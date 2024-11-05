@@ -1,5 +1,6 @@
 package org.upyog.sv.web.controllers;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -23,6 +24,8 @@ import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 import org.upyog.sv.web.models.common.RequestInfoWrapper;
 import org.upyog.sv.web.models.common.ResponseInfo;
 import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
+
+import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-16T13:19:19.125+05:30")
 
@@ -53,10 +56,23 @@ public class StreetVendingController {
 			@Valid @ModelAttribute StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<StreetVendingDetail> applications = streetVendingService
 				.getStreetVendingDetails(requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
+		Integer count = streetVendingService.getApplicationsCount(streetVendingSearchCriteria, requestInfoWrapper.getRequestInfo());
 		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
 				StreetVendingConstants.APPLICATIONS_FOUND, StatusEnum.SUCCESSFUL);
 		StreetVendingListResponse response = StreetVendingListResponse.builder().streetVendingDetail(applications)
-				.responseInfo(responseInfo).build();
+				.responseInfo(responseInfo).count(count).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+	public ResponseEntity<StreetVendingResponse> petRegistrationUpdate(
+			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody StreetVendingRequest vendingRequest) {
+		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
+
+		StreetVendingResponse response = StreetVendingResponse.builder().streetVendingDetail(streetVendingDetail)
+				.responseInfo(StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
+						StreetVendingConstants.APPLICATION_UPDATED, StatusEnum.SUCCESSFUL))
+				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

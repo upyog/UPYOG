@@ -109,4 +109,10 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
+	public void enrichStreetVendingApplicationUponUpdate(StreetVendingRequest vendingRequest) {
+		StreetVendingDetail vendingDetail = vendingRequest.getStreetVendingDetail();
+		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
+		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+	}
+
 }

@@ -67,10 +67,10 @@ public class StreetVendingQueryBuilder {
             query.append(" sv.application_status = ? ");
             preparedStmtList.add(criteria.getStatus());
         }
-        if (!CollectionUtils.isEmpty(criteria.getBookingIds())) {
+        if (!ObjectUtils.isEmpty(criteria.getApplicationnNumber())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" sv.application_id IN ( ").append(createQuery(criteria.getBookingIds())).append(" ) ");
-            addToPreparedStatement(preparedStmtList, criteria.getBookingIds());
+            query.append(" sv.application_no = ? ");
+            preparedStmtList.add(criteria.getApplicationnNumber());
         }
         if (!ObjectUtils.isEmpty(criteria.getFromDate())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -80,6 +80,11 @@ public class StreetVendingQueryBuilder {
         if (!ObjectUtils.isEmpty(criteria.getToDate())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" sv.application_date <= CAST(? AS bigint) ");
+            preparedStmtList.add(criteria.getToDate());
+        }
+        if (!ObjectUtils.isEmpty(criteria.getCreatedBy())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" sv.createdby = ? ");
             preparedStmtList.add(criteria.getToDate());
         }
         query.append(ORDERBY_CREATEDTIME);

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.LocalizationConstants;
 import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
@@ -30,6 +31,9 @@ public class StreetVendingValidator {
 	@Autowired
 	private StreetVendingConfiguration config;
 
+	@Autowired
+	private StreetVendingRepository repository;
+
 	/**
 	 * 
 	 * @param bookingRequest
@@ -38,17 +42,16 @@ public class StreetVendingValidator {
 	public void validateCreate(StreetVendingRequest bookingRequest, Object mdmsData) {
 		log.info("validating master data for create street vending request for applicant mobile no : "
 				+ bookingRequest.getStreetVendingDetail().getApplicationNo());
-		
 
-	//	mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 		validateDuplicateDocuments(bookingRequest);
 	}
 
 	public void validateUpdate(StreetVendingRequest bookingDetailFromRequest, StreetVendingDetail detailFromDB) {
-	//	log.info("validating master data for update  booking request for  booking no : " + bookingDetailFromRequest.getBookingNo());
-		//TODO: Add condition for status from to 
+		// log.info("validating master data for update booking request for booking no :
+		// " + bookingDetailFromRequest.getBookingNo());
+		// TODO: Add condition for status from to
 	}
-	
 
 	/**
 	 * 
@@ -59,12 +62,14 @@ public class StreetVendingValidator {
 			List<String> documentFileStoreIds = new LinkedList<String>();
 			streetVendingRequest.getStreetVendingDetail().getDocumentDetails().forEach(document -> {
 				if (documentFileStoreIds.contains(document.getFileStoreId()))
-					throw new CustomException(StreetVendingConstants.DUPLICATE_DOCUMENT_UPLOADED, "Same document cannot be used multiple times");
+					throw new CustomException(StreetVendingConstants.DUPLICATE_DOCUMENT_UPLOADED,
+							"Same document cannot be used multiple times");
 				else
 					documentFileStoreIds.add(document.getFileStoreId());
 			});
 		} else {
-			throw new CustomException(LocalizationConstants.EMPTY_DOCUMENT_ERROR, "Documents are mandatory for booking.");
+			throw new CustomException(LocalizationConstants.EMPTY_DOCUMENT_ERROR,
+					"Documents are mandatory for booking.");
 		}
 	}
 
@@ -77,19 +82,18 @@ public class StreetVendingValidator {
 	public void validateSearch(RequestInfo requestInfo, StreetVendingSearchCriteria criteria) {
 		log.info("Validating search request for criteria " + criteria);
 		String userType = requestInfo.getUserInfo().getType();
-		
-		
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(StreetVendingConstants.CITIZEN) && criteria.isEmpty())
-			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search without any paramters is not allowed");
 
-		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(StreetVendingConstants.CITIZEN) && !criteria.tenantIdOnly()
-				&& criteria.getTenantId() == null)
+		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(StreetVendingConstants.CITIZEN) && criteria.isEmpty())
+			throw new CustomException(LocalizationConstants.INVALID_SEARCH,
+					"Search without any paramters is not allowed");
+
+		if (!requestInfo.getUserInfo().getType().equalsIgnoreCase(StreetVendingConstants.CITIZEN)
+				&& !criteria.tenantIdOnly() && criteria.getTenantId() == null)
 			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "TenantId is mandatory in search");
 
 		if (requestInfo.getUserInfo().getType().equalsIgnoreCase(StreetVendingConstants.CITIZEN) && !criteria.isEmpty()
 				&& !criteria.tenantIdOnly() && criteria.getTenantId() == null)
 			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "TenantId is mandatory in search");
-			
 
 		String allowedParamStr = null;
 
@@ -102,8 +106,7 @@ public class StreetVendingValidator {
 					"The userType: " + requestInfo.getUserInfo().getType() + " does not have any search config");
 
 		if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty())
-			throw new CustomException(LocalizationConstants.INVALID_SEARCH,
-					"No search parameters are expected");
+			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "No search parameters are expected");
 		else {
 			List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
 			validateSearchParams(criteria, allowedParams);
@@ -119,42 +122,30 @@ public class StreetVendingValidator {
 	private void validateSearchParams(StreetVendingSearchCriteria criteria, List<String> allowedParams) {
 		log.info("Validating search params for allowedParams " + allowedParams);
 
-		if (criteria.getBookingNo() != null && !allowedParams.contains("bookingNo"))
-			throw new CustomException(LocalizationConstants.INVALID_SEARCH,
-					"Search on booking no is not allowed");
-
 		if (criteria.getStatus() != null && !allowedParams.contains("status"))
 			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search on Status is not allowed");
-
-		if (criteria.getBookingIds() != null && !allowedParams.contains("ids"))
-			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search on ids is not allowed");
 
 		if (criteria.getOffset() != null && !allowedParams.contains("offset"))
 			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search on offset is not allowed");
 
 		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
 			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search on limit is not allowed");
-		
+
 		if (criteria.getMobileNumber() != null && !allowedParams.contains("mobileNumber"))
 			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search on mobile number is not allowed");
-		
-		if (criteria.getCommunityHallCode() != null && !allowedParams.contains("communityHallCode"))
-			throw new CustomException(LocalizationConstants.INVALID_SEARCH, "Search on community hall name is not allowed");
 
 		if (criteria.getFromDate() != null) {
 			LocalDate fromDate = StreetVendingUtil.parseStringToLocalDate(criteria.getFromDate());
 			if (fromDate.isAfter(LocalDate.now())) {
-				throw new CustomException(StreetVendingConstants.INVALID_SEARCH,
-						"From date cannot be a future date");
+				throw new CustomException(StreetVendingConstants.INVALID_SEARCH, "From date cannot be a future date");
 			}
 		}
-		
-		if(criteria.getFromDate() != null) {
+
+		if (criteria.getFromDate() != null) {
 			LocalDate fromDate = StreetVendingUtil.parseStringToLocalDate(criteria.getFromDate());
-			 if (fromDate.isBefore(StreetVendingUtil.getMonthsAgo(6))) {
-				 throw new CustomException(StreetVendingConstants.INVALID_SEARCH,
-							"From date cannot be prior 6 months");
-		     }
+			if (fromDate.isBefore(StreetVendingUtil.getMonthsAgo(6))) {
+				throw new CustomException(StreetVendingConstants.INVALID_SEARCH, "From date cannot be prior 6 months");
+			}
 		}
 
 		if (criteria.getToDate() != null && criteria.getFromDate() != null) {
@@ -166,6 +157,12 @@ public class StreetVendingValidator {
 			}
 		}
 	}
-	
+
+	public StreetVendingDetail validateApplicationExistence(StreetVendingDetail streetVendingDetail) {
+		StreetVendingDetail streetVendingDetail2 = repository.getApplications(StreetVendingSearchCriteria.builder()
+				.applicationnNumber(streetVendingDetail.getApplicationNo()).build());
+
+		return streetVendingDetail2;
+	}
 
 }
