@@ -891,7 +891,7 @@ public class NotificationService {
 		if(topic.equalsIgnoreCase(configs.getUpdatePropertyForDeactivaingForBifurcationTopic())) {
 			msg = notifUtil.getMessageTemplate(BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT, completeMsgs);
 			templateId=BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT_TEMPLATE_ID;
-			msg.replace("{UPIN}",property.getPropertyId());
+			msg = msg.replace(NOTIFICATION_UPIN,property.getPropertyId());
 		}
 		
 		

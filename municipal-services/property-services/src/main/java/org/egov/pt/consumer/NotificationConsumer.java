@@ -35,7 +35,6 @@ public class NotificationConsumer {
 	
 	@Autowired
 	private NotificationService notifService;
-	
     @KafkaListener(topics = {"${egov.pt.assessment.create.topic}",
     						 "${egov.pt.assessment.update.topic}",
     						 "${persister.update.property.topic}",
@@ -58,7 +57,8 @@ public class NotificationConsumer {
 
 						notifService.sendNotificationForMutationNew(request);
 					} else if(PTConstants.CREATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
-							PTConstants.AMALGAMATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())
+							PTConstants.AMALGAMATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
+							PTConstants.BIFURCATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())
 							){
 
 						notifService.sendNotificationForCreate(request);
@@ -67,11 +67,6 @@ public class NotificationConsumer {
 					else if(PTConstants.UPDATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
 
 						notifService.sendNotificationForUpdate(request);
-					}
-					else if(PTConstants.BIFURCATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString()))
-					{
-						notifService.sendNotificationForCreate(request);
-						notifService.processForBifurcation(request,configs.getUpdatePropertyForDeactivaingForBifurcationTopic());
 					}
 				}	
 			}

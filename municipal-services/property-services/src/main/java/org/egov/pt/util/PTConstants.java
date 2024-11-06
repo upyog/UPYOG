@@ -543,7 +543,7 @@ public class PTConstants {
     
     /////////////////////////////////////////BIFURCATION MESSAGE///////////////////////////
     
-    public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT="BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER";
+    public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT="BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT";
     public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT_TEMPLATE_ID="";
    
     
