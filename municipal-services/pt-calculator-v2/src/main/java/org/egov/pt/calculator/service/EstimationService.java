@@ -273,20 +273,20 @@ public class EstimationService {
 		 * demand and return CalculationRes clr =
 		 * getDemandDataForEstimation(request,masterMap); return clr; }
 		 */
-		
+
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
 		Property property = criteria.getProperty();
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		calcValidator.validatePropertyForCalculation(detail);
 		//call for demand in case employee is calling 
-		
+
 		return new CalculationRes(new ResponseInfo(), Collections.singletonList(getCalculation(request.getRequestInfo(), criteria, masterMap)));
 	}
-	
-	
+
+
 	public CalculationRes getDemandDataForEstimation(CalculationReq request,Map<String,Object> masterMap) {
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(request.getRequestInfo(),request.getCalculationCriteria().get(0));
-		
+
 		Map<String, BigDecimal> taxHeadMap = new HashMap<>();
 		Map<String, String> taxHeadMapType = new HashMap<>();
 		BigDecimal totalAmount = BigDecimal.ZERO;
@@ -310,10 +310,10 @@ public class EstimationService {
 				//taxHeadMapType.put(d.getTaxHeadMasterCode(), d.get)	
 			}	
 		}
-		
-	
 
-		
+
+
+
 		CalculationRes clr = new CalculationRes();
 		clr.setResponseInfo(new ResponseInfo());
 		Calculation cl = new Calculation();
@@ -330,11 +330,11 @@ public class EstimationService {
 			tx = new TaxHeadEstimate();
 			tx.setEstimateAmount(entry.getValue());
 			tx.setTaxHeadCode(entry.getKey());
-			
+
 			tx.setCategory(null!=taxHeadCategoryMap.get(entry.getKey())?taxHeadCategoryMap.get(entry.getKey()):null);
 			txl.add(tx);
 		}
-		
+
 		cl.setTaxHeadEstimates(txl);
 		Map<String,List<String>> additionaldetail=objectmapper.convertValue(oldDemand.getAdditionalDetails(), Map.class);
 		cl.setBillingSlabIds(additionaldetail.get("calculationDescription"));
@@ -358,8 +358,8 @@ public class EstimationService {
 		if(propertylist.size()>0)
 			throw new CustomException("ASESSMENT_ERROR","Property assessment is already completed for this property for the financial year "+criteria.getFinancialYear());
 	}
-	
-	
+
+
 	public boolean checkAssessmentDoneForEmployee(CalculationReq request)
 	{
 		CalculationCriteria criteria = request.getCalculationCriteria().get(0);
@@ -372,7 +372,7 @@ public class EstimationService {
 		List<AssessmentV2> propertylist=assessmentResponseV2.getAssessments().stream().filter(t->t.getFinancialYear().equalsIgnoreCase(criteria.getFinancialYear())).collect(Collectors.toList());
 		if(propertylist.size()>0 && propertylist.get(0).getStatus().equalsIgnoreCase(OWNER_STATUS_ACTIVE))
 			return true;
-		
+
 		return false;
 	}
 
@@ -451,7 +451,7 @@ public class EstimationService {
 			taxAmt=getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
 			taxAmt = getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null);
 			taxAmt=getApplicableTaxForOwnerUsageCategory(taxAmt, propertyBasedExemptionMasterMap, detail,null);
-			
+
 			String[] vacantusagecategoryMasterData  = detail.getUsageCategoryMajor().split("\\_");
 			String vacantusagecategory = vacantusagecategoryMasterData[1];
 			if(!vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
@@ -1164,14 +1164,20 @@ public class EstimationService {
 
 		}
 
+		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));
+		estimates.stream().forEach(t->
+		{
+			if(t.getTaxHeadCode().equals("PT_TIME_PENALTY"))
+				t.setEstimateAmount(updatedPenalty);		}
+				);
 
-		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
+		BigDecimal totalAmount = taxAmt.add(updatedPenalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
 		if(units.size()==1)
 			if(units.get(0).getAgeOfProperty().equalsIgnoreCase("HERITAGE_PROPERTY"))
 				isHeritage=true;
-		
+
 		if(detail.getExemption().isEmpty() && !isHeritage) {
 			if(tenantId.equalsIgnoreCase("mn.imphal"))
 			{
@@ -1220,7 +1226,7 @@ public class EstimationService {
 		BigDecimal pastdue=BigDecimal.ZERO;
 		BigDecimal advanceRebate=taxAmt.multiply(new BigDecimal(75).divide(new BigDecimal(100)));
 		BigDecimal pastduePenalty=BigDecimal.ZERO;
-		
+
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		{
 			if(advanceRebate.compareTo(collectedAmtForOldDemand)>=0)
@@ -1249,9 +1255,9 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_ADVANCE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
-			
+
 			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(advanceRebate);
-			
+
 		}
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
@@ -1260,16 +1266,16 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
-			
+
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 			String date = "31 03 ";
 			LocalDate endDate = LocalDate.now();
 			date=date.concat(String.valueOf(endDate.getYear()));
 			LocalDate startDate = LocalDate.parse(date, dtf);
 			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
-			
+
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
-			
+
 			totalAmount=totalAmount.add(collectedAmtForOldDemand);
 		}
 		//Added For Manipur 
@@ -1278,7 +1284,7 @@ public class EstimationService {
 
 		//BigDecimal roundofpos=BigDecimal.ZERO;
 		//BigDecimal roundofneg=BigDecimal.ZERO;
-		
+
 		if (null != decimalEstimate) {
 			decimalEstimate.setCategory(taxHeadCategoryMap.get(decimalEstimate.getTaxHeadCode()));
 			estimates.add(decimalEstimate);
@@ -1290,7 +1296,7 @@ public class EstimationService {
 			 * roundofneg=decimalEstimate.getEstimateAmount();
 			 * totalAmount=totalAmount.add(roundofneg); }
 			 */
-				
+
 		}
 
 
@@ -1329,7 +1335,7 @@ public class EstimationService {
 
 		Set<String> h1 = new HashSet<>(Arrays.asList("4","5","6","7","8","9"));
 		Set<String> h2 = new HashSet<>(Arrays.asList("10","11","12","1","2","3"));
-		
+
 		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat year=new SimpleDateFormat("yyyy");
 		SimpleDateFormat month=new SimpleDateFormat("M");

@@ -69,7 +69,6 @@ public class NoticeService {
 		Set<String> propertyIds=new HashSet<String>();
 		Set<String> noticePropertyIds=new HashSet<String>();
 		List<Property> properties = null;
-		List<Property> FilterProperties = new ArrayList<Property>();
 		RequestInfo requestInfo=requestInfoWrapper.getRequestInfo();
 		PropertyCriteria propertyCriteria=new PropertyCriteria();
 		
@@ -82,10 +81,14 @@ public class NoticeService {
 		else
 			notice=noticeRepository.getnotices(noticeCriteria);
 		
+		if(noticeCriteria.getPropertyIds()!=null)
+			return notice;
+		
 		notice=notice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
 		propertyIds=notice.stream().map(Notice::getPropertyId).collect(Collectors.toSet());
 		propertyCriteria.setPropertyIds(propertyIds);
 		properties=propertyService.searchProperty(propertyCriteria, requestInfo);
+		List<Property> FilterProperties = new ArrayList<Property>();
 		for (Property property : properties) {
 			for (OwnerInfo owner : property.getOwners()) {
 				if(owner.getMobileNumber().equalsIgnoreCase(requestInfo.getUserInfo().getMobileNumber()))
@@ -94,10 +97,11 @@ public class NoticeService {
 		}
 		noticePropertyIds=FilterProperties.stream().map(Property::getPropertyId).collect(Collectors.toSet());
 		noticeCriteria.setPropertyIds(noticePropertyIds);
-		notice=noticeRepository.getnotices(noticeCriteria);
-		notice=notice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
+		List<Notice> FilterNotice=new ArrayList<Notice>();
+		FilterNotice=noticeRepository.getnotices(noticeCriteria);
+		FilterNotice=FilterNotice.stream().sorted((x,y)->y.getNoticeNumber().compareTo(x.getNoticeNumber())).collect(Collectors.toList());
 		
-		return notice;
+		return FilterNotice;
 	}
 
 

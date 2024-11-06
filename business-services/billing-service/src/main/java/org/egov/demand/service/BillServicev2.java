@@ -1590,6 +1590,10 @@ public class BillServicev2 {
 			updatedDate = date.toString()+"-"  + cuurentMonth.toString() + "-" + year;
 		else
 			updatedDate = date.toString() + "-0" + cuurentMonth.toString() + "-" + year;
+		
+		if(date<10)
+			updatedDate = "0"+date.toString()+"-"  + cuurentMonth.toString() + "-" + year;
+			
 		return updatedDate;
 	}
 
