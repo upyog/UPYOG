@@ -321,7 +321,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
 
   function onChangeArea(i, e) {
     if ( parseInt(e.target.value) > parseInt(formData?.landArea?.floorarea)) {
-      alert("PT_BUILTUPAREA_PLOTSIZE_ERROR_MSG");
+      alert(t("PT_BUILTUPAREA_PLOTSIZE_ERROR_MSG"));
     }
     else{
       const regex=/^(0|[1-9][0-9]{0,8}|)$/;
