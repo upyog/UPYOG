@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.asset.config.AssetConfiguration;
-import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.repository.IdGenRepository;
 import org.egov.asset.util.AssetErrorConstants;
 import org.egov.asset.util.AssetUtil;
@@ -37,9 +36,6 @@ public class EnrichmentService {
 
 	@Autowired
 	private IdGenRepository idGenRepository;
-	
-	@Autowired
-	private AssetRepository assetRepository;
 
 	// @Autowired
 	// private WorkflowService workflowService;
@@ -57,8 +53,6 @@ public class EnrichmentService {
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		assetRequest.getAsset().setAuditDetails(auditDetails);
 		assetRequest.getAsset().setId(UUID.randomUUID().toString());
-		String tenantId = assetRequest.getAsset().getTenantId().split("\\.")[1];
-		assetRequest.getAsset().setAssetId("MCH"+"/"+tenantId+"/"+assetRepository.getNextSequence());
 
 		assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
 		// String applicationType = values.get(AssetConstants.ASSET_PARENT_CATEGORY);
@@ -84,6 +78,32 @@ public class EnrichmentService {
 	}
 
 	/**
+	 * encrich Asset other operation assignment Request like assignment, desposal
+	 * etc by adding auditdetails and uuids
+	 * 
+	 * @param assetRequest
+	 * @param mdmsData
+	 * @param values
+	 */
+	public void enrichAssetOtherOperationsCreateRequest(AssetRequest assetRequest) {
+		log.info("Doing EnrichAssetOtherOperationsRequest");
+		RequestInfo requestInfo = assetRequest.getRequestInfo();
+		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
+		assetRequest.getAsset().getAssetAssignment().setAssignmentId(UUID.randomUUID().toString());
+
+	}
+	
+	public void enrichAssetOtherOperationsUpdateRequest(AssetRequest assetRequest) {
+		log.info("Doing EnrichAssetOtherOperationsRequest");
+		RequestInfo requestInfo = assetRequest.getRequestInfo();
+		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
+
+	}
+	
+	
+	/**
 	 * Sets the ApplicationNumber for given bpaRequest
 	 *
 	 * @param request bpaRequest which is to be created
@@ -102,7 +122,7 @@ public class EnrichmentService {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 
-		asset.setApplicationNo(itr.next());
+		asset.setApplicationNo(AssetUtil.improveAssetID(itr.next(), request));
 	}
 
 	/**

@@ -13,7 +13,7 @@
 	<artifactId>advertisement-canopy-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>advertisement-canopy-service</name>
-	<description>Advertisement Hoarding and Canopy Mangement Module</description>
+	<description>Advertisement Hoarding and Canopy Management Module</description>
 	<properties>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>

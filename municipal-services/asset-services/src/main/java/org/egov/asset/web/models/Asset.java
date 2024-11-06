@@ -2,8 +2,10 @@ package org.egov.asset.web.models;
 
 import java.util.List;
 
+import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
@@ -30,93 +32,157 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Asset   {
-	
-        //@JsonProperty("applicant")
-        //private Applicant applicant = null;
+public class Asset  implements AssetDTO {
 
 		@JsonProperty("id")
-        private String id = null;
+        private String id ;
 
         @JsonProperty("tenantId")
-        private String tenantId = null;
-        
-        @JsonProperty("assetId")
-        private String assetId;
+        private String tenantId;
 
         @JsonProperty("assetBookRefNo")
-        private String assetBookRefNo = null;
+        private String assetBookRefNo ;
 
         @JsonProperty("assetName")
-        private String assetName = null;
+        private String assetName;
 
         @JsonProperty("description")
-        private String description = null;
+        private String description;
 
         @JsonProperty("assetClassification")
-        private String assetClassification = null;
+        private String assetClassification;
         
         @JsonProperty("assetParentCategory")
-        private String assetParentCategory = null;
+        private String assetParentCategory;
 
         @JsonProperty("assetCategory")
-        private String assetCategory = null;
+        private String assetCategory;
         
         @JsonProperty("assetSubCategory")
-        private String assetSubCategory = null;
+        private String assetSubCategory;
         
         @JsonProperty("department")
-        private String department = null;
+        private String department;
 
         @JsonProperty("applicationNo")
-        private String applicationNo = null;
+        private String applicationNo;
 
         @JsonProperty("approvalNo")
-        private String approvalNo = null;
+        private String approvalNo;
 
         @JsonProperty("approvalDate")
-        private Long approvalDate = null;
+        private Long approvalDate;
 
         @JsonProperty("applicationDate")
-        private Long applicationDate = null;
+        private Long applicationDate;
 
         @JsonProperty("status")
-        private String status = null;
-
-//        @JsonProperty("action")
-//        private String action = null;
-//
-//        @JsonProperty("businessService")
-//        private String businessService = null;
+        private String status;
 
         @JsonProperty("addressDetails")
-        private Address addressDetails = null;
+        private Address addressDetails;
         
         @JsonProperty("documents")
         @Valid
-        private List<Document> documents = null;
+        private List<Document> documents;
 
         @JsonIgnore
         @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+        private AuditDetails auditDetails;
 
         @JsonProperty("additionalDetails")
-        private Object additionalDetails = null;
+        private Object additionalDetails;
         
         @JsonProperty("accountId")
-        private String accountId = null;
+        private String accountId;
         
         @JsonProperty("assetCurrentUsage")
-        private String assetCurrentUsage = null;
+        private String assetCurrentUsage ;
         
         @JsonProperty("remarks")
-        private String remarks = null;
+        private String remarks;
+        
+        @JsonProperty("financialYear")
+        private String financialYear;
+        
+        @JsonProperty("sourceOfFinance")
+        private String sourceOfFinance ;
         
         @JsonProperty("workflow")
-    	private ProcessInstance workflow = null;
+    	private ProcessInstance workflow;
+        
+        @JsonProperty("scheme")
+        private String scheme;
 
-//        @JsonProperty("parentAssetSpecificDetails")
-//        private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
+        @JsonProperty("subScheme")
+        private String subScheme;
+        
+        @JsonProperty("orderNumber")
+        private String orderNumber;
+        
+        @JsonProperty("orderDate")
+        private Long orderDate;
+        
+        @JsonProperty("assetAssignment")
+    	private AssetAssignment assetAssignment;
+        
+        @JsonProperty("bookValue")
+        private float bookValue;
+        
+        @JsonProperty("orignalCost:")
+        private float orignalCost;
+        
+        @Transient
+        private float totalCost;
+        
+        @Transient
+        @JsonProperty("grossValue:")
+        private float grossValue;
+        
+        @JsonProperty("purchaseAcquisitionDate")
+        private Long acquisitiondate;
+        
+        @JsonProperty("depreciationRate")
+        private float depreciationRate;
+        
+        @JsonProperty("currentValue")
+        private float currentValue;
+        
+        @JsonProperty("revenueGeneratedByAsset")
+        private float revenueGeneratedByAsset;
+        
+        @JsonProperty("lastMaintenanceDate")
+        private Long lastMaintenanceDate;
+        
+        @JsonProperty("estimatedNextMaintenanceDate")
+        private Long estimatedNextMaintenanceDate;
+        
+        @JsonProperty("code")
+        private Long code;
+        
+        @JsonProperty("oldCode")
+        private Long oldCode;
+        
+        
+        @JsonProperty("unitOfMeasurement")
+        private Long unitOfMeasurement;
+        
+        
+        @JsonProperty("warrantyYears")
+        private Long warrantyYears;
+        
+        @JsonProperty("warrantyExpiryDate")
+        private Long warrantyExpiryDate;
+        
+        @JsonProperty("assetStatus")
+        private String assetStatus;
+       
+        
+        
+        
+        
+//      @JsonProperty("parentAssetSpecificDetails")
+//      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
         
         public Asset(String type, Object additionalInformation) {
             this.assetParentCategory = type;

@@ -1,25 +1,26 @@
 package org.egov.web.notification.sms.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.egov.web.notification.sms.config.SMSConstants;
-import org.egov.web.notification.sms.config.SMSProperties;
-import org.egov.web.notification.sms.models.Sms;
-import org.egov.web.notification.sms.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.*;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.egov.web.notification.sms.config.SMSConstants;
+import org.egov.web.notification.sms.config.SMSProperties;
+import org.egov.web.notification.sms.models.Sms;
+import org.egov.web.notification.sms.service.BaseSMSService;
+import org.egov.web.notification.sms.service.SMSBodyBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j

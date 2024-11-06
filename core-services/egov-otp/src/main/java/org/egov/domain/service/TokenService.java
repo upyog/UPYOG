@@ -11,10 +11,9 @@ import org.egov.domain.model.TokenSearchCriteria;
 import org.egov.domain.model.Tokens;
 import org.egov.domain.model.ValidateRequest;
 import org.egov.persistence.repository.TokenRepository;
-import org.egov.web.util.*;
+import org.egov.web.util.OtpConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.*;
-import org.springframework.security.crypto.password.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,57 +22,59 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TokenService {
 
-    private TokenRepository tokenRepository;
+	private TokenRepository tokenRepository;
 
-    private OtpConfiguration otpConfiguration;
+	private OtpConfiguration otpConfiguration;
 
-    private PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public TokenService(TokenRepository tokenRepository, PasswordEncoder passwordEncoder, OtpConfiguration otpConfiguration) {
-        this.tokenRepository = tokenRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.otpConfiguration = otpConfiguration;
-    }
+	@Autowired
+	public TokenService(TokenRepository tokenRepository, PasswordEncoder passwordEncoder,
+			OtpConfiguration otpConfiguration) {
+		this.tokenRepository = tokenRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.otpConfiguration = otpConfiguration;
+	}
 
-    public Token create(TokenRequest tokenRequest) {
-        tokenRequest.validate();
+	public Token create(TokenRequest tokenRequest) {
+		tokenRequest.validate();
 
-        String originalOtp = randomNumeric(otpConfiguration.getOtpLength());
-        String encryptedOtp = originalOtp;
+		String originalOtp = randomNumeric(otpConfiguration.getOtpLength());
+		String encryptedOtp = originalOtp;
 
-        if (otpConfiguration.isEncryptOTP()){
-            encryptedOtp = passwordEncoder.encode(originalOtp);
-        }
+		if (otpConfiguration.isEncryptOTP()) {
+			encryptedOtp = passwordEncoder.encode(originalOtp);
+		}
 
-        Token token = Token.builder().uuid(UUID.randomUUID().toString()).tenantId(tokenRequest.getTenantId())
-                .identity(tokenRequest.getIdentity()).number(encryptedOtp)
-                .timeToLiveInSeconds(otpConfiguration.getTtl()).build();
-        token = tokenRepository.save(token);
-        token.setNumber(originalOtp);
-        return token;
-    }
+		Token token = Token.builder().uuid(UUID.randomUUID().toString()).tenantId(tokenRequest.getTenantId())
+				.identity(tokenRequest.getIdentity()).number(encryptedOtp)
+				.timeToLiveInSeconds(otpConfiguration.getTtl()).build();
+		token = tokenRepository.save(token);
+		token.setNumber(originalOtp);
+		return token;
+	}
 
-    public Token validate(ValidateRequest validateRequest) {
-        validateRequest.validate();
+	public Token validate(ValidateRequest validateRequest) {
+		validateRequest.validate();
 
-        Tokens tokens = tokenRepository.findByIdentityAndTenantId(validateRequest);
+		Tokens tokens = tokenRepository.findByIdentityAndTenantId(validateRequest);
 
-        if (tokens == null || tokens.getTokens().isEmpty())
-            throw new TokenValidationFailureException();
+		if (tokens == null || tokens.getTokens().isEmpty())
+			throw new TokenValidationFailureException();
 
-        for (Token t: tokens.getTokens()) {
+		for (Token t : tokens.getTokens()) {
 
-            if (!otpConfiguration.isEncryptOTP() && validateRequest.getOtp().equalsIgnoreCase(t.getNumber())
-             || (otpConfiguration.isEncryptOTP()  && passwordEncoder.matches(validateRequest.getOtp(), t.getNumber()))) {
-                tokenRepository.markAsValidated(t);
-                return t;
-            }
-        }
-        throw new TokenValidationFailureException();
-    }
+			if (!otpConfiguration.isEncryptOTP() && validateRequest.getOtp().equalsIgnoreCase(t.getNumber())
+					|| otpConfiguration.isEncryptOTP()
+							&& passwordEncoder.matches(validateRequest.getOtp(), t.getNumber())) {
+				tokenRepository.markAsValidated(t);
+				return t;
+			}
+		}
+		throw new TokenValidationFailureException();
+	}
 
-    public Token search(TokenSearchCriteria searchCriteria) {
-        return tokenRepository.findBy(searchCriteria);
-    }
+	public Token search(TokenSearchCriteria searchCriteria) {
+		return tokenRepository.findBy(searchCriteria);
+	}
 }
