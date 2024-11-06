@@ -35,11 +35,11 @@ public class NotificationConsumer {
 	
 	@Autowired
 	private NotificationService notifService;
-	
     @KafkaListener(topics = {"${egov.pt.assessment.create.topic}",
     						 "${egov.pt.assessment.update.topic}",
     						 "${persister.update.property.topic}",
-    						 "${persister.save.property.topic}"})
+    						 "${persister.save.property.topic}",
+    						 "${persister.update.property.bifurcation.inactive}"})
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		try {
@@ -58,15 +58,22 @@ public class NotificationConsumer {
 						notifService.sendNotificationForMutationNew(request);
 					} else if(PTConstants.CREATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
 							PTConstants.AMALGAMATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())||
-							PTConstants.BIFURCATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
+							PTConstants.BIFURCATION_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())
+							){
 
 						notifService.sendNotificationForCreate(request);
+						
 					}
 					else if(PTConstants.UPDATE_PROCESS_CONSTANT.equalsIgnoreCase(request.getProperty().getCreationReason().toString())){
 
 						notifService.sendNotificationForUpdate(request);
 					}
-				}
+				}	
+			}
+			else if (topic.equalsIgnoreCase(configs.getUpdatePropertyForDeactivaingForBifurcationTopic())) {
+
+				PropertyRequest request = mapper.convertValue(record, PropertyRequest.class);
+				notifService.processForBifurcation(request,configs.getUpdatePropertyForDeactivaingForBifurcationTopic());
 			}
 
         } catch (final Exception e) {

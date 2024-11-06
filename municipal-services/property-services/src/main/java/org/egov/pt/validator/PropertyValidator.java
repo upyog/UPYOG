@@ -48,6 +48,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -153,6 +154,11 @@ public class PropertyValidator {
 		request.getProperty().setParentPropertyUuId(prop.getId());
 		request.getProperty().setParentPropertyId(prop.getPropertyId());
 		parentToBeCheckedRequest.setProperty(prop);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> additionalDetails = mapper.convertValue(request.getProperty().getAdditionalDetails(), Map.class);
+		additionalDetails.put(PTConstants.PARENT_PROPERTY,prop);
+		JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
+		request.getProperty().setAdditionalDetails(node);
 		if (prop.getStatus().equals(Status.ACTIVE)) {
 
 			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(prop.getPropertyId(), prop.getTenantId(),

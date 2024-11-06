@@ -184,7 +184,7 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 			deactivateOldDemandsForPreiousYears(request);
-			producer.push(props.getUpdatenoticetopic(), noticeRequest);
+			//producer.push(props.getUpdatenoticetopic(), noticeRequest);
 		}
 		
 		producer.push(props.getCreateAssessmentTopic(), request);
