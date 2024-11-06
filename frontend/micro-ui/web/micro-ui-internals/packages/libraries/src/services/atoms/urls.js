@@ -122,6 +122,7 @@ const Urls = {
   sv:{
     create: "/sv-services/street-vending/_create",
     search: "/sv-services/street-vending/_search",
+    update: "/sv-services/street-vending/_update",
   },
 
   chb: {

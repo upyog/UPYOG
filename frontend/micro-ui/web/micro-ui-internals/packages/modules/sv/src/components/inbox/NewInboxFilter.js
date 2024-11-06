@@ -1,24 +1,23 @@
-/** @description - The following component renders the fields in the filter box in left side of the inbox page
- * Renders the filter fields
- * filters the data based on the selected filters
- * @status - In Development
- */
-
 import React, { useEffect, useState } from "react";
-import { Dropdown, RadioButtons, ActionBar, RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, CloseSvg, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 
 import Status from "./Status";
 import _ from "lodash";
 
+/** @description - The following component renders the fields in the filter box in left side of the inbox page
+ * Renders the filter fields
+ * filters the data based on the selected filters
+ * @status - In Development
+ */
 const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, moduleCode, ...props }) => {
   const { t } = useTranslation();
   const client = useQueryClient();
 
   const [_searchParams, setSearchParams] = useState(() => ({ ...searchParams, services: [] }));
   const [vendingType, setVendingType] = useState()
-  const [vendingZone, setVendingZone] = useState()
+  const [vendingZo_ne, setVendingZone] = useState()
 
   const ApplicationTypeMenu = [
     {
@@ -27,6 +26,32 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
     },
 
   ];
+
+  // hook for fetching vending type data
+  const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
+        return formattedData;
+      },
+    });
+  let vendingTypeOptions = [];
+  vendingTypeData && vendingTypeData.map((vending) => {
+    vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
+  })
+
+  // hook for fetching vending zone data
+  const { data: vendingZone } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["StreetVending"]?.["VendingZones"]
+        return formattedData;
+      },
+    });
+  let vending_Zone = [];
+  vendingZone && vendingZone.map((zone) => {
+    vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+  })
 
   const localParamChange = (filterParam) => {
     let keys_to_delete = filterParam.delete;
@@ -99,7 +124,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
           </div>
           <div>
 
-          <div>
+            <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("SV_VENDING_TYPE")}:
               </div>
@@ -107,7 +132,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                 <Dropdown
                   selected={vendingType}
                   select={setVendingType}
-                  option={[{i18nKey: "vendingType1"}, {i18nKey: "vendingType2"}]}
+                  option={vendingTypeOptions}
                   optionKey="i18nKey"
                   t={t}
                   placeholder={"Select"}
@@ -121,10 +146,10 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                 {t("SV_VENDING_ZONE")}:
               </div>
               <div>
-              <Dropdown
-                  selected={vendingZone}
+                <Dropdown
+                  selected={vendingZo_ne}
                   select={setVendingZone}
-                  option={[{i18nKey: "vendingZone1"}, {i18nKey: "vendingZsype2"}]}
+                  option={vending_Zone}
                   optionKey="i18nKey"
                   t={t}
                   placeholder={"Select"}
@@ -154,7 +179,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                 <Dropdown
                   selected={vendingType}
                   select={setVendingType}
-                  option={[{i18nKey: "vendingType1"}, {i18nKey: "vendingType2"}]}
+                  option={vendingTypeOptions}
                   optionKey="i18nKey"
                   t={t}
                   placeholder={"Select"}

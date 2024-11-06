@@ -16,7 +16,7 @@ const ApplicationDetails = () => {
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const [enableAudit, setEnableAudit] = useState(false);
-  const [businessService, setBusinessService] = useState("sv");
+  const [businessService, setBusinessService] = useState("street-vending");
 
   const history = useHistory();
 
@@ -28,24 +28,27 @@ const ApplicationDetails = () => {
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber);
 
-  // ------------------------------ The commented code maybe needed to be used later ------------------------
-  // const {
-  //   isLoading: updatingApplication,
-  //   isError: updateApplicationError,
-  //   data: updateResponse,
-  //   error: updateError,
-  //   mutate,
-  // } = Digit.Hooks.ptr.usePTRApplicationAction(tenantId);
+  // hook used to work with the mutation function
+  const {
+    isLoading: updatingApplication,
+    isError: updateApplicationError,
+    data: updateResponse,
+    error: updateError,
+    mutate,
+  } = Digit.Hooks.sv.useSVApplicationAction(tenantId);
 
-  // let workflowDetails = Digit.Hooks.useWorkflowDetails({
-  //   tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
-  //   id: applicationDetails?.applicationData?.applicationData?.applicationNumber,
-  //   moduleCode: businessService,
-  //   role: "PT_CEMP",
-  // });
+  // fetches workflowDetails from the hook useworkflowdetails
+  let workflowDetails = Digit.Hooks.useWorkflowDetails({
+    tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
+    id: applicationDetails?.applicationData?.applicationData?.applicationNo,
+    moduleCode: businessService,
+    role: "SV_CEMP",
+  });
+
+  console.log("data of workflow in applciation dateadslis :: ", workflowDetails)
 
 
-  // const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.ptr.usePTRSearch(
+  // const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.sv.useSVSearch(
   //   {
   //     tenantId,
   //     filters: { applicationNumber: applicationNumber, audit: true },
@@ -64,19 +67,18 @@ const ApplicationDetails = () => {
   }, [applicationDetails]);
 
 
-  // ------------------------------ The commented code will be needed to be used later ------------------------
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ptr" && businessService === "ptr")) {
-  //     setBusinessService(workflowDetails?.data?.applicationBusinessService);
-  //   }
-  // }, [workflowDetails.data]);
+    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "street-vending" && businessService === "street-vending")) {
+      setBusinessService(workflowDetails?.data?.applicationBusinessService);
+    }
+  }, [workflowDetails.data]);
 
 
-  // const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+  // const SV_CEMP = Digit.UserService.hasAccess(["SV_CEMP"]) || false;
   // if (
-  //   PT_CEMP &&
-  //   workflowDetails?.data?.applicationBusinessService === "ptr" &&
+  //   SV_CEMP &&
+  //   workflowDetails?.data?.applicationBusinessService === "sv" &&
   //   workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
   // ) {
   //   workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
@@ -84,14 +86,14 @@ const ApplicationDetails = () => {
   //       return {
   //         action: "PAY",
   //         forcedName: "WF_PAY_APPLICATION",
-  //         redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
+  //         redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/sv-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
   //       };
   //     }
   //     return act;
   //   });
   // }
 
-  
+  // Handling the download of acknowledgement page
   const handleDownloadPdf = async () => {
     const SVApplication = appDetailsToShow?.applicationData;
     const tenantInfo = tenants.find((tenant) => tenant.code === SVApplication.tenantId);
@@ -168,8 +170,8 @@ const ApplicationDetails = () => {
         isLoading={isLoading}
         isDataLoading={isLoading}
         applicationData={appDetailsToShow?.applicationData?.applicationData}
-        // mutate={mutate}
-        // workflowDetails={workflowDetails}
+        mutate={mutate}
+        workflowDetails={workflowDetails}
         businessService={businessService}
         moduleCode="sv-services"
         showToast={showToast}

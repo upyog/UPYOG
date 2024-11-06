@@ -246,6 +246,23 @@ export const svPayloadData = (data) =>{
         pincode: data?.address?.pincode,
         streetName: "",
         vendorId: ""
+      },
+      { // sending correspondence address here
+        addressId: "",
+        addressLine1: data?.correspondenceAddress?.caddressLine1,
+        addressLine2: data?.correspondenceAddress?.caddressLine2,
+        addressType: "",
+        city: data?.correspondenceAddress?.ccity?.name,
+        cityCode: data?.correspondenceAddress?.ccity?.code,
+        doorNo: "",
+        houseNo: data?.correspondenceAddress?.chouseNo,
+        landmark: data?.correspondenceAddress?.clandmark,
+        locality: data?.correspondenceAddress?.clocality?.i18nKey,
+        localityCode: data?.correspondenceAddress?.clocality?.code,
+        pincode: data?.correspondenceAddress?.cpincode,
+        streetName: "",
+        vendorId: "",
+        isAddressSame: data?.correspondenceAddress?.isAddressSame
       }
     ],
     applicationDate: 0,
@@ -310,11 +327,10 @@ export const svPayloadData = (data) =>{
       ...vendordetails
     ],
     workflow: {
-      action: "",
-      assignes: [
-        ""
-      ],
+      action: "APPLY",
       comments: "",
+      businessService: "street-vending",
+      moduleName: "sv-services",
       varificationDocuments: [
         {
           additionalDetails: {},

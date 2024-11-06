@@ -1,8 +1,3 @@
-/** The Main routes component for the employee side
- * Contains routes for every page there is to redirect in the employee side
- * Contains breadcrumbs for each page
- */
-
 import { AppContainer, BackButton, PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
@@ -10,13 +5,23 @@ import { useTranslation } from "react-i18next";
 import Inbox from "./Inbox";
 import SearchApp from "./SearchApp";
 
+/** The Main routes component for the employee side
+ * Contains routes for every page there is to redirect in the employee side
+ * Contains breadcrumbs for each page
+ */
 const EmployeeApp = () => {
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
   const location = useLocation();
   const isMobile = false
+
   const inboxInitialState = {
-    searchParams: {},
+    searchParams: {
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["street-vending"],
+      applicationStatus: [],
+      locality: [],
+    },
   };
 
   /** Displays the path above the form
@@ -65,11 +70,12 @@ const EmployeeApp = () => {
                 parentRoute={path}
                 businessService="sv"
                 filterComponent="SV_INBOX_FILTER"
-                // initialStates={inboxInitialState}
+                initialStates={inboxInitialState}
                 isInbox={true}
               />
             )}
           />
+          <PrivateRoute path={`${path}/application-details/:id`} component={() => <SVApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <SVApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
         </AppContainer>
