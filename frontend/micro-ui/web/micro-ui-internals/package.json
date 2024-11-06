@@ -6,9 +6,7 @@
     "packages/libraries",
     "example",
     "packages/react-components",
-    "packages/modules/*",
-    "packages/modules/fsm"
-
+    "packages/modules/*"
   ],
   "license": "MIT",
   "private": true,
