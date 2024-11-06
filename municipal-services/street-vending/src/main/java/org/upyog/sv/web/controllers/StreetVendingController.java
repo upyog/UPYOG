@@ -65,14 +65,14 @@ public class StreetVendingController {
 	}
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
-	public ResponseEntity<StreetVendingResponse> petRegistrationUpdate(
-			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody StreetVendingRequest vendingRequest) {
+	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
+			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true)  @RequestBody StreetVendingRequest vendingRequest) {
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
 		StreetVendingResponse response = StreetVendingResponse.builder().streetVendingDetail(streetVendingDetail)
 				.responseInfo(StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
 						StreetVendingConstants.APPLICATION_UPDATED, StatusEnum.SUCCESSFUL))
 				.build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<StreetVendingResponse>(response, HttpStatus.OK);
 	}
 }

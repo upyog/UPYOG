@@ -53,14 +53,6 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 	}
 
 	@Override
-	public StreetVendingDetail getApplications(StreetVendingSearchCriteria searchCriteria) {
-		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getStreetVendingSearchQuery(searchCriteria, preparedStmtList);
-		log.info("Final query: " + query);
-		return (StreetVendingDetail) jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-	}
-
-	@Override
 	public Integer getApplicationsCount(StreetVendingSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getStreetVendingSearchQuery(criteria, preparedStatement);
