@@ -15,6 +15,7 @@ import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.service.BookingService;
+import org.upyog.adv.service.DemandService;
 //import org.upyog.adv.service.EncryptionService;
 import org.upyog.adv.service.EnrichmentService;
 import org.upyog.adv.util.BookingUtil;
@@ -45,6 +46,9 @@ public class BookingServiceImpl implements BookingService {
 
 	@Autowired
 	private EnrichmentService enrichmentService;
+	
+	@Autowired
+	private DemandService demandService;
 	
 	
 
@@ -82,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
 		// workflowService.updateWorkflow(bookingRequest,
 		// WorkflowStatus.CREATE);
 
-		// demandService.createDemand(bookingRequest, mdmsData, true);
+		 demandService.createDemand(bookingRequest, mdmsData, true);
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
