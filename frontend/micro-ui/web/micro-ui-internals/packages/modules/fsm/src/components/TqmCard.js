@@ -99,7 +99,7 @@ const TqmCard = ({ reRoute = true }) => {
   const handleNavigation = (e) => {
     if (e) e.preventDefault();
     const url = getLandingUrl();
-    history.push(url);
+    window.location.href = url;
   };
 
   let links = [
@@ -136,7 +136,7 @@ const TqmCard = ({ reRoute = true }) => {
           break;
       }
       if (redirectUrl) {
-        history.push(redirectUrl);
+        window.location.href = redirectUrl;
       }
     }
   }, [reRoute, userRoles, history]);
