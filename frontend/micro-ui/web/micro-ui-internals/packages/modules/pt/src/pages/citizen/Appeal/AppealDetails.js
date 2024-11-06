@@ -34,11 +34,11 @@ const AppealDetails = (props) =>{
                     </div>
                     <div className="col-sm-6">
                         <label>Name of Assessing Officer</label>
-                        <div>{props?.formData?.nameOfAssessingOfficer}</div>
+                        <div>{props?.formData?.nameOfAssessingOfficer || 'NA'}</div>
                     </div>
                     <div className="col-sm-6">
                         <label>Assessing Officer Designation</label>
-                        <div>{props?.formData?.assessingOfficerDesignation}</div>
+                        <div>{props?.formData?.assessingOfficerDesignation || 'NA'}</div>
                     </div>
                 </div>
                 <hr style={{marginBottom: "10px", marginTop: "10px"}} />

@@ -82,7 +82,7 @@ export const ULBService = {
    * @returns {String}
    */,
   getCitizenCurrentTenant: (selectedCity=false) => {
-    const homeCity=Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.name;
+    const homeCity=Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
     if(selectedCity){
       return homeCity;
     }
@@ -102,7 +102,7 @@ export const ULBService = {
    * @returns {String}
    */
   getCitizenCurrentTenant: (selectedCity = false) => {
-    const homeCity = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.name;
+    const homeCity = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
     if (selectedCity) {
       return homeCity;
     }

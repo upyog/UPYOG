@@ -64,6 +64,14 @@ export const UserService = {
       auth: false,
       params: { tenantId: stateCode },
     }),
+  validateOtp: (details) => 
+    ServiceRequest({
+      serviceName: "validateOtp",
+      url: Urls.ValidateOTP,
+      data: details,
+      auth: true,
+      params: {  }
+    }),
   setUser: (data) => {
     return Digit.SessionStorage.set("User", data);
   },

@@ -147,6 +147,7 @@ const CitizenAppeal = (props) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log("---",name, value)
     setFormData({
         ...formData,
         [name]: value,
@@ -159,10 +160,11 @@ const CitizenAppeal = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
+    console.log("data==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {
-        if(!data[k]) {
+        if((k!= "assessingOfficerDesignation" && k!= "nameOfAssessingOfficer") && !data[k]) {
           return errors[k] = 'This field is required';
         }
     });
@@ -409,9 +411,9 @@ const CitizenAppeal = (props) => {
         
         <div className="row appeal-row-cls">
             <div className="col-sm-4">
-                <label for="formControlInputPtAssessingOfcrName" class="form-label">Name of Assessing Officer*</label>
+                <label for="formControlInputPtAssessingOfcrName" class="form-label">Name of Assessing Officer</label>
                 {/* <input type="text" class="form-control" id="formControlInputPtAssessingOfcrName" placeholder="Enter Name of Assessing Officer" value={nameOfAssessingOfficer} onChange={(e)=>setNameOfAssessingOfficer(e?.target?.value)} required /> */}
-                <input type="text" className={fieldError.nameOfAssessingOfficer ? "form-control error-message" : "form-control"} id="formControlInputPtAssessingOfcrName" placeholder="Enter Name of Assessing Officer" name="nameOfAssessingOfficer" value={formData.nameOfAssessingOfficer} onChange={handleChange} required />
+                <input type="text" className={fieldError.nameOfAssessingOfficer ? "form-control error-message" : "form-control"} id="formControlInputPtAssessingOfcrName" placeholder="Enter Name of Assessing Officer" name="nameOfAssessingOfficer" value={formData.nameOfAssessingOfficer} onChange={handleChange} />
                 {fieldError.nameOfAssessingOfficer &&
                         <span className="error-message">
                             {fieldError.nameOfAssessingOfficer}
@@ -419,9 +421,9 @@ const CitizenAppeal = (props) => {
                     }
             </div>
             <div className="col-sm-4">
-                <label for="formControlInputPtAssissingDesg" class="form-label">Designation*</label>
+                <label for="formControlInputPtAssissingDesg" class="form-label">Designation</label>
                 {/* <input type="text" class="form-control" id="formControlInputPtAssissingDesg" placeholder="Enter Designation" value={assessingOfficerDesignation} onChange={(e)=>setAssessingOfficerDesignation(e?.target?.value)} required/> */}
-                <input type="text" className={fieldError.assessingOfficerDesignation ? "form-control error-message" : "form-control"} id="formControlInputPtAssissingDesg" placeholder="Enter Designation" name="assessingOfficerDesignation" value={formData.assessingOfficerDesignation} onChange={handleChange} required />
+                <input type="text" className={fieldError.assessingOfficerDesignation ? "form-control error-message" : "form-control"} id="formControlInputPtAssissingDesg" placeholder="Enter Designation" name="assessingOfficerDesignation" value={formData.assessingOfficerDesignation} onChange={handleChange} />
                 {fieldError.assessingOfficerDesignation &&
                         <span className="error-message">
                             {fieldError.assessingOfficerDesignation}

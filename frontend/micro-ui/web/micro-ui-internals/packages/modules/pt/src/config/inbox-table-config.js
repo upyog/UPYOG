@@ -110,7 +110,7 @@ export const TableConfig = (t) => ({
         mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
       },
       {
-        Header: t("ES_INBOX_APPLICATION_TYPE"),
+        Header: t("Application Type"),
         Cell: ({ row }) => {
           const map = {
             "PT.CREATE": "ES_PT_NEW_PROPERTY",
@@ -130,23 +130,23 @@ export const TableConfig = (t) => ({
         },
       },
       {
-        Header: t("ES_INBOX_STATUS"),
+        Header: t("Application Status"),
         Cell: ({ row }) => {
           const wf = row.original?.workflowData;
           return GetCell(t(`ES_PT_COMMON_STATUS_${wf?.state?.["state"]}`));
         },
         mobileCell: (original) => GetMobCell(t(`ES_PT_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
       },
-      {
-        Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
-        accessor: "createdTime",
-        Cell: ({ row }) => {
-          const wf = row.original.workflowData;
-          const math = Math.round((wf?.businesssServiceSla || 0) / (24 * 60 * 60 * 1000)) || "-";
-          return GetSlaCell(math);
-        },
-        mobileCell: (original) => GetSlaCell(Math.round((original?.workflowData?.["businesssServiceSla"] || 0) / (24 * 60 * 60 * 1000))),
-      },
+      // {
+      //   Header: t("ES_INBOX_SLA_DAYS_REMAINING"),
+      //   accessor: "createdTime",
+      //   Cell: ({ row }) => {
+      //     const wf = row.original.workflowData;
+      //     const math = Math.round((wf?.businesssServiceSla || 0) / (24 * 60 * 60 * 1000)) || "-";
+      //     return GetSlaCell(math);
+      //   },
+      //   mobileCell: (original) => GetSlaCell(Math.round((original?.workflowData?.["businesssServiceSla"] || 0) / (24 * 60 * 60 * 1000))),
+      // },
     ],
     inboxColumnsAssessment: (props) => [
       {
@@ -201,7 +201,7 @@ export const TableConfig = (t) => ({
         mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
       },
       {
-        Header: t("ES_INBOX_APPLICATION_TYPE"),
+        Header: t("Application Type"),
         Cell: ({ row }) => {
           const map = {
             "ASMT": "Assessment",
@@ -217,7 +217,7 @@ export const TableConfig = (t) => ({
         },
       },
       {
-        Header: t("ES_INBOX_STATUS"),
+        Header: t("Application Status"),
         Cell: ({ row }) => {
           const wf = row.original?.workflowData;
           return GetCell(t(`${wf?.state?.["state"]}`));
@@ -282,7 +282,7 @@ export const TableConfig = (t) => ({
       },
       
       {
-        Header: t("ES_INBOX_APPLICATION_TYPE"),
+        Header: t("Application Type"),
         Cell: ({ row }) => {
           const map = {
             "PT.APPEAL": "Appeal",
@@ -298,7 +298,7 @@ export const TableConfig = (t) => ({
         },
       },
       {
-        Header: t("ES_INBOX_STATUS"),
+        Header: t("Application Status"),
         Cell: ({ row }) => {
           const wf = row.original?.workflowData;
           return GetCell(t(`${wf?.state?.["state"]}`));

@@ -184,14 +184,95 @@ const NoticeForAssesment = (props) => {
   const printDiv = (e,divId)=> {
     e.preventDefault();
     var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
+    // var originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
+    // document.body.innerHTML = printContents;
 
-    window.print();
+    // window.print();
 
-    document.body.innerHTML = originalContents;
-    return false;
+    // document.body.innerHTML = originalContents;
+    // return false;
+
+    var printWindow = window.open('', '');
+
+    // Add a header and the content to print
+    printWindow.document.write('<html><head><title></title>');
+    printWindow.document.write(`<style>
+      body{font-family: Arial, sans-serif;}
+      .print-header{
+        border-bottom: 1px solid;
+        margin-bottom: 20px;
+      } 
+        .mn-cls {
+            font-size: 24px;
+            position: relative;
+            top: -40px;
+            left: 20px;
+        }
+        .card .card-label, .card-emp .card-label {
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 23px;
+          --text-opacity: 1;
+          color: #0b0c0c;
+          color: rgba(11, 12, 12, var(--text-opacity));
+          margin-bottom: 8px;
+        }
+        .employee-card-input, .employee-select-wrap {
+         border: none !important;
+        
+        font-weight: bold;
+        }
+        .assment-yr-cls {
+          position: relative !important;
+          top: 30px !important;
+        }
+        .employee-select-wrap--elipses {
+          border: none;
+          font-weight: bold;
+
+        }
+        .employee-select-wrap .select svg {
+          diaplay: none;
+        }
+        tr td {
+          text-align: center;
+        }
+      .content{margin: 20px;} 
+      @media print {
+        #printPageButton {
+          display: none;
+        }
+        .assment-yr-cls {
+          top: -35px !important;
+        }
+      }
+      @media print {
+        .notice-txt li {
+          width: 100% !important;
+        }
+        .notice-txt li div {
+          width: 100% !important;
+        }
+      }
+      </style></head><body>`);
+    
+    // Add a header
+    printWindow.document.write(`<div class="print-header"><img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/trlogo2.png" height="80px" /><span class="mn-cls">${t(tenantId)} Municipal Corporation</span></div>`);
+
+    // Add the content to print
+    printWindow.document.write('<div class="content">' + printContents + '</div>');
+
+    printWindow.document.write('</body></html>');
+
+    // Close the document to finish writing
+    printWindow.document.close();
+
+    // Wait for the window to load and then print
+    printWindow.onload = function () {
+      printWindow.print();
+      printWindow.close();
+    };
     
   }
   const onSubmit = (e) => {
@@ -384,7 +465,7 @@ const NoticeForAssesment = (props) => {
               </div>
               <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
-                  <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
+                  <div className="" style={{display: "inline-block", width: "86%", paddingLeft: "15px"}}>
                       <span>Date(mm/dd/yyyy)</span>
                       <div>{new Date().toLocaleDateString()}</div>
                   </div>

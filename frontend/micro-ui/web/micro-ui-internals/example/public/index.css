@@ -2047,7 +2047,7 @@ img, video {
     .employee-select-wrap .select img, .employee-select-wrap .select svg {
       float: right;
       height: 2.5rem;
-      width: 2.5rem;
+      /* width: 2.5rem; */
       margin-top: 8px;
       margin-right: 8px; }
     .employee-select-wrap .select svg {
@@ -4805,7 +4805,7 @@ video::-webkit-media-controls-panel {
   flex-wrap: wrap;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   --bg-opacity:1;
   background-color: #fff;
   background-color: rgba(255, 255, 255, var(--bg-opacity));
@@ -9671,7 +9671,7 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
   }
   .citizen-card-txt {
     position: relative;
-    top: -34px;
+    top: -33px;
     /* left: 28%; */
     font-size: 18px;
     color: #e70303;
@@ -9682,8 +9682,8 @@ input[type=number], .checkbox-wrap .input-emp[type=number] {
     transition: .5s ease;
     opacity: 1;
     color: white;
-    font-size: 14px;
-    padding: 7px;
+    font-size: 18px;
+    padding: 4px;
     text-align: center;
     display: block;
     border-radius: 0px 0px 6px 6px;
@@ -9707,7 +9707,7 @@ a:focus, a:hover {
   background-size: cover; */
 }
 a:focus, a:hover { 
-  color: #0679fe;
+  color: #00ff19;
 }
 .appeal-row-cls {
   margin-bottom: 10px
@@ -9749,4 +9749,7 @@ a:focus, a:hover {
   .notice-txt li div {
     width: 100% !important;
   }
+}
+button[disabled], html input[disabled] {
+  cursor: not-allowed !important;
 }

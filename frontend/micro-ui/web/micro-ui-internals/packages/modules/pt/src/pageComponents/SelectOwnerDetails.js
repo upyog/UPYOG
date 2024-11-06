@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Toast } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -8,13 +8,18 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const mutationScreen = url.includes("/property-mutation/");
+  const getUserType = () => Digit.UserService.getType();
+  const TYPE_OWNER_VALIDATE = { type: "owner_validate" };
 
   let index = mutationScreen ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
+  const [showToast, setShowToast] = useState(null);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [showToastErrorMsg, setShowToastErrorMsg] = useState(null);
   const [otp, setOtp] = useState();
-  const [isOtpValid, setIsOtpValid] = useState(false);
-  const [otpError, setOtpError] = useState("");
-  const [sentOtp, setSentOtp] = useState("123456");
+  const [isOtpValid, setIsOtpValid] = useState(true);
+  const [disableSendOtp, setDisableSendOtp] = useState(true);
+  const [disableValidateOtp, setDisableValidateOtp] = useState(true);
   const [name, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].name) || formData?.owners?.name || "");
   const [email, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].email) || formData?.owners?.emailId || "");
   const [gender, setGender] = useState((formData.owners && formData.owners[index] && formData.owners[index].gender) || formData?.owners?.gender);
@@ -53,7 +58,12 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
 
   function setMobileNo(e) {
     setMobileNumber(e.target.value);
-    setIsOtpValid(false)
+    setIsOtpValid(false);
+    if(e.target.value && e.target.value.length==10) {
+      setDisableSendOtp(false)
+    } else {
+      setDisableSendOtp(true)
+    }
   }
   function setGuardiansName(e) {
     setFatherOrHusbandName(e.target.value);
@@ -81,20 +91,100 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect(config.key, ownerStep, false, index);
     }
   };
-  const validateOtp = (e) => {
-    e.preventDefault();
-    if(sentOtp == otp) {
-      setOtpError("");
-      setIsOtpValid(true);
-    } else {
-      setOtpError("Invalid OTP");
+  // const validateOtp = (e) => {
+    
+  // }
+
+  const validateOtp = async (e) => {
+    try {
+      e.preventDefault();
+      
+      const requestData = {
+        identity: mobileNumber,
+        otp: otp,
+        tenantId: 'mn'
+      };
+      const res = await Digit.UserService.validateOtp({otp:{...requestData}});
+      console.log("selectOtp==",res)
+      if(res && res?.otp?.isValidationSuccessful) {
+        setIsOtpValid(true);
+        setShowToast({ key: true, label: "OTP validate successfully!" });
+        setTimeout(() => {
+          closeToast();
+        }, 10000);
+      } else {
+        setShowToastErrorMsg({ key: true, label: "Invalid OTP" });
+      setTimeout(() => {
+        closeToastError();
+      }, 10000);
+        setIsOtpValid(false);
+      }
+    } catch (err) {
+      setShowToastErrorMsg({ key: true, label: "Invalid OTP" });
+      setTimeout(() => {
+        closeToastError();
+      }, 10000);
       setIsOtpValid(false);
     }
-  }
-  const sendOtp = (e) => {
+  };
+  
+  const sendOtp = async (e) => {
     e.preventDefault();
     console.log("sendOtp==",e)
+    setIsOtpSent(false);
+    setOtp("")
+    if(!mobileNumber || mobileNumber.length<10) {
+      setShowToastErrorMsg({ key: true, label: "Invalid Mobile No." });
+      setTimeout(() => {
+        closeToastError();
+      }, 10000);
+      return;
+    }
+    // const { mobileNumber } = params;
+    const data = {
+      mobileNumber,
+      tenantId: 'mn',
+      userType: getUserType(),
+    };
+    setDisableValidateOtp(true);
+    try {
+      const [res, err] = await sendOtpService({ otp: { ...data, ...TYPE_OWNER_VALIDATE } });
+      console.log("TYPE_OWNER_VALIDATE--RES==",res)
+      
+      if(res && res?.isSuccessful) {
+        setIsOtpSent(true);
+        setShowToast({ key: true, label: "OTP sent successfully!" });
+        setDisableSendOtp(true);
+        setDisableValidateOtp(false);
+        setTimeout(() => {
+          closeToast();
+          setDisableSendOtp(false)
+        }, 10000);
+        return;
+      }
+    } catch (err) {
+    }
+    
   }
+
+  const sendOtpService = async (data) => {
+    try {
+      const res = await Digit.UserService.sendOtp(data, 'mn');
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  };
+
+  const closeToast = () => {
+    setShowToast(null);
+  };
+  const closeToastError = ()=> {
+    setShowToastErrorMsg(null)
+  }
+  
+
+  
 
   const onSkip = () => onSelect();
   // As Ticket RAIN-2619 other option in gender and gaurdian will be enhance , dont uncomment it
@@ -291,8 +381,10 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           />
           <small>N.B: On change mobile number, you need to verify the OTP every time.</small>
           <div>
-            <button className="submit-bar" onClick={sendOtp} type="submit" style={{display: "inline", marginRight: "10px"}}><header>Send OTP</header></button>
-            <TextInput
+            <button className="submit-bar" disabled={disableSendOtp} onClick={sendOtp} type="submit" style={{display: "inline", marginRight: "10px"}}><header>Send OTP</header></button>
+            {isOtpSent && (
+              <React.Fragment>
+                <TextInput
               t={t}
               type={"text"}
               isMandatory={false}
@@ -312,13 +404,14 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
               })}
             />
            
-            <button className="submit-bar" type="submit" style={{display: "inline", marginLeft: "10px"}} onClick={validateOtp}><header>Validate OTP</header></button>
-            
+            <button className="submit-bar" disabled={disableValidateOtp || (!otp || otp?.length<6)} type="submit" style={{display: "inline", marginLeft: "10px"}} onClick={validateOtp}><header>Validate OTP</header></button>
+              </React.Fragment>
+              )}
           </div>
-          <div style={{position: "relative", top: "-10px"}}>          
+          {/* <div style={{position: "relative", top: "-10px"}}>          
             {isOtpValid && <small style={{color: "green"}}>OTP validate successfully.</small>}
             {!isOtpValid && otpError && <small style={{color: "red"}}>Invalid OTP.</small>}
-          </div>
+          </div> */}
 
           
         </div>
@@ -355,6 +448,9 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
         />
       </div>
     </FormStep>
+    {showToast && <Toast success={showToast.key} label={t(showToast.label)} onClose={closeToast} isDleteBtn={true} />}
+    {showToastErrorMsg && <Toast error={showToastErrorMsg.key} label={t(showToastErrorMsg.label)} onClose={closeToastError} isDleteBtn={true} />}
+
     </React.Fragment>
   );
 };

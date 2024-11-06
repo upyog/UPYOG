@@ -275,6 +275,11 @@ console.log("propertySearch===",data)
               label={t("PT_APPLICATION_CHANNEL_LABEL")}
               text={t(`ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${property?.channel}`)}
             />
+            <Row
+              className="border-none"
+              label={t("Creation Reason")}
+              text={t(`${property?.creationReason}`)}
+            />
 
             {isPropertyTransfer && (
               <React.Fragment>
@@ -283,6 +288,67 @@ console.log("propertySearch===",data)
               </React.Fragment>
             )}
           </StatusTable>
+          {property?.creationReason =="AMALGAMATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{ fontSize: "16px" }}>{t("Amalgamation Details")}</CardSubHeader>
+                {property?.amalgamatedProperty && property?.amalgamatedProperty.length>0 &&  
+                property.amalgamatedProperty.map((amalgamatePropertyDetails)=>(
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={amalgamatePropertyDetails?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(amalgamatePropertyDetails?.property?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(amalgamatePropertyDetails?.property?.landArea && `${t(`${amalgamatePropertyDetails?.property?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={amalgamatePropertyDetails?.property?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${amalgamatePropertyDetails?.property?.address?.locality?.area}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={amalgamatePropertyDetails?.property?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={amalgamatePropertyDetails?.property?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("Dag No")} text={amalgamatePropertyDetails?.property?.address?.dagNo || t("CS_NA")} />
+                        {
+                          amalgamatePropertyDetails?.property?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                amalgamatePropertyDetails.property.owners.map((amalgamatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={amalgamatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={amalgamatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={amalgamatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
           <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={property?.address?.pincode || t("CS_NA")} />

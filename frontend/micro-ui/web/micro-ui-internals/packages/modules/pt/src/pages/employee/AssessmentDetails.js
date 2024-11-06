@@ -35,7 +35,7 @@ const AssessmentDetails = () => {
   
   const getPropertyTypeLocale = (value) => {
     // return `PROPERTYTAX_${value?.split(".")[1]}`;
-    return `${value?.split(".")[1]}`.toLocaleLowerCase();
+    return value=='VACANT' ? 'Vacant' :`${value?.split(".")[1]}`.toLocaleLowerCase();
   };
   
   const getPropertySubtypeLocale = (value) => `PROPERTYTAX_${value}`;  
@@ -132,6 +132,8 @@ const AssessmentDetails = () => {
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
             if(userType?.value?.info?.type == "CITIZEN")
             {
+              setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
+              setTimeout(closeToast, 5000);
               history.push(`/digit-ui/citizen/pt-home`);
             }
             else{
