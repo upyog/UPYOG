@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,9 @@ public class NotificationService {
 
 	@Value("${notification.url}")
 	private String notificationURL;
+	
+	@Autowired
+	private ObjectMapper mapper;
 
 
 	public void sendNotificationForMutation(PropertyRequest propertyRequest) {
@@ -868,6 +872,53 @@ public class NotificationService {
 		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(citizenFeedackMessage, mobileNumberToOwner,templateID);
 		notifUtil.sendSMS(smsRequests);
 
+	}
+	
+	
+	public void processForBifurcation(PropertyRequest request, String topic) {
+
+		Property property = request.getProperty();
+		String completeMsgs = notifUtil.getLocalizationMessages(property.getTenantId(), request.getRequestInfo());
+		property =mapper.convertValue(property.getAdditionalDetails().get("parentProperty"), Property.class);
+		RequestInfo requestInfo = request.getRequestInfo();
+		Map<String, String> mobileNumberToOwner = new HashMap<>();
+		String tenantId = request.getProperty().getTenantId();
+		String moduleName = "PT";
+		String msg = null;
+		String action;
+		String templateId = null;
+		action = "APPROVE";
+		if(topic.equalsIgnoreCase(configs.getUpdatePropertyForDeactivaingForBifurcationTopic())) {
+			msg = notifUtil.getMessageTemplate(BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT, completeMsgs);
+			templateId=BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT_TEMPLATE_ID;
+			msg.replace("{UPIN}",property.getPropertyId());
+		}
+		
+		
+
+		List<String> configuredChannelNames =  notifUtil.fetchChannelList(new RequestInfo(), tenantId, moduleName, action);
+		Set<String> mobileNumbers = new HashSet<>();
+
+		property.getOwners().forEach(owner -> {
+			if (owner.getMobileNumber() != null)
+				mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
+			mobileNumbers.add(owner.getMobileNumber());
+		});
+
+
+		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(msg, mobileNumberToOwner,templateId);
+
+		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
+			notifUtil.sendSMS(smsRequests);
+			Boolean isActionReq = false;
+			List<Event> events = notifUtil.enrichEventNew(smsRequests, requestInfo, property.getTenantId(), property, isActionReq);
+			notifUtil.sendEventNotification(new EventRequest(requestInfo, events));
+		}
+		
+		if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
+			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
+			notifUtil.sendEmail(emailRequests);
+		}
 	}
 
 

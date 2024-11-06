@@ -533,6 +533,47 @@ public class NotificationUtil {
 		});
 		return events;
 	}
+   
+   
+   public List<Event> enrichEventNew(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
+
+	   List<Event> events = new ArrayList<>();
+      Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+      Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
+
+      for(String mobileNumber:mobileNumbers) {
+          UserDetailResponse userDetailResponse = fetchUserByUUID(mobileNumber, requestInfo, property.getTenantId());
+          try
+          {
+              OwnerInfo user= (OwnerInfo) userDetailResponse.getUser().get(0);
+              mapOfPhnoAndUUIDs.put(user.getMobileNumber(),user.getUuid());
+          }
+          catch(Exception e) {
+              log.error("Exception while fetching user object: ",e);
+          }
+      }
+
+      if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
+          log.error("UUIDs Not found for Mobilenumbers");
+      }
+
+      Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+      mobileNumbers.forEach(mobileNumber -> {
+      	
+          List<String> toUsers = new ArrayList<>();
+          toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
+          Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+          Action action = null;
+          String description = removeForInAppMessage(mobileNumberToMsg.get(mobileNumber));
+          events.add(Event.builder().tenantId(tenantId).description(description)
+                  .eventType(USREVENTS_EVENT_TYPE).name(USREVENTS_EVENT_NAME)
+                  .postedBy(USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+                  .eventDetails(null).actions(action).build());
+
+		});
+		return events;
+	}
+
 
     /**
      * Method to remove certain lines from SMS templates
