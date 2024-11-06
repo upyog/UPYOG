@@ -635,10 +635,10 @@ config:
   - name: "builds/municipal-services/advertisement-canopy-service"
     build:
       - work-dir: "municipal-services/advertisement-canopy-service"
-        image-name: "advertisement-canopy-service"
+        image-name: "adrvcanopy-services"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "advertisement-canopy-service/src/main/resources/db"
-        image-name: "advertisement-canopy-service-db" 
+      - work-dir: "municipal-services/advertisement-canopy-service/src/main/resources/db"
+        image-name: "adrvcanopy-services-db" 
  
  # Utilities
  
