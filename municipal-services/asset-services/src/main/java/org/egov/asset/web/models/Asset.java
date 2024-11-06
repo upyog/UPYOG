@@ -22,7 +22,7 @@ import lombok.Setter;
 /**
  * An object representing an asset
  */
-@ApiModel(description = "An object representing an asset")
+@ApiModel(description = "Object representing an asset")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
 
@@ -126,28 +126,21 @@ public class Asset  implements AssetDTO {
         @JsonProperty("assetAssignment")
     	private AssetAssignment assetAssignment;
         
+        @JsonProperty("orignalCost:")
+        private float orignalCost;
+
+        @JsonProperty("acquisitionCost")
+        private float acquisitionCost;
+
         @JsonProperty("bookValue")
         private float bookValue;
         
-        @JsonProperty("orignalCost:")
-        private float orignalCost;
-        
-        @Transient
-        private float totalCost;
-        
-        @Transient
-        @JsonProperty("grossValue:")
-        private float grossValue;
-        
         @JsonProperty("purchaseAcquisitionDate")
-        private Long acquisitiondate;
+        private Long acquisitionDate;
         
         @JsonProperty("depreciationRate")
         private float depreciationRate;
-        
-        @JsonProperty("currentValue")
-        private float currentValue;
-        
+
         @JsonProperty("revenueGeneratedByAsset")
         private float revenueGeneratedByAsset;
         
@@ -157,19 +150,14 @@ public class Asset  implements AssetDTO {
         @JsonProperty("estimatedNextMaintenanceDate")
         private Long estimatedNextMaintenanceDate;
         
-        @JsonProperty("code")
-        private Long code;
+        @JsonProperty("glCode")
+        private Long glCode;
         
         @JsonProperty("oldCode")
         private Long oldCode;
-        
-        
+
         @JsonProperty("unitOfMeasurement")
         private Long unitOfMeasurement;
-        
-        
-        @JsonProperty("warrantyYears")
-        private Long warrantyYears;
         
         @JsonProperty("warrantyExpiryDate")
         private Long warrantyExpiryDate;
@@ -177,10 +165,7 @@ public class Asset  implements AssetDTO {
         @JsonProperty("assetStatus")
         private String assetStatus;
        
-        
-        
-        
-        
+
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
         
