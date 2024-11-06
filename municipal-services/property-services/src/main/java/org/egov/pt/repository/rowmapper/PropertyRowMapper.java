@@ -116,6 +116,12 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 					currentProperty.setAmalgamatedProperty(amalgamatedProperties);
 				}
 				
+				else if(additionalDetails.containsKey("parentProperty") &&null!=additionalDetails.get("parentProperty")) {
+					@SuppressWarnings("unchecked")
+					Property parentProperty =mapper.convertValue(additionalDetails.get("parentProperty"), Property.class);
+					currentProperty.setParentPropery(parentProperty);
+				}
+				
 				
 				
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);

@@ -151,6 +151,8 @@ public class PropertyService {
 					//Deactivating Parent
 					request.getProperty().setBifurcationCount(bifurList.size());
 					producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
+					//push sms to parent Property Notifying Deactivation of the property as Bifiurcation is initiated
+					
 				} 
 			}else {
 				request.getProperty().setBifurcationCount(bifurList.size());

@@ -478,6 +478,10 @@ public class PTConstants {
     
     public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
     
+    public static final String PARENT_PROPERTY = "parentProperty";
+    
+    
+    
     
     //////////////////////////////////MSN FOR ASMT///////////
     public static final String ASMT_MSG_INITIATED_TEMPLATE_ID="1007071694610956961";
@@ -537,6 +541,10 @@ public class PTConstants {
     public static final String MUTATION_PT_DOC_VERIFIER_REJECT_STATE_MESSAGE_MNPT_TEMPLATE_ID="1007234047060705501";
     public static final String MUTATION_PT_DOC_VERIFIER_SENDBACK_STATE_MESSAGE_MNPT_TEMPLATE_ID="1007470788781376589";
     
+    /////////////////////////////////////////BIFURCATION MESSAGE///////////////////////////
+    
+    public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT="BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT";
+    public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT_TEMPLATE_ID="";
    
     
     

@@ -1,6 +1,7 @@
 package org.egov.demand.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.egov.demand.model.Transaction.TxnStatusEnum;
 
@@ -34,11 +35,15 @@ public class ModeOfPaymentDetails {
 	@JsonProperty("toPeriod")
 	private Long toPeriod;
 	
-	
 	@JsonProperty("period")
 	private TxnPeriodEnum period;
 
+	@JsonProperty("interestAmount")
+	private BigDecimal interestAmount;
 	
+	private List<TxnPeriodEnum> adjustedPeriods;
+	
+	private BigDecimal remaingAdvance;
 	
 	 public enum TxnStatusEnum {
 		 	PAID("PAID"),
