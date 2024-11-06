@@ -5,10 +5,12 @@ const createProxy = createProxyMiddleware({
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   target: process.env.REACT_APP_PROXY_API || "https://unified-dev.digit.org",
   changeOrigin: true,
+  secure: false,
 });
 const assetsProxy = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_ASSETS || "https://unified-dev.digit.org",
   changeOrigin: true,
+  secure: false,
 });
 module.exports = function (app) {
   [
@@ -43,7 +45,7 @@ module.exports = function (app) {
     "/tl-services/v1/_create",
     "/tl-services/v1/_search",
     "/egov-url-shortening/shortener",
-    "/eus/shortener",
+    "/egov-url-shortening/shortener",
     "/inbox/v1/_search",
     "/tl-services",
     "/tl-calculator",
