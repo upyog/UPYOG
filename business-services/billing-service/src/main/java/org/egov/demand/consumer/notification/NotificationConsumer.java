@@ -275,7 +275,7 @@ public class NotificationConsumer {
 //			actionLink = config.getNotificationUrl() + actionLink;
 			//actionLink = getShortnerURL(actionLink);
 			//log.info("Action link " + actionLink);
-			content = content.replace("<Link to Bill>", "https://mseva.lgpunjab.gov.in/");
+			content = content.replace("<Link to Bill>", "http://mseva.lgpunjab.gov.in/");
 			content = content.replace("<connectionNumber>", "Consumer No: "+bill.getConsumerCode());
 			content = content.replace("<bill amount>", bill.getTotalAmount().toString());
 			log.info("content WS" + content);
