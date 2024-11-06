@@ -1,4 +1,4 @@
-import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, Loader } from "@upyog/digit-ui-react-components";
+import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -20,8 +20,6 @@ const TqmCard = ({ reRoute = true }) => {
     return null;
   }
 
-  //searching for plants linked to this user
-
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
 
@@ -31,7 +29,6 @@ const TqmCard = ({ reRoute = true }) => {
     body: {
       plantUserSearchCriteria: {
         tenantId,
-        // "plantCodes": [],
         plantUserUuids: userInfo?.info?.uuid ? [userInfo?.info?.uuid] : [],
         additionalDetails: {},
       },
@@ -45,7 +42,6 @@ const TqmCard = ({ reRoute = true }) => {
             return row;
           })
           ?.filter((row) => row.isActive);
-        // userPlants.push({i18nKey:"PQM_PLANT_DEFAULT_ALL"})
         Digit.SessionStorage.set("user_plants", userPlants);
         return userPlants;
       },
@@ -100,6 +96,11 @@ const TqmCard = ({ reRoute = true }) => {
     Icon: <ShippingTruck />,
     moduleName: t("ACTION_TEST_TQM"),
     links: links,
+    // Add onClick handler to handle the navigation
+    onModuleCardClick: () => {
+      const redirectUrl = userRoles?.includes("PQM_TP_OPERATOR") ? "/tqm-ui/employee/tqm/landing" : "/tqm-ui/employee";
+      history.push(redirectUrl);
+    },
   };
 
   if (isPlantOperatorLoggedIn) {
@@ -107,18 +108,13 @@ const TqmCard = ({ reRoute = true }) => {
     delete propsForModuleCard.links[2];
   }
 
-  if (reRoute) {
-    if (userRoles.length === 1) {
-      const role = userRoles[0];
-      let redirectUrl;
-      switch (role) {
-        case "PQM_TP_OPERATOR":
-          redirectUrl = "/tqm-ui/employee/tqm/landing";
-          break;
-        case "PQM_ADMIN":
-          redirectUrl = "/tqm-ui/employee";
-          break;
-      }
+  // Remove automatic redirection for PQM_TP_OPERATOR
+  if (reRoute && userRoles.length === 1) {
+    const role = userRoles[0];
+    let redirectUrl;
+    // Only redirect automatically for PQM_ADMIN
+    if (role === "PQM_ADMIN") {
+      redirectUrl = "/tqm-ui/employee";
       window.location.href = redirectUrl;
     }
   }
