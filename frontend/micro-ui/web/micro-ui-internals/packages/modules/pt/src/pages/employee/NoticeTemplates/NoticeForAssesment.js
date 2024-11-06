@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { printNotice } from "../../../utils";
 
 
 const NoticeForAssesment = (props) => {
@@ -183,97 +184,7 @@ const NoticeForAssesment = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    var printContents = document.getElementById(divId).innerHTML;
-    // var originalContents = document.body.innerHTML;
-
-    // document.body.innerHTML = printContents;
-
-    // window.print();
-
-    // document.body.innerHTML = originalContents;
-    // return false;
-
-    var printWindow = window.open('', '');
-
-    // Add a header and the content to print
-    printWindow.document.write('<html><head><title></title>');
-    printWindow.document.write(`<style>
-      body{font-family: Arial, sans-serif;}
-      .print-header{
-        border-bottom: 1px solid;
-        margin-bottom: 20px;
-      } 
-        .mn-cls {
-            font-size: 24px;
-            position: relative;
-            top: -40px;
-            left: 20px;
-        }
-        .card .card-label, .card-emp .card-label {
-          font-size: 16px;
-          font-weight: 400;
-          line-height: 23px;
-          --text-opacity: 1;
-          color: #0b0c0c;
-          color: rgba(11, 12, 12, var(--text-opacity));
-          margin-bottom: 8px;
-        }
-        .employee-card-input, .employee-select-wrap {
-         border: none !important;
-        
-        font-weight: bold;
-        }
-        .assment-yr-cls {
-          position: relative !important;
-          top: 30px !important;
-        }
-        .employee-select-wrap--elipses {
-          border: none;
-          font-weight: bold;
-
-        }
-        .employee-select-wrap .select svg {
-          diaplay: none;
-        }
-        tr td {
-          text-align: center;
-        }
-      .content{margin: 20px;} 
-      @media print {
-        #printPageButton {
-          display: none;
-        }
-        .assment-yr-cls {
-          top: -35px !important;
-        }
-      }
-      @media print {
-        .notice-txt li {
-          width: 100% !important;
-        }
-        .notice-txt li div {
-          width: 100% !important;
-        }
-      }
-      </style></head><body>`);
-    
-    // Add a header
-    printWindow.document.write(`<div class="print-header"><img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/trlogo2.png" height="80px" /><span class="mn-cls">${t(tenantId)} Municipal Corporation</span></div>`);
-
-    // Add the content to print
-    printWindow.document.write('<div class="content">' + printContents + '</div>');
-
-    printWindow.document.write('</body></html>');
-
-    // Close the document to finish writing
-    printWindow.document.close();
-
-    // Wait for the window to load and then print
-    printWindow.onload = function () {
-      printWindow.print();
-      printWindow.close();
-    };
-    
+    printNotice(e,divId,t(tenantId));
   }
   const onSubmit = (e) => {
     e.preventDefault();

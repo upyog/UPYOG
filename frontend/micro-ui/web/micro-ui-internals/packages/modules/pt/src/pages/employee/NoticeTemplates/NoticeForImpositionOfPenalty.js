@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, CheckBox, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { printNotice } from "../../../utils";
 
 
 const NoticeForImpositionOfPenalty = (props) => {
@@ -49,6 +50,7 @@ const NoticeForImpositionOfPenalty = (props) => {
 const onChangeRuleOfPenalty=(e)=>{
   console.log("====",e)
   const { name, checked } = e.target;
+  e.target.classList.toggle('checked')
   setRulesOfPenalty({
         ...rulesOfPenalty,
         [name]: checked || false,
@@ -134,16 +136,17 @@ const onChangeRuleOfPenalty=(e)=>{
   let [count, setCount] = useState(0);
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
+    printNotice(e,divId,t(tenantId));
+    // var printContents = document.getElementById(divId).innerHTML;
+    // var originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
+    // document.body.innerHTML = printContents;
 
-    window.print();
+    // window.print();
     
-    document.body.innerHTML = originalContents;
-    setCount(1)
-    return false;
+    // document.body.innerHTML = originalContents;
+    // setCount(1)
+    // return false;
     
   }
   const onSubmit = (e) => {
@@ -389,7 +392,7 @@ const onChangeRuleOfPenalty=(e)=>{
               </div>
               <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
-                    <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
+                    <div className="" style={{display: "inline-block", width: "87%", paddingLeft: "15px"}}>
                         <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>

@@ -1252,3 +1252,179 @@ export const getWorkflow = (data = {}) => {
 export const getCreationReason = (data = {}) => {
   return data?.isUpdateProperty ? "UPDATE" : "CREATE";
 };
+
+export const printNotice = (e = null, divId = "", tenant="") => {
+  if(e && divId && tenant) {
+    var printContents = document.getElementById(divId).innerHTML;
+    // var originalContents = document.body.innerHTML;
+
+    // document.body.innerHTML = printContents;
+
+    // window.print();
+
+    // document.body.innerHTML = originalContents;
+    // return false;
+
+    // Create a new window for printing
+    var printWindow = window.open('', '', 'height=600,width=800');
+     // Check if the new window is ready (not about:blank)
+     printWindow.document.open();
+
+    // Add a header and the content to print
+    printWindow.document.write('<html><head><title></title>');
+    printWindow.document.write(`<style>
+      body{font-family: Arial, sans-serif;}
+      .print-header{
+        border-bottom: 1px solid;
+        margin-bottom: 20px;
+      } 
+      .h1 {
+        color: rgba(11, 12, 12, var(--text-opacity));
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .mn-cls {
+          font-size: 24px;
+          position: relative;
+          top: -40px;
+          left: 20px;
+      }
+      .card .card-label, .card-emp .card-label {
+        font-size: 16px;
+        font-weight: 400;
+        
+        --text-opacity: 1;
+        color: #0b0c0c;
+        color: rgba(11, 12, 12, var(--text-opacity));
+        margin-bottom: 8px;
+      }
+      .employee-card-input, .employee-select-wrap {
+        border: none !important;
+      
+      font-weight: bold;
+      }
+      .assment-yr-cls h2 {
+        position: relative !important;
+        top: 30px !important;
+      }
+      .employee-select-wrap--elipses {
+        border: none;
+        font-weight: bold;
+
+      }
+      .employee-select-wrap {
+        position: relative !important;
+        top: 30px !important;
+      }
+      .select .cp {
+        display: none;
+      }
+      tr td {
+        text-align: center;
+      }
+      .content{margin: 20px;}
+      .notice-txt {
+        padding: 0 !important;
+      }
+      .checkbox-wrap {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: inline-block;
+        margin-bottom: 16px;
+        position: relative;
+        -webkit-box-align: baseline;
+        -ms-flex-align: baseline;
+        align-items: baseline; }
+        .checkbox-wrap input, .checkbox-wrap .input-emp {
+          width: 38px;
+          height: 38px;
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 10; }
+        .checkbox-wrap .input-emp {
+          width: 24px;
+          height: 24px; }
+        .checkbox-wrap .custom-checkbox, .checkbox-wrap .custom-checkbox-emp {
+          width: 30px;
+          height: 30px;
+          border-radius: 6px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          --border-opacity:1;
+          border: 1px solid #464646;
+          border-color: rgba(70, 70, 70, var(--border-opacity));
+          z-index: 0; }
+          .checkbox-wrap .custom-checkbox img, .checkbox-wrap .custom-checkbox-emp img, .checkbox-wrap .custom-checkbox svg, .checkbox-wrap .custom-checkbox-emp svg {
+            opacity: 0;
+            }
+        .checkbox-wrap .custom-checkbox-emp {
+          width: 24px;
+          height: 24px; }
+        .checkbox-wrap input:checked ~ .custom-checkbox, .checkbox-wrap .input-emp:checked ~ .custom-checkbox, .checkbox-wrap input:checked ~ .custom-checkbox-emp, .checkbox-wrap .input-emp:checked ~ .custom-checkbox-emp, .checkbox-wrap input:hover ~ .custom-checkbox, .checkbox-wrap .input-emp:hover ~ .custom-checkbox, .checkbox-wrap input:hover ~ .custom-checkbox-emp, .checkbox-wrap .input-emp:hover ~ .custom-checkbox-emp {
+          border-width: 1px;
+          --border-opacity:1;
+          border-color: #0f4f9e;
+          border-color: #0f4f9e; }
+        .checkbox-wrap input.checked ~ .custom-checkbox-emp svg {
+          opacity: 1; 
+        }
+        .checkbox-wrap .label {
+          margin-left: 34px;
+          font-size: 16px;
+          line-height: 20px;
+          --text-opacity:1;
+          color: #0b0c0c;
+          color: rgba(11, 12, 12, var(--text-opacity));
+          position: relative;
+          top: -2px; 
+        }
+      .label {
+        font-size: 100% !important;
+        color: inherit !important;
+        text-align: left !important;
+        white-space: normal;
+      }
+      ol, ul {
+        list-style: none;
+        padding: 0;
+      }
+      @media print {
+        #printPageButton {
+          display: none;
+        }
+        .assment-yr-cls {
+          top: -35px !important;
+        }
+      }
+      @media print {
+        .notice-txt li {
+          width: 100% !important;
+        }
+        .notice-txt li div {
+          width: 100% !important;
+        }
+      }
+      @page { size: auto;  margin: 0mm; }
+    </style></head><body>`);
+    
+    // Add a header
+    printWindow.document.write(`<div class="print-header"><img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/trlogo2.png" height="80px" /><span class="mn-cls">${tenant} Municipal Corporation</span></div>`);
+
+    // Add the content to print
+    printWindow.document.write('<div class="content">' + printContents + '</div>');
+
+    printWindow.document.write('</body></html>');
+
+    // Close the document to finish writing
+    printWindow.document.close();
+
+    // Wait for the window to load and then print
+    printWindow.onload = function () {
+      printWindow.print();
+      printWindow.close();
+    };
+  }
+};

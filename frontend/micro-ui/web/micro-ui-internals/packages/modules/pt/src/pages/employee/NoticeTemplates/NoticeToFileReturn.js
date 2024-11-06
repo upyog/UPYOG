@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { printNotice } from "../../../utils";
 
 
 const NoticeToFileReturn = (props) => {
@@ -47,6 +48,7 @@ const NoticeToFileReturn = (props) => {
   }, [financialYearsData]);
   const printDiv = (e,divId)=> {
     e.preventDefault();
+    printNotice(e,divId,t(tenantId));
     // var printContent = document.getElementById(divId);
     // var WinPrint = window.open('', '', 'width=900,height=650');
     // WinPrint.document.write(printContent.innerHTML);
@@ -54,15 +56,15 @@ const NoticeToFileReturn = (props) => {
     // WinPrint.focus();
     // WinPrint.print();
     // WinPrint.close();
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
+    // var printContents = document.getElementById(divId).innerHTML;
+    // var originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
+    // document.body.innerHTML = printContents;
 
-    window.print();
+    // window.print();
 
-    document.body.innerHTML = originalContents;
-    return false;
+    // document.body.innerHTML = originalContents;
+    // return false;
     
   }
   const onSubmit = (e) => {
@@ -196,7 +198,7 @@ const NoticeToFileReturn = (props) => {
               </div>
               <div className="card" style={{ maxWidth: '100%' }}>
                 <div className="row">
-                    <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
+                    <div className="" style={{display: "inline-block", width: "87%", paddingLeft: "15px"}}>
                         <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
