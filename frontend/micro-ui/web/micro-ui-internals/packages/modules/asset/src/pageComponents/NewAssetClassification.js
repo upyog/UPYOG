@@ -218,7 +218,28 @@
       }
     }, [financialYear,sourceOfFinance,assetclassification, assetsubtype, assettype, assetparentsubCategory,BookPagereference, AssetName,Department,Assetdescription]);
 
-  
+    const assetType = [
+      {
+          code: "Fixed Asset",
+          i18nKey: "Fixed Asset"
+      },
+      {
+          code: "Infrastructure Asset",
+          i18nKey: "Infrastructure Asset"
+      }];
+    const assetCurrentUsage = [
+      {
+          code: "In-use",
+          i18nKey: "In-use",
+      },
+      {
+          code: "In-store",
+          i18nKey: "In-store"
+      },
+      {
+        code: "Disposed",
+        i18nKey: "Disposed"
+    }];
 
     return (
       <React.Fragment>
@@ -524,6 +545,72 @@
                     selected={Department}
                     select={setDepartment}
                     option={departNamefromMDMS}
+                    optionKey="i18nKey"
+                    placeholder={"Select"}
+                    t={t}
+                  />
+                )}
+              />
+
+<div>{t("Assets Type")}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+              <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                        //overflow:"auto"
+                    }}>
+                    {`${t(`AST_PROCURED_DEPARTMENT`)}`}
+                    </span>
+                </div></div>
+              <Controller
+                control={control}
+                name={"Department"}
+                defaultValue={Department}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    // selected={Department}
+                    // select={setDepartment}
+                    option={assetType}
+                    optionKey="i18nKey"
+                    placeholder={"Select"}
+                    t={t}
+                  />
+                )}
+              />
+
+<div>{t("Assets Usage")}
+              <div className="tooltip" style={{width: "12px", height: "5px",marginLeft:"10px", display: "inline-flex",alignItems: "center"}}>
+              <InfoBannerIcon fill="#FF0000" style />
+                    <span className="tooltiptext" style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "small",
+                        wordWrap:"break-word",
+                        width:"300px",
+                        marginLeft:"15px",
+                        marginBottom:"-10px"
+                        //overflow:"auto"
+                    }}>
+                    {`${t(`AST_PROCURED_DEPARTMENT`)}`}
+                    </span>
+                </div></div>
+              <Controller
+                control={control}
+                name={"Department"}
+                defaultValue={Department}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+                    className="form-field"
+                    // selected={Department}
+                    // select={setDepartment}
+                    option={assetCurrentUsage}
                     optionKey="i18nKey"
                     placeholder={"Select"}
                     t={t}
