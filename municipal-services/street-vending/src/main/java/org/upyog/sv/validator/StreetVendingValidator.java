@@ -159,8 +159,8 @@ public class StreetVendingValidator {
 	}
 
 	public StreetVendingDetail validateApplicationExistence(StreetVendingDetail streetVendingDetail) {
-		StreetVendingDetail streetVendingDetail2 = repository.getApplications(StreetVendingSearchCriteria.builder()
-				.applicationnNumber(streetVendingDetail.getApplicationNo()).build());
+		StreetVendingDetail streetVendingDetail2 = repository.getStreetVendingApplications(StreetVendingSearchCriteria.builder()
+				.applicationNumber(streetVendingDetail.getApplicationNo()).build()).get(0);
 
 		return streetVendingDetail2;
 	}
