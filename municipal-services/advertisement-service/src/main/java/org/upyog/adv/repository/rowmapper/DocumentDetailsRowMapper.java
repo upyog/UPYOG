@@ -22,9 +22,8 @@ public class DocumentDetailsRowMapper implements ResultSetExtractor<List<Documen
 			 * document_detail_id, booking_id, document_type, filestore_id, createdby,
 			 * lastmodifiedby, createdtime, lastmodifiedtime
 			 */
-			AuditDetails auditdetails = AuditDetails.builder()
-					//.createdBy(rs.getString("createdby"))
-					//.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby"))
+			AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdby"))
+					.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby"))
 					.lastModifiedTime(rs.getLong("lastmodifiedtime")).build();
 			DocumentDetail details = DocumentDetail.builder().documentDetailId(rs.getString("document_detail_id"))
 					.bookingId(rs.getString("booking_id")).documentType(rs.getString("document_type"))
