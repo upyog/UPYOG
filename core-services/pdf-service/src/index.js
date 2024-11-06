@@ -115,10 +115,11 @@ var fontDescriptors = {
   },
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
-    bold: "src/fonts/BalooPaaji2-Bold.ttf"
+    bold: "src/fonts/BalooPaaji2-Bold.ttf",
   },
   AnmolUni:{
-    normal: "src/fonts/AnmolUni.ttf"
+    normal: "src/fonts/AnmolUni.ttf",
+    bold: "src/fonts/AnmolUni-Bold.ttf"
   }
 };
 
