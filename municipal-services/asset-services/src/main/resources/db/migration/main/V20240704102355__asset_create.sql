@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS eg_asset_assetdetails (
     approvalNo character varying(64) DEFAULT NULL,
     tenantId character varying(256),
     status character varying(64),
-    action character varying(256),
     businessservice character varying(64) DEFAULT NULL,
     additionalDetails JSONB,
     createdTime bigint,
@@ -27,9 +26,10 @@ CREATE TABLE IF NOT EXISTS eg_asset_assetdetails (
     createdby character varying(256),
     lastmodifiedby character varying(256),
     remarks character varying(256),
+    financialYear character varying(64),
+    sourceOfFinance character varying(256),
     CONSTRAINT pk_eg_asset_assetdetails PRIMARY KEY (id)
 );
-
 CREATE TABLE IF NOT EXISTS eg_asset_auditdetails (
     id character varying(64),
     bookRefNo character varying(256) NOT NULL,
@@ -44,7 +44,6 @@ CREATE TABLE IF NOT EXISTS eg_asset_auditdetails (
     approvalNo character varying(64) DEFAULT NULL,
     tenantId character varying(256),
     status character varying(64),
-    action character varying(256),
     businessservice character varying(64) DEFAULT NULL,
     additionalDetails JSONB,
     createdTime bigint,
@@ -53,7 +52,10 @@ CREATE TABLE IF NOT EXISTS eg_asset_auditdetails (
     applicationDate bigint,
     accountid character varying(64),
     createdby character varying(256),
-    lastmodifiedby character varying(256)
+    lastmodifiedby character varying(256),
+    remarks character varying(256),
+    financialYear character varying(64),
+    sourceOfFinance character varying(256)
 );
 
 CREATE TABLE IF NOT EXISTS eg_asset_addressDetails (

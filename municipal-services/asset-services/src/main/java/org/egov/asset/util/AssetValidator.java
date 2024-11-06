@@ -40,7 +40,6 @@ public class AssetValidator {
 	 * @param requestInfo The requestInfo of the incoming request
 	 * @param criteria    The BPASearch Criteria
 	 */
-	// TODO need to make the changes in the data
 	public void validateSearch(RequestInfo requestInfo, AssetSearchCriteria criteria) {
 		String allowedParamStr = null;
 		if (requestInfo.getUserInfo() != null) {

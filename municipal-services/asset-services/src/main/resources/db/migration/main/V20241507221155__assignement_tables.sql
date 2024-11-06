@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.eg_asset_assignmentdetails
 (
-    id character varying(255)  NOT NULL,
+    assignmentId character varying(255)  NOT NULL,
     applicationno character varying(255) ,
     tenantid character varying(255) ,
     assignedusername character varying(255) ,
@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_assignmentdetails
     lastmodifiedtime bigint,
     assetid character varying(255),
     isassigned boolean,
-    CONSTRAINT eg_asset_assignentdetails_pkey PRIMARY KEY (id),
+    employeecode character varying(64),
+    CONSTRAINT eg_asset_assignentdetails_pkey PRIMARY KEY (assignmentId),
     CONSTRAINT eg_asset_assignentdetails_assetid_fkey FOREIGN KEY (assetid)
         REFERENCES public.eg_asset_assetdetails (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_assignmentdetails
 
 CREATE TABLE IF NOT EXISTS public.eg_asset_assignment_history
 (
-    id character varying(255)  NOT NULL,
+    assignmentId character varying(255)  NOT NULL,
     applicationno character varying(255) ,
     tenantid character varying(255) ,
     assignedusername character varying(255) ,
@@ -37,5 +38,6 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_assignment_history
     createdtime bigint,
     lastmodifiedtime bigint,
     assetid character varying(255) ,
-    isassigned boolean
+    isassigned boolean,
+    employeecode character varying(64)
 );
