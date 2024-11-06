@@ -478,6 +478,10 @@ public class PTConstants {
     
     public static final String AMALGAMATED_CREATED_IDS_PROPERTY = "amagamtedFromPropertyIds";
     
+    public static final String PARENT_PROPERTY = "parentProperty";
+    
+    
+    
     
     //////////////////////////////////MSN FOR ASMT///////////
     public static final String ASMT_MSG_INITIATED_TEMPLATE_ID="1007071694610956961";
