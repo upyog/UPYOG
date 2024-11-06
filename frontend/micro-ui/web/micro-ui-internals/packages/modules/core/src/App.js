@@ -71,8 +71,15 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
       <Route path="/digit-ui/citizen">
         <CitizenApp {...commonProps} />
       </Route>
-      <Route path="/digit-ui">
-        <Redirect to="/digit-ui/employee" />
+      <Route path="/tqm-ui/employee/tqm/landing">
+        <Redirect to="/tqm-ui/employee/tqm/landing" />
+      </Route>
+      <Route path="/tqm-ui/employee">
+        <Redirect to="/tqm-ui/employee" />
+      </Route>
+
+      <Route>
+        <Redirect to="/digit-ui/citizen" />
       </Route>
     </Switch>
   );
