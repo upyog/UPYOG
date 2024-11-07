@@ -24,17 +24,17 @@ export const newConfig = [
         ]
     },
 
-    {
-        "head": "ES_TITILE_PROPERTY_SEARCH",
-        "body": [
-            {
-                "component": "PropertySearch",
-                "withoutLabel": true,
-                "key": "propertyDetails",
-                "type": "component"
-            }
-        ]
-    },
+    // {
+    //     "head": "ES_TITILE_PROPERTY_SEARCH",
+    //     "body": [
+    //         {
+    //             "component": "PropertySearch",
+    //             "withoutLabel": true,
+    //             "key": "propertyDetails",
+    //             "type": "component"
+    //         }
+    //     ]
+    // },
 
     {
         "head": "PTR_LOCATION_DETAILS",

@@ -38,7 +38,6 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
 
   const PTRDocument = data?.PetService?.Documents.map(document => ({
   ...document,
-  hasDropdown: true
 }));
 
 

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams, useLocation } from "react-router-dom";
 import { newConfig } from "../../../config/Create/config";
+import { convertDateToEpoch } from "../../../utils";
 
 // component created for renewapplication
 const RenewApplication = () => {
@@ -16,6 +17,7 @@ const RenewApplication = () => {
 
   // applicationNumber passed from the url
   const { applicationNumber } = useParams();
+  sessionStorage.setItem("previousApplicationNumber",applicationNumber)
 
   // const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("RE_EMPLOYEE_MUTATION_HAPPENED", false);
@@ -42,6 +44,8 @@ const RenewApplication = () => {
         petType: data?.pets[0]?.petType?.value,
         breedType: data?.pets[0]?.breedType?.value,
         petGender: data?.pets[0]?.petGender?.name,
+        birthDate: pets?.birthDate ? convertDateToEpoch(pets?.birthDate) : null,
+        adoptionDate: pets?.adoptionDate ? convertDateToEpoch(pets?.adoptionDate) : null,
       },
 
       address: {
@@ -55,6 +59,8 @@ const RenewApplication = () => {
       documents: data?.documents?.documents,
       applicationType: "RENEWAPPLICATION",
       propertyId: data?.propertyDetails?.propertyId,
+      expireflag: false ,
+      petToken: "",
 
 
       workflow: {
