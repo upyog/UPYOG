@@ -42,6 +42,18 @@ public class AdvtConstants {
     
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
+    
+    @Value("${egov.report.host}")
+    public String reportHost;
+    
+    @Value("${egov.report.endpoint.create}")
+    public String reportCreateEndPoint;
+
+    @Value("${egov.alfresco.host}")
+    private String alfrescoHost;
+
+    @Value("${egov.alfresco.endpoint.upload}")
+    private String alfrescoUploadEndPoint;
 
     public static final String STATE_LEVEL_TEENENT_ID = "hp";
     
@@ -94,6 +106,8 @@ public class AdvtConstants {
 
 	public static final String ACTION_VERIFY = "VERIFY";
 
+	public static final String ACTION_APPROVE = "APPROVE";
+
 	public static final String STATUS_APPROVED = "APPROVED";
 
     public static final String WORKFLOW_SITE_BOOKING_MODULE = "ADVT";
@@ -105,6 +119,14 @@ public class AdvtConstants {
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Advertisement_Canopy_Fee";
 
     public static final String SITE_STATUS_BOOKED = "BOOKED";
+
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "ADVT certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_ADVT_CERTIFICATE_COMMENT = "Signed Certificate";
 
 	public String getStatusOrAction(String action, Boolean fetchValue) {
 

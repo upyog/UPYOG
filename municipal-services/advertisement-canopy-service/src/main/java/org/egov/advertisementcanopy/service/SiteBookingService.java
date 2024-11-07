@@ -1,5 +1,6 @@
 package org.egov.advertisementcanopy.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.advertisementcanopy.contract.DMS.DMSResponse;
+import org.egov.advertisementcanopy.contract.DMS.DmsRequest;
+import org.egov.advertisementcanopy.contract.Report.PDFRequest;
 import org.egov.advertisementcanopy.contract.bill.Bill;
 import org.egov.advertisementcanopy.contract.bill.Bill.StatusEnum;
 import org.egov.advertisementcanopy.contract.bill.BillResponse;
@@ -48,6 +52,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -88,6 +93,12 @@ public class SiteBookingService {
 
 	@Autowired
 	private SiteService siteService;
+
+	@Autowired
+	private ReportService reportService;
+
+	@Autowired
+	private AlfrescoService alfrescoService;
 
 	public SiteBookingResponse createBooking(SiteBookingRequest siteBookingRequest) {
 		
@@ -361,6 +372,9 @@ public class SiteBookingService {
 
 		// call workflow
 		workflowService.updateWorkflowStatus(siteBookingRequest);
+		
+		// create and upload pdf
+        createAndUploadPDF(siteBookingRequest);
 
 		// generate demand and fetch bill
 		generateDemandAndBill(siteBookingRequest);
@@ -370,6 +384,171 @@ public class SiteBookingService {
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingRequest.getRequestInfo(), true))
 				.siteBookings(siteBookingRequest.getSiteBookings()).build();
 		return siteBookingResponse;
+	}
+
+	private void createAndUploadPDF(SiteBookingRequest siteBookingRequest) {
+		
+		if (!CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
+			siteBookingRequest.getSiteBookings().stream().forEach(siteBooking -> {
+
+				Thread pdfGenerationThread = new Thread(() -> {
+
+					if(StringUtils.equalsIgnoreCase(siteBooking.getWorkflowAction(), AdvtConstants.ACTION_APPROVE)) {
+						// validate trade license
+						validateSiteBookingCertificateGeneration(siteBooking);
+
+						// create pdf
+						Resource resource = createNoSavePDF(siteBooking, siteBookingRequest.getRequestInfo());
+
+						//upload pdf
+						DmsRequest dmsRequest = generateDmsRequestBySiteBooking(resource, siteBooking,
+								siteBookingRequest.getRequestInfo());
+						try {
+							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+									siteBookingRequest.getRequestInfo());
+						} catch (IOException e) {
+							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+									"Upload Attachment failed." + e.getMessage());
+						}
+					}
+					
+
+				});
+
+				pdfGenerationThread.start();
+
+			});
+		}
+		
+		
+	}
+
+	private DmsRequest generateDmsRequestBySiteBooking(Resource resource, SiteBooking siteBooking,
+			RequestInfo requestInfo) {
+
+//		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
+
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(siteBooking.getApplicationNo())
+				.description(AdvtConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION)
+				.id(AdvtConstants.ALFRESCO_COMMON_CERTIFICATE_ID)
+				.type(AdvtConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE)
+				.objectName(AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)
+				.comments(AdvtConstants.ALFRESCO_ADVT_CERTIFICATE_COMMENT)
+				.status(AdvtConstants.STATUS_APPROVED).file(resource)
+				.servicetype(AdvtConstants.BUSINESS_SERVICE_SITE_BOOKING)
+				.documentType(AdvtConstants.ALFRESCO_DOCUMENT_TYPE)
+				.documentId(AdvtConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
+
+		return dmsRequest;
+	}
+
+	private Resource createNoSavePDF(SiteBooking siteBooking, RequestInfo requestInfo) {
+		
+		// generate pdf
+		PDFRequest pdfRequest = generatePdfRequestBySiteBooking(siteBooking, requestInfo);
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+		
+		return resource;
+	}
+
+	private PDFRequest generatePdfRequestBySiteBooking(SiteBooking siteBooking, RequestInfo requestInfo) {
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map2 = generateDataForSiteBookingPdfCreate(siteBooking, requestInfo);
+
+		map.put("advt", map2);
+
+		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("SiteBookingCertificate").tenantId("hp")
+				.data(map).build();
+
+		return pdfRequest;
+	}
+
+	private Map<String, Object> generateDataForSiteBookingPdfCreate(SiteBooking siteBooking, RequestInfo requestInfo) {
+		Map<String, Object> tlObject = new HashMap<>();
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		String createdDate = dateFormat.format(new Date(siteBooking.getAuditDetails().getCreatedDate()));
+		String fromDate = dateFormat.format(new Date(siteBooking.getFromDate()));
+		String toDate = dateFormat.format(new Date(siteBooking.getToDate()));
+
+// Map variables and values
+		tlObject.put("applicationNumber", siteBooking.getApplicationNo()); // Application Number / Permission Ref ID
+		tlObject.put("qrCodeText", "your_qr_\r\ncode_text_value"); // QR Code Text (or replace with dynamic value if
+																	// needed)
+		tlObject.put("fromDate", fromDate); // From Date
+		tlObject.put("toDate", toDate); // To Date
+		tlObject.put("siteName", siteBooking.getSiteCreationData().getSiteName()); // Site Name
+		tlObject.put("siteAddress", siteBooking.getSiteCreationData().getSiteAddress()); // Site Address
+		tlObject.put("pinCode", siteBooking.getSiteCreationData().getPinCode()); // Pin Code
+		tlObject.put("siteId", siteBooking.getSiteCreationData().getSiteID()); // Site ID
+		tlObject.put("applicantName", siteBooking.getApplicantName()); // Applicant Name
+		tlObject.put("mobileNumber", siteBooking.getMobileNumber()); // Mobile Number
+		tlObject.put("createdDate", createdDate); // Created Date
+		tlObject.put("status", siteBooking.getStatus()); // Status
+		tlObject.put("siteCost", siteBooking.getSiteCreationData().getSiteCost()); // Site Cost
+		tlObject.put("periodInDays", siteBooking.getPeriodInDays()); // Period In Days
+		tlObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
+
+// Generate QR code from attributes
+		StringBuilder qr = new StringBuilder();
+		getQRCodeForPdfCreate(tlObject, qr);
+		tlObject.put("qrCodeText", qr.toString());
+
+		return tlObject;
+	}
+	
+	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
+		tlObject.entrySet().stream()
+		.filter(entry1 -> Arrays.asList("applicationNumber","siteName","siteAddress","siteId","applicantName","mobileNumber"
+				,"status","periodInDays")
+		.contains(entry1.getKey())).forEach(entry -> {
+			qr.append(entry.getKey());
+			qr.append(": ");
+			qr.append(entry.getValue());
+			qr.append("\r\n");
+		});
+		
+		replaceInStringBuilder(qr, "applicationNumber", "Application Number");
+		replaceInStringBuilder(qr, "siteName", "Site Name");
+		replaceInStringBuilder(qr, "siteAddress", "Site Address");
+		replaceInStringBuilder(qr, "siteId", "Site ID");
+		replaceInStringBuilder(qr, "applicantName", "Applicant Name");
+		replaceInStringBuilder(qr, "mobileNumber", "Mobile Number");
+		replaceInStringBuilder(qr, "status", "Status");
+		replaceInStringBuilder(qr, "periodInDays", "Period in Days");
+
+		
+	}
+	
+	private void replaceInStringBuilder(StringBuilder sb, String target, String replacement) {
+	    int start;
+	    while ((start = sb.indexOf(target)) != -1) {
+	        sb.replace(start, start + target.length(), replacement);
+	    }
+	}
+
+	private void validateSiteBookingCertificateGeneration(SiteBooking siteBooking) {
+		
+		if (StringUtils.isEmpty(siteBooking.getApplicationNo())
+			    || null == siteBooking.getFromDate()
+			    || null == siteBooking.getToDate()
+			    || StringUtils.isEmpty(siteBooking.getSiteCreationData().getSiteName())
+			    || StringUtils.isEmpty(siteBooking.getSiteCreationData().getSiteAddress())
+			    || StringUtils.isEmpty(siteBooking.getSiteCreationData().getPinCode())
+			    || StringUtils.isEmpty(siteBooking.getSiteCreationData().getSiteID())
+			    || StringUtils.isEmpty(siteBooking.getSiteCreationData().getSiteCost())
+			    || null == siteBooking.getSiteCreationData().getSecurityAmount()
+			    
+			    || StringUtils.isEmpty(siteBooking.getApplicantName())
+			    || StringUtils.isEmpty(siteBooking.getMobileNumber())
+			    || null == siteBooking.getAuditDetails().getCreatedDate()
+			    || StringUtils.isEmpty(siteBooking.getStatus())
+			    || null == siteBooking.getPeriodInDays()
+			    || StringUtils.isEmpty(siteBooking.getMobileNumber())) {
+			    
+			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF generation failed due to null values for application number: "+siteBooking.getApplicationNo());
+			}
 	}
 
 	private void generateDemandAndBill(SiteBookingRequest siteBookingRequest) {
