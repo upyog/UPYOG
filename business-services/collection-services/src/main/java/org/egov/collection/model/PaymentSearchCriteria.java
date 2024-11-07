@@ -38,6 +38,8 @@ public class PaymentSearchCriteria {
 
     private Set<String> consumerCodes;
     
+    private Set<String> applicationNo;
+    
     private Set<String> businessServices;
     private String businessService;
 
