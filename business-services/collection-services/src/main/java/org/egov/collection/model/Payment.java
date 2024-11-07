@@ -66,6 +66,24 @@ public class Payment {
     private String MeterinstallationDate;
     
     
+    @JsonProperty("ledgerId")
+    private String ledgerId;
+    
+    @JsonProperty("landarea")
+    private String landarea;
+    
+    
+    @JsonProperty("roadtype")
+    private String roadtype;
+    
+    
+    @JsonProperty("roadlength")
+    private String roadlength;
+    
+    
+    @JsonProperty("connectionCategory")
+    private String connectionCategory;
+    
     @NotNull
     @JsonProperty("paymentMode")
     private PaymentModeEnum paymentMode;
