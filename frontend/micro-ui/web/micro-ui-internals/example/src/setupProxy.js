@@ -90,7 +90,8 @@ module.exports = function (app) {
     "/firenoc-services/v1/_create",
     "/employee-dashboard/_search",
     "/sv-services/street-vending/_create",
-    "/sv-services/street-vending/_search"
+    "/sv-services/street-vending/_search",
+    "/sv-services/street-vending/_update"
 
    
   ].forEach((location) => app.use(location, createProxy));

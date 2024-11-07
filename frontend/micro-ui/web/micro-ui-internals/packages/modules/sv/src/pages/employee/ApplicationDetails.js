@@ -147,7 +147,7 @@ const ApplicationDetails = () => {
   //     onClick: () => printCertificate(),
   //   });
 
-
+  
   return (
     <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
@@ -178,8 +178,8 @@ const ApplicationDetails = () => {
         showToast={showToast}
         setShowToast={setShowToast}
         closeToast={closeToast}
-        timelineStatusPrefix={"SV_COMMON_STATUS_"}
-        forcedActionPrefix={"EMPLOYEE_SV"}
+        timelineStatusPrefix={"SV_"}
+        forcedActionPrefix={"SV"}
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />

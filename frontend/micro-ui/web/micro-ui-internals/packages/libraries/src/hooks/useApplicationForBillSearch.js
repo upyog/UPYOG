@@ -4,7 +4,8 @@ import { useQuery } from "react-query";
 import { MCollectService } from "../services/elements/MCollect";
 import { PTRService } from "../services/elements/PTR";
 import { CHBServices } from "../services/elements/CHB";
-import {ADSServices} from "../services/elements/ADS"
+import {ADSServices} from "../services/elements/ADS";
+import { SVService } from "../services/elements/SV";
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -12,6 +13,10 @@ const fsmApplications = async (tenantId, filters) => {
 
 const ptrApplications = async (tenantId, filters) => {
   return (await PTRService.search({ tenantId, filters })).PetRegistrationApplications;
+};
+
+const svApplications = async (tenantId, filters) => {
+  return (await SVService.search({ tenantId, filters })).SVDetail;
 };
 
 
@@ -47,6 +52,11 @@ const refObj = (tenantId, filters) => {
       searchFn: () => ptrApplications(null, { ...filters, applicationNumber: consumerCodes }),
       key: "applicationNumber",
       label: "PTR_UNIQUE_APPLICATION_NUMBER",
+    },
+    street: {
+      searchFn: () => svApplications(null, { ...filters, applicationNo: consumerCodes }),
+      key: "applicationNo",
+      label: "SV_APPLICATION_NO",
     },
     chb: {
       searchFn: () => chbApplications(null, { ...filters, bookingNo: consumerCodes }),
@@ -112,6 +122,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   }
   if (window.location.href.includes("pet-services")) {
     _key = "ptr"
+  } 
+  if (window.location.href.includes("sv-services")) {
+    _key = "street"
   } 
   if (window.location.href.includes("chb-services")) {
     _key = "chb"

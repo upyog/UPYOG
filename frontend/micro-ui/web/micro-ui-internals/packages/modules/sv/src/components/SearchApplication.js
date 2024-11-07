@@ -124,7 +124,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             </Card>
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
-                    <label>{t("SV_APPLICATION_NO_LABEL")}</label>
+                    <label>{t("SV_APPLICATION_NUMBER")}</label>
                     <TextInput name="applicationNumber" inputRef={register({})} />
                 </SearchField>
 
@@ -153,7 +153,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 </SearchField>
 
                 <SearchField>
-                    <label>{t("SV_VENDING_ZONE")}</label>
+                    <label>{t("SV_VENDING_ZONES")}</label>
                     <Controller
                         control={control}
                         name="vendingZone"
@@ -172,7 +172,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 </SearchField>
 
                 <SearchField>
-                    <label>{t("SV_OWNER_MOBILE_NO")}</label>
+                    <label>{t("SV_REGISTERED_MOB_NUMBER")}</label>
                     <MobileNumber
                         name="mobileNumber"
                         inputRef={register({

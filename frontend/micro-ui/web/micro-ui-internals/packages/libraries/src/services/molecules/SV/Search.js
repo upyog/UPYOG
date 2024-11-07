@@ -27,10 +27,10 @@ export const SVSearch = {
         asSectionHeader: true,
         values: [
           { title: "SV_APPLICATION_NUMBER", value: response?.applicationNo },
-          { title: "SV_APPLICANT_NAME", value: response?.vendorDetail[0]?.name},
-          { title: "SV_FATHER/HUSBAND_NAME", value: response?.vendorDetail[0]?.fatherName },
-          { title: "SV_APPLICANT_MOBILE_NO", value: response?.vendorDetail[0]?.mobileNo},
-          { title: "SV_APPLICANT_EMAILID", value: response?.vendorDetail[0]?.emailId },
+          { title: "SV_VENDOR_NAME", value: response?.vendorDetail[0]?.name},
+          { title: "SV_FATHER_NAME", value: response?.vendorDetail[0]?.fatherName },
+          { title: "SV_REGISTERED_MOB_NUMBER", value: response?.vendorDetail[0]?.mobileNo},
+          { title: "SV_EMAIL", value: response?.vendorDetail[0]?.emailId },
           { title: "SV_DATE_OF_BIRTH", value: response?.vendorDetail[0]?.dob },
           { title: "SV_GENDER", value: response?.vendorDetail[0]?.gender },
           { title: "SV_SPOUSE_NAME", value: response?.vendorDetail[0]?.emailId },
@@ -81,7 +81,7 @@ export const SVSearch = {
       },
 
       {
-        title: "SV_DOCUMENT_DETAILS",
+        title: "SV_DOCUMENT_DETAILS_LABEL",
         additionalDetails: {
           
           documents: [
@@ -91,10 +91,10 @@ export const SVSearch = {
                 ?.map((document) => {
 
                   return {
-                    title: `SV_${document?.documentType.replace(".", "_")}`,
+                    title: `${document?.documentType.replace(".", "_")}`,
                     documentType: document?.documentType,
                     documentUid: document?.documentUid,
-                    fileStoreId: document?.filestoreId,
+                    fileStoreId: document?.fileStoreId,
                     status: document.status,
                   };
                 }),
