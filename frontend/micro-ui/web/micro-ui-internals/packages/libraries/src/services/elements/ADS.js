@@ -47,5 +47,16 @@ export const ADSServices= {
       method: "POST",
       params: {},
       auth: true,
-  })
+  }),
+  estimateCreate:(details, tenantId) =>
+    Request({
+      url: Urls.ads.estimateCreate,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),  
 };

@@ -137,6 +137,8 @@ const Urls = {
     search: "/adv-services/booking/v1/_search",
     update: "/adv-services/booking/v1/_update",
     slot_search: "/adv-services/booking/v1/_slot-search",
+    estimateCreate: "/adv-services/booking/v1/_estimate"
+
   },
 
   fnoc:{
