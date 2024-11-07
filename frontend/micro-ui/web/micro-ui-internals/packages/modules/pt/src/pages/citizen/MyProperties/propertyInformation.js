@@ -370,6 +370,66 @@ const onAppeal =()=>{
               
             </React.Fragment>
           )}
+                    {property?.creationReason =="BIFURCATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{ fontSize: "16px" }}>{t("Separated Property Details")}</CardSubHeader>
+                {property?.additionalDetails?.parentProperty && 
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={property?.additionalDetails?.parentProperty?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(property?.additionalDetails?.parentProperty?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(property?.additionalDetails?.parentProperty?.landArea && `${t(`${property?.additionalDetails?.parentProperty?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.additionalDetails?.parentProperty?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${property?.additionalDetails?.parentProperty?.address?.locality?.area}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={property?.additionalDetails?.parentProperty?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={property?.additionalDetails?.parentProperty?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("Dag No")} text={property?.additionalDetails?.parentProperty?.address?.dagNo || t("CS_NA")} />
+                        {
+                          property?.additionalDetails?.parentProperty?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                property?.additionalDetails?.parentProperty?.owners.map((separatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={separatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={separatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={separatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                // ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
           <CardSubHeader>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={`${property.address?.pincode || t("CS_NA")}`} />

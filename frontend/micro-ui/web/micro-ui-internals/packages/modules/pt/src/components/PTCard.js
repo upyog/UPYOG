@@ -74,6 +74,11 @@ const PTCard = () => {
       link: `/digit-ui/employee/pt/application-search`,
       image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
     },
+    {
+      label: t("Search Appeal"),
+      link: `/digit-ui/employee/pt/appeal-search`,
+      image: "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/Property-Transfer.png",
+    },
   ]
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
   const propsForModuleCard = {

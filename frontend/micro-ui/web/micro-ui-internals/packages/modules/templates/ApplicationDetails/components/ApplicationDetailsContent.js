@@ -33,7 +33,7 @@ import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from"./ViewBreakup";
 
-const getParentPropertyDetails = async (tenantId, propertyId, updateparentPropertyDetails) => {
+const getParentPropertyDetails = async (tenantId, propertyId, updateparentPropertyDetails,updateParentPropertyFetchDetails) => {
   const oldPropertyData = await Digit.PTService.search({ tenantId, filters: { propertyIds: propertyId } })
  
   updateparentPropertyDetails(oldPropertyData?.Properties || [])

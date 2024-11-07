@@ -221,7 +221,7 @@ const NoticeToEnterPremises = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    printNotice(e,divId,t(tenantId));
+    printNotice(e,divId,t(props?.isCitizen ? props?.noticeData?.tenantId : tenantId));
     // var printContent = document.getElementById(divId);
     // var WinPrint = window.open('', '', 'width=900,height=650');
     // WinPrint.document.write(printContent.innerHTML);

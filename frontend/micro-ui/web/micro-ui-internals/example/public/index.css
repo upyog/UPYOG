@@ -5796,7 +5796,8 @@ video::-webkit-media-controls-panel {
 @media (min-width: 780px) {
   .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
     border: 1px solid #000;
-    border-right: none;
+    /* border-right: none; */
+    border-radius: 6px;
     height: 32px !important;
     margin-top: -16px !important;
     z-index: 999;

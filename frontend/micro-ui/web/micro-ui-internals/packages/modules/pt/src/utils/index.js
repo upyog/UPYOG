@@ -1312,7 +1312,7 @@ export const printNotice = (e = null, divId = "", tenant="") => {
         font-weight: bold;
 
       }
-      .employee-select-wrap {
+      .employee-select-wrap, .select-wrap {
         position: relative !important;
         top: 30px !important;
       }

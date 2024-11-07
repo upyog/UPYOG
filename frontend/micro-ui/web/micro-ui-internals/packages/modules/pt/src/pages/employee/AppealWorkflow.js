@@ -238,7 +238,9 @@ if(appealId && billData?.canLoad) {
 
     closeModal();
   };
-
+  const generateNotice = () => {
+    history.push({pathname:`/digit-ui/employee/pt/notices`,state: appDetailsToShow});
+  }
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
@@ -391,7 +393,7 @@ if(appealId && billData?.canLoad) {
             />
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
-          <ApplicationDetailsActionBar
+          {appDetailsToShow?.status == 'INWORKFLOW' ? <ApplicationDetailsActionBar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}
@@ -400,7 +402,11 @@ if(appealId && billData?.canLoad) {
             forcedActionPrefix={"WF_EMPLOYEE_ASMT"}
             ActionBarStyle={{float: "right"}}
             MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
-          /> 
+          /> : 
+            <div style={{background: "white", width: "100%", height: "50px", borderRadius: "6px"}}>
+              <button className="submit-bar" style={{color: "white", float: "right", margin: "10px"}} onClick={generateNotice}>Generate Notice</button>
+            </div>
+          }
         </div>
       {/* <ApplicationDetailsTemplate
         applicationDetails={appDetailsToShow}

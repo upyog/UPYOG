@@ -10,6 +10,7 @@ import SearchApp from "./SearchApp";
 import Notices from "./Notices";
 import AssessmentWorkflow from "./AssessmentWorkflow";
 import AppealWorkflow from "./AppealWorkflow"
+import SearchAppeal from "./SearchAppeal";
 
 
 const EmployeeApp = ({ path, url, userType }) => {
@@ -253,6 +254,7 @@ const EmployeeApp = ({ path, url, userType }) => {
             )}
           />
           <PrivateRoute path={`${path}/application-search`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/appeal-search`} component={(props) => <SearchAppeal {...props} parentRoute={path} />} />
         </div>
       </React.Fragment>
     </Switch>

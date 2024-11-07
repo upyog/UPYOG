@@ -53,10 +53,25 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 
 
-const Profile = ({ info, stateName, t }) => (
-  <div className="profile-section">
+const Profile = ({ info, stateName, t }) => {
+  const [profilePic, setProfilePic] = React.useState(null);
+  React.useEffect(async () => {
+    const tenant = Digit.ULBService.getCurrentTenantId();
+    const uuid = info?.uuid;
+    if (uuid) {
+      const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+
+      if (usersResponse && usersResponse.user && usersResponse.user.length) {
+        const userDetails = usersResponse.user[0];
+        const thumbs = userDetails?.photo?.split(",");
+        setProfilePic(thumbs?.at(0));
+      }
+    }
+  }, [profilePic !== null]);
+  return (<div className="profile-section">
     <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={defaultImage} />
+      <img className="img-responsive img-circle img-Profile" src={profilePic ? profilePic : defaultImage}
+       style={{ objectFit: "cover", objectPosition: "center" }} />
     </div>
     <div id="profile-name" className="label-container name-Profile">
       <div className="label-text"> {info?.name} </div>
@@ -74,7 +89,8 @@ const Profile = ({ info, stateName, t }) => (
       !window.location.href.includes("/employee/user/login") &&
       !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
   </div>
-);
+)
+}
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
   OBPSIcon: <OBPSIcon className="icon" />,

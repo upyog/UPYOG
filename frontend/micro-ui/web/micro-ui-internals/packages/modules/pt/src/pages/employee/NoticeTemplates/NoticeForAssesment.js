@@ -184,7 +184,7 @@ const NoticeForAssesment = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    printNotice(e,divId,t(tenantId));
+    printNotice(e,divId,t(props?.isCitizen ? props?.noticeData?.tenantId : tenantId));
   }
   const onSubmit = (e) => {
     e.preventDefault();

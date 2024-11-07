@@ -136,7 +136,7 @@ const onChangeRuleOfPenalty=(e)=>{
   let [count, setCount] = useState(0);
   const printDiv = (e,divId)=> {
     e.preventDefault();
-    printNotice(e,divId,t(tenantId));
+    printNotice(e,divId,t(props?.isCitizen ? props?.noticeData?.tenantId : tenantId));
     // var printContents = document.getElementById(divId).innerHTML;
     // var originalContents = document.body.innerHTML;
 
