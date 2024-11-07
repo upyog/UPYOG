@@ -87,7 +87,6 @@ const TqmCard = ({ reRoute = true }) => {
 
   const { isLoading, data: tqmInboxData } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-  // Determine the correct landing URL based on roles
   const getLandingUrl = () => {
     if (userRoles.includes("PQM_ADMIN")) {
       return "/tqm-ui/employee";
@@ -95,9 +94,8 @@ const TqmCard = ({ reRoute = true }) => {
     return "/tqm-ui/employee/tqm/landing";
   };
 
-  // Handle both link clicks and card clicks
   const handleNavigation = (e) => {
-    if (e) e.preventDefault();
+    // if (e) e.preventDefault();
     const url = getLandingUrl();
     window.location.href = url;
   };
