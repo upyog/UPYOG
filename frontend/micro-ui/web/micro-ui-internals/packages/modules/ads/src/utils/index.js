@@ -58,11 +58,11 @@ export const setaddressDetails = (data) => {
 };
 export const setCartDetails = (data) => {
   let { adslist } = data;
-  console.log("scartDetails-->",adslist);
+  
   let cartDetails = adslist?.cartDetails.map((slot) => {
     return { 
       addType:slot.addType,
-      faceArea: slot.faceArea,
+      faceArea: "Unipole 12 X 8",
       location:slot.location,
       nightLight:slot.nightLight,
       bookingDate:slot.bookingDate,
