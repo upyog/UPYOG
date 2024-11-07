@@ -519,36 +519,46 @@ public class SiteBookingService {
 		return garbageAccountActionResponse;
 	}
 
-	private List<SiteBookingDetail> getApplicationBillUserDetail(List<SiteBooking> accounts, RequestInfo requestInfo) {
+	private List<SiteBookingDetail> getApplicationBillUserDetail(List<SiteBooking> siteBookings, RequestInfo requestInfo) {
 		
 		List<SiteBookingDetail> sitegarbageAccountDetails = new ArrayList<>();
 		
-		accounts.stream().forEach(account -> {
+		siteBookings.stream().forEach(booking -> {
 			
-			if(null == account.getSiteCreationData()
-					|| null == account.getSiteCreationData().getSiteCost()
-					|| null == account.getFromDate()
-					|| null == account.getToDate()) {
+			if(null == booking.getSiteCreationData()
+					|| null == booking.getSiteCreationData().getSiteCost()
+					|| null == booking.getFromDate()
+					|| null == booking.getToDate()) {
 				throw new CustomException("MISSING_VALUES_FOR_CALCULATE_FEE","Mendatory parameters are missing to calculate fees.");
 			}
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			String fromDate = dateFormat.format(new Date(account.getFromDate()));
-			String toDate = dateFormat.format(new Date(account.getToDate()));
+			String fromDate = dateFormat.format(new Date(booking.getFromDate()));
+			String toDate = dateFormat.format(new Date(booking.getToDate()));
 			
 			
-			SiteBookingDetail siteBookingDetail = SiteBookingDetail.builder().applicationNumber(account.getApplicationNo()).build();
-			Long numberOfDays = (account.getToDate() - account.getFromDate()) / (1000 * 60 * 60 * 24);
+			SiteBookingDetail siteBookingDetail = SiteBookingDetail.builder().applicationNumber(booking.getApplicationNo()).build();
+			Long numberOfDays = (booking.getToDate() - booking.getFromDate()) / (1000 * 60 * 60 * 24);
 			
 			// enrich formula
-				siteBookingDetail.setFeeCalculationFormula("NEED to DECIDE.");
-				siteBookingDetail.setFeeCalculationFormula("From Date: ("+fromDate+"), To Date: ("+toDate+"), Cost per day: "+account.getSiteCreationData().getSiteCost());
+//			siteBookingDetail.setFeeCalculationFormula("NEED to DECIDE.");
+			Optional<Double> cost = Optional.of(0.0);
+			if(null != booking.getAdditionalDetail() && null != booking.getAdditionalDetail().get("gstsiteCost").asText()) {
+				try {
+			        cost = Optional.of(Double.parseDouble(booking.getAdditionalDetail().get("gstsiteCost").asText()));
+			    } catch (NumberFormatException e) {
+			        throw new CustomException("GST_SITE_COST_INCORRECT_FORMAT", "Incorrect format of gst site cost.");
+			    }
+			}else {
+				throw new CustomException("GST_SITE_COST_NOT_PRESENT","Gst site cost not present.");
+			}
+			siteBookingDetail.setFeeCalculationFormula("From Date: ("+fromDate+"), To Date: ("+toDate+"), Cost per day: "+cost.get());
 			
 			
 			// search bill Details
 			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
-					.tenantId(account.getTenantId())
-					.consumerCode(Collections.singleton(account.getApplicationNo()))
+					.tenantId(booking.getTenantId())
+					.consumerCode(Collections.singleton(booking.getApplicationNo()))
 					.service("ADVT")// business service
 					.build();
 			BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
@@ -565,9 +575,13 @@ public class SiteBookingService {
 					siteBookingDetail.setTotalPayableAmount(bill.getTotalAmount());
 				});
 					
-			}else if(null != account.getSiteCreationData()) {
+			}else if(null != booking.getSiteCreationData()) {
 				// set payable amount
-				BigDecimal totalPayableAmount = BigDecimal.valueOf(numberOfDays).multiply(new BigDecimal(account.getSiteCreationData().getSiteCost()));
+				BigDecimal totalPayableAmount = BigDecimal.valueOf(numberOfDays)
+												.multiply(new BigDecimal(cost.get()))
+												.add(BigDecimal.valueOf(booking.getSiteCreationData().getSecurityAmount() != null 
+										                ? booking.getSiteCreationData().getSecurityAmount() 
+										                        : 0.0));
 				siteBookingDetail.setTotalPayableAmount(totalPayableAmount);
 			}
 			siteBookingDetail.setBillDetails(billDetailsMap);
@@ -575,9 +589,9 @@ public class SiteBookingService {
 			
 			// enrich userDetails
 			Map<Object, Object> userDetails = new HashMap<>();
-			userDetails.put("UserName", account.getApplicantName());
-			userDetails.put("MobileNo", account.getMobileNumber());
-			userDetails.put("Email", account.getEmailId());
+			userDetails.put("UserName", booking.getApplicantName());
+			userDetails.put("MobileNo", booking.getMobileNumber());
+			userDetails.put("Email", booking.getEmailId());
 			userDetails.put("Address", "NEED to DECIDE");
 
 			siteBookingDetail.setUserDetails(userDetails);
