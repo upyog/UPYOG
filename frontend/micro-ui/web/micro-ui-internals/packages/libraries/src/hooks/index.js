@@ -318,9 +318,9 @@ import useSvCreateApi from "./sv/useSvCreateApi";
 import useTenantsSV from "./sv/useTenants";
 import useADSSlotSearch from "./ads/useADSSlotSearch";
 import useADSSearch from "./ads/useADSSearch";
-import useSvSearchApplication from "./sv/useSvSearchApplication";
 import useSVApplicationDetail from "./sv/useSVApplicationDetail";
-import useSVApplicationAction from "./sv/useSVApplicationAction"
+import useSvSearchApplication from "./sv/useSvSearchApplication";
+import useSVApplicationAction from "./sv/useSVApplicationAction";
 
 const pgr = {
   useComplaintDetails,
@@ -351,7 +351,8 @@ const sv = {
   useTenants:useTenantsSV,
   useSvSearchApplication,
   useSVApplicationDetail,
-  useSVApplicationAction
+  useSVApplicationAction,
+  useSvSearchApplication
 }
 
 const ew = {

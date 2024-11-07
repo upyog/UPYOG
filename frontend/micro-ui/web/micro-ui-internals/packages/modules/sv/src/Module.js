@@ -20,6 +20,11 @@ import { TableConfig } from "./config/inbox-table-config";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import SVAcknowledgement from "./pages/citizen/Create/SVAcknowledgement";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
+import { SVMyApplications } from "./pages/citizen/SVMyApplications";
+import SvApplicationDetails from "./pages/citizen/SvApplicationDetails";
+import Caption from "./components/Caption";
+import ViewTimeline from "./components/ViewTimeline";
+
 
 const componentsToRegister = {
    Create:SVCreate,
@@ -34,7 +39,11 @@ const componentsToRegister = {
    CheckPage:SVCheckPage,
    SVEmpCreate,
    SVAcknowledgement,
-   SVApplicationDetails: ApplicationDetails
+   SVApplicationDetails: ApplicationDetails,
+   SVMyApplications,
+   SvApplicationDetails,
+   Caption,
+   ViewTimeline
   };
   
   // function to register the component as per standard 
