@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
+import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
-import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.CartDetail;
 
@@ -54,14 +54,32 @@ public class BookingValidator {
 
 		private boolean validateBookingDate(List<CartDetail> CartDetails) {
 			LocalDate currentDate = BookingUtil.getCurrentDate();
-			boolean isBookingDateValid = CartDetails.stream().anyMatch(slotDetail ->
-			currentDate.isBefore(slotDetail.getBookingDate()));
+			boolean isBookingDateValid = CartDetails.stream().anyMatch(cartDetail ->
+			currentDate.isBefore(cartDetail.getBookingDate()));
 			return isBookingDateValid;
 		}
 		
-		public void validateUpdate(BookingDetail bookingDetailFromRequest, BookingDetail bookingDetailFromDB) {
-			log.info("validating master data for update  booking request for  booking no : " + bookingDetailFromRequest.getBookingNo());
-			
+		public void validateUpdate(BookingRequest bookingDetailFromRequest, Object mdmsData, String status) {
+			log.info("validating master data for update  booking request for  booking no : "
+					+ bookingDetailFromRequest.getBookingApplication().getBookingNo());
+
+			if (status != null && isValidStatus(status)) {
+
+				mdmsValidator.validateMdmsData(bookingDetailFromRequest, mdmsData);
+
+				validateDuplicateDocuments(bookingDetailFromRequest);
+			} else {
+				throw new CustomException("INVALID_STATUS", "The status " + status + " is not valid.");
+			}
+		}
+		public boolean isValidStatus(String status) {
+		    
+		    try {
+		        BookingStatusEnum.valueOf(status);  
+		        return true; 
+		    } catch (IllegalArgumentException e) {
+		        return false;  
+		    }
 		}
 
 
