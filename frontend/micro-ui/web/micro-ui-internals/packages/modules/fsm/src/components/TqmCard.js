@@ -98,7 +98,7 @@ const TqmCard = ({ reRoute = true }) => {
     if (e) e.preventDefault();
     const url = getLandingUrl();
     if (url) {
-      window.location.replace(url);
+      window.location.href = url;
     }
   };
 
