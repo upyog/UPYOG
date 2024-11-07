@@ -277,7 +277,7 @@ console.log("filtersArgss",filtersArg);
           workflowFilters.businessService = services;
         }
         searchFilters["isInboxSearch"] = true;
-        searchFilters["creationReason"] = ["CREATE"];
+        searchFilters["creationReason"] = [""];
         workflowFilters["moduleName"] = "sv-services";
        
         return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };

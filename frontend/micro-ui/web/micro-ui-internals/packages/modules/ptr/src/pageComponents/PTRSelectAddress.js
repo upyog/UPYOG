@@ -5,13 +5,14 @@ import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/PTRTimeline";
 
 const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = formData.slotlist, renewApplication }) => {
-  const { pathname: url } = useLocation();
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const allCities = Digit.Hooks.ptr.useTenants();
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  let applicationNumber; 
   const {pathname} = useLocation();
   let validation = {};
 
+  const { control } = useForm();
   const user = Digit.UserService.getUser().info;
 
 
@@ -22,19 +23,25 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
     appData = renewApplication || null;
   } else {
     // On employee side appData takes data from the hook while 
-    const {applicationNumber} = useParams();
-    const { isLoading: auditDataLoading, isError: isAuditError, data: app_data } = Digit.Hooks.ptr.usePTRSearch(
+    // const {applicationNumber} = useParams();
+    const { isLoading: auditDataLoading, isError: isAuditError, data: app_data_f } = Digit.Hooks.ptr.usePTRSearch(
       {
         tenantId,
-        filters: { applicationNumber: applicationNumber, audit: true },
+        filters: { applicationNumber: sessionStorage.getItem("previousApplicationNumber"), audit: true },
       },
     );
+    
+    // will only pass the app_data if there is applicationNumber 
+    let app_data
+    if (applicationNumber) {
+      app_data = app_data_f
+    }
 
     appData = app_data && app_data?.PetRegistrationApplications[0];
   }
 
   const [pincode, setPincode] = useState(appData?.address?.pincode|| formData?.address?.pincode || "");
-  const [city, setCity] = useState(convertToObject(appData?.address?.city) || formData?.address?.city || "");
+  const [city, setCity] = useState(formData?.address?.city ||convertToObject(appData?.address?.city)|| "");
   const [locality, setLocality] = useState(convertToObject(appData?.address?.locality) || formData?.address?.locality || "");
   const [streetName, setStreetName] = useState(appData?.address?.street || formData?.address?.street || "");
   const [houseNo, setHouseNo] = useState(appData?.address?.houseNo || formData?.address?.houseNo || "");
@@ -44,9 +51,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
   const [addressline2, setAddressline2] = useState(appData?.address?.addressLine2 || formData?.address?.addressLine2 || "");
 
 
-  const [localities, setLocalities] = useState([]);
-  const [showToast, setShowToast] = useState(null);  // State for Toast
-  const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
+  const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
     "revenue",
     {
@@ -58,7 +63,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
   // Fixing the locality data coming from the useboundarylocalities hook
   let structuredLocality = [];
   fetchedLocalities && fetchedLocalities.map((local, index) => {
-    structuredLocality.push({i18nKey: local.i18nkey, code: local.code, label: local.label, area: local.area, boundaryNum: local.boundaryNum})
+    structuredLocality.push({i18nKey: local.i18nkey, code: local.code, label: local.label})
   })
 
 
@@ -97,35 +102,13 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
   };
 
-  const { control } = useForm();
   const onSkip = () => onSelect();
 
   useEffect(() => {
-    if (userType === "citizen") {
+    // if (userType === "citizen") {
       goNext();
-    }
-  }, [goNext, userType]);
-
-  const formatSlotDetails = (slots) => {
-    const sortedSlots = slots.sort((a, b) => new Date(a.bookingDate) - new Date(b.bookingDate));
-    const firstDate = sortedSlots[0]?.bookingDate;
-    const lastDate = sortedSlots[sortedSlots.length - 1]?.bookingDate;
-    if (firstDate === lastDate) {
-      return `${sortedSlots[0]?.name} (${firstDate})`;
-    } else {
-      return `${sortedSlots[0]?.name} (${firstDate} - ${lastDate})`;
-    }
-  };
-
-  useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => {
-        setShowToast(null);
-      }, 2000); // Close toast after 2 seconds
-
-      return () => clearTimeout(timer); // Clear timer on cleanup
-    }
-  }, [showToast]);
+    // }
+  }, [pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2]);
 
   return (
     <React.Fragment>
@@ -135,7 +118,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || !locality || !addressline1 || !landmark || !city || !locality || !pincode}
+        isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || !locality || !addressline1}
       >
         <div>
           <CardLabel>{`${t("PTR_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
@@ -203,7 +186,13 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
             placeholder={"Enter Address"}
             onChange={setaddressline1}
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
-            ValidationRequired={false}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: false,
+              pattern: "^[a-zA-Z ]*$",
+              type: "textarea",
+              title: t("SV_LANDMARK_ERROR_MESSAGE"),
+            })}
 
           />
 
@@ -218,7 +207,13 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
             placeholder={"Enter Address"}
             onChange={setaddressline2}
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
-            ValidationRequired={false}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: false,
+              pattern: "^[a-zA-Z ]*$",
+              type: "textarea",
+              title: t("SV_LANDMARK_ERROR_MESSAGE"),
+            })}
           />
           <CardLabel>{`${t("PTR_LANDMARK")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextArea
@@ -291,8 +286,9 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
             ValidationRequired={true}
             validation={{
-              pattern: "[0-9]{6}",
-              type: "text",
+              required: false,
+              pattern: "^[0-9]{0,6}+$",
+              type: "tel",
               title: t("CHB_ADDRESS_PINCODE_INVALID"),
             }}
             minLength={6}
@@ -302,18 +298,9 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
 
         </div>
       </FormStep>
-      {showToast && (
-        <Toast
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-        />
-      )}
     </React.Fragment>
   );
 };
 
 export default PTRSelectAddress;
+

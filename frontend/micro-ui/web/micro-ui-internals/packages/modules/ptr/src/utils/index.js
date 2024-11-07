@@ -67,8 +67,8 @@ export const setPetDetails = (data) => {
     petType: pets?.petType?.code,
     breedType: pets?.breedType?.code,
     petGender: pets?.petGender?.code,
-    birthDate: pets?.birthDate,
-    adoptionDate: pets?.adoptionDate,
+    birthDate: pets?.birthDate ? convertDateToEpoch(pets?.birthDate) : null,
+    adoptionDate: pets?.adoptionDate ? convertDateToEpoch(pets?.adoptionDate) : null,
     identificationmark: pets?.identificationmark,
     petColor: pets?.petColor?.colourCode,
     clinicName: pets?.clinicName,
@@ -97,8 +97,8 @@ export const PetDataConvert = (data) => {
       applicationType: sessionStorage.getItem("applicationType"), 
       validityDate: data?.validityDate || null,
       status: data?.status || null,
-      expireflag: data?.expireflag || null ,
-      petToken: data?.petToken || null,
+      expireflag: false ,
+      petToken: "",
       previousapplicationnumber: sessionStorage.getItem("petId"),
       address: data.address,
       petDetails: data.pets,
@@ -169,7 +169,7 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
   return documentName;
 };
 
-/* methid to get date from epoch */
+/* method to get date from epoch */
 export const convertEpochToDate = (dateEpoch, businessService) => {
   // Returning null in else case because new Date(null) returns initial date from calender
   if (dateEpoch) {
@@ -185,6 +185,22 @@ export const convertEpochToDate = (dateEpoch, businessService) => {
       return `${day}/${month}/${year}`;
   } else {
     return null;
+  }
+};
+
+export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
+  //example input format : "2018-10-02"
+  try {
+    const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    const DateObj = new Date(Date.UTC(parts[1], parts[2] - 1, parts[3]));
+    DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
+    if (dayStartOrEnd === "dayend") {
+      DateObj.setHours(DateObj.getHours() + 24);
+      DateObj.setSeconds(DateObj.getSeconds() - 1);
+    }
+    return DateObj.getTime();
+  } catch (e) {
+    return dateString;
   }
 };
 

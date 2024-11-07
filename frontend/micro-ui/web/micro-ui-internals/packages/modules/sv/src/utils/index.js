@@ -2,7 +2,7 @@
  * @author - Shivank - NIUA
  * This componet is developed for all the utility functions which  are used in the whole 
  * application.
- * I havealready added the comments for each function.
+ * I have already added the comments for each function.
  */
 
 
@@ -156,7 +156,7 @@ export const svPayloadData = (data) =>{
     emailId: "",
     isInvolved: data?.owner?.spouseDependentChecked,
     fatherName: "",
-    gender: "",
+    gender: "O",
     id: "",
     mobileNo: "",
     name: data?.owner?.units?.[0]?.spouseName,
@@ -194,7 +194,7 @@ export const svPayloadData = (data) =>{
 
     if (isEmpty(spouseName) && isEmpty(dependentName)) {
       // Case 1: Only vendor exists
-      vendordetails = createVendorObject(data);
+      vendordetails = [createVendorObject(data)];
     } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
       // Case 2: Both vendor and spouse exist
       vendordetails = [
@@ -233,8 +233,8 @@ export const svPayloadData = (data) =>{
     addressDetails: [
       {
         addressId: "",
-        addressLine1: data?.address?.addressLine1,
-        addressLine2: data?.address?.addressLine2,
+        addressLine1: data?.address?.addressline1,
+        addressLine2: data?.address?.addressline2,
         addressType: "",
         city: data?.address?.city?.name,
         cityCode: data?.address?.city?.code,
@@ -246,12 +246,29 @@ export const svPayloadData = (data) =>{
         pincode: data?.address?.pincode,
         streetName: "",
         vendorId: ""
+      },
+      { // sending correspondence address here
+        addressId: "",
+        addressLine1: data?.correspondenceAddress?.caddressline1,
+        addressLine2: data?.correspondenceAddress?.caddressline2,
+        addressType: "",
+        city: data?.correspondenceAddress?.ccity?.name,
+        cityCode: data?.correspondenceAddress?.ccity?.code,
+        doorNo: "",
+        houseNo: data?.correspondenceAddress?.chouseNo,
+        landmark: data?.correspondenceAddress?.clandmark,
+        locality: data?.correspondenceAddress?.clocality?.i18nKey,
+        localityCode: data?.correspondenceAddress?.clocality?.code,
+        pincode: data?.correspondenceAddress?.cpincode,
+        streetName: "",
+        vendorId: "",
+        isAddressSame: data?.correspondenceAddress?.isAddressSame
       }
     ],
     applicationDate: 0,
     applicationId: "",
     applicationNo: "",
-    applicationStatus: "",
+    applicationStatus: "APPLIED",
     approvalDate: 0,
     auditDetails: {
       createdBy: "",
@@ -279,7 +296,7 @@ export const svPayloadData = (data) =>{
     benificiaryOfSocialSchemes: sessionStorage.getItem("beneficiary"),
     cartLatitude: 0,
     cartLongitude: 0,
-    certificateNo: "",
+    certificateNo: null,
     disabilityStatus: sessionStorage.getItem("disabilityStatus"),
     documentDetails: transformDocuments(data?.documents?.documents),
     localAuthorityName: data?.businessDetails?.nameOfAuthority,
@@ -290,31 +307,17 @@ export const svPayloadData = (data) =>{
     vendingArea: data?.businessDetails?.areaRequired,
     vendingLicenseCertificateId: "",
     vendingOperationTimeDetails,
-    // : [
-    //   {
-    //     applicationId: "string",
-    //     auditDetails: {
-    //       createdBy: "string",
-    //       createdTime: 0,
-    //       lastModifiedBy: "string",
-    //       lastModifiedTime: 0
-    //     },
-    //     dayOfWeek: "MONDAY",
-    //     fromTime: "20:50",
-    //     id: "string",
-    //     toTime: "10:50"
-    //   }
-    // ],
     vendingZone:  data?.businessDetails?.vendingZones?.code,
     vendorDetail: [
       ...vendordetails
     ],
     workflow: {
-      action: "",
-      assignes: [
-        ""
-      ],
+      action: "APPLY",
       comments: "",
+      businessService: "street-vending",
+      moduleName: "sv-services",
+      businessService: "street-vending",
+      moduleName: "sv-services",
       varificationDocuments: [
         {
           additionalDetails: {},
@@ -333,7 +336,5 @@ export const svPayloadData = (data) =>{
     }
   }
   };
-
   return formdata;
-
 }
