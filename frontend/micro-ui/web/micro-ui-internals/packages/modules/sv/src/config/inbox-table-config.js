@@ -47,7 +47,7 @@
         }, 
 
         {
-          Header: t("SV_APPLICANT_NAME"),
+          Header: t("SV_VENDOR_NAME"),
           Cell: ( row ) => {
             return GetCell(`${row?.cell?.row?.original?.searchData?.vendorDetail[0]?.["name"]}`)
           },

@@ -18,16 +18,16 @@ const App = () => {
   };
 
   const SVCreate = Digit?.ComponentRegistryService?.getComponent("Create");
-  // const CHBApplicationDetails = Digit?.ComponentRegistryService?.getComponent("CHBApplicationDetails");
-  // const CHBMyApplications = Digit?.ComponentRegistryService?.getComponent("CHBMyApplications");
- 
+  const MyApplication = Digit?.ComponentRegistryService?.getComponent("SVMyApplications");
+  const SvApplicationDetails = Digit?.ComponentRegistryService?.getComponent("SvApplicationDetails");
   return (
     <span className={"sv-citizen"}style={{width:"100%"}}>
       <Switch>
         <AppContainer>
           <BackButton>Back</BackButton>
           <PrivateRoute path={`${path}/apply`} component={SVCreate} />
-          <PrivateRoute path={`${path}/my-applications`} component={SVCreate}></PrivateRoute>
+          <PrivateRoute path={`${path}/my-applications`} component={MyApplication}></PrivateRoute>
+          <PrivateRoute path={`${path}/application/:applicationNo/:tenantId`} component={SvApplicationDetails}></PrivateRoute>
         </AppContainer>
       </Switch>
     </span>
