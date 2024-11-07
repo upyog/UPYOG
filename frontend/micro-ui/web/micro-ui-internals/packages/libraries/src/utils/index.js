@@ -261,6 +261,18 @@ const chbAccess = () => {
 
   return CHB_ACCESS?.length > 0;
 };
+// Checks if the user has access to ADS services based on their roles, this is adding role for employee side
+
+const adsAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const adsRoles = ["ADS_CEMP"];
+
+  const ADS_ACCESS = userRoles?.filter((role) => adsRoles?.includes(role));
+
+  return ADS_ACCESS?.length > 0;
+};
 
 const assetAccess = () => {
   const userInfo = Digit.UserService.getUser();
@@ -358,6 +370,7 @@ export default {
   hrmsAccess,
   getPattern,
   chbAccess,
+  adsAccess,
   hrmsRoles,
   getUnique,
   tlAccess,

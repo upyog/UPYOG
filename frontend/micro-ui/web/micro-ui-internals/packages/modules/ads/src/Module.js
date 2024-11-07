@@ -11,16 +11,25 @@ import ADSAddress from "./pageComponents/ADSAddress";
 import ADSDocumentDetails from "./pageComponents/ADSDocumentDetails";
 import ADSCheckPage from "./pages/citizen/Create/CheckPage";
 import ADSAcknowledgement from "./pages/citizen/Create/ADSAcknowledgement";
+import ADSCard from "./components/ADSCard";
+import EmployeeApp from "./pages/employee";
+import { ADSMyApplications } from "./pages/citizen/ADSMyBookings/index";
+import ADSApplicationDetails from "./pages/citizen/ADSApplicationDetails";
+import ADSSearchApplication from "./components/SearchApplication";
 // Component registry for the ADS module, mapping component names to their implementations.
 // Enables dynamic registration and access of components in the application.
 const componentsToRegister = {
- ADSCreate: ADSCreate,
- ADSSearch,
- ADSCitizenDetails,
- ADSAddress,
- ADSDocumentDetails,
- ADSCheckPage,
- ADSAcknowledgement
+  ADSCreate: ADSCreate,
+  ADSSearch,
+  ADSCitizenDetails,
+  ADSAddress,
+  ADSDocumentDetails,
+  ADSCheckPage,
+  ADSAcknowledgement,
+  ADSCard,
+  ADSMyApplications,
+  ADSApplicationDetails: ADSApplicationDetails,
+  ADSSearchApplication,
 };
 
 // Function to add components to the registry
@@ -75,6 +84,7 @@ export const ADSLinks = ({ matchPath, userType }) => {
 };
 
 export const ADSComponents = {
-  ADSModule, 
-  ADSLinks
+  ADSModule,
+  ADSLinks,
+  ADSCard,
 };
