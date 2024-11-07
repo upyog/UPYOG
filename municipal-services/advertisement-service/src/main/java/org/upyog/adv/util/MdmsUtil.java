@@ -198,7 +198,7 @@ public class MdmsUtil {
 	 * @return
 	 */
 	public List<CalculationType> getcalculationType(RequestInfo requestInfo, String tenantId, String moduleName,CartDetail cartDetail) {
-		String faceArea = "";
+	
 		List<CalculationType> calculationTypes = new ArrayList<CalculationType>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
@@ -218,9 +218,8 @@ public class MdmsUtil {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		faceArea = cartDetail.getFaceArea();
-		faceArea = faceArea.replace(" ", "_");
-		JsonNode nestedArray = rootNode.get(0).get("CalculationType_" + faceArea);
+
+		JsonNode nestedArray = rootNode.get(0).get("CalculationType_" + cartDetail.getFaceArea());
        
 		try {
 		    // Convert nested array to List<CalculationType>
