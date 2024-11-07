@@ -63,7 +63,7 @@
         },
         
         {
-          Header: t("SV_VENDING_ZONE"),
+          Header: t("SV_VENDING_ZONES"),
           Cell: ( row ) => {
             return GetCell(`${row?.cell?.row?.original?.searchData?.["vendingZone"]}`)
           },
@@ -71,7 +71,7 @@
         },
         
         {
-          Header: t("SV_STATUS"),
+          Header: t("SV_APPLICATION_STATUS"),
           Cell: ({ row }) => {
             return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
           },

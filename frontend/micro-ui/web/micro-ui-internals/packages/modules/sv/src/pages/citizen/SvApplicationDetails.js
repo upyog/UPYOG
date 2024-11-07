@@ -58,11 +58,10 @@ const SvApplicationDetails = () => {
 
   const fetchBillData=async()=>{
     setLoading(true);
-    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "sv-services", consumerCode: applicationNo, });
-  
-  setBillData(result);
-  setLoading(false);
-};
+    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "sv-services", consumerCode: applicationNo });
+    setBillData(result);
+    setLoading(false);
+    };
 useEffect(()=>{
 fetchBillData();
 }, [tenantId, applicationNo]); 

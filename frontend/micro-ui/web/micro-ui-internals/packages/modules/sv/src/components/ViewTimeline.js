@@ -96,7 +96,7 @@ const ViewTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
+              to={{ pathname: `/digit-ui/citizen/payment/my-bills/sv-services/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
@@ -140,7 +140,7 @@ const ViewTimeline = (props) => {
                         isCompleted={index === 0}
                        //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
                        label={t(
-                        `ES_PTR_COMMON_STATUS_${data?.processInstances[index].state?.["state"]
+                        `SV_${data?.processInstances[index].state?.["state"]
                         }${timelineStatusPostfix}`
                       )}
                         customChild={getTimelineCaptions(checkpoint)}

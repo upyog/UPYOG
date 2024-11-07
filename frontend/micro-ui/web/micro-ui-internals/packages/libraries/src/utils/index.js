@@ -242,7 +242,7 @@ const svAccess = () => {
   // Extract the roles of the user, mapping them to their respective codes
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
    // Define the specific roles that have access to the service
-  const svRoles = ["SVCEMP", "TVC_EMPLOYEE", "INSPECTION_OFFICER"];
+  const svRoles = ["SVCEMP", "TVCEMPLOYEE", "INSPECTIONOFFICER"];
   // Filter the user's roles to see if any match the defined service roles
   const SV_ACCESS = userRoles?.filter((role) => svRoles?.includes(role));
    // Return true if the user has at least one of the required roles, indicating access

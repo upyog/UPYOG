@@ -2,7 +2,6 @@ import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./inbox/ApplicationTable";
-import InboxLinks from "./inbox/InboxLink";
 import SearchApplication from "./inbox/search";
 
 const SVDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
@@ -72,7 +71,6 @@ const SVDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     <div className="inbox-container">
       {!props.isSearch && (
         <div className="filters-container">
-          <InboxLinks parentRoute={props.parentRoute} businessService={props.moduleCode} />
           <div>
             {
               <FilterComponent

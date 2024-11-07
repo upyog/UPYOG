@@ -124,8 +124,8 @@ EW: [
   // Defined SV array which contains objects of input fields to be rendered in the inbox search box
   SV: [
     {
-      label: "SV_APPLICATION_ID",
-      name: "applicationId",
+      label: "SV_APPLICATION_NUMBER",
+      name: "applicationNo",
       roles: [],
     },
     {
@@ -134,8 +134,8 @@ EW: [
       roles: [],
     },
     {
-      label: "SV_MOBILE_NUMBER",
-      name: "mobileNumber",
+      label: "SV_REGISTERED_MOB_NUMBER",
+      name: "mobileNo",
       type: "mobileNumber",
       maxLength: 10,
       minLength: 0,

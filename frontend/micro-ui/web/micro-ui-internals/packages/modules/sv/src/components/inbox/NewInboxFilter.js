@@ -143,7 +143,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
 
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("SV_VENDING_ZONE")}:
+                {t("SV_VENDING_ZONES")}:
               </div>
               <div>
                 <Dropdown
