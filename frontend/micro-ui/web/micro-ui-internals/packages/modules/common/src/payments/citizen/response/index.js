@@ -717,7 +717,7 @@ export const convertEpochToDate = (dateEpoch) => {
           </div>
         </div>
       ) : null}
-       {business_service == "ads-services" ? (
+       {business_service == "adv-services" ? (
         <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
         <div className="primary-label-btn d-grid" onClick={printCHBReceipt}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
@@ -803,7 +803,7 @@ export const convertEpochToDate = (dateEpoch) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
-      {business_service == "ads-services" && (
+      {business_service == "adv-services" && (
         <Link to={`/digit-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>

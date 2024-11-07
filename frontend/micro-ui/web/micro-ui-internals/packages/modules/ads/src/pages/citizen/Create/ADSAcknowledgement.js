@@ -74,11 +74,11 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
         {user.type==="EMPLOYEE" &&(
-         <Link to={`/digit-ui/employee/payment/collect/${"ads-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
+         <Link to={`/digit-ui/employee/payment/collect/${"adv-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
           </Link> )}
           {user.type==="CITIZEN" &&(
-        <Link to={`/digit-ui/citizen/payment/my-bills/${"ads-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
+        <Link to={`/digit-ui/citizen/payment/my-bills/${"adv-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
         </Link>)}
       </div>
