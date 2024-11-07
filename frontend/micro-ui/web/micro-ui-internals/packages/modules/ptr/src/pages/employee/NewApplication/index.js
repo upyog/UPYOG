@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { newConfig } from "../../../config/Create/config";
+import { convertDateToEpoch } from "../../../utils";
 
 const NewApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -38,15 +39,18 @@ const NewApplication = () => {
   };
 
   const onPetSubmit = (data) => {
-  
+  console.log("data in index of newaplication", data);
     const formData = [{
       tenantId,
       ...data?.owners[0],
       petDetails: {
         ...data?.pets[0],
+        petColor: data?.pets[0]?.petDetails?.colourCode,
         petType: data?.pets[0]?.petType?.value,
         breedType: data?.pets[0]?.breedType?.value,
         petGender: data?.pets[0]?.petGender?.name,
+        birthDate: data?.pets?.birthDate ? convertDateToEpoch(pets?.birthDate) : null,
+        adoptionDate: data?.pets?.adoptionDate ? convertDateToEpoch(pets?.adoptionDate) : null,
       },
 
       address: {
@@ -54,6 +58,8 @@ const NewApplication = () => {
         city: data?.address?.city?.name,
         locality: { code: data?.address?.locality?.code, area: data?.address?.locality?.area },
       },
+      petToken: "",
+      expireflag: false ,
       previousapplicationnumber: null,
       documents: data?.documents?.documents,
       // more fields added according to requirement of payload
@@ -72,7 +78,7 @@ const NewApplication = () => {
     
   };
   
-  const configs = commonFields ? commonFields : newConfig;
+  const configs =  newConfig;
 
 
   
