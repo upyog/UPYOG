@@ -5,7 +5,7 @@ import * as locale from "./locale";
 import * as obps from "./obps";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
-import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
+import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl } from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 
 const GetParamFromUrl = (key, fallback, search) => {
@@ -118,6 +118,28 @@ const didEmployeeHasRole = (role) => {
   return rolearray?.length;
 };
 
+const didEmployeeHasAtleastOneRole = (roles = []) => {
+  return roles.some((role) => didEmployeeHasRole(role));
+};
+const isUlbAdminLoggedIn = () => {
+  return Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.ulb);
+};
+
+const isPlantOperatorLoggedIn = () => {
+  return Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.plant);
+};
+const ROLES = {
+  plant: ["PQM_TP_OPERATOR"],
+  ulb: ["PQM_ADMIN"],
+};
+const tqmAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const tqmRoles = ["PQM_TP_OPERATOR", "PQM_ADMIN"];
+  const TQM_ACCESS = userRoles?.filter((role) => tqmRoles?.includes(role));
+  return TQM_ACCESS?.length > 0;
+};
+
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -153,9 +175,7 @@ const NOCAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
 
-  const NOC_ROLES = [
-    "FIRE_NOC_APPROVER"
-  ]
+  const NOC_ROLES = ["FIRE_NOC_APPROVER"];
 
   const NOC_ACCESS = userRoles?.filter((role) => NOC_ROLES?.includes(role));
 
@@ -203,7 +223,7 @@ const BPAAccess = () => {
 
 const ptAccess = () => {
   const userInfo = Digit.UserService.getUser();
-  console.log("userInfo",userInfo);
+  console.log("userInfo", userInfo);
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR"];
 
@@ -214,7 +234,7 @@ const ptAccess = () => {
 
 const ptrAccess = () => {
   const userInfo = Digit.UserService.getUser();
-  
+
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const ptrRoles = ["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"];
 
@@ -261,7 +281,7 @@ const hrmsAccess = () => {
 const wsAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const waterRoles = ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER","WS_CLERK"];
+  const waterRoles = ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"];
 
   const WS_ACCESS = userRoles?.filter((role) => waterRoles?.includes(role));
 
@@ -271,13 +291,12 @@ const wsAccess = () => {
 const swAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const sewerageRoles = ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER","SW_CLERK"];
+  const sewerageRoles = ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"];
 
   const SW_ACCESS = userRoles?.filter((role) => sewerageRoles?.includes(role));
 
   return SW_ACCESS?.length > 0;
 };
-
 
 export default {
   pdf: PDFUtil,
@@ -314,6 +333,9 @@ export default {
   tlAccess,
   wsAccess,
   swAccess,
+  tqmAccess,
+  didEmployeeHasAtleastOneRole,
+  isPlantOperatorLoggedIn,
 
-  ...privacy
+  ...privacy,
 };

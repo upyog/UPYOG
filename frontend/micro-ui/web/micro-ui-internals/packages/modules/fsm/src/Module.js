@@ -65,6 +65,7 @@ import SelectLocalityOrGramPanchayat from "./pageComponents/SelectLocalityOrGram
 import AddWorker from "./pages/employee/FSMRegistry/Worker/AddWorker"
 import EditWorker from "./pages/employee/FSMRegistry/Worker/EditWorker";
 import WorkerDetails from "./pages/employee/FSMRegistry/Worker/WorkerDetails";
+import TqmCard from "./components/TqmCard";
 
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";
@@ -225,6 +226,7 @@ const componentsToRegister = {
   AddWorker,
   EditWorker,
   WorkerDetails,
+  TqmCard,
 };
 
 export const initFSMComponents = () => {

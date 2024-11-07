@@ -51,7 +51,7 @@ const ApplicationDetail = () => {
 
   return (
     <div className={"employee-main-application-details"}>
-        <div  className={"employee-application-details"}>
+        <div  className={"employee-application-details"} style={{height:"auto !important", maxHeight:"none !important"}}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
         <div>
         <div style={{zIndex: "10",  position: "relative"}}>

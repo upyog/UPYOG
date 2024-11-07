@@ -8,11 +8,11 @@ import { propertyCardBodyStyle } from "../../../utils";
 export const PTMyPayments = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
+  const state = Digit.ULBService.getStateId();
   const result = Digit.Hooks.pt.usePropertySearch({});
   const consumerCode = result?.data?.Properties?.map((a) => a.propertyId).join(",");
 
-  const {data, isLoading, error} = Digit.Hooks.pt.useMyPropertyPayments({tenantId : tenantId,filters: {consumerCodes:consumerCode}},{enabled:result?.data?.Properties.length>0?true:false, propertyData:result?.data?.Properties});
+  const {data, isLoading, error} = Digit.Hooks.pt.useMyPropertyPayments({tenantId : state,filters: {consumerCodes:consumerCode}},{enabled:result?.data?.Properties.length>0?true:false, propertyData:result?.data?.Properties});
   
   if (isLoading || result?.isLoading) {
     return <Loader />;

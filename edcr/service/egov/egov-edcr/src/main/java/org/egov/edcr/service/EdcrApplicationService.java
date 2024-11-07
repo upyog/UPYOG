@@ -299,19 +299,19 @@ public class EdcrApplicationService {
         
         Image objImage = Image.load(filePath);
 
-      
+        
         PdfOptions pdfOptions = new PdfOptions();
 
-        
+       
         CadRasterizationOptions rasterizationOptions = new CadRasterizationOptions();
-        rasterizationOptions.setBackgroundColor(Color.getWhite()); 
-        rasterizationOptions.setDrawType(CadDrawTypeMode.UseObjectColor); 
+        rasterizationOptions.setBackgroundColor(Color.getWhite()); // Set background color if needed
+        rasterizationOptions.setDrawType(CadDrawTypeMode.UseObjectColor); // Ensure object colors are used
 
-        // Set the page size (A0 size in points)
+       
         rasterizationOptions.setPageWidth(3370); 
-        rasterizationOptions.setPageHeight(2384);
+        rasterizationOptions.setPageHeight(2384); 
 
-        
+      
         rasterizationOptions.setAutomaticLayoutsScaling(true);
         rasterizationOptions.setNoScaling(false);
 
@@ -333,7 +333,7 @@ public class EdcrApplicationService {
             PDPageXYZDestination dest = new PDPageXYZDestination();
             dest.setPage(page);
 
-            
+           
             float pageWidth = page.getMediaBox().getWidth();
             float pageHeight = page.getMediaBox().getHeight();
             int centerX = (int) (pageWidth / 2.0f);
@@ -343,13 +343,13 @@ public class EdcrApplicationService {
             dest.setTop(centerY);
             dest.setZoom(1.0f); 
 
-            
+           
             PDDocumentCatalog catalog = document.getDocumentCatalog();
             catalog.setOpenAction(dest);
 
             byte[] modifiedPdfBytes;
 
-           // Watermark
+            //watermark
             PDPageContentStream contentStream = new PDPageContentStream(document, page,
                     PDPageContentStream.AppendMode.APPEND, true, true);
 
@@ -361,18 +361,18 @@ public class EdcrApplicationService {
 //            InputStream imageStream = EdcrApplication.class.getResourceAsStream("/tcpicon.jpg");
 //            java.awt.image.BufferedImage image1 = ImageIO.read(imageStream);
 //            PDImageXObject image = LosslessFactory.createFromImage(document, image1);
-
-           
-            float scale = 10f; 
+//    
+//            
+//            float scale = 10f; 
 //            float watermarkWidth = image.getWidth() * scale;
 //            float watermarkHeight = image.getHeight() * scale;
-//            float watermarkXPos = (pageWidth - watermarkWidth) / 2; 
-//            float watermarkYPos = (pageHeight - watermarkHeight) / 2;
+//            float watermarkXPos = (pageWidth - watermarkWidth) / 2; // Center horizontally
+//            float watermarkYPos = (pageHeight - watermarkHeight) / 2; // Center vertically
 //
 //            
 //            contentStream.drawImage(image, watermarkXPos, watermarkYPos, watermarkWidth, watermarkHeight);
 
-            //Add timestamp
+            // Add timestamp
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             contentStream.beginText();
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 200);
@@ -380,27 +380,25 @@ public class EdcrApplicationService {
            
             float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000) * 200;
 
-           
+            
             float xPos = pageWidth - textWidth - 700; 
             float yPos = 10; 
 
             contentStream.newLineAtOffset(xPos, yPos); 
+
             PDExtendedGraphicsState graphicsState1 = new PDExtendedGraphicsState();
-            graphicsState1.setNonStrokingAlphaConstant(0.7f); // Set text opacity
+            graphicsState1.setNonStrokingAlphaConstant(0.7f); 
             contentStream.setGraphicsStateParameters(graphicsState1);
 
             contentStream.showText(timestamp);
             contentStream.endText();
 
-          
-
-            
+           
             contentStream.close();
 
-            
+            // Save the modified PDF
             ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
             document.save(modifiedPdfStream);
-            document.close();
 
             
             modifiedPdfBytes = modifiedPdfStream.toByteArray();
@@ -421,8 +419,6 @@ public class EdcrApplicationService {
             LOG.error("Error occurred when processing PDF!!!!!", e);
         }
     }
-    
-    
 
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication){

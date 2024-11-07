@@ -357,7 +357,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
   if(reciept_data && reciept_data?.Payments.length>0 && recieptDataLoading == false)
   dowloadOptions.push({
     label: t("MT_FEE_RECIEPT"),
-    onClick: () => getRecieptSearch({tenantId: reciept_data?.Payments[0]?.tenantId,payments: reciept_data?.Payments[0]})
+    onClick: () => getRecieptSearch({tenantId: state,payments: reciept_data?.Payments[0]})
   });
   if(data?.Properties?.[0]?.creationReason === "MUTATION" && data?.Properties?.[0]?.status === "ACTIVE")
   dowloadOptions.push({

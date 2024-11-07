@@ -418,7 +418,7 @@ const ApplicationDetails = () => {
   const appFeeDownloadReceipt = {
     order: 4,
     label: t("DOWNLOAD_RECEIPT_HEADER"),
-    onClick: () => getRecieptSearch(applicationDetails?.applicationData?.tenantId ? applicationDetails?.applicationData?.tenantId : Digit.ULBService.getCurrentTenantId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
+    onClick: () => getRecieptSearch(Digit.ULBService.getStateId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
   };
   const handleViewTimeline=()=>{
     setViewTimeline(true);
@@ -431,8 +431,9 @@ const ApplicationDetails = () => {
     order: 4,
     label: t("WS_APLICATION_RECEIPT"),
     onClick: async () => {
+      const tenant = Digit.ULBService.getStateId();
       const ConnectionDetailsfile = await Digit.PaymentService.generatePdf(tenantId, { WaterConnection: [applicationDetails?.applicationData] }, "ws-consolidatedacknowlegment");
-      const file = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: ConnectionDetailsfile.filestoreIds[0] });
+      const file = await Digit.PaymentService.printReciept(tenant, { fileStoreIds: ConnectionDetailsfile.filestoreIds[0] });
       window.open(file[ConnectionDetailsfile.filestoreIds[0]], "_blank");
     }
   };
@@ -476,7 +477,7 @@ const ApplicationDetails = () => {
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
           <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
-          <div style={{zIndex: "10",  position: "relative"}}>
+          <div style={{zIndex: "10",  position: "relative", maxWidth:"100% !important"}}>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"

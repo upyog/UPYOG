@@ -16,6 +16,7 @@ const createConsumerDetails = () => ({
 });
 
 const ConsumerDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
+  console.log("formadata", formData)
   if(window.location.href.includes("modify-challan") && sessionStorage.getItem("mcollectEditObject"))
   {
     formData = JSON.parse(sessionStorage.getItem("mcollectEditObject"))
@@ -98,6 +99,7 @@ const OwnerForm1 = (_props) => {
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
+  console.log("errorssssss", errors)
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   
@@ -199,6 +201,7 @@ const OwnerForm1 = (_props) => {
               />
             </div>
           </LabelFieldPair>  
+          <div>
           <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
           <LabelFieldPair>  
           <CardLabel style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_EMAIL_ID")}`}</CardLabel>
@@ -207,13 +210,13 @@ const OwnerForm1 = (_props) => {
           control={control}
           name="emailId"
           defaultValue={consumerdetail?.emailId}
-          rules={{  validate: { pattern: (val) => (/[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(val) ? true : t("CS_ADDCOMPLAINT_EMAIL_ERROR")) } }}
+          rules={{  validate: { pattern: (val) => (/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(val) ? true : t("CS_ADDCOMPLAINT_EMAIL_ERROR")) } }}
           render={(props) => (
             <TextInput
               t={t}
               isMandatory={false}
               value={props.value}
-              onChange={(e) => {
+                            onChange={(e) => {
                 props.onChange(e.target.value)
               }}
               disable={isEdit}
@@ -221,7 +224,9 @@ const OwnerForm1 = (_props) => {
             )}
             />
             </div>
-            </LabelFieldPair>  
+            </LabelFieldPair> 
+            {formData?.consomerDetails1 && formData?.consomerDetails1[0]?.emailId && errors && <span style={{color:"red"}}>{errors?.emailId?.message}</span>}
+            </div> 
       </div>
       </div>
     </React.Fragment>

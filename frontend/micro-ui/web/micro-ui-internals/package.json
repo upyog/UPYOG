@@ -4,11 +4,9 @@
   "main": "index.js",
   "workspaces":  [
     "packages/libraries",
-    "packages/css",
     "example",
     "packages/react-components",
     "packages/modules/*"
-
   ],
   "license": "MIT",
   "private": true,
@@ -20,7 +18,7 @@
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
-    "dev:css": "cd packages/css && yarn start",
+    "devD:css": "cd packages/css && yarn start",
     "publish:css": "cd packages/css && yarn publish --access public",
     "dev:libraries": "cd packages/libraries && yarn start",
     "dev:components": "cd packages/react-components && yarn start",
@@ -52,7 +50,7 @@
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "buildD:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
-    "buildD:fsm": "cd packages/modules/fsm && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
     "buildD:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",

@@ -85,6 +85,7 @@ public class ChallanService {
 	    }
 	 public List<Challan> getChallansFromMobileNumber(SearchCriteria criteria, RequestInfo requestInfo){
 		 List<Challan> challans = new LinkedList<>();
+		 String tenantId = criteria.getTenantId();
 	        UserDetailResponse userDetailResponse = userService.getUser(criteria,requestInfo);
 	        if(CollectionUtils.isEmpty(userDetailResponse.getUser())){
 	            return Collections.emptyList();
@@ -97,6 +98,7 @@ public class ChallanService {
 	        }
 
 	        criteria=enrichmentService.getChallanCriteriaFromIds(challans);
+	        criteria.setTenantId(tenantId);
 	        challans = getChallansWithOwnerInfo(criteria,requestInfo);
 	        return challans;
 	    }

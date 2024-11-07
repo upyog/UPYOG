@@ -12,7 +12,95 @@ const getUsageCategory = (usageCategory = "") => {
   tempObj["usageCategoryDetail"] = categoryArray && categoryArray.length > 3 && categoryArray[3];
   return tempObj;
 };
-
+const rentedMonths =
+[
+  {
+   "i18nKey": "PROPERTYTAX_MONTH1",
+    "name": "Month 1",
+    "code": "1",
+    "active": true
+   },
+  {
+    "i18nKey": "PROPERTYTAX_MONTH2",
+    "name": "Month 2",
+    "code": "2",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH3",
+    "name": "Month 3",
+    "code": "3",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH4",
+    "name": "Month 4",
+    "code": "4",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH5",
+    "name": "Month 5",
+    "code": "5",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH6",
+    "name": "Month 6",
+    "code": "6",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH7",
+    "name": "Month 7",
+    "code": "7",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH8",
+    "name": "Month 8",
+    "code": "8",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH9",
+    "name": "Month 9",
+    "code": "9",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH10",
+    "name": "Month 10",
+    "code": "10",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH11",
+    "name": "Month 11",
+    "code": "11",
+   "active": true
+   },
+   {
+    "i18nKey": "PROPERTYTAX_MONTH12",
+    "name": "Month 12",
+    "code": "12",
+   "active": true
+   },    
+  ]   
+  const nonRentedMonthsUsage=[
+    {
+      "i18nKey": "NON_RENT_SELFOCCUPIED",
+      "name": "Non Rent Self occupied",
+      "code": "NonRentSelfOccupied",
+     "active": true
+     },  
+     {
+      "i18nKey": "NON_RENT_UNOCCUPIED",
+      "name": "Non rent Un occupied",
+      "code": "NonRentUnOccupied",
+     "active": true
+     },  
+  ]
 const formatUnits = (units = [], currentFloor, isFloor) => {
   if (!units || units.length == 0) {
     return [
@@ -31,8 +119,8 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
     return {
       ...unit,
       builtUpArea: unit?.constructionDetail?.builtUpArea,
-      rentedMonths:unit?.rentedMonths,
-      nonRentedMonthsUsage: unit?.nonRentedMonthsUsage,
+      rentedMonths:rentedMonths.find(month => month.code === unit?.rentedMonths),
+      nonRentedMonthsUsage: nonRentedMonthsUsage.find(month =>  month.code === unit?.nonRentedMonthsUsage),
       ageOfProperty: unit?.ageOfProperty,
       structureType: unit?.structureType,
       usageCategory: usageCategory ? { code: usageCategory, i18nKey: `PROPERTYTAX_BILLING_SLAB_${usageCategory}` } : {},
@@ -49,6 +137,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
   const [fields, setFields] = useState(
     formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor)
   );
+  const rentedMonthsCodes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 
   useEffect(() => {
     setFields(() => formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor));
@@ -106,95 +195,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     }
   );
 
-  let rentedMonths =
-  [
-    {
-     "i18nKey": "PROPERTYTAX_MONTH1",
-      "name": "Month 1",
-      "code": "1",
-      "active": true
-     },
-    {
-      "i18nKey": "PROPERTYTAX_MONTH2",
-      "name": "Month 2",
-      "code": "2",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH3",
-      "name": "Month 3",
-      "code": "3",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH4",
-      "name": "Month 4",
-      "code": "4",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH5",
-      "name": "Month 5",
-      "code": "5",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH6",
-      "name": "Month 6",
-      "code": "6",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH7",
-      "name": "Month 7",
-      "code": "7",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH8",
-      "name": "Month 8",
-      "code": "8",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH9",
-      "name": "Month 9",
-      "code": "9",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH10",
-      "name": "Month 10",
-      "code": "10",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH11",
-      "name": "Month 11",
-      "code": "11",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH12",
-      "name": "Month 12",
-      "code": "12",
-     "active": true
-     },    
-    ]   
-    let nonRentedMonthsUsage=[
-      {
-        "i18nKey": "NON_RENT_SELFOCCUPIED",
-        "name": "Non Rent Self occupied",
-        "code": "NonRentSelfOccupied",
-       "active": true
-       },  
-       {
-        "i18nKey": "NON_RENT_UNOCCUPIED",
-        "name": "Non rent Un occupied",
-        "code": "NonRentUnOccupied",
-       "active": true
-       },  
-    ]
+ 
     let ageOfProperty =[
       {
         "i18nKey": "PROPERTYTAX_MONTH>10",
@@ -342,10 +343,19 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
           }
           if (key === "usageCategory") {
             unit["usageCategory"] = mdmsData?.usageDetails.find(
-              (e) =>
-                e.code.includes(field[key]?.code) &&
-                e.code.includes(typeof field["unitType"] === "object" ? field["unitType"]?.code : field["unitType"])
-            )?.code;
+              (e) =>{
+                const splitCode=e.code.split(".")[0];
+                if(field[key]?.code==="RESIDENTIAL"){
+                  return splitCode===field[key]?.code &&
+                  e.code.includes(typeof field["unitType"] === "object" ? field["unitType"]?.code : field["unitType"]
+                );
+                }
+                else{
+                  return e.code.includes(field[key]?.code) &&
+                  e.code.includes(typeof field["unitType"] === "object" ? field["unitType"]?.code : field["unitType"])
+                }  
+              }
+            )?.code;           
           } else if (key === "builtUpArea") {
             unit["constructionDetail"] = { builtUpArea: field[key] };
           } else {
@@ -399,7 +409,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     else 
     return true;
   }
-
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
@@ -499,7 +508,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   select={(e) => selectrentedMonths(index, e)}
                 />
               </div>
-              { (field?.rentedMonths?.code ==="1" || field?.rentedMonths?.code ==="2" || field?.rentedMonths?.code ==="3" || field?.rentedMonths?.code ==="4" || field?.rentedMonths?.code ==="5" || field?.rentedMonths?.code ==="6" || field?.rentedMonths?.code ==="7" || field?.rentedMonths?.code ==="8" || field?.rentedMonths?.code ==="9" || field?.rentedMonths?.code ==="10" || field?.rentedMonths?.code ==="11") && (
+              { rentedMonthsCodes.includes(field?.rentedMonths?.code) && (
               <>
               <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>

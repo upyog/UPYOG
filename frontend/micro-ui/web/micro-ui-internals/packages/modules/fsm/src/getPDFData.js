@@ -40,6 +40,28 @@ const getAdvanceAmount = (advanceAmount) => {
   if (advanceAmount === null) return "N/A";
   return `₹ ${advanceAmount}`;
 };
+const getMohalaName = (application, t) => {
+  const tenantPrefix = application?.tenantId?.toUpperCase().split(".").join("_");
+  const localityCode = application?.address?.locality?.code;
+  const village = application?.address?.additionalDetails?.village;
+  const newGramPanchayat = application?.address?.additionalDetails?.newGramPanchayat;
+
+  // Check if village code is non-empty and village is defined
+  if (village?.code) {
+    return (
+      t(`${tenantPrefix}_REVENUE_${localityCode}`) + " " + t(village?.name) || "N/A"
+    );
+  }
+
+  // Check if "newGramPanchayat" exists
+  if (newGramPanchayat) {
+    return t(newGramPanchayat) + " " + t(village?.name) || "N/A";
+  }
+
+  // Default case
+  return t(`${tenantPrefix}_REVENUE_${localityCode}`) || "N/A";
+};
+
 
 const getPDFData = (application, tenantInfo, t) => {
   const { additionalDetails } = application;
@@ -47,7 +69,7 @@ const getPDFData = (application, tenantInfo, t) => {
   const amountPerTrip = additionalDetails?.tripAmount;
   const totalAmount = amountPerTrip * application?.noOfTrips;
   const advanceAmountDue = application?.advanceAmount;
-
+console.log("applicationapplication",application)
   return {
     t: t,
     tenantId: tenantInfo?.code,
@@ -94,7 +116,7 @@ const getPDFData = (application, tenantInfo, t) => {
           { title: t("CS_APPLICATION_DETAILS_CITY"), value: application?.address?.city || "N/A" },
           {
             title: t("CS_APPLICATION_DETAILS_MOHALLA"),
-            value: t(`${application?.tenantId?.toUpperCase().split(".").join("_")}_REVENUE_${application?.address?.locality?.code}`) || "N/A",
+            value:getMohalaName(application, t)
           },
           {
             title: t("CS_APPLICATION_DETAILS_SLUM_NAME"),

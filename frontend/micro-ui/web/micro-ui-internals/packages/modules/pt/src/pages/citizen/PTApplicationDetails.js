@@ -20,6 +20,7 @@ const PTApplicationDetails = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
+  const state = Digit.ULBService.getStateId();
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -236,7 +237,7 @@ const PTApplicationDetails = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
-
+  state
   let dowloadOptions = [];
 
   dowloadOptions.push({
@@ -246,7 +247,7 @@ const PTApplicationDetails = () => {
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("MT_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+      onClick: () => getRecieptSearch({ tenantId: state, payments: reciept_data?.Payments[0] }),
     });
   if (data?.Properties?.[0]?.creationReason === "MUTATION" && data?.Properties?.[0]?.status === "ACTIVE")
     dowloadOptions.push({

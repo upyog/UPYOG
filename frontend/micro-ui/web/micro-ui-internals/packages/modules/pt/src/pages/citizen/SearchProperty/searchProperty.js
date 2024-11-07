@@ -165,7 +165,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
               {"  "}
               <InfoBannerIcon fill="#0b0c0c" />
               <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize:"14px" }}>
-                {t(property.description) + " " + ptSearchConfig?.propertyIdFormat}
+                {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
               </span>
             </div>
           ),

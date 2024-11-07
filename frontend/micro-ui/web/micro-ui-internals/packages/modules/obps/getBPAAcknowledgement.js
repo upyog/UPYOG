@@ -43,7 +43,37 @@ const getMohallaLocale = (value = "", tenantId = "") => {
   const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
   const getBPAAcknowledgement=async(application,tenantInfo,t)=>{
     
-    const owner=application?.landInfo?.owners
+    const owners=application?.landInfo?.owners
+
+    const getOwnersForNewApplication =()=>{
+        let values = [];
+        owners.map((owner) => {
+            let doc = [
+                {  
+                    title: t("CORE_COMMON_NAME"), 
+                    value:owner?.name|| "NA"
+                },
+                { 
+                    title: t("BPA_APPLICANT_GENDER_LABEL"), 
+                    value: owner?.gender || "NA"
+                },
+                { 
+                    title: t("CORE_COMMON_MOBILE_NUMBER"), 
+                    value: owner?.mobileNumber || "NA"
+                },
+                { 
+                    title: t("CORE_COMMON_EMAIL_ID"), 
+                    value: owner?.emailId || "NA"
+                },
+                { 
+                    title: t("BPA_IS_PRIMARY_OWNER_LABEL"), 
+                    value: owner?.isPrimaryOwner || "NA"
+                }
+            ];
+               values.push(...doc);
+          });
+          return values
+    }
     return{
         t: t,
         tenantId: tenantInfo?.code,
@@ -134,33 +164,15 @@ const getMohallaLocale = (value = "", tenantId = "") => {
              },
              {
                 title: t("BPA_APPLICANT_DETAILS_HEADER"),
-                values:  [
-                    {  
-                        title: t("CORE_COMMON_NAME"), 
-                        value:application?.landInfo?.owners[0]?.name|| "NA"
-                    },
-                    { 
-                        title: t("BPA_APPLICANT_GENDER_LABEL"), 
-                        value: application?.landInfo?.owners[0]?.gender || "NA"
-                    },
-                    { 
-                        title: t("CORE_COMMON_MOBILE_NUMBER"), 
-                        value: application?.landInfo?.owners[0]?.mobileNumber || "NA"
-                    },
-                    { 
-                        title: t("CORE_COMMON_EMAIL_ID"), 
-                        value: application?.landInfo?.owners[0]?.emailId || "NA"
-                    },
-                    { 
-                        title: t("BPA_IS_PRIMARY_OWNER_LABEL"), 
-                        value: application?.landInfo?.owners[0]?.isPrimaryOwner || "NA"
-                    }
-
-                ]
+                values:  getOwnersForNewApplication()
             },
             {
                 title : t("BPA_NEW_TRADE_DETAILS_HEADER_DETAILS"),
                 values:[
+                    { 
+                        title: t("BPA_DETAILS_PROPERTYID"), 
+                        value: application?.additionalDetails?.propertyID ||"NA"
+                    },
                     { 
                         title: t("BPA_DETAILS_PIN_LABEL"), 
                         value: application?.landInfo?.address?.pincode || "NA"
