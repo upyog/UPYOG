@@ -4,6 +4,11 @@ import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardL
 import { Link,useHistory} from "react-router-dom";
 import ADSCancelBooking from "./ADSCancelBooking";
 
+/** 
+ * ADSSearchApplication is used for searching ADS bookings and displaying results in a table format.
+ * It provides search filters like booking number,status, mobile number, and date range.
+ * The component also includes ability to view details or cancel bookings.
+ */
 const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
   
     const isMobile = window.Digit.Utils.browser.isMobile();
