@@ -17,23 +17,27 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const stateTenantId  = Digit.ULBService.getStateId();
  
  // This call with tenantId (Get city-level data)
- const  cityResponseObject = Digit.Hooks.useCustomMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryColumns" }],
+ const  cityResponseObject = Digit.Hooks.useCustomMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }],
     { 
           select: (data) => {
-            const formattedData = data?.["ASSET"]?.["AssetParentCategoryColumns"]
+            const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"]
           return formattedData;         
       },
     });
 
+
+    
+
   // This call with stateTenantId (Get state-level data)
-  const stateResponseObject  = Digit.Hooks.useCustomMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryColumns" }],
+  const stateResponseObject  = Digit.Hooks.useCustomMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }],
         { 
               select: (data) => {
-                const formattedData = data?.["ASSET"]?.["AssetParentCategoryColumns"]
+                const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"]
               return formattedData;         
           },
         });
  
+
   useEffect(()=> {
     let combinedData;
     // if city level master is not available then fetch  from state-level
@@ -50,17 +54,46 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
   
   let formJson = [];
- if (Array.isArray(categoriesWiseData)) {
-    // Filter the array based on the selected asset type and active status
-    formJson = categoriesWiseData.filter((item) => {
-      return item["assetParentCategory"] === formData?.asset?.assettype?.code && item.active === true;
-    });
+  if (Array.isArray(categoriesWiseData)) {
+    console.log('Categories Data:', categoriesWiseData);
+    
+    // Log the selected asset type for debugging
+    console.log('Selected Asset Type:', formData?.asset?.assettype?.code);
+  
+    // Filter categories based on the selected assetParentCategory
+    formJson = categoriesWiseData
+      .filter((category) => {
+        const isMatch = category.assetParentCategory === formData?.asset?.assettype?.code || category.assetParentCategory === "COMMON";
+        console.log(`Matching ${category.assetParentCategory} with ${formData?.asset?.assettype?.code}:`, isMatch);
+        return isMatch;
+      })
+      .map((category) => category.fields) // Extract the fields array
+      .flat() // Flatten the fields array
+      .filter((field) => field.active === true); // Filter by active status
+    
+    console.log('Filtered Form Data:', formJson);
   }
+  
 
+// console.log('Testing FormJson value:- ', formJson);
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
   const { control } = useForm();
+
+  //  regexPattern function is use for validation
+  const regexPattern = (columnType) =>{
+  
+    if(!columnType){
+      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
+    }else if(columnType === 'number'){
+      return "^\d+(\.\d+)?$"
+    }else if(columnType === "text"){
+      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
+    }else{
+      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
+    }
+}
 
   const goNext = () => {
     let owner = formData.assetDetails && formData.assetDetails[index];
@@ -122,6 +155,29 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       alert("Geolocation is not supported by your browser.");
     }
   };
+
+  const assetType = [
+    {
+        code: "Fixed Asset",
+        i18nKey: "Fixed Asset"
+    },
+    {
+        code: "Infrastructure Asset",
+        i18nKey: "Infrastructure Asset"
+    }];
+  const assetCurrentUsage = [
+    {
+        code: "In-use",
+        i18nKey: "In-use",
+    },
+    {
+        code: "In-store",
+        i18nKey: "In-store"
+    },
+    {
+      code: "Disposed",
+      i18nKey: "Disposed"
+  }];
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={2} /> : null}
@@ -151,7 +207,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   }}
                 />
               ) : row.type == "dropdown" ? (
-                // if dropdown render
+                //  if dropdown render
                 <Controller
                   control={control}
                   name={row.name}
@@ -186,8 +242,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                     ValidationRequired={false}
                     {...(validation = {
                       isRequired: true,
-                      pattern: "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$",
-                      type: "text",
+                      pattern: regexPattern(row.columnType),
+                      type: row.columnType,
                       title: t("VALID_LAT_LONG"),
                     })}
                   />
@@ -223,8 +279,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   onChange={handleInputChange}
                   {...(validation = {
                     isRequired: true,
-                    pattern: "^[a-zA-Z ]+$",
-                    type: "text",
+                    pattern: regexPattern(row.columnType),
+                    type: row.columnType,
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
                   style={{ width: "50%" }}

@@ -38,8 +38,8 @@ public class EnrichmentService {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		AuditDetails auditDetails = BookingUtil.getAuditDetails(
-			    String.valueOf(requestInfo.getUserInfo().getId()), 
-			    Boolean.TRUE
+			    String.valueOf(bookingRequest.getRequestInfo().getUserInfo().getUuid()), 
+			    true
 			);
 		
 		bookingDetail.setAuditDetails(auditDetails);
@@ -76,7 +76,7 @@ public class EnrichmentService {
 		
 		bookingDetail.getAddress().setAddressId(BookingUtil.getRandonUUID());
 		bookingDetail.getAddress().setApplicantDetailId(bookingDetail.getApplicantDetail().getApplicantDetailId());
-
+//
 //		List<String> customIds = getIdList(requestInfo, bookingDetail.getTenantId(),
 //				config.getAdvertisementBookingIdKey(), config.getAdvertisementBookingIdFromat(), 1);
 //		
@@ -106,21 +106,21 @@ public class EnrichmentService {
 	 * @return List of ids generated using idGen service
 	 */
 	private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
-		/* List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
+		 List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
 				.getIdResponses();
 		
 
 		if (CollectionUtils.isEmpty(idResponses))
 			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
-		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList()); */
-		return null;
+		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+		//return null;
 	}
 
 	//This enriches the booking request, if status is not null then it updates the booking status in booking detail and cart detail, also updates the payment date and audit details
 	public void enrichUpdateBookingRequest(BookingRequest bookingRequest, BookingStatusEnum statusEnum) {
 		AuditDetails auditDetails = BookingUtil.getAuditDetails(
-			    String.valueOf(bookingRequest.getRequestInfo().getUserInfo().getId()), 
+			    String.valueOf(bookingRequest.getRequestInfo().getUserInfo().getUuid()), 
 			    Boolean.FALSE
 			);
 
