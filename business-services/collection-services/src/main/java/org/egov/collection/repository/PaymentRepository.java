@@ -17,8 +17,11 @@ import org.egov.collection.repository.rowmapper.BillRowMapper;
 import org.egov.collection.repository.rowmapper.PaymentRowMapper;
 import org.egov.collection.web.contract.Bill;
 import org.egov.collection.web.contract.PropertyDetail;
+import org.egov.collection.web.contract.RoadCuttingInfo;
+import org.egov.collection.web.contract.UsageCategoryInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -95,6 +98,14 @@ public class PaymentRepository {
     public List<Payment> fetchPayments(PaymentSearchCriteria paymentSearchCriteria) {
         Map<String, Object> preparedStatementValues = new HashMap<>();
 
+        
+        if (paymentSearchCriteria.getBusinessService()!=null && (paymentSearchCriteria.getBusinessService().equalsIgnoreCase("WS.ONE_TIME_FEE")
+        		|| paymentSearchCriteria.getBusinessService().equalsIgnoreCase("SW.ONE_TIME_FEE")
+        		))
+        {
+        	paymentSearchCriteria.setConsumerCodes(paymentSearchCriteria.getApplicationNo());
+        }
+        
         List<String> ids = fetchPaymentIdsByCriteria(paymentSearchCriteria);
 
         if(CollectionUtils.isEmpty(ids))
@@ -312,9 +323,12 @@ public class PaymentRepository {
 
     }
 
+		
     public List<String> fetchPaymentIdsByCriteria(PaymentSearchCriteria paymentSearchCriteria) {
         Map<String, Object> preparedStatementValues = new HashMap<>();
         String query = paymentQueryBuilder.getIdQuery(paymentSearchCriteria, preparedStatementValues);
+        log.info(query);
+        log.info(preparedStatementValues.toString());
         return namedParameterJdbcTemplate.query(query, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
 	}
 
@@ -330,9 +344,9 @@ public class PaymentRepository {
         List<String> address = fetchadresss(consumerCode, businessservice);
         Set<String> consumerCodeSet = Collections.singleton(consumerCode);
 
-        List<String> additional = adddetails(consumerCodeSet, businessservice);
-        List<String> meterdetails = meterinstallmentdate(consumerCodeSet, businessservice);
-        List<String> meterid = meterid(consumerCodeSet, businessservice);
+        List<String> additional = adddetails(consumerCodeSet,null, businessservice);
+        List<String> meterdetails = meterInstallmentDate(consumerCodeSet,null, businessservice);
+        List<String> meterid = meterId(consumerCodeSet,null, businessservice);
         String meterMake = null;
         String averageMeterReading = null;
         String initialMeterReading = null;
@@ -626,163 +640,344 @@ public class PaymentRepository {
 
 	//RECE
 	
-	public List<String> fetchUsageCategoryByApplicationnos(Set<String> consumerCodes,String businesssrvice) {
-		List<String> res = new ArrayList<>();
-		String consumercode = null;
-		 Iterator<String> iterate = consumerCodes.iterator();
-		 while(iterate.hasNext()) {
-			    consumercode =   iterate.next();			  
-		}		
-		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString;
-		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.usagecategory  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
-		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		} else {
-			queryString = "select a2.usagecategory  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
+	
+	public List<RoadCuttingInfo> fetchRoadCuttingInfo(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<RoadCuttingInfo> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT road.* ");
 
-			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		}
-		try {
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
-		} catch (Exception ex) {
-			log.error("Exception while reading usage category" + ex.getMessage());
-		}
-		return res;
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("FROM eg_ws_connection as ws ");
+	    } else {
+	        queryString.append("FROM eg_sw_connection as ws "); // Adjust if there's a corresponding road cutting table for SW
+	    }
+
+	    queryString.append("JOIN eg_ws_roadcuttinginfo as road ON ws.id = road.wsid ")
+	               .append("WHERE ws.status = 'Active'");
+
+	    // Add condition for consumer codes if present
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND ws.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
+
+	    // Add condition for application numbers if present
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND ws.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+
+	    // Log the final query string for debugging
+	    log.info("Query for fetchRoadCuttingInfo: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new BeanPropertyRowMapper<>(RoadCuttingInfo.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while fetching road cutting info: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
 	}
-	public List<String> fetchAddressByApplicationnos(Set<String> consumerCodes,String businesssrvice) {
-		List<String> res = new ArrayList<>();
-		String consumercode = null;
-		 Iterator<String> iterate = consumerCodes.iterator();
-		 while(iterate.hasNext()) {
-			    consumercode =   iterate.next();			  
-		}
-		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString;
-		if (businesssrvice.contains("WS")) {
-			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street,',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city )  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
-		log.info("Query for fetchAddressByApplicationno: " +queryString);
-		}
-		else {
-			 queryString = "select concat(a3.doorno,',',a3.plotno,',',a3.buildingname,',',a3.street,',',a3.landmark,',',a3.district ,',',a3.region,',',a3.city ) FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid  inner join eg_pt_address as a3 on a2.id=a3.propertyid where   a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
 
-				log.info("Query for fetchAddressByApplicationno: " +queryString);
-		}
-		try {
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
-		} catch (Exception ex) {
-			log.error("Exception while reading usage category" + ex.getMessage());
-		}
-		return res;
+
+	public List<UsageCategoryInfo> fetchUsageCategoryByApplicationnos(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<UsageCategoryInfo> res = new ArrayList<>();
+	    StringBuilder queryString = new StringBuilder("SELECT a2.usagecategory, a2.propertyid, a2.landarea FROM ");
+
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("eg_sw_connection a1 ");
+	    }
+
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active'");
+
+	    // Prepare parameters using MapSqlParameterSource
+	    MapSqlParameterSource preparedStatementValues = new MapSqlParameterSource();
+
+	    // Adding conditions dynamically for consumer codes
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.addValue("consumerCodes", consumerCodes);
+	    }
+
+	    // Adding conditions dynamically for application numbers
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.addValue("applicationNumbers", applicationNumbers);
+	    }
+
+	    queryString.append(" GROUP BY a2.usagecategory, a2.propertyid, a2.landarea");
+
+	    // Log the final query string for debugging
+	    log.info("Query for fetchUsageCategoryByApplicationnos: " + queryString);
+
+	    try {
+	        // Use BeanPropertyRowMapper to map result set to UsageCategoryInfo
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new BeanPropertyRowMapper<>(UsageCategoryInfo.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading usage category: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
+	}
+	public List<String> fetchlandareaByApplicationnos(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<String> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT a2.landarea FROM ");
+
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("eg_sw_connection a1 ");
+	    }
+
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active'");
+
+	    // Adding conditions dynamically for consumer codes
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
+
+	    // Adding conditions dynamically for application numbers
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+	    queryString.append(" GROUP BY a2.landarea");
+
+	    // Log the final query string for debugging
+	    log.info("Query for fetchUsageCategoryByApplicationnos: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading usage category: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
 	}
 	
+	public List<String> fetchAddressByApplicationnos(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<String> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT CONCAT(a3.doorno, ',', a3.plotno, ',', a3.buildingname, ',', a3.street, ',', a3.landmark, ',', a3.district, ',', a3.region, ',', a3.city) ");
+
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("FROM eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("FROM eg_sw_connection a1 ");
+	    }
+
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid ")
+	               .append("INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid ")
+	               .append("WHERE a1.status = 'Active'");
+
+	    // Add condition for consumer codes if present
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
+
+	    // Add condition for application numbers if present
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+
+	    // Add GROUP BY clause to include all concatenated fields
+	    queryString.append(" GROUP BY a3.doorno, a3.plotno, a3.buildingname, a3.street, a3.landmark, a3.district, a3.region, a3.city, a3.propertyid"); 
+
+	    // Log the final query string for debugging
+	    log.info("Query for fetchAddressByApplicationnos: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading address: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
+	}
+
+
 	// for propertyid//
 	
-	public List<String> fetchPropertyid(Set<String> consumerCodes,String businesssrvice) {
-		List<String> res = new ArrayList<>();
-		String consumercode = null;
-		 Iterator<String> iterate = consumerCodes.iterator();
-		 while(iterate.hasNext()) {
-			    consumercode =   iterate.next();			  
-		}		
-		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString;
-		if (businesssrvice.contains("WS")) {
-			queryString = "select a1.property_id  FROM eg_ws_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
-		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		} else {
-			queryString = "select a1.property_id  FROM eg_sw_connection a1 INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid where    a1.status='Active' and a1.connectionno   ='"+consumercode+"';";
+	public List<String> fetchPropertyid(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<String> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT a1.property_id ");
 
-			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		}
-		try {
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
-		} catch (Exception ex) {
-			log.error("Exception while reading usage category" + ex.getMessage());
-		}
-		return res;
-	}
-	
-	
-	public List<String> adddetails(Set<String> consumerCodes,String businesssrvice) {
-		List<String> res = new ArrayList<>();
-		String consumercode = null;
-		 Iterator<String> iterate = consumerCodes.iterator();
-		 while(iterate.hasNext()) {
-			    consumercode =   iterate.next();			  
-		}		
-		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString;
-		if (businesssrvice.contains("WS")) {
-			queryString = "select a1.additionaldetails  FROM eg_ws_connection a1  where a1.applicationno   ='"+consumercode+"';";
-		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		} else {
-			queryString = "select a1.additionaldetails  FROM eg_sw_connection a1 where  a1.applicationno   ='"+consumercode+"';";
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("FROM eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("FROM eg_sw_connection a1 ");
+	    }
 
-			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		}
-		try {
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
-		} catch (Exception ex) {
-			log.error("Exception while reading usage category" + ex.getMessage());
-		}
-		return res;
-	}
-	
-	
-	
-	
-	
-	
-	public List<String> meterinstallmentdate(Set<String> consumerCodes,String businesssrvice) {
-		List<String> res = new ArrayList<>();
-		String consumercode = null;
-		 Iterator<String> iterate = consumerCodes.iterator();
-		 while(iterate.hasNext()) {
-			    consumercode =   iterate.next();			  
-		}		
-		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString;
-		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.meterinstallationdate FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.applicationno   ='"+consumercode+"';";
-		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		} else {
-			queryString = "select a2.meterinstallationdate FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.applicationno   ='"+consumercode+"';";
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid ")
+	               .append("WHERE a1.status = 'Active'");
 
-			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		}
-		try {
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
-		} catch (Exception ex) {
-			log.error("Exception while reading usage category" + ex.getMessage());
-		}
-		return res;
-	}
-	
-	public List<String> meterid(Set<String> consumerCodes,String businesssrvice) {
-		List<String> res = new ArrayList<>();
-		String consumercode = null;
-		 Iterator<String> iterate = consumerCodes.iterator();
-		 while(iterate.hasNext()) {
-			    consumercode =   iterate.next();			  
-		}		
-		Map<String, Object> preparedStatementValues = new HashMap<>();
-		String queryString;
-		if (businesssrvice.contains("WS")) {
-			queryString = "select a2.meterid FROM eg_ws_connection a1   inner join eg_ws_service as a2 on a1.id=a2.connection_id where a1.applicationno   ='"+consumercode+"';";
-		log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		} else {
-			queryString = "select a2.meterid FROM eg_sw_connection a1 inner join eg_ws_service as a2 on a1.id=a2.connection_id where  a1.applicationno   ='"+consumercode+"';";
+	    // Add condition for consumer codes if present
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
 
-			log.info("Query for fetchPaymentIdsByCriteria: " +queryString);
-		}
-		try {
-			res = namedParameterJdbcTemplate.query(queryString, preparedStatementValues, new SingleColumnRowMapper<>(String.class));
-		} catch (Exception ex) {
-			log.error("Exception while reading usage category" + ex.getMessage());
-		}
-		return res;
+	    // Add condition for application numbers if present
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+
+	    // Add GROUP BY clause to ensure unique property IDs
+	    queryString.append(" GROUP BY a1.property_id");  // Assuming property_id is the appropriate grouping column
+
+	    // Log the final query string for debugging
+	    log.info("Query for fetchPropertyid: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading property IDs: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
 	}
+
+
+	
+	public List<String> adddetails(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<String> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT a1.additionaldetails ");
+
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("FROM eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("FROM eg_sw_connection a1 ");
+	    }
+
+	    queryString.append("WHERE 1=1");
+
+	    // Add condition for consumer codes if present
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
+
+	    // Add condition for application numbers if present
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+
+	    // Log the final query string for debugging
+	    log.info("Query for adddetails: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading additional details: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
+	}
+
+	
+	
+	
+	
+	
+	
+	public List<String> meterInstallmentDate(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<String> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT a2.meterinstallationdate ");
+
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("FROM eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("FROM eg_sw_connection a1 ");
+	    }
+
+	    queryString.append("INNER JOIN eg_ws_service a2 ON a1.id = a2.connection_id ")
+	               .append("WHERE 1=1");
+
+	    // Add condition for consumer codes if present
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
+
+	    // Add condition for application numbers if present
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+
+	    // Log the final query string for debugging
+	    log.info("Query for meterInstallmentDate: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading meter installation date: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
+	}
+
+	
+	
+	public List<String> meterId(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
+	    List<String> res = new ArrayList<>();
+	    Map<String, Object> preparedStatementValues = new HashMap<>();
+	    StringBuilder queryString = new StringBuilder("SELECT a2.meterid ");
+
+	    // Determine the correct table based on the businessService
+	    if (businessService.contains("WS")) {
+	        queryString.append("FROM eg_ws_connection a1 ");
+	    } else {
+	        queryString.append("FROM eg_sw_connection a1 ");
+	    }
+
+	    queryString.append("INNER JOIN eg_ws_service a2 ON a1.id = a2.connection_id ")
+	               .append("WHERE 1=1");
+
+	    // Add condition for consumer codes if present
+	    if (!CollectionUtils.isEmpty(consumerCodes)) {
+	        queryString.append(" AND a1.connectionno IN (:consumerCodes)");
+	        preparedStatementValues.put("consumerCodes", consumerCodes);
+	    }
+
+	    // Add condition for application numbers if present
+	    if (!CollectionUtils.isEmpty(applicationNumbers)) {
+	        queryString.append(" AND a1.applicationno IN (:applicationNumbers)");
+	        preparedStatementValues.put("applicationNumbers", applicationNumbers);
+	    }
+
+	    // Log the final query string for debugging
+	    log.info("Query for meterId: " + queryString);
+
+	    try {
+	        res = namedParameterJdbcTemplate.query(queryString.toString(), preparedStatementValues, new SingleColumnRowMapper<>(String.class));
+	    } catch (Exception ex) {
+	        log.error("Exception while reading meter ID: " + ex.getMessage(), ex);
+	    }
+
+	    return res;
+	}
+
+	
+	
 	
 	
 	/**
