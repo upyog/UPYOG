@@ -54,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
 
 //		@Autowired
 //		EncryptionService encryptionService;
+	
 
 	@Override
 	public BookingDetail createBooking(@Valid BookingRequest bookingRequest) {
@@ -76,17 +77,7 @@ public class BookingServiceImpl implements BookingService {
 		// ENcrypt PII data of applicant
 		// encryptionService.encryptObject(bookingRequest);
 
-		/**
-		 * Workflow will come into picture once hall location changes or booking is
-		 * cancelled otherwise after payment booking will be auto approved
-		 * 
-		 */
-
-		// 3.Update workflow of the application
-		// workflowService.updateWorkflow(bookingRequest,
-		// WorkflowStatus.CREATE);
-
-		 demandService.createDemand(bookingRequest, mdmsData, true);
+		demandService.createDemand(bookingRequest, mdmsData, true);
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
@@ -219,7 +210,10 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
 		
-		bookingValidator.validateUpdate(advertisementBookingRequest.getBookingApplication(), bookingDetails.get(0));
+		String tenantId = advertisementBookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
+		
+		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
+		bookingValidator.validateUpdate(advertisementBookingRequest, mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
 
 		convertBookingRequest(advertisementBookingRequest, bookingDetails.get(0));
 

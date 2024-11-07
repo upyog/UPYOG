@@ -17,15 +17,12 @@ import java.util.List;
  @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class IdGenerationResponse {
 
     private ResponseInfo responseInfo;
 
     private List<IdResponse> idResponses;
 
-	public List<digit.models.coremodels.IdResponse> getIdResponses() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 }

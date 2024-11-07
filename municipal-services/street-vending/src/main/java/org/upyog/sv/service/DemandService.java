@@ -3,15 +3,17 @@ package org.upyog.sv.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.common.contract.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.repository.DemandRepository;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.VendorDetail;
 import org.upyog.sv.web.models.billing.Demand;
 import org.upyog.sv.web.models.billing.DemandDetail;
-
+import org.upyog.sv.constants.StreetVendingConstants;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -40,8 +42,17 @@ public class DemandService {
 	public List<Demand> createDemand(StreetVendingRequest streetVendingRequest, Object mdmsData) {
 		String tenantId = streetVendingRequest.getStreetVendingDetail().getTenantId();
 		String consumerCode = streetVendingRequest.getStreetVendingDetail().getApplicationNo();
-
-		org.egov.common.contract.request.User user = streetVendingRequest.getRequestInfo().getUserInfo();
+				
+		VendorDetail vendorDetail = null;
+		for (VendorDetail detail : streetVendingRequest.getStreetVendingDetail().getVendorDetail()) {
+		    if (StreetVendingConstants.VENDOR.equals(detail.getRelationshipType())) {
+		        vendorDetail = detail;
+		        break; 
+		    }
+		}
+		
+		User user = User.builder().name(vendorDetail.getName()).emailId(vendorDetail.getEmailId())
+				.mobileNumber(vendorDetail.getMobileNo()).tenantId(streetVendingRequest.getStreetVendingDetail().getTenantId()).build();
 
 		List<DemandDetail> demandDetails = calculationService.calculateDemand(streetVendingRequest);
 

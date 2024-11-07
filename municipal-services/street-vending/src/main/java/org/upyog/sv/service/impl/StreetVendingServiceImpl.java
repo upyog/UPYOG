@@ -57,14 +57,9 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		log.info("MDMS master data : " + mdmsData);
-
+		validator.validateCreate(vendingRequest, mdmsData);
 		enrichmentService.enrichCreateStreetVendingRequest(vendingRequest);
-
 		workflowService.updateWorkflowStatus(vendingRequest);
-
-		// TODO: Move demand generation to update booking working api
-		// demandService.createDemand(vendingRequest, tenantId);
-
 		streetVendingRepository.save(vendingRequest);
 
 		return vendingRequest.getStreetVendingDetail();
@@ -97,7 +92,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		workflowService.updateWorkflowStatus(vendingRequest);
 		streetVendingRepository.update(vendingRequest);
 
-		if (StreetVendingConstants.ACTION_PAY.equals(existingApplication.getWorkflow().getAction())) {
+		if (StreetVendingConstants.ACTION_APPROVE.equals(existingApplication.getWorkflow().getAction())) {
 			String tenantId = extractTenantId(vendingRequest);
 			demandService.createDemand(vendingRequest, tenantId);
 		}

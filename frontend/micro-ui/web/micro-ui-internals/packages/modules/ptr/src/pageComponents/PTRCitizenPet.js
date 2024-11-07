@@ -5,6 +5,7 @@ import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/PTRTimeline";
 import { Controller, useForm } from "react-hook-form";
 import { ApplicationContext } from "../Module";
+import { convertEpochToDate } from "../utils";
 
 
 const PTRCitizenPet
@@ -23,11 +24,11 @@ const PTRCitizenPet
     const [clinicName, setClinicName] = useState(renewApplication?.petDetails?.clinicName || formData?.pets?.clinicName || "");
     const [vaccinationNumber, setVaccinationNumber] = useState(renewApplication?.petDetails?.vaccinationNumber || formData?.pets?.vaccinationNumber || "");
     const [lastVaccineDate, setVaccinationDate] = useState(renewApplication?.petDetails?.lastVaccineDate || formData?.pets?.lastVaccineDate || "");
-    const [petColor, setpetColor] = useState(renewApplication?.petDetails?.petColor || formData?.pets?.petColor || "");
+    const [petColor, setpetColor] = useState(convertToObject(renewApplication?.petDetails?.petColor) || formData?.pets?.petColor || "");
     const [identificationmark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationmark || formData?.pets?.identificationmark || "");
-    const [selectBirthAdoption, setSelectBirthAdoption] = useState(renewApplication?.petDetails?.selectBirthAdoption || formData?.pets?.selectBirthAdoption || [{ i18nKey: "", code: "" }]);
-    const [birthDate, setBirthDate] = useState(renewApplication?.petDetails?.birthDate || formData?.pets?.birth || "");
-    const [adoptionDate, setAdoptionDate] = useState(renewApplication?.petDetails?.adoptionDate || formData?.pets?.adoption || "");
+    const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || formData?.pets?.selectBirthAdoption || [{ i18nKey: "", code: "" }]);
+    const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birth || "");
+    const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoption || "");
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
@@ -337,7 +338,7 @@ const PTRCitizenPet
               ValidationRequired={true}
               {...(validation = {
                 isRequired: true,
-                pattern: "[0-9]{1}[0-9]{2}",
+                pattern: "^(?:[1-9][0-9]?|[1-3][0-9]{2}|400)$",
                 type: "tel",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}

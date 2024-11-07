@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import {
-  CardLabel,
-  CardLabelDesc,
-  CardSubHeader,
-  Modal,
-} from '@nudmcdgnpm/digit-ui-react-components';
-import { useTranslation } from 'react-i18next';
-import ApplicationTable from './ApplicationTable';
+import React, { useState } from "react";
+import { CardLabel, CardLabelDesc, CardSubHeader, Modal } from "@nudmcdgnpm/digit-ui-react-components";
+import { useTranslation } from "react-i18next";
+import ApplicationTable from "./ApplicationTable";
 
 // Close button component
 const Close = () => (
@@ -24,10 +19,10 @@ const CloseBtn = ({ onClick }) => (
 
 /**
  * ADSCartAndCancellationPolicyDetails Component
- * 
- * This component displays cart details and cancellation policy information for an ADS booking. 
- * It features a toggle for viewing the cart and another for displaying the terms and conditions 
- * associated with the booking. The component uses modals to present detailed information and 
+ *
+ * This component displays cart details and cancellation policy information for an ADS booking.
+ * It features a toggle for viewing the cart and another for displaying the terms and conditions
+ * associated with the booking. The component uses modals to present detailed information and
  */
 
 const ADSCartAndCancellationPolicyDetails = () => {
@@ -35,17 +30,12 @@ const ADSCartAndCancellationPolicyDetails = () => {
   const [showViewCart, setShowViewCart] = useState(false);
   const { t } = useTranslation();
   const [params] = Digit.Hooks.useSessionStorage("ADS_CREATE");
-  const tenantId =
-    Digit.ULBService.getCitizenCurrentTenant(true) || 
-    Digit.ULBService.getCurrentTenantId();
-  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(
-    tenantId,
-    'CHB',
-    [{ name: 'CommunityHalls' }],
-    {
-      select: (data) => data?.['CHB']?.['CommunityHalls'] || [],
-    }
-  );
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const [showdemandEstimation, setShowDemandEstimation] = useState(false);
+
+  // const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
+  //   select: (data) => data?.["CHB"]?.["CommunityHalls"] || [],
+  // });
 
   const columns = [
     {
@@ -64,6 +54,27 @@ const ADSCartAndCancellationPolicyDetails = () => {
     // { Header: t("TOTAL_PRICE"), accessor: "price" },
   ];
 
+  let formdata = {
+    tenantId: "pg.mohali",
+    cartDetails: [
+      {
+        addType: "Unipolar",
+        faceArea: "Unipole 12 X 8",
+        location: "Green Park",
+        nightLight: false,
+        bookingDate: "2024-11-30",
+        bookingFromTime: "06:00",
+        bookingToTime: "05:59",
+        status: "BOOKING_CREATED",
+      },
+    ],
+  };
+  let mutation = Digit.Hooks.ads.useADSDemandEstimation();
+
+  if (showdemandEstimation === false) {
+    mutation.mutate(formdata);
+    setShowDemandEstimation(true);
+  }
 
   const handleCartClick = () => {
     setShowViewCart((prev) => !prev);
@@ -75,12 +86,12 @@ const ADSCartAndCancellationPolicyDetails = () => {
 
   const renderCancellationPolicy = (policy) => {
     return (
-      <ol style={{ paddingLeft: '20px' }}>
+      <ol style={{ paddingLeft: "20px" }}>
         {policy
-          .split('\n')
-          .filter((line) => line.trim() !== '')
+          .split("\n")
+          .filter((line) => line.trim() !== "")
           .map((line, index) => (
-            <li key={index} style={{ marginBottom: '10px' }}>
+            <li key={index} style={{ marginBottom: "10px" }}>
               <CardLabelDesc>{line.trim()}</CardLabelDesc>
             </li>
           ))}
@@ -93,66 +104,59 @@ const ADSCartAndCancellationPolicyDetails = () => {
 
   return (
     <div>
+      <CardSubHeader style={{ color: "#a82227" }}>Cart Details</CardSubHeader>
 
-        <CardSubHeader style={{ color: '#a82227' }}>
-            Cart Details
-        </CardSubHeader>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-           <div>
-            <div
-             onClick={handleCartClick}
+      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+        <div>
+          <div
+            onClick={handleCartClick}
             style={{
-                cursor: 'pointer',
-                color: '#a82227',
-                fontSize: '20px',
-                textDecoration: 'none',
-                marginBottom: '10px', // Space below "View Cart"
+              cursor: "pointer",
+              color: "#a82227",
+              fontSize: "20px",
+              textDecoration: "none",
+              marginBottom: "10px", // Space below "View Cart"
             }}
-            >
+          >
             View Cart
-            </div>
-            <div
+          </div>
+          <div
             onClick={handleCancellationPolicyClick}
             style={{
-                cursor: 'pointer',
-                color: '#a82227',
-                fontSize: '20px',
-                textDecoration: 'none',
-                marginBottom: '10px', // Space below "Terms and Conditions"
+              cursor: "pointer",
+              color: "#a82227",
+              fontSize: "20px",
+              textDecoration: "none",
+              marginBottom: "10px", // Space below "Terms and Conditions"
             }}
-            >
+          >
             Terms and Conditions
-            </div>
-            </div>
-            <div style={{ fontSize: '20px', color: '#a82227' }}>
-            Total Booking Amount: <strong>{totalBookingAmount} INR</strong>
-            </div>
+          </div>
         </div>
+        <div style={{ fontSize: "20px", color: "#a82227" }}>
+          Total Booking Amount: <strong>{totalBookingAmount} INR</strong>
+        </div>
+      </div>
       {showCancellationPolicy && (
         <Modal
-          headerBarMain={
-            <CardSubHeader style={{ color: '#a82227', margin: '25px' }}>
-              Terms and Conditions
-            </CardSubHeader>
-          }
+          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>Terms and Conditions</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
           popupStyles={{
-            backgroundColor: '#fff',
-            position: 'relative',
-            maxHeight: '90vh',
-            width: '80%',
-            overflowY: 'auto',
+            backgroundColor: "#fff",
+            position: "relative",
+            maxHeight: "90vh",
+            width: "80%",
+            overflowY: "auto",
           }}
-          children={
-            <div>
-              {cancelpolicyData.length > 0 ? (
-                renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)
-              ) : (
-                <CardLabel style={{ fontSize: '20px' }}>Loading...</CardLabel>
-              )}
-            </div>
-          }
+          // children={
+          //   <div>
+          //     {cancelpolicyData.length > 0 ? (
+          //       renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)
+          //     ) : (
+          //       <CardLabel style={{ fontSize: "20px" }}>Loading...</CardLabel>
+          //     )}
+          //   </div>
+          // }
           actionCancelLabel={null}
           actionCancelOnSubmit={null}
           actionSaveLabel={null}
@@ -165,39 +169,39 @@ const ADSCartAndCancellationPolicyDetails = () => {
           isDisabled={false}
           hideSubmit={true}
           style={{}}
-          popupModuleMianStyles={{ padding: '10px' }}
-          headerBarMainStyle={{ position: 'sticky', top: 0, backgroundColor: '#f5f5f5' }}
+          popupModuleMianStyles={{ padding: "10px" }}
+          headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}
-          popupModuleActionBarStyles={{ display: 'none' }}
+          popupModuleActionBarStyles={{ display: "none" }}
           isOpen={showCancellationPolicy}
           onClose={handleCancellationPolicyClick}
         />
       )}
       {showViewCart && (
         <Modal
-        headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>MY_CART</CardSubHeader>}
-        headerBarEnd={<CloseBtn onClick={handleCartClick} />}
-        popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '80vh', width: '80%', overflowY: 'auto' }}
-        popupModuleMianStyles={{ padding: "10px" }}
-        hideSubmit={true} 
-        headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}
-        formId="modal-action"
-      >
-        <ApplicationTable
-          t={t}
-          data={params?.adslist?.cartDetails}
-          columns={columns}
-          getCellProps={(cellInfo) => ({
-            style: {
-              minWidth: "150px",
-              padding: "20px",
-              fontSize: "16px",
-            },
-          })}
-          isPaginationRequired={false}
-          totalRecords={params?.adslist?.cartDetails.length}
-        />
-      </Modal>
+          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>MY_CART</CardSubHeader>}
+          headerBarEnd={<CloseBtn onClick={handleCartClick} />}
+          popupStyles={{ backgroundColor: "#fff", position: "relative", maxHeight: "80vh", width: "80%", overflowY: "auto" }}
+          popupModuleMianStyles={{ padding: "10px" }}
+          hideSubmit={true}
+          headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}
+          formId="modal-action"
+        >
+          <ApplicationTable
+            t={t}
+            data={params?.adslist?.cartDetails}
+            columns={columns}
+            getCellProps={(cellInfo) => ({
+              style: {
+                minWidth: "150px",
+                padding: "20px",
+                fontSize: "16px",
+              },
+            })}
+            isPaginationRequired={false}
+            totalRecords={params?.adslist?.cartDetails.length}
+          />
+        </Modal>
       )}
     </div>
   );

@@ -307,6 +307,7 @@ import useDemandEstimation from "./chb/useDemandEstimation"
 import useTenantsADS from "./ads/useTenants"
 import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
+import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
@@ -405,7 +406,9 @@ const ads={
   useADSDocumentSearch,
   useADSCreateAPI,
   useADSSlotSearch,
-  useADSSearch
+  useADSSearch,
+  useADSDemandEstimation,
+  
 }
 
 const fsm = {

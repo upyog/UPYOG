@@ -83,6 +83,7 @@ module.exports = function (app) {
     "/adv-services/booking/v1/_search",
     "/adv-services/booking/v1/_update",
     "/adv-services/booking/v1/_slot-search",
+    "/adv-services/booking/v1/_estimate",
     "/billing-service/bill/v2/_fetchbill",
     "/collection-services/payments/pet-services/_search",
     "/requester-services-dx",

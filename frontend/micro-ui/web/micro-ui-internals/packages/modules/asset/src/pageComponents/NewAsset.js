@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, InfoBannerIcon, LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, InfoBannerIcon, LocationIcon, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -12,11 +12,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   );
   const [categoriesWiseData, setCategoriesWiseData] = useState();
 
-
+//  * get @param city & state id
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateTenantId  = Digit.ULBService.getStateId();
  
- // This call with tenantId (Get city-level data)
+ // ? This call with tenantId (Get city-level data)
  const  cityResponseObject = Digit.Hooks.useCustomMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }],
     { 
           select: (data) => {
@@ -26,9 +26,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     });
 
 
-    
-
-  // This call with stateTenantId (Get state-level data)
+//? This call with stateTenantId (Get state-level data)
   const stateResponseObject  = Digit.Hooks.useCustomMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }],
         { 
               select: (data) => {
@@ -64,14 +62,13 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     formJson = categoriesWiseData
       .filter((category) => {
         const isMatch = category.assetParentCategory === formData?.asset?.assettype?.code || category.assetParentCategory === "COMMON";
-        console.log(`Matching ${category.assetParentCategory} with ${formData?.asset?.assettype?.code}:`, isMatch);
+        // console.log(`Matching ${category.assetParentCategory} with ${formData?.asset?.assettype?.code}:`, isMatch);
         return isMatch;
       })
       .map((category) => category.fields) // Extract the fields array
       .flat() // Flatten the fields array
       .filter((field) => field.active === true); // Filter by active status
     
-    console.log('Filtered Form Data:', formJson);
   }
   
 
@@ -181,8 +178,9 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={2} /> : null}
-
+     
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
+    
         <React.Fragment>
           {formJson.map((row, index) => (
             <div key={index}>
