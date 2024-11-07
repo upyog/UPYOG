@@ -43,7 +43,7 @@ public class StreetVendingValidator {
 		log.info("validating master data for create street vending request for applicant mobile no : "
 				+ bookingRequest.getStreetVendingDetail().getApplicationNo());
 
-		// mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
 		validateDuplicateDocuments(bookingRequest);
 	}
 
