@@ -8,6 +8,7 @@ import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
 import { TLService } from "../../services/elements/TL";
 import { CHBServices } from "../../services/elements/CHB";
+import { SVService } from "../../services/elements/SV";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -65,6 +66,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "businessId",
     fetchFilters: filterFunctions.TL,
     _searchFn: () => TLService.search(tenantId, filters),
+  },
+  SV: {
+    services: ["street-vending"],
+    searchResponseKey: "SVDetails",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.SV,
+    _searchFn: () => SVService.search({ tenantId, filters }),
   },
 });
 

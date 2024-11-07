@@ -22,6 +22,18 @@ export const SVService = {
       userService: auth === false ? auth : true,
       params: { tenantId, ...filters },
     }),
+
+    update: (details, tenantId) =>
+      Request({
+        url: Urls.sv.update,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+    }),
 };
 
 
