@@ -5,7 +5,9 @@
   "homepage": "/digit-ui",
   "workspaces": [
     "micro-ui-internals/packages/libraries",
-    "micro-ui-internals/packages/react-components"
+    "micro-ui-internals/packages/react-components",
+    "micro-ui-internals/packages/modules/fsm"
+
   ],
   "engines": {
     "node": ">=14"
@@ -18,7 +20,7 @@
     "@upyog/digit-ui-module-core": "1.8.2",
     "@upyog/digit-ui-module-engagement": "1.8.0",
     "@upyog/digit-ui-module-dss": "1.8.11",
-    "@upyog/digit-ui-module-fsm": "1.8.17",
+    "@upyog/digit-ui-module-fsm": "1.8.18",
     "@upyog/digit-ui-module-hrms": "1.8.0",
     "@upyog/digit-ui-module-mcollect": "1.8.8",
     "@upyog/digit-ui-module-commonpt":"1.8.1",
@@ -43,7 +45,6 @@
     "http-proxy-middleware": "1.3.1"
    
   },
-  
   "resolutions":  {
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",

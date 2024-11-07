@@ -1,16 +1,13 @@
 import React from "react";
 
-import {
-  initPGRComponents,
-  PGRReducers,
-} from "@upyog/digit-ui-module-pgr";
+import { initPGRComponents, PGRReducers } from "@upyog/digit-ui-module-pgr";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
 import {
-  PTModule,
-  PTLinks,
-  PTComponents,
-} from "@upyog/digit-ui-module-pt";
-import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
+  MCollectModule,
+  MCollectLinks,
+  initMCollectComponents,
+} from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import {
   PaymentModule,
@@ -19,16 +16,12 @@ import {
 } from "@upyog/digit-ui-module-common";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
+import { HRMSModule, initHRMSComponents } from "@upyog/digit-ui-module-hrms";
+import { TLModule, TLLinks, initTLComponents } from "@upyog/digit-ui-module-tl";
 import {
-  HRMSModule,
-  initHRMSComponents,
-} from "@upyog/digit-ui-module-hrms";
-import {
-  TLModule,
-  TLLinks,
-  initTLComponents,
-} from "@upyog/digit-ui-module-tl";
-import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
+  initReceiptsComponents,
+  ReceiptsModule,
+} from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
@@ -47,6 +40,7 @@ import {
 initLibraries();
 
 const enabledModules = [
+  "Tqm",
   "PGR",
   "FSM",
   "Payment",
@@ -70,7 +64,7 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
+  "PTR",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -88,7 +82,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PTRModule,
   PTRLinks,
   ...PTRComponents,
-
 });
 
 initPGRComponents();
