@@ -61,5 +61,7 @@ public interface WSCalculationDao {
 	
 	public Boolean getexpiryBill(List billSearch);
 
+	List<String> getConnectionsNoByGroups(String tenantId, String connectionType, List<String> groups);
+
 		
 }

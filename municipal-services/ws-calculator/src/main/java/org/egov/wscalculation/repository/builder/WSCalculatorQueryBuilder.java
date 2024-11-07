@@ -386,7 +386,7 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
-	public String getConnectionsNoByLocality(String tenantId, String connectionType, String status, String locality,
+	public String getConnectionsNoByLocality(String tenantId, String connectionType, String status, String locality,List<String>groups,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoByLocality);
 
@@ -411,6 +411,11 @@ public class WSCalculatorQueryBuilder {
 			preparedStatement.add(locality);
 		}
 
+		if (groups != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" (conn.additionaldetails->>'groups') @> ?::jsonb");
+			preparedStatement.add(groups);
+		}
 		// Getting only non exempted connection to generate bill
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" (conn.additionaldetails->>'isexempted')::boolean is not true ");

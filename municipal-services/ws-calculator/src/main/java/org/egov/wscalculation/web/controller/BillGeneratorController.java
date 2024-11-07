@@ -55,13 +55,12 @@ public class BillGeneratorController {
 			@Valid @RequestBody BillGenerationReq billGenerationReq) {
 
 		BillSchedulerResponse response=new BillSchedulerResponse();
-		List<BillScheduler> billDetails1 = new ArrayList<BillScheduler>();
+		//List<BillScheduler> billDetails1 = new ArrayList<BillScheduler>();
 		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
 		String isBatch=billGenerationReq.getBillScheduler().getIsBatch();
         	log.info("isBatch value"+isBatch);
         	boolean batchBilling=false;
-        	if(StringUtils.isBlank(isBatch))
-        		isBatch="false";
+        	
         			
 		if(isBatch.equals("true")) {
 			batchBilling = true;
@@ -74,14 +73,14 @@ public class BillGeneratorController {
 				if(!localityStatus) {
 				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
 				}
-				billDetails1.addAll(billDetails);
+				//billDetails1.addAll(billDetails);
 		}
 		}else {
 					billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
 					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-				    billDetails1.addAll(billDetails);
+				   // billDetails1.addAll(billDetails);
 		}
-		 response = BillSchedulerResponse.builder().billSchedulers(billDetails1)
+		 response = BillSchedulerResponse.builder().billSchedulers(billDetails)
 				.responseInfo(
 						responseInfoFactory.createResponseInfoFromRequestInfo(billGenerationReq.getRequestInfo(), true))
 				.build();
