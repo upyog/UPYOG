@@ -32,7 +32,7 @@ const SvApplicationDetails = () => {
   const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication(
     {
       tenantId,
-      filters: { applicationNo: applicationNo },
+      filters: { applicationNumber: applicationNo },
     },
   ); 
   const [billData, setBillData]=useState(null);
@@ -50,7 +50,7 @@ const SvApplicationDetails = () => {
   const application =  streetVendingDetails;
 
   
-  sessionStorage.setItem("ptr-pet", JSON.stringify(application));
+  sessionStorage.setItem("streetvending", JSON.stringify(application));
 
   
 
