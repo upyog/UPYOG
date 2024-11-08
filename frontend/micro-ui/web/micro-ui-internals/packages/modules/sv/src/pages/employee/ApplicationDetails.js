@@ -16,10 +16,8 @@ const ApplicationDetails = () => {
   const [showToast, setShowToast] = useState(null);
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
-  const [enableAudit, setEnableAudit] = useState(false);
-  const [businessService, setBusinessService] = useState("street-vending");
+  const businessService = "street-vending"
 
-  const history = useHistory();
 
   // isAction is added to enable or disable the actionbar
   let isAction = false;
@@ -27,16 +25,10 @@ const ApplicationDetails = () => {
     isAction = true;
   }
 
-  const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber);
+  const { isLoading, data: applicationDetails } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber);
 
   // hook used to work with the mutation function
-  const {
-    isLoading: updatingApplication,
-    isError: updateApplicationError,
-    data: updateResponse,
-    error: updateError,
-    mutate,
-  } = Digit.Hooks.sv.useSVApplicationAction(tenantId);
+  const {mutate} = Digit.Hooks.sv.useSVApplicationAction(tenantId);
 
   // fetches workflowDetails from the hook useworkflowdetails
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
@@ -46,21 +38,10 @@ const ApplicationDetails = () => {
     role: "SV_CEMP",
   });
 
-  console.log("data of workflow in applciation dateadslis :: ", workflowDetails)
-
-
-  // const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.sv.useSVSearch(
-  //   {
-  //     tenantId,
-  //     filters: { applicationNumber: applicationNumber, audit: true },
-  //   },
-  // );
-
   const closeToast = () => {
     setShowToast(null);
   };
 
-  console.log("data of applicationDetails in application details page :: ", applicationDetails)
   useEffect(() => {
     if (applicationDetails) {
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
@@ -68,31 +49,24 @@ const ApplicationDetails = () => {
   }, [applicationDetails]);
 
 
-  useEffect(() => {
-
-    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "street-vending" && businessService === "street-vending")) {
-      setBusinessService(workflowDetails?.data?.applicationBusinessService);
-    }
-  }, [workflowDetails.data]);
-
-
-  // const SV_CEMP = Digit.UserService.hasAccess(["SV_CEMP"]) || false;
-  // if (
-  //   SV_CEMP &&
-  //   workflowDetails?.data?.applicationBusinessService === "sv" &&
-  //   workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
-  // ) {
-  //   workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
-  //     if (act.action === "PAY") {
-  //       return {
-  //         action: "PAY",
-  //         forcedName: "WF_PAY_APPLICATION",
-  //         redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/sv-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
-  //       };
-  //     }
-  //     return act;
-  //   });
-  // }
+  // This code wil check if the the employee has access && businessService is streetvending and nextAction is Pay then it will redirect in the Payment page
+  const SV_CEMP = Digit.UserService.hasAccess(["SVCEMP"]) || false;
+  if (
+    SV_CEMP &&
+    workflowDetails?.data?.applicationBusinessService === "street-vending" &&
+    workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
+  ) {
+    workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
+      if (act.action === "PAY") {
+        return {
+          action: "PAY",
+          forcedName: "SV_PAY",
+          redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/sv-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNo}` },
+        };
+      }
+      return act;
+    });
+  }
 
   // Handling the download of acknowledgement page
   const handleDownloadPdf = async () => {
