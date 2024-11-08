@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, InfoBannerIcon, LocationIcon, Card } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, InfoBannerIcon, LocationIcon, Card, CardHeader, CardCaption} from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -125,13 +125,32 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const handleInputChange = (e) => {
     // Get the name & value from the input and select field
     const { name, value } = e.target ? e.target : { name: e.name, value: e };
-    setAssetDetails((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-    name === "purchaseDate" && calculateAssetAge(value);
+  
+    setAssetDetails((prevData) => {
+      // Update the current field
+      const updatedData = {
+        ...prevData,
+        [name]: value,
+      };
+  
+      // Check if both acquisitionCost and purchaseCost are set and calculate bookValue
+      const acquisitionCost = parseFloat(updatedData.acquisitionCost) || 0;
+      const purchaseCost = parseFloat(updatedData.purchaseCost) || 0;
+  
+      if (acquisitionCost && purchaseCost) {
+        console.log('GETTTTTT :-', acquisitionCost, purchaseCost);
+        updatedData.bookValue = acquisitionCost + purchaseCost;
+      }
+  
+      // Calculate asset age if the field is "purchaseDate"
+      if (name === "purchaseDate") {
+        calculateAssetAge(value);
+      }
+  
+      return updatedData;
+    });
   };
-
+  
   //  Get location
   const fetchCurrentLocation = (name) => {
     if ("geolocation" in navigator) {
@@ -178,9 +197,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={2} /> : null}
-     
+      <Card> <CardCaption>{t(formData.asset.Department['value'])}/{formData.asset.assetclassification['value']}/{formData.asset.assettype['value']}/{formData.asset.assetsubtype['value']}/{formData.asset.BookPagereference}</CardCaption></Card>
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
-    
+       
+      
         <React.Fragment>
           {formJson.map((row, index) => (
             <div key={index}>
@@ -276,13 +296,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   value={assetDetails[row.name] || ""}
                   onChange={handleInputChange}
                   {...(validation = {
-                    isRequired: true,
+                    isRequired: row.isMandatory,
                     pattern: regexPattern(row.columnType),
                     type: row.columnType,
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
                   style={{ width: "50%" }}
-                />
+                  readOnly={row.isReadOnly}
+                  />
               )}
             </div>
           ))}
