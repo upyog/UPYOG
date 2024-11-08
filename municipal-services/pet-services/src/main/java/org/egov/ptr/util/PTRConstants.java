@@ -230,7 +230,7 @@ public class PTRConstants {
 
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
 
-	public static final String PET_NEW_REGISTRATION = "ptr";
+	public static final String PET_BUSINESSSERVICE = "ptr";
 
 	public static final String STATUS_APPLIED = "APPLIED";
 
@@ -258,4 +258,11 @@ public class PTRConstants {
 
 	public static final String RENEW_PET_APPLICATION = "RENEWAPPLICATION";
 
+	public static final String PET_REGISTRATION_FEE = "PET_REGISTRATION_FEE";
+
+	public static final String PET_MASTER_MODULE_NAME = "PetService";
+
+	public static final String BILLING_SERVICE = "BillingService";
+
+	public static final String CALCULATION_TYPE = "CalculationType";
 }

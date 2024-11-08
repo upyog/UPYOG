@@ -104,7 +104,7 @@ public class PetRegistrationService {
 
 	public void runJob(String servicename, String jobname, RequestInfo requestInfo) {
 		if (servicename == null)
-			servicename = PET_NEW_REGISTRATION;
+			servicename = PET_BUSINESSSERVICE;
 
 		ptrBatchService.getPetApplicationsAndPerformAction(servicename, jobname, requestInfo);
 
