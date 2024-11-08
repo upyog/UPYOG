@@ -12,7 +12,8 @@
     "packages/modules/core",
     "packages/modules/commonPt",
     "packages/modules/dss",
-    "packages/modules/ptr"
+    "packages/modules/ptr",
+    "packages/modules/fsm"
   ],
   "license": "MIT",
   "private": true,
