@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS eg_ws_scheduler
 
 CREATE INDEX IF NOT EXISTS index_eg_ws_scheduler_tenantid ON eg_ws_scheduler (tenantid);
 CREATE INDEX IF NOT EXISTS index_eg_ws_scheduler_locality ON eg_ws_scheduler (locality);
+
+
+ALTER TABLE IF EXISTS public.eg_ws_scheduler
+    ALTER COLUMN locality DROP NOT NULL;
+
+ALTER TABLE IF EXISTS public.eg_ws_scheduler
+    ADD COLUMN IF NOT EXISTS groups text;
