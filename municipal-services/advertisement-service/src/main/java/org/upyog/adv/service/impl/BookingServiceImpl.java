@@ -163,7 +163,7 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 		}
 
 		// Enforcing the maximum booking days constraint
-		if (totalDates.size() > 3) {
+		if (totalDates.size() > 90) {
 			throw new CustomException(BookingConstants.INVALID_BOOKING_DATE_RANGE,
 					"Booking is not allowed for this number of days.");
 		}
