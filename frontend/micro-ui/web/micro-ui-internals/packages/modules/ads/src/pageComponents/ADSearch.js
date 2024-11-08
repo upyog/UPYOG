@@ -25,6 +25,7 @@ import {
 import ADSCartDetails from "../components/ADSCartDetails";
 const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   const { pathname: url } = useLocation();
+  const user = Digit.UserService.getUser().info;
   let index = 0;
   const [cartDetails, setCartDetails] = useState(
     (formData.adslist && formData.adslist[index] && formData.adslist[index].cartDetails) || formData?.adslist?.cartDetails || []
@@ -388,7 +389,7 @@ const handleCloseCart = () => {
               name="fromDate"
               value={fromDate}
               onChange={SetFromDate}
-              style={{ width: "86%" }}
+              style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
               min={new Date().toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -405,7 +406,7 @@ const handleCloseCart = () => {
               name="toDate"
               value={toDate}
               onChange={SetToDate}
-              style={{ width: "86%" }}
+              style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
               min={new Date().toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),

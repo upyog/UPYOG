@@ -59,7 +59,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
     cartDetails: [
       {
         addType: "Unipolar",
-        faceArea: "Unipole 12 X 8",
+        faceArea:"Unipole_12_X_8",
         location: "Green Park",
         nightLight: false,
         bookingDate: "2024-11-30",
@@ -100,7 +100,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
   };
 
   // Sample total booking amount
-  const totalBookingAmount = 1500; // Replace with actual amount
+  const totalBookingAmount = mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails[0].taxAmount; // Replace with actual amount
 
   return (
     <div>
