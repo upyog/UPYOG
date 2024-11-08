@@ -14,8 +14,10 @@ import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.util.PetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.*;
+import static org.egov.ptr.util.PTRConstants.*;
 
 @Service
 public class DemandService {
@@ -31,9 +33,12 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
-	
+
 	@Autowired
 	private PetUtil petUtil;
+
+	@Autowired
+	private CalculationService calculationService;
 
 	public List<Demand> createDemand(PetRegistrationRequest petReq) {
 		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
@@ -42,14 +47,13 @@ public class DemandService {
 		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
 		User owner = User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
 				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
-		List<DemandDetail> demandDetails = new LinkedList<>();
-		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(BigDecimal.valueOf(500.00))
-				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
+		List<DemandDetail> demandDetails = calculationService.calculateDemand(petReq);
 
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
 				.minimumAmountPayable(amountPayableInteger).tenantId(tenantId)
 				.taxPeriodFrom(Long.valueOf("1680307199000")).taxPeriodTo(Long.valueOf("1711929599000"))
-				.consumerType("ptr").businessService(config.getBusinessService()).additionalDetails(null).build();
+				.consumerType(PET_BUSINESSSERVICE).businessService(config.getBusinessService()).additionalDetails(null)
+				.build();
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 
@@ -57,7 +61,7 @@ public class DemandService {
 	}
 
 	private BigDecimal getAmountPayableMdms(PetRegistrationRequest petReq) {
-		
+
 		return null;
 	}
 

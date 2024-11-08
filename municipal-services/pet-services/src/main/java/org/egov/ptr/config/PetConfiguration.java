@@ -177,4 +177,10 @@ public class PetConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
 
+	@Value("${egov.ptr.newapplication.fee}")
+	private String newApplicationFee;
+	
+	@Value("${egov.ptr.renewapplication.fee}")
+	private String renewApplicationFee;
+	
 }
