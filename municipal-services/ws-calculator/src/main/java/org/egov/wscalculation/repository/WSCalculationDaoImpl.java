@@ -224,9 +224,9 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	}
 	
 	@Override
-	public List<String> getConnectionsNoByGroups(String tenantId, String connectionType, List<String> groups) {
+	public List<String> getConnectionsNoByGroups(String tenantId, String connectionType, String group) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, null,groups, preparedStatement);
+		String query = queryBuilder.getConnectionsNoByLocality(tenantId, connectionType,WSCalculationConstant.ACTIVE_CONNECTION, null,group, preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " query : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}

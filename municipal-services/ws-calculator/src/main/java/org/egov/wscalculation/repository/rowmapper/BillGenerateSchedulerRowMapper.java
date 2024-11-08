@@ -28,7 +28,7 @@ public class BillGenerateSchedulerRowMapper implements ResultSetExtractor<List<B
 			billScheduler.setBillingcycleEnddate(rs.getLong("billingcycleenddate"));
 			billScheduler.setStatus(BillStatus.fromValue(rs.getString("status")));
 			billScheduler.setTenantId(rs.getString("tenantid"));
-
+			billScheduler.setGrup(rs.getString("groups"));
 			AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdby"))
 					.createdTime(rs.getLong("createdtime")).lastModifiedBy(rs.getString("lastmodifiedby"))
 					.lastModifiedTime(rs.getLong("lastmodifiedtime")).build();

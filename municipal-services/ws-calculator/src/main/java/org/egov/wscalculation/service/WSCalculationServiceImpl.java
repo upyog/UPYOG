@@ -160,6 +160,23 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		return calculations;
 	}
 
+	
+	
+	
+	
+	
+	public List<Calculation> bulkbillgeneration(CalculationReq request, Map<String, Object> masterMap) {
+		List<Calculation> calculations = getCalculations(request, masterMap);
+		demandService.generateDemandForBillingCycleInBulk(request, calculations, masterMap, true);
+		return calculations;
+	}
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * 
 	 * @param request - Calculation Request Object
@@ -548,7 +565,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 				
 				if (billSchedular.getTenantId().equalsIgnoreCase("pb.patiala"))
 					connectionNos = wSCalculationDao.getConnectionsNoByGroups(billSchedular.getTenantId(),
-							WSCalculationConstant.nonMeterdConnection, billSchedular.getGroups());
+							WSCalculationConstant.nonMeterdConnection, billSchedular.getGrup());
 				else
 					connectionNos = wSCalculationDao.getConnectionsNoByLocality(billSchedular.getTenantId(),
 							WSCalculationConstant.nonMeterdConnection, billSchedular.getLocality());
