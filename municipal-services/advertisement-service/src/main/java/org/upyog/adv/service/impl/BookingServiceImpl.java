@@ -210,10 +210,9 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
 		
-		String tenantId = advertisementBookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
-		
-		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
-		bookingValidator.validateUpdate(advertisementBookingRequest, mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
+//		String tenantId = bookingDetails.get(0).getTenantId();		
+//		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
+//		bookingValidator.validateUpdate(advertisementBookingRequest.getBookingApplication(), mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
 
 		convertBookingRequest(advertisementBookingRequest, bookingDetails.get(0));
 

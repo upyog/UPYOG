@@ -96,7 +96,12 @@ public class BookingConfiguration {
 //	@Value("${kafka.topics.notification.email}")
 //	private String emailNotifTopic;
 
+	@Value("${kafka.topics.receipt.create}")
+	private String receiptCreateTopic;
 	
+	@Value("${egov.adv.download.permission.letter.link}")
+	private String permissionLetterLink;
+
 	//Module and business name
 	@Value("${adv.module.name}")
 	private String moduleName;
@@ -106,6 +111,12 @@ public class BookingConfiguration {
 	
 	@Value("${adv.calculation.tax.applicable}")
 	private String applicableTaxes;
+	
+	@Value("${egbs.host}")
+	private String egbsHost;
+
+	@Value("${egbs.fetchbill.endpoint}")
+	private String egbsFetchBill;
 	
 	@Value("${egov.billingservice.host}")
 	private String billingHost;
@@ -121,6 +132,8 @@ public class BookingConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
+	
+
 	
 	
 
