@@ -6,7 +6,7 @@ import { PGRReducers } from "@upyog/digit-ui-module-pgr";
 import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks } from "@upyog/digit-ui-module-mcollect";
 // import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
-import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import { initPGRComponents } from "@upyog/digit-ui-module-pgr";
 import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import { initHRMSComponents } from "@upyog/digit-ui-module-hrms";
@@ -28,7 +28,7 @@ import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 
 // import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
 // import { Body, TopBar } from "@upyog/digit-ui-react-components";
-import "@upyog-niua/upyog-css/example/index.css";
+// import "@upyog-niua/upyog-css/example/index.css";
 
 import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
 
