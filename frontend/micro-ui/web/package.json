@@ -5,7 +5,14 @@
   "homepage": "/digit-ui",
   "workspaces": [
     "micro-ui-internals/packages/libraries",
-    "micro-ui-internals/packages/react-components"
+    "micro-ui-internals/packages/react-components",
+    "micro-ui-internals/packages/modules/fsm",
+    "micro-ui-internals/packages/modules/pt",
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/ws",
+    "micro-ui-internals/packages/modules/core",
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/ptr"
   ],
   "engines": {
     "node": ">=14"
@@ -48,7 +55,8 @@
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "**/styled-components": "5.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
