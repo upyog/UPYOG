@@ -75,6 +75,11 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 				appealMap.put(appealUuId, currentAppeal);
 
 			}
+			else if(null!=currentAppeal)
+			{
+				addDocToAppeal(rs, currentAppeal);
+				//appealMap.put(appealUuId, currentAppeal);
+			}
 		}
 		return new ArrayList<>(appealMap.values());
 	}
@@ -84,6 +89,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 		String docId = rs.getString("pdocid");
 		String entityId = rs.getString("pdocentityid");
 		List<Document> docs = appeal.getDocuments();
+		
 
 		if (!(docId != null && entityId.equals(appeal.getId())))
 			return;

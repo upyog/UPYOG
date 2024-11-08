@@ -1276,7 +1276,7 @@ public class EstimationService {
 
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
 
-			totalAmount=totalAmount.add(collectedAmtForOldDemand);
+			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
 		}
 		//Added For Manipur 
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
