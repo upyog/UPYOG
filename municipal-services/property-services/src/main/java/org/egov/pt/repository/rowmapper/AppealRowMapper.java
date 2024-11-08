@@ -37,10 +37,11 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 	public List<Appeal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		// TODO Auto-generated method stub
 		Map<String, Appeal> appealMap = new LinkedHashMap<>();
+		Appeal currentAppeal=new Appeal();
 		while(rs.next())
 		{
 			String appealUuId = rs.getString("id");
-			Appeal currentAppeal = appealMap.get(appealUuId);
+			currentAppeal = appealMap.get(appealUuId);
 			String tenanId = rs.getString("tenantid");
 
 			if(null==currentAppeal)
@@ -75,6 +76,11 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 				appealMap.put(appealUuId, currentAppeal);
 
 			}
+			else if(null!=currentAppeal)
+			{
+				addDocToAppeal(rs, currentAppeal);
+				//appealMap.put(appealUuId, currentAppeal);
+			}
 		}
 		return new ArrayList<>(appealMap.values());
 	}
@@ -84,6 +90,7 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 		String docId = rs.getString("pdocid");
 		String entityId = rs.getString("pdocentityid");
 		List<Document> docs = appeal.getDocuments();
+		
 
 		if (!(docId != null && entityId.equals(appeal.getId())))
 			return;
