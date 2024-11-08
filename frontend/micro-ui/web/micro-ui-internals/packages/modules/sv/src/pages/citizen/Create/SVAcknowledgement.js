@@ -1,7 +1,7 @@
 import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { svPayloadData } from "../../../utils";
 
 /* This component, SVAcknowledgement, is responsible for displaying the acknowledgement 
@@ -53,10 +53,7 @@ const BannerPicker = (props) => {
 const SVAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
   const mutation = Digit.Hooks.sv.useSvCreateApi(data.address?.city?.code); 
-  const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
-  const { tenants } = storeData || {};
-
+  const user = Digit.UserService.getUser().info;
 
   useEffect(() => {
     try {
@@ -81,9 +78,14 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
+      {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+      :
+      <Link to={`/digit-ui/employee`}>
+        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+      </Link>}
     </Card>
   );
 };

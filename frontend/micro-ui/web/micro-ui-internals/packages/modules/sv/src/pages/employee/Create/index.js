@@ -97,6 +97,8 @@ const SVEmpCreate = ({ parentRoute }) => {
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("SV_EMP_CREATE");
+    sessionStorage.removeItem("beneficiary");
+    sessionStorage.removeItem("disabilityStatus");
   };
 
   
