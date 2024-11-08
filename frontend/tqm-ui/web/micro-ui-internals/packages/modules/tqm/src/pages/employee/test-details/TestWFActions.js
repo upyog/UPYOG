@@ -1,17 +1,35 @@
-import { CardText, FormComposerV2, Loader, Modal, WarningIcon } from "@egovernments/digit-ui-react-components";
+import {
+  CardText,
+  FormComposerV2,
+  Loader,
+  Modal,
+  WarningIcon,
+} from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { updateConfig } from "./config/updateTestConfig";
 import { testResultsConfig } from "./config/testResultsConfig";
 import _ from "lodash";
 
-function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, testDetailsData = null, isDataLoading }) {
+function TestWFActions({
+  id,
+  t,
+  WFData,
+  actionData,
+  actionState,
+  submitAction,
+  testDetailsData = null,
+  isDataLoading,
+}) {
   const [showPopUp, setshowPopUp] = useState(null);
   const [config, setConfig] = useState(null);
   const [tempFormData, setTempFormData] = useState({});
   const [convertedData, setConvertedData] = useState({});
   const [drafted, setDrafted] = useState({});
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading: istestLabLoading, data: testLabs } = Digit.Hooks.tqm.useCustomMDMSV2({
+  const {
+    isLoading: istestLabLoading,
+    data: testLabs,
+  } = Digit.Hooks.tqm.useCustomMDMSV2({
     tenantId: tenantId,
     schemaCode: "PQM.QualityTestLab",
   });
@@ -34,7 +52,9 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
             {
               file: { name: "photo" },
               fileStoreId: {
-                fileStoreId: testDetailsData?.documents?.filter((i) => i.isActive === true)?.[0]?.fileStoreId,
+                fileStoreId: testDetailsData?.documents?.filter(
+                  (i) => i.isActive === true
+                )?.[0]?.fileStoreId,
                 tenantId: tenantId,
               },
             },
@@ -45,43 +65,96 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
     // }
   }, [testDetailsData?.testCriteria]);
 
-  const UpdateTestSessionScheduled = Digit.Hooks.useSessionStorage("UPDATE_TEST_SESSION_SCHEDULED", {});
-  const [sessionFormDataScheduled,setSessionFormDataScheduled, clearSessionFormDataScheduled] = UpdateTestSessionScheduled
+  const UpdateTestSessionScheduled = Digit.Hooks.useSessionStorage(
+    "UPDATE_TEST_SESSION_SCHEDULED",
+    {}
+  );
+  const [
+    sessionFormDataScheduled,
+    setSessionFormDataScheduled,
+    clearSessionFormDataScheduled,
+  ] = UpdateTestSessionScheduled;
 
-  const UpdateTestSessionPendingResults = Digit.Hooks.useSessionStorage("UPDATE_TEST_SESSION_PENDINGRESULTS", {});
-  const [sessionFormDataPendingResults,setSessionFormDataPendingResults, clearSessionFormDataPendingResults] = UpdateTestSessionPendingResults
-  const empty = Object.values(sessionFormDataPendingResults).every((i) => i === undefined || (Array.isArray(i) && i.length === 0));
-  const emptyD = Object.values(drafted).every((i) => i === undefined || (Array.isArray(i) && i.length === 0));
+  const UpdateTestSessionPendingResults = Digit.Hooks.useSessionStorage(
+    "UPDATE_TEST_SESSION_PENDINGRESULTS",
+    {}
+  );
+  const [
+    sessionFormDataPendingResults,
+    setSessionFormDataPendingResults,
+    clearSessionFormDataPendingResults,
+  ] = UpdateTestSessionPendingResults;
+  const empty = Object.values(sessionFormDataPendingResults).every(
+    (i) => i === undefined || (Array.isArray(i) && i.length === 0)
+  );
+  const emptyD = Object.values(drafted).every(
+    (i) => i === undefined || (Array.isArray(i) && i.length === 0)
+  );
 
   useEffect(() => {
-    const emptyCheck = tempFormData ? Object.values(tempFormData).every((i) => i === undefined || (Array.isArray(i) && i.length === 0)) : null;
-    const fillCheck = convertedData ? Object.values(convertedData).every((i) => i === undefined || (Array.isArray(i) && i.length === 0)) : true;
-    if (actionState === "DRAFTED" && emptyCheck && !fillCheck && !_.isEmpty(convertedData) && _.isEmpty(sessionFormDataPendingResults)) {
+    const emptyCheck = tempFormData
+      ? Object.values(tempFormData).every(
+          (i) => i === undefined || (Array.isArray(i) && i.length === 0)
+        )
+      : null;
+    const fillCheck = convertedData
+      ? Object.values(convertedData).every(
+          (i) => i === undefined || (Array.isArray(i) && i.length === 0)
+        )
+      : true;
+    if (
+      actionState === "DRAFTED" &&
+      emptyCheck &&
+      !fillCheck &&
+      !_.isEmpty(convertedData) &&
+      _.isEmpty(sessionFormDataPendingResults)
+    ) {
       setDrafted({ ...convertedData });
     }
   }, [convertedData, tempFormData]);
 
-  const onFormValueChange = (setValue, formData, errors, formState, reset, setError, clearErrors, trigger, getValues) => {
+  const onFormValueChange = (
+    setValue,
+    formData,
+    errors,
+    formState,
+    reset,
+    setError,
+    clearErrors,
+    trigger,
+    getValues
+  ) => {
     if (actionState === "PENDINGRESULTS" || actionState === "DRAFTED") {
       if (!_.isEqual(sessionFormDataPendingResults, formData)) {
         const duplicateFormData = _.clone(formData);
         delete duplicateFormData.status;
-        setSessionFormDataPendingResults({ ...sessionFormDataPendingResults, ...duplicateFormData });
-        setTempFormData({ ...sessionFormDataPendingResults, ...duplicateFormData });
+        setSessionFormDataPendingResults({
+          ...sessionFormDataPendingResults,
+          ...duplicateFormData,
+        });
+        setTempFormData({
+          ...sessionFormDataPendingResults,
+          ...duplicateFormData,
+        });
       }
     } else {
       if (!_.isEqual(sessionFormDataScheduled, formData)) {
-        setSessionFormDataScheduled({ ...sessionFormDataScheduled, ...formData });
+        setSessionFormDataScheduled({
+          ...sessionFormDataScheduled,
+          ...formData,
+        });
       }
     }
-    
-  }
+  };
 
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   // const { isLoading: isDataLoading, data: testDetailsData } = Digit.Hooks.tqm.useSearchTest({ id: id, tenantId: tenantId });
 
-  const { isLoading: istestCriteriaLoading, data: testCriteriaData } = Digit.Hooks.tqm.useCustomMDMSV2({
+  const {
+    isLoading: istestCriteriaLoading,
+    data: testCriteriaData,
+  } = Digit.Hooks.tqm.useCustomMDMSV2({
     tenantId: tenantId,
     schemaCode: "PQM.QualityCriteria",
     changeQueryName: "QualityCriteria",
@@ -89,7 +162,10 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
 
   function checkNonEmptyAndDefinedValues(data) {
     for (const key in data) {
-      if (key !== "documents" && (data[key] === null || data[key] === undefined || data[key] === "")) {
+      if (
+        key !== "documents" &&
+        (data[key] === null || data[key] === undefined || data[key] === "")
+      ) {
         return false;
       }
     }
@@ -103,7 +179,10 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
       clearSessionFormDataScheduled();
     }
 
-    if ((actionState === "PENDINGRESULTS" || actionState === "DRAFTED") && !showPopUp) {
+    if (
+      (actionState === "PENDINGRESULTS" || actionState === "DRAFTED") &&
+      !showPopUp
+    ) {
       if (checkNonEmptyAndDefinedValues(data) === false) {
         submitAction({ updateError: true });
         return;
@@ -123,16 +202,31 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
         case "SCHEDULED":
           return setConfig(updateConfig({ t, testLabs }));
         case "PENDINGRESULTS":
-          if (testDetailsData && testCriteriaData) return setConfig(testResultsConfig({ t, testDetailsData, testCriteriaData }));
+          if (testDetailsData && testCriteriaData)
+            return setConfig(
+              testResultsConfig({ t, testDetailsData, testCriteriaData })
+            );
           return setConfig(null);
         case "DRAFTED":
-          if (testDetailsData && testCriteriaData) return setConfig(testResultsConfig({ t, testDetailsData, testCriteriaData }));
+          if (testDetailsData && testCriteriaData)
+            return setConfig(
+              testResultsConfig({ t, testDetailsData, testCriteriaData })
+            );
           return setConfig(null);
         default:
           return setConfig(null);
       }
     }
-  }, [actionState, testLabs, istestLabLoading, istestCriteriaLoading, testCriteriaData, testDetailsData, isDataLoading, WFData]);
+  }, [
+    actionState,
+    testLabs,
+    istestLabLoading,
+    istestCriteriaLoading,
+    testCriteriaData,
+    testDetailsData,
+    isDataLoading,
+    WFData,
+  ]);
 
   const onConfirm = () => {
     const keyf = Object.keys(showPopUp);
@@ -144,8 +238,10 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
       }
     });
     if (showPopUp?.documents?.length > 0) {
-      const fileStoreIds = showPopUp.documents.map(([, obj]) => obj.fileStoreId.fileStoreId);
-      testDetailsData.documents.push({ fileStoreId: fileStoreIds[0] });
+      const fileStoreIds = showPopUp.documents.map(
+        ([, obj]) => obj.fileStoreId.fileStoreId
+      );
+      testDetailsData.documents = [{ fileStoreId: fileStoreIds[0] }];
     }
     testDetailsData.workflow = { action: "UPDATE_RESULT" };
     submitAction(testDetailsData);
@@ -187,13 +283,20 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
         _.resultValue = tempFormData[i];
       }
     });
-    if (tempFormData?.documents?.length === 0 && testDetailsData.documents?.length > 0) {
+    if (
+      tempFormData?.documents?.length === 0 &&
+      testDetailsData.documents?.length > 0
+    ) {
       testDetailsData.documents = [];
     }
     if (tempFormData?.documents?.length > 0) {
-      const fileStoreIds = tempFormData.documents.map(([, obj]) => obj.fileStoreId.fileStoreId);
+      const fileStoreIds = tempFormData.documents.map(
+        ([, obj]) => obj.fileStoreId.fileStoreId
+      );
       // testDetailsData.documents.filter((i) => i.fileStoreId !== fileStoreIds[0]).forEach((i) => (i.isActive = false));
-      testDetailsData.documents = fileStoreIds[0] ? [{ fileStoreId: fileStoreIds[0], isActive: true }] : [];
+      testDetailsData.documents = fileStoreIds[0]
+        ? [{ fileStoreId: fileStoreIds[0], isActive: true }]
+        : [];
     }
     testDetailsData.workflow = { action: "SAVE_AS_DRAFT" };
     submitAction(testDetailsData);
@@ -205,9 +308,22 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
       <FormComposerV2
         config={config}
         onSubmit={onSubmit}
-        label={t(actionState === "SCHEDULED" ? "ES_TQM_UPDATE_STATUS_BUTTON" : "ES_TQM_SUBMIT_TEST_RESULTS_BUTTON")}
-        secondaryActionLabel={t(actionData?.find((i) => i.action === "SAVE_AS_DRAFT") ? "ES_TQM_SAVE_AS_DRAFT" : null)}
-        secondaryActionStyle={{ border: "1px solid", justifyContent: "center", padding: "10px 0px", width: "100%" }}
+        label={t(
+          actionState === "SCHEDULED"
+            ? "ES_TQM_UPDATE_STATUS_BUTTON"
+            : "ES_TQM_SUBMIT_TEST_RESULTS_BUTTON"
+        )}
+        secondaryActionLabel={t(
+          actionData?.find((i) => i.action === "SAVE_AS_DRAFT")
+            ? "ES_TQM_SAVE_AS_DRAFT"
+            : null
+        )}
+        secondaryActionStyle={{
+          border: "1px solid",
+          justifyContent: "center",
+          padding: "10px 0px",
+          width: "100%",
+        }}
         onSecondayActionClick={handleSaveDraft}
         checkSecondaryValidation={true}
         submitInForm={isMobile ? true : false}
@@ -243,7 +359,9 @@ function TestWFActions({ id, t, WFData, actionData, actionState, submitAction, t
           formId="modal-action"
         >
           <div>
-            <CardText style={{ margin: 0 }}>{t("ES_TQM_UPDATE_MODAL_TEXT") + " "}</CardText>
+            <CardText style={{ margin: 0 }}>
+              {t("ES_TQM_UPDATE_MODAL_TEXT") + " "}
+            </CardText>
           </div>
         </Modal>
       )}
