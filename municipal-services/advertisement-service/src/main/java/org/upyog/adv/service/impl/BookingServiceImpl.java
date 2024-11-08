@@ -163,7 +163,7 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 		}
 
 		// Enforcing the maximum booking days constraint
-		if (totalDates.size() > 3) {
+		if (totalDates.size() > 90) {
 			throw new CustomException(BookingConstants.INVALID_BOOKING_DATE_RANGE,
 					"Booking is not allowed for this number of days.");
 		}
@@ -210,10 +210,9 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
 		
-		String tenantId = advertisementBookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
-		
-		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
-		bookingValidator.validateUpdate(advertisementBookingRequest, mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
+//		String tenantId = bookingDetails.get(0).getTenantId();		
+//		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
+//		bookingValidator.validateUpdate(advertisementBookingRequest.getBookingApplication(), mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
 
 		convertBookingRequest(advertisementBookingRequest, bookingDetails.get(0));
 
