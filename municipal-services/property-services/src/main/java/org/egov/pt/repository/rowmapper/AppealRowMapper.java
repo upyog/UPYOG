@@ -37,11 +37,10 @@ public class AppealRowMapper implements ResultSetExtractor<List<Appeal>>{
 	public List<Appeal> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		// TODO Auto-generated method stub
 		Map<String, Appeal> appealMap = new LinkedHashMap<>();
-		Appeal currentAppeal=new Appeal();
 		while(rs.next())
 		{
 			String appealUuId = rs.getString("id");
-			currentAppeal = appealMap.get(appealUuId);
+			Appeal currentAppeal = appealMap.get(appealUuId);
 			String tenanId = rs.getString("tenantid");
 
 			if(null==currentAppeal)
