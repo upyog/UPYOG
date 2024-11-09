@@ -232,17 +232,17 @@ public class PTRConstants {
 
 	public static final String PET_BUSINESSSERVICE = "ptr";
 
-	public static final String STATUS_APPLIED = "APPLIED";
+	public static final String STATUS_APPLIED = "Applied";
 
-	public static final String STATUS_DOCVERIFIED = "DOCVERIFIED";
+	public static final String STATUS_DOCVERIFIED = "Documents Verified";
 
-	public static final String STATUS_APPROVED = "APPROVED";
+	public static final String STATUS_APPROVED = "Approved";
 
-	public static final String STATUS_REGISTRATIONCOMPLETED = "REGISTRATIONCOMPLETED";
+	public static final String STATUS_REGISTRATIONCOMPLETED = "Registration Completed";
 
-	public static final String STATUS_EXPIRED = "EXPIRED";
+	public static final String STATUS_EXPIRED = "Expired";
 
-	public static final String STATUS_REJECTED = "REJECTED";
+	public static final String STATUS_REJECTED = "Rejected";
 
 	public static final String ACTION_APPROVE = "APPROVE";
 

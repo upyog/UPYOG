@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Import({ TracerConfiguration.class })
@@ -176,5 +177,11 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
+	
+	@Value("${egov.ptr.newapplication.fee}")
+	private BigDecimal newApplicationFee;
+	
+	@Value("${egov.ptr.renewapplication.fee}")
+	private BigDecimal renewApplicationFee;
 	
 }
