@@ -17,7 +17,8 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
 
   const [_searchParams, setSearchParams] = useState(() => ({ ...searchParams, services: [] }));
   const [vendingType, setVendingType] = useState()
-  const [vendingZo_ne, setVendingZone] = useState()
+  const [_vendingZone, setVendingZone] = useState()
+  const [app_status, setAppStatus] = useState()
 
   const ApplicationTypeMenu = [
     {
@@ -147,7 +148,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
               </div>
               <div>
                 <Dropdown
-                  selected={vendingZo_ne}
+                  selected={_vendingZone}
                   select={setVendingZone}
                   option={vending_Zone}
                   optionKey="i18nKey"
@@ -177,9 +178,9 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
               </div>
               <div>
                 <Dropdown
-                  selected={vendingType}
-                  select={setVendingType}
-                  option={vendingTypeOptions}
+                  selected={app_status}
+                  select={setAppStatus}
+                  option={[{i18nKey: "Approved"}, {i18nKey: "Rejected"}, {i18nKey: "RegistrationCompleted"}, {i18nKey: "Applied"}]}
                   optionKey="i18nKey"
                   t={t}
                   placeholder={"Select"}

@@ -3,13 +3,6 @@
 
   // applies a style to the inputs of cells
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  
-  // maybe need later
-  const GetSlaCell = (value) => {
-    if (isNaN(value)) return <span className="sla-cell-success">0</span>;
-    return value < 0 ? <span className="sla-cell-error">{value}</span> : <span className="sla-cell-success">{value}</span>;
-  };
-
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
 
 /**
@@ -37,29 +30,29 @@
           mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
         },
 
-        {
-          Header: t("SV_VENDOR_ID"),
-          Cell: ( row ) => {
-            console.log("data of inbox tableconfig row :: ", row)
-            return GetCell(`${row?.cell?.row?.original?.searchData?.vendorDetail[0]?.["id"]}`)
-          },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
-        }, 
+        // {
+        //   Header: t("SV_VENDOR_ID"),
+        //   Cell: ( row ) => {
+        //     console.log("data of inbox tableconfig row :: ", row)
+        //     return GetCell(`${row?.cell?.row?.original?.searchData?.vendorDetail[0]?.["id"]}`)
+        //   },
+        //   mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
+        // }, 
 
         {
           Header: t("SV_VENDOR_NAME"),
           Cell: ( row ) => {
             return GetCell(`${row?.cell?.row?.original?.searchData?.vendorDetail[0]?.["name"]}`)
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.vendorDetail[0]?.["name"]),
         }, 
 
         {
           Header: t("SV_VENDING_TYPE"),
           Cell: ( row ) => {
-            return GetCell(`${row?.cell?.row?.original?.searchData?.vendorDetail[0]?.["relationshipType"]}`)
+            return GetCell(`${row?.cell?.row?.original?.searchData?.["vendingActivity"]}`)
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["vendingActivity"]),
         },
         
         {
@@ -67,7 +60,7 @@
           Cell: ( row ) => {
             return GetCell(`${row?.cell?.row?.original?.searchData?.["vendingZone"]}`)
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["vendingZone"]),
         },
         
         {
