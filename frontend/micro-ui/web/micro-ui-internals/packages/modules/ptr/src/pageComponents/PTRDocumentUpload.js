@@ -235,6 +235,7 @@ function PTRSelectDocument({
 
   return (
     <div style={{ marginBottom: "24px" }}>
+      {/* Renders a dropdown, with the label if the field have label */}
       {doc?.hasDropdown ? (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
@@ -247,7 +248,10 @@ function PTRSelectDocument({
             t={t}
           />
         </LabelFieldPair>
-      ) : null}
+      ) : (
+        <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
+      )
+      }
       <LabelFieldPair>
         <CardLabel className="card-label-smaller"></CardLabel>
         <div className="field">

@@ -39,8 +39,10 @@ export const PTRSearch = {
     return response.PetRegistrationApplications[0];
   },
   RegistrationDetails: ({ PetRegistrationApplications: response, t }) => {
-    return [
 
+    // function to filter out the fields which have values
+    const filterEmptyValues = (values) => values.filter(item => item.value);
+    return [
       {
         title: "PTR_APPLICANT_DETAILS_HEADER",
         asSectionHeader: true,
@@ -56,7 +58,8 @@ export const PTRSearch = {
       {
         title: "PTR_PET_DETAILS_HEADER",
         asSectionHeader: true,
-        values: [
+        values: filterEmptyValues([
+          { title: "PTR_PET_TOKEN", value: response?.petToken },
           { title: "PTR_PET_TYPE", value: response?.petDetails?.petType },
           { title: "PTR_BREED_TYPE", value: response?.petDetails?.breedType },
           { title: "PTR_PET_NAME", value: response?.petDetails?.petName },
@@ -66,9 +69,7 @@ export const PTRSearch = {
           { title: "PTR_VACCINATION_NUMBER", value: response?.petDetails?.vaccinationNumber },
           { title: "PTR_PET_AGE", value: response?.petDetails?.petAge + " Months" },
           { title: "PTR_PET_SEX", value: response?.petDetails?.petGender },
-
-
-        ],
+        ]),
       },
 
       {
@@ -77,25 +78,26 @@ export const PTRSearch = {
         values: [
           { title: "PTR_ADDRESS_PINCODE", value: response?.address?.pincode },
           { title: "PTR_ADDRESS_CITY", value: response?.address?.city },
-          { title: "PTR_STREET_NAME",value: response?.address?.street, },
-          { title: "PTR_HOUSE_NO",value: response?.address?.doorNo,},
-          
-  
+          { title: "PTR_STREET_NAME",value: response?.address?.street },
+          { title: "PTR_HOUSE_NO",value: response?.address?.doorNo},
+          { title: "PTR_ADDRESS_LINE1",value: response?.address?.addressLine1},
+          { title: "PTR_ADDRESS_LINE2",value: response?.address?.addressLine2},
+          { title: "PTR_HOUSE_NAME",value: response?.address?.buildingName},
+          { title: "PTR_LOCALITY",value: response?.address?.locality},
+          { title: "PTR_LANDMARK",value: response?.address?.landmark},
         ],
       },
 
       {
         title: "PTR_DOCUMENT_DETAILS",
         additionalDetails: {
-          
           documents: [
             {
-             
               values: response?.documents
                 ?.map((document) => {
 
                   return {
-                    title: `PTR_${document?.documentType.replace(".", "_")}`,
+                    title: `${document?.documentType.replace(".", "_")}`,
                     documentType: document?.documentType,
                     documentUid: document?.documentUid,
                     fileStoreId: document?.filestoreId,

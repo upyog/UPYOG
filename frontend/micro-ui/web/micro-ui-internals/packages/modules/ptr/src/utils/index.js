@@ -35,7 +35,7 @@ export const setAddressDetails = (data) => {
     doorNo: address?.houseNo || null,
     street: address?.streetName || null,
     locality: {
-      code: address?.locality?.code || "NA",
+      code: address?.locality?.i18nKey || "NA",
       area: address?.locality?.name,
     },
     buildingName: address?.houseName,
@@ -64,8 +64,8 @@ export const setPetDetails = (data) => {
 
   let petDetails = {
     // ...pets,
-    petType: pets?.petType?.code,
-    breedType: pets?.breedType?.code,
+    petType: pets?.petType?.value,
+    breedType: pets?.breedType?.value,
     petGender: pets?.petGender?.code,
     birthDate: pets?.birthDate ? convertDateToEpoch(pets?.birthDate) : null,
     adoptionDate: pets?.adoptionDate ? convertDateToEpoch(pets?.adoptionDate) : null,

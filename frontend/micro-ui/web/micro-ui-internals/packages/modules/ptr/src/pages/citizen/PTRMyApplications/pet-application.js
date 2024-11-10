@@ -21,7 +21,9 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("PTR_APPLICATION_STATUS")} note={application?.status} />
       <KeyNote keyValue={t("PTR_SEARCH_PET_TYPE")} note={application?.petDetails?.petType} />
 
-      {(application?.status == "EXPIRED") && <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} onSubmit={handleRenewalClick}  />}
+      {(application?.status == "Expired") && 
+      <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} onSubmit={handleRenewalClick} />
+}
       <Link to={`/digit-ui/citizen/ptr/petservice/application/${application?.applicationNumber}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>

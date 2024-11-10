@@ -8,11 +8,21 @@ import { ApplicationContext } from "../Module";
 import { convertEpochToDate } from "../utils";
 
 
-const PTRCitizenPet
-  = ({ t, config, onSelect, userType, formData, renewApplication }) => {
+const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplication }) => {
     const { pathname: url } = useLocation();
     const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null; // function to convert an a single string value into an object for dropdowns
     let validation = {};
+
+    // custom hook for getting petcolor data from mdms and format it according to the dropdown need
+    let { data: pet_color } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["PetService"]?.["PetColor"].map((petone) => {
+          return { i18nKey: `${petone.colourName}`, colourCode: `${petone.colourCode}`, code: `${petone.colourName}`, active: `${petone.active}` };
+        })
+        return formattedData;
+      },
+    });
 
   // added data from renewapplication, renders data if there is data in renewapplication
     const [petType, setPetType] = useState(convertToObject(renewApplication?.petDetails?.petType) || formData?.pets?.petType || "");
@@ -24,14 +34,13 @@ const PTRCitizenPet
     const [clinicName, setClinicName] = useState(renewApplication?.petDetails?.clinicName || formData?.pets?.clinicName || "");
     const [vaccinationNumber, setVaccinationNumber] = useState(renewApplication?.petDetails?.vaccinationNumber || formData?.pets?.vaccinationNumber || "");
     const [lastVaccineDate, setVaccinationDate] = useState(renewApplication?.petDetails?.lastVaccineDate || formData?.pets?.lastVaccineDate || "");
-    const [petColor, setpetColor] = useState(convertToObject(renewApplication?.petDetails?.petColor) || formData?.pets?.petColor || "");
-    const [identificationmark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationmark || formData?.pets?.identificationmark || "");
+    const [petColor, setpetColor] = useState( formData?.pets?.petColor || "");
+    const [identificationmark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationMark || formData?.pets?.identificationMark || "");
     const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || formData?.pets?.selectBirthAdoption || [{ i18nKey: "", code: "" }]);
     const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birth || "");
     const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoption || "");
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-
 
     const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType"); // hook for pettype data
     const { data: Breed_Type} = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hook for breed type data
@@ -59,6 +68,11 @@ const PTRCitizenPet
         }
       });
 
+      useEffect(() => {
+        // To set the petColor
+        setpetColor(pet_color?.filter((color) => color?.colourCode === renewApplication?.petDetails?.petColor)?.[0])
+      }, [pet_color])
+
     const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
 
     let pet_sex = [];    // array to store data of pet sex
@@ -70,16 +84,29 @@ const PTRCitizenPet
       });
 
 
-    // used the custom hook for getting petcolor data from mdms and format it according to the dropdown need
-    let { data: pet_color, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
-      {
-        select: (data) => {
-          const formattedData = data?.["PetService"]?.["PetColor"].map((petone) => {
-            return { i18nKey: `${petone.colourName}`, colourCode: `${petone.colourCode}`, code: `${petone.colourName}`, active: `${petone.active}` };
-          })
-          return formattedData;
-        },
-      });
+      // If birthDate is selected, the petAge is setted in months
+      useEffect(() => {
+        if (birthDate) {
+          const [year, month, day] = birthDate.split('-').map(Number);
+          const newbirthDate = new Date(year, month - 1, day);  
+          const today = new Date();
+      
+          // Calculate the year and month difference
+          let yearsDiff = today.getFullYear() - newbirthDate.getFullYear();
+          let monthsDiff = today.getMonth() - newbirthDate.getMonth();
+      
+          // Adjust if the birth month hasn't occurred yet this year
+          if (monthsDiff < 0) {
+              yearsDiff -= 1;
+              monthsDiff += 12;
+          }
+      
+          // Total months
+          const totalMonths = yearsDiff * 12 + monthsDiff;
+          setPetAge(totalMonths)
+          console.log("months from date of ajgie: ", totalMonths);
+        }
+      }, [birthDate]);
 
 
     function setbirthDate(e) {
@@ -193,6 +220,44 @@ const PTRCitizenPet
               )}
             />
 
+            <CardLabel>{`${t("PTR_PET_SEX")}`} <span className="astericColor">*</span></CardLabel>
+            <Controller
+              control={control}
+              name={"petGender"}
+              defaultValue={petGender}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={petGender}
+                  select={setPetGender}
+                  option={pet_sex}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+              )}
+            />
+
+            <CardLabel>{`${t("PTR_PET_COLOR")}`} <span className="astericColor">*</span></CardLabel>
+            <Controller
+              control={control}
+              name={"petColor"}
+              defaultValue={petColor}
+              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={petColor}
+                  select={setpetColor}
+                  option={pet_color}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+              )}
+            />
+
             {/* Radio field to select one of the two options: birth or adoption */}
             <CardLabel>{`${t("PTR_SELECT_BIRTH_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
             <RadioButtons
@@ -271,44 +336,6 @@ const PTRCitizenPet
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
-            />
-
-            <CardLabel>{`${t("PTR_PET_SEX")}`} <span className="astericColor">*</span></CardLabel>
-            <Controller
-              control={control}
-              name={"petGender"}
-              defaultValue={petGender}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={petGender}
-                  select={setPetGender}
-                  option={pet_sex}
-                  optionKey="i18nKey"
-                  t={t}
-                  placeholder={"Select"}
-                />
-              )}
-            />
-
-            <CardLabel>{`${t("PTR_PET_COLOR")}`} <span className="astericColor">*</span></CardLabel>
-            <Controller
-              control={control}
-              name={"petColor"}
-              defaultValue={petColor}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={petColor}
-                  select={setpetColor}
-                  option={pet_color}
-                  optionKey="i18nKey"
-                  t={t}
-                  placeholder={"Select"}
-                />
-              )}
             />
 
             <CardLabel>{`${t("PTR_IDENTIFICATION_MARK")}`}</CardLabel>

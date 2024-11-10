@@ -1,38 +1,18 @@
-import React, { useEffect, useState, useContext } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
-import { cardBodyStyle } from "../utils";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { FormStep, TextInput, CardLabel, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/PTRTimeline";
 
-const PTRCitizenDetails
- = ({ t, config, onSelect, userType, formData, renewApplication }) => {
-  const { pathname: url } = useLocation();
+const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, renewApplication }) => {
   let index = 0
-
+  const user = Digit.UserService.getUser().info; // service to fetch user information
   let validation = {};
 
   // added data from renewapplication, renders data if there is data in renewapplication
-  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || renewApplication?.applicantName || formData?.ownerss?.applicantName || "");
-  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || renewApplication?.emailId || formData?.ownerss?.emailId || "");
-  const [mobileNumber, setMobileNumber] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || renewApplication?.mobileNumber || formData?.ownerss?.mobileNumber || ""
-  );
-  const [alternateNumber, setAltMobileNumber] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
-  );
-
-  
-  const [fatherName, setFatherOrHusbandName] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || renewApplication?.fatherName || formData?.ownerss?.fatherName || ""
-  );
-  
- 
-
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const stateId = Digit.ULBService.getStateId();
- 
-
-  
+  const [applicantName, setName] = useState(renewApplication?.applicantName || user?.name || formData?.ownerss?.applicantName || "");
+  const [emailId, setEmail] = useState(renewApplication?.emailId || formData?.ownerss?.emailId || "");
+  const [mobileNumber, setMobileNumber] = useState(renewApplication?.mobileNumber || user?.mobileNumber || formData?.ownerss?.mobileNumber || "");
+  const [alternateNumber, setAltMobileNumber] = useState(formData?.ownerss?.alternateNumber || "");
+  const [fatherName, setFatherOrHusbandName] = useState(renewApplication?.fatherName || formData?.ownerss?.fatherName || "");
 
   function setOwnerName(e) {
     setName(e.target.value);
@@ -40,12 +20,9 @@ const PTRCitizenDetails
   function setOwnerEmail(e) {
     setEmail(e.target.value);
   }
-  
-
   function setMobileNo(e) {
     setMobileNumber(e.target.value);
   }
-  
   function setAltMobileNo(e) {
     setAltMobileNumber(e.target.value);
   }
@@ -53,7 +30,6 @@ const PTRCitizenDetails
     setFatherOrHusbandName(e.target.value);
   }
   
-
   const goNext = () => {
     let owner = formData.ownerss && formData.ownerss[index];
     let ownerStep;
@@ -61,16 +37,12 @@ const PTRCitizenDetails
       ownerStep = { ...owner, applicantName, mobileNumber,alternateNumber, fatherName, emailId};
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      
       ownerStep = { ...owner, applicantName,  mobileNumber,alternateNumber, fatherName,emailId };
       onSelect(config.key, ownerStep, false,index);
     }
   };
 
   const onSkip = () => onSelect();
-
-  
-  
 
   useEffect(() => {
     if (userType === "citizen") {
@@ -112,8 +84,6 @@ const PTRCitizenDetails
             type: "tel",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-       
-         
         />
        
         <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`} <span className="astericColor">*</span></CardLabel>

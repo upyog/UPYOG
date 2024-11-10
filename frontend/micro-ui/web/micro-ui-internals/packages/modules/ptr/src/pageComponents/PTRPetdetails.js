@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router-dom";
 import { stringReplaceAll, CompareTwoObjects } from "../utils";
+import { convertEpochToDate } from "../utils";
 
 const createPtrDetails = () => ({
 
@@ -272,7 +273,7 @@ const OwnerForm = (_props) => {
               optionsKey="code"
               name="selectBirthAdoption"
               value={selectBirthAdoption}
-              selectedOption={selectBirthAdoption}
+              selectedOption={selectBirthAdoption }
               innerStyles={{ display: "inline-block", marginLeft: "20px", paddingBottom: "2px", marginBottom: "2px" }}
               onSelect={setSelectBirthAdoption}
               isDependent={true}
@@ -281,14 +282,14 @@ const OwnerForm = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.selectBirthAdoption ? errors?.selectBirthAdoption?.message : ""}</CardLabelError>
 
-          {(selectBirthAdoption?.code === "Birth" || appData?.petDetails?.birth) && (
+          {(selectBirthAdoption?.code === "Birth" || appData?.petDetails?.birthDate) && (
             <LabelFieldPair>
               <CardLabel>{`${t("PTR_BIRTH")}`} <span className="astericColor">*</span></CardLabel>
               <div className="field">
                 <Controller
                   control={control}
                   name={"birthDate"}
-                  defaultValue={pets?.birthDate || appData?.petDetails?.birthDate}
+                  defaultValue={pets?.birthDate || convertEpochToDate(appData?.petDetails?.birthDate)}
 
                   render={(props) => (
                     <TextInput
@@ -309,14 +310,14 @@ const OwnerForm = (_props) => {
           )}
           <CardLabelError style={errorStyle}>{localFormState.touched.birthDate ? errors?.birthDate?.message : ""}</CardLabelError>
 
-          {(selectBirthAdoption?.code === "Adoption" || appData?.petDetails?.adoption) && (
+          {(selectBirthAdoption?.code === "Adoption" || appData?.petDetails?.adoptionDate) && (
             <LabelFieldPair>
               <CardLabel>{`${t("PTR_ADOPTION")}`} <span className="astericColor">*</span></CardLabel>
               <div className="field">
                 <Controller
                   control={control}
                   name={"adoptionDate"}
-                  defaultValue={pets?.adoptionDate || appData?.petDetails?.adoptionDate}
+                  defaultValue={pets?.adoptionDate || convertEpochToDate(appData?.petDetails?.adoptionDate)}
 
                   render={(props) => (
                     <TextInput
@@ -442,7 +443,7 @@ const OwnerForm = (_props) => {
             <Controller
               control={control}
               name={"petColor"}
-              defaultValue={pets?.petColor}
+              defaultValue={pets?.petColor || convertToObject(appData?.petDetails?.petColor)}
               // rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
@@ -467,7 +468,7 @@ const OwnerForm = (_props) => {
               <Controller
                 control={control}
                 name={"identificationmark"}
-                defaultValue={pets?.identificationmark}
+                defaultValue={pets?.identificationmark || appData?.petDetails?.identificationMark}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },

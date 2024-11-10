@@ -43,7 +43,7 @@ const ApplicationDetails = () => {
     tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
     id: applicationDetails?.applicationData?.applicationData?.applicationNumber,
     moduleCode: businessService,
-    role: "PT_CEMP",
+    role: "PTR_CEMP",
   });
 
 
@@ -74,9 +74,9 @@ const ApplicationDetails = () => {
   }, [workflowDetails.data]);
 
 
-  const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+  const PTR_CEMP = Digit.UserService.hasAccess(["PTR_CEMP"]) || false;
   if (
-    PT_CEMP &&
+    PTR_CEMP &&
     workflowDetails?.data?.applicationBusinessService === "ptr" &&
     workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
   ) {
@@ -115,7 +115,7 @@ const ApplicationDetails = () => {
     },
     { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNumber ? true : false }
   );
-
+  
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
@@ -125,10 +125,10 @@ const ApplicationDetails = () => {
   };
 
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-    dowloadOptions.push({
-      label: t("PTR_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-    });
+  dowloadOptions.push({
+    label: t("PTR_FEE_RECIEPT"),
+    onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+  });
 
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [applicationDetails?.applicationData?.applicationData] }, "petservicecertificate");
@@ -136,14 +136,13 @@ const ApplicationDetails = () => {
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
 
+  if (reciept_data?.Payments[0]?.paymentStatus === "NEW")
+  dowloadOptions.push({
+    label: t("PTR_CERTIFICATE"),
+    onClick: () => printCertificate(),
+  });
 
-  if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
-    dowloadOptions.push({
-      label: t("PTR_CERTIFICATE"),
-      onClick: () => printCertificate(),
-    });
-
-  return (
+    return (
     <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
@@ -180,9 +179,9 @@ const ApplicationDetails = () => {
       />
 
       {/* link added for the renewal application */}
-      <Link to={`/digit-ui/employee/ptr/petservice/renew-application/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}`}  >
+      {(appDetailsToShow?.applicationData?.applicationData?.status == "Expired") && <Link to={`/digit-ui/employee/ptr/petservice/renew-application/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}`}  >
         <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} />
-      </Link>
+      </Link>}
 
     </div>
   );
