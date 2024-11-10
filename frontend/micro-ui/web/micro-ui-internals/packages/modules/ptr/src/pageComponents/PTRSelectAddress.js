@@ -23,7 +23,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
     appData = renewApplication || null;
   } else {
     // On employee side appData takes data from the hook while 
-    // const {applicationNumber} = useParams();
+    const {applicationNumber} = useParams();
     const { isLoading: auditDataLoading, isError: isAuditError, data: app_data_f } = Digit.Hooks.ptr.usePTRSearch(
       {
         tenantId,
@@ -43,12 +43,12 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
   const [pincode, setPincode] = useState(appData?.address?.pincode|| formData?.address?.pincode || "");
   const [city, setCity] = useState(formData?.address?.city ||convertToObject(appData?.address?.city)|| "");
   const [locality, setLocality] = useState(convertToObject(appData?.address?.locality) || formData?.address?.locality || "");
-  const [streetName, setStreetName] = useState(appData?.address?.street || formData?.address?.street || "");
-  const [houseNo, setHouseNo] = useState(appData?.address?.houseNo || formData?.address?.houseNo || "");
+  const [streetName, setStreetName] = useState(appData?.address?.streetName || appData?.address?.street || formData?.address?.streetName || "");
+  const [houseNo, setHouseNo] = useState(appData?.address?.houseNo || appData?.address?.doorNo || formData?.address?.houseNo || "");
   const [landmark, setLandmark] = useState(appData?.address?.landmark || formData?.address?.landmark || "");
-  const [houseName, setHouseName] = useState(appData?.address?.buildingName || formData?.address?.buildingName || "");
-  const [addressline1, setAddressline1] = useState(appData?.address?.addressLine1 || formData?.address?.addressLine1 || "");
-  const [addressline2, setAddressline2] = useState(appData?.address?.addressLine2 || formData?.address?.addressLine2 || "");
+  const [houseName, setHouseName] = useState(appData?.address?.houseName || appData?.address?.buildingName || formData?.address?.houseName || "");
+  const [addressline1, setAddressline1] = useState(appData?.address?.addressline1 || appData?.address?.addressLine1 || formData?.address?.addressline1 || "");
+  const [addressline2, setAddressline2] = useState(appData?.address?.addressline2 || appData?.address?.addressLine2 || formData?.address?.addressline2 || "");
 
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
@@ -104,12 +104,6 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
 
   const onSkip = () => onSelect();
 
-  useEffect(() => {
-    // if (userType === "citizen") {
-      goNext();
-    // }
-  }, [pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2]);
-
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
@@ -118,7 +112,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || !locality || !addressline1}
+        isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || (!(pathname.includes("revised") || pathname.includes("renew")) && !locality) || !addressline1 }
       >
         <div>
           <CardLabel>{`${t("PTR_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>

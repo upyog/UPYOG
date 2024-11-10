@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { useLocation } from "react-router-dom";
 // Importing required components and hooks from React and digit-ui
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, ImageUploadHandler } from "@nudmcdgnpm/digit-ui-react-components";
 // Importing Timeline component
@@ -10,6 +11,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
+  const {pathname} = useLocation();
 
   // Get the state ID (tenant) from Digit service
   const stateId = Digit.ULBService.getStateId();
@@ -72,11 +74,11 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
 
       {/* Conditionally render the form or loader based on isLoading */}
       {!isLoading ? (
-        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit}>
+        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={!enableSubmit}>
           {/* Map through documents and render PTRSelectDocument component for each document */}
           {data?.PetService?.Documents?.map((document, index) => {
             // Render ImageUploadHandler for the pet photo field
-            if (document?.code === "PET.PETPHOTO") {
+            if (document?.code === "PET.PETPHOTO" && !pathname.includes("revised-application")) {
               return (
                 <div key={index}>
                   <CardLabel className="card-label-smaller">{t("PET_PETPHOTO")}</CardLabel>
