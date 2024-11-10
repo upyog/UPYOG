@@ -1,13 +1,12 @@
-/** The SVSearchApplication component renders the input fields and table with its data
- * Gets data from its parent component through data prop
- * Displays table only when the data is available and on the click of search button
- */
-
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
+/** The SVSearchApplication component renders the input fields and table with its data
+ * Gets data from its parent component through data prop
+ * Displays table only when the data is available and on the click of search button
+ */
 const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
 
     const isMobile = window.Digit.Utils.browser.isMobile();
@@ -26,6 +25,33 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
     }, [register])
+
+
+    // hook for fetching vending type data
+    const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
+        {
+            select: (data) => {
+                const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
+                return formattedData;
+            },
+        });
+    let vendingTypeOptions = [];
+    vendingTypeData && vendingTypeData.map((vending) => {
+        vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
+    })
+
+    // hook for fetching vending zone data
+    const { data: vendingZone } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+        {
+            select: (data) => {
+                const formattedData = data?.["StreetVending"]?.["VendingZones"]
+                return formattedData;
+            },
+        });
+    let vending_Zone = [];
+    vendingZone && vendingZone.map((zone) => {
+        vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+    })
 
 
     // Maybe need to use later
@@ -143,7 +169,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                                 selected={props.value}
                                 select={props.onChange}
                                 onBlur={props.onBlur}
-                                option={[{ i18nKey: "vendortype 1" }, { i18nKey: "vendortype 2" }]}
+                                option={vendingTypeOptions}
                                 optionKey="i18nKey"
                                 t={t}
                                 disable={false}
@@ -162,7 +188,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                                 selected={props.value}
                                 select={props.onChange}
                                 onBlur={props.onBlur}
-                                option={[{ i18nKey: "vendorxone 1" }, { i18nKey: "vendozone 2" }]}
+                                option={vending_Zone}
                                 optionKey="i18nKey"
                                 t={t}
                                 disable={false}

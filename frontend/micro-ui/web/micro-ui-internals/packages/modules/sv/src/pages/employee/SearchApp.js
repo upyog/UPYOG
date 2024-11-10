@@ -1,9 +1,3 @@
-/** Parent component of Search application for employee side
- * Pass the data from the hook to child components
- * Contains onSubmit function
- * Implemented toast for search application here
- */
-
 import React, { useState } from "react"
 import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
@@ -11,6 +5,11 @@ import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import SVSearchApplication from "../../components/SearchApplication";
 
+/** Parent component of Search application for employee side
+ * Pass the data from the hook to child components
+ * Contains onSubmit function
+ * Implemented toast for search application here
+ */
 const SearchApp = ({path}) => {
     const { variant } = useParams();
     const { t } = useTranslation();
@@ -20,6 +19,7 @@ const SearchApp = ({path}) => {
 
     // function to pass filters to hook on clicking submit button
     function onSubmit (_data) {
+      console.log("dayta in searchapp onshubmit :: ", _data)
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
@@ -31,13 +31,14 @@ const SearchApp = ({path}) => {
         }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && !payload.applicationNumber && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.status && !payload.toDate)
-        setShowToast({ warning: true, label: "ERR_SV_FILL_VALID_FIELDS" });
-        else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.toDate))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
-        else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
-        else
+        // if(Object.entries(payload).length>0 && !payload.applicationNumber && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.status && !payload.toDate)
+        // setShowToast({ warning: true, label: "ERR_SV_FILL_VALID_FIELDS" });
+        // else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.toDate))
+        // setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
+        // else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
+        // setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
+        // else
+        console.log("data of payload in searchapp :: ", payload)
         setPayload(payload)
     }
 
@@ -47,14 +48,14 @@ const SearchApp = ({path}) => {
 
     // Hook to fetch data for searchapplication based on the filters 
     const { isLoading, isSuccess, isError, error, data: {SVDetail: searchResult} = {} } = Digit.Hooks.sv.useSvSearchApplication(
-        { tenantId,
+        { 
+          tenantId,
           filters: payload
         },
        config,
       );
 
     return <React.Fragment>
-        {/* <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} />  */}
         <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={isSuccess && !isLoading ? (searchResult.length>0? searchResult : { display: "ES_COMMON_NO_DATA" } ):""} count={""} /> 
         {showToast && (
         <Toast

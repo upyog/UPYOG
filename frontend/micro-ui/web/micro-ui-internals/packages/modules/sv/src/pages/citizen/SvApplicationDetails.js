@@ -5,6 +5,7 @@ import { useHistory, useParams } from "react-router-dom";
 // import { pdfDownloadLink } from "../../utils";
 import ViewTimeline from "../../components/ViewTimeline";
 import get from "lodash/get";
+import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
 
 /**
  * Component is still in development so please ignore as this code is crucial to fetch the Bill details, so that payment button but for now it is 
@@ -117,15 +118,12 @@ fetchBillData();
     return <Loader />;
   }
 
- 
-
-//   const getAcknowledgementData = async () => {
-//     const applications = application || {};
-//     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-//     const acknowldgementDataAPI = await getPetAcknowledgementData({ ...applications }, tenantInfo, t);
-//     Digit.Utils.pdf.generate(acknowldgementDataAPI);
-//     //setAcknowldgementData(acknowldgementDataAPI);
-//   };
+  const getAcknowledgementData = async () => {
+    const applications = application || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+    const acknowldgementDataAPI = await getSVAcknowledgementData({ ...applications }, tenantInfo, t);
+    Digit.Utils.pdf.generate(acknowldgementDataAPI);
+  };
 
 //   let documentDate = t("CS_NA");
 //   if ( streetVendingDetails?.additionalDetails?.documentDate) {
@@ -154,12 +152,11 @@ fetchBillData();
 //     window.open(fileStore[response?.filestoreIds[0]], "_blank");
 //   };
 
-//   let dowloadOptions = [];
-
-//   dowloadOptions.push({
-//     label: t("PTR_PET_DOWNLOAD_ACK_FORM"),
-//     onClick: () => getAcknowledgementData(),
-//   });
+  let dowloadOptions = [];
+  dowloadOptions.push({
+    label: t("SV_DOWNLOAD_ACK_FORM"),
+    onClick: () => getAcknowledgementData(),
+  });
 
   //commented out, need later for download receipt and certificate 
 //   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
@@ -178,14 +175,14 @@ fetchBillData();
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("SV_APPLICATION_DETAILS")}</Header>
-          {/* {dowloadOptions && dowloadOptions.length > 0 && (
+          {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
             />
-          )} */}
+          )}
         </div>
         <Card>
           <StatusTable>
