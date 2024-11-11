@@ -1,8 +1,7 @@
 package org.egov.tlcalculator.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tlcalculator.config.TLCalculatorConfigs;
 import org.egov.tlcalculator.kafka.broker.TLCalculatorProducer;
@@ -23,6 +22,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -179,14 +179,17 @@ public class CalculationService {
 
       if(totalTax.compareTo(BigDecimal.ZERO)==-1)
           throw new CustomException("INVALID AMOUNT","Tax amount is negative");
-      
-       if(license.getTradeLicenseDetail().getAdditionalDetail().get("validityYears").asInt()==1)
-    	estimate.setEstimateAmount(totalTax);
-      else if(license.getTradeLicenseDetail().getAdditionalDetail().get("validityYears").asInt()==2)
-    	estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(2)));
-      else if(license.getTradeLicenseDetail().getAdditionalDetail().get("validityYears").asInt()==3)
-      	estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(3)));
-    // estimate.setEstimateAmount(totalTax);
+      JsonNode additionalDetail = license.getTradeLicenseDetail().getAdditionalDetail();
+      if (!additionalDetail.isNull() && !ObjectUtils.isEmpty(additionalDetail.get("validityYears"))) {
+          int validityYears = additionalDetail.get("validityYears").asInt();
+          if (validityYears == 1)
+              estimate.setEstimateAmount(totalTax);
+          else if (validityYears == 2)
+              estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(2)));
+          else if (validityYears == 3)
+              estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(3)));
+      }
+      //estimate.setEstimateAmount(totalTax);
       estimate.setCategory(Category.TAX);
       if(license.getApplicationType() != null && license.getApplicationType().toString().equals(TLCalculatorConstants.APPLICATION_TYPE_RENEWAL)){
           estimate.setTaxHeadCode(config.getRenewTaxHead());
@@ -326,6 +329,8 @@ public class CalculationService {
               String query = queryBuilder.getSearchQuery(searchCriteria, preparedStmtList);
               List<BillingSlab> billingSlabs = repository.getDataFromDB(query, preparedStmtList);
 
+              log.info("query "+query);
+              log.info("preparedStmt: "+preparedStmtList);
               if(billingSlabs.size()>1)
                   throw new CustomException("BILLINGSLAB ERROR","Found multiple BillingSlabs for the given accessories ");
               if(CollectionUtils.isEmpty(billingSlabs))
