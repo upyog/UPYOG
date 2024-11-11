@@ -43,7 +43,7 @@ export const convertEpochToDate = (dateEpoch) => {
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
-  console.log("datatatataty",data)
+ 
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -607,7 +607,7 @@ export const convertEpochToDate = (dateEpoch) => {
     window.open(fileStore[response.filestoreIds[0]], "_blank");
   };
   const ommitRupeeSymbol = ["PT"].includes(business_service);
-
+console.log("business_service",business_service)
   if ((window.location.href.includes("bpa") || window.location.href.includes("BPA")) && isBpaSearchLoading) return <Loader />
 
   return (
