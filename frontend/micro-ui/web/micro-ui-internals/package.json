@@ -13,7 +13,8 @@
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/ptr",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
+    "packages/modules/tl"
   ],
   "license": "MIT",
   "private": true,
@@ -57,11 +58,11 @@
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
-    "buildD:fsm": "cd packages/modules/fsm && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
