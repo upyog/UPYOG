@@ -213,6 +213,7 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 					&& null == criteria.getName()
 					&& null == criteria.getDoorNo()
 					&& null == criteria.getOldPropertyId()
+					&& null == criteria.getLocality()
 					&& (null == criteria.getFromDate() && null == criteria.getToDate())
 					&& CollectionUtils.isEmpty(criteria.getCreationReason());
 		
@@ -301,6 +302,15 @@ private String appealAddPaginationWrapper(String query, List<Object> preparedStm
 			builder.append("address.locality = ?");
 			preparedStmtList.add(criteria.getLocality());
 		}
+		
+		
+		//Added to ES Issue Removal
+		  if (null != criteria.getDoorNo()) {
+		  addClauseIfRequired(preparedStmtList,builder);
+		  builder.append("address.doorno = ?");
+		  preparedStmtList.add(criteria.getDoorNo());
+		  }
+		 
 
 		Set<String> propertyIds = criteria.getPropertyIds();
 		if (!CollectionUtils.isEmpty(propertyIds)) {
