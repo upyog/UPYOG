@@ -65,9 +65,9 @@ public class EmailUtil {
         }
         return emailRequestList;
     }
-    public void sendEmail(Map<String, Map<String,String>> missingStates) {
+    public void sendEmail(RequestInfo requestInfo, Map<String, Map<String,String>> missingStates) {
 
-        List<EmailRequest> emailRequestList = createEmailRequest(new RequestInfo(), missingStates);
+        List<EmailRequest> emailRequestList = createEmailRequest(requestInfo, missingStates);
 
             for (EmailRequest emailRequest : emailRequestList) {
                 producer.push(appProp.getEmailNotifTopic(), emailRequest);

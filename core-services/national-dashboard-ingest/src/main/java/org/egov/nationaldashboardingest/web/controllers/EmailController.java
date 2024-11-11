@@ -2,9 +2,9 @@ package org.egov.nationaldashboardingest.web.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.nationaldashboardingest.service.EmailService;
 import org.egov.nationaldashboardingest.service.StateListDB;
 import org.egov.nationaldashboardingest.utils.EmailUtil;
+import org.egov.nationaldashboardingest.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.egov.nationaldashboardingest.service.StateFetchService;
 
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Slf4j
@@ -30,12 +31,11 @@ public class EmailController {
     @Autowired
     private StateListDB stateListDB;
 
-    @Autowired
-    private EmailService emailService;
-
 
     @RequestMapping(value = "/_sendEmail", method = RequestMethod.POST)
-    public ResponseEntity<String> sendEmailtoMissingState(@RequestBody RequestInfo requestInfo) {
+    public ResponseEntity<String> sendEmailtoMissingState(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+        RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();  // Get RequestInfo from the wrapper
+        log.info("Received RequestInfo: {}", requestInfo);
         Map<String, Map<String,String>> missingStates = new HashMap<>();
 
         Map<String,Map<String , String>> responseList = stateFetch.stateList(requestInfo);
@@ -48,7 +48,7 @@ public class EmailController {
                 missingStates.put(stateCode,officerInfo);
             }
         }
-        emailUtil.sendEmail(missingStates);
+        emailUtil.sendEmail(requestInfo, missingStates);
 
         return ResponseEntity.ok("Emails sent successfully");
     }

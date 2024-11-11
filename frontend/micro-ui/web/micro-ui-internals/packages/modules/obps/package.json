@@ -1,6 +1,6 @@
 {
   "name": "@upyog/digit-ui-module-obps",
-  "version": "1.8.16",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
