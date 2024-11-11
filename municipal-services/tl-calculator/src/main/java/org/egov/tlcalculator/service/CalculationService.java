@@ -329,8 +329,6 @@ public class CalculationService {
               String query = queryBuilder.getSearchQuery(searchCriteria, preparedStmtList);
               List<BillingSlab> billingSlabs = repository.getDataFromDB(query, preparedStmtList);
 
-              log.info("query "+query);
-              log.info("preparedStmt: "+preparedStmtList);
               if(billingSlabs.size()>1)
                   throw new CustomException("BILLINGSLAB ERROR","Found multiple BillingSlabs for the given accessories ");
               if(CollectionUtils.isEmpty(billingSlabs))
