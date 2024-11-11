@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public class PetApplicationQueryBuilder {
 
-	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ptr.aadharnumber as paadharnumber, ptr.additionaldetail as padditionaldetail, ptr.status as pstatus, ";
+	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ptr.aadharnumber as paadharnumber, ptr.additionaldetail as padditionaldetail, ptr.status as pstatus, ptr.is_banned_pet as pis_banned_pet ";
 
 	private static final String PET_SELECT_QUERY = "  pet.id as ptid, pet.petName as ptpetname, pet.petType as ptpetType, pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, pet.vaccinationNumber as ptvaccinationNumber,";
 
@@ -85,6 +85,11 @@ public class PetApplicationQueryBuilder {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" ptr.createdby = ? ");
 			preparedStmtList.add(criteria.getCreatedBy());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getIsBannedPet())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" ptr.is_banned_pet = ? ");
+			preparedStmtList.add(criteria.getIsBannedPet());
 		}
 		// order pet registration applications based on their createdtime in latest
 		// first manner
