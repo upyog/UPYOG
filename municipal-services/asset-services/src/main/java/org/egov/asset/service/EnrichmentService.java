@@ -74,7 +74,7 @@ public class EnrichmentService {
 					.setApplicationNo(name + "-" + tenantId + "-" + assetRepository.getNextassetApplicationSequence());
 		}
 		if (StringUtils.equalsIgnoreCase(assetRequest.getAsset().getAssetClassification(), "IMMOVABLE")) {
-			String name = assetRequest.getAsset().getAssetClassification().substring(0, 5);
+			String name = assetRequest.getAsset().getAssetClassification().substring(0, 5).toUpperCase();
 			assetRequest.getAsset()
 					.setApplicationNo(name + "-" + tenantId + "-" + assetRepository.getNextassetApplicationSequence());
 		}
