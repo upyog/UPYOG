@@ -224,6 +224,9 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_PET_SEX")} text={pet_details?.petDetails?.petGender || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_IDENTIFICATION_MARK")} text={pet_details?.petDetails?.identificationmark || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
+            {pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={pet_details?.petDetails?.birthDate || t("CS_NA")} />}
+            {pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={pet_details?.petDetails?.adoptionDate || t("CS_NA")} />}
+
 
           </StatusTable>
 
