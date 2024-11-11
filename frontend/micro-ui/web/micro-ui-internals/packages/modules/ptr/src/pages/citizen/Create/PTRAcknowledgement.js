@@ -47,7 +47,7 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
 
   useEffect(() => {
     try {
-      data.tenantId = data.address?.city?.code;
+      data.tenantId = tenantId;
       let formdata = PetDataConvert(data)
       mutation.mutate(formdata, {onSuccess});
     } catch (err) {

@@ -23,6 +23,7 @@ Note- Please Do Not Copy and paste this file without understanding the context  
 
 
 import { PTRService } from "../../elements/PTR";
+import { convertEpochToDate } from "../../../../../modules/ptr/src/utils";
 
 export const PTRSearch = {
   
@@ -32,14 +33,13 @@ export const PTRSearch = {
     
     return response;
   },
-
   
   application: async (tenantId, filters = {}) => {
     const response = await PTRService.search({ tenantId, filters });
     return response.PetRegistrationApplications[0];
   },
-  RegistrationDetails: ({ PetRegistrationApplications: response, t }) => {
-
+  RegistrationDetails: ({ PetRegistrationApplications: response, t, pet_color }) => {
+    console.log("ressponse :: ", response)
     // function to filter out the fields which have values
     const filterEmptyValues = (values) => values.filter(item => item.value);
     return [
@@ -68,7 +68,11 @@ export const PTRSearch = {
           { title: "PTR_VACCINATED_DATE", value: response?.petDetails?.lastVaccineDate },
           { title: "PTR_VACCINATION_NUMBER", value: response?.petDetails?.vaccinationNumber },
           { title: "PTR_PET_AGE", value: response?.petDetails?.petAge + " Months" },
+          { title: "PTR_IDENTIFICATION_MARK", value: response?.petDetails?.identificationMark },
           { title: "PTR_PET_SEX", value: response?.petDetails?.petGender },
+          { title: "PTR_PET_COLOR", value: pet_color?.filter((color) => color?.colourCode === response?.petDetails?.petColor)?.[0]?.i18nKey },
+          { title: "PTR_BIRTH", value: convertEpochToDate(response?.petDetails?.birthDate) },
+          { title: "PTR_ADOPTION", value: convertEpochToDate(response?.petDetails?.adoptionDate) },
         ]),
       },
 
@@ -110,13 +114,13 @@ export const PTRSearch = {
       },
     ];
   },
-  applicationDetails: async (t, tenantId, applicationNumber, userType, args) => {
+  applicationDetails: async (t, tenantId, applicationNumber, pet_color, userType, args) => {
     const filter = { applicationNumber, ...args };
     const response = await PTRSearch.application(tenantId, filter);
 
     return {
       tenantId: response.tenantId,
-      applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t }),
+      applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t, pet_color, }),
       applicationData: response,
       transformToAppDetailsForEmployee: PTRSearch.RegistrationDetails,
       
