@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@upyog/digit-ui-module-bills": "1.8.0",
-    "@upyog/digit-ui-module-common": "1.8.12",
+    "@upyog/digit-ui-module-common": "2.0.0",
     "@upyog/digit-ui-module-engagement": "1.8.0",
     "@upyog/digit-ui-module-fsm": "1.8.17",
     "@upyog/digit-ui-module-mcollect": "2.0.0",
