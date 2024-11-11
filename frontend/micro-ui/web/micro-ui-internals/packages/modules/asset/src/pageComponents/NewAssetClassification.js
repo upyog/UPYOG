@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -170,7 +170,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     setassetclassification(e.target.value);
   }
   function setAssetType(e) {
-    alert('hiiii')
     setassettype(e.target.value);
   }
 
@@ -202,7 +201,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   // function setAssetsOfType(e) {
   //   setAssetsOfType(e.target.value);
   // }
-  
+
   // function setAssetsUsage(e) {
   //   setAssetsUsage(e.target.value);
   // }
@@ -533,7 +532,9 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               </span>
             </div>
           </div>
-          <TextInput
+         
+          <div className="form-field">
+           <TextArea 
             t={t}
             type={"textarea"}
             isMandatory={false}
@@ -541,15 +542,15 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             name="Assetdescription"
             value={Assetdescription}
             onChange={setassetDescription}
-            style={{ width: "50%" }}
+            
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
               pattern: "^[a-zA-Z0-9/-]*$",
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-          />
+            })}/>
+          </div>
 
           <div>
             {t("AST_DEPARTMENT")}
@@ -588,10 +589,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>
-            {t("Assets Type")}
-            
-          </div>
+          <div>{t("Assets Type")}</div>
           <Controller
             control={control}
             name={"assetsOfType"}
@@ -610,10 +608,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>
-            {t("Assets Usage")}
-          
-          </div>
+          <div>{t("Assets Usage")}</div>
           <Controller
             control={control}
             name={"assetsUsage"}
