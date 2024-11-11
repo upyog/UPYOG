@@ -64,8 +64,7 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death",
-  "PTR"
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
@@ -109,9 +108,9 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
-    PTRModule, 
-    PTRLinks, 
-    ...PTRComponents
+    // PTRModule, 
+    // PTRLinks, 
+    // ...PTRComponents
     // TLModule,
     // TLLinks,
   });

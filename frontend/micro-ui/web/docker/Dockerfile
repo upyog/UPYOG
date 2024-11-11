@@ -15,7 +15,7 @@ RUN yarn add @upyog/digit-ui-module-noc
 RUN yarn add @upyog/digit-ui-module-engagement
 RUN yarn add @upyog/digit-ui-module-hrms
 RUN yarn add @upyog/digit-ui-module-core
-RUN yarn add @upyog/digit-ui-module-common
+RUN yarn add @upyog/digit-ui-module-common@2.0.0
 RUN yarn add @upyog/digit-ui-module-commonpt@2.0.0
 RUN yarn add @upyog/digit-ui-module-bills
 
