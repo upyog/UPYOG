@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -176,9 +177,9 @@ public class Asset  implements AssetDTO {
         
         @JsonProperty("assetStatus")
         private String assetStatus;
-       
         
-        
+        @JsonProperty("assetDetails")
+        private JsonNode assetDetails;
         
         
 //      @JsonProperty("parentAssetSpecificDetails")

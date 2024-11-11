@@ -61,7 +61,7 @@ public class AssetService {
 		log.debug("Asset create service method called");
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		String tenantId = assetRequest.getAsset().getTenantId().split("\\.")[0];
-		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
+//		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 
 		// Application can not be created statelevel
 		if (assetRequest.getAsset().getTenantId().split("\\.").length == 1) {
@@ -74,9 +74,10 @@ public class AssetService {
 			assetRequest.getAsset().setApprovalNo(null);
 		}
 
-		assetValidator.validateCreate(assetRequest, mdmsData);
+//		assetValidator.validateCreate(assetRequest, mdmsData);
 
-		enrichmentService.enrichAssetCreateRequest(assetRequest, mdmsData);
+		//enrichmentService.enrichAssetCreateRequest(assetRequest, mdmsData);
+		enrichmentService.enrichAssetCreateRequest(assetRequest);
 		//workflowIntegrator.callWorkFlow(assetRequest);
 		workflowService.updateWorkflow(assetRequest, CreationReason.CREATE);
 		// assetRequest.getAsset().setApplicant("100");

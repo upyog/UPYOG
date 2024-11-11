@@ -1,23 +1,19 @@
-package org.egov.asset.web.models;
+package org.egov.rentlease.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.egov.asset.web.models.Boundary;
+
+import javax.validation.Valid;
+
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Embeddable;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
 
 /**
  * Boundary
@@ -41,10 +37,10 @@ public class Boundary   {
         private String label = null;
 
         @JsonProperty("latitude")
-        private Double latitude = null;
+        private String latitude = null;
 
         @JsonProperty("longitude")
-        private Double longitude = null;
+        private String longitude = null;
 
         @JsonProperty("children")
         @Valid

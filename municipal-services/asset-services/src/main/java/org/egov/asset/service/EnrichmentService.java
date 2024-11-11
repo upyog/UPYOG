@@ -47,7 +47,8 @@ public class EnrichmentService {
 	 * @param mdmsData
 	 * @param values
 	 */
-	public void enrichAssetCreateRequest(AssetRequest assetRequest, Object mdmsData) {
+	//public void enrichAssetCreateRequest(AssetRequest assetRequest, Object mdmsData) 
+	public void enrichAssetCreateRequest(AssetRequest assetRequest) {
 		log.info("Doing EnrichAssetCreateRequest");
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);

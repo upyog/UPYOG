@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS eg_asset_assetdetails (
     action character varying(256),
     businessservice character varying(64) DEFAULT NULL,
     additionalDetails JSONB,
+    assetDetails JSONB,
     createdTime bigint,
     lastModifiedTime bigint,
     approvalDate bigint,

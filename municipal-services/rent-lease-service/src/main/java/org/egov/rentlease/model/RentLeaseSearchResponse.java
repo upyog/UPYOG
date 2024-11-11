@@ -1,8 +1,6 @@
 package org.egov.rentlease.model;
 
-import java.util.List;
-
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,12 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RentLeaseCreationRequest {
-	
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
-	
-	@JsonProperty("RentLease")
-	private List<RentLease> rentLease;
+public class RentLeaseSearchResponse {
 
+	@JsonProperty("ResponseInfo")
+	private ResponseInfo responseInfo;
+	
+	@JsonProperty("searchCriteria")
+	private SearchCriteria searchCriteria;
 }
