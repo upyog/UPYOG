@@ -35,15 +35,18 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     const [vaccinationNumber, setVaccinationNumber] = useState(renewApplication?.petDetails?.vaccinationNumber || formData?.pets?.vaccinationNumber || "");
     const [lastVaccineDate, setVaccinationDate] = useState(renewApplication?.petDetails?.lastVaccineDate || formData?.pets?.lastVaccineDate || "");
     const [petColor, setpetColor] = useState( formData?.pets?.petColor || "");
-    const [identificationmark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationMark || formData?.pets?.identificationMark || "");
-    const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || formData?.pets?.selectBirthAdoption || [{ i18nKey: "", code: "" }]);
-    const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birth || "");
-    const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoption || "");
+    const [identificationMark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationMark || formData?.pets?.identificationMark || "");
+    const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate || renewApplication?.petDetails?.adoptionDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || convertToObject(formData?.pets?.birthDate ? "Birth" : "Adoption") || [{ i18nKey: "", code: "" }]);
+    const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birthDate || "");
+    const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoptionDate || "");
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
     const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType"); // hook for pettype data
     const { data: Breed_Type} = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hook for breed type data
+
+
+    console.log("data of birth adoption fields:: ", convertToObject(renewApplication?.petDetails?.birthDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null))
 
     let menu = [];   // array to store pettype data
     let breed_type = [];    // array to store  breedtype data
@@ -153,7 +156,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     const goNext = () => {
       let owner = formData.pets;
       let ownerStep;
-      ownerStep = { ...owner, petType, breedType, petGender, petName, petAge, doctorName, clinicName, lastVaccineDate, vaccinationNumber, birthDate, adoptionDate, identificationmark, petColor };
+      ownerStep = { ...owner, petType, breedType, petGender, petName, petAge, doctorName, clinicName, lastVaccineDate, vaccinationNumber, birthDate, adoptionDate, identificationMark, petColor };
       onSelect(config.key, ownerStep, false);
     };
 
@@ -164,7 +167,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
       if (userType === "citizen") {
         goNext();
       }
-    }, [petType, breedType, petGender, petName, petAge, doctorName, lastVaccineDate, birthDate, adoptionDate, identificationmark, petColor]);
+    }, [petType, breedType, petGender, petName, petAge, doctorName, lastVaccineDate, birthDate, adoptionDate, identificationMark, petColor]);
 
 
     return (
@@ -344,8 +347,8 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               type={"text"}
               isMandatory={false}
               optionKey="i18nKey"
-              name="identificationmark"
-              value={identificationmark}
+              name="identificationMark"
+              value={identificationMark}
               onChange={setIdentificationmark}
               style={{ width: "86%" }}
               ValidationRequired={false}
@@ -371,15 +374,17 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               })}
             />
 
-            <div>
-              {Math.floor(petAge / 12)}&nbsp;&nbsp;
-              {Math.floor(petAge / 12) === 1 ? "YEAR" : "YEARS"}
-              &nbsp;&nbsp;
-              {petAge % 12}&nbsp;&nbsp;
-              {petAge % 12 === 1 ? "MONTH" : "MONTHS"}
-            </div>
+              {petAge !== undefined && petAge !== null && petAge >= 0 && (
+                <div>
+                  {Math.floor(petAge / 12)}&nbsp;&nbsp;
+                  {Math.floor(petAge / 12) === 1 ? "YEAR" : "YEARS"}
+                  &nbsp;&nbsp;
+                  {petAge % 12}&nbsp;&nbsp;
+                  {petAge % 12 === 1 ? "MONTH" : "MONTHS"}
+                </div>
+              )}
+              <br></br>
 
-            <br></br>
 
             <CardLabel>{`${t("PTR_DOCTOR_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
@@ -413,7 +418,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z ]+$",
+                pattern: "^[a-zA-Z0-9 .,?!'\"-]+$", // pattern to accept anything except special characters
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}

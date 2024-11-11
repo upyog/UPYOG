@@ -183,7 +183,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, value = for
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z0-9 .,?!'\"-]+$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
