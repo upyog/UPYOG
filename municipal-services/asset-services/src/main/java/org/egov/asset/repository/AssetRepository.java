@@ -50,6 +50,12 @@ public class AssetRepository {
 		producer.push(config.getSaveTopic(), assetRequest);
 	}
 	
+	private static final String SEQ_FOR_ASSET_APPLICATION_NUMBER = "select nextval('seq_eg_asset_application_no')";
+	
+	public Long getNextassetApplicationSequence() {
+		return jdbcTemplate.queryForObject(SEQ_FOR_ASSET_APPLICATION_NUMBER, Long.class);
+	}
+
 	/**
 	 * Pushes the request on save assignment topic through kafka
 	 *

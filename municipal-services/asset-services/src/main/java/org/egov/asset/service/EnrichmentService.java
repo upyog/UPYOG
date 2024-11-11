@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.config.AssetConfiguration;
+import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.repository.IdGenRepository;
 import org.egov.asset.util.AssetErrorConstants;
 import org.egov.asset.util.AssetUtil;
@@ -37,6 +39,9 @@ public class EnrichmentService {
 	@Autowired
 	private IdGenRepository idGenRepository;
 
+	@Autowired
+	AssetRepository assetRepository;
+
 	// @Autowired
 	// private WorkflowService workflowService;
 
@@ -47,16 +52,32 @@ public class EnrichmentService {
 	 * @param mdmsData
 	 * @param values
 	 */
-	//public void enrichAssetCreateRequest(AssetRequest assetRequest, Object mdmsData) 
+	// public void enrichAssetCreateRequest(AssetRequest assetRequest, Object
+	// mdmsData)
 	public void enrichAssetCreateRequest(AssetRequest assetRequest) {
 		log.info("Doing EnrichAssetCreateRequest");
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		assetRequest.getAsset().setAuditDetails(auditDetails);
 		assetRequest.getAsset().setId(UUID.randomUUID().toString());
-
+		String[] tenantSpilt = assetRequest.getAsset().getTenantId().split("\\.");
+		String tenantId = tenantSpilt[1];
 		assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
 		// String applicationType = values.get(AssetConstants.ASSET_PARENT_CATEGORY);
+
+		if (StringUtils.isEmpty(assetRequest.getAsset().getAssetClassification())) {
+			throw new CustomException("ASSET_CLASSIFICATION_NULL", "Asset Classification cannot be empty!!!");
+		}
+		if (StringUtils.equalsIgnoreCase(assetRequest.getAsset().getAssetClassification(), "MOVABLE")) {
+			String name = assetRequest.getAsset().getAssetClassification().substring(0, 3).toUpperCase();
+			assetRequest.getAsset()
+					.setApplicationNo(name + "-" + tenantId + "-" + assetRepository.getNextassetApplicationSequence());
+		}
+		if (StringUtils.equalsIgnoreCase(assetRequest.getAsset().getAssetClassification(), "IMMOVABLE")) {
+			String name = assetRequest.getAsset().getAssetClassification().substring(0, 5);
+			assetRequest.getAsset()
+					.setApplicationNo(name + "-" + tenantId + "-" + assetRepository.getNextassetApplicationSequence());
+		}
 
 		// Asset Documents
 		if (!CollectionUtils.isEmpty(assetRequest.getAsset().getDocuments()))
@@ -75,7 +96,7 @@ public class EnrichmentService {
 			assetRequest.getAsset().getAddressDetails().setAddressId(uuid);
 		}
 
-		setIdgenIds(assetRequest);
+		// setIdgenIds(assetRequest);
 	}
 
 	/**
@@ -90,20 +111,19 @@ public class EnrichmentService {
 		log.info("Doing EnrichAssetOtherOperationsRequest");
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
+		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
 		assetRequest.getAsset().getAssetAssignment().setAssignmentId(UUID.randomUUID().toString());
 
 	}
-	
+
 	public void enrichAssetOtherOperationsUpdateRequest(AssetRequest assetRequest) {
 		log.info("Doing EnrichAssetOtherOperationsRequest");
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);  
+		assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
 
 	}
-	
-	
+
 	/**
 	 * Sets the ApplicationNumber for given bpaRequest
 	 *
@@ -146,7 +166,7 @@ public class EnrichmentService {
 
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * encrich update Asset Reqeust by adding auditdetails and uuids
 	 * 
@@ -158,8 +178,8 @@ public class EnrichmentService {
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 		assetRequest.getAsset().setAuditDetails(auditDetails);
-		//assetRequest.getAsset().getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
-		//assetRequest.getAsset().getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
+		// assetRequest.getAsset().getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
+		// assetRequest.getAsset().getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
 
 	}
 
