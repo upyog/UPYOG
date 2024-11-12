@@ -48,7 +48,7 @@ public class GarbageAccountRepository {
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
 			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
-			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account"
+			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account, sub_acc.is_active as sub_acc_is_active, sub_acc.sub_account_count as sub_acc_sub_account_count"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
 			+ ", sub_doc.uuid as sub_doc_uuid, sub_doc.doc_ref_id as sub_doc_doc_ref_id, sub_doc.doc_name as sub_doc_doc_name, sub_doc.doc_type as sub_doc_doc_type, sub_doc.doc_category as sub_doc_doc_category, sub_doc.tbl_ref_uuid as sub_doc_tbl_ref_uuid "
 		    + ", sub_acc_bill.bill_amount as sub_acc_bill_bill_amount, sub_acc_bill.arrear_amount as sub_acc_bill_arrear_amount, sub_acc_bill.panelty_amount as sub_acc_bill_panelty_amount " 
