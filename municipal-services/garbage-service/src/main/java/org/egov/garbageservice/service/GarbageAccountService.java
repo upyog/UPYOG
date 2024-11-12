@@ -213,11 +213,11 @@ public class GarbageAccountService {
 		
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 			
-			AtomicLong childCount = new AtomicLong(0L);
+			AtomicLong childCount = new AtomicLong(1L);
 			garbageAccount.getChildGarbageAccounts().forEach(subAccount -> {
 				GrbgApplication grbgApplication = GrbgApplication.builder()
 						.uuid(UUID.randomUUID().toString())
-						.applicationNo(GrbgConstants.APPLICATION_PREFIX.concat(subAccount.getGarbageId().toString()).concat("/").concat(Long.toString(childCount.getAndIncrement())))
+						.applicationNo(garbageAccount.getGrbgApplication().getApplicationNo().concat("/").concat(Long.toString(childCount.getAndIncrement())))
 						.status(GrbgConstants.STATUS_INITIATED)
 						.garbageId(subAccount.getGarbageId())
 						.build();
@@ -285,7 +285,7 @@ public class GarbageAccountService {
 				subAccount.setPropertyId(garbageAccount.getPropertyId());
 				subAccount.setTenantId(garbageAccount.getTenantId());
 //				subAccount.setIsOwner(false);
-				subAccount.setGarbageId(System.currentTimeMillis()+(counter.getAndAdd(1)));
+				subAccount.setGarbageId(garbageAccount.getGarbageId()+(counter.getAndAdd(1)));
 				subAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 				subAccount.setAuditDetails(garbageAccount.getAuditDetails());
 				subAccount.setParentAccount(garbageAccount.getUuid());
@@ -386,9 +386,14 @@ public class GarbageAccountService {
 
 	private void enrichCreateGarbageApplication(GarbageAccount garbageAccount, RequestInfo requestInfo) {
 		
+		// get application number format
+		String applicationNumber = GrbgConstants.generateApplicationNumberFormat(String.valueOf(garbageAccount.getId())
+													, garbageAccount.getAddresses().get(0).getUlbName()
+													, garbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText());
+		
 		GrbgApplication grbgApplication = GrbgApplication.builder()
 				.uuid(UUID.randomUUID().toString())
-				.applicationNo(GrbgConstants.APPLICATION_PREFIX.concat(garbageAccount.getGarbageId().toString()))
+				.applicationNo(applicationNumber)
 				.status(GrbgConstants.STATUS_INITIATED)
 				.garbageId(garbageAccount.getGarbageId())
 				.build();
@@ -449,6 +454,7 @@ public class GarbageAccountService {
 		}
 
 		// generate garbage_id
+		garbageAccount.setId(garbageAccountRepository.getNextSequence());
 		garbageAccount.setUuid(UUID.randomUUID().toString());
 		garbageAccount.setGarbageId(System.currentTimeMillis());
 		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);

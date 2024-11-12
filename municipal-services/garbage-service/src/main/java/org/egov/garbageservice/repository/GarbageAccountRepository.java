@@ -109,8 +109,6 @@ public class GarbageAccountRepository {
 
     public GarbageAccount create(GarbageAccount account) {
     	
-    	account.setId(getNextSequence());
-    	
         Map<String, Object> accountInputs = new HashMap<>();
         accountInputs.put("id", account.getId());
         accountInputs.put("uuid", account.getUuid());
@@ -139,7 +137,7 @@ public class GarbageAccountRepository {
         return account;
     }
 
-    private Long getNextSequence() {
+    public Long getNextSequence() {
     	return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
 

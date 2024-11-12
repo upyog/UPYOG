@@ -1,5 +1,11 @@
 package org.egov.garbageservice.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +18,7 @@ public class GrbgConstants {
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";
 
-	public static final String APPLICATION_PREFIX = "GB-";
+	public static final String APPLICATION_PREFIX = "GB//HP//DISTRICT//ULBNAME//MMYYYY//XXXXXX";
 
 	public static final String DOCUMENT_ACCOUNT = "ACCOUNT";
 	
@@ -91,5 +97,27 @@ public class GrbgConstants {
     
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
+
+	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
+		String appNo = null;
+		appNo = GrbgConstants.APPLICATION_PREFIX;
+		
+		if(StringUtils.isEmpty(ulbName)
+				|| StringUtils.isEmpty(district)
+				|| StringUtils.isEmpty(id)) {
+			throw new CustomException("APPLICATION_NUMBER_GENERATION_FAILED", "Ulb Name, District and Id can't be empty.");
+		}
+		
+		appNo.replace("ULBNAME", ulbName);
+		appNo.replace("DISTRICT", district);
+		appNo.replace("XXXXXX", id);
+		
+		SimpleDateFormat sf = new SimpleDateFormat("MMYYYY");
+		Date date = new Date();
+		String mmyyyy = sf.format(date);
+		appNo.replace("MMYYYY", mmyyyy);
+		
+		return appNo;
+	}
     
 }
