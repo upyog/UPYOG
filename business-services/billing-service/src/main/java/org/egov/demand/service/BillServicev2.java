@@ -383,7 +383,7 @@ public class BillServicev2 {
 							preparedStmtList.add(totalAmount);
 							preparedStmtList.add(billToBeReturned.get(0).getBillDetails().get(0).getId());
 
-							//jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
+							jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
 							updatedbills=billToBeReturned.get(0).getBillDetails();
 							updatedbills.get(0).setAmount(totalAmount);
 							updatedbills.get(0).setInterestfornoofdays(Integer.parseInt(extraNoOfDays.toString()));
