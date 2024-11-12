@@ -546,6 +546,16 @@ public class WSCalculatorQueryBuilder {
 			query.append(" locality = ? ");
 			preparedStatement.add(criteria.getLocality());
 		}
+		if (criteria.getBatch() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" batch = ? ");
+			preparedStatement.add(criteria.getBatch());
+		}
+		if (criteria.getGroup() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" groups = ? ");
+			preparedStatement.add(criteria.getGroup());
+		}
 		if (criteria.getStatus() != null) {
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" status = ? ");
