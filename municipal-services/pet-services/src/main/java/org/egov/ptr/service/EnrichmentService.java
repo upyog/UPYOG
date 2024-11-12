@@ -22,8 +22,13 @@ import org.egov.ptr.util.PetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import io.jaegertracing.thriftjava.Log;
+import lombok.extern.slf4j.Slf4j;
+
 import static org.egov.ptr.util.PTRConstants.*;
 
+@Slf4j
 @Service
 public class EnrichmentService {
 
@@ -148,10 +153,11 @@ public class EnrichmentService {
 				application.setStatus(STATUS_DOCVERIFIED);
 			} else if (application.getWorkflow().getAction().equals(ACTION_REJECT)) {
 				application.setStatus(STATUS_REJECTED);
-			} else if (application.getWorkflow().getAction().equals(ACTION_PAY)) {
-				application.setStatus(STATUS_REGISTRATIONCOMPLETED);
+			} else if (application.getWorkflow().getAction().equals(ACTION_APPROVE)) {
+				application.setStatus(STATUS_APPROVED);
 				if (isNewPetApplication(application)) {
 					enrichNewPetToken(application, petRegistrationRequest.getRequestInfo(), application.getTenantId());
+					log.info("Pet Token Generated : "+ application.getPetToken());
 				}
 			}
 		}
