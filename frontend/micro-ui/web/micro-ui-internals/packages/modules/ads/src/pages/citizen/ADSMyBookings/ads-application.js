@@ -66,8 +66,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
     <Card>
       <KeyNote keyValue={t("ADS_BOOKING_NO")} note={application?.bookingNo} />
       <KeyNote keyValue={t("ADS_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
-      <KeyNote keyValue={t("ADS_ADVERTISMENT_NAME")} note={t(`${application?.communityHallCode}`)} />
-      <KeyNote keyValue={t("ADS_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
+      <KeyNote keyValue={t("ADS_BOOKING_DATE")} note={getBookingDateRange(application?.cartDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
       <div>
         <Link to={`/digit-ui/citizen/ads/application/${application?.bookingNo}/${application?.tenantId}`}>

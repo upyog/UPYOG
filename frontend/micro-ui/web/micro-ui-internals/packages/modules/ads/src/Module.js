@@ -15,6 +15,7 @@ import ADSCard from "./components/ADSCard";
 import EmployeeApp from "./pages/employee";
 import { ADSMyApplications } from "./pages/citizen/ADSMyBookings/index";
 import ADSApplicationDetails from "./pages/citizen/ADSApplicationDetails";
+import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import ADSSearchApplication from "./components/SearchApplication";
 // Component registry for the ADS module, mapping component names to their implementations.
 // Enables dynamic registration and access of components in the application.
@@ -28,6 +29,7 @@ const componentsToRegister = {
   ADSAcknowledgement,
   ADSCard,
   ADSMyApplications,
+  ApplicationDetails: ApplicationDetails,
   ADSApplicationDetails: ADSApplicationDetails,
   ADSSearchApplication,
 };

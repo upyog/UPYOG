@@ -238,24 +238,8 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                     <TextInput name="bookingNo" inputRef={register({})} />
                 </SearchField>
                 <SearchField>
-                    <label>{t("ADS_AD_NAME")}</label>
-                    <Controller
-                            control={control}
-                            name="communityHallCode"
-                            render={(props) => (
-
-                                <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
-                                option={menu}
-                                optionKey="i18nKey"
-                                t={t}
-                                disable={false}
-                                />
-                                
-                            )}
-                            />
+                    <label>{t("ADS_APPLICANT_NAME")}</label>
+                    <TextInput  name="applicantName" inputRef={register({})} />
                 </SearchField>
                 <SearchField>
                     <label>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</label>

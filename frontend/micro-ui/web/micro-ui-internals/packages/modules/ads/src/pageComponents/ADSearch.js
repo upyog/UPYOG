@@ -30,22 +30,21 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   const [cartDetails, setCartDetails] = useState(
     (formData.adslist && formData.adslist[index] && formData.adslist[index].cartDetails) || formData?.adslist?.cartDetails || []
   );
-  const [adsType, setAdsType] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedFace, setSelectedFace] = useState("");
-  const [fromDate, setFromDate] = useState("");
+  const [adsType, setAdsType] = useState("" || formData?.adType);
+  const [selectedLocation, setSelectedLocation] = useState("" || formData?.location);
+  const [selectedFace, setSelectedFace] = useState("" || formData?.faceArea);
+  const [fromDate, setFromDate] = useState("" || formData?.fromDate);
   // State to manage selected checkboxes
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [toDate, setToDate] = useState("");
+  const [toDate, setToDate] = useState("" || formData?.toDate);
   const [Searchdata, setSearchData] = useState(
     (formData.adslist && formData.adslist[index] && formData.adslist[index].Searchdata) || formData?.adslist?.Searchdata || []
   );
   const [showToast, setShowToast] = useState(null);
 
-  const [selectNight, setselectNight] = useState("");
+  const [selectNight, setselectNight] = useState("" || formData?.nightLight);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [showCartDetails, setShowCartDetails] = useState(false);
-
   let ADSTypeData = [];
   let LocationData = [];
   let FaceId = [];
@@ -108,7 +107,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
         addType: `${t(slot.addType)}`,
         faceArea:`${t(slot.faceArea)}`,
         location: `${t(slot.location)}`,
-        nightLight: `${t(slot.nightLight)}`,
+        nightLight: slot.nightLight===false?"No":"Yes",
         bookingDate: slot.bookingDate,
         price:"979",
         status: slot.slotStaus === "AVAILABLE" ? <div className="sla-cell-success">Available</div> : <div className="sla-cell-error">Booked</div>,
@@ -250,7 +249,32 @@ const handleCartClick = () => {
   }
 };
   const enhancedColumns = [checkboxColumn, ...columns];
- 
+
+  useEffect(() => {
+    // Check if all required fields are filled
+    if (
+      formData?.adType &&
+      formData?.faceArea &&
+      formData?.fromDate &&
+      formData?.toDate &&
+      formData?.nightLight
+    ) {
+      const filters = {
+        addType: formData?.adType?.code,
+        faceArea: formData?.faceArea?.code,
+        location: formData?.location?.code,
+        nightLight: formData?.nightLight?.value,
+        bookingStartDate: formData?.fromDate,
+        bookingEndDate: formData?.toDate,
+      };
+
+      // Only update searchData if the filters have changed
+      if (JSON.stringify(filters) !== JSON.stringify(Searchdata)) {
+        setSearchData(filters);
+      }
+    }
+  }, [formData]); // This will run whenever formData changes
+ console.log("SearchData-->",Searchdata);
   const handleSearch = () => {
     const addType = adsType?.code;
     const startDate = fromDate;
