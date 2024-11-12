@@ -15,11 +15,12 @@ public interface StreetVendingService {
 
 	public StreetVendingDetail createStreetVendingApplication(StreetVendingRequest vendingRequest);
 
-	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo info,
+	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
 			StreetVendingSearchCriteria streetVendingSearchCriteria);
 
 	public StreetVendingDetail updateStreetVendingApplication(StreetVendingRequest vendingRequest);
 
-	public Integer getApplicationsCount(StreetVendingSearchCriteria streetVendingSearchCriteria, RequestInfo requestInfo);
+	public Integer getApplicationsCount(StreetVendingSearchCriteria streetVendingSearchCriteria,
+			RequestInfo requestInfo);
 
 }

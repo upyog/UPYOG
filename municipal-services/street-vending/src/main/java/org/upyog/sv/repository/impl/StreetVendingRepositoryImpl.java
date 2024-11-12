@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.upyog.sv.config.StreetVendingConfiguration;
-import org.upyog.sv.kafka.producer.Producer;
+import org.upyog.sv.kafka.Producer;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.repository.querybuilder.StreetVendingQueryBuilder;
 import org.upyog.sv.repository.rowmapper.StreetVendingApplicationRowMapper;

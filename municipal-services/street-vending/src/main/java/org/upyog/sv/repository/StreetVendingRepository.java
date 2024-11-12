@@ -1,6 +1,5 @@
 package org.upyog.sv.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.upyog.sv.web.models.StreetVendingDetail;
