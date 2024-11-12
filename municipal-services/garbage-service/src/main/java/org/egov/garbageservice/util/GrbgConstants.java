@@ -18,7 +18,7 @@ public class GrbgConstants {
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";
 
-	public static final String APPLICATION_PREFIX = "GB//HP//DISTRICT//ULBNAME//MMYYYY//XXXXXX";
+	public static final String APPLICATION_PREFIX = "GB/HP/DISTRICT/ULBNAME/MMYYYY/XXXXXX";
 
 	public static final String DOCUMENT_ACCOUNT = "ACCOUNT";
 	
@@ -108,14 +108,14 @@ public class GrbgConstants {
 			throw new CustomException("APPLICATION_NUMBER_GENERATION_FAILED", "Ulb Name, District and Id can't be empty.");
 		}
 		
-		appNo.replace("ULBNAME", ulbName);
-		appNo.replace("DISTRICT", district);
-		appNo.replace("XXXXXX", id);
+		appNo = appNo.replace("ULBNAME", ulbName);
+		appNo = appNo.replace("DISTRICT", district);
+		appNo = appNo.replace("XXXXXX", id);
 		
 		SimpleDateFormat sf = new SimpleDateFormat("MMYYYY");
 		Date date = new Date();
 		String mmyyyy = sf.format(date);
-		appNo.replace("MMYYYY", mmyyyy);
+		appNo = appNo.replace("MMYYYY", mmyyyy);
 		
 		return appNo;
 	}

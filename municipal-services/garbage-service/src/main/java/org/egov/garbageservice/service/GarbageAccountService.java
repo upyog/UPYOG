@@ -281,6 +281,7 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 			AtomicInteger counter = new AtomicInteger(1);
 			garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+				subAccount.setId(garbageAccountRepository.getNextSequence());
 				subAccount.setUuid(UUID.randomUUID().toString());
 				subAccount.setPropertyId(garbageAccount.getPropertyId());
 				subAccount.setTenantId(garbageAccount.getTenantId());
