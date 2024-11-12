@@ -86,7 +86,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 		List<CartDetail> cartDetails = jdbcTemplate.
 				query(queryBuilder.getSlotDetailsQuery(bookingIds), bookingIds.toArray(), cartDetailRowmapper);
 		cartDetails.stream().forEach(slotDetail -> {
-			log.info("fetched slotDetails "+ bookingMap.get(slotDetail.getBookingId()));
+			log.info("fetched cartDetails "+ bookingMap.get(slotDetail.getBookingId()));
 			bookingMap.get(slotDetail.getBookingId()).addBookingSlots(slotDetail);
 		});
 		log.info("Fetched booking details cartDetails : " + cartDetails);
