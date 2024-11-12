@@ -47,6 +47,8 @@ public class BookingConstants {
 	
 	public static final String ADV_CALCULATION_TYPE = "CalculationType";
 	
+	public static final String ADV_TAX_AMOUNT = "TaxAmount";
+	
 	public static final String ADVERTISEMENT_DEMAND_ESTIMATION = "Advertisement booking amount estimation details fetched sussessfully";
 	
 	public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
