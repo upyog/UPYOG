@@ -13,8 +13,7 @@
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/fsm",
-    "packages/modules/tl",
-    "packages/modules/ws"
+    "packages/modules/tl"
   ],
   "license": "MIT",
   "private": true,
@@ -67,7 +66,7 @@
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
-    "build:ws": "cd packages/modules/ws && yarn build",
+    "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
