@@ -36,7 +36,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     const [lastVaccineDate, setVaccinationDate] = useState(renewApplication?.petDetails?.lastVaccineDate || formData?.pets?.lastVaccineDate || "");
     const [petColor, setpetColor] = useState( formData?.pets?.petColor || "");
     const [identificationMark, setidentificationmark] = useState(renewApplication?.petDetails?.identificationMark || formData?.pets?.identificationMark || "");
-    const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate || renewApplication?.petDetails?.adoptionDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || convertToObject(formData?.pets?.birthDate ? "Birth" : "Adoption") || [{ i18nKey: "", code: "" }]);
+    const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate || renewApplication?.petDetails?.adoptionDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || convertToObject(formData?.pets?.birthDate || formData?.pets?.adoptionDate ? (formData?.pets?.birthDate ? "Birth" : "Adoption") : null) || [{ i18nKey: "", code: "" }]);
     const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birthDate || "");
     const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoptionDate || "");
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -44,9 +44,6 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
 
     const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType"); // hook for pettype data
     const { data: Breed_Type} = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hook for breed type data
-
-
-    console.log("data of birth adoption fields:: ", convertToObject(renewApplication?.petDetails?.birthDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null))
 
     let menu = [];   // array to store pettype data
     let breed_type = [];    // array to store  breedtype data
@@ -107,7 +104,6 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
           // Total months
           const totalMonths = yearsDiff * 12 + monthsDiff;
           setPetAge(totalMonths)
-          console.log("months from date of ajgie: ", totalMonths);
         }
       }, [birthDate]);
 

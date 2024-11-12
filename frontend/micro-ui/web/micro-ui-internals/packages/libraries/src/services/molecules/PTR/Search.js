@@ -120,7 +120,7 @@ export const PTRSearch = {
 
     return {
       tenantId: response.tenantId,
-      applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t, pet_color, }),
+      applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t, pet_color }),
       applicationData: response,
       transformToAppDetailsForEmployee: PTRSearch.RegistrationDetails,
       
