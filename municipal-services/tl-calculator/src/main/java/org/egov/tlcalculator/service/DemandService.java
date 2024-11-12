@@ -388,9 +388,7 @@ public class DemandService {
         * */
         for (DemandDetail demandDetail : demandDetails) {
             if (!demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(MDMS_ROUNDOFF_TAXHEAD)){
-                if (demandDetail.getTaxAmount() == null) {
-                    demandDetail.setTaxAmount(BigDecimal.ZERO);
-                }
+                if (demandDetail.getTaxAmount() == null) demandDetail.setTaxAmount(BigDecimal.ZERO);
             totalTax = totalTax.add(demandDetail.getTaxAmount());
         }
             else prevRoundOffDemandDetail = demandDetail;
