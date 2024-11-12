@@ -136,13 +136,12 @@ function PTRSelectDocument({
   renewApplication
 }) {
   // Filter documents to find the one matching the current document code
-  const filteredDocument = renewApplication && renewApplication?.documents?.filter((item)=> item?.documentType?.includes(doc?.code))[0] || documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
+  const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
 
-  console.log("filtered document in docuemn:: ", filteredDocument, renewApplication?.documents[0]?.documentType)
   // Initialize state for selected document and file to upload
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
-      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType, i18nKey: filteredDocument?.documentType.replaceAll(".", "_") }
+      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType, i18nKey: filteredDocument?.documentType.replaceAll(".", "_")  }
       : doc?.dropdownData?.length === 1
         ? doc?.dropdownData[0]
         : {}
@@ -177,7 +176,27 @@ function PTRSelectDocument({
 
   // Effect to update documents when selected document or file changes
   useEffect(() => {
-    if (selectedDocument?.code && !renewApplication) {
+    if (selectedDocument?.code && renewApplication?.applicationNumber) {
+      setDocuments((prev) => {
+        const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
+
+        // If no file is uploaded, remove the document from the list
+        if (uploadedFile?.length === 0 || uploadedFile === null) {
+          return filteredDocumentsByDocumentType;
+        }
+
+        const filteredDocumentsByFileStoreId = filteredDocumentsByDocumentType?.filter((item) => item?.fileStoreId !== uploadedFile);
+        return [
+          ...filteredDocumentsByFileStoreId,
+          {
+            documentType: selectedDocument?.code,
+            filestoreId: uploadedFile?.documentUid,
+            documentUid: uploadedFile?.documentUid,
+          },
+        ];
+      });
+    }
+    else if (selectedDocument?.code) {
       setDocuments((prev) => {
         const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
 
@@ -193,27 +212,6 @@ function PTRSelectDocument({
             documentType: selectedDocument?.code,
             filestoreId: uploadedFile,
             documentUid: uploadedFile,
-          },
-        ];
-      });
-    }
-    else {
-      setDocuments((prev) => {
-        const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
-
-        // If no file is uploaded, remove the document from the list
-        if (uploadedFile?.length === 0 || uploadedFile === null) {
-          return filteredDocumentsByDocumentType;
-        }
-
-        const filteredDocumentsByFileStoreId = filteredDocumentsByDocumentType?.filter((item) => item?.fileStoreId !== uploadedFile);
-        console.log("uploaded file in selelctproofidentity :: ", uploadedFile)
-        return [
-          ...filteredDocumentsByFileStoreId,
-          {
-            documentType: selectedDocument?.code,
-            filestoreId: uploadedFile?.documentUid,
-            documentUid: uploadedFile?.documentUid,
           },
         ];
       });

@@ -16,12 +16,6 @@ const usePtrApplicationDetail = (t, tenantId, applicationNumber, config = {}, us
     }
   };
 
-  const petStyle = (element) => {
-    <div style={{fontStyle: "italic", fontWeight: "bold"}}>
-      {element}
-    </div>
-  }
-
   // hook to get the pet colors master data
   let { data: pet_color } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
   {
@@ -35,8 +29,8 @@ const usePtrApplicationDetail = (t, tenantId, applicationNumber, config = {}, us
 
   // Using the useQuery hook to fetch application details
   return useQuery(
-    ["APPLICATION_SEARCH", "PT_SEARCH", applicationNumber, pet_color, petStyle, userType, args],
-    () => PTRSearch.applicationDetails(t, tenantId, applicationNumber, pet_color, petStyle, userType, args),
+    ["APPLICATION_SEARCH", "PT_SEARCH", applicationNumber, pet_color, userType, args],
+    () => PTRSearch.applicationDetails(t, tenantId, applicationNumber, pet_color, userType, args),
     { select: defaultSelect, ...config }
  
   );

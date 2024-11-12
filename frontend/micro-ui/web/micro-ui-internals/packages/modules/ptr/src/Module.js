@@ -1,4 +1,4 @@
-import { CitizenHomeCard, PTIcon, PropertySearch } from "@nudmcdgnpm/digit-ui-react-components";
+import { CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -29,6 +29,7 @@ import NewApplication from "./pages/employee/NewApplication";
 import RenewApplication from "./pages/employee/RenewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
+import PropertySearch from "./pageComponents/PropertySearch";
 
 
 const componentsToRegister = {
