@@ -30,6 +30,7 @@ public class RentLeaseRepository {
 
 	private static final String baseAssetSearchQuery = "SELECT * from eg_asset_assetdetails";
 	private static final String SEQ_FOR_RENT_APPLICATION = "select nextval('seq_eg_rent_lease_application')";
+	private static final String RENT_SEARCH_QUERY= "Select * from eg_rent_lease_application";
 
 	private static final String BASE_SEARCH_QUERY = "SELECT booking.*, asset.id as asset_id,asset.bookingrefno as bookrefno, asset.name as name,asset.description as description, asset.classification as classification, asset.parentcategory as parentcategory, asset.category as category, asset.subcategory as subcategory, asset.department as department, asset.applicationno as applicationno, asset.approvalno as approvalno, asset.tenantid as tenantid, asset.status as status, asset.action as action, asset.businessservice as businessservice, asset.additionaldetails as  additionaldetails, asset.approvaldate as approvaldate, asset.applicationdate as applicationdate, asset.acccountid as accountid, asset.accountid as accountid, asset.remarks as remarks, asset.asset_id as assetid, asset.financialyear as financialyear, asset.sourceoffinance as sourceoffinance"
 			+ "FROM eg_rent_lease_application as booking"
@@ -140,6 +141,26 @@ public class RentLeaseRepository {
 			queryString.append(" AND");
 
 		return true;
+	}
+
+	public List<RentLease> searchForRentAndLeaseFromDb(List<String> ids) {
+		List<String> preparedStatementValues = new ArrayList<>();
+		StringBuilder searchQuery = new StringBuilder(RENT_SEARCH_QUERY);
+		searchQuery = addWhereClauseforRentAndLease(searchQuery, preparedStatementValues, ids);
+		return jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), rentLeaseSearchRowMapper);
+		
+	}
+
+	private StringBuilder addWhereClauseforRentAndLease(StringBuilder searchQuery, List preparedStatementValues,
+			List<String> ids) {
+		searchQuery.append(" WHERE");
+		boolean isAppendAndClause = false;
+		if(!CollectionUtils.isEmpty(ids)) {
+			isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
+			 searchQuery.append(" assetid IN ( ").append(getQueryForCollection(ids,
+	                    preparedStatementValues)).append(" )");
+		}
+		return searchQuery;
 	}
 
 }

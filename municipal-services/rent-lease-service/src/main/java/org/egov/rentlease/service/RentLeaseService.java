@@ -21,6 +21,7 @@ import org.egov.rentlease.model.Asset;
 import org.egov.rentlease.model.AssetRequest;
 import org.egov.rentlease.model.AuditDetails;
 import org.egov.rentlease.model.RentLease;
+import org.egov.rentlease.model.RentLeaseAssetSearchCriteria;
 import org.egov.rentlease.model.RentLeaseCreationRequest;
 import org.egov.rentlease.model.RentLeaseCreationResponse;
 import org.egov.rentlease.model.RentLeaseSearchRequest;
@@ -34,6 +35,10 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.logstash.logback.encoder.org.apache.commons.lang.BooleanUtils;
 
 @Service
 public class RentLeaseService {
@@ -49,51 +54,79 @@ public class RentLeaseService {
 
 	@Autowired
 	WorkflowService workflowService;
-	
+
 	@Autowired
 	RestCallRepository restCallRepository;
-	
+
 	@Autowired
 	private RentConstants constants;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	public RentLeaseCreationResponse create(RentLeaseCreationRequest request) {
 		RentLeaseCreationResponse rentResponse = null;
 		try {
 			Map<String, Asset> siteMap = validateAndSearchAssetData(request);
 			enrichRentAndLease(request);
+			validateAssetAvailableforBooking(request);
 			createRentAndLease(request);
 			workflowService.updateWorkflowStatus(request);
-			updateSiteDataAfterBookingCreate(request,siteMap);
+			// updateSiteDataAfterBookingCreate(request, siteMap);
 			rentResponse = RentLeaseCreationResponse.builder()
-					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), false))
+					.responseInfo(
+							responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), false))
 					.rentLease(request.getRentLease()).build();
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		return rentResponse;
 	}
 
+	private void validateAssetAvailableforBooking(RentLeaseCreationRequest request) {
+		List<String> ids = new ArrayList<>();
+		try {
+			ids = request.getRentLease().stream().map(rent -> rent.getAssetId()).collect(Collectors.toList());
+			if (!CollectionUtils.isEmpty(ids)) {
+				List<RentLease> rentLeaseListFromDB = repo.searchForRentAndLeaseFromDb(ids);
+				request.getRentLease().stream()
+						.filter(rent -> rentLeaseListFromDB.stream()
+								.anyMatch(dbRent -> dbRent.getAssetId().equals(rent.getAssetId())
+										&& dbRent.getStatus().equalsIgnoreCase("Booked")
+										&& dbRent.getStartDate().toString().equals(rent.getStartDate().toString())
+										&& dbRent.getEndDate().toString().equals(rent.getEndDate().toString())))
+						.findFirst().ifPresent(conflictingRent -> {
+							throw new RuntimeException("Asset is already booked for the Start Date"
+									+ conflictingRent.getStartDate() + " and Month " + conflictingRent.getMonths());
+						});
+			}
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+
+	}
+
 	private void updateSiteDataAfterBookingCreate(RentLeaseCreationRequest request, Map<String, Asset> assetMap) {
-		   
+
 		AssetRequest assetRequest = new AssetRequest();
 		assetMap.entrySet().stream().forEach(entry -> {
 			entry.getValue().setStatus(constants.RENT_STATUS_BOOKED);
-			if(null != entry.getValue().getAuditDetails()
-					&& null != request.getRequestInfo()
-							&& null != request.getRequestInfo().getUserInfo()) {
+			if (null != entry.getValue().getAuditDetails() && null != request.getRequestInfo()
+					&& null != request.getRequestInfo().getUserInfo()) {
 				entry.getValue().getAuditDetails().setLastModifiedBy(request.getRequestInfo().getUserInfo().getUuid());
 				entry.getValue().getAuditDetails().setLastModifiedDate(new Date().getTime());
-				//assetRequest = AssetRequest.builder().asset(entry.getValue()).requestInfo(request.getRequestInfo()).build();
+				// assetRequest =
+				// AssetRequest.builder().asset(entry.getValue()).requestInfo(request.getRequestInfo()).build();
 				assetRequest.setAsset(entry.getValue());
 				assetRequest.setRequestInfo(request.getRequestInfo());
 			}
-		
+
 			StringBuilder url = new StringBuilder(constants.getAssetHost().concat(constants.getAssetEndPoint()));
 			Object optional = restCallRepository.fetchResult(url, assetRequest);
 		});
-	
-		
+
 	}
 
 	private void createRentAndLease(RentLeaseCreationRequest request) {
@@ -245,10 +278,92 @@ public class RentLeaseService {
 		return new ArrayList<>(statusWithRoles);
 	}
 
-	public RentLeaseCreationResponse update(RentLeaseCreationRequest rentLeaseCreateRequest) {
+	public RentLeaseCreationResponse update(RentLeaseCreationRequest request) {
 		RentLeaseCreationResponse response = null;
-		
+
+		try {
+			validateRentLeaseUpdateRequest(request);
+
+			// Fetching existing Data from DB
+
+			Map<String, RentLease> rentLeaseMapFromDb = searchRentAndLeaseFromRequest(request);
+
+			request = validateAndEnrichUpdateRentAndLeaseBooking(request, rentLeaseMapFromDb);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 		return response;
+	}
+
+	private RentLeaseCreationRequest validateAndEnrichUpdateRentAndLeaseBooking(RentLeaseCreationRequest request,
+			Map<String, RentLease> rentLeaseMapFromDb) {
+		 
+		 RentLeaseCreationRequest tempRequest = RentLeaseCreationRequest.builder()
+					.requestInfo(request.getRequestInfo()).rentLease(new ArrayList<>()).build();
+			
+			request.getRentLease().stream().forEach(rent ->{
+				RentLease existingRentLease = rentLeaseMapFromDb.get(rent.getApplicationNo());
+				if(null==existingRentLease) {
+					throw new CustomException("APPLICATION_NOT_FOUND","Application No not found: "+rent.getApplicationNo());
+				}
+				if(!rent.getIsOnlyWorkflowCall()) {
+					rent.setApplicationNo(existingRentLease.getApplicationNo());
+					rent.setStatus(existingRentLease.getStatus());
+					rent.setAuditDetails(existingRentLease.getAuditDetails());
+					rent.getAuditDetails().setLastModifiedBy(request.getRequestInfo().getUserInfo().getUuid());
+					rent.getAuditDetails().setLastModifiedDate(new Date().getTime());
+					tempRequest.getRentLease().add(rent);
+				}
+				else {
+					Boolean isWfCall = rent.getIsOnlyWorkflowCall();
+					String tempApplicationNo= rent.getApplicationNo();
+					String action = rent.getWorkflowAction();
+					String comments = rent.getComments();
+					String status = constants.getStatusOrAction(action, true);
+					
+					RentLease rentTemp = objectMapper.convertValue(rentLeaseMapFromDb.get(rent.getApplicationNo()), RentLease.class);
+					
+					if(null == rentTemp) {
+						throw new CustomException("FAILED_SEARCH_RENT_LEASE_BOOKING","Rent and Lease Booking not found for workflow call.");
+					}
+					
+					rentTemp.setIsOnlyWorkflowCall(isWfCall);
+					rentTemp.setApplicationNo(tempApplicationNo);
+					rentTemp.setWorkflowAction(action);
+					rentTemp.setStatus(status);
+					
+					tempRequest.getRentLease().add(rentTemp);
+				}
+			});
+		return tempRequest;
+	}
+
+	private Map<String, RentLease> searchRentAndLeaseFromRequest(RentLeaseCreationRequest request) {
+
+		SearchCriteria criteria = SearchCriteria.builder().applicationNo(
+				request.getRentLease().stream().map(rent -> rent.getApplicationNo()).collect(Collectors.toList()))
+				.build();
+		List<RentLease> rentLeaseList = repo.search(criteria);
+		return rentLeaseList.stream().collect(Collectors.toMap(RentLease::getApplicationNo, rent -> rent));
+	}
+
+	private void validateRentLeaseUpdateRequest(RentLeaseCreationRequest request) {
+		try {
+			if (CollectionUtils.isEmpty(request.getRentLease())) {
+				throw new CustomException("RENT_LEASE_NULL", "RentLease object cannot be empty!!!");
+			}
+			request.getRentLease().stream().filter(rent -> BooleanUtils.isFalse(rent.getIsOnlyWorkflowCall()))
+					.forEach(rent -> {
+						if (StringUtils.isEmpty(rent.getUuid())) {
+							throw new CustomException("EMPTY_REQUEST", "Provide bookings uuid to update.");
+						}
+
+					});
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 
 }

@@ -1,6 +1,8 @@
 package org.egov.rentlease.util;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +42,32 @@ public class RentConstants {
 	public static final String STATUS_PENDINGFORVERIFICATION ="PENDINGFORVERIFICATION";
 	public static final String STATUS_PENDINGFORAPPROVAL ="PENDINGFORAPPROVAL";
 	public static final String STATE_LEVEL_TEENENT_ID = "hp";
-	 public static final String RENT_STATUS_BOOKED = "BOOKED";
+	public static final String RENT_STATUS_BOOKED = "BOOKED";
+	public static final String ACTION_INITIATE = "INITIATE";
+	public static final String WORKFLOW_SITE_BOOKING_MODULE = "RLA";
+	public static final String ACTION_FORWARD_TO_VERIFIER = "FORWARD_TO_VERIFIER";
+
+	public static final String ACTION_FORWARD_TO_APPROVER = "FORWARD_TO_APPROVER";
+
+	public static final String ACTION_RETURN_TO_INITIATOR = "RETURN_TO_INITIATOR";
+
+	public static final String ACTION_RETURN_TO_VERIFIER = "RETURN_TO_VERIFIER";
+
+	public static final String ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
+
+	public static final String STATUS_INITIATED = "INITIATED";
+
+	public static final String STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
 	
+	public static final String STATUS_PENDINGFORPAYMENT = "PENDINGFORPAYMENT";
+
+	public static final String STATUS_APPROVED = "APPROVED";
+	
+	public static final String STATUS_REVOKED ="REVOKED";
+	
+	public static final String STATUS_CANCEL ="CANCEL";
+
+
 
 	public static List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
 		List<String> roleCodes = roles.stream()
@@ -49,5 +75,29 @@ public class RentConstants {
 				.collect(Collectors.toList());
 		return roleCodes;
 	}
-
+	
+	public String getStatusOrAction(String action, Boolean fetchValue)
+	{
+		Map<String, String> map = new HashMap<>();
+		map.put(ACTION_INITIATE, STATUS_INITIATED);
+		map.put(ACTION_FORWARD_TO_VERIFIER, STATUS_PENDINGFORVERIFICATION);
+		map.put(ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, STATUS_PENDINGFORPAYMENT);
+		map.put(ACTION_RETURN_TO_INITIATOR, STATUS_PENDINGFORMODIFICATION);
+		map.put(ACTION_FORWARD_TO_APPROVER, STATUS_PENDINGFORAPPROVAL);
+		map.put(STATUS_REVOKED, STATUS_REVOKED);
+		map.put(STATUS_CANCEL, STATUS_CANCEL);
+		map.put(STATUS_APPROVED, STATUS_APPROVED);
+		
+		
+		if (!fetchValue) {
+			// return key
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+				if (entry.getValue().equals(action)) {
+					return entry.getKey();
+				}
+			}
+		}
+		return map.get(action);
+		
+	}
 }
