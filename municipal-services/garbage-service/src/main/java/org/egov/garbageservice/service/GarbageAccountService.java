@@ -507,6 +507,7 @@ public class GarbageAccountService {
 		// enrich child accounts
 		if(!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
 			
+			AtomicLong atomicLong = new AtomicLong(0L);
 			newGarbageAccount.getChildGarbageAccounts().stream().forEach(childAccount -> {
 				
 				// update case
@@ -528,7 +529,13 @@ public class GarbageAccountService {
 							.createdDate(new Date().getTime()).build());
 				}
 				
+				if(BooleanUtils.isTrue(childAccount.getIsActive())) {
+					atomicLong.getAndIncrement();
+				}
+				
 			});
+			
+			newGarbageAccount.setSubAccountCount(atomicLong.get());
 		}
 		
 //		if (null != newGarbageAccount.getGrbgApplication()) {
