@@ -16,7 +16,6 @@ import {
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Timeline from "../../../components/TLTimelineInFSM";
-import { getAddress } from "@upyog/digit-ui-module-ws/src/utils";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
