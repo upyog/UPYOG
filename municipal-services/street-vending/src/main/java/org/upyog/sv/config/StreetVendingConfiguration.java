@@ -115,9 +115,12 @@ public class StreetVendingConfiguration {
 	@Value("${sv.module.name}")
 	private String moduleName;
 
+	@Value("${sv.payment.business.service.name}")
+	private String paymentBusinessServiceName;
+
 	@Value("${sv.business.service.name}")
 	private String businessServiceName;
-
+	
 	// MDMS Config
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;

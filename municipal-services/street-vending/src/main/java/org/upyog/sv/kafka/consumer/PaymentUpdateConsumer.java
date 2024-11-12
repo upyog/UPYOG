@@ -1,6 +1,5 @@
 package org.upyog.sv.kafka.consumer;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,52 +23,47 @@ public class PaymentUpdateConsumer {
 
 	@Autowired
 	private PaymentNotificationService paymentNotificationService;
-	
 
 	@KafkaListener(topics = { "${kafka.topics.receipt.create}" })
-	public void paymentSuccess(final HashMap<String, Object> record,
-			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
-		log.info("Street vending Appplication Received to update workflow after PAY for topic : " + topic);
-		//TODO: need to remove after testing
-		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
+		log.info("Street Vending Appplication Received to update workflow after PAY ");
 		try {
 			paymentNotificationService.process(record, topic);
 		} catch (JsonProcessingException e) {
-			log.error("Exception occurred while processing payment reciept : ", e.getMessage());
+			log.info("Catch block in listenPayments method of Pet service consumer");
+			e.printStackTrace();
 		}
 
 	}
-	
-	@KafkaListener(topics = { "${kafka.topics.update.pg.txns}" })
-	public void paymentUpdate(final HashMap<String, Object> record,
-			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
-		log.info("Street vending Appplication payment status update for  : " + topic + " and record : " + record);
-		//TODO: need to remove after testing
-		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
-		paymentNotificationService.processTransaction(record, topic, null);
+//	@KafkaListener(topics = { "${kafka.topics.update.pg.txns}" })
+//	public void paymentUpdate(final HashMap<String, Object> record,
+//			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+//
+//		log.info("Street vending Appplication payment status update for  : " + topic + " and record : " + record);
+//		//TODO: need to remove after testing
+//		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
+//		paymentNotificationService.processTransaction(record, topic, null);
+//
+//	}
+//	
+//	
+//	@KafkaListener(topics = { "${kafka.topics.save.pg.txns}" })
+//	public void paymentStarted(final HashMap<String, Object> record,
+//			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+//
+//		log.info("Street vending Appplication payment started for topic  : " + topic + " and record : " + record);
+//		//TODO: need to remove after testing
+//		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
+//		paymentNotificationService.processTransaction(record, topic, null);
+//
+//	}
 
-	}
-	
-	
-	@KafkaListener(topics = { "${kafka.topics.save.pg.txns}" })
-	public void paymentStarted(final HashMap<String, Object> record,
-			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-
-		log.info("Street vending Appplication payment started for topic  : " + topic + " and record : " + record);
-		//TODO: need to remove after testing
-		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
-		paymentNotificationService.processTransaction(record, topic, null);
-
-	}
-	
-	
 	/**
 	 * Returns the map of the values required from the record
 	 * 
-	 * @param documentContext
-	 *            The DocumentContext of the record Object
+	 * @param documentContext The DocumentContext of the record Object
 	 * @return The required values as key,value pair
 	 */
 	@SuppressWarnings("unused")

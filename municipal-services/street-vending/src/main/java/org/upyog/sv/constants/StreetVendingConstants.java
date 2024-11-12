@@ -9,6 +9,7 @@ public class StreetVendingConstants {
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String APPLICATIONS_FOUND = "Applications Found";
 	public static final String APPLICATION_UPDATED = "Application Updated";
+	public static final String REGISTRATION_COMPLETED = "Registration Completed";
 
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 

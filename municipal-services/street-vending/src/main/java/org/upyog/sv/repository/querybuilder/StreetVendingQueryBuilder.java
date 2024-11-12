@@ -97,6 +97,11 @@ public class StreetVendingQueryBuilder {
 			query.append(" sv.createdby = ? ");
 			preparedStmtList.add(criteria.getToDate());
 		}
+		if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" vendor.mobile_no = ? ");
+			preparedStmtList.add(criteria.getApplicationNumber());
+		}		
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);
 		}

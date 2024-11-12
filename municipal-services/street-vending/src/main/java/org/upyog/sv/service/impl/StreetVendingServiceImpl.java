@@ -66,7 +66,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 	}
 
 	@Override
-	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo info,
+	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
 			StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<StreetVendingDetail> applications = streetVendingRepository
 				.getStreetVendingApplications(streetVendingSearchCriteria);
