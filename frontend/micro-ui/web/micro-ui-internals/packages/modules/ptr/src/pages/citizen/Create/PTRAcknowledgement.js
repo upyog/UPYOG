@@ -38,16 +38,15 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
   
   const { t } = useTranslation();
   
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
 
-
   useEffect(() => {
     try {
-      data.tenantId = tenantId;
+      data.tenantId = data.address?.city?.code;
       let formdata = PetDataConvert(data)
       mutation.mutate(formdata, {onSuccess});
     } catch (err) {

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel,Dropdown, LinkButton} from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 import GIS from "./GIS";
 import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
 import Timeline from "../components/Timeline";
+import ApplicationTable from "../components/ApplicationTable";
 
 /**
  * SVBusinessDetails component handles the business details form for street vending applications.
@@ -14,136 +15,241 @@ import Timeline from "../components/Timeline";
  */
 
 const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
-    let validation = {};
-    const user = Digit.UserService.getUser().info;
-    const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || "");
-    const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || "");
-    const [location, setlocation] = useState( formData?.businessDetails?.location || "");
-    const [areaRequired, setareaRequired] = useState( formData?.businessDetails?.areaRequired || "" );
-    const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || "");
-    const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || "");
-    const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
-    const [daysOfOperation, setDaysOfOperation] = useState(
-        formData?.businessDetails?.daysOfOperation || [
-          { name: "Monday", isSelected: false, startTime: "", endTime: "" },
-          { name: "Tuesday", isSelected: false,startTime: "", endTime: "" },
-          { name: "Wednesday", isSelected: false,startTime: "", endTime: "" },
-          { name: "Thursday", isSelected: false,startTime: "", endTime: "" },
-          { name: "Friday",isSelected: false, startTime: "", endTime: "" },
-          { name: "Saturday", isSelected: false,startTime: "", endTime: "" },
-          { name: "Sunday",isSelected: false, startTime: "", endTime: "" },
+  let validation = {};
+  const user = Digit.UserService.getUser().info;
+  const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || "");
+  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || "");
+  const [location, setlocation] = useState(formData?.businessDetails?.location || "");
+  const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || "");
+  const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || "");
+  const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || "");
+  const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
+  const [isSameForAll, setIsSameForAll] = useState(true)
+  const [tempSave, setTempSave] = useState()
+  const [daysOfOperation, setDaysOfOperation] = useState(
+    formData?.businessDetails?.daysOfOperation || [
+      { name: "Monday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Tuesday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Wednesday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Thursday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Friday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Saturday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Sunday", isSelected: false, startTime: "", endTime: "" },
+    ]
+  );
+
+
+  /* this checks two conditions:
+   1. At least one day of the week is selected.
+   2. If a day is selected, both the startTime and endTime for that day are filled.*/
+
+  const validateDaysOfOperation = () => {
+    const atLeastOneDaySelected = daysOfOperation.some(day => day.isSelected);
+    const allSelectedDaysHaveTimeSlots = daysOfOperation.every(
+      day => !day.isSelected || (day.startTime && day.endTime)
+    );
+    return atLeastOneDaySelected && allSelectedDaysHaveTimeSlots;
+  };
+
+  const handleDayToggle = (index) => {
+    const updatedDays = [...daysOfOperation];
+    updatedDays[index].isSelected = !updatedDays[index].isSelected;
+    setDaysOfOperation(updatedDays);
+  };
+
+  const onSameForAllChange = (startTime, endTime) => {
+    setIsSameForAll(!isSameForAll)
+    if (isSameForAll) {
+      setTempSave(daysOfOperation);
+      setDaysOfOperation(
+        [
+          { name: "Monday", isSelected: true, startTime: startTime, endTime: endTime },
+          { name: "Tuesday", isSelected: true, startTime: startTime, endTime: endTime },
+          { name: "Wednesday", isSelected: true, startTime: startTime, endTime: endTime },
+          { name: "Thursday", isSelected: true, startTime: startTime, endTime: endTime },
+          { name: "Friday", isSelected: true, startTime: startTime, endTime: endTime },
+          { name: "Saturday", isSelected: true, startTime: startTime, endTime: endTime },
+          { name: "Sunday", isSelected: true, startTime: startTime, endTime: endTime },
         ]
       );
-
-
-      /* this checks two conditions:
-       1. At least one day of the week is selected.
-       2. If a day is selected, both the startTime and endTime for that day are filled.*/
-
-      const validateDaysOfOperation = () => {
-        const atLeastOneDaySelected = daysOfOperation.some(day => day.isSelected);
-        const allSelectedDaysHaveTimeSlots = daysOfOperation.every(
-            day => !day.isSelected || (day.startTime && day.endTime)
-        );
-        return atLeastOneDaySelected && allSelectedDaysHaveTimeSlots;
-    };
-
-      const handleDayToggle = (index) => {
-        const updatedDays = [...daysOfOperation];
-        updatedDays[index].isSelected = !updatedDays[index].isSelected;
-        setDaysOfOperation(updatedDays);
-      };
-  
-      const handleTimeChange = (index, field, value) => {
-        const updatedDays = [...daysOfOperation];
-        
-        if (field === "startTime" || field === "endTime") {
-          // Only update the time without the AM/PM part
-          updatedDays[index][field] = value;
-        } else {
-          // Update the AM/PM part and concatenate it with the time
-          const timeField = field === "startAmPm" ? "startTime" : "endTime";
-          const timeValue = updatedDays[index][timeField];
-          updatedDays[index][timeField] = `${timeValue} ${value}`; // Concatenate time and AM/PM
-        }
-      
-        setDaysOfOperation(updatedDays);
-      };
-    
-    const { control } = useForm();
-    const [isOpen, setIsOpen] = useState(false);
-
-
-    
-    const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
-      {
-        select: (data) => {
-            const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
-            return formattedData;
-        },
-    }); 
-    let vendingTypeOptions = [];
-    vendingTypeData && vendingTypeData.map((vending) => {
-        vendingTypeOptions.push({i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}`})
-    }) 
-
-    const { data: vendingZone } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
-      {
-        select: (data) => {
-            const formattedData = data?.["StreetVending"]?.["VendingZones"]
-            return formattedData;
-        },
-    }); 
-    let vending_Zone = [];
-    vendingZone && vendingZone.map((zone) => {
-      vending_Zone.push({i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}`})
-    }) 
-
-    const handleGIS = () => {
-        setIsOpen(!isOpen);
-      }
-    
-      const handleRemove = () => {
-        setIsOpen(!isOpen);
-      }
-    
-    function onSave(location) {
-        setlocation(location);
-        setIsOpen(false);
-      }
-
-    function selectlocation(e) {
-        formData.businessDetails["location"] = (typeof e === 'object' && e !== null) ? e.target.value : e;
-        // setlocation((typeof e === 'object' && e !== null) ? e.target.value : e);
-        setlocation(e.target.value);
-      }
-
-    function setNameOfAuthority(e) {
-      setnameOfAuthority(e.target.value);
     }
-    function setVendingLiscence(e) {
-      setvendingLiscence(e.target.value);
+    else {
+      setDaysOfOperation(tempSave)
+    }
+  }
+
+  const onTimeChange = (row, time, value) => {
+    if(time == "startTime"){
+      row.startTime = value;
+    }
+    else if(time == "endTime"){
+      row.endTime = value;
+    }
+  }
+
+  // Checkbox column setup
+  // const checkboxColumn = {
+  //   id: "selection",
+  //   Header: ({ getToggleAllRowsSelectedProps }) => (
+  //     <div style={{ paddingLeft: "30px", width: "10px" }}>
+  //       <input style={{width: "10px"}}
+  //         type="checkbox"
+  //         checked={isSameForAll}
+  //         onChange={() => {
+  //           setIsSameForAll(!isSameForAll);
+  //         }}
+  //       />
+  //     </div>
+  //   ),
+  //   Cell: ({ row }) => (
+  //     <div style={{ paddingLeft: "30px", width: "10px" }}>
+  //       <input style={{width: "10px"}}
+  //         type="checkbox"
+  //         checked={isSameForAll}
+  //         // onChange={() => handleRowSelection(row.index)}
+  //         disabled={true}
+  //       />
+  //     </div>
+  //   ),
+  // };
+
+  // const datatest = [
+  //   {day: "Monday"},
+  //   {day: "Tuesday"},
+  //   {day: "Wednesday"},
+  //   {day: "Thursday"},
+  //   {day: "Friday"},
+  //   {day: "Saturday"},
+  //   {day: "Sunday"},
+  // ]
+
+  // const columns = [
+  //   checkboxColumn,
+  //   { Header: t("SV_DAY"), accessor: "day" },
+  //   {
+  //     Header: t("SV_FROM_TIME"), accessor: "fromTime", Cell: ({ row }) => (
+  //       <div>
+  //         <TextInput
+  //           style={{ width: "100%" }}
+  //           type="time"
+  //           name="startTime"
+  //           // value={row?.startTime || ""}
+  //           onChange={(e) => onTimeChange(row, "startTime", e.target.value)}
+  //           placeholder={"Start Time"}
+  //           // {...(validation = {
+  //           //   isRequired: day.isSelecte ? true : false,
+  //           // })}
+  //         />
+  //         </div>
+  //     ),
+  //   },
+  //   {
+  //     Header: t("SV_TO_TIME"), accessor: "toTime", Cell: ({ row }) => (
+  //         <TextInput
+  //           style={{ width: "100%", marginLeft: "15px" }}
+  //           type="time"
+  //           name="endTime"
+  //           // value={row?.endTime || ""}
+  //           onChange={(e) => onTimeChange(row, "endTime", e.target.value)}
+  //           placeholder={"End Time"}
+  //           // {...(validation = {
+  //           //   isRequired: day.isSelecte ? true : false,
+  //           // })}
+  //         />
+  //     ),
+  //   },
+  // ];
+
+  const handleTimeChange = (index, field, value) => {
+    const updatedDays = [...daysOfOperation];
+
+    if (field === "startTime" || field === "endTime") {
+      // Only update the time without the AM/PM part
+      updatedDays[index][field] = value;
+    } else {
+      // Update the AM/PM part and concatenate it with the time
+      const timeField = field === "startAmPm" ? "startTime" : "endTime";
+      const timeValue = updatedDays[index][timeField];
+      updatedDays[index][timeField] = `${timeValue} ${value}`; // Concatenate time and AM/PM
     }
 
-    function setAreaRequired(e) {
-      setareaRequired(e.target.value);
+    setDaysOfOperation(updatedDays);
+  };
+
+  const { control } = useForm();
+  const [isOpen, setIsOpen] = useState(false);
+
+
+
+  const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
+        return formattedData;
+      },
+    });
+  let vendingTypeOptions = [];
+  vendingTypeData && vendingTypeData.map((vending) => {
+    vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
+  })
+
+  const { data: vendingZone } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["StreetVending"]?.["VendingZones"]
+        return formattedData;
+      },
+    });
+  let vending_Zone = [];
+  vendingZone && vendingZone.map((zone) => {
+    vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+  })
+
+  const handleGIS = () => {
+    setIsOpen(!isOpen);
+  }
+
+  const handleRemove = () => {
+    setIsOpen(!isOpen);
+  }
+
+  function onSave(location) {
+    setlocation(location);
+    setIsOpen(false);
+  }
+
+  function selectlocation(e) {
+    formData.businessDetails["location"] = (typeof e === 'object' && e !== null) ? e.target.value : e;
+    // setlocation((typeof e === 'object' && e !== null) ? e.target.value : e);
+    setlocation(e.target.value);
+  }
+
+  function setNameOfAuthority(e) {
+    setnameOfAuthority(e.target.value);
+  }
+  function setVendingLiscence(e) {
+    setvendingLiscence(e.target.value);
+  }
+
+  function setAreaRequired(e) {
+    setareaRequired(e.target.value);
+  }
+
+
+  const goNext = () => {
+    if (!validateDaysOfOperation()) {
+      alert("Please select at least one day and provide both start and end times for the selected day(s).");
+      return;
     }
+    let business = formData.businessDetails;
+    let businessStep;
 
-    
-    const goNext = () => {
-      if (!validateDaysOfOperation()) {
-        alert("Please select at least one day and provide both start and end times for the selected day(s).");
-        return;
-    }
-      let business = formData.businessDetails;
-      let businessStep;
+    businessStep = { ...business, vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation };
+    onSelect(config.key, businessStep, false);
 
-        businessStep = { ...business, vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation };
-        onSelect(config.key, businessStep, false);
-      
-    };
+  };
 
-    const onSkip = () => onSelect();
+  const onSkip = () => onSelect();
 
 
     useEffect(() => {
@@ -153,12 +259,12 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
     }, [vendingType, vendingZones, location,areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation]);
 
 
-    return (
-      <React.Fragment>
-        {
-         <Timeline currentStep={2} />
-        } 
-        <div>
+  return (
+    <React.Fragment>
+      {
+        <Timeline currentStep={2} />
+      }
+      <div>
         {isOpen && <GIS t={t} onSelect={onSelect} formData={formData} handleRemove={handleRemove} onSave={onSave} />}
 
         {!isOpen && <FormStep
@@ -208,44 +314,46 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
             />
             <CardLabel>{`${t("SV_LOCATION")}`}</CardLabel>
             <div>
-            <TextInput
-            isMandatory={false}
-            optionKey="i18nKey"
-            t={t}
-            style={inputStyles}
-            name="location"
-            value={location}
-            onChange={selectlocation}
-            />
-            <LinkButton
-            label={
-                <div>
-                <span>
-                    <svg 
-                    style={{ float: "right", position: "relative", bottom: "25px", marginTop: "-17px", marginRight: "51%" }} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11 7C8.79 7 7 8.79 7 11C7 13.21 8.79 15 11 15C13.21 15 15 13.21 15 11C15 8.79 13.21 7 11 7ZM19.94 10C19.48 5.83 16.17 2.52 12 2.06V0H10V2.06C5.83 2.52 2.52 5.83 2.06 10H0V12H2.06C2.52 16.17 5.83 19.48 10 19.94V22H12V19.94C16.17 19.48 19.48 16.17 19.94 12H22V10H19.94ZM11 18C7.13 18 4 14.87 4 11C4 7.13 7.13 4 11 4C14.87 4 18 7.13 18 11C18 14.87 14.87 18 11 18Z" fill="#a82227" />
-                    </svg>
-                </span>
-                </div>
-            }
-            onClick={(e) => handleGIS()}
-            />
+              <TextInput
+                isMandatory={false}
+                optionKey="i18nKey"
+                t={t}
+                style={inputStyles}
+                name="location"
+                value={location}
+                onChange={selectlocation}
+              />
+              <LinkButton
+                label={
+                  <div>
+                    <span>
+                      <svg
+                        style={{ float: "right", position: "relative", bottom: "25px", marginTop: "-17px", marginRight: "51%" }} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 7C8.79 7 7 8.79 7 11C7 13.21 8.79 15 11 15C13.21 15 15 13.21 15 11C15 8.79 13.21 7 11 7ZM19.94 10C19.48 5.83 16.17 2.52 12 2.06V0H10V2.06C5.83 2.52 2.52 5.83 2.06 10H0V12H2.06C2.52 16.17 5.83 19.48 10 19.94V22H12V19.94C16.17 19.48 19.48 16.17 19.94 12H22V10H19.94ZM11 18C7.13 18 4 14.87 4 11C4 7.13 7.13 4 11 4C14.87 4 18 7.13 18 11C18 14.87 14.87 18 11 18Z" fill="#a82227" />
+                      </svg>
+                    </span>
+                  </div>
+                }
+                onClick={(e) => handleGIS()}
+              />
             </div>
 
             <CardLabel>{t("SV_DAY_HOUR_OPERATION")} <span className="astericColor">*</span></CardLabel>
             {daysOfOperation.map((day, index) => (
-            <SVDayAndTimeSlot
+              <SVDayAndTimeSlot
                 key={index}
                 t={t}
                 day={day}
+                isSameForAll={isSameForAll}
+                onSameForAllChange={onSameForAllChange}
                 onDayToggle={() => handleDayToggle(index)}
-                onDayChange={() => {}} // No need to change the day name since all days are shown
+                onDayChange={() => { }} // No need to change the day name since all days are shown
                 onTimeChange={(field, value) => handleTimeChange(index, field, value)}
                 ValidationRequired={true}
                 {...(validation = {
                   isRequired: true,
                 })}
-            />
+              />
             ))}
 
             {vendingType?.code==="STATIONARY" && 
@@ -311,9 +419,9 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
 
           </div>
         </FormStep>}
-        </div>
-      </React.Fragment>
-    );
-  };
+      </div>
+    </React.Fragment>
+  );
+};
 
 export default SVBusinessDetails;

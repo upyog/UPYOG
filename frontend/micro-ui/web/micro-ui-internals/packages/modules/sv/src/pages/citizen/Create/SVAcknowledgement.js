@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { svPayloadData } from "../../../utils";
+import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 
 /* This component, SVAcknowledgement, is responsible for displaying the acknowledgement 
  of a service request submission. It utilizes the Digit UI library components for 
@@ -54,7 +55,10 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
   const mutation = Digit.Hooks.sv.useSvCreateApi(data.address?.city?.code); 
   const user = Digit.UserService.getUser().info;
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
 
+  console.log("mutations data :: ", mutation)
   useEffect(() => {
     try {
       data.tenantId = data.address?.city?.code;
@@ -63,6 +67,16 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
     } catch (err) {
     }
   }, []);
+
+  const handleDownloadPdf = async () => {
+    const { SVDetail = [] } = mutation.data;
+    let SVData = (SVDetail) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === SVData.tenantId);
+    let tenantId = SVData.tenantId || tenantId;
+   
+    const data = await getSVAcknowledgementData({ ...SVData }, tenantInfo, t);
+    Digit.Utils.pdf.generate(data);
+  };
 
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
@@ -78,6 +92,7 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
+      {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
