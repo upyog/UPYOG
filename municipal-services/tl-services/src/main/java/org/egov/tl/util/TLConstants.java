@@ -241,9 +241,9 @@ public class TLConstants {
     
     //TL types
 
-    public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
-
     public static final String APPLICATION_TYPE_NEW = "NEW";
+
+    public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
 
     public static final String APPLICATION_TYPE_MODIFICATION = "MODIFICATION";
 
@@ -476,6 +476,12 @@ public class TLConstants {
     public TLConstants() {}
 
     public static final String TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
+    
+    public static final String ROLE_CODE_CITIZEN = "CITIZEN";
+    
+    public static final String ROLE_CODE_SUPERVISOR = "SUPERVISOR";
+    
+    public static final String ROLE_CODE_SECRETARY = "SECRETARY";
     
     public static String ROLE_CODE_EMPLOYEE = "EMPLOYEE";
 

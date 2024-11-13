@@ -2,6 +2,7 @@ package org.egov.garbageservice.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,14 +14,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.garbageservice.contract.bill.*;
+import org.egov.garbageservice.contract.bill.Bill;
 import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
+import org.egov.garbageservice.contract.bill.BillResponse;
+import org.egov.garbageservice.contract.bill.BillSearchCriteria;
+import org.egov.garbageservice.contract.bill.Demand;
+import org.egov.garbageservice.contract.bill.GenerateBillCriteria;
 import org.egov.garbageservice.contract.workflow.BusinessServiceResponse;
 import org.egov.garbageservice.contract.workflow.ProcessInstance;
 import org.egov.garbageservice.contract.workflow.ProcessInstanceRequest;
@@ -213,11 +219,11 @@ public class GarbageAccountService {
 		
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 			
-			AtomicLong childCount = new AtomicLong(0L);
+			AtomicLong childCount = new AtomicLong(1L);
 			garbageAccount.getChildGarbageAccounts().forEach(subAccount -> {
 				GrbgApplication grbgApplication = GrbgApplication.builder()
 						.uuid(UUID.randomUUID().toString())
-						.applicationNo(GrbgConstants.APPLICATION_PREFIX.concat(subAccount.getGarbageId().toString()).concat("/").concat(Long.toString(childCount.getAndIncrement())))
+						.applicationNo(garbageAccount.getGrbgApplication().getApplicationNo().concat("/").concat(Long.toString(childCount.getAndIncrement())))
 						.status(GrbgConstants.STATUS_INITIATED)
 						.garbageId(subAccount.getGarbageId())
 						.build();
@@ -279,13 +285,15 @@ public class GarbageAccountService {
 
 	private void enrichCreateGarbageSubAccounts(GarbageAccount garbageAccount) {
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
-			AtomicInteger counter = new AtomicInteger(1);
+			AtomicInteger counter = new AtomicInteger(0);
 			garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+				subAccount.setId(garbageAccountRepository.getNextSequence());
 				subAccount.setUuid(UUID.randomUUID().toString());
 				subAccount.setPropertyId(garbageAccount.getPropertyId());
 				subAccount.setTenantId(garbageAccount.getTenantId());
 //				subAccount.setIsOwner(false);
-				subAccount.setGarbageId(System.currentTimeMillis()+(counter.getAndAdd(1)));
+				counter.getAndAdd(1);
+				subAccount.setGarbageId(garbageAccount.getGarbageId()+ counter.get());
 				subAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 				subAccount.setAuditDetails(garbageAccount.getAuditDetails());
 				subAccount.setParentAccount(garbageAccount.getUuid());
@@ -350,7 +358,8 @@ public class GarbageAccountService {
 				
 				//validate address
 				if(StringUtils.isEmpty(address.getAddress1())
-						&& StringUtils.isEmpty(address.getAddress1())) {
+						|| null == address.getAdditionalDetail()
+						|| null == address.getAdditionalDetail().get("district")) {
 					throw new CustomException("MISSING_ADDRESS_DETAILS","Provide mendatory details of address.");
 				}
 				
@@ -359,6 +368,8 @@ public class GarbageAccountService {
 				address.setIsActive(true);
 				address.setGarbageId(garbageAccount.getGarbageId());
 			});
+		}else {
+			throw new CustomException("MISSING_ADDRESS","Provide address.");
 		}
 	}
 
@@ -386,9 +397,14 @@ public class GarbageAccountService {
 
 	private void enrichCreateGarbageApplication(GarbageAccount garbageAccount, RequestInfo requestInfo) {
 		
+		// get application number format
+		String applicationNumber = GrbgConstants.generateApplicationNumberFormat(String.valueOf(garbageAccount.getId())
+													, garbageAccount.getAddresses().get(0).getUlbName()
+													, garbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText());
+		
 		GrbgApplication grbgApplication = GrbgApplication.builder()
 				.uuid(UUID.randomUUID().toString())
-				.applicationNo(GrbgConstants.APPLICATION_PREFIX.concat(garbageAccount.getGarbageId().toString()))
+				.applicationNo(applicationNumber)
 				.status(GrbgConstants.STATUS_INITIATED)
 				.garbageId(garbageAccount.getGarbageId())
 				.build();
@@ -430,7 +446,20 @@ public class GarbageAccountService {
 					&& !StringUtils.equals(existingAccounts1.get(0).getPropertyId(), garbageAccount.getPropertyId())) {
 				throw new CustomException("NO_DATA_CAN_BE_CHANGE","Some of the data is not matching and can't be updated.");
 			}
+			
+			
+
+			// validate child garbage account
+			garbageAccount.getChildGarbageAccounts().stream().forEach(childAcc -> {
+				Optional<GarbageAccount> matchingChildAccount = existingAccounts1.get(0).getChildGarbageAccounts().stream().filter(
+						existingChildAcc -> StringUtils.equals(existingChildAcc.getUuid(), childAcc.getUuid()))
+						.findFirst();
+				if(!matchingChildAccount.isPresent()) {
+					throw new CustomException("CHILD_GARBAGE_ACCOUNT_NOT_FOUND", "Provide correct uuid for child garbage account.");
+				}
+			});
 		}
+		
 
 	}
 
@@ -449,36 +478,69 @@ public class GarbageAccountService {
 		}
 
 		// generate garbage_id
+		garbageAccount.setId(garbageAccountRepository.getNextSequence());
 		garbageAccount.setUuid(UUID.randomUUID().toString());
 		garbageAccount.setGarbageId(System.currentTimeMillis());
 		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 		garbageAccount.setWorkflowAction(GrbgConstants.WORKFLOW_ACTION_INITIATE);
 		garbageAccount.setParentAccount(null);
 		garbageAccount.setIsActive(true);
-		garbageAccount.setSubAccountCount(Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
-	            .map(List::size).map(Integer::longValue)
-	            .orElse(0L));
 
 	}
 
 	private void enrichUpdateGarbageAccount(GarbageAccount newGarbageAccount,
 			GarbageAccount existingGarbageAccount, RequestInfo requestInfo, Map<String, String> applicationNumberToCurrentStatus) {
 
-		AuditDetails auditDetails = null;
+		AuditDetails auditDetails = AuditDetails.builder().build();
 		if (null != requestInfo
 				&& null != requestInfo.getUserInfo()) {
-			auditDetails = AuditDetails.builder()
-					.lastModifiedBy(requestInfo.getUserInfo().getUuid())
-					.lastModifiedDate(new Date().getTime()).build();
+			auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+			auditDetails.setLastModifiedDate(new Date().getTime());
 		}
 		if (null != existingGarbageAccount.getAuditDetails()) {
 			auditDetails.setCreatedBy(existingGarbageAccount.getAuditDetails().getCreatedBy());
 			auditDetails.setCreatedDate(existingGarbageAccount.getAuditDetails().getCreatedDate());
 		}
 
+		// enrich parent account
 		newGarbageAccount.setAuditDetails(auditDetails);
 		newGarbageAccount.setId(existingGarbageAccount.getId());
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
+		
+		
+		// enrich child accounts
+		if(!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
+			
+			AtomicLong atomicLong = new AtomicLong(0L);
+			newGarbageAccount.getChildGarbageAccounts().stream().forEach(childAccount -> {
+				
+				// update case
+				if(StringUtils.isNotEmpty(childAccount.getUuid())) {
+
+					Optional<GarbageAccount> matchingChildAccount = existingGarbageAccount.getChildGarbageAccounts().stream().filter(
+							existingChildAcc -> StringUtils.equals(existingChildAcc.getUuid(), childAccount.getUuid()))
+							.findFirst();
+					
+					childAccount.setAuditDetails(AuditDetails.builder()
+							.createdBy(matchingChildAccount.get().getAuditDetails().getCreatedBy())
+							.createdDate(matchingChildAccount.get().getAuditDetails().getCreatedDate())
+							.lastModifiedBy(auditDetails.getLastModifiedBy())
+							.lastModifiedDate(auditDetails.getLastModifiedDate()).build());
+				}else {
+					// create case
+					childAccount.setAuditDetails(AuditDetails.builder()
+							.createdBy(auditDetails.getCreatedBy())
+							.createdDate(new Date().getTime()).build());
+				}
+				
+				if(BooleanUtils.isTrue(childAccount.getIsActive())) {
+					atomicLong.getAndIncrement();
+				}
+				
+			});
+			
+			newGarbageAccount.setSubAccountCount(atomicLong.get());
+		}
 		
 //		if (null != newGarbageAccount.getGrbgApplication()) {
 //			
@@ -535,16 +597,13 @@ public class GarbageAccountService {
 				// enrich garbage account
 				enrichUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount, updateGarbageRequest.getRequestInfo(), applicationNumberToCurrentStatus);
 
-				// enrich child garbage account
-//				enrichChildGarbageAccounts();
-				
 				// update garbage account
 				if (!newGarbageAccount.equals(existingGarbageAccount)) {
 					updateGarbageAccount(updateGarbageRequest, newGarbageAccount, existingGarbageAccount, applicationNumberToCurrentStatus);
 				}
 
 				// update other objects of garbage account
-				updateGarbageAccountObjects(newGarbageAccount, existingGarbageAccount,
+				updateAndEnrichGarbageAccountObjects(newGarbageAccount, existingGarbageAccount,
 						applicationNumberToCurrentStatus);
 
 				garbageAccounts.add(newGarbageAccount);
@@ -742,7 +801,7 @@ public class GarbageAccountService {
 	}
 
 
-	private void updateGarbageAccountObjects(GarbageAccount newGarbageAccount, GarbageAccount existingGarbageAccount, Map<String, String> applicationNumberToCurrentStatus) {
+	private void updateAndEnrichGarbageAccountObjects(GarbageAccount newGarbageAccount, GarbageAccount existingGarbageAccount, Map<String, String> applicationNumberToCurrentStatus) {
 		
 		// 1. update application
 		if(null != newGarbageAccount.getGrbgApplication()
@@ -797,11 +856,25 @@ public class GarbageAccountService {
 		// 5. update grbgAddresses
 		updateGrbgAddress(newGarbageAccount, existingGarbageAccount);
 		
-
+		// 6. update child garbage account
+		updateChildGarbageAccounts(newGarbageAccount);
+		
 		// 2. update bills
 //				bills loop > make list of deleting, updating and creating bills
 		
 		
+		
+	}
+
+
+	private void updateChildGarbageAccounts(GarbageAccount newGarbageAccount) {
+		garbageAccountRepository.update(newGarbageAccount);
+	}
+
+
+	private void enrichChildGarbageAccounts(GarbageAccount newGarbageAccount, GarbageAccount existingGarbageAccount) {
+		
+		enrichUpdateGarbageAccount(newGarbageAccount, existingGarbageAccount, null, null);
 		
 	}
 
@@ -977,7 +1050,7 @@ public class GarbageAccountService {
 					}else if(null != requestInfo && null != requestInfo.getUserInfo()
 							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
 						
-						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(), requestInfo.getUserInfo().getRoles());
+						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount(), requestInfo.getUserInfo().getRoles());
 						if(CollectionUtils.isEmpty(listOfStatus)) {
 							throw new CustomException("SEARCH_ACCOUNT_BY_ROLES","Search can't be performed by this Employee due to lack of roles.");
 						}
@@ -995,10 +1068,11 @@ public class GarbageAccountService {
 		
 	}
 	
-	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
+	private List<String> getAccountStatusListByRoles(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Role> roles) {
 	
-	List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);	
+	List<String> rolesWithinTenant = getRolesByTenantId(searchCriteriaGarbageAccount.getTenantId(), roles);	
 	Set<String> statusWithRoles = new HashSet();
+	AtomicReference<String> tempTenantId = new AtomicReference<>(searchCriteriaGarbageAccount.getTenantId());
 	
 	rolesWithinTenant.stream().forEach(role -> {
 		
@@ -1006,9 +1080,26 @@ public class GarbageAccountService {
 			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORVERIFICATION);
 		}else if(StringUtils.equalsIgnoreCase(role, GrbgConstants.USER_ROLE_GB_APPROVER)) {
 			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORAPPROVAL);
+		}else if(StringUtils.equalsAnyIgnoreCase(role, GrbgConstants.USER_ROLE_SUPERVISOR, GrbgConstants.USER_ROLE_SECRETARY)) {
+			statusWithRoles.addAll(Arrays.asList(
+	                GrbgConstants.STATUS_INITIATED,
+	                GrbgConstants.STATUS_PENDINGFORVERIFICATION,
+	                GrbgConstants.STATUS_PENDINGFORAPPROVAL,
+	                GrbgConstants.STATUS_PENDINGFORMODIFICATION,
+	                GrbgConstants.STATUS_PENDINGFORPAYMENT,
+	                GrbgConstants.STATUS_APPROVED,
+	                GrbgConstants.STATUS_REJECTED,
+	                GrbgConstants.STATUS_CANCELLED
+	            ));
+			if(StringUtils.equalsIgnoreCase(searchCriteriaGarbageAccount.getTenantId()
+					, GrbgConstants.STATE_LEVEL_TENANT_ID)) {
+				tempTenantId.set(null);
+			}
 		}
 		
 	});
+	
+	searchCriteriaGarbageAccount.setTenantId(tempTenantId.get());
 	
 	return new ArrayList<>(statusWithRoles);
 }

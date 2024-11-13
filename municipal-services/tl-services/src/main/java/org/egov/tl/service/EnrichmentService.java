@@ -57,7 +57,7 @@ public class EnrichmentService {
     private BoundaryService boundaryService;
     private UserService userService;
     private WorkflowService workflowService;
-
+    
     @Autowired
     public EnrichmentService(IdGenRepository idGenRepository, TLConfiguration config, TradeUtil tradeUtil,
                              BoundaryService boundaryService,UserService userService,WorkflowService workflowService) {
@@ -681,14 +681,25 @@ public class EnrichmentService {
      * @param requestInfo The requestInfo of searhc request
      * @param criteria The tradeLicenseSearch criteria
      */
-    public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria){
-        if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
+    public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria, List<String> rolesWithinTenant){
+        if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase(TLConstants.ROLE_CODE_CITIZEN)){
             criteria.setAccountId(requestInfo.getUserInfo().getUuid());
 //            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+        }else if(requestInfo.getUserInfo().getType().equalsIgnoreCase(TLConstants.ROLE_CODE_EMPLOYEE)){
+        	
+			if (!CollectionUtils.isEmpty(rolesWithinTenant)) {
+				// fetch all ROLES within tenant
+				if ((rolesWithinTenant.contains(TLConstants.ROLE_CODE_SUPERVISOR)
+						|| rolesWithinTenant.contains(TLConstants.ROLE_CODE_SECRETARY))) {
+					criteria.setTenantId(null);
+				}
+			}
+        	
+        	
         }
         
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN") && criteria.mobileNumberOnly()) {
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(TLConstants.ROLE_CODE_CITIZEN) && criteria.mobileNumberOnly()) {
         	criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         	criteria.setOnlyMobileNumber(true);
         	
