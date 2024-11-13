@@ -49,7 +49,7 @@ const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
     { Header: t("ADD_TYPE"), accessor: "addType" },
     { Header: t("FACE_AREA"), accessor: "faceArea" },
     { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
-    { Header: t("TOTAL_PRICE"), accessor: "price" },
+    { Header: t("UNIT_PRICE"), accessor: "price" },
     {
       Header: t("DELETE_KEY"),
       accessor: "delete",

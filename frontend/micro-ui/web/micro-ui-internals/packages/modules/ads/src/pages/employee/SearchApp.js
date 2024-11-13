@@ -33,7 +33,7 @@ const SearchApp = ({path}) => {
         }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && (!payload.bookingNo && !payload.fromDate && !payload.status && !payload.communityHallCode && !payload.toDate && !payload.mobileNumber))
+        if(Object.entries(payload).length>0 && (!payload.bookingNo && !payload.fromDate && !payload.status && !payload.applicantName && !payload.faceArea && !payload.toDate && !payload.mobileNumber))
         setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });
         else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });

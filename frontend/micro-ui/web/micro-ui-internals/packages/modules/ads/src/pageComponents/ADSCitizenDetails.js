@@ -18,10 +18,10 @@ const ADSCitizenDetails = ({ t, config, onSelect, userType, formData}) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const [applicantName, setName] = useState(
-    (formData.applicant && formData.applicant[index] && formData.applicant[index].applicantName) || formData?.applicant?.applicantName || ""
+    (formData.applicant && formData.applicant[index] && formData.applicant[index].applicantName) || formData?.applicant?.applicantName || user?.name || ""
   );
   const [emailId, setEmail] = useState(
-    (formData.applicant && formData.applicant[index] && formData.applicant[index].emailId) || formData?.applicant?.emailId || ""
+    (formData.applicant && formData.applicant[index] && formData.applicant[index].emailId) || formData?.applicant?.emailId || user?.emailId ||""
   );
   const [mobileNumber, setMobileNumber] = useState(
     (formData.applicant && formData.applicant[index] && formData.applicant[index].mobileNumber) ||
