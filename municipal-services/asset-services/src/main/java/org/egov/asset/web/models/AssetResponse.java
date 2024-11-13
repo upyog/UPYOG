@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+
+import org.egov.asset.dto.AssetDTO;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -34,7 +36,7 @@ public class AssetResponse {
 
 	@JsonProperty("Assets")
 	@Valid
-	private List<Asset> assets = null;
+	private List<AssetDTO> assets = null;
 
 	public AssetResponse addAssetsItem(Asset assetsItem) {
 		if (this.assets == null) {
@@ -44,7 +46,7 @@ public class AssetResponse {
 		return this;
 	}
 	
-	public AssetResponse Asset(List<Asset> assets) {
+	public AssetResponse Asset(List<AssetDTO> assets) {
 	    this.assets = assets;
 	    return this;
 	  }

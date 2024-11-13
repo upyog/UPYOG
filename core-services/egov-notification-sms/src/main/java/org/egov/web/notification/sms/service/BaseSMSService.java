@@ -1,36 +1,47 @@
 package org.egov.web.notification.sms.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.jayway.jsonpath.*;
-import lombok.extern.slf4j.*;
-import org.apache.http.conn.ssl.*;
-import org.apache.http.impl.client.*;
-import org.egov.web.notification.sms.config.*;
-import org.egov.web.notification.sms.models.*;
-import org.springframework.asm.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.core.*;
-import org.springframework.core.env.*;
-import org.springframework.http.*;
-import org.springframework.http.client.*;
-import org.springframework.http.converter.*;
-import org.springframework.http.converter.json.*;
-import org.springframework.util.*;
-import org.springframework.web.client.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.annotation.*;
-import javax.net.ssl.*;
-import java.io.*;
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.*;
-import java.security.*;
-import java.util.*;
+import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.annotation.PostConstruct;
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.egov.web.notification.sms.config.SMSProperties;
+import org.egov.web.notification.sms.models.Sms;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 abstract public class BaseSMSService implements SMSService, SMSBodyBuilder {
 
-    private static final String SMS_RESPONSE_NOT_SUCCESSFUL = "Sms response not successful";
+    //private static final String SMS_RESPONSE_NOT_SUCCESSFUL = "Sms response not successful";
 
     @Autowired
     protected RestTemplate restTemplate;

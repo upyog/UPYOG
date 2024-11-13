@@ -7,3 +7,5 @@ index.lock
 municipal-services/advertisement-canopy-service/.mvn/wrapper/maven-wrapper.properties
 municipal-services/advertisement-canopy-service/mvnw
 municipal-services/advertisement-canopy-service/mvnw.cmd
+core-services/egov-mdms-service/src/main/resources/application.properties
+core-services/egov-mdms-service/src/main/resources/application.properties

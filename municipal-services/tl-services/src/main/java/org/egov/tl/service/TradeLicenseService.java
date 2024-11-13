@@ -40,6 +40,7 @@ import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
 import org.egov.tl.service.notification.EditNotificationService;
+import org.egov.tl.service.notification.TLNotificationService;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.validator.TLValidator;
@@ -76,6 +77,7 @@ import org.egov.tl.workflow.TLWorkflowService;
 import org.egov.tl.workflow.WorkflowIntegrator;
 import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
+import org.jsoup.helper.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -145,6 +147,12 @@ public class TradeLicenseService {
     
     @Autowired
     private BillService billService;
+    
+    @Autowired
+    private TLNotificationService tlNotificationService;
+    
+    @Autowired
+    private TLConstants constants;
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -705,8 +713,7 @@ public class TradeLicenseService {
 //        }
         
 //        // send notifications
-//        sendTLNotifications(licenceResponse);
-        
+    //  sendTLNotifications(tradeLicenseRequest);
         return licenceResponse;
         
     }
@@ -863,23 +870,36 @@ public class TradeLicenseService {
 
 
 
-	private void sendTLNotifications(List<TradeLicense> licenceResponse) {
-		
-    	licenceResponse.stream().forEach(license -> {
-    		
-    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)
-    				&& StringUtils.equals(license.getStatus(), STATUS_APPROVED)) {
-    			// send notification to license owner
-    			List<String> mobileNumbers = license.getTradeLicenseDetail().getOwners().stream().map(owner -> owner.getMobileNumber()).collect(Collectors.toList());
-    			sendSmsNotification(mobileNumbers, STATUS_APPROVED, license.getApplicationNumber());
-    		}
-    		if(StringUtils.equals(license.getBusinessService(), businessService_TL)
-    				&& StringUtils.equals(license.getStatus(), STATUS_PENDINGFORMODIFICATION)) {
-    			// send notification to license owner
-    			List<String> mobileNumbers = license.getTradeLicenseDetail().getOwners().stream().map(owner -> owner.getMobileNumber()).collect(Collectors.toList());
-    			sendSmsNotification(mobileNumbers, STATUS_PENDINGFORMODIFICATION, license.getApplicationNumber());
-    		}
-    	});
+	private void sendTLNotifications(TradeLicenseRequest tradeLicenseRequest) {
+		if(!CollectionUtils.isEmpty(tradeLicenseRequest.getLicenses())) {
+			for(TradeLicense license:tradeLicenseRequest.getLicenses()) {
+				//licenses.forEach(license -> {
+		    		if(StringUtils.equals(license.getBusinessService(), businessService_NewTL)
+		    				&& StringUtils.equals(license.getStatus(), constants.STATUS_PENDINGFORVERIFICATION)) {
+		    			tlNotificationService.process(tradeLicenseRequest);
+		    		//}
+			}
+			
+	    		
+				/*
+				 * if(StringUtils.equals(license.getBusinessService(), businessService_TL) &&
+				 * StringUtils.equals(license.getStatus(), STATUS_APPROVED)) { // send
+				 * notification to license owner List<String> mobileNumbers =
+				 * license.getTradeLicenseDetail().getOwners().stream().map(owner ->
+				 * owner.getMobileNumber()).collect(Collectors.toList());
+				 * sendSmsNotification(mobileNumbers, STATUS_APPROVED,
+				 * license.getApplicationNumber()); }
+				 * if(StringUtils.equals(license.getBusinessService(), businessService_TL) &&
+				 * StringUtils.equals(license.getStatus(), STATUS_PENDINGFORMODIFICATION)) { //
+				 * send notification to license owner List<String> mobileNumbers =
+				 * license.getTradeLicenseDetail().getOwners().stream().map(owner ->
+				 * owner.getMobileNumber()).collect(Collectors.toList());
+				 * sendSmsNotification(mobileNumbers, STATUS_PENDINGFORMODIFICATION,
+				 * license.getApplicationNumber()); }
+				 */
+	    	}//);
+		}
+    	
     	
 	}
 
