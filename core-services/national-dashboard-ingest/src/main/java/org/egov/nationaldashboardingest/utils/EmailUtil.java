@@ -39,19 +39,18 @@ public class EmailUtil {
 
             String subject = "Urgent: Data Ingestion Issue on UMEED National Dashboard";
             String body = String.format(
-                            "Dear " + nodalOfficer + " ,\n\n" +
-                            "We have observed that data from " + stateName + " has not been ingested onto the UMEED National Dashboard on " + formattedDate +".\n\n" +
-                            "This data gap is hindering our ability to monitor urban performance and make informed decisions. " +
-                            "We kindly request you to take immediate action to resolve the issue and ensure timely data ingestion.\n\n" +
-                            "Please coordinate with your technical team to identify/rectify the root cause of the problem. " +
-                            "If you need technical assistance or support, please contact the NUDM-NIUA technical team.\n\n" +
-                            "We appreciate your prompt attention to this matter.\n\n" +
-                            "Thank you,\n" +
-                            "[Your Name]\n" +
-                            "[Your Designation]\n" +
-                            "[Organization]\n" +
-                            "[Contact Information]"
-
+                            "<p>Dear " + nodalOfficer + " ,<br><br></p>" +
+                            "<p>We have observed that data from " + stateName + " has not been ingested onto the UMEED National Dashboard on " + formattedDate +".</p>" +
+                            "<p>This data gap is hindering our ability to monitor urban performance and make informed decisions. " +
+                            "We kindly request you to take immediate action to resolve the issue and ensure timely data ingestion.</p>" +
+                            "<p>Please coordinate with your technical team to identify/rectify the root cause of the problem.</p>" +
+                            "<p>If you need technical assistance or support, please contact the NUDM-NIUA technical team.</p>" +
+                            "<p>We appreciate your prompt attention to this matter.<br><br></p>" +
+                            "<p>Warm Regards,<br>" +
+                            "National Urban Digital Mission, Centre for Digital Governance<br>" +
+                            "National Institute of Urban Affairs (NIUA)<br>" +
+                            "Email: cdg-contact@niua.org | niua.in/cdg/Home<br>" +
+                            "Core 4B, 1st and 2nd Floor, India Habitat Centre, Lodhi Road | New Delhi - 110003</p>"
             );
             Email emailObj = Email.builder()
                     .emailTo(Collections.singleton(email))
