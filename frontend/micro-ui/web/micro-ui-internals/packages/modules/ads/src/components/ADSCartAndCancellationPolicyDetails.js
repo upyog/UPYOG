@@ -33,6 +33,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [showdemandEstimation, setShowDemandEstimation] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
+  const number = sessionStorage.getItem("CartTotalNumber");
 
   // const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
   //   select: (data) => data?.["CHB"]?.["CommunityHalls"] || [],
@@ -126,9 +127,34 @@ const ADSCartAndCancellationPolicyDetails = () => {
               marginBottom: "10px", // Space below "View Cart"
             }}
           >
+            <div class="container" style={{
+              width:"1px",
+            }}>            <div style={{
+              width:"20px",
+                position:"relative"
+            }}>
+              <div style={{
+                  position:"absolute",
+                  top:"-4px",
+                  right:"-93px",
+                  // backgroundColor: "#FFFFFF",
+                  color: "#008000",
+                  padding:"5px",
+                  borderRadius: "30px",
+                  width:"30px",
+                  height:"30px",
+                  textAlign:"center"
+              }}>
+              <div> {number}</div>
+
+              </div>
+            </div>
+          </div> 
             View Cart
+            
           </div>
-          <div
+           
+                  <div
             onClick={handleCancellationPolicyClick}
             style={{
               cursor: "pointer",
