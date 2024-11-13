@@ -27,7 +27,8 @@ export const SVMyApplications = () => {
   } else {
     t1 = 4;
   }
-  let filter1 =  { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNo:user?.mobileNumber, tenantId };
+
+  let filter1 =  { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId,createdby:user?.uuid };
 
   const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters: filter1 });
 
@@ -46,7 +47,7 @@ export const SVMyApplications = () => {
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
             <div key={index}>
-              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={"SV_TRACK_TRACK"}/>
+              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={"TRACK"}/>
             </div>
           ))}
         {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("SV_NO_APPLICATION_FOUND_MSG")}</p>}

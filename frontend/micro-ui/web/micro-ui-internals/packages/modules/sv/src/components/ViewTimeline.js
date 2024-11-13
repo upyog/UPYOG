@@ -61,8 +61,7 @@ const ViewTimeline = (props) => {
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
-
-        // mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
         comment: t(checkpoint?.comment),
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,

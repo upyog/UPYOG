@@ -150,9 +150,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
       if (userType === "citizen") {
         goNext();
       }
-    }, [vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation]);
-
-
+    }, [vendingType, vendingZones, location,areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation]);
 
 
     return (
@@ -168,8 +166,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={!vendingType || !vendingZones || !areaRequired || !nameOfAuthority || !daysOfOperation }
-
+          isDisabled={!vendingType || !vendingZones || vendingType?.code==="STATIONARY"?!areaRequired:null|| !nameOfAuthority || !daysOfOperation }
         >
 
           <div>
@@ -251,7 +248,8 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
             />
             ))}
 
-            
+            {vendingType?.code==="STATIONARY" && 
+            <React.Fragment>
             <CardLabel>{`${t("SV_AREA_REQUIRED")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
               t={t}
@@ -270,6 +268,8 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
                 title: t("SV_INVALID_AREA"),
               })}
             />
+            </React.Fragment>
+            }
 
             <CardLabel>{`${t("SV_LOCAL_AUTHORITY_NAME")}`} <span className="astericColor">*</span></CardLabel>
             <TextInput
@@ -284,7 +284,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z ]*$",
+                pattern: "^[a-zA-Z-/ ]*$",
                 type: "text",
                 title: t("SV_INPUT_DID_NOT_MATCH"),
               })}
@@ -303,7 +303,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
               ValidationRequired={false}
               {...(validation = {
                 isRequired: false,
-                pattern: "^[a-zA-Z ]+$",
+                pattern: "^[a-zA-Z0-9-/ ]+$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}

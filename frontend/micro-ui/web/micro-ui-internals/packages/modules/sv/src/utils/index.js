@@ -304,7 +304,7 @@ export const svPayloadData = (data) =>{
     termsAndCondition: "Y",
     tradeLicenseNo: data?.owner?.units?.[0]?.tradeNumber,
     vendingActivity: data?.businessDetails?.vendingType?.code,
-    vendingArea: data?.businessDetails?.areaRequired,
+    vendingArea: data?.businessDetails?.areaRequired||"0",
     vendingLicenseCertificateId: "",
     vendingOperationTimeDetails,
     vendingZone:  data?.businessDetails?.vendingZones?.code,
@@ -337,4 +337,65 @@ export const svPayloadData = (data) =>{
   }
   };
   return formdata;
+}
+
+import { useTranslation } from "react-i18next";
+import React from "react";
+
+export function SVDocumnetPreview({documents, titleStyles, isSendBackFlow = false, isHrLine = false}) {
+  const { t } = useTranslation();
+  const SvPDFSvg = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="4" fill="#D32F2F"/>
+      <text x="0" y="16" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">PDF</text>
+    </svg>
+  );
+  
+  return (
+    <div style={{ marginTop: "19px"}}>
+      {documents?.map((document, index) => (
+        <React.Fragment key={index}>
+          <div className="documentWidth" style={{width:"50%"}}>
+            <div>
+              {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
+                <a target="_" href={value?.url} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
+                  {/* Remove the centered SVG div from here */}
+                  <div style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "8px",
+                    marginTop: "8px"
+                  }}>
+                    <p style={{ 
+                      margin: 0,
+                      fontWeight: "bold", 
+                      color: "#0000FF", 
+                      textDecoration: "underline"
+                    }}>
+                      {t(value?.title)}
+                    </p>
+                    <SvPDFSvg /> {/* SVG now appears on the right */}
+                  </div>
+                  {isSendBackFlow ? (
+                    value?.documentType?.includes("NOC") ? 
+                      <p style={{ textAlign: "center" }}>{t(value?.documentType.split(".")[1])}</p> : 
+                      <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p>
+                  ) : ""}
+                </a>
+              )) : !(window.location.href.includes("citizen")) && <div><p>{t("SV_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
+            </div>
+            {isHrLine && documents?.length != index + 1 ? (
+              <hr style={{ 
+                color: "#D6D5D4", 
+                backgroundColor: "#D6D5D4", 
+                height: "2px", 
+                marginTop: "20px", 
+                marginBottom: "20px" 
+              }} />
+            ) : null}
+          </div>
+        </React.Fragment>
+      ))}
+    </div>
+  );
 }

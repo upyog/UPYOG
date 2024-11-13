@@ -13,7 +13,8 @@ const StreetVendingApplication = ({ application, buttonLabel }) => {
       <KeyNote keyValue={t("SV_VENDOR_NAME")} note={application?.vendorDetail?.[0]?.name} />
       <KeyNote keyValue={t("SV_VENDING_TYPE")} note={application?.vendingActivity} />
       <KeyNote keyValue={t("SV_VENDING_ZONES")} note={application?.vendingZone} />
-      <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />
+      {application?.vendingActivity==="STATIONARY"&&(
+      <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}
       <Link to={`/digit-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
       </Link>

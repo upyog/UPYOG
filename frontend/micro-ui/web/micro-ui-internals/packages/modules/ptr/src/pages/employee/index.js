@@ -80,7 +80,7 @@ const EmployeeApp = ({ path, url, userType }) => {
               />
             )}
           />
-          <PrivateRoute path={`${path}/petservice/new-application`} component={() => <NewApplication parentUrl={url} />} />
+          <PrivateRoute path={`${path}/petservice/new-application`} component={(props) => <NewApplication {...props} parentUrl={url} />} />
           <PrivateRoute path={`${path}/petservice/renew-application/:applicationNumber`} component={() => <RenewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/petservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/petservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />

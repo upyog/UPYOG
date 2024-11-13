@@ -186,7 +186,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z,-/ ]*$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
@@ -207,7 +207,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z,-/ ]*$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
@@ -226,7 +226,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z,- ]*$",
               type: "text",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
@@ -349,7 +349,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z,-/ ]*$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
@@ -370,7 +370,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z,-/ ]*$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
@@ -389,7 +389,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[a-zA-Z ]*$",
+              pattern: "^[a-zA-Z,- ]*$",
               type: "textarea",
               title: t("SV_LANDMARK_ERROR_MESSAGE"),
             })}
