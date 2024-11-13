@@ -274,7 +274,6 @@ const handleCartClick = () => {
       }
     }
   }, [formData]); // This will run whenever formData changes
- console.log("SearchData-->",Searchdata);
   const handleSearch = () => {
     const addType = adsType?.code;
     const startDate = fromDate;
@@ -300,7 +299,6 @@ const handleCartClick = () => {
       });
     }
   };
-//Todo: Work in progress for Show Cart.
 
   const handleViewCart = () => {
     if (cartDetails.length > 0) {
@@ -454,27 +452,49 @@ const handleCloseCart = () => {
           isDependent={true}
         />
        <div style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
-        <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-        <SubmitBar 
-          label={t("ADS_ADD_TO_CART")} 
-          onSubmit={handleCartClick} 
-        />
-        <SubmitBar 
-          label={t("ADS_VIEW_CART")} 
-          onSubmit={handleViewCart} 
-        />
-        {showCartDetails && (
-          <ADSCartDetails 
-            onClose={handleCloseCart} 
-            cartDetails={cartDetails} 
-            setCartDetails={setCartDetails} 
-          />
-        )}
-        <SubmitBar 
-          label={t("ADS_BOOK_NOW")} 
-          onSubmit={handleBookClick} 
-        />
-      </div>
+          <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+          <SubmitBar label={t("ADS_ADD_TO_CART")} onSubmit={handleCartClick} />
+
+          <div>
+            <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
+          </div>
+          <div
+            class="container"
+            style={{
+              width: "1px",
+            }}
+          >
+            <div
+              style={{
+                width: "1px",
+                position: "relative",
+              }}
+            >
+              <div
+               style={{
+                position: "absolute", // or "relative" depending on parent element
+                // fontSize: "335px",
+                right: "83px", // Position it 0 from the right edge
+                backgroundColor: "#FFFFFF",
+                color: "#008000",
+                padding: "4px",
+                borderRadius: "30px",
+                margin: "1px 0 1px 0",
+                width: "31px",
+                height: "30px",
+                textAlign: "center",
+                transform: "translateX(100%)", // Move left by 100% of its own width
+              }}
+              >
+                <div> {cartDetails.length}</div>
+              </div>
+            </div>
+          </div>
+
+          {showCartDetails && <ADSCartDetails onClose={handleCloseCart} cartDetails={cartDetails} setCartDetails={setCartDetails} />}
+          <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={handleBookClick} />
+        </div>
+
       </FormStep>
       {showTable && ( // Only show table when showTable is true
         <Card>
