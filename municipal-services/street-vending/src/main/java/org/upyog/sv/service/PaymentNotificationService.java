@@ -65,7 +65,7 @@ public class PaymentNotificationService {
 			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in Street Vending method for businessService : " + businessService);
-			if (configs.getPaymentBusinessServiceName()
+			if (configs.getModuleName()
 					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();

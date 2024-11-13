@@ -10,8 +10,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.upyog.sv.service.PaymentNotificationService;
-import org.upyog.sv.util.StreetVendingUtil;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.DocumentContext;
 
