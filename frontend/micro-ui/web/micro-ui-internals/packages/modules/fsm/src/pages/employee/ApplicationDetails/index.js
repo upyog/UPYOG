@@ -269,12 +269,13 @@ const ApplicationDetails = (props) => {
     }
   };
   const downloadAdvancePaymentReceipt = async () => {
+    const paymemntIndex= paymentsHistory.Payments.length===1  ? 0 : 1;
     const receiptFile = {
-      filestoreIds: [paymentsHistory.Payments[1]?.fileStoreId],
+      filestoreIds: [paymentsHistory.Payments[paymemntIndex]?.fileStoreId],
     };
 
     if (!receiptFile?.fileStoreIds?.[0]) {
-      const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[1]] }, "fsm-receipt");
+      const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[paymemntIndex]] }, "fsm-receipt");
       const fileStore = await Digit.PaymentService.printReciept(state, {
         fileStoreIds: newResponse.filestoreIds[0],
       });
@@ -356,9 +357,11 @@ const ApplicationDetails = (props) => {
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-        <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px"}}>
+        <div className="cardHeaderWithOptions" style={isMobile ? {} : {width:"100%", display:"flex", alignItems:"center"}}>
+        <div  style={{flexGrow:1, textAlign:"left"}}>
         <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+        </div>
+        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center", marginTop:"-25px", justifyContent:"flex-end",gap:"10px"}}>
         {dowloadOptions && dowloadOptions.length > 0 && !showReceiptOptions && (
           <MultiLink
             className="multilinkWrapper"
@@ -371,7 +374,7 @@ const ApplicationDetails = (props) => {
           <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
 
         </div> 
-        <div style={{display:"flex",justifyContent:"space-between"}}>
+        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center",gap:"10px", marginTop:"-25px", zIndex:"10"}}>
         {receiptOptions && receiptOptions.length > 0 && showReceiptOptions && (
           <MultiLink
             className="multilinkWrapper"
