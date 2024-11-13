@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS eg_asset_assetdetails (
     action character varying(256),
     businessservice character varying(64) DEFAULT NULL,
     additionalDetails JSONB,
+    assetDetails JSONB,
     createdTime bigint,
     lastModifiedTime bigint,
     approvalDate bigint,
@@ -104,4 +105,15 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_document
 
 COMMENT ON TABLE eg_asset_assetdetails IS 'Table to store asset details';
 
+-- public.seq_eg_asset_application_no
+
+-- DROP SEQUENCE public.seq_eg_asset_application_no;
+
+CREATE SEQUENCE public.seq_eg_asset_application_no
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START 1
+	CACHE 1
+	NO CYCLE;
 

@@ -81,7 +81,7 @@ public class AssetConfiguration {
 	@Value("${egov.asset.max.limit}")
 	private Integer maxSearchLimit;
 	
-	@Value("${workflow.context.path}")
+	@Value("${egov.workflow.host}")
 	private String wfHost;
 
 	@Value("${workflow.transition.path}")

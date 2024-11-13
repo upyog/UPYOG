@@ -111,8 +111,8 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
 	        locality.setCode(rs.getString("locality_code"));
 	        locality.setName(rs.getString("locality_name"));
 	        locality.setLabel(rs.getString("locality_label"));
-	        locality.setLatitude(rs.getString("locality_latitude"));
-	        locality.setLongitude(rs.getString("locality_longitude"));
+	        locality.setLatitude(rs.getDouble("locality_latitude"));
+	        locality.setLongitude(rs.getDouble("locality_longitude"));
 	        addressDetails.setLocality(locality);
 	        asset.setAddressDetails(addressDetails);
 

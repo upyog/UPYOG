@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class RentLeaseCreationResponse {
 
 	@JsonProperty("ResponseInfo")
-	private ResponseInfo requestInfo;
+	private ResponseInfo responseInfo;
 
 	@JsonProperty("rentLease")
 	private List<RentLease> rentLease;
