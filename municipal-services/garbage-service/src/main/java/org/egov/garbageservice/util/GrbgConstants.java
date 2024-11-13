@@ -68,6 +68,10 @@ public class GrbgConstants {
 
     public static final String USER_ROLE_GB_APPROVER = "GB_APPROVER";
 
+    public static final String USER_ROLE_SUPERVISOR = "SUPERVISOR";
+
+    public static final String USER_ROLE_SECRETARY = "SECRETARY";
+
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
     
 
