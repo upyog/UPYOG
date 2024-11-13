@@ -76,7 +76,7 @@ const Home = ({
   const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
     select: (data) => {
       const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
-        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}` };
+        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}`,adtype:`${details.adtype}`,faceArea:`${details.faceArea}` };
       });
       return formattedData;
     },
@@ -152,6 +152,8 @@ const Home = ({
                   location={ad.location} 
                   price={ad.price} 
                   path={`${path}/${code.toLowerCase()}/`}
+                  adType={ad.adtype}
+                  faceArea={ad.faceArea}
                 />
               ))}
             </div>

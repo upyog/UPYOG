@@ -322,7 +322,7 @@ import useADSSearch from "./ads/useADSSearch";
 import useSVApplicationDetail from "./sv/useSVApplicationDetail";
 import useSvSearchApplication from "./sv/useSvSearchApplication";
 import useSVApplicationAction from "./sv/useSVApplicationAction";
-
+import useADSApplicationDetail from "./ads/useADSApplicationDetail";
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -408,7 +408,7 @@ const ads={
   useADSSlotSearch,
   useADSSearch,
   useADSDemandEstimation,
-  
+  useADSApplicationDetail  
 }
 
 const fsm = {

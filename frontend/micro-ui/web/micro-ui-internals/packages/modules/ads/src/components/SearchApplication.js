@@ -18,7 +18,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            fromDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0], // Default to one month ago
+            fromDate: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString().split('T')[0], // Default to one month ago
             toDate: new Date().toISOString().split('T')[0], // Default to today's date
             status: { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") }
         }
@@ -34,15 +34,20 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
     const [showModal,setShowModal] = useState(false)
     const mutation = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
     // to do 
-    const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
-  
-    let menu = [];
 
-    
+    const { data: Face } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "FaceArea" }], {
+      select: (data) => {
+        const formattedData = data?.["Advertisement"]?.["FaceArea"].map((details) => {
+          return { i18nKey: `${details.name}`, code: `${details.code}`, name: `${details.name}`, active: `${details.active}` };
+        });
+        return formattedData;
+      },
+    });
+    let face = [];
 
-    Menu &&
-  Menu.map((one) => {
-    menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
+    Face &&
+    Face.map((one) => {
+      face.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
   });
     const GetCell = (value) => <span className="cell-text">{value}</span>;
     const handleCancelBooking=async()=>{
@@ -52,7 +57,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
         bookingStatus: "CANCELLED"
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        bookingApplication: updatedApplication
       });
       handleSubmit(onSubmit)();
     }
@@ -84,17 +89,19 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
             },
             disableSortBy: true,
           },
-        //to do 
-        //   {
-        //     Header: t("ADS_BOOKING_DATE"),
-        //     Cell: ({ row }) => {
-        //       return row?.original?.bookingSlotDetails.length > 1 
-        //       ? GetCell(`${row?.original?.bookingSlotDetails[0]?.["bookingDate"]}` + " - " + `${row?.original?.bookingSlotDetails[row?.original?.bookingSlotDetails.length-1]?.["bookingDate"]}`) 
-        //       : GetCell(`${row?.original?.bookingSlotDetails[0]?.["bookingDate"]}`);
-        //     },
-        //     disableSortBy: true,
+          {
+            Header: t("ADS_LOCALITY"),
+            Cell: ({ row }) => {
+              const cartDetails = row?.original?.cartDetails;
+              // Map over cartDetails to extract all locations
+              const locations = cartDetails?.map(detail => detail?.location).join(", ");
 
-        //   },
+              // Return the mapped locations using GetCell
+              return GetCell(locations);
+            },
+            disableSortBy: true,
+
+          },
           {
             Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"),
             Cell: ({ row }) => {
@@ -172,7 +179,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                               cursor: 'pointer',
                             }}
                           >
-                            {t("CHB_CANCEL")}
+                            {t("ADS_CANCEL")}
                           </div>
                         )}
           
@@ -238,17 +245,20 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                     <TextInput name="bookingNo" inputRef={register({})} />
                 </SearchField>
                 <SearchField>
-                    <label>{t("ADS_AD_NAME")}</label>
+                    <label>{t("ADS_APPLICANT_NAME")}</label>
+                    <TextInput  name="applicantName" inputRef={register({})} />
+                </SearchField>
+                <SearchField>
+                    <label>{t("ADS_FACE_AREA")}</label>
                     <Controller
                             control={control}
-                            name="communityHallCode"
+                            name="faceArea"
                             render={(props) => (
-
                                 <Dropdown
                                 selected={props.value}
                                 select={props.onChange}
                                 onBlur={props.onBlur}
-                                option={menu}
+                                option={face}
                                 optionKey="i18nKey"
                                 t={t}
                                 disable={false}
@@ -317,8 +327,6 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                         control={control}
                         />
                 </SearchField>
-                
-                <SearchField></SearchField>
                 <SearchField className="submit">
               { /** to do */}
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
@@ -326,7 +334,8 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                     onClick={() => {
                         reset({ 
                             bookingNo: "", 
-                            communityHallCode: "",
+                            applicantName: "",
+                            faceArea:"",
                             fromDate: "", 
                             toDate: "",
                             mobileNumber:"",

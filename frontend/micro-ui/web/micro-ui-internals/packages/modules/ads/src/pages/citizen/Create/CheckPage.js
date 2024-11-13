@@ -131,34 +131,34 @@ import {
   
           />
           <Row
-              label={t("ADS_ADDRESS_LINE_1")}
+              label={t("ADS_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressline1))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ads/${typeOfApplication}/address-details`} />}
           />
           <Row
-              label={t("ADS_ADDRESS_LINE_2")}
+              label={t("ADS_ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressline2))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ads/${typeOfApplication}/address-details`} />}
           />
            <Row
-              label={t("CHB_LANDMARK")}
+              label={t("ADS_LANDMARK")}
               text={`${t(checkForNA(address?.landmark))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ads/${typeOfApplication}/address-details`} />}
           />
            <Row
-              label={t("CHB_CITY")}
+              label={t("ADS_CITY")}
               text={`${t(checkForNA(address?.city?.city?.name))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
            <Row
-              label={t("CHB_LOCALITY")}
+              label={t("ADS_LOCALITY")}
               text={`${t(checkForNA(address?.locality?.i18nKey))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   
           />
           <Row
-              label={t("ADS_PINCODE")}
+              label={t("ADS_ADDRESS_PINCODE")}
               text={`${t(checkForNA(address?.pincode))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ads/${typeOfApplication}/address-details`} />}
   

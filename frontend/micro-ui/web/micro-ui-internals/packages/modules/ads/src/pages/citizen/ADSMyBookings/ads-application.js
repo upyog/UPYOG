@@ -15,18 +15,20 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
-//nikhil will check
-  // const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
-  //   tenantId: application?.tenantId,
-  //   filters: {
-  //     communityHallCode: application?.communityHallCode,
-  //     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
-  //     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-  //     hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
-  //   },
-  //   enabled: false, // Disable automatic refetch
-  // });
 
+  const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
+    let formdata = {
+      advertisementSlotSearchCriteria: {
+        addType: application?.cartDetails?.[0]?.addType,
+        bookingStartDate:application?.cartDetails?.[0]?.bookingDate,
+        bookingEndDate: application?.cartDetails?.[application.cartDetails.length - 1]?.bookingDate,
+        faceArea: application?.cartDetails?.[0]?.faceArea,
+        tenantId: tenantId,
+        location: application?.cartDetails?.[0]?.location,
+        nightLight: application?.cartDetails?.[0]?.nightLight,
+      }
+    };
+   
   const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
@@ -41,8 +43,8 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
     }
   };
   const handleMakePayment = async () => {
-    const result = await refetch();
-    const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
+    const result =  slotSearchData.mutate(formdata);;
+    const isSlotBooked = result?.data?.advertisementSlotSearchCriteria?.some((slot) => slot.slotStaus === "BOOKED");
 
     if (isSlotBooked) {
       setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
@@ -66,8 +68,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
     <Card>
       <KeyNote keyValue={t("ADS_BOOKING_NO")} note={application?.bookingNo} />
       <KeyNote keyValue={t("ADS_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
-      <KeyNote keyValue={t("ADS_ADVERTISMENT_NAME")} note={t(`${application?.communityHallCode}`)} />
-      <KeyNote keyValue={t("ADS_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />
+      <KeyNote keyValue={t("ADS_BOOKING_DATE")} note={getBookingDateRange(application?.cartDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
       <div>
         <Link to={`/digit-ui/citizen/ads/application/${application?.bookingNo}/${application?.tenantId}`}>

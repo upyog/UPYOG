@@ -1,13 +1,38 @@
-import React from "react";
-
+import React, { useEffect } from 'react';
 // this code shows the image and the detail of the advertisement
 
-const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, path, light }) => {
+const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, path, light,adType,faceArea }) => {
+  const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
   const handleViewAvailability = () => {
+    setParams({
+      faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
+      adType:{code:adType,value:adType,i18nKey:adType},
+      location:{code:location,value:location,i18nKey:location},
+      fromDate: new Date().toISOString().split("T")[0], // Current date
+      toDate: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split("T")[0], // 3 months later
+      nightLight:{
+        i18nKey: "Yes",
+        code: "Yes",
+        value: "true",
+      }
+    });
     window.location.href = `${path}bookad/searchads`;
   };
+  useEffect(() => {
+    console.log("Session Storage Data: ", params);
+  }, [params]); // Will log whenever params change
 
   const handleBookNow = () => {
+    setParams({
+      faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
+      adType:{code:adType,value:adType,i18nKey:adType},
+      location:{code:location,value:location,i18nKey:location},
+      nightLight:{
+        i18nKey: "Yes",
+        code: "Yes",
+        value: "true",
+      }
+    });
     window.location.href = `${path}bookad/searchads`;
   };
   return (

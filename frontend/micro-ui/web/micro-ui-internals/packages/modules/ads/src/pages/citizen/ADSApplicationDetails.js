@@ -198,12 +198,12 @@ const ADSApplicationDetails = () => {
             <Row className="border-none" label={t("ADS_HOUSE_NO")} text={ads_details?.address?.houseNo || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_HOUSE_NAME")} text={ads_details?.address?.houseName || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_STREET_NAME")} text={ads_details?.address?.streetName || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_LINE_1")} text={ads_details?.address?.addressline1 || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_LINE_2")} text={ads_details?.address?.addressline2 || t("CS_NA")} />
+            <Row className="border-none" label={t("ADS_ADDRESS_LINE1")} text={ads_details?.address?.addressline1 || t("CS_NA")} />
+            <Row className="border-none" label={t("ADS_ADDRESS_LINE2")} text={ads_details?.address?.addressline2 || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_LANDMARK")} text={ads_details?.address?.landmark || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_CITY")} text={ads_details?.address?.city || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_LOCALITY")} text={ads_details?.address?.locality || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_PINCODE")} text={ads_details?.address?.pincode || t("CS_NA")} />
+            <Row className="border-none" label={t("ADS_ADDRESS_PINCODE")} text={ads_details?.address?.pincode || t("CS_NA")} />
           </StatusTable>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_CART_DETAILS")}</CardSubHeader>
           <ApplicationTable
