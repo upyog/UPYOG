@@ -1,6 +1,5 @@
 import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import { configSVApproverApplication } from "../config";
 
 /* This component, ActionModal, is responsible for displaying a modal dialog 
@@ -34,69 +33,95 @@ const CloseBtn = (props) => {
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
 
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
-    
+
     tenantId,
     {
-      roles: action?.roles?.[0]?.map?.((e) => ({ code: e })),
+      roles: action?.assigneeRoles?.map?.((e) => ({ code: e })),
       isActive: true,
     },
-    { enabled: !action?.isTerminateState }
+    { enabled: action?.isTerminateState }
   );
-
-  const history = useHistory(); // Initialize useHistory
-
-
 
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState(null);
+  const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
-  
+  const [error, setError] = useState(null);
 
-  
+
+
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
 
-  
-  
+  function selectFile(e) {
+    setFile(e.target.files[0]);
+  }
+
+
+
+  useEffect(() => {
+    (async () => {
+      setError(null);
+      if (file) {
+        if (file.size >= 5242880) {
+          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+        } else {
+          try {
+            const response = await Digit.UploadServices.Filestorage("StreetVending", file, tenantId);
+            if (response?.data?.files?.length > 0) {
+              setUploadedFile(response?.data?.files[0]?.fileStoreId);
+            } else {
+              setError(t("CS_FILE_UPLOAD_ERROR"));
+            }
+          } catch (err) {
+            setError(t("CS_FILE_UPLOAD_ERROR"));
+          }
+        }
+      }
+    })();
+  }, [file]);
+
+
+
 
   function submit(data) {
-   
-      let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
-      if (uploadedFile)
-        workflow["documents"] = [
-          
-        ];
-      submitAction({
-        streetVendingDetail: 
-          {
-            ...applicationData,
-            workflow,
-          },
-        
-      });
-     
-   
+    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: [selectedApprover?.uuid] };
+    if (uploadedFile)
+      workflow["documents"] = [
+        {
+          documentType: action?.action + " DOC",
+          fileName: file?.name,
+          fileStoreId: uploadedFile,
+        },
+      ];
+    submitAction({
+      streetVendingDetail:
+      {
+        ...applicationData,
+        workflow,
+      },
+
+    });
   }
 
   useEffect(() => {
-    
-      setConfig(
-        configSVApproverApplication({
-            t,
-            action,
-            approvers,
-            selectedApprover,
-            setSelectedApprover,
-            // selectFile,
-            uploadedFile,
-            setUploadedFile,
-            businessService,
-          })
-        );
+    setConfig(
+      configSVApproverApplication({
+        t,
+        action,
+        approvers,
+        selectedApprover,
+        setSelectedApprover,
+        selectFile,
+        uploadedFile,
+        setUploadedFile,
+        businessService,
+      })
+    );
   }, [action, approvers, uploadedFile]);
 
   return action && config.form ? (
@@ -106,20 +131,20 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionCancelLabel={t(config.label.cancel)}
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
-      actionSaveOnSubmit={() => {}}
+      actionSaveOnSubmit={() => { }}
       formId="modal-action"
     >
-       
-        <FormComposer
-          config={config.form}
-          noBoxShadow
-          inline
-          childrenAtTheBottom
-          onSubmit={submit}
-          defaultValues={defaultValues}
-          formId="modal-action"
-        />
-      
+
+      <FormComposer
+        config={config.form}
+        noBoxShadow
+        inline
+        childrenAtTheBottom
+        onSubmit={submit}
+        defaultValues={defaultValues}
+        formId="modal-action"
+      />
+
     </Modal>
   ) : (
     <Loader />

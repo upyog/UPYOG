@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import { checkForNA, getOrderDocuments } from "../../../utils";
 import ApplicationTable from "../../../components/ApplicationTable";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
+import { SVDocumnetPreview } from "../../../utils";
 import Timeline from "../../../components/Timeline";
 
 
@@ -307,7 +308,7 @@ import Timeline from "../../../components/Timeline";
           </StatusTable>
           
           <CardSubHeader>{t("SV_DOCUMENT_DETAILS_LABEL")}</CardSubHeader>
-          {<DocumentsPreview documents={getOrderDocuments(applicationDocs)} svgStyles = {{}} isSendBackFlow = {false} titleStyles ={{fontSize: "18px", "fontWeight": 700, marginBottom: "10px"}}/>}
+          {<SVDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles = {{}} isSendBackFlow = {false} titleStyles ={{fontSize: "18px", "fontWeight": 700, marginBottom: "10px"}}/>}
           <br></br>
 
           <CardLabel>{t("SV_DISABILITY_STATUS")}</CardLabel>

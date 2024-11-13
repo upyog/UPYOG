@@ -78,48 +78,47 @@ const ApplicationDetails = () => {
 
   const svDetailsPDF = {
     order: 1,
-    label: t("SV_APPLICATION"),
+    label: t("SV_ACKNOWLEDGEMENT"),
     onClick: () => handleDownloadPdf(),
   };
 
   let dowloadOptions = [svDetailsPDF];
 
 
-  // ------------------------------ The commented code maybe needed to be used later ------------------------
-  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-  //   {
-  //     tenantId: tenantId,
-  //     businessService: "pet-services",
-  //     consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNumber,
-  //     isEmployee: false,
-  //   },
-  //   { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNumber ? true : false }
-  // );
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "sv-services",
+      consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNo,
+      isEmployee: false,
+    },
+    { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNo ? true : false }
+  );
 
-  // async function getRecieptSearch({ tenantId, payments, ...params }) {
-  //   let response = { filestoreIds: [payments?.fileStoreId] };
-  //   response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
-  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  // };
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let response = { filestoreIds: [payments?.fileStoreId] };
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "svservice-receipt");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
 
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("SV_FEE_RECIEPT"),
-  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-  //   });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("SV_FEE_RECIEPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
 
-  // const printCertificate = async () => {
-  //   let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [applicationDetails?.applicationData?.applicationData] }, "petservicecertificate");
-  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  // };
+  const printCertificate = async () => {
+    let response = await Digit.PaymentService.generatePdf(tenantId, { SVDetail: [applicationDetails?.applicationData?.applicationData] }, "svcertificate");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
 
-  // if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
-  //   dowloadOptions.push({
-  //     label: t("SV_CERTIFICATE"),
-  //     onClick: () => printCertificate(),
-  //   });
+  if (reciept_data?.Payments[0]?.instrumentStatus === "APPROVED")
+    dowloadOptions.push({
+      label: t("SV_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
 
   
   return (

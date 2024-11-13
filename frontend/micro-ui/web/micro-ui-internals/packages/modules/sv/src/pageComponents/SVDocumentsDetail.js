@@ -87,6 +87,7 @@ function SVDocuments({
 
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(filteredDocument?.fileStoreId || null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSVSelectDocument = (value) => 
     {
@@ -105,6 +106,7 @@ function SVDocuments({
         setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
       } else {
         setUploadedFile(null);
+        setIsUploading(true);
         Digit.UploadServices.Filestorage("StreetVending", file, Digit.ULBService.getStateId())
           .then(response => {
             if (response?.data?.files?.length > 0) {
@@ -113,7 +115,8 @@ function SVDocuments({
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
           })
-          .catch(() => setError(t("CS_FILE_UPLOAD_ERROR")));
+          .catch(() => setError(t("CS_FILE_UPLOAD_ERROR")))
+          .finally(() => {setIsUploading(false)});
       }
     }
   }, [file, t]);
@@ -159,6 +162,12 @@ function SVDocuments({
       )}
       <LabelFieldPair>
         <div className="field" style={{marginLeft:user?.type==="EMPLOYEE"?"30%":null}}>
+        {isUploading ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Loader /> 
+              {/* <span>{t("CS_FILE_UPLOADING")}</span> */}
+            </div>
+          ) : (
           <UploadFile
             onUpload={handleFileUpload}
             onDelete={() => {
@@ -172,6 +181,7 @@ function SVDocuments({
             buttonType="button"
             error={!uploadedFile}
           /> 
+          )}
         </div>
       </LabelFieldPair>
     </div>

@@ -49,10 +49,7 @@ function ApplicationDetailsContent({
   isInfoLabel = false
 }) {
   const { t } = useTranslation();
-  
 const ownersSequences= applicationDetails?.applicationData?.owners
-console.log("appl", applicationDetails)
-
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -146,8 +143,9 @@ console.log("appl", applicationDetails)
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        thumbnailsToShow: checkpoint?.thumbnailsToShow
       };
-      return <TLCaption data={caption} />;
+      return <TLCaption data={caption} OpenImage={OpenImage}/>;
     }
   };
 
