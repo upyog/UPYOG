@@ -1232,7 +1232,7 @@ public class EstimationService {
 		{
 			if(advanceRebate.compareTo(collectedAmtForOldDemand)>=0)
 			{
-				advanceRebate=taxAmt.multiply(new BigDecimal(20).divide(new BigDecimal(100)).negate());
+				advanceRebate=taxAmt.multiply(new BigDecimal(20).divide(new BigDecimal(100)).negate()).setScale(2,2);
 				estimates.add(TaxHeadEstimate.builder()
 						.taxHeadCode(PT_ADVANCE_REBATE)
 						.estimateAmount(advanceRebate).build());
@@ -1263,7 +1263,7 @@ public class EstimationService {
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
 			collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
-			pastdue=collectedAmtForOldDemand;
+			pastdue=collectedAmtForOldDemand.setScale(2,2);
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
@@ -1275,8 +1275,8 @@ public class EstimationService {
 			LocalDate startDate = LocalDate.parse(date, dtf);
 			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
-			
-			//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
+			pastduePenalty=pastduePenalty.setScale(2,2);
+					//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
 				estimates.add(TaxHeadEstimate.builder()
 						.taxHeadCode(PT_PAST_DUE_PENALTY)
 						.estimateAmount(pastduePenalty).build());
@@ -1387,12 +1387,12 @@ public class EstimationService {
 				try {
 					if(i==1)
 					{
-						BigDecimal Amount=taxAmount.add(collectedAmtForOldDemand);
+						BigDecimal Amount=taxAmount.add(collectedAmtForOldDemand).setScale(2,2);
 						paymentDetails.setPaymentMode("Quater1");
 						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(q1startDate).getTime());
 						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(q1endDate).getTime());
 						if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-							paymentDetails.setPastAmount(collectedAmtForOldDemand);
+							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
 						paymentDetails.setTaxAmount(Amount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
@@ -1449,18 +1449,18 @@ public class EstimationService {
 				try {
 					if(i==1)
 					{
-						BigDecimal hAmount=htaxAmount.add(collectedAmtForOldDemand);
+						BigDecimal hAmount=htaxAmount.add(collectedAmtForOldDemand).setScale(2,2);
 						paymentDetails.setPaymentMode("Halfyearly1");
 						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(h1startDate).getTime());
 						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(h1endDate).getTime());
 						if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-							paymentDetails.setPastAmount(collectedAmtForOldDemand);
+							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
 						paymentDetails.setTaxAmount(hAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
 					else if(i==2)
 					{
-						paymentDetails.setPaymentMode("Halfyearly1");
+						paymentDetails.setPaymentMode("Halfyearly2");
 						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(h2startDate).getTime());
 						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(h2endDate).getTime());
 						paymentDetails.setTaxAmount(htaxAmount);
@@ -1484,13 +1484,13 @@ public class EstimationService {
 			{
 				try {
 
-					BigDecimal yAmount=totalAmount.add(collectedAmtForOldDemand);
+					BigDecimal yAmount=totalAmount.add(collectedAmtForOldDemand).setScale(2,2);
 					paymentDetails=new ModeOfPaymentDetails();
 					paymentDetails.setPaymentMode("Yearly");
 					paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(y1startDate).getTime());
 					paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(y1endDate).getTime());
 					if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-						paymentDetails.setPastAmount(collectedAmtForOldDemand);
+						paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
 					paymentDetails.setTaxAmount(yAmount);
 					modeOfPaymentDetails.add(paymentDetails);
 				} catch (ParseException e) {
