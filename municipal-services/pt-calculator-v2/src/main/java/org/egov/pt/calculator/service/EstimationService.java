@@ -72,6 +72,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_R
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_PAST_DUE_PENALTY;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1273,9 +1274,14 @@ public class EstimationService {
 			date=date.concat(String.valueOf(endDate.getYear()));
 			LocalDate startDate = LocalDate.parse(date, dtf);
 			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
-
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
-
+			
+			//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
+				estimates.add(TaxHeadEstimate.builder()
+						.taxHeadCode(PT_PAST_DUE_PENALTY)
+						.estimateAmount(pastduePenalty).build());
+				
+			//}
 			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
 		}
 		//Added For Manipur 

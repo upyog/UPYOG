@@ -811,6 +811,9 @@ public class BillServicev2 {
 			previousYear = true;
 			
 		}
+		//For Testing to be removed
+		//previousYear=false;
+		//cuurentMonth=8;
 		Integer nextYear = assesmentDoneForYearEnd;
 
 		Integer b = c.get(Calendar.YEAR);
