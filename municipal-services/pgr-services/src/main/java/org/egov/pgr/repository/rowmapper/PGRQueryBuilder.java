@@ -90,7 +90,7 @@ public class PGRQueryBuilder {
 
         if (criteria.getServiceRequestId() != null) {
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" LOWER(ser.serviceRequestId) LIKE ? ");
+            builder.append(" (ser.serviceRequestId) LIKE ? ");
             preparedStmtList.add("%" + criteria.getServiceRequestId() + "%");
         }
 
