@@ -37,24 +37,10 @@ const SvApplicationDetails = () => {
     },
   ); 
   const [billData, setBillData]=useState(null);
-
-  
-
-
    const SVDetail = get(data, "SVDetail", []);
-  
-  
-//   const petId = get(data, "PetRegistrationApplications[0].applicationNumber", []);
-  
   let  streetVendingDetails = (SVDetail && SVDetail.length > 0 && SVDetail[0]) || {};
-  console.log("streetVendingDetailsstreetVendingDetails",streetVendingDetails);
   const application =  streetVendingDetails;
-
-  
   sessionStorage.setItem("streetvending", JSON.stringify(application));
-
-  
-
   const [loading, setLoading]=useState(false);
 
   const fetchBillData=async()=>{
@@ -63,30 +49,19 @@ const SvApplicationDetails = () => {
     setBillData(result);
     setLoading(false);
     };
-useEffect(()=>{
-fetchBillData();
-}, [tenantId, applicationNo]); 
+    useEffect(()=>{
+    fetchBillData();
+    }, [tenantId, applicationNo]); 
 
-//   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ptr.usePTRSearch(
-//     {
-//       tenantId,
-//       filters: { applicationNumber: petId, audit: true },
-//     },
-//     {
-//       enabled: true,
-      
-//     }
-//   );
-
-//   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-//     {
-//       tenantId: tenantId,
-//       businessService: "pet-services",
-//       consumerCodes: applicationNo,
-//       isEmployee: false,
-//     },
-//     { enabled: applicationNo ? true : false }
-//   );
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "sv-services",
+      consumerCodes: applicationNo,
+      isEmployee: false,
+    },
+    { enabled: applicationNo ? true : false }
+  );
 
   if (!streetVendingDetails.workflow) {
     let workflow = {
@@ -104,15 +79,6 @@ fetchBillData();
      streetVendingDetails.workflow = workflow;
   }
 
-  
-
-  
-
- 
-  // let owners = [];
-  // owners = application?.owners;
-  // let docs = [];
-  // docs = application?.documents;
 
   if (isLoading) {
     return <Loader />;
@@ -125,19 +91,13 @@ fetchBillData();
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
   };
 
-//   let documentDate = t("CS_NA");
-//   if ( streetVendingDetails?.additionalDetails?.documentDate) {
-//     const date = new Date( streetVendingDetails?.additionalDetails?.documentDate);
-//     const month = Digit.Utils.date.monthNames[date.getMonth()];
-//     documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
-//   }
 
-//   async function getRecieptSearch({ tenantId, payments, ...params }) {
-//     let response = { filestoreIds: [payments?.fileStoreId] };
-//     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
-//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-//   };
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let response = { filestoreIds: [payments?.fileStoreId] };
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "svservice-receipt");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
 
 //   const handleDownload = async (document, tenantid) => {
 //     let tenantId = tenantid ? tenantid : tenantId;
@@ -146,29 +106,29 @@ fetchBillData();
 //     window.open(documentLink, "_blank");
 //   };
 
-//   const printCertificate = async () => {
-//     let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] }, "petservicecertificate");
-//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-//   };
+  const printCertificate = async () => {
+    let response = await Digit.PaymentService.generatePdf(tenantId, { SVDetail: [data?.SVDetail?.[0]] }, "svcertificate");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
 
   let dowloadOptions = [];
   dowloadOptions.push({
-    label: t("SV_DOWNLOAD_ACK_FORM"),
+    label: t("SV_ACKNOWLEDGEMENT"),
     onClick: () => getAcknowledgementData(),
   });
 
-  //commented out, need later for download receipt and certificate 
-//   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-//     dowloadOptions.push({
-//       label: t("PTR_FEE_RECIEPT"),
-//       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-//     });
-//   if (data?.ResponseInfo?.status === "successful")
-//     dowloadOptions.push({
-//       label: t("PTR_CERTIFICATE"),
-//       onClick: () => printCertificate(),
-//     });
+  // commented out, need later for download receipt and certificate 
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("SV_FEE_RECIEPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+  if (data?.ResponseInfo?.status === "SUCCESSFUL")
+    dowloadOptions.push({
+      label: t("SV_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
   
   return (
     <React.Fragment>
@@ -217,7 +177,8 @@ fetchBillData();
           <StatusTable>
             <Row className="border-none" label={t("SV_VENDING_ZONES")} text={streetVendingDetails?.vendingZone || t("CS_NA")} />
             <Row className="border-none" label={t("SV_VENDING_TYPE")} text={streetVendingDetails?.vendingActivity || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />
+            {streetVendingDetails?.vendingActivity==="STATIONARY"&&(
+            <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
             <Row className="border-none" label={t("SV_LOCAL_AUTHORITY_NAME")} text={streetVendingDetails?.localAuthorityName || t("CS_NA")} />
             <Row className="border-none" label={t("SV_BENEFICIARY_SCHEMES")} text={streetVendingDetails?.benificiaryOfSocialSchemes || t("CS_NA")} />
             <Row className="border-none" label={t("SV_DISABILITY_STATUS")} text={streetVendingDetails?.disabilityStatus || t("CS_NA")} />
