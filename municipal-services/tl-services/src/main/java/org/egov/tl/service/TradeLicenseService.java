@@ -274,7 +274,8 @@ public class TradeLicenseService {
         boolean isInterServiceCall = isInterServiceCall(headers);
         tlValidator.validateSearch(requestInfo,criteria,serviceFromPath, isInterServiceCall);
         criteria.setBusinessService(serviceFromPath);
-        enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria);
+        List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+        enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria,rolesWithinTenant);
         if(criteria.getRenewalPending()!=null && criteria.getRenewalPending()== true ) {
         	
         	String currentFinancialYear = "";
@@ -346,15 +347,19 @@ public class TradeLicenseService {
 			// fetch all ROLES within tenant
 			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
 			
-			if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
-				tempLicenses = tempLicenses.stream().filter(license -> 
-				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
-			.collect(Collectors.toList());
-			}
-			if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
-				tempLicenses = tempLicenses.stream().filter(license -> 
-				!StringUtils.equalsAnyIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORPAYMENT))
-			.collect(Collectors.toList());
+			if (!(rolesWithinTenant.contains(TLConstants.ROLE_CODE_SUPERVISOR)
+					|| rolesWithinTenant.contains(TLConstants.ROLE_CODE_SECRETARY))) {
+				if (rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+					tempLicenses = tempLicenses.stream().filter(license -> !StringUtils
+							.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+							.collect(Collectors.toList());
+				}
+				if (rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+					tempLicenses = tempLicenses.stream()
+							.filter(license -> !StringUtils.equalsAnyIgnoreCase(license.getStatus(),
+									TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORPAYMENT))
+							.collect(Collectors.toList());
+				} 
 			}
 			
 //			// remove INITIATED applications for EMPLOYEE
@@ -405,7 +410,7 @@ public class TradeLicenseService {
 
 
 
-	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
 
 		List<String> roleCodes = roles.stream()
 				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
@@ -511,7 +516,7 @@ public class TradeLicenseService {
 	public int countLicenses(TradeLicenseSearchCriteria criteria, RequestInfo requestInfo, String serviceFromPath, HttpHeaders headers){
 		
 		criteria.setBusinessService(serviceFromPath);
-    	enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria);
+    	enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria, null);
 
 
     	int licenseCount = repository.getLicenseCount(criteria);
