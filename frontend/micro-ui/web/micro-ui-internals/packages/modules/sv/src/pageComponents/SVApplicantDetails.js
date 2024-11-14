@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, FormStep,RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber,Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState,useEffect } from "react";
 import Timeline from "../components/Timeline";
 import { calculateAge } from "../utils";
@@ -25,7 +25,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || false);
   const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || false);
   const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
-
+  const [showToast, setShowToast] = useState(null);
 
 
   const [fields, setFeilds] = useState((formData?.owner && formData?.owner?.units) || [{ vendorName: user?.name || "", vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: user?.mobileNumber || "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email:user?.emailId || "", tradeNumber:""}]);
@@ -70,13 +70,22 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
         spouse: "SPOUSE_AGE_ERROR",
         dependent: "DEPENDENT_AGE_ERROR"
       };
-      
-      alert(t(errorMessages[type]));
+      setShowToast({ error: true, label: t(errorMessages[type]) });
       return false;
     }
     
     return true;
   };
+
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 1 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
 
 
   const common = [
@@ -106,6 +115,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   };
 
   function selectvendorName(i, e) {
+    if (/\d/.test(e.target.value)) {
+      setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
+    }
     let units = [...fields];
     units[i].vendorName = e.target.value;
     setvendorName(e.target.value);
@@ -125,6 +137,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
     setFeilds(units);
   }
   function selectfatherName(i, e) {
+    if (/\d/.test(e.target.value)) {
+      setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
+    }
     let units = [...fields];
     units[i].fatherName = e.target.value;
     setfatherName(e.target.value);
@@ -132,6 +147,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   }
   
   function selectspouseName(i, e) {
+    if (/\d/.test(e.target.value)) {
+      setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
+    }
     let units = [...fields];
     units[i].spouseName = e.target.value;
     setspouseName(e.target.value);
@@ -162,6 +180,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
     }   
 
   function selectdependentName(i, e) {
+    if (/\d/.test(e.target.value)) {
+      setShowToast({ error: true, label: t("SV_CITIZEN_VALIDATION_FORMAT") });
+    }
       let units = [...fields];
       units[i].dependentName = e.target.value;
       setdependentName(e.target.value);
@@ -196,7 +217,6 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
         setFeilds(units);
     }
 
-    console.log("fielfsdssss",fields);
     const goNext = () => {
 
      // Validate all applicable dates before proceeding
@@ -276,7 +296,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                 optionKey="i18nKey"
                 name="vendorName"
                 value={field?.vendorName}
-                onChange={(e) => selectvendorName(index, e)}
+                onChange={(e) => selectvendorName(index, e )}
                 disable={false}
                 ValidationRequired={true}
                 {...(validation = {
@@ -286,6 +306,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                     title: t("SV_ENTER_CORRECT_NAME"),
                 })}
                 />
+                
                 <CardLabel>{`${t("SV_REGISTERED_MOB_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
                 <MobileNumber
                 style={{ background: "#FAFAFA" }}
@@ -496,7 +517,16 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
           
           
         </FormStep>
-      
+        {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };

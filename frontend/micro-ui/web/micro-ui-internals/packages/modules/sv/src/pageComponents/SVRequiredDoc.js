@@ -19,11 +19,14 @@ const SVRequiredDoc = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       <Card>
+      <CardHeader>{t("MODULE_SV")}</CardHeader>
         <div>
-         
+         <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
+          <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_TEXT")}</CardText>
+          <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
           <CardSubHeader>{t("SV_REQ_SCREEN_LABEL")}</CardSubHeader>
-        
-          <CardText style={{color: 'red'}}>{t('SV_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
+          <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_LABEL_TEXT")}</CardText>
+          <CardText className={"primaryColor"}>{t('SV_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
           <div>
             {isLoading && <Loader />}
             {Array.isArray(docs)
