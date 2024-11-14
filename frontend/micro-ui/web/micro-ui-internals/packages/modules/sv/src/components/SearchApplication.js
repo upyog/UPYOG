@@ -95,7 +95,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
 
 
         {
-            Header: t("SV_APPLICANT_NAME"),
+            Header: t("SV_VENDOR_NAME"),
             Cell: (row) => {
                 return GetCell(`${row?.row?.original?.vendorDetail[0]?.name}`)
 
@@ -103,7 +103,23 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             disableSortBy: true,
         },
         {
-            Header: t("SV_MOBILE_NUMBER"),
+            Header: t("SV_VENDING_TYPE"),
+            Cell: (row) => {
+                return GetCell(`${row?.row?.original?.vendingActivity}`)
+
+            },
+            disableSortBy: true,
+        },
+        {
+            Header: t("SV_VENDING_ZONES"),
+            Cell: (row) => {
+                return GetCell(`${row?.row?.original?.vendingZone}`)
+
+            },
+            disableSortBy: true,
+        },
+        {
+            Header: t("SV_REGISTERED_MOB_NUMBER"),
             Cell: ({ row }) => {
                 return GetCell(`${row?.original?.vendorDetail[0]?.mobileNo}`)
             },
@@ -152,11 +168,6 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 <SearchField>
                     <label>{t("SV_APPLICATION_NUMBER")}</label>
                     <TextInput name="applicationNumber" inputRef={register({})} />
-                </SearchField>
-
-                <SearchField>
-                    <label>{t("SV_VENDOR_ID")}</label>
-                    <TextInput name="vendorId" inputRef={register({})} />
                 </SearchField>
 
                 <SearchField>

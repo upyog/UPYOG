@@ -25,8 +25,12 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
       label: "SV_NEW_REGISTRATION",
       value: "sv",
     },
-
   ];
+
+  let StatusFields = [];
+  statusMap && statusMap?.map((item) => {
+    StatusFields.push({i18nKey: item?.applicationstatus, applicationstatus: item?.applicationstatus})
+  })
 
   // hook for fetching vending type data
   const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
@@ -63,13 +67,17 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   };
 
   const applyLocalFilters = () => {
-    if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
-    else onFilterChange(_searchParams);
+    // if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
+    // else 
+    onFilterChange(_searchParams);
   };
 
   const clearAll = () => {
     setSearchParams({ ...defaultSearchParams, services: [] });
     onFilterChange({ ...defaultSearchParams });
+    setVendingType(null)
+    setVendingZone(null)
+    setAppStatus(null)
   };
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -83,9 +91,12 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
       });
   };
 
-  const selectLocality = (d) => {
-    localParamChange({ locality: [...(_searchParams?.locality || []), d] });
-  };
+  // setting the vendingzone, vendingtype and status values in searchparams
+  useEffect(() => {
+    if(_vendingZone) localParamChange({ vendingZone: _vendingZone?.code || "" });
+    if(vendingType) localParamChange({ vendingType: vendingType?.code || ""});
+    if(app_status) localParamChange({ status: app_status?.i18nKey || "" });
+  }, [_vendingZone, vendingType, app_status])
 
   return (
     <React.Fragment>
@@ -125,6 +136,21 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
           </div>
           <div>
 
+          <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("SV_VENDING_ZONES")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={_vendingZone}
+                  select={setVendingZone}
+                  option={vending_Zone}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+              </div>
+
             <div>
               <div className="filter-label" style={{ fontWeight: "normal" }}>
                 {t("SV_VENDING_TYPE")}:
@@ -141,34 +167,6 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
 
               </div>
             </div>
-
-            <div>
-              <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("SV_VENDING_ZONES")}:
-              </div>
-              <div>
-                <Dropdown
-                  selected={_vendingZone}
-                  select={setVendingZone}
-                  option={vending_Zone}
-                  optionKey="i18nKey"
-                  t={t}
-                  placeholder={"Select"}
-                />
-              </div>
-              {/* <div className="tag-container">
-                {_searchParams?.locality?.map((locality, index) => {
-                  return (
-                    <RemoveableTag
-                      key={index}
-                      text={t(locality.i18nkey)}
-                      onClick={() => {
-                        localParamChange({ locality: _searchParams?.locality.filter((loc) => loc.code !== locality.code) });
-                      }}
-                    />
-                  );
-                })}
-              </div> */}
             </div>
 
 
@@ -180,7 +178,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                 <Dropdown
                   selected={app_status}
                   select={setAppStatus}
-                  option={[{i18nKey: "Approved"}, {i18nKey: "Rejected"}, {i18nKey: "RegistrationCompleted"}, {i18nKey: "Applied"}]}
+                  option={StatusFields}
                   optionKey="i18nKey"
                   t={t}
                   placeholder={"Select"}
@@ -189,23 +187,6 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
               </div>
             </div>
 
-            {/* <div>
-              <div className="filter-label" style={{ fontWeight: "normal" }}>
-                {t("ES_SV_APP_TYPE")}
-              </div>
-              {ApplicationTypeMenu.map((e, index) => {
-                const checked = _searchParams?.services?.includes(e.value);
-                return (
-                  <CheckBox
-                    key={index + "service"}
-                    label={t(e.label)}
-                    value={e.label}
-                    checked={checked}
-                    onChange={(event) => onServiceSelect(event, e.value)}
-                  />
-                );
-              })}
-            </div> */}
             <div>
               <Status
                 searchParams={_searchParams}

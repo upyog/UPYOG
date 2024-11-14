@@ -47,6 +47,7 @@ const EmployeeDashboard = ({modules}) => {
         };
         
         const response = await Digit.EmployeeDashboardService.search(payload);
+        console.log("ressponseee",response);
         if (response && response.employeeDashboard) {
           setCardData([
             { title: t("ES_APPLICATION_RECEIVED"), count: response.employeeDashboard.applicationReceived || 0, color: "blue" },

@@ -35,7 +35,7 @@ import {
       history.push(jumpTo);
     }
   
-    return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
+    return <LinkButton label={t("CS_COMMON_EDIT")} className="check-page-link-button" onClick={routeTo} />;
   };
   
   const CheckPage = ({ onSubmit, value = {} }) => {

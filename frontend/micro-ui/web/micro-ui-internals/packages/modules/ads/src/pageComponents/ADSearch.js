@@ -73,6 +73,15 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     },
   });
 
+  const { data: CalculationTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "CalculationType" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["Advertisement"]?.["CalculationType"];
+        return formattedData;
+      },
+  });
+
+
   AdType &&
     AdType.map((slot) => {
       ADSTypeData.push({ i18nKey: `${slot.name}`, code: `${slot.code}`, value: `${slot.name}` });
@@ -109,7 +118,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
         location: `${t(slot.location)}`,
         nightLight: slot.nightLight===false?"No":"Yes",
         bookingDate: slot.bookingDate,
-        price:"979",
+        price:Searchdata.unitPrice,
         status: slot.slotStaus === "AVAILABLE" ? <div className="sla-cell-success">Available</div> : <div className="sla-cell-error">Booked</div>,
       }));
       // Only update state if newData is different from current state
@@ -279,8 +288,15 @@ const handleCartClick = () => {
     const startDate = fromDate;
     const endDate = toDate;
     const faceArea=selectedFace?.code;
-    const location=selectedLocation?.code;
+    const location=selectedLocation?.value;
     const nightLight=selectNight?.value;
+    let unitPrice;
+    const item = CalculationTypeData?.find((item) => item?.location === location);
+    
+    if (item) {
+      const calculationTypeKey = `CalculationType_${faceArea}`;
+      unitPrice = item?.[calculationTypeKey]?.[0]?.amount;
+    }
     if (adsType && startDate && endDate && faceArea && location && nightLight) {
       const filters = {
         addType: addType,
@@ -289,6 +305,7 @@ const handleCartClick = () => {
         nightLight:nightLight,
         bookingStartDate: startDate,
         bookingEndDate: endDate,
+        unitPrice: unitPrice,
       };
       setSearchData(filters);
     }

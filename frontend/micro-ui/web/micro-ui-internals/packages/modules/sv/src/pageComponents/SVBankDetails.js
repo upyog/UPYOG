@@ -63,7 +63,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData }) => {
 
   useEffect(() => {
     if (showToast) {
-      const timer = setTimeout(() => setShowToast(null), 3000);
+      const timer = setTimeout(() => setShowToast(null), 2000);
       return () => clearTimeout(timer);
     }
   }, [showToast]);
@@ -82,7 +82,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const goNext = () => {
     if (bankDetails.accountNumber !== bankDetails.confirmAccountNumber) {
-        alert(t("SV_ACCOUNT_NUMBER_MISMATCH"));
+        setShowToast({ error: true, label: t("SV_INVALID_ACCOUNTNUMBER") });
         return;
       }
     onSelect(config.key, { ...formData.bankdetails, ...bankDetails }, false);
@@ -99,14 +99,6 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData }) => {
         onSelect={goNext}
         onSkip={() => onSelect()}
         t={t}
-        // isDisabled={
-        //   !bankDetails.accountNumber ||
-        //   !bankDetails.confirmAccountNumber ||
-        //   !bankDetails.ifscCode ||
-        //   !bankDetails.bankName ||
-        //   !bankDetails.bankBranchName ||
-        //   !bankDetails.accountHolderName
-        // }
       >
         {[
           { label: "SV_ACCOUNT_NUMBER", field: "accountNumber", maxLength: 16, regex: /\D/g },

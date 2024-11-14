@@ -18,7 +18,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            fromDate: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString().split('T')[0], // Default to one month ago
+            fromDate: new Date().toISOString().split('T')[0], // Default to today's date
             toDate: new Date().toISOString().split('T')[0], // Default to today's date
             status: { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") }
         }
