@@ -26,7 +26,6 @@ export const shouldHideBackButton = (config = []) => {
 
 export const setAddressDetails = (data) => {
   let { address } = data;
-
   let propAddress = {
     // ...address,
     pincode: address?.pincode,

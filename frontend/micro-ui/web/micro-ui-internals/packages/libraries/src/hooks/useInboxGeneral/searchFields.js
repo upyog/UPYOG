@@ -125,17 +125,12 @@ EW: [
   SV: [
     {
       label: "SV_APPLICATION_NUMBER",
-      name: "applicationNo",
-      roles: [],
-    },
-    {
-      label: "SV_VENDOR_ID",
-      name: "vendingId",
+      name: "applicationNumber",
       roles: [],
     },
     {
       label: "SV_REGISTERED_MOB_NUMBER",
-      name: "mobileNo",
+      name: "mobileNumber",
       type: "mobileNumber",
       maxLength: 10,
       minLength: 0,
@@ -146,7 +141,7 @@ EW: [
         minLength: "",
         maxLength: "",
       },
-    },
+    }
   ],
 };
 

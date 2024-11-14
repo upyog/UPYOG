@@ -19,7 +19,6 @@ const SearchApp = ({path}) => {
 
     // function to pass filters to hook on clicking submit button
     function onSubmit (_data) {
-      console.log("dayta in searchapp onshubmit :: ", _data)
         var fromDate = new Date(_data?.fromDate)
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
@@ -31,14 +30,12 @@ const SearchApp = ({path}) => {
         }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        // if(Object.entries(payload).length>0 && !payload.applicationNumber && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.status && !payload.toDate)
-        // setShowToast({ warning: true, label: "ERR_SV_FILL_VALID_FIELDS" });
-        // else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.applicationNumber && !payload.toDate))
-        // setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
-        // else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
-        // setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
-        // else
-        console.log("data of payload in searchapp :: ", payload)
+
+        if(Object.entries(payload).length>0 && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.vendingType && !payload.toDate && !payload.vendingZone))
+        setShowToast({ warning: true, label: "ERR_SV_FILL_VALID_FIELDS" });
+        else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
+        setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
+        else
         setPayload(payload)
     }
 
