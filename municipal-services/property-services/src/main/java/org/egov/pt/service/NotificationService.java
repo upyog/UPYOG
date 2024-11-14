@@ -926,7 +926,7 @@ public class NotificationService {
 		}
 	}
 	
-	public void sendNoticeInformation(NoticeRequest noticeRequest)
+	public void sendNoticeInformationForEntryPremises(NoticeRequest noticeRequest)
 	{
 		Map<String, String> mobileNumberToOwner = new HashMap<>();
 		Set<String> mobileNumbers = new HashSet<>();
@@ -935,6 +935,7 @@ public class NotificationService {
 		List<String> configuredChannelNames =  notifUtil.fetchChannelList(new RequestInfo(), noticeRequest.getNotice().getTenantId(), PTConstants.PT_BUSINESSSERVICE, PTConstants.WF_NO_WORKFLOW);
 		String msg = notifUtil.getMessageTemplate(NOTICE_TO_ENTER_PREMISE, completeMsgs);
 		String templateId=NOTICE_TO_ENTER_PREMISE_TEMPLATE_ID;
+		msg = msg.replace("{DATE_TIME}", noticeRequest.getNotice().getEntryDate()+" "+noticeRequest.getNotice().getEntryTime());
 		
 		PropertyCriteria propertyCriteria=new PropertyCriteria();
 		Set<String> propertyIds=new HashSet<String>();
