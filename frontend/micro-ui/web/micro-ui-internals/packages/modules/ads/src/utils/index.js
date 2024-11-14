@@ -62,10 +62,9 @@ export const setCartDetails = (data) => {
   let cartDetails = adslist?.cartDetails.map((slot) => {
     return { 
       addType:slot.addType,
-      faceArea:"Unipole_12_X_8",
+      faceArea:slot.faceArea,
       location:slot.location,
-      // nightLight:slot.nightLight,
-      nightLight:true,
+      nightLight:slot.nightLight==="Yes"? true : false,
       bookingDate:slot.bookingDate,
       bookingFromTime: "06:00",
       bookingToTime: "05:59",

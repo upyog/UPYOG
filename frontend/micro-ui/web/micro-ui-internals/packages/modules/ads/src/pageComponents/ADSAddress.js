@@ -44,10 +44,11 @@ const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
   fetchedLocalities && fetchedLocalities.map((local, index) => {
     structuredLocality.push({i18nKey: local.i18nkey, code: local.code, label: local.label, area: local.area, boundaryNum: local.boundaryNum})
   })
-
+  
   const setAddressPincode = (e) => {
-    const newPincode = e.target.value.slice(0, 6); // Truncate input to first 6 characters
-    setPincode(newPincode);
+   // Get the input value and remove any non-digit characters using a regex
+  const newPincode = e.target.value.replace(/\D/g, '').slice(0, 6); // Remove non-digits and truncate to 6 characters
+  setPincode(newPincode);
   };
 
   const setApplicantStreetName = (e) => {

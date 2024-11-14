@@ -20,7 +20,7 @@ export const ADSSearch = {
     response?.cartDetails?.map((slot) => (
       [`${t(slot.addType)}`,
       `${t(slot.faceArea)}`,
-      `${t(slot.nightLight)}`,
+      `${t(slot.nightLight===true?"Yes":"No")}`,
       `${t(slot.bookingDate)}`,
         `${t(slot.status)}`,]
       )) || [];
