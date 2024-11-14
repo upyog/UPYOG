@@ -7,7 +7,7 @@ import lombok.Data;
 
 public class DashboardQueryConstant {
 
-	// Dashbiard query constants
+	// Dashboard query constants
 	public static StringBuilder DASHBOARD_QUERY_ALL = new StringBuilder("WITH Today_Collection AS ("
 			+ "    SELECT CAST(SUM(amountpaid) AS BIGINT) AS Today_Collection " + "    FROM egcl_paymentdetail "
 			+ "    WHERE createdtime >= EXTRACT(EPOCH FROM CURRENT_DATE) * 1000 "
