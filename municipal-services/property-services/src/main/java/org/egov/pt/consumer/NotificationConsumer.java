@@ -4,7 +4,9 @@ package org.egov.pt.consumer;
 import java.util.HashMap;
 
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Notice;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.service.AssessmentNotificationService;
 import org.egov.pt.service.NotificationService;
 import org.egov.pt.util.PTConstants;
@@ -80,7 +82,8 @@ public class NotificationConsumer {
 			else if(topic.equalsIgnoreCase(configs.getSavenoticetopic()))
 			{
 				NoticeRequest noticeRequest=mapper.convertValue(record, NoticeRequest.class);
-				notifService.sendNoticeInformation(noticeRequest);
+				if(noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_ENTER_PREMISE))
+				notifService.sendNoticeInformationForEntryPremises(noticeRequest);
 			}
 
         } catch (final Exception e) {
