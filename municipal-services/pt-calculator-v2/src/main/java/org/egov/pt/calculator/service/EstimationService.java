@@ -72,6 +72,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_R
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_PAST_DUE_PENALTY;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1164,12 +1165,8 @@ public class EstimationService {
 
 		}
 
-		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));
-		estimates.stream().forEach(t->
-		{
-			if(t.getTaxHeadCode().equals("PT_TIME_PENALTY"))
-				t.setEstimateAmount(updatedPenalty);		}
-				);
+		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( updatedPenalty).build());
 
 		BigDecimal totalAmount = taxAmt.add(updatedPenalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
@@ -1231,7 +1228,7 @@ public class EstimationService {
 		{
 			if(advanceRebate.compareTo(collectedAmtForOldDemand)>=0)
 			{
-				advanceRebate=taxAmt.multiply(new BigDecimal(20).divide(new BigDecimal(100)).negate());
+				advanceRebate=taxAmt.multiply(new BigDecimal(20).divide(new BigDecimal(100)).negate()).setScale(2,2);
 				estimates.add(TaxHeadEstimate.builder()
 						.taxHeadCode(PT_ADVANCE_REBATE)
 						.estimateAmount(advanceRebate).build());
@@ -1262,7 +1259,7 @@ public class EstimationService {
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
 			collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
-			pastdue=collectedAmtForOldDemand;
+			pastdue=collectedAmtForOldDemand.setScale(2,2);
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
@@ -1273,9 +1270,14 @@ public class EstimationService {
 			date=date.concat(String.valueOf(endDate.getYear()));
 			LocalDate startDate = LocalDate.parse(date, dtf);
 			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
-
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
-
+			pastduePenalty=pastduePenalty.setScale(2,2);
+					//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
+				estimates.add(TaxHeadEstimate.builder()
+						.taxHeadCode(PT_PAST_DUE_PENALTY)
+						.estimateAmount(pastduePenalty).build());
+				
+			//}
 			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
 		}
 		//Added For Manipur 
@@ -1381,12 +1383,12 @@ public class EstimationService {
 				try {
 					if(i==1)
 					{
-						BigDecimal Amount=taxAmount.add(collectedAmtForOldDemand);
+						BigDecimal Amount=taxAmount.add(collectedAmtForOldDemand).setScale(2,2);
 						paymentDetails.setPaymentMode("Quater1");
 						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(q1startDate).getTime());
 						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(q1endDate).getTime());
 						if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-							paymentDetails.setPastAmount(collectedAmtForOldDemand);
+							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
 						paymentDetails.setTaxAmount(Amount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
@@ -1443,18 +1445,18 @@ public class EstimationService {
 				try {
 					if(i==1)
 					{
-						BigDecimal hAmount=htaxAmount.add(collectedAmtForOldDemand);
+						BigDecimal hAmount=htaxAmount.add(collectedAmtForOldDemand).setScale(2,2);
 						paymentDetails.setPaymentMode("Halfyearly1");
 						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(h1startDate).getTime());
 						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(h1endDate).getTime());
 						if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-							paymentDetails.setPastAmount(collectedAmtForOldDemand);
+							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
 						paymentDetails.setTaxAmount(hAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
 					else if(i==2)
 					{
-						paymentDetails.setPaymentMode("Halfyearly1");
+						paymentDetails.setPaymentMode("Halfyearly2");
 						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(h2startDate).getTime());
 						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(h2endDate).getTime());
 						paymentDetails.setTaxAmount(htaxAmount);
@@ -1478,13 +1480,13 @@ public class EstimationService {
 			{
 				try {
 
-					BigDecimal yAmount=totalAmount.add(collectedAmtForOldDemand);
+					BigDecimal yAmount=totalAmount.add(collectedAmtForOldDemand).setScale(2,2);
 					paymentDetails=new ModeOfPaymentDetails();
 					paymentDetails.setPaymentMode("Yearly");
 					paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(y1startDate).getTime());
 					paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(y1endDate).getTime());
 					if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-						paymentDetails.setPastAmount(collectedAmtForOldDemand);
+						paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
 					paymentDetails.setTaxAmount(yAmount);
 					modeOfPaymentDetails.add(paymentDetails);
 				} catch (ParseException e) {
