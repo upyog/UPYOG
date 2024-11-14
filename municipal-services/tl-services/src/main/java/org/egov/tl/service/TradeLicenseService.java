@@ -913,7 +913,7 @@ public class TradeLicenseService {
 									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
 
 						// validate trade license
-						validateTradeLicenseCertificateGeneration(license);
+						validateTradeLicenseCertificateGeneration(license, tradeLicenseRequest.getRequestInfo());
 
 						// create pdf
 						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
@@ -1154,7 +1154,7 @@ public class TradeLicenseService {
 	}
 
 
-	private void validateTradeLicenseCertificateGeneration(TradeLicense tradeLicense) {
+	private void validateTradeLicenseCertificateGeneration(TradeLicense tradeLicense, RequestInfo requestInfo) {
 		
 		if (StringUtils.isEmpty(tradeLicense.getLicenseNumber())
 			    && StringUtils.isEmpty(tradeLicense.getApplicationNumber())
@@ -1173,7 +1173,8 @@ public class TradeLicenseService {
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText()))
 			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber") == null 
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
-			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
+			    && StringUtils.isEmpty(tradeLicense.getBusinessService())
+			    && null == requestInfo && null == requestInfo.getUserInfo() && null == requestInfo.getUserInfo().getUserName()) {
 			    
 			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
 			}
