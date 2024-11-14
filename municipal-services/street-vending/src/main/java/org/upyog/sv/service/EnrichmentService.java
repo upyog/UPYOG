@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.sv.config.StreetVendingConfiguration;
+import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.enums.VendorRelationshipType;
 import org.upyog.sv.repository.IdGenRepository;
 import org.upyog.sv.util.StreetVendingUtil;
@@ -109,10 +110,15 @@ public class EnrichmentService {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-	public void enrichStreetVendingApplicationUponUpdate(StreetVendingRequest vendingRequest) {
+	public void enrichStreetVendingApplicationUponUpdate(String applicationStatus, StreetVendingRequest vendingRequest) {
 		StreetVendingDetail vendingDetail = vendingRequest.getStreetVendingDetail();
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
 		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+		vendingDetail.setApplicationStatus(applicationStatus);
+		if (StreetVendingConstants.ACTION_APPROVE
+				.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
+
+		}
 	}
 
 }

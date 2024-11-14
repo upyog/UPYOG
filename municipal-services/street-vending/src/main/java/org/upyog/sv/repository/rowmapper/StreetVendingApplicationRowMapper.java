@@ -22,6 +22,16 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 
 		while (rs.next()) {
 			String applicationId = rs.getString("SVAPPLICATIONID");
+
+			String validFromString = rs.getString("svApprovalDate");
+			long validFromEpoch = Long.parseLong(validFromString);
+			String validToString = null;
+			if (validFromEpoch != 0) {
+				long oneYearInMillis = 365L * 24 * 60 * 60 * 1000; // adding 1 year to valid to field
+				long validToEpoch = validFromEpoch + oneYearInMillis;
+
+				validToString = String.valueOf(validToEpoch);
+			}
 			StreetVendingDetail streetVendingDetail = streetVendingApplicationMap.get(applicationId);
 
 			if (streetVendingDetail == null) {
@@ -47,8 +57,9 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.disabilityStatus(rs.getString("SVDISABILITYSTATUS"))
 						.benificiaryOfSocialSchemes(rs.getString("SVBENEFICIARYOFSOCIALSCHEMES"))
 						.termsAndCondition(rs.getString("SVTERMSANDCONDITION")).auditDetails(auditDetails)
-						.addressDetails(new ArrayList<>()).documentDetails(new ArrayList<>())
-						.vendorDetail(new ArrayList<>()).vendingOperationTimeDetails(new ArrayList<>()).build();
+						.validFrom(validFromString).validTo(validToString).addressDetails(new ArrayList<>())
+						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
+						.vendingOperationTimeDetails(new ArrayList<>()).build();
 
 				streetVendingApplicationMap.put(applicationId, streetVendingDetail);
 			}
