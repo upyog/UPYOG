@@ -248,30 +248,38 @@ console.log("filtersArgss",filtersArg);
         const searchFilters = {};
         const workflowFilters = {};
     
-        const { applicationNo, services, requestId, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus } = filtersArg || {};
-        if (filtersArg?.requestId) {
-          searchFilters.requestId = filtersArg?.requestId;
-        }
-        if (filtersArg?.requestId) {
-          searchFilters.requestId = requestId;
-        }
+        const { applicationNumber, services, mobileNumber, limit, offset, sortBy, sortOrder, vendingType, vendingZone, applicationStatus, status } = filtersArg || {};
+
         if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
           workflowFilters.status = applicationStatus.map((status) => status.uuid);
           if (applicationStatus?.some((e) => e.nonActionableRole)) {
             searchFilters.fetchNonActionableRecords = true;
           }
         }
-        if (filtersArg?.locality?.length) {
-          searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop());
+        if (status && status?.[0]?.status) {
+          workflowFilters.status = status.map((status) => status.uuid);
+          if (status?.some((e) => e.nonActionableRole)) {
+            searchFilters.fetchNonActionableRecords = true;
+          }
         }
+
         if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
           workflowFilters.assignee = uuid;
         }
         if (mobileNumber) {
           searchFilters.mobileNumber = mobileNumber;
         }
-        if (applicationNo) {
-          searchFilters.applicationNo = applicationNo;
+        if (vendingType) {
+          searchFilters.vendingType = vendingType;
+        }
+        if (vendingZone) {
+          searchFilters.vendingZone = vendingZone;
+        }
+        if (status) {
+          searchFilters.status = status;
+        }
+        if (applicationNumber) {
+          searchFilters.applicationNumber = applicationNumber;
         }
         if (services) {
           workflowFilters.businessService = services;

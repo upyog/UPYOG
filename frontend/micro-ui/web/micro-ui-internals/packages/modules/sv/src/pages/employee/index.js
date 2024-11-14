@@ -19,8 +19,9 @@ const EmployeeApp = () => {
     searchParams: {
       uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
       services: ["street-vending"],
-      applicationStatus: [],
-      locality: [],
+      status: null,
+      vendingType: null,
+      vendingZone: null
     },
   };
 
