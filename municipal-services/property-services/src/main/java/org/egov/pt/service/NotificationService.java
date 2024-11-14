@@ -17,6 +17,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.event.Event;
@@ -26,6 +27,7 @@ import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.util.NotificationUtil;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.web.contracts.EmailRequest;
+import org.egov.pt.web.contracts.NoticeRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.SMSRequest;
 import org.egov.tracer.model.CustomException;
@@ -58,6 +60,9 @@ public class NotificationService {
 	
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Autowired
+	PropertyService propertyService;
 
 
 	public void sendNotificationForMutation(PropertyRequest propertyRequest) {
@@ -919,6 +924,46 @@ public class NotificationService {
 			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
 			notifUtil.sendEmail(emailRequests);
 		}
+	}
+	
+	public void sendNoticeInformation(NoticeRequest noticeRequest)
+	{
+		Map<String, String> mobileNumberToOwner = new HashMap<>();
+		Set<String> mobileNumbers = new HashSet<>();
+		
+		String completeMsgs = notifUtil.getLocalizationMessages(noticeRequest.getNotice().getTenantId(), noticeRequest.getRequestInfo());
+		List<String> configuredChannelNames =  notifUtil.fetchChannelList(new RequestInfo(), noticeRequest.getNotice().getTenantId(), PTConstants.PT_BUSINESSSERVICE, PTConstants.WF_NO_WORKFLOW);
+		String msg = notifUtil.getMessageTemplate(NOTICE_TO_ENTER_PREMISE, completeMsgs);
+		String templateId=NOTICE_TO_ENTER_PREMISE_TEMPLATE_ID;
+		
+		PropertyCriteria propertyCriteria=new PropertyCriteria();
+		Set<String> propertyIds=new HashSet<String>();
+		propertyIds.add(noticeRequest.getNotice().getPropertyId());
+		propertyCriteria.setPropertyIds(propertyIds);
+		propertyCriteria.setTenantId(noticeRequest.getNotice().getTenantId());
+		List<Property> propertylist=propertyService.searchProperty(propertyCriteria, noticeRequest.getRequestInfo());
+		Property property=propertylist.get(0);
+		property.getOwners().forEach(owner -> {
+			if (owner.getMobileNumber() != null)
+				mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
+			mobileNumbers.add(owner.getMobileNumber());
+		});
+		
+		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(msg, mobileNumberToOwner,templateId);
+
+		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
+			notifUtil.sendSMS(smsRequests);
+			Boolean isActionReq = false;
+			List<Event> events = notifUtil.enrichEventNew(smsRequests, noticeRequest.getRequestInfo(), property.getTenantId(), property, isActionReq);
+			notifUtil.sendEventNotification(new EventRequest(noticeRequest.getRequestInfo(), events));
+		}
+		
+		if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
+			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(noticeRequest.getRequestInfo(),smsRequests, noticeRequest.getNotice().getTenantId());
+			notifUtil.sendEmail(emailRequests);
+		}
+		
+		System.out.println("noticeRequest::"+noticeRequest.getNotice().getPropertyId());
 	}
 
 

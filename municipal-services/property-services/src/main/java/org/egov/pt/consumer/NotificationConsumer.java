@@ -9,6 +9,7 @@ import org.egov.pt.service.AssessmentNotificationService;
 import org.egov.pt.service.NotificationService;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.web.contracts.AssessmentRequest;
+import org.egov.pt.web.contracts.NoticeRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -39,7 +40,8 @@ public class NotificationConsumer {
     						 "${egov.pt.assessment.update.topic}",
     						 "${persister.update.property.topic}",
     						 "${persister.save.property.topic}",
-    						 "${persister.update.property.bifurcation.inactive}"})
+    						 "${persister.update.property.bifurcation.inactive}",
+                             "${persister.save.notice.topic}"})
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		try {
@@ -74,6 +76,11 @@ public class NotificationConsumer {
 
 				PropertyRequest request = mapper.convertValue(record, PropertyRequest.class);
 				notifService.processForBifurcation(request,configs.getUpdatePropertyForDeactivaingForBifurcationTopic());
+			}
+			else if(topic.equalsIgnoreCase(configs.getSavenoticetopic()))
+			{
+				NoticeRequest noticeRequest=mapper.convertValue(record, NoticeRequest.class);
+				notifService.sendNoticeInformation(noticeRequest);
 			}
 
         } catch (final Exception e) {

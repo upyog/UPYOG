@@ -545,8 +545,11 @@ public class PTConstants {
     
     public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT="BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT";
     public static final String BIFURCATION_DEACT_NOTIF_PARENT_PROP_OWNER_MNPT_TEMPLATE_ID="";
-   
     
+/////////////////////////////////////////NOTICE MESSAGE///////////////////////////
+   
+    public static final String NOTICE_TO_ENTER_PREMISE="NOTICE_TO_ENTER_PREMISE_MNPT";
+    public static final String NOTICE_TO_ENTER_PREMISE_TEMPLATE_ID="1007858281479481097";
     
 
 }
