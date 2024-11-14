@@ -26,6 +26,7 @@ import org.egov.pt.models.Notice;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.enums.CreationReason;
+import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
@@ -128,6 +129,8 @@ public class AssessmentService {
 		Notice notice=new Notice();
 		notice.setPenaltyAmount("0");
 		notice.setPropertyId(property.getPropertyId());
+		notice.setNoticeType(NoticeType.NOTICE_FOR_PENALTY);
+		notice.setTenantId(property.getTenantId());
 		noticeRequest.setNotice(notice);
 		/*if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
 		{*/
@@ -184,7 +187,7 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 			deactivateOldDemandsForPreiousYears(request);
-			//producer.push(props.getUpdatenoticetopic(), noticeRequest);
+			producer.push(props.getUpdatenoticetopic(), noticeRequest);
 		}
 		
 		producer.push(props.getCreateAssessmentTopic(), request);
@@ -259,6 +262,14 @@ public class AssessmentService {
 		Boolean isWorkflowTriggered = isWorkflowTriggered(request.getAssessment(),assessmentFromSearch,"");
 		validator.validateAssessmentUpdate(request, assessmentFromSearch, property, isWorkflowTriggered);
 		
+		NoticeRequest noticeRequest = new NoticeRequest();
+		Notice notice=new Notice();
+		notice.setPenaltyAmount("0");
+		notice.setPropertyId(property.getPropertyId());
+		notice.setNoticeType(NoticeType.NOTICE_FOR_PENALTY);
+		notice.setTenantId(property.getTenantId());
+		noticeRequest.setNotice(notice);
+		
 		if ((request.getAssessment().getStatus().equals(Status.INWORKFLOW) || isWorkflowTriggered)
 				&& config.getIsAssessmentWorkflowEnabled()){
 
@@ -286,6 +297,7 @@ public class AssessmentService {
 			{
 				calculationService.calculateTax(request, property);
 				deactivateOldDemandsForPreiousYears(request);
+				producer.push(props.getUpdatenoticetopic(), noticeRequest);
 			}
 
 			producer.push(props.getUpdateAssessmentTopic(), request);

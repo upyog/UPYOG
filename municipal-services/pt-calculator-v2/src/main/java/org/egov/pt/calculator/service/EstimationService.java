@@ -1165,12 +1165,8 @@ public class EstimationService {
 
 		}
 
-		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));
-		estimates.stream().forEach(t->
-		{
-			if(t.getTaxHeadCode().equals("PT_TIME_PENALTY"))
-				t.setEstimateAmount(updatedPenalty);		}
-				);
+		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( updatedPenalty).build());
 
 		BigDecimal totalAmount = taxAmt.add(updatedPenalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
