@@ -38,19 +38,19 @@ public class CalculationService {
 	// Returns Demand detail: 
 	//Gets the headMasters from the billing service and calculation type from mdms
 	//Calls processCalculationForDemandGeneration to get the demand detail
-	public List<DemandDetail> calculateDemand(BookingRequest bookingRequest) { 
+	public List<DemandDetail> calculateDemand(BookingRequest bookingRequest, List<String> taxRateCodes) { 
 
 		String tenantId = bookingRequest.getBookingApplication().getTenantId().split("\\.")[0];
 		
-		List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId , BookingConstants.BILLING_SERVICE);
-		
+	List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId , BookingConstants.BILLING_SERVICE);
+
 		List<CalculationType> calculationTypes = mdmsUtil.getcalculationType(bookingRequest.getRequestInfo(), tenantId , config.getModuleName(), bookingRequest.getBookingApplication().getCartDetails().get(0) );
 
 
 		log.info("calculationTypes " + calculationTypes);
 
 		List<DemandDetail> demandDetails = processCalculationForDemandGeneration(tenantId, calculationTypes,
-				bookingRequest, headMasters);
+				bookingRequest, headMasters, taxRateCodes);
 
 		return demandDetails;
 
@@ -60,13 +60,13 @@ public class CalculationService {
 	//Demand is generated using billing service, using the taxHeadCode and feeType
 	//GST,SGST tax  codes are stored to calculate final amount
 	private List<DemandDetail> processCalculationForDemandGeneration(String tenantId,
-			List<CalculationType> calculationTypes, BookingRequest bookingRequest, List<TaxHeadMaster> headMasters) {
+			List<CalculationType> calculationTypes, BookingRequest bookingRequest, List<TaxHeadMaster> headMasters, List<String> taxRateCodes) {
 
 		Map<String, Long> advBookingDaysMap = bookingRequest.getBookingApplication().getCartDetails()
 				.stream().collect(Collectors.groupingBy(CartDetail::getAddType, Collectors.counting()));
 		//GST,SGST tax  codes are stored to calculate final amount
-		List<String> taxCodes = Arrays.asList(config.getApplicableTaxes().split(","));
-		log.info("tax applicable on booking  : " + taxCodes);
+//		List<String> taxCodes = Arrays.asList(config.getApplicableTaxes().split(","));
+//		log.info("tax applicable on booking  : " + taxCodes);
 		//Demand will be generated using billing service for booking
 		final List<DemandDetail> demandDetails = new LinkedList<>();
 		
@@ -85,7 +85,7 @@ public class CalculationService {
 				if (type.isTaxApplicable()) {
 					//Add taxable fee 
 					taxableFeeType.add(type);
-				} else if (!taxCodes.contains(type.getFeeType())) {
+				} else if (!taxRateCodes.contains(type.getFeeType())) {
 					DemandDetail data =  DemandDetail.builder().taxAmount(type.getAmount())
 					.taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build();
 					//Add fixed fee for which tax is not applicable
@@ -111,9 +111,9 @@ public class CalculationService {
 		log.info("Total Taxable amount for the booking : " + totalTaxableAmount);
 
 		for (CalculationType type : calculationTypes) {
-		    if (taxCodes.stream().anyMatch(code -> code.trim().equalsIgnoreCase(type.getFeeType().trim()))) {
+		    if (taxRateCodes.stream().anyMatch(code -> code.trim().equalsIgnoreCase(type.getFeeType().trim()))) {
 		        DemandDetail demandDetail = DemandDetail.builder()
-		                .taxAmount(calculateAmount(totalTaxableAmount, type.getAmount()))
+		                .taxAmount(calculateAmount(totalTaxableAmount, type.getRate()))
 		                .taxHeadMasterCode(type.getFeeType()).tenantId(tenantId).build();
 		        demandDetails.add(demandDetail);
 		    }

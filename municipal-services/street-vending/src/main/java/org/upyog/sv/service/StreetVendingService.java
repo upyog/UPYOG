@@ -2,14 +2,10 @@ package org.upyog.sv.service;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
-
-import lombok.NonNull;
 
 public interface StreetVendingService {
 
