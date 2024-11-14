@@ -22,7 +22,7 @@ public class EmployeeDashboardDetailsRowMapper implements RowMapper<EmployeeDash
 		this.moduleName = moduleName;
 	}
 
-	private boolean isThereTotalAmt(ResultSet rs, String column) {
+	private boolean hasColumn(ResultSet rs, String column) {
 		try {
 			rs.findColumn(column);
 			return true;
@@ -37,19 +37,22 @@ public class EmployeeDashboardDetailsRowMapper implements RowMapper<EmployeeDash
 	@Override
 	public EmployeeDashboardDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
 		EmployeeDashboardDetails details = new EmployeeDashboardDetails();
-		details.setApplicationReceived(rs.getInt("Total_Applications_Received"));
-		details.setApplicationApproved(rs.getInt("Total_Applications_Approved"));
-		details.setApplicationPending(rs.getInt("Total_Applications_Pending"));
+		details.setApplicationReceived(
+				hasColumn(rs, "Total_Applications_Received") ? rs.getInt("Total_Applications_Received") : 0);
+		details.setApplicationApproved(
+				hasColumn(rs, "Total_Applications_Approved") ? rs.getInt("Total_Applications_Approved") : 0);
+		details.setApplicationPending(
+				hasColumn(rs, "Total_Applications_Pending") ? rs.getInt("Total_Applications_Pending") : 0);
+		details.setApplicationPending(
+				hasColumn(rs, "Total_Applications_Pending") ? rs.getInt("Total_Applications_Pending") : 0);
 
-		// Check if 'Total_Amount' exists in the result set
-
-		if (isThereTotalAmt(rs, "Total_Amount")) {
-	        BigDecimal totalAmount = rs.getBigDecimal("Total_Amount");
-	        details.setTotalAmount(totalAmount != null ? totalAmount : BigDecimal.ZERO);
-	    } else {
-	        // Set default value if the column is missing
-	        details.setTotalAmount(BigDecimal.ZERO);
-	    }
+		if (hasColumn(rs, "Total_Amount")) {
+			BigDecimal totalAmount = rs.getBigDecimal("Total_Amount");
+			details.setTotalAmount(totalAmount != null ? totalAmount : BigDecimal.ZERO);
+		} else if (hasColumn(rs, "Total_Collection")) {
+			BigDecimal totalAmount = rs.getBigDecimal("Total_Collection");
+			details.setTotalAmount(totalAmount != null ? totalAmount : BigDecimal.ZERO);
+		}
 
 		return details;
 	}
