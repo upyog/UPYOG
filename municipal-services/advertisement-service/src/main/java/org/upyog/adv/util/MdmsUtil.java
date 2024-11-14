@@ -45,7 +45,6 @@ public class MdmsUtil {
 
 	private static Object mdmsMap = null;
 	private static List<TaxHeadMaster> headMasters = null;
-
 	/*
 	 * @Autowired private MDMSClient mdmsClient;
 	 */
@@ -157,7 +156,6 @@ public class MdmsUtil {
 	/**
 	 * makes mdms call with the given criteria and reutrn mdms data
 	 */
-
 	public List<TaxHeadMaster> getTaxHeadMasterList(RequestInfo requestInfo, String tenantId, String moduleName) {
 		if (headMasters != null) {
 			log.info("Returning cached value of tax head masters");
@@ -165,7 +163,6 @@ public class MdmsUtil {
 		}
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
-
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName);
 
 		try {
@@ -182,7 +179,8 @@ public class MdmsUtil {
 
 		return headMasters;
 	}
-
+	
+	
 	/**
 	 * makes mdms call with the given criteria and reutrn mdms data
 	 * 
@@ -216,15 +214,23 @@ public class MdmsUtil {
 		}
 
 		if (rootNode != null) {
-			JsonNode nestedArray = rootNode.get(0).get("CalculationType_" + cartDetail.getFaceArea());
-			try {
-				calculationTypes = mapper.readValue(nestedArray.toString(),
-						mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
-			} catch (JsonProcessingException e) {
-				log.error("Error converting calculation types: ", e);
-			}
-		}
-
+	        // Loop through each location node to find all matching locations and faceArea combinations
+	        for (JsonNode locationNode : rootNode) {
+	            // Check if location matches cartDetail.getLocation()
+	            if (locationNode.get("location").asText().equalsIgnoreCase(cartDetail.getLocation())) {
+	                JsonNode faceAreaNode = locationNode.get("CalculationType_" + cartDetail.getFaceArea());
+	                if (faceAreaNode != null) {
+	                    try {
+	                        List<CalculationType> faceAreaCalculationTypes = mapper.readValue(faceAreaNode.toString(),
+	                                mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+	                        calculationTypes.addAll(faceAreaCalculationTypes);
+	                    } catch (JsonProcessingException e) {
+	                        log.error("Error converting calculation types: ", e);
+	                    }
+	                }
+	            }
+	        }
+	    }
 		// Extract TaxAmount data
 		JSONArray taxAmountJsonArray = mdmsResponse.getMdmsRes().get(config.getModuleName())
 				.get(getTaxAmountMasterName());

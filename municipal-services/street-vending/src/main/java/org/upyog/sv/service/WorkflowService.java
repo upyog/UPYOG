@@ -41,13 +41,15 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
-	public void updateWorkflowStatus(StreetVendingRequest streetVendingRequest) {
+	public State updateWorkflowStatus(StreetVendingRequest streetVendingRequest) {
 		
 			ProcessInstance processInstance = getProcessInstanceForSV(streetVendingRequest.getStreetVendingDetail(),
 					streetVendingRequest.getRequestInfo());
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(streetVendingRequest.getRequestInfo(),
 					Collections.singletonList(processInstance));
-			callWorkFlow(workflowRequest);
+			State state = callWorkFlow(workflowRequest);
+			
+			return state; 
 		
 	}
 

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -44,28 +46,38 @@ public class DemandService {
 	
 	
 	/**
-	 * 1. Fetch tax heads from mdms tax-heads.json
-	 * 2. Map amount to tax heads from CalculateType.json
-	 * 3. Create XDemand for particular tax heads 
-	 * 4. Bill will be automatically generated when fetch bill api is called for demand created by this API
+	 * 1. Fetch tax heads from mdms tax-heads.json 2. Map amount to tax heads from
+	 * CalculateType.json 3. Create XDemand for particular tax heads 4. Bill will be
+	 * automatically generated when fetch bill api is called for demand created by
+	 * this API
+	 * 
 	 * @param bookingRequest
 	 * @return
 	 */
 
-
 	public List<Demand> createDemand(BookingRequest bookingRequest, Object mdmsData, boolean generateDemand) {
 		String tenantId = bookingRequest.getBookingApplication().getTenantId();
+		// String consumerCode = "ADV-8e9d3352-1014-4ed2-97c0-24454ced19c1";
 		String consumerCode = bookingRequest.getBookingApplication().getBookingNo();
-		
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
-		User user =bookingRequest.getRequestInfo().getUserInfo();
+		User user = bookingRequest.getRequestInfo().getUserInfo();
+
+		User owner = User.builder().name(user.getName()).emailId(user.getEmailId()).mobileNumber(user.getMobileNumber())
+				.build();
+
+		Map<String, Object> mdmsDataMap = (Map<String, Object>) mdmsData;
+
 		
-		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
-				.mobileNumber(user.getMobileNumber()).build();
-		
-		List<DemandDetail> demandDetails = calculationService.calculateDemand(bookingRequest);
-		
+		List<Map<String, Object>> taxRateList = (List<Map<String, Object>>) ((Map<String, Object>) ((Map<String, Object>) mdmsDataMap
+				.get("MdmsRes")).get("Advertisement")).get("TaxAmount");
+		List<String> taxRateCodes = taxRateList.stream().map(tax -> (String) tax.get("feeType")) 
+																								
+				.collect(Collectors.toList());
+
+		List<DemandDetail> demandDetails = calculationService.calculateDemand(bookingRequest, taxRateCodes);
+
 		LocalDate maxdate = getMaxBookingDate(bookingDetail);
+
 		
 		Demand demand = Demand.builder().consumerCode(consumerCode)
 				 .demandDetails(demandDetails).payer(owner)
@@ -73,11 +85,11 @@ public class DemandService {
 				.taxPeriodFrom(BookingUtil.getCurrentTimestamp()).taxPeriodTo(BookingUtil.minusOneDay(maxdate))
 				.consumerType(config.getModuleName()).businessService(config.getBusinessServiceName()).additionalDetails(null).build();
 
-		
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
-		if(!generateDemand) {
-			BigDecimal totalAmount = demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+		if (!generateDemand) {
+			BigDecimal totalAmount = demandDetails.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO,
+					BigDecimal::add);
 			demand.setAdditionalDetails(totalAmount);
 			return demands;
 		}

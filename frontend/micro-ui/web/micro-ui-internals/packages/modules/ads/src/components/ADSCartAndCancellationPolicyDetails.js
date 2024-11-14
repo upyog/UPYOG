@@ -55,21 +55,22 @@ const ADSCartAndCancellationPolicyDetails = () => {
     { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
     // { Header: t("TOTAL_PRICE"), accessor: "price" },
   ];
+  let cartDetails = params?.adslist?.cartDetails.map((details) => {
+    return { 
+      addType:details.addType,
+      faceArea:details.faceArea,
+      location:details.location,
+      nightLight:details.nightLight==="Yes"?true:false,
+      bookingDate:details.bookingDate,
+      bookingFromTime: "06:00",
+      bookingToTime: "05:59",
+      status: "BOOKING_CREATED"
+    }; });
 
   let formdata = {
-    tenantId: "pg.mohali",
-    cartDetails: [
-      {
-        addType: "Unipolar",
-        faceArea:"Unipole_12_X_8",
-        location: "Green Park",
-        nightLight: false,
-        bookingDate: "2024-11-30",
-        bookingFromTime: "06:00",
-        bookingToTime: "05:59",
-        status: "BOOKING_CREATED",
-      },
-    ],
+    tenantId:tenantId,
+    cartDetails:cartDetails,
+    
   };
   let mutation = Digit.Hooks.ads.useADSDemandEstimation();
 
@@ -145,7 +146,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
                   height:"30px",
                   textAlign:"center"
               }}>
-              <div> {number}</div>
+              <div> {params?.adslist?.cartDetails.length}</div>
 
               </div>
             </div>

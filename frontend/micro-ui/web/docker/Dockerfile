@@ -18,6 +18,7 @@ RUN yarn add @nudmcdgnpm/digit-ui-module-common
 RUN yarn add @nudmcdgnpm/digit-ui-module-ws
 RUN yarn add @nudmcdgnpm/digit-ui-module-commonpt
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ptr
+RUN yarn add @nudmcdgnpm/upyog-ui-module-ew
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"
