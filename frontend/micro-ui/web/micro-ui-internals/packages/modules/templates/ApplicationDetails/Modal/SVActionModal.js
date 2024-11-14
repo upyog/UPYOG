@@ -89,7 +89,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
 
   function submit(data) {
-    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: [selectedApprover?.uuid] };
+    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: selectedApprover?.uuid?[selectedApprover?.uuid]:null };
     if (uploadedFile)
       workflow["documents"] = [
         {

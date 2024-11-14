@@ -10,14 +10,12 @@
     "packages/modules/core",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/ew",
     "packages/modules/cm",
     "packages/modules/chb",
     "packages/modules/ptr",
     "packages/modules/sv",
     "packages/modules/asset",
-    "packages/modules/ads"
-,
+    "packages/modules/ads",
     "packages/modules/fnoc"
 
   ],
@@ -80,7 +78,7 @@
     "build:ptr": "cd packages/modules/ptr && yarn build",
     "build:asset": "cd packages/modules/asset && yarn build",
     "build:fnoc": "cd packages/modules/fnoc && yarn build",
-    "build:ew": "cd packages/modules/ew && yarn build",
+    "buildD:ew": "cd packages/modules/ew && yarn build",
     "build:sv": "cd packages/modules/sv && yarn build",
     "build:cm": "cd packages/modules/cm && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
