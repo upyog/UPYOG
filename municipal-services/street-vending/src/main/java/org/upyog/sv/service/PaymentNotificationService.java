@@ -14,6 +14,7 @@ import org.upyog.sv.repository.ServiceRequestRepository;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 import org.upyog.sv.web.models.transaction.Transaction;
 import org.upyog.sv.web.models.transaction.TransactionRequest;
 import org.upyog.sv.web.models.workflow.ProcessInstance;
@@ -70,8 +71,9 @@ public class PaymentNotificationService {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
 				log.info("Updating payment status for street vending booking : " + applicationNo);
-				updateWorkflowStatus(paymentRequest);
-				updateApplicationStatus(paymentRequest);
+				State state = updateWorkflowStatus(paymentRequest);
+				String applicationStatus = state.getApplicationStatus();
+				updateApplicationStatus(applicationStatus, paymentRequest);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error(
@@ -82,13 +84,15 @@ public class PaymentNotificationService {
 
 	}
 
-	public void updateWorkflowStatus(PaymentRequest paymentRequest) {
+	public State updateWorkflowStatus(PaymentRequest paymentRequest) {
 
 		ProcessInstance processInstance = getProcessInstanceForSV(paymentRequest);
 		log.info(" Process instance of street vending application " + processInstance.toString());
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(paymentRequest.getRequestInfo(),
 				Collections.singletonList(processInstance));
-		callWorkFlow(workflowRequest);
+		State state = callWorkFlow(workflowRequest);
+		
+		return state;
 
 	}
 
@@ -119,16 +123,29 @@ public class PaymentNotificationService {
 		return response.getProcessInstances().get(0).getState();
 	}
 
-	private void updateApplicationStatus(PaymentRequest paymentRequest) {
+	private StreetVendingDetail updateApplicationStatus(String applicationStatus, PaymentRequest paymentRequest) {
+		StreetVendingDetail streetVendingDetail = streetVendingRepository.getStreetVendingApplications(StreetVendingSearchCriteria.builder()
+				.applicationNumber(paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
+						.getConsumerCode()).build()).get(0);
 
+		if (streetVendingDetail == null) {
+			log.info("Application not founnd in consumer class while updating status");
+			return null;
+		}
+
+		
 		StreetVendingRequest vendingRequest = StreetVendingRequest.builder()
 				.requestInfo(paymentRequest.getRequestInfo()).build();
-		StreetVendingDetail vendingDetail = vendingRequest.getStreetVendingDetail();
-		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
-		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-		vendingDetail.setApplicationStatus(StreetVendingConstants.REGISTRATION_COMPLETED);
+		
+		streetVendingDetail.getAuditDetails().setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+		streetVendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+		streetVendingDetail.setApplicationStatus(applicationStatus);
+		streetVendingDetail.setApprovalDate(System.currentTimeMillis());
+		vendingRequest.setStreetVendingDetail(streetVendingDetail);
 		log.info("Street Vending Request to update application status in consumer : " + vendingRequest);
 		streetVendingRepository.update(vendingRequest);
+		
+		return streetVendingDetail;
 
 	}
 

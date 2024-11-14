@@ -1,7 +1,6 @@
 package org.upyog.sv.repository.querybuilder;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 
@@ -50,7 +49,7 @@ public class StreetVendingQueryBuilder {
 
 	private static final String applicationsCount = "SELECT count(sv.application_id) "
 			+ " FROM eg_sv_street_vending_detail sv "
-			+ " join eg_sv_vendor_detail vend on sv.application_id = vend.application_id  \n";
+			+ " join eg_sv_vendor_detail vendor on sv.application_id = vendor.application_id  \n";
 
 	public String getStreetVendingSearchQuery(StreetVendingSearchCriteria criteria, List<Object> preparedStmtList) {
 
@@ -69,8 +68,8 @@ public class StreetVendingQueryBuilder {
 
 		if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
 			addClauseIfRequired(query, preparedStmtList);
-			query.append(" sv.tenant_id = ? ");
-			preparedStmtList.add(criteria.getTenantId());
+			query.append(" sv.tenant_id LIKE ? ");
+			preparedStmtList.add("%" + criteria.getTenantId() + "%");
 		}
 		if (!ObjectUtils.isEmpty(criteria.getStatus())) {
 			addClauseIfRequired(query, preparedStmtList);
@@ -100,8 +99,23 @@ public class StreetVendingQueryBuilder {
 		if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" vendor.mobile_no = ? ");
-			preparedStmtList.add(criteria.getApplicationNumber());
-		}		
+			preparedStmtList.add(criteria.getMobileNumber());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getVendingType())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.vending_activity = ? ");
+			preparedStmtList.add(criteria.getVendingType());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getVendingZone())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.vending_zone = ? ");
+			preparedStmtList.add(criteria.getVendingZone());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getCreatedBy())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.createdby = ? ");
+			preparedStmtList.add(criteria.getToDate());
+		}
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);
 		}

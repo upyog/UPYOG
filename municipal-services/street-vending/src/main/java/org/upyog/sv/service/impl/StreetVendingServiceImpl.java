@@ -21,6 +21,7 @@ import org.upyog.sv.validator.StreetVendingValidator;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
+import org.upyog.sv.web.models.workflow.State;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -88,8 +89,10 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		existingApplication.setWorkflow(vendingRequest.getStreetVendingDetail().getWorkflow());
 		vendingRequest.setStreetVendingDetail(existingApplication);
 
-		enrichmentService.enrichStreetVendingApplicationUponUpdate(vendingRequest);
-		workflowService.updateWorkflowStatus(vendingRequest);
+		
+		State state = workflowService.updateWorkflowStatus(vendingRequest);
+		String applicationStatus = state.getApplicationStatus();
+		enrichmentService.enrichStreetVendingApplicationUponUpdate(applicationStatus,vendingRequest);
 		streetVendingRepository.update(vendingRequest);
 
 		if (StreetVendingConstants.ACTION_APPROVE.equals(existingApplication.getWorkflow().getAction())) {

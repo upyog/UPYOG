@@ -69,10 +69,10 @@ public class StreetVendingDetail {
 	    private String financialYear = null;
 
 	    @JsonProperty("validFrom")
-	    private Long validFrom = null;
+	    private String validFrom = null;
 
 	    @JsonProperty("validTo")
-	    private Long validTo = null;
+	    private String validTo = null;
 
 	private List<Address> addressDetails;
 
