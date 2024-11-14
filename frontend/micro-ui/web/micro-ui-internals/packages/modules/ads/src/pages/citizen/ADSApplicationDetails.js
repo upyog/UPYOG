@@ -158,7 +158,7 @@ const ADSApplicationDetails = () => {
     ads_details?.cartDetails?.map((slot) => ({
       addType: `${t(slot.addType)}`,
       faceArea: `${t(slot.faceArea)}`,
-      nightLight: `${t(slot.nightLight)}`,
+      nightLight: `${t(slot.nightLight===true?"Yes":"No")}`,
       bookingDate: `${t(slot.bookingDate)}`,
       bookingStatus: `${t(slot.status)}`,
     })) || [];
@@ -198,8 +198,8 @@ const ADSApplicationDetails = () => {
             <Row className="border-none" label={t("ADS_HOUSE_NO")} text={ads_details?.address?.houseNo || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_HOUSE_NAME")} text={ads_details?.address?.houseName || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_STREET_NAME")} text={ads_details?.address?.streetName || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_LINE1")} text={ads_details?.address?.addressline1 || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_LINE2")} text={ads_details?.address?.addressline2 || t("CS_NA")} />
+            <Row className="border-none" label={t("ADS_ADDRESS_LINE1")} text={ads_details?.address?.addressLine1 || t("CS_NA")} />
+            <Row className="border-none" label={t("ADS_ADDRESS_LINE2")} text={ads_details?.address?.addressLine2 || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_LANDMARK")} text={ads_details?.address?.landmark || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_CITY")} text={ads_details?.address?.city || t("CS_NA")} />
             <Row className="border-none" label={t("ADS_LOCALITY")} text={ads_details?.address?.locality || t("CS_NA")} />
