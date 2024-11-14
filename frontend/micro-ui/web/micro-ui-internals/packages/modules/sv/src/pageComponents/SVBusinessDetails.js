@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel,Dropdown, LinkButton,Toast} from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 import GIS from "./GIS";
 import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
@@ -37,6 +37,9 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
       { name: "Sunday", isSelected: false, startTime: "", endTime: "" },
     ]
   );
+
+    const [showToast, setShowToast] = useState(null);
+
 
 
   /* this checks two conditions:
@@ -231,15 +234,18 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
     setvendingLiscence(e.target.value);
   }
 
-  function setAreaRequired(e) {
-    setareaRequired(e.target.value);
-  }
+    function setAreaRequired(e) {
+      if (/[a-zA-Z]/.test(e.target.value)) {
+        setShowToast({ error: true, label: t("SV_CITIZEN_AREA_VALIDATION") });
+      }
+      setareaRequired(e.target.value);
+    }
 
-
-  const goNext = () => {
-    if (!validateDaysOfOperation()) {
-      alert("Please select at least one day and provide both start and end times for the selected day(s).");
-      return;
+    
+    const goNext = () => {
+      if (!validateDaysOfOperation()) {
+        setShowToast({ error: true, label: t("SV_TIME_OPERATIONS_VALIDATION") });
+        return;
     }
     let business = formData.businessDetails;
     let businessStep;
@@ -252,6 +258,16 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
   const onSkip = () => onSelect();
 
 
+
+    useEffect(() => {
+      if (showToast) {
+        const timer = setTimeout(() => {
+          setShowToast(null);
+        }, 2000); // Close toast after 1 seconds
+  
+        return () => clearTimeout(timer); // Clear timer on cleanup
+      }
+    }, [showToast]);
     useEffect(() => {
       if (userType === "citizen") {
         goNext();
@@ -419,9 +435,19 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
 
           </div>
         </FormStep>}
-      </div>
-    </React.Fragment>
-  );
-};
+        {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
+        </div>
+      </React.Fragment>
+    );
+  };
 
 export default SVBusinessDetails;

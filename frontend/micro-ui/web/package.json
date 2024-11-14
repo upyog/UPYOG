@@ -23,7 +23,7 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/upyog-css": "1.2.2",
+    "@nudmcdgnpm/upyog-css": "1.2.3",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-bills": "1.2.0",
     "@nudmcdgnpm/digit-ui-module-common": "1.2.0",
