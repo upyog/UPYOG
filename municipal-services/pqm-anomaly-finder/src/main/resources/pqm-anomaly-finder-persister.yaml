@@ -1,0 +1,46 @@
+serviceMaps:
+  serviceName: pqm-anomaly-finder
+  mappings:
+    - version: 1.0
+      description: Persists PQM Test Anomaly Data in eg_pqm_anomaly_details table
+      fromTopic: save-pqm-test-anomaly-details
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO eg_pqm_anomaly_details(id, tenantId, testId, anomalyType, description, referenceId, resolutionStatus, additionalDetails, isActive, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: $.pqmAnomalys.*
+          jsonMaps:
+            - jsonPath: $.pqmAnomalys.*.id
+            - jsonPath: $.pqmAnomalys.*.tenantId
+            - jsonPath: $.pqmAnomalys.*.testId
+            - jsonPath: $.pqmAnomalys.*.anomalyType
+            - jsonPath: $.pqmAnomalys.*.description
+            - jsonPath: $.pqmAnomalys.*.referenceId
+            - jsonPath: $.pqmAnomalys.*.resolutionStatus
+            - jsonPath: $.pqmAnomalys.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.pqmAnomalys.*.isActive
+            - jsonPath: $.pqmAnomalys.*.auditDetails.createdBy
+            - jsonPath: $.pqmAnomalys.*.auditDetails.lastModifiedBy
+            - jsonPath: $.pqmAnomalys.*.auditDetails.createdTime
+            - jsonPath: $.pqmAnomalys.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO eg_pqm_anomaly_details_auditlog(id, tenantId, testId, anomalyType, description, referenceId, resolutionStatus, additionalDetails, isActive, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: $.pqmAnomalys.*
+          jsonMaps:
+            - jsonPath: $.pqmAnomalys.*.id
+            - jsonPath: $.pqmAnomalys.*.tenantId
+            - jsonPath: $.pqmAnomalys.*.testId
+            - jsonPath: $.pqmAnomalys.*.anomalyType
+            - jsonPath: $.pqmAnomalys.*.description
+            - jsonPath: $.pqmAnomalys.*.referenceId
+            - jsonPath: $.pqmAnomalys.*.resolutionStatus
+            - jsonPath: $.pqmAnomalys.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.pqmAnomalys.*.isActive
+            - jsonPath: $.pqmAnomalys.*.auditDetails.createdBy
+            - jsonPath: $.pqmAnomalys.*.auditDetails.lastModifiedBy
+            - jsonPath: $.pqmAnomalys.*.auditDetails.createdTime
+            - jsonPath: $.pqmAnomalys.*.auditDetails.lastModifiedTime
+            

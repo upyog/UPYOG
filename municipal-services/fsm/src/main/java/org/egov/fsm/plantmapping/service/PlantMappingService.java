@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.fsm.plantmapping.repository.PlantMappingRepository;
+import org.egov.fsm.plantmapping.validator.PlantMDMSValidator;
 import org.egov.fsm.plantmapping.validator.PlantMappingValidator;
 import org.egov.fsm.plantmapping.web.model.PlantMapping;
 import org.egov.fsm.plantmapping.web.model.PlantMappingRequest;
@@ -30,19 +31,22 @@ public class PlantMappingService {
 
 	@Autowired
 	private PlantMappingEnrichmentService enrichmentService;
+	
+	 @Autowired
+	  private PlantMDMSValidator mdmsValidator;
 
 	@Autowired
 	private PlantMappingRepository repository;
 
 	public PlantMapping create(@Valid PlantMappingRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();
-		Object mdmsData = util.mDMSCall(requestInfo, request.getPlantMapping().getTenantId());
+		mdmsValidator.validateMdmsData(request);
 		if (request.getPlantMapping().getTenantId().split("\\.").length == 1) {
 			throw new CustomException(FSMErrorConstants.INVALID_TENANT,
 					"Application Request cannot be create at StateLevel");
 		}
 
-		validaor.validateCreateOrUpdate(request, mdmsData);
+		validaor.validateCreateOrUpdate(request);
 		validaor.validatePlantMappingExists(request);
 		enrichmentService.enrichCreateRequest(request);
 		repository.save(request);
@@ -53,14 +57,13 @@ public class PlantMappingService {
 		RequestInfo requestInfo = request.getRequestInfo();
 
 		PlantMapping plantMap = request.getPlantMapping();
-		Object mdmsData = util.mDMSCall(requestInfo, request.getPlantMapping().getTenantId());
-
+		mdmsValidator.validateMdmsData(request);
 		if (plantMap.getId() == null) {
 			throw new CustomException(FSMErrorConstants.UPDATE_ERROR,
 					"FSTP employee map not found in the System" + plantMap.getId());
 		}
 
-		validaor.validateCreateOrUpdate(request, mdmsData);
+		validaor.validateCreateOrUpdate(request);
 		List<String> ids = new ArrayList<>();
 		ids.add(plantMap.getId());
 		PlantMappingSearchCriteria criteria = PlantMappingSearchCriteria.builder().tenantId(plantMap.getTenantId())
