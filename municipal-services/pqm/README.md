@@ -20,7 +20,7 @@ Process Quality Monitoring Service
 Link to the swagger API contract [yaml](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/fsm/Fsm_Apply_Contract.yaml) 
 
 ## Postman Collection
-#Link to the postman collection [here](https://api.postman.com/collections/13428435-0ad243be-fe31-4bdc-b1f6-17b3310f3bd4?access_key=PMAT-01HK9YFSJ6F8602Z02T9NAAKMC)
+Link to the postman collection [here](https://api.postman.com/collections/13428435-0ad243be-fe31-4bdc-b1f6-17b3310f3bd4)
 
 ## Service Details
 
