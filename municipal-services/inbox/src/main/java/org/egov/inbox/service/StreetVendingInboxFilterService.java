@@ -13,191 +13,222 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
-
+import static org.egov.inbox.util.StreetVendingConstants.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Slf4j
 @Service
 public class StreetVendingInboxFilterService {
 
-    @Value("${egov.searcher.host}")
-    private String searcherHost;
+	@Value("${egov.searcher.host}")
+	private String searcherHost;
 
-    @Value("${egov.searcher.streetVending.search.path}")
-    private String streetVendingInboxSearcherEndpoint;
+	@Value("${egov.searcher.streetVending.search.path}")
+	private String streetVendingInboxSearcherEndpoint;
 
-    @Value("${egov.searcher.streetVending.search.desc.path}")
-    private String streetVendingInboxSearcherDescEndpoint;
+	@Value("${egov.searcher.streetVending.search.desc.path}")
+	private String streetVendingInboxSearcherDescEndpoint;
 
-    @Value("${egov.searcher.streetVending.count.path}")
-    private String streetVendingInboxSearcherCountEndpoint;
-    
-    @Autowired
-    private UserService userService;
-    
-    @Autowired
-    private RestTemplate restTemplate;
+	@Value("${egov.searcher.streetVending.count.path}")
+	private String streetVendingInboxSearcherCountEndpoint;
 
-   
+	@Autowired
+	private UserService userService;
 
-    public List<String> fetchApplicationIdsFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
-        List<String> applicationNumberList = new ArrayList<>();
-        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
-        ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-        
-        boolean isUserPresentForGivenMobileNumber = false;
-        
-        List<String> userUUIDs = new ArrayList<>();
-       
-        // Mobile no is present in search criteria
-        if(moduleSearchCriteria.containsKey(InboxConstants.MOBILE_NUMBER_PARAM)) {
-            String tenantId = criteria.getTenantId();
-            String mobileNumber = String.valueOf(moduleSearchCriteria.get(InboxConstants.MOBILE_NUMBER_PARAM));
-            userUUIDs =userService.fetchUserUUID(mobileNumber, requestInfo, tenantId);
+	@Autowired
+	private RestTemplate restTemplate;
 
-            // If user is not mapped to given mobile no then return empty list
-            isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
-            
-            if(!isUserPresentForGivenMobileNumber){
-                return new ArrayList<>();
-            }
-        }
+	public List<String> fetchApplicationIdsFromSearcher(InboxSearchCriteria criteria,
+			HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
+		List<String> applicationNumberList = new ArrayList<>();
+		HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
+		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
 
-        if(isUserPresentForGivenMobileNumber){
-            Object result = null;
+		boolean isUserPresentForGivenMobileNumber = false;
 
-            Map<String, Object> searcherRequest = new HashMap<>();
-            Map<String, Object> searchCriteria = new HashMap<>();
+		List<String> userUUIDs = new ArrayList<>();
 
-            searchCriteria.put(InboxConstants.TENANT_ID_PARAM,criteria.getTenantId());
-            searchCriteria.put(InboxConstants.BUSINESS_SERVICE_PARAM, processCriteria.getBusinessService());
+		// Mobile no is present in search criteria
+		if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
+			String tenantId = criteria.getTenantId();
+			String mobileNumber = String.valueOf(moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
+			userUUIDs = userService.fetchUserUUID(mobileNumber, requestInfo, tenantId);
 
-            // Accomodating module search criteria in searcher request
-            if(moduleSearchCriteria.containsKey(InboxConstants.MOBILE_NUMBER_PARAM) && !CollectionUtils.isEmpty(userUUIDs)){
-                searchCriteria.put(InboxConstants.USERID_PARAM, userUUIDs);
-            }
-            
-            if(moduleSearchCriteria.containsKey(InboxConstants.LOCALITY_PARAM)){
-                searchCriteria.put(InboxConstants.LOCALITY_PARAM, moduleSearchCriteria.get(InboxConstants.LOCALITY_PARAM));
-            }
-            if(moduleSearchCriteria.containsKey(StreetVendingConstants.APPLICATION_NUMBER_PARAM)){
-                searchCriteria.put(StreetVendingConstants.APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(StreetVendingConstants.APPLICATION_NUMBER_PARAM));
-            }
+			// If user is not mapped to given mobile no then return empty list
+			isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
 
-            // Accomodating process search criteria in searcher request
-            if(!ObjectUtils.isEmpty(processCriteria.getAssignee())){
-                searchCriteria.put(InboxConstants.ASSIGNEE_PARAM, processCriteria.getAssignee());
-            }
-            if(!ObjectUtils.isEmpty(processCriteria.getStatus())){
-                searchCriteria.put(InboxConstants.STATUS_PARAM, processCriteria.getStatus());
-            }else{
-                if(StatusIdNameMap.values().size() > 0) {
-                    if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
-                        searchCriteria.put(InboxConstants.STATUS_PARAM, StatusIdNameMap.keySet());
-                    }
-                }
-            }
+			if (!isUserPresentForGivenMobileNumber) {
+				return new ArrayList<>();
+			}
+		}
 
-            // Paginating searcher results
-            searchCriteria.put(InboxConstants.OFFSET_PARAM, criteria.getOffset());
-            searchCriteria.put(InboxConstants.NO_OF_RECORDS_PARAM, criteria.getLimit());
-            moduleSearchCriteria.put(InboxConstants.LIMIT_PARAM, criteria.getLimit());
+		if (isUserPresentForGivenMobileNumber) {
+			Object result = null;
 
-            searcherRequest.put(InboxConstants.REQUESTINFO_PARAM, requestInfo);
-            searcherRequest.put(InboxConstants.SEARCH_CRITERIA_PARAM, searchCriteria);
+			Map<String, Object> searcherRequest = new HashMap<>();
+			Map<String, Object> searchCriteria = new HashMap<>();
 
-            StringBuilder uri = new StringBuilder();
-            if(moduleSearchCriteria.containsKey(InboxConstants.SORT_ORDER_PARAM) 
-            		&& moduleSearchCriteria.get(InboxConstants.SORT_ORDER_PARAM).equals(InboxConstants.DESC_PARAM)){
-                uri.append(searcherHost).append(streetVendingInboxSearcherDescEndpoint);
-            }else {
-                uri.append(searcherHost).append(streetVendingInboxSearcherEndpoint);
-            }
+			searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
+			searchCriteria.put(BUSINESS_SERVICE_PARAM, processCriteria.getBusinessService());
 
-            result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
+			// Accomodating module search criteria in searcher request
+			if (moduleSearchCriteria.containsKey(VENDING_TYPE_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
+				searchCriteria.put(VENDING_TYPE_PARAM, moduleSearchCriteria.get(VENDING_TYPE_PARAM));
+			}
 
-            applicationNumberList = JsonPath.read(result, "$.StreetVending.*.applicationNumber");
-            
-            log.info("applicationNumberList fetched from seracher endpoint : " + applicationNumberList);
+			if (moduleSearchCriteria.containsKey(VENDING_ZONE_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
+				searchCriteria.put(VENDING_ZONE_PARAM, moduleSearchCriteria.get(VENDING_ZONE_PARAM));
+			}
 
-        }
-        return  applicationNumberList;
-    }
+			if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
+				searchCriteria.put(MOBILE_NUMBER_PARAM, moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
+			}
 
-    public Integer fetchApplicationIdsCountFromSearcher(InboxSearchCriteria criteria, HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo){
-        Integer totalCount = 0;
-        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
-        ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-        boolean isUserPresentForGivenMobileNumber = false;
-        List<String> userUUIDs = new ArrayList<>();
-        
-        if(moduleSearchCriteria.containsKey(InboxConstants.MOBILE_NUMBER_PARAM)) {
-        	String tenantId = criteria.getTenantId();
-            String mobileNumber = String.valueOf(moduleSearchCriteria.get(InboxConstants.MOBILE_NUMBER_PARAM));
-            userUUIDs =userService.fetchUserUUID(mobileNumber, requestInfo, tenantId);
-            // If user is not mapped to given mobile no then return empty list
-            isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
-            
-            if(!isUserPresentForGivenMobileNumber){
-                return 0;
-            }
-        }
+			if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
+				searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
+			}
+			if (moduleSearchCriteria.containsKey(APPLICATION_NUMBER_PARAM)) {
+				searchCriteria.put(APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(APPLICATION_NUMBER_PARAM));
+			}
 
-        if(isUserPresentForGivenMobileNumber){
-            Object result = null;
-
-            Map<String, Object> searcherRequest = new HashMap<>();
-            Map<String, Object> searchCriteria = new HashMap<>();
-
-            searchCriteria.put(InboxConstants.TENANT_ID_PARAM,criteria.getTenantId());
-
-            // Accomodating module search criteria in searcher request
-            if(moduleSearchCriteria.containsKey(InboxConstants.MOBILE_NUMBER_PARAM) && !CollectionUtils.isEmpty(userUUIDs)){
-                searchCriteria.put(InboxConstants.USERID_PARAM, userUUIDs);
-            }
-            if(moduleSearchCriteria.containsKey(InboxConstants.LOCALITY_PARAM)){
-                searchCriteria.put(InboxConstants.LOCALITY_PARAM, moduleSearchCriteria.get(InboxConstants.LOCALITY_PARAM));
-            }
-            if(moduleSearchCriteria.containsKey(StreetVendingConstants.APPLICATION_NUMBER_PARAM)){
-                searchCriteria.put(StreetVendingConstants.APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(StreetVendingConstants.APPLICATION_NUMBER_PARAM));
-            }
-
-            // Accomodating process search criteria in searcher request
-            if(!ObjectUtils.isEmpty(processCriteria.getAssignee())){
-                searchCriteria.put(InboxConstants.ASSIGNEE_PARAM, processCriteria.getAssignee());
-            }
+			// Accomodating process search criteria in searcher request
+			if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
+				searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
+			}
 			if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
-				searchCriteria.put(InboxConstants.STATUS_PARAM, processCriteria.getStatus());
+				searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
 			} else {
 				if (StatusIdNameMap.values().size() > 0) {
 					if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
-						searchCriteria.put(InboxConstants.STATUS_PARAM, StatusIdNameMap.keySet());
+						searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
 					}
 				}
 			}
 
-            // Paginating searcher results
+			// Paginating searcher results
+			searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
+			searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
+			moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
-            searcherRequest.put(InboxConstants.REQUESTINFO_PARAM, requestInfo);
-            searcherRequest.put(InboxConstants.SEARCH_CRITERIA_PARAM, searchCriteria);
+			searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
+			searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
 
-            StringBuilder uri = new StringBuilder();
-            uri.append(searcherHost).append(streetVendingInboxSearcherCountEndpoint);
+			StringBuilder uri = new StringBuilder();
+			if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
+					&& moduleSearchCriteria.get(SORT_ORDER_PARAM).equals(DESC_PARAM)) {
+				uri.append(searcherHost).append(streetVendingInboxSearcherDescEndpoint);
+			} else {
+				uri.append(searcherHost).append(streetVendingInboxSearcherEndpoint);
+			}
 
-            result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
+			result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
-            double count = JsonPath.read(result, "$.TotalCount[0].count");
-            totalCount = (int) count;
+			applicationNumberList = JsonPath.read(result, "$.StreetVending.*.applicationNumber");
 
-        }
-        return  totalCount;
-    }
-    
-    
-    
+			log.info("applicationNumberList fetched from seracher endpoint : " + applicationNumberList);
+
+		}
+		return applicationNumberList;
+	}
+
+	public Integer fetchApplicationIdsCountFromSearcher(InboxSearchCriteria criteria,
+			HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
+		Integer totalCount = 0;
+		HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
+		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
+		boolean isUserPresentForGivenMobileNumber = false;
+		List<String> userUUIDs = new ArrayList<>();
+
+		if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
+			String tenantId = criteria.getTenantId();
+			String mobileNumber = String.valueOf(moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
+			userUUIDs = userService.fetchUserUUID(mobileNumber, requestInfo, tenantId);
+			// If user is not mapped to given mobile no then return empty list
+			isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
+
+			if (!isUserPresentForGivenMobileNumber) {
+				return 0;
+			}
+		}
+
+		if (isUserPresentForGivenMobileNumber) {
+			Object result = null;
+
+			Map<String, Object> searcherRequest = new HashMap<>();
+			Map<String, Object> searchCriteria = new HashMap<>();
+
+			searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
+
+			// Accomodating module search criteria in searcher request
+			if (moduleSearchCriteria.containsKey(VENDING_TYPE_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
+				searchCriteria.put(VENDING_TYPE_PARAM, moduleSearchCriteria.get(VENDING_TYPE_PARAM));
+			}
+
+			if (moduleSearchCriteria.containsKey(VENDING_ZONE_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
+				searchCriteria.put(VENDING_ZONE_PARAM, moduleSearchCriteria.get(VENDING_ZONE_PARAM));
+			}
+
+			if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
+				searchCriteria.put(MOBILE_NUMBER_PARAM, moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
+			}
+			if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
+				searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
+			}
+			if (moduleSearchCriteria.containsKey(APPLICATION_NUMBER_PARAM)) {
+				searchCriteria.put(APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(APPLICATION_NUMBER_PARAM));
+			}
+
+			// Accomodating process search criteria in searcher request
+			if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
+				searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
+			}
+			if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
+				searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+			} else {
+				if (StatusIdNameMap.values().size() > 0) {
+					if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
+						searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
+					}
+				}
+			}
+
+			if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
+				searchCriteria.put(VENDING_TYPE_PARAM, processCriteria.getStatus());
+			} else {
+				if (StatusIdNameMap.values().size() > 0) {
+					if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
+						searchCriteria.put(VENDING_TYPE_PARAM, StatusIdNameMap.keySet());
+					}
+				}
+			}
+
+			if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
+				searchCriteria.put(VENDING_ZONE_PARAM, processCriteria.getStatus());
+			} else {
+				if (StatusIdNameMap.values().size() > 0) {
+					if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
+						searchCriteria.put(VENDING_ZONE_PARAM, StatusIdNameMap.keySet());
+					}
+				}
+			}
+			// Paginating searcher results
+
+			searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
+			searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
+
+			StringBuilder uri = new StringBuilder();
+			uri.append(searcherHost).append(streetVendingInboxSearcherCountEndpoint);
+
+			result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
+
+			double count = JsonPath.read(result, "$.TotalCount[0].count");
+			totalCount = (int) count;
+
+		}
+		return totalCount;
+	}
 
 }
