@@ -1,10 +1,10 @@
 package org.egov.asset.kafka;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.kafka.core.KafkaTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 

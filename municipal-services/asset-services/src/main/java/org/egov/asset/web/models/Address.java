@@ -1,6 +1,5 @@
 package org.egov.asset.web.models;
 
-import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
 
