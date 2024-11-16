@@ -188,6 +188,17 @@ public class GarbageAccountRepository {
 		
 		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
 		searchQuery = addWhereClause(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+		searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
+		return searchQuery;
+	}
+
+	private StringBuilder addOrderByClause(StringBuilder searchQuery, SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
+		
+		if(StringUtils.isNotEmpty(searchCriteriaGarbageAccount.getOrderBy())) {
+			searchQuery = searchQuery.append(" ORDER BY acc.id "+searchCriteriaGarbageAccount.getOrderBy());
+			return searchQuery;
+		}
+		
 		return searchQuery;
 	}
 
@@ -279,6 +290,16 @@ public class GarbageAccountRepository {
         if (null != searchCriteriaGarbageAccount.getParentAccount()) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.parent_account = ").append(searchCriteriaGarbageAccount.getParentAccount());
+        }
+        
+        if (null != searchCriteriaGarbageAccount.getStartId()) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.id >= ").append(+searchCriteriaGarbageAccount.getStartId());
+        }
+        
+        if (null != searchCriteriaGarbageAccount.getEndId()) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+            searchQuery.append(" acc.id <= ").append(+searchCriteriaGarbageAccount.getEndId());
         }
 		
         return searchQuery;
