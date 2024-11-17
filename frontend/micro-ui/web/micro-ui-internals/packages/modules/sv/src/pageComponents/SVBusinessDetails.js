@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import GIS from "./GIS";
 import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
 import Timeline from "../components/Timeline";
-import ApplicationTable from "../components/ApplicationTable";
+import ApplicationTable from "../components/inbox/ApplicationTable";
 
 /**
  * SVBusinessDetails component handles the business details form for street vending applications.
@@ -24,9 +24,8 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || "");
   const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
-  const [isSameForAll, setIsSameForAll] = useState(true)
-  const [tempSave, setTempSave] = useState()
-  const [daysOfOperation, setDaysOfOperation] = useState(
+  const [isSameForAll, setIsSameForAll] = useState(false); // Flag to check if same for all days 
+  const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
     formData?.businessDetails?.daysOfOperation || [
       { name: "Monday", isSelected: false, startTime: "", endTime: "" },
       { name: "Tuesday", isSelected: false, startTime: "", endTime: "" },
@@ -37,9 +36,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
       { name: "Sunday", isSelected: false, startTime: "", endTime: "" },
     ]
   );
-
-    const [showToast, setShowToast] = useState(null);
-
+  const [backupDays, setBackupDays] = useState([...daysOfOperation]); // Backup array to store original days of operation
 
 
   /* this checks two conditions:
@@ -47,142 +44,117 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
    2. If a day is selected, both the startTime and endTime for that day are filled.*/
 
   const validateDaysOfOperation = () => {
-    const atLeastOneDaySelected = daysOfOperation.some(day => day.isSelected);
-    const allSelectedDaysHaveTimeSlots = daysOfOperation.every(
-      day => !day.isSelected || (day.startTime && day.endTime)
-    );
-    return atLeastOneDaySelected && allSelectedDaysHaveTimeSlots;
+    const atLeastOneDaySelected = daysOfOperation.some(day => day.startTime, day => day.endTime);
+    return atLeastOneDaySelected;
   };
 
-  const handleDayToggle = (index) => {
-    const updatedDays = [...daysOfOperation];
-    updatedDays[index].isSelected = !updatedDays[index].isSelected;
-    setDaysOfOperation(updatedDays);
-  };
+  // function to handle day time selection
+  const onTimeChange = (index, time, value) => {
+    let updatedDays = [...daysOfOperation];
+    updatedDays[index][time] = value;
 
-  const onSameForAllChange = (startTime, endTime) => {
-    setIsSameForAll(!isSameForAll)
-    if (isSameForAll) {
-      setTempSave(daysOfOperation);
-      setDaysOfOperation(
-        [
-          { name: "Monday", isSelected: true, startTime: startTime, endTime: endTime },
-          { name: "Tuesday", isSelected: true, startTime: startTime, endTime: endTime },
-          { name: "Wednesday", isSelected: true, startTime: startTime, endTime: endTime },
-          { name: "Thursday", isSelected: true, startTime: startTime, endTime: endTime },
-          { name: "Friday", isSelected: true, startTime: startTime, endTime: endTime },
-          { name: "Saturday", isSelected: true, startTime: startTime, endTime: endTime },
-          { name: "Sunday", isSelected: true, startTime: startTime, endTime: endTime },
-        ]
-      );
-    }
-    else {
-      setDaysOfOperation(tempSave)
-    }
-  }
-
-  const onTimeChange = (row, time, value) => {
-    if(time == "startTime"){
-      row.startTime = value;
-    }
-    else if(time == "endTime"){
-      row.endTime = value;
-    }
-  }
-
-  // Checkbox column setup
-  // const checkboxColumn = {
-  //   id: "selection",
-  //   Header: ({ getToggleAllRowsSelectedProps }) => (
-  //     <div style={{ paddingLeft: "30px", width: "10px" }}>
-  //       <input style={{width: "10px"}}
-  //         type="checkbox"
-  //         checked={isSameForAll}
-  //         onChange={() => {
-  //           setIsSameForAll(!isSameForAll);
-  //         }}
-  //       />
-  //     </div>
-  //   ),
-  //   Cell: ({ row }) => (
-  //     <div style={{ paddingLeft: "30px", width: "10px" }}>
-  //       <input style={{width: "10px"}}
-  //         type="checkbox"
-  //         checked={isSameForAll}
-  //         // onChange={() => handleRowSelection(row.index)}
-  //         disabled={true}
-  //       />
-  //     </div>
-  //   ),
-  // };
-
-  // const datatest = [
-  //   {day: "Monday"},
-  //   {day: "Tuesday"},
-  //   {day: "Wednesday"},
-  //   {day: "Thursday"},
-  //   {day: "Friday"},
-  //   {day: "Saturday"},
-  //   {day: "Sunday"},
-  // ]
-
-  // const columns = [
-  //   checkboxColumn,
-  //   { Header: t("SV_DAY"), accessor: "day" },
-  //   {
-  //     Header: t("SV_FROM_TIME"), accessor: "fromTime", Cell: ({ row }) => (
-  //       <div>
-  //         <TextInput
-  //           style={{ width: "100%" }}
-  //           type="time"
-  //           name="startTime"
-  //           // value={row?.startTime || ""}
-  //           onChange={(e) => onTimeChange(row, "startTime", e.target.value)}
-  //           placeholder={"Start Time"}
-  //           // {...(validation = {
-  //           //   isRequired: day.isSelecte ? true : false,
-  //           // })}
-  //         />
-  //         </div>
-  //     ),
-  //   },
-  //   {
-  //     Header: t("SV_TO_TIME"), accessor: "toTime", Cell: ({ row }) => (
-  //         <TextInput
-  //           style={{ width: "100%", marginLeft: "15px" }}
-  //           type="time"
-  //           name="endTime"
-  //           // value={row?.endTime || ""}
-  //           onChange={(e) => onTimeChange(row, "endTime", e.target.value)}
-  //           placeholder={"End Time"}
-  //           // {...(validation = {
-  //           //   isRequired: day.isSelecte ? true : false,
-  //           // })}
-  //         />
-  //     ),
-  //   },
-  // ];
-
-  const handleTimeChange = (index, field, value) => {
-    const updatedDays = [...daysOfOperation];
-
-    if (field === "startTime" || field === "endTime") {
-      // Only update the time without the AM/PM part
-      updatedDays[index][field] = value;
+    if (updatedDays[index].startTime || updatedDays[index].endTime) {
+      updatedDays[index].isSelected = true;
     } else {
-      // Update the AM/PM part and concatenate it with the time
-      const timeField = field === "startAmPm" ? "startTime" : "endTime";
-      const timeValue = updatedDays[index][timeField];
-      updatedDays[index][timeField] = `${timeValue} ${value}`; // Concatenate time and AM/PM
+      updatedDays[index].isSelected = false; 
     }
-
+  
+    if (isSameForAll) {
+      // Apply the time to all days when isSameForAll is true
+      const { startTime, endTime } = updatedDays[index];
+      updatedDays = updatedDays.map((day) => ({
+        ...day,
+        startTime,
+        endTime,
+      }));
+    }
+  
     setDaysOfOperation(updatedDays);
   };
+  
+  // Handle toggle for isSameForAll and apply backup if needed
+  const handleToggleIsSameForAll = () => {
+    if (!isSameForAll) {
+      setBackupDays([...daysOfOperation]);
+
+      const { startTime, endTime, isSelected } = daysOfOperation.find(
+        (day) => day.startTime || day.endTime
+      ) || daysOfOperation[0];
+      
+      // Set all rows to have the same start and end times
+      setDaysOfOperation(
+        daysOfOperation.map((day) => ({
+          ...day,
+          startTime,
+          endTime,
+          isSelected
+        }))
+      );
+    } else {
+      setDaysOfOperation([...backupDays]);
+    }
+  
+    setIsSameForAll(!isSameForAll);
+  };
+  
+  // Checkbox column setup
+  const checkboxColumn = {
+    id: "selection",
+    Header: () => (
+      <div className="SVTableHeader">
+        <input
+          className="SVCheckbox"
+          type="checkbox"
+          checked={isSameForAll}
+          onChange={handleToggleIsSameForAll}
+        />
+        <h4 style={{ marginLeft: "8px" }}>Select All</h4>
+      </div>
+    ),
+    Cell: () => (
+      <div className="SVTableCells">
+        <input className="SVCheckbox" type="checkbox" checked={isSameForAll} disabled={true} />
+      </div>
+    ),
+  };
+  
+  // columns for table
+  const columns = [ 
+    checkboxColumn,
+    { Header: t("SV_DAY"), accessor: "name" },
+    {
+      Header: t("SV_FROM_TIME"),
+      accessor: "startTime",
+      Cell: ({ row }) => (
+        <TextInput
+          style={{ width: "60%" }}
+          type="time"
+          name="startTime"
+          value={daysOfOperation[row.index]?.startTime || ""}
+          onChange={(e) => onTimeChange(row.index, "startTime", e.target.value)}
+          placeholder={"Start Time"}
+        />
+      ),
+    },
+    {
+      Header: t("SV_TO_TIME"),
+      accessor: "endTime",
+      Cell: ({ row }) => (
+        <TextInput
+          style={{ width: "70%" }}
+          type="time"
+          name="endTime"
+          value={daysOfOperation[row.index]?.endTime || ""}
+          onChange={(e) => onTimeChange(row.index, "endTime", e.target.value)}
+          placeholder={"End Time"}
+        />
+      ),
+    },
+  ];
+
 
   const { control } = useForm();
   const [isOpen, setIsOpen] = useState(false);
-
-
 
   const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
     {
@@ -288,7 +260,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={!vendingType || !vendingZones || vendingType?.code==="STATIONARY"?!areaRequired:null|| !nameOfAuthority || !daysOfOperation }
+          isDisabled={!vendingType || !vendingZones || vendingType?.code === "STATIONARY" ? !areaRequired : null || !nameOfAuthority || !daysOfOperation}
         >
 
           <div>
@@ -355,44 +327,40 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
             </div>
 
             <CardLabel>{t("SV_DAY_HOUR_OPERATION")} <span className="astericColor">*</span></CardLabel>
-            {daysOfOperation.map((day, index) => (
-              <SVDayAndTimeSlot
-                key={index}
-                t={t}
-                day={day}
-                isSameForAll={isSameForAll}
-                onSameForAllChange={onSameForAllChange}
-                onDayToggle={() => handleDayToggle(index)}
-                onDayChange={() => { }} // No need to change the day name since all days are shown
-                onTimeChange={(field, value) => handleTimeChange(index, field, value)}
-                ValidationRequired={true}
-                {...(validation = {
-                  isRequired: true,
-                })}
-              />
-            ))}
-
-            {vendingType?.code==="STATIONARY" && 
-            <React.Fragment>
-            <CardLabel>{`${t("SV_AREA_REQUIRED")}`} <span className="astericColor">*</span></CardLabel>
-            <TextInput
+            <ApplicationTable
               t={t}
-              type={"text"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="areaRequired"
-              value={areaRequired}
-              onChange={setAreaRequired}
-              style={inputStyles}
-              ValidationRequired={false}
-              {...(validation = {
-                isRequired: true,
-                pattern: "^[0-9. ]{1,3}$",
-                type: "tel",
-                title: t("SV_INVALID_AREA"),
+              data={daysOfOperation}
+              columns={columns}
+              getCellProps={(cellInfo) => ({
+                style: {
+                  padding: "4px 0px 0px 18px",
+                  height: "18px",
+                },
               })}
+              isPaginationRequired={false}
             />
-            </React.Fragment>
+
+            {vendingType?.code === "STATIONARY" &&
+              <React.Fragment>
+                <CardLabel>{`${t("SV_AREA_REQUIRED")}`} <span className="astericColor">*</span></CardLabel>
+                <TextInput
+                  t={t}
+                  type={"text"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name="areaRequired"
+                  value={areaRequired}
+                  onChange={setAreaRequired}
+                  style={inputStyles}
+                  ValidationRequired={false}
+                  {...(validation = {
+                    isRequired: true,
+                    pattern: "^[0-9. ]{1,3}$",
+                    type: "tel",
+                    title: t("SV_INVALID_AREA"),
+                  })}
+                />
+              </React.Fragment>
             }
 
             <CardLabel>{`${t("SV_LOCAL_AUTHORITY_NAME")}`} <span className="astericColor">*</span></CardLabel>

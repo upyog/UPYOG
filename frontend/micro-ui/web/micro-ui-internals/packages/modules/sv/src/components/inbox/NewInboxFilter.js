@@ -23,7 +23,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   const ApplicationTypeMenu = [
     {
       label: "SV_NEW_REGISTRATION",
-      value: "sv",
+      value: "street-vending",
     },
   ];
 
@@ -67,8 +67,8 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   };
 
   const applyLocalFilters = () => {
-    // if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
-    // else 
+    if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
+    else 
     onFilterChange(_searchParams);
   };
 
@@ -125,7 +125,6 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                     fill="#505A5F"
                   />
                 </svg>
-                {/* {t("ES_COMMON_CLEAR_ALL")} */}
               </span>
             )}
             {props.type === "mobile" && (

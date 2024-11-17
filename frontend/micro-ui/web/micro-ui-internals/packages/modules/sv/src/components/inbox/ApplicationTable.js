@@ -15,6 +15,8 @@ const ApplicationTable = ({
   pageSizeLimit,
   sortParams,
   totalRecords,
+  styles,
+  isPaginationRequired
 }) => {
   return (
     <Table
@@ -31,6 +33,8 @@ const ApplicationTable = ({
       onSort={onSort}
       sortParams={sortParams}
       totalRecords={totalRecords}
+      styles={styles}
+      isPaginationRequired={isPaginationRequired}
     />
   );
 };
