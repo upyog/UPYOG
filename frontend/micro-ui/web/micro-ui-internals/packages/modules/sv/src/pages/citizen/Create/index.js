@@ -101,8 +101,7 @@ const SVCreate = ({ parentRoute }) => {
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("SV_CREATES");
-    sessionStorage.removeItem("beneficiary");
-    sessionStorage.removeItem("disabilityStatus");
+    sessionStorage.removeItem("CategoryDocument");
   };
   
   let commonFields = Config;

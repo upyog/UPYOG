@@ -99,13 +99,6 @@ const SvApplicationDetails = () => {
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
 
-//   const handleDownload = async (document, tenantid) => {
-//     let tenantId = tenantid ? tenantid : tenantId;
-//     const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
-//     let documentLink = pdfDownloadLink(res.data, document?.fileStoreId);
-//     window.open(documentLink, "_blank");
-//   };
-
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { SVDetail: [data?.SVDetail?.[0]] }, "svcertificate");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
@@ -118,17 +111,19 @@ const SvApplicationDetails = () => {
     onClick: () => getAcknowledgementData(),
   });
 
-  // commented out, need later for download receipt and certificate 
+  
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("SV_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
-  if (data?.ResponseInfo?.status === "SUCCESSFUL")
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("SV_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
+
+
   
   return (
     <React.Fragment>
@@ -181,7 +176,7 @@ const SvApplicationDetails = () => {
             <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}
             <Row className="border-none" label={t("SV_LOCAL_AUTHORITY_NAME")} text={streetVendingDetails?.localAuthorityName || t("CS_NA")} />
             <Row className="border-none" label={t("SV_BENEFICIARY_SCHEMES")} text={streetVendingDetails?.benificiaryOfSocialSchemes || t("CS_NA")} />
-            <Row className="border-none" label={t("SV_DISABILITY_STATUS")} text={streetVendingDetails?.disabilityStatus || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_CATEGORY")} text={streetVendingDetails?.disabilityStatus || t("CS_NA")} />
           </StatusTable>
 
 

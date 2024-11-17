@@ -49,6 +49,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
 
 
@@ -69,6 +70,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       if (file) {
         if (file.size >= 5242880) {
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+          setIsUploading(true);
         } else {
           try {
             const response = await Digit.UploadServices.Filestorage("StreetVending", file, tenantId);
@@ -79,6 +81,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             }
           } catch (err) {
             setError(t("CS_FILE_UPLOAD_ERROR"));
+          }
+          finally {
+            setIsUploading(false)
           }
         }
       }
@@ -120,6 +125,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         uploadedFile,
         setUploadedFile,
         businessService,
+        isUploading,
       })
     );
   }, [action, approvers, uploadedFile]);

@@ -24,6 +24,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || "");
   const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
+  const [showToast, setShowToast] = useState(null);
   const [isSameForAll, setIsSameForAll] = useState(false); // Flag to check if same for all days 
   const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
     formData?.businessDetails?.daysOfOperation || [
@@ -260,7 +261,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={!vendingType || !vendingZones || vendingType?.code === "STATIONARY" ? !areaRequired : null || !nameOfAuthority || !daysOfOperation}
+          isDisabled={!vendingType || !vendingZones || (vendingType?.code === "STATIONARY" ? !areaRequired : null) || !nameOfAuthority || !daysOfOperation}
         >
 
           <div>

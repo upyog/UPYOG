@@ -142,6 +142,11 @@ function SVDocuments({
 
   const { dropdownData } = doc;
   let dropDownData = dropdownData;
+  const LoadingSpinner = () => (
+    <div className="loading-spinner"
+    />
+  );
+
 
   return (
     <div style={{ marginBottom: "24px" }}>
@@ -162,26 +167,24 @@ function SVDocuments({
       )}
       <LabelFieldPair>
         <div className="field" style={{marginLeft:user?.type==="EMPLOYEE"?"30%":null}}>
-        {isUploading ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Loader /> 
-              {/* <span>{t("CS_FILE_UPLOADING")}</span> */}
-            </div>
-          ) : (
           <UploadFile
             onUpload={handleFileUpload}
             onDelete={() => {
               setUploadedFile(null);
             }}
             id={id}
-            message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+            message={isUploading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <LoadingSpinner />
+                <span>Uploading...</span>
+              </div>
+            ) : uploadedFile ? "1 File Uploaded" : "No File Uploaded"}
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"
             buttonType="button"
             error={!uploadedFile}
-          /> 
-          )}
+          />
         </div>
       </LabelFieldPair>
     </div>

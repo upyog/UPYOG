@@ -24,6 +24,7 @@ import { SVMyApplications } from "./pages/citizen/SVMyApplications";
 import SvApplicationDetails from "./pages/citizen/SvApplicationDetails";
 import Caption from "./components/Caption";
 import ViewTimeline from "./components/ViewTimeline";
+import SVSpecialCategory from "./pageComponents/SVSpecialCategory";
 
 
 const componentsToRegister = {
@@ -43,7 +44,8 @@ const componentsToRegister = {
    SVMyApplications,
    SvApplicationDetails,
    Caption,
-   ViewTimeline
+   ViewTimeline,
+   SVSpecialCategory
   };
   
   // function to register the component as per standard 

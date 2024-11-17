@@ -114,6 +114,59 @@
   color: #a82227 !important;
 }
 
+.SVTableHeader {
+  display: flex;
+  padding-left: 26px;
+  width: 150px;
+}
+
+.SVTableCells {
+  padding-left: 80px;
+  width: 10px;
+}
+
+.SVCheckbox {
+  width: 14px;
+}
+
+.svsearchbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.svsearchfield {
+  display: flex;
+  flex-direction: column;
+}
+
+.svclearall {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px !important;
+  border: 3px solid #e5e5e5;
+  border-top: 3px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 4px;
+  transform-origin: center center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
 .status-card {
   width: 24%;
   padding: 20px;
