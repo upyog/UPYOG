@@ -61,9 +61,9 @@ export const setCartDetails = (data) => {
   
   let cartDetails = adslist?.cartDetails.map((slot) => {
     return { 
-      addType:slot.addType,
-      faceArea:slot.faceArea,
-      location:slot.location,
+      addType:slot.addTypeCode,
+      faceArea:slot.faceAreaCode,
+      location:slot.locationCode,
       nightLight:slot.nightLight==="Yes"? true : false,
       bookingDate:slot.bookingDate,
       bookingFromTime: "06:00",

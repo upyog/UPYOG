@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText,DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./ApplicationTable";
 
@@ -29,16 +29,27 @@ const ADSCartAndCancellationPolicyDetails = () => {
   const [showCancellationPolicy, setShowCancellationPolicy] = useState(false);
   const [showViewCart, setShowViewCart] = useState(false);
   const { t } = useTranslation();
-  const [params] = Digit.Hooks.useSessionStorage("ADS_CREATE");
+  const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [showdemandEstimation, setShowDemandEstimation] = useState(false);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
-  const number = sessionStorage.getItem("CartTotalNumber");
 
   // const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
   //   select: (data) => data?.["CHB"]?.["CommunityHalls"] || [],
   // });
-
+  const handleDelete = (index) => {
+    // Make a shallow copy of the current params state to ensure immutability
+    const updatedParams = { ...params };
+  
+    // Check if adslist exists and if cartDetails is an array
+    if (updatedParams?.adslist?.cartDetails) {
+      // Create a new array with the item at the given index removed
+      updatedParams.adslist.cartDetails = updatedParams.adslist.cartDetails.filter((_, idx) => idx !== index);
+    }
+  
+    // Update the state with the modified params
+    setParams(updatedParams);
+  };
   const columns = [
     {
       Header: () => <div style={{ paddingLeft: "50px" }}>{t("S_NO")}</div>, // Use a function to render header with padding
@@ -53,13 +64,22 @@ const ADSCartAndCancellationPolicyDetails = () => {
     { Header: t("FACE_AREA"), accessor: "faceArea" },
     { Header: t("ADS_NIGHT_LIGHT"), accessor: "nightLight" },
     { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
+    {
+      Header: t("DELETE_KEY"),
+      accessor: "delete",
+      Cell: ({ row }) => (
+        <button onClick={() => handleDelete(row.index)}>
+          <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+        </button>
+      ),
+    },
     // { Header: t("TOTAL_PRICE"), accessor: "price" },
   ];
   let cartDetails = params?.adslist?.cartDetails.map((details) => {
     return { 
-      addType:details.addType,
-      faceArea:details.faceArea,
-      location:details.location,
+      addType:details.addTypeCode,
+      faceArea:details.faceAreaCode,
+      location:details.locationCode,
       nightLight:details.nightLight==="Yes"?true:false,
       bookingDate:details.bookingDate,
       bookingFromTime: "06:00",

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 // this code shows the image and the detail of the advertisement
 
 const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, path, light,adType,faceArea }) => {
-  const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
+  const [params, setParams,clearParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
   const handleViewAvailability = () => {
     setParams({
       faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
@@ -19,9 +19,8 @@ const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, pat
     window.location.href = `${path}bookad/searchads`;
   };
   useEffect(() => {
-    console.log("Session Storage Data: ", params);
-  }, [params]); // Will log whenever params change
-
+    clearParams();
+  }, []); 
   const handleBookNow = () => {
     setParams({
       faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
