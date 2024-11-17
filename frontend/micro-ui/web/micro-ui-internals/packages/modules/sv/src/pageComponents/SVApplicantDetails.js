@@ -499,7 +499,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                 ValidationRequired={true}
                 {...(validation = {
                     isRequired: false,
-                    pattern: "^[a-zA-Z0-9 ]+$",
+                    pattern: "^[a-zA-Z0-9-/ ]+$",
                     type: "text",
                     title: t("SV_ENTER_CORRECT_NAME"),
                 })}

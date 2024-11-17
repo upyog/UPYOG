@@ -1,7 +1,7 @@
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
 */
-import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,SubmitBar, EditIcon, RadioButtons,CardLabel} from "@nudmcdgnpm/digit-ui-react-components";
+import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,SubmitBar, EditIcon} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -27,28 +27,12 @@ import Timeline from "../../../components/Timeline";
 
   const SVCheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
-    const {owner,businessDetails,address,bankdetails,documents} = value;
-    const [disabilityStatus, setdisabilityStatus]=useState(null);
-    const [beneficiary, setbeneficiary] =useState(null)
-    const common = [
-      { code: "YES", value:"Yes", i18nKey:"YES" },
-      { code: "NO", value:"NO", i18nKey:"No" },
-    ];
+    const {owner,businessDetails,address,bankdetails,documents,specialCategoryData} = value;
     const [agree, setAgree] = useState(false);
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
-    function setDisabilityStatus(value) {
-      setdisabilityStatus(value);
-    };
     
-    function setBeneficiary(value) {
-      setbeneficiary(value);
-    };
-
-
-    disabilityStatus!==null?sessionStorage.setItem("disabilityStatus",disabilityStatus?.code):null;
-    beneficiary!==null?sessionStorage.setItem("beneficiary",beneficiary?.code):null;
 
     const columnName = [
         { Header: t("SV_WEEK_DAYS"), accessor: "name" },
@@ -71,9 +55,16 @@ import Timeline from "../../../components/Timeline";
      /* Initialize an empty array improvedDoc to hold modified documents.
         Iterate over existing documents, adding a "module" property with the value "StreetVending" to each document.
         Use the modified documents to fetch PDF details only if there are documents present.
-        If the fetched PDF details contain files, filter them to include only those related to the "StreetVending" module and store them in applicationDocs array.*/ 
+        If the fetched PDF details contain files, filter them to include only those related to the "StreetVending" module and store them in applicationDocs array.*/
+        
+    const storedData = JSON.parse(sessionStorage.getItem("CategoryDocument"));
     let improvedDoc = [];
     documents?.documents?.map(appDoc => { improvedDoc.push({...appDoc, module: "StreetVending"}) });
+    if (storedData && Array.isArray(storedData)) {
+      storedData.forEach(data => {
+          improvedDoc.push({...data, module: "StreetVending"});
+      });
+  }
     const { data: pdfDetails, isLoading:pdfLoading, error } = Digit.Hooks.useDocumentSearch( improvedDoc, { enabled: improvedDoc?.length > 0 ? true : false});
 
     let applicationDocs = []
@@ -97,7 +88,7 @@ import Timeline from "../../../components/Timeline";
     
     return (
       <React.Fragment>
-       {<Timeline currentStep={6}/>}
+       {<Timeline currentStep={7}/>}
       <Card>
         <CardHeader>{t("SV_SUMMARY_PAGE")}</CardHeader>
         <div>
@@ -155,13 +146,6 @@ import Timeline from "../../../components/Timeline";
               text={`${t(checkForNA(owner?.units?.[0]?.spouseDateBirth))}`}
           />:null
           }
-          {
-            owner?.units?.[0]?.dependentName?
-            <Row
-              label={t("SV_DEPENDENT_NAME")}
-              text={`${t(checkForNA(owner?.units?.[0]?.dependentName))}`}
-          />:null
-          }
           {owner?.units?.[0]?.dependentName && (
             <Row
                 label={t("SV_DEPENDENT_NAME")}
@@ -187,7 +171,7 @@ import Timeline from "../../../components/Timeline";
             owner?.units?.[0]?.dependentGender?
             <Row
               label={t("SV_DEPENDENT_GENDER")}
-              text={`${t(checkForNA(owner?.units?.[0]?.dependentGender))}`}
+              text={`${t(checkForNA(owner?.units?.[0]?.dependentGender?.code))}`}
           />:null
           }
           {
@@ -306,27 +290,30 @@ import Timeline from "../../../components/Timeline";
               />:null
               }
           </StatusTable>
+
+          <CardSubHeader>{t("SV_ADDITIONAL_DETAILS")}</CardSubHeader>
+          <StatusTable style={{marginBottom:"30px"}}>
+          <Row
+            label={t("SV_CATEGORY")}
+            text={`${t(checkForNA(specialCategoryData?.ownerCategory?.value))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/special-category`} />}
+            />
+          {specialCategoryData?.beneficiary!==null?
+          <Row
+            label={t("SV_BENEFICIARY_SCHEMES")}
+            text={`${t(checkForNA(specialCategoryData?.beneficiary?.value))}`}
+            />:null}
+            {specialCategoryData?.enrollmentId!==null?
+            <Row
+              label={t("SV_ENROLLMENT_APPLICATION_NUMBER")}
+              text={`${t(checkForNA(specialCategoryData?.enrollmentId))}`}
+              />:null}
+          </StatusTable>
           
           <CardSubHeader>{t("SV_DOCUMENT_DETAILS_LABEL")}</CardSubHeader>
           {<SVDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles = {{}} isSendBackFlow = {false} titleStyles ={{fontSize: "18px", "fontWeight": 700, marginBottom: "10px"}}/>}
           <br></br>
 
-          <CardLabel>{t("SV_DISABILITY_STATUS")}</CardLabel>
-          <RadioButtons
-              selectedOption={disabilityStatus}
-              onSelect={setDisabilityStatus}
-              style={{ display: "flex", flexWrap: "wrap", gap:"40px"  }}
-              options={common}
-              optionsKey="i18nKey"
-          />
-          <CardLabel>{t("SV_BENEFICIARY_SCHEMES")}</CardLabel>
-          <RadioButtons
-              selectedOption={beneficiary}
-              onSelect={setBeneficiary}
-              style={{ display: "flex", flexWrap: "wrap", gap:"40px"  }}
-              options={common}
-              optionsKey="i18nKey"
-          />
           <CheckBox
             label={t("SV_FINAL_DECLARATION_MESSAGE")}
             onChange={setdeclarationhandler}

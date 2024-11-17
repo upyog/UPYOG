@@ -8,7 +8,7 @@ It uses an array of predefined actions based on the flow type, and renders each 
 a checkpoint in the timeline, showing progress through tick marks or numbers.
 */
 
-let actions = ["SV_VENDOR_PERSONAL_DETAILS", "SV_VENDOR_BUSINESS_DETAILS", "SV_ADDRESS_DETAILS", "SV_BANK_DETAILS","SV_DOCUMENT_DETAILS_LABEL", "SV_SUMMARY_PAGE"];
+let actions = ["SV_VENDOR_PERSONAL_DETAILS", "SV_VENDOR_BUSINESS_DETAILS", "SV_ADDRESS_DETAILS", "SV_BANK_DETAILS","SV_DOCUMENT_DETAILS_LABEL", "SV_SPECIAL_CATEGORY", "SV_SUMMARY_PAGE"];
 
 const Timeline = ({ currentStep = 1 }) => {
   const { t } = useTranslation();

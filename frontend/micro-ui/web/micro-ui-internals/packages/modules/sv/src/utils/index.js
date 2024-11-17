@@ -76,16 +76,22 @@ export const calculateAge = (birthDate) => {
   return age;
 };
 
+
 // Utility function to transform documents array into required format
 const transformDocuments = (documents) => {
-  console.log("documentsdocuments",documents);
+
   if (!Array.isArray(documents)) return [];
-  
-  return documents.map(doc => ({
-    applicationId: "",  // This can be populated from parent context if needed
+
+  // Retrieve and parse CategoryDocument from sessionStorage
+  const categoryDocument = sessionStorage.getItem("CategoryDocument");
+  const parsedCategoryDocument = categoryDocument ? JSON.parse(categoryDocument) : null;
+
+  // Transform existing documents
+  const transformedDocs = documents.map(doc => ({
+    applicationId: "",  // Populate as required
     documentType: doc.documentType,
     fileStoreId: doc.fileStoreId,
-    documentDetailId: doc.documentUid, // Using documentUid as documentDetailId
+    documentDetailId: doc.documentUid, // Use documentUid as documentDetailId
     auditDetails: {
       createdBy: "",
       createdTime: 0,
@@ -93,9 +99,25 @@ const transformDocuments = (documents) => {
       lastModifiedTime: 0
     }
   }));
+
+  // Add parsedCategoryDocument as an additional document object, if it exists
+  if (parsedCategoryDocument) {
+    transformedDocs.push({
+      applicationId: "",  // Populate if needed
+      documentType: parsedCategoryDocument?.[0]?.documentType || "", // Provide appropriate type if applicable
+      fileStoreId: parsedCategoryDocument?.[0]?.fileStoreId || "",   // Provide fileStoreId if applicable
+      documentDetailId: parsedCategoryDocument?.[0]?.documentUid || "", // Provide detailId if applicable
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      }
+    });
+  }
+
+  return transformedDocs;
 };
-
-
 /**
  * This function `svPayloadData` processes the input `data` to create a structured payload 
  * for street vending details. It constructs vendor, spouse, and dependent objects based on 
@@ -122,7 +144,6 @@ const transformDocuments = (documents) => {
 
 
 export const svPayloadData = (data) =>{
-
   let vendordetails = [];
 
   const createVendorObject = (data) => ({
@@ -293,11 +314,12 @@ export const svPayloadData = (data) =>{
         lastModifiedTime: 0
       },
     },
-    benificiaryOfSocialSchemes: sessionStorage.getItem("beneficiary"),
+    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiary?.value,
+    enrollmentId:data?.specialCategoryData?.enrollmentId,
     cartLatitude: 0,
     cartLongitude: 0,
     certificateNo: null,
-    disabilityStatus: sessionStorage.getItem("disabilityStatus"),
+    disabilityStatus: data?.specialCategoryData?.ownerCategory?.code,
     documentDetails: transformDocuments(data?.documents?.documents),
     localAuthorityName: data?.businessDetails?.nameOfAuthority,
     tenantId: data?.tenantId,

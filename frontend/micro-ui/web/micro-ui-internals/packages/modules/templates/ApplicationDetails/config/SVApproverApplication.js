@@ -14,20 +14,22 @@ export const configSVApproverApplication = ({t,action,selectFile,uploadedFile,se
       },
       form: [
         {
-          body: [  
-            {
-              label: t("SV_ASSIGNEE"),
-              type: "dropdown",
-              populators:(
-                <Dropdown
-                  option={approvers}
-                  t={t}
-                  optionKey="name"
-                  select={setSelectedApprover}
-                  selected={selectedApprover}
-                />
-              )
-            },
+          body: [ 
+            action?.action === "APPROVE" || action?.action === "REJECT" || action?.action === "SENDBACKTOCITIZEN"
+            ? ""
+            : {
+                label: t("SV_ASSIGNEE"),
+                type: "dropdown",
+                populators: (
+                  <Dropdown
+                    option={approvers}
+                    t={t}
+                    optionKey="name"
+                    select={setSelectedApprover}
+                    selected={selectedApprover}
+                  />
+                ),
+              },
             {
               label: t("SV_ACTION_COMMENTS"),
               type: "textarea",
@@ -44,8 +46,6 @@ export const configSVApproverApplication = ({t,action,selectFile,uploadedFile,se
                   onDelete={() => {
                     setUploadedFile(null);
                   }}
-                  // showHint={true}
-                  // hintText={t("PT_ATTACH_RESTRICTIONS_SIZE")}
                   message={uploadedFile ? `1 ${t(`SV_FILE_UPLOADED`)}` : t(`SV_NO_FILE`)}
                 />
               ),

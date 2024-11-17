@@ -83,12 +83,26 @@ export const Config =
                 "route": "document-details",
                 "component": "SVDocumentsDetail",
                 "type": "component",
-                "nextStep": null,
+                "nextStep": "special-category",
                 "isMandatory": true,
                 "key": "documents",
                 "texts": {
                     "header": "SV_DOCUMENT_DETAILS_LABEL",
                     "submitBarLabel": "COMMON_SAVE_NEXT"
+                }
+            },
+            {
+                "route": "special-category",
+                "component": "SVSpecialCategory",
+                "withoutLabel": true,
+                "key": "specialCategoryData",
+                "type": "component",
+                "nextStep": null,
+                "hideInEmployee": true,
+                "isMandatory": true,
+                "texts": {
+                    "submitBarLabel": "COMMON_SAVE_NEXT",
+                    "header": "SV_SPECIAL_CATEGORY_DETAILS",
                 }
             },
             
