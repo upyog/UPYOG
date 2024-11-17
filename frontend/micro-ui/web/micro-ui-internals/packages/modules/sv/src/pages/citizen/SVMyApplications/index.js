@@ -1,5 +1,5 @@
-import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import React from "react";
+import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import StreetVendingApplication from "./StreetVendingApplication";
@@ -16,7 +16,11 @@ export const SVMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
-  
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [mobileTerm, setMobileTerm] = useState("")
+  const [filters, setFilters] = useState(null);
+
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -28,26 +32,87 @@ export const SVMyApplications = () => {
     t1 = 4;
   }
 
-  let filter1 =  { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId,createdby:user?.uuid };
+  let initialFilters = !isNaN(parseInt(filter))
+    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId };
 
-  const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters: filter1 });
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [filter]);
 
-  const {SVDetail: applicationsList } = data || {};
 
+  const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters });
+  const { SVDetail: applicationsList } = data || {};
+
+
+
+  const handleSearch = () => {
+    const trimmedSearchTerm = searchTerm.trim();
+    const searchFilters = {
+      ...initialFilters,
+      applicationNumber: trimmedSearchTerm || null,
+      mobileNumber: mobileTerm || null,
+    };
+
+    // Update the filters state to trigger refetch
+    setFilters(searchFilters);
+  };
 
   if (isLoading) {
     return <Loader />;
   }
 
-
   return (
     <React.Fragment>
       <Header>{`${t("SV_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+
+      <Card>
+        <div style={{ marginLeft: "16px" }}>
+          <div className="svsearchbox" >
+            <div style={{ flex: 1 }}>
+              <div className="svsearchfield" >
+                <CardLabel>{t("SV_APPLICATION_NUMBER")}</CardLabel>
+                <TextInput
+                  placeholder={t("Enter Application No.")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ width: "100%", padding: "8px", height: "150%" }}
+                />
+              </div>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div className="svsearchfield" >
+                <CardLabel>{t("SV_REGISTERED_MOB_NUMBER")}</CardLabel>
+                <TextInput
+                  placeholder={t("Enter Mobile No.")}
+                  value={mobileTerm}
+                  onChange={(e) => setMobileTerm(e.target.value)}
+                  style={{ width: "100%", padding: "8px", height: "150%" }}
+                />
+              </div>
+            </div>
+            <div>
+              <div style={{ marginTop: "17%" }}>
+                <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+                <p
+                  className="link svclearall"
+                  onClick={() => {
+                    setSearchTerm(""), setMobileTerm("");
+                  }}
+                >
+                  {t(`ES_COMMON_CLEAR_ALL`)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
       <div>
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
             <div key={index}>
-              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={"TRACK"}/>
+              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={"TRACK"} />
             </div>
           ))}
         {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("SV_NO_APPLICATION_FOUND_MSG")}</p>}
