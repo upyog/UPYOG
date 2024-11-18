@@ -5,7 +5,7 @@ RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-fsm
 RUN yarn add @upyog/digit-ui-module-pt@2.0.0
-RUN yarn add @upyog/digit-ui-module-tl
+RUN yarn add @upyog/digit-ui-module-tl@2.0.0
 RUN yarn add @upyog/digit-ui-module-obps@2.0.0
 RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @upyog/digit-ui-module-dss
