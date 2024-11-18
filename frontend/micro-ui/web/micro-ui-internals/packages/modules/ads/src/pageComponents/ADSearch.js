@@ -42,7 +42,12 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   );
   const [showToast, setShowToast] = useState(null);
 
-  const [selectNight, setselectNight] = useState("" || formData?.nightLight);
+  // If no nightLight is provided), default to "Yes"
+  const [selectNight, setselectNight] = useState("" || formData?.nightLight || {
+    i18nKey: "Yes",
+    code: "Yes",
+    value: "true",
+  });
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [showCartDetails, setShowCartDetails] = useState(false);
   let ADSTypeData = [];
@@ -114,7 +119,10 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       const newData = mutation.data?.advertisementSlotAvailabiltityDetails.map((slot, index) => ({
         slotId: index + 1,
         addType: `${t(slot.addType)}`,
+        addTypeCode:slot.addType,
+        faceAreaCode:slot.faceArea,
         faceArea:`${t(slot.faceArea)}`,
+        locationCode:slot.location,
         location: `${t(slot.location)}`,
         nightLight: slot.nightLight===false?"No":"Yes",
         bookingDate: slot.bookingDate,

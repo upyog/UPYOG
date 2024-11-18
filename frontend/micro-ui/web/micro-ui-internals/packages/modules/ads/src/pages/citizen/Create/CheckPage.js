@@ -8,7 +8,8 @@ import {
     LinkButton,
     Row,
     StatusTable,
-    SubmitBar
+    SubmitBar,
+    DeleteIcon
   } from "@nudmcdgnpm/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
@@ -41,7 +42,7 @@ import {
   const CheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
     const history = useHistory();
-    
+    const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
     const {
       applicant,
       adslist,
@@ -58,9 +59,31 @@ import {
       { Header: `${t("ADS_TYPE")}`, accessor: "addType" },
       { Header: `${t("ADS_FACE_AREA")}`, accessor: "faceArea" },
       { Header: `${t("ADS_NIGHT_LIGHT")}`, accessor: "nightLight" },
-      { Header: `${t("ADS_DATE")}`, accessor: "bookingDate" }
+      { Header: `${t("ADS_DATE")}`, accessor: "bookingDate" },
+      {
+        Header: t("DELETE_KEY"),
+        accessor: "delete",
+        Cell: ({ row }) => (
+          <button onClick={() => handleDelete(row.index)}>
+            <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+          </button>
+        ),
+      },
     ];
-    const adslistRows = adslist?.cartDetails?.map((slot) => (
+    const handleDelete = (index) => {
+      // Make a shallow copy of the current params state to ensure immutability
+      const updatedParams = { ...params };
+    
+      // Check if adslist exists and if cartDetails is an array
+      if (updatedParams?.adslist?.cartDetails) {
+        // Create a new array with the item at the given index removed
+        updatedParams.adslist.cartDetails = updatedParams.adslist.cartDetails.filter((_, idx) => idx !== index);
+      }
+    
+      // Update the state with the modified params
+      setParams(updatedParams);
+    };
+    const adslistRows =  params?.adslist?.cartDetails.map((slot) => (
       {
         addType: slot.addType,
         faceArea:slot.faceArea,
@@ -178,17 +201,15 @@ import {
                   },
                 })}
                 isPaginationRequired={false}
-                totalRecords={adslistRows.length}
+                totalRecords={ params?.adslist?.cartDetails.length}
               />
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
-          <Card style={{display: "flex", flexDirection: "row" }}>
+          <Card>
             {documents && documents?.documents.map((doc, index) => (
-              <div key={`doc-${index}`} style={{ marginRight: "25px"}}>
-                <div>
-                  <CardSectionHeader>{t("ADS_" + (doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
+              <div key={`doc-${index}`} style={{display: "flex", flexDirection: "row"}}>
+                  <CardSectionHeader style={{ marginRight: "5px"}}>{t("ADS_" + (doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
                   <ADSDocument value={value} Code={doc?.documentType} index={index} />
-                </div>
               </div>
             ))}
           </Card>
