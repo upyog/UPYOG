@@ -256,7 +256,7 @@ public class PropertyService {
 			updateOwnerMobileNumbers(request, propertyFromSearch);
 		}
 
-		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch,true);
 		util.mergeAdditionalDetails(request, propertyFromSearch);
 		producer.push(config.getUpdatePropertyTopic(), request);
 	}
