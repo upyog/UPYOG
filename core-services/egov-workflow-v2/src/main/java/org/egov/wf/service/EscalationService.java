@@ -9,7 +9,6 @@ import org.egov.wf.web.models.Escalation;
 import org.egov.wf.web.models.EscalationSearchCriteria;
 import org.egov.wf.web.models.ProcessInstance;
 import org.egov.wf.web.models.ProcessInstanceRequest;
-import jdk.internal.org.jline.utils.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
