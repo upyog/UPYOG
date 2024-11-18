@@ -5,7 +5,6 @@ import static java.util.Objects.isNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,6 +15,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.AuditDetails;
+import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.web.contracts.IdGenerationRequest;
 import org.egov.ptr.web.contracts.IdGenerationResponse;
@@ -108,23 +108,14 @@ public class CommonUtils {
 	 * @return Map of MasterData name to the list of code in the MasterData
 	 *
 	 */
-	public Map<String, List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names,
-			String filter, String jsonpath, RequestInfo requestInfo) {
+	public Optional<Object> getAttributeValues(String stateTenantId, String moduleName, List<String> names,
+			PetRegistrationRequest petRegistrationRequest) {
 
 		StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsEndpoint());
-		MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId, moduleName, names, filter, requestInfo);
+		MdmsCriteriaReq criteriaReq = prepareMdMsRequest(stateTenantId, moduleName, names, null, petRegistrationRequest.getRequestInfo());
 		Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
 
-		try {
-			if (response.isPresent()) {
-				return JsonPath.read(response.get(), jsonpath);
-			}
-		} catch (Exception e) {
-			throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
-					ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
-		}
-
-		return null;
+		return response;
 	}
 
 	public MdmsCriteriaReq prepareMdMsRequest(String tenantId, String moduleName, List<String> names, String filter,
