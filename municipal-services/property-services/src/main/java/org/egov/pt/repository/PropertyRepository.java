@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.EncryptionCount;
@@ -164,31 +166,53 @@ public class PropertyRepository {
 	 * @param requestInfo RequestInfo object of the request
 	 * @return properties with owner information added from user service
 	 */
-	public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo, Boolean isInternal) {
+		public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo, Boolean isInternal) {
 
-		List<Property> properties;
+			List<Property> properties;
 		
-		Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
+			  Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
 
-		if (criteria.isAudit() && !isOpenSearch) {
-			properties = getPropertyAudit(criteria);
-		} else {
+			    if (criteria.isAudit() && !isOpenSearch) {
+			        properties = getPropertyAudit(criteria);
+			    } else {
+			        properties = getProperties(criteria, isOpenSearch, false);
+			    }
 
-			properties = getProperties(criteria, isOpenSearch, false);
-		}
-		if (CollectionUtils.isEmpty(properties))
-			return Collections.emptyList();
+			    if (CollectionUtils.isEmpty(properties)) {
+			        return Collections.emptyList();
+			    }
 
-		Set<String> ownerIds = properties.stream().map(Property::getOwners).flatMap(List::stream)
-				.map(OwnerInfo::getUuid).collect(Collectors.toSet());
+			    Map<String, Long> maxModifiedTimeMap = properties.stream()
+			            .collect(Collectors.toMap(
+			                    Property::getPropertyId,
+			                    property -> property.getAuditDetails().getLastModifiedTime() ,
+			                    Math::max 
+			            ));
 
-		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
-		userSearchRequest.setUuid(ownerIds);
+			   
+			    List<Property> latestProperties = properties.stream()
+			            .filter(property -> {
+			                Long maxModifiedTime = maxModifiedTimeMap.get(property.getPropertyId());
+			                return maxModifiedTime != null && maxModifiedTime.equals(property.getAuditDetails().getLastModifiedTime());
+			            })
+			            .collect(Collectors.toList());
 
-		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
-		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
-		return properties;
+			    Set<String> ownerIds = latestProperties.stream()
+			            .map(Property::getOwners)
+			            .flatMap(List::stream)
+			            .map(OwnerInfo::getUuid)
+			            .collect(Collectors.toSet());
+
+			    UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
+			    userSearchRequest.setUuid(ownerIds);
+
+			    UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
+			    util.enrichOwner(userDetailResponse, latestProperties, isOpenSearch);
+
+			    return latestProperties;
 	}
+	
+
 	
 	private List<Property> getPropertyAudit(PropertyCriteria criteria) {
 
