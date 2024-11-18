@@ -106,7 +106,7 @@ function ADSSelectDocument({
 
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
-
+  const [isUploading, setIsUploading] = useState(false);
   const handleADSSelectDocument = (value) => setSelectedDocument(value);
 
   function selectfile(e) {
@@ -119,6 +119,10 @@ function ADSSelectDocument({
   const [isHidden, setHidden] = useState(false);
 
   
+  const LoadingSpinner = () => (
+    <div className="loading-spinner"
+    />
+  );
 
   useEffect(() => {
     if (selectedDocument?.code) {
@@ -168,6 +172,7 @@ function ADSSelectDocument({
         } else {
           try {
             setUploadedFile(null);
+            setIsUploading(true);
             const response = await Digit.UploadServices.Filestorage("ADS", file, Digit.ULBService.getStateId());
             if (response?.data?.files?.length > 0) {
               setUploadedFile(response?.data?.files[0]?.fileStoreId);
@@ -176,6 +181,9 @@ function ADSSelectDocument({
             }
           } catch (err) {
             setError(t("CS_FILE_UPLOAD_ERROR"));
+          }
+          finally{
+            setIsUploading(false);
           }
         }
       }
@@ -212,8 +220,12 @@ function ADSSelectDocument({
               setUploadedFile(null);
             }}
             id={id}
-            message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-            textStyles={{ width: "100%" }}
+            message={isUploading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <LoadingSpinner />
+                <span>Uploading...</span>
+              </div>
+            ) : uploadedFile ? "1 File Uploaded" : "No File Uploaded"}            textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"   //  to accept document of all kind
             buttonType="button"

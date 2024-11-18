@@ -180,7 +180,26 @@ const ADSApplicationDetails = () => {
           <StatusTable>
             <Row className="border-none" label={t("ADS_BOOKING_NO")} text={ads_details?.bookingNo} />
           </StatusTable>
-
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_PAYMENT_DETAILS")}</CardSubHeader>
+          <StatusTable>
+            <Row 
+              className="border-none" 
+              label={t("ADS_TOTAL_AMOUNT")} 
+              text={
+                billData?.Bill?.[0]?.totalAmount > 0
+                  ? (
+                      <span >
+                       ₹ {billData?.Bill?.[0]?.totalAmount || t("CS_NA")}  <strong style={{ color: '#a82227' }}>({t("PENDING_PAYMENT")})</strong>
+                      </span>
+                    )
+                  : (
+                      <span >
+                      ₹ {reciept_data?.Payments?.[0]?.totalAmountPaid || t("CS_NA")}   <strong style={{ color: 'green' }}>({t("PAYMENT_PAID")})</strong>
+                      </span>
+                    )
+              }
+            />          
+            </StatusTable>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("ADS_APPLICANT_NAME")} text={ads_details?.applicantDetail?.applicantName || t("CS_NA")} />
@@ -223,16 +242,9 @@ const ADSApplicationDetails = () => {
           />
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Card style={{ display: "flex", flexDirection: "row" }}>
               {docs.map((doc, index) => (
-                <div key={`doc-${index}`} style={{ marginRight: "25px" }}>
-                  <div>
-                    <CardSectionHeader>{t("ADS_" + doc?.documentType?.split(".").slice(0, 2).join("_"))}</CardSectionHeader>
-                    <ADSDocument value={docs} Code={doc?.documentType} index={index} />
-                  </div>
-                </div>
+                <ADSDocument value={docs} Code={doc?.documentType} index={index} />
               ))}
-            </Card>
           </StatusTable>
         </Card>
       </div>
