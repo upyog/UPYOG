@@ -92,7 +92,8 @@ public class EscalationService {
             List<String> businessIds = escalationRepository.getBusinessIds(criteria);
             Integer numberOfBusinessIds = businessIds.size();
             Integer batchSize = config.getEscalationBatchSize();
-            log.info("Number of Business Ids for "+ escalation.getModuleName() + " and status " + escalation.getStatus() + " are ::: " + numberOfBusinessIds);
+            log.info("Number of Business Ids for "+ escalation.getModuleName());
+            log.info(" are ::: " + numberOfBusinessIds);
 
             for(int i = 0; i < numberOfBusinessIds; i = i + batchSize){
 
