@@ -506,7 +506,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                       validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                     }}
                   />
-                  <CardLabel>{`${t("SV_DEPENDENT_GENDER")}`}</CardLabel>
+                  <CardLabel>{`${t("SV_DEPENDENT_GENDER")}`} {dependentNameChecked && <span className="astericColor">*</span>}</CardLabel>
                   <RadioButtons
                     t={t}
                     options={common}
