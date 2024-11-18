@@ -104,7 +104,7 @@ public class EnrichmentService {
      * @param request  PropertyRequest received for property update
      * @param propertyFromDb Properties returned from DB
      */
-    public void enrichUpdateRequest(PropertyRequest request,Property propertyFromDb) {
+    public void enrichUpdateRequest(PropertyRequest request,Property propertyFromDb, Boolean isnumberchange) {
     	
     	Property property = request.getProperty();
         RequestInfo requestInfo = request.getRequestInfo();
@@ -127,7 +127,7 @@ public class EnrichmentService {
 
 		} 
 		
-		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled)
+		else if ((propertyFromDb.getStatus().equals(Status.ACTIVE)|| propertyFromDb.getStatus().equals(Status.INACTIVE)) && isWfEnabled && !isnumberchange)
 		{
 				enrichPropertyForNewWf(requestInfo, property, false);	
 		}
