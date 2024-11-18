@@ -8,6 +8,14 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
   // function to filter out the fields which have values
   const filterEmptyValues = (values) => values.filter(item => item.value);
 
+  let gender, dgender;
+  if(application?.vendorDetail[0]?.gender){
+     gender = application?.vendorDetail[0]?.gender == "M" ? "Male" : "Female";
+  }
+  if(application?.vendorDetail[0]?.dependentGender){
+    dgender = application?.vendorDetail[0]?.dependentGender == "M" ? "Male" : "Female";
+  }
+
   return {
     t: t,
     tenantId: tenantInfo?.code,
@@ -27,12 +35,12 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
           { title: t("SV_REGISTERED_MOB_NUMBER"), value: application?.vendorDetail[0]?.mobileNo},
           { title: t("SV_EMAIL"), value: application?.vendorDetail[0]?.emailId },
           { title: t("SV_DATE_OF_BIRTH"), value: application?.vendorDetail[0]?.dob },
-          { title: t("SV_GENDER"), value: application?.vendorDetail[0]?.gender },
+          { title: t("SV_GENDER"), value: gender },
           { title: t("SV_SPOUSE_NAME"), value: application?.vendorDetail[0]?.spouseName },
           { title: t("SV_SPOUSE_DATE_OF_BIRTH"), value: application?.vendorDetail[0]?.spouseDob },
           { title: t("SV_DEPENDENT_NAME"), value: application?.vendorDetail[0]?.dependentName },
           { title: t("SV_DEPENDENT_DATE_OF_BIRTH"), value: application?.vendorDetail[0]?.dependentDob },
-          { title: t("SV_DEPENDENT_GENDER"), value: application?.vendorDetail[0]?.dependentGender },
+          { title: t("SV_DEPENDENT_GENDER"), value: dgender },
           { title: t("SV_TRADE_NUMBER"), value: application?.vendorDetail[0]?.tradeNumber },
         ]),
       },
@@ -41,7 +49,7 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
         title: t("SV_VENDOR_BUSINESS_DETAILS"),
         asSectionHeader: true,
         values: filterEmptyValues([
-          { title: t("SV_VENDING_TYPE"), value: application?.vendingZone },
+          { title: t("SV_VENDING_TYPE"), value: application?.vendingActivity },
           { title: t("SV_VENDING_ZONES"), value: application?.vendingZone },
           { title: t("SV_AREA_REQUIRED"), value: application?.vendingArea },
           { title: t("SV_LOCAL_AUTHORITY_NAME"), value: application?.localAuthorityName },

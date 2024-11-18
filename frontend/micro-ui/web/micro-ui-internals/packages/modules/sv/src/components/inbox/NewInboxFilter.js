@@ -27,10 +27,26 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
     },
   ];
 
-  let StatusFields = [];
-  statusMap && statusMap?.map((item) => {
-    StatusFields.push({i18nKey: item?.applicationstatus, applicationstatus: item?.applicationstatus})
-  })
+  let StatusFields = [
+    {
+      i18nKey: "APPLIED"
+    },
+    {
+      i18nKey: "APPROVED"
+    },
+    {
+      i18nKey: "REGISTRATIONCOMPLETED"
+    },
+    {
+      i18nKey: "INSPECTIONPENDING"
+    },
+    {
+      i18nKey: "REJECTED"
+    },
+  ];
+  // statusMap && statusMap?.map((item) => {
+  //   StatusFields.push({i18nKey: item?.applicationstatus, applicationstatus: item?.applicationstatus})
+  // })
 
   // hook for fetching vending type data
   const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
