@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, Link, useHistory } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-// import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
+import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
 
 
 const ApplicationDetails = () => {

@@ -31,7 +31,8 @@ const SearchApp = ({path}) => {
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
 
-        if(Object.entries(payload).length>0 && (!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.vendingType && !payload.toDate && !payload.vendingZone))
+        // setting toast based on fields selected
+        if(!payload.applicationNumber && !payload.fromDate && !payload.mobileNumber && !payload.vendingType && !payload.toDate && !payload.vendingZone)
         setShowToast({ warning: true, label: "ERR_SV_FILL_VALID_FIELDS" });
         else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
         setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });

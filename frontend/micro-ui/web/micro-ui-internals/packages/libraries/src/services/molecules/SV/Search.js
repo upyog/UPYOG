@@ -21,6 +21,13 @@ export const SVSearch = {
   RegistrationDetails: ({ SVDetail: response, t }) => {
     // function to filter out the fields which have values
     const filterEmptyValues = (values) => values.filter(item => item.value);
+    let gender, dgender;
+    if(response?.vendorDetail[0]?.gender){
+       gender = response?.vendorDetail[0]?.gender == "M" ? "Male" : "Female";
+    }
+    if(response?.vendorDetail[0]?.dependentGender){
+      dgender = response?.vendorDetail[0]?.dependentGender == "M" ? "Male" : "Female";
+    }
 
     return [
 
@@ -34,12 +41,12 @@ export const SVSearch = {
           { title: "SV_REGISTERED_MOB_NUMBER", value: response?.vendorDetail[0]?.mobileNo},
           { title: "SV_EMAIL", value: response?.vendorDetail[0]?.emailId },
           { title: "SV_DATE_OF_BIRTH", value: response?.vendorDetail[0]?.dob },
-          { title: "SV_GENDER", value: response?.vendorDetail[0]?.gender },
+          { title: "SV_GENDER", value: gender },
           { title: "SV_SPOUSE_NAME", value: response?.vendorDetail[0]?.spouseName },
           { title: "SV_SPOUSE_DATE_OF_BIRTH", value: response?.vendorDetail[0]?.spouseDob },
           { title: "SV_DEPENDENT_NAME", value: response?.vendorDetail[0]?.dependentName },
           { title: "SV_DEPENDENT_DATE_OF_BIRTH", value: response?.vendorDetail[0]?.dependentDob },
-          { title: "SV_DEPENDENT_GENDER", value: response?.vendorDetail[0]?.dependentGender },
+          { title: "SV_DEPENDENT_GENDER", value: dgender },
           { title: "SV_TRADE_NUMBER", value: response?.vendorDetail[0]?.tradeNumber },
         ]),
       },
@@ -48,7 +55,7 @@ export const SVSearch = {
         title: "SV_VENDOR_BUSINESS_DETAILS",
         asSectionHeader: true,
         values: filterEmptyValues([
-          { title: "SV_VENDING_TYPE", value: response?.vendingZone },
+          { title: "SV_VENDING_TYPE", value: response?.vendingActivity },
           { title: "SV_VENDING_ZONES", value: response?.vendingZone },
           { title: "SV_AREA_REQUIRED", value: response?.vendingArea },
           { title: "SV_LOCAL_AUTHORITY_NAME", value: response?.localAuthorityName },
