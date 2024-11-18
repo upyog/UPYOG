@@ -641,7 +641,7 @@ config:
         image-name: "adrvcanopy-services-db" 
   - name: "builds/municipal-services/asset-services"
     build:
-      - work-dir: "asset-services"
+      - work-dir: "municipal-services/asset-services"
         image-name: "asset-services"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/asset-services/src/main/resources/db"
