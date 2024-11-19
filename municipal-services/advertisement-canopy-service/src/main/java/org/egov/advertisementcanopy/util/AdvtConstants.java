@@ -42,6 +42,18 @@ public class AdvtConstants {
     
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
+    
+    @Value("${egov.report.host}")
+    public String reportHost;
+    
+    @Value("${egov.report.endpoint.create}")
+    public String reportCreateEndPoint;
+
+    @Value("${egov.alfresco.host}")
+    private String alfrescoHost;
+
+    @Value("${egov.alfresco.endpoint.upload}")
+    private String alfrescoUploadEndPoint;
 
     public static final String STATE_LEVEL_TEENENT_ID = "hp";
     
@@ -51,14 +63,14 @@ public class AdvtConstants {
 	public static final String ADVERTISEMENT_HOARDING = "Advertising Hoarding";
     
 	public static final String ROLE_CODE_CITIZEN = "CITIZEN";
-    
-	public static final String ROLE_CODE_SITE_WF_CREATOR = "SITE_CREATOR";
-    
-	public static final String ROLE_CODE_SITE_WF_APPROVER = "SITE_APPROVER";
 
 	public static final String ROLE_CODE_SITE_CREATOR = "SITE_CREATOR";
     
 	public static final String ROLE_CODE_SITE_APPROVER = "SITE_APPROVER";
+
+	public static final String ROLE_CODE_SITE_WF_CREATOR = "SITE_WF_CREATOR";
+    
+	public static final String ROLE_CODE_SITE_WF_APPROVER = "SITE_WF_APPROVER";
 	
 	public static final String CANOPY = "Canopy";
 	
@@ -92,6 +104,10 @@ public class AdvtConstants {
 
 	public static final String STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 
+	public static final String ACTION_VERIFY = "VERIFY";
+
+	public static final String ACTION_APPROVE = "APPROVE";
+
 	public static final String STATUS_APPROVED = "APPROVED";
 
     public static final String WORKFLOW_SITE_BOOKING_MODULE = "ADVT";
@@ -104,6 +120,14 @@ public class AdvtConstants {
 
     public static final String SITE_STATUS_BOOKED = "BOOKED";
 
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "ADVT certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_ADVT_CERTIFICATE_COMMENT = "Signed Certificate";
+
 	public String getStatusOrAction(String action, Boolean fetchValue) {
 
 		Map<String, String> map = new HashMap<>();
@@ -113,6 +137,7 @@ public class AdvtConstants {
 		map.put(ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT, STATUS_PENDINGFORPAYMENT);
 		map.put(ACTION_RETURN_TO_INITIATOR, STATUS_PENDINGFORMODIFICATION);
 		map.put(ACTION_FORWARD_TO_APPROVER, STATUS_PENDINGFORAPPROVAL);
+		map.put(ACTION_VERIFY, STATUS_PENDINGFORAPPROVAL);
 		map.put(STATUS_APPROVED, STATUS_APPROVED);
 
 		if (!fetchValue) {

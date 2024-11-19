@@ -185,6 +185,21 @@ public class PDFService {
 			return null;
 		}
 	}
+	
+	private List<String> extractDataFromSignatureResponse(String jsonResponse) {
+		log.info("Inside method extractDataFromResponse");
+		List<String> logoList = new ArrayList<>();
+		try {
+			JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+			logoList.add(jsonNode.path("MdmsRes").path("Signature").path("Signature").get(0).path("base64Signature").asText());
+//			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(1).path("data").asText());
+//			logoList.add(jsonNode.path("MdmsRes").path("logo-hpudd").path("logo").get(0).path("data").asText());
+			return logoList;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	private void parseDataBase(PDFRequest pdfRequest, Map dataConfigs, Map<String, Object> pdfContextData) {
 		String baseKayPath = JsonPath.read(dataConfigs, "$.DataConfigs.baseKeyPath");
@@ -240,7 +255,7 @@ public class PDFService {
 
 		String baseKayPath = JsonPath.read(dataConfigs, "$.DataConfigs.baseKeyPath");
 		List<Object> directList = JsonPath.read(dataConfigs, "$.DataConfigs.mappings.*.direct.*");
-
+		
 		Object requestData = JsonPath.read(pdfRequest.getData(), baseKayPath);
 
 		for (Object object : directList) {
@@ -262,8 +277,98 @@ public class PDFService {
 			if ("QRCODE".equals(valueType)) {
 				value = generateQRCodeImage(value.toString());
 			}
+
+			if ("userName".equals(variable)) {
+				value = addSignatureFromMdms(pdfRequest,value.toString());
+//				addSignatureFromMdms(dataConfigs,pdfContextData);
+			}
+			
 			pdfContextData.put(variable, value);
 		}
+	}
+
+	private String addSignatureFromMdms(PDFRequest pdfRequest, String userName) {
+		
+//		mdms call
+		String apiUrl = mdmsHost + searchEndPoint;
+//		Object payload = getSearchPayload();
+//		Object object = mdmsCall(apiUrl, payload);
+		List<String> signatures = getSignatureFromMdms(pdfRequest.getRequestInfo(), userName);
+		
+		if (CollectionUtils.isEmpty(signatures)) {
+		    throw new CustomException("FETCH_SIGNATURE_FAILED", "Failed to fetch signature from mdms.");
+		} else {
+		    return signatures.get(0);
+		}
+		
+	}
+	private List<String> getSignatureFromMdms(RequestInfo requestInfo, String userName) {
+		log.info("Inside method getSignatureFromMdms");
+		String apiUrl = mdmsHost + searchEndPoint;
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		String authToken = "0648993a-dfd7-4259-90c8-57243fc84061";
+
+		String requestBody = "{\n" + "    \"RequestInfo\": {\n" + "        \"authToken\": \"" + authToken + "\"\n"
+				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \"hp\",\n"
+				+ "        \"moduleDetails\": [\n" + "            {\n"
+				+ "                \"moduleName\": \"Signature\",\n" + "                \"masterDetails\": [\n"
+				+ "                    {\n" + "                        \"name\": \"Signature\"\n"
+				+ "                        ,\"filter\": \"[?(@.userName == \\\""+userName+"\\\")]\"\n" + ""
+				+ "                    }\n"
+				+ "                ]\n" + "            }\n" + "        ]\n" + "    }\n" + "}";
+
+		HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+		try {
+			ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.POST, requestEntity,
+					String.class);
+			if (responseEntity.getStatusCode().is2xxSuccessful()) {
+				List<String> responseData = extractDataFromSignatureResponse(responseEntity.getBody());
+				log.info("signature fetched successfully.");
+				return responseData;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private Object getSearchPayload() {
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		String authToken = "0648993a-dfd7-4259-90c8-57243fc84061";
+
+		String requestBody = "{\n" + "    \"RequestInfo\": {\n" + "        \"authToken\": \"" + authToken + "\"\n"
+				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \"hp\",\n"
+				+ "        \"moduleDetails\": [\n" + "            {\n"
+				+ "                \"moduleName\": \"logo-hpudd\",\n" + "                \"masterDetails\": [\n"
+				+ "                    {\n" + "                        \"name\": \"logo\"\n"
+//				+ "                        ,\"filter\": \"[?(@.code == \\\"v1-logo\\\")]\"\n" + ""
+				+ "                    }\n"
+				+ "                ]\n" + "            }\n" + "        ]\n" + "    }\n" + "}";
+
+		HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+		
+		return null;
+	}
+
+	private Object mdmsCall(String url, Object payload) {
+		
+		Object object = null;
+		try {
+			object = restTemplate.postForObject(url, payload, Object.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return object;
 	}
 
 	private Object parseDate(Long value) {
