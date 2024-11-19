@@ -284,7 +284,8 @@ public class BillServicev2 {
 			billCriteria.setConsumerCode(new HashSet<>());
 		BillResponseV2 res = searchBill(billCriteria.toBillSearchCriteria(), requestInfo);
 		List<BillV2> bills = res.getBill();
-		if(!bills.isEmpty())
+		
+		if(!CollectionUtils.isEmpty(bills))
 		{
 			bills.stream().forEach(b->b.getBillDetails().forEach(bd->
 			{
