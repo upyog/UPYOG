@@ -64,6 +64,7 @@ public class BillDetailV2 {
 	
 	@JsonProperty("paymentModeStatus")
 	private List<ModeOfPaymentDetails> modeOfPaymentDetails;
+	
 	private BigDecimal interestonamount;
 	private String adjusmentfromdate;
 	private String assesmentyear;
