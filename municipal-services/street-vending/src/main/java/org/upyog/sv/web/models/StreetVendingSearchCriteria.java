@@ -24,6 +24,12 @@ public class StreetVendingSearchCriteria {
 
 	@JsonProperty("status")
 	private String status;
+	
+	/**
+	 * true : send draft application details for the user and tenantId
+	 * false: send completed application based on search params
+	 */
+	private String isDraftApplication;
 
 	@JsonProperty("applicationNumber")
 	private String applicationNumber;
@@ -50,7 +56,7 @@ public class StreetVendingSearchCriteria {
 	// @ValidDate
 	@JsonProperty("toDate")
 	private String toDate;
-
+	
 	private boolean isCountCall;
 
 	@JsonProperty("createdBy")

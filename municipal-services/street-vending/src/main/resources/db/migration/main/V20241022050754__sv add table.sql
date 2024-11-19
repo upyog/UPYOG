@@ -21,12 +21,13 @@ CREATE TABLE eg_sv_street_vending_detail (
 		lastmodifiedby character varying(64),
 		createdtime bigint NOT NULL,
 		lastmodifiedtime bigint,
-		constraint eg_sv_street_vending_detail_application_no_key UNIQUE (application_no),
 		constraint eg_sv_street_vending_detail_certificate_no_key UNIQUE (certificate_no)
 );
 
+--TODO: need to add indexes
+
 create table eg_sv_vendor_detail(
-		id VARCHAR(255) PRIMARY KEY,
+		id VARCHAR(64) PRIMARY KEY,
 		application_id character varying(64) NOT NULL,
 		vendor_id character varying(64),
 		name character varying(100) NOT NULL,
@@ -85,10 +86,10 @@ create table eg_sv_document_detail(
 );
 
 create table eg_sv_bank_detail (
-		bank_detail_id VARCHAR(255) PRIMARY KEY,
+		bank_detail_id VARCHAR(64) PRIMARY KEY,
 		application_id character varying(64) NOT NULL,
-		account_no character varying(200),
-		ifsc_code character varying(200),
+		account_no character varying(30),
+		ifsc_code character varying(30),
 		bank_name character varying(300),
 		bank_branch_name character varying(300),
 		account_holder_name character varying(300),
@@ -103,7 +104,7 @@ create table eg_sv_bank_detail (
 );
 
 create table eg_sv_operation_time_detail (
-		id VARCHAR(255) PRIMARY KEY,
+		id VARCHAR(64) PRIMARY KEY,
 		application_id character varying(64) NOT NULL,
 		day_of_week VARCHAR(20) NOT NULL,
 		from_time TIME NOT NULL,
@@ -116,6 +117,19 @@ create table eg_sv_operation_time_detail (
 		FOREIGN KEY (application_id) REFERENCES eg_sv_street_vending_detail (application_id)
 		ON UPDATE NO ACTION
 		ON DELETE CASCADE
+);
+
+--draft_id, draft_application_data, createdBy, lastmodifiedby, lastmodifiedtime
+
+create table eg_sv_street_vending_draft_detail (
+		draft_id VARCHAR(64) PRIMARY KEY,
+		tenant_id VARCHAR(64) NOT NULL,
+		user_uuid VARCHAR(64) NOT NULL,
+		draft_application_data JSONB NOT NULL,
+		createdby character varying(64) NOT NULL,
+		lastmodifiedby character varying(64),
+		createdtime bigint NOT NULL,
+		lastmodifiedtime bigint
 );
 
 
