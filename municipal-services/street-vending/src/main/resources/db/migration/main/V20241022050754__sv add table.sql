@@ -21,6 +21,7 @@ CREATE TABLE eg_sv_street_vending_detail (
 		lastmodifiedby character varying(64),
 		createdtime bigint NOT NULL,
 		lastmodifiedtime bigint,
+		constraint eg_sv_street_vending_detail_application_no_key UNIQUE (application_no),
 		constraint eg_sv_street_vending_detail_certificate_no_key UNIQUE (certificate_no)
 );
 
