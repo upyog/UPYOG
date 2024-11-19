@@ -247,10 +247,13 @@ const handleCartClick = () => {
     // Get selected rows based on selectedCheckboxes
     const selectedRows = data.filter(row => selectedCheckboxes.includes(row.slotId));
 
-    // Create a unique identifier for each row
+    // Create a unique identifier for each row based on addType, faceArea, bookingDate, and location
     const newlyAddedRows = selectedRows.filter(selectedRow => 
       !cartDetails.some(cartRow => 
-        cartRow.slotId === selectedRow.slotId && cartRow.addType === selectedRow.addType
+        cartRow.addType === selectedRow.addType &&
+        cartRow.faceArea === selectedRow.faceArea &&
+        cartRow.bookingDate === selectedRow.bookingDate &&
+        cartRow.location === selectedRow.location
       )
     );
 
