@@ -492,7 +492,7 @@ public class SiteBookingService {
 	public SiteBookingActionResponse getApplicationDetails(SiteBookingActionRequest siteBookingActionRequest) {
 		
 		SiteBookingSearchCriteria criteria = SiteBookingSearchCriteria.builder().build();
-		SiteBookingActionResponse garbageAccountActionResponse = SiteBookingActionResponse.builder()
+		SiteBookingActionResponse siteBookingAccountActionResponse = SiteBookingActionResponse.builder()
 				.applicationDetails(new ArrayList<>())
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(siteBookingActionRequest.getRequestInfo(), true))
 				.build();
@@ -514,9 +514,9 @@ public class SiteBookingService {
 
 		List<SiteBookingDetail> applicationDetails = getApplicationBillUserDetail(accounts, siteBookingActionRequest.getRequestInfo());
 		
-		garbageAccountActionResponse.setApplicationDetails(applicationDetails);
+		siteBookingAccountActionResponse.setApplicationDetails(applicationDetails);
 		
-		return garbageAccountActionResponse;
+		return siteBookingAccountActionResponse;
 	}
 
 	private List<SiteBookingDetail> getApplicationBillUserDetail(List<SiteBooking> accounts, RequestInfo requestInfo) {
