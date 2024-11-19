@@ -44,4 +44,7 @@ public class PetApplicationSearchCriteria {
 	@JsonProperty("createdBy")
 	private String createdBy;
 
+	@JsonProperty("isBannedPet")
+	private Boolean isBannedPet;
+
 }

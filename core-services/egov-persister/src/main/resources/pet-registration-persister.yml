@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-ptr-application
    isTransaction: true
    queryMaps:
-    - query: INSERT INTO eg_ptr_registration (id, tenantid, applicationnumber, applicantname,fathername, mobilenumber, emailid, aadharnumber,createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetail, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_ptr_registration (id, tenantid, applicationnumber, applicantname,fathername, mobilenumber, emailid, aadharnumber,createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetail, status, is_banned_pet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
       basePath: PetRegistrationApplications.*
       jsonMaps:
@@ -41,6 +41,8 @@ serviceMaps:
          dbType: JSONB
 
        - jsonPath: $.PetRegistrationApplications.*.status
+
+       - jsonPath: $.PetRegistrationApplications.*.isBannedPet
 
     
     
@@ -169,7 +171,7 @@ serviceMaps:
    fromTopic: update-ptr-application
    isTransaction: true
    queryMaps:
-    - query: UPDATE eg_ptr_registration SET tenantid = ?, applicationnumber = ?, applicantname = ?, fathername = ?, mobilenumber = ?, emailid = ?, aadharnumber = ?, createdby = ?, lastmodifiedby = ?, createdtime = ?, lastmodifiedtime = ?, additionaldetail = ?, status = ? WHERE id = ?;
+    - query: UPDATE eg_ptr_registration SET tenantid = ?, applicationnumber = ?, applicantname = ?, fathername = ?, mobilenumber = ?, emailid = ?, aadharnumber = ?, createdby = ?, lastmodifiedby = ?, createdtime = ?, lastmodifiedtime = ?, additionaldetail = ?, status = ?, is_banned_pet = ? WHERE id = ?;
 
       basePath: PetRegistrationApplications.*
       jsonMaps:
@@ -201,6 +203,8 @@ serviceMaps:
          dbType: JSONB
 
        - jsonPath: $.PetRegistrationApplications.*.status
+
+       - jsonPath: $.PetRegistrationApplications.*.isBannedPet
 
        - jsonPath: $.PetRegistrationApplications.*.id
 
