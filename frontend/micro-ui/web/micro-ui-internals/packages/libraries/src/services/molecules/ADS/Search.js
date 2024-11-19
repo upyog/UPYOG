@@ -74,7 +74,7 @@ export const ADSSearch = {
                 ?.map((document) => {
 
                   return {
-                    title: `ADS_${document?.documentType?.split('.').slice(0,2).join('_')}`,
+                    title: `ADS_${document?.documentType.split('.').slice(0, 4).join('_')}`,
                     documentType: document?.documentType,
                     documentUid: document?.documentUid,
                     fileStoreId: document?.fileStoreId,
@@ -90,7 +90,7 @@ export const ADSSearch = {
   applicationDetails: async (t, tenantId, BookingNo, userType, args) => {
     const filter = { BookingNo, ...args };
     const response = await ADSSearch.application(tenantId, filter);
-
+    
     return {
       tenantId: response.tenantId,
       applicationDetails: ADSSearch.BookingDetails({ bookingApplication: response, t }),

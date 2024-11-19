@@ -44,7 +44,7 @@ const EmployeeApp = ({ path, url, userType }) => {
               </div>
             ) : null}
             
-            <PrivateRoute path={`${path}/bookad`} component={() => <ADSCreate parentUrl={url} />} />
+            <PrivateRoute path={`${path}/bookad`} component={ADSCreate} />
             <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
             <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
 

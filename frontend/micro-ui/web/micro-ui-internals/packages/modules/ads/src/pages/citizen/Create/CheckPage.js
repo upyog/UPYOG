@@ -207,10 +207,7 @@ import {
           <StatusTable>
           <Card>
             {documents && documents?.documents.map((doc, index) => (
-              <div key={`doc-${index}`} style={{display: "flex", flexDirection: "row"}}>
-                  <CardSectionHeader style={{ marginRight: "5px"}}>{t("ADS_" + (doc?.documentType?.split('.').slice(0,2).join('_')))}</CardSectionHeader>
                   <ADSDocument value={value} Code={doc?.documentType} index={index} />
-              </div>
             ))}
           </Card>
           </StatusTable>
