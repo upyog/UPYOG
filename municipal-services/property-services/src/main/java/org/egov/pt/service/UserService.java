@@ -221,7 +221,7 @@ public class UserService {
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType(owner.getType());
-		userSearchRequest.setName(owner.getName());
+		//userSearchRequest.setName(owner.getName());
 		
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);
