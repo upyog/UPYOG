@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, InfoBannerIcon, LocationIcon, Card, CardHeader, CardCaption} from "@nudmcdgnpm/digit-ui-react-components";
+import {
+  FormStep,
+  TextInput,
+  CardLabel,
+  Dropdown,
+  InfoBannerIcon,
+  LocationIcon,
+  Card,
+  CardHeader,
+  CardCaption,
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -10,33 +20,30 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       ? formData.assetDetails
       : { assetParentCategory: formData?.asset?.assettype?.code }
   );
+
   const [categoriesWiseData, setCategoriesWiseData] = useState();
 
-//  * get @param city & state id
+  //  * get @param city & state id
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const stateTenantId  = Digit.ULBService.getStateId();
- 
- // ? This call with tenantId (Get city-level data)
- const  cityResponseObject = Digit.Hooks.useCustomMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }],
-    { 
-          select: (data) => {
-            const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"]
-          return formattedData;         
-      },
-    });
+  const stateTenantId = Digit.ULBService.getStateId();
 
+  //  This call with tenantId (Get city-level data)
+  const cityResponseObject = Digit.Hooks.useCustomMDMS(tenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+    select: (data) => {
+      const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
+      return formattedData;
+    },
+  });
 
-//? This call with stateTenantId (Get state-level data)
-  const stateResponseObject  = Digit.Hooks.useCustomMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }],
-        { 
-              select: (data) => {
-                const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"]
-              return formattedData;         
-          },
-        });
- 
+  // This call with stateTenantId (Get state-level data)
+  const stateResponseObject = Digit.Hooks.useCustomMDMS(stateTenantId, "ASSET", [{ name: "AssetParentCategoryFields" }], {
+    select: (data) => {
+      const formattedData = data?.["ASSET"]?.["AssetParentCategoryFields"];
+      return formattedData;
+    },
+  });
 
-  useEffect(()=> {
+  useEffect(() => {
     let combinedData;
     // if city level master is not available then fetch  from state-level
     if (cityResponseObject?.data) {
@@ -48,16 +55,15 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       console.log("Both cityResponseObject and stateResponseObject data are unavailable.");
     }
     setCategoriesWiseData(combinedData);
-  }, [cityResponseObject, stateResponseObject]); 
+  }, [cityResponseObject, stateResponseObject]);
 
-  
   let formJson = [];
   if (Array.isArray(categoriesWiseData)) {
-    console.log('Categories Data:', categoriesWiseData);
-    
-    // Log the selected asset type for debugging
-    console.log('Selected Asset Type:', formData?.asset?.assettype?.code);
-  
+    // console.log("Categories Data:", categoriesWiseData);
+
+    // // Log the selected asset type for debugging
+    // console.log("Selected Asset Type:", formData?.asset?.assettype?.code);
+
     // Filter categories based on the selected assetParentCategory
     formJson = categoriesWiseData
       .filter((category) => {
@@ -68,29 +74,25 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       .map((category) => category.fields) // Extract the fields array
       .flat() // Flatten the fields array
       .filter((field) => field.active === true); // Filter by active status
-    
   }
-  
 
-// console.log('Testing FormJson value:- ', formJson);
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
   const { control } = useForm();
 
   //  regexPattern function is use for validation
-  const regexPattern = (columnType) =>{
-  
-    if(!columnType){
-      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
-    }else if(columnType === 'number'){
-      return "^\d+(\.\d+)?$"
-    }else if(columnType === "text"){
-      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
-    }else{
-      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
+  const regexPattern = (columnType) => {
+    if (!columnType) {
+      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$";
+    } else if (columnType === "number") {
+      return "^d+(.d+)?$";
+    } else if (columnType === "text") {
+      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$";
+    } else {
+      return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$";
     }
-}
+  };
 
   const goNext = () => {
     let owner = formData.assetDetails && formData.assetDetails[index];
@@ -125,32 +127,31 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const handleInputChange = (e) => {
     // Get the name & value from the input and select field
     const { name, value } = e.target ? e.target : { name: e.name, value: e };
-  
+
     setAssetDetails((prevData) => {
       // Update the current field
       const updatedData = {
         ...prevData,
         [name]: value,
       };
-  
+
       // Check if both acquisitionCost and purchaseCost are set and calculate bookValue
       const acquisitionCost = parseFloat(updatedData.acquisitionCost) || 0;
       const purchaseCost = parseFloat(updatedData.purchaseCost) || 0;
-  
+
       if (acquisitionCost && purchaseCost) {
-        console.log('GETTTTTT :-', acquisitionCost, purchaseCost);
         updatedData.bookValue = acquisitionCost + purchaseCost;
       }
-  
+
       // Calculate asset age if the field is "purchaseDate"
       if (name === "purchaseDate") {
         calculateAssetAge(value);
       }
-  
+
       return updatedData;
     });
   };
-  
+
   //  Get location
   const fetchCurrentLocation = (name) => {
     if ("geolocation" in navigator) {
@@ -174,38 +175,43 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
   const assetType = [
     {
-        code: "Fixed Asset",
-        i18nKey: "Fixed Asset"
+      code: "Fixed Asset",
+      i18nKey: "Fixed Asset",
     },
     {
-        code: "Infrastructure Asset",
-        i18nKey: "Infrastructure Asset"
-    }];
+      code: "Infrastructure Asset",
+      i18nKey: "Infrastructure Asset",
+    },
+  ];
   const assetCurrentUsage = [
     {
-        code: "In-use",
-        i18nKey: "In-use",
+      code: "In-use",
+      i18nKey: "In-use",
     },
     {
-        code: "In-store",
-        i18nKey: "In-store"
+      code: "In-store",
+      i18nKey: "In-store",
     },
     {
       code: "Disposed",
-      i18nKey: "Disposed"
-  }];
+      i18nKey: "Disposed",
+    },
+  ];
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={2} /> : null}
-      <Card> <CardCaption>{t(formData.asset.Department['value'])}/{formData.asset.assetclassification['value']}/{formData.asset.assettype['value']}/{formData.asset.assetsubtype['value']}/{formData.asset.BookPagereference}</CardCaption></Card>
+      <Card>
+        <CardCaption>
+          {t(formData.asset.Department["value"])}/{formData.asset.assetclassification["value"]}/{formData.asset.assettype["value"]}/
+          {formData.asset.assetsubtype["value"]}/{formData.asset.BookPagereference}
+        </CardCaption>
+      </Card>
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
-       
-      
         <React.Fragment>
           {formJson.map((row, index) => (
             <div key={index}>
               {/* Render the label with the localization key and a mandatory asterisk */}
-              <CardLabel key={index}>{`${t(row.localizationKey)} *`}</CardLabel>
+              <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel>
 
               {row.type === "date" ? (
                 // If the type is 'date', render a standard HTML input element of type 'date'
@@ -303,7 +309,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   })}
                   style={{ width: "50%" }}
                   readOnly={row.isReadOnly}
-                  />
+                />
               )}
             </div>
           ))}
