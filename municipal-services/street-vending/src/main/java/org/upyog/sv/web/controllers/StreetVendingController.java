@@ -1,6 +1,5 @@
 package org.upyog.sv.web.controllers;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -40,7 +39,13 @@ public class StreetVendingController {
 	public ResponseEntity<StreetVendingResponse> createStreetVendingApplication(
 			@RequestBody StreetVendingRequest vendingRequest) {
 
-		StreetVendingDetail streetVendingDetail = streetVendingService.createStreetVendingApplication(vendingRequest);
+		StreetVendingDetail streetVendingDetail = null;
+		
+		if(vendingRequest.isDraftApplication()) {
+			streetVendingDetail = streetVendingService.createStreetVendingDraftApplication(vendingRequest);
+		} else {
+			streetVendingDetail = streetVendingService.createStreetVendingApplication(vendingRequest);
+		}
 
 		StreetVendingResponse response = StreetVendingResponse.builder().streetVendingDetail(streetVendingDetail)
 				.responseInfo(StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
@@ -54,9 +59,21 @@ public class StreetVendingController {
 	public ResponseEntity<StreetVendingListResponse> streetVendingSearch(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute StreetVendingSearchCriteria streetVendingSearchCriteria) {
-		List<StreetVendingDetail> applications = streetVendingService
-				.getStreetVendingDetails(requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
-		Integer count = streetVendingService.getApplicationsCount(streetVendingSearchCriteria, requestInfoWrapper.getRequestInfo());
+		List<StreetVendingDetail> applications = null;
+		Integer count = 0;
+		
+		if(streetVendingSearchCriteria.getIsDraftApplication().equals("true")) {
+			applications = streetVendingService
+					 .getStreetVendingDraftApplicationDetails(requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
+		    count = applications != null ? applications.size() : 0;	
+		    
+		}else {
+			
+			applications = streetVendingService
+					 .getStreetVendingDetails(requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
+			count = streetVendingService.getApplicationsCount(streetVendingSearchCriteria, requestInfoWrapper.getRequestInfo());
+		}
+				
 		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
 				StreetVendingConstants.APPLICATIONS_FOUND, StatusEnum.SUCCESSFUL);
 		StreetVendingListResponse response = StreetVendingListResponse.builder().streetVendingDetail(applications)
