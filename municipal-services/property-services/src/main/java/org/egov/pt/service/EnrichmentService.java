@@ -844,7 +844,7 @@ public class EnrichmentService {
 		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType(owner.getType());
-		//userSearchRequest.setName(owner.getName());
+		userSearchRequest.setName(owner.getName());
 
 		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
 		return userCall(userSearchRequest,uri);
