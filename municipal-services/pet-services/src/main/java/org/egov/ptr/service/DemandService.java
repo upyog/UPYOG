@@ -29,14 +29,14 @@ public class DemandService {
 	@Autowired
 	private DemandRepository demandRepository;
 
-	public List<Demand> createDemand(PetRegistrationRequest petReq) {
+	public List<Demand> createDemand(PetRegistrationRequest petReq, BigDecimal taxAmount) {
 		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
 		String consumerCode = petReq.getPetRegistrationApplications().get(0).getApplicationNumber();
 		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
 		User owner = User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
 				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
 		List<DemandDetail> demandDetails = new LinkedList<>();
-		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(BigDecimal.valueOf(500.00))
+		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(taxAmount)
 				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
 
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)

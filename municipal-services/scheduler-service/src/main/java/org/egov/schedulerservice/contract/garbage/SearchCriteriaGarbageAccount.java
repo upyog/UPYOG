@@ -1,4 +1,4 @@
-package org.egov.garbageservice.model;
+package org.egov.schedulerservice.contract.garbage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

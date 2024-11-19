@@ -277,6 +277,9 @@ public class PTRConstants {
 	public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
 	public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
 
+    public static final String USER_ROLE_SUPERVISOR = "SUPERVISOR";
+
+    public static final String USER_ROLE_SECRETARY = "SECRETARY";
 	
 	public static final String USER_TYPE_CITIZEN = "CITIZEN";
 	
@@ -287,6 +290,10 @@ public class PTRConstants {
 	public static final String USER_ROLE_PTR_APPROVER = "PTR_APPROVER";
 
 	public static final String STATE_LEVEL_TENANT_ID = "hp";
+
+	public static final String MODULE_NAME_PET_SERVICE = "PetService";
+
+	public static final String MASTER_NAME_FEE_STRUCTURE = "FeeStructure";
 	
     // Alfresco keys
     public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
