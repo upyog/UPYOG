@@ -26,6 +26,8 @@ import lombok.ToString;
 public class StreetVendingDetail {
 
 	private String applicationId;
+	
+	private String draftId;
 
 	private String tenantId;
 

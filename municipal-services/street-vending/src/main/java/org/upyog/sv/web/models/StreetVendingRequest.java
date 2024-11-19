@@ -31,5 +31,7 @@ public class StreetVendingRequest {
 	@Valid
 	@JsonProperty("streetVendingDetail")
 	private StreetVendingDetail streetVendingDetail;
+	
+	private boolean isDraftApplication;
 
 }

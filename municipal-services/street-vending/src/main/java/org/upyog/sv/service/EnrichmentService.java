@@ -32,7 +32,7 @@ public class EnrichmentService {
 
 	public void enrichCreateStreetVendingRequest(StreetVendingRequest vendingRequest) {
 		String applicationId = StreetVendingUtil.getRandonUUID();
-		log.info("Enriching booking request for booking id :" + applicationId);
+		log.info("Enriching street vending aplication id :" + applicationId);
 
 		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
 		RequestInfo requestInfo = vendingRequest.getRequestInfo();
@@ -119,6 +119,18 @@ public class EnrichmentService {
 				.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
 
 		}
+	}
+
+	public void enrichCreateStreetVendingDraftApplicationRequest(StreetVendingRequest vendingRequest) {
+		String draftId = StreetVendingUtil.getRandonUUID();
+		log.info("Enriching draft street vending application with draft id :" + draftId);
+		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
+		RequestInfo requestInfo = vendingRequest.getRequestInfo();
+		AuditDetails auditDetails = StreetVendingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+
+		streetVendingDetail.setDraftId(draftId);
+		streetVendingDetail.setAuditDetails(auditDetails);
+		
 	}
 
 }

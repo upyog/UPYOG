@@ -3,6 +3,8 @@ package org.upyog.sv.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -23,6 +25,7 @@ import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 import org.upyog.sv.web.models.workflow.State;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -141,5 +144,21 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			log.debug("loading data of created and by me" + uuids.toString());
 		}
 		return criteria;
+	}
+
+	@Override
+	public StreetVendingDetail createStreetVendingDraftApplication(StreetVendingRequest vendingRequest) {
+		
+		enrichmentService.enrichCreateStreetVendingDraftApplicationRequest(vendingRequest);
+
+		streetVendingRepository.saveDraftApplication(vendingRequest);
+		
+		return vendingRequest.getStreetVendingDetail();
+	}
+
+	@Override
+	public List<StreetVendingDetail> getStreetVendingDraftApplicationDetails(@NonNull RequestInfo requestInfo,
+			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria) {
+		return streetVendingRepository.getStreetVendingDraftApplications(requestInfo, streetVendingSearchCriteria);
 	}
 }
