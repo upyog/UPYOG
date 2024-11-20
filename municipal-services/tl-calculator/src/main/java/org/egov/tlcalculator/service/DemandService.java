@@ -353,6 +353,7 @@ public class DemandService {
             else {
                  demandDetailList = taxHeadToDemandDetail.get(taxHeadEstimate.getTaxHeadCode());
                  total = demandDetailList.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                 if(taxHeadEstimate.getEstimateAmount()==null)taxHeadEstimate.setEstimateAmount(BigDecimal.ZERO);
                  diffInTaxAmount = taxHeadEstimate.getEstimateAmount().subtract(total);
                  if(diffInTaxAmount.compareTo(BigDecimal.ZERO)!=0) {
                      newDemandDetails.add(
