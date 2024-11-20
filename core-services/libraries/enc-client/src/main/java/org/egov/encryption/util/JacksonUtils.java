@@ -111,7 +111,7 @@ public class JacksonUtils {
                     ((ObjectNode) newNode).set(key, filteredNode);
             }
         } catch (ClassCastException e) {
-            log.error("Cannot find value for path : " + filterPath);
+            log.info("Cannot find value for path : " + filterPath);
         }
 
         return newNode;
