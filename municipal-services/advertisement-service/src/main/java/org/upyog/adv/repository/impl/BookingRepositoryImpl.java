@@ -1,5 +1,8 @@
 package org.upyog.adv.repository.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +12,10 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.kafka.Producer;
@@ -59,62 +64,81 @@ public class BookingRepositoryImpl implements BookingRepository {
 		producer.push(bookingConfiguration.getAdvertisementBookingSaveTopic(), bookingRequest);
 
 	}
+
 	@Override
 	public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria bookingSearchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getAdvertisementSearchQuery(bookingSearchCriteria, preparedStmtList);
 
-		log.info("getBookingDetails : Final query: " + query );
+		log.info("getBookingDetails : Final query: " + query);
 		log.info("preparedStmtList :  " + preparedStmtList);
-		List<BookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(),
-				bookingRowmapper);
-		
+		List<BookingDetail> bookingDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), bookingRowmapper);
+
 		log.info("Fetched booking details size : " + bookingDetails.size());
-		
-		if(bookingDetails.size() == 0) {
-			return bookingDetails; 
+
+		if (bookingDetails.size() == 0) {
+			return bookingDetails;
 		}
-		
-		HashMap<String , BookingDetail> bookingMap =  bookingDetails.stream().collect(Collectors.toMap(BookingDetail::getBookingId,
-	           Function.identity(),
-	            (left, right) -> left,
-	            HashMap::new));
+
+		HashMap<String, BookingDetail> bookingMap = bookingDetails.stream().collect(Collectors
+				.toMap(BookingDetail::getBookingId, Function.identity(), (left, right) -> left, HashMap::new));
 		log.info("Fetched booking details bookingMap : " + bookingMap);
 		List<String> bookingIds = new ArrayList<String>();
 		bookingIds.addAll(bookingMap.keySet());
 		log.info("Fetched booking details bookingIds : " + bookingIds);
-		List<CartDetail> cartDetails = jdbcTemplate.
-				query(queryBuilder.getSlotDetailsQuery(bookingIds), bookingIds.toArray(), cartDetailRowmapper);
+		List<CartDetail> cartDetails = jdbcTemplate.query(queryBuilder.getSlotDetailsQuery(bookingIds),
+				bookingIds.toArray(), cartDetailRowmapper);
 		cartDetails.stream().forEach(slotDetail -> {
-			log.info("fetched cartDetails "+ bookingMap.get(slotDetail.getBookingId()));
+			log.info("fetched cartDetails " + bookingMap.get(slotDetail.getBookingId()));
 			bookingMap.get(slotDetail.getBookingId()).addBookingSlots(slotDetail);
 		});
 		log.info("Fetched booking details cartDetails : " + cartDetails);
-		List<DocumentDetail> documentDetails = jdbcTemplate.query(queryBuilder.getDocumentDetailsQuery(bookingIds), bookingIds.toArray(),
-				detailsRowMapper);
-		
+		List<DocumentDetail> documentDetails = jdbcTemplate.query(queryBuilder.getDocumentDetailsQuery(bookingIds),
+				bookingIds.toArray(), detailsRowMapper);
+
 		documentDetails.stream().forEach(documentDetail -> {
 			bookingMap.get(documentDetail.getBookingId()).addUploadedDocumentDetailsItem(documentDetail);
 		});
 		return bookingDetails;
 	}
-	
+
 	@Override
 	public Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getAdvertisementSearchQuery(criteria, preparedStatement);
-		
+
 		if (query == null)
 			return 0;
 
 		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 		return count;
 	}
+ 
+	@Override
+	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
+		String bookingId = criteria.getBookingId();
+		String createdBy = requestInfo.getUserInfo().getUuid();
+		long createdTime = System.currentTimeMillis();
+		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
+		long lastModifiedTime = System.currentTimeMillis();
+		String query = queryBuilder.insertBookingIdForTImer(bookingId);
+		jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
+	}
 	
-	//Upadtes booking request data for the given booking number
+	public void deleteBookingIdForTimer(String bookingId) {
+
+		String query = queryBuilder.deleteBookingIdForTImer(bookingId);
+
+		jdbcTemplate.update(query, bookingId);
+
+	
+	}
+
+	// Upadtes booking request data for the given booking number
 	@Override
 	public void updateBooking(@Valid BookingRequest advertisementBookingRequest) {
-		log.info("Updating advertisement booking request data for booking no : " + advertisementBookingRequest.getBookingApplication().getBookingNo());
+		log.info("Updating advertisement booking request data for booking no : "
+				+ advertisementBookingRequest.getBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getAdvertisementBookingUpdateTopic(), advertisementBookingRequest);
 	}
 
@@ -135,11 +159,11 @@ public class BookingRepositoryImpl implements BookingRepository {
 			paramsList.add(criteria.getAddType());
 
 		}
-		if (StringUtils.isNotBlank(criteria.getAddType())) {
+		if (StringUtils.isNotBlank(criteria.getFaceArea())) {
 			query.append(faceAreaQuery).append(" = ? ");
 			paramsList.add(criteria.getFaceArea());
 		}
-		if (StringUtils.isNotBlank(criteria.getAddType())) {
+		if (StringUtils.isNotBlank(criteria.getLocation())) {
 			query.append(location).append(" = ? ");
 			paramsList.add(criteria.getLocation());
 		}
@@ -156,5 +180,29 @@ public class BookingRepositoryImpl implements BookingRepository {
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);
 		return availabiltityDetails;
 	}
+	
+
+
+	/* This scheduler runs every 5 mins
+	 * to delete the bookingId from the paymentTimer table when 
+	 * the timer is expired or payment is failed
+	 */
+	@Scheduled(fixedRate = 5 * 60 * 1000) //Runs every 5 minutes
+	public void cleanupExpiredEntries() {
+	    
+	    LocalDateTime currentTime = LocalDateTime.now();
+
+	    
+	    long currentTimeMillis = ZonedDateTime.of(currentTime, ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+	   
+	    String query = queryBuilder.deleteBookingIdPaymentTimer();
+
+	    int rowsDeleted = jdbcTemplate.update(query, currentTimeMillis, bookingConfiguration.getPaymentTimer());
+
+	    log.info(rowsDeleted + " expired entries deleted.");
+	}
+
+
 
 }

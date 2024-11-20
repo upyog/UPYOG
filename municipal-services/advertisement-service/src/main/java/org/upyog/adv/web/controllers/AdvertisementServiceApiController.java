@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
+import org.upyog.adv.kafka.consumer.PaymentUpdateConsumer;
 import org.upyog.adv.service.BookingService;
 import org.upyog.adv.service.DemandService;
 import org.upyog.adv.util.BookingUtil;
@@ -48,6 +49,7 @@ public class AdvertisementServiceApiController {
 
 	private final HttpServletRequest request;
 
+
 	@Autowired
 	public AdvertisementServiceApiController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
@@ -59,6 +61,10 @@ public class AdvertisementServiceApiController {
 	
 	@Autowired
 	private DemandService demandService;
+	
+	
+	@Autowired
+	private PaymentUpdateConsumer paymentUpdateConsumer;
 
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> createBooking(
@@ -89,7 +95,7 @@ public class AdvertisementServiceApiController {
 	public ResponseEntity<AdvertisementSlotAvailabilityResponse> v1GetAdvertisementSlotAvailablity(
 			@Valid @RequestBody SlotSearchRequest slotSearchRequest) {
 		List<AdvertisementSlotAvailabilityDetail> applications = bookingService
-				.getAdvertisementSlotAvailability(slotSearchRequest.getCriteria());
+				.getAdvertisementSlotAvailability(slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
 		ResponseInfo info = BookingUtil.createReponseInfo(slotSearchRequest.getRequestInfo(),
 				BookingConstants.ADVERTISEMENT_AVAILABILITY_SEARCH, StatusEnum.SUCCESSFUL);
 		AdvertisementSlotAvailabilityResponse response = AdvertisementSlotAvailabilityResponse.builder()
@@ -131,5 +137,6 @@ public class AdvertisementServiceApiController {
 					.responseInfo(info).build();
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
-
+	 
+	
 }

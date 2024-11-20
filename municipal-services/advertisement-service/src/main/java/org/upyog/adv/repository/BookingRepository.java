@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
@@ -21,6 +22,13 @@ public interface BookingRepository {
 			AdvertisementSlotSearchCriteria criteria);
 	
 	void updateBooking(@Valid BookingRequest bookingRequest);
+
+	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
+
+	void deleteBookingIdForTimer(String bookingId);
+
+	
+
 
 	
 	
