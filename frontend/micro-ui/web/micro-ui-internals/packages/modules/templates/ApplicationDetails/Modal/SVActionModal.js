@@ -1,5 +1,5 @@
 import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 import { configSVApproverApplication } from "../config";
 
 /* This component, ActionModal, is responsible for displaying a modal dialog 
@@ -91,10 +91,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }, [file]);
 
 
+  console.log("actyhdesh,jhfsefsef",action,applicationData);
+
+
 
 
   function submit(data) {
-    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: selectedApprover?.uuid?[selectedApprover?.uuid]:null };
+    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: action?.action==="SENDBACKTOCITIZEN"?[applicationData?.auditDetails?.createdBy]:selectedApprover?.uuid?[selectedApprover?.uuid]:null };
     if (uploadedFile)
       workflow["documents"] = [
         {

@@ -98,6 +98,8 @@ const SVEmpCreate = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("SV_EMP_CREATE");
     sessionStorage.removeItem("CategoryDocument");
+    sessionStorage.removeItem("vendingApplicationID");
+    sessionStorage.removeItem("ApplicationId");
   };
 
   

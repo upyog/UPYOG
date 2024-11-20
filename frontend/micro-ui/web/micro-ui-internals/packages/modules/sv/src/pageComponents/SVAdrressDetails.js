@@ -4,27 +4,28 @@ import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
 
-const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
+const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata }) => {
   const allCities = Digit.Hooks.sv.useTenants();
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const { pathname } = useLocation();
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  const [pincode, setPincode] = useState(formData?.address?.pincode || "");
-  const [city, setCity] = useState(formData?.address?.city || "");
-  const [locality, setLocality] = useState(formData?.address?.locality || "");
-  const [houseNo, setHouseNo] = useState(formData?.address?.houseNo || "");
-  const [landmark, setLandmark] = useState(formData?.address?.landmark || "");
-  const [addressline1, setAddressline1] = useState(formData?.address?.addressline1 || "");
-  const [addressline2, setAddressline2] = useState(formData?.address?.addressline2 || "");
+  const [pincode, setPincode] = useState(editdata?.addressDetails?.[0]?.pincode||formData?.address?.pincode || "");
+  const [city, setCity] = useState(convertToObject(editdata?.addressDetails?.[0]?.city)||formData?.address?.city || "");
+  const [locality, setLocality] = useState(convertToObject(editdata?.addressDetails?.[0]?.locality)||formData?.address?.locality || "");
+  const [houseNo, setHouseNo] = useState(editdata?.addressDetails?.[0]?.houseNo||formData?.address?.houseNo || "");
+  const [landmark, setLandmark] = useState(editdata?.addressDetails?.[0]?.landmark||formData?.address?.landmark || "");
+  const [addressline1, setAddressline1] = useState(editdata?.addressDetails?.[0]?.addressLine1||formData?.address?.addressline1 || "");
+  const [addressline2, setAddressline2] = useState(editdata?.addressDetails?.[0]?.addressLine2||formData?.address?.addressline2 || "");
 
   // states for the correspondence address input fields
-  const [cpincode, setCPincode] = useState(formData?.correspondenceAddress?.cpincode || "");
-  const [ccity, setCCity] = useState(formData?.correspondenceAddress?.ccity || "");
-  const [clocality, setCLocality] = useState(formData?.correspondenceAddress?.clocality || "");
-  const [chouseNo, setCHouseNo] = useState(formData?.correspondenceAddress?.chouseNo || "");
-  const [clandmark, setCLandmark] = useState(formData?.correspondenceAddress?.clandmark || "");
-  const [caddressline1, setCAddressline1] = useState(formData?.correspondenceAddress?.caddressline1 || "");
-  const [caddressline2, setCAddressline2] = useState(formData?.correspondenceAddress?.caddressline2 || "");
+  const [cpincode, setCPincode] = useState(editdata?.addressDetails?.[0]?.pincode||formData?.correspondenceAddress?.cpincode || "");
+  const [ccity, setCCity] = useState(convertToObject(editdata?.addressDetails?.[0]?.city)||formData?.correspondenceAddress?.ccity || "");
+  const [clocality, setCLocality] = useState(convertToObject(editdata?.addressDetails?.[0]?.locality)||formData?.correspondenceAddress?.clocality || "");
+  const [chouseNo, setCHouseNo] = useState(editdata?.addressDetails?.[0]?.houseNo||formData?.correspondenceAddress?.chouseNo || "");
+  const [clandmark, setCLandmark] = useState(editdata?.addressDetails?.[0]?.landmark||formData?.correspondenceAddress?.clandmark || "");
+  const [caddressline1, setCAddressline1] = useState(editdata?.addressDetails?.[0]?.addressLine1||formData?.correspondenceAddress?.caddressline1 || "");
+  const [caddressline2, setCAddressline2] = useState(editdata?.addressDetails?.[0]?.addressLine2||formData?.correspondenceAddress?.caddressline2 || "");
   const [isAddressSame, setIsAddressSame] = useState(formData?.correspondenceAddress?.isAddressSame || false)
 
   const { control } = useForm();
@@ -283,11 +284,10 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData }) => {
             ValidationRequired={true}
             validation={{
               required: false,
-              pattern: "^[0-9]{0,6}+$",
+              pattern: "^[0-9]{6}$",
               type: "tel",
               title: t("SV_ADDRESS_PINCODE_INVALID"),
             }}
-            minLength={6}
             maxLength={6}
           />
         </div>

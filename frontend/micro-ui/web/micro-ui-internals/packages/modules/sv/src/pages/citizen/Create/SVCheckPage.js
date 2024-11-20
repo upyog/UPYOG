@@ -25,10 +25,13 @@ import Timeline from "../../../components/Timeline";
   };
 
 
-  const SVCheckPage = ({ onSubmit, value = {} }) => {
+  const SVCheckPage = ({ onSubmit, editdata, value = {} }) => {
     const { t } = useTranslation();
     const {owner,businessDetails,address,bankdetails,documents,specialCategoryData} = value;
     const [agree, setAgree] = useState(false);
+
+
+
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
@@ -57,16 +60,55 @@ import Timeline from "../../../components/Timeline";
         Use the modified documents to fetch PDF details only if there are documents present.
         If the fetched PDF details contain files, filter them to include only those related to the "StreetVending" module and store them in applicationDocs array.*/
         
-    const storedData = JSON.parse(sessionStorage.getItem("CategoryDocument"));
+    
     let improvedDoc = [];
-    documents?.documents?.map(appDoc => { improvedDoc.push({...appDoc, module: "StreetVending"}) });
-    if (storedData && Array.isArray(storedData)) {
-      storedData.forEach(data => {
+    if (editdata?.documentDetails && Array.isArray(editdata?.documentDetails)) {
+      editdata?.documentDetails.map(data => {
           improvedDoc.push({...data, module: "StreetVending"});
       });
-  }
-    const { data: pdfDetails, isLoading:pdfLoading, error } = Digit.Hooks.useDocumentSearch( improvedDoc, { enabled: improvedDoc?.length > 0 ? true : false});
+    }
 
+    // Add documents from documents?.documents if editdata is empty
+    if (_.isEmpty(editdata)) {
+      if (documents?.documents) {
+        documents.documents.forEach(appDoc => {
+          const isDuplicate=improvedDoc.some(
+            doc => doc.documentType === appDoc.documentType
+          )
+          if(!isDuplicate){
+          improvedDoc.push({ ...appDoc, module: "StreetVending" });
+      }});
+      }
+    }
+
+    // Add documents from storedData if editdata is empty
+    if (_.isEmpty(editdata)) {
+      const storedData = JSON.parse(sessionStorage.getItem("CategoryDocument"));
+      if (storedData && Array.isArray(storedData)) {
+        storedData.forEach(data => {
+          const isDuplicate = improvedDoc.some(
+            doc => doc.documentType === data.documentType
+          );
+        if(!isDuplicate){
+          improvedDoc.push({ ...data, module: "StreetVending" });
+      }});
+      }
+    }
+
+  //   documents?.documents?.map(appDoc => { improvedDoc.push({...appDoc, module: "StreetVending"}) });
+  //   if (storedData && Array.isArray(storedData)) {
+  //     storedData.forEach(data => {
+  //         improvedDoc.push({...data, module: "StreetVending"});
+  //     });
+  // }
+
+
+
+
+
+
+
+    const { data: pdfDetails, isLoading:pdfLoading, error } = Digit.Hooks.useDocumentSearch( improvedDoc, { enabled: improvedDoc?.length > 0 ? true : false});
     let applicationDocs = []
     if (pdfDetails?.pdfFiles?.length > 0) {  
       pdfDetails?.pdfFiles?.map(pdfAppDoc => {

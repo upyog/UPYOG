@@ -3,25 +3,33 @@ import { FormStep, TextInput, CardLabel,Dropdown, UploadFile,Toast} from "@nudmc
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
 
-const SVSpecialCategory = ({ t, config, onSelect, userType, formData }) => {
-  console.log("formDataformData",formData);
+const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
-
-  const [ownerCategory, setownerCategory]=useState(formData?.specialCategoryData?.ownerCategory || "");
-  const [enrollmentId, setenrollmentId]=useState(formData?.specialCategoryData?.enrollmentId || "");
-  const [beneficiary, setbeneficiary] =useState(formData?.specialCategoryData?.beneficiary || "");
-  const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
+  const [ownerCategory, setownerCategory]=useState(convertToObject(editdata?.disabilityStatus)||formData?.specialCategoryData?.ownerCategory || "");
+  const [enrollmentId, setenrollmentId]=useState(editdata?.enrollmentId||formData?.specialCategoryData?.enrollmentId || "");
+  const [beneficiary, setbeneficiary] =useState(convertToObject(editdata?.benificiaryOfSocialSchemes)||formData?.specialCategoryData?.beneficiary || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "100%" };
-
   const [file, setFile] = useState(null);
-//   const filteredDocument = documents?.find((item) => item?.documentType?.includes(doc?.code));
-  const [uploadedFile, setUploadedFile] = useState(formData?.specialCategoryData?.uploadedFile||null);
+  const filteredDocument = editdata?.documentDetails?.find((item) => item?.documentType?.includes(ownerCategory?.code));
+  const [uploadedFile, setUploadedFile] = useState(filteredDocument?.fileStoreId||formData?.specialCategoryData?.uploadedFile||null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     setFile(file);
+  };
+
+  if(editdata?.applicationNo){
+    const Document=[
+      {
+        documentType: editdata?.disabilityStatus,
+        documentUid: filteredDocument?.fileStoreId,
+        fileStoreId: filteredDocument?.fileStoreId,
+      },
+    ]
+    sessionStorage.setItem("CategoryDocument", JSON.stringify(Document))
   };
 
 
@@ -45,6 +53,8 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData }) => {
     specialcategory.push({ i18nKey: `${special_category.name}`, code: `${special_category.code}`, value: `${special_category.name}` })
   })
 
+
+
   const { data: schemes } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Schemes" }],
     {
       select: (data) => {
@@ -56,6 +66,8 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData }) => {
   schemes && schemes.map((schemesdata) => {
     schemes_data.push({ i18nKey: `${schemesdata.name}`, code: `${schemesdata.code}`, value: `${schemesdata.name}` })
   })
+
+  
 
   useEffect(() => {
     if (file) {

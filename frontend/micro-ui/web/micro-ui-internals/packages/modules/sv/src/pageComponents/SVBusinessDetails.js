@@ -14,27 +14,28 @@ import ApplicationTable from "../components/inbox/ApplicationTable";
  * The goNext function validates input and passes the collected data to the parent component.
  */
 
-const SVBusinessDetails = ({ t, config, onSelect, userType, formData }) => {
+const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || "");
-  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || "");
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
+  const [vendingType, setvendingType] = useState(convertToObject(editdata?.vendingActivity)||formData?.businessDetails?.vendingType || "");
+  const [vendingZones, setvendingZones] = useState(convertToObject(editdata?.vendingZone)||formData?.businessDetails?.vendingZones || "");
   const [location, setlocation] = useState(formData?.businessDetails?.location || "");
-  const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || "");
-  const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || "");
-  const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || "");
+  const [areaRequired, setareaRequired] = useState(editdata?.vendingArea||formData?.businessDetails?.areaRequired || "");
+  const [nameOfAuthority, setnameOfAuthority] = useState(editdata?.localAuthorityName||formData?.businessDetails?.nameOfAuthority || "");
+  const [vendingLiscence, setvendingLiscence] = useState(editdata?.vendingLiscence||formData?.businessDetails?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
-  const [isSameForAll, setIsSameForAll] = useState(false); // Flag to check if same for all days 
+  const [isSameForAll, setIsSameForAll] = useState( editdata?.vendingOperationTimeDetails?.length===7?true:false); // Flag to check if same for all days 
   const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
     formData?.businessDetails?.daysOfOperation || [
-      { name: "Monday", isSelected: false, startTime: "", endTime: "" },
-      { name: "Tuesday", isSelected: false, startTime: "", endTime: "" },
-      { name: "Wednesday", isSelected: false, startTime: "", endTime: "" },
-      { name: "Thursday", isSelected: false, startTime: "", endTime: "" },
-      { name: "Friday", isSelected: false, startTime: "", endTime: "" },
-      { name: "Saturday", isSelected: false, startTime: "", endTime: "" },
-      { name: "Sunday", isSelected: false, startTime: "", endTime: "" },
+      { name: "Monday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[0]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[0]?.toTime||"" },
+      { name: "Tuesday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[1]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[1]?.toTime||"" },
+      { name: "Wednesday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[2]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[2]?.toTime||"" },
+      { name: "Thursday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[3]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[3]?.toTime||"" },
+      { name: "Friday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[4]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[4]?.toTime||"" },
+      { name: "Saturday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[5]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[5]?.toTime||"" },
+      { name: "Sunday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[6]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[6]?.toTime||"" },
     ]
   );
   const [backupDays, setBackupDays] = useState([...daysOfOperation]); // Backup array to store original days of operation
