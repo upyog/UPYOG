@@ -1,16 +1,21 @@
 package org.egov.pt.service;
 
 import java.text.Collator;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -26,10 +31,14 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.TypeOfRoad;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
+import org.egov.pt.models.user.UserDetailResponse;
+import org.egov.pt.models.user.UserSearchRequest;
+import org.egov.pt.repository.ServiceRequestRepository;
 import org.egov.pt.util.CommonUtils;
 import org.egov.pt.util.NoticeUtils;
 import org.egov.pt.util.PTConstants;
@@ -37,7 +46,9 @@ import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.AppealRequest;
 import org.egov.pt.web.contracts.NoticeRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -72,6 +83,24 @@ public class EnrichmentService {
 
 	@Autowired
 	private NoticeUtils noticeutil;
+
+	@Autowired
+	private ServiceRequestRepository serviceRequestRepository;
+	
+	@Value("${egov.user.host}")
+    private String userHost;
+
+    @Value("${egov.user.context.path}")
+    private String userContextPath;
+
+    @Value("${egov.user.create.path}")
+    private String userCreateEndpoint;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
+    @Value("${egov.user.update.path}")
+    private String userUpdateEndpoint;
 
 
 
@@ -144,8 +173,8 @@ public class EnrichmentService {
 			property.getDocuments().forEach(doc -> {
 				//Added BY Bikash For Empty doc issue
 				if(null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty()) {
-				doc.setId(UUID.randomUUID().toString());
-				doc.setStatus(Status.ACTIVE);
+					doc.setId(UUID.randomUUID().toString());
+					doc.setStatus(Status.ACTIVE);
 				}
 			});
 		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && !x.getId().isEmpty()).collect(Collectors.toList()));
@@ -167,7 +196,12 @@ public class EnrichmentService {
 
 		property.getOwners().forEach(owner -> {
 
+			UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
+			System.out.println("userDetailResponse::"+userDetailResponse);
+			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
+			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
 			owner.setOwnerInfoUuid(UUID.randomUUID().toString());
+			owner.setUuid(ownerMapFromSearch.entrySet().stream().map(Map.Entry::getKey).findFirst().orElse(UUID.randomUUID().toString()));
 			if (!CollectionUtils.isEmpty(owner.getDocuments()))
 				owner.getDocuments().forEach(doc -> {
 					System.out.println(doc.getDocumentUid());
@@ -175,7 +209,7 @@ public class EnrichmentService {
 						doc.setId(UUID.randomUUID().toString());
 						doc.setStatus(Status.ACTIVE);
 					}
-					
+
 				});
 			owner.setDocuments(owner.getDocuments().stream().filter(x->null!=x.getId() && !x.getId().isEmpty()).collect(Collectors.toList()));
 			owner.setStatus(Status.ACTIVE);
@@ -258,7 +292,7 @@ public class EnrichmentService {
 				}
 			});
 
-		if (!CollectionUtils.isEmpty(property.getUnits()))
+		if (!CollectionUtils.isEmpty(property.getUnits())) {
 			property.getUnits().forEach(unit -> {
 
 				if (unit.getId() == null) {
@@ -266,6 +300,17 @@ public class EnrichmentService {
 					unit.setActive(true);
 				}
 			});
+			
+			int activeCount = 0;
+			for(Unit u :property.getUnits()) {
+				if(u.getActive()) {
+					activeCount++;
+				}
+			}
+			if(activeCount==0) {
+				throw new CustomException("NO_ACTIVE_UNIT","Updated Proerty Doesnto have active units");
+			}
+		}
 
 		Institution institute = property.getInstitution();
 		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())
@@ -671,7 +716,7 @@ public class EnrichmentService {
 
 		enrichUuidsForNewUpdate(requestInfo, property);
 	}
-	
+
 	//Creating new Property for Mutation, Amalgamation, Bifurcation
 	public String getPorpertyIdForAmBiMt(RequestInfo request, Property property) {
 
@@ -710,7 +755,7 @@ public class EnrichmentService {
 
 		return pId;
 
-	
+
 	}
 
 	private void enrichPropertyForBifurcation(RequestInfo requestInfo, Property property) {
@@ -806,5 +851,75 @@ public class EnrichmentService {
 		appeal.setAcknowldgementNumber(ackNo);
 	}
 
+	private UserDetailResponse userExists(OwnerInfo owner, RequestInfo requestInfo) {
+
+		UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(owner.getTenantId(), requestInfo);
+		userSearchRequest.setMobileNumber(owner.getMobileNumber());
+		userSearchRequest.setUserType(owner.getType());
+		userSearchRequest.setName(owner.getName());
+
+		StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
+		return userCall(userSearchRequest,uri);
+	}
+
+	@SuppressWarnings("unchecked")
+	private UserDetailResponse userCall(Object userRequest, StringBuilder url) {
+
+		String dobFormat = null;
+		if (url.indexOf(userSearchEndpoint) != -1 || url.indexOf(userUpdateEndpoint) != -1)
+			dobFormat = "yyyy-MM-dd";
+		else if (url.indexOf(userCreateEndpoint) != -1)
+			dobFormat = "dd/MM/yyyy";
+		try {
+			Optional<Object> response = serviceRequestRepository.fetchResult(url, userRequest);
+
+			if(response.isPresent()) {
+				LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();
+				parseResponse(responseMap,dobFormat);
+				UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
+				return userDetailResponse;
+			}else {
+				return new UserDetailResponse();
+			}
+		}
+		// Which Exception to throw?
+		catch(IllegalArgumentException  e)
+		{
+			throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void parseResponse(LinkedHashMap<String, Object> responeMap,String dobFormat) {
+    	
+        List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>)responeMap.get("user");
+        String format1 = "dd-MM-yyyy HH:mm:ss";
+        
+        if(null != users) {
+        	
+            users.forEach( map -> {
+            	
+                        map.put("createdDate",dateTolong((String)map.get("createdDate"),format1));
+                        if((String)map.get("lastModifiedDate")!=null)
+                            map.put("lastModifiedDate",dateTolong((String)map.get("lastModifiedDate"),format1));
+                        if((String)map.get("dob")!=null)
+                            map.put("dob",dateTolong((String)map.get("dob"),dobFormat));
+                        if((String)map.get("pwdExpiryDate")!=null)
+                            map.put("pwdExpiryDate",dateTolong((String)map.get("pwdExpiryDate"),format1));
+                    }
+            );
+        }
+    }
+	
+	private Long dateTolong(String date,String format){
+        SimpleDateFormat f = new SimpleDateFormat(format);
+        Date d = null;
+        try {
+            d = f.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return  d.getTime();
+    }
 
 }
