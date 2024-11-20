@@ -85,13 +85,13 @@ const transformDocuments = (documents) => {
   // Retrieve and parse CategoryDocument from sessionStorage
   const categoryDocument = sessionStorage.getItem("CategoryDocument");
   const parsedCategoryDocument = categoryDocument ? JSON.parse(categoryDocument) : null;
-
+console.log("parsedCategoryDocumentparsedCategoryDocument",parsedCategoryDocument);
   // Transform existing documents
   const transformedDocs = documents.map(doc => ({
     applicationId: "",  // Populate as required
     documentType: doc.documentType,
-    fileStoreId: doc.fileStoreId,
-    documentDetailId: doc.documentUid, // Use documentUid as documentDetailId
+    fileStoreId: window.location.href.includes("edit")?doc?.fileStoreId?.fileStoreId:doc.fileStoreId,
+    documentDetailId: window.location.href.includes("edit")?doc?.fileStoreId?.fileStoreId:doc.documentUid, // Use documentUid as documentDetailId
     auditDetails: {
       createdBy: "",
       createdTime: 0,
@@ -144,6 +144,228 @@ const transformDocuments = (documents) => {
 
 
 export const svPayloadData = (data) =>{
+  let vendordetails = [];
+
+  const createVendorObject = (data) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: data?.owner?.units?.[0]?.vendorDateOfBirth,
+    ownerTypeCategory:data?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    emailId: data?.owner?.units?.[0]?.email,
+    fatherName: data?.owner?.units?.[0]?.fatherName,
+    gender: data?.owner?.units?.[0]?.gender?.code.charAt(0),
+    id: "",
+    mobileNo: data?.owner?.units?.[0]?.mobileNumber,
+    name: data?.owner?.units?.[0]?.vendorName,
+    relationshipType: "VENDOR",
+    vendorId: null
+  });
+
+  const createSpouseObject = (data) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: data?.owner?.units?.[0]?.spouseDateBirth,
+    ownerTypeCategory:data?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    emailId: "",
+    isInvolved: data?.owner?.spouseDependentChecked,
+    fatherName: "",
+    gender: "O",
+    id: "",
+    mobileNo: "",
+    name: data?.owner?.units?.[0]?.spouseName,
+    relationshipType: "SPOUSE",
+    vendorId: null
+  });
+
+  const createDependentObject = (data) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: data?.owner?.units?.[0]?.dependentDateBirth,
+    ownerTypeCategory:data?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    emailId: "",
+    isInvolved: data?.owner?.dependentNameChecked,
+    fatherName: "",
+    gender: data?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
+    id: "",
+    mobileNo: "",
+    name: data?.owner?.units?.[0]?.dependentName,
+    relationshipType: "DEPENDENT",
+    vendorId: null
+  });
+
+  // Helper function to check if a string is empty or undefined
+  const isEmpty = (str) => !str || str.trim() === '';
+
+  // Main logic
+  if (!isEmpty(data?.owner?.units?.[0]?.vendorName)) {
+    const spouseName = data?.owner?.units?.[0]?.spouseName;
+    const dependentName = data?.owner?.units?.[0]?.dependentName;
+
+    if (isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 1: Only vendor exists
+      vendordetails = [createVendorObject(data)];
+    } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 2: Both vendor and spouse exist
+      vendordetails = [
+        createVendorObject(data),
+        createSpouseObject(data)
+      ];
+    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+      // Case 3: All three exist (vendor, spouse, and dependent)
+      vendordetails = [
+        createVendorObject(data),
+        createSpouseObject(data),
+        createDependentObject(data)
+      ];
+    }
+  }
+
+  const daysOfOperation = data?.businessDetails?.daysOfOperation;
+  const vendingOperationTimeDetails = daysOfOperation
+  .filter(day => day.isSelected) // Filter only selected days
+  .map(day => ({
+    applicationId: "", // Add actual applicationId if available
+    auditDetails: {
+      createdBy: "", // Adjust these fields based on your data
+      createdTime: 0, 
+      lastModifiedBy: "",
+      lastModifiedTime: 0,
+    },
+    dayOfWeek: day.name.toUpperCase(),
+    fromTime: day.startTime,
+    toTime: day.endTime,
+    id: ""
+  }));
+
+  const formdata={
+    streetVendingDetail: {
+    addressDetails: [
+      {
+        addressId: "",
+        addressLine1: data?.address?.addressline1,
+        addressLine2: data?.address?.addressline2,
+        addressType: "",
+        city: data?.address?.city?.name,
+        cityCode: data?.address?.city?.code,
+        doorNo: "",
+        houseNo: data?.address?.houseNo,
+        landmark: data?.address?.landmark,
+        locality: data?.address?.locality?.i18nKey,
+        localityCode: data?.address?.locality?.code,
+        pincode: data?.address?.pincode,
+        streetName: "",
+        vendorId: ""
+      },
+      { // sending correspondence address here
+        addressId: "",
+        addressLine1: data?.correspondenceAddress?.caddressline1,
+        addressLine2: data?.correspondenceAddress?.caddressline2,
+        addressType: "",
+        city: data?.correspondenceAddress?.ccity?.name,
+        cityCode: data?.correspondenceAddress?.ccity?.code,
+        doorNo: "",
+        houseNo: data?.correspondenceAddress?.chouseNo,
+        landmark: data?.correspondenceAddress?.clandmark,
+        locality: data?.correspondenceAddress?.clocality?.i18nKey,
+        localityCode: data?.correspondenceAddress?.clocality?.code,
+        pincode: data?.correspondenceAddress?.cpincode,
+        streetName: "",
+        vendorId: "",
+        isAddressSame: data?.correspondenceAddress?.isAddressSame
+      }
+    ],
+    applicationDate: 0,
+    applicationId: "",
+    applicationNo: "",
+    applicationStatus: "",
+    approvalDate: 0,
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    bankDetail: {
+      accountHolderName: data?.bankdetails?.accountHolderName,
+      accountNumber: data?.bankdetails?.accountNumber,
+      applicationId: "",
+      bankBranchName: data?.bankdetails?.bankBranchName,
+      bankName: data?.bankdetails?.bankName,
+      id: "",
+      ifscCode: data?.bankdetails?.ifscCode,
+      refundStatus: "",
+      refundType: "",
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      },
+    },
+    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiary?.value,
+    enrollmentId:data?.specialCategoryData?.enrollmentId,
+    cartLatitude: 0,
+    cartLongitude: 0,
+    certificateNo: null,
+    disabilityStatus: data?.specialCategoryData?.ownerCategory?.code,
+    documentDetails: transformDocuments(data?.documents?.documents),
+    localAuthorityName: data?.businessDetails?.nameOfAuthority,
+    tenantId: data?.tenantId,
+    termsAndCondition: "Y",
+    tradeLicenseNo: data?.owner?.units?.[0]?.tradeNumber,
+    vendingActivity: data?.businessDetails?.vendingType?.code,
+    vendingArea: data?.businessDetails?.areaRequired||"0",
+    vendingLicenseCertificateId: "",
+    vendingOperationTimeDetails,
+    vendingZone:  data?.businessDetails?.vendingZones?.code,
+    vendorDetail: [
+      ...vendordetails
+    ],
+    workflow: {
+      action: "APPLY",
+      comments: "",
+      businessService: "street-vending",
+      moduleName: "sv-services",
+      businessService: "street-vending",
+      moduleName: "sv-services",
+      varificationDocuments: [
+        {
+          additionalDetails: {},
+          auditDetails: {
+            createdBy: "",
+            createdTime: 0,
+            lastModifiedBy: "",
+            lastModifiedTime: 0
+          },
+          documentType: "",
+          documentUid: "",
+          fileStoreId: "",
+          id: ""
+        }
+      ]
+    }
+  }
+  };
+  return formdata;
+}
+
+
+export const svUpdatePayload = (data) =>{
   let vendordetails = [];
 
   const createVendorObject = (data) => ({
@@ -287,9 +509,9 @@ export const svPayloadData = (data) =>{
       }
     ],
     applicationDate: 0,
-    applicationId: "",
-    applicationNo: "",
-    applicationStatus: "APPLIED",
+    applicationId: sessionStorage.getItem("ApplicationId"),
+    applicationNo: sessionStorage.getItem("vendingApplicationID"),
+    applicationStatus: "",
     approvalDate: 0,
     auditDetails: {
       createdBy: "",
@@ -334,7 +556,7 @@ export const svPayloadData = (data) =>{
       ...vendordetails
     ],
     workflow: {
-      action: "APPLY",
+      action: "RESUBMIT",
       comments: "",
       businessService: "street-vending",
       moduleName: "sv-services",

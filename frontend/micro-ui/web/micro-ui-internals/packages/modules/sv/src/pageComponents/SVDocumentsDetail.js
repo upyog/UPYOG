@@ -11,7 +11,7 @@ import Timeline from "../components/Timeline";
  * Error handling is implemented to inform users of any issues during file upload.
  */
 
-const SVDocumentsDetail = ({ t, config, onSelect, formData }) => {
+const SVDocumentsDetail = ({ t, config, onSelect, formData,editdata }) => {
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
@@ -53,6 +53,7 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData }) => {
               documents={documents}
               setCheckRequiredFields={setCheckRequiredFields}
               formData={formData}
+              editdata={editdata}
             />
           ))}
           {error && <Toast label={error} onClose={() => setError(null)} error />}
@@ -72,12 +73,20 @@ function SVDocuments({
   documents,
   formData,
   id,
+  editdata,
+
 }) {
   const filteredDocument = documents?.find((item) => item?.documentType?.includes(doc?.code));
+  const editdatas = editdata?.documentDetails?.find((item) => item?.documentType?.includes(doc?.code));
   const user = Digit.UserService.getUser().info;
-  
 
   const [selectedDocument, setSelectedDocument] = useState(
+    editdatas
+    ?{ ...editdatas, active: doc?.active === true, code: editdatas?.documentType, i18nKey: editdatas?.documentType}
+    : doc?.dropdownData?.length === 1
+    ? doc?.dropdownData[0]
+    : {}
+    ||
     filteredDocument
       ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType, i18nKey: filteredDocument?.documentType}
       : doc?.dropdownData?.length === 1
@@ -101,6 +110,12 @@ function SVDocuments({
   };
 
   useEffect(() => {
+    editdata?.documentDetails?.map((row, index) => {
+      row?.documentType.includes(doc?.code) ? setUploadedFile(row) : null;
+    } )
+  }, [editdata?.documentDetails])
+
+  useEffect(() => {
     if (file) {
       if (file.size >= 5242880) {
         setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
@@ -121,7 +136,24 @@ function SVDocuments({
     }
   }, [file, t]);
   useEffect(() => {
-    if (selectedDocument?.code) {
+    if (selectedDocument?.code && editdata?.applicationNo) {
+      setDocuments((prev) => {
+        const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
+        if (!uploadedFile) {
+          return filteredDocumentsByDocumentType;
+        }
+        const filteredDocumentsByFileStoreId = filteredDocumentsByDocumentType?.filter((item) => item?.fileStoreId !== uploadedFile);
+        return [
+          ...filteredDocumentsByFileStoreId,
+          {
+            documentType: selectedDocument?.code,
+            fileStoreId: uploadedFile,
+            documentUid: uploadedFile,
+          },
+        ];
+      });
+    }
+    else if (selectedDocument?.code) {
       setDocuments((prev) => {
         const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== selectedDocument?.code);
         if (!uploadedFile) {

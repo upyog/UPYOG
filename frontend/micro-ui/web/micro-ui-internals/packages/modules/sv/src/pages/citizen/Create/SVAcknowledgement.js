@@ -2,7 +2,7 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { svPayloadData } from "../../../utils";
+import { svPayloadData,svUpdatePayload } from "../../../utils";
 import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 
 /* This component, SVAcknowledgement, is responsible for displaying the acknowledgement 
@@ -53,16 +53,18 @@ const BannerPicker = (props) => {
 
 const SVAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
-  const mutation = Digit.Hooks.sv.useSvCreateApi(data.address?.city?.code); 
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const mutation = Digit.Hooks.sv.useSvCreateApi(tenantId,!window.location.href.includes("edit")); 
   const user = Digit.UserService.getUser().info;
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
-  console.log("mutations data :: ", mutation)
   useEffect(() => {
     try {
-      data.tenantId = data.address?.city?.code;
-      let formdata = svPayloadData(data)
+      data.tenantId = tenantId;
+      let formdata = window.location.href.includes("edit") ?
+      svUpdatePayload(data,t):
+      svPayloadData(data)
       mutation.mutate(formdata, {onSuccess});
     } catch (err) {
     }

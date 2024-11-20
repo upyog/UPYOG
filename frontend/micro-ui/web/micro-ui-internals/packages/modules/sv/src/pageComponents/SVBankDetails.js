@@ -24,14 +24,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
-const SVBankDetails = ({ t, config, onSelect, userType, formData }) => {
+const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata }) => {
   const [bankDetails, setBankDetails] = useState({
-    accountNumber: formData?.bankdetails?.accountNumber || "",
-    confirmAccountNumber: formData?.bankdetails?.confirmAccountNumber || "",
-    ifscCode: formData?.bankdetails?.ifscCode || "",
-    bankName: formData?.bankdetails?.bankName || "",
-    bankBranchName: formData?.bankdetails?.bankBranchName || "",
-    accountHolderName: formData?.bankdetails?.accountHolderName || "",
+    accountNumber: editdata?.bankDetail?.accountNumber||formData?.bankdetails?.accountNumber || "",
+    confirmAccountNumber: editdata?.bankDetail?.accountNumber||formData?.bankdetails?.confirmAccountNumber || "",
+    ifscCode: editdata?.bankDetail?.ifscCode||formData?.bankdetails?.ifscCode || "",
+    bankName: editdata?.bankDetail?.bankName||formData?.bankdetails?.bankName || "",
+    bankBranchName: editdata?.bankDetail?.bankBranchName||formData?.bankdetails?.bankBranchName || "",
+    accountHolderName: editdata?.bankDetail?.accountHolderName||formData?.bankdetails?.accountHolderName || "",
   });
   const [showToast, setShowToast] = useState(null);
 

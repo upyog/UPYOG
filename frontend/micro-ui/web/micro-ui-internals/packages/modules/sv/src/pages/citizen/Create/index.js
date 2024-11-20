@@ -15,7 +15,17 @@ const SVCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("SV_CREATES", {});
-  
+
+  const vendingApplicationNo=sessionStorage.getItem("vendingApplicationID")?sessionStorage.getItem("vendingApplicationID"):null;
+  const { data: vendingApplicationData } = Digit.Hooks.sv.useSvSearchApplication(
+    {
+      tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
+      filters: { applicationNumber: vendingApplicationNo },
+        enabled: vendingApplicationNo?true:false
+    },
+  );
+  const vendingData=vendingApplicationData?.SVDetail?.[0]
+
   // function used for traversing through form screens 
   const goNext = (skipStep, index, isAddMultiple, key) => {  
     let currentPath = pathname.split("/").pop(),
@@ -102,6 +112,9 @@ const SVCreate = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("SV_CREATES");
     sessionStorage.removeItem("CategoryDocument");
+    sessionStorage.removeItem("vendingApplicationID");
+    sessionStorage.removeItem("ApplicationId");
+    sessionStorage.removeItem("applicationStatus");
   };
   
   let commonFields = Config;
@@ -124,14 +137,14 @@ const SVCreate = ({ parentRoute }) => {
         const user = Digit.UserService.getUser().info.type;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} editdata={pathname.includes("apply") ? {} : vendingData} />
           </Route>
         );
       })}
 
       
       <Route path={`${match.path}/check`}>
-        <SVCheckPage onSubmit={svcreate} value={params} />
+        <SVCheckPage onSubmit={svcreate} value={params} editdata={pathname.includes("apply") ? {} : vendingData} />
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
         <SVAcknowledgement data={params} onSuccess={onSuccess} />

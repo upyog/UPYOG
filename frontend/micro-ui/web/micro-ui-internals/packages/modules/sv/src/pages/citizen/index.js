@@ -26,6 +26,7 @@ const App = () => {
         <AppContainer>
           <BackButton>Back</BackButton>
           <PrivateRoute path={`${path}/apply`} component={SVCreate} />
+          <PrivateRoute path={`${path}/edit`} component={SVCreate} />
           <PrivateRoute path={`${path}/my-applications`} component={MyApplication}></PrivateRoute>
           <PrivateRoute path={`${path}/application/:applicationNo/:tenantId`} component={SvApplicationDetails}></PrivateRoute>
         </AppContainer>

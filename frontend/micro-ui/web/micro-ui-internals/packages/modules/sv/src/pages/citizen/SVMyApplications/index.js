@@ -32,9 +32,7 @@ export const SVMyApplications = () => {
     t1 = 4;
   }
 
-  let initialFilters = !isNaN(parseInt(filter))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId };
+  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, mobileNumber:user?.mobileNumber };
 
   useEffect(() => {
     setFilters(initialFilters);
@@ -43,8 +41,6 @@ export const SVMyApplications = () => {
 
   const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters });
   const { SVDetail: applicationsList } = data || {};
-
-
 
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();

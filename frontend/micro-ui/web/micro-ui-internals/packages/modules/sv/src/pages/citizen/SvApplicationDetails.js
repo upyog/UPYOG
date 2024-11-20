@@ -36,6 +36,8 @@ const SvApplicationDetails = () => {
       filters: { applicationNumber: applicationNo },
     },
   ); 
+
+  console.log("tendnnsndnd",tenantId);
   const [billData, setBillData]=useState(null);
    const SVDetail = get(data, "SVDetail", []);
   let  streetVendingDetails = (SVDetail && SVDetail.length > 0 && SVDetail[0]) || {};

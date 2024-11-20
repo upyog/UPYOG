@@ -1,16 +1,32 @@
-import { CardLabel, FormStep, RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useState, useEffect } from "react";
+import { CardLabel, FormStep,RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber,Toast ,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState,useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
 import { calculateAge } from "../utils";
 
 
-const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
+const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
+  const convertToObject = (gender) => {
+    if (!gender) return null;
+    switch (gender.toUpperCase()) {
+      case "M":
+        return { i18nKey: "MALE", code: "MALE", value: "Male" };
+      case "F":
+        return { i18nKey: "FEMALE", code: "FEMALE", value: "Female" };
+      case "O":
+        return { i18nKey: "OTHERS", code: "OTHERS", value: "Others" };
+      default:
+        return null;
+    }
+  };
+  const Objectconvert = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const [vendorName, setvendorName] = useState(formData?.owner?.units?.vendorName || formData?.owner?.vendorName || "");
+  const [ownerTypeCategory, setownerTypeCategory] = useState(formData?.owner?.units?.ownerTypeCategory||formData?.owner?.ownerTypeCategory||"");
   const [vendorDateOfBirth, setvendorDateOfBirth] = useState(formData?.owner?.units?.vendorDateOfBirth || formData?.owner?.vendorDateOfBirth || "");
   const [gender, setgender] = useState(formData?.owner?.units?.gender || formData?.owner?.gender || "");
-  const [fatherName, setfatherName] = useState(formData?.owner?.units?.fatherName || formData?.owner?.fatherName || "");
+  const [fatherName, setfatherName] = useState(editdata?.vendorDetail?.[0]?.fatherName||formData?.owner?.units?.fatherName || formData?.owner?.fatherName || "");
   const [spouseName, setspouseName] = useState(formData?.owner?.units?.spouseName || formData?.owner?.spouseName || "");
   const [spousedependent, setspousedependent] = useState(false)
   const [mobileNumber, setmobileNumber] = useState(formData?.owner?.units?.mobileNumber || formData?.owner?.mobileNumber || "");
@@ -26,12 +42,13 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || false);
   const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
   const [showToast, setShowToast] = useState(null);
+  const { control } = useForm();
 
-  const [fields, setFeilds] = useState((formData?.owner && formData?.owner?.units) || [{ vendorName: user?.name || "", vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: user?.mobileNumber || "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email: user?.emailId || "", tradeNumber: "" }]);
+  const [fields, setFeilds] = useState((formData?.owner && formData?.owner?.units) || [{ vendorName: (editdata?.vendorDetail?.[0]?.name ||user?.name || ""),ownerTypeCategory:(Objectconvert(editdata?.vendorDetail?.[0]?.ownerTypeCategory)||""), vendorDateOfBirth:(editdata?.vendorDetail?.[0]?.dob|| ""), gender: convertToObject(editdata?.vendorDetail?.[0]?.gender)||"", fatherName: (editdata?.vendorDetail?.[0]?.fatherName||""), spouseName: (editdata?.vendorDetail?.[1]?.name||""), mobileNumber: (editdata?.vendorDetail?.[0]?.mobileNo||user?.mobileNumber || ""), spouseDateBirth: (editdata?.vendorDetail?.[1]?.dob|| ""), dependentName: (editdata?.vendorDetail?.[2]?.name||""), dependentDateBirth: (editdata?.vendorDetail?.[2]?.dob||""), dependentGender: (convertToObject(editdata?.vendorDetail?.[2]?.gender)||""), email:(editdata?.vendorDetail?.[0]?.emailId||user?.emailId || ""), tradeNumber:""}]);
 
   function handleAdd() {
     const values = [...fields];
-    values.push({ vendorName: "", vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email: "", tradeNumber: "" });
+    values.push({ vendorName: "", ownerTypeCategory:"",vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email:"", tradeNumber:""});
     setFeilds(values);
   }
   const validateEmail = (value) => {
@@ -54,6 +71,18 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
       setFeilds(values);
     }
   }
+
+  const { data: Category } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Category" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["StreetVending"]?.["Category"]
+        return formattedData;
+      },
+    });
+  let category_Options = [];
+  Category && Category.map((category) => {
+    category_Options.push({ i18nKey: `${category.name}`, code: `${category.code}`, value: `${category.name}` })
+  })
 
   /**
    * Single function to validate age for vendor, spouse, and dependent
@@ -133,6 +162,12 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
     let units = [...fields];
     units[i].gender = value;
     setgender(value);
+    setFeilds(units);
+  }
+  function selectownertype(i, value) {
+    let units = [...fields];
+    units[i].ownerTypeCategory = value;
+    setownerTypeCategory(value);
     setFeilds(units);
   }
   function selectfatherName(i, e) {
@@ -241,29 +276,29 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
   const onSkip = () => onSelect();
   return (
     <React.Fragment>
-      {<Timeline currentStep={1} />}
-      <FormStep
-        config={config}
-        onSelect={goNext}
-        onSkip={onSkip}
-        t={t}
-        isDisabled={!fields[0].vendorName || !fields[0].vendorDateOfBirth || !fields[0].gender || !fields[0].fatherName || (spouseDependentChecked && !fields[0].spouseName) || (dependentNameChecked && !fields[0].dependentName)}
-      >
-        {fields.map((field, index) => {
-          return (
-            <div key={`${field}-${index}`}>
-              <div
-                style={{
-                  border: "solid",
-                  borderRadius: "5px",
-                  padding: "10px",
-                  paddingTop: "20px",
-                  marginTop: "10px",
-                  borderColor: "#f3f3f3",
-                  background: "#FAFAFA",
-                  width: inputStyles,
-                }}
-              >
+      {<Timeline currentStep={1}/>}
+        <FormStep
+          config={config}
+          onSelect={goNext}
+          onSkip={onSkip}
+          t={t}
+          isDisabled={!fields[0].vendorName || !fields[0].ownerTypeCategory|| !fields[0].vendorDateOfBirth || !fields[0].gender || !fields[0].fatherName || (spouseDependentChecked && !fields[0].spouseName) || (dependentNameChecked && !fields[0].dependentName)}
+        >
+          {fields.map((field, index) => {
+            return (
+              <div key={`${field}-${index}`}>
+                <div
+                  style={{
+                    border: "solid",
+                    borderRadius: "5px",
+                    padding: "10px",
+                    paddingTop: "20px",
+                    marginTop: "10px",
+                    borderColor: "#f3f3f3",
+                    background: "#FAFAFA",
+                    width:inputStyles,
+                  }}
+                >
                 <CardLabel>{`${t("SV_VENDOR_NAME")}`} <span className="astericColor">*</span></CardLabel>
                 <LinkButton
                   label={
@@ -305,7 +340,26 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData }) => {
                     title: t("SV_ENTER_CORRECT_NAME"),
                   })}
                 />
-
+                <CardLabel>{`${t("SV_OWNER_CATEGORY")}`} <span className="astericColor">*</span></CardLabel>
+                <Controller
+                  control={control}
+                  name={`ownerTypeCategory-${index}`}
+                  defaultValue={ownerTypeCategory}
+                  rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                  render={(props) => (
+                    <Dropdown
+                      className="form-field"
+                      style={{width:"140%"}}
+                      selected={field?.ownerTypeCategory}
+                      select={(e) => selectownertype(index, e)}
+                      option={category_Options}
+                      optionKey="i18nKey"
+                      t={t}
+                      placeholder={"Select"}
+                    />
+                  )}
+                />
+                
                 <CardLabel>{`${t("SV_REGISTERED_MOB_NUMBER")}`} <span className="astericColor">*</span></CardLabel>
                 <MobileNumber
                   style={{ background: "#FAFAFA" }}
