@@ -12,7 +12,6 @@ const StreetVendingApplication = ({ application, buttonLabel }) => {
     sessionStorage.setItem("vendingApplicationID", application?.applicationNo);
     sessionStorage.setItem("ApplicationId",application?.applicationId);
     sessionStorage.setItem("applicationStatus",application?.applicationStatus);
-    sessionStorage.setItem("createdBy",application?.auditDetails?.createdBy);
     history.push(`/digit-ui/citizen/sv/edit`);
   };
 
