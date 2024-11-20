@@ -31,6 +31,7 @@ import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.TypeOfRoad;
+import org.egov.pt.models.Unit;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.models.enums.Status;
@@ -291,7 +292,7 @@ public class EnrichmentService {
 				}
 			});
 
-		if (!CollectionUtils.isEmpty(property.getUnits()))
+		if (!CollectionUtils.isEmpty(property.getUnits())) {
 			property.getUnits().forEach(unit -> {
 
 				if (unit.getId() == null) {
@@ -299,6 +300,17 @@ public class EnrichmentService {
 					unit.setActive(true);
 				}
 			});
+			
+			int activeCount = 0;
+			for(Unit u :property.getUnits()) {
+				if(u.getActive()) {
+					activeCount++;
+				}
+			}
+			if(activeCount==0) {
+				throw new CustomException("NO_ACTIVE_UNIT","Updated Proerty Doesnto have active units");
+			}
+		}
 
 		Institution institute = property.getInstitution();
 		if (!ObjectUtils.isEmpty(institute) && null == institute.getId())
