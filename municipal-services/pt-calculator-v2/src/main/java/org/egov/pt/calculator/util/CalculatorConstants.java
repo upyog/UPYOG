@@ -66,6 +66,8 @@ public class CalculatorConstants {
 	
 	public static final String PT_MODEOFPAYMENT_REBATE="PT_MODEOFPAYMENT_REBATE";
 	
+	public static final String PT_VACANT_LAND_EXEMPTION="PT_VACANT_LAND_EXEMPTION";
+	
 	public static final String PT_MANDATORY_PAYMENT="PT_MANDATORY_PAYMENT";
 	
 	public static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";

@@ -73,6 +73,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYME
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_PAST_DUE_PENALTY;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_VACANT_LAND_EXEMPTION;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -515,7 +516,7 @@ public class EstimationService {
 				usageExemption = usageExemption
 						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
 
-				unit.setTaxamount(currentUnitTax);
+				unit.setTaxamount(currentUnitTax.setScale(2, 2));
 				unitList.add(unit);
 				i++;
 			}
@@ -543,7 +544,7 @@ public class EstimationService {
 
 			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltAmount, propertyBasedExemptionMasterMap, detail,null);
 
-			vctland.setVacantlandamount(unbuiltAmount);
+			vctland.setVacantlandamount(unbuiltAmount.setScale(2, 2));
 			vctland.setVacantlandtype(detail.getVacantusagecategory());
 			vacantland.add(vctland);
 
@@ -555,16 +556,13 @@ public class EstimationService {
 					String vacantusagecategory = vacantusagecategoryMasterData[1];
 					if(vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
 					{
-						taxAmt = taxAmt.add(unbuiltAmount);
 						iscommercial=true;
 					}
 				}
-				else 
-					taxAmt = taxAmt.add(unbuiltAmount);
 
 			}
-			else
-				taxAmt = taxAmt.add(unbuiltAmount);
+
+			taxAmt = taxAmt.add(unbuiltAmount);
 
 			//To Be Reviewd The Function
 			commercial.add(iscommercial);
@@ -1119,26 +1117,41 @@ public class EstimationService {
 		BigDecimal modeofpayment_rebate=BigDecimal.ZERO;
 		BigDecimal updatedtaxammount=BigDecimal.ZERO;
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
+		BigDecimal taxAfterVacExemption=BigDecimal.ZERO;
+		BigDecimal totalAmount=BigDecimal.ZERO;
+
+		if(!commercial.isEmpty() && !vacantland.isEmpty())
+			if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
+			{
+				taxAfterVacExemption=vacantland.get(0).getVacantlandamount().setScale(2, 2);
+				totalAmount=totalAmount.subtract(taxAfterVacExemption);
+				estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption.negate()).build());
+				taxAfterVacExemption=taxAmt.subtract(taxAfterVacExemption);
+			}
+		
+		if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0)
+			taxAfterVacExemption=taxAmt;
+
 		if(detail.getExemption().isEmpty() || detail.getExemption().equalsIgnoreCase(null))
 		{
 
 			switch (criteria.getModeOfPayment()) {
 			case "QUARTERLY":
-				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
+				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
 				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
-				updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 				break;
 
 			case "HALFYEARLY":
-				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
+				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
 				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
-				updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 				break;
 
 			case "YEARLY":
-				modeofpayment_rebate=taxAmt.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
+				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
 				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
-				updatedtaxammount=taxAmt.add(modeofpayment_rebate);
+				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 				break;
 
 			default:
@@ -1168,7 +1181,7 @@ public class EstimationService {
 		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( updatedPenalty).build());
 
-		BigDecimal totalAmount = taxAmt.add(updatedPenalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
+		totalAmount = totalAmount.add(taxAmt).add(updatedPenalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
 		if(units.size()==1)
@@ -1272,11 +1285,11 @@ public class EstimationService {
 			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
 			pastduePenalty=pastduePenalty.setScale(2,2);
-					//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
-				estimates.add(TaxHeadEstimate.builder()
-						.taxHeadCode(PT_PAST_DUE_PENALTY)
-						.estimateAmount(pastduePenalty).build());
-				
+			//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
+			estimates.add(TaxHeadEstimate.builder()
+					.taxHeadCode(PT_PAST_DUE_PENALTY)
+					.estimateAmount(pastduePenalty).build());
+
 			//}
 			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
 		}
