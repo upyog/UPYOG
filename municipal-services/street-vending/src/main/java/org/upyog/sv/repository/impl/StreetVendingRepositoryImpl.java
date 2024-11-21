@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,8 +16,9 @@ import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.repository.querybuilder.StreetVendingQueryBuilder;
 import org.upyog.sv.repository.rowmapper.StreetVendingApplicationRowMapper;
 import org.upyog.sv.repository.rowmapper.StreetVendingDraftApplicationRowMapper;
-import org.upyog.sv.service.EnrichmentService;
+import org.upyog.sv.web.models.PersisterWrapper;
 import org.upyog.sv.web.models.StreetVendingDetail;
+import org.upyog.sv.web.models.StreetVendingDraftDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 
@@ -55,6 +57,11 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		log.info("Saving street vending booking request data for booking no : "
 				+ streetVendingRequest.getStreetVendingDetail().getApplicationNo());
 		producer.push(vendingConfiguration.getStreetVendingApplicationSaveTopic(), streetVendingRequest);
+		String draftId = streetVendingRequest.getStreetVendingDetail().getDraftId();
+		if(StringUtils.isNotBlank(draftId)) {
+			log.info("Deleting draft entry for draft id: " + draftId);
+			deleteDraftApplication(streetVendingRequest);
+		}
 	}
 
 	@Override
@@ -91,11 +98,10 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 
 	@Override
 	public void saveDraftApplication(StreetVendingRequest vendingRequest) {
-        String sql = "INSERT INTO eg_sv_street_vending_draft_detail(\n"
+        /*String sql = "INSERT INTO eg_sv_street_vending_draft_detail(\n"
         		+ "	draft_id, tenant_id, user_uuid, draft_application_data, createdby, lastmodifiedby, createdtime, lastmodifiedtime)\n"
         		+ "	VALUES (?, ?, ?, cast(? as jsonb), ?, ?, ?, ?)";
         try {
-            String draftApplicationData = objectMapper.writeValueAsString(vendingRequest.getStreetVendingDetail());
             
             int result = jdbcTemplate.update(sql, 
             		vendingRequest.getStreetVendingDetail().getDraftId(),
@@ -109,7 +115,10 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
             log.info("result : " + result);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to convert application details to JSON", e);
-        }
+        }*/
+		StreetVendingDraftDetail streetVendingDraftDetail = convertToDraftDetailsObject(vendingRequest);
+		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(streetVendingDraftDetail);
+		producer.push(vendingConfiguration.getStreetVendingDraftApplicationSaveTopic(), persisterWrapper);
     }
 
 	@Override
@@ -124,5 +133,40 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		log.info("Final query: " + query);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), draftApplicationRowMapper);
 	}
+
+	@Override
+	public void updateDraftApplication(StreetVendingRequest vendingRequest) {
+		StreetVendingDraftDetail streetVendingDraftDetail = convertToDraftDetailsObject(vendingRequest);
+		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(streetVendingDraftDetail);
+		producer.push(vendingConfiguration.getStreetVendingDraftApplicationUpdateTopic(), persisterWrapper);
+		
+	}
+	
+	@Override
+	public void deleteDraftApplication(StreetVendingRequest vendingRequest) {
+		StreetVendingDraftDetail streetVendingDraftDetail = convertToDraftDetailsObject(vendingRequest);
+		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(streetVendingDraftDetail);
+		producer.push(vendingConfiguration.getStreetVendingDraftApplicationDeleteTopic(), persisterWrapper);
+		
+	}
+	
+	private StreetVendingDraftDetail convertToDraftDetailsObject(StreetVendingRequest vendingRequest) {
+		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
+		String draftApplicationData = null;
+		try {
+			draftApplicationData = objectMapper.writeValueAsString(vendingRequest.getStreetVendingDetail());
+		} catch (JsonProcessingException e) {
+			log.error("Serialization error for StreetVendingDraftDetail with ID: {} and Tenant: {}",
+					vendingRequest.getStreetVendingDetail().getDraftId(),
+					vendingRequest.getStreetVendingDetail().getTenantId(), e);
+
+		}
+		StreetVendingDraftDetail streetVendingDraftDetail = StreetVendingDraftDetail.builder()
+				.draftId(streetVendingDetail.getDraftId()).tenantId(streetVendingDetail.getTenantId())
+				.userUuid(vendingRequest.getRequestInfo().getUserInfo().getUuid())
+				.draftApplicationData(draftApplicationData).auditDetails(streetVendingDetail.getAuditDetails()).build();
+		return streetVendingDraftDetail;
+	}
+	
 
 }
