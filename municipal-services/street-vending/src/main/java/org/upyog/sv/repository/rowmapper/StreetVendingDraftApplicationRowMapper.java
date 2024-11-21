@@ -14,8 +14,10 @@ import org.upyog.sv.web.models.StreetVendingDetail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class StreetVendingDraftApplicationRowMapper implements ResultSetExtractor<List<StreetVendingDetail>> {
 
 	@Autowired
@@ -25,11 +27,7 @@ public class StreetVendingDraftApplicationRowMapper implements ResultSetExtracto
 
 		List<StreetVendingDetail> applicationList = new ArrayList<StreetVendingDetail>();
 		while (rs.next()) {
-			/**
-			 * SELECT draft_id, tenant_id, user_uuid, draft_application_data, createdby,
-			 * lastmodifiedby, createdtime, lastmodifiedtime FROM
-			 * eg_sv_street_vending_draft_detail;
-			 */
+			
 			String draftId = rs.getString("draft_id");
 			String draftApplicationData = rs.getString("draft_application_data");
 
@@ -37,11 +35,9 @@ public class StreetVendingDraftApplicationRowMapper implements ResultSetExtracto
 			try {
 				streetVendingDetail = objectMapper.readValue(draftApplicationData, StreetVendingDetail.class);
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("JsonMappingException : Error coccure while parsing draft applicagtion for draftid {}", draftId, e);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("JsonProcessingException : Error coccure while parsing draft applicagtion for draftid {}", draftId, e);
 			}
 			;
 			applicationList.add(streetVendingDetail);
