@@ -37,6 +37,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.tl.config.TLConfiguration;
+import org.egov.tl.producer.Producer;
 import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
 import org.egov.tl.service.notification.EditNotificationService;
@@ -153,6 +154,9 @@ public class TradeLicenseService {
     
     @Autowired
     private TLConstants constants;
+    
+    @Autowired
+    private Producer producer; 
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
@@ -282,7 +286,8 @@ public class TradeLicenseService {
         boolean isInterServiceCall = isInterServiceCall(headers);
         tlValidator.validateSearch(requestInfo,criteria,serviceFromPath, isInterServiceCall);
         criteria.setBusinessService(serviceFromPath);
-        enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria);
+        List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+        enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria,rolesWithinTenant);
         if(criteria.getRenewalPending()!=null && criteria.getRenewalPending()== true ) {
         	
         	String currentFinancialYear = "";
@@ -354,15 +359,19 @@ public class TradeLicenseService {
 			// fetch all ROLES within tenant
 			List<String> rolesWithinTenant = getRolesWithinTenant(criteria.getTenantId(), requestInfo.getUserInfo().getRoles());
 			
-			if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
-				tempLicenses = tempLicenses.stream().filter(license -> 
-				!StringUtils.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
-			.collect(Collectors.toList());
-			}
-			if(rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
-				tempLicenses = tempLicenses.stream().filter(license -> 
-				!StringUtils.equalsAnyIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORPAYMENT))
-			.collect(Collectors.toList());
+			if (!(rolesWithinTenant.contains(TLConstants.ROLE_CODE_SUPERVISOR)
+					|| rolesWithinTenant.contains(TLConstants.ROLE_CODE_SECRETARY))) {
+				if (rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_VERIFIER)) {
+					tempLicenses = tempLicenses.stream().filter(license -> !StringUtils
+							.equalsIgnoreCase(license.getStatus(), TLConstants.STATUS_PENDINGFORAPPROVAL))
+							.collect(Collectors.toList());
+				}
+				if (rolesWithinTenant.contains(TLConstants.ROLE_CODE_TL_APPROVER)) {
+					tempLicenses = tempLicenses.stream()
+							.filter(license -> !StringUtils.equalsAnyIgnoreCase(license.getStatus(),
+									TLConstants.STATUS_PENDINGFORVERIFICATION, TLConstants.STATUS_PENDINGFORPAYMENT))
+							.collect(Collectors.toList());
+				} 
 			}
 			
 //			// remove INITIATED applications for EMPLOYEE
@@ -413,7 +422,7 @@ public class TradeLicenseService {
 
 
 
-	private List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
 
 		List<String> roleCodes = roles.stream()
 				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
@@ -519,7 +528,7 @@ public class TradeLicenseService {
 	public int countLicenses(TradeLicenseSearchCriteria criteria, RequestInfo requestInfo, String serviceFromPath, HttpHeaders headers){
 		
 		criteria.setBusinessService(serviceFromPath);
-    	enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria);
+    	enrichmentService.enrichSearchCriteriaWithAccountId(requestInfo,criteria, null);
 
 
     	int licenseCount = repository.getLicenseCount(criteria);
@@ -911,46 +920,79 @@ public class TradeLicenseService {
 
 	private void createAndUploadPDF(TradeLicenseRequest tradeLicenseRequest) {
 		
+		
 		if (!CollectionUtils.isEmpty(tradeLicenseRequest.getLicenses())) {
 			tradeLicenseRequest.getLicenses().stream().forEach(license -> {
 
-				Thread pdfGenerationThread = new Thread(() -> {
-
-					// for NEW TL
-					if ((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
-							&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
-									TLConstants.APPLICATION_TYPE_NEW)
-							&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for RENEWAL TL
-							(StringUtils.equalsIgnoreCase(license.getBusinessService(),
-									TLConstants.businessService_NewTL)
-									&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
-											TLConstants.APPLICATION_TYPE_RENEWAL)
-									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
-
-						// validate trade license
-						validateTradeLicenseCertificateGeneration(license);
-
-						// create pdf
-						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
-
-						//upload pdf
-						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
-								tradeLicenseRequest.getRequestInfo());
-						try {
-							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
-									tradeLicenseRequest.getRequestInfo());
-						} catch (IOException e) {
-							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
-									"Upload Attachment failed." + e.getMessage());
-						}
-					}
-
-				});
-
-				pdfGenerationThread.start();
+				// for NEW TL
+				if ((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+						&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+								TLConstants.APPLICATION_TYPE_NEW)
+						&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for
+																												// RENEWAL
+																												// TL
+						(StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+								&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+										TLConstants.APPLICATION_TYPE_RENEWAL)
+								&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+					
+					
+					TradeLicenseRequest tradeLicenseRequest1 = TradeLicenseRequest.builder()
+							.requestInfo(tradeLicenseRequest.getRequestInfo())
+							.licenses(Collections.singletonList(license))
+							.build();
+					
+					producer.push("save-tl-certificate", tradeLicenseRequest1);
+					
+				}
 
 			});
 		}
+		
+		
+		
+		
+		
+//		if (!CollectionUtils.isEmpty(tradeLicenseRequest.getLicenses())) {
+//			tradeLicenseRequest.getLicenses().stream().forEach(license -> {
+//
+//				Thread pdfGenerationThread = new Thread(() -> {
+//
+//					// for NEW TL
+//					if ((StringUtils.equalsIgnoreCase(license.getBusinessService(), TLConstants.businessService_NewTL)
+//							&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+//									TLConstants.APPLICATION_TYPE_NEW)
+//							&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE)) || // for RENEWAL TL
+//							(StringUtils.equalsIgnoreCase(license.getBusinessService(),
+//									TLConstants.businessService_NewTL)
+//									&& StringUtils.equalsIgnoreCase(license.getApplicationType().name(),
+//											TLConstants.APPLICATION_TYPE_RENEWAL)
+//									&& StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_APPROVE))) {
+//
+//						// validate trade license
+//						validateTradeLicenseCertificateGeneration(license, tradeLicenseRequest.getRequestInfo());
+//
+//						// create pdf
+//						Resource resource = createNoSavePDF(license, tradeLicenseRequest.getRequestInfo());
+//
+//						//upload pdf
+//						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+//								tradeLicenseRequest.getRequestInfo());
+//						try {
+//							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+//									tradeLicenseRequest.getRequestInfo());
+//						} catch (IOException e) {
+//							throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+//									"Upload Attachment failed." + e.getMessage());
+//						}
+//					}
+//
+//				});
+//
+//				pdfGenerationThread.start();
+//
+//			});
+//		}
 		
 		
 	}
@@ -1169,7 +1211,7 @@ public class TradeLicenseService {
 	}
 
 
-	private void validateTradeLicenseCertificateGeneration(TradeLicense tradeLicense) {
+	public void validateTradeLicenseCertificateGeneration(TradeLicense tradeLicense, RequestInfo requestInfo) {
 		
 		if (StringUtils.isEmpty(tradeLicense.getLicenseNumber())
 			    && StringUtils.isEmpty(tradeLicense.getApplicationNumber())
@@ -1188,7 +1230,8 @@ public class TradeLicenseService {
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantName").asText()))
 			    && (tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber") == null 
 			        || StringUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getAdditionalDetail().get("applicantMobileNumber").asText()))
-			    && StringUtils.isEmpty(tradeLicense.getBusinessService())) {
+			    && StringUtils.isEmpty(tradeLicense.getBusinessService())
+			    && null == requestInfo && null == requestInfo.getUserInfo() && null == requestInfo.getUserInfo().getUserName()) {
 			    
 			    throw new CustomException("NULL_APPLICATION_NUMBER","PDF can't be generated with null values for application number: "+tradeLicense.getApplicationNumber());
 			}
@@ -1198,7 +1241,7 @@ public class TradeLicenseService {
 
 
 
-	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
+	public DmsRequest generateDmsRequestByTradeLicense(Resource resource, TradeLicense tradeLicense,
 			RequestInfo requestInfo) {
 
 //		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
@@ -1550,7 +1593,7 @@ public class TradeLicenseService {
 		// fetch data
 		try {
 			if(null != tradeLicenseActionRequest) {
-				statusList = tlRepository.getStatusOfAllApplications(tradeLicenseActionRequest.getTenantId());
+				statusList = tlRepository.getTypesOfAllApplications(tradeLicenseActionRequest.getIsHistoryCall(),tradeLicenseActionRequest.getTenantId());
 			}
 			if (!CollectionUtils.isEmpty(statusList)) {
 				tradeLicenseActionResponse
