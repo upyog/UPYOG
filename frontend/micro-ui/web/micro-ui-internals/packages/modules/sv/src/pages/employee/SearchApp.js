@@ -45,16 +45,16 @@ const SearchApp = ({path}) => {
     }
 
     // Hook to fetch data for searchapplication based on the filters 
-    const { isLoading, isSuccess, isError, error, data: {SVDetail: searchResult} = {} } = Digit.Hooks.sv.useSvSearchApplication(
+    const { isLoading, isSuccess, isError, error, data: {SVDetail: searchResult, count: count} = {} } = Digit.Hooks.sv.useSvSearchApplication(
         { 
           tenantId,
           filters: payload
         },
        config,
       );
-
+    
     return <React.Fragment>
-        <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={isSuccess && !isLoading ? (searchResult.length>0? searchResult : { display: "ES_COMMON_NO_DATA" } ):""} count={""} /> 
+        <SVSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={isSuccess && !isLoading ? (searchResult.length>0? searchResult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (
         <Toast
           error={showToast.error}

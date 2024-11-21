@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 import SVDesktopInbox from "../../components/SVDesktopInbox";
-// import MobileInbox from "../../components/MobileInbox";
+import MobileInbox from "../../components/MobileInbox";
 
 const Inbox = ({
   useNewInboxAPI,
@@ -92,29 +92,28 @@ const Inbox = ({
   };
 
 
-  // if (rest?.data?.length !== null) {
-  //   if (isMobile) {
-  //     return (
-  //       <MobileInbox
-  //         data={data}
-  //         isLoading={hookLoading}
-  //         isSearch={!isInbox}
-  //         searchFields={searchFields}
-  //         onFilterChange={handleFilterChange}
-  //         onSearch={handleFilterChange}
-  //         onSort={handleSort}
-  //         parentRoute={parentRoute}
-  //         searchParams={searchParams}
-  //         sortParams={sortParams}
-  //         linkPrefix={`${parentRoute}/application-details/`}
-  //         tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)["PTR"]}
-  //         filterComponent={filterComponent}
-  //         EmptyResultInboxComp={EmptyResultInboxComp}
-  //         useNewInboxAPI={useNewInboxAPI}
-  //       />
-  //       // <div></div>
-  //     );
-  //   } else {
+  if (rest?.data?.length !== null) {
+    if (isMobile) {
+      return (
+        <MobileInbox
+          data={data}
+          isLoading={hookLoading}
+          isSearch={!isInbox}
+          searchFields={searchFields}
+          onFilterChange={handleFilterChange}
+          onSearch={handleFilterChange}
+          onSort={handleSort}
+          parentRoute={parentRoute}
+          searchParams={searchParams}
+          sortParams={sortParams}
+          linkPrefix={`${parentRoute}/application-details/`}
+          tableConfig={rest?.tableConfig ? rest?.tableConfig:TableConfig(t)["SV"]}
+          filterComponent={filterComponent}
+          EmptyResultInboxComp={EmptyResultInboxComp}
+          useNewInboxAPI={useNewInboxAPI}
+        />
+      );
+    } else {
       return (
         <div>
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
@@ -146,8 +145,8 @@ const Inbox = ({
           />
         </div>
       );
-  //   }
-  // }
+    }
+  }
 };
 
 export default Inbox;

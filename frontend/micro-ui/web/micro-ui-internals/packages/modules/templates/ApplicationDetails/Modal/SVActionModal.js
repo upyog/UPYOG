@@ -51,14 +51,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [error, setError] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
-
-
-
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
 
   function selectFile(e) {
+    setIsUploading(true);
     setFile(e.target.files[0]);
   }
 
@@ -70,7 +68,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       if (file) {
         if (file.size >= 5242880) {
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-          setIsUploading(true);
         } else {
           try {
             const response = await Digit.UploadServices.Filestorage("StreetVending", file, tenantId);
