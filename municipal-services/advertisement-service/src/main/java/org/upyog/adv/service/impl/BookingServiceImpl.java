@@ -11,6 +11,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.repository.BookingRepository;
@@ -46,15 +47,15 @@ public class BookingServiceImpl implements BookingService {
 
 	@Autowired
 	private EnrichmentService enrichmentService;
-	
+
 	@Autowired
 	private DemandService demandService;
-	
-	
+
+	@Autowired
+	private BookingConfiguration config;
 
 //		@Autowired
 //		EncryptionService encryptionService;
-	
 
 	@Override
 	public BookingDetail createBooking(@Valid BookingRequest bookingRequest) {
@@ -85,56 +86,54 @@ public class BookingServiceImpl implements BookingService {
 		return bookingRequest.getBookingApplication();
 	}
 
-@Override
-public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria advertisementSearchCriteria, RequestInfo info) {
+	@Override
+	public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria advertisementSearchCriteria,
+			RequestInfo info) {
 //	BookingValidator.validateSearch(info, advertisementSearchCriteria);
-	List<BookingDetail> bookingDetails = new ArrayList<BookingDetail>();
+		List<BookingDetail> bookingDetails = new ArrayList<BookingDetail>();
 //	advertisementSearchCriteria  = addCreatedByMeToCriteria(advertisementSearchCriteria, info);
-	
-	log.info("loading data based on criteria" + advertisementSearchCriteria);
-	
-	if(advertisementSearchCriteria.getMobileNumber() != null){
-	
-	ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantMobileNo(advertisementSearchCriteria.getMobileNumber())
-			.build();
-	BookingDetail bookingDetail = BookingDetail.builder().applicantDetail(applicantDetail)
-			.build();
-	BookingRequest bookingRequest = BookingRequest.builder()
-			.bookingApplication(bookingDetail).requestInfo(info).build();
-	
+
+		log.info("loading data based on criteria" + advertisementSearchCriteria);
+
+		if (advertisementSearchCriteria.getMobileNumber() != null) {
+
+			ApplicantDetail applicantDetail = ApplicantDetail.builder()
+					.applicantMobileNo(advertisementSearchCriteria.getMobileNumber()).build();
+			BookingDetail bookingDetail = BookingDetail.builder().applicantDetail(applicantDetail).build();
+			BookingRequest bookingRequest = BookingRequest.builder().bookingApplication(bookingDetail).requestInfo(info)
+					.build();
+
 //	BookingDetail = encryptionService.encryptObject(bookingRequest);
-	
-	advertisementSearchCriteria.setMobileNumber(bookingDetail.getApplicantDetail().getApplicantMobileNo());
-	
-	log.info("loading data based on criteria after encrypting mobile no : " + advertisementSearchCriteria);
-	
-	}
-	
-	bookingDetails = bookingRepository.getBookingDetails(advertisementSearchCriteria);
-	if(CollectionUtils.isEmpty(bookingDetails)) {
-		return bookingDetails;
-	}
+
+			advertisementSearchCriteria.setMobileNumber(bookingDetail.getApplicantDetail().getApplicantMobileNo());
+
+			log.info("loading data based on criteria after encrypting mobile no : " + advertisementSearchCriteria);
+
+		}
+
+		bookingDetails = bookingRepository.getBookingDetails(advertisementSearchCriteria);
+		if (CollectionUtils.isEmpty(bookingDetails)) {
+			return bookingDetails;
+		}
 //	bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
-	return bookingDetails;
-}
+		return bookingDetails;
+	}
 
 	@Override
-	public Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria,
-			@NonNull RequestInfo requestInfo) {
+	public Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria, @NonNull RequestInfo requestInfo) {
 		criteria.setCountCall(true);
 		Integer bookingCount = 0;
-		
-	//	criteria  = addCreatedByMeToCriteria(criteria, requestInfo);
+
+		// criteria = addCreatedByMeToCriteria(criteria, requestInfo);
 		bookingCount = bookingRepository.getBookingCount(criteria);
-		
+
 		return bookingCount;
 	}
-		
 
 	@Override
 	public List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
-			AdvertisementSlotSearchCriteria criteria) {
+			AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
 
 		List<AdvertisementSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getAdvertisementSlotAvailability(criteria);
@@ -143,9 +142,19 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 		List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse = convertToAdvertisementAvailabilityResponse(
 				criteria, availabiltityDetails);
 
+		if (criteria.getIsTimerRequired()) {
+			bookingRepository.insertBookingIdForTimer(criteria, requestInfo);
+			long timerValue = config.getPaymentTimer();
+			availabiltityDetailsResponse.get(0).setTimerValue(timerValue);
+
+		}
 		log.info("Availabiltity details response after updating status :" + availabiltityDetailsResponse);
+
 		return availabiltityDetailsResponse;
 	}
+	
+
+	
 
 	private List<AdvertisementSlotAvailabilityDetail> convertToAdvertisementAvailabilityResponse(
 			AdvertisementSlotSearchCriteria criteria, List<AdvertisementSlotAvailabilityDetail> availabiltityDetails) {
@@ -177,7 +186,9 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 		availabiltityDetailsResponse.forEach(detail -> {
 			if (availabiltityDetails.contains(detail)) {
 				detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+				detail.setBookingId(criteria.getBookingId());			
 			}
+
 		});
 
 		return availabiltityDetailsResponse;
@@ -192,11 +203,13 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 				.build();
 		return availabiltityDetail;
 	}
-	
-	//This method updates booking from the booking number, searches the booking num and get its details, if payment detail is not null the it sets the receipt number and payment date
+
+	// This method updates booking from the booking number, searches the booking num
+	// and get its details, if payment detail is not null the it sets the receipt
+	// number and payment date
 	@Override
-	public BookingDetail updateBooking(BookingRequest advertisementBookingRequest,
-			PaymentDetail paymentDetail, BookingStatusEnum status) {
+	public BookingDetail updateBooking(BookingRequest advertisementBookingRequest, PaymentDetail paymentDetail,
+			BookingStatusEnum status) {
 		String bookingNo = advertisementBookingRequest.getBookingApplication().getBookingNo();
 		log.info("Updating booking for booking no : " + bookingNo);
 		if (bookingNo == null) {
@@ -209,7 +222,7 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 			throw new CustomException("INVALID_BOOKING_CODE",
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
-		
+
 //		String tenantId = bookingDetails.get(0).getTenantId();		
 //		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
 //		bookingValidator.validateUpdate(advertisementBookingRequest.getBookingApplication(), mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
@@ -217,8 +230,9 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 		convertBookingRequest(advertisementBookingRequest, bookingDetails.get(0));
 
 		enrichmentService.enrichUpdateBookingRequest(advertisementBookingRequest, status);
-		
-		//Update payment date and receipt no on successful payment when payment detail object is received
+
+		// Update payment date and receipt no on successful payment when payment detail
+		// object is received
 		if (paymentDetail != null) {
 			advertisementBookingRequest.getBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			advertisementBookingRequest.getBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
@@ -229,9 +243,9 @@ public List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria adverti
 		return advertisementBookingRequest.getBookingApplication();
 	}
 
-	//This sets the paymennt receipt file store id and permission letter file store id
-	private void convertBookingRequest(BookingRequest advertisementbookingRequest,
-			BookingDetail bookingDetailDB) {
+	// This sets the paymennt receipt file store id and permission letter file store
+	// id
+	private void convertBookingRequest(BookingRequest advertisementbookingRequest, BookingDetail bookingDetailDB) {
 		BookingDetail bookingDetailRequest = advertisementbookingRequest.getBookingApplication();
 		if (bookingDetailDB.getPermissionLetterFilestoreId() == null
 				&& bookingDetailRequest.getPermissionLetterFilestoreId() != null) {

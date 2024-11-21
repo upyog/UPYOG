@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.enums.BookingStatusEnum;
+import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.repository.ServiceRequestRepository;
+import org.upyog.adv.repository.impl.BookingRepositoryImpl;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.transaction.Transaction;
@@ -40,6 +42,9 @@ public class PaymentService {
 
 	@Autowired
 	private BookingService bookingService;
+	
+	@Autowired
+	private BookingRepositoryImpl bookingRepo;
 
 	/**
 	 *
@@ -64,6 +69,7 @@ public class PaymentService {
 				BookingRequest bookingRequest = BookingRequest.builder()
 						.requestInfo(paymentRequest.getRequestInfo()).bookingApplication(bookingDetail).build();
 				bookingService.updateBooking(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
+				bookingRepo.deleteBookingIdForTimer(bookingRequest.getBookingApplication().getBookingId());
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occured while sending notification ADV : " + e.getMessage());

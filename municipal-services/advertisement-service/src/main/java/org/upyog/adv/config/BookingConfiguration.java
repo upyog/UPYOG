@@ -133,6 +133,9 @@ public class BookingConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
 	
+	@Value("${adv.payment.timer}")
+	private Long paymentTimer;
+	
 
 	
 	
