@@ -1,4 +1,4 @@
-FROM upyogio/flyway:4.1.2
+FROM upyogio/flyway:10.7.1
 
 COPY ./migration/main /flyway/sql
 
