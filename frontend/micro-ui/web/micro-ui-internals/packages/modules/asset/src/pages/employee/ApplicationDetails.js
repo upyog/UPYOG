@@ -53,7 +53,6 @@ const ApplicationDetails = () => {
   );
 
 
-
   const closeToast = () => {
     setShowToast(null);
   };
@@ -73,9 +72,6 @@ const ApplicationDetails = () => {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
     }
   }, [workflowDetails.data]);
-
-
-
 
 
   const handleDownloadPdf = async () => {
