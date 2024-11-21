@@ -95,22 +95,31 @@ public class StreetVendingConfiguration {
 	 * isLocalizationStateLevel;
 	 */
 
-	/** Used Parameters **/
+	/** Used for application no  creation **/
 
 	@Value("${egov.idgen.street-vending.application.id.name}")
 	private String streetVendingApplicationKey;
 
 	@Value("${egov.idgen.street-vending.application.id.format}")
 	private String streetVendingApplicationFormat;
+	
+	//Kafka topics for saving street vending data
 
 	@Value("${persister.create.street-vending.topic}")
 	private String streetVendingApplicationSaveTopic;
 
-	@Value("${persister.init.street-vending.topic}")
-	private String streetVendingApplicationInitSaveTopic;
-
 	@Value("${persister.update.street-vending.topic}")
 	private String streetVendingApplicationUpdateTopic;
+	
+	
+	@Value("${persister.create.draft.street-vending.topic}")
+	private String streetVendingDraftApplicationSaveTopic;
+	
+	@Value("${persister.update.draft.street-vending.topic}")
+	private String streetVendingDraftApplicationUpdateTopic;
+	
+	@Value("${persister.delete.draft.street-vending.topic}")
+	private String streetVendingDraftApplicationDeleteTopic;
 
 	@Value("${sv.module.name}")
 	private String moduleName;
@@ -152,5 +161,7 @@ public class StreetVendingConfiguration {
 
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
+	
+	
 
 }

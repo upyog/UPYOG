@@ -123,12 +123,22 @@ public class EnrichmentService {
 
 	public void enrichCreateStreetVendingDraftApplicationRequest(StreetVendingRequest vendingRequest) {
 		String draftId = StreetVendingUtil.getRandonUUID();
-		log.info("Enriching draft street vending application with draft id :" + draftId);
+		log.info("Enriching create draft street vending application with draft id :" + draftId);
 		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
 		RequestInfo requestInfo = vendingRequest.getRequestInfo();
 		AuditDetails auditDetails = StreetVendingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
 		streetVendingDetail.setDraftId(draftId);
+		streetVendingDetail.setAuditDetails(auditDetails);
+		
+	}
+	
+	public void enrichUpdateStreetVendingDraftApplicationRequest(StreetVendingRequest vendingRequest) {
+		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
+		log.info("Enriching update draft street vending application with draft id :" + streetVendingDetail.getDraftId());
+		RequestInfo requestInfo = vendingRequest.getRequestInfo();
+		AuditDetails auditDetails = StreetVendingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+
 		streetVendingDetail.setAuditDetails(auditDetails);
 		
 	}

@@ -149,13 +149,18 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 	@Override
 	public StreetVendingDetail createStreetVendingDraftApplication(StreetVendingRequest vendingRequest) {
 		
-		enrichmentService.enrichCreateStreetVendingDraftApplicationRequest(vendingRequest);
-
-		streetVendingRepository.saveDraftApplication(vendingRequest);
+		if(StringUtils.isNotBlank(vendingRequest.getStreetVendingDetail().getDraftId())) {
+			enrichmentService.enrichUpdateStreetVendingDraftApplicationRequest(vendingRequest);
+			streetVendingRepository.updateDraftApplication(vendingRequest);
+		} else {
+			enrichmentService.enrichCreateStreetVendingDraftApplicationRequest(vendingRequest);
+			streetVendingRepository.saveDraftApplication(vendingRequest);
+		}
+		
 		
 		return vendingRequest.getStreetVendingDetail();
 	}
-
+	
 	@Override
 	public List<StreetVendingDetail> getStreetVendingDraftApplicationDetails(@NonNull RequestInfo requestInfo,
 			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria) {
