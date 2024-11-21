@@ -1178,10 +1178,9 @@ public class EstimationService {
 
 		}
 
-		final BigDecimal updatedPenalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( updatedPenalty).build());
-
-		totalAmount = totalAmount.add(taxAmt).add(updatedPenalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
+		penalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
+		
+		totalAmount = totalAmount.add(taxAmt).add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
 		if(units.size()==1)
@@ -1286,13 +1285,26 @@ public class EstimationService {
 			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
 			pastduePenalty=pastduePenalty.setScale(2,2);
 			//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
-			estimates.add(TaxHeadEstimate.builder()
-					.taxHeadCode(PT_PAST_DUE_PENALTY)
-					.estimateAmount(pastduePenalty).build());
+			/*
+			 * estimates.add(TaxHeadEstimate.builder() .taxHeadCode(PT_PAST_DUE_PENALTY)
+			 * .estimateAmount(pastduePenalty).build());
+			 */
 
 			//}
+			penalty=penalty.add(pastduePenalty);
 			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
 		}
+		
+		BigDecimal payblepenalty=taxAfterVacExemption.multiply(new BigDecimal(15).divide(new BigDecimal(100))).setScale(2,2);
+		if(penalty.compareTo(payblepenalty)>0)
+		{
+			if(penalty.compareTo(new BigDecimal(20000))>0)
+				if(payblepenalty.compareTo(new BigDecimal(20000))>0)
+					payblepenalty=new BigDecimal(20000);				
+		}
+		else
+			payblepenalty=penalty;
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( payblepenalty).build());
 		//Added For Manipur 
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
 		//TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty).add(collectedAmtForOldDemand), rebate.add(exemption).add(complementary_rebate).add(modeofpayment_rebate));

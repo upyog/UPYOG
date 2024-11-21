@@ -195,7 +195,8 @@ public class EnrichmentService {
 			});
 
 		property.getOwners().forEach(owner -> {
-
+			
+			owner.setTenantId(property.getTenantId());
 			UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
 			System.out.println("userDetailResponse::"+userDetailResponse);
 			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
