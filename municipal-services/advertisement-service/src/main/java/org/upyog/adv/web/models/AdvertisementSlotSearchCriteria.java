@@ -31,6 +31,10 @@ public class AdvertisementSlotSearchCriteria {
 	
 	private Boolean nightLight;
 	
+	private String bookingId;
+
+	private Boolean isTimerRequired;
+	
 	@NotBlank
 	@ValidDate
 	private String bookingStartDate;

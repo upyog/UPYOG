@@ -40,6 +40,13 @@ public class AdvertisementBookingQueryBuilder {
 	        + "WHERE eabd.booking_id = eacd.booking_id AND eabd.tenant_id = ? \n"
 	        + "AND eacd.status IN ('BOOKED', 'PENDING_FOR_PAYMENT') AND \n"
 	        + "eacd.booking_date >= ?::DATE AND eacd.booking_date <= ?::DATE \n";
+	
+	private static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timer(booking_id, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?);\n";
+
+	private static final String PAYMENT_TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
+	
+	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = "DELETE FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
+
 	 
 	private Object createQueryParams(List<String> ids) {
 		StringBuilder builder = new StringBuilder();
@@ -60,6 +67,31 @@ public class AdvertisementBookingQueryBuilder {
 	+ "join public.eg_adv_applicant_detail appl on ecbd.booking_id = appl.booking_id \n";
 	
 
+	public String insertBookingIdForTImer(String bookingId) {
+		StringBuilder builder;
+		
+		
+			builder = new StringBuilder(PAYMENT_TIMER_QUERY);
+			return builder.toString();
+		
+	}
+	
+	public String deleteBookingIdForTImer(String bookingId) {
+		StringBuilder builder;
+
+		builder = new StringBuilder(PAYMENT_TIMER_DELETE_QUERY);
+		return builder.toString();
+
+	}
+	
+	public String deleteBookingIdPaymentTimer() {
+		StringBuilder builder;
+		
+		
+			builder = new StringBuilder(PAYMENT_TIMER_DELETE_BOOKINGID);
+			return builder.toString();
+		
+	}
 	/**
 	 * To give the Search query based on the requirements.
 	 * 
@@ -240,10 +272,13 @@ public class AdvertisementBookingQueryBuilder {
 	    paramsList.add(searchCriteria.getTenantId());
 	    paramsList.add(searchCriteria.getBookingStartDate());
 	    paramsList.add(searchCriteria.getBookingEndDate());
+	    
 
 
 	    return builder;
 	}
+	
+	
 
 
 }

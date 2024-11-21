@@ -19,7 +19,7 @@ public interface BookingService {
 
 	BookingDetail createBooking(@Valid BookingRequest bookingRequest);
 	
-	List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(AdvertisementSlotSearchCriteria criteria);
+	List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) ;
 
 	List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria bookingSearchCriteria, RequestInfo info);
 	Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria, @NonNull RequestInfo requestInfo);
