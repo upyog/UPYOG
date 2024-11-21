@@ -273,9 +273,14 @@ public class UserService {
 	 */
 	private UserDetailResponse userExists(OwnerInfo connectionHolderInfo, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(connectionHolderInfo.getTenantId(), requestInfo);
-		userSearchRequest.setMobileNumber(connectionHolderInfo.getMobileNumber());
-		userSearchRequest.setUserType(connectionHolderInfo.getType());
-		userSearchRequest.setName(connectionHolderInfo.getName());
+		if(connectionHolderInfo.getUuid()!=null){
+			userSearchRequest.setUuid(new HashSet<>(Collections.singletonList(connectionHolderInfo.getUuid())));
+		}
+		else {
+			userSearchRequest.setMobileNumber(connectionHolderInfo.getMobileNumber());
+			userSearchRequest.setUserType(connectionHolderInfo.getType());
+			userSearchRequest.setName(connectionHolderInfo.getName());
+		}
 		StringBuilder uri = new StringBuilder(configuration.getUserHost())
 				.append(configuration.getUserSearchEndpoint());
 		return userCall(userSearchRequest, uri);
