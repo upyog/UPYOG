@@ -357,6 +357,7 @@ Boolean isMigration=false;
 
 
 		if (waterConnectionRequest.getWaterConnection().isIsworkflowdisabled()) {
+			if(waterConnectionRequest.getWaterConnection().getConnectionHolders()!=null){
 			log.info("Water Request: " + waterConnectionRequest);
 			SearchCriteria criteriaAppNo = new SearchCriteria();
 			criteriaAppNo.setApplicationNumber(new HashSet<>(Collections.singletonList(
@@ -370,7 +371,7 @@ Boolean isMigration=false;
 				if(!areMobileNumbersSame){
 					userService.updateUser(waterConnectionRequest,waterConnectionRequest.getWaterConnection());
 				}
-			}
+			}}
 
 			waterDao.updateWaterConnection(waterConnectionRequest,
 					waterConnectionRequest.getWaterConnection().isIsworkflowdisabled());
