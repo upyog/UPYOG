@@ -6372,18 +6372,19 @@ video::-webkit-media-controls-panel {
     position: relative;
     cursor: pointer; }
     .RightMostTopBarOptions .EventNotificationWrapper span {
-      top: -5px;
-      right: -10px;
+      top: -10px;
+      right: -15px;
       position: absolute;
       --bg-opacity:1;
       background-color: #d4351c;
       background-color: rgba(212, 53, 28, var(--bg-opacity));
-      height: 1.5rem;
-      width: 1.5rem;
+      height: 2rem;
+      width: 2rem;
       border-radius: 9999px;
       text-align: center; }
       .RightMostTopBarOptions .EventNotificationWrapper span p {
-        line-height: 14px; }
+        line-height: 20px; 
+        font-size: 14px; }
   .RightMostTopBarOptions .select-wrap {
     margin-bottom: unset; }
     .RightMostTopBarOptions .select-wrap svg {

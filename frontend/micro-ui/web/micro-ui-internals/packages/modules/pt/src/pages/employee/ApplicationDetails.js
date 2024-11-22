@@ -179,7 +179,7 @@ const ApplicationDetails = () => {
     const tenantInfo  = tenants.find((tenant) => tenant.code === Property.tenantId);
 
     const data = await getPTAcknowledgementData(Property, tenantInfo, t);
-    Digit.Utils.pdf.generate(data);
+        Digit.Utils.pdf.generate(data);
   };
 
   const propertyDetailsPDF = {

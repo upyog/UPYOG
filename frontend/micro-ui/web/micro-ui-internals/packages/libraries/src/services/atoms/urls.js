@@ -68,6 +68,7 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
+    no_dues: "/billing-service/bill/v2/_nodues",
   },
 
   pt: {

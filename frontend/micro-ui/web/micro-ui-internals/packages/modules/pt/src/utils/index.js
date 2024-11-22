@@ -26,7 +26,7 @@ export const getPropertyUsageTypeLocale = (value = "") => {
 };
 
 export const getPropertySubUsageTypeLocale = (value = "") => {
-  return convertToLocale(value, "COMMON_PROPSUBUSGTYPE");
+  return convertToLocale(value, "COMMON_PROPUSGTYPE");
 };
 export const getPropertyOccupancyTypeLocale = (value = "") => {
   return convertToLocale(value, "PROPERTYTAX_OCCUPANCYTYPE");
@@ -48,6 +48,15 @@ export const getCityLocale = (value = "") => {
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(convertedValue, `TENANT_TENANTS`);
+};
+
+export const getTypeOfRoad = (value = "") => {
+  let convertedValue = convertDotValues(value);
+  if (convertedValue == "NA" || !checkForNotNull(value)) {
+    return "PT_NA";
+  }
+  convertedValue = convertedValue.toUpperCase();
+  return convertToLocale(convertedValue, `PROPERTYTAX_ROADTYPE`);
 };
 
 export const getPropertyOwnerTypeLocale = (value = "") => {

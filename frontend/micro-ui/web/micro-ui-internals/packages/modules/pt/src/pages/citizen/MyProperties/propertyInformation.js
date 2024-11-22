@@ -18,10 +18,11 @@ import PropertyDocument from "../../../pageComponents/PropertyDocument";
 import { getCityLocale, getPropertyTypeLocale, stringReplaceAll } from "../../../utils";
 import ActionModal from "../../../../../templates/ApplicationDetails/Modal/index"
 import ArrearSummary from "../../../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary";
-const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
+const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData,updateAssessmentData) => {
   const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
   let billData = {};
   if (assessmentData?.Assessments?.length > 0) {
+    updateAssessmentData(assessmentData?.Assessments)
     billData = await Digit.PaymentService.fetchBill(tenantId, {
       businessService: "PT",
       consumerCode: propertyIds,
@@ -36,7 +37,7 @@ const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCan
 };
 
 const getBillAmount = (fetchBillData = null) => {
-  if (fetchBillData == null) return "CS_NA";
+  if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
   return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
 };
 
@@ -95,6 +96,7 @@ const state = Digit.ULBService.getStateId();
   });
 
   const [fetchBillData, updatefetchBillData] = useState({});
+  const [fetchAssessmentData, updateAssessmentData] = useState(null);
 
   const [property, setProperty] = useState(() => data?.Properties[0] || " ");
   const mutation = Digit.Hooks.pt.usePropertyAPI(property?.tenantId, false);
@@ -170,7 +172,7 @@ const onAppeal =()=>{
       loaded: false,
       canLoad: true,
     });
-    setBillData(property?.tenantId || tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData);
+    setBillData(property?.tenantId || tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData,updateAssessmentData);
   }
 
   let flrno,
@@ -300,13 +302,15 @@ const onAppeal =()=>{
               label={t("Creation Reason")}
               text={t(`${property?.creationReason}`)}
             />
-            <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
-            <LinkLabel
+            <Row className="border-none" label={t("Assessment Status")} text={fetchAssessmentData==null ? 'NA' : fetchAssessmentData?.[0]?.status} />
+
+            <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={getBillAmount(fetchBillData)=='CS_NA' ? 'NA' : `₹${t(getBillAmount(fetchBillData))}`} />
+            {/* {getBillAmount(fetchBillData)!=='CS_NA' && <LinkLabel
             onClick={() => history.push({ pathname: `/digit-ui/citizen/pt/payment-details/${property?.propertyId}`})}
             style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
           >
             {t("PT_VIEW_PAYMENT")}
-          </LinkLabel>
+          </LinkLabel>} */}
           </StatusTable>
           <ArrearSummary bill={fetchBillData.Bill?.[0]} />
           {property?.creationReason =="AMALGAMATION" && (
@@ -370,7 +374,7 @@ const onAppeal =()=>{
               
             </React.Fragment>
           )}
-                    {property?.creationReason =="BIFURCATION" && (
+          {property?.creationReason =="BIFURCATION" && (
             <React.Fragment>
               <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
                 <CardSubHeader style={{ fontSize: "16px" }}>{t("Separated Property Details")}</CardSubHeader>
@@ -541,7 +545,7 @@ const onAppeal =()=>{
                     <Row className="border-none"  label={t("PT_FORM3_RELATIONSHIP")} text={`${owner?.relationship || t("CS_NA")}`} />
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_TYPE")} text={`${t(stringReplaceAll(specialCategoryDoc[index]?.documentType,".","_"))}` || t("NA")} />}
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_ID")} text={`${t(specialCategoryDoc[index]?.id)}` || t("CS_NA")} />}
-                    <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} />
+                    {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} /> */}
                     <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.permanentAddress)}` || t("CS_NA")} />
                     {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={(owner?.ownerType || t("CS_NA"))} /> }
                   </StatusTable>
@@ -564,14 +568,14 @@ const onAppeal =()=>{
             <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
             </div>              
             )} */}
-            {property?.status === "ACTIVE" && !enableAudit && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                 <Link to={{ pathname: `/digit-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>
                   <SubmitBar label={t("PT_UPDATE_PROPERTY_BUTTON")} />
                 </Link>
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") &&  (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
@@ -579,7 +583,7 @@ const onAppeal =()=>{
                
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
@@ -587,7 +591,7 @@ const onAppeal =()=>{
                
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}

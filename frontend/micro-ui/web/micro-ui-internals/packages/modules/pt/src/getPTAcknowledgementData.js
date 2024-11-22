@@ -9,6 +9,7 @@ import {
   pdfDocumentName,
   pdfDownloadLink,
   getCityLocale,
+  getTypeOfRoad,
 } from "./utils";
 
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
@@ -34,7 +35,7 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_SEARCHPROPERTY_TABEL_GUARDIANNAME"), value: owners[0]?.fatherOrHusbandName || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_GENDER"), value: t(owners[0]?.gender) || t("CS_NA") },
         { title: t("PT_FORM3_OWNERSHIP_TYPE"), value: t(application?.ownershipCategory) || t("CS_NA") },
-        { title: t("PT_OWNERSHIP_INFO_EMAIL_ID"), value: owners[0]?.emailId || t("CS_NA") },
+        // { title: t("PT_OWNERSHIP_INFO_EMAIL_ID"), value: owners[0]?.emailId || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_USER_CATEGORY"), value: t(getPropertyOwnerTypeLocale(owners[0]?.ownerType)) || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owners[0]?.permanentAddress || t("CS_NA") },
       ],
@@ -48,7 +49,7 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_SEARCHPROPERTY_TABEL_GUARDIANNAME"), value: owner?.fatherOrHusbandName || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_GENDER"), value: t(owner?.gender) || t("CS_NA") },
         { title: t("PT_FORM3_OWNERSHIP_TYPE"), value: t(application?.ownershipCategory) || t("CS_NA") },
-        { title: t("PT_OWNERSHIP_INFO_EMAIL_ID"), value: owner?.emailId || t("CS_NA") },
+        // { title: t("PT_OWNERSHIP_INFO_EMAIL_ID"), value: owner?.emailId || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_USER_CATEGORY"), value: t(getPropertyOwnerTypeLocale(owner?.ownerType)) || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owner?.permanentAddress || t("CS_NA") },
       ];
@@ -83,7 +84,7 @@ const getOwner = (application, t, customTitle) => {
 const getAssessmentInfo = (application, t) => {
   let values = [
     { title: t("PT_ASSESMENT_INFO_USAGE_TYPE"), value: application?.usageCategory ? `${t(
-      (application?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPSUBUSGTYPE_") +
+      (application?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
         (application?.usageCategory?.split(".")[1] ? application?.usageCategory?.split(".")[1] : application?.usageCategory)
     )}` : t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_TYPE_OF_BUILDING"), value: t(getPropertyTypeLocale(application?.propertyType)) || t("CS_NA") },
@@ -195,8 +196,8 @@ const mutationRegistrationDetails = (application, t) => {
 };
 
 const getPTAcknowledgementData = async (application, tenantInfo, t) => {
-  const filesArray = application?.documents?.map((value) => value?.fileStoreId);
-  const res = filesArray?.length>0 && await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId());
+  const filesArray = application?.documents?.map((value) => value?.fileStoreId).filter( (el)=> el);
+  const res = filesArray?.length>0 && await Digit.UploadServices.Filefetch(filesArray, tenantInfo?.code || Digit.ULBService.getStateId());
 
   if (application.creationReason === "MUTATION") {
     return {
@@ -225,10 +226,15 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
             { title: t("PT_PROPERTY_ADDRESS_CITY"), value: t(getCityLocale(application?.tenantId)) || t("CS_NA") },
             {
               title: t("PT_PROPERTY_ADDRESS_MOHALLA"),
-              value: t(`${getMohallaLocale(application?.address?.locality?.code, application?.tenantId)}`) || t("CS_NA"),
+              value: application?.address?.locality?.name || t("CS_NA"),
             },
             { title: t("PT_PROPERTY_ADDRESS_STREET_NAME"), value: application?.address?.street || t("CS_NA") },
             { title: t("PT_PROPERTY_ADDRESS_HOUSE_NO"), value: application?.address?.doorNo || t("CS_NA") },
+            { title: t("Dag No."), value: application?.address?.dagNo || t("CS_NA") },
+            { title: t("Patta No."), value: application?.address?.pattaNo || t("CS_NA") },
+            { title: t("Principal Road Name"), value: application?.address?.principalRoadName || t("CS_NA") },
+            { title: t("Sub-Side Road Name"), value: application?.address?.subSideRoadName || t("CS_NA") },
+            { title: t("Type of Road"), value: t(getTypeOfRoad(application?.address?.typeOfRoad?.code)) || t("CS_NA") },
             { title: t("PT_PROPERTY_ADDRESS_LANDMARK"), value: application?.address?.landmark || t("CS_NA") },
           ],
         },
@@ -268,10 +274,16 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
           { title: t("PT_PROPERTY_ADDRESS_CITY"), value: t(getCityLocale(application?.tenantId)) || t("CS_NA") },
           {
             title: t("PT_PROPERTY_ADDRESS_MOHALLA"),
-            value: t(`${getMohallaLocale(application?.address?.locality?.code, application?.tenantId)}`) || t("CS_NA"),
+            value: application?.address?.locality?.name || t("CS_NA"),
           },
           { title: t("PT_PROPERTY_ADDRESS_STREET_NAME"), value: application?.address?.street || t("CS_NA") },
           { title: t("PT_PROPERTY_ADDRESS_HOUSE_NO"), value: application?.address?.doorNo || t("CS_NA") },
+          { title: t("Dag No."), value: application?.address?.dagNo || t("CS_NA") },
+          { title: t("Patta No."), value: application?.address?.pattaNo || t("CS_NA") },
+          { title: t("Principal Road Name"), value: application?.address?.principalRoadName || t("CS_NA") },
+          { title: t("Sub-Side Road Name"), value: application?.address?.subSideRoadName || t("CS_NA") },
+          { title: t("Type of Road"), value: t(getTypeOfRoad(application?.address?.typeOfRoad?.code)) || t("CS_NA") },
+
           application?.channel === "CITIZEN" ? { title: t("PT_PROPERTY_ADDRESS_LANDMARK"), value: application?.address?.landmark || t("CS_NA") }: {},
         ],
       },
@@ -281,10 +293,13 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
         application.documents && application.documents.length > 0
             ? application.documents.map((document, index) => {
                 let documentLink = pdfDownloadLink(res?.data, document?.fileStoreId);
-                return {
-                  title: t(document?.documentType || t("CS_NA")),
-                  value: pdfDocumentName(documentLink, index) || t("CS_NA"),
-                };
+                if(document?.documentType){
+                  return {
+                    title: t(document?.documentType=="PROPERTY_PHOTO" ? 'PT_PROPERTY_PHOTO' : document?.documentType || t("CS_NA")),
+                    value: pdfDocumentName(documentLink, index) || t("CS_NA"),
+                  };
+                }
+                  
               })
             : {
               title: t("PT_NO_DOCUMENTS"),
