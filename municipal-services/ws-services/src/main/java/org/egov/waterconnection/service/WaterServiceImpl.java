@@ -357,21 +357,22 @@ Boolean isMigration=false;
 
 
 		if (waterConnectionRequest.getWaterConnection().isIsworkflowdisabled()) {
-			if(waterConnectionRequest.getWaterConnection().getConnectionHolders()!=null){
 			log.info("Water Request: " + waterConnectionRequest);
-			SearchCriteria criteriaAppNo = new SearchCriteria();
-			criteriaAppNo.setApplicationNumber(new HashSet<>(Collections.singletonList(
-                    waterConnectionRequest.getWaterConnection().getApplicationNo())));
-			List<WaterConnection> waterConnectionList = search(criteriaAppNo, waterConnectionRequest.getRequestInfo());
-			if(!waterConnectionList.isEmpty()){
-				List<OwnerInfo> connectionHoldersFromSearch = waterConnectionList.get(0).getConnectionHolders();
-				HashMap<String,String> mobileNumberMapFromSearch= connectionHoldersFromSearch.stream().collect(Collectors.toMap(User::getUuid, OwnerInfo::getMobileNumber, (a, b) -> b, HashMap::new));
-                HashMap<String,String> mobileNumberMapFromRequest= waterConnectionRequest.getWaterConnection().getConnectionHolders().stream().collect(Collectors.toMap(User::getUuid, OwnerInfo::getMobileNumber, (a, b) -> b, HashMap::new));
-                boolean areMobileNumbersSame = mobileNumberMapFromRequest.equals(mobileNumberMapFromSearch);
-				if(!areMobileNumbersSame){
-					userService.updateUser(waterConnectionRequest,waterConnectionRequest.getWaterConnection());
+			if (waterConnectionRequest.getWaterConnection().getConnectionHolders() != null) {
+				SearchCriteria criteriaAppNo = new SearchCriteria();
+				criteriaAppNo.setApplicationNumber(new HashSet<>(Collections.singletonList(
+						waterConnectionRequest.getWaterConnection().getApplicationNo())));
+				List<WaterConnection> waterConnectionList = search(criteriaAppNo, waterConnectionRequest.getRequestInfo());
+				if (!waterConnectionList.isEmpty()) {
+					List<OwnerInfo> connectionHoldersFromSearch = waterConnectionList.get(0).getConnectionHolders();
+					HashMap<String, String> mobileNumberMapFromSearch = connectionHoldersFromSearch.stream().collect(Collectors.toMap(User::getUuid, OwnerInfo::getMobileNumber, (a, b) -> b, HashMap::new));
+					HashMap<String, String> mobileNumberMapFromRequest = waterConnectionRequest.getWaterConnection().getConnectionHolders().stream().collect(Collectors.toMap(User::getUuid, OwnerInfo::getMobileNumber, (a, b) -> b, HashMap::new));
+					boolean areMobileNumbersSame = mobileNumberMapFromRequest.equals(mobileNumberMapFromSearch);
+					if (!areMobileNumbersSame) {
+						userService.updateUser(waterConnectionRequest, waterConnectionRequest.getWaterConnection());
+					}
 				}
-			}}
+			}
 
 			waterDao.updateWaterConnection(waterConnectionRequest,
 					waterConnectionRequest.getWaterConnection().isIsworkflowdisabled());
