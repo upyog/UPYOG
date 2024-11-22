@@ -13,7 +13,9 @@ public class NSSStateListQuery {
         String formattedDate = yesterday.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
         String query = "SELECT split_part(datakey, ':', '1') AS date, "
-                + "split_part(datakey, ':', '6') AS state "
+                + "split_part(datakey, ':', '6') AS state, "
+                + "split_part(datakey, ':', '2') AS module, "
+                + "split_part(datakey, ':', '4') AS ulb "
                 + "FROM nss_ingest_data "
                 + "WHERE split_part(datakey, ':', '1') = '" + formattedDate + "';";
 

@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class StateListDB {
@@ -18,11 +16,34 @@ public class StateListDB {
     @Autowired
     private NSSStateListQuery nssStateListQuery;
 
-    public Set<String> findifrecordexists(){
+    public Map<String, Map<String, List<String>>> findIfRecordExists() {
         String sql = nssStateListQuery.getYesterdayDataQuery();
+        Map<String, Map<String, List<String>>> resultMap = new HashMap<>();
 
-        List<String> stateList = jdbcTemplate.query( sql , (rs,rowNum) -> rs.getString("state"));
+        // Execute the query and process the result set
+        jdbcTemplate.query(sql, (rs, rowNum) -> {
+            String state = rs.getString("state");
+            String module = rs.getString("module");
+            String ulb = rs.getString("ulb");
 
-        return  new HashSet<>(stateList);
-    };
+            // Check if the outer map already contains the 'state' key
+            if (!resultMap.containsKey(state)) {
+                resultMap.put(state, new HashMap<>());
+            }
+
+            // Check if the inner map already contains the 'ulb' key
+            if (!resultMap.get(state).containsKey(ulb)) {
+                resultMap.get(state).put(ulb, new ArrayList<>());
+            }
+
+            // Add the 'module' to the list for this 'ulb'
+            resultMap.get(state).get(ulb).add(module);
+
+            return null; // Return value is not needed in this case
+        });
+
+        // Return the resultMap
+        return resultMap;
+    }
+
 }
