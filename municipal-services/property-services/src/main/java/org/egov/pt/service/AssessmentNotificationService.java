@@ -84,12 +84,15 @@ public class AssessmentNotificationService {
         List<String> configuredChannelNamesForAssessment =  util.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_ASSESSMENT);
 
         List<SMSRequest> smsRequests = enrichSMSRequest(topicName, assessmentRequest, property);
-        if(state.equalsIgnoreCase("INITIATED")) {
-        	 smsRequests.addAll(enrichSMSRequestForAssesmentCreate(topicName, assessmentRequest, property));
-        }
-       
+        //This is created for second sms to citizen to give update for the assesment giving issue.
+        List<SMSRequest> smsRequestsForCreate =null;
+        if(state.equalsIgnoreCase("INITIATED"))
+        smsRequestsForCreate =enrichSMSRequestForAssesmentCreate(topicName, assessmentRequest, property);
         if(configuredChannelNamesForAssessment.contains(CHANNEL_NAME_SMS)) {
             util.sendSMS(smsRequests);
+            if(state.equalsIgnoreCase("INITIATED")) {
+            	util.sendSMS(smsRequestsForCreate);
+           }
         }
 
         if(configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EVENT)) {
@@ -98,15 +101,30 @@ public class AssessmentNotificationService {
                 isActionReq = true;
 
             List<Event> events = util.enrichEvent(smsRequests, requestInfo, tenantId, property, isActionReq);
+           
             util.sendEventNotification(new EventRequest(requestInfo, events));
+            if(state.equalsIgnoreCase("INITIATED")) {
+           	 List<Event> events2 = util.enrichEvent(smsRequestsForCreate, requestInfo, tenantId, property, isActionReq);
+           	 util.sendEventNotification(new EventRequest(requestInfo, events2));
+          }
         }
 
         if(configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EMAIL) ){
             List<EmailRequest> emailRequests = util.createEmailRequestFromSMSRequests(requestInfo,smsRequests,tenantId);
             util.sendEmail(emailRequests);
+            if(state.equalsIgnoreCase("INITIATED")) {
+            	List<EmailRequest> emailRequests2 = util.createEmailRequestFromSMSRequests(requestInfo,smsRequestsForCreate,tenantId);
+                util.sendEmail(emailRequests2);
+             }
         }
-
-        if (dueAmount!=null && dueAmount.compareTo(BigDecimal.ZERO)>0) {
+        Boolean dueNotif = true;
+        if(state.equalsIgnoreCase("APPROVED")) {
+        	 billResponse = billingService.fetchBill(property, requestInfo,assessment);
+              dueAmount=BigDecimal.ZERO;
+             if(billResponse!=null &&!billResponse.getBill().isEmpty())
+             dueAmount = billResponse.getBill().get(0).getTotalAmount();
+        }
+        if (dueNotif&&dueAmount!=null && dueAmount.compareTo(BigDecimal.ZERO)>0) {
 
             List<String> configuredChannelNames =  util.fetchChannelList(new RequestInfo(), tenantId, PT_BUSINESSSERVICE, ACTION_FOR_DUES);
             List<SMSRequest> smsRequestsList = new ArrayList<>();
@@ -337,6 +355,13 @@ private String getStateFromWf(ProcessInstance wf, Boolean isWorkflowEnabled) {
             	  messageTemplate = customize(assessment, property, msgCode, localizationMessages);
                   message.put("message", messageTemplate);
             }
+            if(assessment.getWorkflow().getState().getState().equals("APPROVE")) {
+            	msgCode="ASMT_MSG_APPROVED";
+          	  message.put("templateId", ASMT_MSG_INITIATED_SUBMITTED_STATUS_TEMPLATE_ID);
+          	  //ASMT_MSG_INITIATED_SUBMITTED_STATUS
+          	  messageTemplate = customize(assessment, property, msgCode, localizationMessages);
+               message.put("message", messageTemplate);
+          }
           
            
         

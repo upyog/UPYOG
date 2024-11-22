@@ -67,13 +67,15 @@ public class PropertyUtil extends CommonUtils {
 	public void enrichOwner(UserDetailResponse userDetailResponse, List<Property> properties, Boolean isSearchOpen) {
 
 		List<OwnerInfo> users = userDetailResponse.getUser();
+		users.stream().forEach(t->t.getRoles().stream().forEach(u->u.setId(t.getId())));
 		Map<String, OwnerInfo> userIdToOwnerMap = new HashMap<>();
 		users.forEach(user -> userIdToOwnerMap.put(user.getUuid(), user));
 
 		properties.forEach(property -> {
 
 			property.getOwners().forEach(owner -> {
-
+				
+				System.out.println("inside owner::"+owner);
 				if (userIdToOwnerMap.get(owner.getUuid()) == null)
 					log.info("OWNER SEARCH ERROR",
 							"The owner with UUID : \"" + owner.getUuid() + "\" for the property with Id \""

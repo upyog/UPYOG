@@ -14,7 +14,7 @@ SearchDefinitions:
           LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
           $where
           AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = property.acknowldgementnumber GROUP BY wf.businessid)
-          order by pi.createdtime asc $pagination
+          order by pi.createdtime desc $pagination
           ) result
         groupBy:
         orderBy:
@@ -120,7 +120,7 @@ SearchDefinitions:
           LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
           $where
           AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = property.acknowldgementnumber GROUP BY wf.businessid)
-          order by pi.createdtime asc
+          order by pi.createdtime desc
           ) result) TotalCount
         groupBy:
         orderBy:
@@ -174,7 +174,7 @@ SearchDefinitions:
           $where
           AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = asmt.assessmentnumber GROUP BY wf.businessid)
           AND property.status='ACTIVE'
-          order by pi.createdtime asc $pagination
+          order by pi.createdtime desc $pagination
           ) result
         groupBy:
         orderBy:
@@ -228,7 +228,7 @@ SearchDefinitions:
           $where
           AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = asmt.assessmentnumber GROUP BY wf.businessid)
           AND property.status='ACTIVE'
-          order by pi.createdtime asc
+          order by pi.createdtime desc
           ) result) TotalCount
         groupBy:
         orderBy:
@@ -279,7 +279,7 @@ SearchDefinitions:
           LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
           $where
           AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = appeal.acknowldgementnumber GROUP BY wf.businessid)
-          order by pi.createdtime asc
+          order by pi.createdtime desc
           ) result) TotalCount
         groupBy:
         orderBy:
@@ -330,7 +330,7 @@ SearchDefinitions:
           LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
           $where
           AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = appeal.acknowldgementnumber GROUP BY wf.businessid)
-          order by pi.createdtime asc $pagination
+          order by pi.createdtime desc $pagination
           ) result
         groupBy:
         orderBy:

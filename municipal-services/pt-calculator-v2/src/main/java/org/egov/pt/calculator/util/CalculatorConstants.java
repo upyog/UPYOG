@@ -48,6 +48,7 @@ public class CalculatorConstants {
 	public static final String PT_ADVANCE_CARRYFORWARD = "PT_ADVANCE_CARRYFORWARD";
 	
 	public static final String PT_PASTDUE_CARRYFORWARD = "PT_PASTDUE_CARRYFORWARD";
+	public static final String PT_PAST_DUE_PENALTY = "PT_PAST_DUE_PENALTY";
 	
 	public static final String PT_ADVANCE_REBATE="PT_ADVANCE_REBATE";
 
@@ -64,6 +65,8 @@ public class CalculatorConstants {
 	public static final String PT_COMPLEMENTARY_REBATE="PT_COMPLEMENTARY_REBATE";
 	
 	public static final String PT_MODEOFPAYMENT_REBATE="PT_MODEOFPAYMENT_REBATE";
+	
+	public static final String PT_VACANT_LAND_EXEMPTION="PT_VACANT_LAND_EXEMPTION";
 	
 	public static final String PT_MANDATORY_PAYMENT="PT_MANDATORY_PAYMENT";
 	

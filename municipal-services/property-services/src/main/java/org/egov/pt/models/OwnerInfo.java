@@ -124,6 +124,7 @@ public class OwnerInfo extends User {
 		this.setPhoto(user.getPhoto());
 		this.setTenantId(user.getTenantId());
 		this.setAlternatemobilenumber(user.getAlternatemobilenumber());
+		this.setId(user.getId());
 	}
 
 	@Builder()

@@ -201,7 +201,7 @@ public class NotificationUtil {
             if (CollectionUtils.isEmpty(smsRequestList))
                 log.info("Messages from localization couldn't be fetched!");
             for (SMSRequest smsRequest : smsRequestList) {
-                producer.push(config.getSmsNotifTopic(), smsRequest);
+            	producer.push(config.getSmsNotifTopic(), smsRequest);
                 log.info("Sending SMS notification: ");
                 log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
             }
@@ -416,7 +416,7 @@ public class NotificationUtil {
     */
    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
 
-		List<Event> events = new ArrayList<>();
+	   List<Event> events = new ArrayList<>();
        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
        Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
 
@@ -435,6 +435,7 @@ public class NotificationUtil {
        if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
            log.error("UUIDs Not found for Mobilenumbers");
        }
+
 
        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
        mobileNumbers.forEach(mobileNumber -> {

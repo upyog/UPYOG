@@ -65,6 +65,7 @@ import org.egov.pt.calculator.web.models.demand.Bill.BillStatusEnum;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.Notice;
 import org.egov.pt.calculator.web.models.property.NoticeResponse;
+import org.egov.pt.calculator.web.models.property.NoticeType;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
 import org.egov.pt.calculator.web.models.property.Property;
 import org.egov.pt.calculator.web.models.property.PropertyRequest;
@@ -984,6 +985,7 @@ public class CalculatorUtils {
 		
 		else
 			for (Notice notice : res.getNotice()) {
+				if(notice.getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
 				penalty=penalty.add(new BigDecimal(notice.getPenaltyAmount()));
 			}
 

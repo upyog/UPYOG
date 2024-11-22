@@ -284,6 +284,17 @@ public class BillServicev2 {
 			billCriteria.setConsumerCode(new HashSet<>());
 		BillResponseV2 res = searchBill(billCriteria.toBillSearchCriteria(), requestInfo);
 		List<BillV2> bills = res.getBill();
+		
+		if(!CollectionUtils.isEmpty(bills))
+		{
+			bills.stream().forEach(b->b.getBillDetails().forEach(bd->
+			{
+				Map<String, Object> additionalDetails = mapper.convertValue(bd.getAdditionalDetails(), Map.class);
+				List<ModeOfPaymentDetails> modeOfPaymentDetails=mapper.convertValue(additionalDetails.get("paymentModeDetails"), List.class);
+				bd.setModeOfPaymentDetails(modeOfPaymentDetails);
+			}
+					));
+		}
 
 		/*
 		 * If no existing bills found then Generate new bill
@@ -383,7 +394,7 @@ public class BillServicev2 {
 							preparedStmtList.add(totalAmount);
 							preparedStmtList.add(billToBeReturned.get(0).getBillDetails().get(0).getId());
 
-							//jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
+							jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_BASE_QUERY, preparedStmtList.toArray());
 							updatedbills=billToBeReturned.get(0).getBillDetails();
 							updatedbills.get(0).setAmount(totalAmount);
 							updatedbills.get(0).setInterestfornoofdays(Integer.parseInt(extraNoOfDays.toString()));
@@ -809,8 +820,11 @@ public class BillServicev2 {
 				&& appProps.getFinYearEnd() > assesmentDoneForYearEnd) {
 			cuurentMonth = 3;
 			previousYear = true;
-			
+
 		}
+		//For Testing to be removed
+		//previousYear=false;
+		//cuurentMonth=8;
 		Integer nextYear = assesmentDoneForYearEnd;
 
 		Integer b = c.get(Calendar.YEAR);
@@ -1076,7 +1090,7 @@ public class BillServicev2 {
 					mpdObj.setPastAmount(pastDue);
 					mpdList.add(mpdObj);
 				}
-				
+
 				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 			} else if (q2.contains(cuurentMonth)) {
@@ -1445,7 +1459,7 @@ public class BillServicev2 {
 						totalAMountForInterest = totalAMountForInterest.add(adjustedQ3Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
 						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 						totalAmountForInterestCal=adjustedQ3Amount;
-						
+
 						String startDateQ3 = "01-10-" + currentyear;
 						String expiryDateQ3 = "31-12-" + currentyear;
 						mpdObj = new ModeOfPaymentDetails();
@@ -1575,7 +1589,7 @@ public class BillServicev2 {
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
 					mpdList.add(mpdObj);
 				}
-				
+
 				inp = getInterestPenalty( BigDecimal.ZERO,  null, null,null, null , BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,false);
 
 			} else if (h2.contains(cuurentMonth)) {
@@ -1588,7 +1602,7 @@ public class BillServicev2 {
 				Map<String, BigDecimal> interestMap = new HashMap<>();
 				BigDecimal totalAmountForInterestCal=BigDecimal.ZERO;
 				BigDecimal adjustedH1Amount=BigDecimal.ZERO;
-				
+
 				if(previousYear)
 				{
 					try {
@@ -1618,7 +1632,7 @@ public class BillServicev2 {
 						adjustedH1Amount=BigDecimal.ZERO;
 						advancedBillAmount=BigDecimal.ZERO;
 					}
-					
+
 					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
 					noFODays = getDateDifference(firstDayAfterexpiryDateQ2,currentDateWithAssesmentYear(currentyear.toString()));
 					if(previousYear)
@@ -1627,7 +1641,7 @@ public class BillServicev2 {
 					totalAMountForInterest=totalAMountForInterest.setScale(2,2);
 					totalAmountForInterestCal=adjustedH1Amount;
 					interestMap.put("H1",totalAMountForInterest );
-					
+
 					amountwithpastduehalf = adjustedH1Amount.add(pastDue);
 					String startDateh1 = "01-04-" + currentyear;
 					String expiryDateh1 = "30-09-" + currentyear;
@@ -1750,7 +1764,6 @@ public class BillServicev2 {
 		// JsonNode additionalDetails =
 		// mapper.convertValue(demand.getAdditionalDetails(),JsonNode.class);
 		additionalDetails.put("paymentModeDetails", mpdList);
-
 		// totalAmountForDemand = totalAmountForDemand.add(new
 		// BigDecimal(200));//advanced testing
 		return BillDetailV2.builder().billAccountDetails(new ArrayList<>(taxCodeAccountdetailMap.values()))

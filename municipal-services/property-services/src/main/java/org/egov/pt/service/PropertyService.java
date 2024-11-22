@@ -1,5 +1,6 @@
 package org.egov.pt.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,10 +17,14 @@ import javax.validation.Valid;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AmalgamatedProperty;
+import org.egov.pt.models.Assessment;
+import org.egov.pt.models.Assessment.ModeOfPayment;
+import org.egov.pt.models.Assessment.Source;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.UserDetailResponse;
@@ -32,6 +37,7 @@ import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.validator.PropertyValidator;
+import org.egov.pt.web.contracts.AssessmentRequest;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +101,12 @@ public class PropertyService {
 	
 	@Autowired
 	private PropertyUtil propertyUtil;
+		
+	@Autowired
+	private AssessmentEnrichmentService assessmentEnrichmentService;
+	
+	
+	
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -361,7 +373,7 @@ public class PropertyService {
 	}
 	
 	private void processPropertyUpdateAmalgamation(PropertyRequest request, Property propertyFromSearch) {
-
+		
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
@@ -383,7 +395,7 @@ public class PropertyService {
 				.build();
 
 		util.mergeAdditionalDetails(request, propertyFromSearch);
-
+		
 		if(config.getIsWorkflowEnabled()) {
 
 			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
@@ -406,6 +418,8 @@ public class PropertyService {
 				 * If property is In Workflow then continue
 				 */
 				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+				if(state.getState().equalsIgnoreCase(config.getDemandTriggerState()))
+						producer.push(config.getCreateAssessmentTopic(), assesmentcreateForBifurAndAmal(request));
 			}
 
 		} else {
@@ -486,11 +500,17 @@ public class PropertyService {
 						producer.push(config.getUpdatePropertyStatusForBifurcationSuccess(),request );
 						for(PropertyBifurcation b:bifurList) {
 							b.setStatus(true);
+							AssessmentRequest assessmentRequest=new AssessmentRequest();
+							Property prop=mapper.convertValue(b.getPropertyDetails(), Property.class);
+							assessmentRequest=assesmentcreateForBifurAndAmal(request);
+							assessmentRequest.getAssessment().setPropertyId(prop.getPropertyId());
+							producer.push(config.getCreateAssessmentTopic(), assessmentRequest);
 						}
 						request.getProperty().setPropertyBifurcations(bifurList);
 						producer.push(config.getUpdateChildStatusForBifurcation(), request);
 						
 					}
+					
 				}
 				
 				
@@ -895,9 +915,9 @@ public class PropertyService {
 			throw new CustomException("EG_PT_PROPERTY_AUDIT_ERROR", "Audit can only be provided for a single propertyId");
 		}
 
-		if (criteria.getDoorNo() != null || criteria.getName() != null || criteria.getOldPropertyId() != null) {
-			properties = fuzzySearchService.getProperties(requestInfo, criteria);
-		} else {
+		//if (criteria.getDoorNo() != null || criteria.getName() != null || criteria.getOldPropertyId() != null) {
+		//	properties = fuzzySearchService.getProperties(requestInfo, criteria);
+		//} else {
 			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
 
 				/* converts owner information to associated property ids */
@@ -915,7 +935,7 @@ public class PropertyService {
 			properties.forEach(property -> {
 				enrichmentService.enrichBoundary(property, requestInfo);
 			});
-		}
+		//}
 
 		/* Decrypt here */
 		 if(criteria.getIsSearchInternal())
@@ -1030,6 +1050,36 @@ public class PropertyService {
 		propertyCriteria.setIsInboxSearch(false);
         Integer count = repository.getCount(propertyCriteria, requestInfo);
         return count;
+	}
+	
+	public AssessmentRequest assesmentcreateForBifurAndAmal(PropertyRequest request)
+	{
+		AssessmentRequest assessmentRequest=new AssessmentRequest();
+		Assessment assessment=new Assessment();
+		LocalDate currentDate = LocalDate.now();
+		int startYear=currentDate.getYear();
+		int endYear=startYear+1;
+		if(currentDate.getMonthValue()>=1 && currentDate.getMonthValue()<=3)
+		{
+			endYear=startYear;
+			startYear=startYear-1;
+		}
+		String AssesmnetStartYear=String.valueOf(startYear);
+		String AssesmentEndYear=String.valueOf(endYear);
+		AssesmentEndYear=AssesmentEndYear.substring(2,4);
+		String AssesmentYear=AssesmnetStartYear+"-"+AssesmentEndYear;
+		assessment.setFinancialYear(AssesmentYear);
+		assessment.setModeOfPayment(ModeOfPayment.YEARLY);
+		assessment.setPropertyId(request.getProperty().getPropertyId());
+		assessment.setTenantId(request.getProperty().getTenantId());
+		assessment.setSource(Source.MUNICIPAL_RECORDS);
+		assessment.setChannel(Channel.CITIZEN);
+		assessment.setAssessmentDate(System.currentTimeMillis());
+		assessmentRequest.setAssessment(assessment);
+		assessmentRequest.setRequestInfo(request.getRequestInfo());
+		assessmentEnrichmentService.enrichAssessmentCreate(assessmentRequest);
+		assessmentRequest.getAssessment().setStatus(Status.ACTIVE);
+		return assessmentRequest;
 	}
 
 }
