@@ -302,6 +302,20 @@ public class PropertyValidator {
 
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
+		
+		if(!request.getProperty().getWorkflow().equals(null))
+		{
+			if(request.getProperty().getWorkflow().getAction().equalsIgnoreCase("REOPEN"))
+			{
+				List<String> requestMobile=request.getProperty().getOwners().stream().map(OwnerInfo::getMobileNumber).collect(Collectors.toList());
+				if(!requestMobile.contains(propertyFromSearch.getOwners().stream().map(OwnerInfo::getMobileNumber)))
+					throw new CustomException("EG_PT_UPDATE_OWNER_MOBILENUMBER_ERROR", "Update request cannot change owner Information");
+				
+				List<String> requestName=request.getProperty().getOwners().stream().map(OwnerInfo::getName).collect(Collectors.toList());
+				if(!requestName.contains(propertyFromSearch.getOwners().stream().map(OwnerInfo::getName)))
+					throw new CustomException("EG_PT_UPDATE_OWNER_NAME_ERROR", "Update request cannot change owner Information");
+			}
+		}
 	}
 
 
