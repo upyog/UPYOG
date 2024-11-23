@@ -33,10 +33,30 @@ public class RentConstants {
 	
 	@Value("${asset.transition.path}")
 	public String assetEndPoint;
+	@Value("${egov.bill.context.host}")
+	public String billHost;
+
+	@Value("${egov.bill.endpoint.fetch}")
+	public String fetchBillEndpoint;
+
+	@Value("${egov.bill.endpoint.search}")
+	public String searchBillEndpoint;
+    
+    @Value("${egov.demand.create.endpoint}")
+    public String demandCreateEndpoint;
+    
+    @Value("${egov.demand.search.endpoint}")
+    public String demandSearchEndpoint;
+    
+    @Value("${egov.demand.update.endpoint}")
+    public String demandUpdateEndpoint;
+
 
 	public static final String RENT_LEASE_CREATION = "create-rent-lease";
 	public static final String RENT_LEASE_INITIATED = "INITIATED";
+	
 	public static final String RENT_LEASE_CONSTANT = "RLA";
+	
 	public static final String RENT_LEASE_VERIFIER = "Rent Lease Verifier";
 	public static final String RENT_LEASE_APPROVER ="Rent Lease Approver";
 	public static final String STATUS_PENDINGFORVERIFICATION ="PENDINGFORVERIFICATION";
@@ -44,7 +64,9 @@ public class RentConstants {
 	public static final String STATE_LEVEL_TEENENT_ID = "hp";
 	public static final String RENT_STATUS_BOOKED = "BOOKED";
 	public static final String ACTION_INITIATE = "INITIATE";
+	
 	public static final String WORKFLOW_SITE_BOOKING_MODULE = "RLA";
+	
 	public static final String ACTION_FORWARD_TO_VERIFIER = "FORWARD_TO_VERIFIER";
 
 	public static final String ACTION_FORWARD_TO_APPROVER = "FORWARD_TO_APPROVER";
@@ -66,6 +88,10 @@ public class RentConstants {
 	public static final String STATUS_REVOKED ="REVOKED";
 	
 	public static final String STATUS_CANCEL ="CANCEL";
+	
+	public static final String RENT_LEASE_BOOKING_UPDATE_KAFKA_TOPIC = "update-rent-lease-booking";
+	
+    public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Advertisement_Canopy_Fee";
 
 
 

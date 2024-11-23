@@ -57,7 +57,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                 currentTradeLicense = TradeLicense.builder().auditDetails(auditdetails)
                         .licenseNumber(rs.getString("licensenumber"))
                         .licenseType(TradeLicense.LicenseTypeEnum.fromValue(rs.getString("licensetype")))
-                        .applicationType(TradeLicense.ApplicationTypeEnum.fromValue(rs.getString( "applicationType")))
+                        .applicationType(TradeLicense.ApplicationTypeEnum.fromValue(rs.getString( "applicationType")).toString())
                         .workflowCode(rs.getString("workflowCode"))
                         .oldLicenseNumber(rs.getString("oldlicensenumber"))
                         .applicationDate(applicationDate)

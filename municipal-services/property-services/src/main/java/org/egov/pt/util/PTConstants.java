@@ -181,7 +181,7 @@ public class PTConstants {
     
     public static final String WF_STATUS_PAID_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_PAID";
 
-	public static final String NOTIFICATION_MODULENAME = "rainmaker-pt";
+	public static final String NOTIFICATION_MODULENAME = "PropertyTax";
 	
 	/* PT notif loc codes */
 	

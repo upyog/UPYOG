@@ -185,9 +185,159 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-    - query: UPDATE eg_site_application SET site_description = ?, gps_location = ?, site_address = ?, site_cost = ?, site_photograph = ?, structure = ?, size_length = ?, size_width = ?, led_selection = ?, security_amount = ?, powered = ?, others = ?, district_name = ?, ulb_name = ?, ulb_type = ?, ward_number = ?, pincode = ?, additional_detail = ?::JSONB, last_modified_by = ?, last_modified_date = ?, site_type = ?, status = ?, is_active = ?, booking_start_date = ?, booking_end_date = ?, application_start_date = ?, application_end_date = ? WHERE uuid = ? AND id = ?;
+    - query: UPDATE eg_asset_assetdetails SET bookrefno=?, name=?, description=?, classification=?, parentcategory=?, category=?, subcategory=?, department=?,  status=?, action=?, additionaldetails=?::JSONB, assetdetails=?::JSONB,lastmodifiedtime=?, approvaldate=?, accountid=?, lastmodifiedby=?, remarks=? WHERE id=?;
 
       basePath: Asset
       jsonMaps:
 
+       - jsonPath: $.Asset.assetBookRefNo
+
+       - jsonPath: $.Asset.assetName
+
+       - jsonPath: $.Asset.description
+
+       - jsonPath: $.Asset.assetClassification
+
+       - jsonPath: $.Asset.assetParentCategory
+
+       - jsonPath: $.Asset.assetCategory
+
+       - jsonPath: $.Asset.assetSubCategory
+
+       - jsonPath: $.Asset.department
+
+       - jsonPath: $.Asset.status
+
+       - jsonPath: $.Asset.workflow.action
+
+       - jsonPath: $.Asset.additionalDetails
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.Asset.assetDetails
+         type: JSON
+         dbType: JSONB
+
+       - jsonPath: $.Asset.auditDetails.lastModifiedTime
+
+       - jsonPath: $.Asset.approvalDate
+
+       - jsonPath: $.Asset.accountId
+
+       - jsonPath: $.Asset.auditDetails.lastModifiedBy
+
+       - jsonPath: $.Asset.remarks
+
        - jsonPath: $.Asset.id
+
+
+
+    - query: UPDATE eg_asset_addressdetails	SET tenantid=?, doorno=?, latitude=?, longitude=?, addressnumber=?, type=?, addressline1=?, addressline2=?, landmark=?, city=?, pincode=?, detail=?, buildingname=?, street=?, locality_code=?, locality_name=?, locality_label=?, locality_latitude=?, locality_longitude=?, locality_children=?, locality_materializedpath=? WHERE addressid=?;
+
+
+      basePath: Asset
+      jsonMaps:
+
+        - jsonPath: $.Asset.addressDetails.tenantId
+
+        - jsonPath: $.Asset.addressDetails.doorNo
+
+        - jsonPath: $.Asset.addressDetails.latitude
+
+        - jsonPath: $.Asset.addressDetails.longitude
+
+        - jsonPath: $.Asset.addressDetails.addressNumber
+
+        - jsonPath: $.Asset.addressDetails.type
+
+        - jsonPath: $.Asset.addressDetails.addressLine1
+
+        - jsonPath: $.Asset.addressDetails.addressLine2
+
+        - jsonPath: $.Asset.addressDetails.landmark
+
+        - jsonPath: $.Asset.addressDetails.city
+
+        - jsonPath: $.Asset.addressDetails.pincode
+
+        - jsonPath: $.Asset.addressDetails.detail
+
+        - jsonPath: $.Asset.addressDetails.buildingName
+
+        - jsonPath: $.Asset.addressDetails.street
+
+        - jsonPath: $.Asset.addressDetails.locality.code
+
+        - jsonPath: $.Asset.addressDetails.locality.name
+
+        - jsonPath: $.Asset.addressDetails.locality.label
+
+        - jsonPath: $.Asset.addressDetails.locality.latitude
+
+        - jsonPath: $.Asset.addressDetails.locality.longitude
+
+        - jsonPath: $.Asset.addressDetails.locality.children
+
+        - jsonPath: $.Asset.addressDetails.locality.materializedPath
+
+        - jsonPath: $.Asset.addressDetails.addressId
+
+
+
+    - query: UPDATE eg_asset_auditdetails SET  bookrefno=?, name=?, description=?, classification=?, parentcategory=?, category=?, subcategory=?, department=?, applicationno=?, approvalno=?, tenantid=?, status=?, action=?, businessservice=?, additionaldetails=?::JSONB, createdtime=?, lastmodifiedtime=?, approvaldate=?, applicationdate=?, accountid=?, createdby=?, lastmodifiedby=?, financialyear=?, sourceoffinance=? WHERE id=?;
+
+
+      basePath: Asset
+      jsonMaps:
+
+        - jsonPath: $.Asset.assetBookRefNo
+
+        - jsonPath: $.Asset.assetName
+
+        - jsonPath: $.Asset.description
+
+        - jsonPath: $.Asset.assetClassification
+
+        - jsonPath: $.Asset.assetParentCategory
+
+        - jsonPath: $.Asset.assetCategory
+
+        - jsonPath: $.Asset.assetSubCategory
+
+        - jsonPath: $.Asset.department
+
+        - jsonPath: $.Asset.applicationNo
+
+        - jsonPath: $.Asset.approvalNo
+
+        - jsonPath: $.Asset.tenantId
+
+        - jsonPath: $.Asset.status
+
+        - jsonPath: $.Asset.workflow.action
+
+        - jsonPath: $.Asset.workflow.businessService
+
+        - jsonPath: $.Asset.additionalDetails
+          type: JSON
+          dbType: JSONB
+
+        - jsonPath: $.Asset.auditDetails.createdTime
+
+        - jsonPath: $.Asset.auditDetails.lastModifiedTime
+
+        - jsonPath: $.Asset.approvalDate
+
+        - jsonPath: $.Asset.applicationDate
+
+        - jsonPath: $.Asset.accountId
+
+        - jsonPath: $.Asset.auditDetails.createdBy
+
+        - jsonPath: $.Asset.auditDetails.lastModifiedBy
+
+        - jsonPath: $.Asset.financialYear
+
+        - jsonPath: $.Asset.sourceOfFinance
+
+        - jsonPath: $.Asset.id
