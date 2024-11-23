@@ -216,7 +216,7 @@ public class EnrichmentService {
 		}
 		// set application type : NEW is used in tl-calculator
 		if(null == tradeLicense.getApplicationType()) {
-			tradeLicense.setApplicationType(ApplicationTypeEnum.NEW);
+			tradeLicense.setApplicationType(ApplicationTypeEnum.NEW.toString());
 		}
 		// set workflow action
 		if(StringUtils.isEmpty(tradeLicense.getAction())) {
