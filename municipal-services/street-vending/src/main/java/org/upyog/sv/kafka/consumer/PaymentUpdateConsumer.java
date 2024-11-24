@@ -6,7 +6,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
-import org.upyog.sv.service.PaymentNotificationService;
+import org.upyog.sv.service.PaymentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentUpdateConsumer {
 
 	@Autowired
-	private PaymentNotificationService paymentNotificationService;
+	private PaymentService paymentService;
 
 	@KafkaListener(topics = { "${kafka.topics.receipt.create}" })
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		log.info("Street Vending Appplication Received to update workflow after PAY ");
 		try {
-			paymentNotificationService.process(record, topic);
+			paymentService.process(record, topic);
 		} catch (JsonProcessingException e) {
 			log.info("Catch block in listenPayments method of Pet service consumer");
 			e.printStackTrace();
@@ -37,7 +37,7 @@ public class PaymentUpdateConsumer {
 //		log.info("Street vending Appplication payment status update for  : " + topic + " and record : " + record);
 //		//TODO: need to remove after testing
 //		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
-//		paymentNotificationService.processTransaction(record, topic, null);
+//		paymentService.processTransaction(record, topic, null);
 //
 //	}
 //	
@@ -49,7 +49,7 @@ public class PaymentUpdateConsumer {
 //		log.info("Street vending Appplication payment started for topic  : " + topic + " and record : " + record);
 //		//TODO: need to remove after testing
 //		log.info("Strigifed json : " + StreetVendingUtil.beuatifyJson(record));
-//		paymentNotificationService.processTransaction(record, topic, null);
+//		paymentService.processTransaction(record, topic, null);
 //
 //	}
 
