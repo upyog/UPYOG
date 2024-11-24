@@ -40,7 +40,7 @@ public class StreetVendingDetail {
 	private Long approvalDate;
 
 	private String applicationStatus;
-	//StreetVendingApplicationStatus
+	// StreetVendingApplicationStatus
 
 	private String tradeLicenseNo;
 
@@ -62,19 +62,19 @@ public class StreetVendingDetail {
 	private String benificiaryOfSocialSchemes;
 
 	private String termsAndCondition;
-	
-	//Below fields added for certificate validity 
-	 @JsonProperty("issuedDate")
-	    private Long issuedDate = null;
 
-	    @JsonProperty("financialYear")
-	    private String financialYear = null;
+	// Below fields added for certificate validity
+	@JsonProperty("issuedDate")
+	private Long issuedDate = null;
 
-	    @JsonProperty("validFrom")
-	    private String validFrom = null;
+	@JsonProperty("financialYear")
+	private String financialYear = null;
 
-	    @JsonProperty("validTo")
-	    private String validTo = null;
+	@JsonProperty("validFrom")
+	private String validFrom = null;
+
+	@JsonProperty("validTo")
+	private String validTo = null;
 
 	private List<Address> addressDetails;
 

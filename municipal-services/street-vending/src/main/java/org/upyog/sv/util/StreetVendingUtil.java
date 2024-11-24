@@ -2,14 +2,17 @@ package org.upyog.sv.util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.springframework.stereotype.Component;
 import org.upyog.sv.web.models.common.AuditDetails;
 import org.upyog.sv.web.models.common.ResponseInfo;
 import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
@@ -19,10 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
+@Component
 public class StreetVendingUtil {
 
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
-	
+
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
 		final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
@@ -41,11 +45,10 @@ public class StreetVendingUtil {
 	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
 	}
-	
+
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
 	}
-
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
 		Long time = getCurrentTimestamp();
@@ -56,10 +59,10 @@ public class StreetVendingUtil {
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
-	
-	/*Commented and used Instant
-	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
-	 * }
+
+	/*
+	 * Commented and used Instant public static Long getCurrentTimestamp() { return
+	 * System.currentTimeMillis(); }
 	 */
 
 	public static String getRandonUUID() {
@@ -77,7 +80,7 @@ public class StreetVendingUtil {
 	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
-		if(dateFormat == null) {
+		if (dateFormat == null) {
 			dateFormat = DATE_FORMAT;
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
@@ -113,5 +116,31 @@ public class StreetVendingUtil {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	public String convertToFormattedDate(String epochString, String dateFormat) {
+		try {
+			long epoch = Long.parseLong(epochString);
+			Date date = new Date(epoch);
+			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+			return formatter.format(date);
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid epoch value: " + epochString);
+			return null;
+		}
+	}
+
+	public String addOneYearToEpoch(String epochString) {
+		try {
+			long epochValue = Long.parseLong(epochString);
+			if (epochValue != 0) {
+				long oneYearInMillis = 365L * 24 * 60 * 60 * 1000;
+				long updatedEpochValue = epochValue + oneYearInMillis;
+				return String.valueOf(updatedEpochValue);
+			}
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid epoch value: " + epochString);
+		}
+
+		return null;
+	}
 }

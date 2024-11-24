@@ -12,6 +12,8 @@ import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.ServiceRequestRepository;
 import org.upyog.sv.repository.StreetVendingRepository;
+import org.upyog.sv.util.IdgenUtil;
+import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -30,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class PaymentNotificationService {
+public class PaymentService {
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -52,6 +54,12 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private StreetVendingRepository streetVendingRepository;
+
+	@Autowired
+	private StreetVendingUtil streetVendingUtil;
+
+	@Autowired
+	private IdgenUtil idgenUtil;
 
 	/**
 	 *
@@ -91,7 +99,7 @@ public class PaymentNotificationService {
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(paymentRequest.getRequestInfo(),
 				Collections.singletonList(processInstance));
 		State state = callWorkFlow(workflowRequest);
-		
+
 		return state;
 
 	}
@@ -124,71 +132,42 @@ public class PaymentNotificationService {
 	}
 
 	private StreetVendingDetail updateApplicationStatus(String applicationStatus, PaymentRequest paymentRequest) {
-		StreetVendingDetail streetVendingDetail = streetVendingRepository.getStreetVendingApplications(StreetVendingSearchCriteria.builder()
-				.applicationNumber(paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
-						.getConsumerCode()).build()).get(0);
+		StreetVendingDetail streetVendingDetail = streetVendingRepository
+				.getStreetVendingApplications(StreetVendingSearchCriteria.builder()
+						.applicationNumber(
+								paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode())
+						.build())
+				.get(0);
 
 		if (streetVendingDetail == null) {
 			log.info("Application not founnd in consumer class while updating status");
 			return null;
 		}
 
-		
 		StreetVendingRequest vendingRequest = StreetVendingRequest.builder()
 				.requestInfo(paymentRequest.getRequestInfo()).build();
-		
-		streetVendingDetail.getAuditDetails().setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+
+		streetVendingDetail.getAuditDetails()
+				.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
 		streetVendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		streetVendingDetail.setApplicationStatus(applicationStatus);
 		streetVendingDetail.setApprovalDate(System.currentTimeMillis());
 		vendingRequest.setStreetVendingDetail(streetVendingDetail);
+		enrichCertificateNumber(streetVendingDetail, vendingRequest.getRequestInfo(),
+				streetVendingDetail.getTenantId()); // enriching certificate number when updating final status
 		log.info("Street Vending Request to update application status in consumer : " + vendingRequest);
 		streetVendingRepository.update(vendingRequest);
-		
+
 		return streetVendingDetail;
 
 	}
 
-//	public void processTransaction(HashMap<String, Object> record, String topic, String status) {
-//
-//		TransactionRequest transactionRequest = mapper.convertValue(record, TransactionRequest.class);
-//
-//		RequestInfo requestInfo = transactionRequest.getRequestInfo();
-//		Transaction transaction = transactionRequest.getTransaction();
-//
-//		log.info("Transaction in process transaction : " + transaction);
-//
-//		Transaction.TxnStatusEnum transactionStatus = transaction.getTxnStatus();
-//		String bookingNo = transaction.getConsumerCode();
-//
-//		String moduleName = transaction.getModule();
-//
-//		// Payment failure status JSON does not contain module name so added this
-//		// condition
-//		if (null == moduleName && null != bookingNo) { // Update module name from consumer code
-//			moduleName = bookingNo.startsWith("SV") ? configs.getBusinessServiceName() : null;
-//		}
-//
-//		log.info("moduleName : " + moduleName + "  transactionStatus  : " + transactionStatus);
-//
-//		/*
-//		 * if(configs.getBusinessServiceName() .equals(moduleName) &&
-//		 * (Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus) ||
-//		 * Transaction.TxnStatusEnum.PENDING.equals(transactionStatus))){
-//		 * 
-//		 * if(Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus)){ status =
-//		 * BookingStatusEnum.PAYMENT_FAILED; } log.info("For booking no : " + bookingNo
-//		 * + " transaction id : " + transaction.getTxnId());
-//		 * 
-//		 * CommunityHallBookingDetail bookingDetail =
-//		 * CommunityHallBookingDetail.builder().bookingNo(bookingNo) .build();
-//		 * CommunityHallBookingRequest bookingRequest =
-//		 * CommunityHallBookingRequest.builder()
-//		 * .requestInfo(requestInfo).hallsBookingApplication(bookingDetail).build();
-//		 * bookingService.updateBooking(bookingRequest, null, status);
-//		 * 
-//		 * }
-//		 */
-//	}
+	private void enrichCertificateNumber(StreetVendingDetail streetVendingDetail, RequestInfo requestInfo,
+			String tenantId) {
+		String certificateNo = idgenUtil.getIdList(requestInfo, tenantId, configs.getStreetVendingCertificateNoName(),
+				configs.getStreetVendingCertificateNoFormat(), 1).get(0);
+		streetVendingDetail.setCertificateNo(certificateNo);
+		;
+	}
 
 }
