@@ -24,4 +24,8 @@ public interface StreetVendingRepository {
 
 	List<StreetVendingDetail> getStreetVendingDraftApplications(@NonNull RequestInfo requestInfo, 
 			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria);
+
+	void updateDraftApplication(StreetVendingRequest vendingRequest);
+
+	void deleteDraftApplication(StreetVendingRequest vendingRequest);
 }

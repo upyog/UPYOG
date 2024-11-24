@@ -38,6 +38,10 @@ public class AdvertisementSlotAvailabilityDetail {
 	
 	private Boolean nightLight;
 	
+	private String bookingId;
+	
+	private long timerValue;
+	
 	private String bookingDate;
 
 //	private String fromTime;
@@ -49,8 +53,11 @@ public class AdvertisementSlotAvailabilityDetail {
 	@JsonProperty("slotStaus")
 	private String slotStaus;
 	
-	  public Boolean isNightLight() {
+	public Boolean isNightLight() {
 	        return nightLight;
 	    }
+	
+	
+
 
 }

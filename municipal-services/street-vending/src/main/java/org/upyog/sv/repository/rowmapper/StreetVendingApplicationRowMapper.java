@@ -1,8 +1,10 @@
 package org.upyog.sv.repository.rowmapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.*;
 import org.upyog.sv.web.models.common.AuditDetails;
 
@@ -17,21 +19,22 @@ import java.util.Map;
 @Component
 public class StreetVendingApplicationRowMapper implements ResultSetExtractor<List<StreetVendingDetail>> {
 
+	@Autowired
+	private StreetVendingUtil streetVendingUtil;
+
 	public List<StreetVendingDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		Map<String, StreetVendingDetail> streetVendingApplicationMap = new LinkedHashMap<>();
 
 		while (rs.next()) {
 			String applicationId = rs.getString("SVAPPLICATIONID");
-
 			String validFromString = rs.getString("svApprovalDate");
-			long validFromEpoch = Long.parseLong(validFromString);
-			String validToString = null;
-			if (validFromEpoch != 0) {
-				long oneYearInMillis = 365L * 24 * 60 * 60 * 1000; // adding 1 year to valid to field
-				long validToEpoch = validFromEpoch + oneYearInMillis;
-
-				validToString = String.valueOf(validToEpoch);
+			String validToString = "";
+			if (!validFromString.isEmpty()) {
+				validFromString = streetVendingUtil.convertToFormattedDate(validFromString, "dd-MM-YYYY");
+				validToString = streetVendingUtil
+						.convertToFormattedDate(streetVendingUtil.addOneYearToEpoch(validFromString), "dd-MM-YYYY");
 			}
+
 			StreetVendingDetail streetVendingDetail = streetVendingApplicationMap.get(applicationId);
 
 			if (streetVendingDetail == null) {

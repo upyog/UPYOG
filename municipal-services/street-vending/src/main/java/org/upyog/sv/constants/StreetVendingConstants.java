@@ -33,4 +33,53 @@ public class StreetVendingConstants {
 
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
 	public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenant";
+
+	// Notification Enhancement
+	public static final String CHANNEL_NAME_SMS = "SMS";
+
+	public static final String CHANNEL_NAME_EVENT = "EVENT";
+
+	public static final String CHANNEL_NAME_EMAIL = "EMAIL";
+
+	public static final String MODULE = "module";
+
+	public static final String ACTION = "action";
+
+	public static final String CHANNEL_LIST = "channelList";
+
+	public static final String CHANNEL = "Channel";
+
+	public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+
+	public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
+	public static final String USREVENTS_EVENT_TYPE = "SYSTEMGENERATED";
+
+	public static final String USREVENTS_EVENT_NAME = "Street Vending";
+
+	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-CHB";
+	
+	public static final String NOTIFICATION_LOCALE = "en_IN";
+	
+	public static final String NOTIFICATION_MODULE_NAME = "rainmaker-sv";
+	
+	public static final String NOTIFICATION_OWNERNAME = "{OWNER_NAME}";
+	
+	public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
+
+	public static final String NOTIFICATION_STATUS = "{STATUS}";
+	
+
+	public static final String NOTIFICATION_INSPECTION = "ew.en.counter.inspection";
+
+	public static final String NOTIFICATION_SUBMIT = "ew.en.counter.submit";
+
+	public static final String NOTIFICATION_SENTBACK = "ew.en.counter.sentback";
+
+	public static final String NOTIFICATION_REJECT = "ew.en.counter.reject";
+	
+	public static final String NOTIFICATION_APPROVED = "ew.en.counter.approved";
+
+	public static final String NOTIFICATION_REGISTRATIONCOMPLETED = "ew.en.counter.registrationcompleted";
+
 }
