@@ -81,7 +81,7 @@ export const SVSearch = {
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: "SV_ADDRESS_LINE1", value: response?.addressDetails[0]?.addressLine1 },
-          { title: "SV_ADDRESS_LINE2", value: response?.addressDetails[0]?.addressLine1 },
+          { title: "SV_ADDRESS_LINE2", value: response?.addressDetails[0]?.addressLine2 },
           { title: "SV_CITY",value: response?.addressDetails[0]?.city },
           { title: "SV_LOCALITY",value: response?.addressDetails[0]?.locality},
           { title: "SV_ADDRESS_PINCODE",value: response?.addressDetails[0]?.pincode},

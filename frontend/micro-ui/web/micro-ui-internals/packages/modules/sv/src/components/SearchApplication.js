@@ -249,6 +249,8 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                         control={control}
                     />
                 </SearchField>
+                {/* Empty Field added for the formatting of the form */}
+                <SearchField></SearchField> 
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                     <p style={{ marginTop: "10px" }}

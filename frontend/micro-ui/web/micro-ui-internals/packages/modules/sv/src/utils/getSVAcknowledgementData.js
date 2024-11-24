@@ -23,6 +23,7 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
     email: tenantInfo?.emailId,
     phoneNumber: tenantInfo?.contactNumber,
     applicationNumber: application?.applicationNo,
+    isTOCRequired: true,
     heading: t("SV_ACKNOWLEDGEMENT"),
     details: [
 
