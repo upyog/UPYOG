@@ -17,7 +17,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
-  const [timeRemaining, setTimeRemaining] = useState(state.timerValue);
+  const [timeRemaining, setTimeRemaining] = useState(state?.timerValue || 0);
 
   // Retrieve the last saved time for the current booking from localStorage
   useEffect(() => {

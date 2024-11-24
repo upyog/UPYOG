@@ -54,7 +54,7 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-  const [timeRemaining, setTimeRemaining] = useState(state.timerValue);
+  const [timeRemaining, setTimeRemaining] = useState(state?.timerValue || 0);
   
  // Retrieve the last saved time for the current booking from localStorage
  useEffect(() => {
