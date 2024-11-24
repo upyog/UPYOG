@@ -12,6 +12,7 @@ import {
   Loader,
   Toast,
   CardText,
+  CardSubHeader,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
@@ -53,7 +54,39 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
+  const [timeRemaining, setTimeRemaining] = useState(state.timerValue);
+  
+ // Retrieve the last saved time for the current booking from localStorage
+ useEffect(() => {
+  const savedTime = localStorage.getItem(`timeRemaining-${consumerCode}`);
+  if (savedTime) {
+    setTimeRemaining(Number(savedTime)); // Set the saved time if it exists
+  }
+  // Create an interval to update the timer every second
+  const interval = setInterval(() => {
+    setTimeRemaining(prevTime => {
+      if (prevTime <= 0) {
+        clearInterval(interval); // Stop the timer when time reaches 0
+        localStorage.removeItem(`timeRemaining-${consumerCode}`); // Remove the saved time for the expired booking
+        return 0;
+      }
+      const newTime = prevTime - 1;
+      localStorage.setItem(`timeRemaining-${consumerCode}`, newTime); // Save the updated time for the current booking
+      return newTime;
+    });
+  }, 1000);
 
+  // Cleanup the interval when the component is unmounted or when consumerCode changes
+  return () => clearInterval(interval);
+}, [consumerCode]);
+
+
+  // Format seconds into "minutes:seconds" format
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
   const onSubmit = async (d) => {
     const filterData = {
       Transaction: {
@@ -200,6 +233,16 @@ export const SelectPaymentType = (props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Header>{t("PAYMENT_CS_HEADER")}</Header>
         <Card>
+        {businessService === "adv-services" && (
+            <CardSubHeader 
+              style={{ 
+                textAlign: 'right', 
+                fontSize: "24px"
+              }}
+            >
+              {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
+            </CardSubHeader>
+          )}
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
             <CardLabel className="dark">{t("PAYMENT_CS_TOTAL_AMOUNT_DUE")}</CardLabel>
             <CardSectionHeader> ₹ { paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>
