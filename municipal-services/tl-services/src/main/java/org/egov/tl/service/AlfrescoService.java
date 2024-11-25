@@ -41,17 +41,17 @@ public class AlfrescoService {
 	@Autowired
     private ServiceRequestRepository serviceRequestRepository;
 	
-	public DMSResponse uploadAttachment(DmsRequest dmsRequest, RequestInfo requestInfo) throws IOException {
+	public String uploadAttachment(DmsRequest dmsRequest, RequestInfo requestInfo) throws IOException {
 		
 		
-		upload(dmsRequest, null);
+		String documentReferenceId = upload(dmsRequest, null);
 		
 			
         
 //		Object result = serviceRequestRepository.fetchResult(new StringBuilder(config.getAlfrescoHost().concat(config.getAlfrescoUploadEndPoint())), dmsRequest);
 //		DMSResponse response = mapper.convertValue(result,DMSResponse.class);
 		
-		return null;
+		return documentReferenceId;
 	}
 	
 	
