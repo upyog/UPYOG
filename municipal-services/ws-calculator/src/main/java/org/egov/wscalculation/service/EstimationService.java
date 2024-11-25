@@ -632,24 +632,24 @@ public class EstimationService {
 				securityCharge = new BigDecimal(
 						feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString());
 			} else {
-				ArrayList conn_fees = (ArrayList) feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST);
+				ArrayList sec_fees = (ArrayList) feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST);
 
 				BigDecimal fromPlotSize = BigDecimal.ZERO;
 				BigDecimal toPlotSize = BigDecimal.ZERO;
 				BigDecimal securityChargeApplicable = BigDecimal.ZERO;
 				String propertyType = null;
 
-				HashMap<String, String> connFeeMap = null;
-				for (int i = 0; i < conn_fees.size(); i++) {
-					connFeeMap = (HashMap<String, String>) conn_fees.get(i);
-					fromPlotSize = new BigDecimal(connFeeMap.get("fromPlotSize"));
-					toPlotSize = new BigDecimal(connFeeMap.get("toPlotSize"));
-					// securityChargeApplicable=new BigDecimal(connFeeMap.get("securityCharge"));
-					propertyType = connFeeMap.get("usageType").toString();
+				HashMap<String, String> secFeesMap = null;
+				for (int i = 0; i < sec_fees.size(); i++) {
+					secFeesMap = (HashMap<String, String>) sec_fees.get(i);
+					fromPlotSize = new BigDecimal(secFeesMap.get("fromPlotSize"));
+					toPlotSize = new BigDecimal(secFeesMap.get("toPlotSize"));
+					// securityChargeApplicable=new BigDecimal(secFeesMap.get("securityCharge"));
+					propertyType = secFeesMap.get("usageType").toString();
 					if (propertyType.equals(connection_propertyType) && connection_plotSize.compareTo(fromPlotSize) > 0
 							&& connection_plotSize.compareTo(toPlotSize) <= 0) {
 						securityChargeApplicable = new BigDecimal(
-								connFeeMap.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST));
+								secFeesMap.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST));
 						break; // matched the attributes and got valid connection fee
 					}
 
