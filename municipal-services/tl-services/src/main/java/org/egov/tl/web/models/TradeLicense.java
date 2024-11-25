@@ -118,7 +118,7 @@ public class  TradeLicense   {
         private LicenseTypeEnum licenseType = null;
 
         @JsonProperty("applicationType")
-        private ApplicationTypeEnum applicationType = null;
+        private String applicationType;
 
         @SafeHtml
         @JsonProperty("workflowCode")

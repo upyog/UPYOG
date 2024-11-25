@@ -17,11 +17,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.Role;
+import org.egov.rentlease.contract.bill.BillResponse;
+import org.egov.rentlease.contract.bill.Demand;
+import org.egov.rentlease.contract.bill.GenerateBillCriteria;
 import org.egov.rentlease.model.Asset;
 import org.egov.rentlease.model.AssetRequest;
 import org.egov.rentlease.model.AuditDetails;
 import org.egov.rentlease.model.RentLease;
-import org.egov.rentlease.model.RentLeaseAssetSearchCriteria;
 import org.egov.rentlease.model.RentLeaseCreationRequest;
 import org.egov.rentlease.model.RentLeaseCreationResponse;
 import org.egov.rentlease.model.RentLeaseSearchRequest;
@@ -60,9 +62,15 @@ public class RentLeaseService {
 
 	@Autowired
 	private RentConstants constants;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Autowired
+	private DemandService demandService;
+
+	@Autowired
+	private BillService billService;
 
 	public RentLeaseCreationResponse create(RentLeaseCreationRequest request) {
 		RentLeaseCreationResponse rentResponse = null;
@@ -290,52 +298,91 @@ public class RentLeaseService {
 
 			request = validateAndEnrichUpdateRentAndLeaseBooking(request, rentLeaseMapFromDb);
 
+			producer.push(constants.RENT_LEASE_BOOKING_UPDATE_KAFKA_TOPIC, request);
+
+			workflowService.updateWorkflowStatus(request);
+
+			generateDemandAndBill(request);
+
+			 response = RentLeaseCreationResponse.builder()
+					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
+					.rentLease(request.getRentLease()).build();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		return response;
 	}
 
-	private RentLeaseCreationRequest validateAndEnrichUpdateRentAndLeaseBooking(RentLeaseCreationRequest request,
-			Map<String, RentLease> rentLeaseMapFromDb) {
-		 
-		 RentLeaseCreationRequest tempRequest = RentLeaseCreationRequest.builder()
-					.requestInfo(request.getRequestInfo()).rentLease(new ArrayList<>()).build();
-			
-			request.getRentLease().stream().forEach(rent ->{
-				RentLease existingRentLease = rentLeaseMapFromDb.get(rent.getApplicationNo());
-				if(null==existingRentLease) {
-					throw new CustomException("APPLICATION_NOT_FOUND","Application No not found: "+rent.getApplicationNo());
-				}
-				if(!rent.getIsOnlyWorkflowCall()) {
-					rent.setApplicationNo(existingRentLease.getApplicationNo());
-					rent.setStatus(existingRentLease.getStatus());
-					rent.setAuditDetails(existingRentLease.getAuditDetails());
-					rent.getAuditDetails().setLastModifiedBy(request.getRequestInfo().getUserInfo().getUuid());
-					rent.getAuditDetails().setLastModifiedDate(new Date().getTime());
-					tempRequest.getRentLease().add(rent);
-				}
-				else {
-					Boolean isWfCall = rent.getIsOnlyWorkflowCall();
-					String tempApplicationNo= rent.getApplicationNo();
-					String action = rent.getWorkflowAction();
-					String comments = rent.getComments();
-					String status = constants.getStatusOrAction(action, true);
-					
-					RentLease rentTemp = objectMapper.convertValue(rentLeaseMapFromDb.get(rent.getApplicationNo()), RentLease.class);
-					
-					if(null == rentTemp) {
-						throw new CustomException("FAILED_SEARCH_RENT_LEASE_BOOKING","Rent and Lease Booking not found for workflow call.");
+	private void generateDemandAndBill(RentLeaseCreationRequest request) {
+		try {
+			request.getRentLease().stream().forEach(rent -> {
+				if (StringUtils.equalsIgnoreCase(constants.ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT,
+						rent.getWorkflowAction())) {
+					List<Demand> savedDemands = new ArrayList<>();
+					savedDemands = demandService.generateDemand(request.getRequestInfo(), rent,
+							constants.RENT_LEASE_CONSTANT);
+
+					if (CollectionUtils.isEmpty(savedDemands)) {
+						throw new CustomException("INVALID_CONSUMERCODE",
+								"Bill not generated due to no Demand found for the given consumerCode");
 					}
-					
-					rentTemp.setIsOnlyWorkflowCall(isWfCall);
-					rentTemp.setApplicationNo(tempApplicationNo);
-					rentTemp.setWorkflowAction(action);
-					rentTemp.setStatus(status);
-					
-					tempRequest.getRentLease().add(rentTemp);
+
+					GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(rent.getTenantId())
+							.businessService(constants.RENT_LEASE_CONSTANT).consumerCode(rent.getApplicationNo())
+							.build();
+					BillResponse billResponse = billService.generateBill(request.getRequestInfo(), billCriteria);
+
 				}
 			});
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+
+	}
+
+	private RentLeaseCreationRequest validateAndEnrichUpdateRentAndLeaseBooking(RentLeaseCreationRequest request,
+			Map<String, RentLease> rentLeaseMapFromDb) {
+
+		RentLeaseCreationRequest tempRequest = RentLeaseCreationRequest.builder().requestInfo(request.getRequestInfo())
+				.rentLease(new ArrayList<>()).build();
+
+		request.getRentLease().stream().forEach(rent -> {
+			RentLease existingRentLease = rentLeaseMapFromDb.get(rent.getApplicationNo());
+			if (null == existingRentLease) {
+				throw new CustomException("APPLICATION_NOT_FOUND",
+						"Application No not found: " + rent.getApplicationNo());
+			}
+			if (!rent.getIsOnlyWorkflowCall()) {
+				rent.setApplicationNo(existingRentLease.getApplicationNo());
+				rent.setStatus(existingRentLease.getStatus());
+				rent.setAuditDetails(existingRentLease.getAuditDetails());
+				rent.getAuditDetails().setLastModifiedBy(request.getRequestInfo().getUserInfo().getUuid());
+				rent.getAuditDetails().setLastModifiedDate(new Date().getTime());
+				tempRequest.getRentLease().add(rent);
+			} else {
+				Boolean isWfCall = rent.getIsOnlyWorkflowCall();
+				String tempApplicationNo = rent.getApplicationNo();
+				String action = rent.getWorkflowAction();
+				String comments = rent.getComments();
+				String status = constants.getStatusOrAction(action, true);
+
+				RentLease rentTemp = objectMapper.convertValue(rentLeaseMapFromDb.get(rent.getApplicationNo()),
+						RentLease.class);
+
+				if (null == rentTemp) {
+					throw new CustomException("FAILED_SEARCH_RENT_LEASE_BOOKING",
+							"Rent and Lease Booking not found for workflow call.");
+				}
+
+				rentTemp.setIsOnlyWorkflowCall(isWfCall);
+				rentTemp.setApplicationNo(tempApplicationNo);
+				rentTemp.setWorkflowAction(action);
+				rentTemp.setStatus(status);
+
+				tempRequest.getRentLease().add(rentTemp);
+			}
+		});
 		return tempRequest;
 	}
 
