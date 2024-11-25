@@ -12,11 +12,12 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   let index = mutationScreen ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
   const [name, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].name) || formData?.owners?.name || "");
-  const [email, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].email) || formData?.owners?.emailId || "");
+  const [email, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].email) || formData?.owners?.emailId || ""); 
   const [gender, setGender] = useState((formData.owners && formData.owners[index] && formData.owners[index].gender) || formData?.owners?.gender);
   const [mobileNumber, setMobileNumber] = useState(
     (formData.owners && formData.owners[index] && formData.owners[index].mobileNumber) || formData?.owners?.mobileNumber || ""
   );
+  const [error, setError]=useState(null);
   const [fatherOrHusbandName, setFatherOrHusbandName] = useState(
     (formData.owners && formData.owners[index] && formData.owners[index].fatherOrHusbandName) || formData?.owners?.fatherOrHusbandName || ""
   );
@@ -28,7 +29,18 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-
+  const validateEmail=(value)=>{
+    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+    if(value===""){
+      setError("");
+    }
+    else if(emailPattern.test(value)){
+      setError("");  
+    }
+    else{
+      setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));  
+    }
+  }
   const { data: Menu } = Digit.Hooks.pt.useGenderMDMS(stateId, "common-masters", "GenderType");
 
   let menu = [];
@@ -40,9 +52,16 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   function setOwnerName(e) {
     setName(e.target.value);
   }
-  function setOwnerEmail(e) {
-    setEmail(e.target.value);
+  const handleEmailChange=(e)=>{
+    const value=e.target.value;
+    setEmail(value);
+    validateEmail(value);   
   }
+  useEffect(() => {
+    if(email){
+      validateEmail(email);
+    } 
+  }, [email])
   function setGenderName(value) {
     setGender(value);
   }
@@ -58,6 +77,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   }
 
   const goNext = () => {
+    if(email==="" || !error){     
     let owner = formData.owners && formData.owners[index];
     let ownerStep;
     if (userType === "employee") {
@@ -65,7 +85,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
       if (mutationScreen) {
-        ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship };
+        ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship,emailId: email };
         onSelect("", ownerStep);
         return;
       }
@@ -73,6 +93,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect(config.key, ownerStep, false, index);
     }
   };
+}
 
   const onSkip = () => onSelect();
   // As Ticket RAIN-2619 other option in gender and gaurdian will be enhance , dont uncomment it
@@ -187,21 +208,24 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             name="gender"
           />
         </LabelFieldPair>
+        <div>
         <LabelFieldPair>
           <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_OWNER_EMAIL")}`}</CardLabel>
           <div className="field">
             <TextInput
               t={t}
-              type={"email"}
+              type="email"
               isMandatory={false}
               optionKey="i18nKey"
               name="email"
               value={email}
-              onChange={setOwnerEmail}
+              onChange={handleEmailChange}
               disable={editScreen}
             />
           </div>
         </LabelFieldPair>
+        {error && <span style={{color:"red"}}>{error}</span>}
+        </div>
       </div>
     );
   }
@@ -293,16 +317,21 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           labelKey="PT_RELATION"
           disabled={isUpdateProperty || isEditProperty}
         />
-        <CardLabel>{`${t("PT_FORM3_EMAIL_ID")}`}</CardLabel>
+        <div>
+          <LabelFieldPair>
+          <CardLabel>{`${t("PT_FORM3_EMAIL_ID")}`}</CardLabel>
         <TextInput
               isMandatory={false}
               name="email"
               value={email}
-              onChange={setOwnerEmail}
-              {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
+              onChange={handleEmailChange}
+              // {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
               disable={isUpdateProperty || isEditProperty}
             />
-      </div>
+          </LabelFieldPair>
+          {error && <span style={{color:"red"}}>{error}</span>}
+        </div>
+        </div>
     </FormStep>
     </React.Fragment>
   );

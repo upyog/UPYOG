@@ -1,7 +1,7 @@
 {
   "name": "@upyog-niua/upyog-ui-module-ptr",
   "author": "Shivank Shukla & Abhijeet Verma",
-  "version": "1.0.11",
+  "version": "1.8.0",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",

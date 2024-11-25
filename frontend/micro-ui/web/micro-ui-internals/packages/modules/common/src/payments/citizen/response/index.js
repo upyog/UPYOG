@@ -217,7 +217,7 @@ export const convertEpochToDate = (dateEpoch) => {
           else if(businessServ.includes("BPA")){
             let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
             let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
-            console.log("bpppp", bpaResponse)
+            const formattedStakeholderType=bpaResponse?.BPA[0]?.additionalDetails?.typeOfArchitect
             const updatedpayments={
               ...paymentData,
              
@@ -227,6 +227,7 @@ export const convertEpochToDate = (dateEpoch) => {
                       additionalDetails:{
                         ...paymentData.paymentDetails[0].additionalDetails,
                         "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
+                        "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
                       },
                     },
                   ],  
@@ -395,13 +396,21 @@ export const convertEpochToDate = (dateEpoch) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     let paymentArray=[];
-    const payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
+    let payments
+    if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
+    {
+       payments = await Digit.PaymentService.getReciept(tenantId, "PT.MUTATION", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
+    }
+    else {
+       payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
+    }
+   
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
     if (true) {
       let assessmentYear="",assessmentYearForReceipt="";
       let count=0;
       let toDate,fromDate;
-    if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
+    if(payments.Payments[0].paymentDetails[0].businessService=="PT" || payments.Payments[0].paymentDetails[0].businessService=="PT.MUTATION"){
        let arrearRow={};  let arrearArray=[];
           let taxRow={};  let taxArray=[];
          
@@ -586,9 +595,13 @@ export const convertEpochToDate = (dateEpoch) => {
         }
     
          paymentArray[0]=payments.Payments[0]
-        console.log("payments",payments)
-      response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
-      console.log("responseresponse",response)
+         if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
+         {
+           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, "pt-receipt");
+         }
+         else {
+           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
+         }
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response.filestoreIds[0]], "_blank");

@@ -115,7 +115,6 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
     ];
   }
   return units.map((unit) => {
-     console.log("unit",unit)
     let usageCategory = unit?.usageCategory && !(unit?.usageCategory?.includes("NONRESIDENTIAL")) ?  "RESIDENTIAL" : getUsageCategory(unit?.usageCategory)?.usageCategoryMinor;
     return {
       ...unit,
@@ -300,7 +299,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
   }
   function selectrentedMonths(i, value) {
     let units = [...fields]; 
-    console.log("value",value)
     units[i].rentedMonths=value;
     setFields(units);
   }
@@ -345,10 +343,19 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
           }
           if (key === "usageCategory") {
             unit["usageCategory"] = mdmsData?.usageDetails.find(
-              (e) =>
-                e.code.includes(field[key]?.code) &&
-                e.code.includes(typeof field["unitType"] === "object" ? field["unitType"]?.code : field["unitType"])
-            )?.code;
+              (e) =>{
+                const splitCode=e.code.split(".")[0];
+                if(field[key]?.code==="RESIDENTIAL"){
+                  return splitCode===field[key]?.code &&
+                  e.code.includes(typeof field["unitType"] === "object" ? field["unitType"]?.code : field["unitType"]
+                );
+                }
+                else{
+                  return e.code.includes(field[key]?.code) &&
+                  e.code.includes(typeof field["unitType"] === "object" ? field["unitType"]?.code : field["unitType"])
+                }  
+              }
+            )?.code;           
           } else if (key === "builtUpArea") {
             unit["constructionDetail"] = { builtUpArea: field[key] };
           } else {
@@ -402,7 +409,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     else 
     return true;
   }
-console.log("fieldfield",fields)
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}

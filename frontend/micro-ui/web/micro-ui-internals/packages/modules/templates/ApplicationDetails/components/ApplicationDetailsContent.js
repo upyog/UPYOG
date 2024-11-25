@@ -107,7 +107,7 @@ console.log("appl", applicationDetails)
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
-  const getTimelineCaptions = (checkpoint,index=0) => {
+  const getTimelineCaptions = (checkpoint, index = 0, timeline) => {
     if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" && !window.location.href.includes("/obps/"))) {
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
@@ -115,38 +115,47 @@ console.log("appl", applicationDetails)
       };
       return <TLCaption data={caption} />;
     } else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
-      //From BE side assigneeMobileNumber is masked/unmasked with connectionHoldersMobileNumber and not assigneeMobileNumber
-      const privacy = { uuid: checkpoint?.assignes?.[0]?.uuid, fieldName: "mobileNumber", model: "User",showValue: false,
-      loadData: {
-        serviceName: "/egov-workflow-v2/egov-wf/process/_search",
-        requestBody: {},
-        requestParam: { tenantId : applicationDetails?.tenantId, businessIds : applicationDetails?.applicationNo, history:true },
-        jsonPath: "ProcessInstances[0].assignes[0].mobileNumber",
-        isArray: false,
-        d: (res) => {
-          let resultstring = "";
-          resultstring = `+91 ${_.get(res,`ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
-          return resultstring;
-        }
-      }, }
+      const privacy = { 
+        uuid: checkpoint?.assignes?.[0]?.uuid, 
+        fieldName: "mobileNumber", 
+        model: "User",
+        showValue: false,
+        loadData: {
+          serviceName: "/egov-workflow-v2/egov-wf/process/_search",
+          requestBody: {},
+          requestParam: { tenantId: applicationDetails?.tenantId, businessIds: applicationDetails?.applicationNo, history: true },
+          jsonPath: "ProcessInstances[0].assignes[0].mobileNumber",
+          isArray: false,
+          d: (res) => {
+            let resultstring = "";
+            resultstring = `+91 ${_.get(res, `ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
+            return resultstring;
+          }
+        },
+      };
+      const previousCheckpoint = timeline[index - 1];
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
-        mobileNumber:applicationData?.processInstance?.assignes?.[0]?.uuid===checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
+                     ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
+                     : checkpoint?.assignes?.[0]?.mobileNumber,
         comment: t(checkpoint?.comment),
-        wfComment: checkpoint.wfComment,
+        wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [],
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
+      
+  
       return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     } else {
+  
       const caption = {
-        date: checkpoint?.auditDetails?.lastModified,
-        // name: checkpoint?.assigner?.name,
+        date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
         name: checkpoint?.assignes?.[0]?.name,
-        // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
       };
+      
       return <TLCaption data={caption} />;
     }
   };
@@ -432,7 +441,7 @@ console.log("appl", applicationDetails)
                 <CheckPoint
                   isCompleted={true}
                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
-                  customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
+                   customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0],workflowDetails?.data?.timeline)}
                 />
               ) : (
                 <ConnectingCheckPoints>
@@ -459,7 +468,7 @@ console.log("appl", applicationDetails)
                                 checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
                               }${timelineStatusPostfix}`
                             )}
-                            customChild={getTimelineCaptions(checkpoint,index)}
+                            customChild={getTimelineCaptions(checkpoint,index,workflowDetails?.data?.timeline)}
                           />
                         </React.Fragment>
                       );

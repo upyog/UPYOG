@@ -230,12 +230,12 @@ const ApplicationDetails = () => {
   const printReciept = async (businessService="TL", consumerCode=applicationDetails?.applicationData?.applicationNumber) => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
     if(receiptFile.filestoreIds[0]!==null){
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
+      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: receiptFile.filestoreIds[0] });
       window.open(fileStore[receiptFile.filestoreIds[0]], "_blank"); 
     }
     else{
-      const newResponse = await Digit.PaymentService.generatePdf(tenantId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: newResponse.filestoreIds[0] });
+      const newResponse = await Digit.PaymentService.generatePdf(stateId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: newResponse.filestoreIds[0] });
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
     }
   };

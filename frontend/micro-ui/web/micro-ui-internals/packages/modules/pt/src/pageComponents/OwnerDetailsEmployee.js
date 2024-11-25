@@ -134,6 +134,7 @@ const OwnerForm = (_props) => {
   const [uuid, setUuid] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
+  console.log("localstate", localFormState)
   const formValue = watch();
   const { errors } = localFormState;
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -198,6 +199,38 @@ const OwnerForm = (_props) => {
       trigger();
     }
   }, [formValue]);
+  // const validateEmail=(value)=>{
+  //   console.log("valueeee", value)
+  //   const emailPattern=/^[a-zA-Z0-9._%+-]+@gmail\.com$/
+  //   if(value===""){
+  //     setErrors("");
+  //   }
+  //   else if(emailPattern.test(value)){
+  //     console.log("condition met")
+  //     setErrors("");
+      
+      
+  //   }
+  //   else{
+  //     setErrors("Email shd be in correct fromat");
+      
+      
+  //   }
+  // }
+  // const handleEmailChange=(e)=>{
+  //   console.log("eeeooo", email)
+  //   const value=e.target.value;
+  //   setEmail(value);
+  //   validateEmail(value);
+      
+  // }
+  // useEffect(() => {
+  //   if(email){
+  //     validateEmail(email);
+  //   }
+    
+  // }, [email])
+
 
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors)) setError(config.key, { type: errors });
@@ -605,6 +638,7 @@ const OwnerForm = (_props) => {
               </CardLabelError>{" "}
             </React.Fragment>
           ) : null}
+          <div>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_EMAIL_ID")}</CardLabel>
             <div className="field">
@@ -612,12 +646,16 @@ const OwnerForm = (_props) => {
                 control={control}
                 name={"emailId"}
                 defaultValue={owner?.emailId}
-                rules={{ validate: (e) => ((e && /^[^\s@]+@[^\s@]+$/.test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                rules={{ validate: (e) => {
+                    if (!e) return true;
+                    return /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e) || t("CORE_INVALID_EMAIL_ID_PATTERN")}}
+                }
                 render={(props) => (
                   <TextInput
                     value={props.value}
                     disable={isEditScreen}
                     autoFocus={focusIndex.index === owner?.key && focusIndex.type === "emailId"}
+                    errorStyle={localFormState.touched.emailId && errors?.emailId?.message ? true : false}
                     onChange={(e) => {
                       props.onChange(e);
                       setFocusIndex({ index: owner.key, type: "emailId" });
@@ -630,6 +668,7 @@ const OwnerForm = (_props) => {
             </div>
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.emailId ? errors?.emailId?.message : ""}</CardLabelError>
+          </div>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PT_OWNERSHIP_INFO_CORR_ADDR") + (isIndividualTypeOwner ? "" : " *")}</CardLabel>

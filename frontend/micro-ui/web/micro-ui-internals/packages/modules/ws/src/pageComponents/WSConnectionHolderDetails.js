@@ -283,7 +283,55 @@ const ConnectionDetails = (_props) => {
     } else if (!Object.keys(errors).length && formState.errors[config.key] && isErrors) {
       clearErrors(config.key);
     }
-  }, [errors]);
+  }, [errors]); 
+  const validateEmail=(value)=>{
+    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+    const errors=sessionStorage.getItem("FORMSTATE_ERRORS");
+    let formStateErros=typeof errors=== "string" ? JSON.parse(errors):{};
+    if(emailPattern.test(value)){
+      
+      clearErrors("emailId");
+      
+      if(formStateErros["ConnectionHolderDetails"] && formStateErros["ConnectionHolderDetails"]?.type && formStateErros["ConnectionHolderDetails"]?.type?.emailId){
+        delete formStateErros["ConnectionHolderDetails"].type.emailId;
+      }
+        if(Object.keys(formStateErros["ConnectionHolderDetails"].type).length===0){
+          delete formStateErros["ConnectionHolderDetails"].type;
+        }
+        if(Object.keys(formStateErros["ConnectionHolderDetails"]).length===0){
+          delete formStateErros["ConnectionHolderDetails"];
+        }
+        sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formStateErros));
+      
+      return true;
+      
+      
+    }
+    else{
+      
+      setError("emailId",{
+        type:"manual",
+        message:"email id error"
+        
+        
+      });
+      
+      if(!formStateErros["ConnectionHolderDetails"]){
+        formStateErros["ConnectionHolderDetails"]={type:{}};
+      }
+        if(!formStateErros["ConnectionHolderDetails"].type){
+          formStateErros["ConnectionHolderDetails"].type={};
+        }
+        formStateErros["ConnectionHolderDetails"].type.emailId={
+          message:"please enter a valid emailId"
+        }
+        sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formStateErros));
+      
+      return false;
+
+      
+    }
+  }
 
   const checkifPrivacyValid = () => {
     if (window.location.href.includes("edit") || window.location.href.includes("modify")) return true;
@@ -843,6 +891,7 @@ const ConnectionDetails = (_props) => {
                       onChange={(e) => {
                         setEmailId(e.target.value);
                         props.onChange(e.target.value);
+                        validateEmail(e.target.value);
                         setFocusIndex({ index: connectionHolderDetail?.key, type: "emailId" });
                       }}
                       labelStyle={{ marginTop: "unset" }}
@@ -888,7 +937,8 @@ const ConnectionDetails = (_props) => {
                 )}
               />
             </div>
-          </LabelFieldPair>        
+          </LabelFieldPair> 
+          <CardLabelError style={errorStyle}>{localFormState.touched.emailId && errors?.emailId?.message ? errors?.emailId?.message:"" }</CardLabelError>       
         </div>
       ) : null}
     </div>
