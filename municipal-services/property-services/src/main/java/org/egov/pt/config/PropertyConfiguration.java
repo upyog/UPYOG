@@ -455,5 +455,9 @@ public class PropertyConfiguration {
 	
 	@Value("${assesment.start.year}")
 	private Integer assesmentStartyear;
+	
+	
+	@Value("${egov.integration.system.user.uuid}")
+	private String systemUser;
 	    
 }
