@@ -85,7 +85,6 @@ const transformDocuments = (documents) => {
   // Retrieve and parse CategoryDocument from sessionStorage
   const categoryDocument = sessionStorage.getItem("CategoryDocument");
   const parsedCategoryDocument = categoryDocument ? JSON.parse(categoryDocument) : null;
-console.log("parsedCategoryDocumentparsedCategoryDocument",parsedCategoryDocument);
   // Transform existing documents
   const transformedDocs = documents.map(doc => ({
     applicationId: "",  // Populate as required
@@ -359,7 +358,8 @@ export const svPayloadData = (data) =>{
         }
       ]
     }
-  }
+  },
+  isDraftApplication:false,
   };
   return formdata;
 }

@@ -288,7 +288,7 @@ console.log("filtersArgss",filtersArg);
         searchFilters["creationReason"] = [""];
         workflowFilters["moduleName"] = "sv-services";
        
-        return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+        return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder, isDraftApplication:false };
       },
   
 };

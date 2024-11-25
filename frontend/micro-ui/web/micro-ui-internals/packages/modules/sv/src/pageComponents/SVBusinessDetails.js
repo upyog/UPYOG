@@ -15,6 +15,7 @@ import ApplicationTable from "../components/inbox/ApplicationTable";
  */
 
 const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata }) => {
+  console.log("fomrdatatatatata",formData)
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
@@ -40,6 +41,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
   );
   const [backupDays, setBackupDays] = useState([...daysOfOperation]); // Backup array to store original days of operation
 
+  console.log("daysOfOperationdaysOfOperation",daysOfOperation);
 
   /* this checks two conditions:
    1. At least one day of the week is selected.
@@ -215,6 +217,254 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
       setareaRequired(e.target.value);
     }
 
+    //Custom function fo rthe payload whic we can use while goint to next
+
+  const handleSaveasDraft=()=>{
+    let vendordetails = [];
+    let tenantId=Digit.ULBService.getCitizenCurrentTenant(true);
+  const createVendorObject = (formData) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: formData?.owner?.units?.[0]?.vendorDateOfBirth,
+    ownerTypeCategory:formData?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    emailId: formData?.owner?.units?.[0]?.email,
+    fatherName: formData?.owner?.units?.[0]?.fatherName,
+    gender: formData?.owner?.units?.[0]?.gender?.code.charAt(0),
+    id: "",
+    mobileNo: formData?.owner?.units?.[0]?.mobileNumber,
+    name: formData?.owner?.units?.[0]?.vendorName,
+    relationshipType: "VENDOR",
+    vendorId: null
+  });
+
+  const createSpouseObject = (formData) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: formData?.owner?.units?.[1]?.spouseDateBirth,
+    ownerTypeCategory:formData?.owner?.units?.[1]?.ownerTypeCategory?.value,
+    emailId: "",
+    isInvolved: formData?.owner?.spouseDependentChecked,
+    fatherName: "",
+    gender: "O",
+    id: "",
+    mobileNo: "",
+    name: formData?.owner?.units?.[1]?.spouseName,
+    relationshipType: "SPOUSE",
+    vendorId: null
+  });
+
+  const createDependentObject = (formData) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: formData?.owner?.units?.[2]?.dependentDateBirth,
+    ownerTypeCategory:formData?.owner?.units?.[2]?.ownerTypeCategory?.value,
+    emailId: "",
+    isInvolved: formData?.owner?.dependentNameChecked,
+    fatherName: "",
+    gender: formData?.owner?.units?.[2]?.dependentGender?.code.charAt(0),
+    id: "",
+    mobileNo: "",
+    name: formData?.owner?.units?.[2]?.dependentName,
+    relationshipType: "DEPENDENT",
+    vendorId: null
+  });
+
+  // Helper function to check if a string is empty or undefined
+  const isEmpty = (str) => !str || str.trim() === '';
+
+  // Main logic
+  if (!isEmpty(formData?.owner?.units?.[0]?.vendorName)) {
+    const spouseName = formData?.owner?.units?.[0]?.spouseName;
+    const dependentName = formData?.owner?.units?.[0]?.dependentName;
+
+    if (isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 1: Only vendor exists
+      vendordetails = [createVendorObject(formData)];
+    } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 2: Both vendor and spouse exist
+      vendordetails = [
+        createVendorObject(formData),
+        createSpouseObject(formData)
+      ];
+    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+      // Case 3: All three exist (vendor, spouse, and dependent)
+      vendordetails = [
+        createVendorObject(formData),
+        createSpouseObject(formData),
+        createDependentObject(formData)
+      ];
+    }
+  }
+
+  const daysOfOperations = daysOfOperation;
+  const vendingOperationTimeDetails = daysOfOperations
+  .filter(day => day.isSelected) // Filter only selected days
+  .map(day => ({
+    applicationId: "", // Add actual applicationId if available
+    auditDetails: {
+      createdBy: "", // Adjust these fields based on your data
+      createdTime: 0, 
+      lastModifiedBy: "",
+      lastModifiedTime: 0,
+    },
+    dayOfWeek: day.name.toUpperCase(),
+    fromTime: day.startTime,
+    toTime: day.endTime,
+    id: ""
+  }));
+
+  const api_response = sessionStorage.getItem("Response");
+  const response = JSON.parse(api_response);
+
+    let streetVendingDetail= {
+      addressDetails: [
+        {
+          addressId: "",
+          addressLine1: "",
+          addressLine2: "",
+          addressType: "",
+          city: "",
+          cityCode: "",
+          doorNo: "",
+          houseNo: "",
+          landmark: "",
+          locality: "",
+          localityCode: "",
+          pincode: "",
+          streetName: "",
+          vendorId: ""
+        },
+        { // sending correspondence address here
+          addressId: "",
+          addressLine1: "",
+          addressLine2: "",
+          addressType: "",
+          city: "",
+          cityCode: "",
+          doorNo: "",
+          houseNo: "",
+          landmark: "",
+          locality: "",
+          localityCode: "",
+          pincode: "",
+          streetName: "",
+          vendorId: "",
+          isAddressSame: ""
+        }
+      ],
+      applicationDate: 0,
+      applicationId: "",
+      applicationNo: "",
+      applicationStatus: "",
+      approvalDate: 0,
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      },
+      bankDetail: {
+        accountHolderName: "",
+        accountNumber: "",
+        applicationId: "",
+        bankBranchName: "",
+        bankName: "",
+        id: "",
+        ifscCode: "",
+        refundStatus: "",
+        refundType: "",
+        auditDetails: {
+          createdBy: "",
+          createdTime: 0,
+          lastModifiedBy: "",
+          lastModifiedTime: 0
+        },
+      },
+      benificiaryOfSocialSchemes: "",
+      enrollmentId:"",
+      cartLatitude: 0,
+      cartLongitude: 0,
+      certificateNo: null,
+      disabilityStatus: "",
+      draftId: response?.SVDetail?.draftId,
+      documentDetails: [
+        {
+          applicationId: "",
+          auditDetails: {
+            createdBy: "",
+            createdTime: 0,
+            lastModifiedBy: "",
+            lastModifiedTime: 0
+          },
+          documentDetailId: "",
+          documentType: "",
+          fileStoreId: ""
+        }
+      ],
+      localAuthorityName: nameOfAuthority,
+      tenantId: tenantId,
+      termsAndCondition: "Y",
+      tradeLicenseNo: formData?.owner?.units?.[0]?.tradeNumber,
+      vendingActivity: vendingType?.code,
+      vendingArea: areaRequired||"0",
+      vendingLicenseCertificateId: "",
+      vendingOperationTimeDetails,
+      vendingZone:  vendingZones?.code,
+      vendorDetail: [
+        ...vendordetails
+      ],
+      workflow: {
+        action: "APPLY",
+        comments: "",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        varificationDocuments: [
+          {
+            additionalDetails: {},
+            auditDetails: {
+              createdBy: "",
+              createdTime: 0,
+              lastModifiedBy: "",
+              lastModifiedTime: 0
+            },
+            documentType: "",
+            documentUid: "",
+            fileStoreId: "",
+            id: ""
+          }
+        ]
+      }
+    };
+
+    Digit.SVService.create({streetVendingDetail, isDraftApplication:true},tenantId)
+    .then(response=>{
+      console.log("SAVED_SUCCESSFULLY",response);
+      sessionStorage.setItem("Response",JSON.stringify(response));
+    })
+    .catch(error=>{
+      console.log("Something Went Wrong",error);
+    })
+
+  };
+
+
     
     const goNext = () => {
       if (!validateDaysOfOperation()) {
@@ -226,8 +476,8 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
 
     businessStep = { ...business, vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation };
     onSelect(config.key, businessStep, false);
-
-  };
+    handleSaveasDraft();
+    };
 
   const onSkip = () => onSelect();
 

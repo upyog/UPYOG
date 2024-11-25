@@ -251,6 +251,251 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
     setFeilds(units);
   }
 
+
+  //Custom function fo rthe payload whic we can use while goint to next
+
+  const handleSaveasDraft=()=>{
+    let vendordetails = [];
+    let tenantId=Digit.ULBService.getCitizenCurrentTenant(true);
+  const createVendorObject = (fields) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: fields?.[0]?.vendorDateOfBirth,
+    ownerTypeCategory:fields?.[0]?.ownerTypeCategory?.value,
+    emailId: fields?.[0]?.email,
+    fatherName: fields?.[0]?.fatherName,
+    gender: fields?.[0]?.gender?.code.charAt(0),
+    id: "",
+    mobileNo: fields?.[0]?.mobileNumber,
+    name: fields?.[0]?.vendorName,
+    relationshipType: "VENDOR",
+    vendorId: null
+  });
+
+  const createSpouseObject = (fields) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: fields?.[1]?.spouseDateBirth,
+    ownerTypeCategory:fields?.[1]?.ownerTypeCategory?.value,
+    emailId: "",
+    isInvolved: fields?.spouseDependentChecked,
+    fatherName: "",
+    gender: "O",
+    id: "",
+    mobileNo: "",
+    name: fields?.[1]?.spouseName,
+    relationshipType: "SPOUSE",
+    vendorId: null
+  });
+
+  const createDependentObject = (fields) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: fields?.[2]?.dependentDateBirth,
+    ownerTypeCategory:fields?.[2]?.ownerTypeCategory?.value,
+    emailId: "",
+    isInvolved: fields?.dependentNameChecked,
+    fatherName: "",
+    gender: fields?.[2]?.dependentGender?.code.charAt(0),
+    id: "",
+    mobileNo: "",
+    name: fields?.[2]?.dependentName,
+    relationshipType: "DEPENDENT",
+    vendorId: null
+  });
+
+  // Helper function to check if a string is empty or undefined
+  const isEmpty = (str) => !str || str.trim() === '';
+
+  // Main logic
+  if (!isEmpty(fields?.[0]?.vendorName)) {
+    const spouseName = fields?.[0]?.spouseName;
+    const dependentName = fields?.[0]?.dependentName;
+
+    if (isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 1: Only vendor exists
+      vendordetails = [createVendorObject(fields)];
+    } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 2: Both vendor and spouse exist
+      vendordetails = [
+        createVendorObject(fields),
+        createSpouseObject(fields)
+      ];
+    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+      // Case 3: All three exist (vendor, spouse, and dependent)
+      vendordetails = [
+        createVendorObject(fields),
+        createSpouseObject(fields),
+        createDependentObject(fields)
+      ];
+    }
+  }
+
+    let streetVendingDetail= {
+      addressDetails: [
+        {
+          addressId: "",
+          addressLine1: "",
+          addressLine2: "",
+          addressType: "",
+          city: "",
+          cityCode: "",
+          doorNo: "",
+          houseNo: "",
+          landmark: "",
+          locality: "",
+          localityCode: "",
+          pincode: "",
+          streetName: "",
+          vendorId: ""
+        },
+        { // sending correspondence address here
+          addressId: "",
+          addressLine1: "",
+          addressLine2: "",
+          addressType: "",
+          city: "",
+          cityCode: "",
+          doorNo: "",
+          houseNo: "",
+          landmark: "",
+          locality: "",
+          localityCode: "",
+          pincode: "",
+          streetName: "",
+          vendorId: "",
+          isAddressSame: ""
+        }
+      ],
+      applicationDate: 0,
+      applicationId: "",
+      applicationNo: "",
+      applicationStatus: "",
+      approvalDate: 0,
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      },
+      bankDetail: {
+        accountHolderName: "",
+        accountNumber: "",
+        applicationId: "",
+        bankBranchName: "",
+        bankName: "",
+        id: "",
+        ifscCode: "",
+        refundStatus: "",
+        refundType: "",
+        auditDetails: {
+          createdBy: "",
+          createdTime: 0,
+          lastModifiedBy: "",
+          lastModifiedTime: 0
+        },
+      },
+      benificiaryOfSocialSchemes: "",
+      enrollmentId:"",
+      cartLatitude: 0,
+      cartLongitude: 0,
+      certificateNo: null,
+      disabilityStatus: "",
+      draftId: "",
+      documentDetails: [
+        {
+          applicationId: "",
+          auditDetails: {
+            createdBy: "",
+            createdTime: 0,
+            lastModifiedBy: "",
+            lastModifiedTime: 0
+          },
+          documentDetailId: "",
+          documentType: "",
+          fileStoreId: ""
+        }
+      ],
+      localAuthorityName: "",
+      tenantId: tenantId,
+      termsAndCondition: "Y",
+      tradeLicenseNo: fields?.[0]?.tradeNumber,
+      vendingActivity: "",
+      vendingArea: "0",
+      vendingLicenseCertificateId: "",
+      vendingOperationTimeDetails: [
+        {
+          applicationId: "",
+          auditDetails: {
+            createdBy: "",
+            createdTime: 0,
+            lastModifiedBy: "",
+            lastModifiedTime: 0
+          },
+          dayOfWeek: "MONDAY",  // Need to check why showuld we have to forward it
+          fromTime: "09:00",
+          id: "",
+          toTime: "09:00"
+        }
+      ],
+      vendingZone:  "",
+      vendorDetail: [
+        ...vendordetails
+      ],
+      workflow: {
+        action: "APPLY",
+        comments: "",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        varificationDocuments: [
+          {
+            additionalDetails: {},
+            auditDetails: {
+              createdBy: "",
+              createdTime: 0,
+              lastModifiedBy: "",
+              lastModifiedTime: 0
+            },
+            documentType: "",
+            documentUid: "",
+            fileStoreId: "",
+            id: ""
+          }
+        ]
+      }
+    };
+
+    Digit.SVService.create({streetVendingDetail, isDraftApplication:true},tenantId)
+    .then(response=>{
+      console.log("SAVED_SUCCESSFULLY",response);
+      sessionStorage.setItem("Response",JSON.stringify(response));
+    })
+    .catch(error=>{
+      console.log("Something Went Wrong",error);
+    })
+
+  };
+
+
+
+
   const goNext = () => {
 
     // Validate all applicable dates before proceeding
@@ -270,6 +515,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       dependentNameChecked
     };
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
+    handleSaveasDraft();
 
   };
 

@@ -1,5 +1,5 @@
 
-import React ,{Fragment}from "react";
+import React ,{Children, Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -20,7 +20,7 @@ const SVCreate = ({ parentRoute }) => {
   const { data: vendingApplicationData } = Digit.Hooks.sv.useSvSearchApplication(
     {
       tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
-      filters: { applicationNumber: vendingApplicationNo },
+      filters: { applicationNumber: vendingApplicationNo,isDraftApplication:false },
         enabled: vendingApplicationNo?true:false
     },
   );
@@ -79,7 +79,7 @@ const SVCreate = ({ parentRoute }) => {
     }
 
   const svcreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    history.replace(`${match.path}/acknowledgement`);
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {

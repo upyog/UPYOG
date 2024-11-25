@@ -2,7 +2,7 @@ import { Header, MultiLink, SubmitBar } from "@nudmcdgnpm/digit-ui-react-compone
 import _ from "lodash";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, Link, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
 
@@ -17,6 +17,7 @@ const ApplicationDetails = () => {
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const businessService = "street-vending"
+  const isDraftApplication=false
 
 
   // isAction is added to enable or disable the actionbar
@@ -25,7 +26,7 @@ const ApplicationDetails = () => {
     isAction = true;
   }
 
-  const { isLoading, data: applicationDetails } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber);
+  const { isLoading, data: applicationDetails } = Digit.Hooks.sv.useSVApplicationDetail(t, tenantId, applicationNumber,isDraftApplication);
 
   // hook used to work with the mutation function
   const {mutate} = Digit.Hooks.sv.useSVApplicationAction(tenantId);

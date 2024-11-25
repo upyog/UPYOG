@@ -32,7 +32,7 @@ export const SVMyApplications = () => {
     t1 = 4;
   }
 
-  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, mobileNumber:user?.mobileNumber };
+  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, isDraftApplication:false,mobileNumber:user?.mobileNumber };
 
   useEffect(() => {
     setFilters(initialFilters);

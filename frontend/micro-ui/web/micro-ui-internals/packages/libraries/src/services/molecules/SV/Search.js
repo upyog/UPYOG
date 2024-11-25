@@ -114,8 +114,8 @@ export const SVSearch = {
     ];
   },
 
-  applicationDetails: async (t, tenantId, applicationNumber, userType, args) => {
-    const filter = { applicationNumber, ...args };
+  applicationDetails: async (t, tenantId, applicationNumber,isDraftApplication, userType, args) => {
+    const filter = { applicationNumber, ...args,isDraftApplication };
     const response = await SVSearch.application(tenantId, filter);
 
     return {

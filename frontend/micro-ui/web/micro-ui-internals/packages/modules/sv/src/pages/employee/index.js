@@ -25,36 +25,7 @@ const EmployeeApp = () => {
     },
   };
 
-  /** Displays the path above the form
-   * Can redirect the previous components on clicking
-   */
-  const SVBreadCrumbs = ({ location }) => {
-    const { t } = useTranslation();
-    const search = useLocation().search;
-    const fromScreen = new URLSearchParams(search).get("from") || null;
-    const { from : fromScreen2 } = Digit.Hooks.useQueryParams();
-    const crumbs = [
-      {
-        path: "/digit-ui/employee",
-        content: t("ES_COMMON_HOME"),
-        show: true,
-      },
-      {
-        path: "/digit-ui/employee/sv/inbox",
-        content: t("ES_TITLE_INBOX"),
-        show: location.pathname.includes("sv/inbox") ? true : false,
-      },
-      {
-        path: "/digit-ui/employee/sv/my-applications",
-        content: t("ES_COMMON_APPLICATION_SEARCH"),
-        show: location.pathname.includes("sv/my-applications") || location.pathname.includes("/sv/applicationsearch/application-details/") ? true : false,
-      },
-    ];
-  
-    return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
-  }
-
-  const isRes = window.location.href.includes("sv/response");
+ 
   const SVEmpCreate = Digit?.ComponentRegistryService?.getComponent("SVEmpCreate");
   const SVApplicationDetails = Digit?.ComponentRegistryService?.getComponent("SVApplicationDetails")
   return (
