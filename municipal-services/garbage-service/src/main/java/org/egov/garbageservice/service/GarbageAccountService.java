@@ -423,10 +423,10 @@ public class GarbageAccountService {
 //		if(BooleanUtils.isTrue(duplicateOwner)) {
 //			throw new CustomException("DUPLICATE_OWNER","Duplicate Owner Found for given property.");
 //		}
-		if(StringUtils.isEmpty(garbageAccount.getUuid())			// create account condition
-				&& !CollectionUtils.isEmpty(existingAccounts)) {
-			throw new CustomException("DUPLICATE_OWNER","Can't create Duplicate Owner for given property which is already present.");
-		}else 
+//		if(StringUtils.isEmpty(garbageAccount.getUuid())			// create account condition
+//				&& !CollectionUtils.isEmpty(existingAccounts)) {
+//			throw new CustomException("DUPLICATE_OWNER","Can't create Duplicate Owner for given property which is already present.");
+//		}else 
 			if(StringUtils.isNotEmpty(garbageAccount.getUuid()))	// update account condition
 		{
 			List<GarbageAccount> existingAccounts1 = existingAccounts.stream().filter(account -> StringUtils.equals(garbageAccount.getUuid(), account.getUuid())).collect(Collectors.toList());
