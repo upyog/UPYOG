@@ -48,17 +48,17 @@ public class TradeLicenseConsumer {
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         ObjectMapper mapper = new ObjectMapper();
         TradeLicenseRequest tradeLicenseRequest = new TradeLicenseRequest();
-        
-        if(StringUtils.equals(topic, "save-tl-certificate")) {
-        	saveTlCertificate(tradeLicenseRequest);
-        	return ;
-        }
-        
+
         try {
             tradeLicenseRequest = mapper.convertValue(record, TradeLicenseRequest.class);
         } catch (final Exception e) {
             log.error("Error while listening to value: " + record + " on topic: " + topic + ": " + e);
         }
+        if(StringUtils.equals(topic, "${save.tl.certificate}")) {
+        	saveTlCertificate(tradeLicenseRequest);
+        	return ;
+        }
+        
         if (!tradeLicenseRequest.getLicenses().isEmpty()) {
             String businessService = tradeLicenseRequest.getLicenses().get(0).getBusinessService();
             if (businessService == null)
@@ -92,7 +92,7 @@ public class TradeLicenseConsumer {
 		DmsRequest dmsRequest = tradeLicenseService.generateDmsRequestByTradeLicense(resource, license,
 				tradeLicenseRequest.getRequestInfo());
 		try {
-			DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
+			String documentReferenceId = alfrescoService.uploadAttachment(dmsRequest,
 					tradeLicenseRequest.getRequestInfo());
 		} catch (IOException e) {
 			throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
