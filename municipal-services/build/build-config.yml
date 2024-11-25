@@ -232,4 +232,13 @@ config:
         image-name: "adrvcanopy-services"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/advertisement-canopy-service/src/main/resources/db"
-        image-name: "adrvcanopy-services-db" 
+        image-name: "adrvcanopy-services-db
+
+  - name: "builds/municipal-services/asset-services"
+    build:
+      - work-dir: "asset-services"
+        image-name: "asset-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/asset-services/src/main/resources/db"
+        image-name: "asset-services-db" 
+
