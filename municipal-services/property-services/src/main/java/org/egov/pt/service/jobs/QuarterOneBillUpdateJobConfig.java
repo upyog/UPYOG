@@ -1,4 +1,4 @@
-package org.egov.pt.service.quarterOneBillUpdateJob;
+package org.egov.pt.service.jobs;
 
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class QuarterOneBillUpdateJobConfig {
 
     @Bean
     @Autowired
-    CronTriggerFactoryBean processStatusUpdateTrigger(JobDetail processStatusUpdateJob) {
+    CronTriggerFactoryBean processStatusUpdateTrigger(JobDetail quarterOneBillUpdateJob) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
-        cronTriggerFactoryBean.setJobDetail(processStatusUpdateJob);
+        cronTriggerFactoryBean.setJobDetail(quarterOneBillUpdateJob);
         cronTriggerFactoryBean.setCronExpression("0 0 0,12 * * ?");
         cronTriggerFactoryBean.setGroup("status-update");
         return cronTriggerFactoryBean;

@@ -1,4 +1,4 @@
-package org.egov.pt.service.quarterOneBillUpdateJob;
+package org.egov.pt.service.jobs;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
