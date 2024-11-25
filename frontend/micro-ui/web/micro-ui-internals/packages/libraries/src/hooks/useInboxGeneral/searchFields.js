@@ -53,6 +53,25 @@ const inboxSearchFields = {
       },
     },
   ],
+  ASSET: [
+    {
+      label: "ES_ASSET_RESPONSE_CREATE_LABEL",
+      name: "applicationNo",
+      roles: [],
+    },
+    {
+      label: "AST_ASSET_CATEGORY_LABEL",
+      name: "assetclassification",
+      // minLength: "10",
+      roles: [],
+    },
+    {
+      label: "AST_PARENT_CATEGORY_LABEL",
+      name: "assetParentCategory",
+      // minLength: "10",
+      roles: [],
+    },
+  ],
 };
 
 const searchFieldsForSearch = {

@@ -24,6 +24,14 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.PTR,
     _searchFn: () => PTRService.search({ tenantId, filters }),
   },
+  ASSET: {
+    services: ["asset-create"],
+    searchResponseKey: "Asset",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.ASSET,
+    _searchFn: () => ASSETService.search({ tenantId, filters }),
+  },
   FSM: {
     services: ["FSM"],
     searchResponseKey: "fsm",

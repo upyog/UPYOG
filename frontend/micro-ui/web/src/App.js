@@ -41,6 +41,7 @@ import {
   PTRLinks,
   PTRComponents,
 } from "@upyog-niua/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-module-asset";
 
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
@@ -70,7 +71,8 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
+  "PTR",
+  "ASSET"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -88,6 +90,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PTRModule,
   PTRLinks,
   ...PTRComponents,
+  ASSETModule,
+  ASSETLinks,
+  ...ASSETComponents,
 
 });
 
