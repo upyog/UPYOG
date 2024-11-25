@@ -7,7 +7,13 @@
     "packages/css",
     "example",
     "packages/react-components",
-    "packages/modules/*"
+    "packages/modules/core",
+    "packages/modules/common",
+    "packages/modules/asset",
+    "packages/modules/dss",
+    "packages/modules/ptr"
+
+
 
   ],
   "license": "MIT",
@@ -26,6 +32,7 @@
     "dev:components": "cd packages/react-components && yarn start",
     "dev:common": "cd packages/modules/common && yarn start",
     "dev:pt": "cd packages/modules/pt && yarn start",
+    "dev:asset": "cd packages/modules/asset && yarn start",
     "dev:ptr": "cd packages/modules/ptr && yarn start",
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
@@ -45,12 +52,13 @@
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
+    "build:asset":"cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
-    "buildD:common": "cd packages/modules/common && yarn build",
+    "build:common": "cd packages/modules/common && yarn build",
     "buildD:pt": "cd packages/modules/pt && yarn build",
     "build:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
-    "buildD:core": "cd packages/modules/core && yarn build",
+    "build:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
     "buildD:fsm": "cd packages/modules/fsm && yarn build",
     "buildD:dss": "cd packages/modules/dss && yarn build",
