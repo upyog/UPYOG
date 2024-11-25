@@ -683,7 +683,7 @@ public class IngestValidator {
         return converted.toString();
     }
 
-    public Map < String, Map< String, String >> stateListMDMS(RequestInfo requestInfo) {
+    public Map<String, Map<String, Object>> stateListMDMS(RequestInfo requestInfo) {
 
 
         StringBuilder mdmsURL = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
@@ -692,18 +692,22 @@ public class IngestValidator {
                 .filter("[?(@.active==true)]")
                 .build();
 
+        MasterDetail mstrDetail1 = MasterDetail.builder().name("nationalInfo")
+                .filter("[?(@.active==true)]")
+                .build();
+
 
         ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail)).build();
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
         MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
         Object response = null;
-        List < Map < String, String >> jsonOutput = null;
+        List < Map < String, String >> nationalinfouser = null;
 
         log.info("URI: " + mdmsURL.toString());
         try {
             log.info(objectMapper.writeValueAsString(mdmsConfig));
             response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
-            jsonOutput = JsonPath.read(response, MDMS_NATIONALTENANTUSER_PATH);
+            nationalinfouser = JsonPath.read(response, MDMS_NATIONALTENANTUSER_PATH);
 
 
         } catch (ResourceAccessException e) {
@@ -719,16 +723,50 @@ public class IngestValidator {
 
             log.error("Exception while fetching from searcher: ", e);
         }
+        ModuleDetail moduleDetail1 = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail1)).build();
+        MdmsCriteria mdmsCriteria1 = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail1)).tenantId("pg").build();
+        MdmsCriteriaReq mdmsConfig1 = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria1).build();
+        List<Map<String,String>> nationalinfo = null;
+        try {
+            log.info(objectMapper.writeValueAsString(mdmsConfig1));
+            response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig1, Map.class);
+            nationalinfo=  JsonPath.read(response, MDMS_NATIONALTENANTS_PATH);
+            //migratedTenant= jsonOutput.get(0);
 
-        Map<String,Map<String , String>> stateEmailMap = new HashMap<>();
-        for (Map<String, String> state : jsonOutput) {
+        } catch (ResourceAccessException e) {
+
+            Map<String, String> map = new HashMap<>();
+            map.put(null, e.getMessage());
+            throw new CustomException(map);
+        }  catch (HttpClientErrorException e) {
+
+            log.info("the error is : " + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        }catch (Exception e) {
+
+            log.error("Exception while fetching from searcher: ", e);
+        }
+
+        Map<String, Map<String, Object>> stateEmailMap = new HashMap<>();
+
+        for (Map<String, String> state : nationalinfouser) {
             String stateCode = state.get("stateCode");
             String email = state.get("emailId");
-            String nodalofficer = state.get("NodalOfficerName");
+            String nodalOfficer = state.get("NodalOfficerName");
             if (stateCode != null && email != null) {
-                Map<String , String> officerInfo = new HashMap<>();
+                Map<String, Object> officerInfo = new HashMap<>();
                 officerInfo.put("email", email);
-                officerInfo.put("nodalOfficer", nodalofficer);
+                officerInfo.put("nodalOfficer", nodalOfficer);
+                officerInfo.put("ULBs", new ArrayList<String>());
+
+                List<String> ulbs = (List<String>) officerInfo.get("ULBs");
+                for (Map<String, String> stateUlb : nationalinfo) {
+                    String stateWithUlb = stateUlb.get("stateCode");
+                    String ulb = stateUlb.get("code");
+                    if (stateCode.equals(stateWithUlb) && ulb != null) {
+                        ulbs.add(ulb);
+                    }
+                }
                 stateEmailMap.put(stateCode, officerInfo);
             }
         }
