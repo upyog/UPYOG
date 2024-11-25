@@ -15,15 +15,18 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             offset: 0,
             limit: !isMobile && 10,
             sortBy: "commencementDate",
-            sortOrder: "DESC"
+            sortOrder: "DESC",
+            isDraftApplication:"false"
         }
     })
+
 
     useEffect(() => {
         register("offset", 0)
         register("limit", 10)
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
+        register("isDraftApplication", "false")
     }, [register])
 
 
