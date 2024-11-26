@@ -1068,6 +1068,202 @@ const GetEgovLocations = (MdmsRes) => {
     i18nKey: obj.localname,
   }));
 };
+//adding here
+const getAssetDocuments = (MdmsRes) => {
+  MdmsRes["ASSET"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+    return {
+      ...Documents,
+      i18nKey: `${dropdownData.code}`,
+    };
+  });
+};
+const getAssetClassification = (MdmsRes) => {
+  return MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((assetDetails) => {
+    return {
+      ...assetDetails,
+      i18nKey: `ASSET_CLASSIFIED_${assetDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getAssetparentsubcategory= (MdmsRes) => {
+  return MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((assetparentDetails) => {
+    return {
+      ...assetparentDetails,
+      i18nKey: `AST_${assetparentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getAssetParent = (MdmsRes) => {
+  return MdmsRes["ASSET"].assetParentCategory.filter((assetParentCategory) => assetParentCategory.active).map((assetparentDetails) => {
+    return {
+      ...assetparentDetails,
+      i18nKey: `ASSET_CLASSIFIED_${assetparentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};
+const getAssetSubParent = (MdmsRes) => {
+  return MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((assetsubparentDetails) => {
+    return {
+      ...assetsubparentDetails,
+      i18nKey: `ASSET_SUB_CLASSIFIED_${assetsubparentDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};   
+const getAssetcommon = (MdmsRes) => {
+  return MdmsRes["ASSET"].AssetCommonDetail.filter((AssetCommonDetail) => AssetCommonDetail.active).map((assetcommonDetails) => {
+    return {
+      ...assetcommonDetails,
+      i18nKey: `ASSET_COMMON_${assetcommonDetails.code}`,
+    };
+  });
+  //return MdmsRes;
+};   
+const Asset_Classification = (MdmsRes) => {
+  MdmsRes["ASSET"].assetClassification.filter((assetClassification) => assetClassification.active).map((asset_mdms) => {
+    return {
+      ...asset_mdms,
+      i18nKey: `ASSET_CLASS_${asset_mdms.code}`,
+    };
+  });
+};
+const AST_PARENT= (MdmsRes) => {
+  MdmsRes["ASSET"].assetSubCategory.filter((assetSubCategory) => assetSubCategory.active).map((asset_parent_mdms) => {
+    return {
+      ...asset_parent_mdms,
+      i18nKey: `AST_PAR_${asset_parent_mdms.code}`,
+    };
+  });
+};
+const AssetTypeParent = (MdmsRes) => {
+  MdmsRes["ASSET"].assetParentCategory.filter((assetParentCategory) => assetParentCategory.active).map((asset_type_mdms) => {
+    return {
+      ...asset_type_mdms,
+      i18nKey: `ASSET_PARENT_CATEGORY_${asset_type_mdms.code}`,
+    };
+  });
+};
+const AssetSubTypeParent = (MdmsRes) => {
+  MdmsRes["ASSET"].assetCategory.filter((assetCategory) => assetCategory.active).map((asset_sub_type_mdms) => {
+    return {
+      ...asset_sub_type_mdms,
+      i18nKey: `ASSET_SUB_PARENT_CATEGORY_${asset_sub_type_mdms.code}`,
+    };
+  });
+};
+const Assetcommondetail = (MdmsRes) => {
+  MdmsRes["ASSET"].AssetCommonDetail.filter((AssetCommonDetail) => AssetCommonDetail.active).map((asset_mdms_common) => {
+    return {
+      ...asset_mdms_common,
+      i18nKey: `ASSET_SUB_PARENT_CATEGORY_${asset_mdms_common.code}`,
+    };
+  });
+};
+//adding asset here
+const getAssetClassificationList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetClassification",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getAssetparentsubcategoryList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetSubCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetParentList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetParentCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetSubParentList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "assetCategory",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetcommonList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "AssetCommonDetail",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+const getAssetDocumentsCategory = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Documents",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+
 
 const GetServiceDefs = (MdmsRes, moduleCode) => MdmsRes[`RAINMAKER-${moduleCode}`].ServiceDefs.filter((def) => def.active);
 
@@ -1553,7 +1749,38 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 
     case "PTRBreedType":
       return PTRBreedType(MdmsRes);
-     
+    
+    case "assetClassification":
+      return getAssetClassification(MdmsRes); 
+
+    case "assetSubCategory":
+        return getAssetparentsubcategory(MdmsRes);
+    
+    case "Asset_Classification":
+      return Asset_Classification(MdmsRes);
+    case "Asset_Classification":
+        return Asset_Classification(MdmsRes);
+    case "assetParentCategory":
+          return getAssetParent(MdmsRes);
+    
+    case "assetCategory":
+          return getAssetSubParent(MdmsRes);
+    
+    case "AssetCommonDetail":
+          return getAssetcommon(MdmsRes);
+    
+    case "AssetTypeParent":
+          return AssetTypeParent(MdmsRes);
+    
+    case "Documents":
+          return getAssetDocuments(MdmsRes);
+    case "AssetSubTypeParent":
+            return AssetSubTypeParent(MdmsRes);
+      
+    case "Assetcommondetail":
+            return Assetcommondetail(MdmsRes);
+    case "AST_PARENT":
+              return AST_PARENT(MdmsRes);
     default:
       return MdmsRes;
   }
@@ -1683,6 +1910,37 @@ export const MdmsService = {
   },
   getPitType: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getPitTypeCriteria(tenantId, moduleCode), moduleCode);
+  },
+  //adding asset here
+  getAssetClassification: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetClassificationList(tenantId, moduleCode, type), moduleCode);
+  },
+  getAssetparentsubcategory: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetparentsubcategoryList(tenantId, moduleCode, type), moduleCode);
+  },
+  Asset_Classification: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetClassificationList(tenantId, moduleCode, type), moduleCode);
+  },
+  
+  AssetSubTypeParent: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetSubParentList(tenantId, moduleCode, type), moduleCode);
+  },
+  AST_PARENT: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetparentsubcategoryList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  AssetTypeParent: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetParentList(tenantId, moduleCode, type), moduleCode);
+  },
+  getAssetParent: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetParentList(tenantId, moduleCode, type), moduleCode);
+  },
+  getAssetDocuments: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetDocumentsCategory(tenantId, moduleCode), moduleCode);
+  },
+  
+  Assetcommondetail: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getAssetcommonList(tenantId, moduleCode, type), moduleCode);
   },
   getVehicleType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getVehicleTypeCriteria(tenantId, moduleCode, type), moduleCode);

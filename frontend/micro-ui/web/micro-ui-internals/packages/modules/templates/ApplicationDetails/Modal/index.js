@@ -7,6 +7,8 @@ import BPAActionModal from "./BPAActionModal";
 import NOCActionModal from "./NOCActionModal";
 import WNSActionModal from "./WNSActionModal";
 import PTRActionModal from "./PTRActionModal";
+import ASSETActionModal from "./ASSETActionModal";
+
 
 
 
@@ -38,6 +40,9 @@ const ActionModal = (props) => {
 
   if (props?.moduleCode.includes("WS")) {
     return <WNSActionModal {...props} />;
+  }
+  if (props?.businessService.includes("asset-create")) {
+    return <ASSETActionModal {...props} />;
   }
   // return <FSMActionModal {...props} />;
 };
