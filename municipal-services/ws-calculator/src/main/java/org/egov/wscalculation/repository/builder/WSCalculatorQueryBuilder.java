@@ -1,5 +1,6 @@
 package org.egov.wscalculation.repository.builder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -386,7 +387,7 @@ public class WSCalculatorQueryBuilder {
 
 	}
 
-	public String getConnectionsNoByLocality(String tenantId, String connectionType, String status, String locality,List<String>groups,
+	public String getConnectionsNoByLocality(String tenantId, String connectionType, String status, String locality,String groups,
 			List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoByLocality);
 
@@ -412,10 +413,10 @@ public class WSCalculatorQueryBuilder {
 		}
 
 		if (groups != null) {
-			addClauseIfRequired(preparedStatement, query);
-			query.append(" (conn.additionaldetails->>'groups') @> ?::jsonb");
-			preparedStatement.add(groups);
-		}
+	        addClauseIfRequired(preparedStatement, query);
+	        query.append(" conn.additionaldetails->>'groups' = ? ");
+	        preparedStatement.add(groups); // Exact match
+	    }
 		// Getting only non exempted connection to generate bill
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" (conn.additionaldetails->>'isexempted')::boolean is not true ");
@@ -500,7 +501,7 @@ public class WSCalculatorQueryBuilder {
 		return query.toString();
 	}
 
-	public String getBillSchedulerSearchQuery(String locality, Long billFromDate, Long billToDate, String tenantId,
+	public String getBillSchedulerSearchQuery(String locality, Long billFromDate, Long billToDate, String tenantId, String group,
 			List<Object> preparedStmtList) {
 
 		StringBuilder query = new StringBuilder(BILL_SCHEDULER_STATUS_SEARCH_QUERY);
@@ -524,7 +525,11 @@ public class WSCalculatorQueryBuilder {
 			query.append(" billingcycleenddate = ? ");
 			preparedStmtList.add(billToDate);
 		}
-
+		if (group != null) {
+			addClauseIfRequired(preparedStmtList, query);
+			query.append(" groups = ? ");
+			preparedStmtList.add(group);
+		}
 		return query.toString();
 	}
 
@@ -540,6 +545,16 @@ public class WSCalculatorQueryBuilder {
 			addClauseIfRequired(preparedStatement, query);
 			query.append(" locality = ? ");
 			preparedStatement.add(criteria.getLocality());
+		}
+		if (criteria.getBatch() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" batch = ? ");
+			preparedStatement.add(criteria.getBatch());
+		}
+		if (criteria.getGroup() != null) {
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" groups = ? ");
+			preparedStatement.add(criteria.getGroup());
 		}
 		if (criteria.getStatus() != null) {
 			addClauseIfRequired(preparedStatement, query);

@@ -74,12 +74,15 @@ public class BillGeneratorDao {
 	 * @param locality,billFromDate,billToDate and tenantId
 	 */
 	public List<String> fetchExistingBillSchedularStatusForLocality(String locality, Long billFromDate, Long billToDate,
-			String tenantId) {
+			String tenantId, String group) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
 		List<String> res = new ArrayList<>();
-		String queryString = queryBuilder.getBillSchedulerSearchQuery(locality, billFromDate, billToDate, tenantId,
+		String queryString = queryBuilder.getBillSchedulerSearchQuery(locality, billFromDate, billToDate, tenantId,group,
 				preparedStmtList);
+		log.info(queryString);
+		log.info(preparedStmtList.toString());
+
 		try {
 			res = jdbcTemplate.queryForList(queryString, preparedStmtList.toArray(), String.class);
 		} catch (Exception ex) {
