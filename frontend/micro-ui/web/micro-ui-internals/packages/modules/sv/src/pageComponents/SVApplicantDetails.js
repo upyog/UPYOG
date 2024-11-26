@@ -5,7 +5,8 @@ import Timeline from "../components/Timeline";
 import { calculateAge } from "../utils";
 
 
-const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }) => {
+
+const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (gender) => {
@@ -23,7 +24,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
   };
   const Objectconvert = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const [vendorName, setvendorName] = useState(formData?.owner?.units?.vendorName || formData?.owner?.vendorName || "");
-  const [ownerTypeCategory, setownerTypeCategory] = useState(formData?.owner?.units?.ownerTypeCategory||formData?.owner?.ownerTypeCategory||"");
+  const [userCategory, setownerTypeCategory] = useState(formData?.owner?.units?.userCategory||formData?.owner?.userCategory||"");
   const [vendorDateOfBirth, setvendorDateOfBirth] = useState(formData?.owner?.units?.vendorDateOfBirth || formData?.owner?.vendorDateOfBirth || "");
   const [gender, setgender] = useState(formData?.owner?.units?.gender || formData?.owner?.gender || "");
   const [fatherName, setfatherName] = useState(editdata?.vendorDetail?.[0]?.fatherName||formData?.owner?.units?.fatherName || formData?.owner?.fatherName || "");
@@ -44,11 +45,11 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
   const [showToast, setShowToast] = useState(null);
   const { control } = useForm();
 
-  const [fields, setFeilds] = useState((formData?.owner && formData?.owner?.units) || [{ vendorName: (editdata?.vendorDetail?.[0]?.name ||user?.name || ""),ownerTypeCategory:(Objectconvert(editdata?.vendorDetail?.[0]?.ownerTypeCategory)||""), vendorDateOfBirth:(editdata?.vendorDetail?.[0]?.dob|| ""), gender: convertToObject(editdata?.vendorDetail?.[0]?.gender)||"", fatherName: (editdata?.vendorDetail?.[0]?.fatherName||""), spouseName: (editdata?.vendorDetail?.[1]?.name||""), mobileNumber: (editdata?.vendorDetail?.[0]?.mobileNo||user?.mobileNumber || ""), spouseDateBirth: (editdata?.vendorDetail?.[1]?.dob|| ""), dependentName: (editdata?.vendorDetail?.[2]?.name||""), dependentDateBirth: (editdata?.vendorDetail?.[2]?.dob||""), dependentGender: (convertToObject(editdata?.vendorDetail?.[2]?.gender)||""), email:(editdata?.vendorDetail?.[0]?.emailId||user?.emailId || ""), tradeNumber:""}]);
+  const [fields, setFeilds] = useState((formData?.owner && formData?.owner?.units) || [{ vendorName: (previousData?.vendorDetail?.[0]?.name ||editdata?.vendorDetail?.[0]?.name ||user?.name || ""),userCategory:(Objectconvert(previousData?.vendorDetail?.[0]?.userCategory||editdata?.vendorDetail?.[0]?.userCategory)||""), vendorDateOfBirth:(previousData?.vendorDetail?.[0]?.dob||editdata?.vendorDetail?.[0]?.dob|| ""), gender: convertToObject(previousData?.vendorDetail?.[0]?.gender||editdata?.vendorDetail?.[0]?.gender)||"", fatherName: (previousData?.vendorDetail?.[0]?.fatherName||editdata?.vendorDetail?.[0]?.fatherName||""), spouseName: (previousData?.vendorDetail?.[1]?.name||editdata?.vendorDetail?.[1]?.name||""), mobileNumber: (previousData?.vendorDetail?.[0]?.mobileNo||editdata?.vendorDetail?.[0]?.mobileNo||user?.mobileNumber || ""), spouseDateBirth: (previousData?.vendorDetail?.[1]?.dob||editdata?.vendorDetail?.[1]?.dob|| ""), dependentName: (previousData?.vendorDetail?.[2]?.name||editdata?.vendorDetail?.[2]?.name||""), dependentDateBirth: (previousData?.vendorDetail?.[2]?.dob||editdata?.vendorDetail?.[2]?.dob||""), dependentGender: (convertToObject(previousData?.vendorDetail?.[2]?.gender||editdata?.vendorDetail?.[2]?.gender)||""), email:(previousData?.vendorDetail?.[0]?.emailId||editdata?.vendorDetail?.[0]?.emailId||user?.emailId || ""), tradeNumber:(previousData?.vendorDetail?.[0]?.tradeNumber||editdata?.vendorDetail?.[0]?.tradeNumber||"")}]);
 
   function handleAdd() {
     const values = [...fields];
-    values.push({ vendorName: "", ownerTypeCategory:"",vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email:"", tradeNumber:""});
+    values.push({ vendorName: "", userCategory:"",vendorDateOfBirth: "", gender: "", fatherName: "", spouseName: "", mobileNumber: "", spouseDateBirth: "", dependentName: "", dependentDateBirth: "", dependentGender: "", email:"", tradeNumber:""});
     setFeilds(values);
   }
   const validateEmail = (value) => {
@@ -166,7 +167,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
   }
   function selectownertype(i, value) {
     let units = [...fields];
-    units[i].ownerTypeCategory = value;
+    units[i].userCategory = value;
     setownerTypeCategory(value);
     setFeilds(units);
   }
@@ -266,7 +267,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       lastModifiedTime: 0
     },
     dob: fields?.[0]?.vendorDateOfBirth,
-    ownerTypeCategory:fields?.[0]?.ownerTypeCategory?.value,
+    userCategory:fields?.[0]?.userCategory?.code,
     emailId: fields?.[0]?.email,
     fatherName: fields?.[0]?.fatherName,
     gender: fields?.[0]?.gender?.code.charAt(0),
@@ -286,7 +287,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       lastModifiedTime: 0
     },
     dob: fields?.[1]?.spouseDateBirth,
-    ownerTypeCategory:fields?.[1]?.ownerTypeCategory?.value,
+    userCategory:fields?.[1]?.userCategory?.code,
     emailId: "",
     isInvolved: fields?.spouseDependentChecked,
     fatherName: "",
@@ -307,7 +308,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       lastModifiedTime: 0
     },
     dob: fields?.[2]?.dependentDateBirth,
-    ownerTypeCategory:fields?.[2]?.ownerTypeCategory?.value,
+    userCategory:fields?.[2]?.userCategory?.code,
     emailId: "",
     isInvolved: fields?.dependentNameChecked,
     fatherName: "",
@@ -345,6 +346,9 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       ];
     }
   }
+
+  const api_response = sessionStorage.getItem("Response");
+  const response = api_response?JSON.parse(api_response):null;
 
     let streetVendingDetail= {
       addressDetails: [
@@ -416,7 +420,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       cartLongitude: 0,
       certificateNo: null,
       disabilityStatus: "",
-      draftId: "",
+      draftId: previousData?.draftId||response?.SVDetail?.draftId||"",
       documentDetails: [
         {
           applicationId: "",
@@ -482,7 +486,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
       }
     };
 
-    Digit.SVService.create({streetVendingDetail, isDraftApplication:true},tenantId)
+    Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
       console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
@@ -528,7 +532,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={!fields[0].vendorName || !fields[0].ownerTypeCategory|| !fields[0].vendorDateOfBirth || !fields[0].gender || !fields[0].fatherName || (spouseDependentChecked && !fields[0].spouseName) || (dependentNameChecked && !fields[0].dependentName)}
+          isDisabled={!fields[0].vendorName || !fields[0].userCategory|| !fields[0].vendorDateOfBirth || !fields[0].gender || !fields[0].fatherName || (spouseDependentChecked && !fields[0].spouseName) || (dependentNameChecked && !fields[0].dependentName)}
         >
           {fields.map((field, index) => {
             return (
@@ -589,14 +593,14 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata }
                 <CardLabel>{`${t("SV_OWNER_CATEGORY")}`} <span className="astericColor">*</span></CardLabel>
                 <Controller
                   control={control}
-                  name={`ownerTypeCategory-${index}`}
-                  defaultValue={ownerTypeCategory}
+                  name={`userCategory-${index}`}
+                  defaultValue={userCategory}
                   rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                   render={(props) => (
                     <Dropdown
                       className="form-field"
                       style={{width:"140%"}}
-                      selected={field?.ownerTypeCategory}
+                      selected={field?.userCategory}
                       select={(e) => selectownertype(index, e)}
                       option={category_Options}
                       optionKey="i18nKey"

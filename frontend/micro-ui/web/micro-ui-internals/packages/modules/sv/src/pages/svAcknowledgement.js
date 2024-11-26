@@ -16,8 +16,6 @@ const getAssessmentInfo = (application, t) => {
 
 
 const svAcknowledgement = async (application, tenantInfo, t) => {
-console.log("applicationapplicationapplication",application);
-
   const filesArray = application?.documents?.map((value) => value?.fileStoreId);
   const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
 
