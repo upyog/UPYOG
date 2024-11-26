@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA, getOrderDocuments } from "../../../utils";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
-import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 import { SVDocumnetPreview } from "../../../utils";
 import Timeline from "../../../components/Timeline";
 

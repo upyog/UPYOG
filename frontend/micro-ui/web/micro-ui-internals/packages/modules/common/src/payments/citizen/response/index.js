@@ -201,8 +201,21 @@ export const convertEpochToDate = (dateEpoch) => {
   const svCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode } });
+    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode, isDraftApplication:false } });
     const generatePdfKeyForTL = "svcertificate";
+
+    if (applicationDetails) {
+      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+  };
+
+  const svIdCard= async () => {
+    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const state = tenantId;
+    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
+    const generatePdfKeyForTL = "svidentitycard";
 
     if (applicationDetails) {
       let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
@@ -807,6 +820,15 @@ export const convertEpochToDate = (dateEpoch) => {
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
           </svg>
           {t("SV_CERTIFICATE")}
+        </div>
+      ) : null}
+      {business_service == "sv-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svIdCard}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("SV_ID_CARD")}
         </div>
       ) : null}
       {bpaData?.[0]?.businessService === "BPA_OC" && (bpaData?.[0]?.status==="APPROVED" || bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT") ? (

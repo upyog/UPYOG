@@ -1,29 +1,15 @@
 import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
-// import { pdfDownloadLink } from "../../utils";
+import { useParams } from "react-router-dom";
 import ViewTimeline from "../../components/ViewTimeline";
 import get from "lodash/get";
 import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
 
-/**
- * Component is still in development so please ignore as this code is crucial to fetch the Bill details, so that payment button but for now it is 
- * doing his job but fetching the user data and show in the page
- * 
- * TODO:  
- * 1. Add a Configure it for Bill search and collection Service 
- * 2. Add the Download buttons for Certificate and Bill Search
- * 3. Add the logic for Receipt search and bill search
- * 
- */
-
 
 const SvApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const { applicationNo, tenantId } = useParams();
-  const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
@@ -33,11 +19,10 @@ const SvApplicationDetails = () => {
   const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication(
     {
       tenantId,
-      filters: { applicationNumber: applicationNo },
+      filters: { applicationNumber: applicationNo,isDraftApplication:false },
     },
   ); 
 
-  console.log("tendnnsndnd",tenantId);
   const [billData, setBillData]=useState(null);
    const SVDetail = get(data, "SVDetail", []);
   let  streetVendingDetails = (SVDetail && SVDetail.length > 0 && SVDetail[0]) || {};

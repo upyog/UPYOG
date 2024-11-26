@@ -104,6 +104,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     const mutation = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
       advertisementSlotSearchCriteria: {
+        bookingId:null,
         addType: Searchdata.addType,
         bookingStartDate: Searchdata.bookingStartDate,
         bookingEndDate:Searchdata.bookingEndDate,
@@ -111,6 +112,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
         tenantId: tenantId,
         location:Searchdata.location,
         nightLight:Searchdata.nightLight,
+        isTimerRequired: false
       }
     };
     

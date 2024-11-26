@@ -70,7 +70,7 @@ const SVEmpCreate = ({ parentRoute }) => {
     }
 
   const svcreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    history.replace(`${match.path}/acknowledgement`);
   };
 
   // To do: need to check later according to requirments

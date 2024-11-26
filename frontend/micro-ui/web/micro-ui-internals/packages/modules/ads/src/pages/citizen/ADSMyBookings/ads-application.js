@@ -19,6 +19,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
       advertisementSlotSearchCriteria: {
+        bookingId:application?.bookingId,
         addType: application?.cartDetails?.[0]?.addType,
         bookingStartDate:application?.cartDetails?.[0]?.bookingDate,
         bookingEndDate: application?.cartDetails?.[application.cartDetails.length - 1]?.bookingDate,
@@ -26,6 +27,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
         tenantId: tenantId,
         location: application?.cartDetails?.[0]?.location,
         nightLight: application?.cartDetails?.[0]?.nightLight,
+        isTimerRequired: true
       }
     };
    
@@ -42,19 +44,25 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
       return startDate && endDate ? `${startDate}  -  ${endDate}` : t("CS_NA");
     }
   };
-  const handleMakePayment = async () => {
-    const result =  slotSearchData.mutate(formdata);;
-    const isSlotBooked = result?.data?.advertisementSlotSearchCriteria?.some((slot) => slot.slotStaus === "BOOKED");
 
-    if (isSlotBooked) {
-      setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
-    } else {
-      history.push({
-        pathname: `/digit-ui/citizen/payment/my-bills/${"adv-services"}/${application?.bookingNo}`,
-        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo },
-      });
-    }
-  };
+      const handleMakePayment = async () => {
+        try {
+          // Await the mutation and capture the result directly
+          const result = await slotSearchData.mutateAsync(formdata);
+          const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
+          const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;
+          if (isSlotBooked) {
+            setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
+          } else {
+            history.push({
+              pathname: `/digit-ui/citizen/payment/my-bills/${"adv-services"}/${application?.bookingNo}`,
+              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue },
+            });
+          }
+      } catch (error) {
+          console.error("Error making payment:", error);
+      }
+      };
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {

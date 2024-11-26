@@ -14,14 +14,15 @@ public class StreetVendingQueryBuilder {
 			+ "sv.application_status as svApplicationStatus, sv.trade_license_no as svTradeLicenseNo, sv.vending_activity as svVendingActivity, "
 			+ "sv.vending_zone as svVendingZone, sv.cart_latitude as svCartLatitude, sv.cart_longitude as svCartLongitude, sv.vending_area as svVendingArea, "
 			+ "sv.vending_license_certificate_id as svVendingLicenseCertificateId, sv.local_authority_name as svLocalAuthorityName, "
-			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, "
+			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
 			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime ";
 
 	private static final String VENDOR_SELECT_QUERY = " ,vendor.id as vendorId, vendor.application_id as vendorApplicationId, vendor.vendor_id as vendorVendorId, "
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
-			+ "vendor.email_id as vendorEmailId, vendor.mobile_no as vendorMobileNo, vendor.gender as vendorGender, "
-			+ "vendor.relationship_type as vendorRelationshipType ";
+			+ "vendor.email_id as vendorEmailId, vendor.mobile_no as vendorMobileNo, vendor.gender as vendorGender,  "
+			+ "vendor.relationship_type as vendorRelationshipType, vendor.user_category as vendorusercategory, vendor.special_category as vendorspecialcategory, "
+			+ "vendor.is_involved as vendorisinvolved  ";
 
 	private static final String ADDRESS_SELECT_QUERY = " ,address.address_id as addressId, address.address_type as addressType, "
 			+ "address.vendor_id as addressVendorId, address.house_no as addressHouseNo, address.address_line_1 as addressLine1, "

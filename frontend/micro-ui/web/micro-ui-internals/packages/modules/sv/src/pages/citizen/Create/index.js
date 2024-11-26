@@ -1,5 +1,5 @@
 
-import React ,{Fragment}from "react";
+import React ,{Children, Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -20,12 +20,20 @@ const SVCreate = ({ parentRoute }) => {
   const { data: vendingApplicationData } = Digit.Hooks.sv.useSvSearchApplication(
     {
       tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
-      filters: { applicationNumber: vendingApplicationNo },
+      filters: { applicationNumber: vendingApplicationNo,isDraftApplication:false },
         enabled: vendingApplicationNo?true:false
     },
   );
   const vendingData=vendingApplicationData?.SVDetail?.[0]
 
+  const { data: vendingDraftData } = Digit.Hooks.sv.useSvSearchApplication(
+    {
+      tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
+      filters: {isDraftApplication:true} ,
+    },
+  );
+
+  const vending_draft_data=vendingDraftData?.SVDetail?.[0]
   // function used for traversing through form screens 
   const goNext = (skipStep, index, isAddMultiple, key) => {  
     let currentPath = pathname.split("/").pop(),
@@ -79,7 +87,7 @@ const SVCreate = ({ parentRoute }) => {
     }
 
   const svcreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    history.replace(`${match.path}/acknowledgement`);
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
@@ -137,7 +145,7 @@ const SVCreate = ({ parentRoute }) => {
         const user = Digit.UserService.getUser().info.type;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} editdata={pathname.includes("apply") ? {} : vendingData} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} editdata={pathname.includes("apply") ? {} : vendingData} previousData={vending_draft_data} />
           </Route>
         );
       })}

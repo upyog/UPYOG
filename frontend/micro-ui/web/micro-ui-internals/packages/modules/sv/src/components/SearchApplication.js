@@ -15,15 +15,18 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             offset: 0,
             limit: !isMobile && 10,
             sortBy: "commencementDate",
-            sortOrder: "DESC"
+            sortOrder: "DESC",
+            isDraftApplication:"false"
         }
     })
+
 
     useEffect(() => {
         register("offset", 0)
         register("limit", 10)
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
+        register("isDraftApplication", "false")
     }, [register])
 
 
@@ -249,6 +252,8 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                         control={control}
                     />
                 </SearchField>
+                {/* Empty Field added for the formatting of the form */}
+                <SearchField></SearchField> 
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                     <p style={{ marginTop: "10px" }}

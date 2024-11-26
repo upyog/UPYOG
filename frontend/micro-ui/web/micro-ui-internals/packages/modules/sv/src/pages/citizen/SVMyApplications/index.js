@@ -32,15 +32,32 @@ export const SVMyApplications = () => {
     t1 = 4;
   }
 
-  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, mobileNumber:user?.mobileNumber };
+  let initialFilters = { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, isDraftApplication:false,mobileNumber:user?.mobileNumber };
 
   useEffect(() => {
     setFilters(initialFilters);
   }, [filter]);
 
 
-  const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters });
-  const { SVDetail: applicationsList } = data || {};
+  // const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters });
+  // const { SVDetail: applicationsList } = data || {};
+
+  const { isLoading: isNonDraftLoading, data: nonDraftData } = Digit.Hooks.sv.useSvSearchApplication({
+  filters: { ...filters, isDraftApplication: false },
+});
+
+const { isLoading: isDraftLoading, data: draftData } = Digit.Hooks.sv.useSvSearchApplication({
+  filters: { ...filters, isDraftApplication: true, sortOrder: "DESC"  },
+});
+
+const applicationsList = [
+  ...(draftData?.SVDetail || []),
+  ...(nonDraftData?.SVDetail || [])
+];
+
+if (isNonDraftLoading || isDraftLoading) {
+  return <Loader />;
+}
 
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
@@ -54,9 +71,9 @@ export const SVMyApplications = () => {
     setFilters(searchFilters);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <React.Fragment>
@@ -108,7 +125,7 @@ export const SVMyApplications = () => {
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
             <div key={index}>
-              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={"TRACK"} />
+              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={t("SV_TRACK")} />
             </div>
           ))}
         {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("SV_NO_APPLICATION_FOUND_MSG")}</p>}

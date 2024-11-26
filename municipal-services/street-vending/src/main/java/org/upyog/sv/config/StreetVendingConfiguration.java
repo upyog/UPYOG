@@ -43,81 +43,38 @@ public class StreetVendingConfiguration {
 
 	@Value("${egov.workflow.processinstance.search.path}")
 	private String wfProcessSearchPath;
-	
+
 	@Value("${egov.workflow.processinstance.search.path}")
 	private String wfProcessInstanceSearchPath;
-	/*
-	 * // User Config
-	 * 
-	 * @Value("${egov.user.host}") private String userHost;
-	 * 
-	 * @Value("${egov.user.context.path}") private String userContextPath;
-	 * 
-	 * @Value("${egov.user.create.path}") private String userCreateEndpoint;
-	 * 
-	 * @Value("${egov.user.search.path}") private String userSearchEndpoint;
-	 * 
-	 * @Value("${egov.user.update.path}") private String userUpdateEndpoint;
-	 * 
-	 * // NOTIFICATION TOPICS
-	 * 
-	 * @Value("${kafka.topics.notification.sms}") private String smsNotifTopic;
-	 * 
-	 * @Value("${kafka.topics.notification.email}") private String emailNotifTopic;
-	 * 
-	 * @Value("${kafka.topics.receipt.create}") private String receiptCreateTopic;
-	 * 
-	 * @Value("${egov.localization.statelevel}") private Boolean isStateLevel;
-	 * 
-	 * @Value("${notif.sms.enabled}") private Boolean isSMSNotificationEnabled;
-	 * 
-	 * @Value("${notif.email.enabled}") private Boolean isEmailNotificationEnabled;
-	 * 
-	 * // Localization
-	 * 
-	 * @Value("${egov.localization.host}") private String localizationHost;
-	 * 
-	 * @Value("${egov.localization.context.path}") private String
-	 * localizationContextPath;
-	 * 
-	 * @Value("${egov.localization.search.endpoint}") private String
-	 * localizationSearchEndpoint;
-	 * 
-	 * @Value("${egov.localization.fallback.locale}") private String fallBackLocale;
-	 * 
-	 * // Billing-Service
-	 * 
-	 * @Value("${egbs.host}") private String egbsHost;
-	 * 
-	 * @Value("${egbs.fetchbill.endpoint}") private String egbsFetchBill;
-	 * 
-	 * @Value("${egov.localization.statelevel}") private Boolean
-	 * isLocalizationStateLevel;
-	 */
 
-	/** Used for application no  creation **/
+	/** Used for application no creation **/
 
 	@Value("${egov.idgen.street-vending.application.id.name}")
 	private String streetVendingApplicationKey;
 
 	@Value("${egov.idgen.street-vending.application.id.format}")
 	private String streetVendingApplicationFormat;
-	
-	//Kafka topics for saving street vending data
+
+	// Kafka topics for saving street vending data
+
+	@Value("${egov.idgen.street-vending.certificate.no.name}")
+	private String streetVendingCertificateNoName;
+
+	@Value("${egov.idgen.street-vending.certificate.no.format}")
+	private String streetVendingCertificateNoFormat;
 
 	@Value("${persister.create.street-vending.topic}")
 	private String streetVendingApplicationSaveTopic;
 
 	@Value("${persister.update.street-vending.topic}")
 	private String streetVendingApplicationUpdateTopic;
-	
-	
+
 	@Value("${persister.create.draft.street-vending.topic}")
 	private String streetVendingDraftApplicationSaveTopic;
-	
+
 	@Value("${persister.update.draft.street-vending.topic}")
 	private String streetVendingDraftApplicationUpdateTopic;
-	
+
 	@Value("${persister.delete.draft.street-vending.topic}")
 	private String streetVendingDraftApplicationDeleteTopic;
 
@@ -129,7 +86,7 @@ public class StreetVendingConfiguration {
 
 	@Value("${sv.business.service.name}")
 	private String businessServiceName;
-	
+
 	// MDMS Config
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;
@@ -161,7 +118,83 @@ public class StreetVendingConfiguration {
 
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
-	
-	
 
+	// USER EVENTS
+	@Value("${egov.ui.app.host}")
+	private String uiAppHost;
+
+	@Value("${egov.usr.events.create.topic}")
+	private String saveUserEventsTopic;
+
+	@Value("${egov.user.event.notification.enabled}")
+	private Boolean isUserEventsNotificationEnabled;
+
+	// url shortener
+	@Value("${egov.url.shortner.host}")
+	private String urlShortnerHost;
+
+	@Value("${egov.url.shortner.endpoint}")
+	private String shortenerEndpoint;
+
+	@Value("${chb.claculation.tax.applicable}")
+	private String applicableTaxes;
+
+	// Billing-Service
+
+	@Value("${egbs.host}")
+	private String egbsHost;
+
+	@Value("${egbs.fetchbill.endpoint}")
+	private String egbsFetchBill;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isLocalizationStateLevel;
+
+	// User Config
+	@Value("${egov.user.host}")
+	private String userHost;
+
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
+
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
+
+	@Value("${egov.user.search.path}")
+	private String userSearchEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+
+	// NOTIFICATION TOPICS
+	@Value("${kafka.topics.notification.sms}")
+	private String smsNotifTopic;
+
+	@Value("${kafka.topics.notification.email}")
+	private String emailNotifTopic;
+
+	@Value("${kafka.topics.receipt.create}")
+	private String receiptCreateTopic;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isStateLevel;
+
+	@Value("${notif.sms.enabled}")
+	private Boolean isSMSNotificationEnabled;
+
+	@Value("${notif.email.enabled}")
+	private Boolean isEmailNotificationEnabled;
+
+	// Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	@Value("${egov.localization.fallback.locale}")
+	private String fallBackLocale;
 }

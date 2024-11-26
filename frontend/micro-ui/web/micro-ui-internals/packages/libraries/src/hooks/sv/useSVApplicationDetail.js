@@ -6,7 +6,7 @@
 import { useQuery } from "react-query";
 import { SVSearch } from "../../services/molecules/SV/Search";
 
-const useSVApplicationDetail = (t, tenantId, applicationNumber, config = {}, userType, args) => {
+const useSVApplicationDetail = (t, tenantId, applicationNumber, isDraftApplication,config = {}, userType, args) => {
   
   const defaultSelect = (data) => {
      let applicationDetails = data.applicationDetails.map((obj) => {
@@ -20,8 +20,8 @@ const useSVApplicationDetail = (t, tenantId, applicationNumber, config = {}, use
   };
 
   return useQuery(
-    ["APPLICATION_SEARCH", "SV_SEARCH", applicationNumber, userType, args],
-    () => SVSearch.applicationDetails(t, tenantId, applicationNumber, userType, args),
+    ["APPLICATION_SEARCH", "SV_SEARCH", applicationNumber,isDraftApplication, userType, args],
+    () => SVSearch.applicationDetails(t, tenantId, applicationNumber,isDraftApplication, userType, args),
     { select: defaultSelect, ...config }
  
   );
