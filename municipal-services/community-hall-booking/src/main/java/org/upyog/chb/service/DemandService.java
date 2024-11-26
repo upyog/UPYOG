@@ -46,8 +46,8 @@ public class DemandService {
 	/**
 	 * 1. Fetch tax heads from mdms tax-heads.json
 	 * 2. Map amount to tax heads from CalculateType.json
-	 * 3. Create XDemand for particular tax heads 
-	 * 4. Bill will be automatically generated when fetch bill api is called for demand created by this API
+	 * 3. Create Demand for particular tax heads 
+	 * 4. Bill will be automatically generated when fetch bill api is called after demand is created by this API
 	 * @param bookingRequest
 	 * @return
 	 */
@@ -92,10 +92,12 @@ public class DemandService {
 			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR, "Booking of multiple halls are not allowed");
 		}
 		
-		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
 		if (estimationCriteria.getTenantId().split("\\.").length == 1) {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
 		}
+		
+		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
+		
 		CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().tenantId(tenantId)
 				.bookingSlotDetails(estimationCriteria.getBookingSlotDetails())
 				.communityHallCode(estimationCriteria.getCommunityHallCode()).build();

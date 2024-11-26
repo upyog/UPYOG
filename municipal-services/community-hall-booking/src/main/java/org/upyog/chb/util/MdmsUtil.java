@@ -17,14 +17,12 @@ import org.springframework.stereotype.Component;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
-import org.upyog.chb.web.models.ApplicantDetail;
 import org.upyog.chb.web.models.CalculationType;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.billing.TaxHeadMaster;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -38,13 +36,11 @@ public class MdmsUtil {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
 
-
 	private static Object mdmsMap = null;
-	private static List<TaxHeadMaster> headMasters = null;
 
 	/*
 	 * @Autowired private MDMSClient mdmsClient;
@@ -66,7 +62,7 @@ public class MdmsUtil {
 	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
 		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
 		Object result = null;
-		if(mdmsMap == null) {
+		if (mdmsMap == null) {
 			result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
 			setMDMSDataMap(result);
 		} else {
@@ -75,11 +71,10 @@ public class MdmsUtil {
 
 		// Object result = mdmsClient.getMDMSData(mdmsCriteriaReq);
 		// log.info("Master data fetched from MDMSfrom feign client : " + result);
-		
+
 		return result;
 	}
 
-	
 	/**
 	 * Returns the URL for MDMS search end point
 	 *
@@ -133,8 +128,8 @@ public class MdmsUtil {
 				.filter(filterCode).build());
 		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_COMMNUITY_HALLS)
 				.filter(filterCode).build());
-		chbMasterDtls.add(
-				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES).filter("$.[?(@.active==true)].HallCode").build());
+		chbMasterDtls.add(MasterDetail.builder().name(CommunityHallBookingConstants.CHB_HALL_CODES)
+				.filter("$.[?(@.active==true)].HallCode").build());
 		chbMasterDtls.add(
 				MasterDetail.builder().name(CommunityHallBookingConstants.CHB_DOCUMENTS).filter(filterCode).build());
 
@@ -157,61 +152,70 @@ public class MdmsUtil {
 	public static Object getMDMSDataMap() {
 		return mdmsMap;
 	}
-	
-	
+
 	public List<TaxHeadMaster> getTaxHeadMasterList(RequestInfo requestInfo, String tenantId, String moduleName) {
-		if(headMasters != null) {
-			log.info("Returning cached value of tax head masters");
-			return headMasters;
-		}
+		List<TaxHeadMaster> headMasters = null;
+
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
-		
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName);
+
+		String filter = "$.[?(@.service=='chb-services')]";
+
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName,
+				"TaxHeadMaster", filter);
 
 		try {
-			MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
-			
+			MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq),
+					MdmsResponse.class);
+
 			JSONArray jsonArray = mdmsResponse.getMdmsRes().get("BillingService").get("TaxHeadMaster");
-			
+
 			headMasters = mapper.readValue(jsonArray.toJSONString(),
 					mapper.getTypeFactory().constructCollectionType(List.class, TaxHeadMaster.class));
 		} catch (JsonProcessingException e) {
 			log.info("Exception occured while converting tax haead master list : " + e);
-		} 
+		}
 
 		return headMasters;
 	}
 
-	public List<CalculationType> getcalculationType(RequestInfo requestInfo, String tenantId, String moduleName, CommunityHallBookingDetail bookingDetail) {
-		
-		List<CalculationType> calculationTypes = new ArrayList<CalculationType>();
+	public List<CalculationType> getTaxRatesMasterList(RequestInfo requestInfo, String tenantId, String moduleName,
+			CommunityHallBookingDetail bookingDetail) {
+		List<CalculationType> taxRates = null;
+		String taxRatesMasterName = "TaxRates";
+
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
-		
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestCalculationType(requestInfo, tenantId, moduleName, bookingDetail.getCommunityHallCode());
-		MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
-		if(mdmsResponse.getMdmsRes().get(config.getModuleName()) == null) {
-			throw new CustomException("FEE_NOT_AVAILABLE", "Community Hall Fee not available.");
+
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTaxHeadMaster(requestInfo, tenantId, moduleName,
+				taxRatesMasterName, null);
+		MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq),
+				MdmsResponse.class);
+		if (mdmsResponse.getMdmsRes().get(config.getModuleName()) == null) {
+			throw new CustomException("TAX_NOT_AVAILABLE", "Community Hall Tax Rates not available.");
 		}
-		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(config.getModuleName()).get(getCalculationTypeMasterName(bookingDetail.getCommunityHallCode()));
-		
+		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(config.getModuleName()).get(taxRatesMasterName);
+
 		try {
-			calculationTypes = mapper.readValue(jsonArray.toJSONString(),
+			taxRates = mapper.readValue(jsonArray.toJSONString(),
 					mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+			log.info("tax rates : " + taxRates);
 		} catch (JsonProcessingException e) {
-			log.info("Exception occured while converting calculation type : " + e);
-		} 
+			log.info("Exception occured while converting tax rates : " + e);
+		}
 
-		return calculationTypes;
-		
+		return taxRates;
+
 	}
-	
-	private MdmsCriteriaReq getMdmsRequestTaxHeadMaster(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+	private MdmsCriteriaReq getMdmsRequestTaxHeadMaster(RequestInfo requestInfo, String tenantId, String moduleName,
+			String masterName, String filter) {
 
 		MasterDetail masterDetail = new MasterDetail();
-		masterDetail.setName("TaxHeadMaster");
-		masterDetail.setFilter("$.[?(@.service=='chb-services')]");
+		masterDetail.setName(masterName);
+		if (null != filter) {
+			masterDetail.setFilter(filter);
+		}
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 
@@ -231,32 +235,5 @@ public class MdmsUtil {
 
 		return mdmsCriteriaReq;
 	}
-	
-	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName, String communityHallCode) {
 
-		MasterDetail masterDetail = new MasterDetail();
-		masterDetail.setName(getCalculationTypeMasterName(communityHallCode));
-		List<MasterDetail> masterDetailList = new ArrayList<>();
-		masterDetailList.add(masterDetail);
-
-		ModuleDetail moduleDetail = new ModuleDetail();
-		moduleDetail.setMasterDetails(masterDetailList);
-		moduleDetail.setModuleName(moduleName);
-		List<ModuleDetail> moduleDetailList = new ArrayList<>();
-		moduleDetailList.add(moduleDetail);
-
-		MdmsCriteria mdmsCriteria = new MdmsCriteria();
-		mdmsCriteria.setTenantId(tenantId);
-		mdmsCriteria.setModuleDetails(moduleDetailList);
-
-		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-		mdmsCriteriaReq.setRequestInfo(requestInfo);
-
-		return mdmsCriteriaReq;
-	}
-	
-	private String getCalculationTypeMasterName(String communityHallCode) {
-		return CommunityHallBookingConstants.CHB_CALCULATION_TYPE + '_' + communityHallCode;
-	}
 }
