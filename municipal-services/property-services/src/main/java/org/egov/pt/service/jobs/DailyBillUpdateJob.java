@@ -5,14 +5,23 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.OwnerInfo;
+import org.egov.pt.models.collection.BillResponse;
+import org.egov.pt.models.enums.Status;
 import org.egov.pt.service.AssessmentService;
+import org.egov.pt.service.BillingService;
 import org.egov.pt.service.PropertyService;
+import org.egov.pt.util.PropertyUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+
 import javax.annotation.PostConstruct;
+
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +55,13 @@ public class DailyBillUpdateJob implements Job {
     
     @Autowired
    private  AssessmentService assessmentService;
+    
+    @Autowired
+    PropertyUtil propertyUtil;
+    
+    
+    @Autowired
+    BillingService billService;
    
 
     /**
@@ -57,8 +73,21 @@ public class DailyBillUpdateJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
        
-    	String currentFinYear = appProperties.getFinYearStart()+"-"+appProperties.getFinYearEnd();
+    	String currentFinYear = appProperties.getFinYearStart()+"-"+appProperties.getFinYearEnd().toString().substring(2);
+    	BillResponse billResponse = null;
+    	AssessmentSearchCriteria criteria = new AssessmentSearchCriteria();
+    	criteria.setFinancialYear(currentFinYear);
+    	criteria.setStatus(Status.ACTIVE);
+    	List<Assessment> a = assessmentService.searchAssessments(criteria, requestInfo);
     	
+    	for(Assessment asmt :a) {
+    		 billResponse =   billService.fetchBillForDailyBillUpdate(asmt.getPropertyId(), requestInfo,asmt.getTenantId());
+    		if(null!=billResponse && null!=billResponse.getBill() && !billResponse.getBill().isEmpty()) {
+    			Long expiryDate= billResponse.getBill().get(0).getBillDetails().get(0).getExpiryDate();
+    			List<OwnerInfo> owner = asmt.getOwners();
+    			//ForEach Owner create a sms and event 
+    		}
+    	}
     	System.out.println("HI I am Executing through CRON:::"+currentFinYear);
     	
     	//List<Assessment> assmentToSendReminder = 

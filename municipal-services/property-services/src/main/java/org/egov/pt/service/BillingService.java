@@ -71,6 +71,34 @@ public class BillingService {
 	}
 	
 	
+public BillResponse fetchBillForDailyBillUpdate(String property, RequestInfo requestInfo, String tenanatId) {
+		
+		StringBuilder uri = new StringBuilder(billingHost);
+		uri.append(fetchBillEndpoint);
+		uri.append("?").append("tenantId=").append(tenanatId);
+		uri.append("&businessService=").append(PT_BUSINESSSERVICE);
+		uri.append("&consumerCode=").append(property);
+		
+		try {
+        	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+        	
+        	if(response.isPresent()) {
+        		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();
+                BillResponse billResponse = mapper.convertValue(responseMap,BillResponse.class);
+                return billResponse;
+        	}else {
+        		throw new CustomException("IllegalArgumentException","Did not get any response from the billing services");
+        		
+        	}
+        }
+
+        catch(IllegalArgumentException  e)
+        {
+            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convert response into bill response");
+        }
+	}
+	
+	
 	public DemandResponse fetchDemand( AssessmentRequest assessment) {
 		
 		StringBuilder uri = new StringBuilder(billingHost);
