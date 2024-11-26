@@ -9,10 +9,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.waterconnection.web.models.users.UserSearchRequest;
-import org.egov.waterconnection.web.models.users.UserDetailResponse;
+import org.egov.waterconnection.web.models.users.User;
 import org.egov.waterconnection.util.WaterServicesUtil;
 
 import org.egov.tracer.model.CustomException;
@@ -20,15 +18,12 @@ import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.repository.WaterDao;
 import org.egov.waterconnection.repository.WaterDaoImpl;
-import org.egov.waterconnection.util.EncryptionDecryptionUtil;
 import org.egov.waterconnection.util.UnmaskingUtil;
-import org.egov.waterconnection.util.WaterServicesUtil;
 import org.egov.waterconnection.validator.ActionValidator;
 import org.egov.waterconnection.validator.MDMSValidator;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.validator.WaterConnectionValidator;
 import org.egov.waterconnection.web.models.*;
-import org.egov.waterconnection.web.models.Connection.StatusEnum;
 import org.egov.waterconnection.web.models.workflow.BusinessService;
 import org.egov.waterconnection.web.models.workflow.ProcessInstance;
 import org.egov.waterconnection.workflow.WorkflowIntegrator;
@@ -359,17 +354,35 @@ Boolean isMigration=false;
 		SearchCriteria criteria = new SearchCriteria();
 		log.info("con" + wsUtil.isModifyConnectionRequest(waterConnectionRequest));
 		log.info("isDisconnection" + waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary());
+
+
+		if (waterConnectionRequest.getWaterConnection().isIsworkflowdisabled()) {
+			log.info("Water Request: " + waterConnectionRequest);
+			if (waterConnectionRequest.getWaterConnection().getConnectionHolders() != null) {
+				SearchCriteria criteriaAppNo = new SearchCriteria();
+				criteriaAppNo.setApplicationNumber(new HashSet<>(Collections.singletonList(
+						waterConnectionRequest.getWaterConnection().getApplicationNo())));
+				List<WaterConnection> waterConnectionList = search(criteriaAppNo, waterConnectionRequest.getRequestInfo());
+				if (!waterConnectionList.isEmpty()) {
+					List<OwnerInfo> connectionHoldersFromSearch = waterConnectionList.get(0).getConnectionHolders();
+					HashMap<String, String> mobileNumberMapFromSearch = connectionHoldersFromSearch.stream().collect(Collectors.toMap(User::getUuid, OwnerInfo::getMobileNumber, (a, b) -> b, HashMap::new));
+					HashMap<String, String> mobileNumberMapFromRequest = waterConnectionRequest.getWaterConnection().getConnectionHolders().stream().collect(Collectors.toMap(User::getUuid, OwnerInfo::getMobileNumber, (a, b) -> b, HashMap::new));
+					boolean areMobileNumbersSame = mobileNumberMapFromRequest.equals(mobileNumberMapFromSearch);
+					if (!areMobileNumbersSame) {
+						userService.updateUser(waterConnectionRequest, waterConnectionRequest.getWaterConnection());
+					}
+				}
+			}
+
+			waterDao.updateWaterConnection(waterConnectionRequest,
+					waterConnectionRequest.getWaterConnection().isIsworkflowdisabled());
+			return Arrays.asList(waterConnectionRequest.getWaterConnection());
+		}
+
 		if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)
 				&& !waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary()) {
 			// Received request to update the connection for modifyConnection WF
 			return updateWaterConnectionForModifyFlow(waterConnectionRequest);
-		}
-
-		if (waterConnectionRequest.getWaterConnection().isIsworkflowdisabled()) {
-			log.info("Water Request: " + waterConnectionRequest);
-			waterDao.updateWaterConnection(waterConnectionRequest,
-					waterConnectionRequest.getWaterConnection().isIsworkflowdisabled());
-			return Arrays.asList(waterConnectionRequest.getWaterConnection());
 		}
 
 		waterConnectionValidator.validateWaterConnection(waterConnectionRequest, WCConstants.UPDATE_APPLICATION);

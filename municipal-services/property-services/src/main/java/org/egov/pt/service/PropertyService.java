@@ -256,7 +256,7 @@ public class PropertyService {
 			updateOwnerMobileNumbers(request, propertyFromSearch);
 		}
 
-		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch,true);
 		util.mergeAdditionalDetails(request, propertyFromSearch);
 		producer.push(config.getUpdatePropertyTopic(), request);
 	}
@@ -283,7 +283,7 @@ public class PropertyService {
 //			request.getProperty().setCreationReason(CreationReason.UPDATE);
 //		}
 		enrichmentService.enrichAssignes(request.getProperty());
-		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch,false);
 
 		PropertyRequest OldPropertyRequest = PropertyRequest.builder().requestInfo(request.getRequestInfo())
 				.property(propertyFromSearch).build();

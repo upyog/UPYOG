@@ -353,6 +353,7 @@ public class DemandService {
             else {
                  demandDetailList = taxHeadToDemandDetail.get(taxHeadEstimate.getTaxHeadCode());
                  total = demandDetailList.stream().map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                 if(taxHeadEstimate.getEstimateAmount()==null)taxHeadEstimate.setEstimateAmount(BigDecimal.ZERO);
                  diffInTaxAmount = taxHeadEstimate.getEstimateAmount().subtract(total);
                  if(diffInTaxAmount.compareTo(BigDecimal.ZERO)!=0) {
                      newDemandDetails.add(
@@ -386,9 +387,11 @@ public class DemandService {
         /*
         * Sum all taxHeads except RoundOff as new roundOff will be calculated
         * */
-        for (DemandDetail demandDetail : demandDetails){
-            if(!demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(MDMS_ROUNDOFF_TAXHEAD))
-                totalTax = totalTax.add(demandDetail.getTaxAmount());
+        for (DemandDetail demandDetail : demandDetails) {
+            if (!demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(MDMS_ROUNDOFF_TAXHEAD)){
+                if (demandDetail.getTaxAmount() == null) demandDetail.setTaxAmount(BigDecimal.ZERO);
+            totalTax = totalTax.add(demandDetail.getTaxAmount());
+        }
             else prevRoundOffDemandDetail = demandDetail;
         }
 
