@@ -90,8 +90,12 @@ public class IngestService {
             enrichAuditDetails(ingestRequest);
 
             // Flattens incoming ingest payload
-            List<JsonNode> flattenedIndexPayload = customIndexRequestDecorator.createFlattenedIndexRequest(data);
-
+			List<JsonNode> flattenedIndexPayload =new ArrayList<JsonNode>();
+            
+            if(data.getModule().equalsIgnoreCase("COMMON"))
+            	flattenedIndexPayload=customIndexRequestDecorator.createFlattenedIndexRequestForCommon(data);
+            else 
+            	flattenedIndexPayload=customIndexRequestDecorator.createFlattenedIndexRequest(data);
             // Repository layer call for performing bulk indexing
             if(indexNameVsDocumentsToBeIndexed.containsKey(applicationProperties.getModuleIndexMapping().get(moduleCode)))
                 indexNameVsDocumentsToBeIndexed.get(applicationProperties.getModuleIndexMapping().get(moduleCode)).addAll(flattenedIndexPayload);
