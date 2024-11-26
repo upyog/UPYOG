@@ -59,6 +59,8 @@ public class DailyBillUpdateJob implements Job {
        
     	String currentFinYear = appProperties.getFinYearStart()+"-"+appProperties.getFinYearEnd();
     	
+    	System.out.println("HI I am Executing through CRON:::"+currentFinYear);
+    	
     	//List<Assessment> assmentToSendReminder = 
     }
 }

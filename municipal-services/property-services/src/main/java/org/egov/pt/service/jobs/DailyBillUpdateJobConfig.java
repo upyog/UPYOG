@@ -29,7 +29,8 @@ public class DailyBillUpdateJobConfig {
     CronTriggerFactoryBean processBillUpdateTrigger(JobDetail quarterOneBillUpdateJob) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         cronTriggerFactoryBean.setJobDetail(quarterOneBillUpdateJob);
-        cronTriggerFactoryBean.setCronExpression("0 0 0 * * ?");
+       // cronTriggerFactoryBean.setCronExpression("0 0 0 * * ?"); //Run every at night
+        cronTriggerFactoryBean.setCronExpression("1 * * * * ?"); // runs every minute for testing
         cronTriggerFactoryBean.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));;
         cronTriggerFactoryBean.setGroup("bill-update");
         return cronTriggerFactoryBean;
