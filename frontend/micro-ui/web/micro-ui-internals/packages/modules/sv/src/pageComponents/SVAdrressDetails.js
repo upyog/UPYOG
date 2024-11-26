@@ -5,8 +5,6 @@ import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
 
 const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
-  console.log("formdatata",formData);
-  console.log("addresss in prevvv",previousData);
   const allCities = Digit.Hooks.sv.useTenants();
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const { pathname } = useLocation();
@@ -114,11 +112,6 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
   const setcaddressline2 = (e) => {
     setCAddressline2(e.target.value)
   }
-
-
-  console.log("localityaaaaa",locality);
-
-
   //Custom function fo rthe payload whic we can use while goint to next
 
   const handleSaveasDraft=()=>{

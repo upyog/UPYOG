@@ -34,8 +34,6 @@ const SVCreate = ({ parentRoute }) => {
   );
 
   const vending_draft_data=vendingDraftData?.SVDetail?.[0]
-
-  console.log("vendingDraftDatavendingDraftData",vendingDraftData);
   // function used for traversing through form screens 
   const goNext = (skipStep, index, isAddMultiple, key) => {  
     let currentPath = pathname.split("/").pop(),

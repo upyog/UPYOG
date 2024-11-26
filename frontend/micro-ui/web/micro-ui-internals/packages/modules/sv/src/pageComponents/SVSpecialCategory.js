@@ -5,7 +5,6 @@ import Timeline from "../components/Timeline";
 import { transformDocuments } from "../utils";
 
 const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
-  console.log("formDataformData",formData);
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;

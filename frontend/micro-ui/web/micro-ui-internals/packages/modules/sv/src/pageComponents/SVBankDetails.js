@@ -23,7 +23,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
-import { useLocation } from "react-router-dom";
 
 const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previousData }) => {
   const [bankDetails, setBankDetails] = useState({

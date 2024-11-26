@@ -5,7 +5,6 @@ import GIS from "./GIS";
 import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
 import Timeline from "../components/Timeline";
 import ApplicationTable from "../components/inbox/ApplicationTable";
-import { useLocation } from "react-router-dom";
 
 /**
  * SVBusinessDetails component handles the business details form for street vending applications.
@@ -16,7 +15,6 @@ import { useLocation } from "react-router-dom";
  */
 
 const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
-  console.log("")
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;

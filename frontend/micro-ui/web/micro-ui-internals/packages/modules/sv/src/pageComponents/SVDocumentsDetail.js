@@ -13,7 +13,6 @@ import Timeline from "../components/Timeline";
  */
 
 const SVDocumentsDetail = ({ t, config, onSelect, formData,editdata,previousData }) => {
-  console.log("previous",previousData);
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);

@@ -143,7 +143,6 @@ export const transformDocuments = (documents) => {
 
 
 export const svPayloadData = (data) =>{
-  console.log("svvvvvvvvvvvv",data);
   let vendordetails = [];
 
   const createVendorObject = (data) => ({
@@ -258,7 +257,6 @@ export const svPayloadData = (data) =>{
 
   const draftid=sessionStorage.getItem("Response");
   const draftID= draftid ? JSON.parse(draftid) : null
-  console.log("draftIDdraftID",draftID);
 
   const formdata={
     streetVendingDetail: {
