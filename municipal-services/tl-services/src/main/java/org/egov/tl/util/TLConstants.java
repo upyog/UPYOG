@@ -241,13 +241,15 @@ public class TLConstants {
     
     //TL types
 
-    public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
-
     public static final String APPLICATION_TYPE_NEW = "NEW";
+
+    public static final String APPLICATION_TYPE_RENEWAL = "RENEWAL";
 
     public static final String APPLICATION_TYPE_MODIFICATION = "MODIFICATION";
 
     public static final String APPLICATION_TYPE_CLOSURE = "CLOSURE";
+
+    public static final String APPLICATION_TYPE_REVOKE = "REVOKE";
     
     // error constants
 
@@ -295,14 +297,13 @@ public class TLConstants {
 
     public static final String ACTION_CLOSE  = "CLOSE";
 
+    public static final String ACTION_REVOKE  = "REVOKE";
 
-    public static final String STATUS_INITIATED = "INITIATED";
+
 
     public static final String STATUS_APPLIED  = "APPLIED";
 
     public static final String STATUS_VERIFIED  = "VERIFIED";
-
-    public static final String STATUS_APPROVED  = "APPROVED";
 
     public static final String STATUS_REJECTED  = "REJECTED";
 
@@ -317,6 +318,14 @@ public class TLConstants {
     public static final String STATUS_MANUALLYEXPIRED = "MANUALEXPIRED";
 
     public static final String BILL_AMOUNT_JSONPATH = "$.Bill[0].totalAmount";
+
+    public static final String STATUS_INITIATED = "INITIATED";
+
+    public static final String STATUS_APPROVED  = "APPROVED";
+
+    public static final String STATUS_CLOSED  = "CLOSED";
+
+    public static final String STATUS_REVOKED  = "REVOKED";
     
     public static final String STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
     
@@ -467,6 +476,12 @@ public class TLConstants {
     public TLConstants() {}
 
     public static final String TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
+    
+    public static final String ROLE_CODE_CITIZEN = "CITIZEN";
+    
+    public static final String ROLE_CODE_SUPERVISOR = "SUPERVISOR";
+    
+    public static final String ROLE_CODE_SECRETARY = "SECRETARY";
     
     public static String ROLE_CODE_EMPLOYEE = "EMPLOYEE";
 

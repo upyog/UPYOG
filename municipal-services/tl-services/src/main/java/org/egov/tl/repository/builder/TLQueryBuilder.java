@@ -3,6 +3,8 @@ package org.egov.tl.repository.builder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.*;
@@ -402,7 +404,10 @@ public class TLQueryBuilder {
     		
     		 
     	}
-    	
+    	else if(StringUtils.equalsIgnoreCase(criteria.getBusinessService(), TLConstants.businessService_NewTL)
+    			&& criteria.getTenantId()==null) {
+    		query.append("select count(*) from eg_tl_tradelicense where createdtime > ? AND applicationtype= ? ");
+    	}
     	else if(criteria.getTenantId()!=null) {
     		query.append("select count(*) from eg_tl_tradelicense where tenantid = ? and createdtime > ? AND applicationtype= ? ");
     		preparedStmtList.add(criteria.getTenantId());

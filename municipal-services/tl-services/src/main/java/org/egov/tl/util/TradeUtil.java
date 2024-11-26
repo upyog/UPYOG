@@ -444,7 +444,8 @@ public class TradeUtil {
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
 							        		.moduleDetails(moduleDetails)
-							        		.tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
+							        		.tenantId(tenantId)
+//							        		.tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
 							                .build();
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder()
