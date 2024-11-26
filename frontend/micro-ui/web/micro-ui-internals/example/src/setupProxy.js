@@ -67,6 +67,12 @@ module.exports = function (app) {
     "/pet-services/pet-registration/_create",
     "/pet-services/pet-registration/_search",
     "/pet-services/pet-registration/_update",
+    "/asset-services/v1/assets/_create",
+    "/asset-services/v1/assets/_search",
+    "/asset-services/v1/assets/_update",
+    "/asset-services/v1/assets/assignment/_create",
+    "/asset-services/v1/assets/assignment/_update",
+    "/asset-services/v1/assets/_search",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
