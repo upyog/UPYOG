@@ -51,6 +51,12 @@ public class VendorDetail {
 	
 	private String relationshipType;
 	
+	private String userCategory;
+	
+	private String specialCategory;
+	
+	private Boolean isInvolved;
+	
 	private AuditDetails auditDetails;
 	
 	

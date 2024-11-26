@@ -85,6 +85,8 @@ public class StreetVendingDetail {
 	private List<VendorDetail> vendorDetail;
 
 	private List<VendingOperationTimeDetails> vendingOperationTimeDetails;
+	
+	private String enrollmentId;
 
 	private Workflow workflow;
 

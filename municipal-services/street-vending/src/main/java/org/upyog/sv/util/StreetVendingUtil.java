@@ -5,9 +5,11 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -124,23 +126,24 @@ public class StreetVendingUtil {
 			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 			return formatter.format(date);
 		} catch (NumberFormatException e) {
-			System.err.println("Invalid epoch value: " + epochString);
 			return null;
 		}
 	}
 
 	public String addOneYearToEpoch(String epochString) {
+
 		try {
-			long epochValue = Long.parseLong(epochString);
-			if (epochValue != 0) {
-				long oneYearInMillis = 365L * 24 * 60 * 60 * 1000;
-				long updatedEpochValue = epochValue + oneYearInMillis;
-				return String.valueOf(updatedEpochValue);
-			}
-		} catch (NumberFormatException e) {
-			System.err.println("Invalid epoch value: " + epochString);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			LocalDate date = LocalDate.parse(epochString, formatter);
+			// Add one year
+			LocalDate updatedDate = date.plusYears(1);
+
+			return updatedDate.format(formatter);
+
+		} catch (DateTimeParseException ex) {
+			System.err.println("Invalid date format: " + epochString);
 		}
 
-		return null;
+		return null; // Return null if both parsing attempts fail
 	}
 }
