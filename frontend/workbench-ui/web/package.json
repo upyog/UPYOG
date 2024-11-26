@@ -61,8 +61,8 @@
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
     "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
-    "**/polished":"4.2.2",
-    "fast-uri":"2.1.0",
+    "**/polished": "4.2.2",
+    "fast-uri": "2.1.0",
     "**/styled-components": "5.3.11"
   },
   "scripts": {
