@@ -55,9 +55,9 @@ public class StreetVendingConstants {
 
 	public static final String USREVENTS_EVENT_TYPE = "SYSTEMGENERATED";
 
-	public static final String USREVENTS_EVENT_NAME = "Street Vending";
+	public static final String USREVENTS_EVENT_NAME = "Street-Vending";
 
-	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-CHB";
+	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-SV";
 	
 	public static final String NOTIFICATION_LOCALE = "en_IN";
 	
