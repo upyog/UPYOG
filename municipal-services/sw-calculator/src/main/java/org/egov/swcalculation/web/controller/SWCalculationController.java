@@ -2,7 +2,10 @@ package org.egov.swcalculation.web.controller;
 
 
 
+import java.util.HashMap;
+
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -39,7 +42,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Getter
 @Setter
 @Builder
@@ -95,13 +99,35 @@ public class SWCalculationController {
 		sWCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
 	}
 	@PostMapping("/_singledemand")
-//	 public ResponseEntity<String> singledemandgen(@Valid @RequestBody SingleDemand singledemand) {
-	public void _singledemand(@Valid @RequestBody SingleDemand singledemand) {
-//		log.info("singledemandgen::");
-		 
-		     sWCalculationService.generateSingleDemand(singledemand);
-//	            return ResponseEntity.status(HttpStatus.OK).body("Demand generated successfully");
-	        } 
+	public ResponseEntity<Map<String, Object>> singledemandgen(@Valid @RequestBody SingleDemand singledemand) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        // Assuming 'generateSingleDemand' returns a String or null based on success
+	        String singleresponse = sWCalculationService.generateSingleDemand(singledemand);
+	        
+	        if (singleresponse == null) {
+	            // If response is null, indicating failure in demand generation
+	            response.put("status", "Failed");
+	            String message = "Unable to generate demand for Connection No: ".concat(singledemand.getConsumercode());
+	            response.put("message", message);
+	            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	        } else {
+	            // If response is not null, indicating successful demand generation
+	            response.put("status", "Success");
+	            String message = "Single demand generated successfully for Connection No: ".concat(singledemand.getConsumercode());
+	            response.put("message", message);
+	            log.info("singledemandgen:: Demand generated successfully for: {}", singledemand);
+	            return new ResponseEntity<>(response, HttpStatus.OK);
+	        }
+	    } catch (Exception e) {
+	        // Catch any exceptions during the process
+	        response.put("status", "Failed");
+	        log.error("singledemandgen:: Error generating demand for: {}", singledemand, e);
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
 	        
 	@PostMapping("/_jobbillscheduler")
 	public void jobbillscheduler(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {

@@ -544,30 +544,33 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		return sewerageCess;
 	}
 	
-	public void generateSingleDemand(SingleDemand singledemand) {
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime date = LocalDateTime.now();
-		log.info("Time schedule start for sewerage demand generation on : " + date.format(dateTimeFormatter));
-//		List<String> tenantIds = wSCalculationDao.getTenantId();
-		List<String> tenantIds = new ArrayList<>();
-		String tenat = singledemand.getTenantId();
-		tenantIds.add(tenat);
-		if (tenantIds.isEmpty()) {
-			log.info("No tenants are found for generating demand");
-			return;
-		}
-		log.info("Tenant Ids : " + tenantIds.toString());
-		tenantIds.forEach(tenantId -> {
-			try {
+	public String generateSingleDemand(SingleDemand singledemand) {
+	    String tempvariable = null;
+	    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	    LocalDateTime date = LocalDateTime.now();
+	    log.info("Time schedule start for water demand generation on : " + date.format(dateTimeFormatter));
 
-				demandService.SingleDemandGenerate(tenantId, singledemand);
+	    // Instead of fetching all tenant IDs, we are directly working with the provided tenant ID from the SingleDemand object
+	    String tenantId = singledemand.getTenantId();
+	    
+	    if (tenantId == null || tenantId.isEmpty()) {
+	        log.info("No tenant ID found for generating demand.");
+	        return null;  // Returning early if no tenant ID is found
+	    }
 
-			} catch (Exception e) {
-				log.error("Exception occured while generating demand for tenant: " + tenantId);
-				e.printStackTrace();
-			}
-		});
+	    log.info("Tenant Id : " + tenantId);
+
+	    try {
+	        // Directly generating the demand for the single tenant
+	        tempvariable = demandService.SingleDemandGenerate(tenantId, singledemand);
+	    } catch (Exception e) {
+	        log.error("Exception occurred while generating demand for tenant: " + tenantId);
+	        e.printStackTrace();
+	    }
+	    
+	    return tempvariable;
 	}
+
 	
 	/**
 	 * Generate bill Based on Time (Monthly, Quarterly, Yearly)

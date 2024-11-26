@@ -965,7 +965,7 @@ public class DemandService {
 		latestDetailInfo.getLatestDemandDetail().setTaxAmount(diff);
 	}
 	
-	public void SingleDemandGenerate(String tenantId, SingleDemand singledemand) {
+	public String SingleDemandGenerate(String tenantId, SingleDemand singledemand) {
 		singledemand.getRequestInfo().getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterDatas(singledemand, tenantId);
 		long taxPeriodFrom = billingMasterData.get("taxPeriodFrom") == null ? 0l
@@ -976,7 +976,7 @@ public class DemandService {
 			throw new CustomException("NO_BILLING_PERIODS","MDMS Billing Period does not available for tenant: "+ tenantId);
 		}
 
-		generateDemandForSingle(billingMasterData, singledemand, tenantId, taxPeriodFrom, taxPeriodTo);
+		return generateDemandForSingle(billingMasterData, singledemand, tenantId, taxPeriodFrom, taxPeriodTo);
 	}
 	
 	
