@@ -12,7 +12,7 @@ import {
 
 const EngagementCard = () => {
   const userRoles = Digit.SessionStorage.get("User")?.info?.roles;
-  const isEmployee = userRoles.find((role) => role.code === "EMPLOYEE");
+  const isEmployee = false;
 
   useEffect(() => {
     Digit.SessionStorage.set("CITIZENSURVEY.INBOX", null);
