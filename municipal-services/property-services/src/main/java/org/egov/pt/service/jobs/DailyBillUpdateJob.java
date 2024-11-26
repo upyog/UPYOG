@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-public class QuarterOneBillUpdateJob implements Job {
+public class DailyBillUpdateJob implements Job {
 
     private static RequestInfo requestInfo;
 

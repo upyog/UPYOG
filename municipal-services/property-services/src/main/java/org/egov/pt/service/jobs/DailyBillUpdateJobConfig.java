@@ -1,5 +1,7 @@
 package org.egov.pt.service.jobs;
 
+import java.util.TimeZone;
+
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,27 +10,28 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 /**
- * Scheduled to run at 12am and 12pm on a daily basis
+ *  Scheduled to run at 12am to get the bills Assesed in the current financial year and send bill reminder
  */
 @Configuration
-public class QuarterOneBillUpdateJobConfig {
+public class DailyBillUpdateJobConfig {
 
     @Bean
     JobDetailFactoryBean quarterOneBillUpdateJob() {
         JobDetailFactoryBean jobDetailFactory = new JobDetailFactoryBean();
-        jobDetailFactory.setJobClass(QuarterOneBillUpdateJob.class);
-        jobDetailFactory.setGroup("status-update");
+        jobDetailFactory.setJobClass(DailyBillUpdateJob.class);
+        jobDetailFactory.setGroup("bill-update");
         jobDetailFactory.setDurability(true);
         return jobDetailFactory;
     }
 
     @Bean
     @Autowired
-    CronTriggerFactoryBean processStatusUpdateTrigger(JobDetail quarterOneBillUpdateJob) {
+    CronTriggerFactoryBean processBillUpdateTrigger(JobDetail quarterOneBillUpdateJob) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         cronTriggerFactoryBean.setJobDetail(quarterOneBillUpdateJob);
-        cronTriggerFactoryBean.setCronExpression("0 0 0,12 * * ?");
-        cronTriggerFactoryBean.setGroup("status-update");
+        cronTriggerFactoryBean.setCronExpression("0 0 0 * * ?");
+        cronTriggerFactoryBean.setTimeZone(TimeZone.getTimeZone("Asia/Calcutta"));;
+        cronTriggerFactoryBean.setGroup("bill-update");
         return cronTriggerFactoryBean;
     }
 

@@ -44,7 +44,7 @@ public class QuartzConfig {
     @Bean
     SchedulerFactoryBean quartzScheduler() {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
-
+        
         quartzScheduler.setDataSource(dataSource);
         quartzScheduler.setTransactionManager(transactionManager);
         quartzScheduler.setOverwriteExistingJobs(true);
