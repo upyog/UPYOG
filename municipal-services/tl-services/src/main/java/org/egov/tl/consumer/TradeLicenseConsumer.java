@@ -73,7 +73,7 @@ public class TradeLicenseConsumer {
                     break;
             }
         }
-        notificationService.process(tradeLicenseRequest);
+       // notificationService.process(tradeLicenseRequest);
     }
 
 	public void saveTlCertificate(TradeLicenseRequest tradeLicenseRequest) {
