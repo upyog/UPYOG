@@ -22,7 +22,7 @@ public class SewerageConnectionRepository {
 		log.info("fetchSWConnectionAdditonalDetails- connectionNumber : "+connectionNumber);
 		List<Object> presparedStmtList = new ArrayList<>();
 		StringBuilder query = new StringBuilder(SW_ADDTNL_DTL_QUERY);
-		query.append(" where tenantid=?");
+		query.append(" where status ='Active' and tenantid=?");
 		query.append(" and connectionno =?");
 		presparedStmtList.add(tenantId);
 		presparedStmtList.add(connectionNumber);
