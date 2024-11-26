@@ -23,20 +23,20 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
+import { useLocation } from "react-router-dom";
 
-const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata }) => {
+const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previousData }) => {
   const [bankDetails, setBankDetails] = useState({
-    accountNumber: editdata?.bankDetail?.accountNumber||formData?.bankdetails?.accountNumber || "",
-    confirmAccountNumber: editdata?.bankDetail?.accountNumber||formData?.bankdetails?.confirmAccountNumber || "",
-    ifscCode: editdata?.bankDetail?.ifscCode||formData?.bankdetails?.ifscCode || "",
-    bankName: editdata?.bankDetail?.bankName||formData?.bankdetails?.bankName || "",
-    bankBranchName: editdata?.bankDetail?.bankBranchName||formData?.bankdetails?.bankBranchName || "",
-    accountHolderName: editdata?.bankDetail?.accountHolderName||formData?.bankdetails?.accountHolderName || "",
+    accountNumber: previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber||formData?.bankdetails?.accountNumber || "",
+    confirmAccountNumber: previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber||formData?.bankdetails?.confirmAccountNumber || "",
+    ifscCode: previousData?.bankDetail?.ifscCode||editdata?.bankDetail?.ifscCode||formData?.bankdetails?.ifscCode || "",
+    bankName: previousData?.bankDetail?.bankName||editdata?.bankDetail?.bankName||formData?.bankdetails?.bankName || "",
+    bankBranchName: previousData?.bankDetail?.bankBranchName||editdata?.bankDetail?.bankBranchName||formData?.bankdetails?.bankBranchName || "",
+    accountHolderName: previousData?.bankDetail?.accountHolderName||editdata?.bankDetail?.accountHolderName||formData?.bankdetails?.accountHolderName || "",
   });
   const [showToast, setShowToast] = useState(null);
 
   const user = Digit.UserService.getUser().info;
-
   const fetchBankDetails = useCallback(async () => {
     try {
       const response = await fetch(`https://ifsc.razorpay.com/${bankDetails.ifscCode}`);
@@ -80,12 +80,265 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata }) =>
     setBankDetails((prev) => ({ ...prev, [field]: value }));
   };
 
+  //Custom function fo rthe payload whic we can use while goint to next
+
+  const handleSaveasDraft=()=>{
+    let vendordetails = [];
+    let tenantId=Digit.ULBService.getCitizenCurrentTenant(true);
+  const createVendorObject = (formData) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: formData?.owner?.units?.[0]?.vendorDateOfBirth,
+    userCategory:formData?.owner?.units?.[0]?.userCategory?.code,
+    emailId: formData?.owner?.units?.[0]?.email,
+    fatherName: formData?.owner?.units?.[0]?.fatherName,
+    gender: formData?.owner?.units?.[0]?.gender?.code.charAt(0),
+    id: "",
+    mobileNo: formData?.owner?.units?.[0]?.mobileNumber,
+    name: formData?.owner?.units?.[0]?.vendorName,
+    relationshipType: "VENDOR",
+    vendorId: null
+  });
+
+  const createSpouseObject = (formData) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: formData?.owner?.units?.[1]?.spouseDateBirth,
+    userCategory:formData?.owner?.units?.[1]?.userCategory?.code,
+    emailId: "",
+    isInvolved: formData?.owner?.spouseDependentChecked,
+    fatherName: "",
+    gender: "O",
+    id: "",
+    mobileNo: "",
+    name: formData?.owner?.units?.[1]?.spouseName,
+    relationshipType: "SPOUSE",
+    vendorId: null
+  });
+
+  const createDependentObject = (formData) => ({
+    applicationId: "",
+    auditDetails: {
+      createdBy: "",
+      createdTime: 0,
+      lastModifiedBy: "",
+      lastModifiedTime: 0
+    },
+    dob: formData?.owner?.units?.[2]?.dependentDateBirth,
+    userCategory:formData?.owner?.units?.[2]?.userCategory?.code,
+    emailId: "",
+    isInvolved: formData?.owner?.dependentNameChecked,
+    fatherName: "",
+    gender: formData?.owner?.units?.[2]?.dependentGender?.code.charAt(0),
+    id: "",
+    mobileNo: "",
+    name: formData?.owner?.units?.[2]?.dependentName,
+    relationshipType: "DEPENDENT",
+    vendorId: null
+  });
+
+  // Helper function to check if a string is empty or undefined
+  const isEmpty = (str) => !str || str.trim() === '';
+
+  // Main logic
+  if (!isEmpty(formData?.owner?.units?.[0]?.vendorName)) {
+    const spouseName = formData?.owner?.units?.[0]?.spouseName;
+    const dependentName = formData?.owner?.units?.[0]?.dependentName;
+
+    if (isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 1: Only vendor exists
+      vendordetails = [createVendorObject(formData)];
+    } else if (!isEmpty(spouseName) && isEmpty(dependentName)) {
+      // Case 2: Both vendor and spouse exist
+      vendordetails = [
+        createVendorObject(formData),
+        createSpouseObject(formData)
+      ];
+    } else if (!isEmpty(spouseName) && !isEmpty(dependentName)) {
+      // Case 3: All three exist (vendor, spouse, and dependent)
+      vendordetails = [
+        createVendorObject(formData),
+        createSpouseObject(formData),
+        createDependentObject(formData)
+      ];
+    }
+  }
+
+  const daysOfOperations = formData?.businessDetails?.daysOfOperation;
+  const vendingOperationTimeDetails = daysOfOperations
+  .filter(day => day.isSelected) // Filter only selected days
+  .map(day => ({
+    applicationId: "", // Add actual applicationId if available
+    auditDetails: {
+      createdBy: "", // Adjust these fields based on your data
+      createdTime: 0, 
+      lastModifiedBy: "",
+      lastModifiedTime: 0,
+    },
+    dayOfWeek: day.name.toUpperCase(),
+    fromTime: day.startTime,
+    toTime: day.endTime,
+    id: ""
+  }));
+
+  const api_response = sessionStorage.getItem("Response");
+  const response = JSON.parse(api_response);
+
+    let streetVendingDetail= {
+      addressDetails: [
+        {
+          addressId: "",
+          addressLine1: formData?.address?.addressline1,
+          addressLine2: formData?.address?.addressline2,
+          addressType: "",
+          city: formData?.address?.city?.name,
+          cityCode: formData?.address?.city?.code,
+          doorNo: "",
+          houseNo: formData?.address?.houseNo,
+          landmark: formData?.address?.landmark,
+          locality: formData?.address?.locality?.i18nKey,
+          localityCode: formData?.address?.locality?.code,
+          pincode: formData?.address?.pincode,
+          streetName: "",
+          vendorId: ""
+        },
+        { // sending correspondence address here
+          addressId: "",
+          addressLine1: formData?.correspondenceAddress?.caddressline1,
+          addressLine2: formData?.correspondenceAddress?.caddressline2,
+          addressType: "",
+          city: formData?.correspondenceAddress?.ccity?.name,
+          cityCode: formData?.correspondenceAddress?.ccity?.code,
+          doorNo: "",
+          houseNo: formData?.correspondenceAddress?.chouseNo,
+          landmark: formData?.correspondenceAddress?.clandmark,
+          locality: formData?.correspondenceAddress?.clocality?.i18nKey,
+          localityCode: formData?.correspondenceAddress?.clocality?.code,
+          pincode: formData?.correspondenceAddress?.cpincode,
+          streetName: "",
+          vendorId: "",
+          isAddressSame: formData?.correspondenceAddress?.isAddressSame
+        }
+      ],
+      applicationDate: 0,
+      applicationId: "",
+      applicationNo: "",
+      applicationStatus: "",
+      approvalDate: 0,
+      auditDetails: {
+        createdBy: "",
+        createdTime: 0,
+        lastModifiedBy: "",
+        lastModifiedTime: 0
+      },
+      bankDetail: {
+        accountHolderName: bankDetails?.accountHolderName,
+        accountNumber: bankDetails?.accountNumber,
+        applicationId: "",
+        bankBranchName: bankDetails?.bankBranchName,
+        bankName: bankDetails?.bankName,
+        id: "",
+        ifscCode: bankDetails?.ifscCode,
+        refundStatus: "",
+        refundType: "",
+        auditDetails: {
+          createdBy: "",
+          createdTime: 0,
+          lastModifiedBy: "",
+          lastModifiedTime: 0
+        },
+      },
+      benificiaryOfSocialSchemes: "",
+      enrollmentId:"",
+      cartLatitude: 0,
+      cartLongitude: 0,
+      certificateNo: null,
+      disabilityStatus: "",
+      draftId: previousData?.draftId||response?.SVDetail?.draftId,
+      documentDetails: [
+        {
+          applicationId: "",
+          auditDetails: {
+            createdBy: "",
+            createdTime: 0,
+            lastModifiedBy: "",
+            lastModifiedTime: 0
+          },
+          documentDetailId: "",
+          documentType: "",
+          fileStoreId: ""
+        }
+      ],
+      localAuthorityName: formData?.businessDetails?.nameOfAuthority,
+      tenantId: tenantId,
+      termsAndCondition: "Y",
+      tradeLicenseNo: formData?.owner?.units?.[0]?.tradeNumber,
+      vendingActivity: formData?.businessDetails?.vendingType?.code,
+      vendingArea: formData?.businessDetails?.areaRequired||"0",
+      vendingLicenseCertificateId: "",
+      vendingOperationTimeDetails,
+      vendingZone:  formData?.businessDetails?.vendingZones?.code,
+      vendorDetail: [
+        ...vendordetails
+      ],
+      workflow: {
+        action: "APPLY",
+        comments: "",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        varificationDocuments: [
+          {
+            additionalDetails: {},
+            auditDetails: {
+              createdBy: "",
+              createdTime: 0,
+              lastModifiedBy: "",
+              lastModifiedTime: 0
+            },
+            documentType: "",
+            documentUid: "",
+            fileStoreId: "",
+            id: ""
+          }
+        ]
+      }
+    };
+
+    Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
+    .then(response=>{
+      console.log("SAVED_SUCCESSFULLY",response);
+      sessionStorage.setItem("Response",JSON.stringify(response));
+    })
+    .catch(error=>{
+      console.log("Something Went Wrong",error);
+    })
+
+  };
+
+
+
+
+
+
   const goNext = () => {
     if (bankDetails.accountNumber !== bankDetails.confirmAccountNumber) {
         setShowToast({ error: true, label: t("SV_INVALID_ACCOUNTNUMBER") });
         return;
       }
     onSelect(config.key, { ...formData.bankdetails, ...bankDetails }, false);
+    handleSaveasDraft();
   };
 
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : null };

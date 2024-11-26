@@ -26,6 +26,16 @@ const SVCreate = ({ parentRoute }) => {
   );
   const vendingData=vendingApplicationData?.SVDetail?.[0]
 
+  const { data: vendingDraftData } = Digit.Hooks.sv.useSvSearchApplication(
+    {
+      tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
+      filters: {isDraftApplication:true} ,
+    },
+  );
+
+  const vending_draft_data=vendingDraftData?.SVDetail?.[0]
+
+  console.log("vendingDraftDatavendingDraftData",vendingDraftData);
   // function used for traversing through form screens 
   const goNext = (skipStep, index, isAddMultiple, key) => {  
     let currentPath = pathname.split("/").pop(),
@@ -137,7 +147,7 @@ const SVCreate = ({ parentRoute }) => {
         const user = Digit.UserService.getUser().info.type;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} editdata={pathname.includes("apply") ? {} : vendingData} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} editdata={pathname.includes("apply") ? {} : vendingData} previousData={vending_draft_data} />
           </Route>
         );
       })}

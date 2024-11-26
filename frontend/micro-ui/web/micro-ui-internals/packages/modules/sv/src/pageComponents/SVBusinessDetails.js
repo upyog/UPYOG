@@ -5,6 +5,7 @@ import GIS from "./GIS";
 import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
 import Timeline from "../components/Timeline";
 import ApplicationTable from "../components/inbox/ApplicationTable";
+import { useLocation } from "react-router-dom";
 
 /**
  * SVBusinessDetails component handles the business details form for street vending applications.
@@ -14,34 +15,33 @@ import ApplicationTable from "../components/inbox/ApplicationTable";
  * The goNext function validates input and passes the collected data to the parent component.
  */
 
-const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata }) => {
-  console.log("fomrdatatatatata",formData)
+const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
+  console.log("")
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
-  const [vendingType, setvendingType] = useState(convertToObject(editdata?.vendingActivity)||formData?.businessDetails?.vendingType || "");
-  const [vendingZones, setvendingZones] = useState(convertToObject(editdata?.vendingZone)||formData?.businessDetails?.vendingZones || "");
+  const [vendingType, setvendingType] = useState(convertToObject(previousData?.vendingActivity||editdata?.vendingActivity)||formData?.businessDetails?.vendingType || "");
+  const [vendingZones, setvendingZones] = useState(convertToObject(previousData?.vendingZone||editdata?.vendingZone)||formData?.businessDetails?.vendingZones || "");
   const [location, setlocation] = useState(formData?.businessDetails?.location || "");
-  const [areaRequired, setareaRequired] = useState(editdata?.vendingArea||formData?.businessDetails?.areaRequired || "");
-  const [nameOfAuthority, setnameOfAuthority] = useState(editdata?.localAuthorityName||formData?.businessDetails?.nameOfAuthority || "");
-  const [vendingLiscence, setvendingLiscence] = useState(editdata?.vendingLiscence||formData?.businessDetails?.vendingLiscence || "");
+  const [areaRequired, setareaRequired] = useState(previousData?.vendingArea||editdata?.vendingArea||formData?.businessDetails?.areaRequired || "");
+  const [nameOfAuthority, setnameOfAuthority] = useState(previousData?.localAuthorityName||editdata?.localAuthorityName||formData?.businessDetails?.nameOfAuthority || "");
+  const [vendingLiscence, setvendingLiscence] = useState(previousData?.vendingLiscence||editdata?.vendingLiscence||formData?.businessDetails?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
-  const [isSameForAll, setIsSameForAll] = useState( editdata?.vendingOperationTimeDetails?.length===7?true:false); // Flag to check if same for all days 
+  const [isSameForAll, setIsSameForAll] = useState( previousData?.vendingOperationTimeDetails?.length===7||editdata?.vendingOperationTimeDetails?.length===7?true:false); // Flag to check if same for all days 
   const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
     formData?.businessDetails?.daysOfOperation || [
-      { name: "Monday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[0]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[0]?.toTime||"" },
-      { name: "Tuesday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[1]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[1]?.toTime||"" },
-      { name: "Wednesday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[2]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[2]?.toTime||"" },
-      { name: "Thursday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[3]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[3]?.toTime||"" },
-      { name: "Friday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[4]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[4]?.toTime||"" },
-      { name: "Saturday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[5]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[5]?.toTime||"" },
-      { name: "Sunday", isSelected: false, startTime: editdata?.vendingOperationTimeDetails?.[6]?.fromTime||"", endTime: editdata?.vendingOperationTimeDetails?.[6]?.toTime||"" },
+      { name: "Monday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[0]?.fromTime||editdata?.vendingOperationTimeDetails?.[0]?.fromTime||"", endTime: previousData?.vendingOperationTimeDetails?.[0]?.toTime||editdata?.vendingOperationTimeDetails?.[0]?.toTime||"" },
+      { name: "Tuesday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[1]?.fromTime||editdata?.vendingOperationTimeDetails?.[1]?.fromTime||"", endTime:  previousData?.vendingOperationTimeDetails?.[1]?.toTime||editdata?.vendingOperationTimeDetails?.[1]?.toTime||"" },
+      { name: "Wednesday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[2]?.fromTime||editdata?.vendingOperationTimeDetails?.[2]?.fromTime||"", endTime: previousData?.vendingOperationTimeDetails?.[2]?.toTime||editdata?.vendingOperationTimeDetails?.[2]?.toTime||"" },
+      { name: "Thursday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[3]?.fromTime||editdata?.vendingOperationTimeDetails?.[3]?.fromTime||"", endTime: previousData?.vendingOperationTimeDetails?.[3]?.toTime||editdata?.vendingOperationTimeDetails?.[3]?.toTime||"" },
+      { name: "Friday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[4]?.fromTime||editdata?.vendingOperationTimeDetails?.[4]?.fromTime||"", endTime: previousData?.vendingOperationTimeDetails?.[4]?.toTime||editdata?.vendingOperationTimeDetails?.[4]?.toTime||"" },
+      { name: "Saturday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[5]?.fromTime||editdata?.vendingOperationTimeDetails?.[5]?.fromTime||"", endTime: previousData?.vendingOperationTimeDetails?.[5]?.toTime||editdata?.vendingOperationTimeDetails?.[5]?.toTime||"" },
+      { name: "Sunday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[6]?.fromTime||editdata?.vendingOperationTimeDetails?.[6]?.fromTime||"", endTime:  previousData?.vendingOperationTimeDetails?.[6]?.toTime||editdata?.vendingOperationTimeDetails?.[6]?.toTime||"" },
     ]
   );
   const [backupDays, setBackupDays] = useState([...daysOfOperation]); // Backup array to store original days of operation
 
-  console.log("daysOfOperationdaysOfOperation",daysOfOperation);
 
   /* this checks two conditions:
    1. At least one day of the week is selected.
@@ -231,7 +231,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
       lastModifiedTime: 0
     },
     dob: formData?.owner?.units?.[0]?.vendorDateOfBirth,
-    ownerTypeCategory:formData?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    userCategory:formData?.owner?.units?.[0]?.userCategory?.code,
     emailId: formData?.owner?.units?.[0]?.email,
     fatherName: formData?.owner?.units?.[0]?.fatherName,
     gender: formData?.owner?.units?.[0]?.gender?.code.charAt(0),
@@ -251,7 +251,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
       lastModifiedTime: 0
     },
     dob: formData?.owner?.units?.[1]?.spouseDateBirth,
-    ownerTypeCategory:formData?.owner?.units?.[1]?.ownerTypeCategory?.value,
+    userCategory:formData?.owner?.units?.[1]?.userCategory?.code,
     emailId: "",
     isInvolved: formData?.owner?.spouseDependentChecked,
     fatherName: "",
@@ -272,7 +272,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
       lastModifiedTime: 0
     },
     dob: formData?.owner?.units?.[2]?.dependentDateBirth,
-    ownerTypeCategory:formData?.owner?.units?.[2]?.ownerTypeCategory?.value,
+    userCategory:formData?.owner?.units?.[2]?.userCategory?.code,
     emailId: "",
     isInvolved: formData?.owner?.dependentNameChecked,
     fatherName: "",
@@ -401,7 +401,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
       cartLongitude: 0,
       certificateNo: null,
       disabilityStatus: "",
-      draftId: response?.SVDetail?.draftId,
+      draftId: previousData?.draftId||response?.SVDetail?.draftId,
       documentDetails: [
         {
           applicationId: "",
@@ -453,7 +453,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata })
       }
     };
 
-    Digit.SVService.create({streetVendingDetail, isDraftApplication:true},tenantId)
+    Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
       console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
