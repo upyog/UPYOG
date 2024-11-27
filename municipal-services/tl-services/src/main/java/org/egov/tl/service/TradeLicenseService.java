@@ -165,8 +165,8 @@ public class TradeLicenseService {
 	@Autowired
 	private Producer producer;
 
-	@Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
-	private Boolean pickWFServiceNameFromTradeTypeOnly;
+	//@Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
+	//private Boolean pickWFServiceNameFromTradeTypeOnly;
 
 	@Autowired
 	public TradeLicenseService(WorkflowIntegrator wfIntegrator, EnrichmentService enrichmentService,
