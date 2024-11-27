@@ -37,6 +37,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.tl.config.TLConfiguration;
+import org.egov.tl.consumer.TradeLicenseConsumer;
 import org.egov.tl.producer.Producer;
 import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
@@ -160,6 +161,9 @@ public class TradeLicenseService {
 
     @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
     private Boolean pickWFServiceNameFromTradeTypeOnly;
+    
+    @Autowired
+    TradeLicenseConsumer tradeLicenseConsumer;
 
     @Autowired
     public TradeLicenseService(WorkflowIntegrator wfIntegrator, EnrichmentService enrichmentService,
@@ -942,7 +946,8 @@ public class TradeLicenseService {
 							.licenses(Collections.singletonList(license))
 							.build();
 					
-					producer.push("save-tl-certificate", tradeLicenseRequest1);
+					tradeLicenseConsumer.saveTlCertificate(tradeLicenseRequest1);
+					//producer.push("save-tl-certificate", tradeLicenseRequest1);
 					
 				}
 
