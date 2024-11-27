@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.Address;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetAssignment;
@@ -74,6 +73,7 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
                 	    .assetCategory(rs.getString("category"))
                 	    .assetSubCategory(rs.getString("subCategory"))
                 	    .remarks(rs.getString("remarks"))
+                	    .assetStatus(rs.getString("status"))
                 	    .build();
 
                 assetMap.put(id, currentAsset);
@@ -146,6 +146,18 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
                 // Handle exception
             }
         }
+        
+       PGobject assetDetails= (PGobject)rs.getObject("assetdetails"); 
+       if(assetDetails !=null) {
+    	   try {
+    		   JsonNode assetDetailsNode = objectMapper.readTree(assetDetails.getValue());
+        	   asset.setAssetDetails(assetDetailsNode);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	   
+       }
 
         // Mapping documents
         //List<Document> documents = new ArrayList<>();

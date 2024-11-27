@@ -36,7 +36,7 @@ public class AssetQueryBuilder {
             + "asset.status, "
             + "assign.isassigned, "  
             + "assign.assignedusername, "
-            + "assign.employeecode, "  
+           + "assign.employeecode, "  
             + "assign.designation, " 
             + "assign.department, "
             + "assign.assigneddate, "

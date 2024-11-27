@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS public.eg_asset_assignmentdetails
     lastmodifiedtime bigint,
     assetid character varying(255),
     isassigned boolean,
+     assignmentId character varying(256),
+     employeecode character varying(256),
     CONSTRAINT eg_asset_assignentdetails_pkey PRIMARY KEY (id),
     CONSTRAINT eg_asset_assignentdetails_assetid_fkey FOREIGN KEY (assetid)
         REFERENCES public.eg_asset_assetdetails (id) MATCH SIMPLE

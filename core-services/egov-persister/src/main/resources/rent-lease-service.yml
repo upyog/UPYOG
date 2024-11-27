@@ -41,3 +41,29 @@ serviceMaps:
         - jsonPath: $.RentLease.*.auditDetails.lastModifiedDate
 
         - jsonPath: $.RentLease.*.applicationNo
+
+ - version: 1.0
+   name: asset-service
+   description: Update Rent Lease Details
+   fromTopic: update-rent-lease-booking
+   isTransaction: true
+   queryMaps:
+     - query: UPDATE eg_rent_lease_application SET start_date = ?, end_date = ?, month = ?, applicant_detail = ?::JSONB , status = ?, is_active = ? WHERE uuid =?;
+
+       basePath: RentLease.*
+       jsonMaps:
+
+        - jsonPath: $.RentLease.*.uuid
+
+        - jsonPath: $.RentLease.*.end_date
+
+        - jsonPath: $.RentLease.*.month
+
+        - jsonPath: $.RentLease.*.applicant_detail
+
+        - jsonPath: $.RentLease.*.status
+
+        - jsonPath: $.RentLease.*.is_active
+
+        - jsonPath: $.RentLease.*.uuid
+
