@@ -11,7 +11,7 @@ import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import {initWorkbenchComponents} from "@egovernments/digit-ui-module-workbench";
 import { PGRReducers , initPGRComponents} from "@egovernments/digit-ui-module-pgr";
 
-import "@egovernments/digit-ui-css/example/index.css";
+import "@upyog-niua/upyog-css/example/index.css";
 
 import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
