@@ -1,4 +1,4 @@
-package org.egov.applyworkflow.model;
+package org.egov.applyworkflow.web.model;
 
 
 import lombok.AllArgsConstructor;

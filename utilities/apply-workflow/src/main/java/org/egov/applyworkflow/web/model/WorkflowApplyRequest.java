@@ -1,11 +1,17 @@
-package org.egov.applyworkflow.model;
+package org.egov.applyworkflow.web.model;
 
+import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
-import lombok.*;
-import org.egov.common.contract.request.RequestInfo;
+
 import org.springframework.validation.annotation.Validated;
-import java.util.*;
+import javax.validation.Valid;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
 
 /**
  * Contract class to receive request. Array of items are used in case of create,
@@ -20,13 +26,13 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
-public class WorkflowRequest {
+public class WorkflowApplyRequest {
 
     @JsonProperty("RequestInfo")
     private RequestInfo RequestInfo = null;
 
-    @JsonProperty("BusinessServices")
-    private List<BusinessService> BusinessServices = new ArrayList<>();
+    @JsonProperty("BusinessService")
+    @Valid
+    private BusinessServiceDto BusinessServiceDto = null;
 
 }

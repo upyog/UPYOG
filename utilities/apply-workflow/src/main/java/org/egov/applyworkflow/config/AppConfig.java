@@ -30,6 +30,9 @@ public class AppConfig {
     @Value("${workflow.context.path}")
     private String wfContextPath;
 
+    @Value("${workflow.search.path}")
+    private String searchPath;
+
     @Value("${workflow.create.path}")
     private String createPath;
 
