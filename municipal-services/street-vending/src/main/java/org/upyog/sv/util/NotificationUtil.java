@@ -386,7 +386,11 @@ public class NotificationUtil {
 			break;
 
 		case ACTION_STATUS_FORWARD:
-			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION, localizationMessage);
+			if (streetVendingDetail.getApplicationStatus().equals(StreetVendingConstants.INSPECTION_PENDING_STATUS)) {
+				messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION, localizationMessage);
+			}else {
+				messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION_COMPLETE, localizationMessage);
+			}
 			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
 			break;
 

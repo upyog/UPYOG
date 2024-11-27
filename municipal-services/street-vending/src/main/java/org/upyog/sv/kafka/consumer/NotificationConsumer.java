@@ -36,7 +36,7 @@ public class NotificationConsumer {
 
 			vendingRequest = mapper.convertValue(record, StreetVendingRequest.class);
 		} catch (final Exception e) {
-			log.error("Error while processing CHB notification to value: " + record + " on topic: " + topic + ": " + e);
+			log.error("Error while processing SV notification to value: " + record + " on topic: " + topic + ": " + e);
 		}
 
 		notificationService.process(vendingRequest);
