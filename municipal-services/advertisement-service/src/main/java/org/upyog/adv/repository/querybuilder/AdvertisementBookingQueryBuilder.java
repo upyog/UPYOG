@@ -2,16 +2,17 @@ package org.upyog.adv.repository.querybuilder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.upyog.adv.config.BookingConfiguration;
-import org.upyog.adv.repository.impl.BookingRepositoryImpl;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Component
 public class AdvertisementBookingQueryBuilder {
@@ -21,33 +22,53 @@ public class AdvertisementBookingQueryBuilder {
 	private static final StringBuilder bookingDetailsQuery = new StringBuilder(
 			"SELECT ecbd.booking_id, booking_no, payment_date, application_date, tenant_id,\n"
 					+ "booking_status,receipt_no, ecbd.createdby, ecbd.createdtime, \n"
-					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n" 
+					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n"
 					+ "appl.applicant_detail_id, applicant_name, applicant_email_id, applicant_mobile_no,\n"
 					+ "applicant_alternate_mobile_no, \n"
 					+ "address_id, door_no, house_no, address_line_1,address_line_2, \n"
-					+ "landmark, city, city_code, pincode, street_name, locality, locality_code \n" 
+					+ "landmark, city, city_code, pincode, street_name, locality, locality_code \n"
 					+ "FROM public.eg_adv_booking_detail ecbd \n"
 					+ "join public.eg_adv_applicant_detail appl on ecbd.booking_id = appl.booking_id \n"
 					+ "join public.eg_adv_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id ");
 
-		
 	private static final String slotDetailsQuery = "select * from public.eg_adv_cart_detail where booking_id in (";
 
 	private static final String documentDetailsQuery = "select * from public.eg_adv_document_detail  where booking_id in (";
 
 	private static final String ADVERTISEMENT_SLOTS_AVAILABILITY_QUERY = "SELECT eabd.tenant_id, eacd.add_type, eacd.face_area, eacd.location, eacd.night_light, eacd.status, eacd.booking_date \n"
-	        + "FROM eg_adv_booking_detail eabd, eg_adv_cart_detail eacd\n"
-	        + "WHERE eabd.booking_id = eacd.booking_id AND eabd.tenant_id = ? \n"
-	        + "AND eacd.status IN ('BOOKED', 'PENDING_FOR_PAYMENT') AND \n"
-	        + "eacd.booking_date >= ?::DATE AND eacd.booking_date <= ?::DATE \n";
-	
-	private static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timer(booking_id, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?);\n";
+			+ "FROM eg_adv_booking_detail eabd, eg_adv_cart_detail eacd\n"
+			+ "LEFT JOIN eg_adv_payment_timers eapt ON eacd.booking_id = eapt.booking_id\n"
+			+ "WHERE eabd.booking_id = eacd.booking_id AND eabd.tenant_id = ? \n"
+			+ "AND (eapt.booking_id IS NOT NULL OR eacd.status IN ('BOOKED', 'PENDING_FOR_PAYMENT')) \n"
+			+ "AND eacd.booking_date >= ?::DATE AND eacd.booking_date <= ?::DATE \n";
 
-	private static final String PAYMENT_TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
-	
-	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = "DELETE FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
+	private static final String BOOKING_UPDATE_QUERY = "UPDATE public.eg_adv_booking_detail "
+	        + "SET booking_status= ?, payment_date = ?, lastmodifiedby = ?, lastmodifiedtime = ?, "
+	        + "permission_letter_filestore_id = ?, payment_receipt_filestore_id = ? WHERE booking_id = ?";
 
-	 
+	private static final String CART_UPDATE_QUERY = "UPDATE public.eg_adv_cart_detail "
+	        + "SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE cart_id=?";
+
+	private static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timers(booking_id, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?);\n";
+
+	private static final String PAYMENT_TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timers WHERE booking_id = ?";
+
+	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = "DELETE FROM eg_adv_payment_timers WHERE ? - createdtime > ?";
+
+	private static final String FETCH_TIMER = "SELECT booking_id, createdtime FROM eg_adv_payment_timers WHERE booking_id IN (%s)";
+	
+	private static final String INSERT_BOOKING_DETAIL_AUDIT_QUERY = 
+		    "INSERT INTO public.eg_adv_booking_detail_audit " +
+		    "SELECT * FROM public.eg_adv_booking_detail WHERE booking_id = ?";
+
+	private static final String INSERT_CART_DETAIL_AUDIT_QUERY = 
+		    "INSERT INTO public.eg_adv_cart_detail_audit " +
+		    "SELECT cart_id, booking_id, booking_date::date, booking_from_time, booking_to_time, add_type, location, " +
+		    "face_area, night_light, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime " +
+		    "FROM public.eg_adv_cart_detail WHERE cart_id = ?";
+		
+	private static final String BOOKING_ID_EXISTS_CHECK = "SELECT 1 FROM eg_adv_payment_timers WHERE booking_id = ?";
+
 	private Object createQueryParams(List<String> ids) {
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
@@ -58,40 +79,52 @@ public class AdvertisementBookingQueryBuilder {
 		}
 		return builder.toString();
 	}
-	private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, DENSE_RANK() OVER (ORDER BY application_date DESC) offset_ FROM " + "({})"
+
+	private final String paginationWrapper = "SELECT * FROM "
+			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY application_date DESC) offset_ FROM " + "({})"
 			+ " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
 
-	
-	private static final String bookingDetailsCountCount = "SELECT count(ecbd.booking_id) \n" 
+	private static final String bookingDetailsCountCount = "SELECT count(ecbd.booking_id) \n"
 			+ "FROM public.eg_adv_booking_detail ecbd \n"
-	+ "join public.eg_adv_applicant_detail appl on ecbd.booking_id = appl.booking_id \n";
-	
+			+ "join public.eg_adv_applicant_detail appl on ecbd.booking_id = appl.booking_id \n";
 
-	public String insertBookingIdForTImer(String bookingId) {
-		StringBuilder builder;
-		
-		
-			builder = new StringBuilder(PAYMENT_TIMER_QUERY);
-			return builder.toString();
-		
+	public String insertBookingIdForTimer(String bookingId) {
+		return PAYMENT_TIMER_QUERY;
 	}
-	
-	public String deleteBookingIdForTImer(String bookingId) {
-		StringBuilder builder;
 
-		builder = new StringBuilder(PAYMENT_TIMER_DELETE_QUERY);
-		return builder.toString();
-
+	public String deleteBookingIdForTimer(String bookingId) {
+		return PAYMENT_TIMER_DELETE_QUERY;
 	}
-	
+
 	public String deleteBookingIdPaymentTimer() {
-		StringBuilder builder;
-		
-		
-			builder = new StringBuilder(PAYMENT_TIMER_DELETE_BOOKINGID);
-			return builder.toString();
-		
+		return PAYMENT_TIMER_DELETE_BOOKINGID;
 	}
+	
+	public String updateBookingDetail() {
+		return BOOKING_UPDATE_QUERY;
+	}
+	
+	public String updateCartDetail() {
+		return CART_UPDATE_QUERY;
+	}
+	
+	public String createBookingDetailAudit() {
+		return INSERT_BOOKING_DETAIL_AUDIT_QUERY;
+	}
+	
+	public String createCartDetailAudit() {
+		return INSERT_CART_DETAIL_AUDIT_QUERY;
+	}
+	
+	public String checkBookingIdExists(String bookingId) {
+		return BOOKING_ID_EXISTS_CHECK;
+	}
+
+	public String fetchBookingIdForTImer(List<String> bookingIds) {
+		String bookingId = bookingIds.stream().map(id -> "?").collect(Collectors.joining(", "));
+		return String.format(FETCH_TIMER, bookingId);
+	}
+
 	/**
 	 * To give the Search query based on the requirements.
 	 * 
@@ -99,20 +132,19 @@ public class AdvertisementBookingQueryBuilder {
 	 * @param preparedStmtList values to be replaced on the query
 	 * @return Final Search Query
 	 */
-	public String getAdvertisementSearchQuery(AdvertisementSearchCriteria criteria,
-			List<Object> preparedStmtList) {
+	public String getAdvertisementSearchQuery(AdvertisementSearchCriteria criteria, List<Object> preparedStmtList) {
 		StringBuilder builder;
-		
-		if(criteria.isCountCall()) {
+
+		if (criteria.isCountCall()) {
 			builder = new StringBuilder(bookingDetailsCountCount);
-		}else {
+		} else {
 			builder = new StringBuilder(bookingDetailsQuery);
 		}
-		
-		if(criteria.getFromDate() != null || criteria.getToDate() != null) {
+
+		if (criteria.getFromDate() != null || criteria.getToDate() != null) {
 			builder.append(" join public.eg_adv_cart_detail ecsd ON ecsd.booking_id = ecbd.booking_id ");
 		}
-		
+
 		if (criteria.getTenantId() != null) {
 			if (criteria.getTenantId().split("\\.").length == 1) {
 
@@ -139,14 +171,14 @@ public class AdvertisementBookingQueryBuilder {
 			builder.append(" ecbd.booking_no IN (").append(createQueryParams(applicationNos)).append(")");
 			addToPreparedStatement(preparedStmtList, applicationNos);
 		}
-		
+
 		String status = criteria.getStatus();
 		if (status != null) {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" ecbd.booking_status =  ? ");
 			preparedStmtList.add(status);
 		}
-		
+
 		String mobileNo = criteria.getMobileNumber();
 		if (mobileNo != null) {
 			List<String> mobileNos = Arrays.asList(mobileNo.split(","));
@@ -155,7 +187,7 @@ public class AdvertisementBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, mobileNos);
 		}
 
-		//createdby search criteria
+		// createdby search criteria
 		List<String> createdBy = criteria.getCreatedBy();
 		if (!CollectionUtils.isEmpty(createdBy)) {
 
@@ -164,12 +196,11 @@ public class AdvertisementBookingQueryBuilder {
 			addToPreparedStatement(preparedStmtList, createdBy);
 		}
 
-		//From booking date to booking date search criteria
+		// From booking date to booking date search criteria
 		final String DATE_CAST = " ?::DATE ";
 		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecsd.booking_date BETWEEN ").append(DATE_CAST).append(" AND ")
-					.append(DATE_CAST);
+			builder.append(" ecsd.booking_date BETWEEN ").append(DATE_CAST).append(" AND ").append(DATE_CAST);
 			preparedStmtList.add(criteria.getFromDate());
 			preparedStmtList.add(criteria.getToDate());
 		} else if (criteria.getFromDate() != null && criteria.getToDate() == null) {
@@ -181,20 +212,19 @@ public class AdvertisementBookingQueryBuilder {
 			builder.append(" ecsd.booking_date <= ").append(DATE_CAST);
 			preparedStmtList.add(criteria.getToDate());
 		}
-		
+
 		String query = null;
-		
-		if(criteria.isCountCall()) {
-			//pagination attributes not required for count query
+
+		if (criteria.isCountCall()) {
+			// pagination attributes not required for count query
 			query = builder.toString();
 		} else {
-			//Add pagination attributes for booking details query
+			// Add pagination attributes for booking details query
 			query = addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 		}
-		
+
 		return query;
 	}
-	
 
 	/**
 	 * add if clause to the Statement if required or else AND
@@ -221,6 +251,7 @@ public class AdvertisementBookingQueryBuilder {
 			preparedStmtList.add(id);
 		});
 	}
+
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList,
 			AdvertisementSearchCriteria criteria) {
 
@@ -252,7 +283,6 @@ public class AdvertisementBookingQueryBuilder {
 		return finalQuery;
 
 	}
-	
 
 	public String getSlotDetailsQuery(List<String> bookingIds) {
 		StringBuilder builder = new StringBuilder(slotDetailsQuery);
@@ -261,24 +291,21 @@ public class AdvertisementBookingQueryBuilder {
 		return builder.toString();
 
 	}
+
 	public String getDocumentDetailsQuery(List<String> bookingIds) {
 		StringBuilder builder = new StringBuilder(documentDetailsQuery);
 		builder.append(createQueryParams(bookingIds)).append(")");
 		return builder.toString();
 	}
 
-	public StringBuilder getAdvertisementSlotAvailabilityQuery(AdvertisementSlotSearchCriteria searchCriteria, List<Object> paramsList) {
-	    StringBuilder builder = new StringBuilder(ADVERTISEMENT_SLOTS_AVAILABILITY_QUERY);
-	    paramsList.add(searchCriteria.getTenantId());
-	    paramsList.add(searchCriteria.getBookingStartDate());
-	    paramsList.add(searchCriteria.getBookingEndDate());
-	    
+	public StringBuilder getAdvertisementSlotAvailabilityQuery(AdvertisementSlotSearchCriteria searchCriteria,
+			List<Object> paramsList) {
+		StringBuilder builder = new StringBuilder(ADVERTISEMENT_SLOTS_AVAILABILITY_QUERY);
+		paramsList.add(searchCriteria.getTenantId());
+		paramsList.add(searchCriteria.getBookingStartDate());
+		paramsList.add(searchCriteria.getBookingEndDate());
 
-
-	    return builder;
+		return builder;
 	}
-	
-	
-
 
 }
