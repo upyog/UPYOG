@@ -1,7 +1,7 @@
 package org.egov.applyworkflow.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.applyworkflow.model.BusinessService;
+import org.egov.applyworkflow.web.model.BusinessService;
 import org.egov.applyworkflow.repository.EgMdmsDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

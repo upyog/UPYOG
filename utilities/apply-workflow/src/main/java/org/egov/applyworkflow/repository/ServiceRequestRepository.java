@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -12,9 +14,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+
 @Repository
-@Slf4j
 public class ServiceRequestRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(ServiceRequestRepository.class);
+
 
     private ObjectMapper mapper;
 
