@@ -1,6 +1,7 @@
 package org.upyog.adv.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -26,6 +27,14 @@ public interface BookingRepository {
 	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
 
 	void deleteBookingIdForTimer(String bookingId);
+
+	Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
+
+	void updateBookingSynchronously(@Valid BookingRequest advertisementBookingRequest);
+
+
+
+	
 
 	
 

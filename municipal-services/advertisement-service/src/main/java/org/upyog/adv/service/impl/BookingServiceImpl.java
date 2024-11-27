@@ -3,6 +3,7 @@ package org.upyog.adv.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -10,6 +11,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
@@ -19,6 +21,7 @@ import org.upyog.adv.service.BookingService;
 import org.upyog.adv.service.DemandService;
 //import org.upyog.adv.service.EncryptionService;
 import org.upyog.adv.service.EnrichmentService;
+import org.upyog.adv.service.PaymentTimerService;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.util.MdmsUtil;
 import org.upyog.adv.validator.BookingValidator;
@@ -53,9 +56,12 @@ public class BookingServiceImpl implements BookingService {
 
 	@Autowired
 	private BookingConfiguration config;
+	
+	@Autowired
+	private PaymentTimerService paymentTimerService;
 
-//		@Autowired
-//		EncryptionService encryptionService;
+//	@Autowired
+//	private	EncryptionService encryptionService;
 
 	@Override
 	public BookingDetail createBooking(@Valid BookingRequest bookingRequest) {
@@ -103,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
 			BookingRequest bookingRequest = BookingRequest.builder().bookingApplication(bookingDetail).requestInfo(info)
 					.build();
 
-//	BookingDetail = encryptionService.encryptObject(bookingRequest);
+			// BookingDetail = encryptionService.encryptObject(bookingRequest);
 
 			advertisementSearchCriteria.setMobileNumber(bookingDetail.getApplicantDetail().getApplicantMobileNo());
 
@@ -112,6 +118,8 @@ public class BookingServiceImpl implements BookingService {
 		}
 
 		bookingDetails = bookingRepository.getBookingDetails(advertisementSearchCriteria);
+		// Fetch remaining timer values for the booking details
+		paymentTimerService.getRemainingTimerValue(bookingDetails);
 		if (CollectionUtils.isEmpty(bookingDetails)) {
 			return bookingDetails;
 		}
@@ -143,10 +151,7 @@ public class BookingServiceImpl implements BookingService {
 				criteria, availabiltityDetails);
 
 		if (criteria.getIsTimerRequired()) {
-			bookingRepository.insertBookingIdForTimer(criteria, requestInfo);
-			long timerValue = config.getPaymentTimer();
-			availabiltityDetailsResponse.get(0).setTimerValue(timerValue);
-
+			paymentTimerService.insertBookingIdForTimer(criteria, requestInfo, availabiltityDetailsResponse);
 		}
 		log.info("Availabiltity details response after updating status :" + availabiltityDetailsResponse);
 
@@ -237,10 +242,17 @@ public class BookingServiceImpl implements BookingService {
 			advertisementBookingRequest.getBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			advertisementBookingRequest.getBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
 		}
-		bookingRepository.updateBooking(advertisementBookingRequest);
+		//bookingRepository.updateBooking(advertisementBookingRequest);
+		updateBookingSynchronously(advertisementBookingRequest);
 		log.info("fetched booking detail and updated status "
 				+ advertisementBookingRequest.getBookingApplication().getBookingStatus());
 		return advertisementBookingRequest.getBookingApplication();
+	}
+	
+	
+	@Transactional
+	public void updateBookingSynchronously(BookingRequest advertisementBookingRequest) {
+		bookingRepository.updateBookingSynchronously(advertisementBookingRequest);
 	}
 
 	// This sets the paymennt receipt file store id and permission letter file store
@@ -258,6 +270,7 @@ public class BookingServiceImpl implements BookingService {
 		}
 		advertisementbookingRequest.setBookingApplication(bookingDetailDB);
 	}
+
 
 }
 
