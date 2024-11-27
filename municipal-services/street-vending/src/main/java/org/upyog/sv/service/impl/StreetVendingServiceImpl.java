@@ -82,26 +82,26 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 	@Override
 	public StreetVendingDetail updateStreetVendingApplication(StreetVendingRequest vendingRequest) {
-//		StreetVendingDetail existingApplication = validator
-//				.validateApplicationExistence(vendingRequest.getStreetVendingDetail());
-//
-//		if (existingApplication == null) {
-//			return null;
-//		}
-//
-//		existingApplication.setWorkflow(vendingRequest.getStreetVendingDetail().getWorkflow());
-//		vendingRequest.setStreetVendingDetail(existingApplication);
-//
-//		
-//		State state = workflowService.updateWorkflowStatus(vendingRequest);
-//		String applicationStatus = state.getApplicationStatus();
-//		enrichmentService.enrichStreetVendingApplicationUponUpdate(applicationStatus,vendingRequest);
+		StreetVendingDetail existingApplication = validator
+				.validateApplicationExistence(vendingRequest.getStreetVendingDetail());
+
+		if (existingApplication == null) {
+			return null;
+		}
+
+		existingApplication.setWorkflow(vendingRequest.getStreetVendingDetail().getWorkflow());
+		vendingRequest.setStreetVendingDetail(existingApplication);
+
+		
+		State state = workflowService.updateWorkflowStatus(vendingRequest);
+		String applicationStatus = state.getApplicationStatus();
+		enrichmentService.enrichStreetVendingApplicationUponUpdate(applicationStatus,vendingRequest);
 		streetVendingRepository.update(vendingRequest);
 
-//		if (StreetVendingConstants.ACTION_APPROVE.equals(existingApplication.getWorkflow().getAction())) {
-//			String tenantId = extractTenantId(vendingRequest);
-//			demandService.createDemand(vendingRequest, tenantId);
-//		}
+		if (StreetVendingConstants.ACTION_APPROVE.equals(existingApplication.getWorkflow().getAction())) {
+			String tenantId = extractTenantId(vendingRequest);
+			demandService.createDemand(vendingRequest, tenantId);
+		}
 
 		return vendingRequest.getStreetVendingDetail();
 	}
