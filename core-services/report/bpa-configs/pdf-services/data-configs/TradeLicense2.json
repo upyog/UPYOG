@@ -96,6 +96,12 @@
             "value":{
               "path":"$.approverName"
             }
+          },			
+		  {
+           "variable":"userName",
+            "value":{
+              "path":"$.userName"
+            }
           },
           {
            "variable":"approvalTime",
