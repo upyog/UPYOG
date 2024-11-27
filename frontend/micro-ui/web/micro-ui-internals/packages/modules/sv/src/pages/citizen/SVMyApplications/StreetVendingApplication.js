@@ -5,7 +5,6 @@ import { Link,useHistory } from "react-router-dom";
 
 const StreetVendingApplication = ({ application, buttonLabel }) => {
   const { t } = useTranslation();
-  console.log("appplicatioooooo",application);
   const history = useHistory();
   // Function to handle the click event, setting the applicationId and redirecting
   const handleEditClick = () => {
@@ -24,11 +23,18 @@ const StreetVendingApplication = ({ application, buttonLabel }) => {
       <KeyNote keyValue={t("SV_VENDING_ZONES")} note={application?.vendingZone} />
       {application?.vendingActivity==="STATIONARY"&&(
       <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}
+      {application?.applicationNo.length===0&&(
+      <p className="astericColor">{t("SV_DRAFT")}</p>)}
       {(application?.applicationStatus == "CITIZENACTIONREQUIRED") && 
       <SubmitBar style={{ marginBottom: "5px" }} label={"SV_EDIT"} onSubmit={handleEditClick} />}
-      <Link to={`/digit-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
+      {application?.applicationNo.length===0?
+      <Link to={`/digit-ui/citizen/sv/apply/info`}>
+      <SubmitBar label={t("SV_CONTINUE")} />
+    </Link>
+        :
+        <Link to={`/digit-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />
-      </Link>
+      </Link>}
     </Card>
   );
 };

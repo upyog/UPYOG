@@ -34,7 +34,7 @@ public class ServiceRequestRepository {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
         try {
-        	log.info("request info : "+ request + " uri : " + uri);
+        	log.info("request info : {} and uri : {}", request, uri);
             response = restTemplate.postForObject(uri.toString(), request, Map.class);
             log.info("response info : "+ response);
             

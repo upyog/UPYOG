@@ -193,8 +193,5 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 	
-	@Value("${chb.claculation.tax.applicable}")
-	private String applicableTaxes;
-	
 
 }

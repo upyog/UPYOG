@@ -78,7 +78,7 @@ export const calculateAge = (birthDate) => {
 
 
 // Utility function to transform documents array into required format
-const transformDocuments = (documents) => {
+export const transformDocuments = (documents) => {
 
   if (!Array.isArray(documents)) return [];
 
@@ -154,11 +154,13 @@ export const svPayloadData = (data) =>{
       lastModifiedTime: 0
     },
     dob: data?.owner?.units?.[0]?.vendorDateOfBirth,
-    ownerTypeCategory:data?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
     emailId: data?.owner?.units?.[0]?.email,
     fatherName: data?.owner?.units?.[0]?.fatherName,
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     gender: data?.owner?.units?.[0]?.gender?.code.charAt(0),
     id: "",
+    isInvolved: true,
     mobileNo: data?.owner?.units?.[0]?.mobileNumber,
     name: data?.owner?.units?.[0]?.vendorName,
     relationshipType: "VENDOR",
@@ -174,8 +176,9 @@ export const svPayloadData = (data) =>{
       lastModifiedTime: 0
     },
     dob: data?.owner?.units?.[0]?.spouseDateBirth,
-    ownerTypeCategory:data?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
     emailId: "",
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     isInvolved: data?.owner?.spouseDependentChecked,
     fatherName: "",
     gender: "O",
@@ -195,9 +198,10 @@ export const svPayloadData = (data) =>{
       lastModifiedTime: 0
     },
     dob: data?.owner?.units?.[0]?.dependentDateBirth,
-    ownerTypeCategory:data?.owner?.units?.[0]?.ownerTypeCategory?.value,
+    userCategory:data?.owner?.units?.[0]?.userCategory?.code,
     emailId: "",
     isInvolved: data?.owner?.dependentNameChecked,
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     fatherName: "",
     gender: data?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
     id: "",
@@ -251,6 +255,9 @@ export const svPayloadData = (data) =>{
     id: ""
   }));
 
+  const draftid=sessionStorage.getItem("Response");
+  const draftID= draftid ? JSON.parse(draftid) : null
+
   const formdata={
     streetVendingDetail: {
     addressDetails: [
@@ -259,13 +266,13 @@ export const svPayloadData = (data) =>{
         addressLine1: data?.address?.addressline1,
         addressLine2: data?.address?.addressline2,
         addressType: "",
-        city: data?.address?.city?.name,
-        cityCode: data?.address?.city?.code,
+        city: data?.address?.city?.name||data?.address?.city?.code,
+        cityCode: data?.address?.city?.code||data?.tenantId,
         doorNo: "",
         houseNo: data?.address?.houseNo,
         landmark: data?.address?.landmark,
-        locality: data?.address?.locality?.i18nKey,
-        localityCode: data?.address?.locality?.code,
+        locality: draftID?.SVDetail?.[0]?.addressDetails?.[0]?.locality||data?.address?.locality?.i18nKey,
+        localityCode: draftID?.SVDetail?.[0]?.addressDetails?.[0]?.localityCode||data?.address?.locality?.code,
         pincode: data?.address?.pincode,
         streetName: "",
         vendorId: ""
@@ -275,13 +282,13 @@ export const svPayloadData = (data) =>{
         addressLine1: data?.correspondenceAddress?.caddressline1,
         addressLine2: data?.correspondenceAddress?.caddressline2,
         addressType: "",
-        city: data?.correspondenceAddress?.ccity?.name,
-        cityCode: data?.correspondenceAddress?.ccity?.code,
+        city: data?.correspondenceAddress?.ccity?.name||data?.correspondenceAddress?.ccity?.code,
+        cityCode:  data?.correspondenceAddress?.ccity?.code||data?.tenantId,
         doorNo: "",
         houseNo: data?.correspondenceAddress?.chouseNo,
         landmark: data?.correspondenceAddress?.clandmark,
-        locality: data?.correspondenceAddress?.clocality?.i18nKey,
-        localityCode: data?.correspondenceAddress?.clocality?.code,
+        locality: draftID?.SVDetail?.[0]?.addressDetails?.[1]?.locality||data?.correspondenceAddress?.clocality?.i18nKey,
+        localityCode: draftID?.SVDetail?.[0]?.addressDetails?.[1]?.localityCode||data?.correspondenceAddress?.clocality?.code,
         pincode: data?.correspondenceAddress?.cpincode,
         streetName: "",
         vendorId: "",
@@ -322,6 +329,7 @@ export const svPayloadData = (data) =>{
     cartLongitude: 0,
     certificateNo: null,
     disabilityStatus: data?.specialCategoryData?.ownerCategory?.code,
+    draftid:draftID?.SVDetail?.draftId||"",
     documentDetails: transformDocuments(data?.documents?.documents),
     localAuthorityName: data?.businessDetails?.nameOfAuthority,
     tenantId: data?.tenantId,
@@ -359,7 +367,7 @@ export const svPayloadData = (data) =>{
       ]
     }
   },
-  isDraftApplication:false,
+  draftApplication:false,
   };
   return formdata;
 }
