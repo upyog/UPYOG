@@ -290,6 +290,43 @@ import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
+import useSVDoc from "./sv/useSVDoc";
+import useSvCreateApi from "./sv/useSvCreateApi";
+import useTenantsSV from "./sv/useTenants";
+import useADSSlotSearch from "./ads/useADSSlotSearch";
+import useADSSearch from "./ads/useADSSearch";
+import useSVApplicationDetail from "./sv/useSVApplicationDetail";
+import useSvSearchApplication from "./sv/useSvSearchApplication";
+import useSVApplicationAction from "./sv/useSVApplicationAction";
+import useADSApplicationDetail from "./ads/useADSApplicationDetail";
+import useProductPriceMDMS from "./ew/useProductPriceMDMS";
+import useSpecialCategory from "./chb/useSpecialCategory";
+import useResidentType from "./chb/useResidentType";
+import usePurpose from "./chb/usePurpose";
+import useChbCreateAPI from "./chb/useChbCreateAPI";
+import useADSCreateAPI from "./ads/useADSCreateAPI";
+import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
+import useEWCreateAPI from "./ew/useEWCreateAPI";
+import useTenantsEW from "./ew/useTenants";
+import useEWSearch from "./ew/useEWSearch";
+import useEwApplicationDetail from "./ew/useEwApplicationDetail";
+import useEWApplicationAction from "./ew/useEWApplicationAction";
+
+import useChbDocumentSearch from "./chb/useChbDocumentSearch";
+import useChbApplicationDetail from "./chb/useChbApplicationDetail";
+import useChbSearch from "./chb/useChbSearch";
+import useTenantsCHB from "./chb/useTenants";
+import useChbApplicationAction from "./chb/useChbApplicationAction";
+import useServiceSearchCHB from "./chb/useServiceSearchCHB";
+import useChbCommunityHalls from "./chb/useChbCommunityHalls";
+import useChbHallCode from "./chb/useChbHallCode"
+import useChbSlotSearch from "./chb/useChbSlotSearch";
+import useDemandEstimation from "./chb/useDemandEstimation"
+import useTenantsADS from "./ads/useTenants"
+import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
+import useADSDocumentSearch from "./ads/useADSDocumentSearch";
+import useADSDemandEstimation from "./ads/useADSDemandEstimation"
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -571,6 +608,55 @@ const asset = {
   useEditUpdateAPI
 };
 
+const sv = {
+  useSVDoc,
+  useSvCreateApi,
+  useTenants:useTenantsSV,
+  useSvSearchApplication,
+  useSVApplicationDetail,
+  useSVApplicationAction,
+  useSvSearchApplication
+}
+
+const ew = {
+  useProductPriceMDMS,
+  useEWCreateAPI,
+  useTenants: useTenantsEW,
+  useEWSearch,
+  useEwApplicationDetail,
+  useEWApplicationAction,
+};
+
+const chb={
+  useSpecialCategory,
+  useResidentType,
+  usePurpose,
+  useChbCreateAPI,
+  useChbDocumentsMDMS,
+  useChbDocumentSearch,
+  useChbApplicationDetail,
+  useChbSearch,
+  useTenants:useTenantsCHB,
+  useChbApplicationAction,
+  useServiceSearchCHB,
+  useChbCommunityHalls,
+  useChbHallCode,
+  useChbSlotSearch,
+  useDemandEstimation
+}
+// for using tenant for city and document and search 
+const ads={
+  useTenants:useTenantsADS,
+  useADSDocumentsMDMS,
+  useADSDocumentSearch,
+  useADSCreateAPI,
+  useADSSlotSearch,
+  useADSSearch,
+  useADSDemandEstimation,
+  useADSApplicationDetail  
+}
+
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -638,7 +724,11 @@ const Hooks = {
   useBillAmendmentInbox,
   useAudit,
   createTokenAPI,
-  asset
+  asset,
+  sv,
+  chb,
+  ads,
+  ew
 };
 
 export default Hooks;
