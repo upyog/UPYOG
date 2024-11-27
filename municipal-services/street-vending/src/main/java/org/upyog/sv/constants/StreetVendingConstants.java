@@ -10,7 +10,7 @@ public class StreetVendingConstants {
 	public static final String APPLICATIONS_FOUND = "Applications Found";
 	public static final String APPLICATION_UPDATED = "Application Updated";
 	public static final String REGISTRATION_COMPLETED = "Registration Completed";
-
+	public static final String INSPECTION_PENDING_STATUS = "INPECTIONPENDING";
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 
 	// mdms path codes
@@ -70,16 +70,18 @@ public class StreetVendingConstants {
 	public static final String NOTIFICATION_STATUS = "{STATUS}";
 	
 
-	public static final String NOTIFICATION_INSPECTION = "ew.en.counter.inspection";
-
-	public static final String NOTIFICATION_SUBMIT = "ew.en.counter.submit";
-
-	public static final String NOTIFICATION_SENTBACK = "ew.en.counter.sentback";
-
-	public static final String NOTIFICATION_REJECT = "ew.en.counter.reject";
+	public static final String NOTIFICATION_INSPECTION = "sv.en.counter.inspection";
 	
-	public static final String NOTIFICATION_APPROVED = "ew.en.counter.approved";
+	public static final String NOTIFICATION_INSPECTION_COMPLETE = "sv.en.counter.inspection.complete";
 
-	public static final String NOTIFICATION_REGISTRATIONCOMPLETED = "ew.en.counter.registrationcompleted";
+	public static final String NOTIFICATION_SUBMIT = "sv.en.counter.submit";
+
+	public static final String NOTIFICATION_SENTBACK = "sv.en.counter.sentback";
+
+	public static final String NOTIFICATION_REJECT = "sv.en.counter.reject";
+	
+	public static final String NOTIFICATION_APPROVED = "sv.en.counter.approved";
+
+	public static final String NOTIFICATION_REGISTRATIONCOMPLETED = "sv.en.counter.registrationcompleted";
 
 }
