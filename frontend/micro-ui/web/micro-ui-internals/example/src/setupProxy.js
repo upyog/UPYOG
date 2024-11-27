@@ -73,6 +73,22 @@ module.exports = function (app) {
     "/asset-services/v1/assets/assignment/_create",
     "/asset-services/v1/assets/assignment/_update",
     "/asset-services/v1/assets/_search",
+    "/sv-services/street-vending/_create",
+    "/sv-services/street-vending/_search",
+    "/sv-services/street-vending/_update",
+    "/ewaste-services/ewaste-request/_create",
+    "/ewaste-services/ewaste-request/_search",
+    "/ewaste-services/ewaste-request/_update",
+    "/chb-services/booking/v1/_create",
+    "/chb-services/booking/v1/_search",
+    "/chb-services/booking/v1/_update",
+    "/chb-services/booking/v1/_slot-search",
+    "/chb-services/booking/v1/_estimate",
+    "/adv-services/booking/v1/_create",
+    "/adv-services/booking/v1/_search",
+    "/adv-services/booking/v1/_update",
+    "/adv-services/booking/v1/_slot-search",
+    "/adv-services/booking/v1/_estimate",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
