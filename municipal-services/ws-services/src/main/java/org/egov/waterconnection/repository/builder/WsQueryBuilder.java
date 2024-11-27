@@ -210,10 +210,13 @@ public class WsQueryBuilder {
 		}
 
 		// Added clause to support multiple connectionNumbers search
-		if (!CollectionUtils.isEmpty(criteria.getConnectionNumber())) {
+		Set<String> connectionNumbers= criteria.getConnectionNumber();
+		if (!CollectionUtils.isEmpty(connectionNumbers)) {
 			addClauseIfRequired(preparedStatement, query);
-			query.append("  LOWERconn.connectionno IN (").append(createQuery(criteria.getConnectionNumber())).append(")");
-			addToPreparedStatement(preparedStatement, criteria.getConnectionNumber());
+			List <String> patterns = connectionNumbers.stream().filter(connNo -> connNo!=null && !connNo.isEmpty()).map(connNo-> "%" + connNo.toLowerCase() + "%").collect(Collectors.toList());
+			String condition = patterns.stream().map(p-> "LOWER(conn.connectionno) LIKE ?").collect(Collectors.joining("OR"," (", ") "));
+			query.append(condition);
+			preparedStatement.addAll(patterns);
 		}
 		if (!StringUtils.isEmpty(criteria.getStatus())) {
 			addClauseIfRequired(preparedStatement, query);
