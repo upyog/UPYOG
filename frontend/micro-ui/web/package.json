@@ -10,10 +10,7 @@
     "micro-ui-internals/packages/common",
     "micro-ui-internals/packages/asset",
     "micro-ui-internals/packages/dss",
-    "micro-ui-internals/packages/ptr",
-    "micro-ui-internals/packages/sv",
-    "micro-ui-internals/packages/ads",
-    "micro-ui-internals/packages/chb"
+    "micro-ui-internals/packages/ptr"
 
   ],
   "engines": {
