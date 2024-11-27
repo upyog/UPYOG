@@ -76,10 +76,11 @@ public class BillGeneratorService {
 			{
 			billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
 			}
-			//billDetails1.addAll(billDetails);
+			
 		}
     	}
-		else if (!billGenerationReq.getBillScheduler().getGroup().isEmpty())
+        else if (billGenerationReq.getBillScheduler().getGroup() != null && !billGenerationReq.getBillScheduler().getGroup().isEmpty()) 
+
 		{
 			
 			
