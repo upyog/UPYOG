@@ -69,6 +69,8 @@ public class BookingDetail {
 	
 	private AuditDetails auditDetails;
 	
+	private Long remainingTimerValue;
+	
  	//private ProcessInstance workflow;
 	
 

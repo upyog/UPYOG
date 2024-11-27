@@ -1,11 +1,13 @@
 package org.upyog.adv.repository.impl;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.kafka.Producer;
 import org.upyog.adv.repository.BookingRepository;
@@ -25,9 +28,11 @@ import org.upyog.adv.repository.rowmapper.AdvertisementSlotAvailabilityRowMapper
 import org.upyog.adv.repository.rowmapper.BookingCartDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.BookingDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.DocumentDetailsRowMapper;
+import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
+import org.upyog.adv.web.models.AuditDetails;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.CartDetail;
@@ -118,28 +123,104 @@ public class BookingRepositoryImpl implements BookingRepository {
 	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
 		String bookingId = criteria.getBookingId();
 		String createdBy = requestInfo.getUserInfo().getUuid();
-		long createdTime = System.currentTimeMillis();
+		long createdTime = BookingUtil.getCurrentTimestamp();
 		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
-		long lastModifiedTime = System.currentTimeMillis();
-		String query = queryBuilder.insertBookingIdForTImer(bookingId);
+		long lastModifiedTime = BookingUtil.getCurrentTimestamp();
+		
+		// Check if bookingId already exists in timer table 
+	    String checkQuery = queryBuilder.checkBookingIdExists(bookingId);
+	    List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookingId);
+	    if (result.isEmpty()) {
+		String query = queryBuilder.insertBookingIdForTimer(bookingId);
 		jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
-	}
+	}}
 	
 	public void deleteBookingIdForTimer(String bookingId) {
-
-		String query = queryBuilder.deleteBookingIdForTImer(bookingId);
-
+		String query = queryBuilder.deleteBookingIdForTimer(bookingId);
 		jdbcTemplate.update(query, bookingId);
-
-	
 	}
 
+	@Override
+	public Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails) {
+	   
+	    List<String> bookingIds = bookingDetails.stream()
+	            .map(BookingDetail::getBookingId)
+	            .collect(Collectors.toList());   
+	    String query = queryBuilder.fetchBookingIdForTImer(bookingIds);
+	    long currentTimeMillis = BookingUtil.getCurrentTimestamp();
+	    List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, bookingIds.toArray());
+	    Map<String, Long> remainingTimers = new HashMap<>();
+	    for (Map<String, Object> booking : bookings) {
+	        String bookingId = (String) booking.get("booking_id");
+	        Long createdTime = (Long) booking.get("createdtime");
+
+	        if (createdTime != null) {
+	            long elapsedTime = currentTimeMillis - createdTime;
+	            if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
+	                long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
+	                log.info("Booking ID: {}, Remaining Time: {}", bookingId, remainingTime);
+	                remainingTimers.put(bookingId, remainingTime);
+	            } else {
+	                log.info("Booking ID: {}, Timer Expired", bookingId);
+	                remainingTimers.put(bookingId, 0L);
+	            }
+	        } else {
+	            log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingId);
+	            remainingTimers.put(bookingId, 0L);
+	        }
+	    }
+
+	    log.info("Remaining Timers Map: {}", remainingTimers);
+	    return remainingTimers;
+
+	}
+
+	
 	// Upadtes booking request data for the given booking number
 	@Override
 	public void updateBooking(@Valid BookingRequest advertisementBookingRequest) {
 		log.info("Updating advertisement booking request data for booking no : "
 				+ advertisementBookingRequest.getBookingApplication().getBookingNo());
 		producer.push(bookingConfiguration.getAdvertisementBookingUpdateTopic(), advertisementBookingRequest);
+	}
+	
+	@Transactional
+	public void updateBookingSynchronously(@Valid BookingRequest advertisementBookingRequest) {
+		
+		log.info("Updating advertisement booking request data for booking no : "
+		+ advertisementBookingRequest.getBookingApplication().getBookingNo());
+		BookingDetail bookingapplication = advertisementBookingRequest.getBookingApplication();
+		List<CartDetail> cartDetails = advertisementBookingRequest.getBookingApplication().getCartDetails();
+		if (cartDetails == null || cartDetails.isEmpty()) {
+			throw new IllegalArgumentException(
+					"Cart details are missing for booking ID: " + bookingapplication.getBookingId());
+		}
+		CartDetail cartDetail = cartDetails.get(0);
+		AuditDetails auditDetails = advertisementBookingRequest.getBookingApplication().getAuditDetails();
+
+		String bookingQuery = queryBuilder.updateBookingDetail();
+		String cartQuery = queryBuilder.updateCartDetail();
+		String bookingAuditQuery = queryBuilder.createBookingDetailAudit();
+		String cartAuditQuery = queryBuilder.createCartDetailAudit();
+		
+
+		jdbcTemplate.update(bookingQuery, bookingapplication.getBookingStatus(), bookingapplication.getPaymentDate(),
+				auditDetails.getLastModifiedBy(), auditDetails.getLastModifiedTime(),
+				bookingapplication.getPermissionLetterFilestoreId(), bookingapplication.getPaymentReceiptFilestoreId(),
+				bookingapplication.getBookingId());
+
+		jdbcTemplate.update(cartQuery, cartDetail.getStatus(), auditDetails.getLastModifiedBy(),
+				auditDetails.getLastModifiedTime(), cartDetail.getCartId());
+		
+		jdbcTemplate.update(
+		        bookingAuditQuery, 
+		        bookingapplication.getBookingId()
+		    );
+		
+		 jdbcTemplate.update(
+			        cartAuditQuery, 
+			        cartDetail.getCartId()
+			    );
 	}
 
 	@Override
@@ -180,29 +261,4 @@ public class BookingRepositoryImpl implements BookingRepository {
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);
 		return availabiltityDetails;
 	}
-	
-
-
-	/* This scheduler runs every 5 mins
-	 * to delete the bookingId from the paymentTimer table when 
-	 * the timer is expired or payment is failed
-	 */
-	@Scheduled(fixedRate = 5 * 60 * 1000) //Runs every 5 minutes
-	public void cleanupExpiredEntries() {
-	    
-	    LocalDateTime currentTime = LocalDateTime.now();
-
-	    
-	    long currentTimeMillis = ZonedDateTime.of(currentTime, ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-	   
-	    String query = queryBuilder.deleteBookingIdPaymentTimer();
-
-	    int rowsDeleted = jdbcTemplate.update(query, currentTimeMillis, bookingConfiguration.getPaymentTimer());
-
-	    log.info(rowsDeleted + " expired entries deleted.");
-	}
-
-
-
 }
