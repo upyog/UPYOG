@@ -189,7 +189,7 @@ public class CalculationService {
           else if (validityYears == 3)
               estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(3)));
       }
-      //estimate.setEstimateAmount(totalTax);
+      estimate.setEstimateAmount(totalTax);
       estimate.setCategory(Category.TAX);
       if(license.getApplicationType() != null && license.getApplicationType().toString().equals(TLCalculatorConstants.APPLICATION_TYPE_RENEWAL)){
           estimate.setTaxHeadCode(config.getRenewTaxHead());
