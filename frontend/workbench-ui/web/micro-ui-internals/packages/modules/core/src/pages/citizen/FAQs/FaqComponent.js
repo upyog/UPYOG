@@ -1,4 +1,4 @@
-import { ArrowForward } from "@egovernments/digit-ui-react-components";
+import { ArrowForward } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { get } from "lodash";
 import FilterContext from "./FilterContext";
 import { endOfMonth, getTime, startOfMonth } from "date-fns";
-import { Loader } from "@egovernments/digit-ui-react-components"
+import { Loader } from "@upyog/digit-ui-react-components"
 import { ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
 

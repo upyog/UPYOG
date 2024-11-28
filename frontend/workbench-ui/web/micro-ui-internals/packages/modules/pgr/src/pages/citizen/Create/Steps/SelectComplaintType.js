@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
+import { TypeSelectCard } from "@upyog/digit-ui-react-components";
 
 const SelectComplaintType = ({ t, config, onSelect, value }) => {
   const [complaintType, setComplaintType] = useState(() => {

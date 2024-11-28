@@ -18,7 +18,7 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-"@egovernments/digit-ui-react-components": "1.8.0",
+"@upyog/digit-ui-react-components": "1.8.4",
     "jsonpath": "1.1.1",
     "react": "17.0.2",
     "react-date-range": "1.3.0",
@@ -33,6 +33,14 @@
     "react-tooltip": "4.1.2",
     "react-inlinesvg": "1.1.7",
     "lodash": "4.17.21"
+  },
+  "resolutions":  {
+    "**/babel-loader": "8.2.2",
+    "**/@babel/core": "7.14.0",
+    "**/@babel/preset-env": "7.14.0",
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "**/polished":"4.2.2",
+    "**/styled-components": "5.0.0"
   },
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "keywords": [
