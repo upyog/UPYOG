@@ -513,4 +513,8 @@ public class TLConstants {
     public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
     public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
     public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
+
+    // kafka
+    public static final String KAFKA_TOPIC_TL_CERTIFICATE = "save-tl-certificate";
+
 }
