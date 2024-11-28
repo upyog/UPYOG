@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import MDMSAdd from './MDMSAddV2'
-import { Loader,Toast } from '@egovernments/digit-ui-react-components';
+import { Loader,Toast } from '@upyog/digit-ui-react-components';
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

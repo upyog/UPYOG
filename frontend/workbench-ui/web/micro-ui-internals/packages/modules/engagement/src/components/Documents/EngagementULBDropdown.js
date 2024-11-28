@@ -1,5 +1,5 @@
 import React from "react";
-import {  LabelFieldPair, CardLabel, Dropdown,} from "@egovernments/digit-ui-react-components";
+import {  LabelFieldPair, CardLabel, Dropdown,} from "@upyog/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 
