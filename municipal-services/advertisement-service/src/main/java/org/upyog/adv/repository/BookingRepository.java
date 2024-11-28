@@ -23,22 +23,16 @@ public interface BookingRepository {
 			AdvertisementSlotSearchCriteria criteria);
 	
 	void updateBooking(@Valid BookingRequest bookingRequest);
-
-	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
-
+	
 	void deleteBookingIdForTimer(String bookingId);
 
 	Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
-
+	
 	void updateBookingSynchronously(@Valid BookingRequest advertisementBookingRequest);
 
+	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse);
 
-
-	
-
-	
-
-
-	
+	Map<String, Long> getRemainingTimerValues(String bookingId);
 	
 }
