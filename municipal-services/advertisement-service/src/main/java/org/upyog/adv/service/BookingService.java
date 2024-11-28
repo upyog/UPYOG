@@ -1,6 +1,7 @@
 package org.upyog.adv.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -25,5 +26,8 @@ public interface BookingService {
 	Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria, @NonNull RequestInfo requestInfo);
 	
 	BookingDetail updateBooking(@Valid BookingRequest bookingRequest, PaymentDetail paymentDetail, BookingStatusEnum bookingStatusEnum);
+	
+	BookingDetail updateBookingSynchronously(BookingRequest bookingRequest, PaymentDetail paymentDetail,
+			BookingStatusEnum booked);
 
 }

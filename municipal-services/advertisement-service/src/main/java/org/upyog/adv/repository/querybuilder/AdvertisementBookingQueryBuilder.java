@@ -56,7 +56,10 @@ public class AdvertisementBookingQueryBuilder {
 	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = "DELETE FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
 
 	private static final String FETCH_TIMER = "SELECT booking_id, createdtime FROM eg_adv_payment_timer WHERE booking_id IN (%s)";
+
 	
+	private static final String FETCH_TIMER_VALUE = "SELECT booking_id, createdtime FROM eg_adv_payment_timer WHERE booking_id = ?";
+
 	private static final String INSERT_BOOKING_DETAIL_AUDIT_QUERY = 
 		    "INSERT INTO public.eg_adv_booking_detail_audit " +
 		    "SELECT * FROM public.eg_adv_booking_detail WHERE booking_id = ?";
@@ -67,7 +70,7 @@ public class AdvertisementBookingQueryBuilder {
 		    "face_area, night_light, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime " +
 		    "FROM public.eg_adv_cart_detail WHERE cart_id = ?";
 		
-	private static final String BOOKING_ID_EXISTS_CHECK = "SELECT 1 FROM eg_adv_payment_timer WHERE booking_id = ?";
+	private static final String BOOKING_ID_EXISTS_CHECK = "SELECT * FROM eg_adv_payment_timer WHERE booking_id = ?";
 
 	private Object createQueryParams(List<String> ids) {
 		StringBuilder builder = new StringBuilder();
@@ -129,6 +132,14 @@ public class AdvertisementBookingQueryBuilder {
 	                                 .map(id -> "?")
 	                                 .collect(Collectors.joining(", "));
 	    return String.format(FETCH_TIMER, bookingId);
+	}
+	
+	public String fetchBookingIdForTimer(String bookingId) {
+	    if (bookingId == null || bookingId.isEmpty()) {
+	        log.warn("No booking IDs provided for query");
+	        return null;
+	    }
+	    return String.format(FETCH_TIMER_VALUE, bookingId);
 	}
 
 

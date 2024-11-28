@@ -26,9 +26,9 @@ public class PaymentTimerService {
 	private BookingConfiguration config;
 
 	@Transactional
-	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
-			List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse) {
-		bookingRepository.insertBookingIdForTimer(criteria, requestInfo);
+	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,  List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse
+			) {
+		bookingRepository.insertBookingIdForTimer(criteria, requestInfo, availabiltityDetailsResponse.get(0));
 		long timerValue = config.getPaymentTimer();
 		log.info("Creating timer entry for booking id : {} with timer value : {}", criteria.getBookingId(), timerValue);
 		availabiltityDetailsResponse.stream().forEach(detail -> detail.setTimerValue(timerValue));
@@ -44,6 +44,7 @@ public class PaymentTimerService {
 	public void getRemainingTimerValue(List<BookingDetail> bookingDetails) {
         Map<String, Long> remainingTimerValue = bookingRepository.getRemainingTimerValues(bookingDetails);   
         log.info("Received Remaining Timers for bookingId: {}", remainingTimerValue);
+
      // Set the remaining timer value in each BookingDetail object
      	for (BookingDetail bookingDetail : bookingDetails) {
      			Long remainingTimer = remainingTimerValue.get(bookingDetail.getBookingId());
@@ -51,7 +52,6 @@ public class PaymentTimerService {
      		    log.info("Updated BookingDetail: {} with Remaining Timer: {}", bookingDetail.getBookingId(), remainingTimer);
 
      	}
-		return;
 	}
 
 

@@ -68,7 +68,7 @@ public class PaymentService {
 						.build();
 				BookingRequest bookingRequest = BookingRequest.builder()
 						.requestInfo(paymentRequest.getRequestInfo()).bookingApplication(bookingDetail).build();
-				bookingService.updateBooking(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
+				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
 				bookingRepo.deleteBookingIdForTimer(bookingRequest.getBookingApplication().getBookingId());
 			}
 		} catch (IllegalArgumentException e) {

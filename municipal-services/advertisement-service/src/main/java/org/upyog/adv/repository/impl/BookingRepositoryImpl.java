@@ -1,13 +1,11 @@
 package org.upyog.adv.repository.impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.upyog.adv.config.BookingConfiguration;
@@ -120,21 +117,28 @@ public class BookingRepositoryImpl implements BookingRepository {
 	}
  
 	@Override
-	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
+	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse) {
 		String bookingId = criteria.getBookingId();
 		String createdBy = requestInfo.getUserInfo().getUuid();
 		long createdTime = BookingUtil.getCurrentTimestamp();
 		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
 		long lastModifiedTime = BookingUtil.getCurrentTimestamp();
-		
-		// Check if bookingId already exists in timer table 
-	    String checkQuery = queryBuilder.checkBookingIdExists(bookingId);
-	    List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookingId);
-	    if (result.isEmpty()) {
-		String query = queryBuilder.insertBookingIdForTimer(bookingId);
-		jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
-	}}
-	
+
+		// Check if bookingId already exists in timer table
+		String checkQuery = queryBuilder.checkBookingIdExists(bookingId);
+		List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookingId);
+		if (result.isEmpty()) {
+			String query = queryBuilder.insertBookingIdForTimer(bookingId);
+			jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
+		} else {
+			Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
+			long remainingTimeValue = remainingTime.get(bookingId);
+			availabiltityDetailsResponse.setRemainingTimerValue(remainingTimeValue);
+
+		}
+	}
+	    
 	public void deleteBookingIdForTimer(String bookingId) {
 		String query = queryBuilder.deleteBookingIdForTimer(bookingId);
 		jdbcTemplate.update(query, bookingId);
@@ -142,38 +146,93 @@ public class BookingRepositoryImpl implements BookingRepository {
 
 	@Override
 	public Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails) {
-	   
-	    List<String> bookingIds = bookingDetails.stream()
-	            .map(BookingDetail::getBookingId)
-	            .collect(Collectors.toList());   
-	    String query = queryBuilder.fetchBookingIdForTImer(bookingIds);
-	    long currentTimeMillis = BookingUtil.getCurrentTimestamp();
-	    List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, bookingIds.toArray());
-	    Map<String, Long> remainingTimers = new HashMap<>();
-	    for (Map<String, Object> booking : bookings) {
-	        String bookingId = (String) booking.get("booking_id");
-	        Long createdTime = (Long) booking.get("createdtime");
+		if (bookingDetails == null || bookingDetails.isEmpty()) {
+			log.warn("No booking details provided");
+			return Collections.emptyMap();
+		}
 
-	        if (createdTime != null) {
-	            long elapsedTime = currentTimeMillis - createdTime;
-	            if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
-	                long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
-	                log.info("Booking ID: {}, Remaining Time: {}", bookingId, remainingTime);
-	                remainingTimers.put(bookingId, remainingTime);
-	            } else {
-	                log.info("Booking ID: {}, Timer Expired", bookingId);
-	                remainingTimers.put(bookingId, 0L);
-	            }
-	        } else {
-	            log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingId);
-	            remainingTimers.put(bookingId, 0L);
-	        }
-	    }
+		List<String> bookingIds = bookingDetails.stream().map(BookingDetail::getBookingId).filter(Objects::nonNull)
+				.collect(Collectors.toList());
+		String query = queryBuilder.fetchBookingIdForTImer(bookingIds);
 
-	    log.info("Remaining Timers Map: {}", remainingTimers);
-	    return remainingTimers;
+		if (query == null) {
+			log.warn("No query generated, returning empty result");
+			return Collections.emptyMap();
+		}
 
+		long currentTimeMillis = BookingUtil.getCurrentTimestamp();
+		// Execute query only if booking IDs exist
+		List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, bookingIds.toArray());
+		Map<String, Long> remainingTimers = new HashMap<>();
+
+		for (Map<String, Object> booking : bookings) {
+			String bookingId = (String) booking.get("booking_id");
+			Long createdTime = (Long) booking.get("createdtime");
+
+			if (createdTime != null) {
+				long elapsedTime = currentTimeMillis - createdTime;
+				if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
+					long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
+					log.info("Booking ID: {}, Remaining Time: {}", bookingId, remainingTime);
+					remainingTimers.put(bookingId, remainingTime);
+				} else {
+					log.info("Booking ID: {}, Timer Expired", bookingId);
+					remainingTimers.put(bookingId, 0L);
+				}
+			} else {
+				log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingId);
+				remainingTimers.put(bookingId, 0L);
+			}
+		}
+
+		log.info("Remaining Timers Map: {}", remainingTimers);
+		return remainingTimers;
 	}
+	
+	
+	public Map<String, Long> getRemainingTimerValues(String bookingId) {
+		if (bookingId == null || bookingId.isEmpty()) {
+			log.warn("No booking details provided");
+			return Collections.emptyMap();
+		}
+
+		
+		String query = queryBuilder.fetchBookingIdForTimer(bookingId);
+
+		if (query == null) {
+			log.warn("No query generated, returning empty result");
+			return Collections.emptyMap();
+		}
+
+		long currentTimeMillis = BookingUtil.getCurrentTimestamp();
+		// Execute query only if booking IDs exist
+		List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, new Object[]{bookingId});
+		Map<String, Long> remainingTimers = new HashMap<>();
+
+		for (Map<String, Object> booking : bookings) {
+			String bookingID = (String) booking.get("booking_id");
+			Long createdTime = (Long) booking.get("createdtime");
+
+			if (createdTime != null) {
+				long elapsedTime = currentTimeMillis - createdTime;
+				if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
+					long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
+					log.info("Booking ID: {}, Remaining Time: {}", bookingID, remainingTime);
+					remainingTimers.put(bookingID, remainingTime);
+				} else {
+					log.info("Booking ID: {}, Timer Expired", bookingID);
+					remainingTimers.put(bookingID, 0L);
+				}
+			} else {
+				log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingID);
+				remainingTimers.put(bookingID, 0L);
+			}
+		}
+
+		log.info("Remaining Timers Map: {}", remainingTimers);
+		return remainingTimers;
+	}
+
 
 	
 	// Upadtes booking request data for the given booking number

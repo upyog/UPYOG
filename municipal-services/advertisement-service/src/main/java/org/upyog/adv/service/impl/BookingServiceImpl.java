@@ -3,7 +3,6 @@ package org.upyog.adv.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -17,9 +16,9 @@ import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.repository.BookingRepository;
+import org.upyog.adv.service.ADVEncryptionService;
 import org.upyog.adv.service.BookingService;
 import org.upyog.adv.service.DemandService;
-//import org.upyog.adv.service.EncryptionService;
 import org.upyog.adv.service.EnrichmentService;
 import org.upyog.adv.service.PaymentTimerService;
 import org.upyog.adv.util.BookingUtil;
@@ -60,8 +59,8 @@ public class BookingServiceImpl implements BookingService {
 	@Autowired
 	private PaymentTimerService paymentTimerService;
 
-//	@Autowired
-//	private	EncryptionService encryptionService;
+	@Autowired
+	private	ADVEncryptionService encryptionService;
 
 	@Override
 	public BookingDetail createBooking(@Valid BookingRequest bookingRequest) {
@@ -82,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
 		enrichmentService.enrichCreateBookingRequest(bookingRequest);
 
 		// ENcrypt PII data of applicant
-		// encryptionService.encryptObject(bookingRequest);
+		 encryptionService.encryptObject(bookingRequest);
 
 		demandService.createDemand(bookingRequest, mdmsData, true);
 
@@ -109,7 +108,7 @@ public class BookingServiceImpl implements BookingService {
 			BookingRequest bookingRequest = BookingRequest.builder().bookingApplication(bookingDetail).requestInfo(info)
 					.build();
 
-			// BookingDetail = encryptionService.encryptObject(bookingRequest);
+			bookingDetail = encryptionService.encryptObject(bookingRequest);
 
 			advertisementSearchCriteria.setMobileNumber(bookingDetail.getApplicantDetail().getApplicantMobileNo());
 
@@ -120,10 +119,11 @@ public class BookingServiceImpl implements BookingService {
 		bookingDetails = bookingRepository.getBookingDetails(advertisementSearchCriteria);
 		// Fetch remaining timer values for the booking details
 		paymentTimerService.getRemainingTimerValue(bookingDetails);
+
 		if (CollectionUtils.isEmpty(bookingDetails)) {
 			return bookingDetails;
 		}
-//	bookingDetails = encryptionService.decryptObject(bookingDetails, info);
+		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
 		return bookingDetails;
 	}
@@ -242,8 +242,7 @@ public class BookingServiceImpl implements BookingService {
 			advertisementBookingRequest.getBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			advertisementBookingRequest.getBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
 		}
-		//bookingRepository.updateBooking(advertisementBookingRequest);
-		updateBookingSynchronously(advertisementBookingRequest);
+		bookingRepository.updateBooking(advertisementBookingRequest);
 		log.info("fetched booking detail and updated status "
 				+ advertisementBookingRequest.getBookingApplication().getBookingStatus());
 		return advertisementBookingRequest.getBookingApplication();
@@ -251,9 +250,43 @@ public class BookingServiceImpl implements BookingService {
 	
 	
 	@Transactional
-	public void updateBookingSynchronously(BookingRequest advertisementBookingRequest) {
+	public BookingDetail updateBookingSynchronously(BookingRequest advertisementBookingRequest, PaymentDetail paymentDetail,
+			BookingStatusEnum status) {
+		String bookingNo = advertisementBookingRequest.getBookingApplication().getBookingNo();
+		log.info("Updating booking for booking no : " + bookingNo);
+		if (bookingNo == null) {
+			return null;
+		}
+		AdvertisementSearchCriteria advertisementSearchCriteria = AdvertisementSearchCriteria.builder()
+				.bookingNo(bookingNo).build();
+		List<BookingDetail> bookingDetails = bookingRepository.getBookingDetails(advertisementSearchCriteria);
+		if (bookingDetails.size() == 0) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Booking no not valid. Failed to update booking status for : " + bookingNo);
+		}
+
+//		String tenantId = bookingDetails.get(0).getTenantId();		
+//		Object mdmsData = mdmsUtil.mDMSCall(advertisementBookingRequest.getRequestInfo(), tenantId);
+//		bookingValidator.validateUpdate(advertisementBookingRequest.getBookingApplication(), mdmsData, advertisementBookingRequest.getBookingApplication().getBookingStatus());
+
+		convertBookingRequest(advertisementBookingRequest, bookingDetails.get(0));
+
+		enrichmentService.enrichUpdateBookingRequest(advertisementBookingRequest, status);
+
+		// Update payment date and receipt no on successful payment when payment detail
+		// object is received
+		if (paymentDetail != null) {
+			advertisementBookingRequest.getBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
+			advertisementBookingRequest.getBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
+		}
+		
 		bookingRepository.updateBookingSynchronously(advertisementBookingRequest);
+		log.info("fetched booking detail and updated status "
+				+ advertisementBookingRequest.getBookingApplication().getBookingStatus());
+		return advertisementBookingRequest.getBookingApplication();
 	}
+		
+
 
 	// This sets the paymennt receipt file store id and permission letter file store
 	// id
@@ -270,7 +303,6 @@ public class BookingServiceImpl implements BookingService {
 		}
 		advertisementbookingRequest.setBookingApplication(bookingDetailDB);
 	}
-
 
 }
 

@@ -8,7 +8,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 
-@Service
+@Service("advProducer")
 @Slf4j
 public class Producer {
 
