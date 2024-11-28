@@ -2,6 +2,9 @@
 FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
+
+RUN yarn add @upyog/digit-ui-react-components@1.8.4
+
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=8168"
