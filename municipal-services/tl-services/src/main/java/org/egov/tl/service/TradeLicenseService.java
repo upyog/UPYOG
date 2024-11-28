@@ -1257,7 +1257,7 @@ public class TradeLicenseService {
 
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());// Trade License No
-//		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); // Trade Registration No
+		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); // Trade Registration No
 		tlObject.put("tradeName", tradeLicense.getTradeName());// Trade Name
 		tlObject.put("tradePremisesAddress",
 				tradeLicense.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", ")
@@ -1311,7 +1311,7 @@ public class TradeLicenseService {
 
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
 		tlObject.entrySet().stream()
-				.filter(entry1 -> Arrays.asList("tradeLicenseNo", "tradeRegistrationNo", "tradeName",
+				.filter(entry1 -> Arrays.asList("tradeLicenseNo", /*"tradeRegistrationNo",*/ "tradeName",
 						"tradePremisesAddress", "licenseIssueDate", "licenseValidity", "licenseCategory",
 						"licenseApplicantName", "applicantContactNo", "applicantAddress").contains(entry1.getKey()))
 				.forEach(entry -> {
@@ -1322,7 +1322,7 @@ public class TradeLicenseService {
 				});
 
 		replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
-		replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
+//		replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
 		replaceInStringBuilder(qr, "tradeName", "Trade Name");
 		replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
 		replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
