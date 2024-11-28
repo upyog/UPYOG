@@ -2,6 +2,7 @@ package org.egov.pt.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.Assessment.ModeOfPayment;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
@@ -71,13 +72,14 @@ public class BillingService {
 	}
 	
 	
-public BillResponse fetchBillForDailyBillUpdate(String property, RequestInfo requestInfo, String tenanatId) {
+public BillResponse fetchBillForDailyBillUpdate(String property, RequestInfo requestInfo, String tenanatId, ModeOfPayment modeOfPayment) {
 		
 		StringBuilder uri = new StringBuilder(billingHost);
 		uri.append(fetchBillEndpoint);
 		uri.append("?").append("tenantId=").append(tenanatId);
 		uri.append("&businessService=").append(PT_BUSINESSSERVICE);
 		uri.append("&consumerCode=").append(property);
+		uri.append("&modeOfPayment=").append(modeOfPayment);
 		
 		try {
         	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());

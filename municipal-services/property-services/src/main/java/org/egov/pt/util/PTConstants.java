@@ -551,6 +551,11 @@ public class PTConstants {
     public static final String NOTICE_TO_ENTER_PREMISE="NOTICE_TO_ENTER_PREMISE_MNPT";
     public static final String NOTICE_TO_ENTER_PREMISE_TEMPLATE_ID="1007858281479481097";
     
+/////////////////////////////////////////PAYMENT REMINDER///////////////////////////
+
+    public static final String NOTICE_FOR_PAYMENT_REMINDER="NOTICE_FOR_PAYMENT_REMINDER";
+    public static final String NOTICE_FOR_PAYMENT_REMINDER_TEMPLATE_ID="1007181774565090601";
+    
 
 }
 
