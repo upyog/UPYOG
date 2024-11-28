@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer, WorkflowModal } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, WorkflowModal } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect, Fragment } from "react";
 import { configViewBillApproveModal, configViewBillRejectModal, configViewBillCheckModal } from "../config";
 import _ from "lodash";

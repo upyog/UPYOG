@@ -8,7 +8,7 @@ import {
   SearchIconSvg,
   TextInput,
   WhatsappIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -78,7 +78,7 @@ const GenericChart = ({
     return Digit.Download.Excel(chartData, t(header));
   };
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
-  var IconComp = require("@egovernments/digit-ui-react-components")?.[iconName];
+  var IconComp = require("@upyog/digit-ui-react-components")?.[iconName];
   return (
     <Card className={`chart-item ${className}`} ReactRef={chart}>
       <div className={`chartHeader ${showSearch && "column-direction"}`}>

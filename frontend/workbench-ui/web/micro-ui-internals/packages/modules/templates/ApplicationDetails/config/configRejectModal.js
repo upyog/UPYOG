@@ -1,4 +1,4 @@
-import { Dropdown,LabelFieldPair,CardLabel} from '@egovernments/digit-ui-react-components';
+import { Dropdown,LabelFieldPair,CardLabel} from '@upyog/digit-ui-react-components';
 import React, { useState } from 'react'
 
 const configRejectModal = ({

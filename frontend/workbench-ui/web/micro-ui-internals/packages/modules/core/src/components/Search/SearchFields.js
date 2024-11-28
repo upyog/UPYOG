@@ -1,6 +1,6 @@
 import {
     DatePicker, SearchField, SubmitBar
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Controller } from "react-hook-form";
 const SearchFields = ({ register, control, reset, tenantId, t, previousPage, formState, isLoading }) => {
