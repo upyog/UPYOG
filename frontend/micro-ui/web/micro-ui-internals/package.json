@@ -11,7 +11,10 @@
     "packages/modules/common",
     "packages/modules/asset",
     "packages/modules/dss",
-    "packages/modules/ptr"
+    "packages/modules/ptr",
+    "packages/modules/sv",
+    "packages/modules/ads",
+    "packages/modules/chb"
   ],
   "license": "MIT",
   "private": true,
@@ -72,10 +75,10 @@
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
-    "buildD:chb": "cd packages/modules/chb && yarn build",
-    "buildD:ads": "cd packages/modules/ads && yarn build",
+    "build:chb": "cd packages/modules/chb && yarn build",
+    "build:ads": "cd packages/modules/ads && yarn build",
     "buildD:ew": "cd packages/modules/ew && yarn build",
-    "buildD:sv": "cd packages/modules/sv && yarn build",
+    "build:sv": "cd packages/modules/sv && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
