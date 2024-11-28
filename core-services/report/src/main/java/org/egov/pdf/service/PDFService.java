@@ -279,7 +279,8 @@ public class PDFService {
 			}
 
 			if ("userName".equals(variable)) {
-				value = addSignatureFromMdms(pdfRequest,value.toString());
+				String signBase64 = addSignatureFromMdms(pdfRequest,value.toString());
+				pdfContextData.put("signature", signBase64);
 //				addSignatureFromMdms(dataConfigs,pdfContextData);
 			}
 			
