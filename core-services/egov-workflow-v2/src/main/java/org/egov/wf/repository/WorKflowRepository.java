@@ -51,7 +51,7 @@ public class WorKflowRepository {
             return new LinkedList<>();
 
         String query = queryBuilder.getProcessInstanceSearchQueryById(ids, preparedStmtList);
-        log.debug("query for status search: "+query+" params: "+preparedStmtList);
+        log.info("query for status search: "+query+" params: "+preparedStmtList);
 
         return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
     }
