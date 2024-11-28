@@ -10,10 +10,10 @@
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/asset",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/ptr",
     "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/sv",
     "micro-ui-internals/packages/modules/chb"
+
   ],
   "engines": {
     "node": ">=14"

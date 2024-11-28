@@ -18,10 +18,7 @@ RUN yarn add @upyog/digit-ui-module-core
 RUN yarn add @upyog/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-commonpt
 RUN yarn add @upyog/digit-ui-module-bills
-RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
-RUN yarn add @nudmcdgnpm/upyog-ui-module-ew
-RUN yarn add @nudmcdgnpm/upyog-ui-module-chb
-RUN yarn add @nudmcdgnpm/upyog-ui-module-ads
+RUN yarn add @upyog-niua/upyog-ui-module-ptr
 
 ARG WORK_DIR
 WORKDIR /app
