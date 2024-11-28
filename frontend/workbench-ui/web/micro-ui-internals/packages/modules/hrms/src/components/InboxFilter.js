@@ -54,7 +54,7 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
   });
 
   useEffect(() => {
-    if (tenantId.code) {
+    if (tenantId && tenantId.code) {
       setSearchParams({ ..._searchParams, tenantId: tenantId.code });
     }
   }, [tenantId]);
