@@ -1257,7 +1257,7 @@ public class TradeLicenseService {
 
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());// Trade License No
-//		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); // Trade Registration No
+		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); // Trade Registration No
 		tlObject.put("tradeName", tradeLicense.getTradeName());// Trade Name
 		tlObject.put("tradePremisesAddress",
 				tradeLicense.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", ")
