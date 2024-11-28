@@ -3,14 +3,15 @@ package org.egov.nationaldashboardingest.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.nationaldashboardingest.producer.Producer;
+import org.egov.nationaldashboardingest.web.models.Attachments;
 import org.egov.nationaldashboardingest.web.models.Email;
 import org.egov.nationaldashboardingest.web.models.EmailRequest;
 import org.egov.nationaldashboardingest.config.ApplicationProperties;
 import org.springframework.stereotype.Component;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.io.IOException;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,21 +26,32 @@ public class EmailUtil {
     @Autowired
     private ApplicationProperties appProp;
 
-    public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, Map<String,Map<String, String>> missingStates) {
+    @Autowired
+    private ExcelUtil excelUtil;
+
+
+    public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, Map<String,Map<String, Object>> stateList) throws IOException {
 
         LocalDate yesterday = LocalDate.now().minusDays(1);
         String formattedDate = yesterday.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-        List<EmailRequest> emailRequestList = new LinkedList<>();
-        for (Map.Entry<String, Map<String,String>> entry : missingStates.entrySet()) {
-            Map<String,String> officerInfo = entry.getValue();
-            String stateName = entry.getKey();
-            String email = officerInfo.get("email");
-            String nodalOfficer = officerInfo.get("nodalOfficer");
 
-            String subject = "Urgent: Data Ingestion Issue on UMEED National Dashboard";
+        List<Attachments> attachmentsList = excelUtil.generateExcelFiles(stateList);
+        List<EmailRequest> emailRequestList = new LinkedList<>();
+        for (Map.Entry<String, Map<String,Object>> entry : stateList.entrySet()) {
+            Map<String,Object> officerInfo = entry.getValue();
+            String stateName = entry.getKey();
+            String email = (String) officerInfo.get("email");
+            String nodalOfficer = (String) officerInfo.get("nodalOfficer");
+
+            Attachments stateexcel = attachmentsList.stream()
+                    .filter(attachments -> attachments.getFileName().equals(stateName+ ".xlsx"))
+                    .findFirst()
+                    .orElse(null);
+
+            String subject = stateName + " : Data Ingestion Issue on UMEED National Dashboard";
             String body = String.format(
-                            "<p>Dear " + nodalOfficer + " ,<br><br></p>" +
+                    "<p>Dear " + nodalOfficer + " ,<br><br></p>" +
                             "<p>We have observed that data from " + stateName + " has not been ingested onto the UMEED National Dashboard on " + formattedDate +".</p>" +
                             "<p>This data gap is hindering our ability to monitor urban performance and make informed decisions. " +
                             "We kindly request you to take immediate action to resolve the issue and ensure timely data ingestion.</p>" +
@@ -57,6 +69,7 @@ public class EmailUtil {
                     .isHTML(true)
                     .body(body)
                     .subject(subject)
+                    .attachments(stateexcel != null ? Collections.singletonList(stateexcel): null)
                     .build();
 
             EmailRequest emailRequest = new EmailRequest(requestInfo, emailObj);
@@ -64,14 +77,13 @@ public class EmailUtil {
         }
         return emailRequestList;
     }
-    public void sendEmail(RequestInfo requestInfo, Map<String, Map<String,String>> missingStates) {
+    public void sendEmail(RequestInfo requestInfo, Map<String, Map<String,Object>> stateList) throws IOException {
+        List<EmailRequest> emailRequestList = createEmailRequest(requestInfo, stateList);
 
-        List<EmailRequest> emailRequestList = createEmailRequest(requestInfo, missingStates);
-
-            for (EmailRequest emailRequest : emailRequestList) {
-                producer.push(appProp.getEmailNotifTopic(), emailRequest);
-                log.info("Email Request -> " + emailRequest.toString());
-                log.info("EMAIL notification sent!");
+        for (EmailRequest emailRequest : emailRequestList) {
+            producer.push(appProp.getEmailNotifTopic(), emailRequest);
+            log.info("Email Request -> " + emailRequest.toString());
+            log.info("EMAIL notification sent!");
 
         }
     }

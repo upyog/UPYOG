@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.Data;
 
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
@@ -19,5 +19,6 @@ public class Email {
     private String body;
     @JsonProperty("isHTML")
     private boolean isHTML;
+    private List<Attachments> attachments;
 
 }
