@@ -612,9 +612,9 @@ public class EnrichmentService {
                         licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameBPA(), config.getLicenseNumberIdgenFormatBPA(), count);
                         break;
                         
-                    case TLConstants.businessService_NewTL:
-                        licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameTL(), config.getLicenseNumberIdgenFormatTL(), count);
-                        break;
+//                    case TLConstants.businessService_NewTL:
+//                        licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameTL(), config.getLicenseNumberIdgenFormatTL(), count);
+//                        break;
                 }
                 ListIterator<String> itr = licenseNumbers.listIterator();
 
@@ -629,8 +629,10 @@ public class EnrichmentService {
                 for (int i = 0; i < licenses.size(); i++) {
                     TradeLicense license = licenses.get(i);
                     if ((license.getStatus() != null) && license.getStatus().equalsIgnoreCase(endstates.get(i))) {
-                        license.setLicenseNumber(itr.next());
-                        Long time = System.currentTimeMillis();
+                        if (itr.hasNext()) {
+							license.setLicenseNumber(itr.next());
+						}
+						Long time = System.currentTimeMillis();
                         license.setIssuedDate(time);
                         //license.setValidFrom(time);
                         if (mdmsData != null && businessService.equalsIgnoreCase(businessService_BPA)) {
@@ -644,8 +646,8 @@ public class EnrichmentService {
                         }
                         if (businessService.equalsIgnoreCase(businessService_TL)
                         		|| businessService.equalsIgnoreCase(TLConstants.businessService_NewTL)) {
-                        	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
-                        	license.setLicenseNumber(tempId);
+//                        	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
+                        	license.setLicenseNumber(license.getApplicationNumber());
                             license.setValidFrom(new Date().getTime());
                         	license.setValidTo(getValidToDateFromLicensePeriod(license));
                         }
