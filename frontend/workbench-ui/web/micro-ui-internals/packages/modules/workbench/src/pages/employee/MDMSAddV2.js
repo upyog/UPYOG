@@ -67,16 +67,16 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
   const body = api?.requestBody
     ? { ...api?.requestBody }
     : {
-        Mdms: {
-          tenantId: tenantId,
-          schemaCode: `${moduleName}.${masterName}`,
-          uniqueIdentifier: null,
-          data: {},
-          isActive: true,
-        },
-      };
+      Mdms: {
+        tenantId: tenantId,
+        schemaCode: `${moduleName}.${masterName}`,
+        uniqueIdentifier: null,
+        data: {},
+        isActive: true,
+      },
+    };
   const reqCriteriaAdd = {
-    url: api ? api?.url : `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_create/${moduleName}.${masterName}`,
+    url: api ? api?.url : Digit.Utils.workbench.getMDMSActionURL(moduleName, masterName, "create"),
     params: {},
     body: { ...body },
     config: {
@@ -195,14 +195,52 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
   if (isLoading || !formSchema || Object.keys(formSchema) == 0) {
     return <Loader />;
   }
+
   const uiJSONSchema = formSchema?.["definition"]?.["x-ui-schema"];
+
+  function updateAllPropertiesBasedOnUIOrder(schema) {
+    // Iterate through all properties in schema.definition.properties
+    for (let propertyName in schema.definition.properties) {
+      let targetProperty = schema.definition.properties[propertyName];
+
+      // Check if the property has items and the x-ui-schema with a ui:order field
+      if (targetProperty.items && targetProperty.items["x-ui-schema"] && targetProperty.items["x-ui-schema"]["ui:order"]) {
+        const orderArray = targetProperty.items["x-ui-schema"]["ui:order"];
+        let properties = targetProperty.items.properties;
+
+        // Create a new properties object sorted by ui:order
+        let sortedProperties = {};
+
+        // Sort properties according to the orderArray
+        orderArray.forEach((key) => {
+          if (properties.hasOwnProperty(key)) {
+            sortedProperties[key] = properties[key];
+          }
+        });
+
+        // Add remaining properties that were not in the orderArray
+        for (let key in properties) {
+          if (!sortedProperties.hasOwnProperty(key)) {
+            sortedProperties[key] = properties[key];
+          }
+        }
+
+        // Re-assign the sorted properties back to the schema
+        targetProperty.items.properties = sortedProperties;
+      }
+    }
+
+    return schema;
+  }
 
   return (
     <React.Fragment>
       {spinner && <DigitLoader />}
       {formSchema && (
         <DigitJSONForm
-          schema={formSchema}
+          schema={
+            updateAllPropertiesBasedOnUIOrder(formSchema)
+          }
           onFormChange={onFormValueChange}
           onFormError={onFormError}
           formData={session}

@@ -8,23 +8,25 @@ import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 // import { initUtilitiesComponents } from  "@egovernments/digit-ui-module-utilities";
-import {initWorkbenchComponents} from "@egovernments/digit-ui-module-workbench";
-import { PGRReducers , initPGRComponents} from "@egovernments/digit-ui-module-pgr";
+import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
+import { PGRReducers, initPGRComponents } from "@egovernments/digit-ui-module-pgr";
 
-import "@egovernments/digit-ui-css/example/index.css";
+// import "@egovernments/digit-ui-css/example/index.css";
 
 import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
 
 var Digit = window.Digit || {};
 
-const enabledModules = [ "DSS", "HRMS",
-"Workbench"
-,"PGR"
-//  "Engagement", "NDSS","QuickPayLinks", "Payment",
+const enabledModules = [
+  "DSS",
+  "HRMS",
+  "Workbench",
+  "PGR",
+  //  "Engagement", "NDSS","QuickPayLinks", "Payment",
   // "Utilities",
-//added to check fsm
-// "FSM"
+  //added to check fsm
+  // "FSM"
 ];
 
 const initTokens = (stateCode) => {
@@ -57,7 +59,7 @@ const initDigitUI = () => {
   window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
   window.Digit.Customizations = {
     PGR: pgrCustomizations,
-    commonUiConfig: UICustomizations
+    commonUiConfig: UICustomizations,
   };
   window?.Digit.ComponentRegistryService.setupRegistry({
     // PaymentModule,
@@ -72,15 +74,17 @@ const initDigitUI = () => {
   initWorkbenchComponents();
   initPGRComponents();
 
-
-  const moduleReducers = (initData) =>  ({
+  const moduleReducers = (initData) => ({
     pgr: PGRReducers(initData),
   });
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules}       defaultLanding="employee"  moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(
+    <DigitUI stateCode={stateCode} enabledModules={enabledModules} defaultLanding="employee" moduleReducers={moduleReducers} />,
+    document.getElementById("root")
+  );
 };
 
 initLibraries().then(() => {

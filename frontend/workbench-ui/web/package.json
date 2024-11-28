@@ -14,11 +14,11 @@
   ],
   "homepage": "/digit-ui",
   "dependencies": {
-    "@egovernments/digit-ui-libraries": "1.8.1",
-    "@egovernments/digit-ui-module-workbench": "1.0.1",
+    "@egovernments/digit-ui-libraries": "1.8.3",
+    "@egovernments/digit-ui-module-workbench": "1.0.6",
     "@egovernments/digit-ui-module-core": "1.8.2",
     "@egovernments/digit-ui-module-hrms": "1.8.0",
-    "@egovernments/digit-ui-react-components": "1.8.1",
+    "@egovernments/digit-ui-react-components": "1.8.4",
     "@egovernments/digit-ui-module-dss": "1.8.0",
     "@egovernments/digit-ui-module-pgr": "1.8.0",
     "@egovernments/digit-ui-module-common": "1.8.0",
@@ -61,9 +61,10 @@
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
     "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "**/styled-components": "5.0.0",
     "**/polished":"4.2.2",
-    "fast-uri":"2.1.0",
-    "**/styled-components": "5.0.0"
+    "fast-uri":"2.1.0"
+    
   },
   "scripts": {
     "start": "react-scripts start",
