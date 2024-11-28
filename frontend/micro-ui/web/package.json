@@ -6,12 +6,14 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/core",
-    "micro-ui-internals/packages/common",
-    "micro-ui-internals/packages/asset",
-    "micro-ui-internals/packages/dss",
-    "micro-ui-internals/packages/ptr"
-
+    "micro-ui-internals/packages/modules/core",
+    "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/asset",
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/ptr",
+    "micro-ui-internals/packages/modules/ads",
+    "micro-ui-internals/packages/modules/sv",
+    "micro-ui-internals/packages/modules/chb"
   ],
   "engines": {
     "node": ">=14"
