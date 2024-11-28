@@ -2,11 +2,9 @@ package org.egov.nationaldashboardingest.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -18,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egov.nationaldashboardingest.service.StateListDB;
+import org.egov.nationaldashboardingest.web.models.Attachments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,35 +27,42 @@ public class ExcelUtil {
     @Autowired
     private StateListDB stateListDB;
 
-    public void generateExcelFiles(HttpServletResponse response, Map<String, Map<String, Object>> stateList) throws IOException {
-        response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment; filename=ExcelFiles.zip");
+    public List<Attachments> generateExcelFiles(Map<String, Map<String, Object>> stateList) throws IOException {
+        List<Attachments> attachmentsList = new ArrayList<>();
 
-        try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
-            Map<String, Map<String, List<String>>> ulbModules = stateListDB.findIfRecordExists();
 
-            for (Map.Entry<String, Map<String, Object>> entry : stateList.entrySet()) {
-                String state = entry.getKey();
-                Map<String, Object> officerInfo = entry.getValue();
-                List<String> ulbList = (List<String>) officerInfo.get("ULBs");
+        Map<String, Map<String, List<String>>> ulbModules = stateListDB.findIfRecordExists();
 
-                try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-                    XSSFSheet sheet = workbook.createSheet("ULB-Module Data for " + state);
-                    createHeader(sheet, state);
-                    fillULBData(sheet, ulbList, state, ulbModules);
+        for (Map.Entry<String, Map<String, Object>> entry : stateList.entrySet()) {
+            String state = entry.getKey();
+            Map<String, Object> officerInfo = entry.getValue();
+            List<String> ulbList = (List<String>) officerInfo.get("ULBs");
 
-                    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                        workbook.write(baos);
-                        baos.flush();
 
-                        ZipEntry zipEntry = new ZipEntry(state + ".xlsx");
-                        zipOut.putNextEntry(zipEntry);
-                        zipOut.write(baos.toByteArray());
-                        zipOut.closeEntry();
-                    }
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("ULB-Module Data for " + state);
+                createHeader(sheet, state);
+                fillULBData(sheet, ulbList, state, ulbModules);
+
+
+                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                    workbook.write(baos);
+                    baos.flush();
+
+
+                    Attachments attachment = new Attachments();
+                    attachment.setFileName(state + ".xlsx");
+                    attachment.setContent(baos.toByteArray());
+                    attachment.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+
+                    attachmentsList.add(attachment);
                 }
             }
         }
+
+
+        return attachmentsList;
     }
 
     private void createHeader(XSSFSheet sheet, String state) {

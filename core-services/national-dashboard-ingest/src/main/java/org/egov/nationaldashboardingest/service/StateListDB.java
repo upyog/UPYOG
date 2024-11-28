@@ -20,29 +20,29 @@ public class StateListDB {
         String sql = nssStateListQuery.getYesterdayDataQuery();
         Map<String, Map<String, List<String>>> resultMap = new HashMap<>();
 
-        // Execute the query and process the result set
+
         jdbcTemplate.query(sql, (rs, rowNum) -> {
             String state = rs.getString("state");
             String module = rs.getString("module");
             String ulb = rs.getString("ulb");
 
-            // Check if the outer map already contains the 'state' key
+
             if (!resultMap.containsKey(state)) {
                 resultMap.put(state, new HashMap<>());
             }
 
-            // Check if the inner map already contains the 'ulb' key
+
             if (!resultMap.get(state).containsKey(ulb)) {
                 resultMap.get(state).put(ulb, new ArrayList<>());
             }
 
-            // Add the 'module' to the list for this 'ulb'
+
             resultMap.get(state).get(ulb).add(module);
 
-            return null; // Return value is not needed in this case
+            return null;
         });
 
-        // Return the resultMap
+
         return resultMap;
     }
 

@@ -39,12 +39,10 @@ public class EmailController {
 
     @RequestMapping(value = "/_sendEmail", method = RequestMethod.POST)
     public void sendEmailtoMissingState(@RequestBody RequestInfoWrapper requestInfoWrapper, HttpServletResponse response) throws IOException {
-        RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();  // Get RequestInfo from the wrapper
+        RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
         log.info("Received RequestInfo: {}", requestInfo);
-        Map<String, Map<String,Object>> missingStates = new HashMap<>();
-
         Map<String,Map<String , Object>> responseList = stateFetch.stateList(requestInfo);
 
-        excelUtil.generateExcelFiles(response,responseList);
+        emailUtil.sendEmail(requestInfo, responseList);
     }
 }
