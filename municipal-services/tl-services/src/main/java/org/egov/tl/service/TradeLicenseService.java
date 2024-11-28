@@ -812,6 +812,10 @@ public class TradeLicenseService {
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
 				licenses.get(0).setApplicationType(applicationType.toString());
+				// created date of application will be whenever it went to verifier
+				if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_FORWARD_TO_VERIFIER)){
+					licenses.get(0).getAuditDetails().setCreatedTime(new Date().getTime());
+				}
 
 				if (StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())
 						&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
@@ -830,11 +834,7 @@ public class TradeLicenseService {
 					}
 				}
 				
-				// created date of application will be whenever it went to verifier
-				if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_FORWARD_TO_VERIFIER)){
-					license.getAuditDetails().setCreatedTime(new Date().getTime());
-				}
-
+				
 				// calculate passed dates from creation date
 				enrichPassedDates(licenses);
 
