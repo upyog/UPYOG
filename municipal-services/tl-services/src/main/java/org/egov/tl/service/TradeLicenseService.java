@@ -165,8 +165,6 @@ public class TradeLicenseService {
 	@Autowired
 	private Producer producer;
 
-	@Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
-	private Boolean pickWFServiceNameFromTradeTypeOnly;
 
 	@Autowired
 	public TradeLicenseService(WorkflowIntegrator wfIntegrator, EnrichmentService enrichmentService,
@@ -831,6 +829,11 @@ public class TradeLicenseService {
 						licenses.get(0).getAuditDetails().setCreatedTime(new Date().getTime());
 					}
 				}
+				
+				// created date of application will be whenever it went to verifier
+				if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_FORWARD_TO_VERIFIER)){
+					license.getAuditDetails().setCreatedTime(new Date().getTime());
+				}
 
 				// calculate passed dates from creation date
 				enrichPassedDates(licenses);
@@ -1254,7 +1257,7 @@ public class TradeLicenseService {
 
 		// map variables and values
 		tlObject.put("tradeLicenseNo", tradeLicense.getLicenseNumber());// Trade License No
-		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); // Trade Registration No
+//		tlObject.put("tradeRegistrationNo", tradeLicense.getApplicationNumber()); // Trade Registration No
 		tlObject.put("tradeName", tradeLicense.getTradeName());// Trade Name
 		tlObject.put("tradePremisesAddress",
 				tradeLicense.getTradeLicenseDetail().getAddress().getAddressLine1().concat(", ")
