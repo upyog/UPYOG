@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetActionRequest;
+import org.egov.asset.web.models.AssetActionResponse;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetResponse;
 import org.egov.asset.web.models.AssetSearchCriteria;
@@ -17,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -123,4 +128,24 @@ public class AssetControllerV1 {
 				.build();
 		return  new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	 @PostMapping({"assignment/_fetch","/_fetch/{value}"})
+	    public ResponseEntity<?> calculateTLFee(@RequestBody AssetActionRequest actionRequest
+	    										, @PathVariable String value){
+	    	
+	    	AssetActionResponse response = null;
+	    	
+	    	/*if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) {
+	    		response = assetService.getApplicationDetails(assetSearchCriteria);
+	    	}*/ if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
+	    		response = assetService.getActionsOnApplication(actionRequest);
+	    	}else if(StringUtils.equalsIgnoreCase(value, "APPLICATIONDETAILS")){
+	    		response = assetService.getCountOfAllApplicationTypes(actionRequest);
+	    	}else {
+	    		return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
+	    	}
+	    	
+	    	return new ResponseEntity(response, HttpStatus.OK);
+	    }
+	
 }

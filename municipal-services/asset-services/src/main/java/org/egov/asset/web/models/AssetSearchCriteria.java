@@ -67,6 +67,7 @@ public class AssetSearchCriteria {
 	    
 	    @JsonProperty("assetBookRefNo")
 	    private String assetBookRefNo;
+	    
 
 		public boolean isEmpty() {
 			return (this.tenantId == null && this.status == null && this.ids == null && this.applicationNo == null

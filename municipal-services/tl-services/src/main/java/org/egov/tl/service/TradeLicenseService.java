@@ -165,8 +165,6 @@ public class TradeLicenseService {
 	@Autowired
 	private Producer producer;
 
-	//@Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
-	//private Boolean pickWFServiceNameFromTradeTypeOnly;
 
 	@Autowired
 	public TradeLicenseService(WorkflowIntegrator wfIntegrator, EnrichmentService enrichmentService,
@@ -831,6 +829,11 @@ public class TradeLicenseService {
 						licenses.get(0).getAuditDetails().setCreatedTime(new Date().getTime());
 					}
 				}
+				
+				// created date of application will be whenever it went to verifier
+				if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_FORWARD_TO_VERIFIER)){
+					license.getAuditDetails().setCreatedTime(new Date().getTime());
+				}
 
 				// calculate passed dates from creation date
 				enrichPassedDates(licenses);
@@ -1308,7 +1311,7 @@ public class TradeLicenseService {
 
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
 		tlObject.entrySet().stream()
-				.filter(entry1 -> Arrays.asList("tradeLicenseNo", "tradeRegistrationNo", "tradeName",
+				.filter(entry1 -> Arrays.asList("tradeLicenseNo", /*"tradeRegistrationNo",*/ "tradeName",
 						"tradePremisesAddress", "licenseIssueDate", "licenseValidity", "licenseCategory",
 						"licenseApplicantName", "applicantContactNo", "applicantAddress").contains(entry1.getKey()))
 				.forEach(entry -> {
@@ -1319,7 +1322,7 @@ public class TradeLicenseService {
 				});
 
 		replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
-		replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
+//		replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
 		replaceInStringBuilder(qr, "tradeName", "Trade Name");
 		replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
 		replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");

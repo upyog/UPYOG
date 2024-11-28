@@ -92,6 +92,7 @@ public class AssetConfiguration {
 	
 	@Value("${workflow.process.path}")
 	private String wfProcessPath;
+	
  	
 	// SMS
 //	@Value("${kafka.topics.notification.sms}")
