@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
 import { CHBServices } from "../../services/elements/CHB";
+import { PTRService } from "../../services/elements/PTR";
 import { SVService } from "../../services/elements/SV";
 import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";

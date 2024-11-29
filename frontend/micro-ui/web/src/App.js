@@ -40,7 +40,7 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
+} from "@nudmcdgnpm/upyog-ui-module-ptr";
 import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-module-asset";
 
 import { 
