@@ -100,9 +100,9 @@ export const StoreService = {
     Storage.set("initData", initData);
     initData.revenue_localities = revenue_localities;
     initData.localities = localities;
-    // setTimeout(() => {
-    //   renderTenantLogos(stateInfo, initData.tenants);
-    // }, 0);
+    setTimeout(() => {
+      renderTenantLogos(stateInfo, initData.tenants);
+    }, 0);
     return initData;
   },
   defaultData: async (stateCode, moduleCode, language) => {

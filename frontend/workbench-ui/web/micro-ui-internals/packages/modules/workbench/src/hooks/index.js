@@ -1,8 +1,7 @@
 import { logoutV1 } from "./logout";
-import { UICreateConfigGenerator, getMDMSContextPath, isSchemaCodeInMDMSAction } from "./workbench";
+import { UICreateConfigGenerator , getMDMSContextPath } from "./workbench";
 import utils from "../utils";
 import useLocalisationSearch from "./useLocalisationSearch";
-import useMDMSPopupSearch from "./inbox";
 
 const UserService = {
   logoutV1,
@@ -10,9 +9,8 @@ const UserService = {
 
 const workbench = {
   UICreateConfigGenerator,
-  getMDMSContextPath,
-  isSchemaCodeInMDMSAction,
   useLocalisationSearch,
+  getMDMSContextPath
 };
 
 const contracts = {};
@@ -23,9 +21,6 @@ const Hooks = {
   },
   workbench,
   contracts,
-  inbox: {
-    useMDMSPopupSearch,
-  },
 };
 
 const Utils = {
