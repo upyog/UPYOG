@@ -139,7 +139,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
     }
   }, [isLoading]); 
 
-  const onSubmit = () => {debugger
+  const onSubmit = () => {
     let paymentAmount =
       paymentType === t("CS_PAYMENT_FULL_AMOUNT")
         ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.advanceAmount:getTotal()

@@ -206,10 +206,41 @@ const ptAccess = () => {
   console.log("userInfo",userInfo);
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR"];
-
   const PT_ACCESS = userRoles?.filter((role) => ptRoles?.includes(role));
-
   return PT_ACCESS?.length > 0;
+};
+
+const ewAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const ewRoles = ["EW_VENDOR"];
+  const EW_ACCESS = userRoles?.filter((role) => ewRoles?.includes(role));
+  return EW_ACCESS?.length > 0;
+};
+
+const svAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const svRoles = ["SVCEMP", "TVCEMPLOYEE", "INSPECTIONOFFICER"];
+  const SV_ACCESS = userRoles?.filter((role) => svRoles?.includes(role));
+  return SV_ACCESS?.length > 0;
+};
+
+const chbAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const chbRoles = ["CHB_APPROVER", "CHB_VERIFIER"];
+  const CHB_ACCESS = userRoles?.filter((role) => chbRoles?.includes(role));
+  return CHB_ACCESS?.length > 0;
+};
+// Checks if the user has access to ADS services based on their roles, this is adding role for employee side
+
+const adsAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const adsRoles = ["ADS_CEMP"];
+  const ADS_ACCESS = userRoles?.filter((role) => adsRoles?.includes(role));
+  return ADS_ACCESS?.length > 0;
 };
 
 const ptrAccess = () => {
@@ -323,5 +354,9 @@ export default {
   wsAccess,
   swAccess,
   assetAccess,
+  chbAccess,
+  adsAccess,
+  ewAccess,
+  svAccess,
   ...privacy
 };

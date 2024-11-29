@@ -1,4 +1,4 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -9,7 +9,7 @@ const PTRWFApplicationTimeline = (props) => {
   
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
-  // const businessService = "ptr";
+  
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
@@ -18,11 +18,12 @@ const PTRWFApplicationTimeline = (props) => {
   });
   
 
-  function OpenImage(imageSource, index, thumbnailsToShow) {
+  function OpenImage(thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
   const getTimelineCaptions = (checkpoint) => {
+    console.log("cheschsajdwqfwef",checkpoint);
     
     if (checkpoint.state === "OPEN")
     {
@@ -77,15 +78,6 @@ const PTRWFApplicationTimeline = (props) => {
           </div>
           ) : null
         );
-      
-      case "SUBMIT_FEEDBACK":
-        return (
-          <div style={{ marginTop: "24px" }}>
-            <Link to={`/digit-ui/citizen/fsm/rate/${props.id}`}>
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
-            </Link>
-          </div>
-        );
       default:
         return null;
     }
@@ -116,14 +108,6 @@ const PTRWFApplicationTimeline = (props) => {
                 data?.timeline.map((checkpoint, index, arr) => {
                   
                   let timelineStatusPostfix = "";
-                  if (window.location.href.includes("/obps/")) {
-                    if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
-                    timelineStatusPostfix = `_NOT_DONE`
-                    else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                    timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                    else
-                    timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  }
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint

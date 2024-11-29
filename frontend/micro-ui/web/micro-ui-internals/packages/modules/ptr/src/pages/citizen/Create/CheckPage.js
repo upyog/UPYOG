@@ -47,8 +47,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
    
   } = value;
 
-
-
+  
   const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
 
@@ -58,7 +57,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-     {window.location.href.includes("/citizen") ? <Timeline currentStep={5}/> : null}
+     {<Timeline currentStep={5}/>}
     <Card>
       <CardHeader>{t("PTR_CHECK_YOUR_DETAILS")}</CardHeader>
       <div>
@@ -156,6 +155,30 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
 
         />
+                <Row
+            label={t("PTR_IDENTIFICATION_MARK")}
+            text={`${t(checkForNA(pets?.identificationmark))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
+                <Row
+            label={t("PTR_PET_COLOR")}
+            text={`${t(checkForNA(pets?.petColor?.code))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
+                <Row
+            label={t("PTR_VACCINATION_NUMBER")}
+            text={`${t(checkForNA(pets?.vaccinationNumber))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
+                <Row
+            label={t("PTR_SEARCH_BIRTH_ADOPTION")}
+            text={`${t(checkForNA(pets?.adoptionDate ? pets?.adoptionDate : pets?.birthDate))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pet-details`} />}
+
+        />
 
         </StatusTable>
         <br></br>
@@ -164,27 +187,36 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable>
         <Row
             label={t("PTR_HOUSE_NO")}
-            text={`${t(checkForNA(address?.doorNo))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
-
+            text={`${t(checkForNA(address?.houseNo))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
+        {/* If data in houseName, then only it will render */}
+        {address?.houseName && <Row
+            label={t("PTR_HOUSE_NAME")}
+            text={`${t(checkForNA(address?.houseName))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+        />}
          <Row
             label={t("PTR_STREET_NAME")}
-            text={`${t(checkForNA(address?.street))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
-
+            text={`${t(checkForNA(address?.streetName))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("PTR_ADDRESS_LINE1")}
-            text={`${t(checkForNA(address?.addressLine1))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/street`} />}
+            text={`${t(checkForNA(address?.addressline1))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
 
         />
-         
+        {/* If data in addressline 2, then only it will render */}
+        {address?.addressline2 && <Row
+            label={t("PTR_ADDRESS_LINE2")}
+            text={`${t(checkForNA(address?.addressline2))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+        />}
          <Row
             label={t("PTR_ADDRESS_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("MYCITY_CODE_LABEL")}
@@ -193,7 +225,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         />
          <Row
             label={t("PTR_LOCALITY")}
-            text={`${t(checkForNA(address?.locality?.name))}`}
+            text={`${t(checkForNA(address?.locality?.i18nKey))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
+        />
+                 <Row
+            label={t("PTR_LANDMARK")}
+            text={`${t(checkForNA(address?.landmark))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
 

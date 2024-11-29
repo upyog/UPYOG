@@ -2,10 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { FSMService } from "../../services/elements/FSM";
 import { PTService } from "../../services/elements/PT";
-
+import { PTRService } from "../../services/elements/PTR";
 import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
 import { TLService } from "../../services/elements/TL";
+import { CHBServices } from "../../services/elements/CHB";
+import { SVService } from "../../services/elements/SV";
+import { EwService } from "../../services/elements/EW";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -47,6 +50,30 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "businessId",
     fetchFilters: filterFunctions.TL,
     _searchFn: () => TLService.search(tenantId, filters),
+  },
+  EW: {
+    services: ["ewst"],
+    searchResponseKey: "EwasteApplication",
+    businessIdsParamForSearch: "requestId",
+    businessIdAliasForSearch: "requestId",
+    fetchFilters: filterFunctions.EW,
+    _searchFn: () => EwService.search({ tenantId, filters }),
+  },
+  CHB: {
+    services: ["chb"],
+    searchResponseKey: "hallsBookingApplication",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.CHB,
+    _searchFn: () => CHBServices.search({ tenantId, filters }),
+  },
+  SV: {
+    services: ["street-vending"],
+    searchResponseKey: "SVDetails",
+    businessIdsParamForSearch: "applicationNo",
+    businessIdAliasForSearch: "applicationNo",
+    fetchFilters: filterFunctions.SV,
+    _searchFn: () => SVService.search({ tenantId, filters }),
   },
 });
 
