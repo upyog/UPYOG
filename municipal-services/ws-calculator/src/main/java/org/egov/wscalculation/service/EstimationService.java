@@ -598,6 +598,7 @@ public class EstimationService {
 
 		JSONObject feeObj = mapper.convertValue(feeSlab.get(0), JSONObject.class);
 		BigDecimal formFee = BigDecimal.ZERO;
+
 		if (feeObj.get(WSCalculationConstant.FORM_FEE_CONST) != null) {
 			formFee = new BigDecimal(feeObj.getAsNumber(WSCalculationConstant.FORM_FEE_CONST).toString());
 		}
@@ -627,11 +628,9 @@ public class EstimationService {
 				connection_propertyType = "DOMESTIC";
 			else
 				connection_propertyType = "COMMERCIAL";
-
-			if (!feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).getClass().isInstance(List.class)) {
-				securityCharge = new BigDecimal(
-						feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString());
-			} else {
+			Object securityChargeObj = feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST);
+			
+			if (securityChargeObj instanceof List) {
 				ArrayList sec_fees = (ArrayList) feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST);
 
 				BigDecimal fromPlotSize = BigDecimal.ZERO;
@@ -659,21 +658,25 @@ public class EstimationService {
 				// BigDecimal(feeObj.getAsNumber(WSCalculationConstant.WS_CONNECTION_FEE_CONST).toString());
 				securityCharge = securityChargeApplicable;
 			}
-		}
-		/*
-		 * String tenantid= criteria.getTenantId();
-		 * 
-		 * if(tenantid.equalsIgnoreCase("pb.patiala")) { if
-		 * (feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST) != null) {
-		 * if(connection_propertyType.contains("DOM") ||
-		 * connection_propertyType.contains("USAGE_RESIDENTIAL") ) securityCharge = new
-		 * BigDecimal(1000.00); else securityCharge = new BigDecimal(
-		 * feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString()
-		 * ); } }else { if (feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST)
-		 * != null) { securityCharge = new BigDecimal(
-		 * feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString()
-		 * ); } }
-		 */
+
+			else {
+				securityCharge = new BigDecimal(
+						feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString());
+			}
+		} /*
+			 * String tenantid= criteria.getTenantId();
+			 * 
+			 * if(tenantid.equalsIgnoreCase("pb.patiala")) { if
+			 * (feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST) != null) {
+			 * if(connection_propertyType.contains("DOM") ||
+			 * connection_propertyType.contains("USAGE_RESIDENTIAL") ) securityCharge = new
+			 * BigDecimal(1000.00); else securityCharge = new BigDecimal(
+			 * feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString()
+			 * ); } }else { if (feeObj.get(WSCalculationConstant.WS_SECURITY_CHARGE_CONST)
+			 * != null) { securityCharge = new BigDecimal(
+			 * feeObj.getAsNumber(WSCalculationConstant.WS_SECURITY_CHARGE_CONST).toString()
+			 * ); } }
+			 */
 		// Connection Fee to be evaluated here from mdms depending on plotsize
 
 		BigDecimal connectionFee = BigDecimal.ZERO;
