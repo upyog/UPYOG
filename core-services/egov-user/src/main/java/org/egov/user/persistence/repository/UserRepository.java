@@ -164,10 +164,9 @@ public class UserRepository {
 		final User savedUser = save(user);
 		if (user.getRoles().size() > 0) {
 			saveUserRoles(user);
-			Set<String>rolecodes=user.getRoles().stream().map(Role::getCode).collect(Collectors.toSet());
-			if(rolecodes.contains("EMPLOYEE"))
+			if(user.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("EMPLOYEE"))
 			{
-				saveHrmsEmployee(user,rolecodes);
+				saveHrmsEmployee(savedUser);
 			}
 		}
 		final Address savedCorrespondenceAddress = saveAddress(user.getCorrespondenceAddress(), savedUser.getId(),
@@ -179,13 +178,12 @@ public class UserRepository {
 		return savedUser;
 	}
 
-	private void saveHrmsEmployee(User savedUser, Set<String> rolecodes) {
+	private void saveHrmsEmployee(User savedUser) {
 		// INSERT INTO public.eg_hrms_employee
 		//(id, uuid, code, dateofappointment, employeestatus, employeetype, active, tenantid, createdby, createddate, lastmodifiedby, lastmodifieddate, reactivateemployee)
 		//VALUES(255, '734c267b-72d0-4fcc-91ad-5e9a00f44abb', 'PT_DOC_VERIFIER', NULL, NULL, NULL, true, 'mn.imphal', 'test', 123123, '12321', 123123, NULL);
 		Map<String, Object> employeeInputs = new HashMap<String, Object>();	
 		//rolecodes.remove("EMPLOYEE");
-		System.out.println("rolecodes::"+rolecodes);
 		String code="EMPLOYEE";
 		/*
 		 * Optional<String> optional=rolecodes.stream().findFirst();
