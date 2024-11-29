@@ -38,6 +38,15 @@
   const getPetAcknowledgementData = async (application, tenantInfo, t) => {
     const filesArray = application?.documents?.map((value) => value?.fileStoreId);
     const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
+    const getDate = (epochdate) => {
+      return epochdate
+        ? new Date(epochdate * 1000).getDate() + 
+          "/" + 
+          (new Date(epochdate * 1000).getMonth() + 1) + 
+          "/" + 
+          new Date(epochdate * 1000).getFullYear().toString()
+        : "NA";
+    };
 
 
     return {
@@ -52,6 +61,7 @@
           title: t("CS_TITLE_APPLICATION_DETAILS"),
           values: [
             { title: t("PTR_APPLICATION_NUMBER"), value: application?.applicationNumber },
+            { title: t("PTR_VALIDITY_DATE"), value: getDate(application?.validityDate)},
             
             {
               title: t("PTR_APPLICANT_NAME"),

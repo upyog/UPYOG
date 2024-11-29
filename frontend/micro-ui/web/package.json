@@ -12,7 +12,8 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/sv",
-    "micro-ui-internals/packages/modules/chb"
+    "micro-ui-internals/packages/modules/chb",
+    "micro-ui-internals/packages/modules/ptr"
 
   ],
   "engines": {
@@ -39,7 +40,7 @@
     "@upyog/digit-ui-module-tl": "1.8.10",
     "@upyog/digit-ui-module-ws": "1.8.16",
     "@upyog/digit-ui-react-components": "1.8.0",
-    "@upyog-niua/upyog-ui-module-ptr": "1.8.0",
+    "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.4",
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.1",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
