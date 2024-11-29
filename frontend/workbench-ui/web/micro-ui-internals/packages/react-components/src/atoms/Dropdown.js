@@ -49,12 +49,8 @@ const TextField = (props) => {
         props?.addProps?.currentIndex > 2 && e?.target?.parentElement?.parentElement?.children?.namedItem("jk-dropdown-unique")?.scrollBy?.(0, -45);
       }
       e.preventDefault();
-    } else if (e.key === "Enter") {
-      if (props.addProps.length === 1) {
-        props.addProps.selectOption(0);
-      } else {
-        props.addProps.selectOption(props.addProps.currentIndex);
-      }
+    } else if (e.key == "Enter") {
+      props.addProps.selectOption(props.addProps.currentIndex);
       e.preventDefault();
     }
   };

@@ -29,17 +29,17 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: "/workbench-ui/",
+    publicPath: "/digit-ui/",
   },
   optimization: {
     splitChunks: {
       chunks: 'all',
-      minSize: 20000,
-      maxSize: 50000,
-      enforceSizeThreshold: 50000,
-      minChunks: 1,
-      maxAsyncRequests: 30,
-      maxInitialRequests: 30
+      minSize:20000,
+      maxSize:50000,
+      enforceSizeThreshold:50000,
+      minChunks:1,
+      maxAsyncRequests:30,
+      maxInitialRequests:30
     },
   },
   plugins: [

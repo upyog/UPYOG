@@ -1474,7 +1474,7 @@ export const MdmsService = {
   init: (stateCode) =>
     ServiceRequest({
       serviceName: "mdmsInit",
-      url: Urls.MDMS_V2,
+      url: Urls.MDMS,
       data: initRequestBody(stateCode),
       useCache: true,
       params: { tenantId: stateCode },
@@ -1484,7 +1484,7 @@ export const MdmsService = {
       debouncedCall(
         {
           serviceName: "mdmsCall",
-          url: Urls.MDMS_V2,
+          url: Urls.MDMS,
           data: getCriteria(tenantId, details),
           useCache: true,
           params: { tenantId },

@@ -24,17 +24,6 @@ const defaultApiCachingSettings = [
       },
     ],
   },
-  {
-    serviceName: "mdms-v2",
-    cacheTimeInSecs: 3600,
-    debounceTimeInMS: 100,
-    moduleSettings: [
-      {
-        moduleName: "FSM",
-        cacheTimeInSecs: 7200,
-      },
-    ],
-  },
 ];
 
 const storageKey = "cachingService";
