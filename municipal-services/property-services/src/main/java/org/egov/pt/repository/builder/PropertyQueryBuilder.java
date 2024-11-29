@@ -15,7 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class PropertyQueryBuilder {
 
 	@Autowired
@@ -358,6 +361,9 @@ public class PropertyQueryBuilder {
 
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
+		log.info("Query is: " +withClauseQuery);
+		log.info("Parameters are: " +preparedStmtList);
+
 		if (onlyIds || criteria.getIsRequestForCount())
 			return builder.toString();
 		else
