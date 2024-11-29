@@ -298,8 +298,22 @@ public class AssetService {
 	}
 
 	public AssetActionResponse getCountOfAllApplicationTypes(AssetActionRequest actionRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetActionResponse assetActionResponse =null;
+		List<String> statusList = null;
+		try {
+			assetActionResponse = AssetActionResponse.builder().build();
+			if(null!=actionRequest) {
+				statusList = assetRepository.getTypesOfAllApplications(actionRequest.getIsHistoryCall(),actionRequest.getTenantId());
+			}
+			if(!CollectionUtils.isEmpty(statusList)) {
+				assetActionResponse.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
+						.collect(Collectors.groupingBy(String::toString,Collectors.counting())));
+			}
+			
+		} catch (Exception e) {
+			throw new CustomException("FAILED_TO_FETCH", "Failed to fetch Application types.");
+		}
+		return assetActionResponse;
 	}
 
 	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
