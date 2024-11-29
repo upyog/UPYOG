@@ -1,6 +1,15 @@
 package org.upyog.sv.service;
 
+import java.util.List;
+
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.util.EncryptionDecryptionUtil;
+import org.upyog.sv.web.models.StreetVendingDetail;
+import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.VendorDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,63 +17,78 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StreetVendingEncryptionService {
 
-	/*
-	 * @Autowired private EncryptionDecryptionUtil encryptionDecryptionUtil;
-	 * 
-	 * public CommunityHallBookingDetail encryptObject(CommunityHallBookingRequest
-	 * bookingRequest) { ApplicantDetail applicantDetail =
-	 * bookingRequest.getHallsBookingApplication().getApplicantDetail();
-	 * log.info("Applicant detail before encyption : " +
-	 * applicantDetail.getApplicantMobileNo()); applicantDetail =
-	 * encryptionDecryptionUtil.encryptObject(applicantDetail,
-	 * CommunityHallBookingConstants.CHB_APPLICANT_DETAIL_ENCRYPTION_KEY,
-	 * ApplicantDetail.class); log.info("Applicant detail after encyption : " +
-	 * applicantDetail.getApplicantMobileNo());
-	 * bookingRequest.getHallsBookingApplication().setApplicantDetail(
-	 * applicantDetail); return bookingRequest.getHallsBookingApplication(); }
-	 * 
-	 * 
-	 * public CommunityHallBookingDetail decryptObject(CommunityHallBookingDetail
-	 * bookingDetail, RequestInfo requestInfo) { ApplicantDetail applicantDetail =
-	 * bookingDetail.getApplicantDetail();
-	 * log.info("Applicant detail before decryption : " +
-	 * applicantDetail.getApplicantMobileNo()); applicantDetail =
-	 * encryptionDecryptionUtil.decryptObject(applicantDetail,
-	 * CommunityHallBookingConstants.CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
-	 * ApplicantDetail.class, requestInfo);
-	 * 
-	 * log.info("Applicant detail after decryption : " +
-	 * applicantDetail.getApplicantMobileNo());
-	 * bookingDetail.setApplicantDetail(applicantDetail);
-	 * 
-	 * return bookingDetail; }
-	 * 
-	 * public List<CommunityHallBookingDetail>
-	 * decryptObject(List<CommunityHallBookingDetail> bookingDetails, RequestInfo
-	 * requestInfo) { Map<String, CommunityHallBookingDetail> applicantDetailMap =
-	 * bookingDetails.stream().collect(
-	 * Collectors.toMap(CommunityHallBookingDetail::getBookingId,
-	 * Function.identity()));
-	 * 
-	 * List<ApplicantDetail> applicantDetails = bookingDetails.stream().map(detail
-	 * -> detail.getApplicantDetail()).collect(Collectors.toList());
-	 * 
-	 * log.info("Applicant detail before decryption : " +
-	 * applicantDetails.get(0).getApplicantMobileNo()); applicantDetails =
-	 * encryptionDecryptionUtil.decryptObject(applicantDetails,
-	 * CommunityHallBookingConstants.CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
-	 * ApplicantDetail.class, requestInfo);
-	 * 
-	 * applicantDetails.stream().forEach( detail ->{
-	 * if(applicantDetailMap.containsKey(detail.getBookingId())) {
-	 * applicantDetailMap.get(detail.getBookingId()).setApplicantDetail(detail); }
-	 * });
-	 * 
-	 * log.info("Applicant detail after decryption : " +
-	 * applicantDetails.get(0).getApplicantMobileNo());
-	 * //bookingDetail.setApplicantDetail(applicantDetail);
-	 * 
-	 * return bookingDetails; }
-	 */
+    @Autowired
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
+    public StreetVendingDetail encryptObject(StreetVendingRequest streetVendingRequest) {
+        List<VendorDetail> vendorDetails = streetVendingRequest.getStreetVendingDetail().getVendorDetail();
+        
+        if (vendorDetails == null || vendorDetails.isEmpty()) {
+            log.warn("No Vendor Details available for encryption.");
+            return streetVendingRequest.getStreetVendingDetail();
+        }
+
+        VendorDetail vendorDetail = vendorDetails.get(0);
+        log.info("Applicant detail before encryption: {}", vendorDetail.getMobileNo());
+
+        VendorDetail encryptedDetail = encryptionDecryptionUtil.encryptObject(
+                vendorDetail,
+                StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY,
+                VendorDetail.class
+        );
+
+        log.info("Applicant detail after encryption: {}", encryptedDetail.getMobileNo());
+        vendorDetails.set(0, encryptedDetail); // Updating the list
+        streetVendingRequest.getStreetVendingDetail().setVendorDetail(vendorDetails);
+
+        return streetVendingRequest.getStreetVendingDetail();
+    }
+
+    public StreetVendingDetail decryptObject(StreetVendingDetail streetVendingDetail, RequestInfo requestInfo) {
+        if (streetVendingDetail == null || streetVendingDetail.getVendorDetail() == null) {
+            log.warn("No StreetVendingDetail or VendorDetail available for decryption.");
+            return streetVendingDetail;
+        }
+
+        VendorDetail vendorDetail = streetVendingDetail.getVendorDetail().get(0);
+        log.info("Applicant detail before decryption: {}", vendorDetail.getMobileNo());
+
+        VendorDetail decryptedDetail = encryptionDecryptionUtil.decryptObject(
+                vendorDetail,
+                StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
+                VendorDetail.class,
+                requestInfo
+        );
+
+        log.info("Applicant detail after decryption: {}", decryptedDetail.getMobileNo());
+        streetVendingDetail.getVendorDetail().set(0, decryptedDetail);
+
+        return streetVendingDetail;
+    }
+
+    public List<StreetVendingDetail> decryptObject(List<StreetVendingDetail> streetVendingDetails, RequestInfo requestInfo) {
+        if (streetVendingDetails == null || streetVendingDetails.isEmpty()) {
+            log.warn("No StreetVendingDetails available for decryption.");
+            return streetVendingDetails;
+        }
+
+        streetVendingDetails.forEach(detail -> {
+            if (detail.getVendorDetail() != null && !detail.getVendorDetail().isEmpty()) {
+                VendorDetail vendorDetail = detail.getVendorDetail().get(0);
+                log.info("Applicant detail before decryption: {}", vendorDetail.getMobileNo());
+
+                VendorDetail decryptedDetail = encryptionDecryptionUtil.decryptObject(
+                        vendorDetail,
+                        StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
+                        VendorDetail.class,
+                        requestInfo
+                );
+
+                log.info("Applicant detail after decryption: {}", decryptedDetail.getMobileNo());
+                detail.getVendorDetail().set(0, decryptedDetail);
+            }
+        });
+
+        return streetVendingDetails;
+    }
 }
