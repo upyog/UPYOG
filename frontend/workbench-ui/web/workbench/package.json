@@ -12,7 +12,7 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/workbench"
   ],
-  "homepage": "/uat/workbench-ui",
+  "homepage": "/workbench-ui",
   "dependencies": {
     "@egovernments/digit-ui-libraries": "1.8.3",
     "@egovernments/digit-ui-module-workbench": "1.0.6",
