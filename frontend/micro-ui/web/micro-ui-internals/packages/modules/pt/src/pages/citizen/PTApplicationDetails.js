@@ -7,7 +7,7 @@ import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
 import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -20,6 +20,7 @@ const PTApplicationDetails = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
+  const state = Digit.ULBService.getStateId();
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -236,7 +237,7 @@ const PTApplicationDetails = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
-
+  state
   let dowloadOptions = [];
 
   dowloadOptions.push({
@@ -246,7 +247,7 @@ const PTApplicationDetails = () => {
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("MT_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+      onClick: () => getRecieptSearch({ tenantId: state, payments: reciept_data?.Payments[0] }),
     });
   if (data?.Properties?.[0]?.creationReason === "MUTATION" && data?.Properties?.[0]?.status === "ACTIVE")
     dowloadOptions.push({
@@ -260,9 +261,8 @@ const PTApplicationDetails = () => {
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
-          <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-          </div>
+          <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -271,6 +271,9 @@ const PTApplicationDetails = () => {
               options={dowloadOptions}
             />
           )}
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          </div>
+          
         </div>
         <Card>
           <StatusTable>
@@ -319,7 +322,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                   transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                   transferorOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {transferorOwners.length != 1 && (

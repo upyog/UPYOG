@@ -30,10 +30,10 @@ public class Configurations {
 	public Integer mutationDeadlineMonth;
 	
 	//MDMS
-	@Value("${egov.mdms.host}")
+	@Value("${mdms.v2.host}")
 	private String mdmsHost;
 	
-	@Value("${egov.mdms.search.endpoint}")
+	@Value("${mdms.v2.search.endpoint}")
 	private String mdmsEndpoint;
 	
 	

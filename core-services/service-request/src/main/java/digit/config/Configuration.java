@@ -51,6 +51,9 @@ public class Configuration {
     @Value("${egov.service.definition.create.topic}")
     private String serviceDefinitionCreateTopic;
 
+    @Value("${egov.service.definition.update.topic}")
+    private String serviceDefinitionUpdateTopic;
+
     @Value("${egov.service.create.topic}")
     private String serviceCreateTopic;
 
@@ -59,5 +62,32 @@ public class Configuration {
 
     @Value("${egov.max.string.input.size}")
     private Integer maxStringInputSize;
+
+    @Value("${user.service.hostname}")
+	private String userServiceHostName;
+
+	@Value("${user.service.searchpath}")
+	private String userServiceSearchPath;
+
+    @Value("${egov.service.notification.action.code}")
+    private String surveyActionCode;
+
+    @Value("${egov.service.notification.event.topic}")
+    private String userEventTopic;
+
+    @Value("${egov.service.notification.ui.host}")
+    private String notificationUiHost;
+
+    @Value("${egov.service.notification.ui.redirect.url}")
+    private String notificationEndpoint;
+
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationEndpoint;
+
+    @Value("${egov.service.notification.fallback.locale}")
+    private String fallBackLocale;
 
 }

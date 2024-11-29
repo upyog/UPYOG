@@ -10,7 +10,7 @@ import { subFormRegistry } from "@upyog/digit-ui-libraries";
 import { useTranslation } from "react-i18next";
 import IFrameInterface from "./IFrameInterface";
 
-subFormRegistry.addSubForm("testForm", testForm);
+subFormRegistry?.addSubForm("testForm", testForm);
 
 const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   const userType = "employee";

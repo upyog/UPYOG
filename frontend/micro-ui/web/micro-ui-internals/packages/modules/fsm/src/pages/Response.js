@@ -29,7 +29,7 @@ const DisplayText = (action, isSuccess, isEmployee, t, data) => {
 };
 
 const BannerPicker = (props) => {
-  let actionMessage = props?.action ? props.action : "CREATE";
+  let actionMessage = props?.action ? props.action : props.data?.fsm?.[0].applicationStatus;
   let labelMessage = GetLabel(props.data?.fsm?.[0].applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t);
 
   if (props.errorInfo && props.errorInfo !== null && props.errorInfo !== "" && typeof props.errorInfo === "string" && props.action !== "SCHEDULE") {

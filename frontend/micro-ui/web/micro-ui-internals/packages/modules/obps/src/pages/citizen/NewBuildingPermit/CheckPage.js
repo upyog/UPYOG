@@ -8,13 +8,15 @@ import {
   import Timeline from "../../../components/Timeline";
   import { convertEpochToDateDMY, stringReplaceAll, getOrderDocuments } from "../../../utils";
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
+  import { format } from "date-fns";
 
   const CheckPage = ({ onSubmit, value }) => {
     const { t } = useTranslation();
     const history = useHistory();
     const match = useRouteMatch();
     let user = Digit.UserService.getUser();
-    const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
+    const tenantId = Digit.ULBService.getCurrentTenantId() || user?.info?.permanentCity || value?.tenantId;
+   
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";

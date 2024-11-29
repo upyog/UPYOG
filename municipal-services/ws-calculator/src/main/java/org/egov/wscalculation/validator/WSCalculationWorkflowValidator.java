@@ -3,6 +3,7 @@ package org.egov.wscalculation.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.CalculatorUtil;
@@ -31,6 +32,9 @@ public class WSCalculationWorkflowValidator {
 
 	@Autowired
 	private MDMSValidator mdmsValidator;
+
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	 public Boolean applicationValidation(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
 	    Map<String,String> errorMap = new HashMap<>();

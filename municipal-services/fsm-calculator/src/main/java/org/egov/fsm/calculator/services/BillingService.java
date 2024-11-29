@@ -38,8 +38,13 @@ public class BillingService {
 
 		try {
 
-			Optional<Object> response = serviceRequestRepository.fetchApiResult(uri,
-					RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+			Optional<Object> response = Optional.empty();
+			try {
+				response = serviceRequestRepository.fetchApiResult(uri,
+							RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+			} catch (Exception e) {
+				response = Optional.of(new LinkedHashMap<String, Object>());
+			}
 
 			if (response.isPresent()) {
 				LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response.get();

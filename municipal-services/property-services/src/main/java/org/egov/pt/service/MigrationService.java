@@ -1,11 +1,9 @@
 package org.egov.pt.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jayway.jsonpath.JsonPath;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -19,22 +17,18 @@ import org.egov.pt.models.UnitUsage;
 import org.egov.pt.models.enums.*;
 import org.egov.pt.models.oldProperty.*;
 //import org.egov.pt.models.oldProperty.PropertyCriteria;
-import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.AssessmentRepository;
 import org.egov.pt.repository.ServiceRequestRepository;
-import org.egov.pt.repository.builder.OldPropertyQueryBuilder;
-import org.egov.pt.repository.builder.PropertyQueryBuilder;
+import org.egov.pt.repository.builder.OldPropertyQueryBulider;
 import org.egov.pt.repository.rowmapper.MigrationCountRowMapper;
 import org.egov.pt.repository.rowmapper.OldPropertyRowMapper;
-import org.egov.pt.repository.rowmapper.PropertyRowMapper;
 import org.egov.pt.util.AssessmentUtils;
 import org.egov.pt.util.ErrorConstants;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.validator.AssessmentValidator;
 import org.egov.pt.validator.PropertyMigrationValidator;
-import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.*;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
@@ -47,7 +41,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -87,7 +80,7 @@ public class MigrationService {
     private RestTemplate restTemplate;
 
     @Autowired
-    private OldPropertyQueryBuilder queryBuilder;
+    private OldPropertyQueryBulider queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -230,7 +223,7 @@ public class MigrationService {
             migrationCount.setTenantid(propertyCriteria.getTenantId());
             migrationCount.setRecordCount(Long.valueOf(startBatch+batchSizeInput));
             PropertyMigrationCountRequest request = PropertyMigrationCountRequest.builder().requestInfo(requestInfo).migrationCount(migrationCount).build();
-            producer.push(config.getMigartionBatchCountTopic(), request);
+            producer.push("",config.getMigartionBatchCountTopic(), request);
 
             startBatch = startBatch+batchSizeInput;
             propertyCriteria.setOffset(Long.valueOf(startBatch));
@@ -255,16 +248,12 @@ public class MigrationService {
 
 
     /*public List<OldProperty> searchOldPropertyFromURL(org.egov.pt.web.contracts.RequestInfoWrapper requestInfoWrapper,String tenantId,int i,Integer batchSize){
-
-
         StringBuilder url = new StringBuilder(ptHost).append(oldPropertySearchEndpoint).append(URL_PARAMS_SEPARATER)
                 .append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
                 .append(SEPARATER).append(OFFSET_FIELD_FOR_SEARCH_URL)
                 .append(i).append(SEPARATER)
                 .append(LIMIT_FIELD_FOR_SEARCH_URL).append(batchSize);
         OldPropertyResponse res = mapper.convertValue(fetchResult(url, requestInfoWrapper), OldPropertyResponse.class);
-
-
         return res.getProperties();
     }*/
 
@@ -565,7 +554,7 @@ public class MigrationService {
                     log.error("Error while migrating prperty data of " + property.getPropertyId(), e);
                 }
 
-                producer.push(config.getSavePropertyTopic(), request);
+                producer.push("",config.getSavePropertyTopic(), request);
                 properties.add(property);
 
 
@@ -921,7 +910,7 @@ public class MigrationService {
             errorMap.put(assessment.getAssessmentNumber(), String.valueOf(e));
         }
         //assessmentRequestList.add(request);
-        producer.push(config.getCreateAssessmentTopic(), request);
+        producer.push("",config.getCreateAssessmentTopic(), request);
     }
 
     public Map<String,String> addAssessmentPenaltyandRebate(Map<String,String> assessmentAdditionalDetail,PropertyDetail propertyDetail){
@@ -993,7 +982,7 @@ public class MigrationService {
      */
     public Map<String,List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names, String filter,String jsonpath, RequestInfo requestInfo){
 
-        StringBuilder uri = new StringBuilder(config.getMdmsHost()).append(config.getMdmsEndpoint());
+        StringBuilder uri = new StringBuilder(config.getMdmsHost()).append(config.getMdmsEndPoint());
         MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId,moduleName,names,filter,requestInfo);
         Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
 
@@ -1079,7 +1068,7 @@ public class MigrationService {
 
     public void sendDataToAssessmentCreateTopic(List<AssessmentRequest> assessmentRequestList){
         for(AssessmentRequest assessmentRequest: assessmentRequestList)
-            producer.push(config.getCreateAssessmentTopic(), assessmentRequest);
+            producer.push("",config.getCreateAssessmentTopic(), assessmentRequest);
     }
 
     public Object propertyfetchResult(StringBuilder uri, Object request) {

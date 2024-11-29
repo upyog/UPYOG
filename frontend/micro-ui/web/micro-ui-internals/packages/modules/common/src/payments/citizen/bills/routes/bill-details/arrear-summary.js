@@ -42,10 +42,10 @@ const ArrearSummary = ({ bill = {} }) => {
   let fees = {};
   let sortedBillDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod) || [];
   sortedBillDetails = [...sortedBillDetails];
-  const arrears = sortedBillDetails?.reduce((total, current, index) => (total + current.amount), 0) || 0;
+  const arrears = sortedBillDetails?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
   let arrearsAmount = `₹ ${arrears?.toFixed?.(0) || Number(0).toFixed(0)}`;
 
-  //sortedBillDetails.shift();
+  sortedBillDetails.shift();
   sortedBillDetails.map((bill) => {
     let fee = formatTaxHeaders(bill);
     fees[getFinancialYears(bill.fromPeriod, bill.toPeriod)] = fee;

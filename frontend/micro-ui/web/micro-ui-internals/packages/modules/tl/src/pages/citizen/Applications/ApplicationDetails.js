@@ -36,6 +36,7 @@ const TLApplicationDetails = () => {
   const { tenants } = storeData || {};
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [viewTimeline, setViewTimeline]=useState(false);
+  const stateId = Digit.ULBService.getStateId();
   let multiBoxStyle = {
     border: "groove",
     background: "#FAFAFA",
@@ -122,12 +123,12 @@ const TLApplicationDetails = () => {
   const downloadPaymentReceipt = async () => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
      if (receiptFile?.filestoreIds[0]!==null) {
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
+      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: receiptFile.filestoreIds[0] });
       window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
       setShowOptions(false);      
     } else {
-      const newResponse = await Digit.PaymentService.generatePdf(tenantId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: newResponse.filestoreIds[0] });
+      const newResponse = await Digit.PaymentService.generatePdf(stateId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: newResponse.filestoreIds[0] });
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
       setShowOptions(false);
     }
@@ -174,15 +175,16 @@ const TLApplicationDetails = () => {
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px"}}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div style={{display:"flex", color:"#A52A2A", alignItems:"center"}}>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-        </div>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
         <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
         />
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>        
       </div>
       <Card style={{ position: "relative" }}>
         {application?.map((application, index) => {

@@ -23,11 +23,13 @@ public class ServiceDefinitionQueryBuilder {
     private static final String AND_QUERY = " AND ";
 
     private static final String IDS_WRAPPER_QUERY = " SELECT id FROM ({HELPER_TABLE}) temp ";
+    public static final String SURVEY_COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
     private final String ORDERBY_CREATEDTIME = " ORDER BY sd.createdtime DESC ";
 
     public String getServiceDefinitionsIdsQuery(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest, List<Object> preparedStmtList) {
         ServiceDefinitionCriteria criteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
-
+        System.out.println("criteria in query method");
+        System.out.println(criteria);
         StringBuilder query = new StringBuilder(SELECT + " DISTINCT(sd.id), sd.createdtime ");
         query.append(" FROM eg_service_definition sd ");
 
@@ -39,7 +41,7 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!CollectionUtils.isEmpty(criteria.getCode())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" sd.code IN ( ").append(createQuery(criteria.getCode())).append(" )");
+            query.append(" sd.code ILIKE ( ").append(createQuery(criteria.getCode())).append(" || '%' )");
             addToPreparedStatement(preparedStmtList, criteria.getCode());
         }
 
@@ -60,6 +62,31 @@ public class ServiceDefinitionQueryBuilder {
             query.append(" sd.clientid = ? ");
             preparedStmtList.add(criteria.getClientId());
         }
+        
+        if(!ObjectUtils.isEmpty(criteria.getTodaysDate()))
+        {
+            System.out.println("inside todays date query");
+            if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
+                addClauseIfRequired(query, preparedStmtList);
+                System.out.println("inside active query");
+                query.append(" to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+                preparedStmtList.add(criteria.getTodaysDate());
+            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
+                addClauseIfRequired(query, preparedStmtList);
+                
+                query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
+               
+                preparedStmtList.add(criteria.getTodaysDate());
+                preparedStmtList.add(criteria.getTodaysDate());
+            }
+        }
+
+        if(!ObjectUtils.isEmpty(criteria.getPostedBy())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ( ? || '%' )");
+            preparedStmtList.add(criteria.getPostedBy());        
+        }
 
         // Fetch service definitions which have NOT been soft deleted
         addClauseIfRequired(query, preparedStmtList);
@@ -70,12 +97,19 @@ public class ServiceDefinitionQueryBuilder {
         query.append(ORDERBY_CREATEDTIME);
 
         // Pagination to limit results
-        if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
-            prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
+        if(criteria!=null && !criteria.getIsCountCall()){
+            if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
+                prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
+            }
+            addPagination(query, preparedStmtList, serviceDefinitionSearchRequest.getPagination());
         }
-        addPagination(query, preparedStmtList, serviceDefinitionSearchRequest.getPagination());
 
         return IDS_WRAPPER_QUERY.replace("{HELPER_TABLE}", query.toString());
+    }
+
+    public String getSurveyCountQuery(ServiceDefinitionSearchRequest criteria, List<Object> preparedStmtList) {
+        String query = "select count(*) from eg_service_definition where isactive = true";
+        return query;
     }
 
     private void prepareDefaultPaginationObject(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
@@ -141,6 +175,31 @@ public class ServiceDefinitionQueryBuilder {
             query.append(" sd.id IN ( ").append(createQuery(criteria.getIds())).append(" )");
             addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
+
+        if(!ObjectUtils.isEmpty(criteria.getTodaysDate()))
+        {
+            System.out.println("inside todays date query");
+            if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
+                addClauseIfRequired(query, preparedStmtList);
+                System.out.println("inside active query");
+                query.append(" to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+                preparedStmtList.add(criteria.getTodaysDate());
+            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
+                preparedStmtList.add(criteria.getTodaysDate());
+                preparedStmtList.add(criteria.getTodaysDate());
+            }
+        }
+
+        if(!ObjectUtils.isEmpty(criteria.getPostedBy())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ( ? || '%' )");
+            preparedStmtList.add(criteria.getPostedBy());        
+        }
+
+
 
         return query.toString();
     }

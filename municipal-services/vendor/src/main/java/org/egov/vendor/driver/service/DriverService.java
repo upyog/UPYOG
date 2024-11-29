@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.vendor.config.VendorConfiguration;
 import org.egov.vendor.driver.repository.DriverRepository;
 import org.egov.vendor.driver.web.model.Driver;
 import org.egov.vendor.driver.web.model.DriverRequest;
@@ -32,16 +33,28 @@ public class DriverService {
 	@Autowired
 	private DriverUserService userService;
 
+	@Autowired
+	private VendorConfiguration config;
+
 	public Driver create(DriverRequest driverRequest) {
 
 		if (driverRequest.getDriver().getTenantId().split("\\.").length == 1) {
 			throw new CustomException("Invalid TenantId", " Application cannot be create at StateLevel");
 		}
-		userService.manageDrivers(driverRequest);
+		driverRequest.getDriver().getOwner()
+				.setMobileNumber(driverRepository.getdriverSeqMobileNum(getSeqDriverMobileNumber()));
+		userService.manageDrivers(driverRequest, true);
 		enrichmentService.enrichCreate(driverRequest);
 		driverRepository.save(driverRequest);
 		return driverRequest.getDriver();
 
+	}
+
+	/*
+	 * This method is to increment mobile number each time driver is created
+	 */
+	private String getSeqDriverMobileNumber() {
+		return config.getDriverMobileNumberIncrement();
 	}
 
 	public Driver update(DriverRequest driverRequest) {
@@ -49,7 +62,7 @@ public class DriverService {
 		if (driverRequest.getDriver().getTenantId().split("\\.").length == 1) {
 			throw new CustomException("Invalid TenantId", " Application cannot be updated at StateLevel");
 		}
-		userService.manageDrivers(driverRequest);
+		userService.manageDrivers(driverRequest, false);
 		enrichmentService.enrichUpdate(driverRequest);
 		driverRepository.update(driverRequest);
 		return driverRequest.getDriver();

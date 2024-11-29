@@ -113,8 +113,7 @@ public class EnrichmentService {
 	/**
 	 * enrich the vendor update request with the required data
 	 * 
-	 * @param fsmRequest
-	 * @param mdmsData
+	 * @param vendorRequest
 	 */
 	public void enrichUpdate(VendorRequest vendorRequest) {
 		RequestInfo requestInfo = vendorRequest.getRequestInfo();

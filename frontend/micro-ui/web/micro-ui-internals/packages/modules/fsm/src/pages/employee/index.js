@@ -61,7 +61,7 @@ export const FsmBreadCrumb = ({ location }) => {
       show: isFsm,
     },
     {
-      path: isRegistry ? "/digit-ui/employee/fsm/registry" : FSTPO ? "/digit-ui/employee/fsm/fstp-inbox" : "/digit-ui/employee",
+      path: isRegistry ? "/digit-ui/employee/fsm/registry?selectedTabs=VENDOR" : FSTPO ? "/digit-ui/employee/fsm/fstp-inbox" : "/digit-ui/employee",
       content: isVehicleLog ? t("ES_TITLE_INBOX") : "FSM",
       show: isFsm,
     },

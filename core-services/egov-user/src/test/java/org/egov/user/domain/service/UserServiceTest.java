@@ -579,7 +579,7 @@ public class UserServiceTest {
         when(encryptionDecryptionUtil.encryptObject(domainUser, "User", User.class)).thenReturn(domainUser);
         userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
 
-        verify(userRepository).update(domainUser, domainUser,domainUser.getId()!=null?domainUser.getId():0, domainUser.getUuid()!=null?domainUser.getUuid():"NA" );
+        verify(userRepository).update(domainUser, domainUser,domainUser.getId(), domainUser.getUuid() );
     }
 
     private org.egov.user.domain.model.User validDomainUser(boolean otpValidationMandatory) {

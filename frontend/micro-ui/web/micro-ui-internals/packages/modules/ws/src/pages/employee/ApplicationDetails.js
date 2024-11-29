@@ -71,8 +71,6 @@ const ApplicationDetails = () => {
       select: (data) => data?.DataSecurity?.SecurityPolicy?.find((elem) => elem?.model == "User") || {},
     }
   );
-  
-  
 
   let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, applicationNumber, serviceType, userInfo,{ privacy: Digit.Utils.getPrivacyObject() });
 
@@ -374,16 +372,17 @@ const ApplicationDetails = () => {
 
   const handleEstimateDownload = async () => {
     if (applicationDetails?.applicationData?.additionalDetails?.estimationFileStoreId) {
-      getFiles([applicationDetails?.applicationData?.additionalDetails?.estimationFileStoreId], stateCode)
+      getFiles([applicationDetails?.applicationData?.additionalDetails?.estimationFileStoreId], applicationDetails?.tenantId)
     } else {
       const warningCount = sessionStorage.getItem("WARINIG_COUNT") || "0";
       const warningCountDetails = JSON.parse(warningCount);
       if(warningCountDetails == 0) {
         const filters = { applicationNumber };
-        const response = await Digit.WSService.search({tenantId : tenantId, filters: { ...filters }, businessService: serviceType == "WATER" ? "WS" : "SW"})
+        console.log(filters,"filters")
+        const response = await Digit.WSService.search({tenantId : applicationDetails?.tenantId, filters: { ...filters }, businessService: serviceType == "WATER" ? "WS" : "SW"})
         let details = serviceType == "WATER" ? response?.WaterConnection?.[0] : response?.SewerageConnections?.[0];
         if (details?.additionalDetails?.estimationFileStoreId) {
-          getFiles([details?.additionalDetails?.estimationFileStoreId], stateCode)
+          getFiles([details?.additionalDetails?.estimationFileStoreId], tenantId)
         } else {
           sessionStorage.setItem("WARINIG_COUNT", warningCountDetails ? warningCountDetails + 1 : 1);
           setTimeout(() => {
@@ -407,7 +406,7 @@ const ApplicationDetails = () => {
   const sanctionDownloadObject = {
     order: 2,
     label: t("WS_SANCTION_LETTER"),
-    onClick: () => getFiles([applicationDetails?.applicationData?.additionalDetails?.sanctionFileStoreId], stateCode),
+    onClick: () => getFiles([applicationDetails?.applicationData?.additionalDetails?.sanctionFileStoreId], applicationDetails?.tenantId),
   };
 
   const applicationDownloadObject = {
@@ -419,7 +418,7 @@ const ApplicationDetails = () => {
   const appFeeDownloadReceipt = {
     order: 4,
     label: t("DOWNLOAD_RECEIPT_HEADER"),
-    onClick: () => getRecieptSearch(applicationDetails?.applicationData?.tenantId ? applicationDetails?.applicationData?.tenantId : Digit.ULBService.getCurrentTenantId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
+    onClick: () => getRecieptSearch(Digit.ULBService.getStateId(), reciept_data?.Payments?.[0], applicationDetails?.applicationData?.applicationNo, receiptKey ),
   };
   const handleViewTimeline=()=>{
     setViewTimeline(true);
@@ -432,8 +431,9 @@ const ApplicationDetails = () => {
     order: 4,
     label: t("WS_APLICATION_RECEIPT"),
     onClick: async () => {
+      const tenant = Digit.ULBService.getStateId();
       const ConnectionDetailsfile = await Digit.PaymentService.generatePdf(tenantId, { WaterConnection: [applicationDetails?.applicationData] }, "ws-consolidatedacknowlegment");
-      const file = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: ConnectionDetailsfile.filestoreIds[0] });
+      const file = await Digit.PaymentService.printReciept(tenant, { fileStoreIds: ConnectionDetailsfile.filestoreIds[0] });
       window.open(file[ConnectionDetailsfile.filestoreIds[0]], "_blank");
     }
   };
@@ -476,12 +476,11 @@ const ApplicationDetails = () => {
       <div className={"employee-main-application-details"}>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-          <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
-          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-          </div> 
+          <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+          <div style={{zIndex: "10",  position: "relative", maxWidth:"100% !important"}}>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
+              className="multilinkWrapper"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
@@ -490,6 +489,9 @@ const ApplicationDetails = () => {
               ref={menuRef}
             />
           )}
+          </div>
+          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          </div>           
         </div>
 
         <ApplicationDetailsTemplate

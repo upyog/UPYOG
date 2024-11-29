@@ -60,7 +60,10 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
 
             // Method for enriching information in base document structure
             ingestUtil.enrichMetaDataInBaseDocumentStructureForDataIngest(baseDocumentStructure, ingestData);
-            
+	    // Add the current timestamp to the base document structure
+            Long currentTimestamp = System.currentTimeMillis();
+            baseDocumentStructure.put("timestamp", currentTimestamp);
+		
             log.info("Base structure - " + baseDocumentStructure.toString());
 
             // Creates a map of groupByMetric vs ( map of bucketName vs ( map of (flattenedFieldName vs bucketValue) ) )
@@ -138,6 +141,87 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
         log.info("Flattening incoming request took: " + (endTime - startTime) + " ms");
         return finalDocumentsToBeIndexed;
     }
+    
+    @Override
+    public List<JsonNode> createFlattenedIndexRequestForCommon(Data ingestData) {
+        Long startTime = System.currentTimeMillis();
+        List<JsonNode> finalDocumentsToBeIndexed = new ArrayList<>();
+        try {
+            String seedData = objectMapper.writeValueAsString(ingestData);
+            JsonNode incomingData = objectMapper.readValue(seedData, JsonNode.class);
+            List<String> keyNames = new ArrayList<>();
+            JsonNode metricsData = incomingData.get(IngestConstants.METRICS);
+            jsonProcessorUtil.enrichKeyNamesInList(metricsData, keyNames);
+            log.info(keyNames.toString());
+            ObjectNode baseDocumentStructure = objectMapper.createObjectNode();
+            // Method for enriching information in base document structure
+            ingestUtil.enrichMetaDataInBaseDocumentStructureForDataIngest(baseDocumentStructure, ingestData);
+            // Prepare base document structure
+            keyNames.forEach(name -> {
+                if(!(metricsData.get(name) instanceof ArrayNode)){
+                    Object convertedValue = jsonProcessorUtil.convertJsonNodeToNativeType(metricsData.get(name));
+                    jsonProcessorUtil.addAppropriateBoxedTypeValueToBaseDocument(baseDocumentStructure, name, convertedValue);
+                }
+            });
+            log.info("Base structure - " + baseDocumentStructure.toString());
+            // Creates a map of groupByMetric vs ( map of bucketName vs ( map of (flattenedFieldName vs bucketValue) ) )
+            HashMap<String, HashMap<String, HashMap<String, Object>>> flattenedValuesToBeInserted = new HashMap<>();
+            keyNames.forEach(name -> {
+                if(metricsData.get(name) instanceof ArrayNode){
+                    //log.info(name);
+                    for(JsonNode currentNode : metricsData.get(name)) {
+                        String groupByMetric = currentNode.get("groupBy").asText();
+                        String groupByMetricInCamelCase = ingestUtil.convertFieldNameToCamelCase(groupByMetric);
+                        if(!flattenedValuesToBeInserted.containsKey(groupByMetricInCamelCase)){
+                            flattenedValuesToBeInserted.put(groupByMetricInCamelCase, new HashMap<>());
+                        }
+                        String flattenedFieldName = name + "For" + ingestUtil.capitalizeFieldName(groupByMetric);
+                        //log.info(flattenedFieldName);
+                        for(JsonNode bucketNode : currentNode.get("buckets")) {
+                            if (!flattenedValuesToBeInserted.get(groupByMetricInCamelCase).containsKey(bucketNode.get("name").asText())){
+                                flattenedValuesToBeInserted.get(groupByMetricInCamelCase).put(bucketNode.get("name").asText(), new HashMap<>());
+                            }
+                            flattenedValuesToBeInserted.get(groupByMetricInCamelCase).get(bucketNode.get("name").asText()).put(flattenedFieldName, jsonProcessorUtil.convertJsonNodeToNativeType(bucketNode.get("value")));
+                        }
+                    }
+                }
+            });
+            //log.info(flattenedValuesToBeInserted.toString());
+            // Prepare flattened JSON data and put it all onto finalDocumentsToBeIndexed list
+            flattenedValuesToBeInserted.keySet().forEach(groupByCategory ->{
+                ObjectNode currentStructure = baseDocumentStructure;
+                flattenedValuesToBeInserted.get(groupByCategory).keySet().forEach(bucketName -> {
+                    currentStructure.put(groupByCategory, bucketName);
+                    flattenedValuesToBeInserted.get(groupByCategory).get(bucketName).keySet().forEach(flattenedFieldName -> {
+                        Object value = flattenedValuesToBeInserted.get(groupByCategory).get(bucketName).get(flattenedFieldName);
+                        jsonProcessorUtil.addAppropriateBoxedTypeValueToBaseDocument(currentStructure, flattenedFieldName, value);
+                    });
+                    //log.info(currentStructure.toString());
+                    try {
+                        finalDocumentsToBeIndexed.add(objectMapper.readTree(currentStructure.toString()));
+                    } catch (JsonProcessingException e) {
+                        throw new CustomException("EG_DS_FLATTEN_ERR", "Error while reading flattened data");
+                    }
+                    // Separate it out to a clean method - cleanBaseStructureForNextGroupByCategory
+                    flattenedValuesToBeInserted.get(groupByCategory).get(bucketName).keySet().forEach(flattenedFieldName ->{
+                        currentStructure.remove(flattenedFieldName);
+                    });
+                    currentStructure.remove(groupByCategory);
+                });
+            });
+            // If metrics data does not have any group by clauses, flattening is not required and base document can be indexed directly.
+            if(CollectionUtils.isEmpty(finalDocumentsToBeIndexed)){
+                finalDocumentsToBeIndexed.add(baseDocumentStructure);
+            }
+            log.info(finalDocumentsToBeIndexed.toString());
+        }catch(JsonProcessingException e){
+            throw new CustomException("EG_PAYLOAD_READ_ERR", "Error occured while processing ingest data");
+        }
+        Long endTime = System.currentTimeMillis();
+        log.info("Flattening incoming request took: " + (endTime - startTime) + " ms");
+        return finalDocumentsToBeIndexed;
+    }
+
 
     @Override
     public List<String> createFlattenedMasterDataRequest(MasterData masterData) {

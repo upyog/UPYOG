@@ -104,6 +104,7 @@ const SelectRoadDetails = ({ t, config, onSelect, userType, formData, formState,
         onSelect={(data) => onSelect(config.key, data)}
         isDisabled={roadWidth && distance ? false : true}
         t={t}
+        onSkip={onSkip}
       />
     </React.Fragment>
   );

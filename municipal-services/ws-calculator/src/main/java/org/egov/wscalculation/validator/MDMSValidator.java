@@ -40,6 +40,12 @@ public class MDMSValidator {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
 
+//	@Value("${mdms.v2.host}")
+//    private String mdmsHost;
+//
+//    @Value("${mdms.v2.search.endpoint}")
+//    private String mdmsEndpoint;
+    
 	public void validateMasterData(MeterConnectionRequest request) {
 		String jsonPath = MRConstants.JSONPATH_ROOT;
 		String tenantId = request.getRequestInfo().getUserInfo().getTenantId();

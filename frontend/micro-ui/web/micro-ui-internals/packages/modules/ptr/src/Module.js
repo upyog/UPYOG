@@ -1,16 +1,12 @@
-import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
+import { CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-import PTRPetdetails from "./pageComponents/PTRPetdetails";
-import PTROwnerDetails from "./pageComponents/PTROwnerDetails";
+
 import PTRCitizenPet from "./pageComponents/PTRCitizenPet";
-import PTRDocumentUpload from "./pageComponents/PTRDocumentUpload";
-import PTRSelectStreet from "./pageComponents/PTRSelectStreet";
+
 import PTRCreate from "./pages/citizen/Create";
 import PTRCitizenDetails from "./pageComponents/PTRCitizenDetails";
-import PTRCitizenAddress from "./pageComponents/PTRCitizenAddress";
-import PTRSelectPincode from "./pageComponents/PTRSelectPincode";
 import PTRSelectAddress from "./pageComponents/PTRSelectAddress";
 import PTRSelectProofIdentity from "./pageComponents/PTRSelectProofIdentity";
 import PTRServiceDoc from "./pageComponents/PTRServiceDoc";
@@ -21,72 +17,52 @@ import PTRAcknowledgement from "./pages/citizen/Create/PTRAcknowledgement";
 import { PTRMyApplications } from "./pages/citizen/PTRMyApplications";
 import PTRApplicationDetails from "./pages/citizen/PTRApplicationDetails";
 import PTRWFCaption from "./pageComponents/PTRWFCaption";
-import PTRWFReason from "./pageComponents/PTRWFReason";
 import EmployeeApp from "./pages/employee";
 import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import { TableConfig } from "./config/inbox-table-config";
-import NewApplication from "./pages/employee/NewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
-import Response from "./pages/Response";
-import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import CitizenFeedback from "@upyog/digit-ui-module-core/src/components/CitizenFeedback";
-import AcknowledgementCF from "@upyog/digit-ui-module-core/src/components/AcknowledgementCF";
-
+import PropertySearch from "./pageComponents/PropertySearch";
+import NewApplication from "./pages/employee/NewApplication";
 
 
 const componentsToRegister = {
   PTRCheckPage,
   PTRAcknowledgement,
   PTRWFCaption,
-  PTRWFReason,
   PTRNewApplication: NewApplication,
   ApplicationDetails: ApplicationDetails,
-  PTRResponse: Response,
   PTRMyApplications: PTRMyApplications,
   PTRApplicationDetails: PTRApplicationDetails,
-  SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
-  AcknowledgementCF,
-  CitizenFeedback,
-  PTRPetdetails,
-  PTROwnerDetails,
   PTRCreatePet: PTRCreate,
-  PTRDocumentUpload,
-  PTRSelectStreet,
   PTRCitizenDetails,
   PTRCitizenPet,
-  PTRCitizenAddress,
-  PTRSelectPincode,
   PTRSelectAddress,
   PTRSelectProofIdentity,
   PTRServiceDoc,
   PTRWFApplicationTimeline,
- 
-  
-  
-  
-
- 
+  PropertySearch, // component added for property search
 };
 
+// function of component registry to add entries in the registry
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };
 
-
+// Main module function to get to the routes file of citizen or employee module
 export const PTRModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
-
   const moduleCode = "PTR";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   addComponentsToRegistry();
 
-  Digit.SessionStorage.set("PTR_TENANTS", tenants);
+  Digit.SessionStorage.set("PTR_TENANTS", tenants);  // setting a value in a session storage object
 
+  // loads localization settings for an employee based on the current tenant and language when the component mounts
   useEffect(
     () =>
       userType === "employee" &&
@@ -111,35 +87,17 @@ export const PTRLinks = ({ matchPath, userType }) => {
     clearParams();
   }, []);
 
-  const links = [
-    
-    {
-      link: `${matchPath}/ptr/petservice/new-application`,
-      i18nKey: t("PTR_CREATE_PET_APPLICATION"),
-    },
-    
-    {
-      link: `${matchPath}/ptr/petservice/my-application`,
-      i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
-    },
-    
-    {
-      link: `${matchPath}/howItWorks`,
-      i18nKey: t("PTR_HOW_IT_WORKS"),
-    },
-    {
-      link: `${matchPath}/faqs`,
-      i18nKey: t("PTR_FAQ_S"),
-    },
-  ];
-
+  const links = [];
+  
+  // returns CitizenHomeCard component while passing links to be used in card and an Icon to display
   return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
+// Components Exported
 export const PTRComponents = {
   PTRCard,
   PTRModule,
   PTRLinks,
-  PT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  PTR_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   PTRInboxTableConfig: TableConfig,
 };

@@ -46,7 +46,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
   useEffect(() => {
     if (formData?.address) {
       let flag = true;;
-        Object.keys(formData?.address).map(dta => {
+        Object.keys(formData?.address)?.map(dta => {
           if (dta != "key" || formData?.address[dta] != undefined || formData?.address[dta] != "" || formData?.address[dta] != null) {
 
           } else {
@@ -118,11 +118,11 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
   useEffect(() => {
     let keys = Object.keys(formValue);
     const part = {};
-    keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
+    keys?.forEach((key) => (part[key] = formData[config.key]?.[key]));
 
     if (userType === "employee") {
       if (!_.isEqual(formValue, part)) {
-        Object.keys(formValue).map(data => {
+        Object.keys(formValue)?.map(data => {
           if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
             setIsErrors(true);
           }
@@ -190,7 +190,7 @@ const TLSelectAddress = ({ t, config, onSelect, userType, formData, setError, fo
             render={(props) => (
               <Dropdown
                 className="form-field"
-                selected={checkingLocationForRenew || formData?.cpt?.details ? ({...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name}) :(props.value || {...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name})}
+                selected={checkingLocationForRenew && formData?.cpt?.details ? ({...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name}) :(props.value || {...formData?.cpt?.details?.address?.locality, i18nkey:formData?.cpt?.details?.address?.locality?.name})}
                 option={localities}
                 select={props.onChange}
                 onBlur={props.onBlur}

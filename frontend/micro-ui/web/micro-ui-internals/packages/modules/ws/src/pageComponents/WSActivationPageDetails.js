@@ -135,7 +135,6 @@ const ConnectionDetails = (_props) => {
     }, [errors]);
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-console.log("ffffffffffffffffffff",formData2)
     return (
         <div>
             <div style={{ marginBottom: "16px" }}>

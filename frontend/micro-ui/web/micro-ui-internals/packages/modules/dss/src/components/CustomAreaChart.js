@@ -57,7 +57,7 @@ const renderUnits = (t, denomination, symbol) => {
   }
 };
 
-const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChartDenomination }) => {
+const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChartDenomination, moduleCode }) => {
   const lineLegend = {
     margin: "10px",
   };

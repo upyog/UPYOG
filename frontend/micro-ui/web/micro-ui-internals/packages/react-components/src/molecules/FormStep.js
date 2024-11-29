@@ -6,7 +6,7 @@ import CardLabel from "../atoms/CardLabel";
 import CardLabelError from "../atoms/CardLabelError";
 import TextInput from "../atoms/TextInput";
 import InputCard from "./InputCard";
-import { DatePicker } from "../atoms/DatePicker";
+import { DatePicker } from "@upyog/digit-ui-react-components";
 const FormStep = ({
   t,
   children,
@@ -40,7 +40,7 @@ const FormStep = ({
     if (input.type === "text") {  
       return (
         <React.Fragment key={index}>
-          <CardLabel>{t(input.label)} {input.labelChildren && input.labelChildren}</CardLabel>
+          <CardLabel>{t(input.label)}</CardLabel>
           {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container" style={{ justifyContent: "left" }}>
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}

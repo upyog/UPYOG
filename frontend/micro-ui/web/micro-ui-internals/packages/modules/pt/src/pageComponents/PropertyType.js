@@ -31,7 +31,7 @@ const PropertyType = ({ t, config, onSelect, userType, formData, setError, clear
     } else {
       if (Array.isArray(proptype) && proptype.length > 0) {
         for (i = 0; i < proptype.length; i++) {
-          if (i != 1 && i != 4 && Array.isArray(proptype) && proptype.length > 0)
+          if ( Array.isArray(proptype) && proptype.length > 0)
             menu.push({ i18nKey: "COMMON_PROPTYPE_" + stringReplaceAll(proptype[i].code, ".", "_"), code: proptype[i].code });
         }
       }

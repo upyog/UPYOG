@@ -1,11 +1,13 @@
 const Urls = {
   MDMS: `/egov-mdms-service/v1/_search`,
+  MDMSV2: `/mdms-v2/v1/_search`,
   WorkFlow: `/egov-workflow-v2/egov-wf/businessservice/_search`,
   WorkFlowProcessSearch: `/egov-workflow-v2/egov-wf/process/_search`,
   localization: `/localization/messages/v1/_search`,
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    gramPanchayats: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=GP`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -194,10 +196,47 @@ const Urls = {
     disconnection_notice: "/pdf-service/v1/_createnosave",
     meter_search:"/ws-calculator/meterConnection/_search"
   },
+
+  asset: {
+    create: "/asset-services/v1/assets/_create",
+    search: "/asset-services/v1/assets/_search",
+    update: "/asset-services/v1/assets/_update",
+    assign: "/asset-services/v1/assets/assignment/_create",
+    return_asset: "/asset-services/v1/assets/assignment/_update",
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
+  },
+  ew: {
+    create: "/ewaste-services/ewaste-request/_create",
+    search: "/ewaste-services/ewaste-request/_search",
+    update: "/ewaste-services/ewaste-request/_update",
+  },
+
+  sv:{
+    create: "/sv-services/street-vending/_create",
+    search: "/sv-services/street-vending/_search",
+    update: "/sv-services/street-vending/_update",
+  },
+
+  chb: {
+    create: "/chb-services/booking/v1/_create",
+    search: "/chb-services/booking/v1/_search",
+    update: "/chb-services/booking/v1/_update",
+    slot_search: "/chb-services/booking/v1/_slot-search",
+    estimateCreate: "/chb-services/booking/v1/_estimate"
+  },
+  ads: {
+    create: "/adv-services/booking/v1/_create",
+    search: "/adv-services/booking/v1/_search",
+    update: "/adv-services/booking/v1/_update",
+    slot_search: "/adv-services/booking/v1/_slot-search",
+    estimateCreate: "/adv-services/booking/v1/_estimate"
+
+  },
+
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token",
+  token:"/requester-services-dx/user/token/citizen",
   issueDoc:"/requester-services-dx/user/issuedfiles",
   uri:"/requester-services-dx/user/file"
 },
@@ -215,6 +254,11 @@ digiLocker:{
       delete: "/egov-survey-services/egov-ss/survey/_delete",
       submitResponse: "/egov-survey-services/egov-ss/survey/response/_submit",
       showResults: "/egov-survey-services/egov-ss/survey/response/_results",
+      createSurvey: "/service-request/service/definition/v1/_create",
+      cfdefinitionsearch: "/service-request/service/definition/v1/_search",
+      submitSurveyResponse: "/service-request/service/v1/_create",
+      selectedSurveySearch: "/service-request/service/v1/_search",
+      updateSurvey:"/service-request/service/definition/v1/_update",
     },
   },
 

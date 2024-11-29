@@ -435,7 +435,7 @@ export const ComplaintDetails = (props) => {
       <Card>
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <CardSubHeader>{t(`CS_HEADER_COMPLAINT_SUMMARY`)}</CardSubHeader>
-        <LinkButton label={t("VIEW_TIMELINE")} style={{marginLeft:'auto'}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} style={{marginLeft:'auto', color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
         </div>
         <CardLabel style={{fontWeight:"700"}}>{t(`CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS`)}</CardLabel>
         {isLoading ? (

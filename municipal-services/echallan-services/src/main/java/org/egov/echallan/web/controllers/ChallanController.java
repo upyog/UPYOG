@@ -62,7 +62,6 @@ public class ChallanController {
 	     int totalAmountCollected = dynamicData.get(ChallanConstants.TOTAL_COLLECTION);
 	     int validity = challanService.getChallanValidity();
 	     int totalCount = challanService.countForSearch(criteria,requestInfoWrapper.getRequestInfo());
-
 	     ChallanResponse response = ChallanResponse.builder().challans(challans).countOfServices(countOfServices)
 				 .totalAmountCollected(totalAmountCollected).validity(validity).totalCount(totalCount)
 				 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
@@ -90,7 +89,7 @@ public class ChallanController {
 
 	@PostMapping("/_test")
 	public ResponseEntity test( @RequestBody ChallanRequest challanRequest){
-		producer.push("update-challan",challanRequest);
+		producer.push(challanRequest.getChallan().getTenantId(), "update-challan",challanRequest);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 }

@@ -5,7 +5,7 @@ import { Card, DateWrap, KeyNote } from "@upyog/digit-ui-react-components";
 import { CardSubHeader } from "@upyog/digit-ui-react-components";
 import { LOCALIZATION_KEY } from "../constants/Localization";
 
-// import { ConvertTimestampToDate } from "../@egovernments/digit-utils/services/date";
+// import { ConvertTimestampToDate } from "../@upyog/digit-utils/services/date";
 
 const Complaint = ({ data, path }) => {
   let { serviceCode, serviceRequestId, applicationStatus } = data;

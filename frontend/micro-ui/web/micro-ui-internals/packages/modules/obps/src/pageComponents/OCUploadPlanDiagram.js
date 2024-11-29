@@ -2,7 +2,8 @@ import {
     CardLabel, FormStep,
     UploadFile,
     Toast,
-    Loader
+    Loader,
+    CardText
 } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
@@ -57,6 +58,7 @@ const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerInd
             isMultipleAllow={true}
         >
             <CardLabel>{`${t("BPA_OC_PLAN_DIAGRAM_DXF")} *`}</CardLabel>
+            <CardText>{t("please upload same/updated dxf file")}</CardText>
             <UploadFile
                 id={"oc-doc"}
                 extraStyleName={"propertyCreate"}

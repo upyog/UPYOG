@@ -33,8 +33,8 @@ const getMDMSData = async (action, state, dispatch) => {
           moduleName: "BillingService",
           masterDetails: [
             {
-              name: "BusinessService"
-              // filter: "[?(@.type=='Adhoc')]"
+              name: "BusinessService",
+              filter: "[?(@.code=='WS' || @.code=='SW')]"
             },
             {
               name: "TaxHeadMaster"

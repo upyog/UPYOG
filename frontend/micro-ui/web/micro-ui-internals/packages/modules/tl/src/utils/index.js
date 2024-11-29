@@ -175,8 +175,8 @@ export const gettradeownerarray = (data) => {
       }
     })
   })
-  !isEditRenew && !window.location.href.includes("edit-application") && data.tradeLicenseDetail.owners.map((oldowner) => {
-    let found = tradeownerarray.length > 0 ? tradeownerarray.some(el => el.id === oldowner.id):false;
+  !isEditRenew && !window.location.href.includes("edit-application") && data.tradeLicenseDetail?.owners?.map((oldowner) => {
+    let found = tradeownerarray.length > 0 ? tradeownerarray?.some(el => el.id === oldowner.id):false;
     if(!found)tradeownerarray.push({...oldowner,active:false});   
   })
   data?.owners?.owners.map((ob, index) => {
@@ -200,7 +200,7 @@ export const gettradeownerarray = (data) => {
 
 export const gettradeunits = (data) => {
   let tradeunits = [];
-  data?.TradeDetails?.units.map((ob) => {
+  data?.TradeDetails?.units?.map((ob) => {
     tradeunits.push({ tradeType: ob.tradesubtype.code, uom: ob.unit, uomValue: ob.uom });
   });
   return tradeunits;
@@ -209,8 +209,8 @@ export const gettradeunits = (data) => {
 export const gettradeupdateunits = (data) => {
   let TLunits = [];
   const isEditRenew = window.location.href.includes("renew-trade");
-  data.tradeLicenseDetail.tradeUnits.map((oldunit) => {
-    data.TradeDetails.units.map((newunit) => {
+  data?.tradeLicenseDetail?.tradeUnits?.map((oldunit) => {
+    data?.TradeDetails?.units?.map((newunit) => {
       if(oldunit.id === newunit.id)
       {
         if (oldunit.tradeType !== newunit.tradesubtype.code || oldunit.uomValue !== newunit.uom)
@@ -238,7 +238,7 @@ export const gettradeupdateunits = (data) => {
       }
     })
   })
-  data.TradeDetails.units.map((ob) => {
+  data.TradeDetails?.units?.map((ob) => {
     if(!ob.id)
     {
       TLunits.push({ tradeType: ob.tradesubtype.code, uom: ob.unit, uomValue: ob.uom });
@@ -249,7 +249,7 @@ export const gettradeupdateunits = (data) => {
 
 export const getaccessories = (data) => {
   let tradeaccessories = [];
-  data?.TradeDetails?.accessories.map((ob) => {
+  data?.TradeDetails?.accessories?.map((ob) => {
     tradeaccessories.push({ uom: ob.unit, accessoryCategory: ob.accessory.code, uomValue: ob.uom ? ob.uom : null, count: ob.accessorycount });
   });
   return tradeaccessories;
@@ -260,13 +260,13 @@ export const gettradeupdateaccessories = (data) => {
   const isEditRenew = window.location.href.includes("renew-trade");
   if(data?.TradeDetails?.isAccessories?.i18nKey.includes("NO"))
   {
-    data?.tradeLicenseDetail?.accessories && data.tradeLicenseDetail.accessories.map((oldunit) => {
+    data?.tradeLicenseDetail?.accessories && data?.tradeLicenseDetail?.accessories?.map((oldunit) => {
       TLaccessories.push({...oldunit,active:false});
     })
   }
   else{
-  data?.tradeLicenseDetail?.accessories && data.tradeLicenseDetail.accessories.map((oldunit) => {
-    data.TradeDetails.accessories.map((newunit) => {
+  data?.tradeLicenseDetail?.accessories && data?.tradeLicenseDetail?.accessories?.map((oldunit) => {
+    data?.TradeDetails?.accessories?.map((newunit) => {
       if(oldunit.id === newunit.id)
       {
         if (oldunit.accessoryCategory !== newunit.accessory.code || oldunit.count !== newunit.accessorycount || oldunit.uomValue !== newunit.uom)
@@ -296,7 +296,7 @@ export const gettradeupdateaccessories = (data) => {
       }
     })
   })
-  data.TradeDetails.accessories.map((ob) => {
+  data?.TradeDetails?.accessories?.map((ob) => {
     if(!ob.id)
     {
       TLaccessories.push({ uom: ob.unit, accessoryCategory: ob.accessory.code, uomValue: ob.uom ? ob.uom : null, count: ob.accessorycount });
@@ -451,7 +451,7 @@ export const getEditTradeDocumentUpdate = (data) => {
 export const getEditRenewTradeDocumentUpdate = (data,datafromflow) => {
   let updateddocuments=[];
   let doc = datafromflow ? datafromflow.owners.documents : [];
-  data.tradeLicenseDetail.applicationDocuments.map((olddoc) => {
+  data?.tradeLicenseDetail?.applicationDocuments?.map((olddoc) => {
     if(olddoc.documentType === "OWNERPHOTO" && olddoc.fileStoreId === datafromflow.owners.documents["OwnerPhotoProof"].fileStoreId ||
     olddoc.documentType === "OWNERSHIPPROOF" && olddoc.fileStoreId == datafromflow.owners.documents["ProofOfOwnership"].fileStoreId ||
     olddoc.documentType === "OWNERIDPROOF" && olddoc.fileStoreId === datafromflow.owners.documents["ProofOfIdentity"].fileStoreId)
@@ -512,7 +512,7 @@ export const convertToUpdateTrade = (data = {}, datafromflow, tenantId) => {
 export const getvalidfromdate = (date, fy) => {
   let temp = parseInt(fy[0].id);
   let object = fy?.[0];
-  fy && fy.map((ob) => {
+  fy && fy?.map((ob) => {
     if (parseInt(ob.id) > temp) {
       object = ob;
       temp = parseInt(ob.id);
@@ -525,7 +525,7 @@ export const getvalidTodate = (date, fy) => {
 
   let temp = parseInt(fy[0].id);
   let object;
-  fy && fy.map((ob) => {
+  fy && fy?.map((ob) => {
     if (parseInt(ob.id) > temp) {
       object = ob;
       temp = parseInt(ob.id);
@@ -740,7 +740,7 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
   let differentFormats = downloadLink?.split(",") || [];
   let fileURL = "";
   differentFormats.length > 0 &&
-    differentFormats.map((link) => {
+    differentFormats?.map((link) => {
       if (!link.includes("large") && !link.includes("medium") && !link.includes("small")) {
         fileURL = link;
       }
@@ -812,7 +812,7 @@ export const getUniqueItemsFromArray = (data, identifier) => {
 export const commonTransform = (object, path) => {
   let data = get(object, path);
   let transformedData = {};
-  data.map(a => {
+  data?.map(a => {
     const splitList = a.code.split(".");
     let ipath = "";
     for (let i = 0; i < splitList.length; i += 1) {

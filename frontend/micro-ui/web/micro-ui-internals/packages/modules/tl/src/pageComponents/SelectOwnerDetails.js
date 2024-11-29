@@ -103,7 +103,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         return state.filter((e, i) => i !== action?.payload?.index);
       case "SET_PRIMARY_OWNER":
         if (action?.payload?.index >= 0) {
-          return state.map((ownerData, i) => {
+          return state?.map((ownerData, i) => {
             if (i === action?.payload?.index) {
               return { ...ownerData, isprimaryowner: true };
             } else {
@@ -114,7 +114,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           return state;
         }
       case "EDIT_CURRENT_OWNER_PROPERTY":
-        return state.map((data, __index) => {
+        return state?.map((data, __index) => {
           if (__index === action.payload.index) {
             return { ...data, [action.payload.key]: action.payload.value };
           } else {
@@ -148,7 +148,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
   let TLmenu = [];
   Menu &&
-    Menu.map((genders) => {
+    Menu?.map((genders) => {
       TLmenu.push({ i18nKey: `TL_GENDER_${genders.code}`, code: `${genders.code}` });
     });
 
@@ -219,7 +219,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
       <React.Fragment>
         {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(error)}>
-          {formState.map((field, index) => {
+          {formState?.map((field, index) => {
             return (
               <div key={`${field}-${index}`}>
                 <div>
@@ -344,7 +344,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     type={"text"}
                     isMandatory={false}
                     name="emailId"
-                    value={field.emailId}
+                    value={field?.emailId}
                     onChange={(e) => handleTextInputField(index, e, "emailId")}
                     ValidationRequired={true}
                     //disable={isUpdateProperty || isEditProperty}
@@ -371,7 +371,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(error)}>
-        {formState.map((field, index) => {
+        {formState?.map((field, index) => {
           return (
             <div key={`${field}-${index}`}>
               <div
@@ -516,7 +516,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   t={t}
                   isMandatory={false}
                   name="emailId"
-                  value={field.emailId}
+                  value={field?.emailId}
                   onChange={(e) => handleTextInputField(index, e, "emailId")}
                   {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
                 />
@@ -524,8 +524,8 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   <CheckBox
                     label={t("TL_PRIMARY_OWNER_LABEL")}
                     onChange={(e) => dispatch({ type: "SET_PRIMARY_OWNER", payload: { index } })}
-                    value={field.isprimaryowner}
-                    checked={field.isprimaryowner}
+                    value={field?.isprimaryowner}
+                    checked={field?.isprimaryowner}
                     style={{ paddingTop: "10px" }}
                     name={`multiowner-checkbox-${index}`}
                     //disable={isUpdateProperty || isEditProperty}

@@ -232,12 +232,12 @@ const ApplicationDetails = () => {
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PT_APPLICATION_TITLE")}</Header>
-      <div style={{display:"flex", alignItems:'center', color:"#A52A2A"}}>
-      <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
-      </div>
+      <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+         
+      <div style={{zIndex: "10",  position: "relative"}}>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
+              className="multilinkWrapper"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
@@ -247,6 +247,9 @@ const ApplicationDetails = () => {
             />
           )}
           </div>
+      <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+      </div>      
+      </div>
       <ApplicationDetailsTemplate
         applicationDetails={appDetailsToShow}
         isLoading={isLoading}

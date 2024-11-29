@@ -24,7 +24,7 @@ const ConfirmationQuestion = ({ t, title }) => (
   <div className="confirmation_box">
     <span>
       {" "}
-      {t("CONFIRM_DELETE_MSG_NEW")} <b>{` ${title}`}</b>{t("COMPLETELY_DELETE")} <br/><br />{t("COMPLETELY_DELETE_WARN_MSG")} 
+      {t("CONFIRM_DELETE_MSG_NEW")} <b>{` ${title} `}</b>{t("COMPLETELY_DELETE")} <br/><br />{t("COMPLETELY_DELETE_WARN_MSG")} 
     </span>
   </div>
 );

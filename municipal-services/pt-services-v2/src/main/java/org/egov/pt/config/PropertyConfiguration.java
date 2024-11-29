@@ -204,7 +204,12 @@ public class PropertyConfiguration {
     @Value("${egov.url.shortener.endpoint}")
     private String shortenerEndpoint;
 
+    // MDMS
+    @Value("${egov.mdms.v2.host}")
+    private String mdmsHost;
 
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndpoint;
 
 
 

@@ -42,6 +42,9 @@ public class ServiceDefinitionResponse {
     @JsonProperty("Pagination")
     @Valid
     private Pagination pagination = null;
+    
+    @JsonProperty("TotalCount")
+    private Integer totalCount;
 
 
     public ServiceDefinitionResponse addServiceDefinitionItem(ServiceDefinition serviceDefinitionItem) {

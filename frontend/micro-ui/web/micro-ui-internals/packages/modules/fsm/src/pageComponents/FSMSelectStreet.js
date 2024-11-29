@@ -216,7 +216,8 @@ if (property !== "undefined")
         _defaultValues={{ street: property.propertyDetails.address.street, doorNo: property.propertyDetails.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        isDisabled={doorNo && street ? false : true}
+        onSkip={onSkip}
+        isDisabled={doorNo || street ? false : true}
         t={t}
       />
     </React.Fragment>

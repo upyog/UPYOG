@@ -5,12 +5,17 @@ import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
-  const [pincode, setPincode] = useState(formData?.address?.pincode || "");
+  const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode || formData?.address?.pincode || "");
   const [pincodeServicability, setPincodeServicability] = useState(null);
 
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
+  let property = sessionStorage?.getItem("Digit_FSM_PT")
+  if (property !== "undefined")
+  {
+    property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+  }
   const inputs = [
     {
       label: "CORE_COMMON_PINCODE",
@@ -25,12 +30,20 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       },
     },
   ];
+  useEffect(()=>{
+    if(property?.propertyDetails?.address?.pincode){ 
+        setPincode(property?.propertyDetails?.address?.pincode);   
+    }
+  },[ property?.propertyDetails?.address?.pincode])
 
   useEffect(() => {
     if (formData?.address?.pincode) {
       setPincode(formData.address.pincode);
     }
-  }, [formData?.address?.pincode]);
+    else if(formData?.cpt?.details?.address?.pincode){
+      setPincode(formData?.cpt?.details?.address?.pincode)
+    }
+  }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
 
   useEffect(() => {
     if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
@@ -99,7 +112,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
         t={t}
         config={{ ...config, inputs }}
         onSelect={goNext}
-        _defaultValues={{ pincode }}
+        value={pincode}
         onChange={onChange}
         onSkip={onSkip}
         forcedError={t(pincodeServicability)}

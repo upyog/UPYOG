@@ -7,7 +7,6 @@ const Overview = () => {
   const { t } = useTranslation();
   const moduleCode = "home";
   const { data: response, isLoading } = Digit.Hooks.dss.useDashboardConfig(moduleCode);
-console.log("")
   if (isLoading) {
     return <Loader />;
   }

@@ -19,7 +19,7 @@ public class FSMQueryBuilder {
 
 	private static final String QUERY = "select count(*) OVER() AS full_count,fsm.*,fsm_address.*,fsm_geo.*,fsm_pit.*,fsm.id as fsm_id, fsm.createdby as fsm_createdby,"
 			+ "  fsm.lastmodifiedby as fsm_lastmodifiedby, fsm.createdtime as fsm_createdtime, fsm.lastmodifiedtime as fsm_lastmodifiedtime,"
-			+ "	 fsm.additionaldetails,fsm_address.id as fsm_address_id,fsm_geo.id as fsm_geo_id,"
+			+ "	 fsm.additionaldetails,fsm_address.id as fsm_address_id, fsm_address.additionaldetails as addressAdditionalDetails, fsm_geo.id as fsm_geo_id,"
 			+ "	 fsm_pit.id as fsm_pit_id, fsm_pit.additionalDetails as fsm_pit_additionalDetails"
 			+ "	 FROM eg_fsm_application fsm"
 			+ "	 INNER JOIN   eg_fsm_address fsm_address on fsm_address.fsm_id = fsm.id"
@@ -51,11 +51,26 @@ public class FSMQueryBuilder {
 			}
 		}
 
+		/*
+		 * Enable part search by application number of fsm application
+		 */
 		List<String> applicationNumber = criteria.getApplicationNos();
-		if (!CollectionUtils.isEmpty(applicationNumber)) {
+		if (!CollectionUtils.isEmpty(applicationNumber) && (applicationNumber.stream()
+				.filter(checkappnumber -> checkappnumber.length() > 0).findFirst().orElse(null) != null)) {
+			boolean flag = false;
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" fsm.applicationNo IN (").append(createQuery(applicationNumber)).append(")");
-			addToPreparedStatement(preparedStmtList, applicationNumber);
+			builder.append(" ( ");
+			for (String applicationno : applicationNumber) {
+
+				if (flag)
+					builder.append(" OR ");
+				builder.append(" UPPER(fsm.applicationNo) like ?");
+				preparedStmtList.add('%' + org.apache.commons.lang3.StringUtils.upperCase(applicationno) + '%');
+				builder.append(" ESCAPE '_' ");
+				flag = true;
+
+			}
+			builder.append(" ) ");
 		}
 
 		List<String> applicationStatus = criteria.getApplicationStatus();

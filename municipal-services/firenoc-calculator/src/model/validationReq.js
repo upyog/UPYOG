@@ -129,7 +129,7 @@ const Address = {
         "Unique Identifier of the tenant to which user primarily belongs"
     },
     doorNo: {
-      type: "string",
+      type: ["string", "null"],
       description: "House number or door number."
     },
     latitude: {
@@ -169,7 +169,7 @@ const Address = {
     },
     landmark: {
       description: "additional landmark to help locate the address",
-      type: ["string", "null"],
+      type: ["string", "null"]
     },
     city: {
       description:

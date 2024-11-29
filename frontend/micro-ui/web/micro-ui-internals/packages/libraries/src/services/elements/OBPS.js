@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { MdmsService } from "./MDMS";
 import React from "react";
 import { UploadServices } from "../atoms/UploadServices";
+import { PTService } from "./PT";
 
 export const OBPSService = {
   scrutinyDetails: (tenantId, params) =>
@@ -265,6 +266,12 @@ export const OBPSService = {
   },
   BPADetailsPage: async (tenantId, filters) => {
     const response = await OBPSService.BPASearch(tenantId, filters);
+    sessionStorage.setItem("BPA_WORKFLOW_STATUS", response?.BPA[0]?.status);
+    let PTResponse={};
+    if(response!==undefined && response?.BPA[0]?.additionalDetails?.propertyID ){
+      PTResponse = response?.BPA[0]?.additionalDetails?.propertyID &&
+       (await Digit.PTService.search({ tenantId, filters: { propertyIds: response?.BPA[0]?.additionalDetails?.propertyID } }));
+    }
     let appDocumentFileStoreIds = response?.BPA?.[0]?.documents?.map(docId => docId.fileStoreId);
     if(!appDocumentFileStoreIds) appDocumentFileStoreIds = [];
     response?.BPA?.[0]?.additionalDetails?.fieldinspection_pending?.map(fiData => {
@@ -289,7 +296,8 @@ export const OBPSService = {
     const bpaResponse = await OBPSService.BPASearch(tenantId, { ...filter });
        const comparisionRep = {
          ocdcrNumber: BPA?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber:bpaResponse?.BPA?.[0]?.edcrNumber,
-         edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber
+         edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber.includes("OCDCR")? BPA?.edcrNumber: bpaResponse?.BPA?.[0]?.edcrNumber,
+         propertyId: BPA?.additionalDetails?.propertyID
       }
     const comparisionReport = await OBPSService.comparisionReport(BPA?.tenantId, { ...comparisionRep });
 
@@ -537,7 +545,7 @@ export const OBPSService = {
         { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true  },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true  },
         { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true },
-        { title: "BPA_BOUNDARY_WALL_LENGTH_LABEL", value: BPA?.additionalDetails?.boundaryWallLength || "NA", isNotTranslated: true }
+        { title: "BPA_PROPERTY_ID", value: BPA?.additionalDetails?.propertyID || "NA" }
       ]
     };
 
@@ -551,7 +559,7 @@ export const OBPSService = {
           { title: BPA?.businessService !== "BPA_OC" ? "BPA_EDCR_NO_LABEL" : "BPA_OC_EDCR_NO_LABEL", value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "BPA_UPLOADED_PLAN_DXF" },
+          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile, text: "Uploaded Plan.pdf" },
           { title: "BPA_SCRUNTINY_REPORT_OUTPUT", value: edcr?.planReport, text: "BPA_SCRUTINY_REPORT_PDF" },
         ]
       }

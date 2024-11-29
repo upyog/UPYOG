@@ -9,7 +9,13 @@ const OBPSResponse = (props) => {
   const { state } = props.location;
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const bpaData = state?.data?.BPA?.[0];
+  let bpaData={}
+  if(state?.data?.response){
+    bpaData = state?.data?.response?.BPA?.[0];
+  }
+  else{
+    bpaData = state?.data?.BPA?.[0];
+  }
   const [applicationData, setApplicationData] = useState({});
   const [isLoader, setIsLoader] = useState(true);
   const history = useHistory();

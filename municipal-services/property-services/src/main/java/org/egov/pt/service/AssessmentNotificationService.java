@@ -1,8 +1,14 @@
 package org.egov.pt.service;
 
 
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.Property;
@@ -36,17 +42,21 @@ public class AssessmentNotificationService {
     private PropertyService propertyService;
 
     private PropertyConfiguration config;
-    
+
     private BillingService billingService;
+
+    private MultiStateInstanceUtil centralInstanceUtil;
 
     private UnmaskingUtil unmaskingUtil;
 
     @Autowired
-    public AssessmentNotificationService(NotificationUtil util, PropertyService propertyService, PropertyConfiguration config,BillingService billingService,UnmaskingUtil unmaskingUtil ) {
+    public AssessmentNotificationService(NotificationUtil util, PropertyService propertyService, PropertyConfiguration config,BillingService billingService, MultiStateInstanceUtil centralInstanceUtil, UnmaskingUtil unmaskingUtil) {
+
         this.util = util;
         this.propertyService = propertyService;
         this.config = config;
         this.billingService = billingService;
+        this.centralInstanceUtil = centralInstanceUtil;
         this.unmaskingUtil = unmaskingUtil;
     }
 
@@ -57,9 +67,9 @@ public class AssessmentNotificationService {
         String tenantId = assessment.getTenantId();
 
         PropertyCriteria criteria = PropertyCriteria.builder().tenantId(tenantId)
-                                    .propertyIds(Collections.singleton(assessment.getPropertyId()))
-                                    .isSearchInternal(Boolean.TRUE)
-                                    .build();
+                .propertyIds(Collections.singleton(assessment.getPropertyId()))
+                .isSearchInternal(Boolean.TRUE)
+                .build();
 
 
         List<Property> properties = propertyService.searchProperty(criteria, requestInfo);
@@ -77,7 +87,7 @@ public class AssessmentNotificationService {
 
         List<SMSRequest> smsRequests = enrichSMSRequest(topicName, assessmentRequest, property);
         if(configuredChannelNamesForAssessment.contains(CHANNEL_NAME_SMS)) {
-            util.sendSMS(smsRequests);
+            util.sendSMS(smsRequests, tenantId);
         }
 
         if(configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EVENT)) {
@@ -86,12 +96,12 @@ public class AssessmentNotificationService {
                 isActionReq = true;
 
             List<Event> events = util.enrichEvent(smsRequests, requestInfo, tenantId, property, isActionReq);
-            util.sendEventNotification(new EventRequest(requestInfo, events));
+            util.sendEventNotification(new EventRequest(requestInfo, events), tenantId);
         }
 
         if(configuredChannelNamesForAssessment.contains(CHANNEL_NAME_EMAIL) ){
             List<EmailRequest> emailRequests = util.createEmailRequestFromSMSRequests(requestInfo,smsRequests,tenantId);
-            util.sendEmail(emailRequests);
+            util.sendEmail(emailRequests, tenantId);
         }
 
         if (dueAmount!=null && dueAmount.compareTo(BigDecimal.ZERO)>0) {
@@ -101,42 +111,43 @@ public class AssessmentNotificationService {
             enrichSMSRequestForDues(smsRequestsList, assessmentRequest, property);
 
             if(configuredChannelNames.contains(CHANNEL_NAME_SMS)) {
-                util.sendSMS(smsRequestsList);
+                util.sendSMS(smsRequestsList, tenantId);
             }
 
             if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)) {
                 Boolean isActionRequired = true;
                 List<Event> eventsList = util.enrichEvent(smsRequestsList, requestInfo, tenantId, property, isActionRequired);
-                util.sendEventNotification(new EventRequest(requestInfo, eventsList));
+                util.sendEventNotification(new EventRequest(requestInfo, eventsList), tenantId);
             }
 
             if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL) ){
                 List<EmailRequest> emailRequests = util.createEmailRequestFromSMSRequests(requestInfo,smsRequests,tenantId);
-                util.sendEmail(emailRequests);
+                util.sendEmail(emailRequests, tenantId);
             }
-            }
+        }
 
     }
 
 
 
     private void enrichSMSRequestForDues(List<SMSRequest> smsRequests, AssessmentRequest assessmentRequest,
-			Property property) {
-		
-    	String tenantId = assessmentRequest.getAssessment().getTenantId();
-    	String localizationMessages = util.getLocalizationMessages(tenantId,assessmentRequest.getRequestInfo());
-    	
-    	String messageTemplate = util.getMessageTemplate(DUES_NOTIFICATION, localizationMessages);
-    	
-    	if(messageTemplate.contains(NOTIFICATION_PROPERTYID))
+                                         Property property) {
+
+        String tenantId = assessmentRequest.getAssessment().getTenantId();
+        String stateLevelTenantId = centralInstanceUtil.getStateLevelTenant(tenantId);
+        String localizationMessages = util.getLocalizationMessages(tenantId,assessmentRequest.getRequestInfo());
+
+        String messageTemplate = util.getMessageTemplate(DUES_NOTIFICATION, localizationMessages);
+
+        if(messageTemplate.contains(NOTIFICATION_PROPERTYID))
             messageTemplate = messageTemplate.replace(NOTIFICATION_PROPERTYID, property.getPropertyId());
 
         if(messageTemplate.contains(NOTIFICATION_FINANCIALYEAR))
             messageTemplate = messageTemplate.replace(NOTIFICATION_FINANCIALYEAR, assessmentRequest.getAssessment().getFinancialYear());
-        
+
         if(messageTemplate.contains(NOTIFICATION_PAYMENT_LINK)){
 
-            String UIHost = config.getUiAppHost();
+            String UIHost = config.getUiAppHostMap().get(stateLevelTenantId);
             String paymentPath = config.getPayLinkSMS();
             paymentPath = paymentPath.replace("$consumercode",property.getPropertyId());
             paymentPath = paymentPath.replace("$tenantId",property.getTenantId());
@@ -146,30 +157,30 @@ public class AssessmentNotificationService {
 
             messageTemplate = messageTemplate.replace(NOTIFICATION_PAYMENT_LINK,util.getShortenedUrl(finalPath));
         }
-        
+
         Map<String,String > mobileNumberToOwner = new HashMap<>();
         property.getOwners().forEach(owner -> {
             if(owner.getMobileNumber()!=null)
                 mobileNumberToOwner.put(owner.getMobileNumber(),owner.getName());
             if(owner.getAlternatemobilenumber() !=null && !owner.getAlternatemobilenumber().equalsIgnoreCase(owner.getMobileNumber()) ) {
-            	mobileNumberToOwner.put(owner.getAlternatemobilenumber() ,owner.getName());
+                mobileNumberToOwner.put(owner.getAlternatemobilenumber() ,owner.getName());
             }
         });
-        
-        List <SMSRequest> smsRequestsForDues = util.createSMSRequest(messageTemplate,mobileNumberToOwner);
-        
-        smsRequests.addAll(smsRequestsForDues);
-    	
-		
-	}
 
-	/**
+        List <SMSRequest> smsRequestsForDues = util.createSMSRequest(messageTemplate,mobileNumberToOwner);
+
+        smsRequests.addAll(smsRequestsForDues);
+
+
+    }
+
+    /**
      * Enriches the smsRequest with the customized messages
      * @param request The tradeLicenseRequest from kafka topic
      * @param smsRequests List of SMSRequets
      */
     private List<SMSRequest> enrichSMSRequest(String topicName, AssessmentRequest request, Property property){
-    	
+
         String tenantId = request.getAssessment().getTenantId();
         String localizationMessages = util.getLocalizationMessages(tenantId,request.getRequestInfo());
         String message = getCustomizedMsg(topicName, request, property, localizationMessages);
@@ -181,7 +192,7 @@ public class AssessmentNotificationService {
             if(owner.getMobileNumber()!=null)
                 mobileNumberToOwner.put(owner.getMobileNumber(),owner.getName());
             if(owner.getAlternatemobilenumber() !=null && !owner.getAlternatemobilenumber().equalsIgnoreCase(owner.getMobileNumber()) ) {
-            	mobileNumberToOwner.put(owner.getAlternatemobilenumber() ,owner.getName());
+                mobileNumberToOwner.put(owner.getAlternatemobilenumber() ,owner.getName());
             }
         });
         return util.createSMSRequest(message,mobileNumberToOwner);
@@ -233,6 +244,7 @@ public class AssessmentNotificationService {
     private String customize(Assessment assessment, Property property, String msgCode, String localizationMessages){
 
         String messageTemplate = util.getMessageTemplate(msgCode, localizationMessages);
+        String stateLevelTenantId = centralInstanceUtil.getStateLevelTenant(property.getTenantId());
 
         if(messageTemplate.contains(NOTIFICATION_ASSESSMENTNUMBER))
             messageTemplate = messageTemplate.replace(NOTIFICATION_ASSESSMENTNUMBER, assessment.getAssessmentNumber());
@@ -251,7 +263,7 @@ public class AssessmentNotificationService {
 
         if(messageTemplate.contains(NOTIFICATION_PAYMENT_LINK)){
 
-            String UIHost = config.getUiAppHost();
+            String UIHost = config.getUiAppHostMap().get(stateLevelTenantId);
             String paymentPath = config.getPayLinkSMS();
             paymentPath = paymentPath.replace("$consumercode",property.getPropertyId());
             paymentPath = paymentPath.replace("$tenantId",property.getTenantId());

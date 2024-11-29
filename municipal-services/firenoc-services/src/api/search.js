@@ -28,6 +28,8 @@ export const searchApiResponse = async (request, next = {}) => {
     FireNOCs: []
   };
   const queryObj = JSON.parse(JSON.stringify(request.query));
+  const header = JSON.parse(JSON.stringify(request.headers));
+
   //console.log("request", request.query);
   //console.log("Query object:"+JSON.stringify(queryObj));
   let errors = validateFireNOCSearchModel(queryObj);
@@ -64,9 +66,9 @@ export const searchApiResponse = async (request, next = {}) => {
     queryObj.tenantId = queryObj.tenantId ? queryObj.tenantId : tenantId;
 
     if(queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID)
-      text = `${text} where FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
+      text = `${text} where FN.tenantid LIKE '${queryObj.tenantId}%' `;
     else
-      text = `${text} where FN.tenantid = '${queryObj.tenantId}' AND`;
+      text = `${text} where FN.tenantid = '${queryObj.tenantId}' `;
   } else {
     if (!isEmpty(queryObj) && !(keys(queryObj).length==2 && 
     queryObj.hasOwnProperty("offset") && queryObj.hasOwnProperty("limit"))) {
@@ -74,9 +76,9 @@ export const searchApiResponse = async (request, next = {}) => {
     }
     if (queryObj.tenantId) {
       if(queryObj.tenantId == envVariables.EGOV_DEFAULT_STATE_ID)
-        text = `${text} FN.tenantid LIKE '${queryObj.tenantId}%' AND`;
+        text = `${text} FN.tenantid LIKE '${queryObj.tenantId}%' `;
       else
-        text = `${text} FN.tenantid = '${queryObj.tenantId}' AND`;
+        text = `${text} FN.tenantid = '${queryObj.tenantId}' `;
     }
   }
   // if (queryObj.status) {
@@ -88,7 +90,8 @@ export const searchApiResponse = async (request, next = {}) => {
     // console.log("mobile number");
     let userSearchResponse = await searchByMobileNumber(
       queryObj.mobileNumber,
-      envVariables.EGOV_DEFAULT_STATE_ID
+      envVariables.EGOV_DEFAULT_STATE_ID,
+      header
     );
 
     //console.log("User Search Response-> " + userSearchResponse);
@@ -100,7 +103,7 @@ export const searchApiResponse = async (request, next = {}) => {
     for (var i = 0; i < userSearchResponseJson.user.length; i++) {
       userUUIDArray.push(userSearchResponseJson.user[i].uuid);
     }
-   console.log("User Search Response uuid-> " + userUUIDArray.length);
+    console.log("User Search Response uuid-> " + userUUIDArray.length);
 
     let firenocIdQuery = `SELECT FN.uuid as FID FROM eg_fn_firenoc FN JOIN eg_fn_firenocdetail FD ON (FN.uuid = FD.firenocuuid) JOIN eg_fn_owner FO ON (FD.uuid = FO.firenocdetailsuuid) where `;
 
@@ -152,7 +155,7 @@ export const searchApiResponse = async (request, next = {}) => {
     //const dbResponse={"rows":[],"err":null};
 
     let firenocIds = [];
-    console.log("dbResponse" + JSON.stringify(dbResponse));
+    //console.log("dbResponse" + JSON.stringify(dbResponse));
     if (dbResponse.err) {
       console.log(err.stack);
     } else {
@@ -161,19 +164,24 @@ export const searchApiResponse = async (request, next = {}) => {
           ? mapIDsToList(dbResponse.rows)
           : [];
     }
+    console.log("firenocIds is " + firenocIds);
 
+   
     if (queryObj.hasOwnProperty("ids")) {
       queryObj.ids.push(...firenocIds);
     } else {
       queryObj.ids = firenocIds.toString();
     }
+    
   }
+
+
   if (queryObj.hasOwnProperty("ids")) {
     // console.log(queryObj.ids.split(","));
     let ids = queryObj.ids.split(",");
     if(ids!=null && (ids.length>0 && ids[0]!=''))
     {
-    sqlQuery = `${sqlQuery} FN.uuid IN ( `;
+    sqlQuery = `${sqlQuery} AND FN.uuid IN ( `;
     for (var i = 0; i < ids.length; i++) {
       sqlQuery = `${sqlQuery} '${ids[i]}' `;
       if (i != ids.length - 1) sqlQuery = `${sqlQuery} ,`;
@@ -184,8 +192,8 @@ export const searchApiResponse = async (request, next = {}) => {
       return response;
     }
 
-    if (ids.length > 1) sqlQuery = `${sqlQuery} ) AND`;
-  }
+    if (ids.length >= 1) sqlQuery = `${sqlQuery} ) `;
+    }
 
   if (queryKeys) {
     queryKeys.forEach(item => {
@@ -201,7 +209,7 @@ export const searchApiResponse = async (request, next = {}) => {
           item != "limit"
         ) {
           queryObj[item]=queryObj[item].toUpperCase();
-          sqlQuery = `${sqlQuery} ${item}='${queryObj[item]}' AND`;
+          sqlQuery = `${sqlQuery} AND ${item}='${queryObj[item]}' `;
         }
       }
     });
@@ -211,12 +219,12 @@ export const searchApiResponse = async (request, next = {}) => {
     queryObj.hasOwnProperty("fromDate") &&
     queryObj.hasOwnProperty("toDate")
   ) {
-    sqlQuery = `${sqlQuery} FN.createdtime >= ${queryObj.fromDate} AND FN.createdtime <= ${queryObj.toDate} AND`;
+    sqlQuery = `${sqlQuery} AND FN.createdtime >= ${queryObj.fromDate} AND FN.createdtime <= ${queryObj.toDate} `;
   } else if (
     queryObj.hasOwnProperty("fromDate") &&
     !queryObj.hasOwnProperty("toDate")
   ) {
-    sqlQuery = `${sqlQuery} FN.createdtime >= ${queryObj.fromDate} AND`;
+    sqlQuery = `${sqlQuery} AND FN.createdtime >= ${queryObj.fromDate} `;
   }
 
   
@@ -236,7 +244,7 @@ export const searchApiResponse = async (request, next = {}) => {
   offset = offset+1;
 }
  if(keys(queryObj).length!=2){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)} ) s WHERE s.rn  BETWEEN ${offset} AND ${limit+offset}   `;
+  sqlQuery = `${sqlQuery} ) s WHERE s.rn  BETWEEN ${offset} AND ${limit+offset}   `;
  }else{
   sqlQuery = `${sqlQuery}  ) s WHERE s.rn  BETWEEN ${offset} AND ${limit} ORDER BY fid `;
  }
@@ -244,7 +252,7 @@ export const searchApiResponse = async (request, next = {}) => {
 }else if(isEmpty(queryObj)){
   sqlQuery = `${sqlQuery}  ) s`;
 }else if(!isEmpty(queryObj)){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}  ) s ORDER BY fid `;
+  sqlQuery = `${sqlQuery}) s ORDER BY fid `;
 }
 
   console.log("SQL QUery:" +sqlQuery);
@@ -259,7 +267,8 @@ export const searchApiResponse = async (request, next = {}) => {
         ? await mergeSearchResults(
             dbResponse.rows,
             request.query,
-            request.body.RequestInfo
+            request.body.RequestInfo,
+            header
           )
         : [];
   }
