@@ -184,12 +184,13 @@ public class UserRepository {
 		//(id, uuid, code, dateofappointment, employeestatus, employeetype, active, tenantid, createdby, createddate, lastmodifiedby, lastmodifieddate, reactivateemployee)
 		//VALUES(255, '734c267b-72d0-4fcc-91ad-5e9a00f44abb', 'PT_DOC_VERIFIER', NULL, NULL, NULL, true, 'mn.imphal', 'test', 123123, '12321', 123123, NULL);
 		Map<String, Object> employeeInputs = new HashMap<String, Object>();	
-		rolecodes.remove("EMPLOYEE");
+		//rolecodes.remove("EMPLOYEE");
 		System.out.println("rolecodes::"+rolecodes);
-		String code="";
-		Optional<String> optional=rolecodes.stream().findFirst();
-		if(optional.isPresent())
-			code=optional.get();
+		String code="EMPLOYEE";
+		/*
+		 * Optional<String> optional=rolecodes.stream().findFirst();
+		 * if(optional.isPresent()) code=optional.get();
+		 */
 		String createdby=null;
 		System.out.println("Createdby::"+savedUser.getCreatedBy());
 		if(savedUser.getCreatedBy()!=null)
