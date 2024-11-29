@@ -34,10 +34,9 @@ public class BookingConfiguration {
 
 	@Value("${persister.save.advertisement.booking.topic}")
 	private String advertisementBookingSaveTopic;
-	
+
 	@Value("${persister.update.advertisement.booking.topic}")
 	private String advertisementBookingUpdateTopic;
-
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")
@@ -51,7 +50,7 @@ public class BookingConfiguration {
 
 	@Value("${egov.idgen.advertisement.booking.id.format}")
 	private String advertisementBookingIdFromat;
-	
+
 	// Pagination config for search results
 	@Value("${egov.adv.default.limit}")
 	private Integer defaultLimit;
@@ -61,7 +60,6 @@ public class BookingConfiguration {
 
 	@Value("${egov.adv.max.limit}")
 	private Integer maxSearchLimit;
-
 
 	// MDMS Config
 	@Value("${egov.mdms.host}")
@@ -98,26 +96,29 @@ public class BookingConfiguration {
 
 	@Value("${kafka.topics.receipt.create}")
 	private String receiptCreateTopic;
-	
+
 	@Value("${egov.adv.download.permission.letter.link}")
 	private String permissionLetterLink;
-
-	//Module and business name
+	
+	@Value("${egov.application.view.link}")
+	private String viewApplicationLink;
+	
+	// Module and business name
 	@Value("${adv.module.name}")
 	private String moduleName;
-	
+
 	@Value("${adv.business.service.name}")
 	private String businessServiceName;
-	
+
 	@Value("${adv.calculation.tax.applicable}")
 	private String applicableTaxes;
-	
+
 	@Value("${egbs.host}")
 	private String egbsHost;
 
 	@Value("${egbs.fetchbill.endpoint}")
 	private String egbsFetchBill;
-	
+
 	@Value("${egov.billingservice.host}")
 	private String billingHost;
 
@@ -132,12 +133,56 @@ public class BookingConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-	
+
 	@Value("${adv.payment.timer}")
 	private Long paymentTimer;
-	
 
-	
-	
+	// USER EVENTS
+	@Value("${egov.ui.app.host}")
+	private String uiAppHost;
+
+	@Value("${egov.usr.events.create.topic}")
+	private String saveUserEventsTopic;
+
+	@Value("${egov.user.event.notification.enabled}")
+	private Boolean isUserEventsNotificationEnabled;
+
+	@Value("${egov.msg.pay.link}")
+	private String payLinkSMS;
+
+	// url shortener
+	@Value("${egov.url.shortner.host}")
+	private String urlShortnerHost;
+
+	@Value("${egov.url.shortner.endpoint}")
+	private String shortenerEndpoint;
+
+	// NOTIFICATION TOPICS
+	@Value("${kafka.topics.notification.sms}")
+	private String smsNotifTopic;
+
+	@Value("${kafka.topics.notification.email}")
+	private String emailNotifTopic;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isStateLevel;
+
+	@Value("${notif.sms.enabled}")
+	private Boolean isSMSNotificationEnabled;
+
+	@Value("${notif.email.enabled}")
+	private Boolean isEmailNotificationEnabled;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isLocalizationStateLevel;
+	// Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
 
 }
