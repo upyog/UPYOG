@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -155,7 +156,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	private void addTimerValueToBooking(List<CommunityHallBookingDetail> bookingDetails) {
 		// Extract booking IDs from booking details
-		List<String> bookingIds = bookingDetails.stream().map(CommunityHallBookingDetail::getBookingId).toList();
+		List<String> bookingIds = bookingDetails.stream()
+		        .map(CommunityHallBookingDetail::getBookingId)
+		        .collect(Collectors.toList());
 
 		
 		Map<String, Long> bookingIdTimerValueMap = bookingTimerService.getTimerValue(bookingIds);
