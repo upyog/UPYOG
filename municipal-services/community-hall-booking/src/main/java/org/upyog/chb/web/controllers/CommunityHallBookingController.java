@@ -112,13 +112,13 @@ public class CommunityHallBookingController {
 	@RequestMapping(value = "/v1/_slot-search", method = RequestMethod.POST)
 	public ResponseEntity<CommunityHallSlotAvailabilityResponse> v1GetCommmunityHallSlotAvailablity(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallSlotSearchCriteria criteria) {
-		List<CommunityHallSlotAvailabilityDetail> applications = bookingService.getCommunityHallSlotAvailability(criteria);
+		CommunityHallSlotAvailabilityResponse communityHallSlotAvailabilityResponse  = bookingService.getCommunityHallSlotAvailability(criteria, requestInfoWrapper.getRequestInfo());
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_AVIALABILITY_SEARCH,
 				StatusEnum.SUCCESSFUL);
-		CommunityHallSlotAvailabilityResponse response = CommunityHallSlotAvailabilityResponse.builder()
-				.hallSlotAvailabiltityDetails(applications)
-				.responseInfo(info).build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+		communityHallSlotAvailabilityResponse.setResponseInfo(info);
+		
+		return new ResponseEntity<>(communityHallSlotAvailabilityResponse, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)

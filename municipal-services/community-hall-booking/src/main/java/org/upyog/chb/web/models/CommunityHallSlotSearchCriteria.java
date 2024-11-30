@@ -45,5 +45,10 @@ public class CommunityHallSlotSearchCriteria {
 	private String fromTime;
 
 	private String toTime;
+	
+	//This flag will be used to create timer for payment of booking
+	private Boolean isTimerRequired;
+	
+	private String bookingId;
 
 }
