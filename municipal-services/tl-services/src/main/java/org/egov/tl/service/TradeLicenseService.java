@@ -1295,6 +1295,8 @@ public class TradeLicenseService {
 						: null);// Applicant Address
 		tlObject.put("approverName",
 				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
+		tlObject.put("userName",
+				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);// User Name
 		tlObject.put("approvalTime", approvalTime);// Approval Time
 		tlObject.put("ownerName",
 				!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners())
