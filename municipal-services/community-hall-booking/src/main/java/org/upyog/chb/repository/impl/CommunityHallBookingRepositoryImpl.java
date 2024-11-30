@@ -216,6 +216,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	
 	@Override
 	public int deleteExpiredBookingTimer() {
+		log.info("Deleting booking timer for expired bookings : deleteExpiredBookingTimer");
 		long currentTimeMillis = CommunityHallBookingUtil.getCurrentTimestamp();
 
 		long timerValueInMilleconds = Long.parseLong(bookingConfiguration.getBookingPaymentTimerValue());
@@ -230,6 +231,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 	@Override
 	public void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail, String status) {
+		
 		String bookingId = communityHallsBookingRequest.getHallsBookingApplication().getBookingId();
 		String lastUpdateBy = communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid();
 		long lastUpdatedTime = CommunityHallBookingUtil.getCurrentTimestamp();
@@ -240,6 +242,9 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 			receiptNo =	paymentDetail.getReceiptNumber();
 			receiptDate=	paymentDetail.getReceiptDate();
 		}
+		
+		log.info("Updating payment status of booking id : {} to status : {}", bookingId, status);
+		
 		/*set booking_status = ?, lastmodifiedby = ?, lastmodifiedtime = ? "
 			+ ", receipt_no = ?, payment_date = ? where booking_id = ?*/
 		

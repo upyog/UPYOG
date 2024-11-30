@@ -332,10 +332,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			}
 		});
 		
-		if(criteria.getIsTimerRequired()) {
-			
-		}
-
 		return availabiltityDetailsList;
 	}
 
