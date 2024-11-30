@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,8 @@ import org.egov.ptr.models.workflow.State;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
 import org.egov.ptr.repository.ServiceRequestRepository;
+import org.egov.ptr.util.CommonUtils;
+import org.egov.ptr.util.ErrorConstants;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
 import org.egov.ptr.web.contracts.PDFRequest;
@@ -49,6 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 @Service
 public class PetRegistrationService {
@@ -91,6 +95,9 @@ public class PetRegistrationService {
 
 	@Autowired
 	private AlfrescoService alfrescoService;
+
+	@Autowired
+	private CommonUtils commonUtils;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -139,7 +146,7 @@ public class PetRegistrationService {
 				throw new CustomException("TENANTID_MANDATORY", "TenantId is mandatory for employee to search registrations.");
 			}
 			
-			List<String> listOfStatus = getAccountStatusListByRoles(petApplicationSearchCriteria.getTenantId(), requestInfo.getUserInfo().getRoles());
+			List<String> listOfStatus = getAccountStatusListByRoles(petApplicationSearchCriteria, requestInfo.getUserInfo().getRoles());
 			if(CollectionUtils.isEmpty(listOfStatus)) {
 				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES","Search can't be performed by this Employee due to lack of roles.");
 			}
@@ -150,10 +157,11 @@ public class PetRegistrationService {
 		
 	}
 	
-	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
+	private List<String> getAccountStatusListByRoles(PetApplicationSearchCriteria petApplicationSearchCriteria, List<Role> roles) {
 		
-		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);	
+		List<String> rolesWithinTenant = getRolesByTenantId(petApplicationSearchCriteria.getTenantId(), roles);	
 		Set<String> statusWithRoles = new HashSet();
+		AtomicReference<String> tempTenantId = new AtomicReference<>(petApplicationSearchCriteria.getTenantId());
 		
 		rolesWithinTenant.stream().forEach(role -> {
 			
@@ -161,9 +169,24 @@ public class PetRegistrationService {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
 			}else if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_APPROVER)) {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+			}else if(StringUtils.equalsAnyIgnoreCase(role, PTRConstants.USER_ROLE_SUPERVISOR, PTRConstants.USER_ROLE_SECRETARY)) {
+				statusWithRoles.addAll(Arrays.asList(
+						PTRConstants.APPLICATION_STATUS_INITIATED,
+					    PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION,
+					    PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL,
+					    PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION,
+					    PTRConstants.APPLICATION_STATUS_PENDINGFORPAYMENT,
+					    PTRConstants.APPLICATION_STATUS_APPROVED,
+					    PTRConstants.APPLICATION_STATUS_REJECTED
+		            ));
+				if(StringUtils.equalsIgnoreCase(petApplicationSearchCriteria.getTenantId()
+						, PTRConstants.STATE_LEVEL_TENANT_ID)) {
+					tempTenantId.set(null);
+				}
 			}
 			
 		});
+		petApplicationSearchCriteria.setTenantId(tempTenantId.get());
 		
 		return new ArrayList<>(statusWithRoles);
 	}
@@ -203,21 +226,21 @@ public class PetRegistrationService {
 	private void createAndUploadPDF(PetRegistrationRequest petRegistrationRequest) {
 		
 		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
-			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(license -> {
+			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(petApplication -> {
 
 				Thread pdfGenerationThread = new Thread(() -> {
 
 					// for NEW TL
-					if (StringUtils.equalsIgnoreCase(license.getWorkflow().getAction(), PTRConstants.WORKFLOW_ACTION_APPROVE)) {
+					if (StringUtils.equalsIgnoreCase(petApplication.getWorkflow().getAction(), PTRConstants.WORKFLOW_ACTION_APPROVE)) {
 
 						// validate trade license
-						validateTradeLicenseCertificateGeneration(license);
+						validatePetCertificateGeneration(petApplication);
 
 						// create pdf
-						Resource resource = createNoSavePDF(license, petRegistrationRequest.getRequestInfo());
+						Resource resource = createNoSavePDF(petApplication, petRegistrationRequest.getRequestInfo());
 
 						//upload pdf
-						DmsRequest dmsRequest = generateDmsRequestByTradeLicense(resource, license,
+						DmsRequest dmsRequest = generateDmsRequestByPetApplication(resource, petApplication,
 								petRegistrationRequest.getRequestInfo());
 						try {
 							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
@@ -238,7 +261,7 @@ public class PetRegistrationService {
 		
 	}
 
-	private DmsRequest generateDmsRequestByTradeLicense(Resource resource, PetRegistrationApplication petRegistrationApplication,
+	private DmsRequest generateDmsRequestByPetApplication(Resource resource, PetRegistrationApplication petRegistrationApplication,
 			RequestInfo requestInfo) {
 
 		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
@@ -268,7 +291,7 @@ public class PetRegistrationService {
 		
 		PDFRequest pdfRequest = PDFRequest.builder()
 				.RequestInfo(requestInfo)
-				.key("TradeLicense2")
+				.key("PetCertificate")
 				.tenantId("hp")
 				.data(map)
 				.build();
@@ -296,6 +319,7 @@ public class PetRegistrationService {
 		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
 		tlObject.put("applicantName", petRegistrationApplication.getApplicantName());
 		tlObject.put("mobileNumber", petRegistrationApplication.getMobileNumber());
+		tlObject.put("userName", requestInfo.getUserInfo().getUserName());
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);
@@ -335,7 +359,7 @@ public class PetRegistrationService {
 	    }
 	}
 
-	private void validateTradeLicenseCertificateGeneration(PetRegistrationApplication petRegistrationApplication) {
+	private void validatePetCertificateGeneration(PetRegistrationApplication petRegistrationApplication) {
 		
 		if (StringUtils.isEmpty(petRegistrationApplication.getApplicationNumber())
 			    || StringUtils.isEmpty(petRegistrationApplication.getPetDetails().getPetName())
@@ -354,8 +378,13 @@ public class PetRegistrationService {
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
 				.equals(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT)) {
 			
+			// fetch fees from MDMS
+			
+			
+			BigDecimal taxAmount = getFeesFromMdms(petRegistrationRequest);
+//			taxAmount = ;
 			// create demands
-			List<Demand> savedDemands = demandService.createDemand(petRegistrationRequest);
+			List<Demand> savedDemands = demandService.createDemand(petRegistrationRequest, taxAmount);
 
 	        if(CollectionUtils.isEmpty(savedDemands)) {
 	            throw new CustomException("INVALID_CONSUMERCODE","Bill not generated due to no Demand found for the given consumerCode");
@@ -371,6 +400,31 @@ public class PetRegistrationService {
 		}
 	}
 	
+
+	private BigDecimal getFeesFromMdms(PetRegistrationRequest petRegistrationRequest) {
+
+		AtomicReference<BigDecimal> taxAmount = new AtomicReference<BigDecimal>(BigDecimal.ZERO);
+		String tenantId = petRegistrationRequest.getPetRegistrationApplications().get(0).getTenantId();
+
+		try {
+			Optional<Object> response = commonUtils.getAttributeValues(PTRConstants.STATE_LEVEL_TENANT_ID,
+					PTRConstants.MODULE_NAME_PET_SERVICE, Arrays.asList(PTRConstants.MASTER_NAME_FEE_STRUCTURE),
+					petRegistrationRequest);
+
+				List<LinkedHashMap<Object, Object>> feeStructureList = JsonPath.read(response.get(),
+						"$.MdmsRes.PetService.FeeStructure");
+				feeStructureList.stream()
+						.filter(fee1 -> StringUtils.equalsIgnoreCase((String) fee1.get("tenantId"), tenantId))
+						.forEach(obj -> {
+							taxAmount.set(BigDecimal.valueOf(Double.valueOf(obj.get("price").toString())));
+						});
+				return taxAmount.get();
+
+		} catch (Exception e) {
+			throw new CustomException("FETCH_FEES_FAILED","Failed to fetch fees from mdms for tenant id: "+tenantId);
+		}
+
+	}
 
 	public Object enrichResponseDetail(List<PetRegistrationApplication> applications) {
 		
@@ -430,12 +484,7 @@ public class PetRegistrationService {
 				.applicationNumber(petRegistrationApplication.getApplicationNumber())
 				.build();
 
-		// total fee for NewTL
-		BigDecimal totalFee = BigDecimal.valueOf(500.00);
-		applicationDetail.setTotalPayableAmount(totalFee);
-		
-
-		// formula for NewTL
+		// formula
 		StringBuilder feeCalculationFormula = new StringBuilder("Breed: "+petRegistrationApplication.getPetDetails().getBreedType());
 		
 		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
@@ -451,6 +500,7 @@ public class PetRegistrationService {
 		Map<Object, Object> billDetailsMap = new HashMap<>();
 		if (!CollectionUtils.isEmpty(bills)) {
 			billDetailsMap.put("billId", bills.get(0).getId());
+		// total fee
 			applicationDetail.setTotalPayableAmount(bills.get(0).getTotalAmount());
 		}
 		applicationDetail.setBillDetails(billDetailsMap);

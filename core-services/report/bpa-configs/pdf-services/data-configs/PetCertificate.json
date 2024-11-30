@@ -66,6 +66,12 @@
             "value":{
               "path":"$.petPhotoURL"
             }
+          },
+          {
+           "variable":"userName",
+            "value":{
+              "path":"$.userName"
+            }
           }
         ]
       }

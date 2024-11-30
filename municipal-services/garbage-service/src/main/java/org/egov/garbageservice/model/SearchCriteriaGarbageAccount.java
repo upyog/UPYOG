@@ -36,4 +36,10 @@ public class SearchCriteriaGarbageAccount {
     private Boolean isOwner;
     
     private String parentAccount;
+
+    private String orderBy = "ASC";
+
+    private Long startId;
+
+    private Long endId;
 }

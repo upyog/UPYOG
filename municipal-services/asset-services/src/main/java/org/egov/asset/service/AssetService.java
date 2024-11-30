@@ -2,27 +2,46 @@ package org.egov.asset.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.management.RuntimeErrorException;
 import javax.validation.Valid;
 
+import org.egov.asset.config.AssetConfiguration;
+import org.egov.asset.dto.AssetAssignmentDTO;
+import org.egov.asset.dto.AssetDTO;
+import org.egov.asset.dto.AssetSearchDTO;
 import org.egov.asset.repository.AssetRepository;
-import org.egov.asset.util.AssetConstants;
+import org.egov.asset.repository.RestCallRepository;
 import org.egov.asset.util.AssetErrorConstants;
+import org.egov.asset.util.AssetUtil;
 import org.egov.asset.util.AssetValidator;
 import org.egov.asset.util.MdmsUtil;
 import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetActionRequest;
+import org.egov.asset.web.models.AssetActionResponse;
+import org.egov.asset.web.models.AssetApplicationDetail;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetSearchCriteria;
 import org.egov.asset.web.models.CreationReason;
+import org.egov.asset.web.models.RequestInfoWrapper;
 import org.egov.asset.web.models.UserSearchCriteria;
+import org.egov.asset.web.models.workflow.BusinessServiceResponse;
+import org.egov.asset.web.models.workflow.State;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
@@ -44,6 +63,21 @@ public class AssetService {
 	@Autowired
 	WorkflowService workflowService;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
+	private AssetUtil assetUtil;
+
+	@Autowired
+	private AssetConfiguration assetConfiguration;
+
+	@Autowired
+	private RestCallRepository restCallRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	/**
 	 * does all the validations required to create Asset Record in the system
 	 * 
@@ -54,7 +88,7 @@ public class AssetService {
 		log.debug("Asset create service method called");
 		RequestInfo requestInfo = assetRequest.getRequestInfo();
 		String tenantId = assetRequest.getAsset().getTenantId().split("\\.")[0];
-		Object mdmsData = util.mDMSCall(requestInfo,assetRequest.getAsset().getTenantId());
+//		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 
 		// Application can not be created statelevel
 		if (assetRequest.getAsset().getTenantId().split("\\.").length == 1) {
@@ -67,10 +101,11 @@ public class AssetService {
 			assetRequest.getAsset().setApprovalNo(null);
 		}
 
-		assetValidator.validateCreate(assetRequest, mdmsData);
+//		assetValidator.validateCreate(assetRequest, mdmsData);
 
-		enrichmentService.enrichAssetCreateRequest(assetRequest, mdmsData);
-		//workflowIntegrator.callWorkFlow(assetRequest);
+		// enrichmentService.enrichAssetCreateRequest(assetRequest, mdmsData);
+		enrichmentService.enrichAssetCreateRequest(assetRequest);
+		// workflowIntegrator.callWorkFlow(assetRequest);
 		workflowService.updateWorkflow(assetRequest, CreationReason.CREATE);
 		// assetRequest.getAsset().setApplicant("100");
 		assetRepository.save(assetRequest);
@@ -80,20 +115,35 @@ public class AssetService {
 
 	}
 
-	public List<Asset> search(AssetSearchCriteria criteria, RequestInfo requestInfo) {
+	public List<AssetDTO> search(AssetSearchCriteria criteria, RequestInfo requestInfo) {
 		List<Asset> assets = new LinkedList<>();
 		assetValidator.validateSearch(requestInfo, criteria);
 		List<String> roles = new ArrayList<>();
 		for (Role role : requestInfo.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
-		if ((criteria.tenantIdOnly() || criteria.isEmpty()) && roles.contains(AssetConstants.EMPLOYEE)) {
+		// if ((criteria.tenantIdOnly() || criteria.isEmpty()) &&
+		// roles.contains(AssetConstants.ASSET_INITIATOR)) {
+		if ((criteria.tenantIdOnly() || criteria.isEmpty())) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());
+		} else
+			assets = getAssetsFromCriteria(criteria);
+
+		if (criteria.getApplicationNo() != null) {
+			return assets.stream().map(asset -> modelMapper.map(asset, AssetDTO.class)).collect(Collectors.toList());
+		} else {
+			return assets.stream().map(this::convertToAssetSearchDTO).collect(Collectors.toList());
 		}
-		assets = getAssetsFromCriteria(criteria);
-		return assets;
+	}
+
+	private AssetSearchDTO convertToAssetSearchDTO(Asset asset) {
+		AssetSearchDTO assetSearchDTO = modelMapper.map(asset, AssetSearchDTO.class);
+		if (asset.getAssetAssignment() != null) {
+			assetSearchDTO.setAssetAssignment(modelMapper.map(asset.getAssetAssignment(), AssetAssignmentDTO.class));
+		}
+		return assetSearchDTO;
 	}
 
 	private List<Asset> getAssetCreatedForByMe(AssetSearchCriteria criteria, RequestInfo requestInfo) {
@@ -107,7 +157,7 @@ public class AssetService {
 			uuids.add(requestInfo.getUserInfo().getUuid());
 			criteria.setCreatedBy(uuids);
 		}
-		log.debug("loading data of created and by me"+ uuids.toString());
+		log.debug("loading data of created and by me" + uuids.toString());
 		assets = getAssetsFromCriteria(criteria);
 		return assets;
 	}
@@ -147,6 +197,117 @@ public class AssetService {
 		assetRepository.update(assetRequest);
 
 		return assetRequest.getAsset();
+	}
+
+	public Asset assignment(@Valid AssetRequest assetRequest) {
+		log.debug("Asset assignment service method called");
+		// RequestInfo requestInfo = assetRequest.getRequestInfo();
+
+		// Application can not be created statelevel
+		if (assetRequest.getAsset().getTenantId().split("\\.").length == 1) {
+			throw new CustomException(AssetErrorConstants.INVALID_TENANT,
+					" Application cannot be create at StateLevel");
+		}
+		enrichmentService.enrichAssetOtherOperationsCreateRequest(assetRequest);
+		assetRepository.saveAssignment(assetRequest);
+		return assetRequest.getAsset();
+	}
+
+	public Asset updateAssignment(@Valid AssetRequest assetRequest) {
+		log.debug("Asset assignment service method called");
+		// RequestInfo requestInfo = assetRequest.getRequestInfo();
+
+		// Application can not be created statelevel
+		if (assetRequest.getAsset().getTenantId().split("\\.").length == 1) {
+			throw new CustomException(AssetErrorConstants.INVALID_TENANT,
+					" Application cannot be create at StateLevel");
+		}
+		enrichmentService.enrichAssetOtherOperationsUpdateRequest(assetRequest);
+		assetRepository.updateAssignment(assetRequest);
+		return assetRequest.getAsset();
+	}
+
+	public AssetActionResponse getActionsOnApplication(AssetActionRequest assetActionRequest) {
+		Map<String, List<String>> applicationActionMaps = new HashMap<>();
+		AssetActionResponse assetActionResponse =null;
+		try {
+			if (CollectionUtils.isEmpty(assetActionRequest.getApplicationNumbers())) {
+				throw new CustomException("INVALID_REQUEST", "Please provide Asset Application numbers");
+			}
+			assetActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
+				AssetSearchCriteria assetSearchCriteria = AssetSearchCriteria.builder().applicationNo(applicationNumber)
+						.build();
+
+				List<Asset> assets = assetRepository.getAssetData(assetSearchCriteria);
+				if (CollectionUtils.isEmpty(assets)) {
+					throw new CustomException("ASSET_NOT_FOUND", "No Asset found with provided input.");
+				}
+				Asset asset = null != assets ? assets.get(0) : null;
+				String applicationStatus = asset.getStatus();
+				String applicationTenantId = asset.getTenantId();
+				String applicationBusinessId = assetUtil.ASSET_BUSINESS_SERVICE;
+				List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId,
+						assetActionRequest.getRequestInfo().getUserInfo().getRoles());
+
+				StringBuilder uri = new StringBuilder(assetConfiguration.getWfHost());
+				uri.append(assetConfiguration.getWfBusinessServiceSearchPath());
+				uri.append("?tenantId=").append(applicationTenantId);
+				uri.append("&businessServices=").append(applicationBusinessId);
+				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+						.requestInfo(assetActionRequest.getRequestInfo()).build();
+				LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository
+						.fetchResult(uri, requestInfoWrapper);
+
+				BusinessServiceResponse businessServiceResponse = objectMapper.convertValue(responseObject,
+						BusinessServiceResponse.class);
+				if (null == businessServiceResponse
+						|| CollectionUtils.isEmpty(businessServiceResponse.getBusinessServices())) {
+					throw new CustomException("NO_BUSINESS_SERVICE_FOUND",
+							"Business service not found for application number: " + applicationNumber);
+				}
+				List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
+						.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus))
+						.collect(Collectors.toList());
+
+				// filtering actions based on roles
+				List<String> actions = new ArrayList<>();
+				stateList.stream().forEach(state -> {
+					state.getActions().stream().filter(
+							action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
+							.forEach(action -> {
+								actions.add(action.getAction());
+							});
+				});
+
+				applicationActionMaps.put(applicationNumber, actions);
+
+			});
+
+			List<AssetApplicationDetail> nextActionList = new ArrayList<>();
+			applicationActionMaps.entrySet().stream().forEach(entry -> {
+				nextActionList.add(
+						AssetApplicationDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+			});
+			
+			 assetActionResponse = AssetActionResponse.builder().applicationDetails(nextActionList).build();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return assetActionResponse;
+	}
+
+	public AssetActionResponse getCountOfAllApplicationTypes(AssetActionRequest actionRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
 	}
 
 }

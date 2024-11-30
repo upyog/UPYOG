@@ -473,7 +473,7 @@ public class NotificationUtil {
 		String expiryDate = new SimpleDateFormat("dd/MM/yyyy").format(license.getValidTo());
 		message = message.replace("{3}", expiryDate);
 
-		license.setApplicationType(TradeLicense.ApplicationTypeEnum.valueOf(APPLICATION_TYPE_RENEWAL));
+		license.setApplicationType(TradeLicense.ApplicationTypeEnum.valueOf(APPLICATION_TYPE_RENEWAL).toString());
 		List<TradeLicense> tradeLicenseList = new ArrayList<>();
 		tradeLicenseList.add(license);
 		CalculationRes calculationRes = calculationService.getEstimation(requestInfo, tradeLicenseList );

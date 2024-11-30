@@ -1,0 +1,69 @@
+serviceMaps:
+ serviceName: RentLeaseService
+ mappings:
+ - version: 1.0
+   name: asset-service
+   description: Save Rent Lease Details
+   fromTopic: create-rent-lease
+   isTransaction: true
+   queryMaps:
+     - query: INSERT INTO eg_rent_lease_application(uuid, tenantid, mobile_no, start_date, end_date, month, assetid, applicant_detail, status, is_active, createdby, createddate, lastmodifiedby, lastmodifieddate,applicationno) VALUES(?, ?, ?, ?, ?, ?, ?, ?::JSONB , ?, ?, ?, ?, ?, ?, ?);
+
+       basePath: RentLease.*
+       jsonMaps:
+
+        - jsonPath: $.RentLease.*.uuid
+
+        - jsonPath: $.RentLease.*.tenantId
+
+        - jsonPath: $.RentLease.*.mobileNo
+
+        - jsonPath: $.RentLease.*.startDate
+
+        - jsonPath: $.RentLease.*.endDate
+
+        - jsonPath: $.RentLease.*.months
+
+        - jsonPath: $.RentLease.*.assetId
+
+        - jsonPath: $.RentLease.*.applicantDetails
+
+        - jsonPath: $.RentLease.*.status
+
+        - jsonPath: $.RentLease.*.isActive
+
+        - jsonPath: $.RentLease.*.auditDetails.createdBy
+
+        - jsonPath: $.RentLease.*.auditDetails.createdDate
+
+        - jsonPath: $.RentLease.*.auditDetails.lastModifiedBy
+
+        - jsonPath: $.RentLease.*.auditDetails.lastModifiedDate
+
+        - jsonPath: $.RentLease.*.applicationNo
+
+ - version: 1.0
+   name: asset-service
+   description: Update Rent Lease Details
+   fromTopic: update-rent-lease-booking
+   isTransaction: true
+   queryMaps:
+     - query: UPDATE eg_rent_lease_application SET start_date = ?, end_date = ?, month = ?, applicant_detail = ?::JSONB , status = ?, is_active = ? WHERE uuid =?;
+
+       basePath: RentLease.*
+       jsonMaps:
+
+        - jsonPath: $.RentLease.*.uuid
+
+        - jsonPath: $.RentLease.*.end_date
+
+        - jsonPath: $.RentLease.*.month
+
+        - jsonPath: $.RentLease.*.applicant_detail
+
+        - jsonPath: $.RentLease.*.status
+
+        - jsonPath: $.RentLease.*.is_active
+
+        - jsonPath: $.RentLease.*.uuid
+

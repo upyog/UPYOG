@@ -267,7 +267,7 @@ public class SiteRepository {
 					&& !searchSiteRequest.getSiteSearchData().getDistrictName().isEmpty()) {
 				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
 				siteSearchQuery.append(" eg_site_application.district_name = ").append("'")
-						.append(searchSiteRequest.getSiteSearchData().getAdvertisementType()).append("'");
+						.append(searchSiteRequest.getSiteSearchData().getDistrictName()).append("'");
 			}
 			if (null != searchSiteRequest.getSiteSearchData().getStatus()
 					&& !searchSiteRequest.getSiteSearchData().getStatus().isEmpty()) {
@@ -309,6 +309,14 @@ public class SiteRepository {
 								preparedStatementValues))
 						.append(" )");
 			}
+			
+			if (null != searchSiteRequest.getSiteSearchData().getTenantId()
+					&& !searchSiteRequest.getSiteSearchData().getTenantId().isEmpty()) {
+				isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, siteSearchQuery);
+				siteSearchQuery.append(" eg_site_application.tenant_id = ").append("'")
+						.append(searchSiteRequest.getSiteSearchData().getTenantId()).append("'");
+			}
+			
 			/*
 			 * if (!searchSiteRequest.getSiteSearchData().getWorkflowStatus().isEmpty() &&
 			 * null != searchSiteRequest.getSiteSearchData().getWorkflowStatus()) {

@@ -57,7 +57,7 @@ public class EnrichmentService {
     private BoundaryService boundaryService;
     private UserService userService;
     private WorkflowService workflowService;
-
+    
     @Autowired
     public EnrichmentService(IdGenRepository idGenRepository, TLConfiguration config, TradeUtil tradeUtil,
                              BoundaryService boundaryService,UserService userService,WorkflowService workflowService) {
@@ -216,7 +216,7 @@ public class EnrichmentService {
 		}
 		// set application type : NEW is used in tl-calculator
 		if(null == tradeLicense.getApplicationType()) {
-			tradeLicense.setApplicationType(ApplicationTypeEnum.NEW);
+			tradeLicense.setApplicationType(ApplicationTypeEnum.NEW.toString());
 		}
 		// set workflow action
 		if(StringUtils.isEmpty(tradeLicense.getAction())) {
@@ -612,8 +612,8 @@ public class EnrichmentService {
                         licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameBPA(), config.getLicenseNumberIdgenFormatBPA(), count);
                         break;
                         
-                    case TLConstants.businessService_NewTL:
-                        licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameTL(), config.getLicenseNumberIdgenFormatTL(), count);
+                   case TLConstants.businessService_NewTL:
+                       licenseNumbers = licenses.stream().map(license -> license.getApplicationNumber()).collect(Collectors.toList());
                         break;
                 }
                 ListIterator<String> itr = licenseNumbers.listIterator();
@@ -629,8 +629,10 @@ public class EnrichmentService {
                 for (int i = 0; i < licenses.size(); i++) {
                     TradeLicense license = licenses.get(i);
                     if ((license.getStatus() != null) && license.getStatus().equalsIgnoreCase(endstates.get(i))) {
-                        license.setLicenseNumber(itr.next());
-                        Long time = System.currentTimeMillis();
+                        if (itr.hasNext()) {
+							license.setLicenseNumber(itr.next());
+						}
+						Long time = System.currentTimeMillis();
                         license.setIssuedDate(time);
                         //license.setValidFrom(time);
                         if (mdmsData != null && businessService.equalsIgnoreCase(businessService_BPA)) {
@@ -644,8 +646,8 @@ public class EnrichmentService {
                         }
                         if (businessService.equalsIgnoreCase(businessService_TL)
                         		|| businessService.equalsIgnoreCase(TLConstants.businessService_NewTL)) {
-                        	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
-                        	license.setLicenseNumber(tempId);
+//                        	String tempId = validateAndEnrichTLApplication(license, license.getLicenseNumber());
+                        	license.setLicenseNumber(license.getApplicationNumber());
                             license.setValidFrom(new Date().getTime());
                         	license.setValidTo(getValidToDateFromLicensePeriod(license));
                         }
@@ -681,14 +683,25 @@ public class EnrichmentService {
      * @param requestInfo The requestInfo of searhc request
      * @param criteria The tradeLicenseSearch criteria
      */
-    public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria){
-        if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
+    public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria, List<String> rolesWithinTenant){
+        if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase(TLConstants.ROLE_CODE_CITIZEN)){
             criteria.setAccountId(requestInfo.getUserInfo().getUuid());
 //            criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
             criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+        }else if(requestInfo.getUserInfo().getType().equalsIgnoreCase(TLConstants.ROLE_CODE_EMPLOYEE)){
+        	
+			if (!CollectionUtils.isEmpty(rolesWithinTenant)) {
+				// fetch all ROLES within tenant
+				if ((rolesWithinTenant.contains(TLConstants.ROLE_CODE_SUPERVISOR)
+						|| rolesWithinTenant.contains(TLConstants.ROLE_CODE_SECRETARY))) {
+					criteria.setTenantId(null);
+				}
+			}
+        	
+        	
         }
         
-        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN") && criteria.mobileNumberOnly()) {
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase(TLConstants.ROLE_CODE_CITIZEN) && criteria.mobileNumberOnly()) {
         	criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
         	criteria.setOnlyMobileNumber(true);
         	

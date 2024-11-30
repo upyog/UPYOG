@@ -29,10 +29,10 @@ public class AssetConstants {
 
 	// mdms master names
 //	public static final String ASSET_CLASSIFICATION_MAPPING = "assetClassificationMapping";
-	public static final String ASSET_CLASSIFICATION = "AssetClassification";
-	public static final String ASSET_PARENT_CATEGORY = "AssetParentCategory";
-	public static final String ASSET_CATEGORY = "AssetCategory";
-	public static final String ASSET_SUB_CATEGORY = "AssetSubCategory";
+	public static final String ASSET_CLASSIFICATION = "assetClassification";
+	public static final String ASSET_PARENT_CATEGORY = "assetParentCategory";
+	public static final String ASSET_CATEGORY = "assetCategory";
+	public static final String ASSET_SUB_CATEGORY = "assetSubCategory";
 	
 //	public static final String ASSET_CLASSIFICATIONS = "ServiceType";
 //	public static final String APPLICATION_TYPE = "ApplicationType";
@@ -58,6 +58,9 @@ public class AssetConstants {
 	public static final String ACTION_REVOCATE = "REVOCATE";
 	public static final String ACTION_CANCEL = "CANCEL";
 	public static final String EMPLOYEE = "EMPLOYEE";
+	public static final String AASET_APPROVER = "AASET_APPROVER";
+	public static final String ASSET_INITIATOR = "ASSET_INITIATOR"; 
+	public static final String ASSET_VERIFIER = "ASSET_VERIFIER";
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 
 }

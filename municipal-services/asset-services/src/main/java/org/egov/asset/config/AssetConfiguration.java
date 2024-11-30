@@ -1,26 +1,26 @@
 package org.egov.asset.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
+import org.egov.tracer.config.TracerConfiguration;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.TimeZone;
-import javax.annotation.PostConstruct;
-    import com.fasterxml.jackson.databind.DeserializationFeature;
-    import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import org.egov.tracer.config.TracerConfiguration;
 
 
 @Getter
@@ -41,11 +41,8 @@ public class AssetConfiguration {
 
  	@Value("${egov.mdms.search.endpoint}")
  	private String mdmsEndPoint;
-
-//    @Value("${egov.mdms.search.endpoint}")
-//    private String mdmsUrl;
  	
- // Idgen Config
+ 	// Idgen Config
  	@Value("${egov.idgen.host}")
  	private String idGenHost;
 
@@ -59,12 +56,18 @@ public class AssetConfiguration {
  	private String applicationNoIdgenFormat;
 
  	
- // Persister Config
+ 	// Persister Config
  	@Value("${persister.save.assetdetails.topic}")
  	private String saveTopic;
 
  	@Value("${persister.update.assetdetails.topic}")
  	private String updateTopic;
+ 	
+ 	@Value("${persister.save.assetassignment.topic}")
+ 	private String saveAssignmentTopic;
+
+ 	@Value("${persister.update.assetassignment.topic}")
+ 	private String updateAssignmentTopic;
  	
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
@@ -78,7 +81,7 @@ public class AssetConfiguration {
 	@Value("${egov.asset.max.limit}")
 	private Integer maxSearchLimit;
 	
-	@Value("${workflow.context.path}")
+	@Value("${egov.workflow.host}")
 	private String wfHost;
 
 	@Value("${workflow.transition.path}")
@@ -89,6 +92,7 @@ public class AssetConfiguration {
 	
 	@Value("${workflow.process.path}")
 	private String wfProcessPath;
+	
  	
 	// SMS
 //	@Value("${kafka.topics.notification.sms}")
@@ -138,5 +142,9 @@ public class AssetConfiguration {
     return converter;
     }
 
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 	
 }
