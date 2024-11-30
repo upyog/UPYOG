@@ -20,6 +20,7 @@ import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
 import ChallanQRCode from "./ChallanQRCode";
+import {AdvertisementModuleCard} from "../../../../ads/src/components/AdvertisementModuleCard";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -89,6 +90,16 @@ const Home = ({
       </Route>
     ) : null;
   });
+  // for showing advertisement image and its detail in first page
+  const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
+    select: (data) => {
+      const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
+        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}`,adtype:`${details.adtype}`,faceArea:`${details.faceArea}` };
+      });
+      return formattedData;
+    },
+  });
+  const Advertisement=advertisement||[];
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
@@ -128,6 +139,23 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
+            {code?.toUpperCase()==="ADS" && (
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
+              {Advertisement.map((ad) => (
+                <AdvertisementModuleCard
+                  imageSrc={ad.imageSrc} 
+                  poleNo={ad.poleNo} 
+                  light={ad.light} 
+                  title={ad.title} 
+                  location={ad.location} 
+                  price={ad.price} 
+                  path={`${path}/${code.toLowerCase()}/`}
+                  adType={ad.adtype}
+                  faceArea={ad.faceArea}
+                />
+              ))}
+            </div>
+            )}
             <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
           </div>
         </Route>

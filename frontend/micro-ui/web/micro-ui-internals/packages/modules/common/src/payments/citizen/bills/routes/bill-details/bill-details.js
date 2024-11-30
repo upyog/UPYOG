@@ -17,6 +17,39 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
+  const [timeRemaining, setTimeRemaining] = useState(state?.timerValue || 0);
+
+  // Retrieve the last saved time for the current booking from localStorage
+  useEffect(() => {
+    const savedTime = localStorage.getItem(`timeRemaining-${consumerCode}`);
+    if (savedTime) {
+      setTimeRemaining(Number(savedTime)); // Set the saved time if it exists
+    }
+    // Create an interval to update the timer every second
+    const interval = setInterval(() => {
+      setTimeRemaining(prevTime => {
+        if (prevTime <= 0) {
+          clearInterval(interval); // Stop the timer when time reaches 0
+          localStorage.removeItem(`timeRemaining-${consumerCode}`); // Remove the saved time for the expired booking
+          return 0;
+        }
+        const newTime = prevTime - 1;
+        localStorage.setItem(`timeRemaining-${consumerCode}`, newTime); // Save the updated time for the current booking
+        return newTime;
+      });
+    }, 1000);
+
+    // Cleanup the interval when the component is unmounted or when consumerCode changes
+    return () => clearInterval(interval);
+  }, [consumerCode]);
+
+  // Format seconds into "minutes:seconds" format
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
@@ -164,7 +197,15 @@ const BillDetails = ({ paymentRules, businessService }) => {
         tenantId: billDetails.tenantId,
         name: bill.payerName,
         mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
-    } else {
+    } 
+    else if (businessService === "adv-services") {
+      history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+        paymentAmount, 
+        tenantId: billDetails.tenantId, 
+        propertyId: propertyId ,
+        timerValue:timeRemaining,});
+      } 
+    else {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
     }
   };
@@ -188,10 +229,22 @@ const BillDetails = ({ paymentRules, businessService }) => {
       <Header>{t("CS_PAYMENT_BILL_DETAILS")}</Header>
       <Card>
         <div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <KeyNote
             keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
             note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
           />
+          {businessService === "adv-services" && (
+            <CardSubHeader 
+              style={{ 
+                textAlign: 'right', 
+                fontSize: "24px"
+              }}
+            >
+              {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
+            </CardSubHeader>
+          )}
+          </div>
           {businessService !== "PT.MUTATION" && businessService !== "FSM.TRIP_CHARGES" && (
             <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} />
           )}
