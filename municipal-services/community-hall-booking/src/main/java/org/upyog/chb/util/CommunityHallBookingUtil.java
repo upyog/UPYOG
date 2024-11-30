@@ -128,9 +128,9 @@ public class CommunityHallBookingUtil {
         return minutes * 60;
     }
     
-    public static long calculateDifferenceInMinutes(long time1, long time2) {
+    public static long calculateDifferenceInSeconds(long time1, long time2) {
         long differenceInMillis = time1 - time2; // Subtract the values
-        return differenceInMillis / (1000 * 60); // Convert milliseconds to minutes
+        return differenceInMillis / 1000 ; // Convert milliseconds to minutes
     }
 
 }

@@ -209,7 +209,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 	@Override
 	public void deleteBookingTimer(String bookingId) {
-		log.info("Deleting booking timer for booking id : {}", bookingId);
+		log.info("Deleting booking timer query : {} booking id : {} ", CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY, bookingId);
 		jdbcTemplate.update(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY, bookingId);
 
 	}
@@ -263,6 +263,22 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		List<BookingPaymentTimerDetails> paymentTimerList = jdbcTemplate.query(CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, 
 				new Object[]{criteria.getBookingId()},
 				new GenericRowMapper<>(BookingPaymentTimerDetails.class));
+		
+		log.info("Booking payment timer query : {} and parmas : {}", CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, criteria.getBookingId());
+		
+		return paymentTimerList;
+	}
+	
+	@Override
+	public List<BookingPaymentTimerDetails> getBookingTimer(List<String> bookingIds) {
+		
+		String bookingIdString = String.join(",", bookingIds);
+		
+		List<BookingPaymentTimerDetails> paymentTimerList = jdbcTemplate.query(CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, 
+				new Object[]{bookingIdString},
+				new GenericRowMapper<>(BookingPaymentTimerDetails.class));
+		
+		log.info("Booking payment timer query : {} and parmas : {}", CommunityHallBookingQueryBuilder.GET_BOOKING_PAYMENT_TIMER_VALUE_QUERY, bookingIdString);
 		return paymentTimerList;
 	}
 	
