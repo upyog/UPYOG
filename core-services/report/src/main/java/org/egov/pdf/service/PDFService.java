@@ -278,9 +278,10 @@ public class PDFService {
 				value = generateQRCodeImage(value.toString());
 			}
 
-			if ("userName".equals(variable)) {
-				String signBase64 = addSignatureFromMdms(pdfRequest,value.toString());
+			if ("approverName".equals(variable)) {
+				value = addSignatureFromMdms(pdfRequest,value.toString());
 				pdfContextData.put("signature", signBase64);
+
 //				addSignatureFromMdms(dataConfigs,pdfContextData);
 			}
 			
