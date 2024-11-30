@@ -69,21 +69,17 @@ public class PaymentNotificationService {
 				 * cancelled otherwise after payment booking will be auto approved
 				 * 
 				 */
-				// String tenantId = paymentRequest.getPayment().getTenantId();
-				// CommunityHallBookingSearchCriteria bookingSearchCriteria =
-				// CommunityHallBookingSearchCriteria.builder()
-				// .bookingNo(bookingNo)
-				// .tenantId(tenantId).build();
-				// updateWorkflowStatus(paymentRequest);
-				// List<CommunityHallBookingDetail> bookingDetail =
-				// bookingService.getBookingDetails(bookingSearchCriteria, null);
+				
 				log.info("Reciept no of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptNumber());
 				log.info("Payment date of payment : " + paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptDate());
 				CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
 						.build();
 				CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
 						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
-				bookingService.updateBooking(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
+				
+				//now updating booking status directly using jdbc template
+				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
+				
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occured while sending notification CHB : " + e.getMessage());

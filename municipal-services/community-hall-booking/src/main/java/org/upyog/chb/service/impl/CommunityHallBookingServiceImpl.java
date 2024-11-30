@@ -223,6 +223,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	 * Deleting the timer entry here after successful update of booking
 	 */
 	@Transactional
+	@Override
 	public void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
 			PaymentDetail paymentDetail, BookingStatusEnum status) {
 		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();

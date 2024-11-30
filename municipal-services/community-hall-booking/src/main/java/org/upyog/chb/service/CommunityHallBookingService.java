@@ -30,4 +30,11 @@ public interface CommunityHallBookingService {
 
 	Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria, @NonNull RequestInfo requestInfo);
 
+	/**
+	 * We are updating booking status synchronously for updating booking status on payment success 
+	 * Deleting the timer entry here after successful update of booking
+	 */
+	void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
+			PaymentDetail paymentDetail, BookingStatusEnum status);
+
 }
