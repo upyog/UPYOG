@@ -86,6 +86,8 @@ public class CommunityHallBookingDetail {
 	private AuditDetails auditDetails;
 	
  	private ProcessInstance workflow;
+ 	
+ 	private long timerValue;
 	
 
 	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetail uploadedDocumentDetailsItem) {

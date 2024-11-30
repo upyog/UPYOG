@@ -45,4 +45,6 @@ public interface CommunityHallBookingRepository {
 	int updateBookingTimer(String bookingId, String lastModifiedBy);
 
 	int deleteExpiredBookingTimer();
+
+	List<BookingPaymentTimerDetails> getBookingTimer(List<String> bookingIds);
 }

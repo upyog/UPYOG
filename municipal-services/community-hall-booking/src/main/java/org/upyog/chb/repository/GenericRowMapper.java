@@ -35,6 +35,7 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnLabel(i).toLowerCase(); // Column name in lowercase
                     Object columnValue = rs.getObject(i);
+                    columnName = columnName.replace("_", "");
                     columnValueMap.put(columnName, columnValue);
                 }
 

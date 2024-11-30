@@ -4,6 +4,7 @@ package org.upyog.chb.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -146,10 +147,28 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			return bookingDetails;
 		}
 		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
+		
+		addTimerValueToBooking(bookingDetails);
 
 		return bookingDetails;
 	}
 	
+	private void addTimerValueToBooking(List<CommunityHallBookingDetail> bookingDetails) {
+		// Extract booking IDs from booking details
+		List<String> bookingIds = bookingDetails.stream().map(CommunityHallBookingDetail::getBookingId).toList();
+
+		
+		Map<String, Long> bookingIdTimerValueMap = bookingTimerService.getTimerValue(bookingIds);
+
+		bookingDetails.forEach(booking -> {
+		    Long timerValue = bookingIdTimerValueMap.get(booking.getBookingId());
+		    if (timerValue != null) {
+		    	 booking.setTimerValue(timerValue);
+		    }
+		});
+	}
+	
+
 	@Override
 	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria,
 			@NonNull RequestInfo requestInfo) {
