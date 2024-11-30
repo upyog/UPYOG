@@ -114,5 +114,23 @@ public class CommunityHallBookingUtil {
 		
         return monthsAgo;
 	}
+	
+	/**
+     * Converts the given minutes to seconds.
+     * 
+     * @param minutes The number of minutes to convert to seconds.
+     * @return The equivalent seconds for the given minutes.
+     */
+    public static int getSeconds(int minutes) {
+        if (minutes < 0) {
+            throw new IllegalArgumentException("Minutes cannot be negative");
+        }
+        return minutes * 60;
+    }
+    
+    public static long calculateDifferenceInMinutes(long time1, long time2) {
+        long differenceInMillis = time1 - time2; // Subtract the values
+        return differenceInMillis / (1000 * 60); // Convert milliseconds to minutes
+    }
 
 }
