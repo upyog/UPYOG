@@ -44,6 +44,8 @@ public class CommunityHallSlotAvailabilityResponse   {
 	}
 	
 	private Integer count;
+	
+	private long timerValue;
 
 }
 

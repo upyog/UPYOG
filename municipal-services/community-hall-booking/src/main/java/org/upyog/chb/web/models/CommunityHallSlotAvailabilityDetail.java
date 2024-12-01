@@ -45,6 +45,4 @@ public class CommunityHallSlotAvailabilityDetail {
 	@JsonProperty("slotStaus")
 	private String slotStaus;
 	
-	
-
 }

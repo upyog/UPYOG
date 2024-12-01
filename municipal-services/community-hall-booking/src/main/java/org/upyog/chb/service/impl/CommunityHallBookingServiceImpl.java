@@ -4,6 +4,8 @@ package org.upyog.chb.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -13,10 +15,12 @@ import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
+import org.upyog.chb.service.BookingTimerService;
 import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
@@ -29,6 +33,7 @@ import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
+import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
 import digit.models.coremodels.PaymentDetail;
@@ -59,6 +64,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	@Autowired
 	private CHBEncryptionService encryptionService;
+	
+	@Autowired
+	private BookingTimerService bookingTimerService;
 	
 	
 	@Override
@@ -140,10 +148,30 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			return bookingDetails;
 		}
 		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
+		
+		addTimerValueToBooking(bookingDetails);
 
 		return bookingDetails;
 	}
 	
+	private void addTimerValueToBooking(List<CommunityHallBookingDetail> bookingDetails) {
+		// Extract booking IDs from booking details
+		List<String> bookingIds = bookingDetails.stream()
+		        .map(CommunityHallBookingDetail::getBookingId)
+		        .collect(Collectors.toList());
+
+		
+		Map<String, Long> bookingIdTimerValueMap = bookingTimerService.getTimerValue(bookingIds);
+
+		bookingDetails.forEach(booking -> {
+		    Long timerValue = bookingIdTimerValueMap.get(booking.getBookingId());
+		    if (timerValue != null) {
+		    	 booking.setTimerValue(timerValue);
+		    }
+		});
+	}
+	
+
 	@Override
 	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria,
 			@NonNull RequestInfo requestInfo) {
@@ -185,7 +213,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
 		log.info("Updating booking for booking no : " + bookingNo);
 		if (bookingNo == null) {
-			return null;
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
 		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 				.bookingNo(bookingNo).build();
@@ -210,6 +239,31 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				+ communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus());
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
+	
+	/**
+	 * We are updating booking status synchronously for updating booking status on payment success 
+	 * Deleting the timer entry here after successful update of booking
+	 */
+	@Transactional
+	@Override
+	public void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
+			PaymentDetail paymentDetail, BookingStatusEnum status) {
+		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
+		log.info("Updating booking synchronously for booking no : " + bookingNo);
+		if (bookingNo == null) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Booking no not valid. Failed to update booking status for : " + bookingNo);
+		}
+		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
+				.bookingNo(bookingNo).build();
+		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+		if (bookingDetails.size() == 0) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Booking no not valid. Failed to update booking status for : " + bookingNo);
+		}
+		bookingRepository.updateBookingSynchronously(communityHallsBookingRequest, paymentDetail, status.toString());
+		bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
+	}
 
 	private void convertBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
 			CommunityHallBookingDetail bookingDetailDB) {
@@ -227,21 +281,32 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	}
 
 	@Override
-	public List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
-			CommunityHallSlotSearchCriteria criteria) {
-		if (criteria.getCommunityHallCode() == null || CollectionUtils.isEmpty(criteria.getHallCodes())) {
-
+	public CommunityHallSlotAvailabilityResponse getCommunityHallSlotAvailability(
+			CommunityHallSlotSearchCriteria criteria, RequestInfo info) {
+		if (criteria.getCommunityHallCode() == null && CollectionUtils.isEmpty(criteria.getHallCodes())) {
+			throw new CustomException("INVALID_HALL_CODE",
+					"Invalid hall code provided for slot search");
 		}
 
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
 		
-		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsResponse = convertToCommunityHallAvailabilityResponse(
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsList = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
-
-		log.info("Availabiltity details response after updating status :" + availabiltityDetailsResponse);
-		return availabiltityDetailsResponse;
+		
+		Long timerValue =  null;
+				
+		if(criteria.getIsTimerRequired()) {
+			 timerValue =  bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
+		}
+		
+		CommunityHallSlotAvailabilityResponse hallSlotAvailabilityResponse = CommunityHallSlotAvailabilityResponse.builder()
+				.hallSlotAvailabiltityDetails(availabiltityDetailsList).timerValue(timerValue)
+				.build();
+		
+		log.info("Availabiltity details response after updating status :" + hallSlotAvailabilityResponse);
+		return hallSlotAvailabilityResponse;
 	}
 
 	/**
@@ -253,7 +318,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	private List<CommunityHallSlotAvailabilityDetail> convertToCommunityHallAvailabilityResponse(
 			CommunityHallSlotSearchCriteria criteria, List<CommunityHallSlotAvailabilityDetail> availabiltityDetails) {
 
-		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsResponse = new ArrayList<CommunityHallSlotAvailabilityDetail>();
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsList = new ArrayList<CommunityHallSlotAvailabilityDetail>();
 		LocalDate startDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingStartDate());
 
 		LocalDate endDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingEndDate());
@@ -279,18 +344,18 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				hallCodes.addAll(criteria.getHallCodes());
 			}
 			hallCodes.stream().forEach(data -> {
-				availabiltityDetailsResponse.add(createCommunityHallSlotAvailabiltityDetail(criteria, date, data));
+				availabiltityDetailsList.add(createCommunityHallSlotAvailabiltityDetail(criteria, date, data));
 			});
 		});
 
 		//Setting hall status to booked if it is already booked by checking in the database entry
-		availabiltityDetailsResponse.stream().forEach(detail -> {
+		availabiltityDetailsList.stream().forEach(detail -> {
 			if (availabiltityDetails.contains(detail)) {
 				detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
 			}
 		});
-
-		return availabiltityDetailsResponse;
+		
+		return availabiltityDetailsList;
 	}
 
 	private CommunityHallSlotAvailabilityDetail createCommunityHallSlotAvailabiltityDetail(
