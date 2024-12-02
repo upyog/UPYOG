@@ -287,7 +287,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			throw new CustomException("INVALID_HALL_CODE",
 					"Invalid hall code provided for slot search");
 		}
-
+		log.info("criteria : {}" , criteria);
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
@@ -295,7 +295,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsList = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
 		
-		Long timerValue =  null;
+		Long timerValue =  0l;
 				
 		if(criteria.getIsTimerRequired()) {
 			 timerValue =  bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
