@@ -29,34 +29,33 @@ public class EmailUtil {
     @Autowired
     private ExcelUtil excelUtil;
 
-
-    public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, Map<String,Map<String, Object>> stateList) throws IOException {
+    public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, Map<String, Map<String, Object>> stateList) throws IOException {
 
         LocalDate yesterday = LocalDate.now().minusDays(1);
         String formattedDate = yesterday.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-
         List<Attachments> attachmentsList = excelUtil.generateExcelFiles(stateList);
+
+
         List<EmailRequest> emailRequestList = new LinkedList<>();
-        for (Map.Entry<String, Map<String,Object>> entry : stateList.entrySet()) {
-            Map<String,Object> officerInfo = entry.getValue();
+        for (Map.Entry<String, Map<String, Object>> entry : stateList.entrySet()) {
+            Map<String, Object> officerInfo = entry.getValue();
             String stateName = entry.getKey();
             String email = (String) officerInfo.get("email");
             String nodalOfficer = (String) officerInfo.get("nodalOfficer");
 
-            Attachments stateexcel = attachmentsList.stream()
-                    .filter(attachments -> attachments.getFileName().equals(stateName+ ".xlsx"))
+            Attachments stateExcel = attachmentsList.stream()
+                    .filter(attachments -> attachments.getFileName().equals(stateName + ".xlsx"))
                     .findFirst()
                     .orElse(null);
 
             String subject = stateName + " : Data Ingestion Issue on UMEED National Dashboard";
             String body = String.format(
                     "<p>Dear " + nodalOfficer + " ,<br><br></p>" +
-                            "<p>We have observed that data from " + stateName + " has not been ingested onto the UMEED National Dashboard on " + formattedDate +".</p>" +
+                            "<p>We have observed that data from " + stateName + " has not been ingested onto the UMEED National Dashboard on " + formattedDate + ".</p>" +
                             "<p>This data gap is hindering our ability to monitor urban performance and make informed decisions. " +
                             "We kindly request you to take immediate action to resolve the issue and ensure timely data ingestion.</p>" +
-                            "<p>Please coordinate with your technical team to identify/rectify the root cause of the problem.</p>" +
-                            "<p>If you need technical assistance or support, please contact the NUDM-NIUA technical team.</p>" +
+                            "<p>Please coordinate with your technical team to identify/rectify the root cause of the problem. If you need technical assistance or support, please contact the NUDM-NIUA technical team.</p>" +
                             "<p>We appreciate your prompt attention to this matter.<br><br></p>" +
                             "<p>Warm Regards,<br>" +
                             "National Urban Digital Mission, Centre for Digital Governance<br>" +
@@ -64,29 +63,40 @@ public class EmailUtil {
                             "Email: cdg-contact@niua.org | niua.in/cdg/Home<br>" +
                             "Core 4B, 1st and 2nd Floor, India Habitat Centre, Lodhi Road | New Delhi - 110003</p>"
             );
-            Email emailObj = Email.builder()
-                    .emailTo(Collections.singleton(email))
-                    .isHTML(true)
-                    .body(body)
-                    .subject(subject)
-                    .attachments(stateexcel != null ? Collections.singletonList(stateexcel): null)
-                    .build();
+
+            // Add attachment if found
+            List<Attachments> emailAttachments = new ArrayList<>();
+            if (stateExcel != null) {
+                Attachments attachment = new Attachments();
+                attachment.setFileName(stateExcel.getFileName());
+                attachment.setContent(stateExcel.getContent()); // byte[]
+                attachment.setContentType(stateExcel.getContentType());
+                emailAttachments.add(attachment);
+            }
+
+            Email emailObj = new Email();
+            emailObj.setEmailTo(Collections.singleton(email));
+            emailObj.setHTML(true);
+            emailObj.setBody(body);
+            emailObj.setSubject(subject);
+            if (!emailAttachments.isEmpty()) {
+                emailObj.setAttachments(emailAttachments); // Add attachments to the email
+            }
 
             EmailRequest emailRequest = new EmailRequest(requestInfo, emailObj);
             emailRequestList.add(emailRequest);
         }
         return emailRequestList;
     }
-    public void sendEmail(RequestInfo requestInfo, Map<String, Map<String,Object>> stateList) throws IOException {
+
+    public void sendEmail(RequestInfo requestInfo, Map<String, Map<String, Object>> stateList) throws IOException {
         List<EmailRequest> emailRequestList = createEmailRequest(requestInfo, stateList);
 
         for (EmailRequest emailRequest : emailRequestList) {
             producer.push(appProp.getEmailNotifTopic(), emailRequest);
-            log.info("Email Request -> " + emailRequest.toString());
+            log.info("Email Request -> {}", emailRequest);
             log.info("EMAIL notification sent!");
-
         }
     }
+
 }
-
-
