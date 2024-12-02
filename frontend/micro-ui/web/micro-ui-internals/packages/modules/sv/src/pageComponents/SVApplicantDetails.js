@@ -488,7 +488,6 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
 
     Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
-      console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
     })
     .catch(error=>{
@@ -599,7 +598,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
                   render={(props) => (
                     <Dropdown
                       className="form-field"
-                      style={{width:"140%"}}
+                      style={{width:"100%"}}
                       selected={field?.userCategory}
                       select={(e) => selectownertype(index, e)}
                       option={category_Options}

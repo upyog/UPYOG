@@ -10,13 +10,17 @@ import { Link } from "react-router-dom";
 const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
 
     const isMobile = window.Digit.Utils.browser.isMobile();
+    const todaydate = new Date();
+    const today = todaydate.toISOString().split("T")[0];
     const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
         defaultValues: {
             offset: 0,
             limit: !isMobile && 10,
             sortBy: "commencementDate",
             sortOrder: "DESC",
-            isDraftApplication:"false"
+            isDraftApplication:"false",
+            fromDate: today,
+            toDate: today
         }
     })
 
@@ -27,7 +31,9 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
         register("isDraftApplication", "false")
-    }, [register])
+        setValue("fromDate", today);
+        setValue("toDate", today);
+    }, [register, setValue, today])
 
 
     // hook for fetching vending type data
@@ -55,23 +61,6 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     vendingZone && vendingZone.map((zone) => {
         vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
     })
-
-
-    // Maybe need to use later
-    //   const applicationStatuses = [
-    //       {
-    //           code: "ACTIVE",
-    //           i18nKey: "WF_SV_ACTIVE"
-    //       },
-    //       {
-    //           code: "INACTIVE",
-    //           i18nKey: "WF_SV_INACTIVE"
-    //       },
-    //       {
-    //           code: "INWORKFLOW",
-    //           i18nKey: "WF_SV_INWORKFLOW"
-    //       },
-    //   ]
 
     const stateId = Digit.ULBService.getStateId();
 
@@ -239,7 +228,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 <SearchField>
                     <label>{t("SV_FROM_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
                         name="fromDate"
                         control={control}
                     />
@@ -247,7 +236,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 <SearchField>
                     <label>{t("SV_TO_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
                         name="toDate"
                         control={control}
                     />
@@ -262,10 +251,8 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                                 applicationNumber: "",
                                 fromDate: "",
                                 toDate: "",
-                                petType: "",
                                 mobileNumber: "",
                                 status: "",
-                                breedType: "",
                                 offset: 0,
                                 limit: 10,
                                 sortBy: "commencementDate",

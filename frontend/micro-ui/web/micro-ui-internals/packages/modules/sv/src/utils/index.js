@@ -329,7 +329,7 @@ export const svPayloadData = (data) =>{
     cartLongitude: 0,
     certificateNo: null,
     disabilityStatus: data?.specialCategoryData?.ownerCategory?.code,
-    draftid:draftID?.SVDetail?.draftId||"",
+    draftId:draftID?.SVDetail?.draftId||"",
     documentDetails: transformDocuments(data?.documents?.documents),
     localAuthorityName: data?.businessDetails?.nameOfAuthority,
     tenantId: data?.tenantId,

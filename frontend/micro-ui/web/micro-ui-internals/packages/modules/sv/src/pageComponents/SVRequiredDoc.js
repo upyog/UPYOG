@@ -3,13 +3,18 @@ import React, { useEffect } from "react";
 import { stringReplaceAll } from "../utils";
 
 
-const SVRequiredDoc = ({ t,onSelect,}) => {
+const SVRequiredDoc = ({ t, config, onSelect, userType, formData }) => {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
   
  
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.sv.useSVDoc(stateId, "StreetVending", "Documents");
   let docs = Documentsob?.StreetVending?.Documents;
+  function onSave() {}
+  function goNext() {
+    onSelect();
+  }
 
   return (
     <React.Fragment>
@@ -40,9 +45,6 @@ const SVRequiredDoc = ({ t,onSelect,}) => {
                   ))
               : null}
           </div>
-        </div>
-        <div>
-          <CardText className={"primaryColor"}>{t('SV_SPECIAL_CATEGORY_NOTES')}</CardText>
         </div>
         <span>
           <SubmitBar label={t("COMMON_NEXT")} onSubmit={onSelect} />

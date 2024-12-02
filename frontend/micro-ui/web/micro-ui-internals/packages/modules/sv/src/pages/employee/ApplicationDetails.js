@@ -114,7 +114,6 @@ const ApplicationDetails = () => {
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
-
   const printId = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { SVDetail: [applicationDetails?.applicationData?.applicationData] }, "svidentitycard");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
@@ -126,13 +125,12 @@ const ApplicationDetails = () => {
       label: t("SV_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-
+    
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("SV_ID_CARD"),
       onClick: () => printId(),
     });
-
   
   return (
     <div>

@@ -10,23 +10,23 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
   const { pathname } = useLocation();
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  const [pincode, setPincode] = useState(previousData?.addressDetails?.[0]?.pincode||editdata?.addressDetails?.[0]?.pincode||formData?.address?.pincode || "");
-  const [city, setCity] = useState(convertToObject(previousData?.addressDetails?.[0]?.city||editdata?.addressDetails?.[0]?.city)||formData?.address?.city || "");
-  const [locality, setLocality] = useState(convertToObject(previousData?.addressDetails?.[0]?.locality||editdata?.addressDetails?.[0]?.locality)||formData?.address?.locality || "");
-  const [houseNo, setHouseNo] = useState(previousData?.addressDetails?.[0]?.houseNo||editdata?.addressDetails?.[0]?.houseNo||formData?.address?.houseNo || "");
-  const [landmark, setLandmark] = useState(previousData?.addressDetails?.[0]?.landmark||editdata?.addressDetails?.[0]?.landmark||formData?.address?.landmark || "");
-  const [addressline1, setAddressline1] = useState(previousData?.addressDetails?.[0]?.addressLine1||editdata?.addressDetails?.[0]?.addressLine1||formData?.address?.addressline1 || "");
-  const [addressline2, setAddressline2] = useState(previousData?.addressDetails?.[0]?.addressLine2||editdata?.addressDetails?.[0]?.addressLine2||formData?.address?.addressline2 || "");
+  const [pincode, setPincode] = useState(formData?.address?.pincode ||previousData?.addressDetails?.[0]?.pincode||editdata?.addressDetails?.[0]?.pincode|| "");
+  const [city, setCity] = useState(formData?.address?.city || convertToObject(previousData?.addressDetails?.[0]?.city||editdata?.addressDetails?.[0]?.city)|| "");
+  const [locality, setLocality] = useState(formData?.address?.locality || convertToObject(previousData?.addressDetails?.[0]?.locality||editdata?.addressDetails?.[0]?.locality)|| "");
+  const [houseNo, setHouseNo] = useState(formData?.address?.houseNo || previousData?.addressDetails?.[0]?.houseNo||editdata?.addressDetails?.[0]?.houseNo|| "");
+  const [landmark, setLandmark] = useState(formData?.address?.landmark || previousData?.addressDetails?.[0]?.landmark||editdata?.addressDetails?.[0]?.landmark|| "");
+  const [addressline1, setAddressline1] = useState(formData?.address?.addressline1 || previousData?.addressDetails?.[0]?.addressLine1||editdata?.addressDetails?.[0]?.addressLine1|| "");
+  const [addressline2, setAddressline2] = useState(formData?.address?.addressline2 || previousData?.addressDetails?.[0]?.addressLine2||editdata?.addressDetails?.[0]?.addressLine2|| "");
 
   // states for the correspondence address input fields
-  const [cpincode, setCPincode] = useState(previousData?.addressDetails?.[1]?.pincode||editdata?.addressDetails?.[1]?.pincode||formData?.correspondenceAddress?.cpincode || "");
-  const [ccity, setCCity] = useState(convertToObject(previousData?.addressDetails?.[1]?.city||editdata?.addressDetails?.[1]?.city)||formData?.correspondenceAddress?.ccity || "");
-  const [clocality, setCLocality] = useState(convertToObject(previousData?.addressDetails?.[1]?.locality||editdata?.addressDetails?.[1]?.locality)||formData?.correspondenceAddress?.clocality || "");
-  const [chouseNo, setCHouseNo] = useState(previousData?.addressDetails?.[1]?.houseNo||editdata?.addressDetails?.[1]?.houseNo||formData?.correspondenceAddress?.chouseNo || "");
-  const [clandmark, setCLandmark] = useState(previousData?.addressDetails?.[1]?.landmark||editdata?.addressDetails?.[1]?.landmark||formData?.correspondenceAddress?.clandmark || "");
-  const [caddressline1, setCAddressline1] = useState(previousData?.addressDetails?.[1]?.addressLine1||editdata?.addressDetails?.[1]?.addressLine1||formData?.correspondenceAddress?.caddressline1 || "");
-  const [caddressline2, setCAddressline2] = useState(previousData?.addressDetails?.[1]?.addressLine2||editdata?.addressDetails?.[1]?.addressLine2||formData?.correspondenceAddress?.caddressline2 || "");
-  const [isAddressSame, setIsAddressSame] = useState(previousData?.addressDetails?.[1]?.isAddressSame||editdata?.addressDetails?.[1]?.isAddressSame||formData?.correspondenceAddress?.isAddressSame || false)
+  const [cpincode, setCPincode] = useState(formData?.correspondenceAddress?.cpincode || previousData?.addressDetails?.[1]?.pincode||editdata?.addressDetails?.[1]?.pincode|| "");
+  const [ccity, setCCity] = useState(formData?.correspondenceAddress?.ccity || convertToObject(previousData?.addressDetails?.[1]?.city||editdata?.addressDetails?.[1]?.city)|| "");
+  const [clocality, setCLocality] = useState(formData?.correspondenceAddress?.clocality || convertToObject(previousData?.addressDetails?.[1]?.locality||editdata?.addressDetails?.[1]?.locality)|| "");
+  const [chouseNo, setCHouseNo] = useState(formData?.correspondenceAddress?.chouseNo || previousData?.addressDetails?.[1]?.houseNo||editdata?.addressDetails?.[1]?.houseNo|| "");
+  const [clandmark, setCLandmark] = useState(formData?.correspondenceAddress?.clandmark || previousData?.addressDetails?.[1]?.landmark||editdata?.addressDetails?.[1]?.landmark|| "");
+  const [caddressline1, setCAddressline1] = useState(formData?.correspondenceAddress?.caddressline1 || previousData?.addressDetails?.[1]?.addressLine1||editdata?.addressDetails?.[1]?.addressLine1|| "");
+  const [caddressline2, setCAddressline2] = useState(formData?.correspondenceAddress?.caddressline2 || previousData?.addressDetails?.[1]?.addressLine2||editdata?.addressDetails?.[1]?.addressLine2|| "");
+  const [isAddressSame, setIsAddressSame] = useState(formData?.correspondenceAddress?.isAddressSame || previousData?.addressDetails?.[1]?.isAddressSame||editdata?.addressDetails?.[1]?.isAddressSame|| false)
 
   const { control } = useForm();
   const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
@@ -350,7 +350,6 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
 
     Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
-      console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
     })
     .catch(error=>{
@@ -398,7 +397,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!city || !houseNo || !locality || !addressline1 || !addressline2}
+        isDisabled={!city || !houseNo || !locality || !addressline1 || !addressline2 || !pincode}
       >
         <div>
           <CardLabel>{`${t("SV_HOUSE_NO")}`} <span className="astericColor">*</span></CardLabel>
@@ -518,7 +517,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
               />
             )}
           />
-          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`}</CardLabel>
+          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type="tel"
@@ -531,7 +530,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
             style={inputStyles}
             ValidationRequired={true}
             validation={{
-              required: false,
+              required: true,
               pattern: "^[0-9]{6}$",
               type: "tel",
               title: t("SV_ADDRESS_PINCODE_INVALID"),
@@ -551,7 +550,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!ccity || !chouseNo || !clocality || !caddressline1 || !caddressline2}
+        isDisabled={!ccity || !chouseNo || !clocality || !caddressline1 || !caddressline2 || !cpincode}
       >
         <div>
           {/* <CardHeader>{`${t("SV_CORRESPONDENCE_ADDRESS_HEADER")}`}</CardHeader> */}
@@ -680,7 +679,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
               />
             )}
           />
-          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`}</CardLabel>
+          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type="tel"
@@ -693,8 +692,8 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
             ValidationRequired={true}
             validation={{
-              required: false,
-              pattern: "^[0-9]{0,6}+$",
+              required: true,
+              pattern: "^[0-9]{6}$",
               type: "tel",
               title: t("SV_ADDRESS_PINCODE_INVALID"),
             }}
