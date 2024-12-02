@@ -154,9 +154,10 @@ console.log("appl", applicationDetails)
         name: checkpoint?.assignes?.[0]?.name,
         wfComment: checkpoint?.wfComment,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        thumbnailsToShow: checkpoint?.thumbnailsToShow
       };
       
-      return <TLCaption data={caption} />;
+      return <TLCaption data={caption} OpenImage={OpenImage}/>;
     }
   };
 
