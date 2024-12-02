@@ -12,10 +12,12 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
     tenantId: application?.tenantId,
     filters: {
+      bookingId:application?.bookingId,
       communityHallCode: application?.communityHallCode,
       bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
       bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
       hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+      isTimerRequired:true
     },
     enabled: false, // Disable automatic refetch
   });
@@ -34,6 +36,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
     }
   };
   const handleMakePayment = async () => {
+    try {
     const result = await refetch();
     const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
       (slot) => slot.slotStaus === "BOOKED"
@@ -44,8 +47,11 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
     } else {
       history.push({
         pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
-        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo },
+        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue },
       });
+    }
+  } catch (error) {
+    setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
   };
   useEffect(() => {
