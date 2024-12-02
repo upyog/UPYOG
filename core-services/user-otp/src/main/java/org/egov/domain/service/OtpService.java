@@ -77,6 +77,7 @@ public class OtpService {
         try {
             final String otpNumber = otpRepository.fetchOtp(otpRequest);
             otpRequest.setMobileNumber(matchingUser.getMobileNumber());
+            otpRequest.setTemplateId(registrationSmsTemplateId);
             otpSMSSender.send(otpRequest, otpNumber);
             otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
         } catch (Exception e) {

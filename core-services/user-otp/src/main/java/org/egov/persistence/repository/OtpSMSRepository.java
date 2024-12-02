@@ -48,7 +48,7 @@ public class OtpSMSRepository {
     public void send(OtpRequest otpRequest, String otpNumber) {
 		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
 		final String message = getMessage(otpNumber, otpRequest);
-        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime,"templateId"));
+        kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime,otpRequest.getTemplateId()));
     }
     
     public void sendNew(OtpRequest otpRequest, String otpNumber) {
@@ -70,19 +70,29 @@ public class OtpSMSRepository {
             
            String registerOtpMsg =  "OTP for registering your property with the concerned "
            		+ "Municipality is %s. Please use this code within the next 10 minutes "
-           		+ "to complete your Registration Process. Thank you!MMPTBhttps://www.propertytax.mn.gov.in";
+           		+ "to complete your Registration Process. Thank you!MMPTB https://www.propertytax.mn.gov.in";
+           
+           String loginOtpMsg =  "OTP for login to your concerned "
+              		+ "Municipality is %s. Please use this code within the next 10 minutes "
+              		+ "to complete your Registration Process. Thank you!MMPTBhttps://www.propertytax.mn.gov.in";
+           
+           String resetOtpMsg =  "OTP for resseting your password with the concerned "
+              		+ "Municipality is %s. Please use this code within the next 10 minutes "
+              		+ "to complete your Registration Process. Thank you!MMPTB https://www.propertytax.mn.gov.in";
+           
             localisedMsgs.put(LOCALIZATION_KEY_REGISTER_SMS,registerOtpMsg );
-            localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS, "Dear Citizen, Your Login OTP is %s.");
-            localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS, "Dear Citizen, Your OTP for recovering password is %s.");
+            localisedMsgs.put(LOCALIZATION_KEY_LOGIN_SMS, registerOtpMsg);
+            localisedMsgs.put(LOCALIZATION_KEY_PWD_RESET_SMS,registerOtpMsg );
         }
         String message = null;
 
-        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType() || otpRequest.isOwnerValidate())
+        if (otpRequest.isRegistrationRequestType()|| otpRequest.isOwnerValidate())
             message = localisedMsgs.get(LOCALIZATION_KEY_REGISTER_SMS);
-        //else if (otpRequest.isLoginRequestType())
-           // message = localisedMsgs.get(LOCALIZATION_KEY_LOGIN_SMS);
+        else if (otpRequest.isLoginRequestType())
+            message = localisedMsgs.get(LOCALIZATION_KEY_LOGIN_SMS);
+        
         else
-            message = localisedMsgs.get(LOCALIZATION_KEY_PWD_RESET_SMS);
+            message = localisedMsgs.get(LOCALIZATION_KEY_PWD_RESET_SMS);//LOCALIZATION_KEY_PWD_RESET_SMS NO TEMLATE PROVIDED
 
         return message;
     }
