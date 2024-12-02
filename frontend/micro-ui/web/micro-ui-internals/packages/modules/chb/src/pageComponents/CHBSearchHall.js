@@ -83,7 +83,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
       communityHallCode:Searchdata.communityHallCode,
       bookingStartDate:Searchdata.bookingStartDate,
       bookingEndDate:Searchdata.bookingEndDate,
-      hallCode:Searchdata.hallCode
+      hallCode:Searchdata.hallCode,
+      isTimerRequired:false,
     }
   });
 
