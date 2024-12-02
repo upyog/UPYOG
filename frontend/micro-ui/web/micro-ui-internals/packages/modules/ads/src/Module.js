@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard,PTIcon } from "@upyog/digit-ui-react-components";
+import { Header, CitizenHomeCard,CHBIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -82,7 +82,7 @@ export const ADSLinks = ({ matchPath, userType }) => {
 
   const links = [];
 
-  return <CitizenHomeCard header={t("ADVERTISEMENT_MODULE")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("ADVERTISEMENT_MODULE")} links={links} Icon={() => <CHBIcon className="fill-path-primary-main" />} />;
 };
 
 export const ADSComponents = {

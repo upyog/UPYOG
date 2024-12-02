@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard,PTIcon } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard,CHBIcon } from "@upyog/digit-ui-react-components";
 
 
 // Component to render the ADS module card with relevant links and access control for employee side
@@ -28,7 +28,7 @@ const ADSCard = () => {
   ]
   const ADS_CEMP = Digit.UserService.hasAccess(["ADS_CEMP"]) || false;
   const propsForModuleCard = {
-    Icon: <PTIcon/>,
+    Icon: <CHBIcon/>,
     moduleName: t("ADS_ADVERTISEMENT_MODULE"),
     
     links:links.filter(link=>!link?.role||ADS_CEMP),

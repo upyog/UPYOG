@@ -80,7 +80,7 @@ const EmployeeApp = ({ path, url, userType }) => {
               />
             )}
           /> */}
-          <PrivateRoute path={`${path}/bookHall`} component={() => <CHBCreate parentUrl={url} />} />
+          <PrivateRoute path={`${path}/bookHall`} component={CHBCreate} />
           {/* <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} /> */}
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
