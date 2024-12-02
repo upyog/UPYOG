@@ -198,7 +198,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
         name: bill.payerName,
         mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
     } 
-    else if (businessService === "adv-services") {
+    else if (businessService === "adv-services" || businessService==="chb-services") {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
         paymentAmount, 
         tenantId: billDetails.tenantId, 
@@ -234,7 +234,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
             keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
             note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
           />
-          {businessService === "adv-services" && (
+          {(businessService === "adv-services" || businessService === "chb-services") && (
             <CardSubHeader 
               style={{ 
                 textAlign: 'right', 
