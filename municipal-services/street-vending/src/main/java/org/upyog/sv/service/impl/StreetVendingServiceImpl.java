@@ -77,11 +77,11 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 	@Override
 	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
 			StreetVendingSearchCriteria streetVendingSearchCriteria) {
-		List<StreetVendingDetail> applications = streetVendingRepository
-				.getStreetVendingApplications(streetVendingSearchCriteria);
+		
 		if (streetVendingSearchCriteria.getMobileNumber() != null) {
 			VendorDetail applicantDetail = VendorDetail.builder()
-					.mobileNo(streetVendingSearchCriteria.getMobileNumber()).build();
+					.mobileNo(streetVendingSearchCriteria.getMobileNumber())
+					.dob("1985-02-01").build(); //TODO to remove dob from here 
 			
 			List<VendorDetail> vendorDetails = new ArrayList<>();
 			vendorDetails.add(applicantDetail);
@@ -99,6 +99,8 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 			log.info("Loading data based on criteria after encrypting mobile number: {}", streetVendingSearchCriteria);
 		}
+		List<StreetVendingDetail> applications = streetVendingRepository
+				.getStreetVendingApplications(streetVendingSearchCriteria);
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
