@@ -397,7 +397,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!city || !houseNo || !locality || !addressline1 || !addressline2}
+        isDisabled={!city || !houseNo || !locality || !addressline1 || !addressline2 || !pincode}
       >
         <div>
           <CardLabel>{`${t("SV_HOUSE_NO")}`} <span className="astericColor">*</span></CardLabel>
@@ -517,7 +517,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
               />
             )}
           />
-          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`}</CardLabel>
+          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type="tel"
@@ -530,7 +530,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
             style={inputStyles}
             ValidationRequired={true}
             validation={{
-              required: false,
+              required: true,
               pattern: "^[0-9]{6}$",
               type: "tel",
               title: t("SV_ADDRESS_PINCODE_INVALID"),
@@ -550,7 +550,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!ccity || !chouseNo || !clocality || !caddressline1 || !caddressline2}
+        isDisabled={!ccity || !chouseNo || !clocality || !caddressline1 || !caddressline2 || !cpincode}
       >
         <div>
           {/* <CardHeader>{`${t("SV_CORRESPONDENCE_ADDRESS_HEADER")}`}</CardHeader> */}
@@ -679,7 +679,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
               />
             )}
           />
-          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`}</CardLabel>
+          <CardLabel>{`${t("SV_ADDRESS_PINCODE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type="tel"
@@ -692,8 +692,8 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
             ValidationRequired={true}
             validation={{
-              required: false,
-              pattern: "^[0-9]{0,6}+$",
+              required: true,
+              pattern: "^[0-9]{6}$",
               type: "tel",
               title: t("SV_ADDRESS_PINCODE_INVALID"),
             }}

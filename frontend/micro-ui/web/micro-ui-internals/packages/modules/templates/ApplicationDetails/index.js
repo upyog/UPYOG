@@ -47,7 +47,8 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails
+    clearDataDetails,
+    isAction=false
   } = props;
   
   useEffect(() => {
@@ -237,6 +238,7 @@ const ApplicationDetails = (props) => {
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
+            isAction={isAction} // isAction is added to enable or disable the action bar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}
