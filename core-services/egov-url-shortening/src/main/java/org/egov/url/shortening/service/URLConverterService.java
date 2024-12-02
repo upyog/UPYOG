@@ -167,29 +167,33 @@ public class URLConverterService {
                 if(uuid != null)
                     data.put("user",uuid);
             }
-            String  tag = params.get("tag");
-            if(tag.equalsIgnoreCase("billPayment")){
-                String businessService = params.get("businessService");
-                if(businessService.equalsIgnoreCase("PT"))
-                    data.put("tag", "Property Bill Payment");
-                if(businessService.equalsIgnoreCase("WS"))
-                    data.put("tag", "Water and Sewerage Bill Payment");
+            String tag = params.get("tag");
+            if (tag != null) {  
+                if (tag.equalsIgnoreCase("billPayment")) {
+                    String businessService = params.get("businessService");
+                    if (businessService != null) {  
+                        if (businessService.equalsIgnoreCase("PT")) {
+                            data.put("tag", "Property Bill Payment");
+                        } else if (businessService.equalsIgnoreCase("WS")) {
+                            data.put("tag", "Water and Sewerage Bill Payment");
+                        }
+                    }
+                } else if (tag.equalsIgnoreCase("complaintTrack")) {
+                    data.put("tag", "Complaint tracking");
+                } else if (tag.equalsIgnoreCase("propertyOpenSearch")) {
+                    data.put("tag", "Property Open Search");
+                } else if (tag.equalsIgnoreCase("wnsOpenSearch")) {
+                    data.put("tag", "Water and Sewerage Open Search");
+                } else if (tag.equalsIgnoreCase("smsOnboarding")) {
+                    data.put("tag", "SMS Onboarding");
+                } else {
+                    data.put("tag", "Unidentified link");
+                }
+            } else {
+                
+                data.put("tag", "No tag provided");
             }
-            else if(tag.equalsIgnoreCase("complaintTrack")){
-                data.put("tag", "Compliant tracking");
-            }
-            else if(tag.equalsIgnoreCase("propertyOpenSearch")){
-                data.put("tag", "Property Open Search");
-            }
-            else if(tag.equalsIgnoreCase("wnsOpenSearch")){
-                data.put("tag", "Water and Sewerage Open Search");
-            }
-            else if(tag.equalsIgnoreCase("smsOnboarding")){
-                data.put("tag", "SMS Onboarding");
-            }
-            else{
-                data.put("tag", "Unidentified link");
-            }
+
 
             producer.push(kafkaTopic,data);
 
