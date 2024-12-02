@@ -45,62 +45,21 @@ public class BillGeneratorController {
 
 	@Autowired
 	private BillGenerationValidator billGenerationValidator;
-	
+
 	@Autowired
 	private SewerageCalculatorDao sewerageCalculatorDao;
-	
+
 	@PostMapping("/scheduler/_create")
 	public ResponseEntity<BillSchedulerResponse> billSchedulerCreate(
 			@Valid @RequestBody BillGenerationRequest billGenerationReq) {
-		
-		
-		BillSchedulerResponse response=new BillSchedulerResponse();
-		List<BillScheduler> billDetails1 = new ArrayList<BillScheduler>();
-		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
-		String isBatch=billGenerationReq.getBillScheduler().getIsBatch();
-        	log.info("isBatch value"+isBatch);
-        	boolean batchBilling=false;
-        	if(StringUtils.isBlank(isBatch))
-        		isBatch="false";
-        			
-		if(isBatch.equals("true")) {
-			batchBilling = true;
-		}
-        	if(batchBilling) {		
-			List<String> listOfLocalities = sewerageCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
-			for(String localityName : listOfLocalities) {		
-				billGenerationReq.getBillScheduler().setLocality(localityName);			
-				boolean localityStatus = billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-				if(!localityStatus) {
-				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-				}
-				billDetails1.addAll(billDetails);
-		}
-		}else {
-					billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-				    billDetails1.addAll(billDetails);
-		}
-		 response = BillSchedulerResponse.builder().billSchedulers(billDetails1)
-				.responseInfo(
-						responseInfoFactory.createResponseInfoFromRequestInfo(billGenerationReq.getRequestInfo(), true))
-				.build();
+
+		BillSchedulerResponse response = new BillSchedulerResponse();
+		 response = BillSchedulerResponse.builder().billSchedulers( billGeneratorService.bulkbillgeneration(billGenerationReq) )
+					.responseInfo(
+							responseInfoFactory.createResponseInfoFromRequestInfo(billGenerationReq.getRequestInfo(), true))
+					.build();
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
-		
-		
-		
-		
-		
-		/*
-		 * billGenerationValidator.validateBillingCycleDates(billGenerationReq,
-		 * billGenerationReq.getRequestInfo()); List<BillScheduler> billDetails =
-		 * billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-		 * BillSchedulerResponse response =
-		 * BillSchedulerResponse.builder().billSchedulers(billDetails) .responseInfo(
-		 * responseInfoFactory.createResponseInfoFromRequestInfo(billGenerationReq.
-		 * getRequestInfo(), true)) .build(); return new ResponseEntity<>(response,
-		 * HttpStatus.CREATED);
-		 */
+
 	}
 
 	@PostMapping("/scheduler/_search")
