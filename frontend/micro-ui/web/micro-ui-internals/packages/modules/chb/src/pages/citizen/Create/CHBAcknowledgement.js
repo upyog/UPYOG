@@ -1,8 +1,7 @@
 import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
-import getChbAcknowledgementData from "../../../getChbAcknowledgementData";
+import { Link, useRouteMatch,useHistory } from "react-router-dom";
 import { CHBDataConvert } from "../../../utils";
 
 const GetActionMessage = (props) => {
@@ -35,13 +34,45 @@ const BannerPicker = (props) => {
 
 const CHBAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
-
+  const history = useHistory();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
   const user = Digit.UserService.getUser().info;
+  const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
+    tenantId:tenantId,
+    filters: {
+      bookingId:mutation.data?.hallsBookingApplication[0].bookingId,
+      communityHallCode: mutation.data?.hallsBookingApplication[0].communityHallCode,
+      bookingStartDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.bookingDate,
+      bookingEndDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[mutation.data?.hallsBookingApplication[0].bookingSlotDetails.length - 1]?.bookingDate,
+      hallCode:mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.hallCode,
+      isTimerRequired:true,
+    },
+    enabled: false, // Disable automatic refetch
+  });
+
+  const handleMakePayment = async () => {
+    try{
+    const result = await refetch();
+    const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
+      (slot) => slot.slotStaus === "BOOKED"
+    );
+
+    if (isSlotBooked) {
+      setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
+    } else {
+      history.push({
+        pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
+        state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue },
+      });
+    }
+  }catch (error) {
+    setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+  }
+  };
   useEffect(() => {
     try {
       data.tenantId = tenantId;
@@ -51,16 +82,6 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
       });
     } catch (err) {}
   }, []);
-
-  const handleDownloadPdf = async () => {
-    const { hallsBookingApplication = [] } = mutation.data;
-    let Chb = (hallsBookingApplication && hallsBookingApplication[0]) || {};
-    const tenantInfo = tenants.find((tenant) => tenant.code === Chb.tenantId);
-    let tenantId = Chb.tenantId || tenantId;
-
-    const data = await getChbAcknowledgementData({ ...Chb }, tenantInfo, t);
-    Digit.Utils.pdf.generate(data);
-  };
 
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
@@ -78,18 +99,13 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
          {user.type==="CITIZEN" &&(<Link to={`/digit-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
-        {/* <SubmitBar
-          label={t("CHB_DOWNLOAD_ACK_FORM")}
-          onSubmit={handleDownloadPdf}
-        /> */}
         {user.type==="EMPLOYEE" &&(
          <Link to={`/digit-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
           </Link> )}
           {user.type==="CITIZEN" &&(
-        <Link to={`/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-        </Link>)}
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}/>
+        )}
       </div>
     )}
     {!mutation.isSuccess && user.type==="CITIZEN" &&(
