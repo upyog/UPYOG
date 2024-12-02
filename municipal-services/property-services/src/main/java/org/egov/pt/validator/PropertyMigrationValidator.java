@@ -33,30 +33,30 @@ import java.util.stream.Collectors;
 public class PropertyMigrationValidator {
 
 
-    @Autowired
-    private PropertyUtil propertyUtil;
+	@Autowired
+	private PropertyUtil propertyUtil;
 
-    @Autowired
-    private PropertyConfiguration configs;
-    
-    @Autowired
-    private PropertyService service;
-    
-    @Autowired
-    private ObjectMapper mapper;
+	@Autowired
+	private PropertyConfiguration configs;
+
+	@Autowired
+	private PropertyService service;
+
+	@Autowired
+	private ObjectMapper mapper;
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
-    
 
-    /**
-     * Validate the masterData and ctizenInfo of the given propertyRequest
-     * @param request PropertyRequest for create
-     */
+
+	/**
+	 * Validate the masterData and ctizenInfo of the given propertyRequest
+	 * @param request PropertyRequest for create
+	 */
 	public void validatePropertyCreateRequest(PropertyRequest request,Map<String, List<String>> masters,Map<String, String> errorMap) {
 
 		//Map<String, String> errorMap = new HashMap<>();
-		
+
 		List<Unit> units 		=	request.getProperty().getUnits();
 		List<OwnerInfo> owners 	=	request.getProperty().getOwners();
 
@@ -66,7 +66,7 @@ public class PropertyMigrationValidator {
 
 		if(CollectionUtils.isEmpty(request.getProperty().getOwners()))
 			throw new CustomException("OWNER INFO ERROR","Owners cannot be empty, please provide at least one owner information");
-		
+
 		/*if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);*/
 
@@ -87,47 +87,47 @@ public class PropertyMigrationValidator {
 		List<Unit> units = property.getUnits();
 
 		for (Unit unit : units) {
-			
+
 			ConstructionDetail consDtl = unit.getConstructionDetail();
-			
+
 			if (consDtl.getCarpetArea() != null && !property.getPropertyType().contains(PTConstants.PT_TYPE_VACANT)
 					&& consDtl.getCarpetArea().compareTo(consDtl.getBuiltUpArea()) >= 0)
 				errorMap.put("UNIT INFO ERROR ", "Carpet area cannot be greater or equal than builtUp area");
 		}
 	}
 
-    /**
-     * Validates if the fields in PropertyRequest are present in the MDMS master Data
-     *
-     * @param request PropertyRequest received for creating or update
-     *
-     */
-    private void validateMasterData(PropertyRequest request, Map<String, List<String>> codes,  Map<String,String> errorMap) {
-    	
-        Property property = request.getProperty();
+	/**
+	 * Validates if the fields in PropertyRequest are present in the MDMS master Data
+	 *
+	 * @param request PropertyRequest received for creating or update
+	 *
+	 */
+	private void validateMasterData(PropertyRequest request, Map<String, List<String>> codes,  Map<String,String> errorMap) {
+
+		Property property = request.getProperty();
 
 		validateInstitution(property, errorMap);
 
-		
+
 		if (null != codes) {
 			validateCodes(property, codes, errorMap);
 		} else {
 			errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
 		}
 
-//        if (!errorMap.isEmpty()){
-//			throw new CustomException(errorMap);
-//		}
+		//        if (!errorMap.isEmpty()){
+		//			throw new CustomException(errorMap);
+		//		}
 
-    }
+	}
 
-    private void validateFields(PropertyRequest request, Map<String, String> errorMap) {
+	private void validateFields(PropertyRequest request, Map<String, String> errorMap) {
 
-    	Property property = request.getProperty();
-    	
-//    	if(configs.getIsWorkflowEnabled() && null == property.getWorkflow())
-//    		errorMap.put("EG_PR_WF_NOT_NULL", "Wokflow is enabled for create please provide the necessary info in workflow field in property");
-   	
+		Property property = request.getProperty();
+
+		//    	if(configs.getIsWorkflowEnabled() && null == property.getWorkflow())
+		//    		errorMap.put("EG_PR_WF_NOT_NULL", "Wokflow is enabled for create please provide the necessary info in workflow field in property");
+
 		if (property.getAddress().getGeoLocation() == null)
 			property.getAddress().setGeoLocation(new GeoLocation());
 
@@ -150,7 +150,7 @@ public class PropertyMigrationValidator {
 						+ configs.getMinumumLandArea() + " " + configs.getLandAreaUnit()+ "Current "+property.getLandArea());
 			}
 		}
-		
+
 		if (property.getPropertyType().contains(PTConstants.PT_TYPE_BUILTUP)) {
 
 			Long floors = property.getNoOfFloors();
@@ -160,25 +160,25 @@ public class PropertyMigrationValidator {
 						"No of floors cannot be null or lesser than value one in count for property of type : "
 								+ PTConstants.PT_TYPE_BUILTUP);
 			}
-			
+
 			if (property.getUsageCategory() == null)
 				errorMap.put("EG_PT_ERROR_USAGE",
 						"Usage Category is mandatory for for property of type : " + PTConstants.PT_TYPE_BUILTUP);
 		}
-    	
+
 	}
 
-    /**
-     *Checks if the codes of all fields are in the list of codes obtain from master data
-     *
-     * @param property property from PropertyRequest which are to validated
-     * @param codes Map of MasterData name to List of codes in that MasterData
-     * @param errorMap Map to fill all errors caught to send as custom Exception
-     * @return Error map containing error if existed
-     *
-     */
-    private static Map<String,String> validateCodes(Property property, Map<String,List<String>> codes, Map<String,String> errorMap){
-    	
+	/**
+	 *Checks if the codes of all fields are in the list of codes obtain from master data
+	 *
+	 * @param property property from PropertyRequest which are to validated
+	 * @param codes Map of MasterData name to List of codes in that MasterData
+	 * @param errorMap Map to fill all errors caught to send as custom Exception
+	 * @return Error map containing error if existed
+	 *
+	 */
+	private static Map<String,String> validateCodes(Property property, Map<String,List<String>> codes, Map<String,String> errorMap){
+
 		if (property.getPropertyType() != null && !codes.get(PTConstants.MDMS_PT_PROPERTYTYPE).contains(property.getPropertyType())) {
 			errorMap.put("Invalid PROPERTYTYPE", "The PropertyType '" + property.getPropertyType() + "' does not exists");
 		}
@@ -187,38 +187,40 @@ public class PropertyMigrationValidator {
 			errorMap.put("Invalid OWNERSHIPCATEGORY", "The OwnershipCategory '" + property.getOwnershipCategory() + "' does not exists");
 		}
 
-		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory())) {
-			errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
+
+		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory()) ) {
+			if(!codes.get(PTConstants.MDMS_PT_VACANTUSAGECATEGORY).contains(property.getUsageCategory()))
+				errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
 		}
-		
+
 		if (!CollectionUtils.isEmpty(property.getUnits()))
 			for (Unit unit : property.getUnits()) {
 
 				if (ObjectUtils.isEmpty(unit.getUsageCategory()) || unit.getUsageCategory() != null
 						&& !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(unit.getUsageCategory())) {
 					errorMap.put("INVALID USAGE CATEGORY ", "The Usage CATEGORY '" + unit.getUsageCategory()
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
+					+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
 				}
 
 				String constructionType = unit.getConstructionDetail().getConstructionType();
-				
+
 				if (!ObjectUtils.isEmpty(constructionType)
 						&& !codes.get(PTConstants.MDMS_PT_CONSTRUCTIONTYPE).contains(constructionType)) {
 					errorMap.put("INVALID CONSTRUCTION TYPE ", "The CONSTRUCTION TYPE '" + constructionType
 							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
 				}
-				
+
 				if (!ObjectUtils.isEmpty(unit.getOccupancyType())
 						&& !codes.get(PTConstants.MDMS_PT_OCCUPANCYTYPE).contains(unit.getOccupancyType())) {
 					errorMap.put("INVALID OCCUPANCYTYPE TYPE ", "The OCCUPANCYTYPE TYPE '" + unit.getOccupancyType()
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
+					+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
 				}
 
 			}
 
-//		if (!CollectionUtils.isEmpty(errorMap)){
-//			throw new CustomException(errorMap);
-//		}
+		//		if (!CollectionUtils.isEmpty(errorMap)){
+		//			throw new CustomException(errorMap);
+		//		}
 
 		for (OwnerInfo owner : property.getOwners()) {
 
@@ -231,45 +233,45 @@ public class PropertyMigrationValidator {
 
 		if(!CollectionUtils.isEmpty(property.getDocuments()) && property.getDocuments().contains(null))
 			errorMap.put("INVALID ENTRY IN PROPERTY DOCS", " The proeprty documents cannot contain null values");
-		
-		
-		
+
+
+
 
 		return errorMap;
 
 	}
 
-    /**
-     * Validates if MasterData is properly fetched for the given MasterData names
-     * @param masterNames
-     * @param codes
-     */
-    private void validateMDMSData(List<String> masterNames,Map<String,List<String>> codes){
-    	
-        Map<String,String> errorMap = new HashMap<>();
-        for(String masterName:masterNames){
-            if(CollectionUtils.isEmpty(codes.get(masterName))){
-                errorMap.put("MDMS DATA ERROR ","Unable to fetch "+masterName+" codes from MDMS");
-            }
-        }
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-    }
+	/**
+	 * Validates if MasterData is properly fetched for the given MasterData names
+	 * @param masterNames
+	 * @param codes
+	 */
+	private void validateMDMSData(List<String> masterNames,Map<String,List<String>> codes){
 
-    /**
-     * Validates if institution Object has null InstitutionType
-     * @param property PropertyRequest which is to be validated
-     * @param errorMap ErrorMap to catch and to throw error using CustomException
-     */
-    private void validateInstitution(Property property, Map<String,String> errorMap){
-    	
+		Map<String,String> errorMap = new HashMap<>();
+		for(String masterName:masterNames){
+			if(CollectionUtils.isEmpty(codes.get(masterName))){
+				errorMap.put("MDMS DATA ERROR ","Unable to fetch "+masterName+" codes from MDMS");
+			}
+		}
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
+	}
+
+	/**
+	 * Validates if institution Object has null InstitutionType
+	 * @param property PropertyRequest which is to be validated
+	 * @param errorMap ErrorMap to catch and to throw error using CustomException
+	 */
+	private void validateInstitution(Property property, Map<String,String> errorMap){
+
 		log.debug("contains check: " + property.getOwnershipCategory().contains("INSTITUTIONAL"));
-		
+
 		Institution institution = property.getInstitution();
-		
+
 		if(ObjectUtils.isEmpty(institution))
 			return;
-		
+
 		if (!property.getOwnershipCategory().contains("INSTITUTIONAL")) {
 
 			errorMap.put("INVALID INSTITUTION OBJECT",
@@ -278,12 +280,12 @@ public class PropertyMigrationValidator {
 		}
 
 
-				if (institution.getType() == null)
-					errorMap.put(" INVALID INSTITUTION OBJECT ", "The institutionType cannot be null ");
-				if (institution.getName() == null)
-					errorMap.put("INVALID INSTITUTION OBJECT", "Institution name cannot be null");
-				if (institution.getDesignation() == null)
-					errorMap.put("INVALID INSTITUTION OBJECT", "Designation cannot be null");
+		if (institution.getType() == null)
+			errorMap.put(" INVALID INSTITUTION OBJECT ", "The institutionType cannot be null ");
+		if (institution.getName() == null)
+			errorMap.put("INVALID INSTITUTION OBJECT", "Institution name cannot be null");
+		if (institution.getDesignation() == null)
+			errorMap.put("INVALID INSTITUTION OBJECT", "Designation cannot be null");
 	}
 
 
@@ -296,7 +298,7 @@ public class PropertyMigrationValidator {
 
 		Property property = request.getProperty();
 		List<OwnerInfo> owners = property.getOwners();
-		
+
 		if (!property.getOwnershipCategory().contains("INSTITUTIONAL")) {
 
 			owners.forEach(owner -> {
@@ -311,8 +313,8 @@ public class PropertyMigrationValidator {
 			});
 		}
 
-//		if (!errorMap.isEmpty())
-//			throw new CustomException(errorMap);
+		//		if (!errorMap.isEmpty())
+		//			throw new CustomException(errorMap);
 
 	}
 
@@ -362,9 +364,9 @@ public class PropertyMigrationValidator {
 		} else {
 			errorMap.put(ErrorConstants.MISSING_REQ_INFO_CODE, ErrorConstants.MISSING_REQ_INFO_MSG);
 		}
-//		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
-//			throw new CustomException(errorMap);
-//		}
+		//		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+		//			throw new CustomException(errorMap);
+		//		}
 
 	}
 
@@ -429,9 +431,9 @@ public class PropertyMigrationValidator {
 
 		}
 
-//		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
-//			throw new CustomException(errorMap);
-//		}
+		//		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+		//			throw new CustomException(errorMap);
+		//		}
 
 	}
 
@@ -451,9 +453,9 @@ public class PropertyMigrationValidator {
 				}
 			}
 		}
-//		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
-//			throw new CustomException(errorMap);
-//		}
+		//		if (!CollectionUtils.isEmpty(errorMap.keySet())) {
+		//			throw new CustomException(errorMap);
+		//		}
 
 	}
 
