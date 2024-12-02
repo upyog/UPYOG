@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel,Dropdown, LinkButton,Toast} from "@upyog/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 import GIS from "./GIS";
-import SVDayAndTimeSlot from "./SVDayAndTimeSlot";
 import Timeline from "../components/Timeline";
 import ApplicationTable from "../components/inbox/ApplicationTable";
 
@@ -24,9 +23,9 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
   const [areaRequired, setareaRequired] = useState(previousData?.vendingArea||editdata?.vendingArea||formData?.businessDetails?.areaRequired || "");
   const [nameOfAuthority, setnameOfAuthority] = useState(previousData?.localAuthorityName||editdata?.localAuthorityName||formData?.businessDetails?.nameOfAuthority || "");
   const [vendingLiscence, setvendingLiscence] = useState(previousData?.vendingLiscence||editdata?.vendingLiscence||formData?.businessDetails?.vendingLiscence || "");
-  const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
+  const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" }; 
   const [showToast, setShowToast] = useState(null);
-  const [isSameForAll, setIsSameForAll] = useState( previousData?.vendingOperationTimeDetails?.length===7||editdata?.vendingOperationTimeDetails?.length===7?true:false); // Flag to check if same for all days 
+  const [isSameForAll, setIsSameForAll] = useState( previousData?.vendingOperationTimeDetails?.length===7||editdata?.vendingOperationTimeDetails?.length===7?true:false || formData?.businessDetails?.isSameForAll); // Flag to check if same for all days 
   const [daysOfOperation, setDaysOfOperation] = useState( // Array to store selected days of operation
     formData?.businessDetails?.daysOfOperation || [
       { name: "Monday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[0]?.fromTime||editdata?.vendingOperationTimeDetails?.[0]?.fromTime||"", endTime: previousData?.vendingOperationTimeDetails?.[0]?.toTime||editdata?.vendingOperationTimeDetails?.[0]?.toTime||"" },
@@ -38,8 +37,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
       { name: "Sunday", isSelected: false, startTime: previousData?.vendingOperationTimeDetails?.[6]?.fromTime||editdata?.vendingOperationTimeDetails?.[6]?.fromTime||"", endTime:  previousData?.vendingOperationTimeDetails?.[6]?.toTime||editdata?.vendingOperationTimeDetails?.[6]?.toTime||"" },
     ]
   );
-  const [backupDays, setBackupDays] = useState([...daysOfOperation]); // Backup array to store original days of operation
-
+  const [backupDays, setBackupDays] = useState(formData?.businessDetails?.backupDays || [...daysOfOperation]); // Backup array to store original days of operation
 
   /* this checks two conditions:
    1. At least one day of the week is selected.
@@ -129,7 +127,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
       accessor: "startTime",
       Cell: ({ row }) => (
         <TextInput
-          style={{ width: "60%" }}
+          style={{ width: "126px" }}
           type="time"
           name="startTime"
           value={daysOfOperation[row.index]?.startTime || ""}
@@ -143,7 +141,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
       accessor: "endTime",
       Cell: ({ row }) => (
         <TextInput
-          style={{ width: "70%" }}
+          style={{ width: "128px" }}
           type="time"
           name="endTime"
           value={daysOfOperation[row.index]?.endTime || ""}
@@ -453,7 +451,6 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
 
     Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
-      console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
     })
     .catch(error=>{
@@ -472,7 +469,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
     let business = formData.businessDetails;
     let businessStep;
 
-    businessStep = { ...business, vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation };
+    businessStep = { ...business, vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation, isSameForAll, backupDays };
     onSelect(config.key, businessStep, false);
     handleSaveasDraft();
     };

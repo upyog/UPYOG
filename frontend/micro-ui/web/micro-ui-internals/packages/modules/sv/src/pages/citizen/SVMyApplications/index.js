@@ -38,10 +38,6 @@ export const SVMyApplications = () => {
     setFilters(initialFilters);
   }, [filter]);
 
-
-  // const { isLoading, data } = Digit.Hooks.sv.useSvSearchApplication({ filters });
-  // const { SVDetail: applicationsList } = data || {};
-
   const { isLoading: isNonDraftLoading, data: nonDraftData } = Digit.Hooks.sv.useSvSearchApplication({
   filters: { ...filters, isDraftApplication: false },
 });

@@ -329,7 +329,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
 
     Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
-      console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
     })
     .catch(error=>{

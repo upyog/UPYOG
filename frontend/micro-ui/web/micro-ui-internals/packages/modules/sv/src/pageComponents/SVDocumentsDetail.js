@@ -268,7 +268,6 @@ const transformDocuments = (documents) => {
 
     Digit.SVService.create({streetVendingDetail, draftApplication:true},tenantId)
     .then(response=>{
-      console.log("SAVED_SUCCESSFULLY",response);
       sessionStorage.setItem("Response",JSON.stringify(response));
     })
     .catch(error=>{

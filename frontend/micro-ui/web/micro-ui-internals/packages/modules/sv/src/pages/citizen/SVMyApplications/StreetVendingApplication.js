@@ -26,7 +26,7 @@ const StreetVendingApplication = ({ application, buttonLabel }) => {
       {application?.applicationNo.length===0&&(
       <p className="astericColor">{t("SV_DRAFT")}</p>)}
       {(application?.applicationStatus == "CITIZENACTIONREQUIRED") && 
-      <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_EDIT")} onSubmit={handleEditClick} />}
+      <SubmitBar style={{ marginBottom: "5px" }} label={"SV_EDIT"} onSubmit={handleEditClick} />}
       {application?.applicationNo.length===0?
       <Link to={`/digit-ui/citizen/sv/apply/info`}>
       <SubmitBar label={t("SV_CONTINUE")} />

@@ -8,13 +8,9 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
 
   const allLinks = [
     {
-      text: t("ES_TITLE_NEW_REGISTRATION"),
-      link: "/digit-ui/employee/ptr/new-application",
-    },
-    {
-      text: t("ES_TITILE_SEARCH_APPLICATION"),
-      link: `${linkPrefix}/search`,
-    },
+      text: t("SV_TITLE_NEW_REGISTRATION"),
+      link: "/digit-ui/employee/sv/apply",
+    }
   ];
 
   const [links, setLinks] = useState([]);
@@ -44,7 +40,7 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView="" }) => {
       <span className="logo">
         <ShippingTruck />
       </span>{" "}
-      <span className="text">{t("ES_TITLE_PET_REGISTRATION")}</span>
+      <span className="text">{t("ES_TITLE_SV_REGISTRATION")}</span>
     </div>
   );
 

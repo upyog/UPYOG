@@ -44,9 +44,6 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
       i18nKey: "REJECTED"
     },
   ];
-  // statusMap && statusMap?.map((item) => {
-  //   StatusFields.push({i18nKey: item?.applicationstatus, applicationstatus: item?.applicationstatus})
-  // })
 
   // hook for fetching vending type data
   const { data: vendingTypeData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
@@ -96,17 +93,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
     setAppStatus(null)
   };
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-
-  const onServiceSelect = (e, label) => {
-    if (e.target.checked) localParamChange({ services: Array.isArray(_searchParams.services) ? [..._searchParams.services, label] : [label] });
-    else
-      localParamChange({
-        services: _searchParams.services.filter((o) => o !== label),
-        applicationStatus: _searchParams.applicationStatus?.filter((e) => e.stateBusinessService !== label),
-      });
-  };
-
+  
   // setting the vendingzone, vendingtype and status values in searchparams
   useEffect(() => {
     if(_vendingZone) localParamChange({ vendingZone: _vendingZone?.code || "" });

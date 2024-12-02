@@ -30,15 +30,6 @@
           mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
         },
 
-        // {
-        //   Header: t("SV_VENDOR_ID"),
-        //   Cell: ( row ) => {
-        //     console.log("data of inbox tableconfig row :: ", row)
-        //     return GetCell(`${row?.cell?.row?.original?.searchData?.vendorDetail[0]?.["id"]}`)
-        //   },
-        //   mobileCell: (original) => GetMobCell(original?.searchData?.["applicantName"]),
-        // }, 
-
         {
           Header: t("SV_VENDOR_NAME"),
           Cell: ( row ) => {
