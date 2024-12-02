@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.util.EncryptionDecryptionUtil;
+import org.upyog.sv.web.models.BankDetail;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.VendorDetail;
@@ -22,6 +23,8 @@ public class StreetVendingEncryptionService {
 
     public StreetVendingDetail encryptObject(StreetVendingRequest streetVendingRequest) {
         List<VendorDetail> vendorDetails = streetVendingRequest.getStreetVendingDetail().getVendorDetail();
+        BankDetail bankDetail = streetVendingRequest.getStreetVendingDetail().getBankDetail();
+
         
         if (vendorDetails == null || vendorDetails.isEmpty()) {
             log.warn("No Vendor Details available for encryption.");
@@ -36,6 +39,15 @@ public class StreetVendingEncryptionService {
                 StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY,
                 VendorDetail.class
         );
+        
+        BankDetail encryptedBankDetail = encryptionDecryptionUtil.encryptObject(
+                bankDetail,
+                StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY, 
+                BankDetail.class
+        );
+
+        log.info("Bank detail after encryption: {}", encryptedBankDetail.getAccountNumber());
+        streetVendingRequest.getStreetVendingDetail().setBankDetail(encryptedBankDetail);
 
         log.info("Applicant detail after encryption: {}", encryptedDetail.getMobileNo());
         vendorDetails.set(0, encryptedDetail); // Updating the list
@@ -62,6 +74,20 @@ public class StreetVendingEncryptionService {
 
         log.info("Applicant detail after decryption: {}", decryptedDetail.getMobileNo());
         streetVendingDetail.getVendorDetail().set(0, decryptedDetail);
+        
+        
+        BankDetail bankDetail = streetVendingDetail.getBankDetail();
+        log.info("Bank detail before decryption: {}", bankDetail.getAccountNumber());
+
+        BankDetail decryptedBankDetail = encryptionDecryptionUtil.decryptObject(
+        		bankDetail,
+                StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
+                BankDetail.class,
+                requestInfo
+        );
+
+        log.info("Bank detail after decryption: {}", decryptedBankDetail.getAccountNumber());
+        streetVendingDetail.setBankDetail(decryptedBankDetail);
 
         return streetVendingDetail;
     }
@@ -86,6 +112,23 @@ public class StreetVendingEncryptionService {
 
                 log.info("Applicant detail after decryption: {}", decryptedDetail.getMobileNo());
                 detail.getVendorDetail().set(0, decryptedDetail);
+            }
+        });
+        
+        streetVendingDetails.forEach(detail -> {
+            if (detail.getBankDetail() != null) {
+            	BankDetail bankDetail = detail.getBankDetail();
+                log.info("Bank detail before decryption: {}", bankDetail.getAccountNumber());
+
+                BankDetail decryptedBankDetail = encryptionDecryptionUtil.decryptObject(
+                		bankDetail,
+                        StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
+                        BankDetail.class,
+                        requestInfo
+                );
+
+                log.info("Bank detail after decryption: {}", decryptedBankDetail.getAccountNumber());
+                detail.setBankDetail(decryptedBankDetail);
             }
         });
 

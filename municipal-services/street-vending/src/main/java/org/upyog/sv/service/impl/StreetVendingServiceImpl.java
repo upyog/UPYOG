@@ -68,11 +68,9 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		log.info("MDMS master data : " + mdmsData);
 		validator.validateCreate(vendingRequest, mdmsData);
 		enrichmentService.enrichCreateStreetVendingRequest(vendingRequest);
-		//workflowService.updateWorkflowStatus(vendingRequest);
+		workflowService.updateWorkflowStatus(vendingRequest);
 		encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.save(vendingRequest);
-		
-
 		return vendingRequest.getStreetVendingDetail();
 	}
 

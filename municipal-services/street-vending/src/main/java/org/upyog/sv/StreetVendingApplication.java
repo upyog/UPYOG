@@ -1,7 +1,6 @@
 package org.upyog.sv;
 
 
-import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 import org.egov.encryption.config.EncryptionConfiguration;
@@ -12,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,17 +30,12 @@ public class StreetVendingApplication {
         SpringApplication.run(StreetVendingApplication.class, args);
     }
     @Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.setTimeZone(TimeZone.getTimeZone(timeZone));
-        mapper.registerModule(new JavaTimeModule());
-        mapper.findAndRegisterModules();
-        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-        return mapper;
-       
-    }
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.setTimeZone(TimeZone.getTimeZone(timeZone))//.registerModule(new JavaTimeModule())
+				//Added to resolve parsing issue of String to Local date in NotificationConsumer
+				.findAndRegisterModules();
+	}
 
     @Bean
     public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
