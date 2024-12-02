@@ -46,7 +46,7 @@ public class StreetVendingEncryptionService {
                 BankDetail.class
         );
 
-        log.info("Bank detail after encryption: {}", encryptedBankDetail.getAccountNumber());
+     
         streetVendingRequest.getStreetVendingDetail().setBankDetail(encryptedBankDetail);
 
         log.info("Applicant detail after encryption: {}", encryptedDetail.getMobileNo());
