@@ -83,5 +83,11 @@ public class StreetVendingConstants {
 	public static final String NOTIFICATION_APPROVED = "sv.en.counter.approved";
 
 	public static final String NOTIFICATION_REGISTRATIONCOMPLETED = "sv.en.counter.registrationcompleted";
+	
+    public static final String SV_APPLICANT_DETAIL_ENCRYPTION_KEY = "SVApplicantDetail";
+	
+	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "SVApplicantDetailDecrypDisabled";
+
+	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "SVApplicantDetailDecryptionDisabled";
 
 }

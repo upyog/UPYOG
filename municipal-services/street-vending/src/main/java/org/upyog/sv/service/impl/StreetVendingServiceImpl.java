@@ -16,6 +16,7 @@ import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.service.DemandService;
 import org.upyog.sv.service.EnrichmentService;
+import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.service.WorkflowService;
 import org.upyog.sv.util.MdmsUtil;
@@ -23,6 +24,7 @@ import org.upyog.sv.validator.StreetVendingValidator;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
+import org.upyog.sv.web.models.VendorDetail;
 import org.upyog.sv.web.models.workflow.State;
 
 import lombok.NonNull;
@@ -49,6 +51,9 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 	@Autowired
 	private StreetVendingValidator validator;
+	
+	@Autowired
+	private StreetVendingEncryptionService encryptionService;
 
 	@Override
 	public StreetVendingDetail createStreetVendingApplication(StreetVendingRequest vendingRequest) {
@@ -64,8 +69,8 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		validator.validateCreate(vendingRequest, mdmsData);
 		enrichmentService.enrichCreateStreetVendingRequest(vendingRequest);
 		workflowService.updateWorkflowStatus(vendingRequest);
+		encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.save(vendingRequest);
-
 		return vendingRequest.getStreetVendingDetail();
 	}
 
@@ -74,11 +79,33 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<StreetVendingDetail> applications = streetVendingRepository
 				.getStreetVendingApplications(streetVendingSearchCriteria);
+		if (streetVendingSearchCriteria.getMobileNumber() != null) {
+			VendorDetail applicantDetail = VendorDetail.builder()
+					.mobileNo(streetVendingSearchCriteria.getMobileNumber()).build();
+			
+			List<VendorDetail> vendorDetails = new ArrayList<>();
+			vendorDetails.add(applicantDetail);
+			
+			StreetVendingDetail streetVendingDetail = StreetVendingDetail.builder().vendorDetail(vendorDetails).build();
+			StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
+					.streetVendingDetail(streetVendingDetail).requestInfo(requestInfo).build();
+			StreetVendingDetail encryptedDetail = encryptionService.encryptObject(streetVendingRequest);
+			
+			if (encryptedDetail.getVendorDetail() != null && !encryptedDetail.getVendorDetail().isEmpty()) {
+				streetVendingSearchCriteria.setMobileNumber(encryptedDetail.getVendorDetail().get(0).getMobileNo());
+			} else {
+				log.warn("Encryption returned no vendor details. Criteria not updated.");
+			}
 
-		if (CollectionUtils.isEmpty(applications))
+			log.info("Loading data based on criteria after encrypting mobile number: {}", streetVendingSearchCriteria);
+		}
+		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
+		}
+		applications = encryptionService.decryptObject(applications, requestInfo);
 		return applications;
 	}
+
 
 	@Override
 	public StreetVendingDetail updateStreetVendingApplication(StreetVendingRequest vendingRequest) {

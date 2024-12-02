@@ -111,7 +111,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 				.noneMatch(vendor -> vendor.getId().equals(vendorId))) {
 			VendorDetail vendorDetail = VendorDetail.builder().id(vendorId)
 					.applicationId(rs.getString("VENDORAPPLICATIONID")).name(rs.getString("VENDORNAME"))
-					.dob(rs.getDate("VENDORDATEOFBIRTH").toLocalDate()).fatherName(rs.getString("VENDORFATHERNAME"))
+					.dob(rs.getDate("VENDORDATEOFBIRTH").toString()).fatherName(rs.getString("VENDORFATHERNAME"))
 					.mobileNo(rs.getString("VENDORMOBILENO")).emailId(rs.getString("VENDOREMAILID"))
 					.gender(rs.getString("VENDORGENDER").charAt(0))
 					.relationshipType(rs.getString("VENDORRELATIONSHIPTYPE"))

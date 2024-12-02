@@ -37,7 +37,7 @@ public class VendorDetail {
 
 	@NonNull
 	@JsonFormat(pattern = StreetVendingUtil.DATE_FORMAT)
-	private LocalDate dob;
+	private String dob;
 
 	private Character gender;
 
