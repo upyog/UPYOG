@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Toast,CardSubHeader } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,29 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
+  const [timeRemaining, setTimeRemaining] = useState(application?.remainingTimerValue);
+// Initialize time remaining on mount or when application changes
+useEffect(() => {
+  setTimeRemaining(application?.remainingTimerValue || 0);
+}, [application?.remainingTimerValue]);
 
+// Timer logic
+useEffect(() => {
+  if (timeRemaining <= 0) return;
+
+  const interval = setInterval(() => {
+    setTimeRemaining((prevTime) => Math.max(prevTime - 1, 0));
+  }, 1000);
+
+  return () => clearInterval(interval); // Cleanup interval
+}, [timeRemaining]);
+
+// Format seconds into "minutes:seconds" format
+const formatTime = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+};
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
       advertisementSlotSearchCriteria: {
@@ -60,7 +82,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
             });
           }
       } catch (error) {
-          console.error("Error making payment:", error);
+        setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
       }
       };
   useEffect(() => {
@@ -74,7 +96,17 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
   }, [showToast]);
   return (
     <Card>
-      <KeyNote keyValue={t("ADS_BOOKING_NO")} note={application?.bookingNo} />
+       <div style={{ display: "flex", justifyContent: "space-between" }}>
+       <KeyNote keyValue={t("ADS_BOOKING_NO")} note={application?.bookingNo} />
+            { timeRemaining>0 && (<CardSubHeader 
+              style={{ 
+                textAlign: 'right', 
+                fontSize: "24px"
+              }}
+            >
+              {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
+            </CardSubHeader>)}
+        </div>
       <KeyNote keyValue={t("ADS_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
       <KeyNote keyValue={t("ADS_BOOKING_DATE")} note={getBookingDateRange(application?.cartDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
