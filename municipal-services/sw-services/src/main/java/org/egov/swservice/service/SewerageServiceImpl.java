@@ -1,18 +1,15 @@
 package org.egov.swservice.service;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.swservice.config.SWConfiguration;
 import org.egov.swservice.repository.SewerageDao;
 import org.egov.swservice.repository.SewerageDaoImpl;
-import org.egov.swservice.util.EncryptionDecryptionUtil;
 import org.egov.swservice.util.SWConstants;
 import org.egov.swservice.util.SewerageServicesUtil;
 import org.egov.swservice.util.UnmaskingUtil;
@@ -36,7 +33,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.egov.swservice.util.SWConstants.*;
@@ -116,15 +112,28 @@ public class SewerageServiceImpl implements SewerageService {
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
 		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
-			List<SewerageConnection> sewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
-			swapConnHolders(sewerageConnectionRequest,sewerageConnectionList);
+			List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
+			if (prevSewerageConnectionList.size() > 0) {
+				for (SewerageConnection previousConnectionsListObj : prevSewerageConnectionList) {
+					sewerageDaoImpl.updateSewerageApplicationStatus(previousConnectionsListObj.getId(),
+							SWConstants.INACTIVE_STATUS);
+				}
+			}
+			// Validate any process Instance exists with WF
+			if (!CollectionUtils.isEmpty(prevSewerageConnectionList)) {
+				workflowService.validateInProgressWF(prevSewerageConnectionList, sewerageConnectionRequest.getRequestInfo(),
+						sewerageConnectionRequest.getSewerageConnection().getTenantId());
+				sewerageConnectionValidator.validateConnectionStatus(prevSewerageConnectionList, sewerageConnectionRequest,
+						reqType);
+			}
+			swapConnHolders(sewerageConnectionRequest, prevSewerageConnectionList);
 
 			//Swap masked Plumber info with unmasked plumberInfo from previous applications
-			if(!ObjectUtils.isEmpty(sewerageConnectionList.get(0).getPlumberInfo()))
-				unmaskingUtil.getUnmaskedPlumberInfo(sewerageConnectionRequest.getSewerageConnection().getPlumberInfo(), sewerageConnectionList.get(0).getPlumberInfo());
+			if(!ObjectUtils.isEmpty(prevSewerageConnectionList.get(0).getPlumberInfo()))
+				unmaskingUtil.getUnmaskedPlumberInfo(sewerageConnectionRequest.getSewerageConnection().getPlumberInfo(), prevSewerageConnectionList.get(0).getPlumberInfo());
 
-			if (!CollectionUtils.isEmpty(sewerageConnectionList)) {
-				workflowService.validateInProgressWF(sewerageConnectionList, sewerageConnectionRequest.getRequestInfo(),
+			if (!CollectionUtils.isEmpty(prevSewerageConnectionList)) {
+				workflowService.validateInProgressWF(prevSewerageConnectionList, sewerageConnectionRequest.getRequestInfo(),
 						sewerageConnectionRequest.getSewerageConnection().getTenantId());
 			}
 			reqType = SWConstants.MODIFY_CONNECTION;
