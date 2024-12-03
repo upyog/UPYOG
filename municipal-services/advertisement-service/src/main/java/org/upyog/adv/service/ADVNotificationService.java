@@ -46,13 +46,13 @@ public class ADVNotificationService {
 	private NotificationUtil util;
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-//	@Autowired
-//	private CHBEncryptionService chbEncryptionService;
+	@Autowired
+	private ADVEncryptionService advEncryptionService;
 
 	public void process(BookingRequest bookingRequest, String status) {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		// Decrypt applicant detail it will be used in notification
-//		bookingDetail = chbEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
+		bookingDetail = advEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
 
 		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : "
 				+ status);

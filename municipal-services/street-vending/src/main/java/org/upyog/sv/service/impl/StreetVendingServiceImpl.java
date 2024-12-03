@@ -76,7 +76,12 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			log.info("Deleting draft entry for draft id: " + draftId);
 			streetVendingRepository.deleteDraftApplication(draftId);
 		}
-		return vendingRequest.getStreetVendingDetail();
+		StreetVendingDetail streetVendingDetail = encryptionService.decryptObject(
+				vendingRequest.getStreetVendingDetail(), 
+				vendingRequest.getRequestInfo()
+			);
+
+		return streetVendingDetail;
 	}
 
 	@Override
