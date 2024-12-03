@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
@@ -36,18 +37,18 @@ public class StreetVendingController {
 	@Autowired
 	private StreetVendingService streetVendingService;
 
-	private final StreetVendingValidationService validationService;
-
-	public StreetVendingController(StreetVendingValidationService validationService) {
-		this.validationService = validationService;
-	}
+//	private final StreetVendingValidationService validationService;
+//
+//	public StreetVendingController(StreetVendingValidationService validationService) {
+//		this.validationService = validationService;
+//	}
 
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> createStreetVendingApplication(
 			@RequestBody StreetVendingRequest vendingRequest) {
 
 		StreetVendingDetail streetVendingDetail = null;
-		validationService.validateRequest(vendingRequest); /// To validate the Create application request
+//		validationService.validateRequest(vendingRequest); /// To validate the Create application request
 		if (vendingRequest.isDraftApplication()) {
 			streetVendingDetail = streetVendingService.createStreetVendingDraftApplication(vendingRequest);
 		} else {
@@ -105,7 +106,7 @@ public class StreetVendingController {
 	public ResponseEntity<StreetVendingResponse> streetVendingDeleteDraft(
 			@ApiParam(value = "Details for draft deletion + RequestInfo meta data.", required = true) 
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
-			@ModelAttribute String draftId) {
+			@RequestParam(value = "draftId", required = true) String draftId) {
 		String draftDiscardResponse = streetVendingService.deleteStreetVendingDraft(draftId);
 		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
 				draftDiscardResponse, StatusEnum.SUCCESSFUL);
