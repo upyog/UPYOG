@@ -261,6 +261,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			throw new CustomException("INVALID_BOOKING_CODE",
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
+		CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
+		communityHallsBookingRequest.setHallsBookingApplication(bookingDetail);
 		bookingRepository.updateBookingSynchronously(communityHallsBookingRequest, paymentDetail, status.toString());
 		bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
 	}
