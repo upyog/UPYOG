@@ -1,9 +1,9 @@
 package org.egov.web.notification.mail.consumer.contract;
 
-import java.util.List;
+
 import java.util.Set;
 
-import org.egov.web.notification.mail.consumer.contract.Attachments;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,6 +27,6 @@ public class Email {
 	private String body;
 	@JsonProperty("isHTML")
 	private boolean isHTML;
-    private List<Attachments> attachments;
+    private Attachments attachments;
 
 }

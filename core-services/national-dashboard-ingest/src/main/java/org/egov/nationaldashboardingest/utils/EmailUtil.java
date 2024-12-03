@@ -36,7 +36,6 @@ public class EmailUtil {
 
         List<Attachments> attachmentsList = excelUtil.generateExcelFiles(stateList);
 
-
         List<EmailRequest> emailRequestList = new LinkedList<>();
         for (Map.Entry<String, Map<String, Object>> entry : stateList.entrySet()) {
             Map<String, Object> officerInfo = entry.getValue();
@@ -51,43 +50,38 @@ public class EmailUtil {
 
             String subject = stateName + " : Data Ingestion Issue on UMEED National Dashboard";
             String body = String.format(
-                    "<p>Dear " + nodalOfficer + " ,<br><br></p>" +
-                            "<p>We have observed that data from " + stateName + " has not been ingested onto the UMEED National Dashboard on " + formattedDate + ".</p>" +
+                    "<p>Dear %s,<br><br></p>" +
+                            "<p>We have observed that data from %s has not been ingested onto the UMEED National Dashboard on %s.</p>" +
                             "<p>This data gap is hindering our ability to monitor urban performance and make informed decisions. " +
                             "We kindly request you to take immediate action to resolve the issue and ensure timely data ingestion.</p>" +
-                            "<p>Please coordinate with your technical team to identify/rectify the root cause of the problem. If you need technical assistance or support, please contact the NUDM-NIUA technical team.</p>" +
+                            "<p>Please coordinate with your technical team to identify/rectify the root cause of the problem." +
+                            "If you need technical assistance or support, please contact the NUDM-NIUA technical team.</p>" +
                             "<p>We appreciate your prompt attention to this matter.<br><br></p>" +
                             "<p>Warm Regards,<br>" +
                             "National Urban Digital Mission, Centre for Digital Governance<br>" +
                             "National Institute of Urban Affairs (NIUA)<br>" +
                             "Email: cdg-contact@niua.org | niua.in/cdg/Home<br>" +
-                            "Core 4B, 1st and 2nd Floor, India Habitat Centre, Lodhi Road | New Delhi - 110003</p>"
+                            "Core 4B, 1st and 2nd Floor, India Habitat Centre, Lodhi Road | New Delhi - 110003</p>",
+                    nodalOfficer, stateName, formattedDate
             );
 
-            // Add attachment if found
-            List<Attachments> emailAttachments = new ArrayList<>();
-            if (stateExcel != null) {
-                Attachments attachment = new Attachments();
-                attachment.setFileName(stateExcel.getFileName());
-                attachment.setContent(stateExcel.getContent()); // byte[]
-                attachment.setContentType(stateExcel.getContentType());
-                emailAttachments.add(attachment);
-            }
 
             Email emailObj = new Email();
             emailObj.setEmailTo(Collections.singleton(email));
             emailObj.setHTML(true);
             emailObj.setBody(body);
             emailObj.setSubject(subject);
-            if (!emailAttachments.isEmpty()) {
-                emailObj.setAttachments(emailAttachments); // Add attachments to the email
+            if(stateExcel != null) {
+                emailObj.setAttachments(stateExcel);
             }
 
             EmailRequest emailRequest = new EmailRequest(requestInfo, emailObj);
             emailRequestList.add(emailRequest);
         }
+
         return emailRequestList;
     }
+
 
     public void sendEmail(RequestInfo requestInfo, Map<String, Map<String, Object>> stateList) throws IOException {
         List<EmailRequest> emailRequestList = createEmailRequest(requestInfo, stateList);
