@@ -87,8 +87,13 @@ public class BookingServiceImpl implements BookingService {
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
+		
+		BookingDetail bookingDetails = encryptionService.decryptObject(
+			    bookingRequest.getBookingApplication(), 
+			    bookingRequest.getRequestInfo()
+			);
 
-		return bookingRequest.getBookingApplication();
+		return bookingDetails;
 	}
 
 	@Override
