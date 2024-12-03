@@ -26,10 +26,7 @@ import { MdmsServiceV2 } from "../services/elements/MDMSV2";
  * @returns {Object} Returns the object of the useQuery from react-query.
  */
 const useCustomMDMSV2 = (tenantId, moduleName, masterDetails = [], config = {}) => {
-  console.log("MDMS Version V2 Here");
-  console.log("Ist function :- ", tenantId, moduleName, masterDetails, config)
     return useQuery([tenantId, moduleName, masterDetails], () => MdmsServiceV2.getMultipleTypesWithFilter(tenantId, moduleName, masterDetails), config);
-  
-};
+  };
 
 export default useCustomMDMSV2;

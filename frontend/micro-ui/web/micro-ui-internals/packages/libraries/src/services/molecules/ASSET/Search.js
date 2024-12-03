@@ -65,7 +65,7 @@ export const ASSETSearch = {
           { title: "AST_PARENT_CATEGORY", value: response?.assetParentCategory },
           { title: "AST_SUB_CATEGORY", value: response?.assetCategory },
           { title: "AST_NAME", value: response?.assetName },
-          { title: "AST_DEPARTMENT", value: response?.department },
+          { title: "AST_DEPARTMENT", value: 'COMMON_MASTERS_DEPARTMENT_'+response?.department },
           { title: "AST_USAGE", value: response?.assetCurrentUsage },
 
         ],

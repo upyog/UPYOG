@@ -67,7 +67,7 @@ import React from "react";
           Header: t("AST_DEPARTMENT_LABEL"),
           Cell: ({ row }) => {
             const wf = row.original?.workflowData;
-            return GetCell(t(`${row?.original?.searchData?.["department"]}`));
+            return GetCell(t(`${'COMMON_MASTERS_DEPARTMENT_'+row?.original?.searchData?.["department"]}`));
 
 
           },

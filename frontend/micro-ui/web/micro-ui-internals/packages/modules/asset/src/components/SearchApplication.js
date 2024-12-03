@@ -95,7 +95,7 @@
             {
               Header: t("AST_DEPARTMENT_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${t(row?.original?.["department"])}`)
+                return GetCell(`${t('COMMON_MASTERS_DEPARTMENT_'+row?.original?.["department"])}`)
               },
               disableSortBy: true,
             },

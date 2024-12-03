@@ -37,7 +37,7 @@ const SearchApp = ({path, parentRoute}) => {
         //   {}
         // );
 
-        console.log('Comming made url testing', payload);
+        
 
         if(Object.entries(payload).length>0 && !payload.applicationNo && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.status && !payload.toDate)
         setShowToast({ warning: true, label: "ERR_VALID_FIELDS" });
@@ -60,8 +60,7 @@ const SearchApp = ({path, parentRoute}) => {
        config,
       );
 
-      console.log("searchReult",searchReult)
-      console.log("countonAPI",count);
+
     return <React.Fragment>
         <ASSETSearchApplication t={t} isLoading={isLoading} parentRoute={parentRoute} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
         {showToast && (

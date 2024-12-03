@@ -59,11 +59,6 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
   let formJson = [];
   if (Array.isArray(categoriesWiseData)) {
-    // console.log("Categories Data:", categoriesWiseData);
-
-    // // Log the selected asset type for debugging
-    // console.log("Selected Asset Type:", formData?.asset?.assettype?.code);
-
     // Filter categories based on the selected assetParentCategory
     formJson = categoriesWiseData
       .filter((category) => {

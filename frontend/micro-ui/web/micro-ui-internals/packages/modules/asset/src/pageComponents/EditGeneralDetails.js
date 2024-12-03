@@ -104,7 +104,7 @@
       let departNamefromMDMS = [];
 
       departmentName && departmentName.map((departmentname) => {
-        departNamefromMDMS.push({i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
+        departNamefromMDMS.push({i18nKey: `COMMON_MASTERS_DEPARTMENT_${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}`})
       }) 
 
       
