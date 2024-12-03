@@ -2,8 +2,6 @@ package org.upyog.sv.web.controllers;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
-import org.upyog.sv.validator.StreetVendingValidationService;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingListResponse;
 import org.upyog.sv.web.models.StreetVendingRequest;
