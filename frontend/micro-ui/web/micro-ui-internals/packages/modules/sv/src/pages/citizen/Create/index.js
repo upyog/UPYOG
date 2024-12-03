@@ -123,6 +123,7 @@ const SVCreate = ({ parentRoute }) => {
     sessionStorage.removeItem("vendingApplicationID");
     sessionStorage.removeItem("ApplicationId");
     sessionStorage.removeItem("applicationStatus");
+    sessionStorage.removeItem("Response");
   };
   
   let commonFields = Config;
