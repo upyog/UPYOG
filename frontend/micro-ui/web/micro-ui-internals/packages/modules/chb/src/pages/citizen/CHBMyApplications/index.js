@@ -99,11 +99,9 @@ export const CHBMyApplications = () => {
               </div>
             </div>
           </div>
-          <span className="link" style={{ display: "block" }}>
             <Link to="/digit-ui/citizen/chb/bookHall/searchhall">
-              {t("CHB_NEW_BOOKING")}
+              <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("CHB_NEW_BOOKING")+" +"} />
             </Link>
-          </span>
         </div>
       </Card>
       <div>
