@@ -57,11 +57,6 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		log.info("Saving street vending booking request data for booking no : "
 				+ streetVendingRequest.getStreetVendingDetail().getApplicationNo());
 		producer.push(vendingConfiguration.getStreetVendingApplicationSaveTopic(), streetVendingRequest);
-		String draftId = streetVendingRequest.getStreetVendingDetail().getDraftId();
-		if(StringUtils.isNotBlank(draftId)) {
-			log.info("Deleting draft entry for draft id: " + draftId);
-			deleteDraftApplication(streetVendingRequest);
-		}
 	}
 
 	@Override
@@ -142,12 +137,13 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		
 	}
 	
-	@Override
-	public void deleteDraftApplication(StreetVendingRequest vendingRequest) {
-		StreetVendingDraftDetail streetVendingDraftDetail = convertToDraftDetailsObject(vendingRequest);
-		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(streetVendingDraftDetail);
+	public void deleteDraftApplication(String draftId) {
+		StreetVendingDraftDetail streetVendingDraftDetail = StreetVendingDraftDetail.builder().draftId(draftId).build();
+
+		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(
+				streetVendingDraftDetail);
 		producer.push(vendingConfiguration.getStreetVendingDraftApplicationDeleteTopic(), persisterWrapper);
-		
+
 	}
 	
 	private StreetVendingDraftDetail convertToDraftDetailsObject(StreetVendingRequest vendingRequest) {

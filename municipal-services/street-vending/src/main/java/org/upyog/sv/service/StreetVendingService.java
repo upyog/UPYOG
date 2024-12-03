@@ -28,4 +28,5 @@ public interface StreetVendingService {
 	public List<StreetVendingDetail> getStreetVendingDraftApplicationDetails(@NonNull RequestInfo requestInfo,
 			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria);
 
+	public String deleteStreetVendingDraft(String draftId);
 }

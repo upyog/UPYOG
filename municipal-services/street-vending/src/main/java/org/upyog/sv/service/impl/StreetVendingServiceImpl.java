@@ -71,6 +71,11 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		workflowService.updateWorkflowStatus(vendingRequest);
 		encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.save(vendingRequest);
+		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
+		if(StringUtils.isNotBlank(draftId)) {
+			log.info("Deleting draft entry for draft id: " + draftId);
+			streetVendingRepository.deleteDraftApplication(draftId);
+		}
 		return vendingRequest.getStreetVendingDetail();
 	}
 
@@ -194,5 +199,15 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 	public List<StreetVendingDetail> getStreetVendingDraftApplicationDetails(@NonNull RequestInfo requestInfo,
 			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		return streetVendingRepository.getStreetVendingDraftApplications(requestInfo, streetVendingSearchCriteria);
+	}
+
+	public String deleteStreetVendingDraft(String draftId) {
+
+		if (StringUtils.isNotBlank(draftId)) {
+			log.info("Deleting draft entry for draft id: " + draftId);
+			streetVendingRepository.deleteDraftApplication(draftId);
+		}
+
+		return StreetVendingConstants.DRAFT_DISCARDED;
 	}
 }
