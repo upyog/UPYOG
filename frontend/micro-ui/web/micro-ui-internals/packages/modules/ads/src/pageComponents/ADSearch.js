@@ -279,8 +279,15 @@ const handleCartClick = () => {
       formData?.faceArea &&
       formData?.fromDate &&
       formData?.toDate &&
-      formData?.nightLight
+      formData?.nightLight && formData?.location
     ) {
+      let unitPrice;
+      let location=formData?.location?.value;
+      const item = CalculationTypeData?.find((item) => item?.location ===location );
+      if (item) {
+        const calculationTypeKey = `CalculationType_${ formData?.faceArea?.code}`;
+        unitPrice = item?.[calculationTypeKey]?.[0]?.amount;
+      }
       const filters = {
         addType: formData?.adType?.code,
         faceArea: formData?.faceArea?.code,
@@ -288,6 +295,7 @@ const handleCartClick = () => {
         nightLight: formData?.nightLight?.value,
         bookingStartDate: formData?.fromDate,
         bookingEndDate: formData?.toDate,
+        unitPrice: unitPrice,
       };
 
       // Only update searchData if the filters have changed
@@ -295,7 +303,7 @@ const handleCartClick = () => {
         setSearchData(filters);
       }
     }
-  }, [formData]); // This will run whenever formData changes
+  }, [formData,CalculationTypeData]); // This will run whenever formData changes
   const handleSearch = () => {
     const addType = adsType?.code;
     const startDate = fromDate;
@@ -305,7 +313,6 @@ const handleCartClick = () => {
     const nightLight=selectNight?.value;
     let unitPrice;
     const item = CalculationTypeData?.find((item) => item?.location === location);
-    
     if (item) {
       const calculationTypeKey = `CalculationType_${faceArea}`;
       unitPrice = item?.[calculationTypeKey]?.[0]?.amount;
@@ -527,7 +534,7 @@ const handleCloseCart = () => {
 
       </FormStep>
       {showTable && ( // Only show table when showTable is true
-        <Card>
+        <Card style={{ overflowX: 'auto'}}>
           <ApplicationTable
             t={t}
             data={data}

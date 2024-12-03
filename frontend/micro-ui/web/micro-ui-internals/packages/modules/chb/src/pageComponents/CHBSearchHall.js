@@ -421,7 +421,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
         </div>
       </FormStep>
       {showTable && ( // Only show table when showTable is true
-       <Card>
+       <Card style={{ overflowX: 'auto'}}>
          <ApplicationTable
            t={t}
            data={data}

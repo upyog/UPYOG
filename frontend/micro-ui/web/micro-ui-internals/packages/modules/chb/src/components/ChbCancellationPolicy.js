@@ -146,7 +146,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
         <Modal
           headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Price Breakup</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
-          popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
+          popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '60vh', width: '60%', overflowY: 'auto' }}
           children={
             <div>
               <CardLabelDesc style={{ marginBottom: '15px' }}>Estimate Price Details</CardLabelDesc>
