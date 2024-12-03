@@ -3,8 +3,12 @@ package org.upyog.sv.web.models;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.validation.annotation.Validated;
-import org.upyog.sv.enums.StreetVendingApplicationStatus;
+import org.upyog.sv.validator.CreateApplicationGroup;
 import org.upyog.sv.web.models.common.AuditDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,6 +33,7 @@ public class StreetVendingDetail {
 	
 	private String draftId;
 
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String tenantId;
 
 	private String applicationNo;
@@ -40,22 +45,31 @@ public class StreetVendingDetail {
 	private Long approvalDate;
 
 	private String applicationStatus;
-	// StreetVendingApplicationStatus
 
 	private String tradeLicenseNo;
 
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String vendingActivity;
 
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String vendingZone;
 
 	private BigDecimal cartLatitude;
+	
 	private BigDecimal cartLongitude;
 
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private Integer vendingArea;
 
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String localAuthorityName;
 //Store file id of vending certificate 
+	
 	private String vendingLicenseCertificateId;
+	
+	private String paymentReceiptId;
+	
+	private String vendingLicenseId;
 
 	private String disabilityStatus;
 
@@ -76,7 +90,9 @@ public class StreetVendingDetail {
 	@JsonProperty("validTo")
 	private String validTo = null;
 
-	private List<Address> addressDetails;
+	@Valid
+	@NotNull(groups = CreateApplicationGroup.class)
+	private List<@Valid Address> addressDetails;
 
 	private BankDetail bankDetail;
 

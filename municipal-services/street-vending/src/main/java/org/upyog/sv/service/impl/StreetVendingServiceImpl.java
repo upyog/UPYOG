@@ -1,6 +1,7 @@
 package org.upyog.sv.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -51,7 +52,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 	@Autowired
 	private StreetVendingValidator validator;
-	
+
 	@Autowired
 	private StreetVendingEncryptionService encryptionService;
 
@@ -66,62 +67,48 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		log.info("MDMS master data : " + mdmsData);
+		// 1
 		validator.validateCreate(vendingRequest, mdmsData);
+		// 2
 		enrichmentService.enrichCreateStreetVendingRequest(vendingRequest);
+		// 3
 		workflowService.updateWorkflowStatus(vendingRequest);
-		//encryptionService.encryptObject(vendingRequest);
+		// 4
+		encryptionService.encryptObject(vendingRequest);
+		// 5
 		streetVendingRepository.save(vendingRequest);
 		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
-		if(StringUtils.isNotBlank(draftId)) {
+		// 6
+		if (StringUtils.isNotBlank(draftId)) {
 			log.info("Deleting draft entry for draft id: " + draftId);
 			streetVendingRepository.deleteDraftApplication(draftId);
 		}
-		/*
-		 * StreetVendingDetail streetVendingDetail = encryptionService.decryptObject(
-		 * vendingRequest.getStreetVendingDetail(), vendingRequest.getRequestInfo() );
-		 */
+		// 7
+		StreetVendingDetail streetVendingDetail = encryptionService
+				.decryptObject(vendingRequest.getStreetVendingDetail(), vendingRequest.getRequestInfo());
 
-		return vendingRequest.getStreetVendingDetail();
+		return streetVendingDetail;
 	}
 
 	@Override
 	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
 			StreetVendingSearchCriteria streetVendingSearchCriteria) {
-		
-		/*
-		 * if (streetVendingSearchCriteria.getMobileNumber() != null) { VendorDetail
-		 * applicantDetail = VendorDetail.builder()
-		 * .mobileNo(streetVendingSearchCriteria.getMobileNumber())
-		 * .dob("1985-02-01").build(); //TODO to remove dob from here
-		 * 
-		 * List<VendorDetail> vendorDetails = new ArrayList<>();
-		 * vendorDetails.add(applicantDetail);
-		 * 
-		 * StreetVendingDetail streetVendingDetail =
-		 * StreetVendingDetail.builder().vendorDetail(vendorDetails).build();
-		 * StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
-		 * .streetVendingDetail(streetVendingDetail).requestInfo(requestInfo).build();
-		 * StreetVendingDetail encryptedDetail =
-		 * encryptionService.encryptObject(streetVendingRequest);
-		 * 
-		 * if (encryptedDetail.getVendorDetail() != null &&
-		 * !encryptedDetail.getVendorDetail().isEmpty()) {
-		 * streetVendingSearchCriteria.setMobileNumber(encryptedDetail.getVendorDetail()
-		 * .get(0).getMobileNo()); } else {
-		 * log.warn("Encryption returned no vendor details. Criteria not updated."); }
-		 * 
-		 * log.info("Loading data based on criteria after encrypting mobile number: {}",
-		 * streetVendingSearchCriteria); }
-		 */
+
+		if (StringUtils.isNotBlank(streetVendingSearchCriteria.getMobileNumber())) {
+			String encryptedMobileNumber = encryptMobileNumber(streetVendingSearchCriteria.getMobileNumber(),
+					requestInfo);
+			streetVendingSearchCriteria.setMobileNumber(encryptedMobileNumber);
+
+			log.info("Updated search criteria with encrypted mobile number: {}", streetVendingSearchCriteria);
+		}
 		List<StreetVendingDetail> applications = streetVendingRepository
 				.getStreetVendingApplications(streetVendingSearchCriteria);
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
-	//	applications = encryptionService.decryptObject(applications, requestInfo);
+		applications = encryptionService.decryptObject(applications, requestInfo);
 		return applications;
 	}
-
 
 	@Override
 	public StreetVendingDetail updateStreetVendingApplication(StreetVendingRequest vendingRequest) {
@@ -129,24 +116,21 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 				.validateApplicationExistence(vendingRequest.getStreetVendingDetail());
 
 		if (existingApplication == null) {
-			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION,
-					"Application not found");
+			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION, "Application not found");
 		}
-
-//		existingApplication.setWorkflow(vendingRequest.getStreetVendingDetail().getWorkflow());
-//		vendingRequest.setStreetVendingDetail(existingApplication);
 
 		State state = workflowService.updateWorkflowStatus(vendingRequest);
-		String applicationStatus = state.getApplicationStatus();
-		enrichmentService.enrichStreetVendingApplicationUponUpdate(applicationStatus,vendingRequest);
-		streetVendingRepository.update(vendingRequest);
+		enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
 
-		if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
-			String tenantId = extractTenantId(vendingRequest);
-			demandService.createDemand(vendingRequest, tenantId);
+		if (StreetVendingConstants.ACTION_APPROVE
+				.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
+			demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
 		}
-
-		return vendingRequest.getStreetVendingDetail();
+		encryptionService.encryptObject(vendingRequest);
+		streetVendingRepository.update(vendingRequest);
+		StreetVendingDetail streetVendingDetail = encryptionService
+				.decryptObject(vendingRequest.getStreetVendingDetail(), vendingRequest.getRequestInfo());
+		return streetVendingDetail;
 	}
 
 	private String extractTenantId(StreetVendingRequest request) {
@@ -191,19 +175,18 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 	@Override
 	public StreetVendingDetail createStreetVendingDraftApplication(StreetVendingRequest vendingRequest) {
-		
-		if(StringUtils.isNotBlank(vendingRequest.getStreetVendingDetail().getDraftId())) {
+
+		if (StringUtils.isNotBlank(vendingRequest.getStreetVendingDetail().getDraftId())) {
 			enrichmentService.enrichUpdateStreetVendingDraftApplicationRequest(vendingRequest);
 			streetVendingRepository.updateDraftApplication(vendingRequest);
 		} else {
 			enrichmentService.enrichCreateStreetVendingDraftApplicationRequest(vendingRequest);
 			streetVendingRepository.saveDraftApplication(vendingRequest);
 		}
-		
-		
+
 		return vendingRequest.getStreetVendingDetail();
 	}
-	
+
 	@Override
 	public List<StreetVendingDetail> getStreetVendingDraftApplicationDetails(@NonNull RequestInfo requestInfo,
 			@Valid StreetVendingSearchCriteria streetVendingSearchCriteria) {
@@ -219,4 +202,34 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 		return StreetVendingConstants.DRAFT_DISCARDED;
 	}
+
+	public String encryptMobileNumber(String mobileNumber, RequestInfo requestInfo) {
+		if (StringUtils.isBlank(mobileNumber)) {
+			throw new IllegalArgumentException("Mobile number cannot be null or blank.");
+		}
+
+		try {
+			// Create a StreetVendingRequest object with the mobile number
+			StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
+					.streetVendingDetail(StreetVendingDetail.builder()
+							.vendorDetail(
+									Collections.singletonList(VendorDetail.builder().mobileNo(mobileNumber).build()))
+							.build())
+					.requestInfo(requestInfo).build();
+
+			// Encrypt the mobile number
+			StreetVendingDetail encryptedDetail = encryptionService.encryptObject(streetVendingRequest);
+
+			if (encryptedDetail == null || encryptedDetail.getVendorDetail() == null
+					|| encryptedDetail.getVendorDetail().isEmpty()) {
+				throw new CustomException("ENCRYPTION_FAILED", "Failed to encrypt mobile number.");
+			}
+
+			return encryptedDetail.getVendorDetail().get(0).getMobileNo();
+		} catch (Exception e) {
+			log.error("Error encrypting mobile number", e);
+			throw new CustomException("ENCRYPTION_ERROR", "Error occurred while encrypting mobile number.");
+		}
+	}
+
 }

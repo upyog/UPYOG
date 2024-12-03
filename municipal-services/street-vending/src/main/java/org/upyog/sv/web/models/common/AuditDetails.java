@@ -1,7 +1,9 @@
 package org.upyog.sv.web.models.common;
 
+import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
+import org.upyog.sv.validator.CreateApplicationGroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,19 +26,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuditDetails   {
-        @JsonProperty("createdBy")
-        private String createdBy = null;
+public class AuditDetails {
 
-        @JsonProperty("lastModifiedBy")
-        private String lastModifiedBy = null;
+	@NotNull(groups = CreateApplicationGroup.class)
+	@JsonProperty("createdBy")
+	private String createdBy = null;
 
-        @JsonProperty("createdTime")
-        private Long createdTime = null;
+	@JsonProperty("lastModifiedBy")
+	private String lastModifiedBy = null;
 
-        @JsonProperty("lastModifiedTime")
-        private Long lastModifiedTime = null;
+	@NotNull(groups = CreateApplicationGroup.class)
+	@JsonProperty("createdTime")
+	private Long createdTime = null;
 
+	@JsonProperty("lastModifiedTime")
+	private Long lastModifiedTime = null;
 
 }
-

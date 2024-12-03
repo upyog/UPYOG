@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.validator.StreetVendingValidationService;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingListResponse;
 import org.upyog.sv.web.models.StreetVendingRequest;
@@ -34,18 +35,18 @@ public class StreetVendingController {
 	@Autowired
 	private StreetVendingService streetVendingService;
 
-//	private final StreetVendingValidationService validationService;
-//
-//	public StreetVendingController(StreetVendingValidationService validationService) {
-//		this.validationService = validationService;
-//	}
+	private final StreetVendingValidationService validationService;
+
+	public StreetVendingController(StreetVendingValidationService validationService) {
+		this.validationService = validationService;
+	}
 
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> createStreetVendingApplication(
 			@RequestBody StreetVendingRequest vendingRequest) {
 
 		StreetVendingDetail streetVendingDetail = null;
-//		validationService.validateRequest(vendingRequest); /// To validate the Create application request
+		validationService.validateRequest(vendingRequest); /// To validate the Create application request
 		if (vendingRequest.isDraftApplication()) {
 			streetVendingDetail = streetVendingService.createStreetVendingDraftApplication(vendingRequest);
 		} else {
