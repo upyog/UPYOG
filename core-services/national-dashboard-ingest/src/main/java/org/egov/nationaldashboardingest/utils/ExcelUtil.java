@@ -143,7 +143,6 @@ public class ExcelUtil {
     }
 
     private void createCell(Row row, int columnCount, Object valueOfCell, CellStyle style, XSSFSheet sheet) {
-        sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
 
         if (valueOfCell instanceof Integer) {
