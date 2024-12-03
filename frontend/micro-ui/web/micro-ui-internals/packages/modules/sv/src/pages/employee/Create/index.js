@@ -100,6 +100,7 @@ const SVEmpCreate = ({ parentRoute }) => {
     sessionStorage.removeItem("CategoryDocument");
     sessionStorage.removeItem("vendingApplicationID");
     sessionStorage.removeItem("ApplicationId");
+    sessionStorage.removeItem("Response");
   };
 
   
