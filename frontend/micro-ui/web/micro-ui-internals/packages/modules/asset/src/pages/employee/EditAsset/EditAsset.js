@@ -37,13 +37,15 @@ const EditAsset = () => {
 
 
   
-
-  const onFormValueChange = (setValue, formData, formState) => {
-    
+const onFormValueChange = (setValue, formData, formState) => {
+    console.log('HIII', formData);
+    console.log('ssssss ', formState);
     setSubmitValve(!Object.keys(formState.errors).length); 
   };
 
   const onSubmit = (data) => {
+    console.log('ON Submit data:- ', data);
+    
     const formData = {
       accountId: applicationDetails?.applicationData?.applicationData?.accountId,
       tenantId: applicationDetails?.applicationData?.applicationData?.tenantId,
@@ -99,14 +101,13 @@ const EditAsset = () => {
 
   };
     
-
-  const configs = editConfig;    
+const configs = editConfig;    
 
   
   return (
     <FormComposer
       heading={t("AST_EDIT_ASSET")}
-      isDisabled={canSubmit}
+      // isDisabled={canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {
        

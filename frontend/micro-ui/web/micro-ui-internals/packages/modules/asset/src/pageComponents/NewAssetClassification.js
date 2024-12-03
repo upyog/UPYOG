@@ -133,7 +133,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     departmentName.map((departmentname) => {
       departNamefromMDMS.push({
         i18nKey: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`,
-        code: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`,
+        code: `${departmentname.code}`,
         value: `COMMON_MASTERS_DEPARTMENT_${departmentname.code}`,
       });
     });
@@ -267,30 +267,55 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     Assetdescription,
   ]);
 
-  const assetType = [
-    {
-      code: "Fixed Asset",
-      i18nKey: "Fixed Asset",
+  const { data: assetTypeData } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetType" }], {
+    select: (data) => {
+      const formattedData = data?.["ASSET"]?.["AssetType"];
+      return formattedData;
     },
-    {
-      code: "Infrastructure Asset",
-      i18nKey: "Infrastructure Asset",
+  });
+  let assetType = [];
+
+  assetTypeData && assetTypeData.map((assT) => {
+      assetType.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
+  });
+
+ 
+  // const assetType = [
+  //   {
+  //     code: "Fixed Asset",
+  //     i18nKey: "Fixed Asset",
+  //   },
+  //   {
+  //     code: "Infrastructure Asset",
+  //     i18nKey: "Infrastructure Asset",
+  //   },
+  // ];
+  const { data: assetCurrentUsageData } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetUsage" }], {
+    select: (data) => {
+      const formattedData = data?.["ASSET"]?.["AssetUsage"];
+      return formattedData;
     },
-  ];
-  const assetCurrentUsage = [
-    {
-      code: "In-use",
-      i18nKey: "In-use",
-    },
-    {
-      code: "In-store",
-      i18nKey: "In-store",
-    },
-    {
-      code: "Disposed",
-      i18nKey: "Disposed",
-    },
-  ];
+  });
+  let assetCurrentUsage = [];
+
+  assetCurrentUsageData && assetCurrentUsageData.map((assT) => {
+    assetCurrentUsage.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
+  });
+
+  // const assetCurrentUsage = [
+  //   {
+  //     code: "In-use",
+  //     i18nKey: "In-use",
+  //   },
+  //   {
+  //     code: "In-store",
+  //     i18nKey: "In-store",
+  //   },
+  //   {
+  //     code: "Disposed",
+  //     i18nKey: "Disposed",
+  //   },
+  // ];
 
   return (
     <React.Fragment>
@@ -470,7 +495,25 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               />
             )}
           />
-
+     <div>{t("Assets Type")}</div>
+          <Controller
+            control={control}
+            name={"assetsOfType"}
+            defaultValue={assetsOfType}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={assetsOfType}
+                select={setAssetsOfType}
+                option={assetType}
+                optionKey="i18nKey"
+                placeholder={"Select"}
+                t={t}
+              />
+            )}
+          />
+          
           <div>
             {t("AST_BOOK_REF_SERIAL_NUM")}
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
@@ -603,24 +646,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>{t("Assets Type")}</div>
-          <Controller
-            control={control}
-            name={"assetsOfType"}
-            defaultValue={assetsOfType}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
-              <Dropdown
-                className="form-field"
-                selected={assetsOfType}
-                select={setAssetsOfType}
-                option={assetType}
-                optionKey="i18nKey"
-                placeholder={"Select"}
-                t={t}
-              />
-            )}
-          />
+     
 
           <div>{t("Assets Usage")}</div>
           <Controller

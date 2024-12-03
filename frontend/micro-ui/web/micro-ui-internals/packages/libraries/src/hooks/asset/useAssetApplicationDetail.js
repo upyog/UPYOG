@@ -31,8 +31,6 @@ const useAssetApplicationDetail = (t, tenantId, applicationNo, config = {}, user
       },
     });
   
-    console.log('State and city is running or not :- ', cityResponseObject, stateResponseObject);
-
     let combinedData;
 
     // if city level master is not available then fetch  from state-level
