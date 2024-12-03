@@ -115,10 +115,7 @@ public class EnrichmentService {
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
 		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		vendingDetail.setApplicationStatus(applicationStatus);
-		if (StreetVendingConstants.ACTION_APPROVE
-				.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
-
-		}
+		
 	}
 
 	public void enrichCreateStreetVendingDraftApplicationRequest(StreetVendingRequest vendingRequest) {

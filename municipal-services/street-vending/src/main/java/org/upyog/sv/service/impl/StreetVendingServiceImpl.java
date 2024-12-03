@@ -115,19 +115,19 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 				.validateApplicationExistence(vendingRequest.getStreetVendingDetail());
 
 		if (existingApplication == null) {
-			return null;
+			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION,
+					"Application not found");
 		}
 
-		existingApplication.setWorkflow(vendingRequest.getStreetVendingDetail().getWorkflow());
-		vendingRequest.setStreetVendingDetail(existingApplication);
+//		existingApplication.setWorkflow(vendingRequest.getStreetVendingDetail().getWorkflow());
+//		vendingRequest.setStreetVendingDetail(existingApplication);
 
-		
 		State state = workflowService.updateWorkflowStatus(vendingRequest);
 		String applicationStatus = state.getApplicationStatus();
 		enrichmentService.enrichStreetVendingApplicationUponUpdate(applicationStatus,vendingRequest);
 		streetVendingRepository.update(vendingRequest);
 
-		if (StreetVendingConstants.ACTION_APPROVE.equals(existingApplication.getWorkflow().getAction())) {
+		if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
 			String tenantId = extractTenantId(vendingRequest);
 			demandService.createDemand(vendingRequest, tenantId);
 		}
