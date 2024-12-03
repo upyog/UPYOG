@@ -95,6 +95,7 @@ const EWApplicationDetails = () => {
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
 
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("EW_APPLICATION_DETAILS")}</Header>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
         {downloadOptions && downloadOptions.length > 0 && (
           <MultiLink
             className="multilinkWrapper employee-mulitlink-main-div"
@@ -105,6 +106,7 @@ const EWApplicationDetails = () => {
             optionsClassName={"employee-options-btn-className"}
           />
         )}
+        </div>
       </div>
 
       <ApplicationDetailsTemplate
