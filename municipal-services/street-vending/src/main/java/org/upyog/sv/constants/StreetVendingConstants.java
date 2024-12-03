@@ -13,6 +13,7 @@ public class StreetVendingConstants {
 	public static final String INSPECTION_PENDING_STATUS = "INPECTIONPENDING";
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 	public static final String INVALID_APPLICATION = "INVALID APPLICATION";
+	public static final String DRAFT_DISCARDED = "Draft discarded";
 
 	// mdms path codes
 	public static final String SV_MASTER_MODULE_NAME = "StreetVending";
