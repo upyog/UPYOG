@@ -848,3 +848,11 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/advertisement-service/src/main/resources/db"
         image-name: "adv-services-db" 
+
+
+  - name: "builds/upyog/utilities/apply-workflow"
+    build:
+      - work-dir: "utilities/apply-workflow"
+        image-name: "apply-workflow"
+        dockerfile: "build/maven/Dockerfile"
+
