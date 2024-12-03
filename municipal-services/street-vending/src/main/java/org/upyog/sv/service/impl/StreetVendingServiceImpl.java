@@ -69,7 +69,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		validator.validateCreate(vendingRequest, mdmsData);
 		enrichmentService.enrichCreateStreetVendingRequest(vendingRequest);
 		workflowService.updateWorkflowStatus(vendingRequest);
-		encryptionService.encryptObject(vendingRequest);
+		//encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.save(vendingRequest);
 		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
 		if(StringUtils.isNotBlank(draftId)) {
@@ -88,33 +88,37 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
 			StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		
-		if (streetVendingSearchCriteria.getMobileNumber() != null) {
-			VendorDetail applicantDetail = VendorDetail.builder()
-					.mobileNo(streetVendingSearchCriteria.getMobileNumber())
-					.dob("1985-02-01").build(); //TODO to remove dob from here 
-			
-			List<VendorDetail> vendorDetails = new ArrayList<>();
-			vendorDetails.add(applicantDetail);
-			
-			StreetVendingDetail streetVendingDetail = StreetVendingDetail.builder().vendorDetail(vendorDetails).build();
-			StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
-					.streetVendingDetail(streetVendingDetail).requestInfo(requestInfo).build();
-			StreetVendingDetail encryptedDetail = encryptionService.encryptObject(streetVendingRequest);
-			
-			if (encryptedDetail.getVendorDetail() != null && !encryptedDetail.getVendorDetail().isEmpty()) {
-				streetVendingSearchCriteria.setMobileNumber(encryptedDetail.getVendorDetail().get(0).getMobileNo());
-			} else {
-				log.warn("Encryption returned no vendor details. Criteria not updated.");
-			}
-
-			log.info("Loading data based on criteria after encrypting mobile number: {}", streetVendingSearchCriteria);
-		}
+		/*
+		 * if (streetVendingSearchCriteria.getMobileNumber() != null) { VendorDetail
+		 * applicantDetail = VendorDetail.builder()
+		 * .mobileNo(streetVendingSearchCriteria.getMobileNumber())
+		 * .dob("1985-02-01").build(); //TODO to remove dob from here
+		 * 
+		 * List<VendorDetail> vendorDetails = new ArrayList<>();
+		 * vendorDetails.add(applicantDetail);
+		 * 
+		 * StreetVendingDetail streetVendingDetail =
+		 * StreetVendingDetail.builder().vendorDetail(vendorDetails).build();
+		 * StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
+		 * .streetVendingDetail(streetVendingDetail).requestInfo(requestInfo).build();
+		 * StreetVendingDetail encryptedDetail =
+		 * encryptionService.encryptObject(streetVendingRequest);
+		 * 
+		 * if (encryptedDetail.getVendorDetail() != null &&
+		 * !encryptedDetail.getVendorDetail().isEmpty()) {
+		 * streetVendingSearchCriteria.setMobileNumber(encryptedDetail.getVendorDetail()
+		 * .get(0).getMobileNo()); } else {
+		 * log.warn("Encryption returned no vendor details. Criteria not updated."); }
+		 * 
+		 * log.info("Loading data based on criteria after encrypting mobile number: {}",
+		 * streetVendingSearchCriteria); }
+		 */
 		List<StreetVendingDetail> applications = streetVendingRepository
 				.getStreetVendingApplications(streetVendingSearchCriteria);
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
-		applications = encryptionService.decryptObject(applications, requestInfo);
+	//	applications = encryptionService.decryptObject(applications, requestInfo);
 		return applications;
 	}
 
