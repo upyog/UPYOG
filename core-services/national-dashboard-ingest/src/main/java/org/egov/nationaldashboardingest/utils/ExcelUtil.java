@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -114,7 +117,7 @@ public class ExcelUtil {
             Row row = sheet.createRow(rowCount++);
             createCell(row, 0, ulb, style, sheet);
 
-            int totalY = 0;
+            int moduleCount = 0;
 
             for (int i = 0; i < modules.length; i++) {
                 String module = modules[i];
@@ -122,12 +125,12 @@ public class ExcelUtil {
 
                 createCell(row, i + 1, isAvailable ? "Y" : "N", style, sheet);
                 if (isAvailable) {
-                    totalY++;
+                    moduleCount++;
                 }
             }
 
             createCell(row, 7, "", style, sheet);
-            createCell(row, 8, totalY, style, sheet);
+            createCell(row, 8, moduleCount, style, sheet);
         }
     }
 
@@ -140,7 +143,6 @@ public class ExcelUtil {
     }
 
     private void createCell(Row row, int columnCount, Object valueOfCell, CellStyle style, XSSFSheet sheet) {
-        //sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
 
         if (valueOfCell instanceof Integer) {
