@@ -58,7 +58,7 @@ public class StreetVendingDetail {
 	
 	private BigDecimal cartLongitude;
 
-	@NotBlank(groups = CreateApplicationGroup.class)
+	@NotNull(groups = CreateApplicationGroup.class)
 	private Integer vendingArea;
 
 	@NotBlank(groups = CreateApplicationGroup.class)

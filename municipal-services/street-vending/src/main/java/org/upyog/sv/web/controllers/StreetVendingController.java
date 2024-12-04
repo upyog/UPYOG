@@ -91,6 +91,7 @@ public class StreetVendingController {
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+		validationService.validateRequest(vendingRequest); /// To validate the Update application request
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
 		StreetVendingResponse response = StreetVendingResponse.builder().streetVendingDetail(streetVendingDetail)

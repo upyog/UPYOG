@@ -27,32 +27,44 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class BankDetail   {
-	
+public class BankDetail {
+
 	private String id;
-	
+
 	private String applicationId;
-    @NotBlank
-    @Size(min = 8, max = 18)
-    private String accountNumber;
+	@NotBlank
+	@Size(min = 8, max = 18)
+	private String accountNumber;
 
-    @NotBlank
-    private String ifscCode;
+	@NotBlank
+	private String ifscCode;
 
-    @NotBlank
-    private String bankName;
+	@NotBlank
+	private String bankName;
 
-    @NotBlank
-    private String bankBranchName;
+	@NotBlank
+	private String bankBranchName;
 
-    @NotBlank
-    private String accountHolderName;
-    
-    private String refundType;
-    
-    private String refundStatus;
-    
-    private AuditDetails auditDetails;
-    
+	@NotBlank
+	private String accountHolderName;
+
+	private String refundType;
+
+	private String refundStatus;
+
+	private AuditDetails auditDetails;
+
+	public BankDetail(BankDetail bankDetail) {
+		this.id = bankDetail.getId();
+		this.applicationId = bankDetail.getApplicationId();
+		this.accountNumber = bankDetail.getAccountNumber();
+		this.ifscCode = bankDetail.getIfscCode();
+		this.bankName = bankDetail.getBankName();
+		this.bankBranchName = bankDetail.getBankBranchName();
+		this.accountHolderName = bankDetail.getAccountHolderName();
+		this.refundType = bankDetail.getRefundType();
+		this.refundStatus = bankDetail.getRefundStatus();
+		this.auditDetails = bankDetail.getAuditDetails();
+	}
+
 }
-

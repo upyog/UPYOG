@@ -13,7 +13,8 @@ public class StreetVendingQueryBuilder {
 			+ "sv.application_date as svApplicationDate, sv.certificate_no as svCertificateNo, sv.approval_date as svApprovalDate, "
 			+ "sv.application_status as svApplicationStatus, sv.trade_license_no as svTradeLicenseNo, sv.vending_activity as svVendingActivity, "
 			+ "sv.vending_zone as svVendingZone, sv.cart_latitude as svCartLatitude, sv.cart_longitude as svCartLongitude, sv.vending_area as svVendingArea, "
-			+ "sv.vending_license_certificate_id as svVendingLicenseCertificateId, sv.local_authority_name as svLocalAuthorityName, "
+			+ "sv.vending_license_certificate_id as svVendingLicenseCertificateId, sv.payment_receipt_id as svPaymentReceiptId , sv.vending_license_id as svVendingLicenseId, "
+			+ "sv.local_authority_name as svLocalAuthorityName, " 
 			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
 			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime ";

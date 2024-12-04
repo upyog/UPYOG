@@ -58,6 +58,8 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.cartLongitude(rs.getBigDecimal("SVCARTLONGITUDE")).vendingArea(rs.getInt("SVVENDINGAREA"))
 						.localAuthorityName(rs.getString("SVLOCALAUTHORITYNAME"))
 						.vendingLicenseCertificateId(rs.getString("SVVENDINGLICENSECERTIFICATEID"))
+						.paymentReceiptId(rs.getString("SVPAYMENTRECEIPTID"))
+						.vendingLicenseId(rs.getString("SVVENDINGLICENSEID"))
 						.disabilityStatus(rs.getString("SVDISABILITYSTATUS"))
 						.benificiaryOfSocialSchemes(rs.getString("SVBENEFICIARYOFSOCIALSCHEMES"))
 						.enrollmentId(rs.getString("SVENROLLMENTID"))
