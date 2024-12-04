@@ -70,7 +70,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       .flat() // Flatten the fields array
       .filter((field) => field.active === true); // Filter by active status
   }
-
+  
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
@@ -134,7 +134,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       const acquisitionCost = parseFloat(updatedData.acquisitionCost) || 0;
       const purchaseCost = parseFloat(updatedData.purchaseCost) || 0;
 
-      if (acquisitionCost && purchaseCost) {
+      if (acquisitionCost >= 0 || purchaseCost >= 0) {
+        console.log('Test DAta :- ',acquisitionCost ,purchaseCost)
         updatedData.bookValue = acquisitionCost + purchaseCost;
       }
 
@@ -168,30 +169,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     }
   };
 
-  const assetType = [
-    {
-      code: "Fixed Asset",
-      i18nKey: "Fixed Asset",
-    },
-    {
-      code: "Infrastructure Asset",
-      i18nKey: "Infrastructure Asset",
-    },
-  ];
-  const assetCurrentUsage = [
-    {
-      code: "In-use",
-      i18nKey: "In-use",
-    },
-    {
-      code: "In-store",
-      i18nKey: "In-store",
-    },
-    {
-      code: "Disposed",
-      i18nKey: "Disposed",
-    },
-  ];
+
+
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={2} /> : null}
@@ -206,7 +185,26 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           {formJson.map((row, index) => (
             <div key={index}>
               {/* Render the label with the localization key and a mandatory asterisk */}
-              <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel>
+              {/* <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel> */}
+              <div>
+              {`${t(row.code)} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t(row.iLable)} `}
+              </span>
+            </div>
+          </div>
 
               {row.type === "date" ? (
                 // If the type is 'date', render a standard HTML input element of type 'date'
