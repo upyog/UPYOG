@@ -230,7 +230,7 @@ public class PetRegistrationService {
 		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
 			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(petApplication -> {
 
-				Thread pdfGenerationThread = new Thread(() -> {
+//				Thread pdfGenerationThread = new Thread(() -> {
 
 					// for NEW TL
 					if (StringUtils.equalsIgnoreCase(petApplication.getWorkflow().getAction(), PTRConstants.WORKFLOW_ACTION_APPROVE)) {
@@ -253,9 +253,9 @@ public class PetRegistrationService {
 						}
 					}
 
-				});
+//				});
 
-				pdfGenerationThread.start();
+//				pdfGenerationThread.start();
 
 			});
 		}
