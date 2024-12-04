@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.upyog.sv.web.models.events.Event;
 import org.upyog.sv.web.models.events.EventRequest;
 import org.upyog.sv.web.models.events.Recepient;
 import org.upyog.sv.web.models.events.Source;
+
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;

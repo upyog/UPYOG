@@ -42,4 +42,13 @@ public class AuditDetails {
 	@JsonProperty("lastModifiedTime")
 	private Long lastModifiedTime = null;
 
+	public AuditDetails(AuditDetails auditDetails) {
+
+		this.createdBy = auditDetails.createdBy;
+		this.lastModifiedBy = auditDetails.lastModifiedBy;
+		this.createdTime = auditDetails.createdTime;
+		this.lastModifiedTime = auditDetails.lastModifiedTime;
+
+	}
+
 }

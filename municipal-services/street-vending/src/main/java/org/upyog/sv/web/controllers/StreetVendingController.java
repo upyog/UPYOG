@@ -46,7 +46,7 @@ public class StreetVendingController {
 			@RequestBody StreetVendingRequest vendingRequest) {
 
 		StreetVendingDetail streetVendingDetail = null;
-		validationService.validateRequest(vendingRequest); /// To validate the Create application request
+//		validationService.validateRequest(vendingRequest); /// To validate the Create application request
 		if (vendingRequest.isDraftApplication()) {
 			streetVendingDetail = streetVendingService.createStreetVendingDraftApplication(vendingRequest);
 		} else {

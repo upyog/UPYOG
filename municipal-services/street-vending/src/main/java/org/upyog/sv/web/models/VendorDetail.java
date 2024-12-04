@@ -65,4 +65,21 @@ public class VendorDetail {
 
 	private AuditDetails auditDetails;
 
+	public VendorDetail(VendorDetail vendorDetail) {
+		this.id = vendorDetail.getId();
+		this.applicationId = vendorDetail.getApplicationId();
+		this.vendorId = vendorDetail.getVendorId();
+		this.name = vendorDetail.getName();
+		this.dob = vendorDetail.getDob();
+		this.gender = vendorDetail.getGender();
+		this.fatherName = vendorDetail.getFatherName();
+		this.mobileNo = vendorDetail.getMobileNo();
+		this.emailId = vendorDetail.getEmailId();
+		this.relationshipType = vendorDetail.getRelationshipType();
+		this.userCategory = vendorDetail.getUserCategory();
+		this.specialCategory = vendorDetail.getSpecialCategory();
+		this.isInvolved = vendorDetail.getIsInvolved();
+		this.auditDetails = vendorDetail.getAuditDetails();
+	}
+
 }

@@ -3,6 +3,7 @@ package org.upyog.sv.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -22,6 +23,7 @@ import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.service.WorkflowService;
 import org.upyog.sv.util.MdmsUtil;
 import org.upyog.sv.validator.StreetVendingValidator;
+import org.upyog.sv.web.models.BankDetail;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -74,6 +76,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		// 3
 		workflowService.updateWorkflowStatus(vendingRequest);
 		// 4
+		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
 		// 5
 		streetVendingRepository.save(vendingRequest);
@@ -84,9 +87,9 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			streetVendingRepository.deleteDraftApplication(draftId);
 		}
 		// 7
-		StreetVendingDetail streetVendingDetail = encryptionService
-				.decryptObject(vendingRequest.getStreetVendingDetail(), vendingRequest.getRequestInfo());
-
+		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
+		streetVendingDetail.setVendorDetail(originalDetail.getVendorDetail());
+		streetVendingDetail.setBankDetail(originalDetail.getBankDetail());
 		return streetVendingDetail;
 	}
 
@@ -126,10 +129,12 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 				.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
 			demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
 		}
+		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.update(vendingRequest);
-		StreetVendingDetail streetVendingDetail = encryptionService
-				.decryptObject(vendingRequest.getStreetVendingDetail(), vendingRequest.getRequestInfo());
+		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
+		streetVendingDetail.setVendorDetail(originalDetail.getVendorDetail());
+		streetVendingDetail.setBankDetail(originalDetail.getBankDetail());
 		return streetVendingDetail;
 	}
 
@@ -230,6 +235,14 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			log.error("Error encrypting mobile number", e);
 			throw new CustomException("ENCRYPTION_ERROR", "Error occurred while encrypting mobile number.");
 		}
+	}
+
+	private StreetVendingDetail copyFieldsToBeEncrypted(StreetVendingDetail detail) {
+		return StreetVendingDetail.builder()
+				.vendorDetail(detail.getVendorDetail() != null
+						? detail.getVendorDetail().stream().map(VendorDetail::new).collect(Collectors.toList())
+						: null)
+				.bankDetail(detail.getBankDetail() != null ? new BankDetail(detail.getBankDetail()) : null).build();
 	}
 
 }
