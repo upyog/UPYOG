@@ -26,7 +26,8 @@ public class WorkflowController {
         this.workflowApplyService = workflowApplyService;
     }
 
-    @PostMapping("/_process")
+    //@PostMapping("/_process")
+    @RequestMapping(value = "/_process", method = RequestMethod.POST)
     @ApiOperation(value = "Process Workflow", notes = "Handles create or update workflow operations based on the payload")
     public ResponseEntity<Object> processWorkflow(@ApiParam(value = "Workflow payload", required = true)
                                                   @Valid @RequestBody WorkflowApplyRequest payload) {
