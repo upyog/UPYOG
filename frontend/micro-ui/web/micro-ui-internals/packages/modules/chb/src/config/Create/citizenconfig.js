@@ -6,12 +6,17 @@
                         {
                             "route":"searchhall",
                             "component":"CHBSearchHall",
-                            "nextStep": "applicant-details",
+                            "nextStep": "info",
                             "key": "slotlist",
                             "type": "component"
                         },
-
-                        
+                        {
+                            "route":"info",
+                            "component":"CHBRequiredDoc",
+                            "nextStep": "applicant-details",
+                            "key": "Documents",
+                            "type": "component"
+                        },
                         {
                         "route": "applicant-details",
                         "component": "CHBCitizenDetails",

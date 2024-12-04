@@ -68,15 +68,6 @@ const ADSCreate = ({ parentRoute }) => {
     redirectWithHistory(nextPage);
   };
 
-  if (
-    params &&
-    Object.keys(params).length > 0 &&
-    window.location.href.includes("/info") &&
-    sessionStorage.getItem("docReqScreenByBack") !== "true"
-  ) {
-    clearParams();
-    queryClient.invalidateQueries("ADS_CREATE");
-  }
   const chbcreate = async () => {
     history.push(`${match.path}/acknowledgement`);
   };

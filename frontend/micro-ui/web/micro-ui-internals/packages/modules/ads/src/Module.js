@@ -17,6 +17,7 @@ import { ADSMyApplications } from "./pages/citizen/ADSMyBookings/index";
 import ADSApplicationDetails from "./pages/citizen/ADSApplicationDetails";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import ADSSearchApplication from "./components/SearchApplication";
+import ADSRequiredDoc from "./pageComponents/ADSRequiredDoc";
 // Component registry for the ADS module, mapping component names to their implementations.
 // Enables dynamic registration and access of components in the application.
 const componentsToRegister = {
@@ -32,6 +33,7 @@ const componentsToRegister = {
   ApplicationDetails: ApplicationDetails,
   ADSApplicationDetails: ADSApplicationDetails,
   ADSSearchApplication,
+  ADSRequiredDoc
 };
 
 // Function to add components to the registry

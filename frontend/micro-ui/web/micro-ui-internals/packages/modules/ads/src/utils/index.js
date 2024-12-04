@@ -12,6 +12,13 @@ export const checkForNA = (value = "") => {
   return checkForNotNull(value) ? value : "CS_NA";
 };
 
+export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
+  if (searcher == "") return str;
+  while (str.includes(searcher)) {
+    str = str.replace(searcher, replaceWith);
+  }
+  return str;
+};
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
   /* Need to enhance this util to return required format*/
 
