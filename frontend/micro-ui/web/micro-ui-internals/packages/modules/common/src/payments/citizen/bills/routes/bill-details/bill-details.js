@@ -5,6 +5,7 @@ import { useHistory, useLocation, useParams, Redirect } from "react-router-dom";
 import ArrearSummary from "./arrear-summary";
 import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
+import TimerValues from "../../../timer-values/timerValues";
 
 const BillDetails = ({ paymentRules, businessService }) => {
   const { t } = useTranslation();
@@ -17,38 +18,6 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
-  const [timeRemaining, setTimeRemaining] = useState(state?.timerValue || 0);
-
-  // Retrieve the last saved time for the current booking from localStorage
-  useEffect(() => {
-    const savedTime = localStorage.getItem(`timeRemaining-${consumerCode}`);
-    if (savedTime) {
-      setTimeRemaining(Number(savedTime)); // Set the saved time if it exists
-    }
-    // Create an interval to update the timer every second
-    const interval = setInterval(() => {
-      setTimeRemaining(prevTime => {
-        if (prevTime <= 0) {
-          clearInterval(interval); // Stop the timer when time reaches 0
-          localStorage.removeItem(`timeRemaining-${consumerCode}`); // Remove the saved time for the expired booking
-          return 0;
-        }
-        const newTime = prevTime - 1;
-        localStorage.setItem(`timeRemaining-${consumerCode}`, newTime); // Save the updated time for the current booking
-        return newTime;
-      });
-    }, 1000);
-
-    // Cleanup the interval when the component is unmounted or when consumerCode changes
-    return () => clearInterval(interval);
-  }, [consumerCode]);
-
-  // Format seconds into "minutes:seconds" format
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
 
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
@@ -203,7 +172,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
         paymentAmount, 
         tenantId: billDetails.tenantId, 
         propertyId: propertyId ,
-        timerValue:timeRemaining,});
+        timerValue:state?.timerValue,});
       } 
     else {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
@@ -241,7 +210,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
                 fontSize: "24px"
               }}
             >
-              {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
+            <TimerValues businessService={businessService} consumerCode={consumerCode} timerValues={state?.timerValue} t={t}/>
             </CardSubHeader>
           )}
           </div>

@@ -20,6 +20,7 @@ import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
 import { stringReplaceAll } from "../bills/routes/bill-details/utils";
 import $ from "jquery";
 import { makePayment } from "./payGov";
+import TimerValues from "../timer-values/timerValues";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
@@ -54,39 +55,7 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-  const [timeRemaining, setTimeRemaining] = useState(state?.timerValue || 0);
-  
- // Retrieve the last saved time for the current booking from localStorage
- useEffect(() => {
-  const savedTime = localStorage.getItem(`timeRemaining-${consumerCode}`);
-  if (savedTime) {
-    setTimeRemaining(Number(savedTime)); // Set the saved time if it exists
-  }
-  // Create an interval to update the timer every second
-  const interval = setInterval(() => {
-    setTimeRemaining(prevTime => {
-      if (prevTime <= 0) {
-        clearInterval(interval); // Stop the timer when time reaches 0
-        localStorage.removeItem(`timeRemaining-${consumerCode}`); // Remove the saved time for the expired booking
-        return 0;
-      }
-      const newTime = prevTime - 1;
-      localStorage.setItem(`timeRemaining-${consumerCode}`, newTime); // Save the updated time for the current booking
-      return newTime;
-    });
-  }, 1000);
 
-  // Cleanup the interval when the component is unmounted or when consumerCode changes
-  return () => clearInterval(interval);
-}, [consumerCode]);
-
-
-  // Format seconds into "minutes:seconds" format
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  };
   const onSubmit = async (d) => {
     const filterData = {
       Transaction: {
@@ -240,7 +209,7 @@ export const SelectPaymentType = (props) => {
                 fontSize: "24px"
               }}
             >
-              {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
+          <TimerValues businessService={businessService} consumerCode={consumerCode} timerValues={state?.timerValue} t={t}/>
             </CardSubHeader>
           )}
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
