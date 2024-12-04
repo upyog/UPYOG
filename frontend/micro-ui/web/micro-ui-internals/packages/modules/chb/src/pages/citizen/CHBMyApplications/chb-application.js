@@ -21,6 +21,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
     },
     enabled: false, // Disable automatic refetch
   });
+  /*
   const [timeRemaining, setTimeRemaining] = useState(application?.timerValue);
   // Initialize time remaining on mount or when application changes
   useEffect(() => {
@@ -44,6 +45,8 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
+
+  */
   const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
@@ -87,9 +90,9 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   }, [showToast]);
   return (
     <Card>
-       <div style={{ display: "flex", justifyContent: "space-between" }}>
+       {/* <div style={{ display: "flex", justifyContent: "space-between" }}> */}
        <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
-            { timeRemaining>0 && (<CardSubHeader 
+            {/* { timeRemaining>0 && (<CardSubHeader 
               style={{ 
                 textAlign: 'right', 
                 fontSize: "24px"
@@ -97,7 +100,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
             >
               {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
             </CardSubHeader>)}
-        </div>
+        </div> */}
       <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
       <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={t(`${application?.communityHallCode}`)} />
       <KeyNote keyValue={t("CHB_BOOKING_DATE")} note={getBookingDateRange(application?.bookingSlotDetails)} />

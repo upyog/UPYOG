@@ -15,6 +15,8 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
+
+  /*
   const [timeRemaining, setTimeRemaining] = useState(application?.remainingTimerValue);
 // Initialize time remaining on mount or when application changes
 useEffect(() => {
@@ -38,6 +40,7 @@ const formatTime = (seconds) => {
   const remainingSeconds = seconds % 60;
   return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
 };
+*/
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
       advertisementSlotSearchCriteria: {
@@ -96,9 +99,9 @@ const formatTime = (seconds) => {
   }, [showToast]);
   return (
     <Card>
-       <div style={{ display: "flex", justifyContent: "space-between" }}>
+       {/* <div style={{ display: "flex", justifyContent: "space-between" }}> */}
        <KeyNote keyValue={t("ADS_BOOKING_NO")} note={application?.bookingNo} />
-            { timeRemaining>0 && (<CardSubHeader 
+            {/* { timeRemaining>0 && (<CardSubHeader 
               style={{ 
                 textAlign: 'right', 
                 fontSize: "24px"
@@ -106,7 +109,7 @@ const formatTime = (seconds) => {
             >
               {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
             </CardSubHeader>)}
-        </div>
+        </div> */}
       <KeyNote keyValue={t("ADS_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
       <KeyNote keyValue={t("ADS_BOOKING_DATE")} note={getBookingDateRange(application?.cartDetails)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
