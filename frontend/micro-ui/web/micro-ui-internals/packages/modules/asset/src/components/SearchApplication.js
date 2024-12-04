@@ -71,9 +71,9 @@
           
 
             {
-              Header: t("AST_ASSET_CATEGORY_LABEL"),
+              Header: t("AST_BOOK_REF_SERIAL_NUM"),
               Cell: ( row ) => {
-                return GetCell(`${row?.row?.original?.["assetClassification"]}`)
+                return GetCell(`${row?.row?.original?.["assetBookRefNo"]}`)
               },
               disableSortBy: true,
             },
@@ -354,7 +354,7 @@
               <br></br>
            { data !== "" ? 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
-            <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
+            {/* <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button>  */}
             <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer", marginLeft:"15px"}}>Download QR Report</button> 
 
             </div>
