@@ -116,4 +116,42 @@ public class PropertiesManager {
 
 	@Value("${decryption.abac.enable}")
 	private Boolean isDecryptionEnable;
+	
+	//Mseva Sso
+	@Value("${egov.hrms.sso.mseva.decryption.key}")
+	public byte[] hrmsMsevaSsoKey;
+	
+	@Value("${egov.hrms.eseva.api.host}")
+	public String hrmsEsevaApiHost;
+	
+	@Value("${egov.hrms.eseva.api.endpoint}")
+	public String hrmsEsevaApiEndPoint;
+	
+	@Value("${egov.hrms.uat.employee.link.app}")
+	public String hrmsMsevaUatApiEndPoint;
+	
+	@Value("${egov.hrms.eseva.api.request.object}")
+	public String hrmsEsevaApiRequestObject;
+	
+	@Value("${egov.hrms.eseva.api.response.object.response}")
+	public String hrmsEsevaApiResponseObjectResp;
+	
+	@Value("${egov.hrms.eseva.api.response.object.data}")
+	public String hrmsEsevaApiResponseObjectData;
+	
+	@Value("${egov.hrms.eseva.api.response.object.username}")
+	public String hrmsEsevaApiResponseObjectUsername;
+	
+	@Value("${egov.hrms.eseva.api.response.object.mobile}")
+	public String hrmsEsevaApiResponseObjectMobile;
+	
+	@Value("${egov.hrms.eseva.api.response.object.email}")
+	public String hrmsEsevaApiResponseObjectEmail;
+	
+	@Value("${egov.hrms.eseva.api.response.object.district}")
+	public String hrmsEsevaApiResponseObjectDistrict;
+	
+	@Value("${egov.hrms.eseva.api.response.object.fullname}")
+	public String hrmsEsevaApiResponseObjectFullname;
+	
 }
