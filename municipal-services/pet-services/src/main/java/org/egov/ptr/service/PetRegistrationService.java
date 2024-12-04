@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,6 +27,7 @@ import org.egov.ptr.models.Demand;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationActionRequest;
 import org.egov.ptr.models.PetRegistrationActionResponse;
+import org.egov.ptr.models.PetCountResponse;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.collection.Bill;
@@ -374,7 +376,7 @@ public class PetRegistrationService {
 			}
 	}
 
-	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest) {
+	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest ) {
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
 				.equals(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT)) {
 			
@@ -465,12 +467,21 @@ public class PetRegistrationService {
 					.applicationNumber(applicationNumber)
 					.build();
 			List<PetRegistrationApplication> petApplications = petRegistrationRepository.getApplications(criteria);
+			
 			PetRegistrationApplication petRegistrationApplication = null != petApplications ? petApplications.get(0): null;
 			
+			PetRegistrationRequest mdmsrequest = PetRegistrationRequest.builder()
+	                .requestInfo(ptradeLicenseActionRequest.getRequestInfo())
+	                .build();
+			
+			mdmsrequest.setPetRegistrationApplications(petApplications);			
 
+			BigDecimal taxAmount = getFeesFromMdms(mdmsrequest);
+	        
 			ApplicationDetail applicationDetail = getApplicationBillUserDetail(petRegistrationApplication, ptradeLicenseActionRequest.getRequestInfo());
 			
-			
+			applicationDetail.setTotalPayableAmount(taxAmount);
+	 
 			tradeLicenseActionResponse.getApplicationDetails().add(applicationDetail);
 		});
 		
@@ -609,4 +620,28 @@ public class PetRegistrationService {
 		return roleCodes;
 	}
 
+	public PetCountResponse getAllcounts() {
+		PetCountResponse response = new PetCountResponse();
+        List<Map<String, Object>> statusList = null;
+        statusList = petRegistrationRepository.getAllCounts();
+        
+        if (!CollectionUtils.isEmpty(statusList)) {
+        	response.setCountsData(
+		                statusList.stream()
+		                        .filter(Objects::nonNull) // Ensure no null entries
+		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+		                        .collect(Collectors.toList())); // Collect the filtered list
+			  
+			  if (statusList.get(0).containsKey("total_applications")) {
+		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+		            } else {
+		                throw new IllegalArgumentException("total_applications is not a valid number");
+		            }
+		        }
+		}
+        return response;
+	}	
+	
 }
