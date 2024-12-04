@@ -30,6 +30,7 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 	//Selecting the query based on the moduleName 
 	public EmployeeDashboardDetails fetchModuleData(EmployeeDashboardRequest employeeDashboardRequest) {
 		ModuleName moduleName = employeeDashboardRequest.getModuleName();
+		String tenantid = employeeDashboardRequest.getTenantId();
 		StringBuilder query;
 
 		switch (moduleName) {
@@ -74,8 +75,7 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
 			throw new IllegalArgumentException("Module Not found");
 		}
 		log.info("Executing query for module: {} - Query: {}", moduleName, query.toString());
-
-		return jdbcTemplate.queryForObject(query.toString(), new EmployeeDashboardDetailsRowMapper(moduleName));
+		return jdbcTemplate.queryForObject(query.toString(), new Object[]{tenantid}, new EmployeeDashboardDetailsRowMapper(moduleName));
 	}
 
 	
