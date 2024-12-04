@@ -46,7 +46,7 @@ public class StreetVendingController {
 			@RequestBody StreetVendingRequest vendingRequest) {
 
 		StreetVendingDetail streetVendingDetail = null;
-//		validationService.validateRequest(vendingRequest); /// To validate the Create application request
+		validationService.validateRequest(vendingRequest); /// To validate the Create application request
 		if (vendingRequest.isDraftApplication()) {
 			streetVendingDetail = streetVendingService.createStreetVendingDraftApplication(vendingRequest);
 		} else {
@@ -91,6 +91,7 @@ public class StreetVendingController {
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+		validationService.validateRequest(vendingRequest); /// To validate the Update application request
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
 		StreetVendingResponse response = StreetVendingResponse.builder().streetVendingDetail(streetVendingDetail)
