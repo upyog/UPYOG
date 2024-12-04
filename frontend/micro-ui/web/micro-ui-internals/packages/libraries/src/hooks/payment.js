@@ -26,7 +26,7 @@ export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...fi
 
   const { isLoading, error, isError, data, status } = useQuery(
     ["citizenBillsForBuisnessService", businessService, { ...params }],
-    () => Digit.PaymentService.fetchBill(window.location.href.includes("mcollect") ? tenant : tenantId, { ...params }),
+    () => Digit.PaymentService.fetchBill(window.location.href.includes("mcollect")?tenant:tenantId, { ...params }),
     {
       refetchOnMount: true,
       retry: false,
