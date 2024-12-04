@@ -19,6 +19,8 @@ import org.egov.applyworkflow.web.model.workflow.BusinessServiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static org.egov.applyworkflow.util.Constants.WORKFLOW_CREATE;
 import static org.egov.applyworkflow.util.Constants.WORKFLOW_UPDATE;
 
@@ -87,6 +89,31 @@ public class WorkflowApplyService {
         workflowRequest.setRequestInfo(payload.getRequestInfo());
         workflowRequest.addBusinessServiceItem(businessService);
 
+        // Construct Search URL
+        StringBuilder searchUrl = new StringBuilder(appConfig.getWfContextPath());
+        searchUrl.append(appConfig.getSearchPath());
+        String searchParam = String.format("?businessServices=%s&tenantId=%s",
+                //appConfig.getSearchPath(),
+                workflowRequest.getBusinessServices().get(0).getBusinessService(),
+                workflowRequest.getBusinessServices().get(0).getTenantId()
+
+        );
+        searchUrl.append(searchParam);
+        log.info("Fetching existing workflow for update at URI: {}", searchUrl);
+
+        // Fetch existing workflow
+        Object response = serviceRequestRepository.fetchResult(searchUrl, workflowRequest);
+        BusinessServiceResponse businessServiceResponse = objectMapper.convertValue(response, BusinessServiceResponse.class);
+
+        // check if workflow exits or not
+        if (Optional.ofNullable(businessServiceResponse)
+                .map(BusinessServiceResponse::getBusinessServices)
+                .filter(services -> !services.isEmpty())
+                .isPresent()) {
+            throw new IllegalStateException("Workflow exists, so it cannot be created but can be updated.");
+        }
+
+
         // Construct Create URL
         StringBuilder url = new StringBuilder(appConfig.getWfContextPath());
         url.append(appConfig.getCreatePath());
@@ -94,7 +121,7 @@ public class WorkflowApplyService {
         log.info("Payload: {}", workflowRequest);
 
         // Make API call for creation
-        Object response = serviceRequestRepository.fetchResult(url, workflowRequest);
+        response = serviceRequestRepository.fetchResult(url, workflowRequest);
         return objectMapper.convertValue(response, BusinessServiceResponse.class);
     }
 
