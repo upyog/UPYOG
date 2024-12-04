@@ -108,11 +108,6 @@ public class ExcelUtil {
 
         Map<String, List<String>> stateModules = ulbModules.get(state);
 
-        if (stateModules == null) {
-            log.warn("No module data found for state: {}", state);
-            return;
-        }
-
         for (String ulb : ulbList) {
             Row row = sheet.createRow(rowCount++);
             createCell(row, 0, ulb, style, sheet);
@@ -121,10 +116,9 @@ public class ExcelUtil {
 
             for (int i = 0; i < modules.length; i++) {
                 String module = modules[i];
-                boolean isAvailable = checkModuleAvailability(ulb, module, stateModules);
-
-                createCell(row, i + 1, isAvailable ? "Y" : "N", style, sheet);
-                if (isAvailable) {
+                boolean moduleDataAvailable = checkModuleAvailability(ulb, module, stateModules);
+                createCell(row, i + 1, moduleDataAvailable ? "Y" : "N", style, sheet);
+                if (moduleDataAvailable) {
                     moduleCount++;
                 }
             }
@@ -135,14 +129,18 @@ public class ExcelUtil {
     }
 
     private boolean checkModuleAvailability(String ulb, String module, Map<String, List<String>> stateModules) {
-        List<String> availableModules = stateModules.get(ulb);
-        if (availableModules != null) {
-            return availableModules.contains(module);
+        if (stateModules == null) {
+            return false;
         }
-        return false;
+        List<String> availableModules = stateModules.get(ulb);
+        if (availableModules == null) {
+            return false;
+        }
+        return availableModules.contains(module);
     }
 
     private void createCell(Row row, int columnCount, Object valueOfCell, CellStyle style, XSSFSheet sheet) {
+        
         Cell cell = row.createCell(columnCount);
 
         if (valueOfCell instanceof Integer) {
