@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -32,4 +33,12 @@ public class PetRegistrationRepository {
 		log.info("Final query: " + query);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 	}
+	
+	public List<Map<String, Object>> getAllCounts() {
+		List<Map<String, Object>> statusList = null;
+		String query = "SELECT SUM(COUNT(*)) OVER () AS total_applications,EXTRACT(MONTH FROM TO_TIMESTAMP(createdtime / 1000)) AS month,COUNT(*) AS application_count FROM eg_wf_processinstance_v2 WHERE modulename = 'PTR' AND action = 'APPROVE' GROUP BY month ORDER BY month";
+		statusList =jdbcTemplate.queryForList(query);
+        return statusList;
+	}
+	
 }

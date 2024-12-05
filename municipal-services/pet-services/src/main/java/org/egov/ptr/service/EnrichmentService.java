@@ -14,9 +14,13 @@ import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.util.PetUtil;
+import org.egov.tl.web.models.TradeLicense;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class EnrichmentService {
@@ -54,8 +58,7 @@ public class EnrichmentService {
 			application.getAddress().setId(UUID.randomUUID().toString()); // Enrich address UUID
 			application.getPetDetails().setPetDetailsId(application.getId());
 			application.getPetDetails().setId(UUID.randomUUID().toString()); // Enrich petDetails UUID
-			application.setApplicationNumber(petRegistrationIdList.get(index++)); // Enrich application number from
-																					// IDgen
+			application.setApplicationNumber(makeDesiredNumber(application,petRegistrationIdList.get(index++))); // Enrich application number from															// IDgen
 			if (!CollectionUtils.isEmpty(application.getDocuments()))
 				application.getDocuments().forEach(doc -> {
 					if (doc.getId() == null) {
@@ -70,6 +73,34 @@ public class EnrichmentService {
 			// application.setApplicationNumber(UUID.randomUUID().toString());
 		}
 	}
+	
+	private String makeDesiredNumber(PetRegistrationApplication petregistrationApplication,String ApplicationNumber) {
+		
+		String ulbName = null;
+		if(null == petregistrationApplication.getAdditionalDetail().get("ulbName")) {
+			throw new CustomException("ULB_NAME_EMPTY","Provide the ULB name.");
+		}
+		else {
+			ulbName = petregistrationApplication.getAdditionalDetail().get("ulbName").toString();
+			ulbName = ulbName.replaceAll("^\"|\"$", "").toUpperCase();
+		}
+		
+		ApplicationNumber = ApplicationNumber.replace("ULBNAME", ulbName);
+		ApplicationNumber = ApplicationNumber.replace("VALIDITYPERIOD", getFormatOfPeriodOfPT());
+        
+		return ApplicationNumber;
+	}
+	
+	private String getFormatOfPeriodOfPT() {
+		  	LocalDate currentDate = LocalDate.now();
+
+	        // Define a formatter for "MMyyyy"
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMyyyy");
+
+	        // Format the current date
+	        return currentDate.format(formatter);
+	}
+
 
 	public void enrichPetApplicationUponUpdate(PetRegistrationRequest petRegistrationRequest, PetRegistrationApplication existingApplication) {
 		

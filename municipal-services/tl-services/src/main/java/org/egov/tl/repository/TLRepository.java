@@ -236,22 +236,24 @@ public class TLRepository {
 	}
 
 
-	public List<String> getTypesOfAllApplications(Boolean isHistoryCall, String tenantId) {
-		List<String> statusList = null;
+	public List<Map<String, Object>> getTypesOfAllApplications(Boolean isHistoryCall, String tenantId) {
+		List<Map<String, Object>> statusList = null;
 		String query = null;
-    	List<Object> preparedStmtList = new ArrayList<>();
-		
-		if (BooleanUtils.isTrue(isHistoryCall)) {
-			query = "select applicationtype from eg_tl_tradelicense_audit where \"action\" = 'APPROVE' and  status = 'APPROVED'";
-		}else {
-			if (StringUtils.isEmpty(tenantId)) {
-				query = "select applicationtype from eg_tl_tradelicense";
-			} else {
-				query = "select applicationtype from eg_tl_tradelicense WHERE tenantid = ?";
-				preparedStmtList.add(tenantId);
-			} 
-		}
-		statusList = jdbcTemplate.query(query,preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("applicationtype"));
+//    	List<Object> preparedStmtList = new ArrayList<>();
+		query = "SELECT SUM(COUNT(*)) OVER () AS total_applications,EXTRACT(MONTH FROM TO_TIMESTAMP(createdtime / 1000)) AS month,COUNT(*) AS application_count FROM eg_tl_tradelicense_audit WHERE status = 'APPROVED' AND DATE(TO_TIMESTAMP(createdtime / 1000)) < CURRENT_DATE GROUP BY status,month ORDER BY month";
+		statusList =jdbcTemplate.queryForList(query);
+
+//		if (BooleanUtils.isTrue(isHistoryCall)) {
+//			query = "select applicationtype from eg_tl_tradelicense_audit where \"action\" = 'APPROVE' and  status = 'APPROVED'";
+//		}else {
+//			if (StringUtils.isEmpty(tenantId)) {
+//				query = "select applicationtype from eg_tl_tradelicense";
+//			} else {
+//				query = "select applicationtype from eg_tl_tradelicense WHERE tenantid = ?";
+//				preparedStmtList.add(tenantId);
+//			} 
+//		}
+//		statusList = jdbcTemplate.query(query,preparedStmtList.toArray(),(rs, rowNum) -> rs.getString("applicationtype"));
 		
 		return statusList;
 	}

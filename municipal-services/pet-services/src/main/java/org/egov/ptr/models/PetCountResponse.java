@@ -1,10 +1,8 @@
-package org.egov.tl.web.models;
+package org.egov.ptr.models;
 
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,12 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TradeLicenseActionResponse {
-
-	private List<ApplicationDetail> applicationDetails;
-	
+public class PetCountResponse {
+    private List<Map<String, Object>> countsData;
 	private long  applicationTotalCount;
-	
-	private List<Map<String, Object>> statusList;
-
 }
