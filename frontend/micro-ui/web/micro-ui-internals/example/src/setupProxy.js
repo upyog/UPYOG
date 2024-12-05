@@ -76,6 +76,7 @@ module.exports = function (app) {
     "/sv-services/street-vending/_create",
     "/sv-services/street-vending/_search",
     "/sv-services/street-vending/_update",
+    "/sv-services/street-vending/_deletedraft",
     "/ewaste-services/ewaste-request/_create",
     "/ewaste-services/ewaste-request/_search",
     "/ewaste-services/ewaste-request/_update",
@@ -89,6 +90,7 @@ module.exports = function (app) {
     "/adv-services/booking/v1/_update",
     "/adv-services/booking/v1/_slot-search",
     "/adv-services/booking/v1/_estimate",
+    "/employee-dashboard/_search",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
