@@ -39,6 +39,8 @@ public class BookingDetail {
 	
 	private Long paymentDate;
 	
+	private String draftId;
+	
 	private Long applicationDate;
 	
 	@NotBlank
@@ -69,7 +71,7 @@ public class BookingDetail {
 	
 	private AuditDetails auditDetails;
 	
-	private Long remainingTimerValue;
+	private Long timerValue;
 	
  	//private ProcessInstance workflow;
 	

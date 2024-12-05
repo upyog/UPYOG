@@ -42,7 +42,7 @@ public class AdvertisementSlotAvailabilityDetail {
 	
 	private long timerValue;
 	
-	private long remainingTimerValue;
+//	private long remainingTimerValue;
 	
 	private String bookingDate;
 

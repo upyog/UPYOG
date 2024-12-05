@@ -55,6 +55,12 @@ public class AdvertisementSearchCriteria {
     private String toDate;
 
     private boolean isCountCall;
+    
+    /**
+	 * true : send draft application details for the user and tenantId
+	 * false: send completed application based on search params
+	 */
+    private String isDraftApplication;
 
     @JsonProperty("createdBy")
     @JsonIgnore

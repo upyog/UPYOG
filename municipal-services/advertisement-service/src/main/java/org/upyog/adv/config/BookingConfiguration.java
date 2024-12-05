@@ -37,6 +37,16 @@ public class BookingConfiguration {
 
 	@Value("${persister.update.advertisement.booking.topic}")
 	private String advertisementBookingUpdateTopic;
+	
+	@Value("${persister.create.draft.advertisement.topic}")
+	private String advertisementDraftApplicationSaveTopic;
+
+	@Value("${persister.update.draft.advertisement.topic}")
+	private String advertisementDraftApplicationUpdateTopic;
+
+	@Value("${persister.delete.draft.advertisement.topic}")
+	private String advertisementDraftApplicationDeleteTopic;
+
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")

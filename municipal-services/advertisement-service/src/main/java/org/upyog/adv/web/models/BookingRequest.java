@@ -35,7 +35,7 @@ public class BookingRequest {
 	@Valid
 	@JsonProperty("bookingApplication")
 	private  BookingDetail bookingApplication; 
-	
 
-	
+	@JsonProperty("isDraftApplication")
+	private boolean isDraftApplication;
 }

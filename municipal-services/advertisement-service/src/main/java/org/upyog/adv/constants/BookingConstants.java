@@ -99,5 +99,7 @@ public class BookingConstants {
 	public static final String BOOKING_CREATED_STATUS = "BOOKING_CREATED";
 	
 	public static final String BOOKED_STATUS = "BOOKED";
+	
+	public static final String DRAFT_DISCARDED = "Draft discarded";
 
 }

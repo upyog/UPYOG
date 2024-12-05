@@ -30,4 +30,11 @@ public interface BookingService {
 	BookingDetail updateBookingSynchronously(BookingRequest bookingRequest, PaymentDetail paymentDetail,
 			BookingStatusEnum booked);
 
+	BookingDetail createAdvertisementDraftApplication(BookingRequest bookingRequest);
+
+	List<BookingDetail> getAdvertisementDraftApplicationDetails(@NonNull RequestInfo requestInfo,
+			@Valid AdvertisementSearchCriteria criteria);
+	
+	public String deleteAdvertisementDraft(String draftId);
+
 }
