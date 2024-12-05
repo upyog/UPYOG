@@ -28,6 +28,13 @@ delete from eg_sv_operation_time_detail cascade;
 
 delete from eg_sv_street_vending_draft_detail cascade;
 
+-- workflow deletion of sv applications
+delete from eg_wf_processinstance_v2 where businessservice='street-vending';
+
+-- audit tables deletion of sv
+delete from eg_sv_street_vending_detail_auditdetails;
+ 
+delete from eg_sv_vendor_detail_auditdetails;
 ---
 
 select  * from  eg_sv_street_vending_detail ;
