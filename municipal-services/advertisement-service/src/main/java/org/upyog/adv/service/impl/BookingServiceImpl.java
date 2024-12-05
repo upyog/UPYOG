@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,13 @@ public class BookingServiceImpl implements BookingService {
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
+		
+		String draftId = bookingRequest.getBookingApplication().getDraftId();
+		// 5
+		if (StringUtils.isNotBlank(draftId)) {
+			log.info("Deleting draft entry for draft id: " + draftId);
+			bookingRepository.deleteDraftApplication(draftId);
+		}
 		
 		BookingDetail bookingDetails = encryptionService.decryptObject(
 			    bookingRequest.getBookingApplication(), 
@@ -308,6 +316,37 @@ public class BookingServiceImpl implements BookingService {
 		}
 		advertisementbookingRequest.setBookingApplication(bookingDetailDB);
 	}
+	
+	@Override
+	public BookingDetail createAdvertisementDraftApplication(BookingRequest bookingRequest) {
+
+		if (StringUtils.isNotBlank(bookingRequest.getBookingApplication().getDraftId())) {
+			enrichmentService.enrichUpdateAdvertisementDraftApplicationRequest(bookingRequest);
+			bookingRepository.updateDraftApplication(bookingRequest);
+		} else {
+			enrichmentService.enrichCreateAdvertisementDraftApplicationRequest(bookingRequest);
+			bookingRepository.saveDraftApplication(bookingRequest);
+		}
+
+		return bookingRequest.getBookingApplication();
+	}
+	
+	@Override
+	public List<BookingDetail> getAdvertisementDraftApplicationDetails(@NonNull RequestInfo requestInfo,
+			@Valid AdvertisementSearchCriteria criteria) {
+		return bookingRepository.getAdvertisementDraftApplications(requestInfo, criteria);
+	}
+	
+	public String deleteAdvertisementDraft(String draftId) {
+
+		if (StringUtils.isNotBlank(draftId)) {
+			log.info("Deleting draft entry for draft id: " + draftId);
+			bookingRepository.deleteDraftApplication(draftId);
+		}
+		return BookingConstants.DRAFT_DISCARDED;
+	}
+	
+	
 
 }
 

@@ -1,8 +1,6 @@
 package org.upyog.adv.service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -125,6 +123,28 @@ public class EnrichmentService {
 		}
 		bookingRequest.getBookingApplication().setPaymentDate(auditDetails.getLastModifiedTime());
 		bookingRequest.getBookingApplication().setAuditDetails(auditDetails);
+		
+	}
+	
+	public void enrichCreateAdvertisementDraftApplicationRequest(BookingRequest bookingRequest) {
+		String draftId = BookingUtil.getRandonUUID();
+		log.info("Enriching create draft street vending application with draft id :" + draftId);
+		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
+		RequestInfo requestInfo = bookingRequest.getRequestInfo();
+		AuditDetails auditDetails = BookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+
+		bookingDetail.setDraftId(draftId);
+		bookingDetail.setAuditDetails(auditDetails);
+		
+	}
+	
+	public void enrichUpdateAdvertisementDraftApplicationRequest(BookingRequest bookingRequest) {
+		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
+		log.info("Enriching update draft street vending application with draft id :" + bookingDetail.getDraftId());
+		RequestInfo requestInfo = bookingRequest.getRequestInfo();
+		AuditDetails auditDetails = BookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+
+		bookingDetail.setAuditDetails(auditDetails);
 		
 	}
 

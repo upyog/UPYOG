@@ -21,11 +21,13 @@ import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.kafka.Producer;
 import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.repository.querybuilder.AdvertisementBookingQueryBuilder;
+import org.upyog.adv.repository.rowmapper.AdvertisementDraftApplicationRowMapper;
 import org.upyog.adv.repository.rowmapper.AdvertisementSlotAvailabilityRowMapper;
 import org.upyog.adv.repository.rowmapper.BookingCartDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.BookingDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.adv.util.BookingUtil;
+import org.upyog.adv.web.models.AdvertisementDraftDetail;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
@@ -34,7 +36,12 @@ import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.CartDetail;
 import org.upyog.adv.web.models.DocumentDetail;
+import org.upyog.adv.web.models.PersisterWrapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
@@ -58,6 +65,10 @@ public class BookingRepositoryImpl implements BookingRepository {
 	private AdvertisementBookingQueryBuilder queryBuilder;
 	@Autowired
 	private AdvertisementSlotAvailabilityRowMapper availabilityRowMapper;
+	@Autowired
+	private AdvertisementDraftApplicationRowMapper draftApplicationRowMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Override
 	public void saveBooking(BookingRequest bookingRequest) {
@@ -131,10 +142,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 		if (result.isEmpty()) {
 			String query = queryBuilder.insertBookingIdForTimer(bookingId);
 			jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
+			long timerValue = bookingConfiguration.getPaymentTimer();
+	        availabiltityDetailsResponse.setTimerValue(timerValue / 1000);
 		} else {
 			Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
 			long remainingTimeValue = remainingTime.get(bookingId);
-			availabiltityDetailsResponse.setRemainingTimerValue(remainingTimeValue);
+			availabiltityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
 
 		}
 	}
@@ -320,4 +333,61 @@ public class BookingRepositoryImpl implements BookingRepository {
 		log.info("Fetched slot availabilty details : " + availabiltityDetails);
 		return availabiltityDetails;
 	}
+	
+	@Override
+	public void saveDraftApplication(BookingRequest bookingRequest) {
+		AdvertisementDraftDetail advertisementDraftDetail = convertToDraftDetailsObject(bookingRequest);
+		PersisterWrapper<AdvertisementDraftDetail> persisterWrapper = new PersisterWrapper<AdvertisementDraftDetail>(advertisementDraftDetail);
+		producer.push(bookingConfiguration.getAdvertisementDraftApplicationSaveTopic(), persisterWrapper);
+    }
+
+	@Override
+	public List<BookingDetail> getAdvertisementDraftApplications(@NonNull RequestInfo requestInfo,
+			@Valid AdvertisementSearchCriteria advertisementSearchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = "SELECT draft_id, draft_application_data FROM eg_adv_draft_detail where user_uuid = ? and tenant_id = ?";
+		preparedStmtList.add(requestInfo.getUserInfo().getUuid());
+		preparedStmtList.add(advertisementSearchCriteria.getTenantId());
+		
+		log.info("Final query for getAdvertisementApplications {} and paramsList {} : " , preparedStmtList);
+		log.info("Final query: " + query);
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), draftApplicationRowMapper);
+	}
+
+	@Override
+	public void updateDraftApplication(BookingRequest bookingRequest) {
+		AdvertisementDraftDetail advertisementDraftDetail = convertToDraftDetailsObject(bookingRequest);
+		PersisterWrapper<AdvertisementDraftDetail> persisterWrapper = new PersisterWrapper<AdvertisementDraftDetail>(advertisementDraftDetail);
+		producer.push(bookingConfiguration.getAdvertisementDraftApplicationUpdateTopic(), persisterWrapper);
+		
+	}
+	
+	public void deleteDraftApplication(String draftId) {
+		AdvertisementDraftDetail advertisementDraftDetail = AdvertisementDraftDetail.builder().draftId(draftId).build();
+
+		PersisterWrapper<AdvertisementDraftDetail> persisterWrapper = new PersisterWrapper<AdvertisementDraftDetail>(
+				advertisementDraftDetail);
+		producer.push(bookingConfiguration.getAdvertisementDraftApplicationDeleteTopic(), persisterWrapper);
+
+	}
+	
+	private AdvertisementDraftDetail convertToDraftDetailsObject(BookingRequest bookingRequest) {
+		BookingDetail advertisementDetail = bookingRequest.getBookingApplication();
+		String draftApplicationData = null;
+		try {
+			draftApplicationData = objectMapper.writeValueAsString(bookingRequest.getBookingApplication());
+		} catch (JsonProcessingException e) {log.error("Serialization error for AdvertisementDraftDetail with ID: {} and Tenant: {}",
+				bookingRequest.getBookingApplication().getDraftId(),
+				bookingRequest.getBookingApplication().getTenantId(), e);
+
+	}
+		AdvertisementDraftDetail advertisementDraftDetail = AdvertisementDraftDetail.builder()
+				.draftId(advertisementDetail.getDraftId()).tenantId(advertisementDetail.getTenantId())
+				.userUuid(bookingRequest.getRequestInfo().getUserInfo().getUuid())
+				.draftApplicationData(draftApplicationData).auditDetails(advertisementDetail.getAuditDetails()).build();
+		return advertisementDraftDetail;
+	}
+	
+	
+	
 }

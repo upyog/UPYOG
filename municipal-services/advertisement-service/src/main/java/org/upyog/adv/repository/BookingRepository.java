@@ -12,6 +12,8 @@ import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 
+import lombok.NonNull;
+
 public interface BookingRepository {
 
 	void saveBooking(BookingRequest bookingRequest);
@@ -32,7 +34,16 @@ public interface BookingRepository {
 
 	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
 			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse);
-
+	
 	Map<String, Long> getRemainingTimerValues(String bookingId);
+	
+	void saveDraftApplication(BookingRequest bookingRequest);
+
+	void updateDraftApplication(BookingRequest bookingRequest);
+
+	List<BookingDetail> getAdvertisementDraftApplications(@NonNull RequestInfo requestInfo,
+			@Valid AdvertisementSearchCriteria advertisementSearchCriteria);
+
+	void deleteDraftApplication(String draftId);
 	
 }
