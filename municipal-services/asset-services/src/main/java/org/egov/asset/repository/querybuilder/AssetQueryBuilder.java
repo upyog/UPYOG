@@ -1,22 +1,22 @@
 package org.egov.asset.repository.querybuilder;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.web.models.AssetSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+
 @Component
 public class AssetQueryBuilder {
-	
-	@Autowired
+
+    @Autowired
     private AssetConfiguration config;
 
-	private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
+    private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
     private static final String QUERY = "SELECT asset.id, "
             + "asset.bookrefno, asset.name, asset.description, asset.classification, "
@@ -35,13 +35,13 @@ public class AssetQueryBuilder {
             + "assign.isassigned, assign.assignedusername, assign.employeecode, assign.designation, "
             + "assign.department, assign.assigneddate, assign.returndate, assign.assignmentId "
             + "FROM eg_asset_assetdetails asset "
-    	    + LEFT_OUTER_JOIN_STRING + "eg_asset_addressdetails address on asset.id = address.asset_id"
-    	    + LEFT_OUTER_JOIN_STRING + "eg_asset_document doc on asset.id = doc.assetid"
-    	    + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid ";
-    	    //+ " ORDER BY eg_asset_assetdetails.createdtime DESC";
+            + LEFT_OUTER_JOIN_STRING + "eg_asset_addressdetails address on asset.id = address.asset_id"
+            + LEFT_OUTER_JOIN_STRING + "eg_asset_document doc on asset.id = doc.assetid"
+            + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid ";
+    //+ " ORDER BY eg_asset_assetdetails.createdtime DESC";
 
     private static final String LIMITED_DATA_QUERY = "SELECT asset.id, "
-    		+ "asset.tenantid, "
+            + "asset.tenantid, "
             + "asset.applicationno, "
             + "asset.classification, "
             + "asset.parentcategory, "
@@ -50,36 +50,36 @@ public class AssetQueryBuilder {
             + "asset.name, "
             + "asset.department, "
             + "asset.status, "
-            + "assign.isassigned, "  
+            + "assign.isassigned, "
             + "assign.assignedusername, "
-            + "assign.employeecode, "  
-            + "assign.designation, " 
+            + "assign.employeecode, "
+            + "assign.designation, "
             + "assign.department, "
             + "assign.assigneddate, "
             + "assign.returndate, "
-            + "assign.assignmentId "  
+            + "assign.assignmentId "
             + "FROM eg_asset_assetdetails asset "
             + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid";
 
-    
+
     private final String paginationWrapper = "SELECT * FROM "
             + "(SELECT *, DENSE_RANK() OVER (ORDER BY result.applicationno DESC) AS offset_ FROM " + "({})"
             + " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
-    
+
     //private final String countWrapper = "SELECT COUNT(DISTINCT(bpa_id)) FROM ({INTERNAL_QUERY}) as asset_count";
-	
+
     /**
      * To give the Search query based on the requirements.
-     * 
-     * @param criteria ASSET search criteria
+     *
+     * @param criteria         ASSET search criteria
      * @param preparedStmtList values to be replaced on the query
      * @return Final Search Query
      */
-	public String getAssetSearchQuery(AssetSearchCriteria criteria, List<Object> preparedStmtList) {
-		StringBuilder builder = new StringBuilder(QUERY);
-		//String query = "SELECT * FROM public.eg_asset_assetdetails ORDER BY createdtime DESC;";
-		
-		if (criteria.getTenantId() != null) {
+    public String getAssetSearchQuery(AssetSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(QUERY);
+        //String query = "SELECT * FROM public.eg_asset_assetdetails ORDER BY createdtime DESC;";
+
+        if (criteria.getTenantId() != null) {
             if (criteria.getTenantId().split("\\.").length == 1) {
 
                 addClauseIfRequired(preparedStmtList, builder);
@@ -91,14 +91,14 @@ public class AssetQueryBuilder {
                 preparedStmtList.add(criteria.getTenantId());
             }
         }
-		
-		List<String> ids = criteria.getIds();
+
+        List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
-        
+
         String applicationNo = criteria.getApplicationNo();
         if (applicationNo != null) {
             List<String> applicationNos = Arrays.asList(applicationNo.split(","));
@@ -106,16 +106,16 @@ public class AssetQueryBuilder {
             builder.append(" asset.applicationNo IN (").append(createQuery(applicationNos)).append(")");
             addToPreparedStatement(preparedStmtList, applicationNos);
         }
-        
+
         // createdby search criteria 
         List<String> createdBy = criteria.getCreatedBy();
-		if (!CollectionUtils.isEmpty(createdBy)) {
+        if (!CollectionUtils.isEmpty(createdBy)) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdby IN (").append(createQuery(createdBy)).append(")");
             addToPreparedStatement(preparedStmtList, createdBy);
         }
-		
-		// Status wise search criteria 
+
+        // Status wise search criteria
         String status = criteria.getStatus();
         if (status != null) {
             List<String> statusList = Arrays.asList(status.split(","));
@@ -123,28 +123,28 @@ public class AssetQueryBuilder {
             builder.append(" asset.status IN (").append(createQuery(statusList)).append(")");
             addToPreparedStatement(preparedStmtList, statusList);
         }
-        
+
         // ParentCategory wise search criteria 
         String assetParentCategoryList = criteria.getAssetParentCategory();
         if (assetParentCategoryList != null) {
-            List<String>  assetParentCategory = Arrays.asList(assetParentCategoryList.split(","));
+            List<String> assetParentCategory = Arrays.asList(assetParentCategoryList.split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" UPPER(asset.parentCategory) IN (").append(createQuery(assetParentCategory)).append(")");
             addToPreparedStatement(preparedStmtList, assetParentCategory);
         }
-        
+
         // Classification wise search criteria 
         String classification = criteria.getAssetClassification();
         if (classification != null) {
-            List<String>  classificationList = Arrays.asList(classification.split(","));
+            List<String> classificationList = Arrays.asList(classification.split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" UPPER(asset.classification) IN (").append(createQuery(classificationList)).append(")");
             addToPreparedStatement(preparedStmtList, classificationList);
         }
-		
-        
-		// Approval from approvaldate and to approvaldate search criteria 
-		Long approvalDt = criteria.getApprovalDate();
+
+
+        // Approval from approvaldate and to approvaldate search criteria
+        Long approvalDt = criteria.getApprovalDate();
         if (approvalDt != null) {
 
             Calendar approvalDate = Calendar.getInstance();
@@ -165,7 +165,7 @@ public class AssetQueryBuilder {
             builder.append(" asset.approvalDate BETWEEN ").append(approvalStrDate.getTimeInMillis()).append(" AND ")
                     .append(approvalEndDate.getTimeInMillis());
         }
-        
+
         // Approval from createddate and to createddate search criteria 
         if (criteria.getFromDate() != null && criteria.getToDate() != null) {
             addClauseIfRequired(preparedStmtList, builder);
@@ -176,21 +176,21 @@ public class AssetQueryBuilder {
             builder.append(" asset.createdtime >= ").append(criteria.getFromDate());
         }
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
-	}
-	
-	
+    }
+
+
     /**
      * To give the Search query based on the requirements.
-     * 
-     * @param criteria ASSET search criteria
+     *
+     * @param criteria         ASSET search criteria
      * @param preparedStmtList values to be replaced on the query
      * @return Final Search Query
      */
-	public String getAssetSearchQueryForLimitedData(AssetSearchCriteria criteria, List<Object> preparedStmtList) {
-		StringBuilder builder = new StringBuilder(LIMITED_DATA_QUERY);
-		//String query = "SELECT * FROM public.eg_asset_assetdetails ORDER BY createdtime DESC;";
-		
-		if (criteria.getTenantId() != null) {
+    public String getAssetSearchQueryForLimitedData(AssetSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(LIMITED_DATA_QUERY);
+        //String query = "SELECT * FROM public.eg_asset_assetdetails ORDER BY createdtime DESC;";
+
+        if (criteria.getTenantId() != null) {
             if (criteria.getTenantId().split("\\.").length == 1) {
 
                 addClauseIfRequired(preparedStmtList, builder);
@@ -202,14 +202,14 @@ public class AssetQueryBuilder {
                 preparedStmtList.add(criteria.getTenantId());
             }
         }
-		
-		List<String> ids = criteria.getIds();
+
+        List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
-        
+
         String applicationNo = criteria.getApplicationNo();
         if (applicationNo != null) {
             List<String> applicationNos = Arrays.asList(applicationNo.split(","));
@@ -217,16 +217,16 @@ public class AssetQueryBuilder {
             builder.append(" asset.applicationNo IN (").append(createQuery(applicationNos)).append(")");
             addToPreparedStatement(preparedStmtList, applicationNos);
         }
-        
+
         // createdby search criteria 
         List<String> createdBy = criteria.getCreatedBy();
-		if (!CollectionUtils.isEmpty(createdBy)) {
+        if (!CollectionUtils.isEmpty(createdBy)) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdby IN (").append(createQuery(createdBy)).append(")");
             addToPreparedStatement(preparedStmtList, createdBy);
         }
-		
-		// Status wise search criteria 
+
+        // Status wise search criteria
         String status = criteria.getStatus();
         if (status != null) {
             List<String> statusList = Arrays.asList(status.split(","));
@@ -234,28 +234,28 @@ public class AssetQueryBuilder {
             builder.append(" asset.status IN (").append(createQuery(statusList)).append(")");
             addToPreparedStatement(preparedStmtList, statusList);
         }
-        
+
         // ParentCategory wise search criteria 
         String assetParentCategoryList = criteria.getAssetParentCategory();
         if (assetParentCategoryList != null) {
-            List<String>  assetParentCategory = Arrays.asList(assetParentCategoryList.split(","));
+            List<String> assetParentCategory = Arrays.asList(assetParentCategoryList.split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" UPPER(asset.parentCategory) IN (").append(createQuery(assetParentCategory)).append(")");
             addToPreparedStatement(preparedStmtList, assetParentCategory);
         }
-        
+
         // Classification wise search criteria 
         String classification = criteria.getAssetClassification();
         if (classification != null) {
-            List<String>  classificationList = Arrays.asList(classification.split(","));
+            List<String> classificationList = Arrays.asList(classification.split(","));
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" UPPER(asset.classification) IN (").append(createQuery(classificationList)).append(")");
             addToPreparedStatement(preparedStmtList, classificationList);
         }
-		
-        
-		// Approval from approvaldate and to approvaldate search criteria 
-		Long approvalDt = criteria.getApprovalDate();
+
+
+        // Approval from approvaldate and to approvaldate search criteria
+        Long approvalDt = criteria.getApprovalDate();
         if (approvalDt != null) {
 
             Calendar approvalDate = Calendar.getInstance();
@@ -276,7 +276,7 @@ public class AssetQueryBuilder {
             builder.append(" asset.approvalDate BETWEEN ").append(approvalStrDate.getTimeInMillis()).append(" AND ")
                     .append(approvalEndDate.getTimeInMillis());
         }
-        
+
         // Approval from createddate and to createddate search criteria 
         if (criteria.getFromDate() != null && criteria.getToDate() != null) {
             addClauseIfRequired(preparedStmtList, builder);
@@ -287,9 +287,11 @@ public class AssetQueryBuilder {
             builder.append(" asset.createdtime >= ").append(criteria.getFromDate());
         }
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
-	}
-	/**
+    }
+
+    /**
      * add if clause to the Statement if required or else AND
+     *
      * @param values
      * @param queryString
      */
@@ -300,9 +302,10 @@ public class AssetQueryBuilder {
             queryString.append(" AND");
         }
     }
-    
+
     /**
      * add values to the preparedStatment List
+     *
      * @param preparedStmtList
      * @param ids
      */
@@ -311,9 +314,10 @@ public class AssetQueryBuilder {
             preparedStmtList.add(id);
         });
     }
-    
+
     /**
      * produce a query input for the multiple values
+     *
      * @param ids
      * @return
      */
@@ -327,12 +331,11 @@ public class AssetQueryBuilder {
         }
         return builder.toString();
     }
-    
+
     /**
-     * 
-     * @param query prepared Query
+     * @param query            prepared Query
      * @param preparedStmtList values to be replased on the query
-     * @param criteria bpa search criteria
+     * @param criteria         bpa search criteria
      * @return the query by replacing the placeholders with preparedStmtList
      */
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, AssetSearchCriteria criteria) {
@@ -341,10 +344,10 @@ public class AssetQueryBuilder {
         int offset = config.getDefaultOffset();
         String finalQuery = paginationWrapper.replace("{}", query);
 
-        if(criteria.getLimit() == null && criteria.getOffset() == null) {
-        	limit = config.getMaxSearchLimit();
-        } 
-        
+        if (criteria.getLimit() == null && criteria.getOffset() == null) {
+            limit = config.getMaxSearchLimit();
+        }
+
         if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit())
             limit = criteria.getLimit();
 

@@ -1,20 +1,19 @@
 package org.egov.asset.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
 @Data
-public class AssetSearchDTO implements AssetDTO{
-	
-	@JsonProperty("id")
-    private String id ;
+public class AssetSearchDTO implements AssetDTO {
+
+    @JsonProperty("id")
+    private String id;
 
     @JsonProperty("tenantId")
     private String tenantId;
 
     @JsonProperty("assetBookRefNo")
-    private String assetBookRefNo ;
+    private String assetBookRefNo;
 
     @JsonProperty("assetName")
     private String assetName;
@@ -24,16 +23,16 @@ public class AssetSearchDTO implements AssetDTO{
 
     @JsonProperty("assetClassification")
     private String assetClassification;
-    
+
     @JsonProperty("assetParentCategory")
     private String assetParentCategory;
 
     @JsonProperty("assetCategory")
     private String assetCategory;
-    
+
     @JsonProperty("assetSubCategory")
     private String assetSubCategory;
-    
+
     @JsonProperty("department")
     private String department;
 
@@ -45,10 +44,10 @@ public class AssetSearchDTO implements AssetDTO{
 
     @JsonProperty("status")
     private String status;
-    
+
     @JsonProperty("assetStatus")
     private String assetStatus;
-    
+
     @JsonProperty("assetAssignment")
     AssetAssignmentDTO assetAssignment;
 

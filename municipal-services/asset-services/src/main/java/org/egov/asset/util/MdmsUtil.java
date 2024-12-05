@@ -1,10 +1,6 @@
 package org.egov.asset.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.repository.ServiceRequestRepository;
 import org.egov.common.contract.request.RequestInfo;
@@ -16,27 +12,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 @Component
 public class MdmsUtil {
-	
-	
-	private AssetConfiguration config;
-	
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+
+
+    private final AssetConfiguration config;
+
+    @Autowired
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
     private RestTemplate restTemplate;
-   
 
-	@Autowired
-	public MdmsUtil(AssetConfiguration config, ServiceRequestRepository serviceRequestRepository) {
-		this.config = config;
-		this.serviceRequestRepository = serviceRequestRepository;
-	}
+
+    @Autowired
+    public MdmsUtil(AssetConfiguration config, ServiceRequestRepository serviceRequestRepository) {
+        this.config = config;
+        this.serviceRequestRepository = serviceRequestRepository;
+    }
 
 //    @Value("${egov.mdms.master.name}")
 //    private String masterName;
@@ -60,7 +59,7 @@ public class MdmsUtil {
 //        //log.info(ulbToCategoryListMap.toString());
 //        return rate;
 //    }
-	
+
 //    private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
 //        MasterDetail masterDetail = new MasterDetail();
 //        masterDetail.setName(masterName);
@@ -83,82 +82,82 @@ public class MdmsUtil {
 //
 //        return mdmsCriteriaReq;
 //    }
-    
-    
+
+
     /**
-	 * makes mdms call with the given criteria and reutrn mdms data
-	 * @param requestInfo
-	 * @param tenantId
-	 * @return
-	 */
-	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
-		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
-		Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
-		return result;
-	}
-	
-	
-	/**
-	 * Returns the URL for MDMS search end point
-	 *
-	 * @return URL for MDMS search end point
-	 */
-	public StringBuilder getMdmsSearchUrl() {
-		return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
-	}
-	
-	/**
-	 * prepares the mdms request object
-	 * @param requestInfo
-	 * @param tenantId
-	 * @return
-	 */
-	public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
-		List<ModuleDetail> moduleRequest = getBPAModuleRequest();
+     * makes mdms call with the given criteria and reutrn mdms data
+     *
+     * @param requestInfo
+     * @param tenantId
+     * @return
+     */
+    public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
 
-		List<ModuleDetail> moduleDetails = new LinkedList<>();
-		moduleDetails.addAll(moduleRequest);
 
-		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build();
+    /**
+     * Returns the URL for MDMS search end point
+     *
+     * @return URL for MDMS search end point
+     */
+    public StringBuilder getMdmsSearchUrl() {
+        return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+    }
 
-		MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo)
-				.build();
-		return mdmsCriteriaReq;
-	}
-	
-	/**
-	 * Creates request to search ApplicationType and etc from MDMS
-	 * 
-	 * @param requestInfo
-	 *            The requestInfo of the request
-	 * @param tenantId
-	 *            The tenantId of the BPA
-	 * @return request to search ApplicationType and etc from MDMS
-	 */
-	public List<ModuleDetail> getBPAModuleRequest() {
+    /**
+     * prepares the mdms request object
+     *
+     * @param requestInfo
+     * @param tenantId
+     * @return
+     */
+    public MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
+        List<ModuleDetail> moduleRequest = getBPAModuleRequest();
 
-		// master details for BPA module
-		List<MasterDetail> assetMasterDtls = new ArrayList<>();
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.addAll(moduleRequest);
 
-		// filter to only get code field from master data
-		final String filterCode = "$.[?(@.active==true)].code";
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build();
 
-		//assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_CLASSIFICATION_MAPPING).filter(filterCode).build());
-		assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_CLASSIFICATION).filter(filterCode).build());
-		assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_PARENT_CATEGORY).filter(filterCode).build());
-		assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_CATEGORY).filter(filterCode).build());
-		assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_SUB_CATEGORY).filter(filterCode).build());
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo)
+                .build();
+        return mdmsCriteriaReq;
+    }
 
-		ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(assetMasterDtls)
-				.moduleName(AssetConstants.ASSET_MODULE).build();
+    /**
+     * Creates request to search ApplicationType and etc from MDMS
+     *
+     * @param requestInfo The requestInfo of the request
+     * @param tenantId    The tenantId of the BPA
+     * @return request to search ApplicationType and etc from MDMS
+     */
+    public List<ModuleDetail> getBPAModuleRequest() {
 
-		// master details for common-masters module
-		List<MasterDetail> commonMasterDetails = new ArrayList<>();
-		ModuleDetail commonMasterMDtl = ModuleDetail.builder().masterDetails(commonMasterDetails)
-				.moduleName(AssetConstants.COMMON_MASTERS_MODULE).build();
+        // master details for BPA module
+        List<MasterDetail> assetMasterDtls = new ArrayList<>();
 
-		return Arrays.asList(bpaModuleDtls, commonMasterMDtl);
+        // filter to only get code field from master data
+        final String filterCode = "$.[?(@.active==true)].code";
 
-	}
+        //assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_CLASSIFICATION_MAPPING).filter(filterCode).build());
+        assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_CLASSIFICATION).filter(filterCode).build());
+        assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_PARENT_CATEGORY).filter(filterCode).build());
+        assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_CATEGORY).filter(filterCode).build());
+        assetMasterDtls.add(MasterDetail.builder().name(AssetConstants.ASSET_SUB_CATEGORY).filter(filterCode).build());
+
+        ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(assetMasterDtls)
+                .moduleName(AssetConstants.ASSET_MODULE).build();
+
+        // master details for common-masters module
+        List<MasterDetail> commonMasterDetails = new ArrayList<>();
+        ModuleDetail commonMasterMDtl = ModuleDetail.builder().masterDetails(commonMasterDetails)
+                .moduleName(AssetConstants.COMMON_MASTERS_MODULE).build();
+
+        return Arrays.asList(bpaModuleDtls, commonMasterMDtl);
+
+    }
 
 }
