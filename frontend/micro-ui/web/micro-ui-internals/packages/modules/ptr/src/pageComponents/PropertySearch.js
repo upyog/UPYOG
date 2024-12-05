@@ -24,7 +24,7 @@ const PropertySearch = ({ t, config, onSelect, userType,formData,renewApplicatio
   const [shouldFetchDetails, setShouldFetchDetails] = useState(false);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const allCities = Digit.Hooks.fnoc.useTenants();
+  const allCities = Digit.Hooks.ptr.useTenants();
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   let cities = [];
