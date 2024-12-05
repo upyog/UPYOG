@@ -14,7 +14,6 @@ import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.util.PetUtil;
-import org.egov.tl.web.models.TradeLicense;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
