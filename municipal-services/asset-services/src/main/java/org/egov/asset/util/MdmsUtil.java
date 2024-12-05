@@ -151,12 +151,7 @@ public class MdmsUtil {
         ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(assetMasterDtls)
                 .moduleName(AssetConstants.ASSET_MODULE).build();
 
-        // master details for common-masters module
-        List<MasterDetail> commonMasterDetails = new ArrayList<>();
-        ModuleDetail commonMasterMDtl = ModuleDetail.builder().masterDetails(commonMasterDetails)
-                .moduleName(AssetConstants.COMMON_MASTERS_MODULE).build();
-
-        return Arrays.asList(bpaModuleDtls, commonMasterMDtl);
+        return Arrays.asList(bpaModuleDtls);
 
     }
 
