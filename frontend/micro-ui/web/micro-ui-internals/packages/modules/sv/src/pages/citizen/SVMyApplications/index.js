@@ -20,6 +20,8 @@ export const SVMyApplications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [mobileTerm, setMobileTerm] = useState("")
   const [filters, setFilters] = useState(null);
+  const [applicationsList, setApplicationsList] = useState([]);
+  
 
 
   let filter = window.location.href.split("/").pop();
@@ -46,10 +48,25 @@ const { isLoading: isDraftLoading, data: draftData } = Digit.Hooks.sv.useSvSearc
   filters: { ...filters, isDraftApplication: true, sortOrder: "DESC"  },
 });
 
-const applicationsList = [
-  ...(draftData?.SVDetail || []),
-  ...(nonDraftData?.SVDetail || [])
-];
+const previousDraftId = draftData?.SVDetail?.[0]?.draftId;
+
+
+  useEffect(() => {
+    if (draftData?.SVDetail && nonDraftData?.SVDetail) {
+      setApplicationsList([
+        ...(draftData.SVDetail || []),
+        ...(nonDraftData.SVDetail || [])
+      ]);
+    }
+  }, [draftData, nonDraftData]);
+
+  // Handle discarding a draft application
+  const handleDiscardApplication = (applicationToRemove) => {
+    // Update the applications list by filtering out the discarded application
+    setApplicationsList(prevApplications => 
+      prevApplications.filter(app => app !== applicationToRemove)
+    );
+  };
 
 if (isNonDraftLoading || isDraftLoading) {
   return <Loader />;
@@ -67,10 +84,7 @@ if (isNonDraftLoading || isDraftLoading) {
     setFilters(searchFilters);
   };
 
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
-
+ 
   return (
     <React.Fragment>
       <Header>{`${t("SV_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
@@ -121,7 +135,7 @@ if (isNonDraftLoading || isDraftLoading) {
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
             <div key={index}>
-              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={t("SV_TRACK")} />
+              <StreetVendingApplication application={application} tenantId={user?.permanentCity} buttonLabel={t("SV_TRACK")} previousDraftId={previousDraftId} onDiscard={handleDiscardApplication} />
             </div>
           ))}
         {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("SV_NO_APPLICATION_FOUND_MSG")}</p>}

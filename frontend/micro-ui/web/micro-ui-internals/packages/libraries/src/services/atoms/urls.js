@@ -33,6 +33,7 @@ const Urls = {
   UserLogout: "/user/_logout",
 
   Shortener: "/egov-url-shortening/shortener",
+  employeeDashboardSearch: "/employee-dashboard/_search",
 
   fsm: {
     search: "/fsm/v1/_search",
@@ -215,6 +216,7 @@ const Urls = {
     create: "/sv-services/street-vending/_create",
     search: "/sv-services/street-vending/_search",
     update: "/sv-services/street-vending/_update",
+    deleteDraft:"/sv-services/street-vending/_deletedraft",
   },
 
   chb: {

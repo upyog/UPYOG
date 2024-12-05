@@ -56,7 +56,7 @@ import { CHBServices } from "./services/elements/CHB";
 import { ADSServices } from "./services/elements/ADS";
 import { SVService } from "./services/elements/SV";
 import { EwService } from "./services/elements/EW";
-
+import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
 import {CustomService} from "./services/elements/CustomService";    
    
 
@@ -126,6 +126,7 @@ const initLibraries = () => {
   setupLibraries("ADSServices", ADSServices);
   setupLibraries("EwService", EwService);
   setupLibraries("SVService", SVService);
+  setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
 
   return new Promise((resolve) => {
     initI18n(resolve);
