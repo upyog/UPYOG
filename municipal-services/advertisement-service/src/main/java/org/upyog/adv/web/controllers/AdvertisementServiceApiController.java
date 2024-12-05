@@ -39,12 +39,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import jdk.internal.org.jline.utils.Log;
+import lombok.extern.slf4j.Slf4j;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-15T13:40:01.245+05:30")
 
 @Controller
 @Api(value = "Advertisement Controller", description = "Operations related to Advertisement Booking")
 @RequestMapping("/booking")
+@Slf4j
 public class AdvertisementServiceApiController {
 
 	private final ObjectMapper objectMapper;
@@ -74,6 +77,8 @@ public class AdvertisementServiceApiController {
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> createBooking(
 			@ApiParam(value = "Details for theadvertisement booking time, payment and documents", required = true) @Valid @RequestBody BookingRequest bookingRequest) {
+		log.info("bookingRequest : {}" , bookingRequest);
+		log.info("bookingRequest.isDraftApplication() {} ", bookingRequest.isDraftApplication());
 		validationService.validateRequest(bookingRequest);
 		BookingDetail bookingDetail = null;
 		if (bookingRequest.isDraftApplication()) {

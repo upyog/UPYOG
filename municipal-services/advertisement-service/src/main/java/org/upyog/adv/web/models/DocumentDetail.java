@@ -3,6 +3,7 @@ package org.upyog.adv.web.models;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
+import org.upyog.adv.validator.CreateApplicationGroup;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -29,10 +30,10 @@ public class DocumentDetail {
 	
 	private String bookingId;
 
-	@NotBlank
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String documentType;
 	
-	@NotBlank
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String fileStoreId;
 
 	private AuditDetails auditDetails;
