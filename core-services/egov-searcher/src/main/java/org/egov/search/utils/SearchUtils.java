@@ -278,4 +278,26 @@ public class SearchUtils {
 		return result;
 	}
 
+    private String removeJSONOperatorsForNamedParam(String namedParam) {
+        
+        /*
+         * In the param, if contain the json operators then removing those special characters from param setting as param name
+         * for named param. ex, if param name is like bpa.additionadetails->>'applicationtype' then removing the single
+         * quote(') and json operator (->>) and setting named param name as bpa.additionadetailsapplicationtype.
+         */
+        String namedParamTemp = namedParam.replace("'", "");
+        StringBuilder namedParamRes = new StringBuilder();
+        Pattern pattern = Pattern.compile("->>");
+        Matcher m = pattern.matcher(namedParamTemp);
+        int lastIndex = 0;
+        if (m.find()) {
+            namedParamRes.append(namedParamTemp, lastIndex, m.start());
+            lastIndex = m.end();
+        }
+
+        if (lastIndex < namedParamTemp.length())
+            namedParamRes.append(namedParamTemp, lastIndex, namedParamTemp.length());
+        return namedParamRes.toString();
+    }
+
 }
