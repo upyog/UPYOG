@@ -174,11 +174,11 @@ public class SearchUtils {
 						operator =  "=";
 						paramValue = ((String) paramValue).toLowerCase();
 					}
-					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + param.getName());
-
+					
+					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + namedParam);
 				}
-				if(!operator.equals("LIKE"))
-				preparedStatementValues.put(param.getName(), paramValue);
+
+				preparedStatementValues.put(namedParam, paramValue);
 			}
 		} catch (Exception e) {
 			log.error("Exception while bulding query: ", e);
