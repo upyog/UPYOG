@@ -45,8 +45,7 @@ public class MDMSValidator {
      */
     public Map<String, List<String>> getAttributeValues(Object mdmsData) {
 
-        List<String> modulepaths = Arrays.asList(AssetConstants.ASSET_JSONPATH_CODE,
-                AssetConstants.COMMON_MASTER_JSONPATH_CODE);
+        List<String> modulepaths = Arrays.asList(AssetConstants.ASSET_JSONPATH_CODE);
         final Map<String, List<String>> mdmsResMap = new HashMap<>();
         modulepaths.forEach(modulepath -> {
             try {
