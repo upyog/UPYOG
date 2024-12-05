@@ -1,6 +1,7 @@
 # Local Setup
 
-To setup the Asset Service (Asset-Service) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
+To setup the Asset Service (Asset-Service) in your local system, clone
+the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
@@ -10,8 +11,8 @@ To setup the Asset Service (Asset-Service) in your local system, clone the [UPYO
 - [ ] Redis
 - [ ] Elasticsearch
 - [x] Kafka
-  - [ ] Consumer
-  - [x] Producer
+    - [ ] Consumer
+    - [x] Producer
 
 ## Running Locally
 

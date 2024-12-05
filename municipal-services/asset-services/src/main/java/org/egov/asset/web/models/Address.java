@@ -1,21 +1,15 @@
 package org.egov.asset.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
+
 import javax.persistence.Embedded;
 import javax.persistence.Id;
 
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 /**
- * Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. 
+ * Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case.
  */
 @ApiModel(description = "Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case. ")
 @Validated
@@ -26,56 +20,56 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Address   {
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+public class Address {
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-        @JsonProperty("doorNo")
-        private String doorNo = null;
+    @JsonProperty("doorNo")
+    private String doorNo = null;
 
-        @JsonProperty("latitude")
-        private Double latitude = null;
+    @JsonProperty("latitude")
+    private Double latitude = null;
 
-        @JsonProperty("longitude")
-        private Double longitude = null;
-        
-        @Id
-        @JsonProperty("addressId")
-        private String addressId = null;
+    @JsonProperty("longitude")
+    private Double longitude = null;
 
-        @JsonProperty("addressNumber")
-        private String addressNumber = null;
+    @Id
+    @JsonProperty("addressId")
+    private String addressId = null;
 
-        @JsonProperty("type")
-        private String type = null;
+    @JsonProperty("addressNumber")
+    private String addressNumber = null;
 
-        @JsonProperty("addressLine1")
-        private String addressLine1 = null;
+    @JsonProperty("type")
+    private String type = null;
 
-        @JsonProperty("addressLine2")
-        private String addressLine2 = null;
+    @JsonProperty("addressLine1")
+    private String addressLine1 = null;
 
-        @JsonProperty("landmark")
-        private String landmark = null;
+    @JsonProperty("addressLine2")
+    private String addressLine2 = null;
 
-        @JsonProperty("city")
-        private String city = null;
+    @JsonProperty("landmark")
+    private String landmark = null;
 
-        @JsonProperty("pincode")
-        private String pincode = null;
+    @JsonProperty("city")
+    private String city = null;
 
-        @JsonProperty("detail")
-        private String detail = null;
+    @JsonProperty("pincode")
+    private String pincode = null;
 
-        @JsonProperty("buildingName")
-        private String buildingName = null;
+    @JsonProperty("detail")
+    private String detail = null;
 
-        @JsonProperty("street")
-        private String street = null;
+    @JsonProperty("buildingName")
+    private String buildingName = null;
 
-        @Embedded
-        @JsonProperty("locality")
-        private Boundary locality = null;
+    @JsonProperty("street")
+    private String street = null;
+
+    @Embedded
+    @JsonProperty("locality")
+    private Boundary locality = null;
 
 
 }

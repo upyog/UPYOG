@@ -2,19 +2,13 @@ package org.egov.asset.web.models.workflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contract class to send response. Array of TradeLicense items are used in case of search results or response for create, whereas single TradeLicense item is used for update
@@ -29,21 +23,21 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class ProcessInstanceResponse {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo;
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo;
 
-        @JsonProperty("ProcessInstances")
-        @Valid
-        private List<ProcessInstance> processInstances;
+    @JsonProperty("ProcessInstances")
+    @Valid
+    private List<ProcessInstance> processInstances;
 
 
-        public ProcessInstanceResponse addProceInstanceItem(ProcessInstance proceInstanceItem) {
-            if (this.processInstances == null) {
+    public ProcessInstanceResponse addProceInstanceItem(ProcessInstance proceInstanceItem) {
+        if (this.processInstances == null) {
             this.processInstances = new ArrayList<>();
-            }
+        }
         this.processInstances.add(proceInstanceItem);
         return this;
-        }
+    }
 
 }
 

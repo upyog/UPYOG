@@ -1,9 +1,8 @@
 package org.egov.asset.config;
 
-import java.util.TimeZone;
-
-import javax.annotation.PostConstruct;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +12,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
 
 
 @Getter
@@ -34,66 +27,66 @@ public class AssetConfiguration {
 
     @Value("${app.timezone}")
     private String timeZone;
-    
+
     // MDMS Related Configurations
- 	@Value("${egov.mdms.host}")
- 	private String mdmsHost;
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
 
- 	@Value("${egov.mdms.search.endpoint}")
- 	private String mdmsEndPoint;
- 	
- 	// Idgen Config
- 	@Value("${egov.idgen.host}")
- 	private String idGenHost;
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndPoint;
 
- 	@Value("${egov.idgen.path}")
- 	private String idGenPath;
+    // Idgen Config
+    @Value("${egov.idgen.host}")
+    private String idGenHost;
 
- 	@Value("${egov.idgen.asset.applicationNum.name}")
- 	private String applicationNoIdgenName;
+    @Value("${egov.idgen.path}")
+    private String idGenPath;
 
- 	@Value("${egov.idgen.asset.applicationNum.format}")
- 	private String applicationNoIdgenFormat;
+    @Value("${egov.idgen.asset.applicationNum.name}")
+    private String applicationNoIdgenName;
 
- 	
- 	// Persister Config
- 	@Value("${persister.save.assetdetails.topic}")
- 	private String saveTopic;
+    @Value("${egov.idgen.asset.applicationNum.format}")
+    private String applicationNoIdgenFormat;
 
- 	@Value("${persister.update.assetdetails.topic}")
- 	private String updateTopic;
- 	
- 	@Value("${persister.save.assetassignment.topic}")
- 	private String saveAssignmentTopic;
 
- 	@Value("${persister.update.assetassignment.topic}")
- 	private String updateAssignmentTopic;
- 	
-	@Value("${employee.allowed.search.params}")
-	private String allowedEmployeeSearchParameters;
-	
-	@Value("${egov.asset.default.limit}")
-	private Integer defaultLimit;
+    // Persister Config
+    @Value("${persister.save.assetdetails.topic}")
+    private String saveTopic;
 
-	@Value("${egov.asset.default.offset}")
-	private Integer defaultOffset;
+    @Value("${persister.update.assetdetails.topic}")
+    private String updateTopic;
 
-	@Value("${egov.asset.max.limit}")
-	private Integer maxSearchLimit;
-	
-	@Value("${workflow.context.path}")
-	private String wfHost;
+    @Value("${persister.save.assetassignment.topic}")
+    private String saveAssignmentTopic;
 
-	@Value("${workflow.transition.path}")
-	private String wfTransitionPath;
-	
-	@Value("${workflow.businessservice.search.path}")
-	private String wfBusinessServiceSearchPath;
-	
-	@Value("${workflow.process.path}")
-	private String wfProcessPath;
- 	
-	// SMS
+    @Value("${persister.update.assetassignment.topic}")
+    private String updateAssignmentTopic;
+
+    @Value("${employee.allowed.search.params}")
+    private String allowedEmployeeSearchParameters;
+
+    @Value("${egov.asset.default.limit}")
+    private Integer defaultLimit;
+
+    @Value("${egov.asset.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${egov.asset.max.limit}")
+    private Integer maxSearchLimit;
+
+    @Value("${workflow.context.path}")
+    private String wfHost;
+
+    @Value("${workflow.transition.path}")
+    private String wfTransitionPath;
+
+    @Value("${workflow.businessservice.search.path}")
+    private String wfBusinessServiceSearchPath;
+
+    @Value("${workflow.process.path}")
+    private String wfProcessPath;
+
+    // SMS
 //	@Value("${kafka.topics.notification.sms}")
 //	private String smsNotifTopic;
 //
@@ -107,7 +100,7 @@ public class AssetConfiguration {
 //	@Value("${notification.email.enabled}")
 //	private Boolean isEmailNotificationEnabled;
 
-	// Localization
+    // Localization
 //	@Value("${egov.localization.host}")
 //	private String localizationHost;
 //
@@ -129,21 +122,21 @@ public class AssetConfiguration {
     }
 
     @Bean
-    public ObjectMapper objectMapper(){
-    return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
     }
 
     @Bean
     @Autowired
     public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setObjectMapper(objectMapper);
-    return converter;
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(objectMapper);
+        return converter;
     }
 
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-	
+
 }

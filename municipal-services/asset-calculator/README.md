@@ -1,63 +1,97 @@
-# fsm-calculator
+# Asset Calculator Service
 
-FSM Calculator is a system that enables FSM Admin to create billing slab for the FSM application(s) with different combination of propertyType , slum , tank capacity and etc..
+The **Asset Calculator Service** is designed to manage asset depreciation, re-evaluations etc based on master data  and calculate charges for assets within the ecosystem. This document provides details on how to set up and use the Asset Calculator service, along with its key functionalities and dependencies.
 
-Generates the Demand after calculating the charges for the given application using the billing slab already configured. This document contains the details about how to setup the fsm-calculator service and description the functionalities it provides.   
+---
 
-### DB UML Diagram
+## Features
+2. **Depreciation Calculation**:
+    - Calculate and generate Depreciation based on configured slabs.
+---
 
-![plot](./fsm-calculator.png)
+## Service Dependencies
 
-### Service Dependencies
+The Asset Calculator service interacts with the following dependent services:
+- **mdms-service**
+- **workflow-v2**
+- **user-service**
+- **vendor**
+- **vehicle**
 
-- billing-service
-- mdms-service
-- workflow-v2
-- user-service
-- vendor
-- vehicle
+---
 
+## Database Schema
 
-### Swagger API Contract
+The database schema is designed to store billing slab details and related configurations. Refer to the UML diagram in `asset-calculator.png` for detailed database relationships.
 
-Link to the swagger API contract [yaml](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/fsm/Fsm_Apply_Contract.yaml) and editor link like below
+---
 
+## API Details
 
-### Postman Collection
-Link to the postman collection [here](https://www.getpostman.com/collections/8b9eb951a810486f41a4)
+| **Endpoint**            | **Description**      |
+|--------------------------|----------------------|
+| `_calculate`             | Calculates           |
 
+---
 
-## Service Details
+## Kafka Topics
 
-**Faecal sludge management Calculator: fsm-calculator**
+### Producers
 
-- Contains the API's to create, update, search billing Slab with certain combination
-- Contains the API's to calculate and generate Demand for FSM Application and return the Estimate of the Charges for Given FSM.
+- **`xyz`**: Xyz.
 
+---
 
+## Configuration
 
-### API Details
+### Server Settings
+```properties
+server.context-path=/asset-calculator
 
-`_calculate` : This API calculates the TRIP Charge fees based on the billing slab identified for FSM Application.
-
-`_estimate` : This API returns the estimate of the TRIP Charges for the given FSM Application.
-
-`billingSlab/_create` : The create api to create BillingSlab with the combination of tankCapacity, Slum and propertyType.
-
-`billingSlab/_update`  :The update api to update the existing billingSlab for the given combination of tankCapacity, Slum and PropertyType.
-
-`billingSlab/_search` : The search api search for the billngslab based on the search criteria.
-
-
-### Reference Document
-TBD
+```
 
 
-### Kafka Consumers
+### Persister Topics
+```properties
+persister.save.billing.slab.topic=save-asset-depreciation-slab
+```
+
+### MDMS Service
+```properties
+egov.mdms.host=http://localhost:8094
+egov.mdms.search.endpoint=/egov-mdms-service/v1/_search
+```
 
 
-### Kafka Producers
-- **save-fsm-billing-slab** : service sends data to this topic to create new billing slab.
+### Asset Registry
+```properties
+egov.asset.create.endpoint=/_create
+egov.asset.update.endpoint=/_update
+egov.asset.search.endpoint=/_search
+```
 
+---
 
-- **update-fsm-billing-slab** : service sends data to this topic to update the billing slab
+## Swagger API Contract
+
+Access the Swagger API contract via the following links:
+- [YAML File](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/fsm/Fsm_Apply_Contract.yaml)
+- [Swagger Editor](https://editor.swagger.io/)
+
+---
+
+## Postman Collection
+
+The Postman collection is available for testing the APIs:
+- [Postman Collection](https://www.getpostman.com/collections/8b9eb951a810486f41a4)
+
+---
+
+## Future Enhancements
+
+- Detailed documentation for logic (TBD).
+- Advanced search and reporting capabilities for slabs.
+
+---
+
+For additional details or contributions, visit the [GitHub Repository](https://github.com/egovernments).

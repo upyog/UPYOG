@@ -1,23 +1,15 @@
 package org.egov.asset.web.models;
 
-import java.util.List;
-
-import javax.persistence.Transient;
-import javax.validation.Valid;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import lombok.*;
 import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * An object representing an asset
@@ -32,147 +24,147 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Asset  implements AssetDTO {
+public class Asset implements AssetDTO {
 
-		@JsonProperty("id")
-        private String id ;
+    @JsonProperty("id")
+    private String id;
 
-        @JsonProperty("tenantId")
-        private String tenantId;
+    @JsonProperty("tenantId")
+    private String tenantId;
 
-        @JsonProperty("assetBookRefNo")
-        private String assetBookRefNo ;
+    @JsonProperty("assetBookRefNo")
+    private String assetBookRefNo;
 
-        @JsonProperty("assetName")
-        private String assetName;
+    @JsonProperty("assetName")
+    private String assetName;
 
-        @JsonProperty("description")
-        private String description;
+    @JsonProperty("description")
+    private String description;
 
-        @JsonProperty("assetClassification")
-        private String assetClassification;
-        
-        @JsonProperty("assetParentCategory")
-        private String assetParentCategory;
+    @JsonProperty("assetClassification")
+    private String assetClassification;
 
-        @JsonProperty("assetCategory")
-        private String assetCategory;
-        
-        @JsonProperty("assetSubCategory")
-        private String assetSubCategory;
-        
-        @JsonProperty("department")
-        private String department;
+    @JsonProperty("assetParentCategory")
+    private String assetParentCategory;
 
-        @JsonProperty("applicationNo")
-        private String applicationNo;
+    @JsonProperty("assetCategory")
+    private String assetCategory;
 
-        @JsonProperty("approvalNo")
-        private String approvalNo;
+    @JsonProperty("assetSubCategory")
+    private String assetSubCategory;
 
-        @JsonProperty("approvalDate")
-        private Long approvalDate;
+    @JsonProperty("department")
+    private String department;
 
-        @JsonProperty("applicationDate")
-        private Long applicationDate;
+    @JsonProperty("applicationNo")
+    private String applicationNo;
 
-        @JsonProperty("status")
-        private String status;
+    @JsonProperty("approvalNo")
+    private String approvalNo;
 
-        @JsonProperty("addressDetails")
-        private Address addressDetails;
-        
-        @JsonProperty("documents")
-        @Valid
-        private List<Document> documents;
+    @JsonProperty("approvalDate")
+    private Long approvalDate;
 
-        @JsonIgnore
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails;
+    @JsonProperty("applicationDate")
+    private Long applicationDate;
 
-        @JsonProperty("additionalDetails")
-        private Object additionalDetails;
-        
-        @JsonProperty("accountId")
-        private String accountId;
-        
-        @JsonProperty("assetCurrentUsage")
-        private String assetCurrentUsage ;
-        
-        @JsonProperty("remarks")
-        private String remarks;
-        
-        @JsonProperty("financialYear")
-        private String financialYear;
-        
-        @JsonProperty("sourceOfFinance")
-        private String sourceOfFinance ;
-        
-        @JsonProperty("workflow")
-    	private ProcessInstance workflow;
-        
-        @JsonProperty("scheme")
-        private String scheme;
+    @JsonProperty("status")
+    private String status;
 
-        @JsonProperty("subScheme")
-        private String subScheme;
-        
-        @JsonProperty("orderNumber")
-        private String orderNumber;
-        
-        @JsonProperty("orderDate")
-        private Long orderDate;
-        
-        @JsonProperty("assetAssignment")
-    	private AssetAssignment assetAssignment;
-        
-        @JsonProperty("orignalCost:")
-        private float orignalCost;
+    @JsonProperty("addressDetails")
+    private Address addressDetails;
 
-        @JsonProperty("acquisitionCost")
-        private float acquisitionCost;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents;
 
-        @JsonProperty("bookValue")
-        private float bookValue;
-        
-        @JsonProperty("purchaseAcquisitionDate")
-        private Long acquisitionDate;
-        
-        @JsonProperty("depreciationRate")
-        private float depreciationRate;
+    @JsonIgnore
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 
-        @JsonProperty("revenueGeneratedByAsset")
-        private float revenueGeneratedByAsset;
-        
-        @JsonProperty("lastMaintenanceDate")
-        private Long lastMaintenanceDate;
-        
-        @JsonProperty("estimatedNextMaintenanceDate")
-        private Long estimatedNextMaintenanceDate;
-        
-        @JsonProperty("glCode")
-        private Long glCode;
-        
-        @JsonProperty("oldCode")
-        private Long oldCode;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails;
 
-        @JsonProperty("unitOfMeasurement")
-        private Long unitOfMeasurement;
-        
-        @JsonProperty("warrantyExpiryDate")
-        private Long warrantyExpiryDate;
-        
-        @JsonProperty("assetStatus")
-        private String assetStatus;
-       
+    @JsonProperty("accountId")
+    private String accountId;
+
+    @JsonProperty("assetCurrentUsage")
+    private String assetCurrentUsage;
+
+    @JsonProperty("remarks")
+    private String remarks;
+
+    @JsonProperty("financialYear")
+    private String financialYear;
+
+    @JsonProperty("sourceOfFinance")
+    private String sourceOfFinance;
+
+    @JsonProperty("workflow")
+    private ProcessInstance workflow;
+
+    @JsonProperty("scheme")
+    private String scheme;
+
+    @JsonProperty("subScheme")
+    private String subScheme;
+
+    @JsonProperty("orderNumber")
+    private String orderNumber;
+
+    @JsonProperty("orderDate")
+    private Long orderDate;
+
+    @JsonProperty("assetAssignment")
+    private AssetAssignment assetAssignment;
+
+    @JsonProperty("orignalCost:")
+    private float orignalCost;
+
+    @JsonProperty("acquisitionCost")
+    private float acquisitionCost;
+
+    @JsonProperty("bookValue")
+    private float bookValue;
+
+    @JsonProperty("purchaseAcquisitionDate")
+    private Long acquisitionDate;
+
+    @JsonProperty("depreciationRate")
+    private float depreciationRate;
+
+    @JsonProperty("revenueGeneratedByAsset")
+    private float revenueGeneratedByAsset;
+
+    @JsonProperty("lastMaintenanceDate")
+    private Long lastMaintenanceDate;
+
+    @JsonProperty("estimatedNextMaintenanceDate")
+    private Long estimatedNextMaintenanceDate;
+
+    @JsonProperty("glCode")
+    private Long glCode;
+
+    @JsonProperty("oldCode")
+    private Long oldCode;
+
+    @JsonProperty("unitOfMeasurement")
+    private Long unitOfMeasurement;
+
+    @JsonProperty("warrantyExpiryDate")
+    private Long warrantyExpiryDate;
+
+    @JsonProperty("assetStatus")
+    private String assetStatus;
+
 
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
-        
-        public Asset(String type, Object additionalInformation) {
-            this.assetParentCategory = type;
-            this.additionalDetails = additionalInformation;
-        }
+
+    public Asset(String type, Object additionalInformation) {
+        this.assetParentCategory = type;
+        this.additionalDetails = additionalInformation;
+    }
 
 
 }
