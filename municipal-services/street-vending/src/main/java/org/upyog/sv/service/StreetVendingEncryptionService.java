@@ -1,6 +1,7 @@
 package org.upyog.sv.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,120 +19,89 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StreetVendingEncryptionService {
 
-    @Autowired
-    private EncryptionDecryptionUtil encryptionDecryptionUtil;
+	@Autowired
+	private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
-    public StreetVendingDetail encryptObject(StreetVendingRequest streetVendingRequest) {
-        List<VendorDetail> vendorDetails = streetVendingRequest.getStreetVendingDetail().getVendorDetail();
-        BankDetail bankDetail = streetVendingRequest.getStreetVendingDetail().getBankDetail();
+	public StreetVendingDetail encryptObject(StreetVendingRequest streetVendingRequest) {
+		List<VendorDetail> vendorDetails = streetVendingRequest.getStreetVendingDetail().getVendorDetail();
+		BankDetail bankDetail = streetVendingRequest.getStreetVendingDetail().getBankDetail();
 
-        
-        if (vendorDetails == null || vendorDetails.isEmpty()) {
-            log.warn("No Vendor Details available for encryption.");
-            return streetVendingRequest.getStreetVendingDetail();
-        }
+		if (vendorDetails == null || vendorDetails.isEmpty()) {
+			log.warn("No Vendor Details available for encryption.");
+			return streetVendingRequest.getStreetVendingDetail();
+		}
 
-        VendorDetail vendorDetail = vendorDetails.get(0);
-        log.info("Applicant detail before encryption: {}", vendorDetail.getMobileNo());
+		log.info("Applicant detail before encryption: {}", vendorDetails);
 
-        VendorDetail encryptedDetail = encryptionDecryptionUtil.encryptObject(
-                vendorDetail,
-                StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY,
-                VendorDetail.class
-        );
-        
-        BankDetail encryptedBankDetail = encryptionDecryptionUtil.encryptObject(
-                bankDetail,
-                StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY, 
-                BankDetail.class
-        );
+		List<VendorDetail> encryptedVendorDetails = vendorDetails.stream()
+				.map(vendorDetail -> encryptionDecryptionUtil.encryptObject(vendorDetail,
+						StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY, VendorDetail.class))
+				.collect(Collectors.toList());
+		if (bankDetail != null) {
+			BankDetail encryptedBankDetail = encryptionDecryptionUtil.encryptObject(bankDetail,
+					StreetVendingConstants.SV_APPLICANT_DETAIL_ENCRYPTION_KEY, BankDetail.class);
 
-     
-        streetVendingRequest.getStreetVendingDetail().setBankDetail(encryptedBankDetail);
+			streetVendingRequest.getStreetVendingDetail().setBankDetail(encryptedBankDetail);
+		}
+		streetVendingRequest.getStreetVendingDetail().setVendorDetail(encryptedVendorDetails);
 
-        log.info("Applicant detail after encryption: {}", encryptedDetail.getMobileNo());
-        vendorDetails.set(0, encryptedDetail); // Updating the list
-        streetVendingRequest.getStreetVendingDetail().setVendorDetail(vendorDetails);
+		return streetVendingRequest.getStreetVendingDetail();
+	}
 
-        return streetVendingRequest.getStreetVendingDetail();
-    }
+	public StreetVendingDetail decryptObject(StreetVendingDetail streetVendingDetail, RequestInfo requestInfo) {
+		if (streetVendingDetail == null || streetVendingDetail.getVendorDetail() == null) {
+			log.warn("No StreetVendingDetail or VendorDetail available for decryption.");
+			return streetVendingDetail;
+		}
 
-    public StreetVendingDetail decryptObject(StreetVendingDetail streetVendingDetail, RequestInfo requestInfo) {
-        if (streetVendingDetail == null || streetVendingDetail.getVendorDetail() == null) {
-            log.warn("No StreetVendingDetail or VendorDetail available for decryption.");
-            return streetVendingDetail;
-        }
+		List<VendorDetail> vendorDetails = streetVendingDetail.getVendorDetail();
+		log.info("Applicant detail before decryption: {}", vendorDetails);
 
-        VendorDetail vendorDetail = streetVendingDetail.getVendorDetail().get(0);
-        log.info("Applicant detail before decryption: {}", vendorDetail.getMobileNo());
+		List<VendorDetail> decryptedDetail = encryptionDecryptionUtil.decryptObject(vendorDetails,
+				StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY, VendorDetail.class, requestInfo);
 
-        VendorDetail decryptedDetail = encryptionDecryptionUtil.decryptObject(
-                vendorDetail,
-                StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
-                VendorDetail.class,
-                requestInfo
-        );
+		streetVendingDetail.setVendorDetail(decryptedDetail);
 
-        log.info("Applicant detail after decryption: {}", decryptedDetail.getMobileNo());
-        streetVendingDetail.getVendorDetail().set(0, decryptedDetail);
-        
-        
-        BankDetail bankDetail = streetVendingDetail.getBankDetail();
-        log.info("Bank detail before decryption: {}", bankDetail.getAccountNumber());
+		BankDetail bankDetail = streetVendingDetail.getBankDetail();
+		if (bankDetail != null) {
+			BankDetail decryptedBankDetail = encryptionDecryptionUtil.decryptObject(bankDetail,
+					StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY, BankDetail.class, requestInfo);
 
-        BankDetail decryptedBankDetail = encryptionDecryptionUtil.decryptObject(
-        		bankDetail,
-                StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
-                BankDetail.class,
-                requestInfo
-        );
+			streetVendingDetail.setBankDetail(decryptedBankDetail);
+		}
+		return streetVendingDetail;
+	}
 
-        log.info("Bank detail after decryption: {}", decryptedBankDetail.getAccountNumber());
-        streetVendingDetail.setBankDetail(decryptedBankDetail);
+	public List<StreetVendingDetail> decryptObject(List<StreetVendingDetail> streetVendingDetails,
+			RequestInfo requestInfo) {
+		if (streetVendingDetails == null || streetVendingDetails.isEmpty()) {
+			log.warn("No StreetVendingDetails available for decryption.");
+			return streetVendingDetails;
+		}
 
-        return streetVendingDetail;
-    }
+		for (StreetVendingDetail detail : streetVendingDetails) {
 
-    public List<StreetVendingDetail> decryptObject(List<StreetVendingDetail> streetVendingDetails, RequestInfo requestInfo) {
-        if (streetVendingDetails == null || streetVendingDetails.isEmpty()) {
-            log.warn("No StreetVendingDetails available for decryption.");
-            return streetVendingDetails;
-        }
+			if (detail.getVendorDetail() != null && !detail.getVendorDetail().isEmpty()) {
+				List<VendorDetail> vendorDetails = detail.getVendorDetail();
+				log.info("Applicant detail before decryption: {}", vendorDetails);
 
-        streetVendingDetails.forEach(detail -> {
-            if (detail.getVendorDetail() != null && !detail.getVendorDetail().isEmpty()) {
-                VendorDetail vendorDetail = detail.getVendorDetail().get(0);
-                log.info("Applicant detail before decryption: {}", vendorDetail.getMobileNo());
+				List<VendorDetail> decryptedDetail = encryptionDecryptionUtil.decryptObject(vendorDetails,
+						StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY, VendorDetail.class,
+						requestInfo);
 
-                VendorDetail decryptedDetail = encryptionDecryptionUtil.decryptObject(
-                        vendorDetail,
-                        StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
-                        VendorDetail.class,
-                        requestInfo
-                );
+				detail.setVendorDetail(decryptedDetail);
+			}
 
-                log.info("Applicant detail after decryption: {}", decryptedDetail.getMobileNo());
-                detail.getVendorDetail().set(0, decryptedDetail);
-            }
-        });
-        
-        streetVendingDetails.forEach(detail -> {
-            if (detail.getBankDetail() != null) {
-            	BankDetail bankDetail = detail.getBankDetail();
-                log.info("Bank detail before decryption: {}", bankDetail.getAccountNumber());
+			if (detail.getBankDetail() != null) {
+				BankDetail bankDetail = detail.getBankDetail();
+				BankDetail decryptedBankDetail = encryptionDecryptionUtil.decryptObject(bankDetail,
+						StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY, BankDetail.class, requestInfo);
 
-                BankDetail decryptedBankDetail = encryptionDecryptionUtil.decryptObject(
-                		bankDetail,
-                        StreetVendingConstants.SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY,
-                        BankDetail.class,
-                        requestInfo
-                );
+				log.info("Bank detail after decryption: {}", decryptedBankDetail.getAccountNumber());
+				detail.setBankDetail(decryptedBankDetail);
+			}
+		}
 
-                log.info("Bank detail after decryption: {}", decryptedBankDetail.getAccountNumber());
-                detail.setBankDetail(decryptedBankDetail);
-            }
-        });
-
-        return streetVendingDetails;
-    }
+		return streetVendingDetails;
+	}
 }
