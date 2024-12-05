@@ -145,20 +145,6 @@ create table eg_adv_address_detail (
     ON DELETE NO ACTION
 );
 
---draft_id, draft_application_data, createdBy, lastmodifiedby, lastmodifiedtime
-
-create table eg_adv_draft_detail (
-		draft_id VARCHAR(64) PRIMARY KEY,
-		tenant_id VARCHAR(64) NOT NULL,
-		user_uuid VARCHAR(64) NOT NULL,
-		draft_application_data JSONB NOT NULL,
-		createdby character varying(64) NOT NULL,
-		lastmodifiedby character varying(64),
-		createdtime bigint NOT NULL,
-		lastmodifiedtime bigint
-);
-
-
 CREATE INDEX IF NOT EXISTS idx_eg_adv_address_detail_applicant_detail_id ON eg_adv_address_detail(applicant_detail_id);
 
 
