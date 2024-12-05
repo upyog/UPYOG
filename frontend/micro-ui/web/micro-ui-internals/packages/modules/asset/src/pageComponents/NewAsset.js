@@ -70,7 +70,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       .flat() // Flatten the fields array
       .filter((field) => field.active === true); // Filter by active status
   }
-  
+  console.log('Testing Form:- ', formJson);
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
@@ -135,7 +135,6 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       const purchaseCost = parseFloat(updatedData.purchaseCost) || 0;
 
       if (acquisitionCost >= 0 || purchaseCost >= 0) {
-        console.log('Test DAta :- ',acquisitionCost ,purchaseCost)
         updatedData.bookValue = acquisitionCost + purchaseCost;
       }
 
@@ -169,6 +168,25 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     }
   };
 
+  //Dropdown get data form masters
+  const dropDownData = (masterName) => {
+    const trimmedName = masterName ? masterName.trim() : '';
+    const { data: masterDropdown } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: trimmedName }], {
+      select: (data) => {
+        console.log('data :- ', data);
+        const formattedData = data?.["ASSET"]?.['Warranty'];
+        return formattedData;
+      },
+    });
+    let dropDown = [];
+  
+    masterDropdown && masterDropdown.map((row) => {
+      dropDown.push({ i18nKey: `${row.code}`, code: `${row.code}`, value: `${row.name}` });
+    });
+
+    console.log('dropDown', dropDown);
+    return dropDown
+  }
 
 
   return (
@@ -236,7 +254,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                       className="form-field"
                       selected={assetDetails[row.name]}
                       select={handleInputChange}
-                      option={row.options}
+                      option={dropDownData(row.masterName)}
                       optionKey="i18nKey"
                       placeholder={"Select"}
                       isMandatory={false}
