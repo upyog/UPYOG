@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.kafka.consumer.PaymentUpdateConsumer;
+import org.upyog.adv.service.AdvertisementValidationService;
 import org.upyog.adv.service.BookingService;
 import org.upyog.adv.service.DemandService;
 import org.upyog.adv.util.BookingUtil;
@@ -49,12 +50,15 @@ public class AdvertisementServiceApiController {
 	private final ObjectMapper objectMapper;
 
 	private final HttpServletRequest request;
+	
+	private final AdvertisementValidationService validationService;
 
 
 	@Autowired
-	public AdvertisementServiceApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+	public AdvertisementServiceApiController(ObjectMapper objectMapper, HttpServletRequest request, AdvertisementValidationService validationService) {
 		this.objectMapper = objectMapper;
 		this.request = request;
+		this.validationService = validationService;
 	}
 
 	@Autowired
@@ -70,11 +74,12 @@ public class AdvertisementServiceApiController {
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> createBooking(
 			@ApiParam(value = "Details for theadvertisement booking time, payment and documents", required = true) @Valid @RequestBody BookingRequest bookingRequest) {
-
+		validationService.validateRequest(bookingRequest);
 		BookingDetail bookingDetail = null;
 		if (bookingRequest.isDraftApplication()) {
 			bookingDetail = bookingService.createAdvertisementDraftApplication(bookingRequest);
 		} else {
+
 			bookingDetail = bookingService.createBooking(bookingRequest);
 		}
 		ResponseInfo info = BookingUtil.createReponseInfo(bookingRequest.getRequestInfo(),
@@ -120,7 +125,8 @@ public class AdvertisementServiceApiController {
 	
 	 @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	    public ResponseEntity<AdvertisementResponse> v1UpdateAdvertisementBooking(
-	            @ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody BookingRequest advertisementBookingRequest) {
+	            @ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) 
+	            @Valid @RequestBody BookingRequest advertisementBookingRequest) {
 	        
 	        /**
 	         * This update booking method will be called for below two tasks : 
@@ -128,7 +134,7 @@ public class AdvertisementServiceApiController {
 	         * 2. Update status when cancelled
 	         * 
 	         */
-	        
+		 	validationService.validateRequest(advertisementBookingRequest);
 	        BookingDetail bookingDetail = bookingService.updateBooking(advertisementBookingRequest, null, 
 	                 BookingStatusEnum.valueOf(advertisementBookingRequest.getBookingApplication().getBookingStatus()));
 	        ResponseInfo info = BookingUtil.createReponseInfo(advertisementBookingRequest.getRequestInfo(), BookingConstants.ADVERTISEMENT_BOOKING_UPDATED,
