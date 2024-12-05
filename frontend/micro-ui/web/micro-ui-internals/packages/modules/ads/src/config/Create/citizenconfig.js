@@ -10,8 +10,15 @@ export const citizenConfig = [
       {
         route: "searchads",
         component: "ADSSearch",
-        nextStep: "applicant-details",
+        nextStep: "info",
         key: "adslist",
+        type: "component",
+      },
+      {
+        route: "info",
+        component: "ADSRequiredDoc",
+        nextStep: "applicant-details",
+        key: "Documents",
         type: "component",
       },
       {
