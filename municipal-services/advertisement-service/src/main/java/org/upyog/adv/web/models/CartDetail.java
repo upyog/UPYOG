@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import javax.validation.constraints.NotBlank;
 
 import org.upyog.adv.util.BookingUtil;
+import org.upyog.adv.validator.CreateApplicationGroup;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,13 +35,13 @@ public class CartDetail {
 	@JsonProperty("bookingId")
 	private String bookingId = null; //foreign key
 	
-	@NotBlank
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String addType;
 	
-	@NotBlank
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String location;
 	
-	@NotBlank
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String faceArea;
 	
 	@JsonProperty("nightLight")

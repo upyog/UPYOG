@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
 //import org.upyog.adv.web.models.workflow.ProcessInstance;
+import org.upyog.adv.validator.CreateApplicationGroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,7 +44,7 @@ public class BookingDetail {
 	
 	private Long applicationDate;
 	
-	@NotBlank
+	@NotBlank(groups = CreateApplicationGroup.class)
 	private String tenantId;
 	
 	@JsonProperty("bookingStatus")
