@@ -119,7 +119,7 @@ function ApplicationDetailsContent({
         name: checkpoint?.assignes?.[0]?.name,
         // mobileNumber: checkpoint?.assigner?.mobileNumber,
         wfComment: checkpoint?.wfComment,
-        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        // mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
       };
       return <TLCaption data={caption} />;
     }

@@ -109,6 +109,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       if(res && res?.otp?.isValidationSuccessful) {
         setIsOtpValid(true);
         setShowToast({ key: true, label: "OTP validate successfully!" });
+        setIsOtpSent(false);
         setTimeout(() => {
           closeToast();
         }, 10000);

@@ -249,7 +249,8 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
   return {
     t: t,
     tenantId: tenantInfo?.code,
-    name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
+    // name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
+    name: `${t(tenantInfo?.i18nKey)} ${(t(`${tenantInfo?.city?.ulbGrade}`))}`,
     email: tenantInfo?.emailId,
     phoneNumber: tenantInfo?.contactNumber,
     heading: t("PT_ACKNOWLEDGEMENT"),
