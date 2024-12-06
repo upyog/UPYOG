@@ -82,6 +82,9 @@ public class Asset implements AssetDTO {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
+    @JsonProperty("assetAssignment")
+    private AssetAssignment assetAssignment;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
@@ -109,17 +112,8 @@ public class Asset implements AssetDTO {
     @JsonProperty("subScheme")
     private String subScheme;
 
-    @JsonProperty("orderNumber")
-    private String orderNumber;
-
-    @JsonProperty("orderDate")
-    private Long orderDate;
-
-    @JsonProperty("assetAssignment")
-    private AssetAssignment assetAssignment;
-
-    @JsonProperty("orignalCost:")
-    private float orignalCost;
+    @JsonProperty("purchaseCost:")
+    private float purchaseCost;
 
     @JsonProperty("acquisitionCost")
     private float acquisitionCost;
@@ -127,32 +121,32 @@ public class Asset implements AssetDTO {
     @JsonProperty("bookValue")
     private float bookValue;
 
-    @JsonProperty("purchaseAcquisitionDate")
-    private Long acquisitionDate;
+    @JsonProperty("invoiceDate")
+    private Long invoiceDate;
 
-    @JsonProperty("depreciationRate")
-    private float depreciationRate;
+    @JsonProperty("invoiceNumber")
+    private String invoiceNumber;
 
-    @JsonProperty("revenueGeneratedByAsset")
-    private float revenueGeneratedByAsset;
+    @JsonProperty("purchaseDate")
+    private Long purchaseDate;
 
-    @JsonProperty("lastMaintenanceDate")
-    private Long lastMaintenanceDate;
+    @JsonProperty("purchaseOrderNumber")
+    private String purchaseOrderNumber;
 
-    @JsonProperty("estimatedNextMaintenanceDate")
-    private Long estimatedNextMaintenanceDate;
-
-    @JsonProperty("glCode")
-    private Long glCode;
+    @JsonProperty("location")
+    private String location;
 
     @JsonProperty("oldCode")
     private Long oldCode;
 
+    @JsonProperty("modeOfPossessionOrAcquisition")
+    private String modeOfPossessionOrAcquisition;
+
     @JsonProperty("unitOfMeasurement")
     private Long unitOfMeasurement;
 
-    @JsonProperty("warrantyExpiryDate")
-    private Long warrantyExpiryDate;
+    @JsonProperty("lifeOfAsset")
+    private String lifeOfAsset;
 
     @JsonProperty("assetStatus")
     private String assetStatus;
