@@ -234,7 +234,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
       )}
       {showViewCart && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>MY_CART</CardSubHeader>}
+          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>My Cart</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCartClick} />}
           popupStyles={{ backgroundColor: "#fff", position: "relative", maxHeight: "80vh", width: "80%", overflowY: "auto" }}
           popupModuleMianStyles={{ padding: "10px" }}
