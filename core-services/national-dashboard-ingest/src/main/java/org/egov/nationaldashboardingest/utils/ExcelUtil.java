@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -18,6 +16,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.egov.nationaldashboardingest.config.ApplicationProperties;
 import org.egov.nationaldashboardingest.service.StateListDB;
 import org.egov.nationaldashboardingest.web.models.Attachments;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,9 @@ public class ExcelUtil {
 
     @Autowired
     private StateListDB stateListDB;
+
+    @Autowired
+    private ApplicationProperties appProp;
 
     public List<Attachments> generateExcelFiles(Map<String, Map<String, Object>> stateList) throws IOException {
         List<Attachments> attachmentsList = new ArrayList<>();
@@ -68,6 +70,15 @@ public class ExcelUtil {
         return attachmentsList;
     }
 
+    private List<String> getModules() {
+
+        Map<String,String> moduleIndexMapping = appProp.getModuleIndexMapping();
+
+        return moduleIndexMapping.keySet().stream()
+                .limit(6)
+                .collect(Collectors.toList());
+    }
+
     private void createHeader(XSSFSheet sheet, String state) {
         Row row = sheet.createRow(0);
         Row row1 = sheet.createRow(1);
@@ -82,22 +93,20 @@ public class ExcelUtil {
         sheet.addMergedRegion(CellRangeAddress.valueOf("A1:A2"));
         sheet.addMergedRegion(CellRangeAddress.valueOf("B1:I1"));
 
+
         createCell(row, 0, "ULB - " + state, style, sheet);
         createCell(row, 1, "Modules/Services", style, sheet);
-
-        createCell(row1, 1, "FIRENOC", style, sheet);
-        createCell(row1, 2, "MCOLLECT", style, sheet);
-        createCell(row1, 3, "PGR", style, sheet);
-        createCell(row1, 4, "PT", style, sheet);
-        createCell(row1, 5, "TL", style, sheet);
-        createCell(row1, 6, "WS", style, sheet);
-        createCell(row1, 7, "(blank)", style, sheet);
-        createCell(row1, 8, "Total", style, sheet);
+        int column = 1;
+        for (String module : getModules()) {
+            createCell(row1, column++, module, style, sheet);
+        }
+        createCell(row1, column++, "(blank)", style, sheet);
+        createCell(row1, column, "Total", style, sheet);
     }
 
     private void fillULBData(XSSFSheet sheet, List<String> ulbList, String state, Map<String, Map<String, List<String>>> ulbModules) {
         int rowCount = 2;
-        String[] modules = {"FIRENOC", "MCOLLECT", "PGR", "PT", "TL", "WS", "OBPS"};
+
 
         CellStyle style = sheet.getWorkbook().createCellStyle();
         XSSFFont font = sheet.getWorkbook().createFont();
@@ -113,18 +122,18 @@ public class ExcelUtil {
             createCell(row, 0, ulb, style, sheet);
 
             int moduleCount = 0;
+            int column = 1;
 
-            for (int i = 0; i < modules.length; i++) {
-                String module = modules[i];
+            for (String module : getModules()) {
                 boolean moduleDataAvailable = checkModuleAvailability(ulb, module, stateModules);
-                createCell(row, i + 1, moduleDataAvailable ? "Y" : "N", style, sheet);
+                createCell(row, column++, moduleDataAvailable ? "Y" : "N", style, sheet);
                 if (moduleDataAvailable) {
                     moduleCount++;
                 }
             }
 
-            createCell(row, 7, "", style, sheet);
-            createCell(row, 8, moduleCount, style, sheet);
+            createCell(row, column++, "", style, sheet);
+            createCell(row, column, moduleCount, style, sheet);
         }
     }
 
