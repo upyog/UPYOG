@@ -12,7 +12,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
   const {pathname} = useLocation();
-
+  const user = Digit.UserService.getUser().info;
   // Get the state ID (tenant) from Digit service
   const stateId = Digit.ULBService.getStateId();
 
@@ -82,6 +82,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
               return (
                 <div key={index}>
                   <CardLabel className="card-label-smaller">{t("PET_PETPHOTO")}</CardLabel>
+                  <div style={{marginLeft: user?.type==="EMPLOYEE"?"37%":""}}>
                   <ImageUploadHandler
                     tenantId={stateId}
                     uploadedImages={documents.filter((doc) => doc.documentType === "PET.PETPHOTO").map((doc) => doc.filestoreId)}
@@ -90,7 +91,8 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
                     error={error}
                     setError={setError}
                     maxImages={1}  // Restrict to one image
-                  />
+                    />
+                    </div>
                 </div>
               );
             } else {
@@ -105,6 +107,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
                   documents={documents}
                   setCheckRequiredFields={setCheckRequiredFields}
                   renewApplication={renewApplication}
+                  user={user}
                 />
               );
             }
@@ -133,11 +136,12 @@ function PTRSelectDocument({
   action,
   formData,
   id,
-  renewApplication
+  renewApplication,
+  user
 }) {
   // Filter documents to find the one matching the current document code
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-
+  const [isUploading, setIsUploading] = useState(false);
   // Initialize state for selected document and file to upload
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
@@ -145,6 +149,11 @@ function PTRSelectDocument({
       : doc?.dropdownData?.length === 1
         ? doc?.dropdownData[0]
         : {}
+  );
+
+  const LoadingSpinner = () => (
+    <div className="loading-spinner"
+    />
   );
 
   // State for handling file and uploaded file ID
@@ -229,6 +238,7 @@ function PTRSelectDocument({
         } else {
           try {
             setUploadedFile(null);
+            setIsUploading(true);
             // Upload the selected file and update the uploadedFile state
             const response = await Digit.UploadServices.Filestorage("PTR", file, Digit.ULBService.getStateId());
             if (response?.data?.files?.length > 0) {
@@ -239,6 +249,7 @@ function PTRSelectDocument({
           } catch (err) {
             setError(t("CS_FILE_UPLOAD_ERROR"));
           }
+          finally {setIsUploading(false)};
         }
       }
     })();
@@ -258,7 +269,7 @@ function PTRSelectDocument({
           <Dropdown
             className="form-field"
             selected={selectedDocument}
-            style={{ width: "100%" }}
+            style={{width: user?.type==="EMPLOYEE"?"50%":"100%"}}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}
             optionKey="i18nKey"
@@ -281,7 +292,12 @@ function PTRSelectDocument({
               setUploadedFile(null);
             }}
             id={id}
-            message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+            message={isUploading ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <LoadingSpinner />
+                <span>Uploading...</span>
+              </div>
+            ) : uploadedFile ? "1 File Uploaded" : "No File Uploaded"}
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"   // Acceptable file formats
