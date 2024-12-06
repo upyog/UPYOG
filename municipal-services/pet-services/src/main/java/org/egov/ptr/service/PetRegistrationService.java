@@ -308,14 +308,34 @@ public class PetRegistrationService {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String createdTime = dateFormat.format(new Date(petRegistrationApplication.getAuditDetails().getCreatedTime()));
-		String lastVaccineDate = dateFormat.format(petRegistrationApplication.getPetDetails().getLastVaccineDate());
+		
+		String lastVaccineDateStr = petRegistrationApplication.getPetDetails().getLastVaccineDate().toString();
+		String lastVaccineDate = null; // Declare outside the try block
+
+		try {
+		    // Define the input format of the String (example: yyyy-MM-dd)
+		    SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		    // Parse the String into a Date object
+		    Date lastVaccineDateObj = inputDateFormat.parse(lastVaccineDateStr);
+
+		    // Format the Date object into the desired format (example: dd-MM-yyyy)
+		    SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		    lastVaccineDate = outputDateFormat.format(lastVaccineDateObj);
+
+		} catch (Exception e) {
+		    System.err.println("Error parsing last vaccine date: " + e.getMessage());
+		    e.printStackTrace();
+		}
+
+//		String lastVaccineDate = dateFormat.format(petRegistrationApplication.getPetDetails().getLastVaccineDate().toString());
 		
 		// map variables and values
 		tlObject.put("applicationNumber", petRegistrationApplication.getApplicationNumber());//Trade License No
 		tlObject.put("petName", petRegistrationApplication.getPetDetails().getPetName()); //Trade Registration No
 		tlObject.put("breedType", petRegistrationApplication.getPetDetails().getBreedType());//Trade Name
 		tlObject.put("address", petRegistrationApplication.getAddress().getAddressLine1().concat(", ")
-			.concat(petRegistrationApplication.getAddress().getCity().concat(", ")
+			.concat(petRegistrationApplication.getAdditionalDetail().get("ulbName").toString().concat(", ")
 			.concat(petRegistrationApplication.getAddress().getPincode())));// Trade Premises Address
 		tlObject.put("createdTime", createdTime);// License Issue Date
 		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
