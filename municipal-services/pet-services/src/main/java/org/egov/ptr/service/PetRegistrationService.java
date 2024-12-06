@@ -289,7 +289,7 @@ public class PetRegistrationService {
 		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(petRegistrationApplication, requestInfo);
 		
-		map.put("tl", map2);
+		map.put("ptr", map2);
 		
 		PDFRequest pdfRequest = PDFRequest.builder()
 				.RequestInfo(requestInfo)
