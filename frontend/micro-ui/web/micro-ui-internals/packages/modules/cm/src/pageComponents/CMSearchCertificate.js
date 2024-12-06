@@ -7,7 +7,6 @@
 // npm command: npm install react-google-recaptcha --save
 
 import React, { useEffect, useState, useRef } from "react";
-import { Toast } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ReCAPTCHA from "react-google-recaptcha";
 import { convertEpochToDate } from "../utils";
@@ -19,8 +18,8 @@ import {
   Dropdown,
   SearchField,
   Table,
-  Card,
   Header,
+  Toast, 
 } from "@upyog/digit-ui-react-components";
 
 const CMSearchCertificate = () => {
@@ -599,10 +598,10 @@ const CMSearchCertificate = () => {
   return (
     <React.Fragment>
       <div>
-        <Header>{t("SEARCH_CERTIFICATE")}</Header>
+        <div className="h1" style={{fontSize: "40px", fontFamily:"Roboto Condensed"}}>{t("SEARCH_CERTIFICATE")}</div>
         <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
           <SearchField>
-            <label>{t("CERTIFICATE_TYPE")}</label>
+            <label className="astericColor" style={{fontSize: "19px"}} >{t("CERTIFICATE_TYPE")}</label>
             <Controller
               control={control}
               name="certificateType"
@@ -621,7 +620,7 @@ const CMSearchCertificate = () => {
             />
           </SearchField>
           <SearchField>
-            <label>{t("CERTIFICATE_NUMBER")}</label>
+            <label className="astericColor" style={{fontSize: "19px"}}>{t("CERTIFICATE_NUMBER")}</label>
             <TextInput
               name="certificateNo"
               t={t}
