@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
+import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.kafka.producer.Producer;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.repository.GenericRowMapper;
@@ -184,38 +185,43 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	}
 
 	@Override
-	public void createBookingTimer(CommunityHallSlotSearchCriteria criteria, RequestInfo requestInfo) {
+	public void createBookingTimer(CommunityHallSlotSearchCriteria criteria, RequestInfo requestInfo, boolean updateBookingStatus) {
 		String bookingId = criteria.getBookingId();
 		String createdBy = requestInfo.getUserInfo().getUuid();
 		long createdTime = CommunityHallBookingUtil.getCurrentTimestamp();
-		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
-		long lastModifiedTime = CommunityHallBookingUtil.getCurrentTimestamp();
 
 		// Log the information at the beginning of the method
 		log.info("Executing Insert Query with the following details: ");
 		log.info("Booking ID: {}", bookingId);
 		log.info("Created By: {}", createdBy);
 		log.info("Created Time: {}", createdTime);
-		log.info("Last Modified By: {}", lastModifiedBy);
-		log.info("Last Modified Time: {}", lastModifiedTime);
 
 		// Query execution
 		String query = CommunityHallBookingQueryBuilder.PAYMENT_TIMER_INSERT_QUERY;
-		jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
+		jdbcTemplate.update(query, bookingId, createdBy, createdTime, "ACTIVE");
 
 		// Log after the query execution
 		log.info("Insert Query Executed Successfully for Booking ID: {}", bookingId);
+		
+		if(updateBookingStatus) {
+			updateBookingSynchronously(bookingId, createdBy, null, BookingStatusEnum.PENDING_FOR_PAYMENT.toString());
+		}
+		
 	}
-
+	
 	@Override
-	public void deleteBookingTimer(String bookingId) {
+	public void deleteBookingTimer(String bookingId, boolean updateBookingStatus) {
 		log.info("Deleting booking timer query : {} booking id : {} ", CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY, bookingId);
 		jdbcTemplate.update(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY, bookingId);
+		if(updateBookingStatus) {
+			log.info("updating booking status of booking ids : {} ", bookingId);
+			updateBookingSynchronously(bookingId, "SYSTEM_USER", null, BookingStatusEnum.BOOKING_CREATED.toString());
+		}
 
 	}
 	
 	@Override
-	public int deleteExpiredBookingTimer() {
+	public List<BookingPaymentTimerDetails> getExpiredBookingTimer() {
 		log.info("Deleting booking timer for expired bookings : deleteExpiredBookingTimer");
 		long currentTimeMillis = CommunityHallBookingUtil.getCurrentTimestamp();
 
@@ -223,17 +229,19 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 
 		timerValueInMilleconds = timerValueInMilleconds * 60 * 1000;
 
-		int rows = jdbcTemplate.update(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_DELETE_EXPIRED_QUERY, currentTimeMillis,
-				timerValueInMilleconds);
-		return rows;
+		List<BookingPaymentTimerDetails> bookingPaymentTimerDetails = jdbcTemplate.query(CommunityHallBookingQueryBuilder.PAYMENT_TIMER_SELECT_EXPIRED_QUERY, new Object[]{currentTimeMillis,
+				timerValueInMilleconds, "ACTIVE"},
+				new GenericRowMapper<>(BookingPaymentTimerDetails.class));
+		return bookingPaymentTimerDetails;
 
 	}
 
 	@Override
-	public void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail, String status) {
+	public void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status) {
 		
-		String bookingId = communityHallsBookingRequest.getHallsBookingApplication().getBookingId();
-		String lastUpdateBy = communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid();
+		log.info("updateBookingSynchronously for booking id : {} by uuid : ", bookingId, uuid);
+		
+		String lastUpdateBy = uuid;
 		long lastUpdatedTime = CommunityHallBookingUtil.getCurrentTimestamp();
 		String receiptNo = null;
 		long receiptDate = 0l;
@@ -245,12 +253,12 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		
 		log.info("Updating payment status of booking id : {} to status : {}", bookingId, status);
 		
-		/*set booking_status = ?, lastmodifiedby = ?, lastmodifiedtime = ? "
-			+ ", receipt_no = ?, payment_date = ? where booking_id = ?*/
+		if(paymentDetail != null) {
+			jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_DETAIL_QUERY, status, lastUpdateBy, lastUpdatedTime, receiptNo, receiptDate, bookingId);
+		} else {
+			jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, lastUpdateBy, lastUpdatedTime, bookingId);
+		}
 		
-		jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_DETAIL_QUERY, status, lastUpdateBy, lastUpdatedTime, receiptNo, receiptDate, bookingId);
-		/*set status = ?, lastmodifiedby = ?, lastmodifiedtime = ? "
-			+ " where booking_id = ?*/
 		jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPDATE_BOOKING_SLOT_QUERY, status, lastUpdateBy, lastUpdatedTime, bookingId);
 		
 		jdbcTemplate.update(CommunityHallBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
@@ -283,13 +291,12 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	}
 	
     /**
-     * Updates the lastModifiedBy and lastModifiedTime fields for a given booking.
-  
+     * Updates the createdTime field for a given booking.
      */
 	@Override
-    public int updateBookingTimer(String bookingId, String lastModifiedBy) {
-       long lastModifiedTime = CommunityHallBookingUtil.getCurrentTimestamp();
-       return jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPADTE_BOOKING_PAYMENT_TIMER_VALUE_QUERY, lastModifiedBy, lastModifiedTime, bookingId);
+    public int updateBookingTimer(String bookingId) {
+       long createdTime = CommunityHallBookingUtil.getCurrentTimestamp();
+       return jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPADTE_BOOKING_PAYMENT_TIMER_VALUE_QUERY, "PENDING", bookingId);
     }
 
 }

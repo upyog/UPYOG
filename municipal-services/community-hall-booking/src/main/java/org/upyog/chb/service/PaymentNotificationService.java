@@ -3,16 +3,20 @@ package org.upyog.chb.service;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.enums.BookingStatusEnum;
+import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.transaction.Transaction;
 import org.upyog.chb.web.models.transaction.TransactionRequest;
 import org.upyog.chb.web.models.workflow.ProcessInstance;
@@ -47,7 +51,10 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private CommunityHallBookingService bookingService;
-
+	
+	@Autowired
+	private CommunityHallBookingRepository bookingRepository;
+	
 	/**
 	 *
 	 * @param record
@@ -78,7 +85,8 @@ public class PaymentNotificationService {
 						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
 				
 				//now updating booking status directly using jdbc template
-				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED);
+				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED,
+						false);
 				
 			}
 		} catch (IllegalArgumentException e) {
@@ -156,13 +164,30 @@ public class PaymentNotificationService {
         	if(Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus)){
         		status = BookingStatusEnum.PAYMENT_FAILED;
         	}
+        	
+        	CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
+					.bookingNo(bookingNo).build();
+			List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+			if (bookingDetails.size() == 0) {
+				throw new CustomException("INVALID_BOOKING_CODE",
+						"Booking no not valid. Failed to update booking status for : " + bookingNo);
+			}
+			CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
+        	
         	log.info("For booking no : " + bookingNo + " transaction id : " + transaction.getTxnId());
         	
-        	CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().bookingNo(bookingNo)
-					.build();
+        	
 			CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
 					.requestInfo(requestInfo).hallsBookingApplication(bookingDetail).build();
-			bookingService.updateBooking(bookingRequest, null, status);
+			
+			
+			if(BookingStatusEnum.PAYMENT_FAILED.equals(status)) {
+				bookingService.updateBookingSynchronously(bookingRequest, null, status, true);
+			} else {
+				bookingService.updateBookingSynchronously(bookingRequest, null, BookingStatusEnum.PENDING_FOR_PAYMENT, false);
+				bookingRepository.updateBookingTimer(bookingDetail.getBookingId());
+			}
+			
             
         }
     }

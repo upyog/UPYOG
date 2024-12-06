@@ -1,8 +1,6 @@
 package org.upyog.chb.service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,71 +30,44 @@ public class BookingTimerService {
 	
 	@Transactional
 	public long getTimerValue(CommunityHallSlotSearchCriteria criteria, RequestInfo info, List<CommunityHallSlotAvailabilityDetail> availabilityDetailsList) {
-		long timerValue = CommunityHallBookingUtil.getSeconds(Integer.parseInt(bookingConfiguration.getBookingPaymentTimerValue()));
+		long timerValue = 0 ;
 		String bookingId = criteria.getBookingId();
 		List<BookingPaymentTimerDetails> paymentTimerList = bookingRepository.getBookingTimer(criteria);
-		if(paymentTimerList.size() > 0) {
+		if(!CollectionUtils.isEmpty(paymentTimerList)) {
 			log.info("Timer for Booking id : {} exists." , bookingId);
 			BookingPaymentTimerDetails bookingPaymentTimerDetails = paymentTimerList.get(0);
 			long timeReamining = getTimerValue(bookingPaymentTimerDetails);
 			if(timeReamining < 1) {
-				bookingRepository.deleteBookingTimer(bookingId);
-				bookingRepository.createBookingTimer(criteria, info);
+				//return 0 need to reload timer on front end
 				return timerValue;
+			}else {
+				log.info("Timer for Booking id : {} exists with value  : {}" , bookingId, timerValue);
+				//if existing timer not expired return value from here
+				return timeReamining;
 			}
-			bookingRepository.updateBookingTimer(bookingId, info.getUserInfo().getUuid());
+			
 		} else {
-			bookingRepository.createBookingTimer(criteria, info);
+			bookingRepository.createBookingTimer(criteria, info, true);
 		}
+		timerValue = CommunityHallBookingUtil.getSeconds(Integer.parseInt(bookingConfiguration.getBookingPaymentTimerValue()));
 		log.info("Creating timer entry for booking id : {} with timer value : {}", criteria.getBookingId(), timerValue);
-		
 		return timerValue;
 		
 	}
 	
 	public Long getTimerValue(BookingPaymentTimerDetails bookingPaymentTimerDetails) {
 		long timerValue = CommunityHallBookingUtil.getSeconds(Integer.parseInt(bookingConfiguration.getBookingPaymentTimerValue()));
-		long timeReamining = CommunityHallBookingUtil.calculateDifferenceInSeconds(CommunityHallBookingUtil.getCurrentTimestamp(), bookingPaymentTimerDetails.getCreatedTime());
+		long currentTimestamp = CommunityHallBookingUtil.getCurrentTimestamp();
+		long timeSpentAfterCreation = CommunityHallBookingUtil.calculateDifferenceInSeconds(currentTimestamp, bookingPaymentTimerDetails.getCreatedTime());
+		log.info("currentTimestamp : {} createdTime : {} timeSpentAfterCreation : {} ", currentTimestamp, bookingPaymentTimerDetails.getCreatedTime(), timeSpentAfterCreation);
+		return timerValue - timeSpentAfterCreation;
 		
-		return timerValue - timeReamining;
-		
-	}
-	
-	@Transactional
-	public Map<String, Long> getTimerValue(List<String> bookingIds) {
-
-		// Retrieve payment timer details from the repository
-		List<BookingPaymentTimerDetails> paymentTimerDetails = bookingRepository.getBookingTimer(bookingIds);
-
-		// Create a map of bookingId to calculated timer value in minutes
-		Map<String, Long> bookingIdTimerValueMap = paymentTimerDetails.stream()
-				.collect(Collectors.toMap(BookingPaymentTimerDetails::getBookingId, timer ->  getTimerValue(timer)));
-		
-		List<String> expiredBookingIds = bookingIdTimerValueMap.entrySet().stream()
-		        .filter(entry -> entry.getValue() < 1) // Filter entries where timer value is less than 1
-		        .map(Map.Entry::getKey) // Extract the bookingId (key)
-		        .collect(Collectors.toList()); // Collect the filtered bookingIds into a list
-		
-		if(!CollectionUtils.isEmpty(expiredBookingIds)) {
-			String bookingIdString = String.join(",", expiredBookingIds);
-			bookingRepository.deleteBookingTimer(bookingIdString);
-			expiredBookingIds.stream().forEach(bookingId  -> bookingIdTimerValueMap.remove(bookingId));
-		}
-		
-
-		log.info("Expired booking id : " + expiredBookingIds);
-
-		// Log the map of bookingId to timer values
-		log.info("Booking ID to Timer Value Map: {}", bookingIdTimerValueMap);
-		
-		return bookingIdTimerValueMap;
-
 	}
 	
 	@Transactional
 	public void deleteBookingTimer(String bookingId) {
 		log.info("Deleting timer entry for booking id : {}", bookingId);
-		bookingRepository.deleteBookingTimer(bookingId);
+		bookingRepository.deleteBookingTimer(bookingId, true);
 	}
 	
 }

@@ -53,17 +53,28 @@ public class PaymentUpdateConsumer {
 
 	}
 	
+	/**
+	 * Handling this use case with timer table so its not required now 
+	 * 
+	 * @param record
+	 * @param topic
+	 */
 	
-	@KafkaListener(topics = { "${kafka.topics.save.pg.txns}" })
-	public void paymentStarted(final HashMap<String, Object> record,
-			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-
-		log.info("CHB Appplication payment started for topic  : " + topic + " and record : " + record);
-		//TODO: need to remove after testing
-		log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
-		paymentNotificationService.processTransaction(record, topic, BookingStatusEnum.PENDING_FOR_PAYMENT);
-
-	}
+	//@KafkaListener(topics = { "${kafka.topics.save.pg.txns}" })
+	/*
+	 * public void paymentStarted(final HashMap<String, Object> record,
+	 * 
+	 * @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	 * 
+	 * log.info("CHB Appplication payment started for topic  : " + topic +
+	 * " and record : " + record); //TODO: need to remove after testing
+	 * log.info("Strigifed json : " +
+	 * CommunityHallBookingUtil.beuatifyJson(record));
+	 * paymentNotificationService.processTransaction(record, topic,
+	 * BookingStatusEnum.PENDING_FOR_PAYMENT);
+	 * 
+	 * }
+	 */
 	
 	
 	/**
