@@ -30,7 +30,7 @@ public class AssetQueryBuilder {
             + "asset.purchaseordernumber, asset.location, asset.purchasecost, "
             + "asset.acquisitioncost, asset.bookvalue, asset.lifeofasset, "
             + "asset.modeofpossessionoracquisition, asset.assettype, "
-            + "asset.assetusage, asset.assetstatus "
+            + "asset.assetusage, asset.assetstatus, "
             + "address.doorno, address.latitude, address.longitude, address.addressid, "
             + "address.addressnumber, address.type, address.addressline1, address.addressline2, "
             + "address.landmark, address.city, address.pincode, address.detail, "
