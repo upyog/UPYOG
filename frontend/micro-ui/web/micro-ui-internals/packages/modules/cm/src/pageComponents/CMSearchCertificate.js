@@ -1,17 +1,15 @@
 // Description: CMSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result
 // @author: Khalid Rashid
 
-// Hcaptcha library is used for captcha
-// @github: https://github.com/hCaptcha/react-hcaptcha
-// npm command: npm install @hcaptcha/react-hcaptcha --save
+// @date: 2021-04-15
+// Recaptcha library used for captcha
+// @github: https://github.com/google-reCAPTCHA/recaptcha-v2
+// npm command: npm install react-google-recaptcha --save
 
 import React, { useEffect, useState, useRef } from "react";
 import { Toast } from "@upyog/digit-ui-react-components";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 import ReCAPTCHA from "react-google-recaptcha";
-// import { hcaptchaDetails } from "../utils";
 import { convertEpochToDate } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -35,7 +33,6 @@ const CMSearchCertificate = () => {
   const today = todaydate.toISOString().split("T")[0];
 
   const [token, setToken] = useState("");
-  const captcha = useRef();
   const [ishuman, setIshuman] = useState(false);
   const [istable, setistable] = useState(false);
   const [certificate_name, setCertificate_name] = useState("");
@@ -43,9 +40,6 @@ const CMSearchCertificate = () => {
 
   // function to reset captcha
   const resetCaptcha = () => {
-    // if (captcha.current) {
-    //   captcha.current.resetCaptcha();
-    // }
     grecaptcha.reset()
   };
 
@@ -636,22 +630,11 @@ const CMSearchCertificate = () => {
               placeholder={"Please enter unique certificate number"}
               value={certificate_No}
               onChange={setcertificate_No}
-            // style={{ width: "100" }}
             />
           </SearchField>
           <SearchField>
-            {/* <HCaptcha
-              ref={captcha}
-              sitekey="51424344-c730-4ac8-beec-0aca56be0754"
-              onVerify={(token, ekey) =>
-                //  handleVerificationSuccess(token, ekey)
-                setToken(token)
-              }
-              onExpire={(e) => setToken("")}
-            /> */}
-
             <ReCAPTCHA
-              // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+              // sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // test sitekey (can be used if you don't have a real sitekey)
               sitekey="6LfoM5MqAAAAAAQkwtM6X-IGwdURyY50WwvcaA_g"
               onChange={handleCaptchaChange}
             />
