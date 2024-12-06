@@ -9,13 +9,14 @@ ALTER TABLE eg_asset_assetdetails
     ADD COLUMN lifeOfAsset VARCHAR(64),
     ADD COLUMN unitOfMeasurement BIGINT,
     ADD COLUMN bookValue DOUBLE PRECISION,
-    ADD COLUMN assetBookRefNo VARCHAR(256),
     ADD COLUMN assetCurrentUsage VARCHAR(256),
     ADD COLUMN purchaseDate BIGINT,
     ADD COLUMN modeOfPossessionOrAcquisition VARCHAR(256),
     ADD COLUMN acquisitionCost DOUBLE PRECISION,
     ADD COLUMN purchaseOrderNumber VARCHAR(64),
     ADD COLUMN scheme VARCHAR(256),
+    ADD COLUMN assetType VARCHAR(256),
+    ADD COLUMN assetUsage VARCHAR(256),
     ADD COLUMN oldCode BIGINT;
 
 
@@ -28,11 +29,12 @@ ALTER TABLE eg_asset_auditdetails
     ADD COLUMN lifeOfAsset VARCHAR(64),
     ADD COLUMN unitOfMeasurement BIGINT,
     ADD COLUMN bookValue DOUBLE PRECISION,
-    ADD COLUMN assetBookRefNo VARCHAR(256),
     ADD COLUMN assetCurrentUsage VARCHAR(256),
     ADD COLUMN purchaseDate BIGINT,
     ADD COLUMN modeOfPossessionOrAcquisition VARCHAR(256),
     ADD COLUMN acquisitionCost DOUBLE PRECISION,
     ADD COLUMN purchaseOrderNumber VARCHAR(64),
     ADD COLUMN scheme VARCHAR(256),
+    ADD COLUMN assetType VARCHAR(256),
+    ADD COLUMN assetUsage VARCHAR(256),
     ADD COLUMN oldCode BIGINT;

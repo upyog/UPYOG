@@ -91,9 +91,6 @@ public class Asset implements AssetDTO {
     @JsonProperty("accountId")
     private String accountId;
 
-    @JsonProperty("assetCurrentUsage")
-    private String assetCurrentUsage;
-
     @JsonProperty("remarks")
     private String remarks;
 
@@ -148,8 +145,16 @@ public class Asset implements AssetDTO {
     @JsonProperty("lifeOfAsset")
     private String lifeOfAsset;
 
+    @JsonProperty("assetUsage")
+    private String assetUsage;
+
+    @JsonProperty("assetType")
+    private String assetType;
+
     @JsonProperty("assetStatus")
     private String assetStatus;
+
+
 
 
 //      @JsonProperty("parentAssetSpecificDetails")
