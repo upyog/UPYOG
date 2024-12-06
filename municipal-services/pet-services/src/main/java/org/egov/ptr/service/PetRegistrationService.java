@@ -308,7 +308,7 @@ public class PetRegistrationService {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String createdTime = dateFormat.format(new Date(petRegistrationApplication.getAuditDetails().getCreatedTime()));
-		String lastVaccineDate = dateFormat.format(new Date(petRegistrationApplication.getPetDetails().getLastVaccineDate()));
+		String lastVaccineDate = dateFormat.format(petRegistrationApplication.getPetDetails().getLastVaccineDate());
 		
 		// map variables and values
 		tlObject.put("applicationNumber", petRegistrationApplication.getApplicationNumber());//Trade License No
@@ -333,7 +333,7 @@ public class PetRegistrationService {
 
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
 		tlObject.entrySet().stream()
-		.filter(entry1 -> Arrays.asList("tradeLicenseNo","tradeRegistrationNo","tradeName","tradePremisesAddress","licenseIssueDate","licenseValidity","licenseCategory","licenseApplicantName","applicantContactNo","applicantAddress")
+		.filter(entry1 -> Arrays.asList("applicationNumber","petName","breedType","address")
 		.contains(entry1.getKey())).forEach(entry -> {
 			qr.append(entry.getKey());
 			qr.append(": ");
@@ -341,16 +341,16 @@ public class PetRegistrationService {
 			qr.append("\r\n");
 		});
 		
-	    replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
-	    replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
-	    replaceInStringBuilder(qr, "tradeName", "Trade Name");
-	    replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
-	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
-	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
-	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
-	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
-	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
-	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
+	    replaceInStringBuilder(qr, "applicationNumber", "Pet Application No");
+	    replaceInStringBuilder(qr, "petName", "Pet Name");
+	    replaceInStringBuilder(qr, "breedType", "Breed Type");
+	    replaceInStringBuilder(qr, "address", "Address");
+//	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
+//	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
+//	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
+//	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
+//	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
+//	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
 		
 	}
 
