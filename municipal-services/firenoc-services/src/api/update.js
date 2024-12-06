@@ -102,7 +102,7 @@ export const updateApiResponse = async (request, isExternalCall, next = {}) => {
   }
 
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
-  //console.log("Fire NoC body"+JSON.stringify(body.FireNOCs));
+  console.log("Fire NoC body"+JSON.stringify(body.FireNOCs));
   let topic = envVariables.KAFKA_TOPICS_FIRENOC_UPDATE;
   let tenantId = body.FireNOCs[0].tenantId;
 
@@ -158,6 +158,9 @@ export const updateApiResponse = async (request, isExternalCall, next = {}) => {
   producer.send(payloads, function(err, data) {
     if (err) console.log(err);
   });
+
+  console.log("Producer payloads are "+ JSON.stringify(payloads));
+
 
   return response;
 };
