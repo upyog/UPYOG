@@ -72,7 +72,7 @@ This project is a Flask-based chatbot designed to handle FAQs using semantic sim
    ```
 
 6. **Access the Application**:
-   Open your browser and navigate to `http://127.0.0.1:7001`.
+   Open your browser and navigate to `http://127.0.0.1:7002`.
 
 ---
 
@@ -183,10 +183,4 @@ For any questions or feedback, feel free to contact:
 
 ---
 
-### Screenshot
 
-![Chatbot Screenshot](https://via.placeholder.com/800x400?text=Chatbot+UI+Screenshot)
-
----
-
-Feel free to modify this README file as needed to suit your project’s specific details.
