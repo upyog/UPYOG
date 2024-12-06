@@ -1,7 +1,6 @@
 package org.upyog.chb.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -30,21 +29,22 @@ public interface CommunityHallBookingRepository {
 
 	Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria);
 
-	void createBookingTimer(CommunityHallSlotSearchCriteria criteria, RequestInfo requestInfo);
+	void createBookingTimer(CommunityHallSlotSearchCriteria criteria, RequestInfo requestInfo, boolean updateBookingStatus);
 
-	void deleteBookingTimer(String bookingId);
+	void deleteBookingTimer(String bookingId, boolean updateBookingStatus);
 
-	void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetai, String status);
+	void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status);
 
 	List<BookingPaymentTimerDetails> getBookingTimer(CommunityHallSlotSearchCriteria criteria);
 
 	/**
-	 * Updates the lastModifiedBy and lastModifiedTime fields for a given booking.
+	 * Updates the createdTime field for a given booking.
 	  
 	 */
-	int updateBookingTimer(String bookingId, String lastModifiedBy);
+	int updateBookingTimer(String bookingId);
 
-	int deleteExpiredBookingTimer();
+	List<BookingPaymentTimerDetails> getExpiredBookingTimer();
 
 	List<BookingPaymentTimerDetails> getBookingTimer(List<String> bookingIds);
+
 }

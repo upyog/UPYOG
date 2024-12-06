@@ -32,8 +32,9 @@ public interface CommunityHallBookingService {
 	/**
 	 * We are updating booking status synchronously for updating booking status on payment success 
 	 * Deleting the timer entry here after successful update of booking
+	 * @param deleteBookingTimer 
 	 */
 	void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
-			PaymentDetail paymentDetail, BookingStatusEnum status);
+			PaymentDetail paymentDetail, BookingStatusEnum status, boolean deleteBookingTimer);
 
 }

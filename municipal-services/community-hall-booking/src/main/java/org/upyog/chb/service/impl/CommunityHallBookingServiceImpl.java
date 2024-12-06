@@ -4,8 +4,6 @@ package org.upyog.chb.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -126,21 +124,23 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		
 		log.info("loading data based on criteria" + bookingSearchCriteria);
 		
-		if(bookingSearchCriteria.getMobileNumber() != null && bookingSearchCriteria.getMobileNumber().trim().length() >9){
-		
-		ApplicantDetail applicantDetail = ApplicantDetail.builder().applicantMobileNo(bookingSearchCriteria.getMobileNumber())
-				.build();
-		CommunityHallBookingDetail communityHallBookingDetail = CommunityHallBookingDetail.builder().applicantDetail(applicantDetail)
-				.build();
-		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
-				.hallsBookingApplication(communityHallBookingDetail).requestInfo(info).build();
-		
-		communityHallBookingDetail = encryptionService.encryptObject(bookingRequest);
-		
-		bookingSearchCriteria.setMobileNumber(communityHallBookingDetail.getApplicantDetail().getApplicantMobileNo());
-		
-		log.info("loading data based on criteria after encrypting mobile no : " + bookingSearchCriteria);
-		
+		if (bookingSearchCriteria.getMobileNumber() != null
+				&& bookingSearchCriteria.getMobileNumber().trim().length() > 9) {
+
+			ApplicantDetail applicantDetail = ApplicantDetail.builder()
+					.applicantMobileNo(bookingSearchCriteria.getMobileNumber()).build();
+			CommunityHallBookingDetail communityHallBookingDetail = CommunityHallBookingDetail.builder()
+					.applicantDetail(applicantDetail).build();
+			CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+					.hallsBookingApplication(communityHallBookingDetail).requestInfo(info).build();
+
+			communityHallBookingDetail = encryptionService.encryptObject(bookingRequest);
+
+			bookingSearchCriteria
+					.setMobileNumber(communityHallBookingDetail.getApplicantDetail().getApplicantMobileNo());
+
+			log.info("loading data based on criteria after encrypting mobile no : " + bookingSearchCriteria);
+
 		}
 		
 		bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
@@ -149,29 +149,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 		
-		addTimerValueToBooking(bookingDetails);
-
 		return bookingDetails;
 	}
 	
-	private void addTimerValueToBooking(List<CommunityHallBookingDetail> bookingDetails) {
-		// Extract booking IDs from booking details
-		List<String> bookingIds = bookingDetails.stream()
-		        .map(CommunityHallBookingDetail::getBookingId)
-		        .collect(Collectors.toList());
-
-		
-		Map<String, Long> bookingIdTimerValueMap = bookingTimerService.getTimerValue(bookingIds);
-
-		bookingDetails.forEach(booking -> {
-		    Long timerValue = bookingIdTimerValueMap.get(booking.getBookingId());
-		    if (timerValue != null) {
-		    	 booking.setTimerValue(timerValue);
-		    }
-		});
-	}
 	
-
 	@Override
 	public Integer getBookingCount(@Valid CommunityHallBookingSearchCriteria criteria,
 			@NonNull RequestInfo requestInfo) {
@@ -247,7 +228,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Transactional
 	@Override
 	public void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
-			PaymentDetail paymentDetail, BookingStatusEnum status) {
+			PaymentDetail paymentDetail, BookingStatusEnum status, boolean deleteBookingTimer) {
 		String bookingNo = communityHallsBookingRequest.getHallsBookingApplication().getBookingNo();
 		log.info("Updating booking synchronously for booking no : " + bookingNo);
 		if (bookingNo == null) {
@@ -263,8 +244,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		CommunityHallBookingDetail bookingDetail = bookingDetails.get(0);
 		communityHallsBookingRequest.setHallsBookingApplication(bookingDetail);
-		bookingRepository.updateBookingSynchronously(communityHallsBookingRequest, paymentDetail, status.toString());
-		bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
+		bookingRepository.updateBookingSynchronously(bookingDetail.getBookingId(), communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), paymentDetail, status.toString());
+		if(deleteBookingTimer) {
+			bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
+		}
 	}
 
 	private void convertBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
