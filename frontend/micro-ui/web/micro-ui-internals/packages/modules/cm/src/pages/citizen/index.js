@@ -15,7 +15,7 @@ const App = () => {
   const CMSearchCertificate = Digit?.ComponentRegistryService?.getComponent("CMSearchCertificate");
 
   return (
-    <span className={"citizen"} style={{width:"1500px", marginLeft: "10%"}}> 
+    <span className={"citizen"} style={{width:"80%", marginLeft: "10%"}}> 
     {/* Routes to the page components of the module */}
       <Switch>
         <AppContainer>
