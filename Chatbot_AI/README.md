@@ -1,7 +1,7 @@
 
 # Chatbot with Multilingual Support and FAQ Retrieval
 
-![Chatbot Banner](https://via.placeholder.com/1200x400?text=Chatbot+Multilingual+Support)
+![Chatbot Banner](https://img.freepik.com/free-vector/voice-assistant-abstract-concept-vector-illustration_335657-3969.jpg)
 
 ## Overview
 
@@ -167,24 +167,6 @@ pip install -r requirements.txt
 
 ---
 
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Description of changes"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a Pull Request.
-
----
 
 ## License
 
@@ -198,7 +180,6 @@ For any questions or feedback, feel free to contact:
 
 - **Name**: Nisheet Agrawal  
 - **Email**: [Nisheetag@gmail.com](mailto:Nisheetag@gmail.com)  
-- **Phone**: (+91) 8586086184
 
 ---
 
