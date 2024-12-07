@@ -1,0 +1,17 @@
+#
+# config:
+# -   name: < Name of the job, foo/bar would create job named bar inside folder foo >
+#     build:
+#     - work-dir: < Working directory of the app to be built >
+#       dockerfile: < Path to the dockerfile, optional, assumes dockerfile in working directory if not provided >
+#       image-name: < Docker image name  >
+# -
+# -
+config:
+  - name: "builds/upyog_DMS"
+    build:
+      - work-dir: "/"
+        image-name: "hpud-dms-service"
+        dockerfile: "build/maven/Dockerfile"
+
+       
