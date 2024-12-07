@@ -17,8 +17,18 @@ const getData = (res, combinedData) => {
   formJson.map((row, index) => (
     // rows.push({ title: row.code, value: res?.additionalDetails[row.name]) })
     rows.push({ title: row.code, value: extractValue(res?.additionalDetails[row.name]) })
-  ))
+  ));
 
+  // Add more rows to the rows array for Static 
+  rows.push({ title: "AST_MODE_OF_POSSESSION_OR_ACQUISITION", value: res?.modeOfPossessionOrAcquisition });
+  rows.push({ title: "AST_INVOICE_DATE", value: res?.invoiceDate });
+  rows.push({ title: "AST_INVOICE_NUMBER", value: res?.invoiceNumber });
+  rows.push({ title: "AST_PURCHASE_DATE", value: res?.purchaseDate });
+  rows.push({ title: "AST_PURCHASE_ORDER", value: res?.purchaseOrderNumber });
+  rows.push({ title: "AST_LOCATION_DETAILS", value: res?.location });
+  rows.push({ title: "AST_PURCHASE_COST", value: res?.purchaseCost });
+  rows.push({ title: "AST_ACQUISITION_COST", value: res?.acquisitionCost });
+  rows.push({ title: "AST_BOOK_VALUE", value: res?.bookValue });
   return rows
 }
 const extractValue = (key) => {
@@ -64,9 +74,11 @@ export const ASSETSearch = {
           { title: "AST_CATEGORY", value: response?.assetClassification },
           { title: "AST_PARENT_CATEGORY", value: response?.assetParentCategory },
           { title: "AST_SUB_CATEGORY", value: response?.assetCategory },
+          { title: "AST_CATEGORY_SUB_CATEGORY", value: response?.assetSubCategory },
           { title: "AST_NAME", value: response?.assetName },
+          { title: "ASSET_DESCRIPTION", value: response?.description },
           { title: "AST_DEPARTMENT", value: 'COMMON_MASTERS_DEPARTMENT_'+response?.department },
-          { title: "AST_USAGE", value: response?.assetCurrentUsage },
+          { title: "AST_USAGE", value: response?.assetUsage },
 
         ],
       },
@@ -110,7 +122,7 @@ export const ASSETSearch = {
 
               values: response?.documents
                 ?.map((document) => {
-                  console.log("documnet", document);
+                  // console.log("documnet", document);
 
                   return {
                     title: `ASSET_${document?.documentType}`,
@@ -129,8 +141,6 @@ export const ASSETSearch = {
   applicationDetails: async (t, tenantId, applicationNo, userType, combinedData, args) => {
     const filter = { applicationNo, ...args };
     const response = await ASSETSearch.application(tenantId, filter);
-
-    console.log("::", combinedData);
 
     return {
       tenantId: response.tenantId,
