@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
 		// ENcrypt PII data of applicant
 		 encryptionService.encryptObject(bookingRequest);
 
-		demandService.createDemand(bookingRequest, mdmsData, true);
+		//demandService.createDemand(bookingRequest, mdmsData, true);
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
@@ -131,7 +131,7 @@ public class BookingServiceImpl implements BookingService {
 
 		bookingDetails = bookingRepository.getBookingDetails(advertisementSearchCriteria);
 		// Fetch remaining timer values for the booking details
-		paymentTimerService.getRemainingTimerValue(bookingDetails);
+		//paymentTimerService.getRemainingTimerValue(bookingDetails);
 
 		if (CollectionUtils.isEmpty(bookingDetails)) {
 			return bookingDetails;

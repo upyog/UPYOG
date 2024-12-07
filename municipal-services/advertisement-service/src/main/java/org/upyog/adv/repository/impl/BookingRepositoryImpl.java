@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -14,10 +13,13 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.upyog.adv.config.BookingConfiguration;
+import org.upyog.adv.constants.BookingConstants;
+import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.kafka.Producer;
 import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.repository.querybuilder.AdvertisementBookingQueryBuilder;
@@ -135,13 +137,17 @@ public class BookingRepositoryImpl implements BookingRepository {
 		long createdTime = BookingUtil.getCurrentTimestamp();
 		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
 		long lastModifiedTime = BookingUtil.getCurrentTimestamp();
-
+		String status = BookingConstants.ACTIVE;	
+		String bookingNoQuery = queryBuilder.getBookingNo();
+		String bookingNo = jdbcTemplate.queryForObject(bookingNoQuery, new Object[]{bookingId}, String.class);
+	   
 		// Check if bookingId already exists in timer table
 		String checkQuery = queryBuilder.checkBookingIdExists(bookingId);
 		List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookingId);
 		if (result.isEmpty()) {
 			String query = queryBuilder.insertBookingIdForTimer(bookingId);
-			jdbcTemplate.update(query, bookingId, createdBy, createdTime, lastModifiedBy, lastModifiedTime);
+			jdbcTemplate.update(query, bookingId, createdBy, createdTime, status, bookingNo, lastModifiedBy, lastModifiedTime);
+			statusUpdateForTimer(bookingId, BookingStatusEnum.PENDING_FOR_PAYMENT);
 			long timerValue = bookingConfiguration.getPaymentTimer();
 	        availabiltityDetailsResponse.setTimerValue(timerValue / 1000);
 		} else {
@@ -157,51 +163,54 @@ public class BookingRepositoryImpl implements BookingRepository {
 		jdbcTemplate.update(query, bookingId);
 	}
 
-	@Override
-	public Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails) {
-		if (bookingDetails == null || bookingDetails.isEmpty()) {
-			log.warn("No booking details provided");
-			return Collections.emptyMap();
-		}
-
-		List<String> bookingIds = bookingDetails.stream().map(BookingDetail::getBookingId).filter(Objects::nonNull)
-				.collect(Collectors.toList());
-		String query = queryBuilder.fetchBookingIdForTImer(bookingIds);
-
-		if (query == null) {
-			log.warn("No query generated, returning empty result");
-			return Collections.emptyMap();
-		}
-
-		long currentTimeMillis = BookingUtil.getCurrentTimestamp();
-		// Execute query only if booking IDs exist
-		List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, bookingIds.toArray());
-		Map<String, Long> remainingTimers = new HashMap<>();
-
-		for (Map<String, Object> booking : bookings) {
-			String bookingId = (String) booking.get("booking_id");
-			Long createdTime = (Long) booking.get("createdtime");
-
-			if (createdTime != null) {
-				long elapsedTime = currentTimeMillis - createdTime;
-				if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
-					long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
-					log.info("Booking ID: {}, Remaining Time: {}", bookingId, remainingTime);
-					remainingTimers.put(bookingId, remainingTime);
-				} else {
-					log.info("Booking ID: {}, Timer Expired", bookingId);
-					remainingTimers.put(bookingId, 0L);
-				}
-			} else {
-				log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingId);
-				remainingTimers.put(bookingId, 0L);
-			}
-		}
-
-		log.info("Remaining Timers Map: {}", remainingTimers);
-		return remainingTimers;
+//	@Override
+//	public Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails) {
+//		if (bookingDetails == null || bookingDetails.isEmpty()) {
+//			log.warn("No booking details provided");
+//			return Collections.emptyMap();
+//		}
+//
+//		List<String> bookingIds = bookingDetails.stream().map(BookingDetail::getBookingId).filter(Objects::nonNull)
+//				.collect(Collectors.toList());
+//		String query = queryBuilder.fetchBookingIdForTImer(bookingIds);
+//
+//		if (query == null) {
+//			log.warn("No query generated, returning empty result");
+//			return Collections.emptyMap();
+//		}
+//
+//		long currentTimeMillis = BookingUtil.getCurrentTimestamp();
+//		// Execute query only if booking IDs exist
+//		List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, bookingIds.toArray());
+//		Map<String, Long> remainingTimers = new HashMap<>();
+//
+//		for (Map<String, Object> booking : bookings) {
+//			String bookingId = (String) booking.get("booking_id");
+//			Long createdTime = (Long) booking.get("createdtime");
+//
+//			if (createdTime != null) {
+//				long elapsedTime = currentTimeMillis - createdTime;
+//				if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
+//					long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
+//					log.info("Booking ID: {}, Remaining Time: {}", bookingId, remainingTime);
+//					remainingTimers.put(bookingId, remainingTime);
+//				} else {
+//					log.info("Booking ID: {}, Timer Expired", bookingId);
+//					remainingTimers.put(bookingId, 0L);
+//				}
+//			} else {
+//				log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingId);
+//				remainingTimers.put(bookingId, 0L);
+//			}
+//		}
+//
+//		log.info("Remaining Timers Map: {}", remainingTimers);
+//		return remainingTimers;
+//	}
+	public void statusUpdateForTimer(String bookingId, BookingStatusEnum status) {
+		String query = queryBuilder.updateBookingStatusForTimer(bookingId);
+		jdbcTemplate.update(query, status.name(), bookingId, status.name());
 	}
-	
 	
 	public Map<String, Long> getRemainingTimerValues(String bookingId) {
 		if (bookingId == null || bookingId.isEmpty()) {
@@ -209,7 +218,6 @@ public class BookingRepositoryImpl implements BookingRepository {
 			return Collections.emptyMap();
 		}
 
-		
 		String query = queryBuilder.fetchBookingIdForTimer(bookingId);
 
 		if (query == null) {
@@ -389,5 +397,70 @@ public class BookingRepositoryImpl implements BookingRepository {
 	}
 	
 	
-	
+	public String getStatusFromTimerTable(String bookingId) {
+	    String status = null;
+	    if (bookingId != null && !bookingId.isEmpty()) {
+	        String checkQuery = queryBuilder.checkBookingIdExists(bookingId);      
+	        List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookingId);  
+	        if (!result.isEmpty()) {
+	            status = (String) result.get(0).get("status");
+	        } else {          
+	            System.out.println("No records found for bookingId: " + bookingId);
+	        }
+	    }
+	    return status;
+	}
+
+	public void scheduleTimerDelete() {
+	    long currentTimeMillis = BookingUtil.getCurrentTimestamp();
+	    List<String> bookingIds = fetchBookingIds(currentTimeMillis);
+
+	    if (bookingIds.isEmpty()) {
+	        log.warn("No valid booking IDs found for deletion.");
+	        return;
+	    }
+
+	    for (String bookingId : bookingIds) {
+	        String status = getStatusFromTimerTable(bookingId);
+
+	        if (!"active".equalsIgnoreCase(status)) {
+	            log.warn("Booking ID " + bookingId + " is not active.");
+	            continue; 
+	        }
+
+	        int rowsDeleted = deleteBookingId(currentTimeMillis, bookingId);
+	        if (rowsDeleted > 0) {
+	            log.info(rowsDeleted + " expired entry(ies) deleted for booking ID: " + bookingId);
+	            statusUpdateForTimer(bookingId, BookingStatusEnum.BOOKING_CREATED);
+	        } else {
+	            log.warn("No entries deleted for booking ID: " + bookingId);
+	        }
+	    }
+	}
+
+	public List<String> fetchBookingIds(long currentTimeMillis) {
+	    String query = queryBuilder.getBookingIdToDelete();
+	    if (query == null || query.isEmpty()) {
+	        log.error("Query to fetch booking IDs is null or empty.");
+	        return Collections.emptyList(); 
+	    }
+
+	    try {
+	        return jdbcTemplate.queryForList(query, new Object[]{currentTimeMillis, bookingConfiguration.getPaymentTimer()}, String.class);
+	    } catch (DataAccessException e) {
+	        log.warn("Error fetching booking IDs: " + e.getMessage());
+	        return Collections.emptyList(); 
+	    }
+	}
+
+	private int deleteBookingId(long currentTimeMillis, String bookingId) {
+	    String deleteQuery = queryBuilder.deleteBookingIdPaymentTimer();
+	    if (deleteQuery == null || deleteQuery.isEmpty()) {
+	        log.error("Delete query is null or empty for booking ID: " + bookingId);
+	        return 0;
+	    }
+	    return jdbcTemplate.update(deleteQuery, currentTimeMillis, bookingConfiguration.getPaymentTimer(), bookingId);
+	}
+
+
 }
