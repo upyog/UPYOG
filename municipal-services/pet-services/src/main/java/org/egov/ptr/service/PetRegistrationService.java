@@ -350,8 +350,7 @@ public class PetRegistrationService {
 		tlObject.put("qrCodeText", qr.toString());
 		
 		String base64Photo = getPetPhoto(petRegistrationApplication,requestInfo);
-		
-		tlObject.put("petPhotoURL", base64Photo);
+		tlObject.put("petPhotoURL", "data:image/png;base64," + base64Photo);
 
 		
 		return tlObject;
