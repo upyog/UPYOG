@@ -19,5 +19,8 @@ public class TradeLicenseActionResponse {
 
 	private List<ApplicationDetail> applicationDetails;
 	
-	private Map<String, Long> applicationTypesCount;
+	private long  applicationTotalCount;
+	
+	private List<Map<String, Object>> statusList;
+
 }
