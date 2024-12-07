@@ -725,7 +725,14 @@ config:
       - work-dir: "utilities/demo-utility"
         image-name: "demo-utility"
         dockerfile: "build/maven/Dockerfile"
-            
+        
+# Hp-Services
+
+  - name: "builds/upyog/hp-services/hpud-landingpage-service"
+    build:
+      - work-dir: "hp-services/hpud-landingpage-service"
+        image-name: "hpud-landing-service"
+        dockerfile: "build/maven/Dockerfile"
         
         
 # Frontend
