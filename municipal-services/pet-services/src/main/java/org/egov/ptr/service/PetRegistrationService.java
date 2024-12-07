@@ -44,6 +44,7 @@ import org.egov.ptr.util.ErrorConstants;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
 import org.egov.ptr.web.contracts.PDFRequest;
+import org.egov.ptr.web.contracts.PetPhotoRequest;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.egov.ptr.web.contracts.alfresco.DMSResponse;
 import org.egov.ptr.web.contracts.alfresco.DmsRequest;
@@ -348,6 +349,11 @@ public class PetRegistrationService {
 		
 		tlObject.put("qrCodeText", qr.toString());
 		
+		String base64Photo = getPetPhoto(petRegistrationApplication,requestInfo);
+		
+		tlObject.put("petPhotoURL", base64Photo);
+
+		
 		return tlObject;
 	}
 
@@ -372,6 +378,25 @@ public class PetRegistrationService {
 //	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
 //	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
 		
+	}
+	
+	private String getPetPhoto(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
+		
+		PetPhotoRequest PhotoRequest = generatePhotoRequestPet(petRegistrationApplication, requestInfo);
+		
+		String resource = reportService.getPetPhoto(PhotoRequest);
+
+		return resource;
+	}
+	
+	private  PetPhotoRequest generatePhotoRequestPet(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo){
+//	        Map<String, Object> requestBody = new HashMap<>();
+//	        requestBody.put("RequestInfo", Collections.singletonMap("authToken", "717791b3-8e75-46ed-9194-5630ecc786f6"));
+		PetPhotoRequest PhotoObject = PetPhotoRequest.builder()
+				.RequestInfo(requestInfo)
+				.objectId(petRegistrationApplication.getId())
+				.build();;
+		return PhotoObject;
 	}
 
 	private void replaceInStringBuilder(StringBuilder qr, String target, String replacement) {
