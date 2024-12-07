@@ -40,17 +40,17 @@ public class PaymentTimerService {
 	}
 	
 
-	public void getRemainingTimerValue(List<BookingDetail> bookingDetails) {
-        Map<String, Long> remainingTimerValue = bookingRepository.getRemainingTimerValues(bookingDetails);   
-        log.info("Received Remaining Timers for bookingId: {}", remainingTimerValue);
-
-     	for (BookingDetail bookingDetail : bookingDetails) {
-     			Long remainingTimer = remainingTimerValue.get(bookingDetail.getBookingId());
-     			bookingDetail.setTimerValue(remainingTimer != null ? remainingTimer / 1000 : 0L);
-     		    log.info("Updated BookingDetail: {} with Remaining Timer: {}", bookingDetail.getBookingId(), remainingTimer);
-
-     	}
-	}
+//	public void getRemainingTimerValue(List<BookingDetail> bookingDetails) {
+//        Map<String, Long> remainingTimerValue = bookingRepository.getRemainingTimerValues(bookingDetails);   
+//        log.info("Received Remaining Timers for bookingId: {}", remainingTimerValue);
+//
+//     	for (BookingDetail bookingDetail : bookingDetails) {
+//     			Long remainingTimer = remainingTimerValue.get(bookingDetail.getBookingId());
+//     			bookingDetail.setTimerValue(remainingTimer != null ? remainingTimer / 1000 : 0L);
+//     		    log.info("Updated BookingDetail: {} with Remaining Timer: {}", bookingDetail.getBookingId(), remainingTimer);
+//
+//     	}
+//	}
 
 
 }

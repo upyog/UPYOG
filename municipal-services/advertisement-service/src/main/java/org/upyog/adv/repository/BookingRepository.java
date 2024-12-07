@@ -28,7 +28,7 @@ public interface BookingRepository {
 	
 	void deleteBookingIdForTimer(String bookingId);
 
-	Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
+	//Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
 	
 	void updateBookingSynchronously(@Valid BookingRequest advertisementBookingRequest);
 
@@ -45,5 +45,7 @@ public interface BookingRepository {
 			@Valid AdvertisementSearchCriteria advertisementSearchCriteria);
 
 	void deleteDraftApplication(String draftId);
+
+	void scheduleTimerDelete();
 	
 }
