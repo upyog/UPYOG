@@ -214,6 +214,7 @@ public class AssetQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
+        // for searcher
         List<String> acknowledgementIds = criteria.getAcknowledgementIds();
         if (!CollectionUtils.isEmpty(acknowledgementIds)) {
             addClauseIfRequired(preparedStmtList, builder);
