@@ -214,6 +214,13 @@ public class AssetQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
+        List<String> acknowledgementIds = criteria.getAcknowledgementIds();
+        if (!CollectionUtils.isEmpty(acknowledgementIds)) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.id IN (").append(createQuery(acknowledgementIds)).append(")");
+            addToPreparedStatement(preparedStmtList, acknowledgementIds);
+        }
+
         String applicationNo = criteria.getApplicationNo();
         if (applicationNo != null) {
             List<String> applicationNos = Arrays.asList(applicationNo.split(","));
