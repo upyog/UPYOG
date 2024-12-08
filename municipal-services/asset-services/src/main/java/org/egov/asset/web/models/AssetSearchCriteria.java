@@ -63,16 +63,19 @@ public class AssetSearchCriteria {
     @JsonProperty("assetBookRefNo")
     private String assetBookRefNo;
 
+    @JsonProperty("acknowledgementIds")
+    private List<String> acknowledgementIds;
+
     public boolean isEmpty() {
-        return (this.tenantId == null && this.status == null && this.ids == null && this.applicationNo == null
+        return (this.tenantId == null && this.status == null && this.ids == null && this.acknowledgementIds == null && this.applicationNo == null
                 && this.approvalNo == null && this.approvalDate == null && this.assetClassification == null && this.assetParentCategory == null
-                && this.approvalDate == null && this.assetBookRefNo == null && this.createdBy == null);
+                && this.assetBookRefNo == null && this.createdBy == null);
     }
 
     public boolean tenantIdOnly() {
-        return (this.tenantId != null && this.status == null && this.ids == null && this.applicationNo == null
+        return (this.tenantId != null && this.status == null && this.ids == null && this.acknowledgementIds == null && this.applicationNo == null
                 && this.approvalNo == null && this.approvalDate == null && this.assetClassification == null && this.assetParentCategory == null
-                && this.approvalDate == null && this.assetBookRefNo == null && this.createdBy == null);
+                && this.assetBookRefNo == null && this.createdBy == null);
     }
 
 }
