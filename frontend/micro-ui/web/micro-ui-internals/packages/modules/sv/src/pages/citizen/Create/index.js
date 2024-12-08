@@ -124,6 +124,11 @@ const SVCreate = ({ parentRoute }) => {
     sessionStorage.removeItem("ApplicationId");
     sessionStorage.removeItem("applicationStatus");
     sessionStorage.removeItem("Response");
+    sessionStorage.removeItem("addressIdOne");
+    sessionStorage.removeItem("addressIdTwo");
+    sessionStorage.removeItem("vendorIds");
+    sessionStorage.removeItem("bankIds");
+    sessionStorage.removeItem("venId");
   };
   
   let commonFields = Config;
@@ -156,7 +161,7 @@ const SVCreate = ({ parentRoute }) => {
         <SVCheckPage onSubmit={svcreate} value={params} editdata={pathname.includes("apply") ? {} : vendingData} />
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
-        <SVAcknowledgement data={params} onSuccess={onSuccess} />
+        <SVAcknowledgement data={params} onSuccess={onSuccess}/>
       </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />

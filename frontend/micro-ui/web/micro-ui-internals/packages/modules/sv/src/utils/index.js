@@ -377,7 +377,7 @@ export const svUpdatePayload = (data) =>{
   let vendordetails = [];
 
   const createVendorObject = (data) => ({
-    applicationId: "",
+    applicationId: sessionStorage.getItem("ApplicationId"),
     auditDetails: {
       createdBy: "",
       createdTime: 0,
@@ -388,8 +388,9 @@ export const svUpdatePayload = (data) =>{
     userCategory:data?.owner?.units?.[0]?.userCategory?.code,
     emailId: data?.owner?.units?.[0]?.email,
     fatherName: data?.owner?.units?.[0]?.fatherName,
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     gender: data?.owner?.units?.[0]?.gender?.code.charAt(0),
-    id: "",
+    id: sessionStorage.getItem("venId"),
     mobileNo: data?.owner?.units?.[0]?.mobileNumber,
     name: data?.owner?.units?.[0]?.vendorName,
     relationshipType: "VENDOR",
@@ -397,7 +398,7 @@ export const svUpdatePayload = (data) =>{
   });
 
   const createSpouseObject = (data) => ({
-    applicationId: "",
+    applicationId: sessionStorage.getItem("ApplicationId"),
     auditDetails: {
       createdBy: "",
       createdTime: 0,
@@ -409,8 +410,9 @@ export const svUpdatePayload = (data) =>{
     emailId: "",
     isInvolved: data?.owner?.spouseDependentChecked,
     fatherName: "",
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     gender: "N/A",
-    id: "",
+    id: sessionStorage.getItem("venId"),
     mobileNo: "",
     name: data?.owner?.units?.[0]?.spouseName,
     relationshipType: "SPOUSE",
@@ -418,7 +420,7 @@ export const svUpdatePayload = (data) =>{
   });
 
   const createDependentObject = (data) => ({
-    applicationId: "",
+    applicationId: sessionStorage.getItem("ApplicationId"),
     auditDetails: {
       createdBy: "",
       createdTime: 0,
@@ -430,8 +432,9 @@ export const svUpdatePayload = (data) =>{
     emailId: "",
     isInvolved: data?.owner?.dependentNameChecked,
     fatherName: "",
+    specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     gender: data?.owner?.units?.[0]?.dependentGender?.code.charAt(0),
-    id: "",
+    id: sessionStorage.getItem("venId"),
     mobileNo: "",
     name: data?.owner?.units?.[0]?.dependentName,
     relationshipType: "DEPENDENT",
@@ -469,7 +472,7 @@ export const svUpdatePayload = (data) =>{
   const vendingOperationTimeDetails = daysOfOperation
   .filter(day => day.isSelected) // Filter only selected days
   .map(day => ({
-    applicationId: "", // Add actual applicationId if available
+    applicationId: sessionStorage.getItem("ApplicationId"),
     auditDetails: {
       createdBy: "", // Adjust these fields based on your data
       createdTime: 0, 
@@ -486,7 +489,7 @@ export const svUpdatePayload = (data) =>{
     streetVendingDetail: {
     addressDetails: [
       {
-        addressId: "",
+        addressId: sessionStorage.getItem("addressIdOne"),
         addressLine1: data?.address?.addressline1,
         addressLine2: data?.address?.addressline2,
         addressType: "PERMANENT",
@@ -499,10 +502,10 @@ export const svUpdatePayload = (data) =>{
         localityCode: data?.address?.locality?.code,
         pincode: data?.address?.pincode,
         streetName: "",
-        vendorId: ""
+        vendorId: sessionStorage.getItem("vendorIds")
       },
       { // sending correspondence address here
-        addressId: "",
+        addressId: sessionStorage.getItem("addressIdTwo"),
         addressLine1: data?.correspondenceAddress?.caddressline1,
         addressLine2: data?.correspondenceAddress?.caddressline2,
         addressType: "CORRESPONDENCE",
@@ -515,7 +518,7 @@ export const svUpdatePayload = (data) =>{
         localityCode: data?.correspondenceAddress?.clocality?.code,
         pincode: data?.correspondenceAddress?.cpincode,
         streetName: "",
-        vendorId: "",
+        vendorId: sessionStorage.getItem("vendorIds"),
         isAddressSame: data?.correspondenceAddress?.isAddressSame
       }
     ],
@@ -533,10 +536,10 @@ export const svUpdatePayload = (data) =>{
     bankDetail: {
       accountHolderName: data?.bankdetails?.accountHolderName,
       accountNumber: data?.bankdetails?.accountNumber,
-      applicationId: "",
+      applicationId: sessionStorage.getItem("ApplicationId"),
       bankBranchName: data?.bankdetails?.bankBranchName,
       bankName: data?.bankdetails?.bankName,
-      id: "",
+      id: sessionStorage.getItem("bankIds"),
       ifscCode: data?.bankdetails?.ifscCode,
       refundStatus: "",
       refundType: "",

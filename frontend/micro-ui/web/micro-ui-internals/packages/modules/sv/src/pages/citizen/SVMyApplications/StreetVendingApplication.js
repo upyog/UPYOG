@@ -7,10 +7,16 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
+  //TODO: Need to remove all session storage from here and get the data from Search API call
   const handleEditClick = () => {
     sessionStorage.setItem("vendingApplicationID", application?.applicationNo);
     sessionStorage.setItem("ApplicationId",application?.applicationId);
     sessionStorage.setItem("applicationStatus",application?.applicationStatus);
+    sessionStorage.setItem("addressIdOne",application?.addressDetails?.[0]?.addressId);
+    sessionStorage.setItem("addressIdTwo",application?.addressDetails?.[1]?.addressId);
+    sessionStorage.setItem("vendorIds",application?.addressDetails?.[0]?.vendorId);
+    sessionStorage.setItem("bankIds",application?.bankDetail?.id);
+    sessionStorage.setItem("venId",application?.vendorDetail?.[0]?.id);
     history.push(`/digit-ui/citizen/sv/edit`);
   };
 
