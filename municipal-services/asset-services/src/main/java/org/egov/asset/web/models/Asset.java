@@ -110,13 +110,13 @@ public class Asset implements AssetDTO {
     private String subScheme;
 
     @JsonProperty("purchaseCost")
-    private float purchaseCost;
+    private double purchaseCost;
 
     @JsonProperty("acquisitionCost")
-    private float acquisitionCost;
+    private double acquisitionCost;
 
     @JsonProperty("bookValue")
-    private float bookValue;
+    private double bookValue;
 
     @JsonProperty("invoiceDate")
     private Long invoiceDate;

@@ -43,6 +43,7 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
             String tenantId = rs.getString("tenantId");
             String financialYear = rs.getString("financialYear");
             String sourceOfFinance = rs.getString("sourceOfFinance");
+            double bookValue = rs.getDouble("bookvalue");
             Asset currentAsset = assetMap.get(id);
             if (currentAsset == null) {
 
@@ -68,6 +69,19 @@ public class AssetRowMapper implements ResultSetExtractor<List<Asset>> {
                         .assetCategory(rs.getString("category"))
                         .assetSubCategory(rs.getString("subCategory"))
                         .remarks(rs.getString("remarks"))
+                        .purchaseCost(rs.getDouble("purchaseCost"))
+                        .acquisitionCost(rs.getDouble("acquisitionCost"))
+                        .bookValue(bookValue)
+                        .invoiceDate(rs.getLong("invoiceDate"))
+                        .invoiceNumber(rs.getString("invoiceNumber"))
+                        .purchaseDate(rs.getLong("purchaseDate"))
+                        .purchaseOrderNumber(rs.getString("purchaseOrderNumber"))
+                        .location(rs.getString("location"))
+                        .modeOfPossessionOrAcquisition(rs.getString("modeOfPossessionOrAcquisition"))
+                        .lifeOfAsset(rs.getString("lifeOfAsset"))
+                        .assetUsage(rs.getString("assetUsage"))
+                        .assetType(rs.getString("assetType"))
+                        .assetStatus(rs.getString("assetStatus"))
                         .build();
 
                 assetMap.put(id, currentAsset);
