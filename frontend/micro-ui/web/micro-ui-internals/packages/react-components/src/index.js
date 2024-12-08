@@ -174,6 +174,7 @@ import {
   InfoIcon,
   LoginIcon,
   PTRIcon,
+  CHBIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -460,5 +461,6 @@ export {
   InfoIcon,
   LoginIcon,
   CitizenConsentForm,
-  PTRIcon
+  PTRIcon,
+  CHBIcon
 };

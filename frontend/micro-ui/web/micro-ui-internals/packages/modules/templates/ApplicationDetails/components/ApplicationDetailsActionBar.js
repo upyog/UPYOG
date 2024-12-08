@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { SubmitBar, ActionBar, Menu } from "@upyog/digit-ui-react-components";
 
-function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={} }) {
+function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSelect, setDisplayMenu, businessService, forcedActionPrefix,ActionBarStyle={},MenuStyle={},isAction,applicationDetails }) {
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
   const menuRef = useRef();
@@ -32,10 +32,13 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
     isMenuBotton = true; 
     isSingleButton = false;
   }
+  const Session = Digit.SessionStorage.get("User");
+  const uuid = Session?.info?.uuid;
+  const modified = applicationDetails?.applicationData?.auditDetails?.lastModifiedBy;
 
   return (
     <React.Fragment>
-      {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && (
+      {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && !isAction && (
         <ActionBar style={{...ActionBarStyle}}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
@@ -47,10 +50,19 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
               style={MenuStyle}
             />
           ) : null}
-          <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          {businessService === "ewst" ? (
+            modified === uuid || modified == null ? (
+              <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+            ) : (
+              <CardLabel style={{ color: "red", font: "30px", fontWeight: "bold" }}>{`${t("EW_ALERT_ANOTHER_VENDOR")}`}</CardLabel>
+            )
+          ) : (
+            <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          )}
+          {/* <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} /> */}
         </ActionBar>
       )}
-      {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && (
+      {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && !isAction && (
         <ActionBar style={{...ActionBarStyle}}>
           <button
               style={{ color: "#FFFFFF", fontSize: "18px" }}
