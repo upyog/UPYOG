@@ -74,7 +74,7 @@ public class BookingDetail {
 	
 	private AuditDetails auditDetails;
 	
-	private Long timerValue;
+	//private Long timerValue;
 	
  	//private ProcessInstance workflow;
 	

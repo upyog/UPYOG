@@ -101,5 +101,8 @@ public class BookingConstants {
 	public static final String BOOKED_STATUS = "BOOKED";
 	
 	public static final String DRAFT_DISCARDED = "Draft discarded";
+	
+	public static final String ACTIVE = "active";
+
 
 }
