@@ -70,7 +70,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       .flat() // Flatten the fields array
       .filter((field) => field.active === true); // Filter by active status
   }
-  console.log('Testing Form:- ', formJson);
+  
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
@@ -170,24 +170,21 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
   //Dropdown get data form masters
   const dropDownData = (masterName) => {
-    const trimmedName = masterName ? masterName.trim() : '';
+    const trimmedName = masterName ? masterName.trim() : "";
     const { data: masterDropdown } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: trimmedName }], {
       select: (data) => {
-        console.log('data :- ', data);
-        const formattedData = data?.["ASSET"]?.['Warranty'];
+        const formattedData = data?.["ASSET"]?.[trimmedName];
         return formattedData;
       },
     });
     let dropDown = [];
-  
-    masterDropdown && masterDropdown.map((row) => {
-      dropDown.push({ i18nKey: `${row.code}`, code: `${row.code}`, value: `${row.name}` });
-    });
 
-    console.log('dropDown', dropDown);
-    return dropDown
-  }
-
+    masterDropdown &&
+      masterDropdown.map((row) => {
+        dropDown.push({ i18nKey: `${row.code}`, code: `${row.code}`, name: `${row.name}` });
+      });
+    return dropDown;
+  };
 
   return (
     <React.Fragment>
@@ -200,12 +197,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       </Card>
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
         <React.Fragment>
-          {formJson.map((row, index) => (
-            <div key={index}>
-              {/* Render the label with the localization key and a mandatory asterisk */}
-              {/* <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel> */}
-              <div>
-              {`${t(row.code)} *`}
+          <div>
+            {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")} *`}
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
               <InfoBannerIcon />
               <span
@@ -219,10 +212,365 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   marginBottom: "-10px",
                 }}
               >
-                {`${t(row.iLable)} `}
+                {`${t("")} `}
               </span>
             </div>
           </div>
+          <Controller
+                  control={control}
+                  name={"modeOfPossessionOrAcquisition"}
+                  isMandatory={false}
+                  defaultValue={assetDetails["modeOfPossessionOrAcquisition"] ? assetDetails["modeOfPossessionOrAcquisition"] : ""}
+                  rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                  render={(props) => (
+                    <Dropdown
+                      className="form-field"
+                      selected={assetDetails["modeOfPossessionOrAcquisition"]}
+                      select={handleInputChange}
+                      option={dropDownData("ModeOfPossessionOrAcquisition")}
+                      optionKey="i18nKey"
+                      placeholder={"Select"}
+                      isMandatory={false}
+                      t={t}
+                    />
+                  )}
+                />
+
+          <div>
+            {`${t("AST_INVOICE_DATE")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+                  t={t}
+                  type={"date"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name={"invoiceDate"}
+                  value={assetDetails["invoiceDate"]}
+                  onChange={handleInputChange}
+                  style={{ width: "50%" }}
+                  max={new Date().toISOString().split("T")[0]}
+                  rules={{
+                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  }}
+                />
+
+        <div>
+            {`${t("AST_INVOICE_NUMBER")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="invoiceNumber"
+            value={assetDetails["invoiceNumber"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+<div>
+            {`${t("AST_PURCHASE_DATE")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+         
+          <TextInput
+                  t={t}
+                  type={"date"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name={"purchaseDate"}
+                  value={assetDetails["purchaseDate"]}
+                  onChange={handleInputChange}
+                  style={{ width: "50%" }}
+                  max={new Date().toISOString().split("T")[0]}
+                  rules={{
+                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  }}
+                />
+
+          <div>
+            {`${t("AST_PURCHASE_ORDER")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="purchaseOrderNumber"
+            value={assetDetails["purchaseOrderNumber"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+
+        <div>
+            {`${t("AST_LOCATION_DETAILS")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <div style={{ position: "relative", width: "50%" }}>
+                  <TextInput
+                    t={t}
+                    type={"text"}
+                    isMandatory={false}
+                    optionKey="i18nKey"
+                    name={"location"}
+                    value={assetDetails["location"] || ""}
+                    onChange={handleInputChange}
+                    style={{ flex: 1 }}
+                    ValidationRequired={false}
+                    {...(validation = {
+                      isRequired: true,
+                      pattern: "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$",
+                      type: "text",
+                      title: t("VALID_LAT_LONG"),
+                    })}
+                  />
+                  <div
+                    className="butt-icon"
+                    onClick={() => {
+                      fetchCurrentLocation("location");
+                    }}
+                    style={{
+                      position: "absolute",
+                      right: "0", // Position the icon 10px from the right edge of the input
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "2px 5px",
+                    }}
+                  >
+                    {/* {t("AST_FETCH_LOCATION")} */}
+                    <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
+                  </div>
+                </div>
+
+
+          <div>
+            {`${t("AST_PURCHASE_COST")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="purchaseCost"
+            value={assetDetails["purchaseCost"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+        <div>
+            {`${t("AST_ACQUISITION_COST")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="acquisitionCost"
+            value={assetDetails["acquisitionCost"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+<div>
+            {`${t("AST_BOOK_VALUE")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="bookValue"
+            value={assetDetails["bookValue"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+          {/* Dynamically Form Render */}
+          {formJson.map((row, index) => (
+            <div key={index}>
+              {/* Render the label with the localization key and a mandatory asterisk */}
+              {/* <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel> */}
+              <div>
+                {`${t(row.code)} *`}
+                <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+                  <InfoBannerIcon />
+                  <span
+                    className="tooltiptext"
+                    style={{
+                      whiteSpace: "pre-wrap",
+                      fontSize: "small",
+                      wordWrap: "break-word",
+                      width: "300px",
+                      marginLeft: "15px",
+                      marginBottom: "-10px",
+                    }}
+                  >
+                    {`${t(row.iLable)} `}
+                  </span>
+                </div>
+              </div>
 
               {row.type === "date" ? (
                 // If the type is 'date', render a standard HTML input element of type 'date'

@@ -78,27 +78,56 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
 };
 
 /* methid to get date from epoch */
-export const convertEpochToDate = (dateEpoch,businessService) => {
-  // Returning null in else case because new Date(null) returns initial date from calender
-  if (dateEpoch) {
-    const dateFromApi = new Date(dateEpoch);
-    let month = dateFromApi.getMonth() + 1;
-    let day = dateFromApi.getDate();
-    let year = dateFromApi.getFullYear();
-    month = (month > 9 ? "" : "0") + month;
-    day = (day > 9 ? "" : "0") + day;
-    if(businessService == "asset-create")
-    return `${day}-${month}-${year}`;
-    else
-    return `${day}/${month}/${year}`;
+export const convertDateToEpoch = (dateString) => {
+  // Parse the date string into a Date object
+  const date = new Date(dateString);
+
+  // Check if the date is valid
+  if (!isNaN(date)) {
+    // Return the epoch time in seconds (divide by 1000 to convert from milliseconds to seconds)
+    return Math.floor(date.getTime() / 1000);
   } else {
-    return null;
+    return null; // Return null if the input date is invalid
   }
+};
+
+const convertStringToFloat = (amountString) => {
+  // Remove commas if present and convert to float
+  const cleanedString = amountString.replace(/,/g, '');
+  
+  // Convert to float and return
+  const floatValue = parseFloat(cleanedString);
+  
+  // Return the float value, or NaN if conversion fails
+  return isNaN(floatValue) ? null : floatValue;
 };
 
 
 export const Assetdata = (data) => {
+  // Define the keys to exclude from additionalDetails
+  const keysToRemove = [
+    "invoiceDate",
+    "invoiceNumber",
+    "purchaseDate",
+    "purchaseOrderNumber",
+    "assetAge",
+    "location",
+    "purchaseCost",
+    "acquisitionCost",
+    "bookValue"
+  ];
 
+  // Ensure data?.assetDetails exists before attempting to filter
+  const assetDetails = data?.assetDetails || {}; // Default to empty object if undefined or null
+  
+
+  // Filter out the keys to remove from assetDetails
+  const filteredAdditionalDetails = Object.keys(assetDetails)
+    .filter(key => !keysToRemove.includes(key)) // Remove unwanted keys
+    .reduce((acc, key) => {
+      acc[key] = assetDetails[key]; // Add remaining keys to the accumulator
+      return acc;
+    }, {});
   const formdata = {
     Asset: {
       accountId: "",
@@ -111,12 +140,26 @@ export const Assetdata = (data) => {
       assetCategory:data?.asset?.assetsubtype?.code,
       assetSubCategory:data?.asset?.assetparentsubCategory?.code,
       department: data?.asset?.Department?.code,
+      assetType: data?.asset?.assetsOfType?.code,
+      assetUsage: data?.asset?.assetsUsage?.code,
       financialYear: data?.asset?.financialYear?.code,
       sourceOfFinance: data?.asset?.sourceOfFinance?.code,
       applicationNo: "",
       approvalDate: "",
       applicationDate: "",
       status: "",
+      modeOfPossessionOrAcquisition: data?.assetDetails?.modeOfPossessionOrAcquisition?.code,
+      invoiceDate: convertDateToEpoch(data?.assetDetails?.invoiceDate),
+      invoiceNumber: data?.assetDetails?.invoiceNumber,
+      purchaseDate: convertDateToEpoch(data?.assetDetails?.purchaseDate),
+      purchaseOrderNumber: data?.assetDetails?.purchaseOrderNumber,
+      warranty: data?.assetDetails?.warranty?.code,
+      assetAge: data?.assetDetails?.assetAge,
+      location: data?.assetDetails?.location,
+      // purchaseCost: data?.assetDetails?.purchaseCost,
+      purchaseCost: convertStringToFloat(data?.assetDetails?.purchaseCost),
+      acquisitionCost: convertStringToFloat(data?.assetDetails?.purchaseCost),
+      bookValue: data?.assetDetails?.bookValue,
       action: "",
       businessService: "asset-create",
 
@@ -141,16 +184,11 @@ export const Assetdata = (data) => {
         moduleName: "asset-services"
       },
 
-      additionalDetails: {
-        ...data?.assetDetails,
+      additionalDetails: filteredAdditionalDetails,
 
-        acquisitionProcessionDetails: {
-        },
-      }, 
     },
   };
 
- 
   return formdata;
 };
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
