@@ -17,6 +17,7 @@ ALTER TABLE eg_asset_assetdetails
     ADD COLUMN scheme VARCHAR(256),
     ADD COLUMN assetType VARCHAR(256),
     ADD COLUMN assetUsage VARCHAR(256),
+    ADD COLUMN assetStatus VARCHAR(256),
     ADD COLUMN oldCode BIGINT;
 
 
@@ -37,4 +38,5 @@ ALTER TABLE eg_asset_auditdetails
     ADD COLUMN scheme VARCHAR(256),
     ADD COLUMN assetType VARCHAR(256),
     ADD COLUMN assetUsage VARCHAR(256),
+    ADD COLUMN assetStatus VARCHAR(256),
     ADD COLUMN oldCode BIGINT;
