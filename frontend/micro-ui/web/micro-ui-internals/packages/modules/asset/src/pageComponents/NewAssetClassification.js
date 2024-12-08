@@ -495,7 +495,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               />
             )}
           />
-     <div>{t("Assets Type")}</div>
+     <div>{t("AST_TYPE")}</div>
           <Controller
             control={control}
             name={"assetsOfType"}
@@ -550,6 +550,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />
+          
 
           <CardLabel>{`${t("AST_NAME")}`}</CardLabel>
           <TextInput
@@ -648,7 +649,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
 
      
 
-          <div>{t("Assets Usage")}</div>
+          <div>{t("AST_USAGE")}</div>
           <Controller
             control={control}
             name={"assetsUsage"}
