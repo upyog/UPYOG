@@ -10,6 +10,7 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
   // Function to handle the click event, setting the applicationId and redirecting
   const handleRenewalClick = () => {
     sessionStorage.setItem("petId", application?.applicationNumber)
+    application?.petToken && application?.petToken?.length > 0 ? sessionStorage.setItem("petToken",application?.petToken) : ""
     history.push(`/digit-ui/citizen/ptr/petservice/revised-application`);
   };
 

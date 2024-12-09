@@ -141,9 +141,16 @@ function PTRSelectDocument({
 }) {
   // Filter documents to find the one matching the current document code
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
+  const previousDocument = renewApplication?.documents?.find((item) => item?.documentType?.includes(doc?.code));
   const [isUploading, setIsUploading] = useState(false);
   // Initialize state for selected document and file to upload
   const [selectedDocument, setSelectedDocument] = useState(
+    previousDocument
+    ?{ ...previousDocument, active: doc?.active === true, code: previousDocument?.documentType, i18nKey: previousDocument?.documentType}
+    : doc?.dropdownData?.length === 1
+    ? doc?.dropdownData[0]
+    : {}
+    ||
     filteredDocument
       ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType, i18nKey: filteredDocument?.documentType.replaceAll(".", "_")  }
       : doc?.dropdownData?.length === 1

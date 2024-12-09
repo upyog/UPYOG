@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getPetAcknowledgementData from "../../getPetAcknowledgementData";
 import PTRWFApplicationTimeline from "../../pageComponents/PTRWFApplicationTimeline";
-import { pdfDownloadLink } from "../../utils";
-
+import { convertEpochToDate } from "../../utils";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -126,25 +125,11 @@ fetchBillData();
     //setAcknowldgementData(acknowldgementDataAPI);
   };
 
-  let documentDate = t("CS_NA");
-  if ( pet_details?.additionalDetails?.documentDate) {
-    const date = new Date( pet_details?.additionalDetails?.documentDate);
-    const month = Digit.Utils.date.monthNames[date.getMonth()];
-    documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
-  }
-
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  };
-
-  const handleDownload = async (document, tenantid) => {
-    let tenantId = tenantid ? tenantid : tenantId;
-    const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
-    let documentLink = pdfDownloadLink(res.data, document?.fileStoreId);
-    window.open(documentLink, "_blank");
   };
 
   const printCertificate = async () => {
@@ -211,6 +196,14 @@ fetchBillData();
               text={getDate(pet_details?.validityDate)} 
             />
           </StatusTable>
+          {pet_details?.petToken&&pet_details?.petToken.length>0&&(
+          <StatusTable>
+            <Row
+              className="border-none"
+              label={t("PTR_TOKEN")}
+              text={pet_details?.petToken} 
+            />
+          </StatusTable>)}
            
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_ADDRESS_HEADER")}</CardSubHeader>
           <StatusTable>
@@ -241,23 +234,10 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_PET_SEX")} text={pet_details?.petDetails?.petGender || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_IDENTIFICATION_MARK")} text={pet_details?.petDetails?.identificationmark || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
-            {pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={pet_details?.petDetails?.birthDate || t("CS_NA")} />}
-            {pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={pet_details?.petDetails?.adoptionDate || t("CS_NA")} />}
-
-
+            {pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={convertEpochToDate(pet_details?.petDetails?.birthDate) || t("CS_NA")} />}
+            {pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={convertEpochToDate(pet_details?.petDetails?.adoptionDate) || t("CS_NA")} />}
           </StatusTable>
 
-
-          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
-          <div>
-            {Array.isArray(docs) ? (
-              docs.length > 0 && <PTRDocument pet_details={pet_details}></PTRDocument>
-            ) : (
-              <StatusTable>
-                <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
-              </StatusTable>
-            )}
-          </div> */}
           <PTRWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast
