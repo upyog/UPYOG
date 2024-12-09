@@ -38,14 +38,36 @@ const EditAsset = () => {
 
   
 const onFormValueChange = (setValue, formData, formState) => {
-    console.log('HIII', formData);
-    console.log('ssssss ', formState);
     setSubmitValve(!Object.keys(formState.errors).length); 
   };
 
+  /* methid to get date from epoch */
+ const convertDateToEpoch = (dateString) => {
+  // Parse the date string into a Date object
+  const date = new Date(dateString);
+
+  // Check if the date is valid
+  if (!isNaN(date)) {
+    // Return the epoch time in seconds (divide by 1000 to convert from milliseconds to seconds)
+    return Math.floor(date.getTime() / 1000);
+  } else {
+    return null; // Return null if the input date is invalid
+  }
+};
+const convertStringToFloat = (amountString) => {
+  // Remove commas if present and convert to float
+  const cleanedString = amountString.replace(/,/g, '');
+  
+  // Convert to float and return
+  const floatValue = parseFloat(cleanedString);
+  
+  // Return the float value, or NaN if conversion fails
+  return isNaN(floatValue) ? null : floatValue;
+};
+
+
   const onSubmit = (data) => {
-    console.log('ON Submit data:- ', data);
-    
+    console.log('Edit Coming data:- ', data);
     const formData = {
       accountId: applicationDetails?.applicationData?.applicationData?.accountId,
       tenantId: applicationDetails?.applicationData?.applicationData?.tenantId,
@@ -57,6 +79,17 @@ const onFormValueChange = (setValue, formData, formState) => {
       assetCategory:data?.editAssignDetails?.[0]?.assetsubtype?.code,
       assetSubCategory:data?.editAssignDetails?.[0]?.assetparentsubCategory?.code,
       department: data?.editAssignDetails?.[0]?.Department?.code,
+      assetType: data?.editAssignDetails?.[0]?.assetType?.code,
+      assetUsage: data?.editAssignDetails?.[0]?.assetUsage?.code,
+      modeOfPossessionOrAcquisition: data?.editAssignDetails?.[0]?.modeOfPossessionOrAcquisition?.code,
+      invoiceDate: convertDateToEpoch(data?.editAssignDetails?.[0]?.invoiceDate), 
+      invoiceNumber: data?.editAssignDetails?.[0]?.invoiceNumber,
+      purchaseDate: convertDateToEpoch(data?.editAssignDetails?.[0]?.purchaseDate),
+      purchaseOrderNumber: data?.editAssignDetails?.[0]?.purchaseOrderNumber,
+      location: data?.editAssignDetails?.[0]?.location,
+      purchaseCost: convertStringToFloat(data?.editAssignDetails?.[0]?.purchaseCost),
+      acquisitionCost: convertStringToFloat(data?.editAssignDetails?.[0]?.acquisitionCost),
+      bookValue: convertStringToFloat(data?.editAssignDetails?.[0]?.bookValue),
       financialYear: data?.editAssignDetails?.[0]?.financialYear?.code,
       sourceOfFinance: data?.editAssignDetails?.[0]?.sourceOfFinance?.code,
       applicationNo: applicationDetails?.applicationData?.applicationData?.applicationNo,
