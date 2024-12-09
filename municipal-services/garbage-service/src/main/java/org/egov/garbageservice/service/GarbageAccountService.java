@@ -629,7 +629,8 @@ public class GarbageAccountService {
 				
 				List<Demand> savedDemands = new ArrayList<>();
             	// generate demand
-				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, GrbgConstants.BUSINESS_SERVICE);
+				BigDecimal taxAmount = new BigDecimal("100.00");
+				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, GrbgConstants.BUSINESS_SERVICE, taxAmount);
 	            
 
 		        if(CollectionUtils.isEmpty(savedDemands)) {

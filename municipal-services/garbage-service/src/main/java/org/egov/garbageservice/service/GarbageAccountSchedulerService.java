@@ -1,5 +1,6 @@
 package org.egov.garbageservice.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,9 @@ public class GarbageAccountSchedulerService {
 	@Autowired
 	private BillService billService;
 
+	@Autowired
+	private MdmsService mdmsService;
+
 	public Object generateBill(RequestInfoWrapper requestInfoWrapper) {
 
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
@@ -40,17 +44,22 @@ public class GarbageAccountSchedulerService {
 				.searchGarbageAccounts(searchCriteriaGarbageAccountRequest);
 
 		// create demand and bill for every account
-
 		if (null != garbageAccountResponse && !CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
 
 			garbageAccountResponse.getGarbageAccounts().stream().forEach(garbageAccount -> {
 
 				garbageAccount.setGrbgApplicationNumber(garbageAccount.getGrbgApplication().getApplicationNo());
 
+				Object mdmsResponse = mdmsService.fetchGarbageFeeFromMdms(requestInfoWrapper.getRequestInfo(),
+						garbageAccount.getTenantId());
+
+				// calculate fees from mdms response
+				BigDecimal taxAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount);
+
 				List<Demand> savedDemands = new ArrayList<>();
 				// generate demand
 				savedDemands = demandService.generateDemand(requestInfoWrapper.getRequestInfo(), garbageAccount,
-						GrbgConstants.BUSINESS_SERVICE);
+						GrbgConstants.BUSINESS_SERVICE, taxAmount);
 
 				if (CollectionUtils.isEmpty(savedDemands)) {
 					throw new CustomException("INVALID_CONSUMERCODE",
