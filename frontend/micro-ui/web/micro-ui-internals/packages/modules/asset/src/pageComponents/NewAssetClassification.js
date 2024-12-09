@@ -10,8 +10,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   let index = 0;
   let validation = {};
 
-  // custom function by @shivank which calculate the current financial year accordingly
-
   const calculateCurrentFinancialYear = () => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -212,14 +210,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     setDepartment(e.target.value);
   }
 
-  // function setAssetsOfType(e) {
-  //   setAssetsOfType(e.target.value);
-  // }
-
-  // function setAssetsUsage(e) {
-  //   setAssetsUsage(e.target.value);
-  // }
-
   const goNext = () => {
     let owner = formData.asset && formData.asset[index];
     let ownerStep;
@@ -279,17 +269,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
       assetType.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
   });
 
- 
-  // const assetType = [
-  //   {
-  //     code: "Fixed Asset",
-  //     i18nKey: "Fixed Asset",
-  //   },
-  //   {
-  //     code: "Infrastructure Asset",
-  //     i18nKey: "Infrastructure Asset",
-  //   },
-  // ];
   const { data: assetCurrentUsageData } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetUsage" }], {
     select: (data) => {
       const formattedData = data?.["ASSET"]?.["AssetUsage"];
@@ -301,21 +280,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   assetCurrentUsageData && assetCurrentUsageData.map((assT) => {
     assetCurrentUsage.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
   });
-
-  // const assetCurrentUsage = [
-  //   {
-  //     code: "In-use",
-  //     i18nKey: "In-use",
-  //   },
-  //   {
-  //     code: "In-store",
-  //     i18nKey: "In-store",
-  //   },
-  //   {
-  //     code: "Disposed",
-  //     i18nKey: "Disposed",
-  //   },
-  // ];
 
   return (
     <React.Fragment>
@@ -458,7 +422,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               />
             )}
           />
-          <CardLabel>{`${t("AST_SUB_CATEGORY")}`}</CardLabel>
+          <CardLabel>{`${t("AST_SUB_CATEGORYss")}`}</CardLabel>
           <Controller
             control={control}
             name={"assetsubtype"}
