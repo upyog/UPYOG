@@ -48,11 +48,10 @@ public class LandingPageController {
 	
 	private String getClientIp(HttpServletRequest request) {
         // Check for X-Forwarded-For header (used by proxies/load balancers)
-//		System.out.println(request.getHeader("X-Real-IP"));
-        String ip = request.getRemoteAddr();
+        String ip =  request.getHeader("X-Forwarded-For");
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             // Fallback to remote address
-            ip =  request.getHeader("X-Forwarded-For");
+            ip =  request.getRemoteAddr();
         }
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             // Check for the X-Real-IP header (used by some proxies)
