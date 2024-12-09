@@ -1172,6 +1172,15 @@ public class InboxService {
 			}
 		}
 
+
+
+			if (businessServiceName.contains("asset-create")) {
+				if (moduleSearchCriteria.containsKey("offset")) {
+					moduleSearchCriteria.put("offset", 0);
+				}
+
+		}
+
 		Set<String> searchParams = moduleSearchCriteria.keySet();
 
 		searchParams.forEach((param) -> {
