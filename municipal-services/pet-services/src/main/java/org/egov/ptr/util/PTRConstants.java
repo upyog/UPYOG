@@ -29,6 +29,9 @@ public class PTRConstants {
 
     @Value("${egov.alfresco.endpoint.upload}")
     private String alfrescoUploadEndPoint;
+    
+    @Value("${egov.alfresco.endpoint.get_pet_photo}")
+    private String alfrescoGetPetPhotoEndPoint;
 
 	public static final String MDMS_PT_OWNERTYPE = "OwnerType";
 
