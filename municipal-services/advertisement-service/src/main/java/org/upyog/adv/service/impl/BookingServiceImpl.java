@@ -82,9 +82,9 @@ public class BookingServiceImpl implements BookingService {
 		enrichmentService.enrichCreateBookingRequest(bookingRequest);
 
 		// ENcrypt PII data of applicant
-		 encryptionService.encryptObject(bookingRequest);
+		encryptionService.encryptObject(bookingRequest);
 
-		//demandService.createDemand(bookingRequest, mdmsData, true);
+		demandService.createDemand(bookingRequest, mdmsData, true);
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
