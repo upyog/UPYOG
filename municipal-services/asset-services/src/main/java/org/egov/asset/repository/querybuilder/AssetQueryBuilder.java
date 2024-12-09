@@ -47,6 +47,7 @@ public class AssetQueryBuilder {
 
     private static final String LIMITED_DATA_QUERY = "SELECT asset.id, "
             + "asset.tenantid, "
+            + "asset.bookrefno, "
             + "asset.applicationno, "
             + "asset.classification, "
             + "asset.parentcategory, "
@@ -55,6 +56,8 @@ public class AssetQueryBuilder {
             + "asset.name, "
             + "asset.department, "
             + "asset.status, "
+            + "asset.assetstatus, "
+            + "asset.createdtime, "
             + "assign.isassigned, "
             + "assign.assignedusername, "
             + "assign.employeecode, "
