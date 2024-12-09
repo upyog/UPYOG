@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequestMapping("/landing")
 @Slf4j
-@CrossOrigin(origins="*")
  
 public class LandingPageController {
 	
