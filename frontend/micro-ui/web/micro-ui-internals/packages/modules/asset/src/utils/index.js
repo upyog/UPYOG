@@ -158,7 +158,7 @@ export const Assetdata = (data) => {
       location: data?.assetDetails?.location,
       // purchaseCost: data?.assetDetails?.purchaseCost,
       purchaseCost: convertStringToFloat(data?.assetDetails?.purchaseCost),
-      acquisitionCost: convertStringToFloat(data?.assetDetails?.purchaseCost),
+      acquisitionCost: convertStringToFloat(data?.assetDetails?.acquisitionCost),
       bookValue: data?.assetDetails?.bookValue,
       action: "",
       businessService: "asset-create",

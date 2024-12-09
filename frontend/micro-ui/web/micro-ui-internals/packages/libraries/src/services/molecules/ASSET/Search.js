@@ -1,6 +1,14 @@
 
 import { ASSETService } from "../../elements/ASSET";
 
+const convertTimestampToDate = (timestamp) => {
+  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 const getData = (res, combinedData) => {
 
   let formJson = combinedData
@@ -21,9 +29,9 @@ const getData = (res, combinedData) => {
 
   // Add more rows to the rows array for Static 
   rows.push({ title: "AST_MODE_OF_POSSESSION_OR_ACQUISITION", value: res?.modeOfPossessionOrAcquisition });
-  rows.push({ title: "AST_INVOICE_DATE", value: res?.invoiceDate });
+  rows.push({ title: "AST_INVOICE_DATE", value:convertTimestampToDate( res?.invoiceDate) });
   rows.push({ title: "AST_INVOICE_NUMBER", value: res?.invoiceNumber });
-  rows.push({ title: "AST_PURCHASE_DATE", value: res?.purchaseDate });
+  rows.push({ title: "AST_PURCHASE_DATE", value: convertTimestampToDate(res?.purchaseDate) });
   rows.push({ title: "AST_PURCHASE_ORDER", value: res?.purchaseOrderNumber });
   rows.push({ title: "AST_LOCATION_DETAILS", value: res?.location });
   rows.push({ title: "AST_PURCHASE_COST", value: res?.purchaseCost });
@@ -34,7 +42,7 @@ const getData = (res, combinedData) => {
 const extractValue = (key) => {
 
   if (typeof key === 'object') {
-    return key['value']
+    return key['code']
   }
   return key
 }
@@ -79,6 +87,7 @@ export const ASSETSearch = {
           { title: "ASSET_DESCRIPTION", value: response?.description },
           { title: "AST_DEPARTMENT", value: 'COMMON_MASTERS_DEPARTMENT_'+response?.department },
           { title: "AST_USAGE", value: response?.assetUsage },
+          { title: "AST_TYPE", value: response?.assetType },
 
         ],
       },
