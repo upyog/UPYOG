@@ -122,6 +122,7 @@ const PTRCreate = ({ parentRoute }) => {
     clearParams();
     queryClient.invalidateQueries("PTR_CREATE_PET");
     sessionStorage.removeItem(["applicationType","petId"]);
+    sessionStorage.removeItem("petToken");
   };
   if (isLoading) {
     return <Loader />;

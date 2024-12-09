@@ -96,7 +96,7 @@ export const PetDataConvert = (data) => {
       validityDate: data?.validityDate || null,
       status: data?.status || null,
       expireflag: false ,
-      petToken: "",
+      petToken: sessionStorage.getItem("petToken")||"",
       previousapplicationnumber: sessionStorage.getItem("petId"),
       address: data.address,
       petDetails: data.pets,
@@ -168,7 +168,7 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
 };
 
 /* method to get date from epoch */
-export const convertEpochToDate = (dateEpoch, businessService) => {
+export const convertEpochToDate = (dateEpoch) => {
   // Returning null in else case because new Date(null) returns initial date from calender
   if (dateEpoch) {
     const dateFromApi = new Date(dateEpoch);
@@ -177,10 +177,7 @@ export const convertEpochToDate = (dateEpoch, businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if (businessService == "ptr")
-      return `${day}-${month}-${year}`;
-    else
-      return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   } else {
     return null;
   }

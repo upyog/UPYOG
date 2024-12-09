@@ -34,20 +34,16 @@ const BannerPicker = (props) => {
 };
 
 const PTRAcknowledgement = ({ data, onSuccess }) => {
-
-  
   const { t } = useTranslation();
-  
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const user = Digit.UserService.getUser().info;
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
   const { tenants } = storeData || {};
 
   useEffect(() => {
     try {
-      data.tenantId = data.address?.city?.code;
+      data.tenantId = tenantId;
       let formdata = PetDataConvert(data)
       mutation.mutate(formdata, {onSuccess});
     } catch (err) {
