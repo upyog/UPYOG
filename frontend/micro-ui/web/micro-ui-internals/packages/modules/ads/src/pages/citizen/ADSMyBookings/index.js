@@ -121,7 +121,7 @@ export const ADSMyApplications = () => {
         {filteredApplications.length > 0 &&
           filteredApplications.map((application, index) => (
             <div key={index}>
-              <AdsApplication application={application} tenantId={user?.permanentCity} buttonLabel={t("ADS_SUMMARY")} />
+              <AdsApplication application={application} tenantId={tenantId} buttonLabel={t("ADS_SUMMARY")} />
             </div>
           ))}
         {filteredApplications.length === 0 && !isLoading && (
