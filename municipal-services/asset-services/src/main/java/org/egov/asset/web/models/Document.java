@@ -1,18 +1,9 @@
 package org.egov.asset.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
 
 /**
  * This object holds list of documents attached during the transaciton for a property
@@ -26,21 +17,21 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Document   {
-        @JsonProperty("documentId")
-        private String documentId = null;
+public class Document {
+    @JsonProperty("documentId")
+    private String documentId = null;
 
-        @JsonProperty("documentType")
-        private String documentType = null;
+    @JsonProperty("documentType")
+    private String documentType = null;
 
-        @JsonProperty("fileStoreId")
-        private String fileStoreId = null;
+    @JsonProperty("fileStoreId")
+    private String fileStoreId = null;
 
-        @JsonProperty("documentUid")
-        private String documentUid = null;
+    @JsonProperty("documentUid")
+    private String documentUid = null;
 
-        @JsonProperty("docDetails")
-        private Object docDetails = null;
+    @JsonProperty("docDetails")
+    private Object docDetails = null;
 
 
 }

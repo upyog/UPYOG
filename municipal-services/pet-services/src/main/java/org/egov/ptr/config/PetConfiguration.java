@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+import java.math.BigDecimal;
 import java.util.TimeZone;
 
 @Import({ TracerConfiguration.class })
@@ -45,6 +46,9 @@ public class PetConfiguration {
 	@Value("${ptr.kafka.update.topic}")
 	private String updatePtrTopic;
 
+	@Value("${ptr.kafka.renew.topic}")
+	private String renewPtrTopic;
+
 	// USER
 	@Value("${egov.user.host}")
 	private String userHost;
@@ -65,6 +69,12 @@ public class PetConfiguration {
 
 	@Value("${egov.idgen.ptrid.name}")
 	private String petIdGenName;
+
+	@Value("${egov.idgen.ptrtoken.format}")
+	private String petTokenFormat;
+
+	@Value("${egov.idgen.ptrtoken.name}")
+	private String petTokenName;
 
 	// NOTIFICATION TOPICS
 	@Value("${kafka.topics.notification.sms}")
@@ -91,11 +101,6 @@ public class PetConfiguration {
 	@Value("${egov.ptr.businessService}")
 	private String businessService;
 
-	// Notif variables
-
-	@Value("${egov.usr.events.download.receipt.link}")
-	private String userEventReceiptDownloadLink;
-
 	// Localization
 	@Value("${egov.localization.host}")
 	private String localizationHost;
@@ -120,12 +125,6 @@ public class PetConfiguration {
 
 	@Value("${egov.user.event.notification.enabled}")
 	private Boolean isUserEventsNotificationEnabled;
-
-	@Value("${egov.msg.download.receipt.link}")
-	private String receiptDownloadLink;
-
-	@Value("${egov.msg.pay.link}")
-	private String payLinkSMS;
 
 	@Value("${workflow.host}")
 	private String wfHost;
@@ -178,5 +177,11 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-
+	
+	@Value("${egov.ptr.newapplication.fee}")
+	private BigDecimal newApplicationFee;
+	
+	@Value("${egov.ptr.renewapplication.fee}")
+	private BigDecimal renewApplicationFee;
+	
 }
