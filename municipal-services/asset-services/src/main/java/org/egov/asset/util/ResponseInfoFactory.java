@@ -12,7 +12,7 @@ public class ResponseInfoFactory {
         final String apiId = requestInfo != null ? requestInfo.getApiId() : "";
         final String ver = requestInfo != null ? requestInfo.getVer() : "";
         Long ts = null;
-        if(requestInfo!=null)
+        if (requestInfo != null)
             ts = requestInfo.getTs();
         final String resMsgId = "uief87324"; // FIXME : Hard-coded
         final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";

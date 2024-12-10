@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-@Import({ TracerConfiguration.class })
+@Import({TracerConfiguration.class})
 @SpringBootApplication
-@ComponentScan(basePackages = { "org.egov.asset", "org.egov.asset.web.controllers" , "org.egov.asset.config"})
+@ComponentScan(basePackages = {"org.egov.asset", "org.egov.asset.web.controllers", "org.egov.asset.config"})
 public class AssetApplication {
 
 
