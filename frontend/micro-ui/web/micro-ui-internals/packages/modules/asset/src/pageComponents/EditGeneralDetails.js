@@ -1,6 +1,7 @@
 import {
     CardLabel,
     CardLabelError,
+    CardCaption,
     LabelFieldPair,
     TextInput,
     Toast,
@@ -525,7 +526,7 @@ const OwnerForm = (_props) => {
                         <Controller
                             control={control}
                             name={"Department"}
-                            defaultValue={convertToObject(comingDataFromAPI?.department)}
+                            defaultValue={convertToObject('COMMON_MASTERS_DEPARTMENT_'+comingDataFromAPI?.department)}
                             render={(props) => (
                                 <Dropdown
                                     className="form-field"
@@ -541,7 +542,10 @@ const OwnerForm = (_props) => {
                         />
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.Department ? errors?.Department?.message : ""}</CardLabelError>
-
+                    <br/>
+                    <CardCaption>Asset Common Details </CardCaption>
+                    <br/>
+                    <br/>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_TYPE")}</CardLabel>
                         <Controller
