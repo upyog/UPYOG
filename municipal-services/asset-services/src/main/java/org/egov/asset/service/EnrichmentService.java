@@ -1,12 +1,7 @@
 package org.egov.asset.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import digit.models.coremodels.IdResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.repository.IdGenRepository;
 import org.egov.asset.util.AssetErrorConstants;
@@ -20,120 +15,144 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import digit.models.coremodels.IdResponse;
-//import digit.models.coremodels.IdResponse;
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class EnrichmentService {
 
-	@Autowired
-	private AssetConfiguration config;
+    @Autowired
+    private AssetConfiguration config;
 
-	@Autowired
-	private AssetUtil assetUtil;
+    @Autowired
+    private AssetUtil assetUtil;
 
-	@Autowired
-	private IdGenRepository idGenRepository;
+    @Autowired
+    private IdGenRepository idGenRepository;
 
-	// @Autowired
-	// private WorkflowService workflowService;
+    /**
+     * Enriches the Asset create request by adding audit details and unique identifiers (UUIDs).
+     *
+     * @param assetRequest The request object containing asset details to be enriched.
+     * @param mdmsData     Master data required for enrichment.
+     */
+    public void enrichAssetCreateRequest(AssetRequest assetRequest, Object mdmsData) {
+        log.info("Enriching Asset Create Request");
+        RequestInfo requestInfo = assetRequest.getRequestInfo();
 
-	/**
-	 * encrich create Asset Reqeust by adding auditdetails and uuids
-	 * 
-	 * @param assetRequest
-	 * @param mdmsData
-	 * @param values
-	 */
-	public void enrichAssetCreateRequest(AssetRequest assetRequest, Object mdmsData) {
-		log.info("Doing EnrichAssetCreateRequest");
-		RequestInfo requestInfo = assetRequest.getRequestInfo();
-		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		assetRequest.getAsset().setAuditDetails(auditDetails);
-		assetRequest.getAsset().setId(UUID.randomUUID().toString());
+        // Set audit details for the asset
+        AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+        assetRequest.getAsset().setAuditDetails(auditDetails);
+        assetRequest.getAsset().setId(UUID.randomUUID().toString());
 
-		assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
-		// String applicationType = values.get(AssetConstants.ASSET_PARENT_CATEGORY);
+        // Set the account ID to the creator's user ID
+        assetRequest.getAsset().setAccountId(assetRequest.getAsset().getAuditDetails().getCreatedBy());
 
-		// Asset Documents
-		if (!CollectionUtils.isEmpty(assetRequest.getAsset().getDocuments()))
-			assetRequest.getAsset().getDocuments().forEach(document -> {
-				if (document.getDocumentId() == null) {
-					String uuid = UUID.randomUUID().toString();
-					document.setDocumentId(uuid);
-					String docUuid = UUID.randomUUID().toString();
-					document.setDocumentUid(docUuid);
-				}
-			});
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(assetRequest.getAsset().getDocuments())) {
+            assetRequest.getAsset().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
 
-		// Asset AddressDetails
-		if (assetRequest.getAsset().getAddressDetails() != null) {
-			String uuid = UUID.randomUUID().toString();
-			assetRequest.getAsset().getAddressDetails().setAddressId(uuid);
-		}
+        // Enrich address details with a unique address ID if present
+        if (assetRequest.getAsset().getAddressDetails() != null) {
+            assetRequest.getAsset().getAddressDetails().setAddressId(UUID.randomUUID().toString());
+        }
 
-		setIdgenIds(assetRequest);
-	}
+        // Generate and set ID generation fields for the asset
+        setIdgenIds(assetRequest);
+    }
 
-	/**
-	 * Sets the ApplicationNumber for given bpaRequest
-	 *
-	 * @param request bpaRequest which is to be created
-	 */
-	private void setIdgenIds(AssetRequest request) {
-		RequestInfo requestInfo = request.getRequestInfo();
-		String tenantId = request.getAsset().getTenantId();
-		Asset asset = request.getAsset();
+    /**
+     * Enriches other Asset operations (e.g., assignment, disposal) by adding audit details and unique identifiers.
+     *
+     * @param assetRequest The request object containing asset operation details to be enriched.
+     */
+    public void enrichAssetOtherOperationsCreateRequest(AssetRequest assetRequest) {
+        log.info("Enriching Other Asset Operations Request");
+        RequestInfo requestInfo = assetRequest.getRequestInfo();
 
-		List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
-				config.getApplicationNoIdgenFormat(), 1);
-		ListIterator<String> itr = applicationNumbers.listIterator();
+        // Set audit details for the asset assignment
+        AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+        assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
+        assetRequest.getAsset().getAssetAssignment().setAssignmentId(UUID.randomUUID().toString());
+    }
 
-		Map<String, String> errorMap = new HashMap<>();
+    /**
+     * Enriches Asset assignment update requests by adding audit details.
+     *
+     * @param assetRequest The request object containing asset assignment update details.
+     */
+    public void enrichAssetOtherOperationsUpdateRequest(AssetRequest assetRequest) {
+        log.info("Enriching Asset Assignment Update Request");
+        RequestInfo requestInfo = assetRequest.getRequestInfo();
 
-		if (!errorMap.isEmpty())
-			throw new CustomException(errorMap);
+        // Set audit details for the asset assignment
+        AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+        assetRequest.getAsset().getAssetAssignment().setAuditDetails(auditDetails);
+    }
 
-		asset.setApplicationNo(itr.next());
-	}
+    /**
+     * Generates and sets application numbers for the given Asset request using the ID generation service.
+     *
+     * @param request The Asset request for which application numbers need to be generated.
+     */
+    private void setIdgenIds(AssetRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        String tenantId = request.getAsset().getTenantId();
+        Asset asset = request.getAsset();
 
-	/**
-	 * Returns a list of numbers generated from idgen
-	 *
-	 * @param requestInfo RequestInfo from the request
-	 * @param tenantId    tenantId of the city
-	 * @param idKey       code of the field defined in application properties for
-	 *                    which ids are generated for
-	 * @param idformat    format in which ids are to be generated
-	 * @param count       Number of ids to be generated // count not used at present
-	 * @return List of ids generated using idGen service
-	 */
-	private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
-		List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
-				.getIdResponses();
+        // Generate application numbers using ID generation service
+        List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getApplicationNoIdgenName(),
+                config.getApplicationNoIdgenFormat(), 1);
 
-		if (CollectionUtils.isEmpty(idResponses))
-			throw new CustomException(AssetErrorConstants.IDGEN_ERROR, "No ids returned from idgen Service");
+        if (applicationNumbers.isEmpty()) {
+            throw new CustomException(AssetErrorConstants.IDGEN_ERROR, "No IDs returned from ID generation service");
+        }
 
-		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-	}
-	
-	/**
-	 * encrich update Asset Reqeust by adding auditdetails and uuids
-	 * 
-	 * @param assetRequest
-	 * @param mdmsData
-	 * @param values
-	 */
-	public void enrichAssetUpdateRequest(AssetRequest assetRequest, Object mdmsData) {
-		RequestInfo requestInfo = assetRequest.getRequestInfo();
-		AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		assetRequest.getAsset().setAuditDetails(auditDetails);
-		//assetRequest.getAsset().getAuditDetails().setLastModifiedBy(auditDetails.getLastModifiedBy());
-		//assetRequest.getAsset().getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
+        // Set the application number for the asset
+        asset.setApplicationNo(AssetUtil.improveAssetID(applicationNumbers.get(0), request));
+    }
 
-	}
+    /**
+     * Fetches a list of IDs from the ID generation service.
+     *
+     * @param requestInfo Request information for the service call.
+     * @param tenantId    Tenant ID for which IDs are generated.
+     * @param idKey       Key used for ID generation.
+     * @param idformat    Format of the IDs to be generated.
+     * @param count       Number of IDs to generate.
+     * @return A list of generated IDs.
+     */
+    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey, String idformat, int count) {
+        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count)
+                .getIdResponses();
+
+        if (CollectionUtils.isEmpty(idResponses)) {
+            throw new CustomException(AssetErrorConstants.IDGEN_ERROR, "No IDs returned from ID generation service");
+        }
+
+        // Extract and return IDs from the response
+        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * Enriches the Asset update request by adding audit details.
+     *
+     * @param assetRequest The request object containing asset details to be updated.
+     * @param mdmsData     Master data required for enrichment.
+     */
+    public void enrichAssetUpdateRequest(AssetRequest assetRequest, Object mdmsData) {
+        RequestInfo requestInfo = assetRequest.getRequestInfo();
+
+        // Set audit details for the asset
+        AuditDetails auditDetails = assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+        assetRequest.getAsset().setAuditDetails(auditDetails);
+    }
 
 }

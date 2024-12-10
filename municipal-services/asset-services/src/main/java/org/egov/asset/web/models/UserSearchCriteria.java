@@ -1,17 +1,11 @@
 package org.egov.asset.web.models;
 
-import java.util.Collections;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,54 +13,54 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class UserSearchCriteria {
-	
-	    @JsonProperty("tenantId")
-	    private String tenantId;
-	    
-	    @JsonProperty("assetClassification")
-	    private String assetClassification;
-	    
-	    @JsonProperty("assetParentCategory")
-	    private String assetParentCategory;
-	    
-	    @JsonProperty("assetBookRefNo")
-	    private String assetBookRefNo;
 
-	    @JsonProperty("RequestInfo")
-		private RequestInfo requestInfo;
+    @JsonProperty("tenantId")
+    private String tenantId;
 
-		@JsonProperty("uuid")
-		private List<String> uuid;	
+    @JsonProperty("assetClassification")
+    private String assetClassification;
 
-		@JsonProperty("id")
-		private List<String> id;
+    @JsonProperty("assetParentCategory")
+    private String assetParentCategory;
 
-		@JsonProperty("userName")
-		private String userName;
+    @JsonProperty("assetBookRefNo")
+    private String assetBookRefNo;
 
-		@JsonProperty("name")
-		private String name;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-	
-		@JsonProperty("active")
-		@Setter
-		private Boolean active;
+    @JsonProperty("uuid")
+    private List<String> uuid;
+
+    @JsonProperty("id")
+    private List<String> id;
+
+    @JsonProperty("userName")
+    private String userName;
+
+    @JsonProperty("name")
+    private String name;
 
 
-		@JsonProperty("pageSize")
-		private int pageSize;
+    @JsonProperty("active")
+    @Setter
+    private Boolean active;
 
-		@JsonProperty("pageNumber")
-		private int pageNumber = 0;
 
-		@JsonProperty("sort")
-		private List<String> sort = Collections.singletonList("name");
+    @JsonProperty("pageSize")
+    private int pageSize;
 
-		@JsonProperty("userType")
-		private String userType;
+    @JsonProperty("pageNumber")
+    private int pageNumber = 0;
 
-		@JsonProperty("roleCodes")
-		private List<String> roleCodes;
+    @JsonProperty("sort")
+    private List<String> sort = Collections.singletonList("name");
+
+    @JsonProperty("userType")
+    private String userType;
+
+    @JsonProperty("roleCodes")
+    private List<String> roleCodes;
 
 
 }

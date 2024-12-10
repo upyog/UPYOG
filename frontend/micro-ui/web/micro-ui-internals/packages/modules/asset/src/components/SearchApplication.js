@@ -12,13 +12,19 @@
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
+      // Calculate the date 7 days ago
+      const fromDate = new Date(todaydate);
+      fromDate.setDate(todaydate.getDate() - 7);  // Subtract 7 days from today
+
+      // Convert fromDate to YYYY-MM-DD format
+      const fromDateFormatted = fromDate.toISOString().split("T")[0];
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
               sortOrder: "DESC",
-              fromDate: today,
+              fromDate: fromDateFormatted,
               toDate: today,
           }
       })
@@ -27,9 +33,9 @@
         register("limit", 10)
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
-        setValue("fromDate", today);
+        setValue("fromDate", fromDateFormatted);
         setValue("toDate", today);
-      },[register, setValue, today])
+      },[register, setValue, today, fromDateFormatted])
 
 // Get base path
       var base_url = window.location.origin;
@@ -96,6 +102,13 @@
               Header: t("AST_DEPARTMENT_LABEL"),
               Cell: ({ row }) => {
                 return GetCell(`${t('COMMON_MASTERS_DEPARTMENT_'+row?.original?.["department"])}`)
+              },
+              disableSortBy: true,
+            },
+            {
+              Header: t("AST_APPLICATION_STATUS"),
+              Cell: ({ row }) => {
+                return GetCell(`${row?.original?.["status"]}`)
               },
               disableSortBy: true,
             },
@@ -337,7 +350,7 @@
                       onClick={() => {
                           reset({ 
                               applicationNo: "", 
-                              fromDate: today, 
+                              fromDate: fromDateFormatted, 
                               toDate: today,
                               status: "",
                               offset: 0,

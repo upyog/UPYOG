@@ -23,7 +23,6 @@ const PTRWFApplicationTimeline = (props) => {
   }
 
   const getTimelineCaptions = (checkpoint) => {
-    console.log("cheschsajdwqfwef",checkpoint);
     
     if (checkpoint.state === "OPEN")
     {

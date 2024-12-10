@@ -14,6 +14,7 @@ import {
   useDemandSearch,
   useRecieptSearch,
   useRecieptSearchNew,
+  useAssetQrCode,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -661,6 +662,7 @@ const Hooks = {
   useSessionStorage,
   useQueryParams,
   useFetchPayment,
+  useAssetQrCode,
   usePaymentUpdate,
   useFetchCitizenBillsForBuissnessService,
   useFetchBillsForBuissnessService,

@@ -252,11 +252,10 @@ const PTRSelectAddress = ({ t, config, onSelect, formData, renewApplication }) =
             ValidationRequired={true}
             validation={{
               required: false,
-              pattern: "^[0-9]{0,6}+$",
+              pattern: "^[0-9]{6}$",
               type: "tel",
-              title: t("CHB_ADDRESS_PINCODE_INVALID"),
+              title: t("SV_ADDRESS_PINCODE_INVALID"),
             }}
-            minLength={6}
             maxLength={6}
           />
 

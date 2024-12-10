@@ -68,7 +68,7 @@ export const setPetDetails = (data) => {
     petGender: pets?.petGender?.code,
     birthDate: pets?.birthDate ? convertDateToEpoch(pets?.birthDate) : null,
     adoptionDate: pets?.adoptionDate ? convertDateToEpoch(pets?.adoptionDate) : null,
-    identificationmark: pets?.identificationmark,
+    identificationMark: pets?.identificationMark,
     petColor: pets?.petColor?.colourCode,
     clinicName: pets?.clinicName,
     petName: pets?.petName,

@@ -422,7 +422,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               />
             )}
           />
-          <CardLabel>{`${t("AST_SUB_CATEGORYss")}`}</CardLabel>
+          <CardLabel>{`${t("AST_SUB_CATEGORY")}`}</CardLabel>
           <Controller
             control={control}
             name={"assetsubtype"}
