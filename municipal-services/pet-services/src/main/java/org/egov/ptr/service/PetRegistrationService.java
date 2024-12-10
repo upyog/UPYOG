@@ -172,6 +172,9 @@ public class PetRegistrationService {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
 			}else if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_APPROVER)) {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
 			}else if(StringUtils.equalsAnyIgnoreCase(role, PTRConstants.USER_ROLE_SUPERVISOR, PTRConstants.USER_ROLE_SECRETARY)) {
 				statusWithRoles.addAll(Arrays.asList(
 						PTRConstants.APPLICATION_STATUS_INITIATED,
@@ -342,42 +345,39 @@ public class PetRegistrationService {
 		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
 		tlObject.put("applicantName", petRegistrationApplication.getApplicantName());
 		tlObject.put("mobileNumber", petRegistrationApplication.getMobileNumber());
-		tlObject.put("userName", requestInfo.getUserInfo().getUserName());
+		tlObject.put("userName", requestInfo.getUserInfo().getName());
+		tlObject.put("approverName", requestInfo.getUserInfo().getUserName());
+		tlObject.put("OwnerName", petRegistrationApplication.getAdditionalDetail().get("applicantName"));
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);
-		
-		tlObject.put("qrCodeText", qr.toString());
+				tlObject.put("qrCodeText", qr.toString());
 		
 		String base64Photo = getPetPhoto(petRegistrationApplication,requestInfo);
-		
-		tlObject.put("petPhotoURL", base64Photo);
-
+		tlObject.put("petPhotoURL", "data:image/png;base64," + base64Photo);
 		
 		return tlObject;
 	}
 
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
-		tlObject.entrySet().stream()
-		.filter(entry1 -> Arrays.asList("applicationNumber","petName","breedType","address")
-		.contains(entry1.getKey())).forEach(entry -> {
-			qr.append(entry.getKey());
-			qr.append(": ");
-			qr.append(entry.getValue());
-			qr.append("\r\n");
+		
+		List<String> orderedKeys = Arrays.asList("applicationNumber","OwnerName", "petName", "breedType", "address");
+
+		orderedKeys.forEach(key -> {
+		    if (tlObject.containsKey(key)) {
+		        qr.append(key);
+		        qr.append(": ");
+		        qr.append(tlObject.get(key));
+		        qr.append("\r\n");
+		    }
 		});
 		
 	    replaceInStringBuilder(qr, "applicationNumber", "Pet Application No");
+	    replaceInStringBuilder(qr, "OwnerName", "Pet Owner Name");
 	    replaceInStringBuilder(qr, "petName", "Pet Name");
 	    replaceInStringBuilder(qr, "breedType", "Breed Type");
 	    replaceInStringBuilder(qr, "address", "Address");
-//	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
-//	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
-//	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
-//	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
-//	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
-//	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
-		
+
 	}
 	
 	private String getPetPhoto(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
