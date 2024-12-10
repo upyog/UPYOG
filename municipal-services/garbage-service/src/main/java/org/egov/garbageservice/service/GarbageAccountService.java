@@ -629,7 +629,8 @@ public class GarbageAccountService {
 				
 				List<Demand> savedDemands = new ArrayList<>();
             	// generate demand
-				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, GrbgConstants.BUSINESS_SERVICE);
+				BigDecimal taxAmount = new BigDecimal("100.00");
+				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account, GrbgConstants.BUSINESS_SERVICE, taxAmount);
 	            
 
 		        if(CollectionUtils.isEmpty(savedDemands)) {
@@ -1037,37 +1038,50 @@ public class GarbageAccountService {
 	private void validateAndEnrichSearchGarbageAccount(SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
 		RequestInfo requestInfo = searchCriteriaGarbageAccountRequest.getRequestInfo();
 		
-		
-		if(null != searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()) {
-			if(CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getId()) &&
-			        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getGarbageId()) &&
-			        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getPropertyId()) &&
-			        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getType()) &&
-			        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getName()) &&
-			        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getMobileNumber()) &&
-			        CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getApplicationNumber()) &&
-			        null == searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsOwner()) {
-	
-					if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
-						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
-					}else if(null != requestInfo && null != requestInfo.getUserInfo()
-							&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
-						
-						List<String> listOfStatus = getAccountStatusListByRoles(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(), requestInfo.getUserInfo().getRoles());
-						if(CollectionUtils.isEmpty(listOfStatus)) {
-							throw new CustomException("SEARCH_ACCOUNT_BY_ROLES","Search can't be performed by this Employee due to lack of roles.");
+		if (null != searchCriteriaGarbageAccountRequest.getIsSchedulerCall()
+				&& !searchCriteriaGarbageAccountRequest.getIsSchedulerCall()) {
+			if (null != searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()) {
+				if (CollectionUtils
+						.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getId())
+						&& CollectionUtils.isEmpty(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getGarbageId())
+						&& CollectionUtils.isEmpty(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getPropertyId())
+						&& CollectionUtils.isEmpty(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getType())
+						&& CollectionUtils.isEmpty(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getName())
+						&& CollectionUtils.isEmpty(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getMobileNumber())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
+								.getApplicationNumber())
+						&& null == searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsOwner()) {
+
+					if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
+							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
+						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
+								.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
+					} else if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
+							.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_EMPLOYEE)) {
+
+						List<String> listOfStatus = getAccountStatusListByRoles(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(),
+								requestInfo.getUserInfo().getRoles());
+						if (CollectionUtils.isEmpty(listOfStatus)) {
+							throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
+									"Search can't be performed by this Employee due to lack of roles.");
 						}
 						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setStatus(listOfStatus);
-					}else {
-						throw new CustomException("MISSING_SEARCH_PARAMETER","Provide the parameters to search garbage accounts.");
+					} else {
+						throw new CustomException("MISSING_SEARCH_PARAMETER",
+								"Provide the parameters to search garbage accounts.");
 					}
+				}
+			} else if (null != requestInfo && null != requestInfo.getUserInfo() && StringUtils
+					.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
+				searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(SearchCriteriaGarbageAccount
+						.builder().createdBy(Collections.singletonList(requestInfo.getUserInfo().getUuid())).build());
 			}
-		}else if(null != requestInfo && null != requestInfo.getUserInfo()
-				&& StringUtils.equalsIgnoreCase(requestInfo.getUserInfo().getType(), GrbgConstants.USER_TYPE_CITIZEN)) {
-			searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(
-					SearchCriteriaGarbageAccount.builder().createdBy(Collections.singletonList(
-									requestInfo.getUserInfo().getUuid())).build());
 		}
 		
 	}
