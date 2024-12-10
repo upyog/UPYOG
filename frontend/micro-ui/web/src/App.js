@@ -52,6 +52,7 @@ import {
 import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
 import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
 import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
+import {COMMONMODULEModule, COMMONMODULELinks, COMMONMODULEComponents} from "@nudmcdgnpm/upyog-ui-module-cm"
 
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
@@ -86,7 +87,8 @@ const enabledModules = [
   "ADS",
   "SV",
   "EW",
-  "CHB"
+  "CHB",
+  "COMMONMODULE"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -119,7 +121,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   CHBModule,
   CHBLinks,
   ...CHBComponents,
-
+  COMMONMODULELinks,
+  COMMONMODULEModule,
+  ...COMMONMODULEComponents
 });
 
 initPGRComponents();

@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, TextInput } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -14,7 +14,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
   const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || "");
   const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || "");
   const [landmark, setLandmark] = useState(formData?.address?.landmark || "");
-  const [buildingName, setBuildingName] = useState(formData?.address?.latitude || "");
+  const [buildingName, setBuildingName] = useState(formData?.address?.buildingName || "");
   const [doorNo, setDoorNo] = useState(formData?.address?.doorNo || "");
 
   useEffect(() => {
