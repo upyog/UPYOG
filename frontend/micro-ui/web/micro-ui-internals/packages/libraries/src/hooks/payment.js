@@ -162,6 +162,17 @@ export const useDemandSearch = ({ consumerCode, businessService, tenantId }, con
   return queryData;
 };
 
+export const useAssetQrCode = ({ tenantId, ...params }, config = {}) => {     
+  return useQuery(
+    ["assets_Reciept_Search", { tenantId, params },config],
+    () => Digit.PaymentService.useAssetQrCodeService(tenantId, params),
+    {
+      refetchOnMount: false,
+      ...config,
+    }
+  );
+};
+
 export const useRecieptSearch = ({ tenantId, businessService, ...params }, config = {}) => {
   return useQuery(
     ["reciept_search", { tenantId, businessService, params },config],
