@@ -1,0 +1,131 @@
+curl --location 'https://dev.digit.org/egov-workflow-v2/egov-wf/businessservice/_create' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"RequestInfo": {
+		"apiId": "Rainmaker",
+		"action": "",
+		"did": 1,
+		"key": "",
+		"msgId": "20230910130900|en_IN",
+		"requesterId": "",
+		"ts": 1513579888772,
+		"ver": ".01",
+		"authToken": "{{devAuth}}"
+	},
+	"BusinessServices": [
+		{
+			"tenantId": "pg",
+			"businessService": "ewst",
+			"business": "ewaste-services",
+			"businessServiceSla": null,
+			"states": [
+				{
+					"sla": null,
+					"state": null,
+					"applicationStatus": null,
+					"docUploadRequired": false,
+					"isStartState": true,
+					"isTerminateState": false,
+					"isStateUpdatable": true,
+					"actions": [
+						{
+							"action": "CREATE",
+							"nextState": "REQUESTCREATED",
+							"roles": [
+								"CITIZEN"
+							]
+						}
+					]
+				},
+				{
+					"sla": null,
+					"state": "REQUESTCREATED",
+					"applicationStatus": "REQUESTCREATED",
+					"docUploadRequired": false,
+					"isStartState": false,
+					"isTerminateState": false,
+					"isStateUpdatable": false,
+					"actions": [
+						{
+							"action": "VERIFYPRODUCT",
+							"nextState": "PRODUCTVERIFIED",
+							"roles": [
+								"EW_VENDOR"
+							]
+						},
+						{
+							"action": "REJECT",
+							"nextState": "REQUESTREJECTED",
+							"roles": [
+								"EW_VENDOR"
+							]
+						}
+					]
+				},
+				{
+					"sla": null,
+					"state": "PRODUCTVERIFIED",
+					"applicationStatus": "PRODUCTVERIFIED",
+					"docUploadRequired": false,
+					"isStartState": false,
+					"isTerminateState": true,
+					"isStateUpdatable": false,
+					"actions": [
+						{
+							"action": "SENDPICKUPALERT",
+							"nextState": "COMPLETIONPENDING",
+							"roles": [
+								"EW_VENDOR"
+							]
+						}
+					]
+				},
+				{
+					"sla": null,
+					"state": "COMPLETIONPENDING",
+					"applicationStatus": "COMPLETIONPENDING",
+					"docUploadRequired": false,
+					"isStartState": false,
+					"isTerminateState": true,
+					"isStateUpdatable": false,
+					"actions": [
+						{
+							"action": "COMPLETEREQUEST",
+							"nextState": "REQUESTCOMPLETED",
+							"roles": [
+								"EW_VENDOR"
+							]
+						},
+						{
+							"action": "REJECT",
+							"nextState": "REQUESTREJECTED",
+							"roles": [
+								"EW_VENDOR"
+							]
+						}
+					]
+				},
+				{
+					"sla": null,
+					"state": "REQUESTREJECTED",
+					"applicationStatus": "REQUESTREJECTED",
+					"docUploadRequired": false,
+					"isStartState": false,
+					"isTerminateState": true,
+					"isStateUpdatable": false,
+					"actions": null
+				},
+				{
+					"sla": null,
+					"state": "REQUESTCOMPLETED",
+					"applicationStatus": "REQUESTCOMPLETED",
+					"docUploadRequired": false,
+					"isStartState": false,
+					"isTerminateState": true,
+					"isStateUpdatable": false,
+					"actions": null
+				}
+			]
+		}
+	]
+}'

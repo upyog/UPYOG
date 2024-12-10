@@ -11,6 +11,7 @@ import CitizenFeedback from "./components/CitizenFeedback";
 
 import getStore from "./redux/store";
 import ErrorBoundary from "./components/ErrorBoundaries";
+import EmployeeDashboard from "./components/EmployeeDashboard";
 import { useState } from "react";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
@@ -112,6 +113,7 @@ const componentsToRegister = {
   SelectOtp,
   AcknowledgementCF,
   CitizenFeedback,
+  EmployeeDashboard
 };
 
 export const initCoreComponents = () => {

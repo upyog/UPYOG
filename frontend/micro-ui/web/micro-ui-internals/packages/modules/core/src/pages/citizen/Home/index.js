@@ -14,6 +14,7 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
+  CHBIcon
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -89,7 +90,7 @@ const Home = () => {
       // },
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
-        Icon: <WSICon />,
+        Icon: <CHBIcon />,
         onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
       },
     ],

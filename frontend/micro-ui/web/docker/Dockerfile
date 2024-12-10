@@ -18,6 +18,11 @@ RUN yarn add @upyog/digit-ui-module-core
 RUN yarn add @upyog/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-commonpt
 RUN yarn add @upyog/digit-ui-module-bills
+RUN yarn add @nudmcdgnpm/upyog-ui-module-ptr
+RUN yarn add @nudmcdgnpm/upyog-ui-module-cm
+RUN yarn add @nudmcdgnpm/upyog-ui-module-ads
+Run yarn add @nudmcdgnpm/upyog-ui-module-sv
+
 
 ARG WORK_DIR
 WORKDIR /app
