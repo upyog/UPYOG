@@ -1,5 +1,5 @@
 import { Loader } from "@upyog/digit-ui-react-components";
-import React ,{Fragment}from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -13,15 +13,32 @@ const PTRCreate = ({ parentRoute }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const history = useHistory();
+  const stateId = Digit.ULBService.getStateId();
+
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
+
   let { data: commonFields, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "CommonFieldsConfig" }],
-  {
-    select: (data) => {
-        const formattedData = data?.["PetService"]?.["CommonFieldsConfig"]
+    {
+      select: (data) => {
+        const formattedData = data?.["PetService"]?.["CommonFieldsConfigEmp"]
         return formattedData;
+      },
+    });
+
+  const applicationId = sessionStorage.getItem("petId") ?sessionStorage.getItem("petId") : null
+  sessionStorage.setItem("applicationType",pathname.includes("new-application") ? "NEWAPPLICATION":"RENEWAPPLICATION")
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const { isError, error, data: ApplicationData } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationId },
     },
-});
+  );
+
+  let dataComingfromAPI = ApplicationData?.PetRegistrationApplications[0];
+
+
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
@@ -43,11 +60,11 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    
+    // let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
 
 
-    
+
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
@@ -61,18 +78,20 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     }
-     else {
+    else {
       nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
   };
 
+ 
 
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
       queryClient.invalidateQueries("PTR_CREATE_PET");
+
     }
 
   const ptrcreate = async () => {
@@ -96,30 +115,33 @@ const PTRCreate = ({ parentRoute }) => {
     goNext(skipStep, index, isAddMultiple, key);
   }
 
-  const handleSkip = () => {};
-  const handleMultiple = () => {};
+  const handleSkip = () => { };
+  const handleMultiple = () => { };
 
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("PTR_CREATE_PET");
+    sessionStorage.removeItem(["applicationType","petId"]);
+    sessionStorage.removeItem("petToken");
   };
   if (isLoading) {
     return <Loader />;
   }
 
- 
-  commonFields = commonFields? commonFields:citizenConfig;
+
+  commonFields = commonFields ? commonFields : citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
-  
+
   config.indexRoute = "info";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
   const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
 
-  
-  
+
+
+
   return (
     <Switch>
       {config.map((routeObj, index) => {
@@ -127,12 +149,12 @@ const PTRCreate = ({ parentRoute }) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} renewApplication={pathname.includes("new-application") ? {} : dataComingfromAPI} />
           </Route>
         );
       })}
 
-      
+
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={ptrcreate} value={params} />
       </Route>
