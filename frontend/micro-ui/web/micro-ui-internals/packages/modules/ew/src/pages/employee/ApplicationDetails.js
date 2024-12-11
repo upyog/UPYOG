@@ -96,9 +96,11 @@ const EWApplicationDetails = () => {
 
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("EW_APPLICATION_DETAILS")}</Header>
         <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+         
+         <div style={{zIndex: "10",  position: "relative"}}>
         {downloadOptions && downloadOptions.length > 0 && (
           <MultiLink
-            className="multilinkWrapper employee-mulitlink-main-div"
+            className="multilinkWrapper"
             onHeadClick={() => setShowOptions(!showOptions)}
             displayOptions={showOptions}
             options={downloadOptions}
@@ -106,6 +108,7 @@ const EWApplicationDetails = () => {
             optionsClassName={"employee-options-btn-className"}
           />
         )}
+        </div>
         </div>
       </div>
 

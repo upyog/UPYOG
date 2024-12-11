@@ -9,7 +9,6 @@
     "packages/react-components",
     "packages/modules/core",
     "packages/modules/common",
-    "packages/modules/asset",
     "packages/modules/dss",
     "packages/modules/chb",
     "packages/modules/engagement"
@@ -55,7 +54,7 @@
     "dev:cm": "cd packages/modules/cm && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
-    "build:asset": "cd packages/modules/asset && yarn build",
+    "buildD:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "buildD:pt": "cd packages/modules/pt && yarn build",

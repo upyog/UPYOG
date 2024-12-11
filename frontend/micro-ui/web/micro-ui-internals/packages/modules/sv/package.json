@@ -1,7 +1,7 @@
 {
     "name": "@nudmcdgnpm/upyog-ui-module-sv",
     "author": "Shivank Shukla & Khalid Rashid",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "license": "MIT",
     "main": "dist/index.js",
     "module": "dist/index.modern.js",
