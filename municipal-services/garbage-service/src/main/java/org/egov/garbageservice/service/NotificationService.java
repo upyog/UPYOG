@@ -28,7 +28,7 @@ public class NotificationService {
 
 	private static final String SMS_BODY_GENERATE_BILL = "Message Sent Successfully";
 
-	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Goa-IDC OPEN: Congratulations! Your Application Has Been Approved";
+	private static final String EMAIL_SUBJECT_GENERATE_BILL = "UPYOG: Congratulations! Your Application Has Been Approved";
 
 	@Autowired
 	private CustomKafkaTemplate<String, Object> kafkaTemplate;
