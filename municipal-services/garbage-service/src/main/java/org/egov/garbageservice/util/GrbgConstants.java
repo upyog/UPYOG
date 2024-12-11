@@ -74,7 +74,18 @@ public class GrbgConstants {
 
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
     
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "GB certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
+    
 
+    @Value("${frontend.base.uri}")
+    public String frontEndBaseUri;
+    
     @Value("${workflow.context.path}")
     public String workflowHost;
     
@@ -101,6 +112,18 @@ public class GrbgConstants {
     
     @Value("${egov.demand.update.endpoint}")
     public String demandUpdateEndpoint;
+    
+    @Value("${egov.report.host}")
+    public String reportHost;
+    
+    @Value("${egov.report.endpoint.create}")
+    public String reportCreateEndPoint;
+    
+    @Value("${egov.alfresco.host}")
+    public String alfrescoHost;
+    
+    @Value("${egov.alfresco.endpoint.upload}")
+    public String alfrescoUploadEndPoint;
 
 	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
 		String appNo = null;

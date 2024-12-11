@@ -1,7 +1,10 @@
 package org.egov.garbageservice.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,10 +51,15 @@ import org.egov.garbageservice.repository.GrbgDocumentRepository;
 import org.egov.garbageservice.repository.GrbgOldDetailsRepository;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.ResponseInfoFactory;
+import org.egov.garbageservice.model.contract.PDFRequest;
+import org.egov.garbageservice.model.contract.DmsRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import java.util.Base64;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -60,6 +68,9 @@ public class GarbageAccountService {
 
 	@Autowired
 	private GarbageAccountRepository garbageAccountRepository;
+	
+	@Autowired
+	private AlfrescoService alfrescoService;
 
 	@Autowired
 	private GrbgApplicationRepository grbgApplicationRepository;
@@ -93,6 +104,9 @@ public class GarbageAccountService {
 
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired
+	private ReportService reportService;
 
 	@Autowired
 	private BillService billService;;
@@ -562,7 +576,6 @@ public class GarbageAccountService {
 		// load garbage account from backend if workflow = true
 		GarbageAccountRequest garbageAccountRequest = loadUpdateGarbageAccountRequestFromMap(updateGarbageRequest, existingGarbageApplicationAccountsMap);
 		
-		
 		// call workflow
 		ProcessInstanceResponse processInstanceResponse = callWfUpdate(garbageAccountRequest);
 		Map<String, String> applicationNumberToCurrentStatus = processInstanceResponse.getProcessInstances().stream()
@@ -603,7 +616,10 @@ public class GarbageAccountService {
 			
 		}
 		
+		// generate certificate and upload
 		
+		createAndUploadPDF(garbageAccountRequest,updateGarbageRequest.getRequestInfo());
+
 		// generate demand and fetch bill
 		generateDemandAndBill(garbageAccountRequest);
 		
@@ -618,10 +634,132 @@ public class GarbageAccountService {
 		
 		return garbageAccountResponse;
 	}
+	
+	private void createAndUploadPDF(GarbageAccountRequest updateGarbageRequest, RequestInfo requestInfo) 
+	{
+		List<GarbageAccount> GarbageAccounts = updateGarbageRequest.getGarbageAccounts();
+		
+		if (!CollectionUtils.isEmpty((GarbageAccounts))) {
+			for (GarbageAccount GarbageAccount : GarbageAccounts) {
+				if (StringUtils.equalsIgnoreCase(GarbageAccount.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_APPROVE)) {
+					saveGrbCertificate(GarbageAccount, requestInfo);
+				}
+			}
+		}	
+	}
+
+	
+	public void saveGrbCertificate(GarbageAccount GarbageAccount, RequestInfo requestInfo) {
+
+		// validate trade license
+		validateGrbCertificateGeneration(GarbageAccount);
+
+		// create pdf
+		Resource resource = createNoSavePDF(GarbageAccount,requestInfo);
+
+		 //upload pdf
+		DmsRequest dmsRequest = generateDmsRequestByGarbage(resource, GarbageAccount,
+				requestInfo);
+		try {
+			String documentReferenceId = alfrescoService.uploadAttachment(dmsRequest,requestInfo);
+		} catch (IOException e) {
+			throw new CustomException("UPLOAD_ATTACHMENT_FAILED",
+					"Upload Attachment failed." + e.getMessage());
+		}
+
+	}
+	
+	private DmsRequest generateDmsRequestByGarbage(Resource resource,GarbageAccount GarbageAccount,RequestInfo requestInfo) {
+		
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(GarbageAccount.getUuid()).description(GrbgConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION)
+				.id(GrbgConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(GrbgConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE)
+				.objectName(GrbgConstants.BUSINESS_SERVICE).comments(GrbgConstants.ALFRESCO_TL_CERTIFICATE_COMMENT)
+				.status(GrbgConstants.STATUS_APPROVED).file(resource).servicetype(GrbgConstants.BUSINESS_SERVICE)
+				.documentType(GrbgConstants.ALFRESCO_DOCUMENT_TYPE).documentId(GrbgConstants.ALFRESCO_COMMON_DOCUMENT_ID)
+				.build();
+
+		return dmsRequest;
+	}
+	
+	public Resource createNoSavePDF(GarbageAccount GarbageAccount, RequestInfo requestInfo) {
+		
+		PDFRequest pdfRequest = generatePdfRequestByGarbage(GarbageAccount, requestInfo);
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+
+		return resource;
+	}
+	
+	private PDFRequest generatePdfRequestByGarbage(GarbageAccount GarbageAccount, RequestInfo requestInfo) {
+
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map2 = generateDataForGarbagePdfCreate(GarbageAccount, requestInfo);
+
+		map.put("gb", map2);
+
+		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("GarbageRegistrationCertificate").tenantId("hp")
+				.data(map).build();
+
+		return pdfRequest;
+	}
+	
+	private Map<String, Object> generateDataForGarbagePdfCreate(GarbageAccount GarbageAccount,RequestInfo requestInfo) {
+
+		Map<String, Object> grbObject = new HashMap<>();
+		
+		// map variables and values
+		grbObject.put("applicationNumber", GarbageAccount.getGrbgApplicationNumber());// garbage Application No
+//		tlObject.put("tradeRegistrationNo", GarbageAccount.getApplicationNumber()); // Trade Registration No
+		grbObject.put("ownerName", GarbageAccount.getName());// owner Name
+		grbObject.put("address",GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
+						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail()
+						.get("district").asText()).concat(", ")
+						.concat(GarbageAccount.getAddresses().get(0).getWardName())
+						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
+																																																		// Applicant
+																											// Name
+		grbObject.put("mobileNumber",GarbageAccount.getMobileNumber());
+																													// Contact																											// No
+		grbObject.put("propertyId",GarbageAccount.getPropertyId());
+		
+		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
+		
+		grbObject.put("userName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		// generate QR code from attributes
+		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
+		uri.append("payments");
+		String  qr = GarbageAccount.getPropertyId().concat(":")
+				.concat(GarbageAccount.getGarbageId().toString()).concat(":")
+				.concat(GarbageAccount.getCreated_by());
+		uri.append("?id=").append(Base64.getEncoder().encodeToString(qr.getBytes()));
+		grbObject.put("qrCodeText", uri);
+		return grbObject;
+	}
+	
+	public void validateGrbCertificateGeneration(GarbageAccount GarbageAccount) {
+
+		if (StringUtils.isEmpty(GarbageAccount.getGrbgApplicationNumber())
+//				&& StringUtils.isEmpty(tradeLicense.getApplicationNumber())
+				&& StringUtils.isEmpty(GarbageAccount.getName())
+				&& StringUtils.isEmpty(GarbageAccount.getAddresses().get(0).getAddress1())
+				&& (GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district") == null
+						|| StringUtils.isEmpty(GarbageAccount.getAddresses().get(0).getAdditionalDetail()
+								.get("district").asText()))
+				&& StringUtils.isEmpty(GarbageAccount.getAddresses().get(0).getWardName())
+				&& StringUtils.isEmpty(GarbageAccount.getAddresses().get(0).getPincode())
+				&& (GarbageAccount.getAdditionalDetail().get("applicantName") == null
+						|| StringUtils.isEmpty(GarbageAccount.getAdditionalDetail().get("applicantName").asText()))
+				&& (GarbageAccount.getAdditionalDetail().get("applicantPhoneNumber") == null
+						|| StringUtils.isEmpty(GarbageAccount.getAdditionalDetail().get("applicantPhoneNumber").asText()))) {
+
+			throw new CustomException("NULL_APPLICATION_NUMBER",
+					"PDF can't be generated with null values for application number: "
+							+ GarbageAccount.getGrbgApplicationNumber());
+		}
+	}
 
 
-
-
+	
 	private void generateDemandAndBill(GarbageAccountRequest updateGarbageRequest) {
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 			
