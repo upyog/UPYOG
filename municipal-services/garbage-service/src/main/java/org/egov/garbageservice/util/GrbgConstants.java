@@ -67,6 +67,14 @@ public class GrbgConstants {
 	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
 
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
+	
+  	public static final String USER_ROLE_GB_VERIFIER = "GB_VERIFIER";
+
+	public static final String USER_ROLE_GB_APPROVER = "GB_APPROVER";
+
+	public static final String USER_ROLE_SUPERVISOR = "SUPERVISOR";
+
+	public static final String USER_ROLE_SECRETARY = "SECRETARY";
     
     // Alfresco keys
     public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
@@ -118,6 +126,12 @@ public class GrbgConstants {
     
     @Value("${egov.alfresco.endpoint.upload}")
     public String alfrescoUploadEndPoint;
+
+	@Value("${egov.mdms.host}")
+	private String mdmsServiceHostUrl;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsSearchEndpoint;
 
 	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
 		String appNo = null;
