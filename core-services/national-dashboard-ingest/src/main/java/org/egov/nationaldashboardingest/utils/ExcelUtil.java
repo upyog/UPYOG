@@ -74,9 +74,7 @@ public class ExcelUtil {
 
         Map<String,String> moduleIndexMapping = appProp.getModuleIndexMapping();
 
-        return moduleIndexMapping.keySet().stream()
-                .limit(6)
-                .collect(Collectors.toList());
+        return new ArrayList<>(moduleIndexMapping.keySet());
     }
 
     private void createHeader(XSSFSheet sheet, String state) {
@@ -92,7 +90,6 @@ public class ExcelUtil {
 
         sheet.addMergedRegion(CellRangeAddress.valueOf("A1:A2"));
         sheet.addMergedRegion(CellRangeAddress.valueOf("B1:I1"));
-
 
         createCell(row, 0, "ULB - " + state, style, sheet);
         createCell(row, 1, "Modules/Services", style, sheet);
