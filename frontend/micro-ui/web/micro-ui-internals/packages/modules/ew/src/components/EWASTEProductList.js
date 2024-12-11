@@ -41,6 +41,8 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
   const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
   setCalculatedAmount(totalPrice);
 
+  if(prlistName.length>0){
+
   return (
     <div className="card">
       <ApplicationTable
@@ -62,11 +64,12 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       <StatusTable style={{marginLeft: "20px"}}>
         <Row
           label={t("EWASTE_NET_PRICE")}
-          text={totalPrice}
+          text={<div style={{ marginLeft: "40%" }}>{totalPrice}</div>}
         />
       </StatusTable>
     </div>
-  );
+  )}
+  return null;
 };
 
 export default ProductList;

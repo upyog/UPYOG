@@ -63,35 +63,33 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       <Card>
         <CardHeader>{t("EWASTE_CHECK_YOUR_DETAILS")}</CardHeader>
         <div>
-          <br></br>
-
-          <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
-
-          <ApplicationTable
-            t={t}
-            data={productRows}
-            columns={productcolumns}
-            getCellProps={(cellInfo) => ({
-              style: {
-                minWidth: "150px",
-                padding: "10px",
-                fontSize: "16px",
-                paddingLeft: "20px",
-              },
-            })}
-            isPaginationRequired={false}
-            totalRecords={productRows.length}
+        <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
+        <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
+        <ApplicationTable
+          t={t}
+          data={productRows}
+          columns={productcolumns}
+          getCellProps={(cellInfo) => ({
+            style: {
+              minWidth: "150px",
+              padding: "10px",
+              fontSize: "16px",
+              paddingLeft: "20px",
+            },
+          })}
+          isPaginationRequired={false}
+          totalRecords={productRows.length}
+        />
+        <br />
+        <StatusTable style={{ marginLeft: "20px" }}>
+          <Row
+            label={t("EWASTE_NET_PRICE")}
+            text={<div style={{ marginLeft: "295px" }}>{ewdet?.calculatedAmount}</div>}
+            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
           />
-          <br></br>
+        </StatusTable>
+      </div>
 
-          <StatusTable style={{ marginLeft: "20px" }}>
-            <Row
-              label={t("EWASTE_NET_PRICE")}
-              text={ewdet?.calculatedAmount}
-              actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
-            />
-          </StatusTable>
-          <br></br>
 
           <CardSubHeader>{t("EWASTE_TITLE_OWNER_DETAILS")}</CardSubHeader>
           <br></br>

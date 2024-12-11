@@ -15,7 +15,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productName) || formData?.ewdet?.productName || ""
   );
   const [productQuantity, setProductQuantity] = useState(
-    (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productQuantity) || formData?.ewdet?.productQuantity || "1"
+    (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.productQuantity) || formData?.ewdet?.productQuantity || "0"
   );
   const [calculatedAmount, setCalculatedAmount] = useState(
     (formData.ewdet && formData.ewdet[index] && formData.ewdet[index]?.calculatedAmount) || formData?.ewdet?.calculatedAmount || ""
