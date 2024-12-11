@@ -179,6 +179,7 @@ const EWASTECitizenApplicationDetails = () => {
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_PRODUCT_DETAILS")}</CardSubHeader>
+          <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
           <ApplicationTable
             t={t}
             data={productRows}
@@ -194,6 +195,7 @@ const EWASTECitizenApplicationDetails = () => {
             isPaginationRequired={false}
             totalRecords={productRows.length}
           />
+          </div>
 
           <br></br>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_EW_ACTION_TRANSACTION_ID")}</CardSubHeader>

@@ -95,7 +95,7 @@ useEffect(() => {
       >
         {files.map((file, index) => (
           <LabelFieldPair key={index} style={{ marginBottom: "24px" }}>
-            <CardLabel className="card-label-smaller">{t("EWASTE_PR_DOCUMENT") + (index !== 0 ? index : "")}</CardLabel>
+            <CardLabel className="card-label-smaller">{t("EWASTE_PR_DOCUMENT") + (index !== 0 ? index + 1 : " 1")}</CardLabel>
             <div className="field" style={{ display: "flex", alignItems: "center" }}>
               <UploadFile
                 onUpload={(e) => handleFileSelect(e, index)}
