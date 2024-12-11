@@ -26,7 +26,8 @@ import NoData from "../components/NoData";
 import { ReactComponent as Arrow_Right } from "../images/Arrow_Right.svg";
 import { ReactComponent as Arrow_Right_White } from "../images/Arrow_Right_white.svg";
 import { checkCurrentScreen } from "../components/DSSCard";
-
+import CustomAreaChart from "../components/CustomAreaChart"
+import LineChartWithData from "../components/LineChart";
 const key = "DSS_FILTERS";
 const getInitialRange = () => {
   const data = Digit.SessionStorage.get(key);
@@ -102,7 +103,7 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
           <span style={{ fontSize: "14px", fontWeight: "400px", color: "white" }}>{t(`TIP_${data.name}`)}</span>
         </span>
       </div>
-      {data.name === "NATIONAL_DSS_OVERVIEW_CITIZEN_FEEDBACK_SCORE" ? 
+      {data.name === "NATIONAL_DSS_OVERVIEW_CITIZEN_FEEDBACK_SCORE" ?
       <Rating
           //id={response?.responseData?.data?.[0]?.headerValue}
           currentRating={Math.round(response?.responseData?.data?.[0]?.headerValue * 10) / 10}
@@ -206,7 +207,7 @@ console.log("bottomIndexbottomIndex",bottomIndex)
     if (data?.[0]) {
 
       let plotsss = transformedData.map((data, index) => {
-        console.log("ssssssssssss", { ...data })
+        //console.log("ssssssssssss", { ...data })
         return { ...data }
       })
       data[0].plots = plotsss.reverse()
@@ -338,7 +339,7 @@ const Home = ({ stateCode }) => {
   const handlePrint = () => Digit.Download.PDF(fullPageRef, t(dashboardConfig?.[0]?.name));
 
   const dashboardConfig = response?.responseData;
-
+  console.log("dashboardConfig",dashboardConfig)
   const shareOptions = navigator.share
     ? [
         {
@@ -406,7 +407,9 @@ const Home = ({ stateCode }) => {
   if (isLoading || localizationLoading) {
     return <Loader />;
   }
-
+  console.log("selectedState",selectedState)
+  console.log("totalCount",totalCount)
+  console.log("liveCount",liveCount)
   return (
     <FilterContext.Provider value={provided}>
       <div ref={fullPageRef}>
@@ -432,7 +435,7 @@ const Home = ({ stateCode }) => {
             </div>
           )}
         </div>
-
+ 
         {mobileView ? (
           <div className="options-m">
             <div>
@@ -524,6 +527,36 @@ const Home = ({ stateCode }) => {
                         {item?.charts?.[0]?.chartType == "map" && (
                           <HorBarChart data={row.vizArray?.[1]?.charts?.[0]} setselectState={selectedState}></HorBarChart>
                         )}
+                      </div>
+                    </div>
+                  );
+                }else if (item?.charts?.[0]?.chartType == "line") {
+                  return (
+                    <div
+                      className={`dss-card-parent  ${
+                        item.vizType == "chart"
+                          ? "w-100"
+                          : item.name.includes("NO_OF_TRANSACTION")
+                          ? "dss-h-100"
+                          : ""
+                      }`}
+                      style={item.vizType == "chart" ? { backgroundColor: "#fff", height: "600px" } : { backgroundColor: colors[index].light }}
+                      key={index}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                       
+                      </div>
+                      <div className="dss-card-body">
+                        {item?.charts?.[0]?.chartType == "line" &&
+                          <LineChartWithData data={item?.charts?.[0]} title={"NURT_NO_OF_TRANSACTION_CUMULATIVE"}  moduleCode={moduleCode} />
+                          }
+                       
                       </div>
                     </div>
                   );
