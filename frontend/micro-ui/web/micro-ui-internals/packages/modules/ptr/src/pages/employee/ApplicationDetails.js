@@ -146,9 +146,11 @@ const ApplicationDetails = () => {
     <div>
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}> 
+        <div style={{zIndex: "10",  position: "relative"}}>
         {dowloadOptions && dowloadOptions.length > 0 && (
           <MultiLink
-            className="multilinkWrapper employee-mulitlink-main-div"
+            className="multilinkWrapper"
             onHeadClick={() => setShowOptions(!showOptions)}
             displayOptions={showOptions}
             options={dowloadOptions}
@@ -157,6 +159,8 @@ const ApplicationDetails = () => {
           // ref={menuRef}
           />
         )}
+      </div>
+      </div>
       </div>
 
       <ApplicationDetailsTemplate
