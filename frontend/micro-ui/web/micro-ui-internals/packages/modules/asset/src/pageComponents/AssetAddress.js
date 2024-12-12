@@ -15,7 +15,6 @@ const AssetAddress = ({ t, config, onSelect, userType, formData, formState }) =>
 
   let isEditAddress = formData?.isEditAddress || false;
   if (presentInModifyApplication) isEditAddress = true;
-  console.log("usertype data-->",user);
   const { pincode, city } = formData?.address || "";
   const cities = user.type === "EMPLOYEE" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
 

@@ -106,15 +106,16 @@ const convertStringToFloat = (amountString) => {
 export const Assetdata = (data) => {
   // Define the keys to exclude from additionalDetails
   const keysToRemove = [
+    "acquisitionCost",
+    "assetAge",
+    "bookValue",
     "invoiceDate",
     "invoiceNumber",
     "purchaseDate",
     "purchaseOrderNumber",
-    "assetAge",
-    "location",
     "purchaseCost",
-    "acquisitionCost",
-    "bookValue"
+    "location",
+    "warranty" 
   ];
 
   // Ensure data?.assetDetails exists before attempting to filter

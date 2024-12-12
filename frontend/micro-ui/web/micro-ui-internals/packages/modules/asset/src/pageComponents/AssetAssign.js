@@ -162,7 +162,7 @@ const OwnerForm = (_props) => {
                     <StatusTable>
                         <Row
                             label={t("AST_DEPARTMENT_LABEL")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.department))}`}
+                            text={`${t(checkForNA('COMMON_MASTERS_DEPARTMENT_'+applicationDetails?.applicationData?.applicationData?.department))}`}
                         />
                     </StatusTable>
                     <LabelFieldPair>
