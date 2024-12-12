@@ -1,8 +1,8 @@
 {
-  "key":"PetCertificate",
+  "key":"GarbageRegistrationCertificate",
   "DataConfigs": {
     "version": "1.0.0",
-    "baseKeyPath":"$.ptr",
+    "baseKeyPath":"$.gb",
     "mappings":[
       {
         "direct":[
@@ -20,15 +20,15 @@
             "type":"QRCODE"
           },
           {
-           "variable":"petName",
+           "variable":"ownerName",
             "value":{
-              "path":"$.petName"
+              "path":"$.ownerName"
             }
           },
           {
-           "variable":"breedType",
+           "variable":"propertyId",
             "value":{
-              "path":"$.breedType"
+              "path":"$.propertyId"
             }
           },
           {
@@ -44,27 +44,9 @@
             }
           },
           {
-           "variable":"lastVaccineDate",
-            "value":{
-              "path":"$.lastVaccineDate"
-            }
-          },
-          {
-           "variable":"applicantName",
-            "value":{
-              "path":"$.applicantName"
-            }
-          },
-          {
            "variable":"mobileNumber",
             "value":{
               "path":"$.mobileNumber"
-            }
-          },
-          {
-           "variable":"petPhotoURL",
-            "value":{
-              "path":"$.petPhotoURL"
             }
           },
           {
