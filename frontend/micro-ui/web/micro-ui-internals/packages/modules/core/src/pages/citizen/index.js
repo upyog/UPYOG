@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute,AdvertisementModuleCard } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -21,7 +21,6 @@ import Search from "./SearchApp";
 import QRCode from "./QRCode";
 import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
-import {AdvertisementModuleCard} from "../../../../ads/src/components/AdvertisementModuleCard";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
