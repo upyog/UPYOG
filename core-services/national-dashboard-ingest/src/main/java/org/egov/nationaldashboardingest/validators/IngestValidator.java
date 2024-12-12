@@ -641,7 +641,7 @@ public class IngestValidator {
     public void verifyIfMasterDataAlreadyIngested(MasterData masterData) {
         StringBuilder uri = new StringBuilder(applicationProperties.getElasticSearchHost() + "/");
         uri.append(applicationProperties.getMasterDataIndex());
-        uri.append("/nss").append("/_search");
+        uri.append("/_search");
         uri.append("?q=financialYear").append(":").append(masterData.getFinancialYear()).append(" AND ").append("module").append(":").append(masterData.getModule()).append(" AND ").append("region").append(":").append(masterData.getRegion()).append(" AND ").append("state").append(":").append(masterData.getState());
         log.info(uri.toString());
         Integer numOfRecordsFound = repository.findIfRecordAlreadyExists(uri);
