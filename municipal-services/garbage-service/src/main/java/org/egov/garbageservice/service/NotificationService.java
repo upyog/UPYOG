@@ -12,9 +12,9 @@ import org.egov.garbageservice.model.EmailRequest;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.SMSRequest;
 import org.egov.garbageservice.util.RequestInfoWrapper;
-import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -31,7 +31,7 @@ public class NotificationService {
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "UPYOG: Congratulations! Your Application Has Been Approved";
 
 	@Autowired
-	private CustomKafkaTemplate<String, Object> kafkaTemplate;
+	private KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Value("${kafka.topics.email.service.topic.name}")
 	private String emailTopic;
