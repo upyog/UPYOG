@@ -25,11 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationService {
 
-	private static final String EMAIL_BODY_GENERATE_BILL = "Email Sent Successfully";
+	private static final String USER_NAME_PLACEHOLDER = "{user_name}";
+	private static final String GARBAGE_BILL_NO_PLACEHOLDER = "{bill_no}";
+
+	private static final String EMAIL_BODY_GENERATE_BILL = "Dear " + USER_NAME_PLACEHOLDER + ",\r\n" + "\r\n"
+			+ "Email Sent Successfully";
 
 	private static final String SMS_BODY_GENERATE_BILL = "Message Sent Successfully";
 
-	private static final String EMAIL_SUBJECT_GENERATE_BILL = "UPYOG: Congratulations! Your Bill Has Been Generated";
+	private static final String EMAIL_SUBJECT_GENERATE_BILL = "UPYOG: Congratulations! Your Bill Has Been Generated : "
+			+ GARBAGE_BILL_NO_PLACEHOLDER;
 
 	@Autowired
 	private KafkaTemplate<String, Object> kafkaTemplate;
@@ -71,6 +76,11 @@ public class NotificationService {
 		String emailBody = EMAIL_BODY_GENERATE_BILL;
 		String smsBody = SMS_BODY_GENERATE_BILL;
 		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
+
+		emailBody = populateNotificationPlaceholders(emailBody, garbageAccount, bill);
+		smsBody = populateNotificationPlaceholders(smsBody, garbageAccount, bill);
+		emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill);
+
 		if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
 			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()),
 					requestInfoWrapper.getRequestInfo(), null, emailSubject);
@@ -79,6 +89,12 @@ public class NotificationService {
 			sendSms(smsBody, garbageAccount.getMobileNumber());
 		}
 
+	}
+
+	private String populateNotificationPlaceholders(String body, GarbageAccount garbageAccount, Bill bill) {
+		body = body.replace(USER_NAME_PLACEHOLDER, garbageAccount.getName());
+		body = body.replace(GARBAGE_BILL_NO_PLACEHOLDER, bill.getBillNumber());
+		return body;
 	}
 
 }
