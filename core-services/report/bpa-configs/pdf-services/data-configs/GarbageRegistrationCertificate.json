@@ -54,12 +54,6 @@
             "value":{
               "path":"$.userName"
             }
-          },
-          {
-           "variable":"approverName",
-            "value":{
-              "path":"$.approverName"
-            }
           }
         ]
       }
