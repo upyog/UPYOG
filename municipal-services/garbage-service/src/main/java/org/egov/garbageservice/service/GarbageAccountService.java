@@ -579,12 +579,10 @@ public class GarbageAccountService {
 		
 		// load garbage account from backend if workflow = true
 		GarbageAccountRequest garbageAccountRequest = loadUpdateGarbageAccountRequestFromMap(updateGarbageRequest, existingGarbageApplicationAccountsMap);
-		
 		// call workflow
 		ProcessInstanceResponse processInstanceResponse = callWfUpdate(garbageAccountRequest);
 		Map<String, String> applicationNumberToCurrentStatus = processInstanceResponse.getProcessInstances().stream()
 								.collect(Collectors.toMap(ProcessInstance::getBusinessId, instance -> instance.getState().getApplicationStatus()));
-		
 		
 		// update garbage account
 		if (!CollectionUtils.isEmpty(garbageAccountRequest.getGarbageAccounts())) {
@@ -717,7 +715,7 @@ public class GarbageAccountService {
 		grbObject.put("ownerName", GarbageAccount.getName());// owner Name
 		grbObject.put("address",GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
 						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail()
-						.get("district").asText()).concat(", ")
+						.get("district").asText()).concat(", ").concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat("(").concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(")")
 						.concat(GarbageAccount.getAddresses().get(0).getWardName())
 						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
 																																																		// Applicant
@@ -726,7 +724,9 @@ public class GarbageAccountService {
 																													// Contact																											// No
 		grbObject.put("propertyId",GarbageAccount.getPropertyId());
 		
-		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
+		grbObject.put("createdTime","sjgjkhd");
+
+//		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 		
 		grbObject.put("userName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 		// generate QR code from attributes
