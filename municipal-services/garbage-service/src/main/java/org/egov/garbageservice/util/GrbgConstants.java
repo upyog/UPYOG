@@ -66,42 +66,66 @@ public class GrbgConstants {
 
 	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
 
-	public static final String USER_ROLE_GB_VERIFIER = "GB_VERIFIER";
+    public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
+	
+  	public static final String USER_ROLE_GB_VERIFIER = "GB_VERIFIER";
 
 	public static final String USER_ROLE_GB_APPROVER = "GB_APPROVER";
 
 	public static final String USER_ROLE_SUPERVISOR = "SUPERVISOR";
 
 	public static final String USER_ROLE_SECRETARY = "SECRETARY";
+    
+    // Alfresco keys
+    public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+    public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "GB certificate";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+    public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+    public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+    public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
+    
 
-	public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
+    @Value("${frontend.base.uri}")
+    public String frontEndBaseUri;
+    
+    @Value("${workflow.context.path}")
+    public String workflowHost;
+    
+    @Value("${workflow.transition.path}")
+    public String workflowEndpointTransition;
+    
+    @Value("${workflow.business.search}")
+    public String workflowBusinessServiceSearchPath;
 
-	@Value("${workflow.context.path}")
-	public String workflowHost;
-
-	@Value("${workflow.transition.path}")
-	public String workflowEndpointTransition;
-
-	@Value("${workflow.business.search}")
-	public String workflowBusinessServiceSearchPath;
-
-	@Value("${egov.bill.context.host}")
-	public String billHost;
-
-	@Value("${egov.bill.endpoint.fetch}")
-	public String fetchBillEndpoint;
-
-	@Value("${egov.bill.endpoint.search}")
-	public String searchBillEndpoint;
-
-	@Value("${egov.demand.create.endpoint}")
-	public String demandCreateEndpoint;
-
-	@Value("${egov.demand.search.endpoint}")
-	public String demandSearchEndpoint;
-
-	@Value("${egov.demand.update.endpoint}")
-	public String demandUpdateEndpoint;
+    @Value("${egov.bill.context.host}")
+    public String billHost;
+    
+    @Value("${egov.bill.endpoint.fetch}")
+    public String fetchBillEndpoint;
+    
+    @Value("${egov.bill.endpoint.search}")
+    public String searchBillEndpoint;
+    
+    @Value("${egov.demand.create.endpoint}")
+    public String demandCreateEndpoint;
+    
+    @Value("${egov.demand.search.endpoint}")
+    public String demandSearchEndpoint;
+    
+    @Value("${egov.demand.update.endpoint}")
+    public String demandUpdateEndpoint;
+    
+    @Value("${egov.report.host}")
+    public String reportHost;
+    
+    @Value("${egov.report.endpoint.create}")
+    public String reportCreateEndPoint;
+    
+    @Value("${egov.alfresco.host}")
+    public String alfrescoHost;
+    
+    @Value("${egov.alfresco.endpoint.upload}")
+    public String alfrescoUploadEndPoint;
 
 	@Value("${egov.mdms.host}")
 	private String mdmsServiceHostUrl;
