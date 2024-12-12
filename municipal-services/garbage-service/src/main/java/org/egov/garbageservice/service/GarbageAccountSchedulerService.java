@@ -83,7 +83,7 @@ public class GarbageAccountSchedulerService {
 				BillResponse billResponse = billService.generateBill(requestInfoWrapper.getRequestInfo(), billCriteria);
 				
 				//triggerNotifications 
-//				notificationService.triggerNotificationsGenerateBill(garbageAccount,billResponse.getBill().get(0),requestInfoWrapper);
+				notificationService.triggerNotificationsGenerateBill(garbageAccount,billResponse.getBill().get(0),requestInfoWrapper);
 
 			});
 		}
