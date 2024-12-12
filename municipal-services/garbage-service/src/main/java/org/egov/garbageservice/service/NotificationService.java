@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.garbageservice.contract.bill.Bill;
 import org.egov.garbageservice.enums.SMSCategory;
@@ -70,9 +71,13 @@ public class NotificationService {
 		String emailBody = EMAIL_BODY_GENERATE_BILL;
 		String smsBody = SMS_BODY_GENERATE_BILL;
 		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
-		sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()),
-				requestInfoWrapper.getRequestInfo(), null, emailSubject);
-		sendSms(smsBody, garbageAccount.getMobileNumber());
+		if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
+			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()),
+					requestInfoWrapper.getRequestInfo(), null, emailSubject);
+		}
+		if (!StringUtils.isEmpty(garbageAccount.getMobileNumber())) {
+			sendSms(smsBody, garbageAccount.getMobileNumber());
+		}
 
 	}
 
