@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ApplicationTable from "./inbox/ApplicationTable";
 import { DeleteIcon, StatusTable, Row } from "@upyog/digit-ui-react-components";
 
-const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount }) => {
+const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount,calculatedAmount }) => {
   const handleDelete = (e) => {
     const updatedList1 = [...prlistName];
     if (updatedList1.length != 0) {
@@ -17,9 +17,32 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
     }
   };
 
+  const handleIncrement = (index) => {
+    const updatedQuantities = [...prlistQuantity];
+    const currentQuantity = parseInt(updatedQuantities[index].code, 10);
+    updatedQuantities[index].code = currentQuantity + 1;
+    setPrlistQuantity(updatedQuantities);
+  };
+
+  const handleDecrement = (index) => {
+    const updatedQuantities = [...prlistQuantity];
+    if (updatedQuantities[index].code > 1) {
+      updatedQuantities[index].code -= 1;
+      setPrlistQuantity(updatedQuantities);
+    }
+  };
+
   const productcolumns = [
     { Header: t("PRODUCT_NAME"), accessor: "name" },
-    { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
+    { Header: t("PRODUCT_QUANTITY"), accessor: "quantity", 
+      Cell: ({ row }) => (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <button style={{marginRight: "5px", borderRadius: "50%", paddingLeft: "11px", paddingRight: "11px", background: "#a82227", cursor: "pointer",fontSize: "18px",  color: "white" }} onClick={() => handleDecrement(row.index)} >-</button>
+          {row.original.quantity}
+          <button style={{marginLeft: "5px",  borderRadius: "50%", paddingLeft: "9px", paddingRight: "9px", background: "#a82227",fontSize: "18px", cursor: "pointer", color: "white"}} onClick={() => handleIncrement(row.index)}>+</button>
+        </div>
+      ) 
+     },
     { Header: t("UNIT_PRICE"), accessor: "unit_price" },
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
     {
@@ -38,8 +61,11 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
     }
   )) || [];
 
-  const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
-  setCalculatedAmount(totalPrice);
+  // Calculate the total price
+  useEffect(() => {
+    const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
+    setCalculatedAmount(totalPrice);
+  }, [productRows, setCalculatedAmount]);
 
   if(prlistName.length>0){
 
@@ -49,7 +75,7 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
         t={t}
         data={productRows}
         columns={productcolumns}
-        getCellProps={(cellInfo) => ({
+        getCellProps={() => ({
           style: {
             minWidth: "150px",
             padding: "20px",
@@ -64,7 +90,7 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       <StatusTable style={{marginLeft: "20px"}}>
         <Row
           label={t("EWASTE_NET_PRICE")}
-          text={<div style={{ marginLeft: "40%" }}>{totalPrice}</div>}
+          text={<div style={{ marginLeft: "37%" }}>{"₹ " + calculatedAmount}</div>}
         />
       </StatusTable>
     </div>

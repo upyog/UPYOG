@@ -235,6 +235,10 @@ const Urls = {
 
   },
 
+  cm: {
+    search: "/common-module/validity/_search"
+  },
+
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",

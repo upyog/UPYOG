@@ -23,7 +23,7 @@ RUN yarn add @nudmcdgnpm/upyog-ui-module-cm
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ads
 RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
 RUN yarn add @nudmcdgnpm/upyog-ui-module-asset
-
+RUN yarn add @nudmcdgnpm/upyog-ui-module-ew
 
 ARG WORK_DIR
 WORKDIR /app

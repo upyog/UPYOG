@@ -46,7 +46,7 @@ const getEwAcknowledgementData = async (application, tenantInfo, t, response) =>
       {
         title: t("ES_EW_ACTION_FINALAMOUNT"),
         values: [
-          { title: t("EWASTE_NET_PRICE"), value: application?.calculatedAmount },
+          { title: t("EWASTE_NET_PRICE"), value: "₹ " + application?.calculatedAmount },
          
         ],
       }

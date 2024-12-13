@@ -11,6 +11,7 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/chb",
     "micro-ui-internals/packages/modules/engagement"
+
   ],
   "engines": {
     "node": ">=14"
@@ -38,7 +39,7 @@
     "@upyog/digit-ui-react-components": "1.8.0",
     "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.8",
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.4",
-    "@nudmcdgnpm/upyog-ui-module-ew":"1.2.2",
+    "@nudmcdgnpm/upyog-ui-module-ew":"1.2.3",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.3",
     "@nudmcdgnpm/upyog-ui-module-cm":"1.2.2",

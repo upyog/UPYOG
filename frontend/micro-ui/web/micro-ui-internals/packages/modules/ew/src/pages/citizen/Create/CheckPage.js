@@ -84,7 +84,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <StatusTable style={{ marginLeft: "20px" }}>
           <Row
             label={t("EWASTE_NET_PRICE")}
-            text={<div style={{ marginLeft: "295px" }}>{ewdet?.calculatedAmount}</div>}
+            text={<div style={{ marginLeft: "295px" }}>{"₹ " + ewdet?.calculatedAmount}</div>}
             actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
           />
         </StatusTable>

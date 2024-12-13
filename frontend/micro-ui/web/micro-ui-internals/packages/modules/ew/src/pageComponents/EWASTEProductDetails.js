@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect, Toast } from "@upyog/digit-ui-react-components";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import { FormStep, TextInput, CardLabel, Dropdown, Toast } from "@upyog/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 import { Controller, useForm } from "react-hook-form";
 import { SubmitBar } from "@upyog/digit-ui-react-components";
 import ProductList from "../components/EWASTEProductList";
 
-const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
+const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
@@ -62,11 +62,18 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
       return;
     }
 
+    // Checks if the selected product already exists
     const productExists = prlistName.some((item) => item.code === productName.code);
 
     if (!productExists) {
-      setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
-      setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
+      if (productName) {
+        setPrlistName([...prlistName, { code: productName.code, i18nKey: productName.i18nKey, price: productName.price }]);
+        setPrlistQuantity([...prlistQuantity, { code: productQuantity }]);
+      } else {
+        setShowToast({
+          label: t("EWASTE_PRODUCT_NAME_NOT_SELECTED_LABEL")
+        })
+      }
     } else {
       setShowToast({
         label: t("EWASTE_DUPLICATE_PRODUCT_ERROR_MESSAGE"),
@@ -134,9 +141,8 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
-              pattern: "^[1-9][0-9]*$",
+              pattern: "^[0-9]*$",
               type: "text",
-              
             })}
           />
 
@@ -147,9 +153,8 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
             isMandatory={false}
             optionKey="i18nKey"
             name="productPrice"
-            value={productName.price}
+            value={productName && productName.price}
             disable={true}
-            //  onChange={setproductPrice}
             style={{ width: "86%" }}
             ValidationRequired={false}
           />
@@ -165,6 +170,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData, ownerIndex 
           prlistQuantity={prlistQuantity}
           setPrlistQuantity={setPrlistQuantity}
           setCalculatedAmount={setCalculatedAmount}
+          calculatedAmount={calculatedAmount}
         />
       </div>
 
