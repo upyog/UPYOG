@@ -63,26 +63,26 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		//String query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
 		String query = "";
 		String queryTwo = "";
+		List<SewerageDetails> sewerageDetails = null;
+		List<SewerageDetails> sewerageDetailsTwo =  null;
 		if((tenantId.equals("pb.amritsar"))) {
 			 query = queryBuilder.getConnectionNumberListForNonCommercial(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatement);
-		     queryTwo = queryBuilder.getConnectionNumberListForCommercialOnlySewerage(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatementTwo);  
-			 log.info("Demand will not generate for water metered connections in Amritsar: "+query);
+		         queryTwo = queryBuilder.getConnectionNumberListForCommercialOnlySewerage(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatementTwo);  
+			 // log.info("Demand will not generate for water metered connections in Amritsar: "+query);
+			 sewerageDetails= jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
+			 sewerageDetailsTwo=jdbcTemplate.query(queryTwo, preparedStatement.toArray(), demandSchedulerRowMapper);
+			 sewerageDetails.addAll(sewerageDetailsTwo);
 		}else {
 			query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
+			sewerageDetails= jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
 		}
 		
-		log.info(query.toString());	
-		log.info(preparedStatement.toString());
-		log.info(queryTwo.toString());
-		log.info(preparedStatementTwo.toString());
-
-		List<SewerageDetails> sewerageDetails = jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
-		List<SewerageDetails> sewerageDetailsTwo = jdbcTemplate.query(queryTwo, preparedStatement.toArray(), demandSchedulerRowMapper);
-
-		sewerageDetails.addAll(sewerageDetailsTwo);
+		// log.info(query.toString());	
+		// log.info(preparedStatement.toString());
+		// log.info(queryTwo.toString());
+		// log.info(preparedStatementTwo.toString());
 		List<SewerageDetails> deDuplSewerageList = sewerageDetails.stream().distinct().collect(Collectors.toList());
-
-		
+	 
 		return deDuplSewerageList;
 	}
 	@Override
