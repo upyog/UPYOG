@@ -818,13 +818,17 @@ public class GarbageAccountService {
 				accountTemp.setWorkflowComment(comment);
 				accountTemp.setStatus(status);
 				accountTemp.getGrbgApplication().setStatus(status);
-//				accountTemp.setChildGarbageAccounts(null);			// at a time only 1 app no provided for WF
-				if(!CollectionUtils.isEmpty(accountTemp.getChildGarbageAccounts())) {
-					accountTemp.getChildGarbageAccounts().stream().forEach(child -> {
-						child.setWorkflowAction(action);
-						child.setStatus(status);
-					});
+				
+				if (!(StringUtils.equals(account.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_APPROVE) || StringUtils.equals(account.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_VERIFY))) {
+					if(!CollectionUtils.isEmpty(accountTemp.getChildGarbageAccounts())) {
+						accountTemp.getChildGarbageAccounts().stream().forEach(child -> {
+							child.setWorkflowAction(action);
+							child.setStatus(status);
+						});
+					}
 				}
+
+//				accountTemp.setChildGarbageAccounts(null);			// at a time only 1 app no provided for WF
 				
 				garbageAccountRequestTemp.getGarbageAccounts().add(accountTemp);
 			}else if(StringUtils.equals(account.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_INITIATE)){
@@ -892,19 +896,23 @@ public class GarbageAccountService {
 						.comment(newGarbageAccount.getWorkflowComment()).build();
 				
 				processInstances.add(parentProcessInstance);
-				
-				if(!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
-					newGarbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
-						ProcessInstance subProcessInstance = ProcessInstance.builder().tenantId(subAccount.getTenantId())
-								.businessService(applicationPropertiesAndConstant.WORKFLOW_BUSINESS_SERVICE)
-								.moduleName(applicationPropertiesAndConstant.WORKFLOW_MODULE_NAME)
-								.businessId(subAccount.getGrbgApplication().getApplicationNo())
-								.action(null != subAccount.getWorkflowAction() ? subAccount.getWorkflowAction() : getStatusOrAction(subAccount.getStatus(), false))
-								.comment(subAccount.getWorkflowComment()).build();
-						
-						processInstances.add(subProcessInstance);
-					});
+				if (!(StringUtils.equals(newGarbageAccount.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_APPROVE) || StringUtils.equals(newGarbageAccount.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_VERIFY))) {
+					if(!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
+						newGarbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+							ProcessInstance subProcessInstance = ProcessInstance.builder().tenantId(subAccount.getTenantId())
+									.businessService(applicationPropertiesAndConstant.WORKFLOW_BUSINESS_SERVICE)
+									.moduleName(applicationPropertiesAndConstant.WORKFLOW_MODULE_NAME)
+									.businessId(subAccount.getGrbgApplication().getApplicationNo())
+									.action(null != subAccount.getWorkflowAction() ? subAccount.getWorkflowAction() : getStatusOrAction(subAccount.getStatus(), false))
+									.comment(subAccount.getWorkflowComment()).build();
+							
+							processInstances.add(subProcessInstance);
+						});
+					}
 				}
+
+					
+				
 				
 				
 //				// build process instance request
@@ -1407,7 +1415,7 @@ public class GarbageAccountService {
 		
 		garbageAccountActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
 		
-			String status = mapAccounts.get(applicationNumber).getGrbgApplication().getStatus();
+			String status = mapAccounts.get(applicationNumber).getStatus();
 			List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
 					.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), status)
 										&& !StringUtils.equalsAnyIgnoreCase(state.getApplicationStatus(), applicationPropertiesAndConstant.STATUS_APPROVED)
