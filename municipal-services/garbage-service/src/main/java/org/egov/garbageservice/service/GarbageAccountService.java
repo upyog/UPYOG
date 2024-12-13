@@ -1241,8 +1241,14 @@ public class GarbageAccountService {
 		
 		if(StringUtils.equalsIgnoreCase(role, GrbgConstants.USER_ROLE_GB_VERIFIER)) {
 			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORVERIFICATION);
+			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORMODIFICATION);
+			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORMODIFICATION);
+			statusWithRoles.add(GrbgConstants.STATUS_REJECTED);
 		}else if(StringUtils.equalsIgnoreCase(role, GrbgConstants.USER_ROLE_GB_APPROVER)) {
 			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORAPPROVAL);
+			statusWithRoles.add(GrbgConstants.STATUS_APPROVED);
+			statusWithRoles.add(GrbgConstants.STATUS_PENDINGFORMODIFICATION);
+			statusWithRoles.add(GrbgConstants.STATUS_REJECTED);
 		}
 		
 	});
