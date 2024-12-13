@@ -134,16 +134,19 @@ public class NotificationService {
 
 	private String prepareAddress(GrbgAddress grbgAddress) {
 		StringBuilder fullAddress = new StringBuilder();
-		// address1+ward_name+ulb_name(ulbType)+District +pincode
-		fullAddress.append(!StringUtils.isEmpty(grbgAddress.getAddress1()) ? grbgAddress.getAddress1() : "")
-				.append(", ").append(!StringUtils.isEmpty(grbgAddress.getWardName()) ? grbgAddress.getWardName() : "")
-				.append(", ").append(!StringUtils.isEmpty(grbgAddress.getUlbName()) ? grbgAddress.getUlbName() : "")
-				.append("(").append(!StringUtils.isEmpty(grbgAddress.getUlbType()) ? grbgAddress.getUlbType() : "")
-				.append("), ")
-				.append(null != grbgAddress.getAdditionalDetail() ? GrbgConstants
-						.removeFirstAndLastChar(String.valueOf(grbgAddress.getAdditionalDetail().get("district"))) : "")
-				.append(", ").append(!StringUtils.isEmpty(grbgAddress.getPincode()) ? grbgAddress.getPincode() : "")
-				.append(".");
+		if (null != grbgAddress) {
+			// address1+ward_name+ulb_name(ulbType)+District +pincode
+			fullAddress.append(!StringUtils.isEmpty(grbgAddress.getAddress1()) ? grbgAddress.getAddress1() : "")
+					.append(", ")
+					.append(!StringUtils.isEmpty(grbgAddress.getWardName()) ? grbgAddress.getWardName() : "")
+					.append(", ").append(!StringUtils.isEmpty(grbgAddress.getUlbName()) ? grbgAddress.getUlbName() : "")
+					.append("(").append(!StringUtils.isEmpty(grbgAddress.getUlbType()) ? grbgAddress.getUlbType() : "")
+					.append("), ")
+					.append(null != grbgAddress.getAdditionalDetail() ? GrbgConstants.removeFirstAndLastChar(
+							String.valueOf(grbgAddress.getAdditionalDetail().get("district"))) : "")
+					.append(", ").append(!StringUtils.isEmpty(grbgAddress.getPincode()) ? grbgAddress.getPincode() : "")
+					.append(".");
+		}
 		return String.valueOf(fullAddress);
 	}
 
