@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/EWASTETimeline";
 
-const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
+const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
   const onSkip = () => onSelect();
+  let validation;
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
   const formValue = watch();
@@ -89,6 +90,13 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData, formSta
           value={doorNo}
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
+          ValidationRequired={true}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[0-9]*$",
+            type: "text",
+            title: t("EW_HOUSE_NO_ERROR_MESSAGE"),
+          })}
 
         />
         <CardLabel>{`${t("EWASTE_HOUSE_NAME")}`}</CardLabel>

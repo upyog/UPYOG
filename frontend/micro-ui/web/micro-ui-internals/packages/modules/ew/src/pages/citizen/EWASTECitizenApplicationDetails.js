@@ -184,7 +184,7 @@ const EWASTECitizenApplicationDetails = () => {
             t={t}
             data={productRows}
             columns={productcolumns}
-            getCellProps={(cellInfo) => ({
+            getCellProps={() => ({
               style: {
                 minWidth: "150px",
                 padding: "10px",
@@ -200,8 +200,8 @@ const EWASTECitizenApplicationDetails = () => {
           <br></br>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_EW_ACTION_TRANSACTION_ID")}</CardSubHeader>
           <StatusTable>
-            {ew_details.calculatedAmount && <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={ew_details?.calculatedAmount} />}
-            {ew_details.finalAmount && <Row className="border-none" label={t("ES_EW_ACTION_FINALAMOUNT")} text={ew_details?.finalAmount} />}
+            {ew_details.calculatedAmount && <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={"₹ " + ew_details?.calculatedAmount} />}
+            {ew_details.finalAmount && <Row className="border-none" label={t("ES_EW_ACTION_FINALAMOUNT")} text={"₹ " + ew_details?.finalAmount} />}
             {ew_details.transactionId && <Row className="border-none" label={t("ES_EW_ACTION_TRANSACTION_ID")} text={ew_details?.transactionId} />}
             {ew_details.pickUpDate && <Row className="border-none" label={t("EW_PICKUP_DATE")} text={ew_details?.pickUpDate} />}
           </StatusTable>
