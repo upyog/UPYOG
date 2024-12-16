@@ -240,8 +240,10 @@ public class Util {
 	 * state level search is allowed for employee if they contian state level roles 
 	 */
 	public void validateTenantIdForUserType(String tenantId, RequestInfo requestInfo) {
-
+		log.info("tenantId_inside_validateTenantIdForUserType: " +tenantId);
+		log.info("requestInfo_inside_validateTenantIdForUserType: " +requestInfo);
 		String userType = requestInfo.getUserInfo().getType();
+		log.info("userType: " +userType);
 
 		if (Constants.EMPLOYEE_TYPE_CODE.equalsIgnoreCase(userType) && !tenantId.contains(".")) {
 

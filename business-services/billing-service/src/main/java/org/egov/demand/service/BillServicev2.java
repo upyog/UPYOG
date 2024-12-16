@@ -109,7 +109,7 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-
+import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class BillServicev2 {
@@ -230,7 +230,8 @@ public class BillServicev2 {
 			billCriteria.setConsumerCode(new HashSet<>());
 		BillResponseV2 res = searchBill(billCriteria.toBillSearchCriteria(), requestInfo);
 		List<BillV2> bills = res.getBill();
-
+		log.info("requestInfo_inside_fetchBill: " +requestInfo);
+		log.info("res_inside_fetchBill: " +res);
 		/* 
 		 * If no existing bills found then Generate new bill 
 		 */
