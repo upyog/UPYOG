@@ -56,13 +56,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PropertyService {
-	
+
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
 
 	@Autowired
 	private PropertyProducer producer;
-	
+
 	@Autowired
 	private NotificationService notifService;
 
@@ -98,15 +98,15 @@ public class PropertyService {
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
-	
+
 	@Autowired
 	private PropertyUtil propertyUtil;
-		
+
 	@Autowired
 	private AssessmentEnrichmentService assessmentEnrichmentService;
-	
-	
-	
+
+
+
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -124,7 +124,7 @@ public class PropertyService {
 			Integer  maxBifurcation  = request.getProperty().getMaxBifurcation();
 			if(null==maxBifurcation) {
 				throw new CustomException("INVALID_BIFURCATION_NUMBER","Invalid Maximum Bifurcation number");
-				
+
 			}
 			if(maxBifurcation<2) {
 				throw new CustomException("INVALID_BIFURCATION_MIN_NUMBER","minimum Bifurcation number should be 2");
@@ -140,13 +140,13 @@ public class PropertyService {
 			//producer.pushAfterEncrytpion(config.getSaveBifurcationTopic(), request);
 			bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
 			if(null!=bifurList && bifurList.size()>0) {
-				
-				
+
+
 				bifurList  = bifurList.stream().sorted((x,y)->x.getCreatedTime().compareTo(y.getCreatedTime())).collect(Collectors.toList());
 				Integer dbMaxBifur = bifurList.get(0).getMaxBifurcation();
 				request.getProperty().setBifurcationCount(bifurList.size());
 				if(dbMaxBifur== bifurList.size()) {
-					
+
 					for(PropertyBifurcation b: bifurList)
 					{
 						request.setProperty(b.getPropertyRequest().getProperty());
@@ -164,22 +164,22 @@ public class PropertyService {
 					request.getProperty().setBifurcationCount(bifurList.size());
 					producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForBifurcationTopic(), request);
 					//push sms to parent Property Notifying Deactivation of the property as Bifiurcation is initiated
-					
+
 				} 
 			}else {
 				request.getProperty().setBifurcationCount(bifurList.size());
 			}
-				
-			
-				
+
+
+
 		}else {
-			
+
 			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
 				processPropertyCreateForAmalgamation(request);
 			}
 			userService.createUser(request);
-			
-			
+
+
 			if (config.getIsWorkflowEnabled()
 					&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
 				wfService.updateWorkflow(request, request.getProperty().getCreationReason());
@@ -191,23 +191,23 @@ public class PropertyService {
 
 			/* Fix this.
 			 * For FUZZY-search, This code to be un-commented when privacy is enabled
-			 
+
 			//Push PLAIN data to fuzzy search index
 			producer.push(config.getSavePropertyFuzzyTopic(), request);
-			*
-			*/
+			 *
+			 */
 			//Push data after encryption
 			producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
-			
+
 			if(request.getProperty().getCreationReason().equals(CreationReason.AMALGAMATION)) {
 				producer.pushAfterEncrytpion(config.getUpdatePropertyForDeactivaingForAmalgamationTopic(), request);
 			}
 			request.getProperty().setWorkflow(request.getProperty().getWorkflow());
 
 			/* decrypt here */
-			
+
 		}
-		
+
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 		//return request.getProperty();
 	}
@@ -225,14 +225,14 @@ public class PropertyService {
 	 * @return List of updated properties
 	 */
 	public Property updateProperty(PropertyRequest request) {
-		
+
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 		boolean isRequestForBifurcation = CreationReason.BIFURCATION.equals(request.getProperty().getCreationReason());
 		boolean isRequestForAmalgamation = CreationReason.AMALGAMATION.equals(request.getProperty().getCreationReason());
-		
+
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
 
 		if (isRequestForOwnerMutation)
@@ -243,7 +243,7 @@ public class PropertyService {
 			processMobileNumberUpdate(request, propertyFromSearch);
 		else if(isRequestForAmalgamation)
 			processPropertyUpdateAmalgamation(request, propertyFromSearch);
-		
+
 		else
 			processPropertyUpdate(request, propertyFromSearch);
 
@@ -256,57 +256,71 @@ public class PropertyService {
 
 		/* Fix this.
 		 * For FUZZY-search, This code to be un-commented when privacy is enabled
-		 
+
 		//Push PLAIN data to fuzzy search index
 		producer.push(config.getSavePropertyFuzzyTopic(), fuzzyPropertyRequest);
-		*
-		*/
+		 *
+		 */
 
 		/* decrypt here */
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 	}
-	
+
 	/*
 		Method to check if the update request is for updating owner mobile numbers
-	*/
-	
+	 */
+
 	private boolean checkIsRequestForMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
 		Map <String, String> uuidToMobileNumber = new HashMap <String, String>();
 		List <OwnerInfo> owners = propertyFromSearch.getOwners();
-		
+
 		for(OwnerInfo owner : owners) {
 			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
 		}
-		
+
 		List <OwnerInfo> ownersFromRequest = request.getProperty().getOwners();
-		
+
 		Boolean isNumberDifferent = false;
-		
+
 		for(OwnerInfo owner : ownersFromRequest) {
 			if(uuidToMobileNumber.containsKey(owner.getUuid()) && !uuidToMobileNumber.get(owner.getUuid()).equals(owner.getMobileNumber())) {
 				isNumberDifferent = true;
 				break;
 			}
 		}
-		
+
 		return isNumberDifferent;
 	}
-	
+
 	/*
 		Method to process owner mobile number update
-	*/
-	
+	 */
+
 	private void processMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
-		
-				if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
-					userService.createUser(request);
-				} else {			
-					updateOwnerMobileNumbers(request,propertyFromSearch);
-				}
+
+		if(!request.getProperty().getWorkflow().equals(null))
+		{
+			if(request.getProperty().getWorkflow().getAction().equalsIgnoreCase("REOPEN"))
+			{
+				List<String> requestMobile=request.getProperty().getOwners().stream().map(OwnerInfo::getMobileNumber).collect(Collectors.toList());
+				if(!requestMobile.contains(propertyFromSearch.getOwners().stream().map(OwnerInfo::getMobileNumber)))
+					throw new CustomException("EG_PT_UPDATE_OWNER_MOBILENUMBER_ERROR", "Update request cannot change owner Information");
 				
-				enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
-				util.mergeAdditionalDetails(request, propertyFromSearch);
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);		
+				List<String> requestName=request.getProperty().getOwners().stream().map(OwnerInfo::getName).collect(Collectors.toList());
+				if(!requestName.contains(propertyFromSearch.getOwners().stream().map(OwnerInfo::getName)))
+					throw new CustomException("EG_PT_UPDATE_OWNER_NAME_ERROR", "Update request cannot change owner Information");
+			}
+		}
+
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+			userService.createUser(request);
+		} else {			
+			updateOwnerMobileNumbers(request,propertyFromSearch);
+		}
+
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);		
 	}
 
 	/**
@@ -328,7 +342,7 @@ public class PropertyService {
 		}
 
 		//check for Property Ids;
-		
+
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 
@@ -371,9 +385,9 @@ public class PropertyService {
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
 	}
-	
+
 	private void processPropertyUpdateAmalgamation(PropertyRequest request, Property propertyFromSearch) {
-		
+
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
@@ -385,7 +399,7 @@ public class PropertyService {
 		}
 
 		//check for Property Ids;
-		
+
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 
@@ -395,7 +409,7 @@ public class PropertyService {
 				.build();
 
 		util.mergeAdditionalDetails(request, propertyFromSearch);
-		
+
 		if(config.getIsWorkflowEnabled()) {
 
 			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
@@ -419,7 +433,7 @@ public class PropertyService {
 				 */
 				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 				if(state.getState().equalsIgnoreCase(config.getDemandTriggerState()))
-						producer.push(config.getCreateAssessmentTopic(), assesmentcreateForBifurAndAmal(request));
+					producer.push(config.getCreateAssessmentTopic(), assesmentcreateForBifurAndAmal(request));
 			}
 
 		} else {
@@ -430,8 +444,8 @@ public class PropertyService {
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
 	}
-	
-	
+
+
 	private void processPropertyUpdateBifurcation(PropertyRequest request, Property propertyFromSearch) {
 
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
@@ -445,7 +459,7 @@ public class PropertyService {
 		}
 
 		//check for Property Ids;
-		
+
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 
@@ -474,23 +488,23 @@ public class PropertyService {
 
 				terminateWorkflowAndReInstatePreviousRecordForBifurcation(request, propertyFromSearch);
 			}else {
-				
+
 				if(state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())) {
 					producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
-					
+
 				}else {
 					List<PropertyBifurcation> bifurList= repository.getBifurcationProperties(request.getProperty().getParentPropertyId());
 					Integer Count = bifurList.stream()
 							.filter(x->!x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
 							.filter(x ->!x.getStatus()).collect(Collectors.toList()).size();
-					
+
 					if(Count>0 ) {
 						request.getProperty().setStatus(Status.INACTIVE);
 						producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 						//Update the status to true in bifurcation table for this property uuid
 						PropertyBifurcation b = bifurList.stream()
-												.filter(x->x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
-												.collect(Collectors.toList()).get(0);
+								.filter(x->x.getChildpropertyuuid().equalsIgnoreCase(request.getProperty().getId()))
+								.collect(Collectors.toList()).get(0);
 						b.setStatus(true);
 
 						request.getProperty().setPropertyBifurcations(Arrays.asList(b));
@@ -508,13 +522,13 @@ public class PropertyService {
 						}
 						request.getProperty().setPropertyBifurcations(bifurList);
 						producer.push(config.getUpdateChildStatusForBifurcation(), request);
-						
+
 					}
-					
+
 				}
-				
-				
-				
+
+
+
 			}
 
 		} else {
@@ -525,8 +539,8 @@ public class PropertyService {
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
 	}
-	
-	
+
+
 	private void processPropertyCreateForAmalgamation(PropertyRequest request) {
 		if (null == request.getProperty().getAmalgamatedProperty()
 				|| request.getProperty().getAmalgamatedProperty().isEmpty())
@@ -564,8 +578,8 @@ public class PropertyService {
 			a.setProperty(propertyFromSearchAmalgamation);
 			validPropertyListToBeAmalgamatedIds.add(propertyFromSearchAmalgamation.getId());
 		}
-		
-		
+
+
 		@SuppressWarnings("unchecked")
 		Map<String, Object> additionalDetails = mapper.convertValue(request.getProperty().getAdditionalDetails(), Map.class);
 		additionalDetails.put(PTConstants.CREATED_FROM_PROPERTY, request.getProperty().getAmalgamatedProperty().stream().map(x->x.getPropertyId()).collect(Collectors.toList()));
@@ -574,13 +588,13 @@ public class PropertyService {
 		JsonNode node=mapper.convertValue(additionalDetails, JsonNode.class);
 		request.getProperty().setAdditionalDetails(node);
 	}
-	
-	
+
+
 	private void processPropertyUpdateForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
-		
+
 		if(null==request.getProperty().getAmalgamatedProperty() ||request.getProperty().getAmalgamatedProperty().isEmpty() )
 			throw new CustomException("INVALID_AMALGAMATION_PROPERTY","Invalid Property for Amalgamtion");
-		
+
 		Set<Property>validPropertyListToBeAmalgamated = new HashSet();
 		PropertyRequest amalPropertiesToBeCheckedRequest = null;
 		Property propertyForAmalgamation = null;
@@ -589,19 +603,19 @@ public class PropertyService {
 			amalPropertiesToBeCheckedRequest = new PropertyRequest();
 			propertyForAmalgamation = new Property();
 			propertyFromSearchAmalgamation = new Property();
-			
+
 			propertyForAmalgamation.setPropertyId(a.getPropertyId());
 			propertyForAmalgamation.setTenantId(a.getTenantId());;
-			
+
 			amalPropertiesToBeCheckedRequest.setProperty(propertyForAmalgamation);
 			amalPropertiesToBeCheckedRequest.setRequestInfo(request.getRequestInfo());
-			
+
 			propertyFromSearchAmalgamation = unmaskingUtil.getPropertyUnmaskedForAmalgamation(amalPropertiesToBeCheckedRequest);
 			amalPropertiesToBeCheckedRequest.setProperty(propertyFromSearchAmalgamation);
 			if (propertyFromSearchAmalgamation.getStatus().equals(Status.ACTIVE)) {
-			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearchAmalgamation.getPropertyId(), propertyFromSearchAmalgamation.getTenantId(), request.getRequestInfo());
-			if (isBillUnpaid)
-				throw new CustomException("EG_PT_AMALGAMATION_UNPAID_CHILD_ERROR", "Child Property has to be completely paid for before initiating the Amalgamation process");
+				Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearchAmalgamation.getPropertyId(), propertyFromSearchAmalgamation.getTenantId(), request.getRequestInfo());
+				if (isBillUnpaid)
+					throw new CustomException("EG_PT_AMALGAMATION_UNPAID_CHILD_ERROR", "Child Property has to be completely paid for before initiating the Amalgamation process");
 			}else {
 				throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_CHILD_ERROR", "Child Property has to be in ACTIVE state");
 			}
@@ -609,11 +623,11 @@ public class PropertyService {
 			validPropertyListToBeAmalgamated.add(propertyFromSearchAmalgamation);
 		}
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
-		
+
 		if (propertyFromSearch.getStatus().equals(Status.ACTIVE)) {
-		Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
-		if (isBillUnpaid)
-			throw new CustomException("EG_PT_AMALGAMATION_UNPAID_PARENT_ERROR", "Parent Property has to be completely paid for before initiating the Amalgamation process");
+			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
+			if (isBillUnpaid)
+				throw new CustomException("EG_PT_AMALGAMATION_UNPAID_PARENT_ERROR", "Parent Property has to be completely paid for before initiating the Amalgamation process");
 		}else {
 			throw new CustomException("EG_PT_AMALGAMATION_INACTIVE_PARENT_ERROR", "Parent Property has to be in ACTIVE state");
 		}
@@ -627,7 +641,7 @@ public class PropertyService {
 		}
 
 		//check for Property Ids;
-		
+
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequestForAmalgamation(request, propertyFromSearch);
 
@@ -637,8 +651,8 @@ public class PropertyService {
 				.build();
 
 		util.mergeAdditionalDetails(request, propertyFromSearch);
-		
-		
+
+
 		if(config.getIsWorkflowEnabled()) {
 
 			State state = wfService.updateWorkflow(request, CreationReason.UPDATE);
@@ -673,21 +687,21 @@ public class PropertyService {
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
 	}
-	
+
 	/*
 		Method to update owners mobile number
-	*/
+	 */
 
 	private void updateOwnerMobileNumbers(PropertyRequest request, Property propertyFromSearch) {
-		
-		
+
+
 		Map <String, String> uuidToMobileNumber = new HashMap <String, String>();
 		List <OwnerInfo> owners = propertyFromSearch.getOwners();
-		
+
 		for(OwnerInfo owner : owners) {
 			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
 		}
-		
+
 		userService.updateUserMobileNumber(request, uuidToMobileNumber);
 		notifService.sendNotificationForMobileNumberUpdate(request, propertyFromSearch,uuidToMobileNumber);		
 	}
@@ -753,7 +767,7 @@ public class PropertyService {
 		}
 	}
 
-	
+
 	private void processOwnerBifurcation(PropertyRequest request, Property propertyFromSearch) {
 
 		propertyValidator.validateBifurcation(request, propertyFromSearch);
@@ -825,7 +839,7 @@ public class PropertyService {
 		 * getRequestInfo().getUserInfo().getUuid().toString(), true));
 		 * previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
 		 */
-		
+
 		//For Updating the child property to inactive
 		propertyFromSearch.setStatus(Status.INACTIVE);
 		PropertyRequest prosearch = PropertyRequest.builder()
@@ -833,17 +847,17 @@ public class PropertyService {
 				.property(propertyFromSearch)
 				.build();
 		producer.pushAfterEncrytpion(config.getBifurcationChildInactive(), prosearch);
-		
-		
+
+
 		PropertyRequest proReInstate = PropertyRequest.builder()
 				.requestInfo(request.getRequestInfo())
 				.property(propertyFromSearch)
 				.build();
 		//For Updating the parent property to active
 		producer.pushAfterEncrytpion(config.getUpdateParentPropertyForBifurcation(), proReInstate);
-		
+
 	}
-	
+
 	private void terminateWorkflowAndReInstatePreviousRecord(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
@@ -870,7 +884,7 @@ public class PropertyService {
 
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 	}
-	
+
 	private void terminateWorkflowAndReInstatePreviousRecordForAmalgamation(PropertyRequest request, Property propertyFromSearch) {
 
 		/* current record being rejected */
@@ -881,7 +895,7 @@ public class PropertyService {
 		Map<String, Object> additionalDetails = mapper.convertValue(propertyFromSearch.getAdditionalDetails(), Map.class);
 		if(null == additionalDetails)
 			return;
-		
+
 		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
 				.requestInfo(request.getRequestInfo())
 				.property(propertyFromSearch)
@@ -918,27 +932,27 @@ public class PropertyService {
 		//if (criteria.getDoorNo() != null || criteria.getName() != null || criteria.getOldPropertyId() != null) {
 		//	properties = fuzzySearchService.getProperties(requestInfo, criteria);
 		//} else {
-			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
+		if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
 
-				/* converts owner information to associated property ids */
-				Boolean shouldReturnEmptyList = repository.enrichCriteriaFromUser(criteria, requestInfo);
+			/* converts owner information to associated property ids */
+			Boolean shouldReturnEmptyList = repository.enrichCriteriaFromUser(criteria, requestInfo);
 
-				if (shouldReturnEmptyList)
-					return Collections.emptyList();
+			if (shouldReturnEmptyList)
+				return Collections.emptyList();
 
-				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
-				filterPropertiesForUser(properties, criteria.getOwnerIds());
-			} else {
-				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
-			}
+			properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
+			filterPropertiesForUser(properties, criteria.getOwnerIds());
+		} else {
+			properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
+		}
 
-			properties.forEach(property -> {
-				enrichmentService.enrichBoundary(property, requestInfo);
-			});
+		properties.forEach(property -> {
+			enrichmentService.enrichBoundary(property, requestInfo);
+		});
 		//}
 
 		/* Decrypt here */
-		 if(criteria.getIsSearchInternal())
+		if(criteria.getIsSearchInternal())
 			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_DECRYPT_MODEL, Property.class, requestInfo);
 		else if(!criteria.getIsRequestForOldDataEncryption())
 			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_MODEL, Property.class, requestInfo);
@@ -976,7 +990,7 @@ public class PropertyService {
 
 
 	List<Property> getPropertiesPlainSearch(PropertyCriteria criteria, RequestInfo requestInfo) {
-		
+
 		if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit())
 			criteria.setLimit(config.getMaxSearchLimit());
 		if(criteria.getLimit()==null)
@@ -1014,44 +1028,44 @@ public class PropertyService {
 	}
 
 	public Property addAlternateNumber(PropertyRequest request) {
-		
+
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateAlternateMobileNumberInformation(request, propertyFromSearch);
 		userService.createUserForAlternateNumber(request);
-		
+
 		request.getProperty().setAlternateUpdated(true);		
-		
+
 		Map <String, String> uuidToAlternateMobileNumber = new HashMap <String, String>();
 		List <OwnerInfo> owners = propertyFromSearch.getOwners();
-		
+
 		for(OwnerInfo owner : owners) {
-			
+
 			if(owner.getAlternatemobilenumber()!=null) {
-			   uuidToAlternateMobileNumber.put(owner.getUuid(), owner.getAlternatemobilenumber());
+				uuidToAlternateMobileNumber.put(owner.getUuid(), owner.getAlternatemobilenumber());
 			}
 			else {
 				uuidToAlternateMobileNumber.put(owner.getUuid(), " ");
 			}
 		}
-		
+
 		notifService.sendNotificationForAlternateNumberUpdate(request, propertyFromSearch,uuidToAlternateMobileNumber);	
-		
+
 		//enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 		util.mergeAdditionalDetails(request, propertyFromSearch);
-		
+
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
-		
+
 		request.getProperty().setWorkflow(null);
-		
+
 		return request.getProperty();
 	}
-	
+
 	public Integer count(RequestInfo requestInfo, @Valid PropertyCriteria propertyCriteria) {
 		propertyCriteria.setIsInboxSearch(false);
-        Integer count = repository.getCount(propertyCriteria, requestInfo);
-        return count;
+		Integer count = repository.getCount(propertyCriteria, requestInfo);
+		return count;
 	}
-	
+
 	public AssessmentRequest assesmentcreateForBifurAndAmal(PropertyRequest request)
 	{
 		AssessmentRequest assessmentRequest=new AssessmentRequest();

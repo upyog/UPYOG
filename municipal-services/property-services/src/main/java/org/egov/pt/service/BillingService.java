@@ -2,6 +2,7 @@ package org.egov.pt.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.Assessment.ModeOfPayment;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
@@ -50,6 +51,35 @@ public class BillingService {
 		uri.append("&businessService=").append(PT_BUSINESSSERVICE);
 		uri.append("&consumerCode=").append(property.getPropertyId());
 		uri.append("&modeOfPayment=").append(assessment.getModeOfPayment());
+		
+		try {
+        	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+        	
+        	if(response.isPresent()) {
+        		LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>)response.get();
+                BillResponse billResponse = mapper.convertValue(responseMap,BillResponse.class);
+                return billResponse;
+        	}else {
+        		throw new CustomException("IllegalArgumentException","Did not get any response from the billing services");
+        		
+        	}
+        }
+
+        catch(IllegalArgumentException  e)
+        {
+            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convert response into bill response");
+        }
+	}
+	
+	
+public BillResponse fetchBillForDailyBillUpdate(String property, RequestInfo requestInfo, String tenanatId, ModeOfPayment modeOfPayment) {
+		
+		StringBuilder uri = new StringBuilder(billingHost);
+		uri.append(fetchBillEndpoint);
+		uri.append("?").append("tenantId=").append(tenanatId);
+		uri.append("&businessService=").append(PT_BUSINESSSERVICE);
+		uri.append("&consumerCode=").append(property);
+		uri.append("&modeOfPayment=").append(modeOfPayment);
 		
 		try {
         	Optional<Object> response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());

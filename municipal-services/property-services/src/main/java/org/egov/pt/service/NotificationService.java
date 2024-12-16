@@ -16,6 +16,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Assessment;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.enums.CreationReason;
@@ -924,6 +925,46 @@ public class NotificationService {
 			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, tenantId);
 			notifUtil.sendEmail(emailRequests);
 		}
+	}
+	
+	public void sendPaymentReminder(Assessment asmt,RequestInfo requestInfo)
+	{
+		Map<String, String> mobileNumberToOwner = new HashMap<>();
+		Set<String> mobileNumbers = new HashSet<>();
+		
+		String completeMsgs = notifUtil.getLocalizationMessages(asmt.getTenantId(), requestInfo);
+		List<String> configuredChannelNames =  notifUtil.fetchChannelList(new RequestInfo(), asmt.getTenantId(), PTConstants.PT_BUSINESSSERVICE, PTConstants.WF_NO_WORKFLOW);
+		String msg = notifUtil.getMessageTemplate(NOTICE_FOR_PAYMENT_REMINDER, completeMsgs);
+		String templateId=NOTICE_FOR_PAYMENT_REMINDER_TEMPLATE_ID;
+		
+		PropertyCriteria propertyCriteria=new PropertyCriteria();
+		Set<String> propertyIds=new HashSet<String>();
+		propertyIds.add(asmt.getPropertyId());
+		propertyCriteria.setPropertyIds(propertyIds);
+		propertyCriteria.setTenantId(asmt.getTenantId());
+		List<Property> propertylist=propertyService.searchProperty(propertyCriteria, requestInfo);
+		Property property=propertylist.get(0);
+		property.getOwners().forEach(owner -> {
+			if (owner.getMobileNumber() != null)
+				mobileNumberToOwner.put(owner.getMobileNumber(), owner.getName());
+			mobileNumbers.add(owner.getMobileNumber());
+		});
+		
+		List<SMSRequest> smsRequests = notifUtil.createSMSRequestNew(msg, mobileNumberToOwner,templateId);
+
+		if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
+			notifUtil.sendSMS(smsRequests);
+			Boolean isActionReq = false;
+			List<Event> events = notifUtil.enrichEventNew(smsRequests, requestInfo, property.getTenantId(), property, isActionReq);
+			notifUtil.sendEventNotification(new EventRequest(requestInfo, events));
+		}
+		
+		if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
+			List<EmailRequest> emailRequests = notifUtil.createEmailRequestFromSMSRequests(requestInfo,smsRequests, property.getTenantId());
+			notifUtil.sendEmail(emailRequests);
+		}
+		
+		System.out.println("noticeRequest::"+property.getPropertyId());
 	}
 	
 	public void sendNoticeInformationForEntryPremises(NoticeRequest noticeRequest)
