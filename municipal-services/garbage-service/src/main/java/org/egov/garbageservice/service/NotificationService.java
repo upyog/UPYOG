@@ -1,7 +1,5 @@
 package org.egov.garbageservice.service;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,20 +20,15 @@ import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StreamUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class NotificationService {
-
-	@Value("classpath:template/GrbgBillEmailTemplate.html")
-	private Resource grbgBillEmailTemplateResource;
 
 	private static final String RECIPINTS_NAME_PLACEHOLDER = "{recipients_name}";
 	private static final String MONTH_PLACEHOLDER = "{month}";
@@ -56,8 +49,7 @@ public class NotificationService {
 //			+ "\r\n" + "Total Amount: " + AMOUNT_PLACEHOLDER + "\r\n" + "Due Date: " + DUE_DATE_PLACEHOLDER;
 
 	private static final String EMAIL_BODY_GENERATE_BILL = GrbgConstants.getContentAsString(
-			"C:/SOURAV/Git/HP/UPYOG/municipal-services/garbage-service/src/main/resources/template/GrbgBillEmailTemplate.html");
-//	private final String EMAIL_BODY_GENERATE_BILL = grbgBillEmailTemplate();
+			"C:/SOURAV/Git/HP/UPYOG/municipal-services/garbage-service/src/main/resources/templates/GrbgBillEmailTemplate.html");
 
 	private static final String SMS_BODY_GENERATE_BILL = "Message Sent Successfully";
 
@@ -159,18 +151,6 @@ public class NotificationService {
 					.append(".");
 		}
 		return String.valueOf(fullAddress);
-	}
-
-	public String grbgBillEmailTemplate() {
-		String htmlContent = "";
-		try {
-			htmlContent = StreamUtils.copyToString(grbgBillEmailTemplateResource.getInputStream(),
-					StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			// Handle exception if the file is not found or can't be read
-			e.printStackTrace();
-		}
-		return htmlContent;
 	}
 
 }
