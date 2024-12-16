@@ -5,6 +5,7 @@ import { useHistory, useLocation, useParams, Redirect } from "react-router-dom";
 import ArrearSummary from "./arrear-summary";
 import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
+import TimerValues from "../../../timer-values/timerValues";
 
 const BillDetails = ({ paymentRules, businessService }) => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
+
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
@@ -139,7 +141,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
     }
   }, [isLoading]); 
 
-  const onSubmit = () => {debugger
+  const onSubmit = () => {
     let paymentAmount =
       paymentType === t("CS_PAYMENT_FULL_AMOUNT")
         ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.advanceAmount:getTotal()
@@ -164,7 +166,15 @@ const BillDetails = ({ paymentRules, businessService }) => {
         tenantId: billDetails.tenantId,
         name: bill.payerName,
         mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
-    } else {
+    } 
+    else if (businessService === "adv-services" || businessService==="chb-services") {
+      history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+        paymentAmount, 
+        tenantId: billDetails.tenantId, 
+        propertyId: propertyId ,
+        timerValue:state?.timerValue,});
+      } 
+    else {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
     }
   };
@@ -188,10 +198,22 @@ const BillDetails = ({ paymentRules, businessService }) => {
       <Header>{t("CS_PAYMENT_BILL_DETAILS")}</Header>
       <Card>
         <div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <KeyNote
             keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
             note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
           />
+          {(businessService === "adv-services" || businessService === "chb-services") && (
+            <CardSubHeader 
+              style={{ 
+                textAlign: 'right', 
+                fontSize: "24px"
+              }}
+            >
+            <TimerValues businessService={businessService} consumerCode={consumerCode} timerValues={state?.timerValue} t={t}/>
+            </CardSubHeader>
+          )}
+          </div>
           {businessService !== "PT.MUTATION" && businessService !== "FSM.TRIP_CHARGES" && (
             <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} />
           )}

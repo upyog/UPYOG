@@ -12,6 +12,7 @@ import {
   Loader,
   Toast,
   CardText,
+  CardSubHeader,
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
@@ -19,6 +20,7 @@ import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
 import { stringReplaceAll } from "../bills/routes/bill-details/utils";
 import $ from "jquery";
 import { makePayment } from "./payGov";
+import TimerValues from "../timer-values/timerValues";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
@@ -200,6 +202,16 @@ export const SelectPaymentType = (props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Header>{t("PAYMENT_CS_HEADER")}</Header>
         <Card>
+        {(businessService === "adv-services" || businessService==="chb-services") && (
+            <CardSubHeader 
+              style={{ 
+                textAlign: 'right', 
+                fontSize: "24px"
+              }}
+            >
+          <TimerValues businessService={businessService} consumerCode={consumerCode} timerValues={state?.timerValue} t={t}/>
+            </CardSubHeader>
+          )}
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
             <CardLabel className="dark">{t("PAYMENT_CS_TOTAL_AMOUNT_DUE")}</CardLabel>
             <CardSectionHeader> ₹ { paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>

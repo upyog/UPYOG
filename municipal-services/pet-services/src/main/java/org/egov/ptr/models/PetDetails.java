@@ -1,10 +1,5 @@
 package org.egov.ptr.models;
 
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.egov.ptr.models.Applicant.ApplicantBuilder;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -57,4 +52,16 @@ public class PetDetails {
 
 	@JsonProperty("vaccinationNumber")
 	private String vaccinationNumber = null;
+
+	@JsonProperty("petColor")
+	private String petColor = null;
+
+	@JsonProperty("adoptionDate")
+	private Long adoptionDate = null;
+
+	@JsonProperty("birthDate")
+	private Long birthDate = null;
+	
+	@JsonProperty("identificationMark")
+	private String identificationMark = null;
 }

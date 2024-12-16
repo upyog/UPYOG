@@ -11,10 +11,12 @@ import {
   PTIcon,
   TLIcon,
   WSICon,
-  PTRIcon
+  PTRIcon,
+  CHBIcon
 } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import EmployeeDashboard from "./EmployeeDashboard";
 
 /* 
 Feature :: Citizen All service screen cards
@@ -78,6 +80,10 @@ const iconSelector = (code) => {
       return <BillsIcon className="fill-path-primary-main" />;
       case "PTR":
       return <PTRIcon className="fill-path-primary-main" />;
+    case "CHB":
+      return <CHBIcon className="fill-path-primary-main" />;
+    case "ADS":
+      return <CHBIcon className="fill-path-primary-main" />;
     default:
       return <PTIcon className="fill-path-primary-main" />;
   }
@@ -131,8 +137,17 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
 
 const EmployeeHome = ({ modules }) => {
   if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
+    const { data: dashboardConfig } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "cityDashboardIntegration" }],
+  {
+    select: (data) => {
+      const formattedData = data?.["common-masters"]?.["cityDashboardIntegration"]
+      return formattedData;
+    },
+  });
   return (
     <div className="employee-app-container">
+      <br />
+      {(dashboardConfig?.[0]?.isActive)?<EmployeeDashboard modules={modules}/>:null}
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
