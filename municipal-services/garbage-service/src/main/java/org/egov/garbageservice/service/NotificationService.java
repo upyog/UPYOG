@@ -16,10 +16,11 @@ import org.egov.garbageservice.model.EmailRequest;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.SMSRequest;
-import org.egov.garbageservice.util.GrbgConstants;
+import org.egov.garbageservice.util.GrbgUtils;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,17 +40,6 @@ public class NotificationService {
 	private static final String AMOUNT_PLACEHOLDER = "{amount}";
 	private static final String DUE_DATE_PLACEHOLDER = "{due_date}";
 	private static final String GARBAGE_NO_PLACEHOLDER = "{garbage_no}";
-
-//	private static final String EMAIL_BODY_GENERATE_BILL = "Dear " + RECIPINTS_NAME_PLACEHOLDER + ",\r\n" + " \r\n"
-//			+ "We hope this message finds you well. We would like to inform you that your garbage collection bill for"
-//			+ " the period of " + MONTH_PLACEHOLDER + "/" + YEAR_PLACEHOLDER
-//			+ " has been generated. Below are the details of your bill:\r\n" + " \r\n" + "Bill Details:\r\n" + " \r\n"
-//			+ "Bill ID: " + GARBAGE_BILL_NO_PLACEHOLDER + "\r\n" + "Name: " + RECIPINTS_NAME_PLACEHOLDER + "\r\n"
-//			+ "Address: " + ADDRESS_PLACEHOLDER + "\r\n" + "Collection Unit Type: " + COLLECTION_UNIT_TYPE_PLACEHOLDER
-//			+ "\r\n" + "Total Amount: " + AMOUNT_PLACEHOLDER + "\r\n" + "Due Date: " + DUE_DATE_PLACEHOLDER;
-
-	private static final String EMAIL_BODY_GENERATE_BILL = GrbgConstants.getContentAsString(
-			"C:/SOURAV/Git/HP/UPYOG/municipal-services/garbage-service/src/main/resources/templates/GrbgBillEmailTemplate.html");
 
 	private static final String SMS_BODY_GENERATE_BILL = "Message Sent Successfully";
 
@@ -92,8 +82,9 @@ public class NotificationService {
 	}
 
 	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill,
-			RequestInfoWrapper requestInfoWrapper) {
-		String emailBody = EMAIL_BODY_GENERATE_BILL;
+			RequestInfoWrapper requestInfoWrapper, GrbgUtils grbgUtils) {
+		ClassPathResource resource = new ClassPathResource("templates/GrbgBillEmailTemplate.html");
+		String emailBody = grbgUtils.getContentAsString(resource);
 		String smsBody = SMS_BODY_GENERATE_BILL;
 		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
 
@@ -117,7 +108,7 @@ public class NotificationService {
 		LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
 		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, garbageAccount.getName());
-		body = body.replace(MONTH_PLACEHOLDER, GrbgConstants.toCamelCase(String.valueOf(dateTime.getMonth())));
+		body = body.replace(MONTH_PLACEHOLDER, GrbgUtils.toCamelCase(String.valueOf(dateTime.getMonth())));
 		body = body.replace(YEAR_PLACEHOLDER, String.valueOf(dateTime.getYear()));
 		body = body.replace(GARBAGE_BILL_NO_PLACEHOLDER, bill.getBillNumber());
 		if (!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
@@ -145,7 +136,7 @@ public class NotificationService {
 					.append(", ").append(!StringUtils.isEmpty(grbgAddress.getUlbName()) ? grbgAddress.getUlbName() : "")
 					.append("(").append(!StringUtils.isEmpty(grbgAddress.getUlbType()) ? grbgAddress.getUlbType() : "")
 					.append("), ")
-					.append(null != grbgAddress.getAdditionalDetail() ? GrbgConstants.removeFirstAndLastChar(
+					.append(null != grbgAddress.getAdditionalDetail() ? GrbgUtils.removeFirstAndLastChar(
 							String.valueOf(grbgAddress.getAdditionalDetail().get("district"))) : "")
 					.append(", ").append(!StringUtils.isEmpty(grbgAddress.getPincode()) ? grbgAddress.getPincode() : "")
 					.append(".");
