@@ -399,7 +399,7 @@ public class SWCalculatorQueryBuilder {
 
 	}
 	
-	public String getBillSchedulerSearchQuery(String locality, Long billFromDate, Long billToDate, String tenantId,
+	public String getBillSchedulerSearchQuery(String locality, Long billFromDate, Long billToDate, String tenantId,String group,
 			List<Object> preparedStmtList) {
 
 		StringBuilder query = new StringBuilder(BILL_SCHEDULER_STATUS_SEARCH_QUERY);
@@ -423,7 +423,11 @@ public class SWCalculatorQueryBuilder {
 			query.append(" billingcycleenddate = ? ");
 			preparedStmtList.add(billToDate);
 		}
-		
+		if (group != null) {
+			addClauseIfRequired(preparedStmtList, query);
+			query.append(" groups = ? ");
+			preparedStmtList.add(group);
+		}
 
 		return query.toString();
 	}

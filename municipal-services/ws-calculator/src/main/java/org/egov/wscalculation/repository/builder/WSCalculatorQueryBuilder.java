@@ -414,7 +414,7 @@ public class WSCalculatorQueryBuilder {
 
 		if (groups != null) {
 	        addClauseIfRequired(preparedStatement, query);
-	        query.append(" conn.additionaldetails->>'groups' = ? ");
+	        query.append(" conn.additionaldetails->>'group' = ? ");
 	        preparedStatement.add(groups); // Exact match
 	    }
 		// Getting only non exempted connection to generate bill

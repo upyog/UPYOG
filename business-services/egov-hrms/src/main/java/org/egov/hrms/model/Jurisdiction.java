@@ -42,11 +42,16 @@ package org.egov.hrms.model;
 
 import lombok.*;
 
+import java.util.List;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Validated
 @EqualsAndHashCode(exclude = {"auditDetails"})
@@ -82,5 +87,13 @@ public class Jurisdiction {
     private AuditDetails auditDetails;
 
     private Boolean isActive;
-
+    
+    @JsonProperty("roles")
+    @Valid
+    private List<JurisdictionRole> roles;
+    
+    @SafeHtml
+    @Size(max=256)
+    private String furnishedRolesList;
+    
 }
