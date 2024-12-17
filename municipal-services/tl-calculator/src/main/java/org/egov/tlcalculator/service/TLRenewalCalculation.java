@@ -88,19 +88,19 @@ public class TLRenewalCalculation {
 
         BigDecimal rebateAmt = BigDecimal.ZERO;
         Map<String, Object> rebate = getApplicableMaster(financialyear, rebateMasterList);
-        System.out.println("Rebate Object---->"+rebate);
+        log.info("Rebate Object---->"+rebate);
         if (null == rebate) return rebateAmt;
 
         String[] time = ((String) rebate.get(TLCalculatorConstants.ENDING_DATE_APPLICABLES)).split("/");
         Calendar cal = Calendar.getInstance();
         setDateToCalendar(financialyear, time, cal);
 
-        System.out.println("cal.getTimeInMillis--->"+cal.getTimeInMillis());
-        System.out.println("System.currentTimeMillis--->"+System.currentTimeMillis());
+        log.info("cal.getTimeInMillis--->"+cal.getTimeInMillis());
+        log.info("System.currentTimeMillis--->"+System.currentTimeMillis());
 
         if (cal.getTimeInMillis() > System.currentTimeMillis())
             rebateAmt = calculateApplicables(taxAmt, rebate);
-        System.out.println("rebateAmt rate--->"+rebateAmt);
+        log.info("rebateAmt rate--->"+rebateAmt);
         return rebateAmt;
     }
 
