@@ -1,7 +1,7 @@
 import { pdfDocumentName, pdfDownloadLink, stringReplaceAll,getTransaltedLocality } from "./index";
 
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
-const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
+const ulbCamel = (ulb) => ulb.toLowerCase()?.split(" ")?.map(capitalize).join(" ");
 
 const getOwnerDetails = (application, t) => {
   application.owners = application?.tradeLicenseDetail?.owners?.filter((owner) => owner.active == true) || [];
@@ -21,7 +21,7 @@ const getOwnerDetails = (application, t) => {
     };
   } else { //if (application?.subOwnerShipCategory?.includes("INDIVIDUAL"))
     let values = [];
-    application?.tradeLicenseDetail.owners.map((owner) => {
+    application?.tradeLicenseDetail?.owners?.map((owner) => {
       let indOwner = [
         { title: t("TL_OWNER_S_NAME_LABEL"), value: owner?.name || t("CS_NA") },
         { title: t("TL_OWNER_S_MOBILE_NUM_LABEL"), value: owner?.mobileNumber || t("CS_NA") },
@@ -31,8 +31,8 @@ const getOwnerDetails = (application, t) => {
         { title: t("TL_NEW_OWNER_DETAILS_EMAIL_LABEL"), value: owner?.emailId || t("CS_NA") },
         { title: t("TL_OWNER_SPECIAL_CATEGORY"), value: owner?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}`) : t("CS_NA") },
         { title: t("TL_NEW_OWNER_DETAILS_ADDR_LABEL"), value: owner?.permanentAddress || t("CS_NA") },
-      ];
-      values.push(...indOwner);
+              ];
+     values.push(...indOwner);
     });
     return {
       title: t("TL_OWNERSHIP_DETAILS_HEADER"),
@@ -44,6 +44,7 @@ const getTradeDetails = (application, t) => {
   return {
     title: t("TL_COMMON_TR_DETAILS"),
     values: [
+      { title: t("TL_HOME_SEARCH_RESULTS_APP_NO_LABEL"), value: application?.applicationNumber || t("CS_NA") },
       { title: t("TL_APPLICATION_TYPE"), value: t(`TRADELICENSE_APPLICATIONTYPE_${application?.applicationType}`) || t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_LIC_TYPE_LABEL"), value: application?.licenseType ? t(`TRADELICENSE_LICENSETYPE_${application?.licenseType}`) : t("CS_NA") },
       { title: t("TL_COMMON_TABLE_COL_TRD_NAME"), value: application?.tradeName || t("CS_NA") },
@@ -52,7 +53,7 @@ const getTradeDetails = (application, t) => {
       { title: t("TL_NEW_TRADE_DETAILS_STRUCT_TYPE_LABEL"), value: application?.tradeLicenseDetail?.structureType ? t(`COMMON_MASTERS_STRUCTURETYPE_${application?.tradeLicenseDetail?.structureType?.split('.')[0]}`) : t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_STRUCT_SUB_TYPE_LABEL"), value: application?.tradeLicenseDetail?.structureType ? t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(application?.tradeLicenseDetail?.structureType, ".", "_")}`) : t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL"), value: Digit.DateUtils.ConvertTimestampToDate(application?.commencementDate, "dd/MM/yyyy") || t("CS_NA"), },
-      { title: t("TL_NEW_GST_NUMBER_LABEL"), value: application?.tradeLicenseDetail?.additionalDetail?.tradeGstNo || t("CS_NA") },
+      { title: t("TL_NEW_GST_NUMBER_LABEL"), value: application?.tradeLicenseDetail?.additionalDetail?.tradeGstNo || application?.tradeLicenseDetail?.additionalDetail?.gstNo ||t("CS_NA") },
       { title: t("TL_NEW_OPERATIONAL_SQ_FT_AREA_LABEL"), value: application?.tradeLicenseDetail?.operationalArea || t("CS_NA") },
       { title: t("TL_NEW_NUMBER_OF_EMPLOYEES_LABEL"), value: application?.tradeLicenseDetail?.noOfEmployees || t("CS_NA") },
     ],
@@ -76,7 +77,7 @@ const getAccessoriesDetails = (application, t) => {
   });
 
   return {
-    title: "",
+    title: t("ACCESSORIES_DETAILS"),
     values: values,
   };
 };
@@ -92,22 +93,19 @@ const getTradeUnitsDetails = (application, t) => {
       { title: t("TL_NEW_TRADE_SUB_TYPE_LABEL"), value: tradeSubType ? t(`TRADELICENSE_TRADETYPE_${tradeSubType}`) : t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER"), value: unit?.uom || t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL"), value: unit?.uomValue || t("CS_NA") },
-      { title: "", value: ""},
-      { title: "", value: ""},
-      { title: "", value: ""}
     ];
     values.push(...value);
   });
 
   return {
-    title: "",
+    title: t("TRADE_UNIT_DETAILS"),
     values: values,
   };
 };
 
 const getAddressDetails = (application, t) => {
   return {
-    title: "",
+    title: t("PROPERTY_DETAILS"),
     values: [
       { title: t("TL_PROPERTY_ID"), value: application?.tradeLicenseDetail?.additionalDetail?.propertyId || t("CS_NA") },
       { title: t("CORE_COMMON_PINCODE"), value: application?.tradeLicenseDetail?.address?.pincode || t("CS_NA") },
@@ -130,8 +128,10 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
     tenantId: tenantInfo?.code,
     title: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
     name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
-    email: "",
-    phoneNumber: "",
+    email: tenantInfo?.emailId,
+    phoneNumber: tenantInfo?.contactNumber,
+    heading:t("NEW_TRADE_LICENSE_APPLICATION"),
+    applicationNumber:application?.applicationNumber,
     details: [
       // {
       //   title: t("NOC_TASK_DETAILS_HEADER"),

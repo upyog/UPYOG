@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useReducer, useEffect } from "react";
-import { InboxComposer, ComplaintIcon, Header, DropIcon } from "@egovernments/digit-ui-react-components";
+import { InboxComposer, ComplaintIcon, Header, DropIcon } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
@@ -31,7 +31,7 @@ const WSInbox = ({ parentRoute }) => {
     sortBy: "createdTime",
     limit: window.Digit.Utils.browser.isMobile() ? 50 : 10,
     offset: 0,
-    sortOrder: "ASC",
+    sortOrder: "DESC",
   };
   sessionStorage.removeItem("Digit.BILL.INBOX");
   sessionStorage.removeItem("Digit.SW.INBOX");

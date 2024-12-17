@@ -8,7 +8,7 @@ import {
   Dropdown,
   MobileNumber,
   Loader
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 const SearchFields = ({register, control, reset, tenantId, t, previousPage ,formState}) => {
 
@@ -35,7 +35,7 @@ const SearchFields = ({register, control, reset, tenantId, t, previousPage ,form
         componentInFront: "+91",
     };
     const propsForOldConnectionNumberNpropertyId = {
-      pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+      pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
       title: t("ERR_DEFAULT_INPUT_FIELD_MSG"),
   };
   const serviceCategory = useWatch({ control: control, name: "serviceCategory", defaultValue: "" });

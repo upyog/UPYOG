@@ -11,7 +11,8 @@ import {
   PTIcon,
   TLIcon,
   WSICon,
-} from "@egovernments/digit-ui-react-components";
+  PTRIcon
+} from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -75,6 +76,8 @@ const iconSelector = (code) => {
       return <OBPSIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
+      case "PTR":
+      return <PTRIcon className="fill-path-primary-main" />;
     default:
       return <PTIcon className="fill-path-primary-main" />;
   }

@@ -1,12 +1,11 @@
 import React from "react";
-import { DatePicker } from "@egovernments/digit-ui-react-components";
-import { RadioButtons } from "@egovernments/digit-ui-react-components";
+import { DatePicker } from "@upyog/digit-ui-react-components";
+import { RadioButtons } from "@upyog/digit-ui-react-components";
 
 
-export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action, module }) => ({
+export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, action, module }) => ({
 
   label: {
-    heading: `ES_FSM_ACTION_TITLE_${action}`,
     submit: `CS_COMMON_${action}`,
     cancel: "CS_COMMON_CLOSE",
   },
@@ -31,6 +30,18 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
           },
         },
         {
+          label: t("ES_FSM_ACTION_VEHICLE_CAPACITY_IN_LTRS"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "capacity",
+            validation: {
+              required: true,
+            },
+          },
+          disable: true,
+        },
+        {
           label: t("ES_FSM_ACTION_WASTE_VOLUME_LABEL"),
           type: "number",
           isMandatory: true,
@@ -42,6 +53,99 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
             },
             error: `${t("ES_FSM_ACTION_INVALID_WASTE_VOLUME")} ${vehicleCapacity} ${t("CS_COMMON_LITRES")}`,
           },
+        },
+        {   
+          head: "",
+          body: [
+        
+        {
+          type: "component",
+          route: "search-property",
+          isMandatory: true,
+          component: "CPTSearchProperty", 
+          key: "cptsearchproperty",
+          withoutLabel: true,
+          nextStep: 'search-results',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "search-results",
+          isMandatory: true,
+          component: "CPTSearchResults", 
+          key: "cptsearchresults",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "create-property", 
+          isMandatory: true,
+          component: "CPTCreateProperty", 
+          key: "cptcreateproperty",
+          withoutLabel: true,
+          isSkipEnabled : true,
+          nextStep: 'acknowledge-create-property',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "acknowledge-create-property", 
+          isMandatory: true,
+          component: "CPTAcknowledgement", 
+          key: "cptacknowledgement",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "property-details",
+          isMandatory: true,
+          component: "CPTPropertyDetails", 
+          key: "propertydetails",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+      ],
+  },
+  {
+    head: "FSM_NEW_APPLICATION_PROPERTY",
+    body: [
+      {
+        component: "CPTPropertySearchNSummary",
+        withoutLabel: true,
+        key: "cpt",
+        type: "component",
+        hideInCitizen: true
+      }
+    ]
+  },      
+        {
+          label: t("ES_FSM_ACTION_ROAD_WIDTH"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "roadWidth",
+            validation: {
+              required: true,
+            },
+          },
+          disable: false,
+        },
+        {
+          label: t("ES_FSM_ACTION_DISTANCE_FROM_ROAD"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "distancefromroad",
+            validation: {
+              required: true,
+            },
+          },
+          disable: false,
         },
         {
           label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
@@ -120,7 +224,7 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
           disable: true,
           // disable: customizationConfig ? !customizationConfig?.noOfTrips?.override : true,
         },
-        module !== "FSM_ZERO_PAY_SERVICE" && {
+        /*module !== "FSM_ZERO_PAY_SERVICE" && {
           label: "FSM_PAYMENT_RECEIVED",
           isMandatory: true,
           type: "custom",
@@ -147,7 +251,7 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
               />
             ),
           },
-        },
+        }, */
       ],
     },
   ],

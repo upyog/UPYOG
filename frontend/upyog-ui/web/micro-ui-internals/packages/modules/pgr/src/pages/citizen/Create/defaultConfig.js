@@ -17,7 +17,7 @@ export const config = {
         cardText: "CS_COMPLAINT_TYPE_TEXT",
         submitBarLabel: "CS_COMMON_NEXT",
       },
-      nextStep: "sub-type",
+      nextStep: "map",
     },
     "sub-type": {
       component: SelectSubType,

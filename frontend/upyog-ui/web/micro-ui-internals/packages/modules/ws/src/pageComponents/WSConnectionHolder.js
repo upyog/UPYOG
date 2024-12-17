@@ -1,4 +1,5 @@
-import { CardLabel, CheckBox, Dropdown, FormStep, Loader, MobileNumber, RadioButtons, TextInput, UploadFile } from "@egovernments/digit-ui-react-components";
+
+import { CardLabel, CheckBox, Dropdown, FormStep, Loader, MobileNumber, RadioButtons, TextInput, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
 import { stringReplaceAll } from "../utils";
@@ -19,7 +20,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
   const [dropdownValue, setDropdownValue] = useState(formData?.ConnectionHolderDetails?.documentType || "");
   const [ownerType, setOwnerType] = useState( formData?.ConnectionHolderDetails?.specialCategoryType || {});
   let isMobile = window.Digit.Utils.browser.isMobile();
-
+  const [emailId, setEmail] = useState(formData?.ConnectionHolderDetails?.emailId || formData?.formData?.ConnectionHolderDetails?.emailId || "");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   let dropdownData = [];
@@ -52,7 +53,18 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
     genderTypeData["common-masters"].GenderType.filter(data => data.active).map((genderDetails) => {
       menu.push({ i18nKey: `COMMON_GENDER_${genderDetails.code}`, code: `${genderDetails.code}`, value: `${genderDetails.code}` });
     });
-
+    const validateEmail=(value)=>{  
+      const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+      if(value===""){
+        setError("");
+      }
+      else if(emailPattern.test(value)){
+        setError(""); 
+      }
+      else{
+        setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));  
+      }
+    }
 
   useEffect(() => {
     (async () => {
@@ -108,24 +120,41 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
   function setTypeOfOwner(value) {
     setOwnerType(value);
   }
+  function setOwnerEmail(e) {
+    setEmail(e.target.value);
+  }
+  const handleEmailChange=(e)=>{
+    const value=e.target.value;
+    setEmail(value);
+    validateEmail(value);   
+  }
+  useEffect(() => {
+    if(emailId){
+      validateEmail(emailId);
+    } 
+  }, [emailId])
+  
   function selectfile(e) {
     setFile(e.target.files[0]);
   }
-
+  
+const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.cpt?.details?.owners.slice().reverse():[];
 
   const goNext = () => {
+    if(!error){
 
     if(isOwnerSame == true)
     {
       //need to add property data here from previous screen
       let ConnectionDet = {
       isOwnerSame:isOwnerSame,
-      name: formData?.cpt?.details?.owners?.[0]?.name,
-      mobileNumber: formData?.cpt?.details?.owners?.[0]?.mobileNumber,
-      gender: formData?.cpt?.details?.owners?.[0]?.gender ? {code:formData?.cpt?.details?.owners?.[0]?.gender, i18nKey:`COMMON_GENDER_${formData?.cpt?.details?.owners?.[0]?.gender}`} : null,
-      guardian: formData?.cpt?.details?.owners?.[0]?.fatherOrHusbandName, 
-      address: formData?.cpt?.details?.owners?.[0]?.permanentAddress,
-      relationship:formData?.cpt?.details?.owners?.[0]?.relationship ? {code : formData?.cpt?.details?.owners?.[0]?.relationship, i18nKey:`COMMON_MASTERS_OWNERTYPE_${formData?.cpt?.details?.owners?.[0]?.relationship}`} : null,
+      name: reversedOwners?.[0]?.name,
+      mobileNumber: reversedOwners?.[0]?.mobileNumber,
+      gender: reversedOwners?.[0]?.gender ? {code:reversedOwners?.[0]?.gender, i18nKey:`COMMON_GENDER_${reversedOwners?.[0]?.gender}`} : null,
+      guardian: reversedOwners?.[0]?.fatherOrHusbandName, 
+      address: reversedOwners?.[0]?.permanentAddress,
+      emailId: reversedOwners?.[0]?.emailId,
+      relationship:reversedOwners?.[0]?.relationship ? {code : reversedOwners?.[0]?.relationship, i18nKey:`COMMON_MASTERS_OWNERTYPE_${reversedOwners?.[0]?.relationship}`} : null,
       specialCategoryType:ownerType,
       documentId:documentId,
       fileStoreId:uploadedFile,
@@ -135,10 +164,11 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
     }
     else
     {
-      let ConnectionDet = { isOwnerSame:isOwnerSame, name: name, mobileNumber: mobileNumber, gender: gender, guardian: guardian, address: address, relationship:relationship,specialCategoryType:ownerType, documentId:documentId, fileStoreId:uploadedFile, documentType:dropdownValue   }
+      let ConnectionDet = { isOwnerSame:isOwnerSame, name: name, mobileNumber: mobileNumber, gender: gender, guardian: guardian, address: address, relationship:relationship,specialCategoryType:ownerType, emailId:emailId, documentId:documentId, fileStoreId:uploadedFile, documentType:dropdownValue   }
       onSelect(config.key, ConnectionDet);
     }
   };
+}
 
   const onSkip = () => onSelect();
 
@@ -176,7 +206,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
               //disable={name && !isOpenLinkFlow ? true : false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "text",
                 title: t("WS_NAME_ERROR_MESSAGE"),
               })}
@@ -216,7 +246,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
               //disable={editScreen}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "text",
                 title: t("WS_NAME_ERROR_MESSAGE"),
               })}
@@ -261,6 +291,23 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
                 optionKey="i18nKey"
                 t={t}
             />
+            <div>
+            <CardLabel>{`${t("WS_EMAIL_ID")}`}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              name="emailId"
+              value={emailId}
+              onChange={handleEmailChange}
+              {...(validation = {
+                //isRequired: true,
+                pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+                type:"Email",                
+                title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID"),
+              })}
+            />
+            {error && <span style={{color:"red"}}>{error}</span>}
+            </div>
             {/* {ownerType && Object.entries(ownerType).length>0 && ownerType?.code !== "NONE" && <div>
                 <CardLabel>{`${t("WS_DOCUMENT_ID_LABEL")}`}</CardLabel>
                 <TextInput

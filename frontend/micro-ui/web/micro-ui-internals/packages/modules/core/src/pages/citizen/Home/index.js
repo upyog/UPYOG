@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
 import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
-
+import ChatBot from "./ChatBot";
 const Home = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -59,7 +59,7 @@ const Home = () => {
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
-
+console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
   const allCitizenServicesProps = {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
@@ -179,6 +179,7 @@ const Home = () => {
             </div>
           )
         ) : null}
+        <ChatBot/>
       </div>
     </div>
   );

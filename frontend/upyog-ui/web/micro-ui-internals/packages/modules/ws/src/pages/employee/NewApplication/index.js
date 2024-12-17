@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -130,10 +130,9 @@ const NewApplication = () => {
     let waterAndSewerageLoader = false, waterLoader = false, sewerageLoader = false;
     if (payload?.water && payload?.sewerage) waterAndSewerageLoader = true;
     if (payload?.water && !payload?.sewerage) waterLoader = true;
-    if (!payload?.water && payload?.sewerage) sewerageLoader = true;
-
-    let waterConnection = { WaterConnection: payload };
-    let sewerageConnection = { SewerageConnection: payload };
+    if (!payload?.water && payload?.sewerage) sewerageLoader = true;   
+    let waterConnection = { WaterConnection: payload ,disconnectRequest: false, reconnectRequest: false};
+    let sewerageConnection = { SewerageConnection: payload ,disconnectRequest: false, reconnectRequest: false};
 
     if (waterAndSewerageLoader) {
       setWaterAndSewerageBoth(true);
@@ -153,7 +152,7 @@ const NewApplication = () => {
           },
           onSuccess: async (waterData, variables) => {
             let response = await updatePayloadOfWS(waterData?.WaterConnection?.[0], "WATER");
-            let waterConnectionUpdate = { WaterConnection: response };
+            let waterConnectionUpdate = { WaterConnection: response,disconnectRequest:false, reconnectRequest:false };
             waterUpdateMutation(waterConnectionUpdate, {
               onError: (error, variables) => {
                 setIsEnableLoader(false);
@@ -170,7 +169,7 @@ const NewApplication = () => {
                   },
                   onSuccess: async (sewerageData, variables) => {
                     let response = await updatePayloadOfWS(sewerageData?.SewerageConnections?.[0], "SEWERAGE");
-                    let sewerageConnectionUpdate = { SewerageConnection: response };
+                    let sewerageConnectionUpdate = { SewerageConnection: response, disconnectRequest:false, reconnectRequest:false  };
                     await sewerageUpdateMutation(sewerageConnectionUpdate, {
                       onError: (error, variables) => {
                         setIsEnableLoader(false);

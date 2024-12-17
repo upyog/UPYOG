@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Loader, MultiSelectDropdown, RemoveableTag } from "@egovernments/digit-ui-react-components";
+import { Loader, MultiSelectDropdown, RemoveableTag } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ServiceCategoryCount from "./ServiceCategoryCount";
 
@@ -8,7 +8,7 @@ const ServiceCategory = ({ onAssignmentChange, searchParams, selectedCategory,se
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [moreStatus, showMoreStatus] = useState(false);
-  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(stateId, "BillingService", "BusinessService", "[?(@.type=='Adhoc')]");
+  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(stateId, "BillingService", "BusinessService", "[?(@.type=='Adhoc' && @.isActive==true)]");
   let newMenu = [];
   const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     if (searcher == "") return str;

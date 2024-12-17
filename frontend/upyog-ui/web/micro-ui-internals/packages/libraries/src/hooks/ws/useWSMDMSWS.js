@@ -28,13 +28,12 @@ const useWSMDMSWS = {
         ),
       {
         select: (data) =>
-          data['ws-services-masters'].ApplicationType.map((type) => ({
+          data["ws-services-masters"].ApplicationType.map((type) => ({
             code: type.code,
             i18nKey: `WS_${type.code}`,
           })),
       }
     ),
-
 };
 
 export default useWSMDMSWS;

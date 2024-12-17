@@ -21,7 +21,7 @@ import {
   
   const getPropertyDetails = (application, t) => {
     const owners = application?.owners?.filter((owner) => owner.active == true) || [];
-    const names = owners?.map(owner => owner.name)?.join(",");
+    const names = owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.map(owner => owner.name)?.join(",");
     return {
       title: t("WS_COMMON_PROPERTY_DETAILS"),
       values: [
@@ -44,6 +44,7 @@ import {
         //{ title: t("WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL"), value: t(owner?.connectionHolders?.[0]?.relationship) || t("CS_NA") },
         //{ title: t("WS_OWNER_SPECIAL_CATEGORY"), value: owner?.connectionHolders?.[0]?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}`) : t("CS_NA") },
         { title: t("WS_CORRESPONDANCE_ADDRESS_LABEL"), value: owner?.connectionHolders?.[0]?.correspondenceAddress || t("CS_NA") },
+        { title: t("CORE_COMMON_EMAIL_ID"), value: owner?.connectionHolders?.[0]?.emailId || t("CS_NA") },
       ] : [
         { title: t("WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS"), value: t("SCORE_YES") || t("CS_NA") }
       ],
@@ -83,7 +84,16 @@ import {
         ],
       };
   };
-
+  const getRestorationDetails = (application, t) => {
+    return {
+        title: t("WS_RESTORATION_DETAILS"),
+        values: [
+          { title: t("WS_DISCONNECTION_TYPE"), value: application?.isDisconnectionTemporary === true ? t("WS_DISCONNECTIONTYPE_TEMPORARY") : t("WS_DISCONNECTIONTYPE_PERMANENT") || t("CS_NA") },
+          { title: t("WS_DISCONNECTION_PROPOSED_DATE"), value: Digit.DateUtils.ConvertEpochToDate(application?.dateEffectiveFrom) || t("CS_NA") },
+          { title: t("WS_DISCONNECTION_REASON"), value: application?.disconnectionReason || t("CS_NA") },
+        ],
+      };
+  };
   const getDocumentDetails = (application, t) => {
     const documents = application?.documents
     return {

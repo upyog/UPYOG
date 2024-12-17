@@ -24,6 +24,10 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     return useQuery("FSM_APPLICATION_EDIT_APPLICATION_CHANNEL", () => onlyEmployeeChannels(), queryConfig);
   };
 
+  const useUrcConfig = () => {
+    return useQuery("FSM_APPLICATION_NEW_URC_CONFIG", () => MdmsService.getUrcConfig(tenantId, moduleCode, type), queryConfig);
+  };
+
   const usePropertyType = () => {
     return useQuery("FSM_PROPERTY_TYPE", () => MdmsService.getPropertyType(tenantId, moduleCode, type), queryConfig);
   };
@@ -91,7 +95,6 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     return useQuery("FSM_RECEIVED_PAYMENT_TYPE", () => MdmsService.getWSTaxHeadMaster(tenantId, moduleCode, type), queryConfig);
   };
 
-
   switch (type) {
     case "SanitationType":
       return useSanitationType();
@@ -146,7 +149,9 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     case "ReceivedPaymentType":
       return useReceivedPaymentType();
     case "WSTaxHeadMaster":
-      return useWSTaxHeadMaster()
+      return useWSTaxHeadMaster();
+    case "UrcConfig":
+      return useUrcConfig();
     default:
       return null;
   }

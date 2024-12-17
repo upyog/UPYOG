@@ -9,7 +9,7 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 export const mdmsData = async (tenantId, t) => {
   const result = await Digit.MDMSService.getMultipleTypes(tenantId, "tenant", ["tenants", "citymodule"]);
 
-  const filteredResult = result?.tenant.tenants.filter((e) => e.code === tenantId);
+  const filteredResult =result && result.tenant.tenants.filter((e) => e.code === tenantId);
 
   const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
   const ulbGrade = filteredResult?.[0]?.city?.ulbGrade.replaceAll(" ", "_");
@@ -65,9 +65,21 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
 };
 
 /*   method to get filename  from fielstore url*/
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
-  tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+// export const DownloadReceipt = async (payments,consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+//   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
+//   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+// };
+
+export const DownloadReceipt = async (payments,consumerCode, tenantId, businessService) => {
+  let response=null;
+  if(payments?.fileStoreId){
+    response = { filestoreIds: [payments?.fileStoreId] };
+  }
+  else{
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "ws-onetime-receipt");
+ }    
+ const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+ window.open(fileStore[response?.filestoreIds[0]], "_blank");
 };
 export const pdfDocumentName = (documentLink = "", index = 0) => {
   let documentName = decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) || `Document - ${index + 1}`;
@@ -162,7 +174,8 @@ export const getPattern = (type) => {
       return /^\d{0,8}(\.\d{1,2})?$/i;
     //return /(([0-9]+)((\.\d{1,2})?))$/i;
     case "Email":
-      return /^(?=^.{1,64}$)((([^<>()\[\]\\.,;:\s$*@'"]+(\.[^<>()\[\]\\.,;:\s@'"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))$/i;
+      return /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i;
+      //return /^(?=^.{1,64}$)((([^<>()\[\]\\.,;:\s$*@'"]+(\.[^<>()\[\]\\.,;:\s@'"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))$/i;
     case "Address":
       return /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,500}$/i;
     case "PAN":
@@ -244,6 +257,7 @@ export const createPayloadOfWS = async (data) => {
             ownerType: data?.ConnectionHolderDetails?.[0]?.ownerType?.code || "",
             relationship: data?.ConnectionHolderDetails?.[0]?.relationship?.code || "",
             sameAsPropertyAddress: data?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails,
+            emailId: data?.ConnectionHolderDetails?.[0].emailId || "",
           },
         ]
       : null,
@@ -353,6 +367,7 @@ export const convertToEditWSUpdate = (data) => {
             gender: data?.ConnectionHolderDetails?.gender?.code || "",
             mobileNumber: data?.ConnectionHolderDetails?.mobileNumber || "",
             name: data?.ConnectionHolderDetails?.name || "",
+            emailId:data?.ConnectionHolderDetails?.emailId || "",
             ownerType: data?.ConnectionHolderDetails?.specialCategoryType?.code || "",
             relationship: data?.ConnectionHolderDetails?.relationship?.code || "",
             sameAsPropertyAddress: data?.ConnectionHolderDetails?.sameAsOwnerDetails,
@@ -469,6 +484,7 @@ export const convertToEditSWUpdate = (data) => {
               gender: data?.ConnectionHolderDetails?.gender?.code || "",
               mobileNumber: data?.ConnectionHolderDetails?.mobileNumber || "",
               name: data?.ConnectionHolderDetails?.name || "",
+              emailId:data?.ConnectionHolderDetails?.emailId || "",
               ownerType: data?.ConnectionHolderDetails?.specialCategoryType?.code || "",
               relationship: data?.ConnectionHolderDetails?.relationship?.code || "",
               sameAsPropertyAddress: data?.ConnectionHolderDetails?.sameAsOwnerDetails,
@@ -588,7 +604,7 @@ export const createPayloadOfWSDisconnection = async (data, storeData, service) =
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" || data?.type?.value?.code === "TEMPORARY" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: true,
       sewerage: false,
@@ -635,7 +651,7 @@ export const createPayloadOfWSDisconnection = async (data, storeData, service) =
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: false,
       sewerage: true,
@@ -679,6 +695,129 @@ export const createPayloadOfWSDisconnection = async (data, storeData, service) =
 
   return returnObject;
 };
+export const createPayloadOfWSReconnection = async (data, storeData, service) => {
+  const user = Digit.UserService.getType();
+  let plumberInfo = [];
+  if (storeData?.applicationData?.plumberInfo?.length > 0) {
+    // let plumberInfoDetails = storeData?.applicationData?.plumberInfo?.[0];
+    // if (plumberInfoDetails?.id) delete plumberInfoDetails?.id;
+    // plumberInfo = [plumberInfoDetails];
+
+    let plumberInfoData = {};
+    if (storeData?.applicationData?.plumberInfo?.[0]?.licenseNo) plumberInfoData.licenseNo = storeData?.applicationData?.plumberInfo?.[0]?.licenseNo;
+    if (storeData?.applicationData?.plumberInfo?.[0]?.mobileNumber)
+      plumberInfoData.mobileNumber = storeData?.applicationData?.plumberInfo?.[0]?.mobileNumber;
+    if (storeData?.applicationData?.plumberInfo?.[0]?.id)
+      plumberInfoData.id = storeData?.applicationData?.plumberInfo?.[0]?.id;
+    if (storeData?.applicationData?.plumberInfo?.[0]?.name) plumberInfoData.name = storeData?.applicationData?.plumberInfo?.[0]?.name;
+    plumberInfo = [plumberInfoData];
+  }
+
+  let wsPayload = {
+    WaterConnection: {
+      id: storeData?.applicationData?.id,
+      applicationNo: storeData?.applicationData?.applicationNo,
+      applicationStatus: storeData?.applicationData?.applicationStatus,
+      status: storeData?.applicationData?.status,
+      connectionNo: storeData?.applicationData?.connectionNo,
+      connectionHolders: storeData?.applicationData?.connectionHolders,
+      applicationType: "WATER_RECONNECTION",
+      dateEffectiveFrom: convertDateToEpoch(data?.date),
+      isdisconnection: true,
+      isDisconnectionTemporary: data?.type?.value?.code === "Temporary" || data?.type?.value?.code === "TEMPORARY" ? true : false,
+      disconnectionReason: data?.reason.value?.code,
+      documents: data?.documents,
+      water: true,
+      sewerage: false,
+      proposedTaps: storeData?.applicationData?.proposedTaps && Number(storeData?.applicationData?.proposedTaps),
+      proposedPipeSize: storeData?.applicationData?.proposedPipeSize?.size && Number(storeData?.applicationData?.proposedPipeSize?.size),
+      service: "Water",
+      property: storeData?.applicationData?.property,
+      propertyId: storeData?.applicationData?.propertyId,
+      oldConnectionNo: null,
+      plumberInfo: plumberInfo?.length > 0 ? plumberInfo : null,
+      roadCuttingInfo: storeData?.applicationData?.roadCuttingInfo,
+      roadCuttingArea: null,
+      roadType: null,
+      connectionExecutionDate: storeData?.applicationData?.connectionExecutionDate,
+      noOfTaps: storeData?.applicationData?.noOfTaps,
+      additionalDetails: storeData?.applicationData?.additionalDetails,
+      tenantId: storeData?.applicationData?.tenantId,
+      connectionType: storeData.applicationData.connectionType || null,
+      waterSource: storeData.applicationData.waterSource || null,
+      processInstance: {
+        ...storeData?.applicationData?.processInstance,
+        action: "INITIATE",
+        businessService:"WSReconnection"
+      },
+      channel: user === "citizen" ? "CITIZEN" : "CFC_COUNTER",
+    },
+    disconnectRequest: false,
+  };
+
+  if (storeData.applicationData.connectionType) {
+    if (storeData.applicationData.meterInstallationDate)
+      wsPayload.WaterConnection.meterInstallationDate = storeData.applicationData.meterInstallationDate;
+    if (storeData.applicationData.meterId) wsPayload.WaterConnection.meterId = storeData.applicationData.meterId;
+  }
+
+  let swPayload = {
+    SewerageConnection: {
+      id: storeData?.applicationData?.id,
+      applicationNo: storeData?.applicationData?.applicationNo,
+      applicationStatus: storeData?.applicationData?.applicationStatus,
+      status: storeData?.applicationData?.status,
+      connectionNo: storeData?.applicationData?.connectionNo,
+      connectionHolders: storeData?.applicationData?.connectionHolders,
+      applicationType: "WATER_RECONNECTION",
+      dateEffectiveFrom: convertDateToEpoch(data?.date),
+      isdisconnection: true,
+      isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
+      disconnectionReason: data?.reason.value?.code,
+      documents: data?.documents,
+      water: false,
+      sewerage: true,
+      proposedWaterClosets: storeData?.applicationData?.proposedWaterClosets && Number(storeData?.applicationData?.proposedWaterClosets),
+      proposedToilets: storeData?.applicationData?.proposedToilets && Number(storeData?.applicationData?.proposedToilets),
+      service: "Sewerage",
+      property: storeData?.applicationData?.property,
+      propertyId: storeData?.applicationData?.propertyId,
+      oldConnectionNo: null,
+      plumberInfo: plumberInfo?.length > 0 ? plumberInfo : null,
+      roadCuttingInfo: storeData?.applicationData?.roadCuttingInfo,
+      roadCuttingArea: null,
+      roadType: null,
+      connectionExecutionDate: storeData?.applicationData?.connectionExecutionDate,
+      noOfWaterClosets: storeData?.applicationData?.noOfWaterClosets,
+      noOfToilets: storeData?.applicationData?.noOfToilets,
+      additionalDetails: storeData?.applicationData?.additionalDetails,
+      tenantId: storeData?.applicationData?.tenantId,
+      // connectionType: storeData.applicationData.connectionType || null,
+      connectionType: "Non Metered",
+      waterSource: storeData.applicationData.waterSource || null,
+      processInstance: {
+        ...storeData?.applicationData?.processInstance,
+        action: "INITIATE",
+        businessService:"SWReconnection"
+      },
+      channel: user === "citizen" ? "CITIZEN" : "CFC_COUNTER",
+    },
+    disconnectRequest: false,
+  };
+
+  // if (storeData.applicationData.connectionType) {
+  //   if (storeData.applicationData.meterInstallationDate) swPayload.SewerageConnection.meterInstallationDate = storeData.applicationData.meterInstallationDate;
+  //   if (storeData.applicationData.meterId) swPayload.SewerageConnection.meterId = storeData.applicationData.meterId;
+  // }
+
+  let returnObject = service === "WATER" ? wsPayload : swPayload;
+  /* use customiseCreateFormData hook to make some chnages to the water object */
+  // returnObject = Digit?.Customizations?.WS?.customiseCreatePayloadOfWSDisconnection
+  //   ? Digit?.Customizations?.WS?.customiseCreatePayloadOfWSDisconnection(data, returnObject, service)
+  //   : returnObject;
+
+  return returnObject;
+};
 export const createPayloadOfWSReSubmitDisconnection = async (data, storeData, service) => {
   const user = Digit.UserService.getType();
   let wsPayload = {
@@ -686,7 +825,7 @@ export const createPayloadOfWSReSubmitDisconnection = async (data, storeData, se
       ...storeData?.applicationData,
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: true,
       sewerage: false,
@@ -712,7 +851,7 @@ export const createPayloadOfWSReSubmitDisconnection = async (data, storeData, se
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: false,
       sewerage: true,
@@ -755,6 +894,21 @@ export const updatePayloadOfWSDisconnection = async (data, type) => {
   payload = Digit?.Customizations?.WS?.customiseUpdatePayloadOfWSDisconnection
     ? Digit?.Customizations?.WS?.customiseUpdatePayloadOfWSDisconnection(data, payload, type)
     : payload;
+  return payload;
+};
+export const updatePayloadOfWSRestoration = async (data, type) => {
+  let payload = {
+    ...data,
+    plumberInfo : data?.plumberInfo?.[0] ? [{...data?.plumberInfo?.[0], id:null}] : data?.plumberInfo,
+    applicationType: type === "WATER" ? "WATER_RECONNECTION" : "SEWERAGE_RECONNECTION",
+    processInstance: {
+      ...data?.processInstance,
+      businessService: type === "WATER" ? "WSReconnection" : "SWReconnection",
+      action: "SUBMIT_APPLICATION",
+    },
+  };
+  /* use customiseCreateFormData hook to make some chnages to the water object */
+ 
   return payload;
 };
 
@@ -1015,6 +1169,7 @@ export const convertApplicationData = (data, serviceType, modify = false, editBy
             uuid: data?.applicationData?.connectionHolders?.[0]?.uuid,
             name: data?.applicationData?.connectionHolders?.[0]?.name || "",
             mobileNumber: data?.applicationData?.connectionHolders?.[0]?.mobileNumber || "",
+            emailId: data?.applicationData?.connectionHolders?.[0]?.emailId || "",
             guardian: data?.applicationData?.connectionHolders?.[0]?.fatherOrHusbandName || "",
             address: data?.applicationData?.connectionHolders?.[0]?.correspondenceAddress || "",
             gender: data?.applicationData?.connectionHolders?.[0]?.gender
@@ -1291,6 +1446,7 @@ export const convertEditApplicationDetails = async (data, appData, actionData) =
             gender: data?.ConnectionHolderDetails?.[0]?.gender?.code || "",
             mobileNumber: data?.ConnectionHolderDetails?.[0]?.mobileNumber || "",
             name: data?.ConnectionHolderDetails?.[0]?.name || "",
+            emailId:data?.ConnectionHolderDetails?.[0]?.emailId || "",
             ownerType: data?.ConnectionHolderDetails?.[0]?.ownerType?.code || "",
             relationship: data?.ConnectionHolderDetails?.[0]?.relationship?.code || "",
             sameAsPropertyAddress: data?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails,
@@ -1469,6 +1625,7 @@ export const convertModifyApplicationDetails = async (data, appData, actionData 
         gender: data?.ConnectionHolderDetails?.[0]?.gender?.code || "",
         mobileNumber: data?.ConnectionHolderDetails?.[0]?.mobileNumber || "",
         name: data?.ConnectionHolderDetails?.[0]?.name || "",
+        emailId:data?.ConnectionHolderDetails?.[0]?.emailId || "",
         ownerType: data?.ConnectionHolderDetails?.[0]?.ownerType?.code || "",
         relationship: data?.ConnectionHolderDetails?.[0]?.relationship?.code || "",
         sameAsPropertyAddress: data?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails,

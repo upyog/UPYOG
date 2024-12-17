@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@upyog/digit-ui-react-components";
 import isUndefined from "lodash/isUndefined";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -83,7 +83,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
         return { code: item.licenseType, active: true };
       });
 
-      accessories.forEach((data) => {
+      accessories?.map((data) => {
         data.i18nKey = t(`TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(data?.code?.toUpperCase(), "-", "_")}`);
       });
 
@@ -123,7 +123,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
     acc[i].uom = "";
     setenableUOM(true);
     acc[i].unit = value?.uom != null ?  value.uom : "";
-    Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
+    Array.from(document.querySelectorAll("input"))?.forEach((input) => (input.value = ""));
     setUnitOfMeasure(value?.uom != null ? value.uom : null);
     // Data?.TradeLicense?.AccessoriesCategory.map((ob) => {
     //   if (value.code === ob.code && ob.uom != null) {
@@ -134,10 +134,21 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
   }
   function selectAccessoryCount(i, e) {
     setAccCountError(null);
-    if (isNaN(e.target.value)) setAccCountError("TL_ONLY_NUM_ALLOWED");
+    const value= e.target.value;
+    if (value === ""){
+      setAccCountError(null);
+      return;
+
+    } 
+    if(value.length>7 || !/^\d+$/.test(value)){
+      setAccCountError("TL_ONLY_NUM_ALLOWED");
+    }
+    else{
+      setAccCountError(null);
+    }
     let acc = [...fields];
-    acc[i].accessorycount = e.target.value;
-    setAccessoryCount(e.target.value);
+    acc[i].accessorycount = value;
+    setAccessoryCount(value);
     setFeilds(acc);
   }
   function selectUnitOfMeasure(i, e) {

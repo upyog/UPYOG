@@ -5,18 +5,18 @@ import { useTranslation } from "react-i18next";
 import { get } from "lodash";
 import FilterContext from "./FilterContext";
 import { endOfMonth, getTime, startOfMonth } from "date-fns";
-import { Loader } from "@egovernments/digit-ui-react-components"
+import { Loader } from "@upyog/digit-ui-react-components"
 import { ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
 
 
 
-const PROJECTION_CONFIG = { scale: 320, center: [85.9629, 22.5937] };
+const PROJECTION_CONFIG = { scale: 280, center: [85.9629, 22.5937] };
 
 // Red Variants
 const COLOR_RANGE = ["#54D140", "#298CFF", "#a82227", "#D1D1D1"];
 
-const STATUS = ["Live", "UnderImplementation", "OnBoarded", "None"];
+const STATUS = ["Live", "OnBoarded", "None"];
 const DEFAULT_COLOR = "#D1D1D1";
 const key = "DSS_FILTERS";
 
@@ -121,12 +121,12 @@ const MapChart = ({
 
   let data1 = !isLoading ? response?.responseData?.data?.filter((dat) => 
   {
-    let totalCount = dat.plots[3].value;
-    let liveCount = dat.plots[4].value;
-    let live = dat.plots[4].strValue > 0 ? true : false;
+    let totalCount = dat?.plots[3]?.value;
+    let liveCount = dat?.plots[4]?.value ;
+    let live = dat?.plots[4]?.strValue > 0 ? true : true;
     DataObj[dat.headerName] = {
       ...DataObj?.[dat.headerName],
-      status: dat.plots[2].strValue,
+      status: dat?.plots[2]?.strValue,
       value: live ? liveCount : totalCount,
       live,
       totalCount,
@@ -164,12 +164,7 @@ const MapChart = ({
     <ResponsiveContainer
       width="40%"
       height={220}
-      margin={{
-        top: 5,
-        right: 5,
-        left: 5,
-        bottom: 5,
-      }}
+      
     >
       <div style={{ position: "relative" }}>
         <ReactTooltip>{tooltipContent}</ReactTooltip>
@@ -195,9 +190,9 @@ const MapChart = ({
                     onMouseEnter={(event) =>
                       onMouseEnter(geo, current, event)
                     }
-                    onClick={(event) =>
-                      onMouseClick(geo, current, event)
-                    }
+                    // onClick={(event) =>
+                    //   onMouseClick(geo, current, event)
+                    // }
                     onMouseLeave={(event) =>
                       onMouseLeave(geo, current, event)
                     }

@@ -124,11 +124,12 @@ export const setOwnerDetails = (data) => {
         name: owners[0]?.name,
         ownerType: owners[0]?.ownerType?.code || "NONE",
         documents: document,
+        additionalDetails:{ownerSequence:0, ownerName: owners[0]?.name}
       });
       data.institution = institution;
       data.owners = owner;
     } else {
-      owners.map((ownr) => {
+      owners.map((ownr,index) => {
         let document = [];
         if (ownr?.ownerType?.code != "NONE") {
           document.push({
@@ -153,6 +154,7 @@ export const setOwnerDetails = (data) => {
           permanentAddress: ownr?.permanentAddress,
           relationship: ownr?.relationship?.code,
           documents: document,
+          additionalDetails:{ownerSequence:index, ownerName:ownr?.name}
         });
       });
       data.owners = owner;
@@ -295,6 +297,7 @@ export const getusageCategory = (data, i) => {
 };
 
 export const getunits = (data) => {
+  console.log("datadatadatadatadatadatadata",data)
   let unit = [];
   if (data?.selfOccupied?.i18nKey === "PT_YES_IT_IS_SELFOCCUPIED" && data?.IsAnyPartOfThisFloorUnOccupied.i18nKey === "PT_COMMON_YES") {
     unit.push({
@@ -367,6 +370,7 @@ export const getunits = (data) => {
 };
 
 export const getunitarray = (i, unitsdata, unit, data) => {
+  console.log("unitsdataunitsdataunitsdata",unitsdata)
   if (unitsdata[i].active === true) {
     unit.push(unitsdata[i]);
   } else if (
@@ -471,7 +475,7 @@ export const setPropertyDetails = (data) => {
       landArea: parseInt(data?.landarea?.floorarea),
       propertyType: data?.PropertyType?.code,
       noOfFloors: 0,
-      usageCategory: getUsageType(data),
+      usageCategory: data?.propertyStructureDetails?.usageCategory?.code,
     };
   } else if (data?.PropertyType?.code?.includes("SHAREDPROPERTY")) {
     /*  update this case tulika*/
@@ -520,6 +524,28 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
+  console.log("data",data)
+  // let dataNew = data?.units?.map((value) => {
+  //   let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
+  //   return { ...value, additionalDetails }
+  // })
+  const unitValues=[];
+  unitValues.length=0;
+    if(data?.units && data?.units.length!==0 && Array.isArray(data.units)){
+        data.units.forEach((unit)=>{
+            const unitDetails={
+                RentedMonths:unit?.rentedMonths || null,
+                NonRentedMonthsUsage: unit?.nonRentedMonthsUsage || null,
+                floorNo: unit?.floorNo?.code || null,
+
+            };
+            console.log("unitdetails", unitDetails)
+            //if(unitDetails.RentedMonths!==null && unitDetails.NonRentedMonthsUsage!==null){
+                unitValues.push(unitDetails)
+            //}
+            
+        })
+    }
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -561,9 +587,14 @@ export const convertToProperty = (data = {}) => {
         builtUpArea: builtUpArea,
         noOfFloors: noOfFloors,
         noOofBasements: noOofBasements,
-        unit: unit,
         basement1: basement1,
         basement2: basement2,
+        unit:unitValues,
+        electricity:data.electricity.electricity,
+        uid:data.uid.uid,
+        ageOfProperty: data.propertyStructureDetails.ageOfProperty,
+        structureType:data?.propertyStructureDetails?.structureType,
+        owners: data.owners,
       },
 
       creationReason: getCreationReason(data),
@@ -760,6 +791,8 @@ export const convertToUpdateProperty = (data = {}, t) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
+        ageOfProperty: data.propertyStructureDetails.ageOfProperty,
+        structureType:data?.propertyStructureDetails?.structureType,
       },
 
       creationReason: getCreationReason(data),
@@ -888,9 +921,200 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,payments,pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+  let response = { filestoreIds: [payments?.fileStoreId] };
+  if (!payments?.fileStoreId) {
+    let assessmentYear="",assessmentYearForReceipt="";
+    let count=0;
+    let toDate,fromDate;
+  if(payments.paymentDetails[0].businessService=="PT" || payments.paymentDetails[0].businessService=="PT.MUTATION"){
+     let arrearRow={};  let arrearArray=[];
+        let taxRow={};  let taxArray=[];
+       
+
+        let roundoff=0,tax=0,firecess=0,cancercess=0,penalty=0,rebate=0,interest=0,usage_exemption=0,special_category_exemption=0,adhoc_penalty=0,adhoc_rebate=0,total=0;
+        let roundoffT=0,taxT=0,firecessT=0,cancercessT=0,penaltyT=0,rebateT=0,interestT=0,usage_exemptionT=0,special_category_exemptionT=0,adhoc_penaltyT=0,adhoc_rebateT=0,totalT=0;
+
+   
+        payments.paymentDetails[0].bill.billDetails.map(element => {
+
+        if(element.amount >0 || element.amountPaid>0)
+        { count=count+1;
+          toDate=convertEpochToDate(element.toPeriod).split("/")[2];
+          fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
+          assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
+          assessmentYearForReceipt=fromDate+"-"+toDate;
+        
+     element.billAccountDetails.map(ele => {
+    if(ele.taxHeadCode == "PT_TAX")
+  {tax=ele.adjustedAmount;
+    taxT=ele.amount}
+  else if(ele.taxHeadCode == "PT_TIME_REBATE")
+  {rebate=ele.adjustedAmount;
+    rebateT=ele.amount;}
+  else if(ele.taxHeadCode == "PT_CANCER_CESS")
+  {cancercess=ele.adjustedAmount;
+  cancercessT=ele.amount;}
+  else if(ele.taxHeadCode == "PT_FIRE_CESS")
+  {firecess=ele.adjustedAmount;
+    firecessT=ele.amount;}
+  else if(ele.taxHeadCode == "PT_TIME_INTEREST")
+  {interest=ele.adjustedAmount;
+    interestT=ele.amount;}
+  else if(ele.taxHeadCode == "PT_TIME_PENALTY")
+  {penalty=ele.adjustedAmount;
+    penaltyT=ele.amount;}
+  else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
+  {special_category_exemption=ele.adjustedAmount;
+    special_category_exemptionT=ele.amount;}	
+  else if(ele.taxHeadCode == "PT_ROUNDOFF")
+  {roundoff=ele.adjustedAmount;
+    roundoffT=ele.amount;}	
+  else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
+  {usage_exemption=ele.adjustedAmount;
+    usage_exemptionT=ele.amount;}	
+  else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
+  {adhoc_penalty=ele.adjustedAmount;
+    adhoc_penaltyT=ele.amount;}
+  else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
+  {adhoc_rebate=ele.adjustedAmount;
+    adhoc_rebateT=ele.amount;}
+
+  totalT=totalT+ele.amount;
+  });
+arrearRow={
+"year":assessmentYearForReceipt,
+"tax":tax,
+"firecess":firecess,
+"cancercess":cancercess,
+"penalty":penalty,
+"rebate": rebate,
+"interest":interest,
+"usage_exemption":usage_exemption,
+"special_category_exemption": special_category_exemption,
+"adhoc_penalty":adhoc_penalty,
+"adhoc_rebate":adhoc_rebate,
+"roundoff":roundoff,
+"total":element.amountPaid
+};
+taxRow={
+  "year":assessmentYearForReceipt,
+  "tax":taxT,
+  "firecess":firecessT,
+  "cancercess":cancercessT,
+  "penalty":penaltyT,
+  "rebate": rebateT,
+  "interest":interestT,
+  "usage_exemption":usage_exemptionT,
+  "special_category_exemption": special_category_exemptionT,
+  "adhoc_penalty":adhoc_penaltyT,
+  "adhoc_rebate":adhoc_rebateT,
+  "roundoff":roundoffT,
+  "total":element.amount
+  };
+arrearArray.push(arrearRow);
+taxArray.push(taxRow);
+          } 
+ 
+  
+        });
+
+        if(count==0)
+        {
+          let toDate=convertEpochToDate( payments.paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+          let fromDate=convertEpochToDate( payments.paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+          assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
+          assessmentYearForReceipt=fromDate+"-"+toDate;
+       
+        
+          payments.paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
+       
+      if(ele.taxHeadCode == "PT_TAX")
+      {tax=ele.adjustedAmount;
+      taxT=ele.amount}
+      else if(ele.taxHeadCode == "PT_TIME_REBATE")
+      {rebate=ele.adjustedAmount;
+      rebateT=ele.amount;}
+      else if(ele.taxHeadCode == "PT_CANCER_CESS")
+      {cancercess=ele.adjustedAmount;
+      cancercessT=ele.amount;}
+      else if(ele.taxHeadCode == "PT_FIRE_CESS")
+      {firecess=ele.adjustedAmount;
+      firecessT=ele.amount;}
+      else if(ele.taxHeadCode == "PT_TIME_INTEREST")
+      {interest=ele.adjustedAmount;
+      interestT=ele.amount;}
+      else if(ele.taxHeadCode == "PT_TIME_PENALTY")
+      {penalty=ele.adjustedAmount;
+      penaltyT=ele.amount;}
+      else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
+      {special_category_exemption=ele.adjustedAmount;
+      special_category_exemptionT=ele.amount;}	
+      else if(ele.taxHeadCode == "PT_ROUNDOFF")
+      {roundoff=ele.adjustedAmount;
+      roundoffT=ele.amount;}	
+      else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
+      {usage_exemption=ele.adjustedAmount;
+      usage_exemptionT=ele.amount;}	
+      else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
+      {adhoc_penalty=ele.adjustedAmount;
+      adhoc_penaltyT=ele.amount;}
+      else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
+      {adhoc_rebate=ele.adjustedAmount;
+      adhoc_rebateT=ele.amount;}
+    
+      total=total+ele.adjustedAmount;
+      totalT=totalT+ele.amount;
+
+      });
+    arrearRow={
+    "year":assessmentYearForReceipt,
+    "tax":tax,
+    "firecess":firecess,
+    "cancercess":cancercess,
+    "penalty":penalty,
+    "interest":interest,
+    "usage_exemption":usage_exemption,
+    "special_category_exemption": special_category_exemption,
+    "adhoc_penalty":adhoc_penalty,
+    "adhoc_rebate":adhoc_rebate,
+    "roundoff":roundoff,
+    "total": payments.paymentDetails[0].bill.billDetails[0].amountPaid
+
+    };
+    taxRow={
+      "year":assessmentYearForReceipt,
+      "tax":taxT,
+      "firecess":firecessT,
+      "cancercess":cancercessT,
+      "penalty":penaltyT,
+      "rebate": rebateT,
+      "interest":interestT,
+      "usage_exemption":usage_exemptionT,
+      "special_category_exemption": special_category_exemptionT,
+      "adhoc_penalty":adhoc_penaltyT,
+      "adhoc_rebate":adhoc_rebateT,
+      "roundoff":roundoffT,
+      "total": payments.paymentDetails[0].bill.billDetails[0].amount
+    };
+    arrearArray.push(arrearRow);
+    taxArray.push(taxRow);
+    
+}  
+     
+  const details = {
+      "assessmentYears": assessmentYear,
+      "arrearArray":arrearArray,
+      "taxArray": taxArray
+          }
+    payments.paymentDetails[0].additionalDetails=details;   
+        }
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
+  }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+
 };
 
 export const checkIsAnArray = (obj = []) => {

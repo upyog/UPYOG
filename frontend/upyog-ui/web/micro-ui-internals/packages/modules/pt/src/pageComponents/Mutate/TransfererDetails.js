@@ -1,5 +1,5 @@
 import React from "react";
-import { FormStep, StatusTable, Row, CardHeader, KeyNote, CardCaption } from "@egovernments/digit-ui-react-components";
+import { FormStep, StatusTable, Row, CardHeader, KeyNote, CardCaption } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Timeline from "../../components/TLTimeline";
 // import { cardBodyStyle, stringReplaceAll } from "../utils";
@@ -13,7 +13,7 @@ const TransfererDetails = ({ userType, formData, config, onSelect }) => {
     return (
       <React.Fragment>
         <StatusTable>
-          {propertyDetails?.owners
+          {propertyDetails?.owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence})
             ?.filter((e) => e.status === "ACTIVE")
             .map((owner, index, arr) => {
               return (

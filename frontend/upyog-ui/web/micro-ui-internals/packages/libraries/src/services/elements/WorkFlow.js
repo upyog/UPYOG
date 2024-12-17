@@ -76,7 +76,7 @@ const makeCommentsSubsidariesOfPreviousActions = async (wf) => {
 
 const getAssignerDetails = (instance, nextStep, moduleCode) => {
   let assigner = instance?.assigner
-  if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_ZERO_PAY_SERVICE") {
+  if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE_V1"|| moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_ZERO_PAY_SERVICE") {
     if (instance.state.applicationStatus === "CREATED") {
       assigner = instance?.assigner
     } else {
@@ -91,7 +91,7 @@ const getAssignerDetails = (instance, nextStep, moduleCode) => {
 export const WorkflowService = {
   init: (stateCode, businessServices) => {
     return Request({
-      url: Urls.WorkFlow,
+      url: `${Urls.WorkFlow}`,
       useCache: true,
       method: "POST",
       params: { tenantId: stateCode, businessServices },
@@ -110,7 +110,7 @@ export const WorkflowService = {
   },
 
   getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData }) => {
-    const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id);
+    const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id); 
     const applicationProcessInstance = cloneDeep(workflow?.ProcessInstances);
     const getLocationDetails = window.location.href.includes("/obps/") || window.location.href.includes("noc/inbox");
     const moduleCodeData = getLocationDetails ? applicationProcessInstance?.[0]?.businessService : moduleCode;
@@ -122,11 +122,10 @@ export const WorkflowService = {
         action: id.action,
         state: businessServiceResponse?.find((state) => state.uuid === id.nextState),
       }));
-
       /* To check state is updatable and provide edit option*/
       const currentState = businessServiceResponse?.find((state) => state.uuid === processInstances[0]?.state.uuid);
       if (currentState && currentState?.isStateUpdatable) {
-        if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ZERO_PAY_SERVICE" || moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_VEHICLE_TRIP" || moduleCode === "PGR" || moduleCode === "OBPS") null;
+        if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE_V1" || moduleCode === "FSM_ZERO_PAY_SERVICE" || moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_VEHICLE_TRIP" || moduleCode === "PGR" || moduleCode === "OBPS") null;
         else nextActions.push({ action: "EDIT", state: currentState });
       }
 
@@ -282,7 +281,7 @@ export const WorkflowService = {
           });
         }
 
-        if (timeline[timeline.length - 1].status !== "CREATED" && (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode==="FSM_ADVANCE_PAY_SERVICE" || moduleCode==="FSM_ZERO_PAY_SERVICE" || moduleCode==="PAY_LATER_SERVICE" ))
+        if (timeline[timeline.length - 1].status !== "CREATED" && (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode==="FSM_ADVANCE_PAY_SERVICE" || moduleCode==="FSM_ADVANCE_PAY_SERVICE_V1"|| moduleCode==="FSM_ZERO_PAY_SERVICE" || moduleCode==="PAY_LATER_SERVICE" ))
           timeline.push({
             status: "CREATED",
           });

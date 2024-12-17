@@ -13,6 +13,7 @@ import {
   useGetPaymentRulesForBusinessServices,
   useDemandSearch,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -20,6 +21,7 @@ import { useUserSearch } from "./userSearch";
 import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBillSearch";
 import useBoundaryLocalities from "./useLocalities";
 import useCommonMDMS from "./useMDMS";
+import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
@@ -98,6 +100,7 @@ import usePtApplicationDetail from "./pt/useApplicationDetail";
 import usePtApplicationActions from "./pt/useApplicationActions";
 import usePtMDMS from "./pt/useMDMS";
 import usePropertyAssessment from "./pt/usePropertyAssessment";
+import UseAssessmentCreateUlb from "./pt/UseAssessmentCreateUlb";
 import usePtCalculationEstimate from "./pt/usePtCalculationEstimate";
 import useGenderMDMS from "./pt/useGenderMDMS";
 import usePTGenderMDMS from "./pt/usePTGenderMDMS";
@@ -193,6 +196,12 @@ import useSurveySearch from "./surveys/useSearch";
 import useSurveyShowResults from "./surveys/useShowResults";
 import useSurveySubmitResponse from "./surveys/useSubmitResponse";
 import useSurveyInbox from "./surveys/useSurveyInbox";
+import useServeyCreateDef from "./surveys/useCreateSurvey";
+import useCfdefinitionsearch from "./surveys/useCfdefinitionsearch";
+import useSubmitSurveyResponse from "./surveys/useSubmitSurveyResponse";
+import useSelectedSurveySearch from "./surveys/useSelectedSurveySearch";
+import useCfdefinitionsearchresult from "./surveys/useCfdefinitionsearchresult";
+import useUpdateSurvey from "./surveys/useSurveyUpdate";
 
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
@@ -211,6 +220,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
+import useBulkSearchWS from "./ws/useBulkSearchWS"
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -236,6 +246,7 @@ import useWaterPropertySearch from "./ws/useWaterPropertySearch";
 import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
+import useBulkMeterReadingCreateAPI from "./ws/useBulkMeterCreate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -247,6 +258,22 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
+
+import usePetMDMS from "./ptr/usePetMDMS";
+import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
+import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
+import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
+import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
+import usePTRSearch from "./ptr/usePTRSearch";
+import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
+import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
+import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
+import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
+import useMyPetPayments from "./ptr/useMyPetPayments";
+import useTenantsPTR from "./ptr/useTenants";
+
+
+import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 const pgr = {
   useComplaintDetails,
@@ -266,6 +293,7 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
+
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -307,6 +335,22 @@ const fsm = {
   useVendorSearch,
   useAdvanceBalanceCalulation,
 };
+const ptr = {
+  usePetMDMS,
+  usePTRPetMDMS,
+  useBreedTypeMDMS,
+  usePTRCreateAPI,
+  usePTRApplicationAction,
+  usePTRGenderMDMS,
+  usePTRSearch,
+  usePtrApplicationDetail,
+  // useTenantsPTR,
+  useServiceSearchPTR,
+  usePetDocumentSearch,
+  useMyPetPayments,
+  useTenants: useTenantsPTR
+ 
+};
 
 const pt = {
   usePropertySearch,
@@ -322,6 +366,7 @@ const pt = {
   useApplicationActions: usePtApplicationActions,
   useMDMS: usePtMDMS,
   usePropertyAssessment,
+  UseAssessmentCreateUlb,
   usePtCalculationEstimate,
   useGenderMDMS,
   usePTGenderMDMS,
@@ -330,7 +375,6 @@ const pt = {
   useRatingAndFeedbackMDMS,
   useServiceSearchCF,
 };
-
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,
@@ -437,6 +481,12 @@ const survey = {
   useSubmitResponse: useSurveySubmitResponse,
   useShowResults: useSurveyShowResults,
   useSurveyInbox,
+  useServeyCreateDef:useServeyCreateDef,
+  useCfdefinitionsearch:useCfdefinitionsearch,
+  useSubmitSurveyResponse:useSubmitSurveyResponse,
+  useSelectedSurveySearch:useSelectedSurveySearch,
+  useCfdefinitionsearchresult:useCfdefinitionsearchresult,
+  useUpdateSurvey:useUpdateSurvey,
 };
 
 const noc = {
@@ -459,6 +509,7 @@ const ws = {
   WSuseSearch,
   useSewSearch,
   useSearchWS,
+  useBulkSearchWS,
   useWSDetailsPage,
   useWSApplicationActions,
   useApplicationActionsBillAmendUpdate,
@@ -481,6 +532,7 @@ const ws = {
   useDisConnectionDetails,
   useWSModifyDetailsPage,
   useToCheckPrivacyEnablement,
+  useBulkMeterReadingCreateAPI,
   useWSConfigMDMS: useWSConfigMDMS,
 };
 
@@ -506,9 +558,11 @@ const Hooks = {
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
+  useCommonMDMSV2,
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useNewInboxGeneral,
   useEvents,
@@ -527,6 +581,7 @@ const Hooks = {
   pgr,
   fsm,
   pt,
+  ptr,
   dss,
   mcollect,
   hrms,
@@ -550,6 +605,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  createTokenAPI
 };
 
 export default Hooks;

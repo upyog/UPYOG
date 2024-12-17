@@ -12,7 +12,7 @@ import {
   Loader,
   Toast,
   CardText,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
@@ -74,11 +74,12 @@ export const SelectPaymentType = (props) => {
           name: name || userInfo?.info?.name || billDetails?.payerName,
           mobileNumber: mobileNumber || userInfo?.info?.mobileNumber || billDetails?.mobileNumber,
           tenantId: billDetails?.tenantId,
+          emailId: "sriranjan.srivastava@owc.com"
         },
         // success
         callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
-          ? `${window.location.protocol}//${window.location.host}/upyog-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-          : `${window.location.protocol}//${window.location.host}/upyog-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${propertyId}`,
+          ? `${window.location.protocol}//${window.location.host}/upyog-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? consumerCode:consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
+          : `${window.location.protocol}//${window.location.host}/upyog-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${consumerCode}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -90,10 +91,22 @@ export const SelectPaymentType = (props) => {
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
-      } else {
+      }
+      else if (d?.paymentType == "NTTDATA") {
+        let redirect= redirectUrl.split("returnURL=")
+        let url=redirect[0].split("?")[1].split("&")
+        const options = {
+          "atomTokenId": url[0].split("=")[1],
+          "merchId": url[1].split("=")[1],
+          "custEmail": "sriranjan.srivastava@owc.com",
+          "custMobile": url[3].split("=")[1],
+          "returnUrl": redirect[1]
+        }
+        let atom = new AtomPaynetz(options, 'uat');
+      }
+      else {
         // new payment gatewayfor UPYOG pay
         try {
-
           const gatewayParam = redirectUrl
             ?.split("?")
             ?.slice(1)
@@ -109,7 +122,6 @@ export const SelectPaymentType = (props) => {
             method: "POST",
             target: "_top",
           });
-
           const orderForNDSLPaymentSite = [
             "checksum",
             "messageType",
@@ -154,15 +166,14 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-
-          // makePayment(gatewayParam.txURL,formdata);
+          makePayment(gatewayParam.txURL,newForm);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
-      window.location = redirectUrl;
+     // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {

@@ -1,4 +1,4 @@
-import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, LinkButton, MultiLink } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const ApplicationDetails = () => {
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("PT.CREATE");
   sessionStorage.setItem("applicationNoinAppDetails",propertyId);
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
 
   const {
@@ -72,6 +72,7 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
+      appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
         setEnableAudit(true);
@@ -186,25 +187,57 @@ const ApplicationDetails = () => {
     onClick: () => handleDownloadPdf(),
   };
   let dowloadOptions = [propertyDetailsPDF];
-
- if (applicationDetails?.applicationData?.creationReason === "MUTATION"){
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
+ if (applicationDetails?.applicationData?.creationReason === "MUTATION"){  
    return(
     <MutationApplicationDetails 
       propertyId = {propertyId}
       acknowledgementIds={appDetailsToShow?.applicationData?.acknowldgementNumber}
       workflowDetails={workflowDetails}
       mutate={mutate}
+      showToast={showToast}
+      setShowToast={setShowToast}
+      closeToast={closeToast}
     />
    )
  } 
+  if (applicationDetails?.applicationDetails[1].title == "PT_ASSESMENT_INFO_SUB_HEADER") {
+    if (applicationDetails?.applicationDetails[1].values.length == 4) {
+      let obj = {
+        "title": "PT_ASSESMENT_ELECTRICITY",
+        "value": applicationDetails?.additionalDetails?.electricity || "NA"
+      }
+      applicationDetails?.applicationDetails[1].values.push(obj)
+    }
+    if (applicationDetails?.applicationDetails[1].values.length == 5) {
+      let obj = {
+        "title": "PT_ASSESMENT_ELECTRICITY_UID",
+        "value": applicationDetails?.additionalDetails?.uid || "NA"
+      }
+      applicationDetails?.applicationDetails[1].values.push(obj)
+    }
+  }
 
+  const reversedOwners= Array.isArray(appDetailsToShow?.applicationData?.owners) ? appDetailsToShow?.applicationData?.owners.slice().reverse(): [];
+  if (appDetailsToShow?.applicationData) {
+    appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners.sort(() => { return appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners})
+  }
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
       <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PT_APPLICATION_TITLE")}</Header>
+      <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+         
+      <div style={{zIndex: "10",  position: "relative"}}>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
+              className="multilinkWrapper"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
@@ -214,12 +247,16 @@ const ApplicationDetails = () => {
             />
           )}
           </div>
+      <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+      </div>      
+      </div>
       <ApplicationDetailsTemplate
         applicationDetails={appDetailsToShow}
         isLoading={isLoading}
         isDataLoading={isLoading}
         applicationData={appDetailsToShow?.applicationData}
         mutate={mutate}
+        id={"timeline"}
         workflowDetails={workflowDetails}
         businessService={businessService}
         moduleCode="PT"

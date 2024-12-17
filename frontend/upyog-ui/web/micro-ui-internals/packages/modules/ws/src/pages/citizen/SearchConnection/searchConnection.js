@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@egovernments/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@egovernments/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -283,7 +283,7 @@ const SearchConnection = ({ config: propsConfig, formData }) => {
           onChange={selectpropertyId}
           {...(validation = {
             isRequired: false,
-            pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+            pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
             type: "text",
             title: t("ERR_INVALID_PROPERTY_ID"),
           })}

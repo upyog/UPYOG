@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useContext, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -164,7 +164,7 @@ const CustomHorizontalBarChart = ({
               }}
               tickCount={10}
               tickFormatter={tickFormatter}
-              unit={id === "fsmCapacityUtilization" ? "%" : ""}
+              unit={id === "fssmCapacityUtilization"  || id === "fsmCapacityUtilization"? "%" : ""}
               width={getVerticalWidth(layout)}
             />
             <XAxis dataKey={xDataKey} type={xAxisType} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={10} tickFormatter={tickFormatter} />

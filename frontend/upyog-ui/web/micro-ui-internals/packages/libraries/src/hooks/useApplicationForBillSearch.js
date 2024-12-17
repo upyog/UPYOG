@@ -2,9 +2,14 @@ import { FSMService } from "../services/elements/FSM";
 import { PTService } from "../services/elements/PT";
 import { useQuery } from "react-query";
 import { MCollectService } from "../services/elements/MCollect";
+import { PTRService } from "../services/elements/PTR";
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
+};
+
+const ptrApplications = async (tenantId, filters) => {
+  return (await PTRService.search({ tenantId, filters })).PetRegistrationApplications;
 };
 
 const ptApplications = async (tenantId, filters) => {
@@ -27,6 +32,11 @@ const refObj = (tenantId, filters) => {
       searchFn: () => ptApplications(null, { ...filters, propertyIds: consumerCodes }),
       key: "propertyId",
       label: "PT_UNIQUE_PROPERTY_ID",
+    },
+    ptr: {
+      searchFn: () => ptrApplications(null, { ...filters, applicationNumber: consumerCodes }),
+      key: "applicationNumber",
+      label: "PTR_UNIQUE_APPLICATION_NUMBER",
     },
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),
@@ -80,6 +90,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("BPA.")) {
     _key = "BPA"
   }
+  if (window.location.href.includes("pet-services")) {
+    _key = "ptr"
+  } 
 
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];

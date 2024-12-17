@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel} from "@egovernments/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel} from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,8 +22,8 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
     t1 = 5;
   }
   let filter1 = !isNaN(parseInt(OfsetForSearch))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off }
-    : { limit: "5", sortOrder: "ASC", sortBy: "createdTime", offset: "0" };
+    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off ,status:"ACTIVE"}
+    : { limit: "5", sortOrder: "ASC", sortBy: "createdTime", offset: "0",status:"ACTIVE" };
 
   const closeModal = () => {
     setShowModal(false);
@@ -40,6 +40,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   filters.sortOrder = filter1.sortOrder;
   filters.sortBy = filter1.sortBy;
   filters.offset = filter1.offset;
+  filters.status = filter1.status;
 
 
   const [owners, setOwners, clearOwners] = Digit.Hooks.useSessionStorage("PT_MUTATE_MULTIPLE_OWNERS", null);

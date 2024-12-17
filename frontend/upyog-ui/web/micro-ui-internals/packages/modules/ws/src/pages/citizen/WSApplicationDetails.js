@@ -11,7 +11,7 @@ import {
   CardText,
   CardHeader,
   SubmitBar,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -33,6 +33,7 @@ const WSApplicationDetails = () => {
   const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
   const stateCode = Digit.ULBService.getStateId();
   const [showOptions, setShowOptions] = useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
   const applicationNobyData = window.location.href.includes("SW_")
     ? window.location.href.substring(window.location.href.indexOf("SW_"))
     : window.location.href.substring(window.location.href.indexOf("WS_"));
@@ -108,7 +109,13 @@ const WSApplicationDetails = () => {
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
-
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   const printApplicationReceipts = async () => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
@@ -135,13 +142,13 @@ const WSApplicationDetails = () => {
   const wsEstimateDownloadObject = {
     order: 1,
     label: t("WS_ESTIMATION_NOTICE"),
-    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.estimationFileStoreId], stateCode) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.estimationFileStoreId], stateCode),
+    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.estimationFileStoreId], tenantId) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.estimationFileStoreId], tenantId),
   };
 
   const sanctionDownloadObject = {
     order: 2,
     label: t("WS_SANCTION_LETTER"),
-    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.sanctionFileStoreId], stateCode) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.sanctionFileStoreId], stateCode),
+    onClick: () => data?.WaterConnection?.[0] ? getFiles([data?.WaterConnection?.[0]?.additionalDetails?.sanctionFileStoreId], tenantId) : getFiles([data?.SewerageConnections?.[0]?.additionalDetails?.sanctionFileStoreId], tenantId),
   };
 
   const applicationDownloadObject = {
@@ -152,7 +159,7 @@ const WSApplicationDetails = () => {
 
   const receiptApplicationFeeDownloadObject = {
     order: 4,
-    label: t("WS_RECEIPT_APPLICATION_FEE"),
+    label: t("DOWNLOAD_RECEIPT_HEADER"),
     onClick: printApplicationReceipts,
   };
   
@@ -222,8 +229,12 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
   //const application = data?.Properties[0];
   sessionStorage.setItem("ApplicationNoState", applicationNobyData);
   return (
-    <React.Fragment>
-      {downloadOptions && downloadOptions.length > 0 && (
+    <React.Fragment>     
+      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
+        {downloadOptions && downloadOptions.length > 0 && (
         <div ref={menuRef}>
         <MultiLink
         className="multilinkWrapper"
@@ -234,8 +245,8 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
         />
         </div>        
         )}
-      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-        <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>
       </div>
       {checkifPrivacyenabled && <WSInfoLabel t={t} /> }
       <div className="hide-seperator">
@@ -353,7 +364,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
             <Row
               className="border-none"
               label={t("WS_OWN_DETAIL_OWN_NAME_LABEL")}
-              text={PTData?.Properties?.[0]?.owners?.[0]?.name}
+              text={PTData?.Properties?.[0]?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.[0]?.name}
               textStyle={{ whiteSpace: "pre" }}
             />
             <Row
@@ -516,6 +527,25 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
                 },
                 }}
                 />
+                <Row
+                className="border-none"
+                label={t("WS_OWN_DETAIL_EMAIL_ID_LABEL")}
+                text={data?.WaterConnection?.[0]?.connectionHolders?.[0]?.emailId || data?.SewerageConnections?.[0]?.connectionHolders?.[0]?.emailId || "NA"}
+                textStyle={{ whiteSpace: "pre" }}
+                privacy={ {
+                  uuid: applicationNobyData?.includes("WS") ? data?.WaterConnection?.[0]?.connectionHolders?.[0]?.uuid : data?.SewerageConnections?.[0]?.connectionHolders?.[0]?.uuid,
+                  fieldName: "connectionHoldersEmailId",
+                  model: "WnSConnectionOwner",
+                  showValue: false,
+                  loadData: {
+                    serviceName: serviceType === "WATER" ? "/ws-services/wc/_search" : "/sw-services/swc/_search",
+                    requestBody: {},
+                    requestParam: { tenantId, applicationNumber:applicationNobyData },
+                    jsonPath: serviceType === "WATER" ? "WaterConnection[0].connectionHolders[0].emailId" : "SewerageConnections[0].connectionHolders[0].emailId",
+                    isArray: false,
+                  }, }
+                }
+              />
             </StatusTable>
           </Card>
         ) : (
@@ -610,12 +640,16 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
             ))}
         </Card>
         <Card>
+          <div id="timeline">
           {/* <PTWFApplicationTimeline application={application} id={acknowledgementIds} /> */}
+          
           <WSWFApplicationTimeline
             application={data?.WaterConnection?.[0] || data?.SewerageConnections?.[0]}
             id={data?.WaterConnection?.[0]?.applicationNo || data?.SewerageConnections?.[0]?.applicationNo}
             paymentbuttonenabled={false}
           />
+          </div>
+          
           {data?.WaterConnection?.[0]?.applicationStatus === "PENDING_FOR_PAYMENT" ||
           data?.SewerageConnections?.[0]?.applicationStatus === "PENDING_FOR_PAYMENT" ? (
             <Link

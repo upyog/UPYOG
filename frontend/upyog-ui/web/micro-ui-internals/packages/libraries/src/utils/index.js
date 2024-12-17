@@ -203,12 +203,24 @@ const BPAAccess = () => {
 
 const ptAccess = () => {
   const userInfo = Digit.UserService.getUser();
+  console.log("userInfo",userInfo);
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR"];
 
   const PT_ACCESS = userRoles?.filter((role) => ptRoles?.includes(role));
 
   return PT_ACCESS?.length > 0;
+};
+
+const ptrAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const ptrRoles = ["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"];
+
+  const PTR_ACCESS = userRoles?.filter((role) => ptrRoles?.includes(role));
+
+  return PTR_ACCESS?.length > 0;
 };
 
 const tlAccess = () => {
@@ -290,6 +302,7 @@ export default {
   obps,
   pt,
   ptAccess,
+  ptrAccess,
   NOCAccess,
   mCollectAccess,
   receiptsAccess,

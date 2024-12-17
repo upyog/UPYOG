@@ -1,4 +1,4 @@
-import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { configWSApproverApplication, configWSDisConnectApplication } from "../config";
 import * as predefinedConfig from "../config";
@@ -196,7 +196,14 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       applicationData?.serviceType == "WATER" ?
       submitAction({ WaterConnection: applicationData, disconnectRequest: true }) :
       submitAction({ SewerageConnection: applicationData, disconnectRequest: true })
-    } else {
+    } 
+    else if(applicationData?.applicationType == "SEWERAGE_RECONNECTION") {
+      submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:true })
+    }
+    else if(applicationData?.applicationType == "WATER_RECONNECTION") {
+      submitAction({ WaterConnection: applicationData, disconnectRequest: false, reconnectRequest:true })
+    }
+      else {
       const adhocRebateData = sessionStorage.getItem("Digit.ADHOC_ADD_REBATE_DATA");
       const parsedAdhocRebateData = adhocRebateData ? JSON.parse(adhocRebateData) : "";
       if (parsedAdhocRebateData?.value?.adhocPenalty) applicationData.additionalDetails.adhocPenalty = parseInt(parsedAdhocRebateData?.value?.adhocPenalty) || "";
@@ -205,7 +212,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       if (parsedAdhocRebateData?.value?.adhocRebate) applicationData.additionalDetails.adhocRebate = parseInt(parsedAdhocRebateData?.value?.adhocRebate) || "";
       if (parsedAdhocRebateData?.value?.adhocRebateComment) applicationData.additionalDetails.adhocRebateComment = parsedAdhocRebateData?.value?.adhocRebateComment || "";
       if (parsedAdhocRebateData?.value?.adhocRebateReason) applicationData.additionalDetails.adhocRebateReason = parsedAdhocRebateData?.value?.adhocRebateReason || "";
-      applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData }) : submitAction({ SewerageConnection: applicationData });
+      applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData ,disconnectRequest: false, reconnectRequest:false}) : submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:false });
     }
   }
 

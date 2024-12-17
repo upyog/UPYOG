@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -73,7 +73,7 @@ const ActivateConnection = () => {
         key: Date.now(),
     }];
 
-    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" ? [{
+    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" && state?.data?.applicationType !== "WATER_RECONNECTION" ? [{
         meterId: state?.data?.meterId || "",
         meterInstallationDate: state?.data?.meterInstallationDate ? convertEpochToDates(state?.data?.meterInstallationDate) : null,
         meterInitialReading: state?.data?.additionalDetails?.initialMeterReading || "",
@@ -186,7 +186,7 @@ const ActivateConnection = () => {
               : []
         }
 
-        const reqDetails = filters?.service == "WATER" ? { WaterConnection: formData } : { SewerageConnection: formData }
+        const reqDetails = filters?.service == "WATER"? formData?.applicationType === "WATER_RECONNECTION" ? { WaterConnection: formData, reconnectRequest:true, disconnectRequest:false } :{ WaterConnection: formData }: formData?.applicationType === "SEWERAGE_RECONNECTION" ? { SewerageConnection: formData ,reconnectRequest:true, disconnectRequest:false}:{ SewerageConnection: formData}
 
         if (mutate) {
             // setIsEnableLoader(true);

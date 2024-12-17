@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, Loader, RadioOrSelect, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, Loader, RadioOrSelect, TextInput, Toast } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
 
@@ -53,7 +53,8 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
               "action": "INITIATE"
           },
           "channel": "CITIZEN"
-          }
+          },
+          reconnectRequest:false, disconnectRequest:false
         }
       }
       else{
@@ -72,6 +73,7 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
             gender: formData?.ConnectionHolderDetails?.gender?.code,
             mobileNumber: formData?.ConnectionHolderDetails?.mobileNumber,
             name: formData?.ConnectionHolderDetails?.name,
+            emailId: formData?.ConnectionHolderDetails?.emailId,
             ownerType: formData?.ConnectionHolderDetails?.specialCategoryType?.code || "NONE",
             relationship: formData?.ConnectionHolderDetails?.relationship?.code,
             sameAsPropertyAddress: false,
@@ -92,7 +94,8 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
               "action": "INITIATE"
           },
           "channel": "CITIZEN"
-      }
+      },
+      reconnectRequest:false, disconnectRequest:false
       }
     }
 

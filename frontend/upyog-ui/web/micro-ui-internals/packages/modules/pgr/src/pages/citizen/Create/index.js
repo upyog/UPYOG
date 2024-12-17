@@ -22,7 +22,7 @@ export const CreateComplaint = () => {
   const { stateInfo } = storeData || {};
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_CREATE_COMPLAINT, {});
   // const [customConfig, setConfig] = Digit.Hooks.useSessionStorage(PGR_CITIZEN_COMPLAINT_CONFIG, {});
-  const config = useMemo(() => merge(defaultConfig, Digit.Customizations.PGR.complaintConfig), [Digit.Customizations.PGR.complaintConfig]);
+  const config = useMemo(() => defaultConfig);
   const [paramState, setParamState] = useState(params);
   const [nextStep, setNextStep] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
@@ -66,9 +66,10 @@ export const CreateComplaint = () => {
   };
   const submitComplaint = async () => {
     if (paramState?.complaintType) {
-      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, details, ...values } = paramState;
+      const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, prioritylevel, details, ...values } = paramState;
       const { code: cityCode, name: city } = city_complaint;
       const { code: localityCode, name: localityName } = locality_complaint;
+      const storedpropertyid =sessionStorage.getItem("propertyid")
       const _uploadImages = uploadedImages?.map((url) => ({
         documentType: "PHOTO",
         fileStoreId: url,
@@ -81,6 +82,7 @@ export const CreateComplaint = () => {
         complaintType: subType.key,
         cityCode,
         city,
+        prioritylevel: prioritylevel ,
         description: details,
         district: city,
         region: city,
@@ -88,6 +90,9 @@ export const CreateComplaint = () => {
         localityName,
         state: stateInfo.name,
         uploadedImages: _uploadImages,
+        additionalDetails: {
+          propertyid: storedpropertyid,
+        },
       };
 
       await dispatch(createComplaint(data));
@@ -97,8 +102,19 @@ export const CreateComplaint = () => {
   };
 
   const handleSelect = (data) => {
-    setParams({ ...params, ...data });
-    goNext();
+    let c = JSON.parse(sessionStorage.getItem("complaintType"))
+    if(data?.subType)
+    {
+      
+      let data2 ={"complaintType":c}
+      console.log("handleSelect",data,data2)
+      setParams({ ...params, ...data ,...data2 });
+      goNext();
+    }
+    else {
+      setParams({ ...params, ...data });
+      goNext();
+    }
   };
 
   const handleSkip = () => {

@@ -98,7 +98,9 @@ export const FormComposer = (props) => {
       case "mobileNumber":
         return (
           <Controller
-            render={(props) => <MobileNumber className="field" onChange={props.onChange} value={props.value} disable={disable} />}
+          render={(props) => (
+            <MobileNumber className={populators?.className || "field"} onChange={props.onChange} value={props.value} disable={disable} />
+          )}
             defaultValue={populators.defaultValue}
             name={populators?.name}
             control={control}

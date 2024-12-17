@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation, Route } from "react-router-dom";
-import { PrivateRoute, BackButton } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, BackButton } from "@upyog/digit-ui-react-components";
 import TestAcknowledgment from "./TestAcknowledgment";
 import { WSMyApplications } from "./WSMyApplications";
 
@@ -11,7 +11,7 @@ const App = ({ path }) => {
   let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
   let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const WSDisconnectAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WSDisconnectAcknowledgement");
-
+  const WSRestorationAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WSRestorationAcknowledgement");
   const getBackPageNumber = () => {
     let goBacktoFromProperty = -1;
     if (sessionStorage.getItem("VisitedCommonPTSearch") === "true" && isCommonPTPropertyScreen) {
@@ -23,6 +23,7 @@ const App = ({ path }) => {
 
   const WSCreate = Digit?.ComponentRegistryService?.getComponent("WSCreate");
   const WSDisconnection = Digit?.ComponentRegistryService?.getComponent("WSDisconnection");
+  const WSRestoration = Digit?.ComponentRegistryService?.getComponent("WSRestoration");
   const WSSearchConnectionComponent = Digit?.ComponentRegistryService?.getComponent("WSSearchConnectionComponent");
   const WSSearchResultsComponent = Digit?.ComponentRegistryService?.getComponent("WSSearchResultsComponent");
   const WSCitizenApplicationDetails = Digit?.ComponentRegistryService?.getComponent("WSCitizenApplicationDetails");
@@ -43,7 +44,9 @@ const App = ({ path }) => {
         <Switch>
           <PrivateRoute path={`${path}/create-application`} component={WSCreate} />
           <PrivateRoute path={`${path}/disconnect-application`} component={WSDisconnection} />
+          <PrivateRoute path={`${path}/restore-application`} component={WSRestoration} />
           <PrivateRoute path={`${path}/disconnect-acknowledge`} component={WSDisconnectAcknowledgement} />
+          <PrivateRoute path={`${path}/restoration-acknowledge`} component={WSRestorationAcknowledgement} />
           <PrivateRoute path={`${path}/resubmit-disconnect-application`} component={WSReSubmitDisconnectionApplication} />
           <Route path={`${path}/search`} component={WSSearchConnectionComponent} />
           <PrivateRoute path={`${path}/my-bills`} component={WNSMyBillsComponent} />

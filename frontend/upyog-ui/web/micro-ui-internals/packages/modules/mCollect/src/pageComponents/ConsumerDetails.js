@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader, CardSectionHeader } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader, CardSectionHeader } from "@upyog/digit-ui-react-components";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import * as func from "../pages/employee/Utils/Category";
 import { sortDropdownNames } from "../pages/employee/Utils/Sortbyname";
@@ -11,10 +11,12 @@ import { getUniqueItemsFromArray, commonTransform, stringReplaceAll,getPattern, 
 const createConsumerDetails = () => ({
   ConsumerName: "",
   mobileNumber: "",
+  emailId:"",
   // key: Date.now(),
 });
 
 const ConsumerDetails = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
+  console.log("formadata", formData)
   if(window.location.href.includes("modify-challan") && sessionStorage.getItem("mcollectEditObject"))
   {
     formData = JSON.parse(sessionStorage.getItem("mcollectEditObject"))
@@ -97,6 +99,7 @@ const OwnerForm1 = (_props) => {
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
+  console.log("errorssssss", errors)
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   
@@ -151,7 +154,7 @@ const OwnerForm1 = (_props) => {
                 control={control}
                 name={"ConsumerName"}
                 defaultValue={consumerdetail?.ConsumerName}
-                rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z-.`' ]*$/.test(val) ? true : t("CS_ADDCOMPLAINT_NAME_ERROR")) } }}
+                rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z ]*$/.test(val) ? true : t("CS_ADDCOMPLAINT_NAME_ERROR")) } }}
                 render={(props) => (
                   <TextInput
                     value={props.value}
@@ -198,7 +201,32 @@ const OwnerForm1 = (_props) => {
               />
             </div>
           </LabelFieldPair>  
+          <div>
           <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
+          <LabelFieldPair>  
+          <CardLabel style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_EMAIL_ID")}`}</CardLabel>
+          <div className="field">
+          <Controller
+          control={control}
+          name="emailId"
+          defaultValue={consumerdetail?.emailId}
+          rules={{  validate: { pattern: (val) => (/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(val) ? true : t("CS_ADDCOMPLAINT_EMAIL_ERROR")) } }}
+          render={(props) => (
+            <TextInput
+              t={t}
+              isMandatory={false}
+              value={props.value}
+                            onChange={(e) => {
+                props.onChange(e.target.value)
+              }}
+              disable={isEdit}
+            />
+            )}
+            />
+            </div>
+            </LabelFieldPair> 
+            {formData?.consomerDetails1 && formData?.consomerDetails1[0]?.emailId && errors && <span style={{color:"red"}}>{errors?.emailId?.message}</span>}
+            </div> 
       </div>
       </div>
     </React.Fragment>

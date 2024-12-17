@@ -89,6 +89,9 @@ export const Search = {
       response?.additionalDetails && response?.additionalDetails.tripAmount
         ? response.additionalDetails.tripAmount
         : demandDetails?.Demands[0]?.demandDetails[0]?.taxAmount || "N/A";
+    const propertyID= response.additionalDetails.propertyID || "N/A";
+    //const roadWidth=response.additionalDetails.roadWidth || "N/A";
+    
     // const totalAmount = response?.noOfTrips === 0 || amountPerTrip === "N/A" ? "N/A" : response?.noOfTrips * Number(amountPerTrip);
     const totalAmount = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.taxAmount)?.reduce((a, b) => a + b) || "N/A";
     const employeeResponse = [
@@ -104,6 +107,7 @@ export const Search = {
         values: [
           { title: "ES_APPLICATION_DETAILS_APPLICANT_NAME", value: response?.citizen?.name },
           { title: "ES_APPLICATION_DETAILS_APPLICANT_MOBILE_NO", value: response?.citizen?.mobileNumber },
+          {title: "ES_APPLICATION_DETAILS_APPLICANT_EMAIL_ID", value: response?.citizen?.emailId },
           response?.paymentPreference && {
             title: "ES_FSM_PAYMENT_PREFERENCE",
             value: response?.paymentPreference ? `ES_ACTION_${response?.paymentPreference}` : "N/A",
@@ -113,6 +117,7 @@ export const Search = {
       {
         title: "ES_APPLICATION_DETAILS_PROPERTY_DETAILS",
         values: [
+          {title: "ES_APPLICATION_DETAILS_PROPERTY_ID", value: response?.additionalDetails?.propertyID},
           { title: "ES_APPLICATION_DETAILS_PROPERTY_TYPE", value: getPropertyTypeLocale(response?.propertyUsage) },
           { title: "ES_APPLICATION_DETAILS_PROPERTY_SUB-TYPE", value: getPropertySubtypeLocale(response?.propertyUsage) },
         ],
@@ -153,6 +158,14 @@ export const Search = {
           {
             title: "ES_APPLICATION_DETAILS_PIT_TYPE",
             value: !!response?.sanitationtype ? `PITTYPE_MASTERS_${response?.sanitationtype}` : "",
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_ROAD_WIDTH",
+            value: response?. additionalDetails?.roadWidth ,
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD",
+            value: response?. additionalDetails?.distancefromroad,
           },
           {
             title: "ES_APPLICATION_DETAILS_PIT_DIMENSION",
@@ -223,7 +236,7 @@ export const Search = {
     return {
       tenantId: response.tenantId,
       applicationDetails: citizenResponse,
-      pdfData: { ...response, amountPerTrip, totalAmount, vehicleMake, vehicleCapacity, slumName, dsoDetails },
+      pdfData: { ...response, propertyID, amountPerTrip, totalAmount, vehicleMake, vehicleCapacity, slumName, dsoDetails },
     };
   },
 

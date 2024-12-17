@@ -8,7 +8,7 @@ import {
   SearchIconSvg,
   TextInput,
   WhatsappIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -77,48 +77,61 @@ const GenericChart = ({
     return Digit.Download.Excel(chartData, t(header));
   };
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
-  return (
-    <Card className={`chart-item ${className}`} ReactRef={chart}>
-      <div className={`chartHeader ${showSearch && "column-direction"}`} style={{flexDirection:"column"}}>
-        <div>
-          {showHeader && (
-            <CardLabel className={"dss-header-label"}>
-              <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`}>
-                {headerName}
-                {chartDenomination?.toLowerCase() === "amount" && (
-                  <span style={{ whiteSpace: "pre" }}> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>
-                )}
-                <span
-                  className="tooltiptext"
-                  style={{
-                    whiteSpace: !isMobile ? "nowrap" : "normal",
-                    fontSize: "medium",
-                    marginLeft: t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`).length > 30 ? -120 : -60,
-                  }}
-                >
-                  {t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`)}
-                </span>
-              </span>
-              {/* {`${t(header)}`} */}
-            </CardLabel>
-          )}
-          { chip.length <2 && subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
-        </div>
-        <div className="sideContent">
-          {chip && chip.length > 1 && <Chip items={chip} onClick={updateChip} t={t} />}
-          <span className="table-search-wrapper">
-            {showSearch && (
-              <TextInput className="searchInput" placeholder="Search" signature={true} signatureImg={<SearchImg />} onChange={onChange} />
-            )}
-            {showDownload && <DownloadIcon className="mrlg cursorPointer" onClick={handleExcelDownload} />}
-          </span>
-          {!showDownload && <EllipsisMenu menuItems={menuItems} displayKey="i18nKey" onSelect={(data) => download(data)} />}
-        </div>
-      </div>
-      {caption && <CardCaption>{caption}</CardCaption>}
+  if(window.location.href.includes("main-dashboard-landing"))
+  {  return ( 
+    <Card className={`chart-item ${className}`} ReactRef={chart} style={{maxWidth:"60%",width:className == "metricsTable"?"100%":"",backgroundColor:className == "metricsTable"?"#e3e3e3":"white"}}>
+      
+      {caption && <CardCaption>{caption}
+      </CardCaption>}
       {React.cloneElement(children, { setChartData, setChartDenomination })}
     </Card>
   );
+  }
+  else {
+    return (
+      <Card className={`chart-item ${className}`} ReactRef={chart}>
+        <div className={`chartHeader ${showSearch && "column-direction"}`} style={{flexDirection:"column"}}>
+          <div>
+            {showHeader && (
+              <CardLabel className={"dss-header-label"}>
+                <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`}>
+                  {headerName}
+                  {chartDenomination?.toLowerCase() === "amount" && (
+                    <span style={{ whiteSpace: "pre" }}> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>
+                  )}
+                  <span
+                    className="tooltiptext"
+                    style={{
+                      whiteSpace: !isMobile ? "nowrap" : "normal",
+                      fontSize: "medium",
+                      marginLeft: t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`).length > 30 ? -120 : -60,
+                    }}
+                  >
+                    {t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`)}
+                  </span>
+                </span>
+                {/* {`${t(header)}`} */}
+              </CardLabel>
+            )}
+            { chip.length <2 && subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
+          </div>
+          <div className="sideContent">
+            {chip && chip.length > 1 && <Chip items={chip} onClick={updateChip} t={t} />}
+            <span className="table-search-wrapper">
+              {showSearch && (
+                <TextInput className="searchInput" placeholder="Search" signature={true} signatureImg={<SearchImg />} onChange={onChange} />
+              )}
+              {showDownload && <DownloadIcon className="mrlg cursorPointer" onClick={handleExcelDownload} />}
+            </span>
+            {!showDownload && <EllipsisMenu menuItems={menuItems} displayKey="i18nKey" onSelect={(data) => download(data)} />}
+          </div>
+        </div>
+        {caption && <CardCaption>{caption}</CardCaption>}
+        {React.cloneElement(children, { setChartData, setChartDenomination })}
+      </Card>
+    );
+  }
+
 };
 
 export default GenericChart;

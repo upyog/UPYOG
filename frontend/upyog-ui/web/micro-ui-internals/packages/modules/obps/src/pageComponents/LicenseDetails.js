@@ -1,4 +1,4 @@
-import { BackButton, CardLabel, FormStep, Loader, MobileNumber, RadioButtons, TextInput } from "@egovernments/digit-ui-react-components";
+import { BackButton, CardLabel, FormStep, Loader, MobileNumber, RadioButtons, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
@@ -116,7 +116,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
               disable={name && !isOpenLinkFlow ? true : false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}

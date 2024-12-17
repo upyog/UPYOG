@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -49,6 +49,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     try {
       let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
       data.tenantId = tenantId;
+      console.log("isPropertyMutation",isPropertyMutation,data)
       let formdata = !window.location.href.includes("edit-application")
         ? isPropertyMutation
           ? data
@@ -59,6 +60,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
         onSuccess,
       });
     } catch (err) {
+      console,log("error",err)
     }
   }, []);
 
@@ -81,7 +83,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       {mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_RESPONSE")}</CardText>}
-      {!mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>}
+      {!mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE") }. {mutation.error.response.data.Errors[0].message} </CardText>}
       {/* {mutation.isSuccess && (
         <LinkButton
           label={
