@@ -19,9 +19,9 @@ import lombok.Setter;
 @Builder
 public class CalulationCriteria {
 
-	@JsonProperty("fsm")
-	@Valid
-	private FSM fsm = null;
+//	@JsonProperty("fsm")
+//	@Valid
+//	private FSM fsm = null;
 
 	@JsonProperty("applicationNo")
 	@Size(min = 2, max = 64)

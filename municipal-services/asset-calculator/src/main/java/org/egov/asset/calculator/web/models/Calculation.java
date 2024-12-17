@@ -5,8 +5,6 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.egov.asset.calculator.web.models.demand.TaxHeadEstimate;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -26,16 +24,16 @@ public class Calculation {
 	@JsonProperty("applicationNumber")
 	private String applicationNumber = null;
 
-	@JsonProperty("fsm")
-	private FSM fsm = null;
+//	@JsonProperty("fsm")
+//	private FSM fsm = null;
 
 	@NotNull
 	@JsonProperty("tenantId")
 	@Size(min = 2, max = 256)
 	private String tenantId = null;
 
-	@JsonProperty("taxHeadEstimates")
-	List<TaxHeadEstimate> taxHeadEstimates;
+//	@JsonProperty("taxHeadEstimates")
+//	List<TaxHeadEstimate> taxHeadEstimates;
 	
 	@JsonProperty("feeType")
 	String feeType = null;

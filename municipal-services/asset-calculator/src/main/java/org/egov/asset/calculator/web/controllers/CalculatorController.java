@@ -1,20 +1,15 @@
 package org.egov.asset.calculator.web.controllers;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.asset.calculator.services.CalculationService;
-import org.egov.asset.calculator.services.DemandService;
 import org.egov.asset.calculator.utils.ResponseInfoFactory;
-import org.egov.asset.calculator.web.models.AdvanceAmountResponse;
 import org.egov.asset.calculator.web.models.Calculation;
 import org.egov.asset.calculator.web.models.CalculationReq;
 import org.egov.asset.calculator.web.models.CalculationRes;
-import org.egov.asset.calculator.web.models.CancellationAmountResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,18 +33,16 @@ public class CalculatorController {
 
 	private CalculationService calculationService;
 
-	private DemandService demandService;
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
 	public CalculatorController(ObjectMapper objectMapper, HttpServletRequest request,
-			CalculationService calculationService, DemandService demandService) {
+			CalculationService calculationService) {
 		this.objectMapper = objectMapper;
 		this.request = request;
 		this.calculationService = calculationService;
-		this.demandService = demandService;
 	}
 
 	/**

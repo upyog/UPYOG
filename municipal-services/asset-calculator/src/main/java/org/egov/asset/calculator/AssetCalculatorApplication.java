@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @Import({ TracerConfiguration.class })
-public class CalculatorApplication {
+public class AssetCalculatorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CalculatorApplication.class, args);
+		SpringApplication.run(AssetCalculatorApplication.class, args);
 	}
 
 }
