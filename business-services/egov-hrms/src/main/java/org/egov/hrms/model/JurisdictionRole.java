@@ -13,10 +13,10 @@ import lombok.ToString;
 @Setter
 @ToString
 public class JurisdictionRole {
-	@Size(min=2, max=100)
+	@Size(min=2)//, max=100)
     private String value;
 	
-	@Size(min=2, max=100)
+	@Size(min=2)//, max=100)
     private String label;
 
 }

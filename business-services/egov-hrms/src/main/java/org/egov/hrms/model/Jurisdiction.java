@@ -68,17 +68,17 @@ public class Jurisdiction {
 
     @SafeHtml
     @NotNull
-    @Size(min=2, max=100)
+    @Size(min=2)//,max=100)
     private String hierarchy;
 
     @SafeHtml
     @NotNull
-    @Size(min=2, max=100)
+    @Size(min=2)//,max=100)
     private String boundary;
 
     @SafeHtml
     @NotNull
-    @Size(max=256)
+//    @Size(max=256)
     private String boundaryType;
 
     @SafeHtml
@@ -93,7 +93,7 @@ public class Jurisdiction {
     private List<JurisdictionRole> roles;
     
     @SafeHtml
-    @Size(max=256)
+//    @Size(max=256)	
     private String furnishedRolesList;
     
 }
