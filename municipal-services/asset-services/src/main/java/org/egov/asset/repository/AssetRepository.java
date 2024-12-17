@@ -4,17 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.kafka.Producer;
 import org.egov.asset.repository.querybuilder.AssetQueryBuilder;
+import org.egov.asset.repository.rowmapper.AssetAuditRowMapper;
 import org.egov.asset.repository.rowmapper.AssetLimitedDateRowMapper;
 import org.egov.asset.repository.rowmapper.AssetRowMapper;
 import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetAuditDetails;
 import org.egov.asset.web.models.AssetSearchCriteria;
 import org.egov.asset.web.models.AssetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +44,9 @@ public class AssetRepository {
 	
 	@Autowired
 	AssetLimitedDateRowMapper assetLimitedDateRowMapper;
+	
+	@Autowired
+	AssetAuditRowMapper assetAuditRowMapper; 
 	
 	
 	/**
@@ -108,6 +116,41 @@ public class AssetRepository {
 		String query = "SELECT SUM(COUNT(*)) OVER () AS total_applications,EXTRACT(MONTH FROM TO_TIMESTAMP(createdtime / 1000)) AS month,COUNT(*) AS application_count FROM eg_wf_processinstance_v2 WHERE modulename = 'SITE' AND action = 'APPROVE' GROUP BY month ORDER BY month";
 		statusList =jdbcTemplate.queryForList(query);
         return statusList;
+	}
+
+	public List<String> getTypesOfAllApplications(Boolean isHistoryCall, String tenantId) {
+		List<String> statusList = null;
+		List<AssetAuditDetails> listFromDb=null;
+		String query = null;
+    	List<Object> preparedStmtList = new ArrayList<>();
+    	try {
+    		if (BooleanUtils.isTrue(isHistoryCall)) {
+    			query = "select classification,parentcategory,category,subcategory from eg_asset_auditdetails where \"action\" = 'APPROVE' and  status = 'APPROVED'";
+    		}
+    		else {
+    			if(StringUtils.isEmpty(tenantId)) {
+    				query = "select classification,parentcategory,category,subcategory from eg_asset_auditdetails";
+    			}
+    			else {
+    				query = "select classification,parentcategory,category,subcategory from eg_asset_auditdetails e where e.tenantid = ?";
+    				preparedStmtList.add(tenantId);
+    			}
+    		}
+    		listFromDb =jdbcTemplate.query(query, preparedStmtList.toArray(), assetAuditRowMapper);
+    		if(!CollectionUtils.isEmpty(listFromDb)) {
+    			for(AssetAuditDetails i:listFromDb) {
+    				statusList.add(i.getCategory());
+    				statusList.add(i.getClassification());
+    				statusList.add(i.getParentCategory());
+    				statusList.add(i.getSubCategory());
+    			}
+    		}
+    		
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return statusList;
 	}
 
 }

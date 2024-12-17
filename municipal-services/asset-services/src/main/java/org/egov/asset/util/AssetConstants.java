@@ -62,5 +62,7 @@ public class AssetConstants {
 	public static final String ASSET_INITIATOR = "ASSET_INITIATOR"; 
 	public static final String ASSET_VERIFIER = "ASSET_VERIFIER";
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
+	public static final String ASSET_WF_CREATOR = "ASSET_WF_CREATOR";
+	public static final String ASSET_WF_APPROVER = "ASSET_WF_APPROVER";
 
 }

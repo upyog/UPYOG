@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.management.RuntimeErrorException;
 import javax.validation.Valid;
 
 import org.egov.asset.config.AssetConfiguration;
@@ -19,6 +18,7 @@ import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.dto.AssetSearchDTO;
 import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.repository.RestCallRepository;
+import org.egov.asset.util.AssetConstants;
 import org.egov.asset.util.AssetErrorConstants;
 import org.egov.asset.util.AssetUtil;
 import org.egov.asset.util.AssetValidator;
@@ -72,7 +72,7 @@ public class AssetService {
 
 	@Autowired
 	private AssetConfiguration assetConfiguration;
-
+	
 	@Autowired
 	private RestCallRepository restCallRepository;
 
@@ -125,12 +125,16 @@ public class AssetService {
 		}
 		// if ((criteria.tenantIdOnly() || criteria.isEmpty()) &&
 		// roles.contains(AssetConstants.ASSET_INITIATOR)) {
-		if ((criteria.tenantIdOnly() || criteria.isEmpty())) {
+		if ((/* criteria.tenantIdOnly() || */ criteria.isEmpty())) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());
-		} else
-			assets = getAssetsFromCriteria(criteria);
+		} else if( roles.contains(AssetConstants.EMPLOYEE)) {
+			
+				criteria.setCreatedBy(null);
+				assets = getAssetsFromCriteria(criteria);
+			}
+			
 
 		if (criteria.getApplicationNo() != null) {
 			return assets.stream().map(asset -> modelMapper.map(asset, AssetDTO.class)).collect(Collectors.toList());
@@ -299,8 +303,22 @@ public class AssetService {
 	}
 
 	public AssetActionResponse getCountOfAllApplicationTypes(AssetActionRequest actionRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetActionResponse assetActionResponse =null;
+		List<String> statusList = null;
+		try {
+			assetActionResponse = AssetActionResponse.builder().build();
+			if(null!=actionRequest) {
+				statusList = assetRepository.getTypesOfAllApplications(actionRequest.getIsHistoryCall(),actionRequest.getTenantId());
+			}
+			if(!CollectionUtils.isEmpty(statusList)) {
+				assetActionResponse.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
+						.collect(Collectors.groupingBy(String::toString,Collectors.counting())));
+			}
+			
+		} catch (Exception e) {
+			throw new CustomException("FAILED_TO_FETCH", "Failed to fetch Application types.");
+		}
+		return assetActionResponse;
 	}
 
 	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {

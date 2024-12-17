@@ -17,68 +17,69 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class AssetSearchCriteria {
-	
-	 @JsonProperty("tenantId")
-	    private String tenantId;
 
-	    @JsonProperty("ids")
-	    private List<String> ids;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-	    @JsonProperty("status")
-	    private String status;
+	@JsonProperty("ids")
+	private List<String> ids;
 
-	    @JsonProperty("applicationNo")
-	    private String applicationNo;
+	@JsonProperty("status")
+	private String status;
 
-	    @JsonProperty("approvalNo")
-	    private String approvalNo;
+	@JsonProperty("applicationNo")
+	private String applicationNo;
 
-	    @JsonProperty("offset")
-	    private Integer offset;
+	@JsonProperty("approvalNo")
+	private String approvalNo;
 
-	    @JsonProperty("limit")
-	    private Integer limit;
+	@JsonProperty("offset")
+	private Integer offset;
 
-	    @JsonProperty("approvalDate")
-	    private Long approvalDate;
+	@JsonProperty("limit")
+	private Integer limit;
 
-	    @JsonProperty("fromDate")
-	    private Long fromDate;
+	@JsonProperty("approvalDate")
+	private Long approvalDate;
 
-	    @JsonProperty("toDate")
-	    private Long toDate;
+	@JsonProperty("fromDate")
+	private Long fromDate;
 
-	    @JsonProperty("businessService")
-	    @JsonIgnore
-	    private List<String> businessService;
+	@JsonProperty("toDate")
+	private Long toDate;
 
-	    @JsonProperty("createdBy")
-	    @JsonIgnore
-	    private List<String> createdBy;
+	@JsonProperty("businessService")
+	@JsonIgnore
+	private List<String> businessService;
 
-	    @JsonProperty("locality")
-	    private String locality;
-	    
-	    @JsonProperty("assetClassification")
-	    private String assetClassification;
-	    
-	    @JsonProperty("assetParentCategory")
-	    private String assetParentCategory;
-	    
-	    @JsonProperty("assetBookRefNo")
-	    private String assetBookRefNo;
-	    
+	@JsonProperty("createdBy")
+	@JsonIgnore
+	private List<String> createdBy;
 
-		public boolean isEmpty() {
-			return (this.tenantId == null && this.status == null && this.ids == null && this.applicationNo == null
-	                && this.approvalNo == null && this.approvalDate == null && this.assetClassification == null && this.assetParentCategory == null
-	                && this.approvalDate == null && this.assetBookRefNo == null && this.createdBy == null);
-		}
-		
-		public boolean tenantIdOnly() {
-			return (this.tenantId != null && this.status == null && this.ids == null && this.applicationNo == null
-	                && this.approvalNo == null && this.approvalDate == null && this.assetClassification == null && this.assetParentCategory == null
-	                && this.approvalDate == null && this.assetBookRefNo == null && this.createdBy == null);
-	    }
+	@JsonProperty("locality")
+	private String locality;
+
+	@JsonProperty("assetClassification")
+	private String assetClassification;
+
+	@JsonProperty("assetParentCategory")
+	private String assetParentCategory;
+
+	@JsonProperty("assetBookRefNo")
+	private String assetBookRefNo;
+
+	public boolean isEmpty() {
+		return (this.tenantId == null && this.status == null && this.ids == null && this.applicationNo == null
+				&& this.approvalNo == null && this.approvalDate == null && this.assetClassification == null
+				&& this.assetParentCategory == null && this.approvalDate == null && this.assetBookRefNo == null
+				&& this.createdBy == null);
+	}
+
+	public boolean tenantIdOnly() {
+		return (this.tenantId != null && this.status == null && this.ids == null && this.applicationNo == null
+				&& this.approvalNo == null && this.approvalDate == null && this.assetClassification == null
+				&& this.assetParentCategory == null && this.approvalDate == null && this.assetBookRefNo == null
+				&& this.createdBy == null);
+	}
 
 }
