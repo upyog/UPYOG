@@ -28,9 +28,9 @@ public class AssetService {
 
 
 	private StringBuilder getBPASearchURL() {
-		StringBuilder url = new StringBuilder(config.getFsmHost());
-		url.append(config.getFsmContextPath());
-		url.append(config.getFsmSearchEndpoint());
+		StringBuilder url = new StringBuilder(config.getAssetHost());
+		//url.append(config.getFsmContextPath());
+		//url.append(config.getFsmSearchEndpoint());
 		url.append("?");
 		return url;
 	}
