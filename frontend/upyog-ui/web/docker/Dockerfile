@@ -3,7 +3,7 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries
-RUN yarn add @upyog/digit-ui-module-fsm@1.18.18
+RUN yarn add @upyog/digit-ui-module-fsm@1.8.18
 RUN yarn add @upyog/digit-ui-module-pt@2.0.0
 RUN yarn add @upyog/digit-ui-module-tl@2.0.0
 RUN yarn add @upyog/digit-ui-module-obps@2.0.0
