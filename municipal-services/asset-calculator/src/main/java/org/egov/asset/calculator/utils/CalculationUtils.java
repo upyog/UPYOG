@@ -28,41 +28,41 @@ public class CalculationUtils {
      * Creates demand Search url based on tenanatId,businessService and ConsumerCode
      * @return demand search url
      */
-    public String getDemandSearchURL(){
-        StringBuilder url = new StringBuilder(config.getBillingHost());
-        url.append(config.getDemandSearchEndpoint());
-        url.append("?");
-        url.append("tenantId=");
-        url.append("{1}");
-        url.append("&");
-        url.append("businessService=");
-        url.append("{2}");
-        url.append("&");
-        url.append("consumerCode=");
-        url.append("{3}");
-        return url.toString();
-    }
+//    public String getDemandSearchURL(){
+//        StringBuilder url = new StringBuilder(config.getBillingHost());
+//        url.append(config.getDemandSearchEndpoint());
+//        url.append("?");
+//        url.append("tenantId=");
+//        url.append("{1}");
+//        url.append("&");
+//        url.append("businessService=");
+//        url.append("{2}");
+//        url.append("&");
+//        url.append("consumerCode=");
+//        url.append("{3}");
+//        return url.toString();
+//    }
 
 
     /**
      * Creates generate bill url using tenantId,consumerCode and businessService
      * @return Bill Generate url
      */
-    public String getBillGenerateURI(){
-        StringBuilder url = new StringBuilder(config.getBillingHost());
-        url.append(config.getBillGenerateEndpoint());
-        url.append("?");
-        url.append("tenantId=");
-        url.append("{1}");
-        url.append("&");
-        url.append("consumerCode=");
-        url.append("{2}");
-        url.append("&");
-        url.append("businessService=");
-        url.append("{3}");
-
-        return url.toString();
-    }
+//    public String getBillGenerateURI(){
+//        StringBuilder url = new StringBuilder(config.getBillingHost());
+//        url.append(config.getBillGenerateEndpoint());
+//        url.append("?");
+//        url.append("tenantId=");
+//        url.append("{1}");
+//        url.append("&");
+//        url.append("consumerCode=");
+//        url.append("{2}");
+//        url.append("&");
+//        url.append("businessService=");
+//        url.append("{3}");
+//
+//        return url.toString();
+//    }
 
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
@@ -76,38 +76,38 @@ public class CalculationUtils {
     /**
      * identify the billingBusinessService matching to the calculation FeeType
      */
-	public String getBillingBusinessService( String feeType) {
-
-		String billingBusinessService;
-		switch (feeType) {
-		case CalculatorConstants.APPLICATION_FEE:
-			
-				billingBusinessService = config.getApplicationFeeBusinessService();
-			break;
-		
-		default:
-			billingBusinessService = feeType;
-			break;
-		}
-		return billingBusinessService;
-	}
+//	public String getBillingBusinessService( String feeType) {
+//
+//		String billingBusinessService;
+//		switch (feeType) {
+//		case CalculatorConstants.APPLICATION_FEE:
+//
+//				billingBusinessService = config.getApplicationFeeBusinessService();
+//			break;
+//
+//		default:
+//			billingBusinessService = feeType;
+//			break;
+//		}
+//		return billingBusinessService;
+//	}
 	
 	/**
 	* identify the billingBusinessService matching to the calculation FeeType
 	*/
-	public String getTaxHeadCode(String feeType) {
-
-		String billingTaxHead;
-		switch (feeType) {
-		case CalculatorConstants.APPLICATION_FEE:
-		
-				billingTaxHead = config.getApplicationFeeTaxHead();
-			break;
-		
-		default:
-			billingTaxHead = feeType;
-			break;
-		}
-		return billingTaxHead;
-	}
+//	public String getTaxHeadCode(String feeType) {
+//
+//		String billingTaxHead;
+//		switch (feeType) {
+//		case CalculatorConstants.APPLICATION_FEE:
+//
+//				billingTaxHead = config.getApplicationFeeTaxHead();
+//			break;
+//
+//		default:
+//			billingTaxHead = feeType;
+//			break;
+//		}
+//		return billingTaxHead;
+//	}
 }
