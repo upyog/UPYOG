@@ -180,6 +180,7 @@ public class CalculationService {
       if(totalTax.compareTo(BigDecimal.ZERO)==-1)
           throw new CustomException("INVALID AMOUNT","Tax amount is negative");
       JsonNode additionalDetail = license.getTradeLicenseDetail().getAdditionalDetail();
+      estimate.setEstimateAmount(totalTax);
       if (!additionalDetail.isNull() && !ObjectUtils.isEmpty(additionalDetail.get("validityYears"))) {
           int validityYears = additionalDetail.get("validityYears").asInt();
           if (validityYears == 1)
@@ -189,7 +190,7 @@ public class CalculationService {
           else if (validityYears == 3)
               estimate.setEstimateAmount(totalTax.multiply(BigDecimal.valueOf(3)));
       }
-      estimate.setEstimateAmount(totalTax);
+
       estimate.setCategory(Category.TAX);
       if(license.getApplicationType() != null && license.getApplicationType().toString().equals(TLCalculatorConstants.APPLICATION_TYPE_RENEWAL)){
           estimate.setTaxHeadCode(config.getRenewTaxHead());
