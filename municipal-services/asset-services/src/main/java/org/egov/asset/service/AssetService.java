@@ -3,11 +3,13 @@ package org.egov.asset.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -123,8 +125,15 @@ public class AssetService {
 		for (Role role : requestInfo.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
+		List<String> listOfStatus = getAccountStatusListByRoles(criteria.getTenantId(),requestInfo.getUserInfo().getRoles());
+		if(CollectionUtils.isEmpty(listOfStatus)) {
+			throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
+					"Search can't be performed by this Employee due to lack of roles.");	
+		}
 		// if ((criteria.tenantIdOnly() || criteria.isEmpty()) &&
 		// roles.contains(AssetConstants.ASSET_INITIATOR)) {
+		criteria.setListOfstatus(listOfStatus);
+		
 		if ((/* criteria.tenantIdOnly() || */ criteria.isEmpty())) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
@@ -134,6 +143,9 @@ public class AssetService {
 				criteria.setCreatedBy(null);
 				assets = getAssetsFromCriteria(criteria);
 			}
+		else {
+			assets = getAssetsFromCriteria(criteria);
+		}
 			
 
 		if (criteria.getApplicationNo() != null) {
@@ -141,6 +153,34 @@ public class AssetService {
 		} else {
 			return assets.stream().map(this::convertToAssetSearchDTO).collect(Collectors.toList());
 		}
+	}
+
+	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
+		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);	
+		Set<String> statusWithRoles = new HashSet();
+		try {
+			if(!CollectionUtils.isEmpty(rolesWithinTenant)) {
+				for(String r:rolesWithinTenant) {
+					if(r.equalsIgnoreCase(AssetConstants.ASSET_WF_APPROVER)) {
+						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORAPPROVAL);
+						statusWithRoles.add(AssetConstants.STATUS_APPROVED);
+						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORMODIFICATION);
+						statusWithRoles.add(AssetConstants.STATUS_REJECTED);
+					}
+				}
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return new ArrayList<>(statusWithRoles);
+	}
+
+	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+		List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
+				.collect(Collectors.toList());
+		return roleCodes;
 	}
 
 	private AssetSearchDTO convertToAssetSearchDTO(Asset asset) {
