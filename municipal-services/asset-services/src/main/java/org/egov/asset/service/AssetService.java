@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.management.RuntimeErrorException;
 import javax.validation.Valid;
 
 import org.egov.asset.config.AssetConfiguration;
@@ -18,6 +17,7 @@ import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.dto.AssetSearchDTO;
 import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.repository.RestCallRepository;
+import org.egov.asset.util.AssetConstants;
 import org.egov.asset.util.AssetErrorConstants;
 import org.egov.asset.util.AssetUtil;
 import org.egov.asset.util.AssetValidator;
@@ -71,7 +71,7 @@ public class AssetService {
 
 	@Autowired
 	private AssetConfiguration assetConfiguration;
-
+	
 	@Autowired
 	private RestCallRepository restCallRepository;
 
@@ -124,12 +124,16 @@ public class AssetService {
 		}
 		// if ((criteria.tenantIdOnly() || criteria.isEmpty()) &&
 		// roles.contains(AssetConstants.ASSET_INITIATOR)) {
-		if ((criteria.tenantIdOnly() || criteria.isEmpty())) {
+		if ((/* criteria.tenantIdOnly() || */ criteria.isEmpty())) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());
-		} else
-			assets = getAssetsFromCriteria(criteria);
+		} else if( roles.contains(AssetConstants.EMPLOYEE)) {
+			
+				criteria.setCreatedBy(null);
+				assets = getAssetsFromCriteria(criteria);
+			}
+			
 
 		if (criteria.getApplicationNo() != null) {
 			return assets.stream().map(asset -> modelMapper.map(asset, AssetDTO.class)).collect(Collectors.toList());

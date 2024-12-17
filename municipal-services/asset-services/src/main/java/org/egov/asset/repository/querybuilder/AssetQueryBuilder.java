@@ -203,7 +203,7 @@ public class AssetQueryBuilder {
         }
         
         // createdby search criteria 
-        List<String> createdBy = criteria.getCreatedBy();
+       	 List<String> createdBy = criteria.getCreatedBy();
 		if (!CollectionUtils.isEmpty(createdBy)) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdby IN (").append(createQuery(createdBy)).append(")");
