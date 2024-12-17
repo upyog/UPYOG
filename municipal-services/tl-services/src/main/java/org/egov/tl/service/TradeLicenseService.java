@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -1295,6 +1296,8 @@ public class TradeLicenseService {
 						: null);// Applicant Address
 		tlObject.put("approverName",
 				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
+		tlObject.put("userName",
+				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);// User Name
 		tlObject.put("approvalTime", approvalTime);// Approval Time
 		tlObject.put("ownerName",
 				!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners())
@@ -1572,7 +1575,7 @@ public class TradeLicenseService {
 	public TradeLicenseActionResponse getCountOfAllApplicationTypes(
 			TradeLicenseActionRequest tradeLicenseActionRequest) {
 		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().build();
-		List<String> statusList = null;
+		List<Map<String, Object>> statusList = null;
 
 		// validate request if required
 
@@ -1583,9 +1586,20 @@ public class TradeLicenseService {
 						tradeLicenseActionRequest.getTenantId());
 			}
 			if (!CollectionUtils.isEmpty(statusList)) {
-				tradeLicenseActionResponse
-						.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
-								.collect(Collectors.groupingBy(String::toString, Collectors.counting())));
+				  tradeLicenseActionResponse.setStatusList(
+			                statusList.stream()
+			                        .filter(Objects::nonNull) // Ensure no null entries
+			                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+			                        .collect(Collectors.toList())); // Collect the filtered list
+				  
+				  if (statusList.get(0).containsKey("total_applications")) {
+			            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+			            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+			                tradeLicenseActionResponse.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+			            } else {
+			                throw new IllegalArgumentException("total_applications is not a valid number");
+			            }
+			        }
 			}
 		} catch (Exception e) {
 			throw new CustomException("FAILED_TO_FETCH", "Failed to fetch Application types.");

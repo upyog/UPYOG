@@ -25,5 +25,8 @@ public class AssetActionResponse {
 	private List<AssetApplicationDetail> applicationDetails;
 
 	private Map<String, Long> applicationTypesCount;
-
+	
+    private List<Map<String, Object>> countsData;
+    
+	private long  applicationTotalCount;
 }

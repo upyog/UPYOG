@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteRepository;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.SiteConstants;
+import org.egov.advertisementcanopy.model.AllSiteCountResponse;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
@@ -463,5 +465,29 @@ public class SiteService {
 				.collect(Collectors.toList());
 		return roleCodes;
 	}
+	
+	public AllSiteCountResponse getAllcounts() {
+		AllSiteCountResponse response = new AllSiteCountResponse();
+        List<Map<String, Object>> statusList = null;
+        statusList = siteRepository.getAllCounts();
+        
+        if (!CollectionUtils.isEmpty(statusList)) {
+        	response.setCountsData(
+		                statusList.stream()
+		                        .filter(Objects::nonNull) // Ensure no null entries
+		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+		                        .collect(Collectors.toList())); // Collect the filtered list
+			  
+			  if (statusList.get(0).containsKey("total_applications")) {
+		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+		            } else {
+		                throw new IllegalArgumentException("total_applications is not a valid number");
+		            }
+		        }
+		}
+        return response;
+	}	
 
 }

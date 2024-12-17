@@ -612,9 +612,9 @@ public class EnrichmentService {
                         licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameBPA(), config.getLicenseNumberIdgenFormatBPA(), count);
                         break;
                         
-//                    case TLConstants.businessService_NewTL:
-//                        licenseNumbers = getIdList(requestInfo, tenantId, config.getLicenseNumberIdgenNameTL(), config.getLicenseNumberIdgenFormatTL(), count);
-//                        break;
+                   case TLConstants.businessService_NewTL:
+                       licenseNumbers = licenses.stream().map(license -> license.getApplicationNumber()).collect(Collectors.toList());
+                        break;
                 }
                 ListIterator<String> itr = licenseNumbers.listIterator();
 

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,6 +27,7 @@ import org.egov.ptr.models.Demand;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationActionRequest;
 import org.egov.ptr.models.PetRegistrationActionResponse;
+import org.egov.ptr.models.PetCountResponse;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.collection.Bill;
@@ -42,6 +44,7 @@ import org.egov.ptr.util.ErrorConstants;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
 import org.egov.ptr.web.contracts.PDFRequest;
+import org.egov.ptr.web.contracts.PetPhotoRequest;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.egov.ptr.web.contracts.alfresco.DMSResponse;
 import org.egov.ptr.web.contracts.alfresco.DmsRequest;
@@ -169,6 +172,9 @@ public class PetRegistrationService {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORVERIFICATION);
 			}else if(StringUtils.equalsIgnoreCase(role, PTRConstants.USER_ROLE_PTR_APPROVER)) {
 				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORAPPROVAL);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_APPROVED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_REJECTED);
+				statusWithRoles.add(PTRConstants.APPLICATION_STATUS_PENDINGFORMODIFICATION);
 			}else if(StringUtils.equalsAnyIgnoreCase(role, PTRConstants.USER_ROLE_SUPERVISOR, PTRConstants.USER_ROLE_SECRETARY)) {
 				statusWithRoles.addAll(Arrays.asList(
 						PTRConstants.APPLICATION_STATUS_INITIATED,
@@ -228,7 +234,7 @@ public class PetRegistrationService {
 		if (!CollectionUtils.isEmpty(petRegistrationRequest.getPetRegistrationApplications())) {
 			petRegistrationRequest.getPetRegistrationApplications().stream().forEach(petApplication -> {
 
-				Thread pdfGenerationThread = new Thread(() -> {
+//				Thread pdfGenerationThread = new Thread(() -> {
 
 					// for NEW TL
 					if (StringUtils.equalsIgnoreCase(petApplication.getWorkflow().getAction(), PTRConstants.WORKFLOW_ACTION_APPROVE)) {
@@ -251,9 +257,9 @@ public class PetRegistrationService {
 						}
 					}
 
-				});
+//				});
 
-				pdfGenerationThread.start();
+//				pdfGenerationThread.start();
 
 			});
 		}
@@ -287,7 +293,7 @@ public class PetRegistrationService {
 		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> map2 = generateDataForTradeLicensePdfCreate(petRegistrationApplication, requestInfo);
 		
-		map.put("tl", map2);
+		map.put("ptr", map2);
 		
 		PDFRequest pdfRequest = PDFRequest.builder()
 				.RequestInfo(requestInfo)
@@ -306,50 +312,91 @@ public class PetRegistrationService {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String createdTime = dateFormat.format(new Date(petRegistrationApplication.getAuditDetails().getCreatedTime()));
-		String lastVaccineDate = dateFormat.format(new Date(petRegistrationApplication.getPetDetails().getLastVaccineDate()));
+		
+		String lastVaccineDateStr = petRegistrationApplication.getPetDetails().getLastVaccineDate().toString();
+		String lastVaccineDate = null; // Declare outside the try block
+
+		try {
+		    // Define the input format of the String (example: yyyy-MM-dd)
+		    SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		    // Parse the String into a Date object
+		    Date lastVaccineDateObj = inputDateFormat.parse(lastVaccineDateStr);
+
+		    // Format the Date object into the desired format (example: dd-MM-yyyy)
+		    SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		    lastVaccineDate = outputDateFormat.format(lastVaccineDateObj);
+
+		} catch (Exception e) {
+		    System.err.println("Error parsing last vaccine date: " + e.getMessage());
+		    e.printStackTrace();
+		}
+
+//		String lastVaccineDate = dateFormat.format(petRegistrationApplication.getPetDetails().getLastVaccineDate().toString());
 		
 		// map variables and values
 		tlObject.put("applicationNumber", petRegistrationApplication.getApplicationNumber());//Trade License No
 		tlObject.put("petName", petRegistrationApplication.getPetDetails().getPetName()); //Trade Registration No
 		tlObject.put("breedType", petRegistrationApplication.getPetDetails().getBreedType());//Trade Name
 		tlObject.put("address", petRegistrationApplication.getAddress().getAddressLine1().concat(", ")
-			.concat(petRegistrationApplication.getAddress().getCity().concat(", ")
+			.concat(petRegistrationApplication.getAdditionalDetail().get("ulbName").toString().concat(", ")
 			.concat(petRegistrationApplication.getAddress().getPincode())));// Trade Premises Address
 		tlObject.put("createdTime", createdTime);// License Issue Date
 		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
 		tlObject.put("applicantName", petRegistrationApplication.getApplicantName());
 		tlObject.put("mobileNumber", petRegistrationApplication.getMobileNumber());
-		tlObject.put("userName", requestInfo.getUserInfo().getUserName());
+		tlObject.put("userName", requestInfo.getUserInfo().getName());
+		tlObject.put("approverName", requestInfo.getUserInfo().getUserName());
+		tlObject.put("OwnerName", petRegistrationApplication.getAdditionalDetail().get("applicantName"));
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);
+				tlObject.put("qrCodeText", qr.toString());
 		
-		tlObject.put("qrCodeText", qr.toString());
+		String base64Photo = getPetPhoto(petRegistrationApplication,requestInfo);
+		tlObject.put("petPhotoURL", "data:image/png;base64," + base64Photo);
 		
 		return tlObject;
 	}
 
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
-		tlObject.entrySet().stream()
-		.filter(entry1 -> Arrays.asList("tradeLicenseNo","tradeRegistrationNo","tradeName","tradePremisesAddress","licenseIssueDate","licenseValidity","licenseCategory","licenseApplicantName","applicantContactNo","applicantAddress")
-		.contains(entry1.getKey())).forEach(entry -> {
-			qr.append(entry.getKey());
-			qr.append(": ");
-			qr.append(entry.getValue());
-			qr.append("\r\n");
+		
+		List<String> orderedKeys = Arrays.asList("applicationNumber","OwnerName", "petName", "breedType", "address");
+
+		orderedKeys.forEach(key -> {
+		    if (tlObject.containsKey(key)) {
+		        qr.append(key);
+		        qr.append(": ");
+		        qr.append(tlObject.get(key));
+		        qr.append("\r\n");
+		    }
 		});
 		
-	    replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
-	    replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
-	    replaceInStringBuilder(qr, "tradeName", "Trade Name");
-	    replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
-	    replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
-	    replaceInStringBuilder(qr, "licenseValidity", "License Validity");
-	    replaceInStringBuilder(qr, "licenseCategory", "License Category");
-	    replaceInStringBuilder(qr, "licenseApplicantName", "License Applicant Name");
-	    replaceInStringBuilder(qr, "applicantContactNo", "Applicant Contact No");
-	    replaceInStringBuilder(qr, "applicantAddress", "Applicant Address");
+	    replaceInStringBuilder(qr, "applicationNumber", "Pet Application No");
+	    replaceInStringBuilder(qr, "OwnerName", "Pet Owner Name");
+	    replaceInStringBuilder(qr, "petName", "Pet Name");
+	    replaceInStringBuilder(qr, "breedType", "Breed Type");
+	    replaceInStringBuilder(qr, "address", "Address");
+
+	}
+	
+	private String getPetPhoto(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo) {
 		
+		PetPhotoRequest PhotoRequest = generatePhotoRequestPet(petRegistrationApplication, requestInfo);
+		
+		String resource = reportService.getPetPhoto(PhotoRequest);
+
+		return resource;
+	}
+	
+	private  PetPhotoRequest generatePhotoRequestPet(PetRegistrationApplication petRegistrationApplication, RequestInfo requestInfo){
+//	        Map<String, Object> requestBody = new HashMap<>();
+//	        requestBody.put("RequestInfo", Collections.singletonMap("authToken", "717791b3-8e75-46ed-9194-5630ecc786f6"));
+		PetPhotoRequest PhotoObject = PetPhotoRequest.builder()
+				.RequestInfo(requestInfo)
+				.objectId(petRegistrationApplication.getId())
+				.build();;
+		return PhotoObject;
 	}
 
 	private void replaceInStringBuilder(StringBuilder qr, String target, String replacement) {
@@ -374,7 +421,7 @@ public class PetRegistrationService {
 			}
 	}
 
-	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest) {
+	private void generateDemandAndBill(PetRegistrationRequest petRegistrationRequest ) {
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
 				.equals(PTRConstants.WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT)) {
 			
@@ -465,12 +512,21 @@ public class PetRegistrationService {
 					.applicationNumber(applicationNumber)
 					.build();
 			List<PetRegistrationApplication> petApplications = petRegistrationRepository.getApplications(criteria);
+			
 			PetRegistrationApplication petRegistrationApplication = null != petApplications ? petApplications.get(0): null;
 			
+			PetRegistrationRequest mdmsrequest = PetRegistrationRequest.builder()
+	                .requestInfo(ptradeLicenseActionRequest.getRequestInfo())
+	                .build();
+			
+			mdmsrequest.setPetRegistrationApplications(petApplications);			
 
+			BigDecimal taxAmount = getFeesFromMdms(mdmsrequest);
+	        
 			ApplicationDetail applicationDetail = getApplicationBillUserDetail(petRegistrationApplication, ptradeLicenseActionRequest.getRequestInfo());
 			
-			
+			applicationDetail.setTotalPayableAmount(taxAmount);
+	 
 			tradeLicenseActionResponse.getApplicationDetails().add(applicationDetail);
 		});
 		
@@ -609,4 +665,28 @@ public class PetRegistrationService {
 		return roleCodes;
 	}
 
+	public PetCountResponse getAllcounts() {
+		PetCountResponse response = new PetCountResponse();
+        List<Map<String, Object>> statusList = null;
+        statusList = petRegistrationRepository.getAllCounts();
+        
+        if (!CollectionUtils.isEmpty(statusList)) {
+        	response.setCountsData(
+		                statusList.stream()
+		                        .filter(Objects::nonNull) // Ensure no null entries
+		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+		                        .collect(Collectors.toList())); // Collect the filtered list
+			  
+			  if (statusList.get(0).containsKey("total_applications")) {
+		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+		            } else {
+		                throw new IllegalArgumentException("total_applications is not a valid number");
+		            }
+		        }
+		}
+        return response;
+	}	
+	
 }

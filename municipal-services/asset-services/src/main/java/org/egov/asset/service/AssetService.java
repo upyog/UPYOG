@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -327,5 +328,30 @@ public class AssetService {
 				.collect(Collectors.toList());
 		return roleCodes;
 	}
+	
+	public AssetActionResponse getAllcounts() {
+		AssetActionResponse response = new AssetActionResponse();
+        List<Map<String, Object>> statusList = null;
+        statusList = assetRepository.getAllCounts();
+        
+        if (!CollectionUtils.isEmpty(statusList)) {
+        	response.setCountsData(
+		                statusList.stream()
+		                        .filter(Objects::nonNull) // Ensure no null entries
+		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+		                        .collect(Collectors.toList())); // Collect the filtered list
+			  
+			  if (statusList.get(0).containsKey("total_applications")) {
+		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+		            } else {
+		                throw new IllegalArgumentException("total_applications is not a valid number");
+		            }
+		        }
+		}
+        return response;
+	}	
+	
 
 }

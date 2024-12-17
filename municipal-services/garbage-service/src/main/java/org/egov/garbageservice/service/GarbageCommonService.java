@@ -1,6 +1,11 @@
 package org.egov.garbageservice.service;
+import org.egov.garbageservice.model.GarbageCountResponse;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageCommonRequest;
@@ -10,15 +15,20 @@ import org.egov.garbageservice.repository.GrbgCollectionUnitRepository;
 import org.egov.garbageservice.repository.GrbgDeclarationRepository;
 import org.egov.garbageservice.repository.GrbgOldDetailsRepository;
 import org.egov.garbageservice.repository.GrbgScheduledRequestsRepository;
+import org.egov.garbageservice.repository.GarbageCountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 
 @Service
 public class GarbageCommonService {
 
 	@Autowired
 	private GrbgCollectionUnitRepository grbgCollectionUnitRepository;
+
+	@Autowired
+	private GarbageCountRepository grbgCountRepository;
 
 	@Autowired
 	private GrbgCollectionStaffRepository grbgCollectionStaffRepository;
@@ -157,5 +167,28 @@ public class GarbageCommonService {
 		return garbageCommonRequest;
 	}
 	
+	public GarbageCountResponse getAllcounts() {
+        GarbageCountResponse response = new GarbageCountResponse();
+        List<Map<String, Object>> statusList = null;
+        statusList = grbgCountRepository.getAllCounts();
+        
+        if (!CollectionUtils.isEmpty(statusList)) {
+        	response.setCountsData(
+		                statusList.stream()
+		                        .filter(Objects::nonNull) // Ensure no null entries
+		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+		                        .collect(Collectors.toList())); // Collect the filtered list
+			  
+			  if (statusList.get(0).containsKey("total_applications")) {
+		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+		            } else {
+		                throw new IllegalArgumentException("total_applications is not a valid number");
+		            }
+		        }
+		}
+        return response;
+	}	
 	
 }
