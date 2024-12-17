@@ -216,6 +216,11 @@ public class AssetQueryBuilder {
             addToPreparedStatement(preparedStmtList, createdBy);
         }
 		
+		List<String> listOfStatus = criteria.getListOfstatus();
+		if(!CollectionUtils.isEmpty(listOfStatus)) {
+			 addClauseIfRequired(preparedStmtList, builder);
+			 builder.append("asset.status IN (").append(createQuery(listOfStatus)).append(")");
+		}
 		// Status wise search criteria 
         String status = criteria.getStatus();
         if (status != null) {
