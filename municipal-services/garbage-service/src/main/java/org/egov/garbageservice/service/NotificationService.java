@@ -31,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationService {
 
+	private static final String GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION = "templates/GrbgBillEmailTemplate.html";
+
 	private static final String RECIPINTS_NAME_PLACEHOLDER = "{recipients_name}";
 	private static final String MONTH_PLACEHOLDER = "{month}";
 	private static final String YEAR_PLACEHOLDER = "{year}";
@@ -83,7 +85,7 @@ public class NotificationService {
 
 	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill,
 			RequestInfoWrapper requestInfoWrapper, GrbgUtils grbgUtils) {
-		ClassPathResource resource = new ClassPathResource("templates/GrbgBillEmailTemplate.html");
+		ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
 		String emailBody = grbgUtils.getContentAsString(resource);
 		String smsBody = SMS_BODY_GENERATE_BILL;
 		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
