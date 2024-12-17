@@ -40,7 +40,7 @@ public class MDMSService {
 	 * @return MDMS Search URL
 	 */
 	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
-		List<ModuleDetail> moduleRequest = getFSMModuleRequest();
+		List<ModuleDetail> moduleRequest = getAssetModuleRequest();
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 		moduleDetails.addAll(moduleRequest);
 		MdmsCriteriaReq mdmsCriteriaReq = getAdvanceMDMSRequest(requestInfo, tenantId);
@@ -66,7 +66,7 @@ public class MDMSService {
 	 * @return MDMSCriteria Request
 	 */
 	private MdmsCriteriaReq getMDMSRequest(CalculationReq calculationReq, String tenantId) {
-		List<ModuleDetail> moduleRequest = getFSMModuleRequest();
+		List<ModuleDetail> moduleRequest = getAssetModuleRequest();
 
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 		moduleDetails.addAll(moduleRequest);
@@ -77,7 +77,7 @@ public class MDMSService {
 	}
 
 	private MdmsCriteriaReq getAdvanceMDMSRequest(RequestInfo requestInfo, String tenantId) {
-		List<ModuleDetail> moduleRequest = getFSMModuleRequest();
+		List<ModuleDetail> moduleRequest = getAssetModuleRequest();
 
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
 		moduleDetails.addAll(moduleRequest);
@@ -86,7 +86,7 @@ public class MDMSService {
 		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 	}
 
-	public List<ModuleDetail> getFSMModuleRequest() {
+	public List<ModuleDetail> getAssetModuleRequest() {
 
 		// filter to only get code field from master data
 		final String filterCode = "$.[?(@.active==true)]";
@@ -98,17 +98,15 @@ public class MDMSService {
 				.add(MasterDetail.builder().name(CalculatorConstants.FSM_ADVANCEPAYMENT).filter(filterCode).build());
 		fsmMasterDtls
 				.add(MasterDetail.builder().name(CalculatorConstants.FSM_CANCELLATIONFEE).filter(filterCode).build());
-		fsmMasterDtls.add(
-				MasterDetail.builder().name(CalculatorConstants.ZERO_PRICE_CHECK_FROM_MDMS).build());
 
 		ModuleDetail fsmMasterMDtl = ModuleDetail.builder().masterDetails(fsmMasterDtls)
 				.moduleName(CalculatorConstants.MODULE_CODE).build();
 
 		List<MasterDetail> vehicleMasterDtls = new ArrayList<>();
 		vehicleMasterDtls
-				.add(MasterDetail.builder().name(CalculatorConstants.VEHICLE_MAKE_MODEL).filter(filterCode).build());
+				.add(MasterDetail.builder().name(CalculatorConstants.FIXED_VALUE).filter(filterCode).build());
 		ModuleDetail vehicleMasterMDtl = ModuleDetail.builder().masterDetails(vehicleMasterDtls)
-				.moduleName(CalculatorConstants.VEHICLE_MODULE_CODE).build();
+				.moduleName(CalculatorConstants.FIXED_VALUE).build();
 
 		return Arrays.asList(vehicleMasterMDtl, fsmMasterMDtl);
 
