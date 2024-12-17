@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useMemo, useReducer,useState } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import SearchFormFields from "./SearchFields";
 import CancelBillModal from "./CancelBillModal";

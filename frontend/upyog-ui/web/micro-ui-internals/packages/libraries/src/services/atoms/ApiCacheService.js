@@ -31,8 +31,8 @@ const getSetting = (serviceName, moduleName) => {
   const setting = getCachedSetting();
   const serviceSetting = setting.find((item) => item.serviceName === serviceName);
   const responseSetting = {
-    cacheTimeInSecs: serviceSetting.cacheTimeInSecs,
-    debounceTimeInMS: serviceSetting.debounceTimeInMS || 100,
+    cacheTimeInSecs: serviceSetting?.cacheTimeInSecs,
+    debounceTimeInMS: serviceSetting?.debounceTimeInMS || 100,
   };
   if (!moduleName) {
     return responseSetting;
@@ -42,8 +42,8 @@ const getSetting = (serviceName, moduleName) => {
     return responseSetting;
   }
   return {
-    cacheTimeInSecs: moduleSettings.cacheTimeInSecs || responseSetting.cacheTimeInSecs,
-    debounceTimeInMS: moduleSettings.debounceTimeInMS || responseSetting.debounceTimeInMS,
+    cacheTimeInSecs: moduleSettings?.cacheTimeInSecs || responseSetting?.cacheTimeInSecs,
+    debounceTimeInMS: moduleSettings?.debounceTimeInMS || responseSetting?.debounceTimeInMS,
   };
 };
 export const ApiCacheService = {

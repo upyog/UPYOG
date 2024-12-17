@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -75,7 +75,8 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
      if(data?.serviceName?.code === "WATER" || data?.serviceName?.code === "BOTH"){
         tenantId = data?.cpt?.details?.tenantId || tenantId;
         let formdata = isEdit ? convertToEditWSUpdate(data) : convertToWSUpdate(data);
-        WSmutation.mutate(formdata, {
+       const formdataNew = {...formdata,disconnectRequest:false, reconnectRequest:false}
+        WSmutation.mutate(formdataNew, {
           onSuccess,
         })
     }
@@ -90,7 +91,8 @@ const WSAcknowledgement = ({ data, onSuccess, clearParams }) => {
       {
         let tenantId = data?.cpt?.details?.tenantId || tenantId;
         let formdata = isEdit ? convertToEditSWUpdate(data) : convertToSWUpdate(data);
-        SWmutation.mutate(formdata, {
+        const formdataNew = {...formdata,disconnectRequest:false, reconnectRequest:false}
+        SWmutation.mutate(formdataNew, {
           onSuccess,
         })
       }

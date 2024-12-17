@@ -15,6 +15,7 @@ module.exports = function (app) {
     "/access/v1/actions/mdms",
     "/egov-mdms-service",
     "/egov-location",
+    "/mdms-v2",
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
@@ -63,6 +64,9 @@ module.exports = function (app) {
     "/inbox/v1/elastic/_search",
     "/fsm-calculator",
     "/service-request",
+    "/pet-services/pet-registration/_create",
+    "/pet-services/pet-registration/_search",
+    "/pet-services/pet-registration/_update",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

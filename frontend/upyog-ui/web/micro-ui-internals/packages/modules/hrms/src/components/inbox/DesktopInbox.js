@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "../inbox/ApplicationTable";
-import { Card, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, Loader } from "@upyog/digit-ui-react-components";
 import InboxLinks from "../inbox/ApplicationLinks";
 import SearchApplication from "./search";
 import { Link } from "react-router-dom";

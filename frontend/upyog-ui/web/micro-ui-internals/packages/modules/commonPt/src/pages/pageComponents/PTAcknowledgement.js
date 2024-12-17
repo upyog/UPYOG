@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useHistory } from "react-router-dom";
@@ -148,6 +148,8 @@ const PTAcknowledgement = ({ onSuccess, onSelect, formData, redirectUrl, userTyp
   const onNext = () => {
     if (onSelect) {
       if (mutation.isSuccess) {
+        sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(mutation?.data?.Properties[0]))
+        sessionStorage.setItem("Digit_FSM_PT",JSON.stringify(mutation?.data?.Properties[0]))
         onSelect("cpt", { details: mutation?.data?.Properties[0] });
       }
     }

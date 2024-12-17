@@ -2,28 +2,25 @@
   "name": "egovernments",
   "version": "1.5.4",
   "main": "index.js",
-  "workspaces": [
+  "workspaces":  [
     "packages/libraries",
     "packages/css",
     "example",
     "packages/react-components",
     "packages/modules/common",
-    "packages/modules/core",
-    "packages/modules/dss",
-    "packages/modules/engagement",
-    "packages/modules/pgr",
     "packages/modules/pt",
-    "packages/modules/tl",
-    "packages/modules/ws"
+    "packages/modules/core",
+    "packages/modules/commonPt",
+    "packages/modules/dss",
+    "packages/modules/fsm"
   ],
-  "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
   "private": true,
   "engines": {
     "node": ">=14"
   },
   "scripts": {
-    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
+    "start": "run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
@@ -33,6 +30,7 @@
     "dev:components": "cd packages/react-components && yarn start",
     "dev:common": "cd packages/modules/common && yarn start",
     "dev:pt": "cd packages/modules/pt && yarn start",
+    "dev:ptr": "cd packages/modules/ptr && yarn start",
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:pgr": "cd packages/modules/pgr && yarn start",
@@ -54,19 +52,20 @@
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "build:pt": "cd packages/modules/pt && yarn build",
+    "buildD:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
-    "build:pgr": "cd packages/modules/pgr && yarn build",
-    "buildD:fsm": "cd packages/modules/fsm && yarn build",
+    "buildD:pgr": "cd packages/modules/pgr && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
     "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
-    "build:engagement": "cd packages/modules/engagement && yarn build",
+    "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
-    "build:ws": "cd packages/modules/ws && yarn build",
+    "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
@@ -83,11 +82,13 @@
   },
   "dependencies": {
     "lodash": "4.17.21",
-    "microbundle-crl": "0.13.11"
-  } ,"resolutions": {
+    "microbundle-crl": "^0.13.11"
+  },
+  "resolutions": {
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0"
+    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
+    "**/styled-components": "5.0.0"
   }
 }

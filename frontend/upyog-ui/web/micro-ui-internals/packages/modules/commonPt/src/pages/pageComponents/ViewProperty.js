@@ -1,4 +1,4 @@
-import { Header, ActionBar, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Header, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, {useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -13,10 +13,10 @@ import ApplicationDetails from "../../../../templates/ApplicationDetails";
  *
  * @example
  *   for employee
- *   digit-ui/employee/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
+ *   upyog-ui/employee/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
  *
  *   for citizen
- *   digit-ui/citizen/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
+ *   upyog-ui/citizen/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
  *
  * @returns {Screen}  Property Details screen
  */

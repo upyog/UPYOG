@@ -1,4 +1,4 @@
-import { FormComposer, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
@@ -148,8 +148,8 @@ const ModifyApplication = () => {
 
     const details = sessionStorage.getItem("WS_EDIT_APPLICATION_DETAILS") ? JSON.parse(sessionStorage.getItem("WS_EDIT_APPLICATION_DETAILS")) : {};
     let convertAppData = await convertModifyApplicationDetails(data, details);
-    const reqDetails = data?.ConnectionDetails?.[0]?.serviceName == "WATER" ? { WaterConnection: convertAppData } : { SewerageConnection: convertAppData }
-
+    //const reqDetails = data?.ConnectionDetails?.[0]?.serviceName == "WATER" ? { WaterConnection: convertAppData } : { SewerageConnection: convertAppData }
+    const reqDetails = data?.ConnectionDetails?.[0]?.serviceName == "WATER"? data?.ConnectionDetails?.[0]?.applicationType === "WATER_RECONNECTION" ? { WaterConnection: convertAppData, reconnectRequest:true, disconnectRequest:false } :{ WaterConnection: convertAppData,reconnectRequest:false, disconnectRequest:false  }: formData?.applicationType === "SEWERAGE_RECONNECTION" ? { SewerageConnection: convertAppData ,reconnectRequest:true, disconnectRequest:false}:{ SewerageConnection: convertAppData ,reconnectRequest:false, disconnectRequest:false }
     if (serviceType == "WATER") {
       if (waterMutation) {
         setIsEnableLoader(true);
@@ -161,7 +161,7 @@ const ModifyApplication = () => {
           },
           onSuccess: async (data, variables) => {
             let response = await updatePayloadOfWS(data?.WaterConnection?.[0], "WATER");
-            let waterConnectionUpdate = { WaterConnection: response };
+            let waterConnectionUpdate = { WaterConnection: response, reconnectRequest:false, disconnectRequest:false };
             waterUpdateMutation(waterConnectionUpdate, {
               onError: (error, variables) => {
                 setIsEnableLoader(false);
@@ -190,7 +190,7 @@ const ModifyApplication = () => {
           },
           onSuccess: async (data, variables) => {
             let response = await updatePayloadOfWS(data?.SewerageConnections?.[0], "SEWERAGE");
-            let sewerageConnectionUpdate = { SewerageConnection: response };
+            let sewerageConnectionUpdate = { SewerageConnection: response,reconnectRequest:false, disconnectRequest:false  };
             await sewerageUpdateMutation(sewerageConnectionUpdate, {
               onError: (error, variables) => {
                 setIsEnableLoader(false);
