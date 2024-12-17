@@ -23,7 +23,7 @@ public class AssetSearchCriteria {
 
 	@JsonProperty("ids")
 	private List<String> ids;
-
+	
 	@JsonProperty("status")
 	private String status;
 
@@ -67,6 +67,9 @@ public class AssetSearchCriteria {
 
 	@JsonProperty("assetBookRefNo")
 	private String assetBookRefNo;
+	
+	@JsonProperty("status")
+	private List<String> listOfstatus;
 
 	public boolean isEmpty() {
 		return (this.tenantId == null && this.status == null && this.ids == null && this.applicationNo == null

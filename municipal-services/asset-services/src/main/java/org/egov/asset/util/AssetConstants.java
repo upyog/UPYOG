@@ -52,6 +52,8 @@ public class AssetConstants {
 	public static final String STATUS_NOCUPDATION = "INPROGRESS";
 	public static final String STATUS_PENDINGAPPROVAL = "INPROGRESS";
 	public static final String STATUS_CANCELLED = "CANCELLED";
+	public static final String STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
+	public static final String  STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
 	
 	public static final String ACTION_PENDINGAPPROVAL = "PENDINGAPPROVAL";
 	public static final String ACTION_REJECT = "REJECT";
