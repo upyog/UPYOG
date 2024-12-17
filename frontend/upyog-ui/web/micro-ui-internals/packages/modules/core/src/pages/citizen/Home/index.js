@@ -14,12 +14,12 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
 import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
-
+import ChatBot from "./ChatBot";
 const Home = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -59,28 +59,28 @@ const Home = () => {
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
-
+  console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
   const allCitizenServicesProps = {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
       name: t(citizenServicesObj?.sideOption?.name),
-      onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl.replace("digit-ui","upyog-ui")),
+      onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
     },
     options: [
       {
         name: t(citizenServicesObj?.props?.[0]?.label),
         Icon: <ComplaintIcon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       {
         name: t(citizenServicesObj?.props?.[1]?.label),
         Icon: <PTIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       {
         name: t(citizenServicesObj?.props?.[2]?.label),
         Icon: <CaseIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       // {
       //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
@@ -90,7 +90,7 @@ const Home = () => {
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
         Icon: <WSICon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
@@ -99,28 +99,28 @@ const Home = () => {
     header: t(infoAndUpdatesObj?.headerLabel),
     sideOption: {
       name: t(infoAndUpdatesObj?.sideOption?.name),
-      onClick: () => history.push(infoAndUpdatesObj?.sideOption?.navigationUrl.replace("digit-ui","upyog-ui")),
+      onClick: () => history.push(infoAndUpdatesObj?.sideOption?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
     },
     options: [
       {
         name: t(infoAndUpdatesObj?.props?.[0]?.label),
         Icon: <HomeIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[0]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[0]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[1]?.label),
         Icon: <Calender />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[1]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[1]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[2]?.label),
         Icon: <DocumentIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[2]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[2]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[3]?.label),
         Icon: <DocumentIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl.replace("digit-ui","upyog-ui")),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl.replace("/digit-ui/","/upyog-ui/")),
       },
       // {
       //     name: t("CS_COMMON_HELP"),
@@ -129,6 +129,12 @@ const Home = () => {
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
+  sessionStorage.removeItem("type" );
+  sessionStorage.removeItem("pincode");
+  sessionStorage.removeItem("tenantId");
+  sessionStorage.removeItem("localityCode");
+  sessionStorage.removeItem("landmark"); 
+  sessionStorage.removeItem("propertyid");
 
   return isLoading ? (
     <Loader />
@@ -173,6 +179,7 @@ const Home = () => {
             </div>
           )
         ) : null}
+        <ChatBot/>
       </div>
     </div>
   );

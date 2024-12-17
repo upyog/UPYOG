@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getVehicleType } from "../utils";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSMTextFieldStyle }) => {
@@ -56,6 +56,20 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       disable: false,
       isMandatory: true,
     },
+    {
+      label:"ES_NEW_APPLICATION_DISTANCE_FROM_ROAD",
+      type: "text",
+      name: "distancefromroad",
+      default: formData?.tripData?.distancefromroad,
+      isMandatory: true,
+    },
+    {
+      label: "ES_NEW_APPLICATION_ROAD_WIDTH",
+      type: "text",
+      name: "roadWidth",
+      default: formData?.tripData?.roadWidth,
+      isMandatory: true,
+    }
   ];
 
   function setTripNum(value) {
@@ -66,17 +80,32 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
     setVehicle({ label: value.capacity });
     onSelect(config.key, { ...formData[config.key], vehicleType: value });
   }
-
-  function setValue(object) {
-    onSelect(config.key, { ...formData[config.key], ...object });
+  //console.log(formdata)
+  function setValue(value, input) {
+    value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
   }
+
   useEffect(() => {
     (async () => {
       if (formData?.tripData?.vehicleType !== vehicle) {
         setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
       }
 
-      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.tripData?.vehicleType?.capacity) {
+      if (
+        formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
+        formData.tripData.noOfTrips &&
+        formData.tripData.amountPerTrip
+      ) {
+        setValue({
+          amount: formData.tripData.amountPerTrip * formData.tripData.noOfTrips,
+        });
+      } else if (
+        formData?.propertyType &&
+        formData?.subtype &&
+        formData?.address &&
+        formData?.tripData?.vehicleType?.capacity &&
+        formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
+      ) {
         const capacity = formData?.tripData?.vehicleType.capacity;
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
@@ -88,10 +117,13 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
         if (billSlab?.price || billSlab?.price === 0) {
-          setValue({
-            amountPerTrip: billSlab.price,
-            amount: billSlab.price * formData.tripData.noOfTrips,
-          });
+          // setValue({
+          //   amountPerTrip: billSlab.price,
+          //   amount: billSlab.price * formData.tripData.noOfTrips,
+          // });
+          // onSelect(config.key, { ...formData[config.key], amount: amount, amountPerTrip: billSlab.price });
+          setValue(billSlab.price,"amountPerTrip");
+          setValue(billSlab.price * formData.tripData.noOfTrips,"amount");
           setError(false);
         } else {
           setValue({
@@ -102,8 +134,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         }
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
 
+  // console.log(formData,"formData 1111111111")
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (
@@ -133,9 +166,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
             <TextInput
               type={input.type}
               style={{ ...styles, ...FSMTextFieldStyle }}
-              onChange={(e) => setTripNum(e.target.value)}
+              onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
-              value={input.default ? input.default : formData && formData[config.key] ? formData[config.key][input.name] : null}
+              value={formData && formData[config.key] ? formData[config.key][input.name] : null}
               {...input.validation}
               disable={input.disable}
             />

@@ -1,5 +1,5 @@
 .checkpoint-connect-wrap {
-  padding-bottom: 40px;
+  padding-bottom: 4px;
   @apply relative;
 }
 .checkpoint-done {
@@ -51,6 +51,8 @@
 
 .checkpoint-comments-wrap {
   max-width: 560px;
+  padding: 4px;
+  margin-top: 4px;
   @apply bg-grey-mid p-sm mt-sm;
 
   h4{

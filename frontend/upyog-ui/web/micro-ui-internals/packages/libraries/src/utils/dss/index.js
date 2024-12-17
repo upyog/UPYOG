@@ -10,6 +10,10 @@ const amountFormatter = (value, denomination, t) => {
       return `₹ ${currencyFormatter.format((value / 10000000).toFixed(2) || 0)} ${t("ES_DSS_CR")}`;
     case "Unit":
       return `₹ ${currencyFormatter.format(value?.toFixed(2) || 0)}`;
+      case "UnitOverview":
+      return `${currencyFormatter.format(value?.toFixed(2) || 0)} %`;
+      case "UnitGDP":
+      return `${currencyFormatter.format(value?.toFixed(4) || 0)}`;
     default:
       return "";
   }
@@ -32,9 +36,11 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t, isDecim
 
       const Nformatter = new Intl.NumberFormat("en-IN");
       return Nformatter.format(Math.round(value));
-    case "percentage":
-      const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
-      return `${Pformatter.format(value.toFixed(2))} %`;
+      case "percentage":
+        const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
+        const formattedValue = Pformatter.format(Math.max(0, value).toFixed(2)); // Ensures value is non-negative
+        return `${formattedValue} %`;
+      
     default:
       return "";
   }

@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -11,7 +11,10 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
 
 
   function setPropertyfloorarea(e) {
-    setfloorarea(e.target.value);
+    const regex=/^(|[1-9][0-9]{0,8}|)$/;
+    if(regex.test(e.target.value)|| e.target.value==" "){
+      setfloorarea(e.target.value);
+    }
   }
 
   const goNext = () => {
