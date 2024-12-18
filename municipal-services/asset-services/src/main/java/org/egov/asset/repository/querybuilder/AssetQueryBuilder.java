@@ -102,7 +102,8 @@ public class AssetQueryBuilder {
 		List<String> listOfStatus = criteria.getListOfstatus();
 		if(!CollectionUtils.isEmpty(listOfStatus)) {
 			 addClauseIfRequired(preparedStmtList, builder);
-			 builder.append("asset.status IN (").append(createQuery(listOfStatus)).append(")");
+			 builder.append(" asset.status IN (").append(createQuery(listOfStatus)).append(")");
+			 addToPreparedStatement(preparedStmtList, listOfStatus);
 		}
 		
 		// Status wise search criteria 
@@ -219,7 +220,8 @@ public class AssetQueryBuilder {
 		List<String> listOfStatus = criteria.getListOfstatus();
 		if(!CollectionUtils.isEmpty(listOfStatus)) {
 			 addClauseIfRequired(preparedStmtList, builder);
-			 builder.append("asset.status IN (").append(createQuery(listOfStatus)).append(")");
+			 builder.append(" asset.status IN (").append(createQuery(listOfStatus)).append(")");
+			 addToPreparedStatement(preparedStmtList, listOfStatus);
 		}
 		// Status wise search criteria 
         String status = criteria.getStatus();
