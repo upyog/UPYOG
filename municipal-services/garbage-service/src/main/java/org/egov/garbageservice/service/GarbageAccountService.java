@@ -1505,6 +1505,7 @@ public class GarbageAccountService {
 	public GarbageAccountActionResponse payNowGrbgBill(String userUuid) {
 
 		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
+				.isEmptyBillFilter(true)
 				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(userUuid).build()).build()).build();
 
 		GarbageAccountActionResponse accountActionResponse = getApplicationDetails(garbageAccountActionRequest);
