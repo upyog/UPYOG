@@ -6,10 +6,14 @@ import java.util.stream.Collectors;
 
 import org.egov.swcalculation.constants.SWCalculationConstant;
 import org.egov.swcalculation.repository.builder.SWCalculatorQueryBuilder;
+import org.egov.swcalculation.repository.rowMapper.BillSearchRowMapper;
 import org.egov.swcalculation.repository.rowMapper.DemandSchedulerRowMapper;
+import org.egov.swcalculation.repository.rowMapper.Demandcancelwrapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageConnectionRowMapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageDemandRowMapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageRowMapper;
+import org.egov.swcalculation.web.models.BillSearch;
+import org.egov.swcalculation.web.models.Canceldemandsearch;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SewerageDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,14 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 
 	@Autowired
 	SewerageDemandRowMapper sewerageDemandRowMapper;
+	
+	
+	
+	@Autowired
+	private Demandcancelwrapper demandcancelwrapper;
+	
+	@Autowired
+	private BillSearchRowMapper billsearchMapper;
 
 	@Override
 	public List<String> getTenantId() {
@@ -151,6 +163,60 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		log.info("batchCode " + batchCode + " Locality list : " + query);
 		return jdbcTemplate.queryForList(query, preparedStatement.toArray(), String.class);
 	}
+	
+	
+	
+/* CancelBill */
+	
+	
+	
+	/* DEMAND ID PICK */
+	public List<Canceldemandsearch> getConnectionCancel(String businessService, String tenantId, String consumerCode,  Long taxPeriodFrom,
+			Long taxPeriodTo ) {
+		
+			List<Object> preparedStatement = new ArrayList<>();
+			String query = queryBuilder.getCancelBill(businessService ,tenantId , consumerCode , taxPeriodTo,  taxPeriodFrom, preparedStatement);
+			log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+					 " connection list : " + query);
+			return jdbcTemplate.query(query, preparedStatement.toArray(), demandcancelwrapper);
+		
+	}
+	
+	/* UPDATE */
+	
+	
+	public Boolean getUpdate(List demandlist) {		
+			List<Object> preparedStatement = new ArrayList<>();
+			String query = queryBuilder.getUpdateDemand(demandlist,preparedStatement);
+			log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+					 " connection list : " + query);
+			jdbcTemplate.update(query, preparedStatement.toArray());	
+			return true;
+	}
+	
+	
+	
+	
+	public List<BillSearch> getBill(String consumercode,String businessService) {
+		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getBillid(consumercode,businessService,preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		return jdbcTemplate.query(query, preparedStatement.toArray(),billsearchMapper);
+	
+}
+	
+	
+	public Boolean getexpiryBill(List billSearch) {
+		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getBillDemand(billSearch,preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		jdbcTemplate.update(query, preparedStatement.toArray());	
+		return true;
+}
 	
 	
 }
