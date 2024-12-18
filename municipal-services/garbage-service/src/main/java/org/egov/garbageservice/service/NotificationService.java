@@ -57,9 +57,6 @@ public class NotificationService {
 	@Autowired
 	private GrbgUtils grbgUtils;
 
-//	@Autowired
-//	private EncryptionDecryptionUtil encryptionDecryptionUtil;
-
 	@Autowired
 	private KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -137,10 +134,6 @@ public class NotificationService {
 		body = body.replace(AMOUNT_PLACEHOLDER, String.valueOf(bill.getTotalAmount()));
 		body = body.replace(DUE_DATE_PLACEHOLDER, "");
 		body = body.replace(GARBAGE_NO_PLACEHOLDER, garbageAccount.getGrbgApplicationNumber());
-//		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
-//				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
-//						+ encryptionDecryptionUtil.encryptObject(garbageAccount.getCreated_by(),
-//								GrbgConstants.GARBAGE_MODEL, String.class));
 		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER, grbgConfig.getGrbgServiceHostUrl() + ""
 				+ grbgConfig.getGrbgPayNowBillEndpoint() + "" + garbageAccount.getCreated_by());
 
