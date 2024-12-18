@@ -31,6 +31,8 @@ public class UserSearchCriteria {
     private String tenantId;
     private List<String> roleCodes;
     private String alternatemobilenumber;
+    private boolean digilockersearch;
+
 
     public void validate(boolean isInterServiceCall) {
         if (validateIfEmptySearch(isInterServiceCall) || validateIfTenantIdExists(isInterServiceCall)) {

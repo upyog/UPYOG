@@ -35,6 +35,7 @@ public class User {
 
     private Long id;
     private String uuid;
+    private String digilockerid;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_TENANT)
     @Size(max = 50)
@@ -85,6 +86,7 @@ public class User {
     private boolean otpValidationMandatory;
     private boolean mobileValidationMandatory = true;
     private String alternateMobileNumber;
+    private boolean digilockerRegistration;
 
     public User addAddressItem(Address addressItem) {
         if (this.addresses == null) {

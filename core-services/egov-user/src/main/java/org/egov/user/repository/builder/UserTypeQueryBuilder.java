@@ -70,6 +70,13 @@ public class UserTypeQueryBuilder {
             "\tFROM eg_user userdata LEFT OUTER JOIN eg_user_address addr ON userdata.id = addr.userid AND userdata.tenantid = addr" +
             ".tenantid LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
 
+    private static final String SELECT_EG_USER_QUERY = "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
+            ".password, userdata.pwdexpirydate,  userdata.mobilenumber, userdata.altcontactnumber, userdata.emailid, userdata.createddate, userdata" +
+            ".lastmodifieddate,  userdata.createdby, userdata.lastmodifiedby, userdata.active, userdata.name, userdata.gender, userdata.pan, userdata.aadhaarnumber, userdata" +
+            ".type,  userdata.version, userdata.guardian, userdata.guardianrelation, userdata.signature, userdata.accountlocked, userdata.accountlockeddate, userdata" +
+            ".bloodgroup, userdata.photo, userdata.identificationmark,  userdata.tenantid, userdata.id, userdata.uuid, userdata.alternatemobilenumber, userdata.digilockerid" +
+            " FROM eg_user userdata";
+
     private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY id) offset_ FROM " +
             "({baseQuery})" +
@@ -92,7 +99,15 @@ public class UserTypeQueryBuilder {
 
     @SuppressWarnings("rawtypes")
     public String getQuery(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
-        final StringBuilder selectQuery = new StringBuilder(SELECT_USER_QUERY);
+        StringBuilder selectQuery;
+
+        if(userSearchCriteria.isDigilockersearch()){
+            selectQuery = new StringBuilder(SELECT_EG_USER_QUERY);
+        }
+        else {
+            selectQuery = new StringBuilder(SELECT_USER_QUERY);
+        }
+
 
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
 
@@ -285,12 +300,14 @@ public class UserTypeQueryBuilder {
     }
 
     public String getInsertUserQuery() {
-        return "insert into eg_user (id,uuid,tenantid,salutation,dob,locale,username,password,pwdexpirydate,mobilenumber,altcontactnumber,emailid,active,name,gender,pan,aadhaarnumber,"
-                + "type,guardian,guardianrelation,signature,accountlocked,bloodgroup,photo,identificationmark,createddate,lastmodifieddate,createdby,lastmodifiedby,alternatemobilenumber) values (:id,:uuid,:tenantid,:salutation,"
+        return "insert into eg_user (id,uuid,digilockerid,tenantid,salutation,dob,locale,username,password,pwdexpirydate,mobilenumber,altcontactnumber,emailid,active,name,gender,pan,aadhaarnumber,"
+                + "type,guardian,guardianrelation,signature,accountlocked,bloodgroup,photo,identificationmark,createddate,lastmodifieddate,createdby,lastmodifiedby,alternatemobilenumber) values (:id,:uuid,:digilockerid,:tenantid,:salutation,"
                 + ":dob,:locale,:username,:password,:pwdexpirydate,:mobilenumber,:altcontactnumber,:emailid,:active,:name,:gender,:pan,:aadhaarnumber,:type,:guardian,:guardianrelation,:signature,"
                 + ":accountlocked,:bloodgroup,:photo,:identificationmark,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby,:alternatemobilenumber) ";
     }
-
+    public String getDigilockerUpdateQuery(){
+        return "update eg_user set digilockerid=:DigilockerID where username=:username and tenantid=:tenantid ";
+    }
     public String getUpdateUserQuery() {
         return "update eg_user set salutation=:Salutation,dob=:Dob,locale=:Locale,password=:Password,pwdexpirydate=:PasswordExpiryDate,mobilenumber=:MobileNumber,altcontactnumber=:AltContactNumber,emailid=:EmailId,active=:Active,name=:Name,gender=:Gender,pan=:Pan,aadhaarnumber=:AadhaarNumber,"
                 + "type=:Type,guardian=:Guardian,guardianrelation=:GuardianRelation,signature=:Signature," +

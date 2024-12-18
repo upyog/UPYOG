@@ -59,6 +59,12 @@ public class UserController {
     @Value("${egov.user.search.default.size}")
     private Integer defaultSearchSize;
 
+    @Value("${digilocker.register}")
+    private boolean isDigiLockerRegistration;
+
+    @Value("${digilocker.search}")
+    private boolean isDigiLockerSearch;
+
 
     @Autowired
     public UserController(UserService userService, TokenService tokenService) {
@@ -174,8 +180,33 @@ public class UserController {
         log.info("Received Profile Update Request  " + createUserRequest);
         User user = createUserRequest.toDomain(false);
         final User updatedUser = userService.partialUpdate(user, createUserRequest.getRequestInfo());
-        return createResponseforUpdate(updatedUser);
+        return  createResponseforUpdate(updatedUser);
     }
+
+    @PostMapping("/auth/_digilocker")
+    public Object authDigiLocker(@RequestBody @Valid CreateUserRequest createUserRequest, @RequestHeader HttpHeaders headers) {
+        UserSearchRequest request = new UserSearchRequest();
+        request.setMobileNumber(createUserRequest.getUser().getMobileNumber());
+        request.setDigilockerSearch(isDigiLockerSearch);
+        request.setTenantId(createUserRequest.getUser().getTenantId());
+        List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
+        if ( !userContracts.isEmpty()) {
+            User user = createUserRequest.toDomain(false);
+            user.setDigilockerRegistration(isDigiLockerRegistration);
+            final User updatedUser = userService.updateWithoutOtpValidation(user, createUserRequest.getRequestInfo());
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } else {
+            User user = createUserRequest.toDomain(true);
+            user.setUsername(user.getMobileNumber());
+            user.setDigilockerRegistration(isDigiLockerRegistration);
+            user.setDigilockerid(createUserRequest.getUser().getDigilockerid());
+            Object createdUser = userService.registerWithLogin(user, createUserRequest.getRequestInfo());
+            return new ResponseEntity<>(createdUser, HttpStatus.OK);
+        }
+    }
+
+
+
 
     private UserDetailResponse createResponse(User newUser) {
         UserRequest userRequest = new UserRequest(newUser);

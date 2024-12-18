@@ -58,6 +58,7 @@ public class UserSearchResponseContent {
     private String tenantId;
     private Set<RoleRequest> roles;
     private String uuid;
+    private String digilockerid;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date createdDate;
@@ -100,6 +101,7 @@ public class UserSearchResponseContent {
         this.fatherOrHusbandName = user.getGuardian();
         this.relationship = user.getGuardianRelation();
         this.uuid = user.getUuid();
+        this.digilockerid = user.getDigilockerid();
         this.addresses = user.getAddresses();
         this.alternatemobilenumber=user.getAlternateMobileNumber();
         mapPermanentAddress(user);
