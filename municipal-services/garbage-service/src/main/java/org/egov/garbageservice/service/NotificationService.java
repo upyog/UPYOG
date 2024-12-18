@@ -16,6 +16,7 @@ import org.egov.garbageservice.model.EmailRequest;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.SMSRequest;
+import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.GrbgUtils;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,22 @@ public class NotificationService {
 	private static final String AMOUNT_PLACEHOLDER = "{amount}";
 	private static final String DUE_DATE_PLACEHOLDER = "{due_date}";
 	private static final String GARBAGE_NO_PLACEHOLDER = "{garbage_no}";
+//	private static final String GARBAGE_ACCOUNT_CREATED_BY_PLACEHOLDER = "{garbage_ac_created_by}";
+	private static final String GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER = "{garbage_pay_now_bill_url}";
 
 	private static final String SMS_BODY_GENERATE_BILL = "Message Sent Successfully";
 
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Garbage Collection Bill for " + MONTH_PLACEHOLDER
 			+ "/" + YEAR_PLACEHOLDER + " with " + GARBAGE_NO_PLACEHOLDER;
+
+	@Autowired
+	private GrbgConstants grbgConfig;
+
+	@Autowired
+	private GrbgUtils grbgUtils;
+
+//	@Autowired
+//	private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
 	@Autowired
 	private KafkaTemplate<String, Object> kafkaTemplate;
@@ -84,7 +96,7 @@ public class NotificationService {
 	}
 
 	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill,
-			RequestInfoWrapper requestInfoWrapper, GrbgUtils grbgUtils) {
+			RequestInfoWrapper requestInfoWrapper) {
 		ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
 		String emailBody = grbgUtils.getContentAsString(resource);
 		String smsBody = SMS_BODY_GENERATE_BILL;
@@ -125,6 +137,13 @@ public class NotificationService {
 		body = body.replace(AMOUNT_PLACEHOLDER, String.valueOf(bill.getTotalAmount()));
 		body = body.replace(DUE_DATE_PLACEHOLDER, "");
 		body = body.replace(GARBAGE_NO_PLACEHOLDER, garbageAccount.getGrbgApplicationNumber());
+//		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
+//				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
+//						+ encryptionDecryptionUtil.encryptObject(garbageAccount.getCreated_by(),
+//								GrbgConstants.GARBAGE_MODEL, String.class));
+		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER, grbgConfig.getGrbgServiceHostUrl() + ""
+				+ grbgConfig.getGrbgPayNowBillEndpoint() + "" + garbageAccount.getCreated_by());
+
 		return body;
 	}
 

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.garbageservice.contract.bill.*;
 import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
 import org.egov.garbageservice.contract.workflow.BusinessServiceResponse;
@@ -1495,6 +1496,16 @@ public class GarbageAccountService {
 				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
 				.collect(Collectors.toList());
 		return roleCodes;
+	}
+	
+	public GarbageAccountActionResponse payNowGrbgBill(String userUuid) {
+
+		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
+				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(userUuid).build()).build()).build();
+
+		GarbageAccountActionResponse accountActionResponse = getApplicationDetails(garbageAccountActionRequest);
+
+		return accountActionResponse;
 	}
 
 

@@ -76,6 +76,8 @@ public class GrbgConstants {
 
 	public static final String USER_ROLE_SECRETARY = "SECRETARY";
 
+	public static final String GARBAGE_MODEL = "Garbage";
+
 	// Alfresco keys
 	public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
 	public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "GB certificate";
@@ -83,6 +85,9 @@ public class GrbgConstants {
 	public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
 	public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
 	public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
+
+	@Value(("${state.level.tenant.id}"))
+	private String stateLevelTenantId;
 
 	@Value("${frontend.base.uri}")
 	public String frontEndBaseUri;
@@ -131,6 +136,12 @@ public class GrbgConstants {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsSearchEndpoint;
+
+	@Value("${garbage.service.host}")
+	private String grbgServiceHostUrl;
+
+	@Value("${garbage.service.pay.now.bill.endpoint}")
+	private String grbgPayNowBillEndpoint;
 
 	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
 		String appNo = null;
