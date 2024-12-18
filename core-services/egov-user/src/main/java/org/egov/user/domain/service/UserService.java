@@ -81,6 +81,8 @@ public class UserService {
     @Value("${max.invalid.login.attempts}")
     private Long maxInvalidLoginAttempts;
 
+    @Value("${digilocker.search}")
+    private boolean isDigiLockerSearch;
 
     @Value("${egov.user.pwd.pattern}")
     private String pwdRegex;
@@ -171,6 +173,24 @@ public class UserService {
         return users.get(0);
     }
 
+    public User getUserBymobileNumber(String mobileNumber) {
+
+        UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder()
+                .mobileNumber(mobileNumber)
+                .build();
+
+        if (isEmpty(mobileNumber)) {
+            log.error("Mobile Number is mandatory");
+            throw new UserNotFoundException(userSearchCriteria);
+        }
+        userSearchCriteria.setDigilockersearch(isDigiLockerSearch);
+        List<User> users = userRepository.findAll(userSearchCriteria);
+
+        if (users.isEmpty())
+            throw new UserNotFoundException(userSearchCriteria);
+        return users.get(0);
+    }
+
 
     /**
      * get the users based on on userSearch criteria
@@ -185,20 +205,24 @@ public class UserService {
         searchCriteria.validate(isInterServiceCall);
 
         searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
-        /* encrypt here / encrypted searchcriteria will be used for search*/
-        
-        String altmobnumber=null;
-        
-        if(searchCriteria.getMobileNumber()!=null) {
-        	altmobnumber = searchCriteria.getMobileNumber();
-        }
 
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
-        
-        if(altmobnumber!=null) {
-        	searchCriteria.setAlternatemobilenumber(altmobnumber);
+        if(searchCriteria.isDigilockersearch() && searchCriteria.getMobileNumber() != null){
+            searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
         }
-        
+        else {
+            String altmobnumber = null;
+
+            if (searchCriteria.getMobileNumber() != null) {
+                altmobnumber = searchCriteria.getMobileNumber();
+            }
+
+            searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+
+            if (altmobnumber != null) {
+                searchCriteria.setAlternatemobilenumber(altmobnumber);
+            }
+        }
+        log.info("Search Criteria :-", searchCriteria);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
         /* decrypt here / final reponse decrypted*/
@@ -230,6 +254,7 @@ public class UserService {
         user.setPassword(encryptPwd(user.getPassword()));
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+
         User persistedNewUser = persistNewUser(user);
         return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
 
@@ -269,6 +294,8 @@ public class UserService {
             throw new UserNameNotValidException();
         else if (isCitizenLoginOtpBased)
             user.setMobileNumber(user.getUsername());
+        else if(!isCitizenLoginOtpBased && user.isDigilockerRegistration())
+            user.setMobileNumber(user.getUsername());
         if (!isCitizenLoginOtpBased)
             validatePassword(user.getPassword());
         user.setRoleToCitizen();
@@ -307,7 +334,7 @@ public class UserService {
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
-            return restTemplate.postForEntity(userHost + "/user/oauth/token", request, Map.class).getBody();
+            return restTemplate.postForEntity(userHost + "/user/auth/_digilocker", request, Map.class).getBody();
 
         } catch (Exception e) {
             log.error("Error occurred while logging-in via register flow", e);
@@ -352,22 +379,43 @@ public class UserService {
      */
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
-        final User existingUser = getUserByUuid(user.getUuid());
-        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
-        validateUserRoles(user);
-        user.validateUserModification();
-        validatePassword(user.getPassword());
-        user.setPassword(encryptPwd(user.getPassword()));
+        User existingUser;
+        if(user.isDigilockerRegistration()){
+            existingUser = getUserBymobileNumber(user.getMobileNumber());
+            user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+            validatePassword(user.getPassword());
+            user.setPassword(encryptPwd(user.getPassword()));
+            user.validateUserModification();
+            user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+            userRepository.update(user, existingUser,existingUser.getId(), user.getUuid() );
+        }else {
+            existingUser = getUserByUuid(user.getUuid());
+
+            user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+            validateUserRoles(user);
+            user.validateUserModification();
+            validatePassword(user.getPassword());
+            user.setPassword(encryptPwd(user.getPassword()));
+            user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+            userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
+        }
         /* encrypt */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
-        userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
+
 
         // If user is being unlocked via update, reset failed login attempts
         if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
             resetFailedLoginAttempts(user);
 
-        User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        User encryptedUpdatedUserfromDB, decryptedupdatedUserfromDB;
+
+        if(user.isDigilockerRegistration()){
+            encryptedUpdatedUserfromDB = getUserBymobileNumber(user.getMobileNumber());
+            decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        }
+        else {
+            encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+            decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        }
         return decryptedupdatedUserfromDB;
     }
 

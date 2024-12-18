@@ -80,6 +80,9 @@ public class UserSearchRequest {
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
 
+    @JsonProperty("digilockerSearch")
+    private boolean digilockerSearch;
+
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
                 .id(id)
@@ -97,6 +100,7 @@ public class UserSearchRequest {
                 .tenantId(tenantId)
                 .roleCodes(roleCodes)
                 .uuid(uuid)
+                .digilockersearch(digilockerSearch)
                 .build();
     }
 }

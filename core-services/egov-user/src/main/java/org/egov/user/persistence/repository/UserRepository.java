@@ -15,6 +15,7 @@ import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
 import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
+import org.egov.user.repository.rowmapper.DigilockerUserResultSetExtractor;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -43,16 +44,18 @@ public class UserRepository {
     private UserTypeQueryBuilder userTypeQueryBuilder;
     private RoleRepository roleRepository;
     private UserResultSetExtractor userResultSetExtractor;
+    private DigilockerUserResultSetExtractor digilockerUserResultSetExtractor;
 
     @Autowired
     UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
                    AddressRepository addressRepository, UserResultSetExtractor userResultSetExtractor,
-                   JdbcTemplate jdbcTemplate,
+                   DigilockerUserResultSetExtractor digilockerUserResultSetExtractor, JdbcTemplate jdbcTemplate,
                    NamedParameterJdbcTemplate namedParameterJdbcTemplate, AuditRepository auditRepository) {
         this.addressRepository = addressRepository;
         this.roleRepository = roleRepository;
         this.userTypeQueryBuilder = userTypeQueryBuilder;
         this.userResultSetExtractor = userResultSetExtractor;
+        this.digilockerUserResultSetExtractor = digilockerUserResultSetExtractor;
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.auditRepository = auditRepository;
@@ -89,11 +92,17 @@ public class UserRepository {
                 return users;
             }
         }
+
         String queryStr = userTypeQueryBuilder.getQuery(userSearch, preparedStatementValues);
         log.debug(queryStr);
 
-        users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
-        enrichRoles(users);
+        if(userSearch.isDigilockersearch()){
+            users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), digilockerUserResultSetExtractor);
+            enrichRoles(users);
+        }else {
+            users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
+            enrichRoles(users);
+        }
 
         return users;
     }
@@ -149,6 +158,7 @@ public class UserRepository {
         final Long newId = getNextSequence();
         user.setId(newId);
         user.setUuid(UUID.randomUUID().toString());
+        user.setDigilockerid(user.getDigilockerid());
         user.setCreatedDate(new Date());
         user.setLastModifiedDate(new Date());
         user.setCreatedBy(user.getLoggedInUserId());
@@ -178,11 +188,17 @@ public class UserRepository {
 
 
         Map<String, Object> updateuserInputs = new HashMap<>();
+        if(user.isDigilockerRegistration()){
+            updateuserInputs.put("username", oldUser.getUsername());
+            updateuserInputs.put("tenantid", oldUser.getTenantId());
+        }
+        else {
+            updateuserInputs.put("username", oldUser.getUsername());
+            updateuserInputs.put("type", oldUser.getType().toString());
+            updateuserInputs.put("tenantid", oldUser.getTenantId());
+            updateuserInputs.put("AadhaarNumber", user.getAadhaarNumber());
+        }
 
-        updateuserInputs.put("username", oldUser.getUsername());
-        updateuserInputs.put("type", oldUser.getType().toString());
-        updateuserInputs.put("tenantid", oldUser.getTenantId());
-        updateuserInputs.put("AadhaarNumber", user.getAadhaarNumber());
 
         if (isNull(user.getAccountLocked()))
             updateuserInputs.put("AccountLocked", oldUser.getAccountLocked());
@@ -275,34 +291,36 @@ public class UserRepository {
         updateuserInputs.put("Salutation", user.getSalutation());
         updateuserInputs.put("Signature", user.getSignature());
         updateuserInputs.put("Title", user.getTitle());
-
-
-        List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
-        if (user.getType() != null) {
-            if (userTypeEnumValues.contains(user.getType()))
-                updateuserInputs.put("Type", user.getType().toString());
-            else {
-                updateuserInputs.put("Type", "");
+        updateuserInputs.put("DigilockerID",user.getDigilockerid());
+        if(!user.isDigilockerRegistration()) {
+            List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
+            if (user.getType() != null) {
+                if (userTypeEnumValues.contains(user.getType()))
+                    updateuserInputs.put("Type", user.getType().toString());
+                else {
+                    updateuserInputs.put("Type", "");
+                }
+            } else {
+                updateuserInputs.put("Type", oldUser.getType().toString());
             }
-        }
-        else {
-            updateuserInputs.put("Type", oldUser.getType().toString());
         }
 
         updateuserInputs.put("alternatemobilenumber", user.getAlternateMobileNumber());
 
         updateuserInputs.put("LastModifiedDate", new Date());
         updateuserInputs.put("LastModifiedBy", userId );
-        
-        updateAuditDetails(oldUser, userId, uuid);
-
-        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
-        if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
-            validateAndEnrichRoles(Collections.singletonList(user));
-            updateRoles(user);
-        }
-        if (user.getPermanentAndCorrespondenceAddresses() != null) {
-            addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+        if(user.isDigilockerRegistration()) {
+            namedParameterJdbcTemplate.update(userTypeQueryBuilder.getDigilockerUpdateQuery(), updateuserInputs);
+        }else {
+            updateAuditDetails(oldUser, userId, uuid);
+            namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
+            if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
+                validateAndEnrichRoles(Collections.singletonList(user));
+                updateRoles(user);
+            }
+            if (user.getPermanentAndCorrespondenceAddresses() != null) {
+                addressRepository.update(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+            }
         }
     }
 
@@ -463,6 +481,7 @@ public class UserRepository {
 
         userInputs.put("id", entityUser.getId());
         userInputs.put("uuid", entityUser.getUuid());
+        userInputs.put("digilockerid", entityUser.getDigilockerid());
         userInputs.put("tenantid", entityUser.getTenantId());
         userInputs.put("salutation", entityUser.getSalutation());
         userInputs.put("dob", entityUser.getDob());
