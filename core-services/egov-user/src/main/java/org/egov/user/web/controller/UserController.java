@@ -193,7 +193,7 @@ public class UserController {
         if ( !userContracts.isEmpty()) {
             User user = createUserRequest.toDomain(false);
             user.setDigilockerRegistration(isDigiLockerRegistration);
-            final User updatedUser = userService.updateWithoutOtpValidation(user, createUserRequest.getRequestInfo());
+            Object updatedUser = userService.updateDigilockerID(user, createUserRequest.getRequestInfo());
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         } else {
             User user = createUserRequest.toDomain(true);
