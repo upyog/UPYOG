@@ -1411,9 +1411,13 @@ public class GarbageAccountService {
 			garbageAccountDetail.setUserDetails(userDetails);
 			
 			
-			
-			
-			garbageAccountDetails.add(garbageAccountDetail);
+			if (garbageAccountActionRequest.getIsEmptyBillFilter()) {
+				if (!CollectionUtils.isEmpty(garbageAccountDetail.getBills())) {
+					garbageAccountDetails.add(garbageAccountDetail);
+				}
+			} else {
+				garbageAccountDetails.add(garbageAccountDetail);
+			}
 		});
 		
 		return garbageAccountDetails;
