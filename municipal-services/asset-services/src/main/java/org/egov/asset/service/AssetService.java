@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -303,8 +304,12 @@ public class AssetService {
 				uri.append("&businessServices=").append(applicationBusinessId);
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
 						.requestInfo(assetActionRequest.getRequestInfo()).build();
+				Optional<Object> response = restCallRepository.fetchResult(uri, requestInfoWrapper);
+				if(!response.isPresent()) {
+					throw new CustomException("WF_SEARCH_FAILED","Failed to fetch WF business service.");
+				}
 				LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository
-						.fetchResult(uri, requestInfoWrapper);
+						.fetchResult(uri, requestInfoWrapper).get();
 
 				BusinessServiceResponse businessServiceResponse = objectMapper.convertValue(responseObject,
 						BusinessServiceResponse.class);
@@ -314,7 +319,9 @@ public class AssetService {
 							"Business service not found for application number: " + applicationNumber);
 				}
 				List<State> stateList = businessServiceResponse.getBusinessServices().get(0).getStates().stream()
-						.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus))
+						.filter(state -> StringUtils.equalsIgnoreCase(state.getApplicationStatus(), applicationStatus)
+								&& !StringUtils.equalsIgnoreCase(state.getApplicationStatus(),
+										AssetConstants.STATUS_APPROVED))
 						.collect(Collectors.toList());
 
 				// filtering actions based on roles
@@ -366,9 +373,20 @@ public class AssetService {
 
 	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
 
-		List<String> roleCodes = roles.stream()
-				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
-				.collect(Collectors.toList());
+		/*List<String> roleCodes = roles.stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId))
+				.map(role -> role.getCode())
+				.collect(Collectors.toList());*/
+		
+		List<String> roleCodes = new ArrayList<>();
+		if(!CollectionUtils.isEmpty(roles)) {
+			for (Role role : roles) {
+			    if (StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)) {
+			        roleCodes.add(role.getCode());
+			    }
+			}
+		}
+		
 		return roleCodes;
 	}
 	
