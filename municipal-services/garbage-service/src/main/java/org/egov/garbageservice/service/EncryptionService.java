@@ -35,7 +35,7 @@ public class EncryptionService {
 
 		EncryptionRequest encryptionRequest = EncryptionRequest
 				.builder().encryptionRequests(Arrays.asList(EncReqObject.builder()
-						.tenantId(grbgConfig.getStateLevelTenantId()).type("Normal").value(valueToEncrypt).build()))
+						.tenantId(grbgConfig.getStateLevelTenantId()).type("Imp").value(valueToEncrypt).build()))
 				.build();
 
 		ArrayList<String> encryptedValueResponse = null;
