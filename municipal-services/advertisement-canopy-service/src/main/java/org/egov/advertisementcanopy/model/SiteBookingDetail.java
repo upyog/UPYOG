@@ -23,8 +23,12 @@ public class SiteBookingDetail {
 	private String applicationNumber;
     private List<String> action;
     private BigDecimal totalPayableAmount;
-	private String feeCalculationFormula;
-	private Map<Object, Object> billDetails;
+    private BigDecimal totalUntaxedAmount;
+    private Long securityAmount;
+    private Long numberOfDays;
+    private String feeCalculationFormula;
+    private String tax;
+    private Map<Object, Object> billDetails;
 	private Map<Object, Object> userDetails;
 	private SiteBooking garbageAccount;
 	private List<Bill> bills;

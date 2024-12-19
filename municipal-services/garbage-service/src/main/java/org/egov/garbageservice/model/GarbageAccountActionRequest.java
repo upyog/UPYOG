@@ -3,6 +3,7 @@ package org.egov.garbageservice.model;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -18,9 +19,18 @@ import lombok.Setter;
 @Builder
 public class GarbageAccountActionRequest {
 
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo = null;
-    
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo = null;
+
 	private List<String> applicationNumbers;
-	
+
+	private List<String> billStatus;
+
+	private String month;
+
+	private String year;
+
+	@Builder.Default
+	private Boolean isEmptyBillFilter = false;
+
 }

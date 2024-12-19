@@ -3,6 +3,10 @@ package org.egov.garbageservice.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +26,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.garbageservice.contract.bill.*;
 import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
 import org.egov.garbageservice.contract.workflow.BusinessServiceResponse;
@@ -710,10 +715,11 @@ public class GarbageAccountService {
 //		tlObject.put("tradeRegistrationNo", GarbageAccount.getApplicationNumber()); // Trade Registration No
 		grbObject.put("ownerName", GarbageAccount.getName());// owner Name
 		grbObject.put("address",GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
-						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail()
-						.get("district").asText()).concat(", ").concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat("(").concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(")")
-						.concat(GarbageAccount.getAddresses().get(0).getWardName())
-						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
+					.concat(GarbageAccount.getAddresses().get(0).getWardName())
+					.concat(", ").concat(GarbageAccount.getAddresses().get(0).getUlbName())
+					.concat(" (").concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
+					.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
+					.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
 																																																		// Applicant
 																											// Name
 		grbObject.put("mobileNumber",GarbageAccount.getMobileNumber());
@@ -1313,7 +1319,7 @@ public class GarbageAccountService {
 		// search application number
 		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
 
-		List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo());
+		List<GarbageAccountDetail> applicationDetails = getApplicationBillUserDetail(accounts, garbageAccountActionRequest.getRequestInfo(), garbageAccountActionRequest);
 		
 		garbageAccountActionResponse.setApplicationDetails(applicationDetails);
 		
@@ -1321,7 +1327,8 @@ public class GarbageAccountService {
 	}
 
 
-	private List<GarbageAccountDetail> getApplicationBillUserDetail(List<GarbageAccount> accounts, RequestInfo requestInfo) {
+	private List<GarbageAccountDetail> getApplicationBillUserDetail(List<GarbageAccount> accounts,
+			RequestInfo requestInfo, GarbageAccountActionRequest garbageAccountActionRequest) {
 		
 		List<GarbageAccountDetail> garbageAccountDetails = new ArrayList<>();
 		
@@ -1338,7 +1345,37 @@ public class GarbageAccountService {
 			Map<Object, Object> billDetailsMap = new HashMap<>();
 			if (!CollectionUtils.isEmpty(billResponse.getBill())) {
 				// enrich all bills
+				
+				if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getBillStatus())) {
+					List<Bill> finalBills = billResponse.getBill().stream().filter(
+							bill -> garbageAccountActionRequest.getBillStatus().contains(bill.getStatus().name()))
+							.collect(Collectors.toList());
+					billResponse.setBill(finalBills);
+				}
+				
+				if (!StringUtils.isEmpty(garbageAccountActionRequest.getMonth())
+						&& !StringUtils.isEmpty(garbageAccountActionRequest.getYear())) {
+					List<Bill> finalBillsAfterYearMonthFilter = new ArrayList<>();
+					billResponse.getBill().forEach(bill -> {
+						Instant instant = Instant.ofEpochMilli(bill.getBillDate());
+						LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+						String formattedDate = dateTime.format(formatter);
+
+						if (null != dateTime.getMonth()
+								&& garbageAccountActionRequest.getMonth()
+										.equalsIgnoreCase(dateTime.getMonth().toString())
+								&& garbageAccountActionRequest.getYear()
+										.equalsIgnoreCase(String.valueOf(dateTime.getYear()))) {
+							finalBillsAfterYearMonthFilter.add(bill);
+						}
+
+					});
+					billResponse.setBill(finalBillsAfterYearMonthFilter);
+				}
+				
 				garbageAccountDetail.setBills(billResponse.getBill());
+				
 				Optional<Bill> activeBill = billResponse.getBill().stream()
 						.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
 			            .findFirst();
@@ -1375,9 +1412,13 @@ public class GarbageAccountService {
 			garbageAccountDetail.setUserDetails(userDetails);
 			
 			
-			
-			
-			garbageAccountDetails.add(garbageAccountDetail);
+			if (garbageAccountActionRequest.getIsEmptyBillFilter()) {
+				if (!CollectionUtils.isEmpty(garbageAccountDetail.getBills())) {
+					garbageAccountDetails.add(garbageAccountDetail);
+				}
+			} else {
+				garbageAccountDetails.add(garbageAccountDetail);
+			}
 		});
 		
 		return garbageAccountDetails;
@@ -1460,6 +1501,17 @@ public class GarbageAccountService {
 				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(role -> role.getCode())
 				.collect(Collectors.toList());
 		return roleCodes;
+	}
+	
+	public GarbageAccountActionResponse payNowGrbgBill(String userUuid) {
+
+		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
+				.isEmptyBillFilter(true)
+				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(userUuid).build()).build()).build();
+
+		GarbageAccountActionResponse accountActionResponse = getApplicationDetails(garbageAccountActionRequest);
+
+		return accountActionResponse;
 	}
 
 
