@@ -8,7 +8,7 @@ export const PaymentService = {
       useCache: false,
       method: "POST",
       auth: false,
-      userService: false,
+      userService: true,
       params: { tenantId, ...filters },
     })
       .then((d) => {
