@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -46,8 +47,10 @@ import org.egov.advertisementcanopy.model.SiteUpdateRequest;
 import org.egov.advertisementcanopy.producer.Producer;
 import org.egov.advertisementcanopy.repository.SiteBookingRepository;
 import org.egov.advertisementcanopy.repository.SiteRepository;
+import org.egov.advertisementcanopy.repository.IdGenRepository;
 import org.egov.advertisementcanopy.util.AdvtConstants;
 import org.egov.advertisementcanopy.util.ResponseInfoFactory;
+import org.egov.advertisementcanopy.model.Idgen.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
@@ -72,6 +75,9 @@ public class SiteBookingService {
 
 	@Autowired
 	private Producer producer;
+	
+	@Autowired
+	private IdGenRepository idGenRepository;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -149,20 +155,34 @@ public class SiteBookingService {
 
 	private void enrichCreateBooking(SiteBookingRequest siteBookingRequest) {
 
+		List<String> applicationNos = getApplicationNumbers(siteBookingRequest.getRequestInfo(), siteBookingRequest.getSiteBookings().get(0).getTenantId(), advtConstants.getBookingNumberIdgenName(), advtConstants.getBookingNumberIdgen(), siteBookingRequest.getSiteBookings().size());
+        ListIterator<String> itr = applicationNos.listIterator();
 		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 			
+			Long fromDateInMillis = booking.getFromDate() * 1000;
+			Long toDateInMillis = booking.getToDate() * 1000;
+			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
+	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24);
+	        
+			if(null != booking.getFromDate() && null != booking.getToDate()) {
+				booking.setPeriodInDays(numberOfDays);
+//				booking.setPeriodInDays(Math.toIntExact( booking.getToDate()-booking.getFromDate() / (1000 * 60 * 60 * 24) ));
+			}
+			
 			booking.setUuid(UUID.randomUUID().toString());
-			booking.setApplicationNo(String.valueOf(System.currentTimeMillis()));
+			
+	        String tempId = itr.next();
+
+        	
+        	tempId = formatApplicationNos(booking, tempId);
+        	booking.setApplicationNo(tempId);
+//			String applicationNo = getApplicationNumber(siteBookingRequest);
+//			booking.setApplicationNo(String.valueOf(applicationNos.get(0)));
 			booking.setIsActive(true);
 			booking.setStatus("INITIATED");
 			
 			booking.setWorkflowAction("INITIATE");
 //			booking.setTenantId("hp.Shimla");
-			
-			if(null != booking.getFromDate() && null != booking.getToDate()) {
-				booking.setPeriodInDays(TimeUnit.MILLISECONDS.toDays(booking.getToDate()-booking.getFromDate()));
-//				booking.setPeriodInDays(Math.toIntExact( booking.getToDate()-booking.getFromDate() / (1000 * 60 * 60 * 24) ));
-			}
 			
 			if(null != siteBookingRequest.getRequestInfo()
 					&& null != siteBookingRequest.getRequestInfo().getUserInfo()) {
@@ -175,7 +195,34 @@ public class SiteBookingService {
 		});
 		
 	}
+    private List<String> getApplicationNumbers(RequestInfo requestInfo, String tenantId, String idKey,
+            String idformat, int count) {
+    	
+		List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+		
+		if (CollectionUtils.isEmpty(idResponses))
+		throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+		
+		return idResponses.stream()
+		.map(IdResponse::getId).collect(Collectors.toList());
+	}
 
+
+    private String formatApplicationNos(SiteBooking siteBooking,String applicationNo) {
+    	
+    	String ulbName = null;
+		if(null == siteBooking.getSiteCreationData().getUlbName()) {
+			throw new CustomException("ULB_NAME_EMPTY","Provide the ULB name.");
+		}else {
+			ulbName = siteBooking.getSiteCreationData().getUlbName().toString();
+			ulbName = ulbName.replaceAll("^\"|\"$", "").toUpperCase();
+		}
+		
+		applicationNo = applicationNo.replace("ULBNAME", ulbName);
+        applicationNo = applicationNo.replace("VALIDITYPERIOD", String.valueOf(siteBooking.getPeriodInDays()));
+        return applicationNo;
+    	
+    }
 	private void validateCreateBooking(SiteBookingRequest siteBookingRequest) {
 		
 		// validate object
@@ -227,6 +274,7 @@ public class SiteBookingService {
 			}
 			// enrich tenant from site to booking
 			booking.setTenantId(tempSite.getTenantId());
+			booking.setSiteCreationData(tempSite);
 		});
 		return siteMap;
 	}
@@ -363,15 +411,15 @@ public class SiteBookingService {
 		
 		// enrich update request
 		siteBookingRequest = validateAndEnrichUpdateSiteBooking(siteBookingRequest, appNoToSiteBookingMap);
-		
+		// call workflow
+		workflowService.updateWorkflowStatus(siteBookingRequest);
+
 		// update request
 		producer.push(AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, siteBookingRequest);
 //		siteBookingRequest.getSiteBookings().stream().forEach(booking -> {
 //			repository.update(booking);
 //		});
 
-		// call workflow
-		workflowService.updateWorkflowStatus(siteBookingRequest);
 		
 		// create and upload pdf
         createAndUploadPDF(siteBookingRequest);
@@ -391,7 +439,7 @@ public class SiteBookingService {
 		if (!CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
 			siteBookingRequest.getSiteBookings().stream().forEach(siteBooking -> {
 
-				Thread pdfGenerationThread = new Thread(() -> {
+//				Thread pdfGenerationThread = new Thread(() -> {
 
 					if(StringUtils.equalsIgnoreCase(siteBooking.getWorkflowAction(), AdvtConstants.ACTION_APPROVE)) {
 						// validate trade license
@@ -413,9 +461,9 @@ public class SiteBookingService {
 					}
 					
 
-				});
+//				});
 
-				pdfGenerationThread.start();
+//				pdfGenerationThread.start();
 
 			});
 		}
@@ -465,7 +513,7 @@ public class SiteBookingService {
 	}
 
 	private Map<String, Object> generateDataForSiteBookingPdfCreate(SiteBooking siteBooking, RequestInfo requestInfo) {
-		Map<String, Object> tlObject = new HashMap<>();
+		Map<String, Object> SiteObject = new HashMap<>();
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String createdDate = dateFormat.format(new Date(siteBooking.getAuditDetails().getCreatedDate()));
@@ -473,29 +521,54 @@ public class SiteBookingService {
 		String toDate = dateFormat.format(new Date(siteBooking.getToDate()));
 
 // Map variables and values
-		tlObject.put("applicationNumber", siteBooking.getApplicationNo()); // Application Number / Permission Ref ID
-		tlObject.put("qrCodeText", "your_qr_\r\ncode_text_value"); // QR Code Text (or replace with dynamic value if
+		SiteObject.put("applicationNumber", siteBooking.getApplicationNo()); // Application Number / Permission Ref ID
+		SiteObject.put("qrCodeText", "your_qr_\r\ncode_text_value"); // QR Code Text (or replace with dynamic value if
 																	// needed)
-		tlObject.put("fromDate", fromDate); // From Date
-		tlObject.put("toDate", toDate); // To Date
-		tlObject.put("siteName", siteBooking.getSiteCreationData().getSiteName()); // Site Name
-		tlObject.put("siteAddress", siteBooking.getSiteCreationData().getSiteAddress()); // Site Address
-		tlObject.put("pinCode", siteBooking.getSiteCreationData().getPinCode()); // Pin Code
-		tlObject.put("siteId", siteBooking.getSiteCreationData().getSiteID()); // Site ID
-		tlObject.put("applicantName", siteBooking.getApplicantName()); // Applicant Name
-		tlObject.put("mobileNumber", siteBooking.getMobileNumber()); // Mobile Number
-		tlObject.put("createdDate", createdDate); // Created Date
-		tlObject.put("status", siteBooking.getStatus()); // Status
-		tlObject.put("siteCost", siteBooking.getSiteCreationData().getSiteCost()); // Site Cost
-		tlObject.put("periodInDays", siteBooking.getPeriodInDays()); // Period In Days
-		tlObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
+		SiteObject.put("fromDate", fromDate); // From Date
+		SiteObject.put("toDate", toDate); // To Date
+		SiteObject.put("siteName", siteBooking.getSiteCreationData().getSiteName()); // Site Name
+		SiteObject.put("siteAddress", siteBooking.getSiteCreationData().getSiteAddress()); // Site Address
+		SiteObject.put("pinCode", siteBooking.getSiteCreationData().getPinCode()); // Pin Code
+		SiteObject.put("siteId", siteBooking.getSiteCreationData().getSiteID()); // Site ID
+		SiteObject.put("applicantName", siteBooking.getApplicantName()); // Applicant Name
+		SiteObject.put("mobileNumber", siteBooking.getMobileNumber()); // Mobile Number
+		SiteObject.put("createdDate", createdDate); // Created Date
+		SiteObject.put("status", siteBooking.getStatus()); // Status
+		SiteObject.put("siteCost", siteBooking.getSiteCreationData().getSiteCost()); // Site Cost
+		SiteObject.put("periodInDays", siteBooking.getPeriodInDays()); // Period In Days
+		SiteObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
+		
+		// search bill Details
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.tenantId(siteBooking.getTenantId())
+				.consumerCode(Collections.singleton(siteBooking.getApplicationNo()))
+				.service("ADVT")// business service
+				.build();
+		BillResponse billResponse = billService.searchBill(billSearchCriteria,requestInfo);
+//					Map<Object, Object> billDetailsMap = new HashMap<>();
+		if (!CollectionUtils.isEmpty(billResponse.getBill())) {
+			// enrich all bills
+//			siteBookingDetail.setBills(billResponse.getBill());
+			Optional<Bill> activeBill = billResponse.getBill().stream()
+					.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
+		            .findFirst();
+			activeBill.ifPresent(bill -> {
+				// enrich active bill details
+				SiteObject.put("total", bill.getTotalAmount()); // Security Amount
+			});
+				
+		}
+		else
+		{
+		    throw new CustomException("NULL_PAYMENT","PDF generation failed due to null values for total: "+siteBooking.getApplicationNo());
+		}
 
 // Generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
-		getQRCodeForPdfCreate(tlObject, qr);
-		tlObject.put("qrCodeText", qr.toString());
+		getQRCodeForPdfCreate(SiteObject, qr);
+		SiteObject.put("qrCodeText", qr.toString());
 
-		return tlObject;
+		return SiteObject;
 	}
 	
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
@@ -712,26 +785,32 @@ public class SiteBookingService {
 			}
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			String fromDate = dateFormat.format(new Date(booking.getFromDate()));
-			String toDate = dateFormat.format(new Date(booking.getToDate()));
-			
-			
-			SiteBookingDetail siteBookingDetail = SiteBookingDetail.builder().applicationNumber(booking.getApplicationNo()).build();
-			Long numberOfDays = (booking.getToDate() - booking.getFromDate()) / (1000 * 60 * 60 * 24);
+			Long fromDateInMillis = booking.getFromDate() * 1000;
+			Long toDateInMillis = booking.getToDate() * 1000;
+			String fromDate = dateFormat.format(new Date(fromDateInMillis));
+			String toDate = dateFormat.format(new Date(toDateInMillis));
+			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
+	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24); 
+			SiteBookingDetail siteBookingDetail = SiteBookingDetail.builder().applicationNumber(booking.getApplicationNo())
+													.tax(booking.getSiteCreationData().getAdditionalDetail().get("gstPercnetage").asText())
+													.securityAmount(booking.getSiteCreationData().getSecurityAmount())
+													.numberOfDays(numberOfDays)
+													.totalUntaxedAmount(BigDecimal.valueOf(numberOfDays).multiply(new BigDecimal(booking.getSiteCreationData().getSiteCost())))
+													.build();
 			
 			// enrich formula
-//			siteBookingDetail.setFeeCalculationFormula("NEED to DECIDE.");
+			//siteBookingDetail.setFeeCalculationFormula("NEED to DECIDE.");
 			Optional<Double> cost = Optional.of(0.0);
-			if(null != booking.getAdditionalDetail() && null != booking.getAdditionalDetail().get("gstsiteCost").asText()) {
+			if(null != booking.getAdditionalDetail() && null != booking.getSiteCreationData().getAdditionalDetail().get("gstsiteCost").asText()) {
 				try {
-			        cost = Optional.of(Double.parseDouble(booking.getAdditionalDetail().get("gstsiteCost").asText()));
+			        cost = Optional.of(Double.parseDouble(booking.getSiteCreationData().getAdditionalDetail().get("gstsiteCost").asText()));
 			    } catch (NumberFormatException e) {
 			        throw new CustomException("GST_SITE_COST_INCORRECT_FORMAT", "Incorrect format of gst site cost.");
 			    }
 			}else {
 				throw new CustomException("GST_SITE_COST_NOT_PRESENT","Gst site cost not present.");
 			}
-			siteBookingDetail.setFeeCalculationFormula("From Date: ("+fromDate+"), To Date: ("+toDate+"), Cost per day: "+cost.get());
+			
 			
 			
 			// search bill Details
@@ -762,6 +841,12 @@ public class SiteBookingService {
 										                ? booking.getSiteCreationData().getSecurityAmount() 
 										                        : 0.0));
 				siteBookingDetail.setTotalPayableAmount(totalPayableAmount);
+				siteBookingDetail.setFeeCalculationFormula("From Date: (<b>"+fromDate+"</b>), To Date: "
+						+ "(<b>"+toDate+"</b>) = Number Of Days (<b>"+numberOfDays+"</b>) * Cost per day: (<b>"
+						+ booking.getSiteCreationData().getSiteCost()+"</b>) + Tax(<b>"
+						+ booking.getSiteCreationData().getAdditionalDetail().get("gstPercnetage").asText()
+						+ "</b>) + Security(<b>"+booking.getSiteCreationData().getSecurityAmount()+")</b> "
+						+ "= Total Payable Amount(<b>"+totalPayableAmount+"</b>)");
 			}
 			siteBookingDetail.setBillDetails(billDetailsMap);
 			
