@@ -9,9 +9,6 @@ import org.egov.garbageservice.model.EncryptionRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -58,22 +55,21 @@ public class EncryptionService {
 	public String decryptString(String valueToDecrypt) {
 		StringBuilder url = new StringBuilder(grbgConfig.getEncServiceHostUrl());
 		url.append(grbgConfig.getEncDecrypyEndpoint());
-		ResponseEntity<Object> responseEntity = null;
+
+		ArrayList<String> decryptedValueResponse = null;
 		String response = null;
 
 		try {
 			valueToDecrypt = URLDecoder.decode(valueToDecrypt);
-			String[] body = { valueToDecrypt };
-			HttpEntity<String[]> entity = new HttpEntity<>(body);
+			String[] decryptionRequest = { valueToDecrypt };
 
-			responseEntity = restTemplate.exchange(url.toString(), HttpMethod.POST, entity, Object.class);
+			decryptedValueResponse = restTemplate.postForObject(url.toString(), decryptionRequest, ArrayList.class);
 		} catch (Exception e) {
 			log.error("Error occured while decrypt value.", e);
 			throw new CustomException("DECRYPTION ERROR",
 					"Error occured while decrypt value. Message: " + e.getMessage());
 		}
-		if (null != responseEntity && null != responseEntity.getBody()) {
-			ArrayList<String> decryptedValueResponse = (ArrayList<String>) responseEntity.getBody();
+		if (!CollectionUtils.isEmpty(decryptedValueResponse)) {
 			response = decryptedValueResponse.get(0);
 		}
 
