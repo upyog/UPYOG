@@ -35,9 +35,9 @@ public class DemandService {
     	// get total Tax
 //    	ApplicationDetail applicationDetail = tradeLicenseService.getApplicationBillUserDetail(garbageAccount, requestInfo);
 //    	BigDecimal taxAmount = new BigDecimal("100.00");
-    	Long numberOfDays = (siteBooking.getToDate() - siteBooking.getFromDate()) / (1000 * 60 * 60 * 24);
+    	Long numberOfDays = siteBooking.getPeriodInDays();
     	Optional<Double> cost = Optional.of(0.0);
-		if(null != siteBooking.getAdditionalDetail() && null != siteBooking.getAdditionalDetail().get("gstsiteCost").asText()) {
+		if(null != siteBooking.getSiteCreationData().getAdditionalDetail() && null != siteBooking.getSiteCreationData().getAdditionalDetail().get("gstsiteCost").asText()) {
 			try {
 		        cost = Optional.of(Double.parseDouble(siteBooking.getAdditionalDetail().get("gstsiteCost").asText()));
 		    } catch (NumberFormatException e) {
