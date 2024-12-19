@@ -164,10 +164,7 @@ public class SiteBookingService {
 			Long differenceInMillis = Math.abs(toDateInMillis - fromDateInMillis);
 	        Long numberOfDays = differenceInMillis / (1000 * 60 * 60 * 24);
 	        
-			if(null != booking.getFromDate() && null != booking.getToDate()) {
-				booking.setPeriodInDays(numberOfDays);
-//				booking.setPeriodInDays(Math.toIntExact( booking.getToDate()-booking.getFromDate() / (1000 * 60 * 60 * 24) ));
-			}
+			booking.setPeriodInDays(numberOfDays);
 			
 			booking.setUuid(UUID.randomUUID().toString());
 			
