@@ -58,7 +58,7 @@ public class DcrReportBlockDetail {
 
     private BigDecimal buildingHeight;
     
-    private BigDecimal buildingHeightExcludingMP;
+    private BigDecimal buildingHeightExcludingMP; // Building height excluding mumty and parapet
 
     private List<DcrReportFloorDetail> dcrReportFloorDetails;
 
