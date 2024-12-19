@@ -59,9 +59,10 @@ public class GarbageAccountController {
 	}
 
 	@GetMapping("/_payNow")
-	public ResponseEntity<?> payNowGrbgBill(@RequestParam(value = "id", required = true) String userUuid) {
+	public ResponseEntity<?> payNowGrbgBill(@RequestParam(value = "id", required = true) String encryptedUserUuid) {
+
 		GarbageAccountActionResponse response = null;
-		response = service.payNowGrbgBill(userUuid);
+		response = service.payNowGrbgBill(encryptedUserUuid);
 
 		return new ResponseEntity(response, HttpStatus.OK);
 	}

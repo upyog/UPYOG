@@ -52,6 +52,9 @@ public class NotificationService {
 			+ "/" + YEAR_PLACEHOLDER + " with " + GARBAGE_NO_PLACEHOLDER;
 
 	@Autowired
+	private EncryptionService encryptionService;
+
+	@Autowired
 	private GrbgConstants grbgConfig;
 
 	@Autowired
@@ -134,8 +137,9 @@ public class NotificationService {
 		body = body.replace(AMOUNT_PLACEHOLDER, String.valueOf(bill.getTotalAmount()));
 		body = body.replace(DUE_DATE_PLACEHOLDER, "");
 		body = body.replace(GARBAGE_NO_PLACEHOLDER, garbageAccount.getGrbgApplicationNumber());
-		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER, grbgConfig.getGrbgServiceHostUrl() + ""
-				+ grbgConfig.getGrbgPayNowBillEndpoint() + "" + garbageAccount.getCreated_by());
+		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
+				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
+						+ encryptionService.encryptString(garbageAccount.getCreated_by()));
 
 		return body;
 	}
