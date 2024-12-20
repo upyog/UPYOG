@@ -28,7 +28,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
         businessService,
         consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode,
       });
-      console.log("state",state);
+     
   let Useruuid = data?.Bill?.[0]?.userId || "";
   let requestCriteria = [
     "/user/_search",
