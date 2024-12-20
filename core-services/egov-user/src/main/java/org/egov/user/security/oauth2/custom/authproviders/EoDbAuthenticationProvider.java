@@ -32,7 +32,7 @@ import static java.util.Objects.isNull;
 import static org.egov.user.config.UserServiceConstants.IP_HEADER_NAME;
 import static org.springframework.util.StringUtils.isEmpty;
 
-@Component("customAuthProvider")
+@Component("eoDbAuthenticationProvider")
 @Slf4j
 public class EoDbAuthenticationProvider implements AuthenticationProvider {
 
