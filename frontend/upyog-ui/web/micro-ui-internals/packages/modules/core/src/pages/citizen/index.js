@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -18,6 +18,8 @@ import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
 import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
+import QRCode from "./QRCode";
+import ChallanQRCode from "./ChallanQRCode";
 const sidebarHiddenFor = [
   "upyog-ui/citizen/register/name",
   "/upyog-ui/citizen/select-language",
@@ -63,21 +65,21 @@ const Home = ({
             a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
             return a;
           }, {});
-        Object.keys(formattedData).forEach(key => {
-          const value = formattedData[key];
-          value.map((item) => {
-            if (!item["state"]) {
-              item["navigationURL"] = item["navigationURL"].replace("digit-ui", "upyog-ui");
-              item["url"] = item["url"].replace("digit-ui", "upyog-ui");
-              return item
-            }
+          Object.keys(formattedData).forEach(key => {
+            const value = formattedData[key];
+            value.map((item) => {
+              if (!item["state"]) {
+                item["navigationURL"] = item["navigationURL"].replace("digit-ui", "upyog-ui");
+                item["url"] = item["url"].replace("digit-ui", "upyog-ui");
+                return item
+              }
+            });
           });
-        });
         return formattedData;
       },
     }
   );
-
+  const isMobile = window.Digit.Utils.browser.isMobile();
   const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
@@ -113,7 +115,7 @@ const Home = ({
           <div className="moduleLinkHomePage">
             <img src={ "https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
             <BackButton className="moduleLinkHomePageBackButton" />
-            <h1>{t("MODULE_" + code.toUpperCase())}</h1>
+           {isMobile? <h4 style={{top: "calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4>:<h1>{t("MODULE_" + code.toUpperCase())}</h1>}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard
@@ -220,6 +222,12 @@ const Home = ({
           <Route path={`${path}/Audit`}>
             <Search/>
           </Route>
+          <Route path={`${path}/payment/verification`}>
+         <QRCode></QRCode>
+          </Route>
+          <Route path={`${path}/challan/details`}>
+         <ChallanQRCode></ChallanQRCode>
+          </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}
             {ModuleLevelLinkHomePages}
@@ -229,8 +237,8 @@ const Home = ({
 
       <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span>
+          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
+          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px"}}>|</span> */}
           <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
 
           <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize: window.Digit.Utils.browser.isMobile()?"12px":"14px" }} >|</span>

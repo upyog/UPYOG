@@ -86,8 +86,9 @@ const TextInput = (props) => {
             disabled={props.disabled}
           />
         )}
-        {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />}
+        {/* {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />} */}
         {props.signature ? props.signatureImg : null}
+
       </div>
     </React.Fragment>
   );

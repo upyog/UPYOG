@@ -12,7 +12,7 @@ import {
   LinkButton,
   DeleteIcon,
   CardSectionHeader
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useState, useMemo, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -243,7 +243,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => {
-                            return /^[a-zA-Z-.`' ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
+                            return /^[a-zA-Z ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
                         render={({ value, onChange, onBlur }) => (
@@ -308,7 +308,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => {
-                            return /^[a-zA-Z-.`' ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
+                            return /^[a-zA-Z ]+$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
                         render={({ value, onChange, onBlur }) => (
@@ -420,7 +420,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => {
-                            return /^[a-zA-Z-.`' ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
+                            return /^[a-zA-Z ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
                         render={({ value, onChange, onBlur }) => (
@@ -529,7 +529,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         rules={{
                           required: t("REQUIRED_FIELD"),
                           validate: (value) => {
-                            return /^[a-zA-Z-.`' ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
+                            return /^[a-zA-Z ]+$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE");
                           },
                         }}
                         render={({ value, onChange, onBlur }) => (
@@ -595,7 +595,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
                         control={control}
                         rules={{
                           required: t("REQUIRED_FIELD"),
-                          validate: (value) => (/^[a-zA-Z-.`' ]*$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE")),
+                          validate: (value) => (/^[a-zA-Z ]+$/i.test(value) ? true : t("PT_NAME_ERROR_MESSAGE")),
                         }}
                         render={({ value, onChange, onBlur }) => (
                           <TextInput

@@ -1,20 +1,22 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
-  } from "@egovernments/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
   import React,{ useMemo }  from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch } from "react-router-dom";
   import Timeline from "../../../components/Timeline";
   import { convertEpochToDateDMY, stringReplaceAll, getOrderDocuments } from "../../../utils";
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
+  import { format } from "date-fns";
 
   const CheckPage = ({ onSubmit, value }) => {
     const { t } = useTranslation();
     const history = useHistory();
     const match = useRouteMatch();
     let user = Digit.UserService.getUser();
-    const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
+    const tenantId = Digit.ULBService.getCurrentTenantId() || user?.info?.permanentCity || value?.tenantId;
+   
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";

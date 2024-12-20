@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TickMark } from "@egovernments/digit-ui-react-components";
+import { TickMark } from "@upyog/digit-ui-react-components";
 
 let actions = [];
 
@@ -15,12 +15,14 @@ const getAction = (flow) => {
       'WS_COMMON_SUMMARY',
     ]
       break;
-    default: actions = [
+    case "TL":  actions = [
       'TL_COMMON_TR_DETAILS',
       'TL_LOCATION_AND_OWNER_DETAILS',
       'TL_DOCUMENT_DETAIL',
       'TL_COMMON_SUMMARY',
     ]
+    default: actions = []
+      break;
   }
 }
 const CPTTimeline = ({ currentStep = 1, flow = "" }) => {
