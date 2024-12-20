@@ -59,7 +59,7 @@ public class TransactionsApiControllerV2 {
 		List<Transaction> transactions = transactionServiceV2.initiateTransaction(transactionRequests);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(transactionRequests.getRequestInfo(), true);
-		TransactionCreateResponseV2 response = new TransactionCreateResponseV2(responseInfo, transactions);
+		TransactionCreateResponseV2 response = transactionServiceV2.prepareResponse(transactions, responseInfo);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

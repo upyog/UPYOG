@@ -1,5 +1,6 @@
 package org.egov.pg.web.models;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -28,4 +29,10 @@ public class TransactionCreateResponseV2 {
 	@JsonProperty("Transactions")
 	@Valid
 	private List<Transaction> transactions;
+
+	private BigDecimal totalPayableAmount;
+	private String callbackUrl;
+	private List<String> orderIdArray;
+	private List<String> consumerCodeArray;
+	private User user;
 }

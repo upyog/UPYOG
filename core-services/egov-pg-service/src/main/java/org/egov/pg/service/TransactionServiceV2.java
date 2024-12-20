@@ -1,5 +1,6 @@
 package org.egov.pg.service;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,9 +17,12 @@ import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
+import org.egov.pg.web.models.ResponseInfo;
+import org.egov.pg.web.models.TransactionCreateResponseV2;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionRequestV2;
+import org.egov.pg.web.models.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -216,6 +220,28 @@ public class TransactionServiceV2 {
 
 		}
 
+	}
+
+	public TransactionCreateResponseV2 prepareResponse(List<Transaction> transactions, ResponseInfo responseInfo) {
+		BigDecimal totalPayableAmount = BigDecimal.ZERO;
+		String callbackUrl = null; // TODO
+		List<String> orderIdArray = new ArrayList<>();
+		List<String> consumerCodeArray = new ArrayList<>();
+		User user = null;
+
+		if (!CollectionUtils.isEmpty(transactions) && null != transactions.get(0).getUser()) {
+			user = transactions.get(0).getUser();
+		}
+
+		for (Transaction transaction : transactions) {
+			orderIdArray.add(transaction.getOrderId());
+			consumerCodeArray.add(transaction.getConsumerCode());
+			totalPayableAmount = totalPayableAmount.add(new BigDecimal(transaction.getTxnAmount().toString()));
+		}
+
+		return TransactionCreateResponseV2.builder().transactions(transactions).responseInfo(responseInfo)
+				.totalPayableAmount(totalPayableAmount).callbackUrl(callbackUrl).orderIdArray(orderIdArray)
+				.consumerCodeArray(consumerCodeArray).user(user).build();
 	}
 
 }
