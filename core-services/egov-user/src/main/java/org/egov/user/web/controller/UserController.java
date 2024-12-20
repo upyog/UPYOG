@@ -187,14 +187,16 @@ public class UserController {
     public Object authDigiLocker(@RequestBody @Valid CreateUserRequest createUserRequest, @RequestHeader HttpHeaders headers) {
         UserSearchRequest request = new UserSearchRequest();
         request.setMobileNumber(createUserRequest.getUser().getMobileNumber());
-        request.setDigilockerSearch(isDigiLockerSearch);
+        //request.setDigilockerSearch(isDigiLockerSearch);
         request.setTenantId(createUserRequest.getUser().getTenantId());
         List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
-        if ( !userContracts.isEmpty()) {
-            User user = createUserRequest.toDomain(false);
-            user.setDigilockerRegistration(isDigiLockerRegistration);
-            Object updatedUser = userService.updateDigilockerID(user, createUserRequest.getRequestInfo());
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        if ( !userContracts.isEmpty()) {            
+        	User user = createUserRequest.toDomain(false);            
+        	User existingUser = searchUsers(request,headers).getUserModels().get(0);            
+        	user.setDigilockerRegistration(isDigiLockerRegistration);            
+        	Object updatedUser = userService.updateDigilockerID(user, existingUser, createUserRequest.getRequestInfo());            
+        	return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+
         } else {
             User user = createUserRequest.toDomain(true);
             user.setUsername(user.getMobileNumber());
@@ -234,7 +236,7 @@ public class UserController {
         List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
                 .collect(Collectors.toList());
         ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
-        return new UserSearchResponse(responseInfo, userContracts);
+        return new UserSearchResponse(responseInfo, userContracts, userModels);
     }
 
     private boolean isMobileValidationRequired(HttpHeaders headers) {

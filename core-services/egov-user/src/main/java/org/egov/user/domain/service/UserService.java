@@ -183,7 +183,7 @@ public class UserService {
             log.error("Mobile Number is mandatory");
             throw new UserNotFoundException(userSearchCriteria);
         }
-        userSearchCriteria.setDigilockersearch(isDigiLockerSearch);
+        //userSearchCriteria.setDigilockersearch(isDigiLockerSearch);
         List<User> users = userRepository.findAll(userSearchCriteria);
 
         if (users.isEmpty())
@@ -206,15 +206,15 @@ public class UserService {
 
         searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
 
-        if(searchCriteria.isDigilockersearch() && searchCriteria.getMobileNumber() != null){
-            searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
-        }
-        else {
+//        if(searchCriteria.isDigilockersearch() && searchCriteria.getMobileNumber() != null){
+//            searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+//        }
+//        else {
             String altmobnumber = null;
 
             if (searchCriteria.getMobileNumber() != null) {
                 altmobnumber = searchCriteria.getMobileNumber();
-            }
+            //}
 
             searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
 
@@ -322,6 +322,7 @@ public class UserService {
             headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("username", user.getUsername());
+            password = "123456";
             if (!isEmpty(password))
                 map.add("password", password);
             else
@@ -379,18 +380,8 @@ public class UserService {
      */
     // TODO Fix date formats
     public User updateWithoutOtpValidation(User user, RequestInfo requestInfo) {
-        User existingUser;
-        if(user.isDigilockerRegistration()){
-            existingUser = getUserBymobileNumber(user.getMobileNumber());
-            user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
-            validatePassword(user.getPassword());
-            user.setPassword(encryptPwd(user.getPassword()));
-            user.validateUserModification();
-            user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
-            userRepository.update(user, existingUser,existingUser.getId(), user.getUuid() );
-        }else {
-            existingUser = getUserByUuid(user.getUuid());
-
+        
+         	User existingUser = getUserByUuid(user.getUuid());
             user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
             validateUserRoles(user);
             user.validateUserModification();
@@ -398,7 +389,6 @@ public class UserService {
             user.setPassword(encryptPwd(user.getPassword()));
             user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
             userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
-        }
         /* encrypt */
 
 
@@ -408,22 +398,10 @@ public class UserService {
 
         User encryptedUpdatedUserfromDB, decryptedupdatedUserfromDB;
 
-        if(user.isDigilockerRegistration()){
-            encryptedUpdatedUserfromDB = getUserBymobileNumber(user.getMobileNumber());
-            decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
-        }
-        else {
             encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
             decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
-        }
-        return decryptedupdatedUserfromDB;
+            return decryptedupdatedUserfromDB;
     }
-
-    public Object updateDigilockerID(User user, RequestInfo requestInfo){
-        updateWithoutOtpValidation(user, requestInfo);
-        return getAccess(user, user.getOtpReference());
-    }
-
 
     public void removeTokensByUser(User user) {
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(USER_CLIENT_ID,
@@ -708,6 +686,19 @@ public class UserService {
             throw new CustomException(errorMap);
         }
     }
+    
+    public Object updateDigilockerID(User user, User existingUser, RequestInfo requestInfo) {        
+    	log.info("User", existingUser);        
+    	existingUser = encryptionDecryptionUtil.encryptObject(existingUser, "UserSelf", User.class);        
+    	user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));        
+    	validatePassword(user.getPassword());        
+    	user.setPassword(encryptPwd(user.getPassword()));        
+    	user.validateUserModification();        
+    	user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);        
+    	userRepository.update(user, existingUser, existingUser.getId(), existingUser.getUuid());        
+    	User encryptedUpdatedUserfromDB = getUserBymobileNumber(user.getMobileNumber());        
+    	User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);        
+    return getAccess(user, user.getOtpReference());}
 
 
 }
