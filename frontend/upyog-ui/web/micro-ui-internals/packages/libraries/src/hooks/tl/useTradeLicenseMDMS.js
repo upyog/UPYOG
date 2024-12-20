@@ -1,21 +1,21 @@
-import { MdmsService } from "../../services/elements/MDMS";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 import { useQuery } from "react-query";
 
 const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
   const useTLDocuments = () => {
-    return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
+    return useQuery("TL_DOCUMENTS", () => MdmsServiceV2.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
   };
   const useStructureType = () => {
-    return useQuery("TL_STRUCTURE_TYPE", () => MdmsService.getTLStructureType(tenantId, moduleCode, type), config);
+    return useQuery("TL_STRUCTURE_TYPE", () => MdmsServiceV2.getTLStructureType(tenantId, moduleCode, type), config);
   };
   const useTradeUnitsData = () => {
-    return useQuery("TL_TRADE_UNITS", () => MdmsService.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
+    return useQuery("TL_TRADE_UNITS", () => MdmsServiceV2.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
   };
   const useTradeOwnerShipCategory = () => {
-    return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsService.GetTradeOwnerShipCategory(tenantId, moduleCode, type), config);
+    return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), config);
   };
   const useTradeOwnershipSubType = () => {
-    return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsService.GetTradeOwnerShipCategory(tenantId, moduleCode, type), {
+    return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), {
       select: data => {
         const {"common-masters":{OwnerShipCategory: categoryData} ={}} = data
         const filteredSubtypesData = categoryData.filter( e => e.code.includes(filter.keyToSearchOwnershipSubtype)).map( e => ({...e, i18nKey: `COMMON_MASTERS_OWNERSHIPCATEGORY_${e.code.replaceAll(".", "_")}`}))
@@ -26,7 +26,7 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
   };
 
   const useOwnerTypeWithSubtypes = () => {
-    return useQuery("TL_TRADE_OWNERSSHIP_TYPE", () => MdmsService.GetTradeOwnerShipCategory(tenantId, moduleCode, type), {
+    return useQuery("TL_TRADE_OWNERSSHIP_TYPE", () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), {
       select: data => {
         const {"common-masters":{OwnerShipCategory: categoryData} ={}} = data
         let OwnerShipCategory = {};
@@ -81,7 +81,7 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
         }) : null
 
         if (OwnerShipCategory) {
-          Object.keys(OwnerShipCategory).forEach((category) => {
+          Object.keys(OwnerShipCategory)?.forEach((category) => {
             // const categoryCode = OwnerShipCategory[category].code;
             ownerShipdropDown.push(formDropdown(OwnerShipCategory[category]));
           });
@@ -94,13 +94,13 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
     });
   };
   const useTLAccessoriesType = () => {
-    return useQuery("TL_TRADE_ACCESSORY_CATEGORY", () => MdmsService.getTLAccessoriesType(tenantId, moduleCode, type), config);
+    return useQuery("TL_TRADE_ACCESSORY_CATEGORY", () => MdmsServiceV2.getTLAccessoriesType(tenantId, moduleCode, type), config);
   };
   const useTLFinancialYear = () => {
-    return useQuery("TL_TRADE_FINANCIAL_YEAR", () => MdmsService.getTLFinancialYear(tenantId, moduleCode, type), config);
+    return useQuery("TL_TRADE_FINANCIAL_YEAR", () => MdmsServiceV2.getTLFinancialYear(tenantId, moduleCode, type), config);
   };
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
+    return useQuery([tenantId, moduleCode, type], () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config);
   };
 
   switch (type) {

@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { convertEpochToDate, DownloadReceipt } from "../../../utils/index";
@@ -17,7 +17,7 @@ const WSPayments = ({ application }) => {
       <KeyNote keyValue={t("WS_PAYMENT_STATUS")} note={t(application?.paymentStatus)} />
       <SubmitBar
         label={t("WS_DOWNLOAD_RECEIPT")}
-        onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, application?.paymentDetails?.[0]?.bill?.consumerCode?.includes("SW")?"SW":"WS")}
+        onSubmit={(e) => DownloadReceipt(application, application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, application?.paymentDetails?.[0]?.bill?.consumerCode?.includes("SW")?"SW":"WS")}
       />
     </Card>
   );

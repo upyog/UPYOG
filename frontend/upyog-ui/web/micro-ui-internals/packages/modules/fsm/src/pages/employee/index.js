@@ -8,7 +8,7 @@ import {
   ViewReportIcon,
   InboxIcon,
   ULBHomeCard,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation } from "react-router-dom";
@@ -61,7 +61,7 @@ export const FsmBreadCrumb = ({ location }) => {
       show: isFsm,
     },
     {
-      path: isRegistry ? "/upyog-ui/employee/fsm/registry" : FSTPO ? "/upyog-ui/employee/fsm/fstp-inbox" : "/upyog-ui/employee",
+      path: isRegistry ? "/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR" : FSTPO ? "/upyog-ui/employee/fsm/fstp-inbox" : "/upyog-ui/employee",
       content: isVehicleLog ? t("ES_TITLE_INBOX") : "FSM",
       show: isFsm,
     },

@@ -18,9 +18,9 @@ const instance = axios.create({
   },
 });
 
-const wrapRequestBody = (requestBody, action, customRequestInfo) => {
+const wrapRequestBody = (requestBody, action, customRequestInfo,endPoint) => {
   const authToken = getAccessToken();
-  let RequestInfo = {
+  let defaultRequestInfo = {
     apiId: "Rainmaker",
     ver: ".01",
     // ts: getDateInEpoch(),
@@ -31,7 +31,15 @@ const wrapRequestBody = (requestBody, action, customRequestInfo) => {
     requesterId: "",
     authToken,
   };
-  RequestInfo = { ...RequestInfo, ...customRequestInfo };
+  let userInfo = JSON.parse(`${localStorage.getItem('user-info')}` ? `${localStorage.getItem('user-info')}` : '');
+  if(endPoint.includes("_fetchbill"))
+  {
+    RequestInfo = { ...RequestInfo, userInfo };
+  }
+  else {
+    RequestInfo = { ...RequestInfo, ...customRequestInfo };
+  }
+ 
   return Object.assign(
     {},
     {
@@ -82,7 +90,7 @@ export const httpRequest = async (
       case "post":
         response = await instance.post(
           endPoint,
-          wrapRequestBody(requestBody, action, customRequestInfo)
+          wrapRequestBody(requestBody, action, customRequestInfo,endPoint)
         );
         break;
       default:

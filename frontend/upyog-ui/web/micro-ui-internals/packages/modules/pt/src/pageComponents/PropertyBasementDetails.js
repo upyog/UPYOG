@@ -1,4 +1,4 @@
-import { CitizenInfoLabel, FormStep, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CitizenInfoLabel, FormStep, RadioButtons } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/TLTimeline";
 

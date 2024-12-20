@@ -1,5 +1,5 @@
 import React,{useMemo, useState} from "react";
-import { Modal, Card, CardText,CardLabelError, TextArea ,Dropdown, Loader} from "@egovernments/digit-ui-react-components";
+import { Modal, Card, CardText,CardLabelError, TextArea ,Dropdown, Loader} from "@upyog/digit-ui-react-components";
 import { Controller, useForm,useWatch } from "react-hook-form";
 
 const Heading = (props) => {

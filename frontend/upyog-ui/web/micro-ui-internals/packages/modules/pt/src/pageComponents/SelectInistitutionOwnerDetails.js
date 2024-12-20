@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { CardHeader, CardLabel, Dropdown, FormStep, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardHeader, CardLabel, Dropdown, FormStep, TextInput } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import Timeline from "../components/TLTimeline";
 
@@ -144,7 +144,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
             disable={isUpdateProperty || isEditProperty}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z-.`' ]*$",
+              pattern: "^[a-zA-Z ]*$",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />
@@ -159,7 +159,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
             disable={isUpdateProperty || isEditProperty}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z-.`' ]*$",
+              pattern: "^[a-zA-Z ]*$",
               title: t("PT_DESIGNATION_ERROR_MESSAGE"),
             })}
           />

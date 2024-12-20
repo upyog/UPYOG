@@ -3,6 +3,7 @@ import { CREATE_COMPLAINT } from "./types";
 const createComplaint = ({
   cityCode,
   complaintType,
+  priorityLevel,
   description,
   landmark,
   city,
@@ -15,10 +16,13 @@ const createComplaint = ({
   uploadedImages,
   mobileNumber,
   name,
+  emailId,
+  additionalDetails
 }) => async (dispatch, getState) => {
   const response = await Digit.Complaint.create({
     cityCode,
     complaintType,
+    priorityLevel,
     description,
     landmark,
     city,
@@ -31,6 +35,8 @@ const createComplaint = ({
     uploadedImages,
     mobileNumber,
     name,
+    emailId,
+    additionalDetails
   });
   dispatch({
     type: CREATE_COMPLAINT,

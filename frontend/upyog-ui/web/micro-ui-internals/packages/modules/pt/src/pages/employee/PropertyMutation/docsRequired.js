@@ -1,7 +1,7 @@
 import {
   ActionBar, Card, CardLabel, CardSectionHeader, CardText, Header, Loader,
   SubmitBar
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";

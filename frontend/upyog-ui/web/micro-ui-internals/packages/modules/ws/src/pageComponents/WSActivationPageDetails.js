@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { getPattern } from "../utils";
 import * as func from "../utils";
@@ -35,12 +35,13 @@ const WSActivationPageDetails = ({ config, onSelect, userType, formData, setErro
             onSelect(config.key, { ...formData[config.key], ...activationDetails });
         }
     }, [activationDetails]);
-
+let formData2= formData
     const commonProps = {
         focusIndex,
         allOwners: activationDetails,
         setFocusIndex,
         formData,
+        formData2,
         formState,
         t,
         setError,
@@ -71,6 +72,7 @@ const ConnectionDetails = (_props) => {
         setFocusIndex,
         t,
         formData,
+        formData2,
         config,
         setError,
         clearErrors,
@@ -133,11 +135,10 @@ const ConnectionDetails = (_props) => {
     }, [errors]);
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-
     return (
         <div>
             <div style={{ marginBottom: "16px" }}>
-                {filters?.service === "WATER" && formData?.connectionDetails?.[0]?.connectionType?.code?.toUpperCase() === "METERED" ? <div>
+                {filters?.service === "WATER" && formData?.connectionDetails?.[0]?.connectionType?.code?.toUpperCase() === "METERED" && formData2?.connectionDetails?.[0]?.formDetails?.applicationData?.applicationType !== "WATER_RECONNECTION"  ? <div>
                     <LabelFieldPair>
                         <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_METER_ID")}*`}</CardLabel>
                         <div className="field">

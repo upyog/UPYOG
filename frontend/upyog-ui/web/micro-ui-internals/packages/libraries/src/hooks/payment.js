@@ -4,11 +4,12 @@ import { PaymentService } from "../services/elements/Payment";
 export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...filters }, config = {}) => {
   const queryClient = useQueryClient();
   const { mobileNumber, tenantId } = Digit.UserService.getUser()?.info || {};
+  const tenant = Digit.ULBService.getCitizenCurrentTenant()
   const params = { mobileNumber, businessService, ...filters };
   if (!params["mobileNumber"]) delete params["mobileNumber"];
   const { isLoading, error, isError, data, status } = useQuery(
     ["citizenBillsForBuisnessService", businessService, { ...params }],
-    () => Digit.PaymentService.fetchBill(tenantId, { ...params }),
+    () => Digit.PaymentService.fetchBill(window.location.href.includes("mcollect")?tenant:tenantId, { ...params }),
     {
       refetchOnMount: true,
       retry: false,
@@ -148,6 +149,16 @@ export const useRecieptSearch = ({ tenantId, businessService, ...params }, confi
   return useQuery(
     ["reciept_search", { tenantId, businessService, params },config],
     () => Digit.PaymentService.recieptSearch(tenantId, businessService, params),
+    {
+      refetchOnMount: false,
+      ...config,
+    }
+  );
+};
+export const useRecieptSearchNew = ({ tenantId, ...params }, config = {}) => {
+  return useQuery(
+    ["obps_Reciept_Search", { tenantId, params },config],
+    () => Digit.PaymentService.recieptSearchNew(tenantId, params),
     {
       refetchOnMount: false,
       ...config,

@@ -2,9 +2,26 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 #FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
+RUN yarn add @upyog/digit-ui-libraries
+RUN yarn add @upyog/digit-ui-module-fsm@1.8.18
+RUN yarn add @upyog/digit-ui-module-pt@2.0.0
+RUN yarn add @upyog/digit-ui-module-tl@2.0.0
+RUN yarn add @upyog/digit-ui-module-obps@2.0.0
+RUN yarn add @upyog/digit-ui-module-ws
+RUN yarn add @upyog/digit-ui-module-dss
+RUN yarn add @upyog/digit-ui-module-mcollect@2.0.0
+RUN yarn add @upyog/digit-ui-module-pgr
+RUN yarn add @upyog/digit-ui-module-noc
+RUN yarn add @upyog/digit-ui-module-engagement
+RUN yarn add @upyog/digit-ui-module-hrms
+RUN yarn add @upyog/digit-ui-module-core
+RUN yarn add @upyog/digit-ui-module-common@2.0.0
+RUN yarn add @upyog/digit-ui-module-commonpt@2.0.0
+RUN yarn add @upyog/digit-ui-module-bills
+
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=4096"
+ENV NODE_OPTIONS "--max-old-space-size=8192"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
@@ -13,11 +30,11 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
-    && chmod +x install-deps.sh \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(8192*8192))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
+    
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine

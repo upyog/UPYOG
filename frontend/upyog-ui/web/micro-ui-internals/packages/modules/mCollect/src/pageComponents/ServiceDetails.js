@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader, CardSectionHeader } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader, CardSectionHeader } from "@upyog/digit-ui-react-components";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import * as func from "../pages/employee/Utils/Category";
 import { sortDropdownNames } from "../pages/employee/Utils/Sortbyname";
@@ -39,7 +39,7 @@ const ServiceDetails = ({ config, onSelect, userType, formData, setError, formSt
   const [selectedLocality, setSelectedLocality] = useState("");
   const [TaxHeadMaster, setAPITaxHeadMaster] = useState([]);
 
-  const {Categories : categoires , data: categoriesandTypes} = Digit.Hooks.mcollect.useMCollectCategory(tenantId,"[?(@.type=='Adhoc')]");
+  const {Categories : categoires , data: categoriesandTypes} = Digit.Hooks.mcollect.useMCollectCategory(tenantId,"[?(@.type=='Adhoc' && @.isActive==true)]");
 
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(

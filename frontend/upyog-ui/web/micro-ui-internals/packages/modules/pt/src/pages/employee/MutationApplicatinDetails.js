@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -13,7 +13,9 @@ import _ from "lodash";
 import get from "lodash/get";
 import { pdfDownloadLink } from "../../utils";
 import { useQuery, useQueryClient } from "react-query";
-const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDetails, mutate}) => {
+import ApplicationDetailsToast from "../../../../templates/ApplicationDetails/components/ApplicationDetailsToast";
+const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDetails, mutate,showToast,
+  setShowToast,closeToast}) => {
   const { t } = useTranslation();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
@@ -87,6 +89,11 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
     }
   }, [applicationDetails]);
+  useEffect(() => {
+    if (showToast) {
+      workflowDetails.revalidate();
+    }
+  }, [showToast]);
 
   const showTransfererDetails = () => {
     if (
@@ -152,8 +159,8 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
           if (isOBPS?.isNoc) {
             history.push(`/upyog-ui/employee/noc/response`, { data: data });
           }
-          // setShowToast({ key: "success", action: selectedAction });
-          // setTimeout(closeToast, 5000);
+          setShowToast({ key: "success", action: selectedAction });
+          setTimeout(closeToast, 5000);
           queryClient.clear();
           queryClient.refetchQueries("APPLICATION_SEARCH");
         },
@@ -165,9 +172,15 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
 
   async function getRecieptSearch({tenantId,payments,...params}) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "consolidatedreceipt");
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    if(response!==null){
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    }
+    else{
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "property-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    }     
   }
 
   const closeModal = () => {
@@ -182,7 +195,11 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
   };
 
   function onActionSelect(action) {
-    if (action) {
+    if(action?.isToast){
+      setShowToast({ key: "error", error: { message: action?.toastMessage } });
+      setTimeout(closeToast, 5000);
+    }
+    else if (action) {
       if (action?.redirectionUrll) {
         window.location.assign(`${window.location.origin}/upyog-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
       } else if (!action?.redirectionUrl) {
@@ -340,7 +357,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
   if(reciept_data && reciept_data?.Payments.length>0 && recieptDataLoading == false)
   dowloadOptions.push({
     label: t("MT_FEE_RECIEPT"),
-    onClick: () => getRecieptSearch({tenantId: reciept_data?.Payments[0]?.tenantId,payments: reciept_data?.Payments[0]})
+    onClick: () => getRecieptSearch({tenantId: state,payments: reciept_data?.Payments[0]})
   });
   if(data?.Properties?.[0]?.creationReason === "MUTATION" && data?.Properties?.[0]?.status === "ACTIVE")
   dowloadOptions.push({
@@ -390,7 +407,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
               <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                  transferorOwners.map((owner, index) => (
+                  transferorOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader style={getCardSubHeadrStyles()}>
                         {transferorOwners.length != 1 && (
@@ -416,7 +433,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
                 transferorInstitution.length ? (
                   <div>
                     {Array.isArray(transfereeOwners) &&
-                      transfereeOwners.map((owner, index) => (
+                      transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                         <div key={index}>
                           <CardSubHeader style={getCardSubHeadrStyles()}>
                             {transfereeOwners.length != 1 && (
@@ -515,6 +532,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
               moduleCode="PT"
             />
           ) : null}
+          <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
