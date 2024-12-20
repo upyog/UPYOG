@@ -104,7 +104,7 @@ public class ExcelUtil {
     }
 
     private void fillULBData(XSSFSheet sheet, List<String> ulbList, String state, Map<String, Map<String, List<String>>> ulbModules) {
-        int rowCount = 2; // Start at row 2 since row 0 and row 1 are headers
+        int rowCount = 2;
 
         CellStyle style = sheet.getWorkbook().createCellStyle();
         XSSFFont font = sheet.getWorkbook().createFont();
@@ -112,6 +112,14 @@ public class ExcelUtil {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        CellStyle grandTotalStyle = sheet.getWorkbook().createCellStyle();
+        XSSFFont grandTotalFont = sheet.getWorkbook().createFont();
+        grandTotalFont.setBold(true);
+        grandTotalFont.setFontHeight(16);
+        grandTotalStyle.setFont(grandTotalFont);
+        grandTotalStyle.setAlignment(HorizontalAlignment.CENTER);
+        grandTotalStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         Map<String, List<String>> stateModules = ulbModules.get(state);
 
@@ -149,10 +157,10 @@ public class ExcelUtil {
 
         int column = 1;
         for (int i = 0; i < moduleYCounts.length; i++) {
-            createCell(grandTotalRow, column++, moduleYCounts[i], style, sheet);
+            createCell(grandTotalRow, column++, moduleYCounts[i], grandTotalStyle, sheet);
         }
 
-        createCell(grandTotalRow, column, totalYmodule, style, sheet);
+        createCell(grandTotalRow, column, totalYmodule, grandTotalStyle, sheet);
     }
 
     private boolean checkModuleAvailability(String ulb, String module, Map<String, List<String>> stateModules) {
