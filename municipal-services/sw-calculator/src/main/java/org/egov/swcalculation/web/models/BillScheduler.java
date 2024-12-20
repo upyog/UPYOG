@@ -1,5 +1,7 @@
 package org.egov.swcalculation.web.models;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -34,12 +36,13 @@ public class BillScheduler {
 	private long billingcycleEnddate;
 
 	private BillStatus status;
-	private String isBatch;
+	private Boolean isBatch;
 	private AuditDetails auditDetails;
 
 	@NotNull
 	private String tenantId;
-	
+	private List<String> group;
+	private String grup;
 	/**
 	 * status of the bill .
 	 */

@@ -6,6 +6,8 @@ import java.util.*;
 import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.service.*;
@@ -138,13 +140,28 @@ public class CalculatorController {
 		//return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
 	}
 	
-	
-		@PostMapping("/cancelDemand")
-	 public CancelDemand cancelDemand(@Valid @RequestBody CancelDemand cancelDemand) {
-		log.info("cancelDemand::");
-	            
-	            return demandService.cancelDemandForConsumer(cancelDemand);
-	        } 
+	@PostMapping("/cancelDemand")
+	public ResponseEntity<Map<String, Object>> cancelDemand(@Valid @RequestBody CancelDemand cancelDemand) {
+	    Map<String, Object> response = new HashMap<>();
+	    log.info("cancelDemand::");
+
+	    try {
+	        CancelDemand result = demandService.cancelDemandForConsumer(cancelDemand);
+
+	        response.put("status", "Success");
+	        response.put("message", "Cancel demand and bill successfully.");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (CustomException e) {
+	        response.put("status", "Failed");
+	        response.put("message", e.getMessage());
+	        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	    } catch (Exception e) {
+	        log.error("Error while processing cancel demand: ", e);
+	        response.put("status", "Failed");
+	        response.put("message", "An error occurred while processing cancel demand.");
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
 	
 	@PostMapping("/_applyAdhocTax")
 	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {

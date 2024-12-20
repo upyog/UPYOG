@@ -41,7 +41,7 @@ public class PGRQueryBuilder {
     
     private static final String RESOLVED_COMPLAINTS_QUERY = "select count(*) from eg_pgr_service_v2 where applicationstatus='CLOSEDAFTERRESOLUTION' and tenantid=? and lastmodifiedtime>? ";
     
-    private static final String AVERAGE_RESOLUTION_TIME_QUERY = "select round(avg(lastmodifiedtime-createdtime)/86400000) from eg_pgr_service_v2 where applicationstatus='CLOSEDAFTERRESOLUTION' and tenantid=? ";
+    private static final String AVERAGE_RESOLUTION_TIME_QUERY = "select coalesce(round(avg(lastmodifiedtime-createdtime)/86400000),0) from eg_pgr_service_v2 where applicationstatus='CLOSEDAFTERRESOLUTION' and tenantid=? ";
     
 
 

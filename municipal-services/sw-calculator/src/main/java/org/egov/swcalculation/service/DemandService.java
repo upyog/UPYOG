@@ -35,10 +35,14 @@ import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.egov.swcalculation.web.models.BillResponseV2;
+import org.egov.swcalculation.web.models.BillSearch;
 import org.egov.swcalculation.web.models.BillV2;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationCriteria;
 import org.egov.swcalculation.web.models.CalculationReq;
+import org.egov.swcalculation.web.models.CancelDemand;
+import org.egov.swcalculation.web.models.CancelList;
+import org.egov.swcalculation.web.models.Canceldemandsearch;
 import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.Demand.StatusEnum;
 import org.egov.swcalculation.web.models.DemandDetail;
@@ -965,7 +969,7 @@ public class DemandService {
 		latestDetailInfo.getLatestDemandDetail().setTaxAmount(diff);
 	}
 	
-	public void SingleDemandGenerate(String tenantId, SingleDemand singledemand) {
+	public String SingleDemandGenerate(String tenantId, SingleDemand singledemand) {
 		singledemand.getRequestInfo().getUserInfo().setTenantId(tenantId);
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterDatas(singledemand, tenantId);
 		long taxPeriodFrom = billingMasterData.get("taxPeriodFrom") == null ? 0l
@@ -976,7 +980,7 @@ public class DemandService {
 			throw new CustomException("NO_BILLING_PERIODS","MDMS Billing Period does not available for tenant: "+ tenantId);
 		}
 
-		generateDemandForSingle(billingMasterData, singledemand, tenantId, taxPeriodFrom, taxPeriodTo);
+		return generateDemandForSingle(billingMasterData, singledemand, tenantId, taxPeriodFrom, taxPeriodTo);
 	}
 	
 	
@@ -1356,6 +1360,57 @@ public class DemandService {
 
 		return isValidSewerageConnection;
 	}
+	
+	
+	/* CANCEL BILL */
+	
+	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand) {
+
+		for (CancelList CancelList : cancelDemand.getCancelList()) {
+			String businessService = CancelList.getBusinessService();
+			String consumerCode = CancelList.getConsumerCode();
+			String tenantId = cancelDemand.getTenantId();
+			Long taxPeriodFrom = cancelDemand.gettaxPeriodFrom();
+			Long taxPeriodTo = cancelDemand.gettaxPeriodTo();
+
+			Set<String> consumerCodeset = new HashSet<>();
+			consumerCodeset.add(consumerCode);
+			CancelList.setConsumerCode(consumerCode);
+			consumerCodeset.add(businessService);
+			CancelList.setBusinessService(businessService);
+			consumerCodeset.add(tenantId);
+
+			Set<Long> consumerCodesets = new HashSet<>();
+			consumerCodesets.add(taxPeriodFrom);
+			cancelDemand.settaxPeriodFrom(taxPeriodFrom);
+			consumerCodesets.add(taxPeriodTo);
+			cancelDemand.settaxPeriodFrom(taxPeriodTo);
+
+			List<Canceldemandsearch> demandlist = sewerageCalculatorDao.getConnectionCancel(businessService, tenantId,
+					consumerCode, taxPeriodFrom, taxPeriodTo);
+			List<BillSearch> billSearch = sewerageCalculatorDao.getBill(consumerCode, businessService);
+
+			if (!demandlist.isEmpty()) {
+//            for (Canceldemandsearch connectionNo : demandlist) 
+				{
+					boolean billCancelled = false;
+					Boolean Cancel = sewerageCalculatorDao.getUpdate(demandlist);
+					if (Cancel) {
+						billCancelled = sewerageCalculatorDao.getexpiryBill(billSearch);
+					}
+
+				}
+			}
+
+		}
+		return cancelDemand;
+	}
+	
+	
+	
+	
+	
+	
 	public String generateDemandForSingle(Map<String, Object> master, SingleDemand singleDemand, String tenantId,
 			Long taxPeriodFrom, Long taxPeriodTo) {
 		try {

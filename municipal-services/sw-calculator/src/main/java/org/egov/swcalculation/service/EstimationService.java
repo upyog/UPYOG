@@ -459,11 +459,9 @@ public class EstimationService {
 			else
 				connection_propertyType = "COMMERCIAL";
 
-			if (!feeObj.get(SWCalculationConstant.SW_SECURITY_DEPOSIT_CONST).getClass().isInstance(List.class)) {
-				securityDeposit = new BigDecimal(
-						feeObj.getAsNumber(SWCalculationConstant.SW_SECURITY_DEPOSIT_CONST).toString());
-			} else {
+			Object securityChargeObj = feeObj.get(SWCalculationConstant.SW_SECURITY_DEPOSIT_CONST);
 
+			if (securityChargeObj instanceof List) {
 				ArrayList sec_depo = (ArrayList) feeObj.get(SWCalculationConstant.SW_SECURITY_DEPOSIT_CONST);
 
 				BigDecimal fromPlotSize = BigDecimal.ZERO;
@@ -489,6 +487,9 @@ public class EstimationService {
 				// securityDeposit = new
 				// BigDecimal(feeObj.getAsNumber(SWCalculationConstant.SW_CONNECTION_FEE_CONST).toString());
 				securityDeposit = securityDepositApplicable;
+			} else {
+				securityDeposit = new BigDecimal(
+						feeObj.getAsNumber(SWCalculationConstant.SW_SECURITY_DEPOSIT_CONST).toString());
 			}
 		}
 		/*

@@ -125,8 +125,8 @@ public class PaymentService {
 
 					// Create a Set to hold the application number
 					Set<String> applicationNumbers = new HashSet<>();
-
-					if (consumercode.get(0).equals("WS_AP") || consumercode.get(0).equals("SW_AP"))
+					/* w/s receipt bug fixing for ledger id and other things-- Abhishek (ticket number-- Defect #24)  */
+					if (consumercode.get(0).contains("WS_AP") || consumercode.get(0).contains("SW_AP"))
 					{
 						
 					    applicationNumbers.add(consumercode.get(0)); // Add the string to the Set

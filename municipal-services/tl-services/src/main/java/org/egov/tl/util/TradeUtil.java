@@ -1,5 +1,6 @@
 package org.egov.tl.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import org.egov.tl.workflow.WorkflowService;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.time.*; 
@@ -230,19 +232,51 @@ public class TradeUtil {
         		
         		license.setFinancialYear(financialYear);
         	}
-            String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}",license.getFinancialYear());
-            List<Map<String,Object>> jsonOutput =  JsonPath.read(mdmsData, jsonPath);
-            Map<String,Object> financialYearProperties = jsonOutput.get(0);
-            Object startDate = financialYearProperties.get(TLConstants.MDMS_STARTDATE);
-            Object endDate = financialYearProperties.get(TLConstants.MDMS_ENDDATE);
-            taxPeriods.put(TLConstants.MDMS_STARTDATE,(Long) startDate);
-            taxPeriods.put(TLConstants.MDMS_ENDDATE,(Long) endDate);
+            //validity years is 1,2,3
+            JsonNode additionalDetail = license.getTradeLicenseDetail().getAdditionalDetail();
+            int validityInYears=1;
+            if (!additionalDetail.isNull() && !ObjectUtils.isEmpty(additionalDetail.get("validityYears"))){
+                validityInYears = additionalDetail.get("validityYears").asInt();
+            }
+
+            List<String> financialYears = calculateFinancialYears(license.getFinancialYear(), validityInYears);
+
+            List<Map<String, Long>> allFinancialYearData = new ArrayList<>();
+
+            for (String financialYear : financialYears) {
+                String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}", financialYear);
+                List<Map<String, Object>> jsonOutput = JsonPath.read(mdmsData, jsonPath);
+                Map<String, Object> financialYearProperties = jsonOutput.get(0);
+                Object startDate = financialYearProperties.get(TLConstants.MDMS_STARTDATE);
+                Object endDate = financialYearProperties.get(TLConstants.MDMS_ENDDATE);
+                taxPeriods.put(TLConstants.MDMS_STARTDATE, (Long) startDate);
+                taxPeriods.put(TLConstants.MDMS_ENDDATE, (Long) endDate);
+                allFinancialYearData.add(taxPeriods);
+            }
+            // Get the first and last financial year epoch time for taxperiod validTo and From
+            taxPeriods.put(TLConstants.MDMS_STARTDATE, allFinancialYearData.get(0).get("startingDate"));
+            taxPeriods.put(TLConstants.MDMS_ENDDATE, allFinancialYearData.get(allFinancialYearData.size()-1).get("endingDate"));
 
         } catch (Exception e) {
             log.error("Error while fetching MDMS data", e);
             throw new CustomException("INVALID FINANCIALYEAR", "No data found for the financialYear: "+license.getFinancialYear());
         }
         return taxPeriods;
+    }
+    public List<String> calculateFinancialYears(String initialYear, int validityYears) {
+        if (validityYears < 1 || validityYears > 3) {
+            throw new IllegalArgumentException("Validity years must be between 1 and 3");
+        }
+        List<String> financialYears = new ArrayList<>();
+
+        int startYear = Integer.parseInt(initialYear.split("-")[0]);
+        int endYear = Integer.parseInt(initialYear.split("-")[1]);
+
+        for (int i = 0; i < validityYears; i++) {
+            financialYears.add(startYear + "-" + (endYear + i));
+            startYear++;
+        }
+        return financialYears;
     }
 
 

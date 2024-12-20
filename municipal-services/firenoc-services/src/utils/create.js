@@ -8,7 +8,7 @@ import { application } from "express";
 
 export const addUUIDAndAuditDetails = async (request, method = "_update") => {
   let { FireNOCs, RequestInfo } = request;
-  let applicationAssignee ;
+  let applicationAssignee;
   //for loop should be replaced new alternative
   for (var i = 0; i < FireNOCs.length; i++) {
     let id = get(FireNOCs[i], "id");
@@ -24,12 +24,12 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
       fireNOCApplication && method != "_create"
         ? fireNOCApplication
         : await addIDGenId(RequestInfo, [
-            {
-              idName: envVariables.EGOV_IDGEN_FN_CERTIFICATE_NO_NAME,
-              tenantId: FireNOCs[i].tenantId,
-              format: envVariables.EGOV_APPLICATION_FORMATE
-            }
-          ]);
+          {
+            idName: envVariables.EGOV_IDGEN_FN_CERTIFICATE_NO_NAME,
+            tenantId: FireNOCs[i].tenantId,
+            format: envVariables.EGOV_APPLICATION_FORMATE
+          }
+        ]);
     FireNOCs[i].fireNOCDetails.buildings = FireNOCs[
       i
     ].fireNOCDetails.buildings.map(building => {
@@ -85,63 +85,80 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
       !isEmpty(FireNOCs[i].fireNOCDetails.applicantDetails.owners)
     ) {
       let owners = FireNOCs[i].fireNOCDetails.applicantDetails.owners;
-
-      console.log("Owner"+JSON.stringify(owners))
+      let ownerShipType = FireNOCs[i].fireNOCDetails.applicantDetails.ownerShipType;
+      console.log("Owner" + JSON.stringify(owners))
       //Owner[{"mobileNumber":"9915299990","name":"Test User first","gender":"MALE","dob":641932199000,"fatherOrHusbandName":"fdfdfd","relationship":"Father","correspondenceAddress":"sdhsd","isPrimaryowner":true}]
-      for (var owneriter = 0; owneriter < owners.length; owneriter++) {         
+      for (var owneriter = 0; owneriter < owners.length; owneriter++) {
         let userResponse = {};
         let userSearchReqCriteria = {};
         let userSearchResponse = {};
-        
-          userSearchReqCriteria.userName = owners[owneriter].mobileNumber;
-          userSearchReqCriteria.mobileNumber = owners[owneriter].mobileNumber;
-          userSearchReqCriteria.name = owners[owneriter].name;
-          userSearchReqCriteria.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
-          userSearchResponse = await userService.searchUser(
-            RequestInfo,
-            userSearchReqCriteria
-          );
-          if (get(userSearchResponse, "user", []).length > 0) {
-                let userlegalName = userSearchResponse.user[0].name;
-                let userFatherName = userSearchResponse.user[0].fatherOrHusbandName
-                if(userlegalName === owners[owneriter].name && userFatherName ===owners[owneriter].fatherOrHusbandName){
-                      userResponse = await userService.updateUser(RequestInfo, 
-                       {
-                        ...userSearchResponse.user[0],
-                        ...owners[owneriter]
-                       }
-                      );
-                }else{
-                      let  owner = addDeactiveUserDetails(tenantId, owners[owneriter]);
-                    userResponse =await userService.createUser(RequestInfo, {
-                      ...userSearchResponse.user[0],
-                    });
+
+        userSearchReqCriteria.userName = owners[owneriter].mobileNumber;
+        userSearchReqCriteria.mobileNumber = owners[owneriter].mobileNumber;
+        userSearchReqCriteria.name = owners[owneriter].name;
+        userSearchReqCriteria.tenantId = envVariables.EGOV_DEFAULT_STATE_ID;
+        userSearchResponse = await userService.searchUser(
+          RequestInfo,
+          userSearchReqCriteria
+        );
+        if (get(userSearchResponse, "user", []).length > 0) {
+          let userlegalName = userSearchResponse.user[0].name;
+          let userFatherName = userSearchResponse.user[0].fatherOrHusbandName
+          if (ownerShipType === 'INDIVIDUAL.SINGLEOWNER' || ownerShipType === 'INDIVIDUAL.MULTIPLEOWNERS') {
+            if (userlegalName === owners[owneriter].name && userFatherName === owners[owneriter].fatherOrHusbandName) {
+              userResponse = await userService.updateUser(RequestInfo,
+                {
+                  ...userSearchResponse.user[0],
+                  ...owners[owneriter]
                 }
-          }else{
-            userResponse = await createUser(
-              RequestInfo,
-             // owners[owneriter],
-              owners[owneriter]={
-                ...owners[owneriter], "userName":owners[owneriter].mobileNumber
-              },
-              envVariables.EGOV_DEFAULT_STATE_ID
-            );
+              );
+            } else {
+              let owner = addDeactiveUserDetails(tenantId, owners[owneriter]);
+              userResponse = await userService.createUser(RequestInfo, {
+                ...userSearchResponse.user[0],
+              });
+            }
+          } else {
+            if (userlegalName === owners[owneriter].name) {
+              console.log("fbefevfefe")
+              userResponse = await userService.updateUser(RequestInfo,
+                {
+                  ...userSearchResponse.user[0],
+                  ...owners[owneriter]
+                }
+              );
+            } else {
+              let owner = addDeactiveUserDetails('pb', owners[owneriter]);
+              userResponse = await userService.createUser(RequestInfo, {
+                ...userSearchResponse.user[0],
+              });
+            }
           }
-          let ownerUUID = get(owners[owneriter], "ownerUUID");
-          owners[owneriter] = {
-            ...owners[owneriter],
-            ...get(userResponse, "user.0", []),
-            ownerUUID: ownerUUID && method != "_create" ? ownerUUID : uuidv1()
-          };
-          if(get(owners[owneriter], "isPrimaryowner")=== true){
-            applicationAssignee=get(owners[owneriter], "uuid")
-          }
+        } else {
+          userResponse = await createUser(
+            RequestInfo,
+            // owners[owneriter],
+            owners[owneriter] = {
+              ...owners[owneriter], "userName": owners[owneriter].mobileNumber
+            },
+            envVariables.EGOV_DEFAULT_STATE_ID
+          );
+        }
+        let ownerUUID = get(owners[owneriter], "ownerUUID");
+        owners[owneriter] = {
+          ...owners[owneriter],
+          ...get(userResponse, "user.0", []),
+          ownerUUID: ownerUUID && method != "_create" ? ownerUUID : uuidv1()
+        };
+        if (get(owners[owneriter], "isPrimaryowner") === true) {
+          applicationAssignee = get(owners[owneriter], "uuid")
+        }
       }
     }
-    let ownervar= FireNOCs[i].fireNOCDetails.applicantDetails.owners.length
-    for(var j=0; j<ownervar; j++){
-      FireNOCs[i].fireNOCDetails.applicantDetails.owners[j]={
-        ...FireNOCs[i].fireNOCDetails.applicantDetails.owners[j], "applicationAssignee":applicationAssignee
+    let ownervar = FireNOCs[i].fireNOCDetails.applicantDetails.owners.length
+    for (var j = 0; j < ownervar; j++) {
+      FireNOCs[i].fireNOCDetails.applicantDetails.owners[j] = {
+        ...FireNOCs[i].fireNOCDetails.applicantDetails.owners[j], "applicationAssignee": applicationAssignee
       }
     }
     FireNOCs[i].dateOfApplied = FireNOCs[i].dateOfApplied
@@ -161,7 +178,7 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
     FireNOCs[i] = await checkApproveRecord(FireNOCs[i], RequestInfo);
   }
   request.FireNOCs = FireNOCs;
-  console.log("Final Request"+ JSON.stringify(request))
+  console.log("Final Request" + JSON.stringify(request))
   return request;
 };
 
@@ -185,12 +202,13 @@ const createUser = async (requestInfo, owner, tenantId) => {
         ...userSearchResponse.user[0],
         ...owner
       });
+      //console.log("userCreateResponse" + JSON.stringify(userCreateResponse));
     } else {
       // console.log("user not found");
 
       owner = addDefaultUserDetails(tenantId, owner);
-       console.log("userSearchResponse.user[0]", userSearchResponse.user[0]);
-       console.log("owner", owner);
+      //console.log("userSearchResponse.user[0]", userSearchResponse.user[0]);
+      //console.log("owner", owner);
       userCreateResponse = await userService.createUser(requestInfo, {
         ...userSearchResponse.user[0],
         ...owner
@@ -221,12 +239,12 @@ const checkApproveRecord = async (fireNoc = {}, RequestInfo) => {
     fireNoc.fireNOCNumber = fireNOCNumber
       ? fireNOCNumber
       : await addIDGenId(RequestInfo, [
-          {
-            idName: envVariables.EGOV_IDGEN_FN_CERTIFICATE_NO_NAME,
-            tenantId: fireNoc.tenantId,
-            format: envVariables.EGOV_CIRTIFICATE_FORMATE
-          }
-        ]);
+        {
+          idName: envVariables.EGOV_IDGEN_FN_CERTIFICATE_NO_NAME,
+          tenantId: fireNoc.tenantId,
+          format: envVariables.EGOV_CIRTIFICATE_FORMATE
+        }
+      ]);
     fireNoc.fireNOCDetails.validFrom = new Date().getTime();
     let validTo = new Date();
     validTo.setFullYear(validTo.getFullYear() + 1);
@@ -289,14 +307,14 @@ export const updateStatus = (FireNOCs, workflowResponse) => {
 export const enrichAssignees = async (FireNOCs, RequestInfo) => {
 
   for (var i = 0; i < FireNOCs.length; i++) {
-    if(FireNOCs[i].fireNOCDetails.action === 'SENDBACKTOCITIZEN'){
-      let assignes = []; 
+    if (FireNOCs[i].fireNOCDetails.action === 'SENDBACKTOCITIZEN') {
+      let assignes = [];
       let owners = FireNOCs[i].fireNOCDetails.applicantDetails.owners;
       for (let owner of owners)
         assignes.push(owner.uuid);
 
       let uuids = await getUUidFromUserName(owners, RequestInfo);
-      if(uuids.length > 0)
+      if (uuids.length > 0)
         assignes = [...new Set([...assignes, ...uuids])];
 
       FireNOCs[i].fireNOCDetails.additionalDetail.assignee = assignes;
@@ -309,12 +327,12 @@ const getUUidFromUserName = async (owners, RequestInfo) => {
   let uuids = [];
   let mobileNumbers = [];
 
-  for(let owner of owners)
+  for (let owner of owners)
     mobileNumbers.push(owner.mobileNumber);
 
   var mobileNumberSet = [...new Set(mobileNumbers)];
 
-  for(let mobileNumber of mobileNumberSet){
+  for (let mobileNumber of mobileNumberSet) {
     let userSearchReqCriteria = {};
     let userSearchResponse = {};
 

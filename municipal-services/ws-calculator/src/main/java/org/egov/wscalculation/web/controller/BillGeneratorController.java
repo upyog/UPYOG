@@ -43,9 +43,7 @@ public class BillGeneratorController {
 
 	@Autowired
 	private BillGeneratorService billGeneratorService;
-	
-	@Autowired
-	private BillGenerationValidator billGenerationValidator;
+
 
 	@Autowired
 	private WSCalculationDao waterCalculatorDao;
@@ -55,32 +53,8 @@ public class BillGeneratorController {
 			@Valid @RequestBody BillGenerationReq billGenerationReq) {
 
 		BillSchedulerResponse response=new BillSchedulerResponse();
-		//List<BillScheduler> billDetails1 = new ArrayList<BillScheduler>();
-		List<BillScheduler> billDetails = new ArrayList<BillScheduler>();
-		String isBatch=billGenerationReq.getBillScheduler().getIsBatch();
-        	log.info("isBatch value"+isBatch);
-        	boolean batchBilling=false;
-        	
-        			
-		if(isBatch.equals("true")) {
-			batchBilling = true;
-		}
-        	if(batchBilling) {		
-			List<String> listOfLocalities = waterCalculatorDao.getLocalityList(billGenerationReq.getBillScheduler().getTenantId(),billGenerationReq.getBillScheduler().getLocality());
-			for(String localityName : listOfLocalities) {		
-				billGenerationReq.getBillScheduler().setLocality(localityName);			
-				boolean localityStatus = billGenerationValidator.checkBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-				if(!localityStatus) {
-				billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-				}
-				//billDetails1.addAll(billDetails);
-		}
-		}else {
-					billGenerationValidator.validateBillingCycleDates(billGenerationReq, billGenerationReq.getRequestInfo());
-					billDetails = billGeneratorService.saveBillGenerationDetails(billGenerationReq);
-				   // billDetails1.addAll(billDetails);
-		}
-		 response = BillSchedulerResponse.builder().billSchedulers(billDetails)
+		
+		 response = BillSchedulerResponse.builder().billSchedulers( billGeneratorService.bulkbillgeneration(billGenerationReq) )
 				.responseInfo(
 						responseInfoFactory.createResponseInfoFromRequestInfo(billGenerationReq.getRequestInfo(), true))
 				.build();

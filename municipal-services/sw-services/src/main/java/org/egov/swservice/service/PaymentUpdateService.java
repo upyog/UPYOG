@@ -412,12 +412,13 @@ public class PaymentUpdateService {
 				}
 			});
 		}
+		/* Payemnt SMS is coming to Employee  also So just commenting it -- Abhishek (09-12-2024)*/ 
 
-		//Send the notification to applicant
-		if(!StringUtils.isEmpty(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber()))
-		{
-			mobileNumbersAndNames.put(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber(), sewerageConnectionRequest.getRequestInfo().getUserInfo().getName());
-		}
+//		//Send the notification to applicant
+//		if(!StringUtils.isEmpty(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber()))
+//		{
+//			mobileNumbersAndNames.put(sewerageConnectionRequest.getRequestInfo().getUserInfo().getMobileNumber(), sewerageConnectionRequest.getRequestInfo().getUserInfo().getName());
+//		}
 
 		Map<String, String> getReplacedMessage = workflowNotificationService.getMessageForMobileNumber(mobileNumbersAndNames,
 				sewerageConnectionRequest, message, property);

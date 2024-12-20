@@ -44,7 +44,7 @@ public class BillGenerationValidator {
 		BillScheduler billScheduler = billGenerationReq.getBillScheduler();
 		List<String> status = billGeneratorDao.fetchExistingBillSchedularStatusForLocality(billScheduler.getLocality(),
 				billScheduler.getBillingcycleStartdate(), billScheduler.getBillingcycleEnddate(),
-				billScheduler.getTenantId());
+				billScheduler.getTenantId(), billScheduler.getGrup());
 
 		if (status.contains("INITIATED") || status.contains("INPROGRESS")) {
 
@@ -76,7 +76,7 @@ public class BillGenerationValidator {
 		BillScheduler billScheduler = billGenerationReq.getBillScheduler();
 		List<String> status = billGeneratorDao.fetchExistingBillSchedularStatusForLocality(billScheduler.getLocality(),
 				billScheduler.getBillingcycleStartdate(), billScheduler.getBillingcycleEnddate(),
-				billScheduler.getTenantId());
+				billScheduler.getTenantId(), billScheduler.getGrup() );
 
 		
 		if (status.contains("INITIATED") || status.contains("INPROGRESS")) {			

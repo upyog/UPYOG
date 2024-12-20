@@ -56,16 +56,16 @@ public class Role {
 
 
 	@NotNull
-	@Size(min=2, max=100)
+	@Size(min=2)//, max=100)
     private String name;
 	
-	@Size(min=2, max=100)
+	@Size(min=2)//, max=100)
     private String code;
 
-	@Size(max=256)
+//	@Size(max=256)
     private String description;
 
-	@Size(max = 256)
+//	@Size(max = 256)
 	private String tenantId;
 
 

@@ -1316,48 +1316,34 @@ public class DemandService {
 	/*
 	 * CANCEL BILL
 	 */
+	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand) {	
+		  for (CancelList cancelList : cancelDemand.getCancelList()) {
+		        String tenantId = cancelList.gettenantId();
+		        String demandid = cancelList.getdemandid();
 
-	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand) {
+		        List<Canceldemandsearch> demandlists = waterCalculatorDao.getConnectionCancels(tenantId, demandid);
 
-		for (CancelList CancelList : cancelDemand.getCancelList()) {
-			String businessService = CancelList.getBusinessService();
-			String consumerCode = CancelList.getConsumerCode();
-			String tenantId = cancelDemand.getTenantId();
-			Long taxPeriodFrom = cancelDemand.gettaxPeriodFrom();
-			Long taxPeriodTo = cancelDemand.gettaxPeriodTo();
+		        if (demandlists.isEmpty()) {
+		            throw new CustomException("Demand not found", "No matching demands found for the given criteria.");
+		        }
 
-			Set<String> consumerCodeset = new HashSet<>();
-			consumerCodeset.add(consumerCode);
-			CancelList.setConsumerCode(consumerCode);
-			consumerCodeset.add(businessService);
-			CancelList.setBusinessService(businessService);
-			consumerCodeset.add(tenantId);
+		        Boolean cancels = waterCalculatorDao.getUpdates(demandlists);
 
-			Set<Long> consumerCodesets = new HashSet<>();
-			consumerCodesets.add(taxPeriodFrom);
-			cancelDemand.settaxPeriodFrom(taxPeriodFrom);
-			consumerCodesets.add(taxPeriodTo);
-			cancelDemand.settaxPeriodFrom(taxPeriodTo);
+		        if (!cancels) {
+		            throw new CustomException("Update failed", "Failed to update demand records.");
+		        }
 
-			List<Canceldemandsearch> demandlist = waterCalculatorDao.getConnectionCancel(businessService, tenantId,
-					consumerCode, taxPeriodFrom, taxPeriodTo);
-			List<BillSearch> billSearch = waterCalculatorDao.getBill(consumerCode, businessService);
+		        List<BillSearchs> billSearchsss = waterCalculatorDao.getBillss(tenantId, demandid);
+		        boolean billCancelled = waterCalculatorDao.getexpiryBills(billSearchsss);
 
-			if (!demandlist.isEmpty()) {
-//            for (Canceldemandsearch connectionNo : demandlist) 
-				{
-					boolean billCancelled = false;
-					Boolean Cancel = waterCalculatorDao.getUpdate(demandlist);
-					if (Cancel) {
-						billCancelled = waterCalculatorDao.getexpiryBill(billSearch);
-					}
+		        if (!billCancelled) {
+		            throw new CustomException("Bill Cancellation Failed", "Failed to cancel bills for the given demand.");
+		        }
+		    }
 
-				}
-			}
-
+		    return cancelDemand;
 		}
-		return cancelDemand;
-	}
+
 
 	public String generateDemandForSingle(Map<String, Object> master, SingleDemand singleDemand, String tenantId,
 			Long taxPeriodFrom, Long taxPeriodTo) {

@@ -77,7 +77,7 @@ public class WorkflowQueryBuilder {
         StringBuilder builder = new StringBuilder(QUERY);
 
         if (!criteria.getHistory())
-            builder.append(LATEST_RECORD);
+            builder.append(" latest=true");
 
         if (criteria.getHistory())
             builder.append(" pi.tenantid=? ");
@@ -140,10 +140,7 @@ public class WorkflowQueryBuilder {
 
 
         if (!criteria.getHistory()) {
-            with_query_builder.append(" pi_outer.lastmodifiedTime = (" +
-                    "SELECT max(lastmodifiedTime) from eg_wf_processinstance_v2 as pi_inner where pi_inner.businessid = pi_outer.businessid and tenantid = ? " +
-                    ") ");
-            preparedStmtList.add(criteria.getTenantId());
+            with_query_builder.append(" latest=true");
         }
 
         if (criteria.getHistory())
