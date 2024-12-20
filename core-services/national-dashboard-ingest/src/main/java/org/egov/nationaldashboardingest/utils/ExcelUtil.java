@@ -73,8 +73,10 @@ public class ExcelUtil {
     private List<String> getModules() {
 
         Map<String,String> moduleIndexMapping = appProp.getModuleIndexMapping();
+        List<String> allModules = new ArrayList<>(moduleIndexMapping.keySet());
+        List<String> requiredModules =  allModules.stream().limit(9).collect(Collectors.toList());
 
-        return new ArrayList<>(moduleIndexMapping.keySet());
+        return requiredModules;
     }
 
     private void createHeader(XSSFSheet sheet, String state) {
@@ -120,6 +122,7 @@ public class ExcelUtil {
 
             int moduleCount = 0;
             int column = 1;
+
 
             for (String module : getModules()) {
                 boolean moduleDataAvailable = checkModuleAvailability(ulb, module, stateModules);
