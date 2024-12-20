@@ -327,6 +327,7 @@ import useTenantsADS from "./ads/useTenants"
 import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
+import useCMSearch from "./cm/useCMSearch";
 
 const pgr = {
   useComplaintDetails,
@@ -657,6 +658,9 @@ const ads={
   useADSApplicationDetail  
 }
 
+const cm = {
+  useCMSearch
+}
 
 const Hooks = {
   useSessionStorage,
@@ -730,7 +734,8 @@ const Hooks = {
   sv,
   chb,
   ads,
-  ew
+  ew,
+  cm
 };
 
 export default Hooks;

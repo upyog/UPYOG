@@ -17,7 +17,7 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/upyog-css": "1.2.5",
+    "@nudmcdgnpm/upyog-css": "1.2.6",
     "@upyog/digit-ui-libraries": "1.8.0",
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
@@ -42,7 +42,6 @@
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.3",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.3",
-    "@nudmcdgnpm/upyog-ui-module-cm":"1.2.2",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

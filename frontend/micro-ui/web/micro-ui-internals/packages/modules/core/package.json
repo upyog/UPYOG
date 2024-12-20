@@ -24,7 +24,8 @@
     "react-router-dom": "5.3.0",
     "react-tooltip": "4.1.2",
     "redux": "4.1.2",
-    "redux-thunk": "2.4.1"
+    "redux-thunk": "2.4.1",
+    "react-google-recaptcha": "^3.1.0"
   },
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "keywords": [
