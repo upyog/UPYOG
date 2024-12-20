@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -37,6 +38,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.tl.config.TLConfiguration;
+import org.egov.tl.consumer.TradeLicenseConsumer;
 import org.egov.tl.producer.Producer;
 import org.egov.tl.repository.RestCallRepository;
 import org.egov.tl.repository.TLRepository;
@@ -134,6 +136,12 @@ public class TradeLicenseService {
 	@Autowired
 	private ReportService reportService;
 
+    @Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
+    private Boolean pickWFServiceNameFromTradeTypeOnly;
+    
+    @Autowired
+    TradeLicenseConsumer tradeLicenseConsumer;
+
 	@Autowired
 	private AlfrescoService alfrescoService;
 
@@ -158,8 +166,6 @@ public class TradeLicenseService {
 	@Autowired
 	private Producer producer;
 
-	@Value("${workflow.bpa.businessServiceCode.fallback_enabled}")
-	private Boolean pickWFServiceNameFromTradeTypeOnly;
 
 	@Autowired
 	public TradeLicenseService(WorkflowIntegrator wfIntegrator, EnrichmentService enrichmentService,
@@ -807,6 +813,10 @@ public class TradeLicenseService {
 				licenses.get(0).setAction(action);
 				licenses.get(0).setComment(comment);
 				licenses.get(0).setApplicationType(applicationType.toString());
+				// created date of application will be whenever it went to verifier
+				if(StringUtils.equalsIgnoreCase(license.getAction(), TLConstants.ACTION_FORWARD_TO_VERIFIER)){
+					licenses.get(0).getAuditDetails().setCreatedTime(new Date().getTime());
+				}
 
 				if (StringUtils.equalsIgnoreCase(TLConstants.STATUS_APPROVED, licenses.get(0).getStatus())
 						&& (StringUtils.equalsIgnoreCase(TLConstants.ACTION_RETURN_TO_INITIATOR, license.getAction())
@@ -824,7 +834,8 @@ public class TradeLicenseService {
 						licenses.get(0).getAuditDetails().setCreatedTime(new Date().getTime());
 					}
 				}
-
+				
+				
 				// calculate passed dates from creation date
 				enrichPassedDates(licenses);
 
@@ -928,9 +939,15 @@ public class TradeLicenseService {
 
 					TradeLicenseRequest tradeLicenseRequest1 = TradeLicenseRequest.builder()
 							.requestInfo(tradeLicenseRequest.getRequestInfo())
-							.licenses(Collections.singletonList(license)).build();
+							.licenses(Collections.singletonList(license))
+							.build();
+					
+					tradeLicenseConsumer.saveTlCertificate(tradeLicenseRequest1);
+					//producer.push("save-tl-certificate", tradeLicenseRequest1);
+					
+						//	.licenses(Collections.singletonList(license)).build();
 
-					producer.push("save-tl-certificate", tradeLicenseRequest1);
+					// producer.push("save-tl-certificate", tradeLicenseRequest1);
 
 				}
 
@@ -1279,6 +1296,8 @@ public class TradeLicenseService {
 						: null);// Applicant Address
 		tlObject.put("approverName",
 				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);// Approver Name
+		tlObject.put("userName",
+				null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);// User Name
 		tlObject.put("approvalTime", approvalTime);// Approval Time
 		tlObject.put("ownerName",
 				!CollectionUtils.isEmpty(tradeLicense.getTradeLicenseDetail().getOwners())
@@ -1295,7 +1314,7 @@ public class TradeLicenseService {
 
 	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
 		tlObject.entrySet().stream()
-				.filter(entry1 -> Arrays.asList("tradeLicenseNo", "tradeRegistrationNo", "tradeName",
+				.filter(entry1 -> Arrays.asList("tradeLicenseNo", /*"tradeRegistrationNo",*/ "tradeName",
 						"tradePremisesAddress", "licenseIssueDate", "licenseValidity", "licenseCategory",
 						"licenseApplicantName", "applicantContactNo", "applicantAddress").contains(entry1.getKey()))
 				.forEach(entry -> {
@@ -1306,7 +1325,7 @@ public class TradeLicenseService {
 				});
 
 		replaceInStringBuilder(qr, "tradeLicenseNo", "Trade License No");
-		replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
+//		replaceInStringBuilder(qr, "tradeRegistrationNo", "Trade Registration No");
 		replaceInStringBuilder(qr, "tradeName", "Trade Name");
 		replaceInStringBuilder(qr, "tradePremisesAddress", "Trade Premises Address");
 		replaceInStringBuilder(qr, "licenseIssueDate", "License Issue Date");
@@ -1556,7 +1575,7 @@ public class TradeLicenseService {
 	public TradeLicenseActionResponse getCountOfAllApplicationTypes(
 			TradeLicenseActionRequest tradeLicenseActionRequest) {
 		TradeLicenseActionResponse tradeLicenseActionResponse = TradeLicenseActionResponse.builder().build();
-		List<String> statusList = null;
+		List<Map<String, Object>> statusList = null;
 
 		// validate request if required
 
@@ -1567,9 +1586,20 @@ public class TradeLicenseService {
 						tradeLicenseActionRequest.getTenantId());
 			}
 			if (!CollectionUtils.isEmpty(statusList)) {
-				tradeLicenseActionResponse
-						.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
-								.collect(Collectors.groupingBy(String::toString, Collectors.counting())));
+				  tradeLicenseActionResponse.setStatusList(
+			                statusList.stream()
+			                        .filter(Objects::nonNull) // Ensure no null entries
+			                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+			                        .collect(Collectors.toList())); // Collect the filtered list
+				  
+				  if (statusList.get(0).containsKey("total_applications")) {
+			            Object totalApplicationsObj = statusList.get(0).get("total_applications");
+			            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+			                tradeLicenseActionResponse.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+			            } else {
+			                throw new IllegalArgumentException("total_applications is not a valid number");
+			            }
+			        }
 			}
 		} catch (Exception e) {
 			throw new CustomException("FAILED_TO_FETCH", "Failed to fetch Application types.");

@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -97,5 +98,10 @@ public class PetController {
     	
     	return new ResponseEntity(response, HttpStatus.OK);
     }
+    
+    @GetMapping("/getAllCounts")
+	public ResponseEntity<?> getAllCounts() {
+	    return ResponseEntity.ok(petRegistrationService.getAllcounts());
+	}
     
 }

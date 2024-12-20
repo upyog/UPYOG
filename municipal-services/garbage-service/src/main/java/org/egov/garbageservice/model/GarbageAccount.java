@@ -43,6 +43,8 @@ public class GarbageAccount {
 	
 	private String userUuid;
 
+	private String created_by;
+
 	private String declarationUuid;
 
 	private String workflowAction;
