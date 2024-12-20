@@ -701,11 +701,11 @@ public class GarbageAccountService {
 		grbObject.put("ownerName", GarbageAccount.getName());// owner Name
 		grbObject.put("address",
 				GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
-						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
-						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat("(")
-						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(")")
 						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
-						.concat(GarbageAccount.getAddresses().get(0).getPincode()));
+						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
+						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
+						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
+						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
 		// Applicant
 		// Name
 		grbObject.put("mobileNumber", GarbageAccount.getMobileNumber());

@@ -50,18 +50,6 @@
             }
           },
           {
-           "variable":"siteManagerContact",
-            "value":{
-              "path":"$.siteManagerContact"
-            }
-          },
-           {
-           "variable":"siteManagerName",
-            "value":{
-              "path":"$.siteManagerName"
-            }
-          },
-          {
            "variable":"siteId",
             "value":{
               "path":"$.siteId"

@@ -54,6 +54,19 @@ public class AdvtConstants {
 
     @Value("${egov.alfresco.endpoint.upload}")
     private String alfrescoUploadEndPoint;
+    
+    //Idgen Config
+    @Value("${egov.idgen.host}")
+    private String idGenHost;
+
+    @Value("${egov.idgen.path}")
+    private String idGenPath;
+
+    @Value("${egov.idgen.advertisementcanopy.booking.number}")
+    private String bookingNumberIdgen;
+    
+    @Value("${egov.idgen.advt.bookingNum.name}")
+    private String bookingNumberIdgenName;
 
     public static final String STATE_LEVEL_TEENENT_ID = "hp";
     
@@ -138,7 +151,7 @@ public class AdvtConstants {
 		map.put(ACTION_RETURN_TO_INITIATOR, STATUS_PENDINGFORMODIFICATION);
 		map.put(ACTION_FORWARD_TO_APPROVER, STATUS_PENDINGFORAPPROVAL);
 		map.put(ACTION_VERIFY, STATUS_PENDINGFORAPPROVAL);
-		map.put(STATUS_APPROVED, STATUS_APPROVED);
+		map.put(ACTION_APPROVE,STATUS_APPROVED);
 
 		if (!fetchValue) {
 			// return key
