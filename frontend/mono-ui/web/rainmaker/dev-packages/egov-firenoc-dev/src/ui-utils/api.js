@@ -31,7 +31,14 @@ const wrapRequestBody = (requestBody, action, customRequestInfo) => {
     requesterId: "",
     authToken,
   };
-  RequestInfo = { ...RequestInfo, ...customRequestInfo };
+  let userInfo = JSON.parse(`${localStorage.getItem('user-info')}` ? `${localStorage.getItem('user-info')}` : '');
+  if(endPoint.includes("_fetchbill"))
+  {
+    RequestInfo = { ...RequestInfo, userInfo };
+  }
+  else {
+    RequestInfo = { ...RequestInfo, ...customRequestInfo };
+  }
   return Object.assign(
     {},
     {
