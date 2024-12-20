@@ -39,7 +39,7 @@ public class DemandService {
     	Optional<Double> cost = Optional.of(0.0);
 		if(null != siteBooking.getSiteCreationData().getAdditionalDetail() && null != siteBooking.getSiteCreationData().getAdditionalDetail().get("gstsiteCost").asText()) {
 			try {
-		        cost = Optional.of(Double.parseDouble(siteBooking.getAdditionalDetail().get("gstsiteCost").asText()));
+		        cost = Optional.of(Double.parseDouble(siteBooking.getSiteCreationData().getAdditionalDetail().get("gstsiteCost").asText()));
 		    } catch (NumberFormatException e) {
 		        throw new CustomException("GST_SITE_COST_INCORRECT_FORMAT", "Incorrect format of gst site cost.");
 		    }
@@ -51,7 +51,7 @@ public class DemandService {
 				.add(BigDecimal.valueOf(siteBooking.getSiteCreationData().getSecurityAmount() != null 
 		                ? siteBooking.getSiteCreationData().getSecurityAmount() 
 		                        : 0.0));
-    	
+    	System.out.println(totalPayableAmount);    	
     	DemandDetail demandDetail = DemandDetail.builder()
     								.taxHeadMasterCode(AdvtConstants.BILLING_TAX_HEAD_MASTER_CODE)
     								.taxAmount(totalPayableAmount)
