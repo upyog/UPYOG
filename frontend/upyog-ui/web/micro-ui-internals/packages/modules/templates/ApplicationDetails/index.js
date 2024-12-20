@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
@@ -13,7 +13,7 @@ import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBa
 import ApplicationDetailsWarningPopup from "./components/ApplicationDetailsWarningPopup";
 
 const ApplicationDetails = (props) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -34,6 +34,7 @@ const ApplicationDetails = (props) => {
     mutate,
     nocMutation,
     workflowDetails,
+    id,
     businessService,
     closeToast,
     moduleCode,
@@ -56,6 +57,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    sessionStorage.setItem("SELECTED_ACTION", action?.action);
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -65,7 +67,7 @@ const ApplicationDetails = (props) => {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
         if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
-          // window.location.assign(`${window.location.origin}digit-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
+          // window.location.assign(`${window.location.origin}upyog-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
 
           history.push(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
         }
@@ -100,83 +102,89 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    setIsEnableLoader(true);
-    if (typeof data?.customFunctionToExecute === "function") {
-      data?.customFunctionToExecute({ ...data });
+    if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
+    {
+     alert("Please fill in the comments before submitting")
     }
-    if (nocData !== false && nocMutation) {
-      const nocPrmomises = nocData?.map((noc) => {
-        return nocMutation?.mutateAsync(noc);
-      });
-      try {
-        setIsEnableLoader(true);
-        const values = await Promise.all(nocPrmomises);
-        values &&
-          values.map((ob) => {
-            Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
-          });
-      } catch (err) {
-        setIsEnableLoader(false);
-        let errorValue = err?.response?.data?.Errors?.[0]?.code
-          ? t(err?.response?.data?.Errors?.[0]?.code)
-          : err?.response?.data?.Errors?.[0]?.message || err;
-        closeModal();
-        setShowToast({ key: "error", error: { message: errorValue } });
-        setTimeout(closeToast, 5000);
-        return;
-      }
-    }
-    if (mutate) {
+    else{
       setIsEnableLoader(true);
-      mutate(data, {
-        onError: (error, variables) => {
+      if (typeof data?.customFunctionToExecute === "function") {
+        data?.customFunctionToExecute({ ...data });
+      }
+      if (nocData !== false && nocMutation) {
+        const nocPrmomises = nocData?.map((noc) => {
+          return nocMutation?.mutateAsync(noc);
+        });
+        try {
+          setIsEnableLoader(true);
+          const values = await Promise.all(nocPrmomises);
+          values &&
+            values.map((ob) => {
+              Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
+            });
+        } catch (err) {
           setIsEnableLoader(false);
-          setShowToast({ key: "error", error });
+          let errorValue = err?.response?.data?.Errors?.[0]?.code
+            ? t(err?.response?.data?.Errors?.[0]?.code)
+            : err?.response?.data?.Errors?.[0]?.message || err;
+          closeModal();
+          setShowToast({ key: "error", error: { message: errorValue } });
           setTimeout(closeToast, 5000);
-        },
-        onSuccess: (data, variables) => {
-          sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
-          setIsEnableLoader(false);
-          if (isOBPS?.bpa) {
-            data.selectedAction = selectedAction;
-            history.replace(`/upyog-ui/employee/obps/response`, { data: data });
-          }
-          if (isOBPS?.isStakeholder) {
-            data.selectedAction = selectedAction;
-            history.push(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
-          }
-          if (isOBPS?.isNoc) {
-            history.push(`/upyog-ui/employee/noc/response`, { data: data });
-          }
-          if (data?.Amendments?.length > 0 ){
-            //RAIN-6981 instead just show a toast here with appropriate message
-          //show toast here and return 
-            //history.push("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
-            
-            if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
-              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
-            } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")){
-              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
-            } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")){
-              setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+          return;
+        }
+      }
+      if (mutate) {
+        setIsEnableLoader(true);
+        mutate(data, {
+          onError: (error, variables) => {
+            setIsEnableLoader(false);
+            setShowToast({ key: "error", error });
+            setTimeout(closeToast, 5000);
+          },
+          onSuccess: (data, variables) => {
+            sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
+            setIsEnableLoader(false);
+            if (isOBPS?.bpa) {
+              data.selectedAction = selectedAction;
+              history.replace(`/upyog-ui/employee/obps/response`, { data: data });
             }
-            else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")){
-              setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
-            }            
-            return
-          }
-          setShowToast({ key: "success", action: selectedAction });
-          clearDataDetails && setTimeout(clearDataDetails, 3000);
-          setTimeout(closeToast, 5000);
-          queryClient.clear();
-          queryClient.refetchQueries("APPLICATION_SEARCH");
-          //push false status when reject
-          
-        },
-      });
+            if (isOBPS?.isStakeholder) {
+              data.selectedAction = selectedAction;
+              history.push(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
+            }
+            if (isOBPS?.isNoc) {
+              history.push(`/upyog-ui/employee/noc/response`, { data: data });
+            }
+            if (data?.Amendments?.length > 0) {
+              //RAIN-6981 instead just show a toast here with appropriate message
+              //show toast here and return 
+              //history.push("/upyog-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+  
+              if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
+                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
+              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
+                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
+              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")) {
+                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+              }
+              else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")) {
+                setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
+              }
+              return
+            }
+            setShowToast({ key: "success", action: selectedAction });
+            clearDataDetails && setTimeout(clearDataDetails, 3000);
+            setTimeout(closeToast, 5000);
+            queryClient.clear();
+            queryClient.refetchQueries("APPLICATION_SEARCH");
+            //push false status when reject
+  
+          },
+        });
+      }
+      closeModal();
     }
-
-    closeModal();
+  
   };
 
   if (isLoading || isEnableLoader) {
@@ -189,6 +197,7 @@ const ApplicationDetails = (props) => {
         <React.Fragment>
           <ApplicationDetailsContent
             applicationDetails={applicationDetails}
+            id={id}
             workflowDetails={workflowDetails}
             isDataLoading={isDataLoading}
             applicationData={applicationData}

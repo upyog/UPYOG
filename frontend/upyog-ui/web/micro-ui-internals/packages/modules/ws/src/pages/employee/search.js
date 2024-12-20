@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, Toast } from "@upyog/digit-ui-react-components";
 
 const Search = ({ path }) => {
   const [isBothCallsFinished, setIsBothCallFinished] = useState(true);

@@ -1,4 +1,4 @@
-import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,7 +56,7 @@ const NewApplication = () => {
   function checkforownerPresent(formData){
     if(formData?.owners){
       formData?.owners?.map((ob) => {
-        if(!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code)
+        if(!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code || ob?.additionalDetails)
         {
           return true;
         }
@@ -79,11 +79,20 @@ const NewApplication = () => {
       formState.errors["owners"] &&
       Object.entries(formState.errors["owners"].type).filter((ob) => ob?.[1].type === "required").length == 0
     ) {
-      setSubmitValve(true);
+      if((formData?.ownershipCategory?.code==="INDIVIDUAL.SINGLEOWNER" && formData?.owners.length==1) || (formData?.ownershipCategory?.code==="INDIVIDUAL.MULTIPLEOWNERS" && formData?.owners.length>1)){
+          setSubmitValve(true);
+      }
     } else {
       setSubmitValve(!Object.keys(formState.errors).length);
     }
-  };
+    if(formData?.ownershipCategory?.code==="INDIVIDUAL.MULTIPLEOWNERS"){
+      for(let i=0;i<formData?.owners.length;i++){
+        if(formData?.owners[i]?.gender.length===0 || formData?.owners[i]?.fatherOrHusbandName.length===0|| formData?.owners[i]?.name.length===0|| formData?.owners[i]?.mobileNumber.length===0|| formData?.owners[i]?.relationship.length===0){
+          setSubmitValve(false);
+        }
+      }
+    }
+  }; 
   const onSubmit = (data) => {
     let isSameAsPropertyOwner = sessionStorage.getItem("isSameAsPropertyOwner"); 
     if(data?.cpt?.id){
@@ -153,9 +162,10 @@ const NewApplication = () => {
 
     let owners = [];
     if (data?.owners?.length > 0) {
-      data?.owners.map((data) => {
+      data?.owners.map((data, index) => {
         let obj = {};
         obj.dob = data?.dob ? convertDateToEpoch(data?.dob) : null;
+        obj.additionalDetails={ownerSequence: index, ownerName:data?.name}
         if (data?.fatherOrHusbandName) obj.fatherOrHusbandName = data?.fatherOrHusbandName;
         if (data?.gender?.code) obj.gender = data?.gender?.code;
         if (data?.mobileNumber) obj.mobileNumber = Number(data?.mobileNumber);
@@ -184,6 +194,7 @@ const NewApplication = () => {
       action: "INITIATE",
       applicationType: "NEW",
       workflowCode: "NewTL",
+      applicationDocuments,
       commencementDate,
       financialYear,
       licenseType,
@@ -279,6 +290,11 @@ const NewApplication = () => {
       return head;
     }
   }
+
+
+
+  // configs[1] = configs[0];
+  // configs[6] = configs[0];
 
   return (
     <div>

@@ -27,7 +27,7 @@ const WSSearchMdmsTypes = {
                   moduleName: "ws-services-masters",
                   masterDetails: [
                     {
-                      name: type ?  type : "Documents"
+                      name: type ? type : "Documents"
                     },
                   ],
                 },
@@ -82,7 +82,7 @@ const WSSearchMdmsTypes = {
           return data?.["ws-services-calculation"] ? data?.["ws-services-calculation"] : []
         }
       }
-    )
+    ),
 };
 
 export default WSSearchMdmsTypes;

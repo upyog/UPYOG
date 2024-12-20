@@ -1,8 +1,10 @@
-import { Header, CitizenHomeCard, PTIcon } from "@egovernments/digit-ui-react-components";
+import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import Area from "./pageComponents/Area";
+import Electricity from "./pageComponents/Electricity";
+import UID from "./pageComponents/UID";
 import PTLandArea from "./pageComponents/PTLandArea";
 import GroundFloorDetails from "./pageComponents/GroundFloorDetails";
 import IsAnyPartOfThisFloorUnOccupied from "./pageComponents/IsAnyPartOfThisFloorUnOccupied";
@@ -51,7 +53,7 @@ import SearchPropertyComponent from "./pages/citizen/SearchProperty";
 import SearchResultsComponent from "./pages/citizen/SearchResults";
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
-
+import SearchPTIDProp from "./components/search/SearchDefaulter";
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
 import PTWFReason from "./pageComponents/PTWFReason";
@@ -69,7 +71,10 @@ import PTRegistrationDocument from "./pageComponents/Mutate/RegistrationDocument
 import TransferProof from "./pageComponents/Mutate/transferReasonDocument";
 import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
+import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
+import PropertyStructureDetails from "./pageComponents/PropertyStructureDetails";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import EmployeeApp from "./pages/employee";
 import PTCard from "./components/PTCard";
@@ -85,12 +90,10 @@ import Response from "./pages/Response";
 import TransferOwnership from "./pages/employee/PropertyMutation";
 import DocsRequired from "./pages/employee/PropertyMutation/docsRequired";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
-import CitizenFeedback from "@egovernments/digit-ui-module-core/src/components/CitizenFeedback";
-import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/AcknowledgementCF";
-// PTAcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/PTAcknowledgementCF";
+import CitizenFeedback from "../../core/src/components/CitizenFeedback";
+import AcknowledgementCF from "../../core/src/components/AcknowledgementCF";
+// PTAcknowledgementCF from "@upyog/digit-ui-module-core/src/components/PTAcknowledgementCF";
 //import PTCitizenFeedbackPopUp from "./pageComponents/PTCitizenFeedbackPopUp";
-
-import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
 
 const componentsToRegister = {
   PTLandArea,
@@ -119,6 +122,9 @@ const componentsToRegister = {
   IsAnyPartOfThisFloorUnOccupied,
   UnOccupiedArea,
   Area,
+  UID,
+  Electricity,
+  PropertyStructureDetails,
   IsResidential,
   PropertyType,
   PropertyUsageType,
@@ -172,7 +178,8 @@ const componentsToRegister = {
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
-  PTSelectLandmark
+  PTSelectLandmark,
+  SearchPTIDProp
 };
 
 const addComponentsToRegistry = () => {

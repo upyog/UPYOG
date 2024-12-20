@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@egovernments/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
 //TODO: please find a better way to display in checkpoints
 import TLWFReason from "./TLWFReason";
 
@@ -27,7 +27,7 @@ const TLWFCaption = ({ data }) => {
       {data?.wfComment ? <div>{data?.wfComment?.map( e => 
       <div className="TLComments">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
-        <p>{e}</p>
+        <p style={{overflowX:"scroll"}}>{e}</p>
       </div>
       )}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">
