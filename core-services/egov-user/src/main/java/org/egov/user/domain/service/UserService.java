@@ -334,7 +334,7 @@ public class UserService {
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
-            return restTemplate.postForEntity(userHost + "/user/auth/_digilocker", request, Map.class).getBody();
+            return restTemplate.postForEntity(userHost + "/user/oauth/token", request, Map.class).getBody();
 
         } catch (Exception e) {
             log.error("Error occurred while logging-in via register flow", e);
@@ -418,6 +418,12 @@ public class UserService {
         }
         return decryptedupdatedUserfromDB;
     }
+
+    public Object updateDigilockerID(User user, RequestInfo requestInfo){
+        updateWithoutOtpValidation(user, requestInfo);
+        return getAccess(user, user.getOtpReference());
+    }
+
 
     public void removeTokensByUser(User user) {
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(USER_CLIENT_ID,
