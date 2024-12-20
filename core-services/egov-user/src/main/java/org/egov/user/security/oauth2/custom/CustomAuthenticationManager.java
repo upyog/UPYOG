@@ -44,11 +44,16 @@ public class CustomAuthenticationManager implements AuthenticationManager {
             {
                 log.debug("Third Party authentication is available.");
                 thirdPartyName=thirdPartyValue.toString();
-            }   
+            }  
+            else
+            	thirdPartyName=null;
+            	
         }
-        for (AuthenticationProvider provider : authenticationProviders) {
+        for (AuthenticationProvider provider : authenticationProviders)
+        {
         	
-            if (!provider.supports(toTest)) {
+            if (!provider.supports(toTest)) 
+            {
                 continue;
             }
             log.debug("Authentication attempt using " + provider.getClass().getName());
@@ -58,6 +63,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
                   {
                 	  if (provider.getClass().getName().contains("EsewaAuthenticationProvider"))
                 		  result = provider.authenticate(authentication);
+                	  
+                	 // break;
                   }  
                 else 
                 	result = provider.authenticate(authentication);
@@ -67,16 +74,18 @@ public class CustomAuthenticationManager implements AuthenticationManager {
                     break;
                 }
             } 
-            catch (AccountStatusException | InternalAuthenticationServiceException e) {
+            catch (AccountStatusException | InternalAuthenticationServiceException e)
+            {
                 // SEC-546: Avoid polling additional providers if auth failure is due to
                 // invalid account status
                 throw e;
-            } catch (AuthenticationException e) {
+            } catch (AuthenticationException e) 
+            {
                 log.error("Unable to authenticate", e);
             }
         }
 
-
+    
         if (result != null) {
             if (eraseCredentialsAfterAuthentication
                     && (result instanceof CredentialsContainer)) {
@@ -86,7 +95,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
             }
 
             return result;
-        } else
+        } 
+        else
             throw new OAuth2Exception("AUTHENTICATION_FAILURE, unable to authenticate user");
 
     }
