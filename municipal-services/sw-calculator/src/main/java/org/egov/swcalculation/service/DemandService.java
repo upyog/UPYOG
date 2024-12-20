@@ -36,6 +36,7 @@ import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.egov.swcalculation.web.models.BillResponseV2;
 import org.egov.swcalculation.web.models.BillSearch;
+import org.egov.swcalculation.web.models.BillSearchs;
 import org.egov.swcalculation.web.models.BillV2;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationCriteria;
@@ -1364,48 +1365,77 @@ public class DemandService {
 	
 	/* CANCEL BILL */
 	
-	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand) {
-
-		for (CancelList CancelList : cancelDemand.getCancelList()) {
-			String businessService = CancelList.getBusinessService();
-			String consumerCode = CancelList.getConsumerCode();
-			String tenantId = cancelDemand.getTenantId();
-			Long taxPeriodFrom = cancelDemand.gettaxPeriodFrom();
-			Long taxPeriodTo = cancelDemand.gettaxPeriodTo();
-
-			Set<String> consumerCodeset = new HashSet<>();
-			consumerCodeset.add(consumerCode);
-			CancelList.setConsumerCode(consumerCode);
-			consumerCodeset.add(businessService);
-			CancelList.setBusinessService(businessService);
-			consumerCodeset.add(tenantId);
-
-			Set<Long> consumerCodesets = new HashSet<>();
-			consumerCodesets.add(taxPeriodFrom);
-			cancelDemand.settaxPeriodFrom(taxPeriodFrom);
-			consumerCodesets.add(taxPeriodTo);
-			cancelDemand.settaxPeriodFrom(taxPeriodTo);
-
-			List<Canceldemandsearch> demandlist = sewerageCalculatorDao.getConnectionCancel(businessService, tenantId,
-					consumerCode, taxPeriodFrom, taxPeriodTo);
-			List<BillSearch> billSearch = sewerageCalculatorDao.getBill(consumerCode, businessService);
-
-			if (!demandlist.isEmpty()) {
-//            for (Canceldemandsearch connectionNo : demandlist) 
-				{
-					boolean billCancelled = false;
-					Boolean Cancel = sewerageCalculatorDao.getUpdate(demandlist);
-					if (Cancel) {
-						billCancelled = sewerageCalculatorDao.getexpiryBill(billSearch);
-					}
-
-				}
-			}
-
-		}
-		return cancelDemand;
-	}
+//	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand) {
+//
+//		for (CancelList CancelList : cancelDemand.getCancelList()) {
+//			String businessService = CancelList.getBusinessService();
+//			String consumerCode = CancelList.getConsumerCode();
+//			String tenantId = cancelDemand.getTenantId();
+//			Long taxPeriodFrom = cancelDemand.gettaxPeriodFrom();
+//			Long taxPeriodTo = cancelDemand.gettaxPeriodTo();
+//
+//			Set<String> consumerCodeset = new HashSet<>();
+//			consumerCodeset.add(consumerCode);
+//			CancelList.setConsumerCode(consumerCode);
+//			consumerCodeset.add(businessService);
+//			CancelList.setBusinessService(businessService);
+//			consumerCodeset.add(tenantId);
+//
+//			Set<Long> consumerCodesets = new HashSet<>();
+//			consumerCodesets.add(taxPeriodFrom);
+//			cancelDemand.settaxPeriodFrom(taxPeriodFrom);
+//			consumerCodesets.add(taxPeriodTo);
+//			cancelDemand.settaxPeriodFrom(taxPeriodTo);
+//
+//			List<Canceldemandsearch> demandlist = sewerageCalculatorDao.getConnectionCancel(businessService, tenantId,
+//					consumerCode, taxPeriodFrom, taxPeriodTo);
+//			List<BillSearch> billSearch = sewerageCalculatorDao.getBill(consumerCode, businessService);
+//
+//			if (!demandlist.isEmpty()) {
+////            for (Canceldemandsearch connectionNo : demandlist) 
+//				{
+//					boolean billCancelled = false;
+//					Boolean Cancel = sewerageCalculatorDao.getUpdate(demandlist);
+//					if (Cancel) {
+//						billCancelled = sewerageCalculatorDao.getexpiryBill(billSearch);
+//					}
+//
+//				}
+//			}
+//
+//		}
+//		return cancelDemand;
+//	}
 	
+	
+	
+	
+	public CancelDemand cancelDemandForConsumer(CancelDemand cancelDemand) {	
+		  for (CancelList cancelList : cancelDemand.getCancelList()) {
+		        String tenantId = cancelList.gettenantId();
+		        String demandid = cancelList.getdemandid();
+		        List<Canceldemandsearch> demandlists = sewerageCalculatorDao.getConnectionCancels(tenantId, demandid);
+		        
+		        if (demandlists.isEmpty()) {
+		            throw new CustomException("Demand not found", "No matching demands found for the given criteria.");
+		        }
+
+		        Boolean cancels = sewerageCalculatorDao.getUpdates(demandlists);
+
+		        if (!cancels) {
+		            throw new CustomException("Update failed", "Failed to update demand records.");
+		        }
+
+		        List<BillSearchs> billSearchsss = sewerageCalculatorDao.getBillss(tenantId, demandid);
+		        boolean billCancelled = sewerageCalculatorDao.getexpiryBills(billSearchsss);
+
+		        if (!billCancelled) {
+		            throw new CustomException("Bill Cancellation Failed", "Failed to cancel bills for the given demand.");
+		        }
+		    }
+
+		    return cancelDemand;
+		}
 	
 	
 	

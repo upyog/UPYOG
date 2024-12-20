@@ -3,6 +3,7 @@ package org.egov.swcalculation.repository;
 import java.util.List;
 
 import org.egov.swcalculation.web.models.BillSearch;
+import org.egov.swcalculation.web.models.BillSearchs;
 import org.egov.swcalculation.web.models.Canceldemandsearch;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SewerageDetails;
@@ -34,10 +35,22 @@ public interface SewerageCalculatorDao {
 	public List<Canceldemandsearch> getConnectionCancel( String businessService, String tenantId, String consumerCode,  Long taxPeriodFrom,
 			Long taxPeriodTo );
 	
+	public List<Canceldemandsearch> getConnectionCancels( String tenantId, String demandid);
+	
+	
 	public Boolean getUpdate(List demandlist);
+	
+	public Boolean getUpdates(List demandlists);
+
 	
 	public List<BillSearch> getBill (String businessService, String consumercode);
 	
+	public List<BillSearchs> getBillss (String tenantId, String demandid);
+
+	
 	public Boolean getexpiryBill(List billSearch);
+	
+	public Boolean getexpiryBills(List billSearchsss);
+
 	
 }
