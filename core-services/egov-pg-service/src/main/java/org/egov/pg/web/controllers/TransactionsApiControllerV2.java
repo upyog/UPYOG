@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TransactionsApiControllerV2 {
 
 	@Autowired
-	private TransactionServiceV2 transactionService;
+	private TransactionServiceV2 transactionServiceV2;
 
 	@Autowired
 	private GatewayService gatewayService;
@@ -53,10 +53,10 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/transaction/v2/_create")
-	public ResponseEntity<TransactionCreateResponseV2> transactionsV1CreatePost(
+	public ResponseEntity<TransactionCreateResponseV2> transactionsV2CreatePost(
 			@Valid @RequestBody TransactionRequestV2 transactionRequests) throws CustomException {
 
-		List<Transaction> transactions = transactionService.initiateTransaction(transactionRequests);
+		List<Transaction> transactions = transactionServiceV2.initiateTransaction(transactionRequests);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(transactionRequests.getRequestInfo(), true);
 		TransactionCreateResponseV2 response = new TransactionCreateResponseV2(responseInfo, transactions);
@@ -73,12 +73,12 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/transaction/v2/_search")
-	public ResponseEntity<TransactionResponse> transactionsV1SearchPost(
+	public ResponseEntity<TransactionResponse> transactionsV2SearchPost(
 			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute TransactionCriteria transactionCriteria) {
 		transactionCriteria.setOffset(0);
 		transactionCriteria.setLimit(5);
-		List<Transaction> transactions = transactionService.getTransactions(transactionCriteria);
+		List<Transaction> transactions = transactionServiceV2.getTransactions(transactionCriteria);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
 		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
@@ -95,9 +95,9 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/transaction/v2/_update")
-	public ResponseEntity<TransactionResponse> transactionsV1UpdatePost(
+	public ResponseEntity<TransactionResponse> transactionsV2UpdatePost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
-		List<Transaction> transactions = transactionService.updateTransaction(requestInfoWrapper.getRequestInfo(),
+		List<Transaction> transactions = transactionServiceV2.updateTransaction(requestInfoWrapper.getRequestInfo(),
 				params);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
@@ -112,7 +112,7 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/gateway/v2/_search")
-	public ResponseEntity<Set<String>> transactionsV1AvailableGatewaysPost() {
+	public ResponseEntity<Set<String>> transactionsV2AvailableGatewaysPost() {
 
 		Set<String> gateways = gatewayService.getActiveGateways();
 		log.debug("Available gateways : " + gateways);
