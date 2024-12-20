@@ -64,13 +64,5 @@ public class UserServiceConstants {
     public static final String PATTERN_TENANT = "^[a-zA-Z. ]*$";
     public static final String PATTERN_PINCODE = "^[1-9][0-9]{5}$";
     
-    //SSO Key
-    public final String hrmsMsevaSsoKey = "6v3TyEgjUcQr3OAp9fZgO9wDOA9/AtbXtUoXT/xjVfQ=";
-    
-    //Esewa API 
-    public final String hrmsEsewaHost = "https://esewatst.punjab.gov.in";
-    public final String hrmsEsewaEndPoint = "/externalapi/api/LocalGovernment/AuthenticateUser";
-    public final String hrmsEsewaReqObj = "Data";
-    public final String hrmsEsewaObjResp = "response";
 }
 

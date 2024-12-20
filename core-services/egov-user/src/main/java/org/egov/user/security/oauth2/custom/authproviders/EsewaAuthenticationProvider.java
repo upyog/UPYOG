@@ -59,6 +59,21 @@ public class EsewaAuthenticationProvider implements CustomThirdPartyAuthenticati
 
 	@Value("${citizen.login.password.otp.enabled}")
 	private boolean citizenLoginPasswordOtpEnabled;
+	
+	@Value("${egov.hrms.sso.mseva.decryption.key}")
+	private String ssoDecryptionKey;
+	
+	@Value("${egov.hrms.eseva.api.host}")
+	private String hrmsEsewaApiHost;
+	
+	@Value("${egov.hrms.eseva.api.endpoint}")
+	private String hrmsEsewaApiEndpoint;
+	
+	@Value("${egov.hrms.eseva.api.request.object}")
+	private String hrmsEsewaApiReqObj;
+	
+	@Value("${egov.hrms.eseva.api.response.object.response}")
+	private String hrmsEsewaApiObjResp;
 
 	@Value("${employee.login.password.otp.enabled}")
 	private boolean employeeLoginPasswordOtpEnabled;
@@ -175,7 +190,7 @@ public class EsewaAuthenticationProvider implements CustomThirdPartyAuthenticati
 	}
 
 	private boolean isPasswordMatch(Boolean isOtpBased, String password, User user, Authentication authentication) {
-		byte[] staticKey = Base64.getDecoder().decode(userServiceConstants.hrmsMsevaSsoKey);
+		byte[] staticKey = Base64.getDecoder().decode(ssoDecryptionKey);
 		
 		final byte[] StaticIv = new byte[16];
 //		String inputData = authenticateUserInputRequest.getTokenName()+":" + user.getUserName();
@@ -191,16 +206,16 @@ public class EsewaAuthenticationProvider implements CustomThirdPartyAuthenticati
 		boolean bl = false;
 		int respValue = 1;
 		StringBuilder uri = new StringBuilder();
-	    uri.append(userServiceConstants.hrmsEsewaHost).append(userServiceConstants.hrmsEsewaEndPoint); // Construct URL for HRMS Eseva call
+	    uri.append(hrmsEsewaApiHost).append(hrmsEsewaApiEndpoint); // Construct URL for HRMS Eseva call
 
 	    Map<String, Object> apiRequest = new HashMap<>();
-	    apiRequest.put(userServiceConstants.hrmsEsewaReqObj, encdata); //hrmsEsevaApiRequestObject
+	    apiRequest.put(hrmsEsewaApiReqObj, encdata); //hrmsEsevaApiRequestObject
 	    
 	    try {
 	    	Map<String, Object> responseMap = (Map<String, Object>) restCallRepository.fetchResult(uri, apiRequest);
 	        
 	        if(responseMap != null) {
-	        	Object responseObj = responseMap.get(userServiceConstants.hrmsEsewaObjResp); //hrmsEsevaApiResponseObjectResp
+	        	Object responseObj = responseMap.get(hrmsEsewaApiObjResp); //hrmsEsevaApiResponseObjectResp
 	        	respValue = Integer.parseInt(responseObj.toString());
 	        	if (respValue == 1) {
 	        		bl = true;
