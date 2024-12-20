@@ -74,6 +74,17 @@ const formatTime = (seconds) => {
         try {
           // Await the mutation and capture the result directly
           const result = await slotSearchData.mutateAsync(formdata);
+          let SlotSearchData={
+            bookingId:application?.bookingId,
+            addType: application?.cartDetails?.[0]?.addType,
+            bookingStartDate:application?.cartDetails?.[0]?.bookingDate,
+            bookingEndDate: application?.cartDetails?.[application.cartDetails.length - 1]?.bookingDate,
+            faceArea: application?.cartDetails?.[0]?.faceArea,
+            tenantId: tenantId,
+            location: application?.cartDetails?.[0]?.location,
+            nightLight: application?.cartDetails?.[0]?.nightLight,
+            isTimerRequired: true
+          };
           const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
           const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;
           if (isSlotBooked) {
@@ -81,7 +92,7 @@ const formatTime = (seconds) => {
           } else {
             history.push({
               pathname: `/digit-ui/citizen/payment/my-bills/${"adv-services"}/${application?.bookingNo}`,
-              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue },
+              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue, SlotSearchData:SlotSearchData },
             });
           }
       } catch (error) {
