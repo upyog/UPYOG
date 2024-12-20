@@ -74,7 +74,7 @@ public class ExcelUtil {
 
         Map<String,String> moduleIndexMapping = appProp.getModuleIndexMapping();
         List<String> allModules = new ArrayList<>(moduleIndexMapping.keySet());
-        List<String> requiredModules =  allModules.stream().limit(9).collect(Collectors.toList());
+        List<String> requiredModules =  allModules.stream().limit(10).collect(Collectors.toList());
 
         return requiredModules;
     }
@@ -91,7 +91,7 @@ public class ExcelUtil {
         style.setVerticalAlignment(VerticalAlignment.CENTER);
 
         sheet.addMergedRegion(CellRangeAddress.valueOf("A1:A2"));
-        sheet.addMergedRegion(CellRangeAddress.valueOf("B1:I1"));
+        sheet.addMergedRegion(CellRangeAddress.valueOf("B1:M1"));
 
         createCell(row, 0, "ULB - " + state, style, sheet);
         createCell(row, 1, "Modules/Services", style, sheet);
@@ -104,8 +104,7 @@ public class ExcelUtil {
     }
 
     private void fillULBData(XSSFSheet sheet, List<String> ulbList, String state, Map<String, Map<String, List<String>>> ulbModules) {
-        int rowCount = 2;
-
+        int rowCount = 2; // Start at row 2 since row 0 and row 1 are headers
 
         CellStyle style = sheet.getWorkbook().createCellStyle();
         XSSFFont font = sheet.getWorkbook().createFont();
@@ -116,6 +115,11 @@ public class ExcelUtil {
 
         Map<String, List<String>> stateModules = ulbModules.get(state);
 
+
+        int[] moduleYCounts = new int[getModules().size()];
+        int totalYmodule = 0;
+
+
         for (String ulb : ulbList) {
             Row row = sheet.createRow(rowCount++);
             createCell(row, 0, ulb, style, sheet);
@@ -124,17 +128,31 @@ public class ExcelUtil {
             int column = 1;
 
 
-            for (String module : getModules()) {
+            for (int i = 0; i < getModules().size(); i++) {
+                String module = getModules().get(i);
                 boolean moduleDataAvailable = checkModuleAvailability(ulb, module, stateModules);
                 createCell(row, column++, moduleDataAvailable ? "Y" : "N", style, sheet);
                 if (moduleDataAvailable) {
                     moduleCount++;
+                    moduleYCounts[i]++;
                 }
             }
 
             createCell(row, column++, "", style, sheet);
             createCell(row, column, moduleCount, style, sheet);
+            totalYmodule += moduleCount;
         }
+
+
+        Row grandTotalRow = sheet.createRow(rowCount);
+        createCell(grandTotalRow, 0, "Grand Total", style, sheet);
+
+        int column = 1;
+        for (int i = 0; i < moduleYCounts.length; i++) {
+            createCell(grandTotalRow, column++, moduleYCounts[i], style, sheet);
+        }
+
+        createCell(grandTotalRow, column, totalYmodule, style, sheet);
     }
 
     private boolean checkModuleAvailability(String ulb, String module, Map<String, List<String>> stateModules) {
