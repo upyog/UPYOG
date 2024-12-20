@@ -90,7 +90,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
             disableSortBy: true,
           },
           {
-            Header: t("AST_PARENT_CATEGORY_LABEL"),
+            Header: t("AST_PARENT_CATEGORY_LABELaaa"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["assetParentCategory"]}`)
             },
@@ -98,7 +98,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           
           },
           {
-            Header: t("AST_NAME_LABEL"),
+            Header: t("AST_NAME_LABELffff"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["assetName"]}`)
             },

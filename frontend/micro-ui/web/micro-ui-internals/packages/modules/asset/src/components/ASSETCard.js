@@ -42,6 +42,10 @@ const ASSETCard = () => {
     {
       label: t("MY_ASSET_APPLICATION"),
       link: `/digit-ui/employee/asset/assetservice/my-asset`,
+    },
+    {
+      label: t("MY_ASSET_MAINTENANCE"),
+      link: `#`,
     }
     // {
     //   label: t("AST_REPORT"),
