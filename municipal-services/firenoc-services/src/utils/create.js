@@ -104,21 +104,20 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
         if (get(userSearchResponse, "user", []).length > 0) {
           let userlegalName = userSearchResponse.user[0].name;
           let userFatherName = userSearchResponse.user[0].fatherOrHusbandName
-          if (ownerShipType === 'INDIVIDUAL.SINGLEOWNER' || ownerShipType === 'INDIVIDUAL.MULTIPLEOWNERS') {
-            if (userlegalName === owners[owneriter].name && userFatherName === owners[owneriter].fatherOrHusbandName) {
-              userResponse = await userService.updateUser(RequestInfo,
+           if (ownerShipType === 'INDIVIDUAL.SINGLEOWNER' || ownerShipType === 'INDIVIDUAL.MULTIPLEOWNERS') {
+             if (userlegalName === owners[owneriter].name && userFatherName === owners[owneriter].fatherOrHusbandName) {
+               userResponse = await userService.updateUser(RequestInfo,
                 {
-                  ...userSearchResponse.user[0],
-                  ...owners[owneriter]
-                }
-              );
-            } else {
-              let owner = addDeactiveUserDetails(tenantId, owners[owneriter]);
-              userResponse = await userService.createUser(RequestInfo, {
-                ...userSearchResponse.user[0],
-              });
-            }
-          } else {
+                   ...userSearchResponse.user[0],
+                   ...owners[owneriter]
+                 }
+               );
+             } else {
+               let ownerTemp = addDeactiveUserDetails("pb", owners[owneriter]);
+               console.log("Hello Owner"+ JSON.stringify(ownerTemp))
+               userResponse = await userService.createUser(RequestInfo, ownerTemp);
+             }
+           } else {
             if (userlegalName === owners[owneriter].name) {
               console.log("fbefevfefe")
               userResponse = await userService.updateUser(RequestInfo,
@@ -128,13 +127,13 @@ export const addUUIDAndAuditDetails = async (request, method = "_update") => {
                 }
               );
             } else {
-              let owner = addDeactiveUserDetails('pb', owners[owneriter]);
-              userResponse = await userService.createUser(RequestInfo, {
-                ...userSearchResponse.user[0],
-              });
+              let ownerTemp = addDeactiveUserDetails('pb', owners[owneriter]);
+              console.log("Hello Temp 2"+JSON.stringify(ownerTemp))
+              userResponse = await userService.createUser(RequestInfo, ownerTemp);
             }
           }
-        } else {
+        } 
+        else {
           userResponse = await createUser(
             RequestInfo,
             // owners[owneriter],
