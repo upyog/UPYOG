@@ -35,6 +35,7 @@ import org.egov.asset.web.models.AssetSearchCriteria;
 import org.egov.asset.web.models.CreationReason;
 import org.egov.asset.web.models.RequestInfoWrapper;
 import org.egov.asset.web.models.UserSearchCriteria;
+import org.egov.asset.web.models.workflow.Action;
 import org.egov.asset.web.models.workflow.BusinessServiceResponse;
 import org.egov.asset.web.models.workflow.State;
 import org.egov.common.contract.request.RequestInfo;
@@ -75,7 +76,7 @@ public class AssetService {
 
 	@Autowired
 	private AssetConfiguration assetConfiguration;
-	
+
 	@Autowired
 	private RestCallRepository restCallRepository;
 
@@ -126,28 +127,27 @@ public class AssetService {
 		for (Role role : requestInfo.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
-		List<String> listOfStatus = getAccountStatusListByRoles(criteria.getTenantId(),requestInfo.getUserInfo().getRoles());
-		if(CollectionUtils.isEmpty(listOfStatus)) {
+		List<String> listOfStatus = getAccountStatusListByRoles(criteria.getTenantId(),
+				requestInfo.getUserInfo().getRoles());
+		if (CollectionUtils.isEmpty(listOfStatus)) {
 			throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
-					"Search can't be performed by this Employee due to lack of roles.");	
+					"Search can't be performed by this Employee due to lack of roles.");
 		}
 		// if ((criteria.tenantIdOnly() || criteria.isEmpty()) &&
 		// roles.contains(AssetConstants.ASSET_INITIATOR)) {
 		criteria.setListOfstatus(listOfStatus);
-		
+
 		if ((/* criteria.tenantIdOnly() || */ criteria.isEmpty())) {
 			log.debug("loading data of created and by me");
 			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
 			log.debug("no of assets retuning by the search query" + assets.size());
-		} else if( roles.contains(AssetConstants.EMPLOYEE)) {
-			
-				criteria.setCreatedBy(null);
-				assets = getAssetsFromCriteria(criteria);
-			}
-		else {
+		} else if (roles.contains(AssetConstants.EMPLOYEE)) {
+
+			criteria.setCreatedBy(null);
+			assets = getAssetsFromCriteria(criteria);
+		} else {
 			assets = getAssetsFromCriteria(criteria);
 		}
-			
 
 		if (criteria.getApplicationNo() != null) {
 			return assets.stream().map(asset -> modelMapper.map(asset, AssetDTO.class)).collect(Collectors.toList());
@@ -157,23 +157,23 @@ public class AssetService {
 	}
 
 	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
-		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);	
+		List<String> rolesWithinTenant = getRolesByTenantId(tenantId, roles);
 		Set<String> statusWithRoles = new HashSet();
 		try {
-			if(!CollectionUtils.isEmpty(rolesWithinTenant)) {
-				for(String r:rolesWithinTenant) {
-					if(r.equalsIgnoreCase(AssetConstants.ASSET_WF_APPROVER)) {
+			if (!CollectionUtils.isEmpty(rolesWithinTenant)) {
+				for (String r : rolesWithinTenant) {
+					if (r.equalsIgnoreCase(AssetConstants.ASSET_WF_APPROVER)) {
 						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORAPPROVAL);
 						statusWithRoles.add(AssetConstants.STATUS_APPROVED);
 						statusWithRoles.add(AssetConstants.STATUS_REJECTED);
 					}
-					if(r.equalsIgnoreCase(AssetConstants.ASSET_WF_CREATOR)) {
+					if (r.equalsIgnoreCase(AssetConstants.ASSET_WF_CREATOR)) {
 						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORMODIFICATION);
 						statusWithRoles.add(AssetConstants.STATUS_INITIATE);
 					}
 				}
 			}
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -278,7 +278,7 @@ public class AssetService {
 
 	public AssetActionResponse getActionsOnApplication(AssetActionRequest assetActionRequest) {
 		Map<String, List<String>> applicationActionMaps = new HashMap<>();
-		AssetActionResponse assetActionResponse =null;
+		AssetActionResponse assetActionResponse = null;
 		try {
 			if (CollectionUtils.isEmpty(assetActionRequest.getApplicationNumbers())) {
 				throw new CustomException("INVALID_REQUEST", "Please provide Asset Application numbers");
@@ -296,7 +296,7 @@ public class AssetService {
 				String applicationTenantId = asset.getTenantId();
 				String applicationBusinessId = assetUtil.ASSET_BUSINESS_SERVICE;
 				List<String> rolesWithinTenant = getRolesWithinTenant(applicationTenantId,
-						assetActionRequest.getRequestInfo().getUserInfo().getRoles());
+						assetActionRequest.getRequestInfo().getUserInfo().getRoles(), assetUtil.ASSET_BUSINESS_SERVICE);
 
 				StringBuilder uri = new StringBuilder(assetConfiguration.getWfHost());
 				uri.append(assetConfiguration.getWfBusinessServiceSearchPath());
@@ -305,8 +305,8 @@ public class AssetService {
 				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
 						.requestInfo(assetActionRequest.getRequestInfo()).build();
 				Optional<Object> response = restCallRepository.fetchResult(uri, requestInfoWrapper);
-				if(!response.isPresent()) {
-					throw new CustomException("WF_SEARCH_FAILED","Failed to fetch WF business service.");
+				if (!response.isPresent()) {
+					throw new CustomException("WF_SEARCH_FAILED", "Failed to fetch WF business service.");
 				}
 				LinkedHashMap<String, Object> responseObject = (LinkedHashMap<String, Object>) restCallRepository
 						.fetchResult(uri, requestInfoWrapper).get();
@@ -326,13 +326,25 @@ public class AssetService {
 
 				// filtering actions based on roles
 				List<String> actions = new ArrayList<>();
-				stateList.stream().forEach(state -> {
-					state.getActions().stream().filter(
-							action -> action.getRoles().stream().anyMatch(role -> rolesWithinTenant.contains(role)))
-							.forEach(action -> {
-								actions.add(action.getAction());
-							});
-				});
+				/*
+				 * stateList.stream().forEach(state -> { state.getActions().stream().filter(
+				 * action -> action.getRoles().stream().anyMatch(role ->
+				 * rolesWithinTenant.contains(role))) .forEach(action -> {
+				 * actions.add(action.getAction()); }); });
+				 */
+				
+				for (State state : stateList) {
+				    List<Action> actionsList = state.getActions(); // Explicitly noting that this is a List<Action>
+				    for (Action action : actionsList) {
+				        List<String> rolesList = action.getRoles(); // Explicitly noting that this is a List<Role>
+				        for (String role : rolesList) {
+				            if (rolesWithinTenant.contains(role)) {
+				                actions.add(action.getAction());
+				                break; // Break to avoid adding the same action multiple times if multiple roles match
+				            }
+				        }
+				    }
+				}
 
 				applicationActionMaps.put(applicationNumber, actions);
 
@@ -340,12 +352,12 @@ public class AssetService {
 
 			List<AssetApplicationDetail> nextActionList = new ArrayList<>();
 			applicationActionMaps.entrySet().stream().forEach(entry -> {
-				nextActionList.add(
-						AssetApplicationDetail.builder().applicationNumber(entry.getKey()).action(entry.getValue()).build());
+				nextActionList.add(AssetApplicationDetail.builder().applicationNumber(entry.getKey())
+						.action(entry.getValue()).build());
 			});
-			
-			 assetActionResponse = AssetActionResponse.builder().applicationDetails(nextActionList).build();
-			
+
+			assetActionResponse = AssetActionResponse.builder().applicationDetails(nextActionList).build();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
@@ -353,66 +365,79 @@ public class AssetService {
 	}
 
 	public AssetActionResponse getCountOfAllApplicationTypes(AssetActionRequest actionRequest) {
-		AssetActionResponse assetActionResponse =null;
+		AssetActionResponse assetActionResponse = null;
 		List<String> statusList = null;
 		try {
 			assetActionResponse = AssetActionResponse.builder().build();
-			if(null!=actionRequest) {
-				statusList = assetRepository.getTypesOfAllApplications(actionRequest.getIsHistoryCall(),actionRequest.getTenantId());
+			if (null != actionRequest) {
+				statusList = assetRepository.getTypesOfAllApplications(actionRequest.getIsHistoryCall(),
+						actionRequest.getTenantId());
 			}
-			if(!CollectionUtils.isEmpty(statusList)) {
-				assetActionResponse.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
-						.collect(Collectors.groupingBy(String::toString,Collectors.counting())));
+			if (!CollectionUtils.isEmpty(statusList)) {
+				assetActionResponse
+						.setApplicationTypesCount(statusList.stream().filter(status -> StringUtils.isNotEmpty(status))
+								.collect(Collectors.groupingBy(String::toString, Collectors.counting())));
 			}
-			
+
 		} catch (Exception e) {
 			throw new CustomException("FAILED_TO_FETCH", "Failed to fetch Application types.");
 		}
 		return assetActionResponse;
 	}
 
-	List<String> getRolesWithinTenant(String tenantId, List<Role> roles) {
+	List<String> getRolesWithinTenant(String tenantId, List<Role> roles, String assetBusinessService) {
 
-		/*List<String> roleCodes = roles.stream()
-				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId))
-				.map(role -> role.getCode())
-				.collect(Collectors.toList());*/
-		
 		List<String> roleCodes = new ArrayList<>();
-		if(!CollectionUtils.isEmpty(roles)) {
-			for (Role role : roles) {
-			    if (StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)) {
-			        roleCodes.add(role.getCode());
-			    }
+		try {
+			if (StringUtils.equalsIgnoreCase(assetBusinessService, AssetConstants.ASSET_BusinessService)) {
+				for (Role role : roles) {
+					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_CREATOR)) {
+						roleCodes.add(AssetConstants.ASSET_CREATOR);
+					}
+					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_APPROVER)) {
+						roleCodes.add(AssetConstants.ASSET_APPROVER);
+					}
+				}
 			}
+
+		} catch (Exception e) {
+			throw new RuntimeException("Roles does not exists!!!");
 		}
-		
+
+		/*
+		 * List<String> roleCodes = roles.stream() .filter(role ->
+		 * StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)) .map(role ->
+		 * role.getCode()) .collect(Collectors.toList());
+		 */
+		/*
+		 * if(!CollectionUtils.isEmpty(roles)) { for (Role role : roles) { if
+		 * (StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)) {
+		 * roleCodes.add(role.getCode()); } } }
+		 */
+
 		return roleCodes;
 	}
-	
+
 	public AssetActionResponse getAllcounts() {
 		AssetActionResponse response = new AssetActionResponse();
-        List<Map<String, Object>> statusList = null;
-        statusList = assetRepository.getAllCounts();
-        
-        if (!CollectionUtils.isEmpty(statusList)) {
-        	response.setCountsData(
-		                statusList.stream()
-		                        .filter(Objects::nonNull) // Ensure no null entries
-		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
-		                        .collect(Collectors.toList())); // Collect the filtered list
-			  
-			  if (statusList.get(0).containsKey("total_applications")) {
-		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
-		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
-		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
-		            } else {
-		                throw new IllegalArgumentException("total_applications is not a valid number");
-		            }
-		        }
+		List<Map<String, Object>> statusList = null;
+		statusList = assetRepository.getAllCounts();
+
+		if (!CollectionUtils.isEmpty(statusList)) {
+			response.setCountsData(statusList.stream().filter(Objects::nonNull) // Ensure no null entries
+					.filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
+					.collect(Collectors.toList())); // Collect the filtered list
+
+			if (statusList.get(0).containsKey("total_applications")) {
+				Object totalApplicationsObj = statusList.get(0).get("total_applications");
+				if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+					response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
+				} else {
+					throw new IllegalArgumentException("total_applications is not a valid number");
+				}
+			}
 		}
-        return response;
-	}	
-	
+		return response;
+	}
 
 }
