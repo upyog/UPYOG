@@ -44,18 +44,18 @@ public class UserRepository {
     private UserTypeQueryBuilder userTypeQueryBuilder;
     private RoleRepository roleRepository;
     private UserResultSetExtractor userResultSetExtractor;
-    private DigilockerUserResultSetExtractor digilockerUserResultSetExtractor;
+   // private DigilockerUserResultSetExtractor digilockerUserResultSetExtractor;
 
     @Autowired
     UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
                    AddressRepository addressRepository, UserResultSetExtractor userResultSetExtractor,
-                   DigilockerUserResultSetExtractor digilockerUserResultSetExtractor, JdbcTemplate jdbcTemplate,
+                   JdbcTemplate jdbcTemplate,
                    NamedParameterJdbcTemplate namedParameterJdbcTemplate, AuditRepository auditRepository) {
         this.addressRepository = addressRepository;
         this.roleRepository = roleRepository;
         this.userTypeQueryBuilder = userTypeQueryBuilder;
         this.userResultSetExtractor = userResultSetExtractor;
-        this.digilockerUserResultSetExtractor = digilockerUserResultSetExtractor;
+        //this.digilockerUserResultSetExtractor = digilockerUserResultSetExtractor;
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.auditRepository = auditRepository;
@@ -96,13 +96,13 @@ public class UserRepository {
         String queryStr = userTypeQueryBuilder.getQuery(userSearch, preparedStatementValues);
         log.debug(queryStr);
 
-        if(userSearch.isDigilockersearch()){
-            users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), digilockerUserResultSetExtractor);
-            enrichRoles(users);
-        }else {
+//        if(userSearch.isDigilockersearch()){
+//            users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), digilockerUserResultSetExtractor);
+//            enrichRoles(users);
+//        }else {
             users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractor);
             enrichRoles(users);
-        }
+        //}
 
         return users;
     }
@@ -188,16 +188,16 @@ public class UserRepository {
 
 
         Map<String, Object> updateuserInputs = new HashMap<>();
-        if(user.isDigilockerRegistration()){
-            updateuserInputs.put("username", oldUser.getUsername());
-            updateuserInputs.put("tenantid", oldUser.getTenantId());
-        }
-        else {
+//        if(user.isDigilockerRegistration()){
+//            updateuserInputs.put("username", oldUser.getUsername());
+//            updateuserInputs.put("tenantid", oldUser.getTenantId());
+//        }
+//        else {
             updateuserInputs.put("username", oldUser.getUsername());
             updateuserInputs.put("type", oldUser.getType().toString());
             updateuserInputs.put("tenantid", oldUser.getTenantId());
             updateuserInputs.put("AadhaarNumber", user.getAadhaarNumber());
-        }
+//        }
 
 
         if (isNull(user.getAccountLocked()))
@@ -292,7 +292,7 @@ public class UserRepository {
         updateuserInputs.put("Signature", user.getSignature());
         updateuserInputs.put("Title", user.getTitle());
         updateuserInputs.put("DigilockerID",user.getDigilockerid());
-        if(!user.isDigilockerRegistration()) {
+//        if(!user.isDigilockerRegistration()) {
             List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
             if (user.getType() != null) {
                 if (userTypeEnumValues.contains(user.getType()))
@@ -303,7 +303,7 @@ public class UserRepository {
             } else {
                 updateuserInputs.put("Type", oldUser.getType().toString());
             }
-        }
+//        }
 
         updateuserInputs.put("alternatemobilenumber", user.getAlternateMobileNumber());
 
