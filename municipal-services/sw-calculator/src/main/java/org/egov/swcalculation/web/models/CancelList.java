@@ -26,4 +26,21 @@ public class CancelList {
 		return consumerCode;
 	}
 	
+	
+	@JsonProperty("tenantId")
+	private String tenantId;
+
+	@JsonProperty("demandid")
+	private String demandid;
+
+	public String gettenantId() {
+		
+		return tenantId;
+	}
+
+	public String getdemandid() {
+		
+		return demandid;
+	}
+	
 }

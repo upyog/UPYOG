@@ -7,12 +7,14 @@ import java.util.stream.Collectors;
 import org.egov.swcalculation.constants.SWCalculationConstant;
 import org.egov.swcalculation.repository.builder.SWCalculatorQueryBuilder;
 import org.egov.swcalculation.repository.rowMapper.BillSearchRowMapper;
+import org.egov.swcalculation.repository.rowMapper.BillSearchRowMappers;
 import org.egov.swcalculation.repository.rowMapper.DemandSchedulerRowMapper;
 import org.egov.swcalculation.repository.rowMapper.Demandcancelwrapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageConnectionRowMapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageDemandRowMapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageRowMapper;
 import org.egov.swcalculation.web.models.BillSearch;
+import org.egov.swcalculation.web.models.BillSearchs;
 import org.egov.swcalculation.web.models.Canceldemandsearch;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SewerageDetails;
@@ -46,11 +48,16 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	
 	
 	
+	
+	
 	@Autowired
 	private Demandcancelwrapper demandcancelwrapper;
 	
 	@Autowired
 	private BillSearchRowMapper billsearchMapper;
+	
+	@Autowired
+	private BillSearchRowMappers billsearchMappers;
 
 	@Override
 	public List<String> getTenantId() {
@@ -182,6 +189,17 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		
 	}
 	
+	
+	public List<Canceldemandsearch> getConnectionCancels(String tenantId, String demandid) {
+		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getCancelBills( tenantId,demandid, preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		return jdbcTemplate.query(query, preparedStatement.toArray(), demandcancelwrapper);
+	
+}
+	
 	/* UPDATE */
 	
 	
@@ -193,6 +211,15 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 			jdbcTemplate.update(query, preparedStatement.toArray());	
 			return true;
 	}
+	
+	public Boolean getUpdates(List demandlists) {		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getUpdateDemands(demandlists,preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		jdbcTemplate.update(query, preparedStatement.toArray());	
+		return true;
+}
 	
 	
 	
@@ -207,11 +234,33 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	
 }
 	
+	public List<BillSearchs> getBillss(String tenantId, String demandid) {
+		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getBillidss(tenantId,demandid,preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		return jdbcTemplate.query(query, preparedStatement.toArray(),billsearchMappers);
+
+	}
+
+
+	
 	
 	public Boolean getexpiryBill(List billSearch) {
 		
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getBillDemand(billSearch,preparedStatement);
+		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
+				 " connection list : " + query);
+		jdbcTemplate.update(query, preparedStatement.toArray());	
+		return true;
+}
+	
+public Boolean getexpiryBills(List billSearchsss) {
+		
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getBillDemands(billSearchsss,preparedStatement);
 		log.info("preparedStatement: " + preparedStatement + " connection type: " + 
 				 " connection list : " + query);
 		jdbcTemplate.update(query, preparedStatement.toArray());	

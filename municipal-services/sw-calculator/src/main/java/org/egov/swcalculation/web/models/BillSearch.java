@@ -13,5 +13,11 @@ public class BillSearch {
 	@JsonProperty("id")
 	private String  id = null;
 	
+	@JsonProperty("tenantId")
+	private String tenantId = null;
+	
+	@JsonProperty("demandid")
+	private String demandid = null;
+	
 	
 }

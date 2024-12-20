@@ -10,6 +10,7 @@ import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.web.models.BillGenerationSearchCriteria;
 import org.egov.wscalculation.web.models.BillSearch;
+import org.egov.wscalculation.web.models.BillSearchs;
 import org.egov.wscalculation.web.models.CancelDemand;
 import org.egov.wscalculation.web.models.CancelList;
 import org.egov.wscalculation.web.models.Canceldemandsearch;
@@ -52,11 +53,14 @@ public class WSCalculatorQueryBuilder {
 	private static final String connectionNoListQueryUpdate = "UPDATE egbs_demand_v1 set ";
 	
 	private static final String connectionNoListQuerybill = "UPDATE egbs_bill_v1 " +
-            "SET status = 'CANCELLED' " +
+            "SET status = 'EXPIRED' " +
             "FROM egbs_billdetail_v1 ";
 	
 	
     private static final String connectionNoBill =  " select distinct(bill.id) from egbs_bill_v1 bill, egbs_billdetail_v1 bd  ";
+    
+    private static final String connectionNoBills =  " select distinct(consumercode) from egbs_billdetail_v1 bd  ";
+
 
 	private static final String distinctTenantIdsCriteria = "SELECT distinct(tenantid) FROM eg_ws_connection ws";
 
@@ -702,6 +706,37 @@ StringBuilder query = new StringBuilder(connectionNoListQueryCancel);
 		return query.toString();
 	}
 	
+	
+	
+	// alternative id pick 
+	
+	
+	public String getCancelBills(String tenantId, String demandid,
+			List<Object> preparedStatement) {
+StringBuilder query = new StringBuilder(connectionNoListQueryCancel);
+				
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.tenantId = ? ");
+		preparedStatement.add(tenantId);
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.id = ? ");
+		preparedStatement.add(demandid);
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.status = 'ACTIVE' ");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" d.ispaymentcompleted = 'false' ");
+				
+		return query.toString();
+	}
+	
+	
+	
+	
+	
+	
 	// DEMAND CANCELLED //
 	
 	public String getUpdateDemand(List<Canceldemandsearch> demandList, List<Object> preparedStatement) {
@@ -721,6 +756,33 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
        query.append(")");
 		return query.toString();
 	}
+	
+	
+	public String getUpdateDemands(List<Canceldemandsearch> demandLists, List<Object> preparedStatement) {
+	    StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
+	    query.append("status='CANCELLED' ");
+	    addClauseIfRequired(preparedStatement, query);
+
+	    if (demandLists.isEmpty()) {
+	        // Add a condition that matches nothing
+	        query.append(" id IN (NULL) ");
+	    } else {
+	        // Add the IN clause with placeholders
+	        query.append(" id IN (");
+
+	        // Use StringJoiner to build the placeholders string
+	        StringJoiner placeholders = new StringJoiner(", ");
+	        for (Canceldemandsearch demand : demandLists) {
+	            placeholders.add("?");
+	            preparedStatement.add(demand.getDemandid());
+	        }
+	        query.append(placeholders.toString());
+	        query.append(")");
+	    }
+
+	    return query.toString();
+	}
+	
 	
 	
 	// BILL EXPIRY//
@@ -749,6 +811,51 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 	}
 	
 	
+	public String getBillids(String tenantid, String demandid, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoBill);	
+		
+		
+		
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" bd.tenantid = ? ");
+		preparedStatement.add(tenantid);
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" bd.billid=bill.id");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" bd.demandid = ? ");
+		preparedStatement.add(demandid);
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" bill.status='ACTIVE'");
+		
+        return query.toString();
+	}
+	
+	public String getBillidss(String tenantid, String demandid, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoBills);	
+		
+		
+		
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" bd.tenantid = ? ");
+		preparedStatement.add(tenantid);
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" bd.billid=bill.id");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" bd.demandid = ? ");
+		preparedStatement.add(demandid);
+		
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append(" bill.status='ACTIVE'");
+		
+        return query.toString();
+	}
+	
+	
 	public String getBillDemand(List<BillSearch> BillSearch, List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoListQuerybill);	
 		
@@ -767,9 +874,33 @@ StringBuilder query = new StringBuilder(connectionNoListQueryUpdate);
 	        query.append(placeholders.toString());
 	        query.append(")");
 	        
-	        
-	        
-	        
+	        addClauseIfRequired(preparedStatement, query);
+			query.append(" status = 'ACTIVE' ");
+			
+			addClauseIfRequired(preparedStatement, query);
+			query.append(" egbs_bill_v1.id = egbs_billdetail_v1.billid");
+			
+	        return query.toString();
+}	
+	
+	
+	public String getBillDemands(List<BillSearchs> billSearchsss, List<Object> preparedStatement) {
+		StringBuilder query = new StringBuilder(connectionNoListQuerybill);	
+		
+		
+		addClauseIfRequired(preparedStatement, query);
+	
+		query.append("  egbs_billdetail_v1.consumercode IN (");
+		
+	        // Use StringJoiner to build the placeholders string
+	        StringJoiner placeholders = new StringJoiner(", ");
+	        for (BillSearchs billSearchs : billSearchsss) {
+	            placeholders.add("?");
+	            preparedStatement.add(billSearchs.getConsumercode());
+	        }
+	        query.append(placeholders.toString());
+	        query.append(")");
+	            
 	        addClauseIfRequired(preparedStatement, query);
 			query.append(" status = 'ACTIVE' ");
 			
