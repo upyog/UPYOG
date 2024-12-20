@@ -154,8 +154,9 @@ public class NotificationService {
 					.append(", ").append(!StringUtils.isEmpty(grbgAddress.getUlbName()) ? grbgAddress.getUlbName() : "")
 					.append("(").append(!StringUtils.isEmpty(grbgAddress.getUlbType()) ? grbgAddress.getUlbType() : "")
 					.append("), ")
-					.append(null != grbgAddress.getAdditionalDetail() ? GrbgUtils.removeFirstAndLastChar(
-							String.valueOf(grbgAddress.getAdditionalDetail().get("district"))) : "")
+					.append(null != grbgAddress.getAdditionalDetail()
+							? String.valueOf(grbgAddress.getAdditionalDetail().get("district").asText())
+							: "")
 					.append(", ").append(!StringUtils.isEmpty(grbgAddress.getPincode()) ? grbgAddress.getPincode() : "")
 					.append(".");
 		}
