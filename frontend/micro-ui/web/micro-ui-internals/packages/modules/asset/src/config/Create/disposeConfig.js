@@ -1,10 +1,10 @@
-export const assignConfig =[ 
+export const disposeConfig =[ 
     {
         "body": [
             {
-                "component": "AssetAssign",
+                "component": "AssetDispose",
                 "withoutLabel": true,
-                "key": "assigndetails",
+                "key": "disposeDetails",
                 "type": "component"
             },
         ]

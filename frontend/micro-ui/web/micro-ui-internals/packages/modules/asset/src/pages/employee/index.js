@@ -49,6 +49,7 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   
   const NewAssetAssignApplication = Digit?.ComponentRegistryService?.getComponent("AssignAssetApplication");
+  const DisposeApplication = Digit?.ComponentRegistryService?.getComponent("DisposeApplication");
   const EditResponse = Digit?.ComponentRegistryService?.getComponent("editResponse");
   const EditAsset = Digit?.ComponentRegistryService?.getComponent("editAsset");
   const NewAssetReturnApplication = Digit?.ComponentRegistryService?.getComponent("returnAssets");
@@ -88,6 +89,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           />
           
           <PrivateRoute path={`${path}/assetservice/assign-assets/:id`} component={() => <NewAssetAssignApplication parentUrl={url} />} />
+          <PrivateRoute path={`${path}/assetservice/dispose-assets/:id`} component={() => <DisposeApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/return-assets/:id`} component={() => <NewAssetReturnApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/edit/:id`} component={() => <EditAsset parentUrl={url} />} />
           <PrivateRoute path={`${path}/assetservice/new-assets`} component={() => <ASSETCreate parentUrl={url} />} />
