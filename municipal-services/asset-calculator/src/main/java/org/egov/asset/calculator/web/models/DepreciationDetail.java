@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "asset_depreciation_details")
+@Table(name = "eg_asset_depreciation_details")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,4 +24,7 @@ public class DepreciationDetail {
     private Double depreciationValue;
     private Double bookValue;
     private LocalDate updatedAt;
+    @Column(name = "rate")
+    private double rate;
+    private Double oldBookValue;
 }

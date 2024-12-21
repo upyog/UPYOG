@@ -60,8 +60,7 @@ public class MDMSService {
 
 	/**
 	 * Creates MDMS request
-	 * 
-	 * @param requestInfo The RequestInfo of the calculationRequest
+	 *
 	 * @param tenantId    The tenantId of the tradeLicense
 	 * @return MDMSCriteria Request
 	 */

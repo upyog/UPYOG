@@ -19,22 +19,19 @@ import lombok.Setter;
 @Builder
 public class CalulationCriteria {
 
-//	@JsonProperty("fsm")
-//	@Valid
-//	private FSM fsm = null;
-
-	@JsonProperty("applicationNo")
+	@JsonProperty("assetId")
 	@Size(min = 2, max = 64)
-	private String applicationNo = null;
+	private String assetId = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
 	@Size(min = 2, max = 256)
 	private String tenantId = null;
-	
-	@JsonProperty("feeType")
-	@NotNull
-	@Size(min = 2, max = 64)
-	private String feeType = null;
+
+	@JsonProperty("serviceType")
+	@Size(min = 2, max = 256)
+	private String serviceType = null;
+
+
 
 }

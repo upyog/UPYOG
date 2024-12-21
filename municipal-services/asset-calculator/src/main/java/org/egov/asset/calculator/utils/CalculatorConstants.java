@@ -70,17 +70,7 @@ public class CalculatorConstants {
 
 	public static final String PERCENTAGE_VALUE = "PERCENTAGEVALUE";
 
-	//public static final String VEHICLE_MAKE_MODEL_JSON_PATH = "$.MdmsRes.Vehicle.VehicleMakeModel";
-	//public static final String ADVANCE_PAYMENT_MODEL_JSON_PATH = "$.MdmsRes.FSM.AdvancePayment";
-	//public static final String CANCELLATION_FEE_MODEL_JSON_PATH = "$.MdmsRes.FSM.CancellationFee";
-
-	//public static final String FSM_SLUM_OVERRIDE_ALLOWED = "$.MdmsRes.FSM.Config[?(@.active==true && @.code==\"slumName\" && @.override==true )]";
-	//public static final String FSM_TRIP_AMOUNT_OVERRIDE_ALLOWED = "$.MdmsRes.FSM.Config[?(@.active==true && @.code==\"additionalDetails.tripAmount\" && @.override==true )]";
-	//public static final String FSM_NO_OF_TRIPS_AMOUNT_OVERRIDE_ALLOWED = "$.MdmsRes.FSM.Config[?(@.active==true && @.code==\"noOfTrips\" && @.override==true )]";
-
-	public static final String BILLING_SLAB_ALREADY_EXISTS = "Billing Slab already exits with the given combination of capacityType, capacityFrom, propertyType and slum";
-	public static final String TENANTID_IS_MANDATORY_IN_SEARCH = "TenantId is mandatory in search";
-
+	public static final String SUCCESS_MESSAGE = "Depreciation calculated successfully";
 	public static final String CREATE = "CREATE";
 	public static final String UPDATE = "UPDATE";
 	public static final String SEARCH = "SEARCH";

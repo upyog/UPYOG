@@ -26,9 +26,9 @@ public class CalculationRes {
 	@Valid
 	private ResponseInfo responseInfo = null;
 
-	@JsonProperty("Calculations")
+	@JsonProperty("Message")
 	@Valid
-	private List<Calculation> calculations = null;
+	private String message;
 
 	
 	

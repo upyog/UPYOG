@@ -30,6 +30,6 @@ public class CalculationReq {
 
 	@JsonProperty("CalulationCriteria")
 	@Valid
-	private List<CalulationCriteria> calulationCriteria = null;
+	private CalulationCriteria calulationCriteria = null;
 
 }
