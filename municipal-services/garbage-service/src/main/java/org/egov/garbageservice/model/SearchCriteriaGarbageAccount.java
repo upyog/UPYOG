@@ -37,7 +37,7 @@ public class SearchCriteriaGarbageAccount {
     
     private String parentAccount;
 
-    private String orderBy = "ASC";
+    private String orderBy = "DESC";
 
     private Long startId;
 
