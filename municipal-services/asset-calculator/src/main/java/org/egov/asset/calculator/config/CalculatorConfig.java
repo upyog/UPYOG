@@ -35,4 +35,7 @@ public class CalculatorConfig {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsSearchEndpoint;
 
+	@Value("${default.tenant.id}")
+	private String defaultTenantId;
+
 }
