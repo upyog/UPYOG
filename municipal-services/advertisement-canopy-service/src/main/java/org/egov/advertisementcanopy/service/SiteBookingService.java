@@ -516,10 +516,11 @@ public class SiteBookingService {
 		String createdDate = dateFormat.format(new Date(siteBooking.getAuditDetails().getCreatedDate()));
 		String fromDate = dateFormat.format(new Date(siteBooking.getFromDate()));
 		String toDate = dateFormat.format(new Date(siteBooking.getToDate()));
+		String approvalTime = dateFormat.format(new Date());
 
 // Map variables and values
 		SiteObject.put("applicationNumber", siteBooking.getApplicationNo()); // Application Number / Permission Ref ID
-		SiteObject.put("qrCodeText", "your_qr_\r\ncode_text_value"); // QR Code Text (or replace with dynamic value if
+//		SiteObject.put("qrCodeText", "your_qr_\r\ncode_text_value"); // QR Code Text (or replace with dynamic value if
 																	// needed)
 		SiteObject.put("fromDate", fromDate); // From Date
 		SiteObject.put("toDate", toDate); // To Date
@@ -534,7 +535,10 @@ public class SiteBookingService {
 		SiteObject.put("siteCost", siteBooking.getSiteCreationData().getSiteCost()); // Site Cost
 		SiteObject.put("periodInDays", siteBooking.getPeriodInDays()); // Period In Days
 		SiteObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
-		
+		SiteObject.put("ulb", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
+		SiteObject.put("ulbType", siteBooking.getSiteCreationData().getUlbType()); // Security Amount
+		SiteObject.put("approvalTime", approvalTime); // Security Amount
+
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
 				.tenantId(siteBooking.getTenantId())
@@ -568,8 +572,8 @@ public class SiteBookingService {
 		return SiteObject;
 	}
 	
-	private void getQRCodeForPdfCreate(Map<String, Object> tlObject, StringBuilder qr) {
-		tlObject.entrySet().stream()
+	private void getQRCodeForPdfCreate(Map<String, Object> SiteObject, StringBuilder qr) {
+		SiteObject.entrySet().stream()
 		.filter(entry1 -> Arrays.asList("applicationNumber","siteName","siteAddress","siteId","applicantName","mobileNumber"
 				,"status","periodInDays")
 		.contains(entry1.getKey())).forEach(entry -> {
