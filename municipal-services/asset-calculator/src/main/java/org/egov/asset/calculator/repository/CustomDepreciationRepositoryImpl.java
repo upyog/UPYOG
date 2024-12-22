@@ -16,13 +16,13 @@ public class CustomDepreciationRepositoryImpl implements CustomDepreciationRepos
 
     @Override
     public void executeBulkDepreciationProcedure(String tenantId) {
-        String sql = "CALL calculate_depreciation(?, ?)";
-        jdbcTemplate.update(sql, tenantId, null); // assetId will be replaced with null
+        String sql = "CALL calculate_depreciation(?, ?, ?)";
+        jdbcTemplate.update(sql, tenantId, null, false); // assetId will be replaced with null
     }
 
     @Override
-    public void executeSingleAndLegacyDateDepreciationCalProcedure(String tenantId, String assetId) {
-        String sql = "CALL calculate_depreciation(?, ?)";
-        jdbcTemplate.update(sql, tenantId, assetId);
+    public void executeSingleAndLegacyDataBulkDepreciationCalProcedure(String tenantId, String assetId) {
+        String sql = "CALL calculate_depreciation(?, ?, ?)";
+        jdbcTemplate.update(sql, tenantId, assetId, true);
     }
 }

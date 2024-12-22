@@ -103,9 +103,9 @@ public class MDMSService {
 
 		List<MasterDetail> vehicleMasterDtls = new ArrayList<>();
 		vehicleMasterDtls
-				.add(MasterDetail.builder().name(CalculatorConstants.FIXED_VALUE).filter(filterCode).build());
+				.add(MasterDetail.builder().name(CalculatorConstants.INVALID_PRICE).filter(filterCode).build());
 		ModuleDetail vehicleMasterMDtl = ModuleDetail.builder().masterDetails(vehicleMasterDtls)
-				.moduleName(CalculatorConstants.FIXED_VALUE).build();
+				.moduleName(CalculatorConstants.INVALID_PRICE).build();
 
 		return Arrays.asList(vehicleMasterMDtl, fsmMasterMDtl);
 
