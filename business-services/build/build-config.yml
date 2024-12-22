@@ -92,3 +92,11 @@ config:
         dockerfile: "build/maven/Dockerfile"  
       - work-dir: "employee-dashboard/src/main/resources/db"
         image-name: "employee-dashboard-db"  
+
+  - name: "builds/business-services/common-module"
+    build:
+      - work-dir: "common-module"
+        image-name: "common-module"
+        dockerfile: "build/maven/Dockerfile"  
+      - work-dir: "common-module/src/main/resources/db"
+        image-name: "common-module-db" 
