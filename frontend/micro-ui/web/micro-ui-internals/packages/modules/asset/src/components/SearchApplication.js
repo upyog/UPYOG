@@ -8,7 +8,7 @@
  
 
   const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, parentRoute, tenantId }) => {
-   
+    
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -38,6 +38,7 @@
       },[register, setValue, today, fromDateFormatted])
 
 // Get base path
+
       var base_url = window.location.origin;
     const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
       {
@@ -53,7 +54,28 @@
     actionState && actionState.map((actionstate) => {
       action.push({i18nKey: `${actionstate.name}`, code: `${actionstate.code}`, value: `${actionstate.name}`})
     }) 
+   
 
+    const { data: actionDetail } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "asset-services-masters", [{ name: "ActionOption" }], {
+      select: (data) => {
+        const formattedData = data?.["asset-services-masters"]?.["ActionOption"];
+        console.log('Formatted Data is comming:-', formattedData);
+        const activeData = formattedData?.filter((item) => item.active === true);
+        return activeData;
+      },
+    });
+    let actionOptionFromMDMS;
+  
+    actionDetail &&
+    actionDetail.map((act) => {
+      actionOptionFromMDMS.push({
+          i18nKey: `${act.code}`,
+          code   : `${act.code}`,
+          value  : `${act.name}`,
+        });
+      });
+
+      console.log('Hello World :- ', actionOptionFromMDMS)
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
 

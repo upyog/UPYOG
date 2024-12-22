@@ -10,6 +10,7 @@ import Response from "./pages/Response";
 import ReturnResponse from "./pages/ReturnResponse";
 import { TableConfig } from "./config/inbox-table-config";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
+import DisposeApplication from "./pages/employee/DisposeAssetApplication";
 import AssetDocuments from "./pageComponents/AssetDocuments";
 import AssetPincode from "./pageComponents/AssetPincode";
 import AssetAddress from "./pageComponents/AssetAddress";
@@ -22,6 +23,7 @@ import NewDocument from "./pageComponents/NewDocument";
 import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
 import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 import AssetAssign from "./pageComponents/AssetAssign";
+import AssetDispose from "./pageComponents/AssetDispose";
 import ReturnAsset from "./pages/employee/ReturnAsset";
 import ReturnAssignedAsset from "./pageComponents/ReturnAssignedAsset";
 // import EditAsset from "./pages/employee/EditAsset";
@@ -35,6 +37,7 @@ import EditResponse from "./pages/employee/EditResponse";
 
 const componentsToRegister = {
   AssignAssetApplication: NewAssetApplication,
+  DisposeApplication,
   AssetDocuments,
   AssetPincode,
   AssetAddress,
@@ -50,6 +53,7 @@ const componentsToRegister = {
   AssetResponse: Response, 
   returnResponse:ReturnResponse,
   AssetAssign,
+  AssetDispose,
   returnAssets:ReturnAsset,
   ReturnAssignedAsset,
   editAsset:EditAsset,
