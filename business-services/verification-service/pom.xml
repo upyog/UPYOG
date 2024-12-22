@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egov</groupId>
-    <artifactId>common-module</artifactId>
+    <artifactId>verification-service</artifactId>
     <packaging>jar</packaging>
-    <name>common-module</name>
+    <name>verification-service</name>
     <version>1.0.0</version>
     <properties>
     <java.version>1.8</java.version>

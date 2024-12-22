@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.upyog.web.controllers.V1ApiController;
+import org.upyog.web.controllers.VerificationServiceController;
 import org.upyog.web.models.CommonModuleRequest;
 import org.upyog.web.models.CommonModuleResponse;
 import org.upyog.web.models.ErrorRes;
@@ -28,11 +28,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
-* API tests for V1ApiController
+* API tests for VerificationServiceController
 */
 @Ignore
 @RunWith(SpringRunner.class)
-@WebMvcTest(V1ApiController.class)
+@WebMvcTest(VerificationServiceController.class)
 @Import(TestConfiguration.class)
 public class V1ApiControllerTest {
 

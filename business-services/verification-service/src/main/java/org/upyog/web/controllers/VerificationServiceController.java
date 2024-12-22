@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiParam;
 
 @Controller
 @RequestMapping("/validity")
-public class V1ApiController {
+public class VerificationServiceController {
 
 	private final ObjectMapper objectMapper;
 
@@ -36,7 +36,7 @@ public class V1ApiController {
 	private CommonService commonService;
 
 	@Autowired
-	public V1ApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+	public VerificationServiceController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
 		this.request = request;
 	}
