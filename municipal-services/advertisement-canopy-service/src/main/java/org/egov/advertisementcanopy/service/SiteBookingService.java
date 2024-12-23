@@ -533,9 +533,11 @@ public class SiteBookingService {
 		SiteObject.put("createdDate", createdDate); // Created Date
 		SiteObject.put("status", siteBooking.getStatus()); // Status
 		SiteObject.put("siteCost", siteBooking.getSiteCreationData().getSiteCost()); // Site Cost
+		SiteObject.put("tax", siteBooking.getSiteCreationData().getAdditionalDetail().get("gstPercnetage").asText()); // Site gst tax
+		SiteObject.put("siteGstCost", siteBooking.getSiteCreationData().getAdditionalDetail().get("gstsiteCost").asText()); // Site gst Cost
 		SiteObject.put("periodInDays", siteBooking.getPeriodInDays()); // Period In Days
 		SiteObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
-		SiteObject.put("ulb", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
+		SiteObject.put("ulbName", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
 		SiteObject.put("ulbType", siteBooking.getSiteCreationData().getUlbType()); // Security Amount
 		SiteObject.put("approvalTime", approvalTime); // Security Amount
 
