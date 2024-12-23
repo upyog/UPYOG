@@ -12,10 +12,9 @@ import org.egov.pg.service.TransactionServiceV2;
 import org.egov.pg.utils.ResponseInfoFactory;
 import org.egov.pg.web.models.RequestInfoWrapper;
 import org.egov.pg.web.models.ResponseInfo;
-import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequestV2;
-import org.egov.pg.web.models.TransactionResponse;
+import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -93,13 +92,13 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/transaction/v2/_update")
-	public ResponseEntity<TransactionResponse> transactionsV2UpdatePost(
+	public ResponseEntity<TransactionResponseV2> transactionsV2UpdatePost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper, @RequestParam Map<String, String> params) {
 		List<Transaction> transactions = transactionServiceV2.updateTransaction(requestInfoWrapper.getRequestInfo(),
 				params);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+		TransactionResponseV2 response = transactionServiceV2.prepareResponse(transactions, responseInfo);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 

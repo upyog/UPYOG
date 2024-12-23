@@ -17,10 +17,10 @@ import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.ResponseInfo;
-import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionRequestV2;
+import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.pg.web.models.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,44 +162,51 @@ public class TransactionServiceV2 {
 	 */
 	public List<Transaction> updateTransaction(RequestInfo requestInfo, Map<String, String> requestParams) {
 
-		System.err.println(requestParams);
+		List<Transaction> currentTxnStatuses = validator.validateUpdateTxnV2(requestParams);
 
-		Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
-//
-//		log.debug(currentTxnStatus.toString());
-//		log.debug(requestParams.toString());
-//
-//		Transaction newTxn = null;
-//
-//		if (validator.skipGateway(currentTxnStatus)) {
-//			newTxn = currentTxnStatus;
-//
-//		} else {
-//			newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
-//
-//			// Enrich the new transaction status before persisting
-//			enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
-//		}
-//
-//		// Check if transaction is successful, amount matches etc
-//		if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
-//			TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn)
-//					.build();
-//			paymentsService.registerPayment(request);
-//		}
-//
-//		TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId())
-//				.txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()).build();
-//
-//		producer.push(appProperties.getUpdateTxnTopic(),
-//				new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
-//		producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
-//
-//		// update demands and bill
-//		updateDemandsAndBillByTransactionDetails(newTxn, requestInfo);
-//
-//		return Collections.singletonList(newTxn);
-		return null;
+		log.debug(currentTxnStatuses.toString());
+		log.debug(requestParams.toString());
+
+		List<Transaction> newTxns = new ArrayList<>();
+
+		for (Transaction currentTxnStatus : currentTxnStatuses) {
+
+			Transaction newTxn = null;
+
+			if (validator.skipGateway(currentTxnStatus)) {
+				newTxn = currentTxnStatus;
+
+			} else {
+				newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
+
+				// Enrich the new transaction status before persisting
+				enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus),
+						newTxn);
+			}
+
+			// Check if transaction is successful, amount matches etc
+			if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+				TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn)
+						.build();
+				paymentsService.registerPayment(request);
+			}
+
+			TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId())
+					.txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()).build();
+
+			producer.push(appProperties.getUpdateTxnTopic(),
+					new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
+			producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
+
+			// update demands and bill
+			updateDemandsAndBillByTransactionDetails(newTxn, requestInfo);
+
+			newTxns.add(newTxn);
+		}
+		if (CollectionUtils.isEmpty(newTxns)) {
+			return null;
+		}
+		return newTxns;
 	}
 
 	private void updateDemandsAndBillByTransactionDetails(Transaction newTxn, RequestInfo requestInfo) {
