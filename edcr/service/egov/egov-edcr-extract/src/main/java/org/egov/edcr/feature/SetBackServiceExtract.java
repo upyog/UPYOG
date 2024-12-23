@@ -218,7 +218,8 @@ public class SetBackServiceExtract extends FeatureExtract {
                 if (pl.getDrawingPreference() != null &&
                         org.egov.infra.utils.StringUtils.isNotBlank(pl.getDrawingPreference().getUom())
                         && (DxfFileConstants.INCH_UOM.equalsIgnoreCase(pl.getDrawingPreference().getUom())
-                                || DxfFileConstants.FEET_UOM.equalsIgnoreCase(pl.getDrawingPreference().getUom()))) {
+                                || DxfFileConstants.FEET_UOM.equalsIgnoreCase(pl.getDrawingPreference().getUom()) 
+                             )) {
                     List<BigDecimal> yardWidthDistance = Util.getListOfDimensionByColourCode(pl, yardName,
                             DxfFileConstants.YARD_DIMENSION_COLOR);
                     if (!yardWidthDistance.isEmpty()) {
@@ -227,7 +228,7 @@ public class SetBackServiceExtract extends FeatureExtract {
                         pl.addError(yardName + "_MIN_DISTANCE", String.format(ERR_MIN_DISTANCE, yardName));
                     }
                 } else {
-                    rearYard.setMinimumDistance(
+                	rearYard.setMinimumDistance(
                             minDistance.getYardMinDistance(pl, yardName, String.valueOf(setBack.getLevel()), doc));
                 }
                 setYardHeight(doc, yardName, rearYard);
