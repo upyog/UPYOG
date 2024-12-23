@@ -20,7 +20,7 @@ const instance = axios.create({
 
 const wrapRequestBody = (requestBody, action, customRequestInfo,endPoint) => {
   const authToken = getAccessToken();
-  let defaultRequestInfo = {
+  let RequestInfo = {
     apiId: "Rainmaker",
     ver: ".01",
     // ts: getDateInEpoch(),
@@ -39,7 +39,7 @@ const wrapRequestBody = (requestBody, action, customRequestInfo,endPoint) => {
   else {
     RequestInfo = { ...RequestInfo, ...customRequestInfo };
   }
- 
+  //RequestInfo = { ...RequestInfo, ...customRequestInfo };
   return Object.assign(
     {},
     {
