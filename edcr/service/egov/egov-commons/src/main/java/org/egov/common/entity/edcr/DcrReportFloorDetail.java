@@ -62,6 +62,20 @@ public class DcrReportFloorDetail {
     private BigDecimal floorArea;
 
     private BigDecimal carpetArea;
+    
+
+
+    private BigDecimal totalBuiltUpDeductionArea;
+
+
+    
+    public BigDecimal getTotalBuiltUpDeductionArea() {
+        return totalBuiltUpDeductionArea;
+    }
+
+    public void setTotalBuiltUpDeductionArea(BigDecimal totalBuiltUpDeductionArea) {
+        this.totalBuiltUpDeductionArea = totalBuiltUpDeductionArea;
+    }
 
     public String getFloorNo() {
         return floorNo;
