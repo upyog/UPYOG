@@ -479,21 +479,18 @@ public class MsevaSsoService {
 	                // Call the internal API search function directly
 	                EmployeeResponse employeeResponse = employeeService.search(criteria, requestInfoWrapper.getRequestInfo());
 					List<Employee> employees = employeeResponse.getEmployees();
-					System.out.println(employeeResponse.getEmployees());
-			
-					Employee firstEmployee11 = employees.get(0);
-	                if (employeeResponse != null && !employeeResponse.getEmployees().isEmpty() && firstEmployee11.getUser() != null) { 
-						if (employees != null && !employees.isEmpty()) {
-							// Fetch the first employee
-							Employee firstEmployee = employees.get(0);
-						
-							finalResults.put("userName", firstEmployee.getUser().getName());
-							finalResults.put("tenantId", firstEmployee.getUser().getTenantId());
-							finalResults.put("employeeType", firstEmployee.getUser().getType());
-							finalResults.put("message", msevaSsoConstants.EMPEXISTS_RESPSTATUS);
-							finalResults.put("url", propertiesManager.hrmsMsevaUatApiEndPoint);		
-							// finalResults.put("code", 4);
-						}
+
+	                if (employeeResponse != null && !employeeResponse.getEmployees().isEmpty() && employees != null && !employees.isEmpty() ) { 
+					
+							// Fetch the first employee							
+							for (Employee employee : employees) {
+								finalResults.put("userName", employee.getCode());
+								finalResults.put("tenantId", employee.getTenantId());
+								finalResults.put("employeeType", "EMPPLOYEE");
+								finalResults.put("message", msevaSsoConstants.EMPEXISTS_RESPSTATUS);
+								finalResults.put("url", propertiesManager.hrmsMsevaUatApiEndPoint);
+							}
+					
 	                	//employee already exists
 	                	respValue = 4;
 						finalResults.put("code", 4);

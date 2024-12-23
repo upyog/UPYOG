@@ -42,8 +42,12 @@ public class MsevaSsoWebController {
                     );
             }
             else if (map.get("code").equals(4)) {
-
-                return new ApiResponse<>(false, (String)map.get("message")
+                SsoResponce ssoResponce = new SsoResponce();
+                ssoResponce.setUserName((String) map.get("userName"));
+			    ssoResponce.setTenantId((String)map.get("tenantId"));
+				ssoResponce.setEmployeeType((String)map.get("employeeType"));
+				ssoResponce.setUrl((String) map.get("url"));
+                return new ApiResponse<>(true, (String)map.get("message"),ssoResponce
                     );
             }
             else if (map.get("code").equals(5)) {
