@@ -33,7 +33,6 @@ import org.upyog.adv.web.models.AdvertisementDraftDetail;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
-import org.upyog.adv.web.models.AuditDetails;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.CartDetail;
@@ -43,6 +42,7 @@ import org.upyog.adv.web.models.PersisterWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -147,7 +147,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 		if (result.isEmpty()) {
 			String query = queryBuilder.insertBookingIdForTimer(bookingId);
 			jdbcTemplate.update(query, bookingId, createdBy, createdTime, status, bookingNo, lastModifiedBy, lastModifiedTime);
-			statusUpdateForTimer(bookingId, BookingStatusEnum.PENDING_FOR_PAYMENT);
+			//statusUpdateForTimer(bookingId, BookingStatusEnum.PENDING_FOR_PAYMENT);
+			updateBookingSynchronously(bookingId, createdBy, null, BookingStatusEnum.PENDING_FOR_PAYMENT.toString());
 			long timerValue = bookingConfiguration.getPaymentTimer();
 	        availabiltityDetailsResponse.setTimerValue(timerValue / 1000);
 		} else {
@@ -163,55 +164,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 		jdbcTemplate.update(query, bookingId);
 	}
 
-//	@Override
-//	public Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails) {
-//		if (bookingDetails == null || bookingDetails.isEmpty()) {
-//			log.warn("No booking details provided");
-//			return Collections.emptyMap();
-//		}
-//
-//		List<String> bookingIds = bookingDetails.stream().map(BookingDetail::getBookingId).filter(Objects::nonNull)
-//				.collect(Collectors.toList());
-//		String query = queryBuilder.fetchBookingIdForTImer(bookingIds);
-//
-//		if (query == null) {
-//			log.warn("No query generated, returning empty result");
-//			return Collections.emptyMap();
-//		}
-//
-//		long currentTimeMillis = BookingUtil.getCurrentTimestamp();
-//		// Execute query only if booking IDs exist
-//		List<Map<String, Object>> bookings = jdbcTemplate.queryForList(query, bookingIds.toArray());
-//		Map<String, Long> remainingTimers = new HashMap<>();
-//
-//		for (Map<String, Object> booking : bookings) {
-//			String bookingId = (String) booking.get("booking_id");
-//			Long createdTime = (Long) booking.get("createdtime");
-//
-//			if (createdTime != null) {
-//				long elapsedTime = currentTimeMillis - createdTime;
-//				if (elapsedTime <= bookingConfiguration.getPaymentTimer()) {
-//					long remainingTime = Math.max(bookingConfiguration.getPaymentTimer() - elapsedTime, 0L);
-//					log.info("Booking ID: {}, Remaining Time: {}", bookingId, remainingTime);
-//					remainingTimers.put(bookingId, remainingTime);
-//				} else {
-//					log.info("Booking ID: {}, Timer Expired", bookingId);
-//					remainingTimers.put(bookingId, 0L);
-//				}
-//			} else {
-//				log.info("Booking ID: {}, No Created Time, Default Remaining Time: 0", bookingId);
-//				remainingTimers.put(bookingId, 0L);
-//			}
-//		}
-//
-//		log.info("Remaining Timers Map: {}", remainingTimers);
-//		return remainingTimers;
-//	}
-	public void statusUpdateForTimer(String bookingId, BookingStatusEnum status) {
-		String query = queryBuilder.updateBookingStatusForTimer(bookingId);
-		jdbcTemplate.update(query, status.name(), bookingId, status.name());
-	}
-	
+
 	public Map<String, Long> getRemainingTimerValues(String bookingId) {
 		if (bookingId == null || bookingId.isEmpty()) {
 			log.warn("No booking details provided");
@@ -254,8 +207,6 @@ public class BookingRepositoryImpl implements BookingRepository {
 		return remainingTimers;
 	}
 
-
-	
 	// Upadtes booking request data for the given booking number
 	@Override
 	public void updateBooking(@Valid BookingRequest advertisementBookingRequest) {
@@ -264,43 +215,29 @@ public class BookingRepositoryImpl implements BookingRepository {
 		producer.push(bookingConfiguration.getAdvertisementBookingUpdateTopic(), advertisementBookingRequest);
 	}
 	
-	@Transactional
-	public void updateBookingSynchronously(@Valid BookingRequest advertisementBookingRequest) {
-		
-		log.info("Updating advertisement booking request data for booking no : "
-		+ advertisementBookingRequest.getBookingApplication().getBookingNo());
-		BookingDetail bookingapplication = advertisementBookingRequest.getBookingApplication();
-		List<CartDetail> cartDetails = advertisementBookingRequest.getBookingApplication().getCartDetails();
-		if (cartDetails == null || cartDetails.isEmpty()) {
-			throw new IllegalArgumentException(
-					"Cart details are missing for booking ID: " + bookingapplication.getBookingId());
+	
+	@Override
+	public void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status) {
+
+		String lastUpdateBy = uuid;
+		long lastUpdatedTime = BookingUtil.getCurrentTimestamp();
+		String receiptNo = null;
+		long receiptDate = 0l;
+
+		if (paymentDetail != null) {
+			jdbcTemplate.update(AdvertisementBookingQueryBuilder.BOOKING_UPDATE_QUERY, status, lastUpdateBy,
+					lastUpdatedTime, receiptNo, receiptDate, bookingId);
+		} else {
+			jdbcTemplate.update(AdvertisementBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, lastUpdateBy,
+					lastUpdatedTime, bookingId);
 		}
-		CartDetail cartDetail = cartDetails.get(0);
-		AuditDetails auditDetails = advertisementBookingRequest.getBookingApplication().getAuditDetails();
 
-		String bookingQuery = queryBuilder.updateBookingDetail();
-		String cartQuery = queryBuilder.updateCartDetail();
-		String bookingAuditQuery = queryBuilder.createBookingDetailAudit();
-		String cartAuditQuery = queryBuilder.createCartDetailAudit();
-		
+		jdbcTemplate.update(AdvertisementBookingQueryBuilder.CART_UPDATE_QUERY, status, lastUpdateBy, lastUpdatedTime,
+				bookingId);
 
-		jdbcTemplate.update(bookingQuery, bookingapplication.getBookingStatus(), bookingapplication.getPaymentDate(),
-				auditDetails.getLastModifiedBy(), auditDetails.getLastModifiedTime(),
-				bookingapplication.getPermissionLetterFilestoreId(), bookingapplication.getPaymentReceiptFilestoreId(),
-				bookingapplication.getBookingId());
+		jdbcTemplate.update(AdvertisementBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
 
-		jdbcTemplate.update(cartQuery, cartDetail.getStatus(), auditDetails.getLastModifiedBy(),
-				auditDetails.getLastModifiedTime(), cartDetail.getCartId());
-		
-		jdbcTemplate.update(
-		        bookingAuditQuery, 
-		        bookingapplication.getBookingId()
-		    );
-		
-		 jdbcTemplate.update(
-			        cartAuditQuery, 
-			        cartDetail.getCartId()
-			    );
+		jdbcTemplate.update(AdvertisementBookingQueryBuilder.INSERT_CART_DETAIL_AUDIT_QUERY, bookingId);
 	}
 
 	@Override
@@ -414,6 +351,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 	public void scheduleTimerDelete() {
 	    long currentTimeMillis = BookingUtil.getCurrentTimestamp();
 	    List<String> bookingIds = fetchBookingIds(currentTimeMillis);
+		
+
 
 	    if (bookingIds.isEmpty()) {
 	        log.warn("No valid booking IDs found for deletion.");
@@ -431,7 +370,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 	        int rowsDeleted = deleteBookingId(currentTimeMillis, bookingId);
 	        if (rowsDeleted > 0) {
 	            log.info(rowsDeleted + " expired entry(ies) deleted for booking ID: " + bookingId);
-	            statusUpdateForTimer(bookingId, BookingStatusEnum.BOOKING_CREATED);
+				updateBookingSynchronously(bookingId, "", null, BookingStatusEnum.BOOKING_CREATED.toString());
+	            //statusUpdateForTimer(bookingId, BookingStatusEnum.BOOKING_CREATED);
 	        } else {
 	            log.warn("No entries deleted for booking ID: " + bookingId);
 	        }
@@ -461,6 +401,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 	    }
 	    return jdbcTemplate.update(deleteQuery, currentTimeMillis, bookingConfiguration.getPaymentTimer(), bookingId);
 	}
+
 
 
 }
