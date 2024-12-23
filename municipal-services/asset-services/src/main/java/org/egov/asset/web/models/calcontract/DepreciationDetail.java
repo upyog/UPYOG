@@ -1,4 +1,4 @@
-package org.egov.asset.calculator.web.models;
+package org.egov.asset.web.models.calcontract;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -9,15 +9,12 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "eg_asset_depreciation_details")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class DepreciationDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String assetId; // Foreign key to asset service
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
