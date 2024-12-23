@@ -1,15 +1,21 @@
 package org.egov.pg.service;
 
+import static java.util.Collections.singletonMap;
+
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
+import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
@@ -27,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,18 +66,6 @@ public class TransactionServiceV2 {
 	@Autowired
 	private PaymentsService paymentsService;
 
-//	TransactionServiceV2(TransactionValidator validator, GatewayService gatewayService, Producer producer,
-//			TransactionRepository transactionRepository, PaymentsService paymentsService,
-//			EnrichmentService enrichmentService, AppProperties appProperties) {
-//		this.validator = validator;
-//		this.gatewayService = gatewayService;
-//		this.producer = producer;
-//		this.transactionRepository = transactionRepository;
-//		this.paymentsService = paymentsService;
-//		this.enrichmentService = enrichmentService;
-//		this.appProperties = appProperties;
-//	}
-
 	/**
 	 * Initiates a transaction by generating a gateway redirect URI for the request
 	 * <p>
@@ -100,9 +96,6 @@ public class TransactionServiceV2 {
 			// Enrich transaction by generating txnid, audit details, default status
 			enrichmentService.enrichCreateTransaction(
 					TransactionRequest.builder().transaction(transaction).requestInfo(requestInfo).build());
-
-//		RequestInfo requestInfo = transactionRequest.getRequestInfo();
-//		Transaction transaction = transactionRequest.getTransaction();
 
 			TransactionDump dump = TransactionDump.builder().txnId(transaction.getTxnId())
 					.auditDetails(transaction.getAuditDetails()).build();
@@ -240,12 +233,22 @@ public class TransactionServiceV2 {
 
 		if (!CollectionUtils.isEmpty(transactions) && null != transactions.get(0).getUser()) {
 			user = transactions.get(0).getUser();
+			callbackUrl = transactions.get(0).getCallbackUrl();
 		}
 
 		for (Transaction transaction : transactions) {
 			orderIdArray.add(transaction.getOrderId());
 			consumerCodeArray.add(transaction.getConsumerCode());
 			totalPayableAmount = totalPayableAmount.add(new BigDecimal(transaction.getTxnAmount().toString()));
+		}
+
+		if (null != callbackUrl) {
+			callbackUrl = UriComponentsBuilder
+					.fromHttpUrl(Arrays.asList(callbackUrl.split(PgConstants.PG_TXN_IN_LABEL)).get(0))
+					.queryParams(new LinkedMultiValueMap<>(
+							singletonMap(PgConstants.PG_TXN_IN_LABEL, Collections.singletonList(transactions.stream()
+									.map(Transaction::getTxnId).collect(Collectors.joining(","))))))
+					.build().toUriString();
 		}
 
 		return TransactionResponseV2.builder().transactions(transactions).responseInfo(responseInfo)
