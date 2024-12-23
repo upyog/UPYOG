@@ -6,6 +6,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.upyog.web.models.CommonDetails;
 
 public interface CommonService {
-    CommonDetails getApplicationCommonDetails(@Valid RequestInfo requestInfo, String moduleName, String applicationNumber);
+    CommonDetails getApplicationCommonDetails(@Valid RequestInfo requestInfo, String moduleName, String applicationNumber, String tenantId);
 }
 
