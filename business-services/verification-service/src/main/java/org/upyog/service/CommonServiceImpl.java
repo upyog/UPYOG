@@ -21,39 +21,50 @@ import digit.models.coremodels.RequestInfoWrapper;
 @Service
 public class CommonServiceImpl implements CommonService {
 
+	private final Map<String, String> moduleHosts;
 	private final Map<String, String> moduleEndpoints;
 	private final Map<String, String> moduleUniqueIdParams;
 	private final CommonDetailsMapperFactory mapperFactory;
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
 	@Autowired
 	public CommonServiceImpl(ModuleConfig moduleConfig, CommonDetailsMapperFactory mapperFactory) {
-		this.moduleEndpoints = moduleConfig.getEndpoints();
-		this.moduleUniqueIdParams = moduleConfig.getUniqueIdParams();
+
+		this.moduleHosts = moduleConfig.getHost();
+		this.moduleEndpoints = moduleConfig.getEndpoint();
+		this.moduleUniqueIdParams = moduleConfig.getUniqueIdParam();
 		this.mapperFactory = mapperFactory;
 	}
 
 	@Override
 	public CommonDetails getApplicationCommonDetails(RequestInfo requestInfo, String moduleName,
 			String applicationNumber) {
-		String endpoint = moduleEndpoints.get(moduleName);
-		if (endpoint == null) {
-			throw new IllegalArgumentException("Invalid module name: " + moduleName);
+		String host = moduleHosts.get(moduleName);
+		if (host == null) {
+			throw new IllegalArgumentException("Invalid module name or host not configured: " + moduleName);
 		}
 
+		String endpoint = moduleEndpoints.get(moduleName);
+		if (endpoint == null) {
+			throw new IllegalArgumentException("Invalid module name or endpoint not configured: " + moduleName);
+		}
+
+		// Retrieve the unique ID parameter for the given module
 		String uniqueIdParam = moduleUniqueIdParams.get(moduleName);
 		if (uniqueIdParam == null) {
 			throw new IllegalArgumentException("No unique ID parameter configured for module: " + moduleName);
 		}
 
+		// Construct the full URL dynamically
 		StringBuilder urlBuilder = new StringBuilder();
-		urlBuilder.append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber);
-		RequestInfoWrapper requestInfoWrapper= RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=")
+				.append(applicationNumber);
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object result = null;
 		try {
 			result = serviceRequestRepository.fetchResult(urlBuilder, requestInfoWrapper);
