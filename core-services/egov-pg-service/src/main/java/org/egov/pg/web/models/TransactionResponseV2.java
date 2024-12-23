@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransactionCreateResponseV2 {
+public class TransactionResponseV2 {
 
 	@JsonProperty("ResponseInfo")
 	@Valid

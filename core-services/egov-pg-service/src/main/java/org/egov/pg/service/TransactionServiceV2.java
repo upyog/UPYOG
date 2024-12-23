@@ -3,7 +3,6 @@ package org.egov.pg.service;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +17,8 @@ import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.ResponseInfo;
-import org.egov.pg.web.models.TransactionCreateResponseV2;
-import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.pg.web.models.TransactionResponseV2;
+import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionRequestV2;
 import org.egov.pg.web.models.User;
@@ -138,12 +137,12 @@ public class TransactionServiceV2 {
 	 * @param transactionCriteria Search Conditions that should be matched
 	 * @return List of transactions matching the conditions.
 	 */
-	public List<Transaction> getTransactions(TransactionCriteria transactionCriteria) {
-		log.info(transactionCriteria.toString());
+	public List<Transaction> getTransactions(TransactionCriteriaV2 transactionCriteriaV2) {
+		log.info(transactionCriteriaV2.toString());
 		try {
-			return transactionRepository.fetchTransactions(transactionCriteria);
+			return transactionRepository.fetchTransactions(transactionCriteriaV2);
 		} catch (DataAccessException e) {
-			log.error("Unable to fetch data from the database for criteria: " + transactionCriteria.toString(), e);
+			log.error("Unable to fetch data from the database for criteria: " + transactionCriteriaV2.toString(), e);
 			throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");
 		}
 	}
@@ -163,41 +162,44 @@ public class TransactionServiceV2 {
 	 */
 	public List<Transaction> updateTransaction(RequestInfo requestInfo, Map<String, String> requestParams) {
 
+		System.err.println(requestParams);
+
 		Transaction currentTxnStatus = validator.validateUpdateTxn(requestParams);
-
-		log.debug(currentTxnStatus.toString());
-		log.debug(requestParams.toString());
-
-		Transaction newTxn = null;
-
-		if (validator.skipGateway(currentTxnStatus)) {
-			newTxn = currentTxnStatus;
-
-		} else {
-			newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
-
-			// Enrich the new transaction status before persisting
-			enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
-		}
-
-		// Check if transaction is successful, amount matches etc
-		if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
-			TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn)
-					.build();
-			paymentsService.registerPayment(request);
-		}
-
-		TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId())
-				.txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()).build();
-
-		producer.push(appProperties.getUpdateTxnTopic(),
-				new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
-		producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
-
-		// update demands and bill
-		updateDemandsAndBillByTransactionDetails(newTxn, requestInfo);
-
-		return Collections.singletonList(newTxn);
+//
+//		log.debug(currentTxnStatus.toString());
+//		log.debug(requestParams.toString());
+//
+//		Transaction newTxn = null;
+//
+//		if (validator.skipGateway(currentTxnStatus)) {
+//			newTxn = currentTxnStatus;
+//
+//		} else {
+//			newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
+//
+//			// Enrich the new transaction status before persisting
+//			enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
+//		}
+//
+//		// Check if transaction is successful, amount matches etc
+//		if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+//			TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn)
+//					.build();
+//			paymentsService.registerPayment(request);
+//		}
+//
+//		TransactionDump dump = TransactionDump.builder().txnId(currentTxnStatus.getTxnId())
+//				.txnResponse(newTxn.getResponseJson()).auditDetails(newTxn.getAuditDetails()).build();
+//
+//		producer.push(appProperties.getUpdateTxnTopic(),
+//				new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
+//		producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
+//
+//		// update demands and bill
+//		updateDemandsAndBillByTransactionDetails(newTxn, requestInfo);
+//
+//		return Collections.singletonList(newTxn);
+		return null;
 	}
 
 	private void updateDemandsAndBillByTransactionDetails(Transaction newTxn, RequestInfo requestInfo) {
@@ -222,7 +224,7 @@ public class TransactionServiceV2 {
 
 	}
 
-	public TransactionCreateResponseV2 prepareResponse(List<Transaction> transactions, ResponseInfo responseInfo) {
+	public TransactionResponseV2 prepareResponse(List<Transaction> transactions, ResponseInfo responseInfo) {
 		BigDecimal totalPayableAmount = BigDecimal.ZERO;
 		String callbackUrl = null; // TODO
 		List<String> orderIdArray = new ArrayList<>();
@@ -239,7 +241,7 @@ public class TransactionServiceV2 {
 			totalPayableAmount = totalPayableAmount.add(new BigDecimal(transaction.getTxnAmount().toString()));
 		}
 
-		return TransactionCreateResponseV2.builder().transactions(transactions).responseInfo(responseInfo)
+		return TransactionResponseV2.builder().transactions(transactions).responseInfo(responseInfo)
 				.totalPayableAmount(totalPayableAmount).callbackUrl(callbackUrl).orderIdArray(orderIdArray)
 				.consumerCodeArray(consumerCodeArray).user(user).build();
 	}

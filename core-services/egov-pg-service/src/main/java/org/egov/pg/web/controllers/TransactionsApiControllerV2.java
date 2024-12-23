@@ -12,8 +12,8 @@ import org.egov.pg.service.TransactionServiceV2;
 import org.egov.pg.utils.ResponseInfoFactory;
 import org.egov.pg.web.models.RequestInfoWrapper;
 import org.egov.pg.web.models.ResponseInfo;
-import org.egov.pg.web.models.TransactionCreateResponseV2;
-import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.pg.web.models.TransactionResponseV2;
+import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequestV2;
 import org.egov.pg.web.models.TransactionResponse;
 import org.egov.tracer.model.CustomException;
@@ -53,13 +53,13 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/transaction/v2/_create")
-	public ResponseEntity<TransactionCreateResponseV2> transactionsV2CreatePost(
+	public ResponseEntity<TransactionResponseV2> transactionsV2CreatePost(
 			@Valid @RequestBody TransactionRequestV2 transactionRequests) throws CustomException {
 
 		List<Transaction> transactions = transactionServiceV2.initiateTransaction(transactionRequests);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(transactionRequests.getRequestInfo(), true);
-		TransactionCreateResponseV2 response = transactionServiceV2.prepareResponse(transactions, responseInfo);
+		TransactionResponseV2 response = transactionServiceV2.prepareResponse(transactions, responseInfo);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
@@ -73,15 +73,13 @@ public class TransactionsApiControllerV2 {
 	 */
 
 	@PostMapping(value = "/transaction/v2/_search")
-	public ResponseEntity<TransactionResponse> transactionsV2SearchPost(
+	public ResponseEntity<TransactionResponseV2> transactionsV2SearchPost(
 			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-			@Valid @ModelAttribute TransactionCriteria transactionCriteria) {
-		transactionCriteria.setOffset(0);
-		transactionCriteria.setLimit(5);
-		List<Transaction> transactions = transactionServiceV2.getTransactions(transactionCriteria);
+			@Valid @ModelAttribute TransactionCriteriaV2 transactionCriteriaV2) {
+		List<Transaction> transactions = transactionServiceV2.getTransactions(transactionCriteriaV2);
 		ResponseInfo responseInfo = ResponseInfoFactory
 				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-		TransactionResponse response = new TransactionResponse(responseInfo, transactions);
+		TransactionResponseV2 response = transactionServiceV2.prepareResponse(transactions, responseInfo);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
