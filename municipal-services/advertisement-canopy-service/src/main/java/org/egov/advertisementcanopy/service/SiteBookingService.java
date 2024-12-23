@@ -540,7 +540,7 @@ public class SiteBookingService {
 		SiteObject.put("ulbName", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
 		SiteObject.put("ulbType", siteBooking.getSiteCreationData().getUlbType()); // Security Amount
 		SiteObject.put("approvalTime", approvalTime); // Security Amount
-
+//		SiteObject.put("total",0); // Security Amount
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
 				.tenantId(siteBooking.getTenantId())
@@ -553,7 +553,7 @@ public class SiteBookingService {
 			// enrich all bills
 //			siteBookingDetail.setBills(billResponse.getBill());
 			Optional<Bill> activeBill = billResponse.getBill().stream()
-					.filter(bill -> StatusEnum.ACTIVE.name().equalsIgnoreCase(bill.getStatus().name()))
+					.filter(bill -> StatusEnum.PAID.name().equalsIgnoreCase(bill.getStatus().name()))
 		            .findFirst();
 			activeBill.ifPresent(bill -> {
 				// enrich active bill details
