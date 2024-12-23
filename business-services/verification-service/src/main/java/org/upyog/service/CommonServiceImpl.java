@@ -17,8 +17,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class CommonServiceImpl implements CommonService {
 
 	private final Map<String, String> moduleHosts;
@@ -43,7 +45,7 @@ public class CommonServiceImpl implements CommonService {
 
 	@Override
 	public CommonDetails getApplicationCommonDetails(RequestInfo requestInfo, String moduleName,
-			String applicationNumber) {
+			String applicationNumber, String tenantId) {
 		String host = moduleHosts.get(moduleName);
 		if (host == null) {
 			throw new IllegalArgumentException("Invalid module name or host not configured: " + moduleName);
@@ -62,11 +64,12 @@ public class CommonServiceImpl implements CommonService {
 
 		// Construct the full URL dynamically
 		StringBuilder urlBuilder = new StringBuilder();
-		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=")
-				.append(applicationNumber);
-		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber)
+		.append("&tenantId=").append(tenantId);
+		RequestInfoWrapper requestInfoWrapper= RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object result = null;
 		try {
+			log.info("urlBuilder : " + urlBuilder);
 			result = serviceRequestRepository.fetchResult(urlBuilder, requestInfoWrapper);
 			JsonNode jsonNode = objectMapper.valueToTree(result);
 			CommonDetailsMapper mapper = mapperFactory.getMapper(moduleName);

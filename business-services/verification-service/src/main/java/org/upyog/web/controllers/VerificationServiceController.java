@@ -44,10 +44,12 @@ public class VerificationServiceController {
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<CommonModuleResponse> v1RegistrationSearchPost(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
-			@ApiParam(value = "Unique application number to search") @Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
+			@ApiParam(value = "tenantId") @Valid @RequestParam(value = "tenantId", required = true) String tenantId,
+			@ApiParam(value = "Unique application number to search") @Valid @RequestParam(value = "applicationNumber", required = true) 
+			String applicationNumber,
 			@ApiParam(value = "Module name to search") @Valid @RequestParam(value = "moduleName", required = true) String moduleName) {
 		
-		CommonDetails commonDetail = commonService.getApplicationCommonDetails(requestInfoWrapper.getRequestInfo(),moduleName,applicationNumber);
+		CommonDetails commonDetail = commonService.getApplicationCommonDetails(requestInfoWrapper.getRequestInfo(),moduleName,applicationNumber,tenantId);
 		CommonModuleResponse response = CommonModuleResponse.builder().commonDetail(commonDetail)
 				.responseInfo(new ResponseInfo())
 				.build();
