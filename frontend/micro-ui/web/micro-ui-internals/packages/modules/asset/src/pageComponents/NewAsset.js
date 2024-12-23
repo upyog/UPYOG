@@ -78,10 +78,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
   //  regexPattern function is use for validation
   const regexPattern = (columnType) => {
+   
     if (!columnType) {
       return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$";
     } else if (columnType === "number") {
-      return "^d+(.d+)?$";
+      return "^[0-9]+(\\.[0-9]+)?$";
     } else if (columnType === "text") {
       return "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$";
     } else {
@@ -460,16 +461,17 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           </div>
           <TextInput
             t={t}
-            type={"text"}
+            type={"number"}
             isMandatory={false}
             optionKey="i18nKey"
             name="purchaseCost"
             value={assetDetails["purchaseCost"]}
             onChange={handleInputChange}
+            ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
-              type: "text",
+              pattern: regexPattern("number"),
+              type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
             style={{ width: "50%" }}
@@ -502,10 +504,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             name="acquisitionCost"
             value={assetDetails["acquisitionCost"]}
             onChange={handleInputChange}
+            ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
-              type: "text",
+              pattern: regexPattern('number'),
+              type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
             style={{ width: "50%" }}

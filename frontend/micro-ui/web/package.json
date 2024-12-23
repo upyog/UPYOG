@@ -11,13 +11,12 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/chb",
     "micro-ui-internals/packages/modules/engagement"
-
   ],
   "engines": {
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/upyog-css": "1.2.5",
+    "@nudmcdgnpm/upyog-css": "1.2.6",
     "@upyog/digit-ui-libraries": "1.8.0",
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
@@ -26,7 +25,7 @@
     "@upyog/digit-ui-module-dss": "1.8.11",
     "@upyog/digit-ui-module-fsm": "1.8.17",
     "@upyog/digit-ui-module-hrms": "1.8.0",
-    "@nudmcdgnpm/upyog-ui-module-asset": "1.2.3",
+    "@nudmcdgnpm/upyog-ui-module-asset": "1.2.4",
     "@upyog/digit-ui-module-mcollect": "1.8.8",
     "@upyog/digit-ui-module-commonpt":"1.8.1",
     "@upyog/digit-ui-module-obps": "1.8.16",
@@ -42,7 +41,6 @@
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.3",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.0",
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.3",
-    "@nudmcdgnpm/upyog-ui-module-cm":"1.2.2",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
