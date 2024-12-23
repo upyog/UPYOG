@@ -486,7 +486,7 @@ public class MsevaSsoService {
 							for (Employee employee : employees) {
 								finalResults.put("userName", employee.getCode());
 								finalResults.put("tenantId", employee.getTenantId());
-								finalResults.put("employeeType", "EMPPLOYEE");
+								finalResults.put("employeeType", "EMPLOYEE");
 								finalResults.put("message", msevaSsoConstants.EMPEXISTS_RESPSTATUS);
 								finalResults.put("url", propertiesManager.hrmsMsevaUatApiEndPoint);
 							}
