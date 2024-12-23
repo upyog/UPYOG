@@ -192,7 +192,7 @@ public class UserController {
         List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
         if ( !userContracts.isEmpty()) {            
         	User user = createUserRequest.toDomain(false);            
-        	User existingUser = searchUsers(request,headers).getUserModels().get(0);            
+        	User existingUser = user;            
         	user.setDigilockerRegistration(isDigiLockerRegistration);            
         	Object updatedUser = userService.updateDigilockerID(user, existingUser, createUserRequest.getRequestInfo());            
         	return new ResponseEntity<>(updatedUser, HttpStatus.OK);
@@ -236,7 +236,7 @@ public class UserController {
         List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
                 .collect(Collectors.toList());
         ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
-        return new UserSearchResponse(responseInfo, userContracts, userModels);
+        return new UserSearchResponse(responseInfo, userContracts);
     }
 
     private boolean isMobileValidationRequired(HttpHeaders headers) {
