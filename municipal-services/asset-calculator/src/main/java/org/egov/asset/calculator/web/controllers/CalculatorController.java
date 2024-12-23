@@ -8,9 +8,7 @@ import javax.validation.Valid;
 import org.egov.asset.calculator.services.CalculationService;
 import org.egov.asset.calculator.services.ProcessDepreciation;
 import org.egov.asset.calculator.utils.ResponseInfoFactory;
-import org.egov.asset.calculator.web.models.Calculation;
-import org.egov.asset.calculator.web.models.CalculationReq;
-import org.egov.asset.calculator.web.models.CalculationRes;
+import org.egov.asset.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +23,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CalculatorController {
 
-	private ProcessDepreciation depreciationService;
+	private final ProcessDepreciation depreciationService;
 	private final CalculationService calculationService;
-
-	
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
+	private final ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
-	public CalculatorController(CalculationService calculationService) {
-		this.calculationService = calculationService;
-	}
+	public CalculatorController(ProcessDepreciation depreciationService, CalculationService calculationService, ResponseInfoFactory responseInfoFactory) {
+        this.depreciationService = depreciationService;
+        this.calculationService = calculationService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
 	/**
 	 * API to trigger depreciation calculation for a specific asset or all assets.
@@ -43,9 +40,33 @@ public class CalculatorController {
 	 * @param calculationReq (Required) The request payload for depreciation calculation.
 	 * @return CalculationRes with calculated results.
 	 */
-	@PostMapping("/_calculate")
+	@PostMapping("/depreciation/_calculate")
 	public ResponseEntity<CalculationRes> calculate(@Valid @RequestBody CalculationReq calculationReq) {
 		CalculationRes calculationRes = calculationService.calculate(calculationReq);
-		return new ResponseEntity<>(calculationRes, HttpStatus.OK);
+
+		CalculationRes response = CalculationRes.builder()
+				.message(calculationRes.getMessage())
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(calculationReq.getRequestInfo(), true))
+				.build();
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	/**
+	 * API to fetch all depreciation details for a specific asset.
+	 *
+	 * @param assetId (Required) The ID of the asset for which depreciation details are required.
+	 * @return List of depreciation details for the provided assetId.
+	 */
+	@GetMapping("/depreciation/{assetId}/details")
+	public ResponseEntity<DepreciationRes> getDepreciationDetails(@PathVariable String assetId) {
+		List<DepreciationDetail> depreciationDetails = depreciationService.getDepreciationDetails(assetId);
+		// Build the response object
+		DepreciationRes response = DepreciationRes.builder()
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(null, true))
+				.depreciation(depreciationDetails)
+				.build();
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

@@ -18,7 +18,7 @@ public class DepreciationDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long assetId; // Foreign key to asset service
+    private String assetId; // Foreign key to asset service
     private LocalDate fromDate;
     private LocalDate toDate;
     private Double depreciationValue;

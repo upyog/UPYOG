@@ -2,23 +2,19 @@ package org.egov.asset.calculator.services;
 
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.calculator.config.CalculatorConfig;
 import org.egov.asset.calculator.repository.CustomDepreciationRepository;
-import org.egov.asset.calculator.web.models.DepreciationDetail;
 import org.egov.asset.calculator.repository.DepreciationDetailRepository;
+import org.egov.asset.calculator.web.models.DepreciationDetail;
+import org.egov.asset.calculator.utils.CalculatorConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 @Service
@@ -26,16 +22,15 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class ProcessDepreciation {
 
-    private  DepreciationDetailRepository depreciationDetailRepository;
-    private final DepreciationDetailRepository depreciationDetailsRepository;
+    private final DepreciationDetailRepository depreciationDetailRepository;
     private final CustomDepreciationRepository customDepreciationRepository;
 
     @Autowired
     private CalculatorConfig config;
 
     @Autowired
-    public ProcessDepreciation(DepreciationDetailRepository depreciationDetailsRepository, CustomDepreciationRepository customDepreciationRepository) {
-        this.depreciationDetailsRepository = depreciationDetailsRepository;
+    public ProcessDepreciation(DepreciationDetailRepository depreciationDetailRepository, CustomDepreciationRepository customDepreciationRepository) {
+        this.depreciationDetailRepository = depreciationDetailRepository;
         this.customDepreciationRepository = customDepreciationRepository;
     }
 
@@ -49,8 +44,9 @@ public class ProcessDepreciation {
     public void executeBulkDepreciationProcedure(String tenantId) {
         try {
             customDepreciationRepository.executeBulkDepreciationProcedure(tenantId);
+            log.info("Procedure executeBulkDepreciationProcedure called");
         } catch (Exception e) {
-            throw new RuntimeException("Error executing bulk depreciation procedure for tenant: " + tenantId, e);
+            throw new RuntimeException(CalculatorConstants.PROCESSING_ERROR  + tenantId, e);
         }
     }
 
@@ -63,14 +59,18 @@ public class ProcessDepreciation {
      */
     public String executeSingleAndLegacyDepreciationProcedure(String tenantId, String assetId) {
         try {
-            customDepreciationRepository.executeSingleAndLegacyDateDepreciationCalProcedure(tenantId, assetId);
-            return "Single and legacy depreciation procedure executed successfully for tenant: " + tenantId + ", asset: " + assetId;
+            customDepreciationRepository.executeSingleAndLegacyDataBulkDepreciationCalProcedure(tenantId, assetId);
+            return CalculatorConstants.SUCCESS_MESSAGE + tenantId + ", asset: " + assetId;
         } catch (Exception e) {
-            throw new RuntimeException("Error executing single and legacy depreciation procedure for tenant: " + tenantId + ", asset: " + assetId, e);
+            throw new RuntimeException(CalculatorConstants.PROCESSING_ERROR  + tenantId + ", asset: " + assetId, e);
         }
     }
 
-    // Code level calculations
+    public List<DepreciationDetail> getDepreciationDetails(String assetId) {
+        return depreciationDetailRepository.findByAssetId(assetId);
+    }
+
+    // Code level calculations not yet complete
     public void calculateDepreciationForSingleAsset(Long assetId) {
         Map<String, Object> asset = null;
 
@@ -100,7 +100,7 @@ public class ProcessDepreciation {
                 .findByAssetIdAndFromDate(assetId, fromDate)
                 .orElse(new DepreciationDetail());
 
-        detail.setAssetId(assetId);
+        //detail.setAssetId(assetId);
         detail.setFromDate(fromDate);
         detail.setToDate(toDate);
         detail.setDepreciationValue(depreciationValue);
@@ -109,6 +109,8 @@ public class ProcessDepreciation {
 
         depreciationDetailRepository.save(detail);
     }
+
+
 
 //    public void calculateBulkDepreciation() {
 //        List<Map<String, Object>> assets = fetchEligibleAssets();
