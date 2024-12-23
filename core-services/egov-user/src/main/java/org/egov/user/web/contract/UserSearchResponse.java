@@ -16,7 +16,5 @@ public class UserSearchResponse {
 
     @JsonProperty("user")
     List<UserSearchResponseContent> userSearchResponseContent;
-    
-    @JsonProperty("user")
-    List<User> userModels;
+
 }
