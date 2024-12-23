@@ -130,7 +130,7 @@ public class EstimationService {
 		// water_charge to be added only if dischargeConnection is not Onlydisposal
 		// (category 62 of Amritsar) means if the connection is only disposal that only
 		// discharge/disposal charges should be applicable
-		if (add_details.containsKey("dischargeConnection")) {
+		if (add_details.containsKey("dischargeConnection") && add_details.get("dischargeConnection")!=null) {
 			if (add_details.get("dischargeConnection").equalsIgnoreCase("OnlyDischarge") == false)
 				estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_CHARGE)
 						.estimateAmount(waterCharge.setScale(2, 2)).build());
@@ -151,7 +151,7 @@ public class EstimationService {
 		// .estimateAmount(waterCess.setScale(2, 2)).build());
 
 		// DISPOSAL DISCHARGE CHARGES
-		if (add_details.containsKey("dischargeConnection")) {
+		if (add_details.containsKey("dischargeConnection") && add_details.get("dischargeConnection")!=null) {
 
 			if (add_details.get("dischargeConnection").equalsIgnoreCase("true")
 					|| add_details.get("dischargeConnection").equalsIgnoreCase("OnlyDischarge")) {
