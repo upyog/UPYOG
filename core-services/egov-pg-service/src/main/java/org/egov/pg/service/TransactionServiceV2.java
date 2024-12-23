@@ -226,7 +226,7 @@ public class TransactionServiceV2 {
 
 	public TransactionResponseV2 prepareResponse(List<Transaction> transactions, ResponseInfo responseInfo) {
 		BigDecimal totalPayableAmount = BigDecimal.ZERO;
-		String callbackUrl = null; // TODO
+		String callbackUrl = null;
 		List<String> orderIdArray = new ArrayList<>();
 		List<String> consumerCodeArray = new ArrayList<>();
 		User user = null;
