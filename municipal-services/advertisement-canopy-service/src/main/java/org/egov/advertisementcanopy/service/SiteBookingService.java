@@ -557,7 +557,7 @@ public class SiteBookingService {
 		            .findFirst();
 			activeBill.ifPresent(bill -> {
 				// enrich active bill details
-				SiteObject.put("total", bill.getTotalAmount()); // Security Amount
+				SiteObject.put("total", bill.getBillDetails().get(0).getAmount()); // total bill Amount
 			});
 				
 		}
