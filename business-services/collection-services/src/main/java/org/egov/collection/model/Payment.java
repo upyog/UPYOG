@@ -69,6 +69,10 @@ public class Payment {
     @JsonProperty("ledgerId")
     private String ledgerId;
     
+    @JsonProperty("groupId")
+    private String groupId;
+    
+    
     @JsonProperty("landarea")
     private String landarea;
     

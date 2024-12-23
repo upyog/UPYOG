@@ -212,6 +212,9 @@ public class PaymentService {
 							String ledgerId = (String) map.get("ledgerId");
 							payments.get(0).setLedgerId(ledgerId);
 							
+							String groups = (String) map.get("groups");
+							payments.get(0).setGroupId(groups);
+
 							String conncat = (String) map.get("connectionCategory");
 							payments.get(0).setConnectionCategory(conncat);
 
