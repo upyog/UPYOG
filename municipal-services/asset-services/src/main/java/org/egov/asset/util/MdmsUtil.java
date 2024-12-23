@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -130,8 +127,6 @@ public class MdmsUtil {
     /**
      * Creates request to search ApplicationType and etc from MDMS
      *
-     * @param requestInfo The requestInfo of the request
-     * @param tenantId    The tenantId of the BPA
      * @return request to search ApplicationType and etc from MDMS
      */
     public List<ModuleDetail> getBPAModuleRequest() {
@@ -151,7 +146,7 @@ public class MdmsUtil {
         ModuleDetail bpaModuleDtls = ModuleDetail.builder().masterDetails(assetMasterDtls)
                 .moduleName(AssetConstants.ASSET_MODULE).build();
 
-        return Arrays.asList(bpaModuleDtls);
+        return Collections.singletonList(bpaModuleDtls);
 
     }
 

@@ -86,48 +86,38 @@ public class AssetConfiguration {
     @Value("${workflow.process.path}")
     private String wfProcessPath;
 
-    // SMS
-//	@Value("${kafka.topics.notification.sms}")
-//	private String smsNotifTopic;
-//
-//	@Value("${notification.sms.enabled}")
-//	private Boolean isSMSEnabled;
-//
-//	// Email
-//	@Value("${kafka.topics.notification.email}")
-//	private String emailNotifTopic;
-//
-//	@Value("${notification.email.enabled}")
-//	private Boolean isEmailNotificationEnabled;
+    @Value("${asset.calculator.service.host}")
+    private String assetCalculatorServiceHost;
 
-    // Localization
-//	@Value("${egov.localization.host}")
-//	private String localizationHost;
-//
-//	@Value("${egov.localization.context.path}")
-//	private String localizationContextPath;
-//
-//	@Value("${egov.localization.search.endpoint}")
-//	private String localizationSearchEndpoint;
-//
-//	@Value("${egov.localization.statelevel}")
-//	private Boolean isLocalizationStateLevel;
-//
-//	@Value("${egov.localization.fallback.locale}")
-//	private String fallBackLocale;
+    @Value("${asset.calculator.depreciation.calculate.api}")
+    private String assetCalculatorDepreciationApi;
+
+    @Value("${asset.calculator.depreciation.list.api}")
+    private String assetCalculatorDepreciationListApi;
+
 
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
 
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
+//    }
+
+
+
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
+        return objectMapper;
     }
 
     @Bean
-    @Autowired
     public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(objectMapper);
