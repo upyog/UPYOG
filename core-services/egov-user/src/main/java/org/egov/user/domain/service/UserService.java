@@ -322,7 +322,7 @@ public class UserService {
             headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("username", user.getUsername());
-            password = "123456";
+            //password = "123456";
             if (!isEmpty(password))
                 map.add("password", password);
             else
