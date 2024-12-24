@@ -198,7 +198,8 @@ public class UserRepository {
             updateuserInputs.put("tenantid", oldUser.getTenantId());
             updateuserInputs.put("AadhaarNumber", user.getAadhaarNumber());
 //        }
-
+            if(user.isDigilockerRegistration())
+        updateuserInputs.put("id", oldUser.getId());
 
         if (isNull(user.getAccountLocked()))
             updateuserInputs.put("AccountLocked", oldUser.getAccountLocked());
