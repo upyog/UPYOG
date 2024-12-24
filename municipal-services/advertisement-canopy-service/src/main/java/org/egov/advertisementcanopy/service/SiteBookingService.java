@@ -516,7 +516,7 @@ public class SiteBookingService {
 		String createdDate = dateFormat.format(new Date(siteBooking.getAuditDetails().getCreatedDate()));
 		String fromDate = dateFormat.format(new Date(siteBooking.getFromDate()));
 		String toDate = dateFormat.format(new Date(siteBooking.getToDate()));
-		String approvalTime = dateFormat.format(new Date());
+		String approvalDate = dateFormat.format(new Date());
 
 // Map variables and values
 		SiteObject.put("applicationNumber", siteBooking.getApplicationNo()); // Application Number / Permission Ref ID
@@ -539,7 +539,7 @@ public class SiteBookingService {
 		SiteObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
 		SiteObject.put("ulbName", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
 		SiteObject.put("ulbType", siteBooking.getSiteCreationData().getUlbType()); // Security Amount
-		SiteObject.put("approvalTime", approvalTime); // Security Amount
+		SiteObject.put("approvalDate", approvalDate); // approval date
 //		SiteObject.put("total",0); // Security Amount
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
