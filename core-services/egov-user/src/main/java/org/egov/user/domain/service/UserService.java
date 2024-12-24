@@ -688,17 +688,13 @@ public class UserService {
     }
     
     public Object updateDigilockerID(User user, User existingUser, RequestInfo requestInfo) {        
-    	log.info("User", existingUser);        
-    	existingUser = encryptionDecryptionUtil.encryptObject(existingUser, "UserSelf", User.class);        
-    	user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));        
-    	validatePassword(user.getPassword());        
-    	user.setPassword(encryptPwd(user.getPassword()));        
-    	user.validateUserModification();        
-    	user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);        
+    	log.info("User", existingUser);                
+    	if (existingUser.getDigilockerid()!=null) {
+        	return getAccess(user, user.getOtpReference());
+        	}
+    	else {
     	userRepository.update(user, existingUser, existingUser.getId(), existingUser.getUuid());        
-    	User encryptedUpdatedUserfromDB = getUserBymobileNumber(user.getMobileNumber());        
-    	User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);        
-    return getAccess(user, user.getOtpReference());}
-
-
+    	return getAccess(user, user.getOtpReference());
+    	}
+    }
 }
