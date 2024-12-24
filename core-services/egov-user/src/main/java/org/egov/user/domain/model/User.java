@@ -27,6 +27,7 @@ import javax.validation.constraints.Size;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -247,6 +248,7 @@ public class User {
     public void setActive(boolean isActive) {
         active = isActive;
     }
+
 }
 
 
