@@ -61,6 +61,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Service
 public class SiteBookingService {
 
@@ -432,22 +434,27 @@ public class SiteBookingService {
 	}
 
 	private void createAndUploadPDF(SiteBookingRequest siteBookingRequest) {
-		
+        
+		log.info("here0");
 		if (!CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
 			siteBookingRequest.getSiteBookings().stream().forEach(siteBooking -> {
 
 //				Thread pdfGenerationThread = new Thread(() -> {
-
+				log.info("here1");
 					if(StringUtils.equalsIgnoreCase(siteBooking.getWorkflowAction(), AdvtConstants.ACTION_APPROVE)) {
 						// validate trade license
+						log.info("here2");
 						validateSiteBookingCertificateGeneration(siteBooking);
+						log.info("here3");
 
 						// create pdf
 						Resource resource = createNoSavePDF(siteBooking, siteBookingRequest.getRequestInfo());
+						log.info("here4");
 
 						//upload pdf
 						DmsRequest dmsRequest = generateDmsRequestBySiteBooking(resource, siteBooking,
 								siteBookingRequest.getRequestInfo());
+						log.info("here5");
 						try {
 							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
 									siteBookingRequest.getRequestInfo());
@@ -464,7 +471,7 @@ public class SiteBookingService {
 
 			});
 		}
-		
+		log.info("here6");
 		
 	}
 
