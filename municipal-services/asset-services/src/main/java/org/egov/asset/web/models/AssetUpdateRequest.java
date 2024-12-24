@@ -1,6 +1,6 @@
 package org.egov.asset.web.models;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 
@@ -14,19 +14,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class AssetActionRequest {
+
+public class AssetUpdateRequest {
 	
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
+  @JsonProperty("RequestInfo")
+  private RequestInfo requestInfo;
 	
-	private List<String> applicationNumbers;
-	
-	private String businessService;
-	
-	private String tenantId;
-	private Boolean isHistoryCall = false;
+	@JsonProperty("Asset")
+	@Valid
+	private AssetUpdate assetUpdate ;
 
 }

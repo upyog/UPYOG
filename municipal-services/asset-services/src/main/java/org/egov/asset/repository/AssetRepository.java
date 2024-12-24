@@ -15,6 +15,7 @@ import org.egov.asset.repository.rowmapper.AssetRowMapper;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetAuditDetails;
 import org.egov.asset.web.models.AssetSearchCriteria;
+import org.egov.asset.web.models.AssetUpdateRequest;
 import org.egov.asset.web.models.AssetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -92,7 +93,7 @@ public class AssetRepository {
 	 * @param bpaRequest
 	 *            The asset update request
 	 */
-	public void updateAssignment(AssetRequest assetRequest) {
+	public void updateAssignment(AssetUpdateRequest assetRequest) {
 		producer.push(config.getUpdateAssignmentTopic(), assetRequest);
 	}
 

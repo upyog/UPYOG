@@ -1,5 +1,8 @@
 package org.egov.asset.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AssetConstants {
 	
 	//Constants For MDMS
@@ -55,17 +58,43 @@ public class AssetConstants {
 	public static final String STATUS_PENDINGFORAPPROVAL = "PENDINGFORAPPROVAL";
 	public static final String  STATUS_PENDINGFORMODIFICATION = "PENDINGFORMODIFICATION";
 	public static final String STATUS_INITIATE = "INITIATED";
+	public static final String ACTION_INITIATE =  "INITIATE";
+	public static final String ACTION_RETURN_TO_INITIATOR = "RETURN_TO_INITIATOR";
+	public static final String ACTION_FORWARD_TO_APPROVER ="FORWARD_TO_APPROVER";
 	
 	public static final String ACTION_PENDINGAPPROVAL = "PENDINGAPPROVAL";
 	public static final String ACTION_REJECT = "REJECT";
 	public static final String ACTION_REVOCATE = "REVOCATE";
 	public static final String ACTION_CANCEL = "CANCEL";
 	public static final String EMPLOYEE = "EMPLOYEE";
-	public static final String AASET_APPROVER = "AASET_APPROVER";
-	public static final String ASSET_INITIATOR = "ASSET_INITIATOR"; 
+	public static final String ASSET_APPROVER = "ASSET_APPROVER";
+	public static final String ASSET_CREATOR = "ASSET_CREATOR"; 
 	public static final String ASSET_VERIFIER = "ASSET_VERIFIER";
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String ASSET_WF_CREATOR = "ASSET_WF_CREATOR";
 	public static final String ASSET_WF_APPROVER = "ASSET_WF_APPROVER";
+	
+	
+	
+	public  static String getStatusOrAction(String action, boolean b) {
+		
+		Map<String, String> map = new HashMap<>();
+		map.put(ACTION_INITIATE, STATUS_INITIATED);
+		map.put(ACTION_RETURN_TO_INITIATOR, STATUS_PENDINGFORMODIFICATION);
+		map.put(ACTION_FORWARD_TO_APPROVER, STATUS_PENDINGFORAPPROVAL);
+		map.put(STATUS_APPROVED, STATUS_APPROVED);
+		map.put(ACTION_REJECT,ACTION_REJECT);
+		
+		if (!b) {
+			// return key
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+				if (entry.getValue().equals(action)) {
+					return entry.getKey();
+				}
+			}
+		}
+		
+		return map.get(action);
+	}
 
 }
