@@ -8,6 +8,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   const TYPE_LOGIN = { type: "login" };
   const [errorRegister, setErrorRegister]= useState(false)
   const getUserType = () => Digit.UserService.getType();
+  const [digilockerAuthentication,setdigilockerAuthentication]=useState(false)
   let newData={}
   useInterval(
     () => {
@@ -21,13 +22,25 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   {
     let code =window.location.href.split("=")[1].split("&")[0]
     let TokenReq = {
-      code_verifier: sessionStorage.getItem("code_verfier_register"),
+      code_verifier: localStorage.getItem('code_verfier_register'),
       code: code, module: "REGISTER",
-      redirect_uri: "https://upyog.niua.org/digit-ui/citizen/login/otp",
+      //redirect_uri: "https://upyog.niua.org/digit-ui/citizen/login/otp",
+      redirect_uri:"http://localhost:3001/digit-ui/citizen/login/otp"
     }
-    console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
+   console.log("token",code,TokenReq,localStorage.getItem("code_verfier_register"))
     const data = await Digit.DigiLockerService.token({TokenReq })
+    console.log("data_token",data)
     registerUser(data)
+    const authData=await Digit.DigiLockerService.auth(data?.TokenRes)
+    setdigilockerAuthentication(authData?.TokenRes)
+    console.log("digilockerAuthentication",digilockerAuthentication)
+
+    //const digilockerAuthentication1=await Digit.DigiLockerService.auth(testdata)
+    //console.log("digilockerAuthentication1",digilockerAuthentication1)
+    if(digilockerAuthentication){
+      //setredirectUrl("http://localhost:3001/digit-ui/citizen")
+      window.location.href="http://localhost:3001/digit-ui/citizen"
+    }
   // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
   //   method: 'POST',
   //   mode: 'cors',
@@ -112,6 +125,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
 
   return (
+   ! digilockerAuthentication &&(
     <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 6 && canSubmit)}>
       <OTPInput length={6} onChange={onOtpChange} value={otp} />
       {timeLeft > 0 ? (
@@ -123,7 +137,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       )}
       {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
       {errorRegister && <CardLabelError>{t("CS_ALREADY_REGISTERED")}</CardLabelError>}
-    </FormStep>
+    </FormStep>)
   );
 };
 

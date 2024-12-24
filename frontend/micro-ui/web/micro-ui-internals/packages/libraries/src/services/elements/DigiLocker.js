@@ -29,6 +29,16 @@ export const DigiLockerService = {
       userService: true,
       data:data,
     }),
+    auth: ( data ) =>
+    Request({
+      url: Urls.digiLocker.auth,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params:{tenantId:"pg"},
+      data:data,
+    }),
     issueDoc: ( data ) =>
     Request({
       url: Urls.digiLocker.issueDoc,
