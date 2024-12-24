@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.egov.asset.calculator.services.CalculationService;
 import org.egov.asset.calculator.services.ProcessDepreciation;
+import org.egov.asset.calculator.services.ProcessDepreciationV2;
 import org.egov.asset.calculator.utils.ResponseInfoFactory;
 import org.egov.asset.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 public class CalculatorController {
 
 	private final ProcessDepreciation depreciationService;
+	private final ProcessDepreciationV2 depreciationServiceV2;
 	private final CalculationService calculationService;
 	private final ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
-	public CalculatorController(ProcessDepreciation depreciationService, CalculationService calculationService, ResponseInfoFactory responseInfoFactory) {
+	public CalculatorController(ProcessDepreciation depreciationService, ProcessDepreciationV2 depreciationServiceV2, CalculationService calculationService, ResponseInfoFactory responseInfoFactory) {
         this.depreciationService = depreciationService;
+        this.depreciationServiceV2 = depreciationServiceV2;
         this.calculationService = calculationService;
         this.responseInfoFactory = responseInfoFactory;
     }

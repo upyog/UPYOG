@@ -3,22 +3,26 @@ package org.egov.asset.calculator.config;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.calculator.config.CalculatorConfig;
 import org.egov.asset.calculator.services.ProcessDepreciation;
+import org.egov.asset.calculator.services.ProcessDepreciationV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Slf4j
 public class DepreciationScheduler {
 
-    private final ProcessDepreciation processDepreciation;
+    //private final ProcessDepreciation processDepreciation;
+    private final ProcessDepreciationV2 processDepreciation;
     private final CalculatorConfig config;
 
     @Autowired
-    public DepreciationScheduler(ProcessDepreciation processDepreciation, CalculatorConfig config) {
+    public DepreciationScheduler(ProcessDepreciationV2 processDepreciation, CalculatorConfig config) {
         this.processDepreciation = processDepreciation;
         this.config = config;
     }
@@ -32,7 +36,20 @@ public class DepreciationScheduler {
         log.info("Cron Job started at: {}", startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         try {
-            processDepreciation.executeBulkDepreciationProcedure(config.getDefaultTenantId());
+            List<String> tenantIds = getTenantIds(); // Fetch tenant IDs dynamically
+            // If tenantIds is null or empty, use default tenant ID from config
+            if (tenantIds == null || tenantIds.isEmpty()) {
+                String defaultTenantId = config.getDefaultTenantId(); // Fetch from configuration
+                log.warn("No tenant IDs found. Using default tenant ID: {}", defaultTenantId);
+                tenantIds = new ArrayList<>();
+                tenantIds.add(defaultTenantId);
+            }
+
+            for (String tenantId : tenantIds) {
+                log.info("Processing depreciation for tenant: {}", tenantId);
+                //processDepreciation.executeBulkDepreciationProcedure(config.getDefaultTenantId());
+                processDepreciation.calculateDepreciation(tenantId, null, false);
+            }
             LocalDateTime endTime = LocalDateTime.now();
             long durationInMillis = java.time.Duration.between(startTime, endTime).toMillis();
             log.info("Cron Job ended at: {}, Duration: {} ms",
@@ -41,5 +58,12 @@ public class DepreciationScheduler {
         } catch (Exception e) {
             log.error("Error during scheduled bulk depreciation: {}", e.getMessage(), e);
         }
+    }
+
+    public List<String> getTenantIds() {
+        // Fetch tenant IDs from the database
+        //List<String> tenantIds = tenantRepository.findAllTenantIds();
+        //return tenantIds != null ? tenantIds : Collections.emptyList();
+        return null;
     }
 }
