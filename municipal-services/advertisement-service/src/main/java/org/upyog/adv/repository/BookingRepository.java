@@ -12,6 +12,7 @@ import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 
+import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
 
 public interface BookingRepository {
@@ -30,8 +31,6 @@ public interface BookingRepository {
 
 	//Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
 	
-	void updateBookingSynchronously(@Valid BookingRequest advertisementBookingRequest);
-
 	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
 			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse);
 	
@@ -47,5 +46,7 @@ public interface BookingRepository {
 	void deleteDraftApplication(String draftId);
 
 	void scheduleTimerDelete();
+
+	void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status);
 	
 }

@@ -36,18 +36,24 @@ public class AdvertisementBookingQueryBuilder {
 	private static final String documentDetailsQuery = "select * from public.eg_adv_document_detail  where booking_id in (";
 	
 	private static final String ADVERTISEMENT_SLOTS_AVAILABILITY_QUERY = 
-		    "SELECT eabd.tenant_id, eacd.add_type, eacd.face_area, eacd.location, eacd.night_light, eacd.status, eacd.booking_date " +
-		    "FROM eg_adv_booking_detail eabd, eg_adv_cart_detail eacd " +
-		    "WHERE eabd.booking_id = eacd.booking_id AND eabd.tenant_id = ? " +
-		    "AND eacd.status IN ('BOOKED', 'PENDING_FOR_PAYMENT') " +
-		    "AND eacd.booking_date >= ?::DATE AND eacd.booking_date <= ?::DATE";
+		    "SELECT eabd.tenant_id, eacd.add_type, eacd.face_area, eacd.location, eacd.night_light, eacd.status, eacd.booking_date\n"
+		    + "FROM eg_adv_booking_detail eabd\n"
+		    + "JOIN eg_adv_cart_detail eacd ON eabd.booking_id = eacd.booking_id\n"
+		    + "LEFT JOIN eg_adv_payment_timer eapt ON eabd.booking_id = eapt.booking_id\n"
+		    + "WHERE eabd.tenant_id = ?\n"
+		    + "AND eacd.status IN ('BOOKED', 'PENDING_FOR_PAYMENT')\n"
+		    + "AND eacd.booking_date >= ?::DATE\n"
+		    + "AND eacd.booking_date <= ?::DATE\n";
 
-	private static final String BOOKING_UPDATE_QUERY = "UPDATE public.eg_adv_booking_detail "
+	public static final String BOOKING_UPDATE_QUERY = "UPDATE public.eg_adv_booking_detail "
 	        + "SET booking_status= ?, payment_date = ?, lastmodifiedby = ?, lastmodifiedtime = ?, "
 	        + "permission_letter_filestore_id = ?, payment_receipt_filestore_id = ? WHERE booking_id = ?";
 
-	private static final String CART_UPDATE_QUERY = "UPDATE public.eg_adv_cart_detail "
-	        + "SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE cart_id=?";
+	public static final String CART_UPDATE_QUERY = "UPDATE public.eg_adv_cart_detail "
+	        + "SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE booking_id=?";
+	
+	public static final String UPDATE_BOOKING_STATUS =  "update eg_adv_booking_detail set booking_status = ?, lastmodifiedby = ?, lastmodifiedtime = ? "
+			+ " where booking_id in (?) ";
 
 	private static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timer(booking_id, createdby, createdtime, status, booking_no, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?);\n";
 
@@ -65,29 +71,19 @@ public class AdvertisementBookingQueryBuilder {
 	
 	private static final String FETCH_BOOKING_NO = "SELECT booking_no FROM eg_adv_booking_detail WHERE booking_id = ?";
 
-	private static final String INSERT_BOOKING_DETAIL_AUDIT_QUERY = 
+	public static final String INSERT_BOOKING_DETAIL_AUDIT_QUERY = 
 		    "INSERT INTO public.eg_adv_booking_detail_audit " +
 		    "SELECT * FROM public.eg_adv_booking_detail WHERE booking_id = ?";
 
-	private static final String INSERT_CART_DETAIL_AUDIT_QUERY = 
+	public static final String INSERT_CART_DETAIL_AUDIT_QUERY = 
 		    "INSERT INTO public.eg_adv_cart_detail_audit " +
 		    "SELECT cart_id, booking_id, booking_date::date, booking_from_time, booking_to_time, add_type, location, " +
 		    "face_area, night_light, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime " +
-		    "FROM public.eg_adv_cart_detail WHERE cart_id = ?";
+		    "FROM public.eg_adv_cart_detail WHERE booking_id = ?";
 		
 	private static final String BOOKING_ID_EXISTS_CHECK = "SELECT * FROM eg_adv_payment_timer WHERE booking_id = ?";
 	
-	private static final String STATUS_UPDATE_QUERY_FOR_TIMER = 
-		    "WITH booking_update AS ( " +
-		    "    UPDATE public.eg_adv_booking_detail " +
-		    "    SET booking_status = ? " +
-		    "    WHERE booking_id = ? " +
-		    "    RETURNING booking_id " +
-		    ") " +
-		    "UPDATE public.eg_adv_cart_detail " +
-		    "SET status = ? " +
-		    "WHERE booking_id = (SELECT booking_id FROM booking_update);";
-
+	
 	private Object createQueryParams(List<String> ids) {
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
@@ -139,9 +135,6 @@ public class AdvertisementBookingQueryBuilder {
 		return INSERT_CART_DETAIL_AUDIT_QUERY;
 	}
 
-	public String updateBookingStatusForTimer(String bookingId) {
-		return STATUS_UPDATE_QUERY_FOR_TIMER;
-	}
 	
 	public String checkBookingIdExists(String bookingId) {
 		return BOOKING_ID_EXISTS_CHECK;
@@ -224,6 +217,15 @@ public class AdvertisementBookingQueryBuilder {
 			builder.append(" ecbd.booking_status =  ? ");
 			preparedStmtList.add(status);
 		}
+		
+		String applicantName = criteria.getApplicantName();
+		if (applicantName != null) {
+		    applicantName = applicantName.trim();
+		    addClauseIfRequired(preparedStmtList, builder);
+		    builder.append(" appl.applicant_name = ? ");
+		    preparedStmtList.add(applicantName);
+		}
+
 
 		String mobileNo = criteria.getMobileNumber();
 		if (mobileNo != null) {
