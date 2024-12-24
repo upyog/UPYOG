@@ -206,22 +206,17 @@ public class UserService {
 
         searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
 
-//        if(searchCriteria.isDigilockersearch() && searchCriteria.getMobileNumber() != null){
-//            searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
-//        }
-//        else {
             String altmobnumber = null;
 
             if (searchCriteria.getMobileNumber() != null) {
                 altmobnumber = searchCriteria.getMobileNumber();
-            //}
+            }
 
             searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
 
             if (altmobnumber != null) {
                 searchCriteria.setAlternatemobilenumber(altmobnumber);
             }
-        }
         log.info("Search Criteria :-", searchCriteria);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
