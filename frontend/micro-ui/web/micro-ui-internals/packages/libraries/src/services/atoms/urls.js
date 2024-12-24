@@ -201,7 +201,8 @@ digiLocker:{
   register :"/requester-services-dx/user/authorization/url/citizen",
   token:"/requester-services-dx/user/token/citizen",
   issueDoc:"/requester-services-dx/user/issuedfiles",
-  uri:"/requester-services-dx/user/file"
+  uri:"/requester-services-dx/user/file",
+  auth:"/user/auth/_digilocker"
 },
   engagement: {
     document: {

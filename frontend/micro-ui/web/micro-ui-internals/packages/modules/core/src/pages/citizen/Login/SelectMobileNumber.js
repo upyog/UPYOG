@@ -68,8 +68,11 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
     e.preventDefault()
     const redirectUrl = data.redirectURL
     console.log("data", data)
-    sessionStorage.setItem("code_verfier_register", data?.codeverifier)
-    window.location.href = redirectUrl
+    localStorage.setItem("code_verfier_register", data?.codeverifier)
+    console.log("redirectUrl",redirectUrl)
+    const modifiedURL =redirectUrl.replace("https://upyog.niua.org", "http://localhost:3001");
+    console.log("modifiedURL",modifiedURL)
+   window.location.href = modifiedURL
   }
   return (
     <FormStep
