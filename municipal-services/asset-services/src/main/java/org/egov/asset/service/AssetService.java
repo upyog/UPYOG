@@ -32,6 +32,8 @@ import org.egov.asset.web.models.AssetActionResponse;
 import org.egov.asset.web.models.AssetApplicationDetail;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetSearchCriteria;
+import org.egov.asset.web.models.AssetUpdate;
+import org.egov.asset.web.models.AssetUpdateRequest;
 import org.egov.asset.web.models.CreationReason;
 import org.egov.asset.web.models.RequestInfoWrapper;
 import org.egov.asset.web.models.UserSearchCriteria;
@@ -49,6 +51,7 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.logstash.logback.encoder.org.apache.commons.lang.BooleanUtils;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 @Service
@@ -272,7 +275,7 @@ public class AssetService {
 					" Application cannot be create at StateLevel");
 		}
 		enrichmentService.enrichAssetOtherOperationsUpdateRequest(assetRequest);
-		assetRepository.updateAssignment(assetRequest);
+		//assetRepository.updateAssignment(assetRequest);
 		return assetRequest.getAsset();
 	}
 
@@ -332,18 +335,18 @@ public class AssetService {
 				 * rolesWithinTenant.contains(role))) .forEach(action -> {
 				 * actions.add(action.getAction()); }); });
 				 */
-				
+
 				for (State state : stateList) {
-				    List<Action> actionsList = state.getActions(); // Explicitly noting that this is a List<Action>
-				    for (Action action : actionsList) {
-				        List<String> rolesList = action.getRoles(); // Explicitly noting that this is a List<Role>
-				        for (String role : rolesList) {
-				            if (rolesWithinTenant.contains(role)) {
-				                actions.add(action.getAction());
-				                break; // Break to avoid adding the same action multiple times if multiple roles match
-				            }
-				        }
-				    }
+					List<Action> actionsList = state.getActions(); // Explicitly noting that this is a List<Action>
+					for (Action action : actionsList) {
+						List<String> rolesList = action.getRoles(); // Explicitly noting that this is a List<Role>
+						for (String role : rolesList) {
+							if (rolesWithinTenant.contains(role)) {
+								actions.add(action.getAction());
+								break; // Break to avoid adding the same action multiple times if multiple roles match
+							}
+						}
+					}
 				}
 
 				applicationActionMaps.put(applicationNumber, actions);
@@ -438,6 +441,132 @@ public class AssetService {
 			}
 		}
 		return response;
+	}
+
+	public AssetUpdate updateAsset(@Valid AssetUpdateRequest assetRequest) {
+		Map<String, AssetUpdate> appNoToSiteBookingMap = null;
+		try {
+			validateAssetUpdateRequest(assetRequest);
+			appNoToSiteBookingMap = searchAssetFromRequest(assetRequest);
+			assetRequest = validateAndEnrichUpdateAsset(assetRequest, appNoToSiteBookingMap);
+			assetRepository.updateAssignment(assetRequest);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return assetRequest.getAssetUpdate();
+	}
+
+	private @Valid AssetUpdateRequest validateAndEnrichUpdateAsset(@Valid AssetUpdateRequest assetRequest,
+			Map<String, AssetUpdate> appNoToSiteBookingMap) {
+		AssetUpdateRequest tempRequest = null;
+		AssetUpdate existingAsset = null;
+		AssetUpdate updateTemp =null;
+		try {
+			tempRequest = AssetUpdateRequest.builder().requestInfo(assetRequest.getRequestInfo())
+					.assetUpdate(new AssetUpdate()).build();
+		 existingAsset = appNoToSiteBookingMap.get(assetRequest.getAssetUpdate().getApplicationNo());
+		 
+		 if(null==existingAsset) {
+			 throw new CustomException("APPLICATION_NOT_FOUND","Application id not found: "+assetRequest.getAssetUpdate().getApplicationNo());
+		 }
+		 
+		 if(!assetRequest.getAssetUpdate().getIsOnlyWorkflowCall()) {
+			 assetRequest.getAssetUpdate().setApplicationNo(existingAsset.getApplicationNo());
+			 assetRequest.getAssetUpdate().setStatus(existingAsset.getStatus());
+			 assetRequest.getAssetUpdate().setAuditDetails(existingAsset.getAuditDetails());
+			 assetRequest.getAssetUpdate().getAuditDetails().setLastModifiedBy(existingAsset.getAuditDetails().getLastModifiedBy());
+			 assetRequest.getAssetUpdate().getAuditDetails().setLastModifiedTime(existingAsset.getAuditDetails().getLastModifiedTime());
+			 tempRequest.setAssetUpdate(assetRequest.getAssetUpdate());
+		 }
+		 
+		 else {
+			 Boolean isWfCall = assetRequest.getAssetUpdate().getIsOnlyWorkflowCall();
+			 String tempApplicationNo = assetRequest.getAssetUpdate().getApplicationNo();
+			 String action = assetRequest.getAssetUpdate().getWorkflowAction();
+			 String status = AssetConstants.getStatusOrAction(action,true);
+			 String comments = assetRequest.getAssetUpdate().getComments();
+			 
+			 updateTemp = objectMapper.convertValue(appNoToSiteBookingMap.get(assetRequest.getAssetUpdate().getApplicationNo()), AssetUpdate.class);
+			 
+			 if(null == updateTemp) {
+					throw new CustomException("FAILED_SEARCH_ASSET_UPDATE","Asset Update not found for workflow call.");
+				}
+			 updateTemp.setIsOnlyWorkflowCall(isWfCall);
+			 updateTemp.setApplicationNo(tempApplicationNo);
+			 updateTemp.setWorkflowAction(action);
+			 updateTemp.setComments(comments);
+			 updateTemp.setStatus(status);
+			 tempRequest.setAssetUpdate(updateTemp);
+		 }
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return tempRequest;
+	}
+
+	private Map<String, AssetUpdate> searchAssetFromRequest(@Valid AssetUpdateRequest assetRequest) {
+		AssetSearchCriteria criteria = null;
+		Map<String, AssetUpdate> bookingMap = new HashMap<>();
+		AssetUpdate updateDateFromDB = null;
+		String applicationNo = assetRequest.getAssetUpdate().getApplicationNo();
+		try {
+			criteria = AssetSearchCriteria.builder().applicationNo(applicationNo).build();
+			updateDateFromDB = (AssetUpdate) assetRepository.getAssetData(criteria);
+			if (null == updateDateFromDB) {
+				throw new CustomException("INVALID_APPLICATION_NO", "Please provide the correct application number!!!");
+			}
+			bookingMap.put(applicationNo, updateDateFromDB);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return bookingMap;
+	}
+
+	private void validateAssetUpdateRequest(@Valid AssetUpdateRequest assetRequest) {
+		try {
+			AssetUpdateRequest activeRequest = AssetUpdateRequest.builder().requestInfo(assetRequest.getRequestInfo())
+					.build();
+			if (null == assetRequest.getAssetUpdate()) {
+				throw new CustomException("EMPTY_REQUEST", "Provide Assets to update.");
+			}
+			if (BooleanUtils.isFalse(assetRequest.getAssetUpdate().getIsOnlyWorkflowCall())) {
+				if (StringUtils.isEmpty(assetRequest.getAssetUpdate().getId())) {
+					throw new CustomException("EMPTY_REQUEST", "Provide Asset ids to update.");
+				}
+			}
+			if (BooleanUtils.isTrue(assetRequest.getAssetUpdate().getIsOnlyWorkflowCall())) {
+				if (StringUtils.isEmpty(assetRequest.getAssetUpdate().getApplicationNo())) {
+					throw new CustomException("EMPTY_REQUEST", "Provide Asset Application number to update.");
+				}
+			}
+			if (null != assetRequest.getAssetUpdate()) {
+				searchValidateAndUpdateAsset(activeRequest);
+			}
+
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+
+	}
+
+	private void searchValidateAndUpdateAsset(AssetUpdateRequest activeRequest) {
+		AssetUpdate updateDataFromDB = new AssetUpdate();
+		AssetSearchCriteria searchCritria = new AssetSearchCriteria();
+		String applicationNo = activeRequest.getAssetUpdate().getApplicationNo();
+		try {
+			searchCritria = AssetSearchCriteria.builder().applicationNo(applicationNo).build();
+			updateDataFromDB = (AssetUpdate) assetRepository.getAssetData(searchCritria);
+			if (null == updateDataFromDB) {
+				throw new CustomException("INVALID_APPLICATION_NUMBER",
+						"Please provide the correct application number");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+
 	}
 
 }
