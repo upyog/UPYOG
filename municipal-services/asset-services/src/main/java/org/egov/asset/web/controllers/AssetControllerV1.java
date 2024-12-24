@@ -134,7 +134,7 @@ public class AssetControllerV1 {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "assignment/_update", method = RequestMethod.POST)
+	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<AssetUpdationResponse> assetUpdate(@Valid @RequestBody AssetUpdateRequest assetRequest) {
 		AssetUpdate asset = assetService.updateAsset(assetRequest);
 		List<AssetDTO> assets = new ArrayList<AssetDTO>();
