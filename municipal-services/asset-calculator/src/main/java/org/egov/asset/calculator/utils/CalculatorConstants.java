@@ -36,7 +36,7 @@ public class CalculatorConstants {
 
 	// Error messages in FSM Calculator
 	public static final String PARSING_ERROR = "PARSING ERROR";
-	public static final String PROCESSING_ERROR = "PARSING ERROR ";
+	public static final String PROCESSING_ERROR = "PROCESSING ERROR ";
 
 	public static final String INVALID_PRICE = "INVALID PRICE";
 	public static final String INVALID_PRAMS = "INVALID PRICE";

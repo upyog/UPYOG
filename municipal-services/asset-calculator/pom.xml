@@ -35,10 +35,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -177,22 +173,24 @@
 				</executions>
 				<configuration>
 					<jsonLibrary>jackson2</jsonLibrary>
+					<!-- Specify the classes to include -->
 					<classes>
-						<class>models.web.org.egov.asset.calculator.DepreciationRes</class>
-						<class>models.web.org.egov.asset.calculator.CalculationReq</class>
-						<class>models.web.org.egov.asset.calculator.CalculationRes</class>
+						<class>org.egov.common.contract.request.User</class>
+						<class>org.egov.common.contract.request.RequestInfo</class>
+						<class>org.egov.common.contract.response.ResponseInfo</class>
 					</classes>
 					<customTypeMappings>
 						<customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
-						<customTypeMapping>models.web.org.egov.asset.calculator.Document:Document</customTypeMapping>
 					</customTypeMappings>
 					<namespace>Digit</namespace>
-					<debug>true</debug>
+					<loggingLevel>Debug</loggingLevel> <!-- Replaces deprecated debug -->
+					<outputFile>target/typescript/types.d.ts</outputFile>
 					<outputKind>module</outputKind>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>
