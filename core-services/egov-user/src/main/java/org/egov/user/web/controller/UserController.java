@@ -192,7 +192,8 @@ public class UserController {
         List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
         if ( !userContracts.isEmpty()) {            
         	User user = createUserRequest.toDomain(false);            
-        	User existingUser = user;            
+        	User existingUser = userContracts.get(0).toUser(); 
+        	user = existingUser;
         	user.setDigilockerRegistration(isDigiLockerRegistration);            
         	Object updatedUser = userService.updateDigilockerID(user, existingUser, createUserRequest.getRequestInfo());            
         	return new ResponseEntity<>(updatedUser, HttpStatus.OK);
