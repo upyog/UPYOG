@@ -160,6 +160,7 @@ public class ExcelUtil {
             createCell(grandTotalRow, column++, moduleYCounts[i], grandTotalStyle, sheet);
         }
 
+        column++;
         createCell(grandTotalRow, column, totalYmodule, grandTotalStyle, sheet);
     }
 
