@@ -24,6 +24,9 @@ public class CalculationService {
     @Autowired
     private ProcessDepreciation processDepreciation;
 
+    @Autowired
+    private ProcessDepreciationV2 depreciationServiceV2;
+
     CalculationRes calculationRes;
 
 
@@ -39,7 +42,8 @@ public class CalculationService {
     public CalculationRes calculate(CalculationReq calculationReq) {
         String tenantId = calculationReq.getCalulationCriteria().getTenantId().split("\\.")[0];
         //Object mdmsData = mdmsService.mDMSCall(calculationReq, tenantId);
-        String message = processDepreciation.executeSingleAndLegacyDepreciationProcedure(calculationReq.getCalulationCriteria().getTenantId(), calculationReq.getCalulationCriteria().getAssetId());
+        //String message = processDepreciation.executeSingleAndLegacyDepreciationProcedure(calculationReq.getCalulationCriteria().getTenantId(), calculationReq.getCalulationCriteria().getAssetId());
+        String message = depreciationServiceV2.calculateDepreciation(calculationReq.getCalulationCriteria().getTenantId(), calculationReq.getCalulationCriteria().getAssetId(), false);
         calculationRes = CalculationRes.builder().message(message).build();
         return calculationRes;
     }

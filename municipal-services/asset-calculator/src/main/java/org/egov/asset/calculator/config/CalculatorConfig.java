@@ -27,6 +27,9 @@ public class CalculatorConfig {
 	@Value("${egov.asset.search.endpoint}")
 	private String assetSearchEndpoint;
 
+	@Value("${scheduler.batch.size}")
+	private int batchSize;
+
 
 	// MDMS
 	@Value("${egov.mdms.host}")
