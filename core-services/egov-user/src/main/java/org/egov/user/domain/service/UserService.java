@@ -688,7 +688,10 @@ public class UserService {
         	return getAccess(user, user.getOtpReference());
         	}
     	else {
-    	userRepository.update(user, existingUser, existingUser.getId(), existingUser.getUuid());        
+    	user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);        
+    	userRepository.update(user, existingUser, existingUser.getId(), existingUser.getUuid()); 
+    	user = encryptionDecryptionUtil.decryptObject(user, null, User.class, requestInfo);
+    	//user = decryptionDecryptionUtil.decryptObject(user, "User", User.class);        
     	return getAccess(user, user.getOtpReference());
     	}
     }

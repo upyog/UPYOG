@@ -20,6 +20,7 @@ import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -249,6 +250,92 @@ public class User {
         active = isActive;
     }
 
+    public User toUser(User u) {
+   	 
+        User user = new User();
+ 
+        user.setId(u.id);
+        user.setUuid(u.uuid);
+        user.setTenantId(u.tenantId);
+        user.setUsername(u.username);
+        user.setSalutation(u.salutation);
+        user.setName(u.name);
+        user.setMobileNumber(u.mobileNumber);
+        user.setEmailId(u.emailId);
+        user.setAltContactNumber(u.altContactNumber);
+        user.setPan(u.pan);
+        user.setAadhaarNumber(u.aadhaarNumber);
+ 
+        // Gender conversion
+        if (u.gender != null) {
+            try {
+                user.setGender(u.gender);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid gender value: " + u.gender);
+            }
+        }
+ 
+        // BloodGroup conversion
+        if (u.bloodGroup != null) {
+            try {
+                user.setBloodGroup(u.bloodGroup);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid blood group value: " + u.bloodGroup);
+            }
+        }
+ 
+        user.setLocale(u.locale);
+        user.setType(u.type);
+        user.setAccountLocked(u.accountLocked);
+        user.setAccountLockedDate(u.accountLockedDate);
+        user.setDob(u.dob);
+        user.setPasswordExpiryDate(u.getPasswordExpiryDate());
+        user.setSignature(u.signature);
+        user.setPhoto(u.photo);
+        user.setIdentificationMark(u.identificationMark);
+        user.setCreatedBy(u.createdBy);
+        user.setCreatedDate(u.createdDate);
+        user.setLastModifiedBy(u.lastModifiedBy);
+        user.setLastModifiedDate(u.lastModifiedDate);
+//        user.setGuardian(u.fatherOrHusbandName);
+//        user.setGuardianRelation(u.relationship);
+        user.setActive(u.active);
+        user.setAlternateMobileNumber(u.alternateMobileNumber);
+ 
+        // Address mappings
+//        if (u.permanentAddress != null || u.permanentCity != null || u.permanentPinCode != null) {
+//            Address permanentAddress = new Address();
+//            permanentAddress.setAddress(u.permanentAddress);
+//            permanentAddress.setCity(u.permanentCity);
+//            permanentAddress.setPinCode(u.permanentPinCode);
+//            user.setPermanentAddress(permanentAddress);
+//        }
+ 
+//        if (u.correspondenceAddress != null || u.correspondenceCity != null || u.correspondencePinCode != null) {
+//            Address correspondenceAddress = new Address();
+//            correspondenceAddress.setAddress(u.correspondenceAddress);
+//            correspondenceAddress.setCity(u.correspondenceCity);
+//            correspondenceAddress.setPinCode(u.correspondencePinCode);
+//            user.setCorrespondenceAddress(correspondenceAddress);
+//        }
+ 
+        user.setAddresses(u.addresses);
+ 
+        // Roles conversion
+        if (u.roles != null) {
+            Set<Role> roleEntities = u.roles.stream()
+                    .map(roleRequest -> {
+                        Role role = new Role();
+                        role.setCode(roleRequest.getCode());
+                        role.setName(roleRequest.getName());
+                        return role;
+                    })
+                    .collect(Collectors.toSet());
+            user.setRoles(roleEntities);
+        }
+ 
+        return user;
+    }
 }
 
 

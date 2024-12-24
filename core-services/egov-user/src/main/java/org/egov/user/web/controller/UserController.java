@@ -190,10 +190,11 @@ public class UserController {
         //request.setDigilockerSearch(isDigiLockerSearch);
         request.setTenantId(createUserRequest.getUser().getTenantId());
         List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
-        if ( !userContracts.isEmpty()) {            
-        	User user = createUserRequest.toDomain(false);            
+        if ( !userContracts.isEmpty()) {   
+        	
         	User existingUser = userContracts.get(0).toUser(); 
-        	user = existingUser;
+        	User user = new User().toUser(existingUser);
+        	user.setDigilockerid(createUserRequest.getUser().getDigilockerid());
         	user.setDigilockerRegistration(isDigiLockerRegistration);            
         	Object updatedUser = userService.updateDigilockerID(user, existingUser, createUserRequest.getRequestInfo());            
         	return new ResponseEntity<>(updatedUser, HttpStatus.OK);
