@@ -543,7 +543,7 @@ public class AssetService {
 				}
 			}
 			if (null != assetRequest.getAssetUpdate()) {
-				searchValidateAndUpdateAsset(activeRequest);
+				searchValidateAndUpdateAsset(assetRequest);
 			}
 
 		} catch (Exception e) {
