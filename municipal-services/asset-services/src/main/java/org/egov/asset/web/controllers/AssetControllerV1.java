@@ -94,7 +94,7 @@ public class AssetControllerV1 {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+	@RequestMapping(value = "/_update/update", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		Asset asset = assetService.update(assetRequest);
@@ -121,7 +121,7 @@ public class AssetControllerV1 {
 
 	}
 
-	@RequestMapping(value = "assignment/_update/update", method = RequestMethod.POST)
+	@RequestMapping(value = "assignment/_update", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsAssignmentUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		Asset asset = assetService.updateAssignment(assetRequest);
@@ -139,7 +139,7 @@ public class AssetControllerV1 {
 		AssetUpdate asset = assetService.updateAsset(assetRequest);
 		List<AssetDTO> assets = new ArrayList<AssetDTO>();
 		assets.add(asset);
-		AssetUpdationResponse response = AssetUpdationResponse.builder().assets(assets)
+		AssetUpdationResponse response =  AssetUpdationResponse.builder().assets(assets)
 				.responseInfo(
 						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
 				.build();
