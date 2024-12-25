@@ -5,31 +5,31 @@ import org.upyog.web.models.CommonDetails;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Component
-public class CommunityHallDetailsMapper implements CommonDetailsMapper {
+public class EwasteDetailsMapper implements CommonDetailsMapper {
 
 	@Override
     public String getModuleName() {
-        return "communityhall";
+        return "ewaste";
     }
 	
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		// Access the first element of the HallApplication array
+		// Access the first element of the EwasteApplication array
 		
-		JsonNode HallApplication = json.path("hallsBookingApplication").isArray()
-				&& json.path("hallsBookingApplication").size() > 0 ? json.path("hallsBookingApplication").get(0) : null;
+		JsonNode EwasteApplication = json.path("EwasteApplication").isArray()
+				&& json.path("EwasteApplication").size() > 0 ? json.path("EwasteApplication").get(0) : null;
 
-		if (HallApplication == null) {
+		if (EwasteApplication == null) {
 			return CommonDetails.builder().applicationNumber("N/A").fromDate("N/A").toDate("N/A").address("N/A")
 					.status("N/A").build();
 		}
 
 		
 		// Extract the application number and status
-		String applicationNumber = HallApplication.path("bookingNo").asText("N/A");
-		String status = HallApplication.path("bookingStatus").asText("N/A");
-		String moduleName = "chb-services";
-		if (!"BOOKED".equalsIgnoreCase(status)) {
+		String applicationNumber = EwasteApplication.path("requestId").asText("N/A");
+		String status = EwasteApplication.path("requestStatus").asText("N/A");
+		String moduleName = "ew-services";
+		if (!"REQUESTCOMPLETED".equalsIgnoreCase(status)) {
 	        // If not BOOKED, set status as Pending and other details as N/A
 	        return CommonDetails.builder()
 	                .applicationNumber(applicationNumber)
@@ -45,13 +45,6 @@ public class CommunityHallDetailsMapper implements CommonDetailsMapper {
 		String toDate = "N/A";
 		String location = "N/A";
 		
-		JsonNode bookingSlotDetails = HallApplication.path("bookingSlotDetails");
-
-		if (bookingSlotDetails.isArray() && bookingSlotDetails.size() > 0) {
-			fromDate = bookingSlotDetails.get(0).path("bookingDate").asText("N/A");
-			toDate = bookingSlotDetails.get(bookingSlotDetails.size() - 1).path("bookingDate").asText("N/A");
-			location = bookingSlotDetails.get(0).path("hallCode").asText("N/A"); // Map location to address
-		}
 
 
 		// Build and return the CommonDetails object
@@ -59,5 +52,4 @@ public class CommunityHallDetailsMapper implements CommonDetailsMapper {
 				.address(location).moduleName(moduleName)
 				.status(status).build();
 	}
-
 }
