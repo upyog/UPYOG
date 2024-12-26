@@ -13,8 +13,8 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     @Query(
             "SELECT COUNT(a) " +
                     "FROM Asset a " +
-                    "WHERE (:tenantId IS NOT NULL AND a.tenantId = :tenantId) " +
-                    "   OR (:tenantId IS NULL AND a.tenantId LIKE 'pg%') " +
+                    "WHERE (:tenantId = 'pg' AND a.tenantId LIKE CONCAT(:tenantId, '%')) " +
+                    "   OR (:tenantId != 'pg' AND a.tenantId = :tenantId) " +
                     "   AND a.isLegacyData = true " +
                     "   AND (:assetId IS NULL OR a.id = :assetId)"
     )
@@ -23,15 +23,15 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
             @Param("assetId") String assetId
     );
 
-
     @Query(
             "SELECT COUNT(a) " +
                     "FROM Asset a " +
-                    "WHERE (:tenantId IS NOT NULL AND a.tenantId = :tenantId) " +
-                    "  OR (:tenantId IS NULL AND a.tenantId LIKE 'pg%') " +
+                    "WHERE " +
+                    "    ((:tenantId = 'pg' AND a.tenantId LIKE CONCAT(:tenantId, '%')) " +
+                    "     OR (:tenantId != 'pg' AND a.tenantId = :tenantId)) " +
                     "  AND a.isLegacyData = false " +
                     "  AND (:assetId IS NULL OR a.id = :assetId) " +
-                    "  AND FUNCTION('to_char', FUNCTION('to_timestamp', a.purchaseDate / 1000), 'MM-dd') = :currentDate"
+                    "  AND TO_CHAR(TO_TIMESTAMP(a.purchaseDate / 1000), 'MM-dd') = :currentDate"
     )
     int countNonLegacyAssets(
             @Param("tenantId") String tenantId,
@@ -40,8 +40,21 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     );
 
 
-    @Query("SELECT a FROM Asset a WHERE a.tenantId = :tenantId AND (:assetId IS NULL OR a.id = :assetId) AND ((a.isLegacyData = :legacyData) OR (a.isLegacyData = false AND FUNCTION('TO_CHAR', a.purchaseDate, 'MM-dd') = :currentDate)) ORDER BY a.id")
-    List<Asset> findAssetsForDepreciation(@Param("tenantId") String tenantId, @Param("assetId") String assetId,
-                                          @Param("legacyData") boolean legacyData, @Param("currentDate") String currentDate,
+    @Query("SELECT a " +
+            "FROM Asset a " +
+            "WHERE " +
+            "    ((:tenantId = 'pg' AND a.tenantId LIKE CONCAT(:tenantId, '%')) " +
+            "     OR (:tenantId != 'pg' AND a.tenantId = :tenantId)) " +
+            "  AND (:assetId IS NULL OR a.id = :assetId) " +
+            "  AND (a.isLegacyData = :legacyData " +
+            "       OR (a.isLegacyData = false " +
+            "           AND TO_CHAR(TO_TIMESTAMP(a.purchaseDate / 1000), 'MM-dd') = :currentDate)) " +
+            "ORDER BY a.id")
+    List<Asset> findAssetsForDepreciation(@Param("tenantId") String tenantId,
+                                          @Param("assetId") String assetId,
+                                          @Param("legacyData") boolean legacyData,
+                                          @Param("currentDate") String currentDate,
                                           Pageable pageable);
+
+
 }
