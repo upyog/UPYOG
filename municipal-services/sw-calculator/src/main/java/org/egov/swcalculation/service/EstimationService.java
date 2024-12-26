@@ -521,10 +521,13 @@ public class EstimationService {
 			else
 				connection_plotSize = new BigDecimal(property.getLandArea());
 
-			if (connection_plotSize == null || connection_propertyType == null || connection_propertyType.equals(""))
+			if ((connection_plotSize == null || connection_propertyType == null || connection_propertyType.equals("")) && !property.getUsageCategory().equals("MIXED"))
 				connection_propertyType = "DEFAULT"; // default connectionFee to be applied from mdms
 			else if (connection_propertyType.contains("DOM") || connection_propertyType.contains("USAGE_RESIDENTIAL"))
 				connection_propertyType = "DOMESTIC";
+			else if (connection_plotSize == null && property.getUsageCategory().equals("MIXED")) 
+		        // If propertyType is MIXED and plot size is null, set superbuilduparea into connection_plotSize
+		        connection_plotSize = property.getSuperBuiltUpArea();		
 			else
 				connection_propertyType = "COMMERCIAL";
 
@@ -536,6 +539,7 @@ public class EstimationService {
 			String propertyType = null;
 
 			HashMap<String, String> connFeeMap = null;
+			
 			for (int i = 0; i < conn_fees.size(); i++) {
 				connFeeMap = (HashMap<String, String>) conn_fees.get(i);
 				fromPlotSize = new BigDecimal(connFeeMap.get("fromPlotSize"));
@@ -554,7 +558,7 @@ public class EstimationService {
 			// BigDecimal(feeObj.getAsNumber(SWCalculationConstant.SW_CONNECTION_FEE_CONST).toString());
 			connectionFee = connectionFeeApplicable;
 		}
-
+		
 		BigDecimal otherCharges = BigDecimal.ZERO;
 		if (feeObj.get(SWCalculationConstant.OTHER_FEE_CONST) != null) {
 			otherCharges = new BigDecimal(feeObj.getAsNumber(SWCalculationConstant.OTHER_FEE_CONST).toString());
