@@ -143,6 +143,15 @@ public class GrbgConstants {
 	@Value("${garbage.service.pay.now.bill.endpoint}")
 	private String grbgPayNowBillEndpoint;
 
+	@Value("${egov.enc.host}")
+	private String encServiceHostUrl;
+
+	@Value("${egov.enc.encrypt.endpoint}")
+	private String encEncryptEndpoint;
+
+	@Value("${egov.enc.decrypt.endpoint}")
+	private String encDecrypyEndpoint;
+
 	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
 		String appNo = null;
 		appNo = GrbgConstants.APPLICATION_PREFIX;

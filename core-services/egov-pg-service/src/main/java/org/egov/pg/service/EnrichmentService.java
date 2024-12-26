@@ -103,6 +103,8 @@ public class EnrichmentService {
         newTxn.setAdditionalDetails(currentTxnStatus.getAdditionalDetails());
         newTxn.setTaxAndPayments(currentTxnStatus.getTaxAndPayments());
         newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
+        newTxn.setOrderId(currentTxnStatus.getOrderId());
+        newTxn.setModule(currentTxnStatus.getModule());
         newTxn.setTxnStatusMsg(currentTxnStatus.getTxnStatusMsg());
         newTxn.setReceipt(currentTxnStatus.getReceipt());
 
