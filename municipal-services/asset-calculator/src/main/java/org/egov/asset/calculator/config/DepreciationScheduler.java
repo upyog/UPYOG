@@ -48,7 +48,7 @@ public class DepreciationScheduler {
             for (String tenantId : tenantIds) {
                 log.info("Processing depreciation for tenant: {}", tenantId);
                 //processDepreciation.executeBulkDepreciationProcedure(config.getDefaultTenantId());
-                processDepreciation.calculateDepreciation(tenantId, null, false);
+                processDepreciation.calculateDepreciation(tenantId, null, config.getLegacyDataFlag());
             }
             LocalDateTime endTime = LocalDateTime.now();
             long durationInMillis = java.time.Duration.between(startTime, endTime).toMillis();

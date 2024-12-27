@@ -41,4 +41,18 @@ public class CalculatorConfig {
 	@Value("${default.tenant.id}")
 	private String defaultTenantId;
 
+	@Value("${persister.save.depreciation.topic}")
+	private String saveDepreciation;
+
+	@Value("${persister.update.depreciation.topic}")
+	private String updateDepreciation;
+
+
+	@Value("${depreciation.legacy.data.flag}")
+	private Boolean legacyDataFlag;
+
+
+
+
+
 }

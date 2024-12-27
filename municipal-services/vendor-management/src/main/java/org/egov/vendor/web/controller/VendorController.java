@@ -1,7 +1,7 @@
 
 package org.egov.vendor.web.controller;
 
-import org.egov.vendor.web.models.Contractor;
+import org.egov.vendor.web.models.Vendor;
 import org.egov.vendor.service.ContractorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,26 +10,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vendor/api/contractors")
-public class ContractorController {
+public class VendorController {
 
     private final ContractorService contractorService;
 
-    public ContractorController(ContractorService contractorService) {
+    public VendorController(ContractorService contractorService) {
         this.contractorService = contractorService;
     }
 
     @GetMapping
-    public List<Contractor> getAllContractors() {
+    public List<Vendor> getAllContractors() {
         return contractorService.getAllContractors();
     }
 
     @PostMapping
-    public Contractor createContractor(@RequestBody Contractor contractor) {
+    public Vendor createContractor(@RequestBody Vendor contractor) {
         return contractorService.saveContractor(contractor);
     }
 
     @PutMapping("/{id}")
-    public Contractor updateContractor(@PathVariable Long id, @RequestBody Contractor contractor) {
+    public Vendor updateContractor(@PathVariable Long id, @RequestBody Vendor contractor) {
         return contractorService.updateContractor(id, contractor);
     }
 
