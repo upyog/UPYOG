@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.config.AssetConfiguration;
@@ -175,6 +177,11 @@ public class AssetRepository {
 			throw new RuntimeException(e.getMessage());
 		}
 		return statusList;
+	}
+
+	public void updateAsset(@Valid AssetUpdateRequest assetRequest) {
+		producer.push(config.getUpdateTopic(), assetRequest);
+		
 	}
 
 }
