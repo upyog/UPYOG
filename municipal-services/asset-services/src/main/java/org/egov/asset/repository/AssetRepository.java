@@ -12,9 +12,12 @@ import org.egov.asset.repository.querybuilder.AssetQueryBuilder;
 import org.egov.asset.repository.rowmapper.AssetAuditRowMapper;
 import org.egov.asset.repository.rowmapper.AssetLimitedDateRowMapper;
 import org.egov.asset.repository.rowmapper.AssetRowMapper;
+import org.egov.asset.repository.rowmapper.AssetUpdateLimitedDateRowMapper;
+import org.egov.asset.repository.rowmapper.AssetUpdateRowMapper;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetAuditDetails;
 import org.egov.asset.web.models.AssetSearchCriteria;
+import org.egov.asset.web.models.AssetUpdate;
 import org.egov.asset.web.models.AssetUpdateRequest;
 import org.egov.asset.web.models.AssetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,12 @@ public class AssetRepository {
 	
 	@Autowired
 	AssetAuditRowMapper assetAuditRowMapper; 
+	
+	@Autowired
+	AssetUpdateRowMapper assetUpdateRowMapper;
+	
+	@Autowired
+	AssetUpdateLimitedDateRowMapper assetUpdateLimitedDateRowMapper;
 	
 	
 	/**
@@ -109,6 +118,20 @@ public class AssetRepository {
 			 query = queryBuilder.getAssetSearchQueryForLimitedData(searchCriteria, preparedStmtList);
 			 log.info("Final query: " + query);
 				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
+		}
+	}
+	public List<AssetUpdate> getAssetDataFromDB(AssetSearchCriteria searchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = null;
+		if(searchCriteria.getApplicationNo() != null) {
+			 query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
+			 log.info("Final query: " + query);
+			return jdbcTemplate.query(query, preparedStmtList.toArray(), assetUpdateRowMapper);
+		}
+		else {
+			 query = queryBuilder.getAssetSearchQueryForLimitedData(searchCriteria, preparedStmtList);
+			 log.info("Final query: " + query);
+				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetUpdateLimitedDateRowMapper);
 		}
 	}
 	
