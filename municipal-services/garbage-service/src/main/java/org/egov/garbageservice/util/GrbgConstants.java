@@ -152,6 +152,12 @@ public class GrbgConstants {
 	@Value("${egov.enc.decrypt.endpoint}")
 	private String encDecrypyEndpoint;
 
+	@Value("${egov.user.host}")
+	private String userServiceHostUrl;
+
+	@Value("${egov.user.search.endpoint}")
+	private String userSearchEndpoint;
+
 	public static String generateApplicationNumberFormat(String id, String ulbName, String district) {
 		String appNo = null;
 		appNo = GrbgConstants.APPLICATION_PREFIX;
