@@ -5,6 +5,8 @@ public class CalculatorConstants {
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID_TENANT_ID_MDMS_KEY";
 	public static final String INVALID_TENANT_ID_MDMS_MSG = "INVALID_TENANT_ID_MDMS_MSG";
 	public static final String INVALID_PROPERTY_TYPE = "INVALID_PROPERTY_TYPE";
+	public static final  String SLM = "SLM";
+	public static final  String DBM = "DBM";
 
 	private CalculatorConstants() {
 	}

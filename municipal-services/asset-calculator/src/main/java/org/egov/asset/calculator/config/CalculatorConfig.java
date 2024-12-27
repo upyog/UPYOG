@@ -47,4 +47,12 @@ public class CalculatorConfig {
 	@Value("${persister.update.depreciation.topic}")
 	private String updateDepreciation;
 
+
+	@Value("${depreciation.legacy.data.flag}")
+	private Boolean legacyDataFlag;
+
+
+
+
+
 }

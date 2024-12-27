@@ -46,9 +46,12 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
             "    ((:tenantId = 'pg' AND a.tenantId LIKE CONCAT(:tenantId, '%')) " +
             "     OR (:tenantId != 'pg' AND a.tenantId = :tenantId)) " +
             "  AND (:assetId IS NULL OR a.id = :assetId) " +
-            "  AND (a.isLegacyData = :legacyData " +
-            "       OR (a.isLegacyData = false " +
-            "           AND TO_CHAR(TO_TIMESTAMP(a.purchaseDate / 1000), 'MM-dd') = :currentDate)) " +
+            "  AND (" +
+            "       (:legacyData = true AND a.isLegacyData = true) " + // Fetch only legacy data if legacyData is true
+            "       OR " +
+            "       (:legacyData = false AND a.isLegacyData = false AND " +
+            "        TO_CHAR(TO_TIMESTAMP(a.purchaseDate / 1000), 'MM-dd') = :currentDate)" + // Fetch non-legacy data only for matching dates
+            "      ) " +
             "ORDER BY a.id")
     List<Asset> findAssetsForDepreciation(@Param("tenantId") String tenantId,
                                           @Param("assetId") String assetId,

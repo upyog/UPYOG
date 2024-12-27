@@ -8,6 +8,7 @@ import org.egov.asset.calculator.repository.AssetRepository;
 import org.egov.asset.calculator.repository.DepreciationDetailRepository;
 import org.egov.asset.calculator.repository.MdmsDataRepository;
 import org.egov.asset.calculator.utils.CalculatorConstants;
+import org.egov.asset.calculator.utils.dto.DepreciationRateDTO;
 import org.egov.asset.calculator.web.models.DepreciationDetail;
 import org.egov.asset.calculator.web.models.DepreciationReq;
 import org.egov.asset.calculator.web.models.contract.Asset;
@@ -21,7 +22,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +89,7 @@ public class ProcessDepreciationV2 {
             Pageable pageable = PageRequest.of(pageIndex, BATCH_SIZE);
             List<Asset> assets = assetRepository.findAssetsForDepreciation(
                     tenantId, assetId, legacyData, currentDate.format(DateTimeFormatter.ofPattern("MM-dd")), pageable);
+            log.info("Second time count Check : Total Assets fetched for processing is : {}",assets.size() );
             log.info("Processing batch {}", pageIndex + 1);
             for (Asset asset : assets) {
                 processAssetDepreciation(asset, currentDate, legacyData);
@@ -128,8 +129,18 @@ public class ProcessDepreciationV2 {
             remainingLife = Integer.parseInt(asset.getLifeOfAsset()) - yearsElapsed;
 
             while (endDate.isBefore(currentDate) && remainingLife > 0) {
-                BigDecimal depreciationRate = fetchDepreciationRate(asset.getAssetCategory());
-                BigDecimal depreciation = calculateDepreciationValue(asset, depreciationRate);
+                DepreciationRateDTO  depreciationRateDTO = fetchDepreciationRateAndMethod(asset.getAssetCategory(), asset.getPurchaseDate());
+                BigDecimal depreciationRate = depreciationRateDTO.getRate();
+                BigDecimal depreciation = null;
+
+                String depreciationMethod = depreciationRateDTO.getMethod();
+                if(depreciationMethod.equals(CalculatorConstants.SLM)){
+                    depreciation = calculateDepreciationValueSLM(asset, depreciationRate);
+                }
+                else {
+                    depreciation = calculateDepreciationValueDBM(asset, depreciationRate);
+                }
+
                 BigDecimal currentBookValue = BigDecimal.valueOf(asset.getBookValue()).subtract(depreciation);
                 asset.setBookValue(currentBookValue.doubleValue());
                 saveDepreciationDetail(asset, startDate, endDate, depreciation, depreciationRate, true);
@@ -152,35 +163,66 @@ public class ProcessDepreciationV2 {
 
             LocalDate anniversaryDate = LocalDate.of(currentDate.getYear(), purchaseDate.getMonth(), purchaseDate.getDayOfMonth());
 
-            if (!anniversaryDate.equals(currentDate)) {
+            if (!anniversaryDate.equals(currentDate) || purchaseDate.equals(currentDate)) {
+                log.warn("Anniversary date / purchase date not applicable for assetId: {} Skipping processing.", asset.getId());
                 return; // Skip if not the anniversary date
             }
+            log.info("before calling depreciation rate method for category: {} and purchasedate: {}", asset.getAssetCategory(), asset.getPurchaseDate());
+            DepreciationRateDTO  depreciationRateDTO = fetchDepreciationRateAndMethod(asset.getAssetCategory(), asset.getPurchaseDate());
+            BigDecimal depreciationRate = depreciationRateDTO.getRate();
+            BigDecimal depreciation = null;
 
-            BigDecimal depreciationRate = fetchDepreciationRate(asset.getAssetCategory());
-            BigDecimal depreciation = calculateDepreciationValue(asset, depreciationRate);
+            String depreciationMethod = depreciationRateDTO.getMethod();
+            if (depreciationRate != null && depreciationRate.compareTo(BigDecimal.ZERO) > 0) {
+                if (depreciationMethod.equals(CalculatorConstants.SLM)) {
+                    depreciation = calculateDepreciationValueSLM(asset, depreciationRate);
+                } else {
+                    depreciation = calculateDepreciationValueDBM(asset, depreciationRate);
+                }
 
-            BigDecimal currentBookValue = BigDecimal.valueOf(asset.getBookValue()).subtract(depreciation);
-            //currentBookValue = asset.setBookValue(BigDecimal.valueOf(asset.getBookValue()).subtract(depreciation).doubleValue());
-            asset.setBookValue(currentBookValue.doubleValue());
+                BigDecimal currentBookValue = BigDecimal.valueOf(asset.getBookValue()).subtract(depreciation);
+                //currentBookValue = asset.setBookValue(BigDecimal.valueOf(asset.getBookValue()).subtract(depreciation).doubleValue());
+                asset.setBookValue(currentBookValue.doubleValue());
 
-            saveDepreciationDetail(asset, purchaseDate, anniversaryDate, depreciation, depreciationRate, false);
-            assetRepository.save(asset);
+                saveDepreciationDetail(asset, purchaseDate, anniversaryDate, depreciation, depreciationRate, false);
+                assetRepository.save(asset);
+            }
+            else {
+                log.info("Depreciation not processed for assetId : {} as rate is Zero", asset.getId());
+            }
         }
     }
 
     /**
      * Fetches depreciation rate for a given asset category.
-     * @param category Asset category.
+     *
+     * @param category     Asset category.
+     * @param purchaseDate
      * @return Depreciation rate.
      */
-    private BigDecimal fetchDepreciationRate(String category) {
-        BigDecimal depreciationRate = mdmsDataRepository.findDepreciationRateByCategory(category);
-        depreciationRate = BigDecimal.valueOf(10.0); // set static value for testing
-        if (depreciationRate == null) {
-            throw new IllegalArgumentException("Depreciation rate not found for category: " + category);
-        }
+    private DepreciationRateDTO fetchDepreciationRateAndMethod(String category, Long purchaseDate) {
 
-        return depreciationRate;
+        BigDecimal depreciationRate = null; // set static value for testing
+        String depreciationMethod = null;
+
+        Object[] result = mdmsDataRepository.findDepreciationRateByCategoryAndPurchaseDate(category.trim(), purchaseDate);
+        log.debug("Fetched depreciation rate for rate, method: {}", result[0]);
+
+        // Check if result is a nested array
+        if (((Object[]) result).length > 0 && ((Object[]) result)[0] instanceof Object[]) {
+            Object[] innerArray = (Object[]) ((Object[]) result)[0];
+             depreciationRate = (innerArray[0] instanceof BigDecimal) ? (BigDecimal) innerArray[0] : null;
+             depreciationMethod = (innerArray[1] instanceof String) ? (String) innerArray[1] : null;
+
+            if (depreciationRate == null || depreciationMethod == null) {
+                throw new IllegalArgumentException("Depreciation details are incomplete.");
+
+            }
+            log.info("Depreciation Rate is : {} and method is :{} ", depreciationRate, depreciationMethod);
+            return new DepreciationRateDTO(depreciationRate, depreciationMethod);
+        }
+        log.info("Depreciation Rate is : {} and method is :{} ", depreciationRate, depreciationMethod);
+        return new DepreciationRateDTO(depreciationRate, depreciationMethod);
     }
 
     /**
@@ -192,7 +234,13 @@ public class ProcessDepreciationV2 {
      * @param depreciationRate The rate of depreciation (as a percentage).
      * @return The calculated depreciation value.
      */
-    private BigDecimal calculateDepreciationValue(Asset asset, BigDecimal depreciationRate) {
+    private BigDecimal calculateDepreciationValueSLM(Asset asset, BigDecimal depreciationRate) {
+
+        // If the depreciation rate is null or 0, skip the calculation and return 0
+        if (depreciationRate == null || BigDecimal.ZERO.compareTo(depreciationRate) == 0) {
+            return BigDecimal.ZERO;
+        }
+
         // Fetch the current book value of the asset
         BigDecimal bookValue = BigDecimal.valueOf(asset.getBookValue());
 
@@ -223,7 +271,13 @@ public class ProcessDepreciationV2 {
      * @param depreciationRate The rate of depreciation (as a percentage).
      * @return The calculated depreciation value.
      */
-    private BigDecimal calculateDecliningBalanceDepreciation(Asset asset, BigDecimal depreciationRate) {
+    private BigDecimal calculateDepreciationValueDBM(Asset asset, BigDecimal depreciationRate) {
+
+        // If the depreciation rate is null or 0, skip the calculation and return 0
+        if (depreciationRate == null || BigDecimal.ZERO.compareTo(depreciationRate) == 0) {
+            return BigDecimal.ZERO;
+        }
+
         // Fetch the current book value of the asset
         BigDecimal bookValue = BigDecimal.valueOf(asset.getBookValue());
 
