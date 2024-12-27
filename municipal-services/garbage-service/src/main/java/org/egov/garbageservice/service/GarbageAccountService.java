@@ -1,9 +1,7 @@
 package org.egov.garbageservice.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -50,6 +48,7 @@ import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.GrbgApplication;
 import org.egov.garbageservice.model.GrbgCollectionUnit;
+import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.model.contract.DmsRequest;
@@ -1291,6 +1290,10 @@ public class GarbageAccountService {
 			criteria.setApplicationNumber(garbageAccountActionRequest.getApplicationNumbers());
 		}
 
+		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getPropertyIds())) {
+			criteria.setPropertyId(garbageAccountActionRequest.getPropertyIds());
+		}
+
 		// search application number
 		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
 
@@ -1479,21 +1482,20 @@ public class GarbageAccountService {
 		return roleCodes;
 	}
 
-	public GarbageAccountActionResponse payNowGrbgBill(String encryptedUserUuid) {
+	public GarbageAccountActionResponse payNowGrbgBill(PayNowRequest payNowRequest) {
 
-		String encodedString = null;
-		try {
-			encodedString = URLEncoder.encode(encryptedUserUuid, "UTF-8").replace("+", "%2B");
-		} catch (UnsupportedEncodingException e) {
-			log.error("Error in encoding.", e);
-			throw new CustomException("ENCODING ERROR", "Error in encoding.");
+		if (StringUtils.isEmpty(payNowRequest.getUserUuid())) {
+			throw new CustomException("INVALID REQUEST", "Please Provide User Uuid.");
 		}
 
-		String userUuid = encryptionService.decryptString(encodedString);
+		// validate user
 
 		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
-				.isEmptyBillFilter(true)
-				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(userUuid).build()).build()).build();
+				.applicationNumbers(payNowRequest.getGarbageApplicationNumbers())
+				.billStatus(payNowRequest.getBillStatus()).month(payNowRequest.getMonth()).year(payNowRequest.getYear())
+				.propertyIds(payNowRequest.getPropertyIds()).requestInfo(RequestInfo.builder()
+						.userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build()).build())
+				.build();
 
 		GarbageAccountActionResponse garbageAccountActionResponse = getApplicationDetails(garbageAccountActionRequest);
 
