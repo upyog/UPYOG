@@ -65,6 +65,7 @@ import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
 import ULBHomeCard from "./atoms/ULBHomeCard";
 import { AdvertisementModuleCard } from "./atoms/AdvertisementModuleCard";
+import AddressDetails from "./molecules/AddressDetails";
 import {
   AnnouncementIcon,
   ArrowDown,
@@ -313,6 +314,7 @@ export {
   ToggleSwitch,
   ULBHomeCard,
   AdvertisementModuleCard,
+  AddressDetails,
   // Icons
   GetApp,
   ArrowLeft,
