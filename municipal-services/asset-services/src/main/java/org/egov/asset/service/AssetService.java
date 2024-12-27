@@ -449,7 +449,7 @@ public class AssetService {
 			validateAssetUpdateRequest(assetRequest);
 			appNoToSiteBookingMap = searchAssetFromRequest(assetRequest);
 			assetRequest = validateAndEnrichUpdateAsset(assetRequest, appNoToSiteBookingMap);
-			assetRepository.updateAssignment(assetRequest);
+			assetRepository.updateAsset(assetRequest);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
