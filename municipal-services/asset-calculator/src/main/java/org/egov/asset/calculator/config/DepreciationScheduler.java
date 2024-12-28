@@ -1,9 +1,8 @@
 package org.egov.asset.calculator.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.asset.calculator.config.CalculatorConfig;
-import org.egov.asset.calculator.services.ProcessDepreciation;
 import org.egov.asset.calculator.services.ProcessDepreciationV2;
+import org.egov.asset.calculator.utils.CalculatorConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,7 @@ public class DepreciationScheduler {
             for (String tenantId : tenantIds) {
                 log.info("Processing depreciation for tenant: {}", tenantId);
                 //processDepreciation.executeBulkDepreciationProcedure(config.getDefaultTenantId());
-                processDepreciation.calculateDepreciation(tenantId, null, config.getLegacyDataFlag());
+                processDepreciation.calculateDepreciation(tenantId, null, config.getLegacyDataFlag(), CalculatorConstants.USER);
             }
             LocalDateTime endTime = LocalDateTime.now();
             long durationInMillis = java.time.Duration.between(startTime, endTime).toMillis();

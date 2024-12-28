@@ -40,22 +40,22 @@ public class DepreciationDetail {
     @Column(name = "book_value", nullable = false)
     private Double bookValue;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-//    @Column(name = "updated_at")
-//    private LocalDate updatedAt;
-
     @Column(name = "rate", nullable = false)
     private double rate;
 
     @Column(name = "old_book_value", nullable = false, columnDefinition = "double precision default 0.0")
     private Double oldBookValue;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_at", updatable = false, nullable = false)
-    private Timestamp createdAt;
+    private Long createdAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "updated_at", nullable = false)
-    private Timestamp updatedAt;
+    @Column(name = "updated_at")
+    private Long updatedAt;
+
+    @Column(name = "created_by", updatable = false, nullable = false)
+    private String createdBy;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
 }
