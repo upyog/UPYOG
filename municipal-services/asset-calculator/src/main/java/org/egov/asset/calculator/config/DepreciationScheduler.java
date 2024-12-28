@@ -10,7 +10,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -36,8 +39,9 @@ public class DepreciationScheduler {
 
         try {
             List<String> tenantIds = getTenantIds(); // Fetch tenant IDs dynamically
+            log.info("List of Tenant IDs to be processed in scheduler: {}", tenantIds.toString());
             // If tenantIds is null or empty, use default tenant ID from config
-            if (tenantIds == null || tenantIds.isEmpty()) {
+            if (tenantIds.isEmpty()) {
                 String defaultTenantId = config.getDefaultTenantId(); // Fetch from configuration
                 log.warn("No tenant IDs found. Using default tenant ID: {}", defaultTenantId);
                 tenantIds = new ArrayList<>();
@@ -46,9 +50,19 @@ public class DepreciationScheduler {
 
             for (String tenantId : tenantIds) {
                 log.info("Processing depreciation for tenant: {}", tenantId);
-                //processDepreciation.executeBulkDepreciationProcedure(config.getDefaultTenantId());
-                processDepreciation.calculateDepreciation(tenantId, null, config.getLegacyDataFlag(), CalculatorConstants.USER);
-            }
+
+                try {
+                    processDepreciation.calculateDepreciation(
+                            tenantId,
+                            null,
+                            config.getLegacyDataFlag(),
+                            CalculatorConstants.USER
+                    );
+                } catch (Exception e) {
+                    log.error("Error processing depreciation for tenant: {}. Error: {}", tenantId, e.getMessage(), e);
+                }
+            } // for loop for processing depreciation of the listed tenants
+
             LocalDateTime endTime = LocalDateTime.now();
             long durationInMillis = java.time.Duration.between(startTime, endTime).toMillis();
             log.info("Cron Job ended at: {}, Duration: {} ms",
@@ -60,9 +74,19 @@ public class DepreciationScheduler {
     }
 
     public List<String> getTenantIds() {
-        // Fetch tenant IDs from the database
-        //List<String> tenantIds = tenantRepository.findAllTenantIds();
-        //return tenantIds != null ? tenantIds : Collections.emptyList();
-        return null;
+        String depreciationProcessTenantIds = config.getDepreciationProcessTenantIds();
+        log.info("Tenants To be processed : {}", depreciationProcessTenantIds);
+        if (depreciationProcessTenantIds != null && !depreciationProcessTenantIds.isEmpty()) {
+            List<String> tenantIdList = Arrays.stream(depreciationProcessTenantIds.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+
+            // Log the processed list of tenant IDs
+            log.info("List of Tenant IDs to be processed: {}", tenantIdList.toString());
+
+            return tenantIdList;
+        }
+        // Return an empty list if the configuration is missing or empty
+        return Collections.emptyList();
     }
 }

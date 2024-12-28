@@ -51,8 +51,7 @@ public class CalculatorConfig {
 	@Value("${depreciation.legacy.data.flag}")
 	private Boolean legacyDataFlag;
 
-
-
-
+	@Value("${depreciation.process.tenant.ids}")
+	private String depreciationProcessTenantIds;
 
 }

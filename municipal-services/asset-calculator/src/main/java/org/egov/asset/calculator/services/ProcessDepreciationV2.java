@@ -178,7 +178,6 @@ public class ProcessDepreciationV2 {
                 log.warn("Anniversary date / purchase date not applicable for assetId: {} Skipping processing.", asset.getId());
                 return; // Skip if not the anniversary date
             }
-            log.info("before calling depreciation rate method for category: {} and purchasedate: {}", asset.getAssetCategory(), asset.getPurchaseDate());
             DepreciationRateDTO  depreciationRateDTO = fetchDepreciationRateAndMethod(asset.getAssetCategory(), asset.getPurchaseDate());
             BigDecimal depreciationRate = depreciationRateDTO.getRate();
             BigDecimal depreciation = null;
@@ -336,13 +335,11 @@ public class ProcessDepreciationV2 {
 
                 log.info("Pushing message to Kafka: topic={}, data={}", "update-depreciation",detail);
                 producer.push("update-depreciation",depreciationReq);
-
                 //depreciationDetailRepository.save(detail);
             } else {
                 // Skip saving and log or throw an exception
                 log.warn("Duplicate depreciation record found for asset {} from {} to {}. Skipping save as legacyData is false.",
                         asset.getId(), startDate, endDate);
-                throw new IllegalStateException("Duplicate depreciation record found for non-legacy data.");
             }
         } else {
             // Create a new record
