@@ -79,6 +79,10 @@ public class ProcessDepreciationV2 {
         String formattedDate = "";
         this.uuid = uuid;
 
+        if(assetId != null ){
+            legacyData = true;
+            assetRepository.updateIsLegacyDataFlag(assetId);
+        }
         // Determine total assets to process based on @legacyData param (legacy or non-legacy)
         if (legacyData) {
             totalAssets = assetRepository.countLegacyAssets(tenantId, assetId);
