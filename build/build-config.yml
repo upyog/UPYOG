@@ -859,5 +859,12 @@ config:
         image-name: "sv-services-db"
  
          
+  - name: "builds/upyog/business-services/verification-service"
+    build:
+      - work-dir: "business-services/verification-service"
+        image-name: "verification-service"
+        dockerfile: "build/maven/Dockerfile"  
+      - work-dir: "business-services/verification-service/src/main/resources/db"
+        image-name: "verification-service-db" 
 
 
