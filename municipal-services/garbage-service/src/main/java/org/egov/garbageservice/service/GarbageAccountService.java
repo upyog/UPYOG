@@ -1293,6 +1293,11 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getPropertyIds())) {
 			criteria.setPropertyId(garbageAccountActionRequest.getPropertyIds());
 		}
+		
+		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getGarbageIds())) {
+			criteria.setGarbageId(garbageAccountActionRequest.getGarbageIds());
+		}
+		
 
 		// search application number
 		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
@@ -1493,7 +1498,9 @@ public class GarbageAccountService {
 		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
 				.applicationNumbers(payNowRequest.getGarbageApplicationNumbers())
 				.billStatus(payNowRequest.getBillStatus()).month(payNowRequest.getMonth()).year(payNowRequest.getYear())
-				.propertyIds(payNowRequest.getPropertyIds()).requestInfo(RequestInfo.builder()
+				.garbageIds(payNowRequest.getGarbageIds())
+				.propertyIds(payNowRequest.getPropertyIds())
+				.requestInfo(RequestInfo.builder()
 						.userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build()).build())
 				.build();
 
