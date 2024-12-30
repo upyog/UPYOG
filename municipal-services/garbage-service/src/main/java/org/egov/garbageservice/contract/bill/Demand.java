@@ -1,5 +1,13 @@
 package org.egov.garbageservice.contract.bill;
 
+//import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.common.contract.request.User;
+import org.egov.garbageservice.model.AuditDetails;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -8,13 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.request.User;
-import org.egov.garbageservice.model.AuditDetails;
-
-//import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A Object which holds the basic info about the revenue assessment for which the demand is generated like module name, consumercode, owner, etc.
@@ -75,7 +76,9 @@ public class Demand   {
 
         CANCELLED("CANCELLED"),
 
-        ADJUSTED("ADJUSTED");
+        ADJUSTED("ADJUSTED"),
+    	
+    	EXPIRED("EXPIRED");
 
         private String value;
 

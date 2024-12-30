@@ -24,9 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AssetUpdate implements AssetDTO{
-	
-
+public class AssetUpdate{
 
 	@JsonProperty("id")
     private String id ;

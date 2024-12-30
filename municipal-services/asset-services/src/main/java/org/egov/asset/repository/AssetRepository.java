@@ -122,6 +122,7 @@ public class AssetRepository {
 				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
 		}
 	}
+
 	public List<AssetUpdate> getAssetDataFromDB(AssetSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = null;
@@ -136,6 +137,7 @@ public class AssetRepository {
 				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetUpdateLimitedDateRowMapper);
 		}
 	}
+
 	
 	public List<Map<String, Object>> getAllCounts() {
 		List<Map<String, Object>> statusList = null;
@@ -143,6 +145,7 @@ public class AssetRepository {
 		statusList =jdbcTemplate.queryForList(query);
         return statusList;
 	}
+
 
 	public List<String> getTypesOfAllApplications(Boolean isHistoryCall, String tenantId) {
 		List<String> statusList = null;

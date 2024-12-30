@@ -9,8 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import java.util.Optional;
 import java.util.Set;
+
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -421,6 +423,26 @@ public class AssetService {
 		return roleCodes;
 	}
 
+	/*
+	 * public AssetActionResponse getAllcounts() { AssetActionResponse response =
+	 * new AssetActionResponse(); List<Map<String, Object>> statusList = null;
+	 * statusList = assetRepository.getAllCounts();
+	 * 
+	 * if (!CollectionUtils.isEmpty(statusList)) { response.setCountsData(
+	 * statusList.stream() .filter(Objects::nonNull) // Ensure no null entries
+	 * .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate
+	 * non-empty entries .collect(Collectors.toList())); // Collect the filtered
+	 * list
+	 * 
+	 * if (statusList.get(0).containsKey("total_applications")) { Object
+	 * totalApplicationsObj = statusList.get(0).get("total_applications"); if
+	 * (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+	 * response.setApplicationTotalCount(((Number)
+	 * totalApplicationsObj).longValue()); } else { throw new
+	 * IllegalArgumentException("total_applications is not a valid number"); } } }
+	 * return response; }
+	 */
+
 	public AssetActionResponse getAllcounts() {
 		AssetActionResponse response = new AssetActionResponse();
 		List<Map<String, Object>> statusList = null;
@@ -443,7 +465,7 @@ public class AssetService {
 		return response;
 	}
 
-	public AssetUpdate updateAsset(@Valid AssetUpdateRequest assetRequest) {
+	public List<AssetUpdate> updateAsset(@Valid AssetUpdateRequest assetRequest) {
 		Map<String, AssetUpdate> appNoToSiteBookingMap = null;
 		try {
 			validateAssetUpdateRequest(assetRequest);
@@ -454,7 +476,7 @@ public class AssetService {
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
-		return assetRequest.getAssetUpdate().get(0);
+		return assetRequest.getAssetUpdate();
 	}
 
 	private @Valid AssetUpdateRequest validateAndEnrichUpdateAsset(@Valid AssetUpdateRequest assetRequest,
@@ -462,45 +484,46 @@ public class AssetService {
 
 		List<AssetUpdate> existingAsset = null;
 		AssetUpdate updateTemp = null;
-			AssetUpdateRequest tempRequest = AssetUpdateRequest.builder().requestInfo(assetRequest.getRequestInfo())
-					.assetUpdate(new ArrayList<>()).build();
-			assetRequest.getAssetUpdate().stream().forEach(booking -> {
-				AssetUpdate assetUpdate = appNoToSiteBookingMap.get(booking.getApplicationNo());
-				if (null == assetUpdate) {
-					throw new CustomException("APPLICATION_NOT_FOUND",
-							"Application id not found: " + booking.getApplicationNo());
-				}
-				if (!booking.getIsOnlyWorkflowCall()) {
-					booking.setApplicationNo(assetUpdate.getApplicationNo());
-					booking.setStatus(assetUpdate.getStatus());
-					booking.setAuditDetails(assetUpdate.getAuditDetails());
-					booking.getAuditDetails().setLastModifiedBy(assetUpdate.getAuditDetails().getLastModifiedBy());
-					booking.getAuditDetails().setLastModifiedTime(assetUpdate.getAuditDetails().getLastModifiedTime());
+		AssetUpdateRequest tempRequest = AssetUpdateRequest.builder().requestInfo(assetRequest.getRequestInfo())
+				.assetUpdate(new ArrayList<>()).build();
+		assetRequest.getAssetUpdate().stream().forEach(booking -> {
+			AssetUpdate assetUpdate = appNoToSiteBookingMap.get(booking.getApplicationNo());
+			if (null == assetUpdate) {
+				throw new CustomException("APPLICATION_NOT_FOUND",
+						"Application id not found: " + booking.getApplicationNo());
+			}
+			if (!booking.getIsOnlyWorkflowCall()) {
+				booking.setApplicationNo(assetUpdate.getApplicationNo());
+				booking.setStatus(assetUpdate.getStatus());
+				booking.setAuditDetails(assetUpdate.getAuditDetails());
+				booking.getAuditDetails().setLastModifiedBy(assetUpdate.getAuditDetails().getLastModifiedBy());
+				booking.getAuditDetails().setLastModifiedTime(assetUpdate.getAuditDetails().getLastModifiedTime());
+				booking.setAssetStatus(assetUpdate.getStatus());
+				tempRequest.getAssetUpdate().add(booking);
+			} else {
+				Boolean isWfCall = booking.getIsOnlyWorkflowCall();
+				String tempApplicationNo = booking.getApplicationNo();
+				String action = booking.getWorkflowAction();
+				String status = AssetConstants.getStatusOrAction(action, true);
+				String comments = booking.getComments();
 
-					tempRequest.getAssetUpdate().add(booking);
+				AssetUpdate assetTemp = objectMapper.convertValue(appNoToSiteBookingMap.get(booking.getApplicationNo()),
+						AssetUpdate.class);
+				if (null == assetTemp) {
+					throw new CustomException("FAILED_SEARCH_ASSET_UPDATE",
+							"Asset Application not found for workflow call.");
 				}
-				else {
-					Boolean isWfCall = booking.getIsOnlyWorkflowCall();
-					String tempApplicationNo = booking.getApplicationNo();
-					String action = booking.getWorkflowAction();
-					String status = AssetConstants.getStatusOrAction(action, true);
-					String comments = booking.getComments();
-					
-					AssetUpdate assetTemp = objectMapper.convertValue(appNoToSiteBookingMap.get(booking.getApplicationNo()), AssetUpdate.class);
-					if(null==assetTemp) {
-						throw new CustomException("FAILED_SEARCH_ASSET_UPDATE","Asset Application not found for workflow call.");
-					}
-					assetTemp.setIsOnlyWorkflowCall(isWfCall);
-					assetTemp.setApplicationNo(tempApplicationNo);
-					assetTemp.setWorkflowAction(action);
-					assetTemp.setComments(comments);
-					assetTemp.setStatus(status);
-					tempRequest.getAssetUpdate().add(assetTemp);
-					
-				}
-			});
+				assetTemp.setIsOnlyWorkflowCall(isWfCall);
+				assetTemp.setApplicationNo(tempApplicationNo);
+				assetTemp.setWorkflowAction(action);
+				assetTemp.setComments(comments);
+				assetTemp.setStatus(status);
+				assetTemp.setAssetStatus(status);
+				tempRequest.getAssetUpdate().add(assetTemp);
 
-		
+			}
+		});
+
 		return tempRequest;
 	}
 
