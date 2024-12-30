@@ -16,6 +16,7 @@ import {
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { addDays, startOfDay, endOfDay, format, differenceInCalendarDays } from 'date-fns';
 import ChbCommunityHallDetails from "../components/ChbCommunityHallDetails";
+import BookingPopup from "../components/BookingPopup";
 
 const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const { pathname: url } = useLocation();
@@ -35,6 +36,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     formData?.slotlist?.Searchdata ||
     []
   );
+  const [existingDataSet, setExistingDataSet] = useState("");
+  const [showModal,setShowModal] = useState(false)
   const [showToast, setShowToast] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const dateRangePickerRef = useRef(null);
@@ -143,10 +146,10 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.slotlist && formData.slotlist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata, existingDataSet };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -297,10 +300,10 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     if (!isCheckboxSelected) {
       setShowToast({ error: true, label:t("CHB_SELECT_AT_LEAST_ONE_SLOT")});
     } else {
-      goNext();
+      setShowModal(true);  // Show modal when button is clicked
     }
   };
-
+  
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
@@ -448,6 +451,20 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
           }}
         />
       )}
+      {showModal && (
+        <BookingPopup
+          t={t}
+          closeModal={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          actionCancelOnSubmit={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          onSubmit={() => {
+            goNext();  // Ensure action is called only when submitting
+            setShowModal(false);  // Close modal after action
+          }}
+          setExistingDataSet={setExistingDataSet}
+          Searchdata={Searchdata}
+        />
+      )}
+
     </React.Fragment>
   );
 };

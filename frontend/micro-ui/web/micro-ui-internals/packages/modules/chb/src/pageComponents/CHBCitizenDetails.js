@@ -3,6 +3,7 @@ import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from
 import { useLocation} from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
+import { TimerValues } from "../components/TimerValues";
 
 const CHBCitizenDetails
  = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
@@ -12,13 +13,13 @@ const CHBCitizenDetails
   
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || "");
-  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || formData?.ownerss?.emailId || "");
+  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || value?.existingDataSet?.ownerss?.applicantName ||"");
+  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || formData?.ownerss?.emailId || value?.existingDataSet?.ownerss?.emailId || "");
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || user?.mobileNumber
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || value?.existingDataSet?.ownerss?.mobileNumber || user?.mobileNumber
   );
   const [alternateNumber, setAltMobileNumber] = useState(
-    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || value?.existingDataSet?.ownerss?.alternateNumber || ""
   );
   function setOwnerName(e) {
     const input = e.target.value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters and non-space characters
@@ -86,9 +87,12 @@ const CHBCitizenDetails
     }
     <Card>
         <CardSubHeader>
+          <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} />
+          </div>
         </CardSubHeader>
         <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@upyog/digit-ui-react-components";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
+import { TimerValues } from "../components/TimerValues";
 
 const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState,value=formData.slotlist}) => {
   const tenantId = Digit.ULBService.getStateId();
-  const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+  const [documents, setDocuments] = useState(formData?.documents?.documents || value?.existingDataSet?.documents?.documents  || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
@@ -58,9 +59,12 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
       <Timeline currentStep={5} />
       <Card>
         <CardSubHeader>
+          <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue}  SlotSearchData={value?.Searchdata}/>
+          </div>
         </CardSubHeader>
         <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>

@@ -4,6 +4,7 @@ import { useLocation} from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import { Controller, useForm } from "react-hook-form";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
+import { TimerValues } from "../components/TimerValues";
 
 
 
@@ -11,10 +12,10 @@ const CHBSlotDetails
   = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
     const { pathname: url } = useLocation();
     let index = window.location.href.charAt(window.location.href.length - 1);
-    const [specialCategory, setspecialcategory] = useState((formData.slots && formData.slots[index] && formData.slots[index].specialCategory) || formData?.slots?.specialCategory || "");
-    const [purpose, setpurpose] = useState((formData.slots && formData.slots[index] && formData.slots[index].purpose) || formData?.slots?.purpose || "");
+    const [specialCategory, setspecialcategory] = useState((formData.slots && formData.slots[index] && formData.slots[index].specialCategory) || formData?.slots?.specialCategory || value?.existingDataSet?.slots?.specialCategory || "");
+    const [purpose, setpurpose] = useState((formData.slots && formData.slots[index] && formData.slots[index].purpose) || formData?.slots?.purpose || value?.existingDataSet?.slots?.purpose || "");
 
-    const [purposeDescription, setPurposeDescription] = useState((formData.slots && formData.slots[index] && formData.slots[index].purposeDescription) || formData?.slots?.purposeDescription || "");
+    const [purposeDescription, setPurposeDescription] = useState((formData.slots && formData.slots[index] && formData.slots[index].purposeDescription) || formData?.slots?.purposeDescription || value?.existingDataSet?.slots?.purposeDescription  || "");
 
     let validation = {};
     const tenantId =  Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
@@ -87,9 +88,12 @@ const CHBSlotDetails
         }
         <Card>
         <CardSubHeader>
+        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
+           <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} />
+          </div>
         </CardSubHeader>
         <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>
