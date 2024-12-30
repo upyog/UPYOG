@@ -244,20 +244,26 @@ public class TradeUtil {
             List<Map<String, Long>> allFinancialYearData = new ArrayList<>();
 
             for (String financialYear : financialYears) {
+                Map<String, Long> newTaxPeriod = new HashMap<>();
                 String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}", financialYear);
                 List<Map<String, Object>> jsonOutput = JsonPath.read(mdmsData, jsonPath);
                 Map<String, Object> financialYearProperties = jsonOutput.get(0);
                 Object startDate = financialYearProperties.get(TLConstants.MDMS_STARTDATE);
                 Object endDate = financialYearProperties.get(TLConstants.MDMS_ENDDATE);
-                taxPeriods.put(TLConstants.MDMS_STARTDATE, (Long) startDate);
-                taxPeriods.put(TLConstants.MDMS_ENDDATE, (Long) endDate);
-                allFinancialYearData.add(taxPeriods);
+                newTaxPeriod.put(TLConstants.MDMS_STARTDATE, (Long) startDate);
+                newTaxPeriod.put(TLConstants.MDMS_ENDDATE, (Long) endDate);
+                allFinancialYearData.add(newTaxPeriod);
             }
             // Get the first and last financial year epoch time for taxperiod validTo and From
             taxPeriods.put(TLConstants.MDMS_STARTDATE, allFinancialYearData.get(0).get("startingDate"));
             taxPeriods.put(TLConstants.MDMS_ENDDATE, allFinancialYearData.get(allFinancialYearData.size()-1).get("endingDate"));
 
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) {
+            log.error("Error while fetching MDMS data", e);
+            throw new CustomException("Error",e.getMessage());
+        }
+        catch (Exception e) {
             log.error("Error while fetching MDMS data", e);
             throw new CustomException("INVALID FINANCIALYEAR", "No data found for the financialYear: "+license.getFinancialYear());
         }
