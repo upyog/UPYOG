@@ -3,8 +3,10 @@ package org.egov.asset.calculator.repository;
 import org.egov.asset.calculator.web.models.contract.Asset;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -58,6 +60,18 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                                           @Param("legacyData") boolean legacyData,
                                           @Param("currentDate") String currentDate,
                                           Pageable pageable);
+
+
+    @Modifying
+    @Transactional
+    @Query(
+            "UPDATE Asset a " +
+                    "SET a.isLegacyData = true " +
+                    "WHERE a.id = :assetId"
+    )
+    int updateIsLegacyDataFlag(
+            @Param("assetId") String assetId
+    );
 
 
 }

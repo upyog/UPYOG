@@ -7,8 +7,10 @@ import org.egov.asset.calculator.kafka.broker.Producer;
 import org.egov.asset.calculator.repository.AssetRepository;
 import org.egov.asset.calculator.repository.DepreciationDetailRepository;
 import org.egov.asset.calculator.repository.MdmsDataRepository;
+import org.egov.asset.calculator.utils.AssetCalculatorUtil;
 import org.egov.asset.calculator.utils.CalculatorConstants;
 import org.egov.asset.calculator.utils.dto.DepreciationRateDTO;
+import org.egov.asset.calculator.web.models.AuditDetails;
 import org.egov.asset.calculator.web.models.DepreciationDetail;
 import org.egov.asset.calculator.web.models.DepreciationReq;
 import org.egov.asset.calculator.web.models.contract.Asset;
@@ -35,20 +37,26 @@ public class ProcessDepreciationV2 {
     private final DepreciationDetailRepository depreciationDetailRepository;
     private final MdmsDataRepository mdmsDataRepository;
     private final Producer producer;
+    private final AssetCalculatorUtil assetCalculatorUtil;
     private DepreciationReq depreciationReq ;
 
+
     private static int BATCH_SIZE;
+    private AuditDetails auditDetails ;
+    private String uuid;
 
     @Autowired
     public ProcessDepreciationV2(AssetRepository assetRepository,
                                  DepreciationDetailRepository depreciationDetailRepository,
-                                 MdmsDataRepository mdmsDataRepository, Producer producer,
+                                 MdmsDataRepository mdmsDataRepository, Producer producer, EnrichmentService enrichmentService, AssetCalculatorUtil assetCalculatorUtil,
                                  CalculatorConfig config) {
         this.assetRepository = assetRepository;
         this.depreciationDetailRepository = depreciationDetailRepository;
         this.mdmsDataRepository = mdmsDataRepository;
         this.producer = producer;
+        this.assetCalculatorUtil = assetCalculatorUtil;
         depreciationReq = new DepreciationReq();
+        auditDetails = new AuditDetails();
 
         // Initialize the static field for batch size from configuration
         BATCH_SIZE = config.getBatchSize();
@@ -56,18 +64,25 @@ public class ProcessDepreciationV2 {
 
     /**
      * Calculates depreciation for assets based on legacy or non-legacy data.
-     * @param tenantId Tenant identifier.
-     * @param assetId Asset identifier (can be null for bulk processing).
+     *
+     * @param tenantId   Tenant identifier.
+     * @param assetId    Asset identifier (can be null for bulk processing).
      * @param legacyData Flag indicating if legacy data should be processed.
+     * @param uuid
      * @return Success message.
      */
     @Transactional
-    public String calculateDepreciation(String tenantId, String assetId, boolean legacyData) {
+    public String calculateDepreciation(String tenantId, String assetId, boolean legacyData, String uuid) {
         LocalDate currentDate = LocalDate.now();
         int totalAssets;
         String message;
         String formattedDate = "";
+        this.uuid = uuid;
 
+        if(assetId != null ){
+            legacyData = true;
+            assetRepository.updateIsLegacyDataFlag(assetId);
+        }
         // Determine total assets to process based on @legacyData param (legacy or non-legacy)
         if (legacyData) {
             totalAssets = assetRepository.countLegacyAssets(tenantId, assetId);
@@ -167,7 +182,6 @@ public class ProcessDepreciationV2 {
                 log.warn("Anniversary date / purchase date not applicable for assetId: {} Skipping processing.", asset.getId());
                 return; // Skip if not the anniversary date
             }
-            log.info("before calling depreciation rate method for category: {} and purchasedate: {}", asset.getAssetCategory(), asset.getPurchaseDate());
             DepreciationRateDTO  depreciationRateDTO = fetchDepreciationRateAndMethod(asset.getAssetCategory(), asset.getPurchaseDate());
             BigDecimal depreciationRate = depreciationRateDTO.getRate();
             BigDecimal depreciation = null;
@@ -313,40 +327,40 @@ public class ProcessDepreciationV2 {
         if (existingDetail.isPresent()) {
             if (legacyData) {
                 // Overwrite the existing record for legacy data
+                auditDetails = assetCalculatorUtil.getAuditDetails(uuid, false);
                 DepreciationDetail detail = existingDetail.get();
                 detail.setDepreciationValue(depreciation.doubleValue());
                 detail.setBookValue(asset.getBookValue());
                 detail.setRate(depreciationRate.doubleValue());
                 detail.setOldBookValue(BigDecimal.valueOf(asset.getBookValue()).add(depreciation).doubleValue());
-                detail.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-
+                detail.setUpdatedAt(auditDetails.getLastModifiedTime());
+                detail.setUpdatedBy(auditDetails.getLastModifiedBy());
                 depreciationReq.setDepreciation(detail);
 
                 log.info("Pushing message to Kafka: topic={}, data={}", "update-depreciation",detail);
                 producer.push("update-depreciation",depreciationReq);
-
                 //depreciationDetailRepository.save(detail);
             } else {
                 // Skip saving and log or throw an exception
                 log.warn("Duplicate depreciation record found for asset {} from {} to {}. Skipping save as legacyData is false.",
                         asset.getId(), startDate, endDate);
-                throw new IllegalStateException("Duplicate depreciation record found for non-legacy data.");
             }
         } else {
             // Create a new record
+            auditDetails = assetCalculatorUtil.getAuditDetails(uuid, true);
             DepreciationDetail detail = new DepreciationDetail();
             detail.setAssetId(asset.getId());
             detail.setFromDate(startDate);
             detail.setToDate(endDate);
             detail.setDepreciationValue(depreciation.doubleValue());
             detail.setBookValue(asset.getBookValue());
-            detail.setCreatedAt(new Timestamp(System.currentTimeMillis()));; // Assuming updatedAt is LocalDateTime
-            detail.setUpdatedAt(new Timestamp(System.currentTimeMillis()));; // Assuming updatedAt is LocalDateTime
+            detail.setCreatedAt(auditDetails.getCreatedTime());; // Assuming updatedAt is LocalDateTime
+            detail.setCreatedBy(auditDetails.getCreatedBy());
             detail.setRate(depreciationRate.doubleValue());
             detail.setOldBookValue(BigDecimal.valueOf(asset.getBookValue()).add(depreciation).doubleValue());
 
             depreciationReq.setDepreciation(detail);
-            log.info("Pushing message to Kafka: topic={}, data={}", "save-depreciation",detail);
+            log.info("Pushing message to Kafka: Create topic={}, data={}", "save-depreciation",detail);
             producer.push("save-depreciation",depreciationReq);
             //depreciationDetailRepository.save(detail);
         }
