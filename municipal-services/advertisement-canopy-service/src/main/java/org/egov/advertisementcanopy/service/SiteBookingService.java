@@ -61,6 +61,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Service
 public class SiteBookingService {
 
@@ -409,7 +411,7 @@ public class SiteBookingService {
 		// enrich update request
 		siteBookingRequest = validateAndEnrichUpdateSiteBooking(siteBookingRequest, appNoToSiteBookingMap);
 		// call workflow
-		workflowService.updateWorkflowStatus(siteBookingRequest);
+//		workflowService.updateWorkflowStatus(siteBookingRequest);
 
 		// update request
 		producer.push(AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, siteBookingRequest);
@@ -432,22 +434,27 @@ public class SiteBookingService {
 	}
 
 	private void createAndUploadPDF(SiteBookingRequest siteBookingRequest) {
-		
+        
+		log.info("here0");
 		if (!CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
 			siteBookingRequest.getSiteBookings().stream().forEach(siteBooking -> {
 
 //				Thread pdfGenerationThread = new Thread(() -> {
-
+				log.info("here1");
 					if(StringUtils.equalsIgnoreCase(siteBooking.getWorkflowAction(), AdvtConstants.ACTION_APPROVE)) {
 						// validate trade license
+						log.info("here2");
 						validateSiteBookingCertificateGeneration(siteBooking);
+						log.info("here3");
 
 						// create pdf
 						Resource resource = createNoSavePDF(siteBooking, siteBookingRequest.getRequestInfo());
+						log.info("here4");
 
 						//upload pdf
 						DmsRequest dmsRequest = generateDmsRequestBySiteBooking(resource, siteBooking,
 								siteBookingRequest.getRequestInfo());
+						log.info("here5");
 						try {
 							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
 									siteBookingRequest.getRequestInfo());
@@ -464,7 +471,7 @@ public class SiteBookingService {
 
 			});
 		}
-		
+		log.info("here6");
 		
 	}
 
@@ -474,7 +481,7 @@ public class SiteBookingService {
 //		MultipartFile multipartFile = convertResourceToMultipartFile(resource, "filename");
 
 		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
-				.objectId(siteBooking.getApplicationNo())
+				.objectId(siteBooking.getUuid())
 				.description(AdvtConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION)
 				.id(AdvtConstants.ALFRESCO_COMMON_CERTIFICATE_ID)
 				.type(AdvtConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE)
@@ -516,7 +523,7 @@ public class SiteBookingService {
 		String createdDate = dateFormat.format(new Date(siteBooking.getAuditDetails().getCreatedDate()));
 		String fromDate = dateFormat.format(new Date(siteBooking.getFromDate()));
 		String toDate = dateFormat.format(new Date(siteBooking.getToDate()));
-		String approvalTime = dateFormat.format(new Date());
+		String approvalDate = dateFormat.format(new Date());
 
 // Map variables and values
 		SiteObject.put("applicationNumber", siteBooking.getApplicationNo()); // Application Number / Permission Ref ID
@@ -539,7 +546,7 @@ public class SiteBookingService {
 		SiteObject.put("securityAmount", siteBooking.getSiteCreationData().getSecurityAmount()); // Security Amount
 		SiteObject.put("ulbName", siteBooking.getSiteCreationData().getUlbName()); // Security Amount
 		SiteObject.put("ulbType", siteBooking.getSiteCreationData().getUlbType()); // Security Amount
-		SiteObject.put("approvalTime", approvalTime); // Security Amount
+		SiteObject.put("approvalDate", approvalDate); // approval date
 //		SiteObject.put("total",0); // Security Amount
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
