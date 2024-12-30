@@ -867,4 +867,10 @@ config:
       - work-dir: "business-services/verification-service/src/main/resources/db"
         image-name: "verification-service-db" 
 
-
+  - name: "builds/upyog/municipal-services/asset-calculator"
+    build:
+      - work-dir: "municipal-services/asset-calculator"
+        image-name: "asset-calculator"
+        dockerfile: "build/maven/Dockerfile"  
+      - work-dir: "municipal-services/asset-calculator/src/main/resources/db"
+        image-name: "asset-calculator-db" 
