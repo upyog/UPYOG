@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS eg_address (
     postoffice character varying(100),
     landmark character varying(256),
     country character varying(50),
-    userid bigint not null references eg_user(id),
+    userid bigint not null ,
     type character varying(50),
     streetroadline character varying(256),
     citytownvillage character varying(256),

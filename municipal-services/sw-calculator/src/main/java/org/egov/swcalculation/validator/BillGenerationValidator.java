@@ -10,8 +10,6 @@ import org.egov.swcalculation.util.CalculatorUtils;
 import org.egov.swcalculation.web.models.BillGenerationRequest;
 import org.egov.swcalculation.web.models.BillScheduler;
 import org.egov.tracer.model.CustomException;
-import org.egov.wscalculation.constants.WSCalculationConstant;
-import org.egov.wscalculation.web.models.BillGenerationReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,8 +45,8 @@ public class BillGenerationValidator {
 				billGenerationReq.getBillScheduler().getTenantId());
 
 		if (billingMasterData.get("taxPeriodFrom") == null || billingMasterData.get("taxPeriodTo") == null) {
-			throw new CustomException(WSCalculationConstant.WS_NO_BILLING_PERIOD_MSG,
-					WSCalculationConstant.WS_NO_BILLING_PERIOD_MSG);
+			throw new CustomException(SWCalculationConstant.SW_NO_BILLING_PERIOD_MSG,
+					SWCalculationConstant.SW_NO_BILLING_PERIOD_MSG);
 		}
 		long taxPeriodFrom = (long) billingMasterData.get("taxPeriodFrom");
 		long taxPeriodTo = (long) billingMasterData.get("taxPeriodTo");

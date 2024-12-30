@@ -1,5 +1,15 @@
-CREATE TABLE IF NOT EXISTS eg_userrole_v1 AS
-select r.code as role_code, ur.roleidtenantid role_tenantid, ur.userid as user_id, ur.tenantid as user_tenantid, ur
-.lastmodifieddate as lastmodifieddate
-	from eg_userrole ur join eg_role r ON ur.roleid = r.id AND ur.roleidtenantid = r.tenantid ;
--- alter table  eg_userrole_v1 ADD CONSTRAINT IF NOT EXISTS fk_user_role_v1 FOREIGN KEY (user_id, user_tenantid) REFERENCES eg_user(id, tenantid);
+-- Table: public.eg_userrole_v1
+
+-- DROP TABLE IF EXISTS public.eg_userrole_v1;
+
+CREATE TABLE IF NOT EXISTS public.eg_userrole_v1
+(
+    role_code character varying(50) COLLATE pg_catalog."default",
+    role_tenantid character varying(256) COLLATE pg_catalog."default",
+    user_id bigint,
+    user_tenantid character varying(256) COLLATE pg_catalog."default",
+    lastmodifieddate timestamp without time zone,
+    CONSTRAINT idx_eg_userrole_v1_unique UNIQUE (role_code, role_tenantid, user_id, user_tenantid)
+)
+
+TABLESPACE pg_default;

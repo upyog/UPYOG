@@ -4,17 +4,26 @@ import static java.util.Objects.isNull;
 import static org.egov.user.config.UserServiceConstants.IP_HEADER_NAME;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.ServiceCallException;
+import org.egov.user.repository.builder.RestCallRepository;
+import org.egov.user.config.UserServiceConstants;
 import org.egov.user.domain.exception.DuplicateUserNameException;
 import org.egov.user.domain.exception.UserNotFoundException;
 import org.egov.user.domain.model.SecureUser;
@@ -44,9 +53,27 @@ public class EsewaAuthenticationProvider implements CustomThirdPartyAuthenticati
 
 	@Autowired
 	private EncryptionDecryptionUtil encryptionDecryptionUtil;
+	
+	@Autowired
+	private RestCallRepository restCallRepository;
 
 	@Value("${citizen.login.password.otp.enabled}")
 	private boolean citizenLoginPasswordOtpEnabled;
+	
+	@Value("${egov.hrms.sso.mseva.decryption.key}")
+	private String ssoDecryptionKey;
+	
+	@Value("${egov.hrms.eseva.api.host}")
+	private String hrmsEsewaApiHost;
+	
+	@Value("${egov.hrms.eseva.api.endpoint}")
+	private String hrmsEsewaApiEndpoint;
+	
+	@Value("${egov.hrms.eseva.api.request.object}")
+	private String hrmsEsewaApiReqObj;
+	
+	@Value("${egov.hrms.eseva.api.response.object.response}")
+	private String hrmsEsewaApiObjResp;
 
 	@Value("${employee.login.password.otp.enabled}")
 	private boolean employeeLoginPasswordOtpEnabled;
@@ -59,6 +86,9 @@ public class EsewaAuthenticationProvider implements CustomThirdPartyAuthenticati
 
 	@Autowired
 	private HttpServletRequest request;
+	
+	@Autowired
+	private UserServiceConstants userServiceConstants;
 
 	public EsewaAuthenticationProvider(UserService userService) {
 		this.userService = userService;
@@ -160,10 +190,65 @@ public class EsewaAuthenticationProvider implements CustomThirdPartyAuthenticati
 	}
 
 	private boolean isPasswordMatch(Boolean isOtpBased, String password, User user, Authentication authentication) {
-		// TODO Add code here to check auth.
-		return true;
-
+		byte[] staticKey = Base64.getDecoder().decode(ssoDecryptionKey);
+		
+		final byte[] StaticIv = new byte[16];
+//		String inputData = authenticateUserInputRequest.getTokenName()+":" + user.getUserName();
+		
+		String inputData = password + ":" + user.getUserName(); //passw instead of token 
+		String encdata = encryptData(inputData,staticKey,StaticIv);
+		
+		boolean blval = ReadValuesFromApi(encdata);
+		return blval;
 	}
+	
+	private boolean ReadValuesFromApi(String encdata) {
+		boolean bl = false;
+		int respValue = 1;
+		StringBuilder uri = new StringBuilder();
+	    uri.append(hrmsEsewaApiHost).append(hrmsEsewaApiEndpoint); // Construct URL for HRMS Eseva call
+
+	    Map<String, Object> apiRequest = new HashMap<>();
+	    apiRequest.put(hrmsEsewaApiReqObj, encdata); //hrmsEsevaApiRequestObject
+	    
+	    try {
+	    	Map<String, Object> responseMap = (Map<String, Object>) restCallRepository.fetchResult(uri, apiRequest);
+	        
+	        if(responseMap != null) {
+	        	Object responseObj = responseMap.get(hrmsEsewaApiObjResp); //hrmsEsevaApiResponseObjectResp
+	        	respValue = Integer.parseInt(responseObj.toString());
+	        	if (respValue == 1) {
+	        		bl = true;
+                }
+	        }
+	    }
+	    catch(Exception e) {
+	    	log.error("An error occurred: ", e);
+	    	bl = false;
+	    	return bl;
+	    }
+
+		return bl;
+	}
+
+	public static String encryptData(String plainText, byte[] key, byte[] iv) {
+        try {
+            byte[] plainBytes = plainText.getBytes(StandardCharsets.UTF_8);
+            
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+
+            byte[] encryptedBytes = cipher.doFinal(plainBytes);
+
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+        	log.error("An error occurred: ", e);
+            return null; 
+        }
+    }
 
 	@SuppressWarnings("unchecked")
 	private String getTenantId(Authentication authentication) {

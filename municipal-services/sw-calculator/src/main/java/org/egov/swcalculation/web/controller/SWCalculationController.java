@@ -18,6 +18,7 @@ import org.egov.swcalculation.web.models.BulkBillReq;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationReq;
 import org.egov.swcalculation.web.models.CalculationRes;
+import org.egov.swcalculation.web.models.CancelDemand;
 import org.egov.swcalculation.web.models.ConnectionResponse;
 import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.DemandResponse;
@@ -25,6 +26,7 @@ import org.egov.swcalculation.web.models.GetBillCriteria;
 import org.egov.swcalculation.web.models.RequestInfoWrapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
 import org.egov.swcalculation.web.models.SingleDemand;
+import org.egov.tracer.model.CustomException;
 import org.egov.swcalculation.service.DemandService;
 import org.egov.swcalculation.service.SWCalculationService;
 import org.egov.swcalculation.service.SWCalculationServiceImpl;
@@ -149,6 +151,39 @@ public class SWCalculationController {
 	public String getConnection(@Valid @RequestBody BulkBillReq bulkBillReq) {
 		return sWCalculationService.generateDemandForConsumerCodeBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
 		//return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
+	}
+	
+	
+//	@PostMapping("/cancelDemand")
+//	 public CancelDemand cancelDemand(@Valid @RequestBody CancelDemand cancelDemand) {
+////		log.info("cancelDemand::");
+//	            
+//	            return demandService.cancelDemandForConsumer(cancelDemand);
+//	        } 
+//	
+	
+	
+	@PostMapping("/cancelDemand")
+	public ResponseEntity<Map<String, Object>> cancelDemand(@Valid @RequestBody CancelDemand cancelDemand) {
+	    Map<String, Object> response = new HashMap<>();
+	    log.info("cancelDemand::");
+
+	    try {
+	        CancelDemand result = demandService.cancelDemandForConsumer(cancelDemand);
+
+	        response.put("status", "Success");
+	        response.put("message", "Cancel demand and bill successfully.");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (CustomException e) {
+	        response.put("status", "Failed");
+	        response.put("message", e.getMessage());
+	        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	    } catch (Exception e) {
+	        log.error("Error while processing cancel demand: ", e);
+	        response.put("status", "Failed");
+	        response.put("message", "An error occurred while processing cancel demand.");
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
 	
 
