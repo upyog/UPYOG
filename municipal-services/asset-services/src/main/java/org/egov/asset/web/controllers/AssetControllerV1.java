@@ -134,12 +134,14 @@ public class AssetControllerV1 {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<AssetUpdationResponse> assetUpdate(@Valid @RequestBody AssetUpdateRequest assetRequest) {
-		AssetUpdate asset = assetService.updateAsset(assetRequest);
-		List<AssetDTO> assets = new ArrayList<AssetDTO>();
-		assets.add(asset);
-		AssetUpdationResponse response =  AssetUpdationResponse.builder().assets(assets)
+		List<AssetUpdate> asset = assetService.updateAsset(assetRequest);
+		/*
+		 * List<AssetDTO> assets = new ArrayList<AssetDTO>(); assets.add(asset);
+		 */
+		AssetUpdationResponse response =  AssetUpdationResponse.builder().assets(asset)
 				.responseInfo(
 						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
 				.build();
@@ -170,4 +172,24 @@ public class AssetControllerV1 {
 		return ResponseEntity.ok(assetService.getAllcounts());
 	}
 
+	
+	 @PostMapping({"assignment/_fetch","/_fetch/{value}"})
+	    public ResponseEntity<?> calculateAssetFee(@RequestBody AssetActionRequest actionRequest
+	    										, @PathVariable String value){
+	    	
+	    	AssetActionResponse response = null;
+	    	
+	    	/*if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) {
+	    		response = assetService.getApplicationDetails(assetSearchCriteria);
+	    	}*/ if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
+	    		response = assetService.getActionsOnApplication(actionRequest);
+	    	}else if(StringUtils.equalsIgnoreCase(value, "APPLICATIONDETAILS")){
+	    		response = assetService.getCountOfAllApplicationTypes(actionRequest);
+	    	}else {
+	    		return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
+	    	}
+	    	
+	    	return new ResponseEntity(response, HttpStatus.OK);
+	    }
+	
 }

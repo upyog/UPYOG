@@ -48,6 +48,7 @@ public class AssetConstants {
 	public static final String STATUS_INITIATED = "INPROGRESS";
 	public static final String STATUS_APPLIED = "INPROGRESS";
 	public static final String STATUS_APPROVED = "APPROVED";
+	public static final String ACTION_APPROVE= "APPROVE";
 	public static final String STATUS_REJECTED = "REJECTED";
 	public static final String STATUS_REVOCATED = "PERMIT REVOCATION";
 	public static final String STATUS_DOCUMENTVERIFICATION = "INPROGRESS";
@@ -82,7 +83,7 @@ public class AssetConstants {
 		map.put(ACTION_INITIATE, STATUS_INITIATED);
 		map.put(ACTION_RETURN_TO_INITIATOR, STATUS_PENDINGFORMODIFICATION);
 		map.put(ACTION_FORWARD_TO_APPROVER, STATUS_PENDINGFORAPPROVAL);
-		map.put(STATUS_APPROVED, STATUS_APPROVED);
+		map.put(ACTION_APPROVE,STATUS_APPROVED);
 		map.put(ACTION_REJECT,ACTION_REJECT);
 		
 		if (!b) {
