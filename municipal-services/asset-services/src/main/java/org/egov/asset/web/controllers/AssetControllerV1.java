@@ -5,18 +5,27 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetActionRequest;
+import org.egov.asset.web.models.AssetActionResponse;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetResponse;
 import org.egov.asset.web.models.AssetSearchCriteria;
+import org.egov.asset.web.models.AssetUpdate;
+import org.egov.asset.web.models.AssetUpdateRequest;
+import org.egov.asset.web.models.AssetUpdationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,29 +38,29 @@ import io.swagger.annotations.ApiParam;
 @Controller
 @RequestMapping("/v1/assets")
 public class AssetControllerV1 {
-	
+
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
-	
+
 	@Autowired
 	AssetService assetService;
-
 
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsCreatePost(
 			@ApiParam(value = "Details for the new asset(s) + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
-		//String accept = request.getHeader("Accept");
-		//if (accept != null && accept.contains("application/json")) {
-			Asset asset = assetService.create(assetRequest);
-			List<AssetDTO> assets = new ArrayList<AssetDTO>();
-			assets.add(asset);
-			AssetResponse response = AssetResponse.builder().assets(assets)
-					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
-					.build();
-			return  new ResponseEntity<>(response, HttpStatus.OK);
-		//}
+		// String accept = request.getHeader("Accept");
+		// if (accept != null && accept.contains("application/json")) {
+		Asset asset = assetService.create(assetRequest);
+		List<AssetDTO> assets = new ArrayList<AssetDTO>();
+		assets.add(asset);
+		AssetResponse response = AssetResponse.builder().assets(assets)
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+		// }
 
-		//return new ResponseEntity<AssetResponse>(HttpStatus.NOT_IMPLEMENTED);
+		// return new ResponseEntity<AssetResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 //	@RequestMapping(value = "/v1/assets/_search", method = RequestMethod.POST)
@@ -74,44 +83,44 @@ public class AssetControllerV1 {
 //
 //		return new ResponseEntity<AssetResponse>(HttpStatus.NOT_IMPLEMENTED);
 //	}
-	
+
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
-	public ResponseEntity<AssetResponse> v1AssetsSearchPost(
-			@RequestBody RequestInfoWrapper requestInfoWrapper,
+	public ResponseEntity<AssetResponse> v1AssetsSearchPost(@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute AssetSearchCriteria searchCriteria) {
 		List<AssetDTO> assets = assetService.search(searchCriteria, requestInfoWrapper.getRequestInfo());
-		AssetResponse response = AssetResponse.builder().assets(assets)
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+		AssetResponse response = AssetResponse.builder().assets(assets).responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				.build();
-		return  new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+	@RequestMapping(value = "/_update/update", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
 		Asset asset = assetService.update(assetRequest);
 		List<AssetDTO> assets = new ArrayList<AssetDTO>();
 		assets.add(asset);
 		AssetResponse response = AssetResponse.builder().assets(assets)
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
 				.build();
-		return  new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	
 	@RequestMapping(value = "assignment/_create", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetAssginCreatePost(
 			@ApiParam(value = "Details for the new asset(s) + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
-			Asset asset = assetService.assignment(assetRequest);
-			List<AssetDTO> assets = new ArrayList<AssetDTO>();
-			assets.add(asset);
-			AssetResponse response = AssetResponse.builder().assets(assets)
-					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
-					.build();
-			return  new ResponseEntity<>(response, HttpStatus.OK);
+		Asset asset = assetService.assignment(assetRequest);
+		List<AssetDTO> assets = new ArrayList<AssetDTO>();
+		assets.add(asset);
+		AssetResponse response = AssetResponse.builder().assets(assets)
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
-	
+
 	@RequestMapping(value = "assignment/_update", method = RequestMethod.POST)
 	public ResponseEntity<AssetResponse> v1AssetsAssignmentUpdatePost(
 			@ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
@@ -119,8 +128,68 @@ public class AssetControllerV1 {
 		List<AssetDTO> assets = new ArrayList<AssetDTO>();
 		assets.add(asset);
 		AssetResponse response = AssetResponse.builder().assets(assets)
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
 				.build();
-		return  new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+
+	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+	public ResponseEntity<AssetUpdationResponse> assetUpdate(@Valid @RequestBody AssetUpdateRequest assetRequest) {
+		List<AssetUpdate> asset = assetService.updateAsset(assetRequest);
+		/*
+		 * List<AssetDTO> assets = new ArrayList<AssetDTO>(); assets.add(asset);
+		 */
+		AssetUpdationResponse response =  AssetUpdationResponse.builder().assets(asset)
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PostMapping({ "_fetch", "/_fetch/{value}" })
+	public ResponseEntity<?> calculateTLFee(@RequestBody AssetActionRequest actionRequest, @PathVariable String value) {
+
+		AssetActionResponse response = null;
+
+		/*
+		 * if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) { response =
+		 * assetService.getApplicationDetails(assetSearchCriteria); }
+		 */ if (StringUtils.equalsIgnoreCase(value, "ACTIONS")) {
+			response = assetService.getActionsOnApplication(actionRequest);
+		} else if (StringUtils.equalsIgnoreCase(value, "APPLICATIONDETAILS")) {
+			response = assetService.getCountOfAllApplicationTypes(actionRequest);
+		} else {
+			return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/getAllCounts")
+	public ResponseEntity<?> getAllCounts() {
+		return ResponseEntity.ok(assetService.getAllcounts());
+	}
+
+	
+	 //@PostMapping({"assignment/_fetch","/_fetch/{value}"})
+	    public ResponseEntity<?> calculateAssetFee(@RequestBody AssetActionRequest actionRequest
+	    										, @PathVariable String value){
+	    	
+	    	AssetActionResponse response = null;
+	    	
+	    	/*if(StringUtils.equalsIgnoreCase(value, "CALCULATEFEE")) {
+	    		response = assetService.getApplicationDetails(assetSearchCriteria);
+	    	}*/ if(StringUtils.equalsIgnoreCase(value, "ACTIONS")){
+	    		response = assetService.getActionsOnApplication(actionRequest);
+	    	}else if(StringUtils.equalsIgnoreCase(value, "APPLICATIONDETAILS")){
+	    		response = assetService.getCountOfAllApplicationTypes(actionRequest);
+	    	}else {
+	    		return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
+	    	}
+	    	
+	    	return new ResponseEntity(response, HttpStatus.OK);
+	    }
+	
 }

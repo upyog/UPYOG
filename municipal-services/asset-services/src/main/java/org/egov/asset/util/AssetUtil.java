@@ -18,6 +18,9 @@ public class AssetUtil {
 	 * @param isCreate
 	 * @return AuditDetails
 	 */
+	
+	public static final String ASSET_BUSINESS_SERVICE = "ASSET";
+	
 	public AuditDetails getAuditDetails(String by, Boolean isCreate) {
 		Long time = System.currentTimeMillis();
 		if (isCreate)

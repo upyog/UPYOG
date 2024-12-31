@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- <th:link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'> -->
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+	</meta>
+	<title>Document</title>
+	<style>
+		/* hemant */
+		body {
+			font-family: 'Arial', sans-serif;
+			font-size: 14px;
+		}
+		.top-header {
+			width: 100%;
+			border-collapse: collapse;
+			border-bottom: solid 4px #49627e;
+		}
+
+
+		.top-header td {
+			padding: 8px;
+			text-align: left;
+		}
+
+		.hp-govt {
+			width: 180px;
+		}
+
+		.udd-logo {
+			width: 140px;
+			float: right;
+			right: 0px;
+		}
+
+		.header-text {
+			margin-top: -30px;
+			text-align: center;
+			font-size: 22px;
+			font-weight: bold;
+			color: #49627e;
+		}
+
+		.service-name {
+			text-align: center;
+			position: absolute;
+			width: 100%;
+			top:90px;
+			font-size: 20px;
+			color: #333;
+			font-weight: bold;
+		}
+
+		.license-description {
+			position: absolute;
+			text-align: center;
+			font-size: 14px;
+			color: #333;
+			font-weight: bold;
+			width: 100%;
+			top:140px;
+		}
+
+		.license-details {
+			margin-top: 10px;
+			display: inline-block;
+			width: 60%;
+			border: solid 1px #ccc;
+			border-collapse: collapse;
+			font-size: 14px;
+			background-color: #f9f9f9;
+		}
+
+		.license-details td {
+			border: solid 1px #ccc;
+			padding: 5px;
+		}
+
+		.qr-code-table {
+			display: inline-block;
+			width: 35%;
+			margin-bottom: 12px;
+		}
+
+		.qr-code {
+			width: 220px;
+			position: relative;
+			padding-left: 50px;
+			margin-top: 0px;
+			float: right;
+			right: 0;
+		}
+
+		/* Terms and Conditions Styling */
+		.terms-condition {
+			font-size: 20px;
+			color: #49627e;
+			margin-top: 30px;
+			text-align: left;
+			border-bottom: dashed 1px #49627e;
+			padding-bottom: 5px;
+		}
+
+		.terms-condition-details {
+			font-size: 14px;
+			text-align: justify;
+			color: #333;
+			margin-top: 10px;
+		}
+
+		.terms-condition-details ol {
+			padding-left: 20px;
+		}
+
+		.terms-condition-details li {
+			margin: 5px 0;
+		}
+
+
+
+		.terms-condition-details{
+			font-size:10px;
+			text-align: justify;
+		}
+		li {
+  			margin: 5px 0;
+		}
+		.sign {
+			position: relative;
+			float: right;
+			margin-top: 20px;
+			text-align: right;
+			width: 100%;
+		}
+		.signature-details {
+			margin-top: -5.6px;
+	
+		}
+		
+		.signature-details span {
+			display: inline;
+			text-align: right;
+			width: 100%;
+			line-height: 1; 
+		 
+
+		}
+		.hp-govt{
+			text-align: right !important;
+			float: right;
+		}
+	</style>
+</head>
+
+<body>
+	<table class="top-header">
+		<tr><td>
+				<img class="hp-govt"
+					th:src="${hpLogo}"
+					alt="Government of Himachal Pradesh" />
+			</td>
+			<td>
+				<h2 class="header-text"><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></h2>
+				<h3 class="service-name">New Trade License</h3>
+				<!--<span class="license-description">(UNDER SECTION 202 OF Himachal Pradesh Municipal ACT, 1994)</span> <br /> -->
+				<span class="license-description">Issued to: <span th:text="${ownerName}">NA</span></span>
+			</td>
+			<td>
+				<img class="udd-logo"
+					th:src="${UDDLogo}"
+					alt="Directorate of Urban Development" />
+			</td>
+		</tr>
+	</table>
+	<table class="license-details">
+		<tr>
+			<td>Trade License No:</td>
+			<td><span th:text="${tradeLicenseNo}">NA</span></td>
+
+		</tr>
+		<tr>
+			<td>Trade Name:</td>
+			<td><span th:text="${tradeName}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Premises Address:</td>
+			<td><span th:text="${tradePremisesAddress}">NA</span></td>
+		</tr>
+		<tr>
+			<td>License Issued Date:</td>
+			<td><span th:text="${licenseIssueDate}">NA</span></td>
+		</tr>
+		<tr>
+			<td>License Validity:</td>
+			<td><span th:text="${licenseValidity}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Sector Category:</td>
+			<td><span th:text="${licenseCategory}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Trade Type Category:</td>
+			<td><span th:text="${licenseSubCategory}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Licensee Name:</td>
+			<td><span th:text="${licenseApplicantName}">NA</span></td>
+		</tr>
+		<tr>
+			<td>Licensee Contact No:</td>
+			<td><span th:text="${licenseeMobileNumber}">NA</span></td>
+		</tr>
+	</table>
+	<table class="qr-code-table">
+		<tr>
+			<td>
+				<img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="" />
+			</td>
+		</tr>
+	</table>
+
+	<h2 class="terms-condition">Term and Conditions of this License:</h2>
+	<p class="terms-condition-details">
+	<ol>
+		<li>This license is for the Trade Sector <b><span th:text="${licenseCategory}">NA</span></b> and is valid for the trade/ business of: <b><span th:text="${licenseSubCategory}">NA</span></b>. </li>
+		<li>The licensee shall apply for renewal of license at least two months prior to the date of expiry of license
+			period to the licensing officer.</li>
+		<li>The trade license is solely for the purpose of conducting business activities as specified within the
+			license.</li>
+		<li>The trade license cannot be used as collateral or security for obtaining any form of loan, credit, or
+			financial borrowing from banks, financial institutions, or any other entities.</li>
+		<li>Any attempt to use the trade license as collateral for loans will be considered a violation of the terms and
+			conditions of the license. Such actions may lead to the revocation of the trade license and potential legal
+			consequences as per applicable laws and regulations.</li>
+		<li>The licensee shall maintain proper record of the articles kept for sale or storage in the premises as may be
+			required by the licensing officer. Further the licensee shall comply with the directions and instructions
+			issued to him by the commissioner or the licensing officer from time to time.</li>
+		<li>The licensee will ensure timely payment of corporation dues.</li>
+		<li>The permission shall, unless specified otherwise in the license, be valid in the entire ULB. limits, subject
+			to such conditions as may be imposed but the Commissioner/ Executive Officer/ Secretary.</li>
+		<li>The owner/occupier of the premises shall have to produce the license before the inspector or the licensing
+			officer at any point of time as may ordered by them.</li>
+		<li>The Commissioner/ Executive Officer/ Secretary shall have a right to impose or alter any of conditions in the license as and when it may be deemed fit by them under the provisions of the  Trade License byelaws of the ULB.</li>
+		<li>The license shall be responsible to obtain the NOC form the concerned department required as per category of
+			license.</li>
+		<li>The license shall be responsible to register premises with ULB for door-to-door garbage collection.</li>
+		<li>The license shall be responsible to install fire distinguishers in the premises as per the requirement and
+			consultation with fire department.</li>
+		<li>The license shall not encroach upon Municipal Corporation /Government of H.P. drain /road/path/land.</li>
+
+	</ol>
+	</p>
+	<div class="sign">
+	 
+	<img th:src="${signature}" alt="signature..." />
+	   <p class="signature-details"> This certificate Signed at <span th:text="${approvalTime}">NA</span>
+			<br />
+			<span th:text="${userName}">userName</span><br />
+			<span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
+	   </p>
+	</div>
+
+
+</body>
+
+</html>

@@ -140,7 +140,7 @@
             <td>
                <!--				<h2 class="header-text"><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></h2>-->
                <h3 class="service-name">Pet Registration Certificate</h3>
-               <span class="license-description">(UNDER SECTION 202 OF Himachal Pradesh Municipal ACT, 1994)</span> <br />
+              <!-- <span class="license-description">(UNDER SECTION 202 OF Himachal Pradesh Municipal ACT, 1994)</span> <br /> -->
                <span class="license-description">Issued to: <span th:text="${applicantName}">NA</span></span>
             </td>
             <td>
@@ -158,46 +158,46 @@
                      <td>Pet Registration No:</td>
                      <td><span th:text="${applicationNumber}">NA</span></td>
                   </tr>
+				  <tr>
+				   	<td>Pet Owner Name:</td>
+				    <td><span th:text="${applicantName}">NA</span></td>
+				  </tr>
+				   <tr>
+				      <td>Pet Owner Mobile No:</td>
+				      <td><span th:text="${mobileNumber}">NA</span></td>
+				    </tr>
                   <tr>
                      <td>Pet Name:</td>
                      <td><span th:text="${petName}">NA</span></td>
                   </tr>
                   <tr>
-                     <td>Pet Breed:</td>
+                     <td>Breed Type:</td>
                      <td><span th:text="${breedType}">NA</span></td>
                   </tr>
                   <tr>
-                     <td>Pet Address:</td>
+                     <td>Property Address:</td>
                      <td><span th:text="${address}">NA</span></td>
                   </tr>
                   <tr>
-                     <td>Registration Issue Date:</td>
+                     <td>Issuance date:</td>
                      <td><span th:text="${createdTime}">NA</span></td>
                   </tr>
                   <tr>
-                     <td>Vaccine Expiry Date:</td>
+                     <td>Vaccination Booster Due on:</td>
                      <td><span th:text="${lastVaccineDate}">NA</span></td>
-                  </tr>
-                  <tr>
-                     <td>Pet Owner Name:</td>
-                     <td><span th:text="${applicantName}">NA</span></td>
-                  </tr>
-                  <tr>
-                     <td>Pet Owner Mobile No:</td>
-                     <td><span th:text="${mobileNumber}">NA</span></td>
                   </tr>
                </table>
             </td>
             <td  style="width: 40%;">
                <table class="qr-code-table">
                   <tr>
-                     <td>
-                        <img class="qr-code" th:src="${petPhotoURL}"  alt="" />
-                     </td>
+					<td>
+					    <img class="qr-code" th:src="${petPhotoURL}" alt="QR Code" style="height: 80px; width: 80px;" />
+					</td>
                   </tr>
                   <tr>
                      <td>
-                        <img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="" />
+                        <img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="" style="height: 80px; width: 80px;" />
                      </td>
                   </tr>
                </table>
@@ -222,24 +222,18 @@
             In case any dog is found defecating on the road/street/ drain, it shall be the duty of the owner concerned to clean the excreta 
             and pack it in a disposable bag to be disposed of in the same manner in which human excreta is disposed of.and regulations.
          </li>
-         <li>The Commissioner/ Executive Officer/ Secretary shall have a right to impose or alter any of conditions in the license as may 
-            be deemed fit by the Commissioner under the provisions of section XXX of the XXXX Act, XXXX.
-         </li>
+		 <li>The Commissioner/ Executive Officer/ Secretary shall have a right to impose or alter any of conditions in the license as and when it may be deemed fit by them under the provisions of the  Trade License byelaws of the ULB.</li>
+
       </ol>
       </p>
-      <div class="sign">
-         <img th:src="${UpyogLogo}"
-            alt="UPYOG Logo" 
-            />
-         <p class="signature-details">
-            Digitally Signed at <span th:text="${approvalTime}">NA</span>
-            <span th:text="${approverName}">NA</span>
-            <!--			<span >Approve</span>-->
-            <span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
-         </p>
-      </div>
-	   <img th:src="${userName}"
-            alt="signature..." 
-            />
+	  <div class="sign">
+	   
+	  <img th:src="${signature}" alt="signature..." />
+	     <p class="signature-details"> This certificate Signed at <span th:text="${approvalTime}">NA</span>
+	  		<br />
+	  		<span th:text="${userName}">userName</span><br />
+	  		<span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
+	     </p>
+	  </div>
    </body>
 </html>
