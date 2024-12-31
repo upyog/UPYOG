@@ -36,8 +36,8 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
-      params:{tenantId:"pg"},
-      data:data,
+      //params:{tenantId:"pg"},
+      data:{User:data},
     }),
     issueDoc: ( data ) =>
     Request({

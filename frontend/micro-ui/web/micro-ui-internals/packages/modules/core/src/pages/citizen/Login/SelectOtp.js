@@ -24,22 +24,56 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     let TokenReq = {
       code_verifier: localStorage.getItem('code_verfier_register'),
       code: code, module: "REGISTER",
-      //redirect_uri: "https://upyog.niua.org/digit-ui/citizen/login/otp",
-      redirect_uri:"http://localhost:3001/digit-ui/citizen/login/otp"
+      redirect_uri: "https://upyog-test.niua.org/digit-ui/citizen/login/otp",
     }
    console.log("token",code,TokenReq,localStorage.getItem("code_verfier_register"))
     const data = await Digit.DigiLockerService.token({TokenReq })
     console.log("data_token",data)
     registerUser(data)
-    const authData=await Digit.DigiLockerService.auth(data?.TokenRes)
-    setdigilockerAuthentication(authData?.TokenRes)
-    console.log("digilockerAuthentication",digilockerAuthentication)
+ 
+     // Function to convert ddmmyyyy to dd/mm/yyyy format
+  function formatDate(dateStr) {
+     if (!dateStr || dateStr.length !== 8) return dateStr; 
+  
+    const day = dateStr.substring(0, 2);
+    const month = dateStr.substring(2, 4);
+    const year = dateStr.substring(4, 8);
+  
+  return `${day}/${month}/${year}`;
+}
 
-    //const digilockerAuthentication1=await Digit.DigiLockerService.auth(testdata)
-    //console.log("digilockerAuthentication1",digilockerAuthentication1)
-    if(digilockerAuthentication){
-      //setredirectUrl("http://localhost:3001/digit-ui/citizen")
-      window.location.href="http://localhost:3001/digit-ui/citizen"
+const user = {
+  ...data?.TokenRes, 
+  dob: formatDate(data?.TokenRes?.dob), 
+  tenantId: "pg", 
+  mobileNumber: data?.TokenRes.mobile, 
+};
+
+const authData = await Digit.DigiLockerService.auth(user);
+console.log("authData",authData)
+
+const setCitizenDetail = ( authData) => {
+  let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
+  localStorage.setItem("Citizen.tenant-id", authData?.UserRequest?.tenantId);
+  localStorage.setItem("tenant-id", authData?.UserRequest?.tenantId);
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(authData?.UserRequest));
+  localStorage.setItem("locale", locale);
+  localStorage.setItem("Citizen.locale", locale);
+  localStorage.setItem("token", authData?.access_token);
+  localStorage.setItem("user-info", JSON.stringify(authData?.UserRequest));
+  localStorage.setItem("Citizen.token", authData?.access_token);
+  localStorage.setItem("user-info", JSON.stringify(authData?.UserRequest));
+  localStorage.setItem("Citizen.user-info", JSON.stringify(authData?.UserRequest));
+};
+
+if(authData){
+      setCitizenDetail(authData)
+      const userInfo={
+        ...authData,
+        info:authData?.UserRequest
+      }
+      Digit.UserService.setUser(userInfo);
+      window.location.href="https://upyog-test.niua.org/digit-ui/citizen"
     }
   // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
   //   method: 'POST',
@@ -125,7 +159,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
 
   return (
-   ! digilockerAuthentication &&(
     <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 6 && canSubmit)}>
       <OTPInput length={6} onChange={onOtpChange} value={otp} />
       {timeLeft > 0 ? (
@@ -138,7 +171,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
       {errorRegister && <CardLabelError>{t("CS_ALREADY_REGISTERED")}</CardLabelError>}
     </FormStep>)
-  );
 };
 
 export default SelectOtp;
