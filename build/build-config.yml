@@ -647,7 +647,14 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/asset-services/src/main/resources/db"
         image-name: "asset-services-db" 
- 
+        
+  - name: "builds/municipal-services/scheduler-service"
+    build:
+      - work-dir: "municipal-services/scheduler-service"
+        image-name: "scheduler"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/scheduler-service/src/main/resources/db"
+        image-name: "scheduler-db"
  # Utilities
  
   - name: "builds/upyog/utilities/egov-weekly-impact-notifier"
@@ -718,7 +725,14 @@ config:
       - work-dir: "utilities/demo-utility"
         image-name: "demo-utility"
         dockerfile: "build/maven/Dockerfile"
-            
+        
+# Hp-Services
+
+  - name: "builds/upyog/hp-services/hpud-landingpage-service"
+    build:
+      - work-dir: "hp-services/hpud-landingpage-service"
+        image-name: "hpud-landing-service"
+        dockerfile: "build/maven/Dockerfile"
         
         
 # Frontend
