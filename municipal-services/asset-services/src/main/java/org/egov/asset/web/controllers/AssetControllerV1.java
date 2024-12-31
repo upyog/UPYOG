@@ -173,7 +173,7 @@ public class AssetControllerV1 {
 	}
 
 	
-	 @PostMapping({"assignment/_fetch","/_fetch/{value}"})
+	 //@PostMapping({"assignment/_fetch","/_fetch/{value}"})
 	    public ResponseEntity<?> calculateAssetFee(@RequestBody AssetActionRequest actionRequest
 	    										, @PathVariable String value){
 	    	
