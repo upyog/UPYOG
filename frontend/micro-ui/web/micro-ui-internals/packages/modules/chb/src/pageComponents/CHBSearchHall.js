@@ -40,6 +40,7 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const [showModal,setShowModal] = useState(false)
   const [showToast, setShowToast] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(true);
   const dateRangePickerRef = useRef(null);
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [hallCode, setHallCode] = useState(
@@ -300,7 +301,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     if (!isCheckboxSelected) {
       setShowToast({ error: true, label:t("CHB_SELECT_AT_LEAST_ONE_SLOT")});
     } else {
+      if(isExistingPopupRequired){
       setShowModal(true);  // Show modal when button is clicked
+      }else{
+        goNext();  // Ensure action is called only when submitting
+      }
     }
   };
   
