@@ -3,10 +3,6 @@ package org.egov.garbageservice.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -715,11 +711,10 @@ public class GarbageAccountService {
 //		tlObject.put("tradeRegistrationNo", GarbageAccount.getApplicationNumber()); // Trade Registration No
 		grbObject.put("ownerName", GarbageAccount.getName());// owner Name
 		grbObject.put("address",GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
-					.concat(GarbageAccount.getAddresses().get(0).getWardName())
-					.concat(", ").concat(GarbageAccount.getAddresses().get(0).getUlbName())
-					.concat(" (").concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
-					.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
-					.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
+						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail()
+						.get("district").asText()).concat(", ").concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat("(").concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(")")
+						.concat(GarbageAccount.getAddresses().get(0).getWardName())
+						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
 																																																		// Applicant
 																											// Name
 		grbObject.put("mobileNumber",GarbageAccount.getMobileNumber());

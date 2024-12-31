@@ -1,3 +1,7 @@
+DROP SEQUENCE IF EXISTS SEQ_EG_PGR_ID;
+CREATE SEQUENCE SEQ_EG_PGR_ID;
+
+
 CREATE TABLE eg_pgr_service_v2(
 
 id                  character varying(64),

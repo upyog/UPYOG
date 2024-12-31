@@ -2,6 +2,9 @@ package org.egov.asset.web.models;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.egov.asset.dto.AssetDTO;
 import org.egov.common.contract.request.RequestInfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,19 +17,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class AssetActionRequest {
+
+public class AssetUpdateRequest {
 	
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
+  @JsonProperty("RequestInfo")
+  private RequestInfo requestInfo;
 	
-	private List<String> applicationNumbers;
-	
-	private String businessService;
-	
-	private String tenantId;
-	private Boolean isHistoryCall = false;
+	@JsonProperty("Asset")
+	@Valid
+	private List<AssetUpdate> assetUpdate ;
 
 }
