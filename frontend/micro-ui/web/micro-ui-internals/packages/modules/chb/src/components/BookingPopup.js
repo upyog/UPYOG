@@ -67,10 +67,12 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
             headerBarMain={<Heading t={t}/>}
             headerBarEnd={<CloseBtn onClick={closeModal} />}
             hideSubmit={true}
+            actionCancelLabel={showExistingBookingDetails && t("CS_COMMON_BACK")}
+            actionCancelOnSubmit={() => setShowExistingBookingDetails(false)}
             formId="modal-action"
         >
             <Card style={{ boxShadow: "none" }}>
-            {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={Searchdata} />}
+            {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={Searchdata} setShowExistingBookingDetails={setShowExistingBookingDetails} />}
             <div style={{
                     display: 'flex',
                     justifyContent: 'center',

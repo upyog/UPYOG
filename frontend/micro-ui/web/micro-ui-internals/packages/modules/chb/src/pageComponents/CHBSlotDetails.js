@@ -4,7 +4,7 @@ import { useLocation} from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import { Controller, useForm } from "react-hook-form";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
-import { TimerValues } from "../components/TimerValues";
+// import { TimerValues } from "../components/TimerValues";
 
 
 
@@ -92,7 +92,7 @@ const CHBSlotDetails
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-           <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} />
+           {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} /> */}
           </div>
         </CardSubHeader>
         <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
