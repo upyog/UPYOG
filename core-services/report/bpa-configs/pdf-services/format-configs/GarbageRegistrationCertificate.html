@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!-- <th:link href='https://fonts.googleapis.com/css?family=Karla' rel='stylesheet'> -->
 
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
-	</meta>
-	<title>Document</title>
+	<title>Garbage Registration Certificate</title>
 	<style>
-		/* hemant */
 		body {
 			font-family: 'Arial', sans-serif;
 			font-size: 14px;
+			background-color: #F8F8F8;
 		}
+
+
 		.top-header {
 			width: 100%;
 			border-collapse: collapse;
-			border-bottom: solid 4px #49627e;
 		}
-
 
 		.top-header td {
 			padding: 8px;
@@ -31,190 +28,194 @@
 		.udd-logo {
 			width: 140px;
 			float: right;
-			right: 0px;
 		}
 
-		.header-text {
-			margin-top: -30px;
+		.header-text,
+		.state-govt {
 			text-align: center;
-			font-size: 22px;
+			font-size: 18px;
 			font-weight: bold;
-			color: #49627e;
+			color: rgb(255, 128, 0);
+			position: absolute;
+			margin-left: 35%;
+			top: 8%;
 		}
 
-		.service-name {
-			text-align: center;
+		.state-govt {
+			top: 10%;
+			margin-left: 37%;
+		}
+
+		.citizen-logo-text {
+			display: inline;
 			position: absolute;
-			width: 100%;
-			top:130px;
+			width: 30%;
+			left: 37%;
+			top: 5%;
+		}
+
+
+		.garbage-details {
+			width: 97%;
+			background-color: #fff;
+			padding: 10px;
+		}
+
+		.text-heading-class {
 			font-size: 20px;
-			color: #333;
 			font-weight: bold;
+			color: #5d5E60;
 		}
 
-		.license-description {
-			position: absolute;
-			text-align: center;
-			font-size: 14px;
-			color: #333;
-			font-weight: bold;
+		.garbage-id {
+			padding-left: 10px;
+			font-size: 28px;
+			font-weight: 700;
+		}
+
+		.property-id {
+			font-size: 28px;
+			font-weight: 700;
+			color: #000;
+		}
+
+
+		.citizen-details {
+			margin: 20px 0;
+		}
+
+		.details-table {
 			width: 100%;
-			top:150px;
-		}
-
-		.license-details {
-			margin-top: 10px;
-			display: inline-block;
-			width: 60%;
-			border: solid 1px #ccc;
 			border-collapse: collapse;
-			font-size: 14px;
-			background-color: #f9f9f9;
+			margin-top: 10px;
 		}
 
-		.license-details td {
-			border: solid 1px #ccc;
-			padding: 5px;
+		.details-table th,
+		.details-table td {
+			padding: 8px 10px;
+			text-align: left;
 		}
 
-		.qr-code-table {
-			display: inline-block;
-			width: 35%;
-			margin-bottom: 12px;
+		.text-heading-class {
+			width: 40%;
 		}
+
+		.text-heading-class-address {
+			width: 60%;
+		}
+
+		.text-details {
+			margin-left: 5px;
+			font-size: 20px;
+			color: black;
+			font-weight: 500;
+		}
+
 
 		.qr-code {
-			width: 220px;
-			position: relative;
-			padding-left: 50px;
-			margin-top: 0px;
-			float: right;
-			right: 0;
+			width: 300px;
+			min-height: 300px;
+			background-color: transparent;
+			/* Ensure the background remains transparent */
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			/* Center the QR code */
 		}
 
-		/* Terms and Conditions Styling */
-		.terms-condition {
-			font-size: 20px;
-			color: #49627e;
-			margin-top: 30px;
-			text-align: left;
-			border-bottom: dashed 1px #49627e;
-			padding-bottom: 5px;
-		}
-
-		.terms-condition-details {
+		body {
+			font-family: 'Arial', sans-serif;
 			font-size: 14px;
-			text-align: justify;
-			color: #333;
-			margin-top: 10px;
+
 		}
 
-		.terms-condition-details ol {
-			padding-left: 20px;
-		}
-
-		.terms-condition-details li {
-			margin: 5px 0;
-		}
-
-
-
-		.terms-condition-details{
-			font-size:10px;
-			text-align: justify;
-		}
-		li {
-  			margin: 5px 0;
-		}
-		.sign {
+		.content {
 			position: relative;
-			float: right;
-			margin-top: 20px;
-			text-align: right;
-			width: 100%;
-		}
-		.signature-details {
-			margin-top: -5.6px;
-	
-		}
-		
-		.signature-details span {
-			display: inline;
-			text-align: right;
-			width: 100%;
-			line-height: 1; 
-		 
+			z-index: 1;
 
 		}
-		.hp-govt{
-			text-align: right !important;
-			float: right;
+
+		.property-id-td {
+			background-image: url('https://citizenseva.hp.gov.in/hp-udd/user_manual/logo.png');
+			background-size: 350px 350px;
+			background-repeat: no-repeat;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-blend-mode: lighten;
+			background-color: rgba(255, 255, 255, 0.8);
+
+		}
+
+		.footer-logo {
+			background-image: url('https://citizenseva.hp.gov.in/hp-udd/user_manual/garbageFooterImage.png');
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-blend-mode: lighten;
+			background-color: rgba(255, 255, 255, 0.8);
+			width: 100%;
+			min-height: 280px;
+
+		}
+		.tag-line{
+			width: 350px;
 		}
 	</style>
 </head>
 
 <body>
+	<!-- Header -->
 	<table class="top-header">
-		<tr><td>
-				<img class="hp-govt"
-					th:src="${hpLogo}"
-					alt="Government of Himachal Pradesh" />
-			</td>
-			<td>
-				<h2 class="header-text"><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></h2>
-				<h3 class="service-name">Garbage Registartin Certificate</h3>
-				<!--<span class="license-description">(UNDER SECTION 202 OF Himachal Pradesh Municipal ACT, 1994)</span> <br /> -->
-				<span class="license-description">Issued to: <span th:text="${ownerName}">NA</span></span>
-			</td>
-			<td>
-				<img class="udd-logo"
-					th:src="${UDDLogo}"
-					alt="Directorate of Urban Development" />
-			</td>
-		</tr>
-	</table>
-	<table class="license-details">
-		<tr>
-			<td>Garbage Registration ID:</td>
-			<td><span th:text="${applicationNumber}">NA</span></td>
-
-		</tr>
-		<tr>
-			<td>Owner Name:</td>
-			<td><span th:text="${ownerName}">NA</span></td>
-		</tr>
-		<tr>
-			<td>Licensee Contact No:</td>
-			<td><span th:text="${mobileNumber}">NA</span></td>
-		</tr>
-		<tr>
-			<td>Property ID:</td>
-			<td><span th:text="${propertyId}">NA</span></td>
-		</tr>
-		<tr>
-			<td>Address:</td>
-			<td><span th:text="${address}">NA</span></td>
-		</tr>
-		<tr>
-			<td>Garbage ID Issuance Date:</td>
-			<td><span th:text="${createdTime}">NA</span></td>
-		</tr>
-
-		
-	</table>
-	<table class="qr-code-table">
 		<tr>
 			<td>
-				<img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="" />
+				<img class="hp-govt" th:src="${hpLogo}" alt="Government of Himachal Pradesh" />
+				<img class="citizen-logo-text"
+					src="https://citizenseva.hp.gov.in/hp-udd/user_manual/citijanseva.png"
+					alt="Citizen Seva Logo" />
+				<h2 class="header-text">Municipal Corporation, Shimla</h2>
+				<h2 class="state-govt">Govt. of Himachal Pradesh</h2>
+			</td>
+			<td></td>
+			<td>
+				<img class="udd-logo" th:src="${UDDLogo}" alt="Directorate of Urban Development" />
 			</td>
 		</tr>
 	</table>
 
-	<h2 class="terms-condition">Your Garbage ID is  <span th:text="${applicationNumber}"></span>:</h2> 
-	<p class="terms-condition-details">
-	</p>
+	<!-- Garbage Details -->
+	<div class="garbage-details">
+		<p>
+			<span class="text-heading-class">Garbage ID:</span>
+			<span class="garbage-id">XXX-XXX-XXXX-XXX</span>
+		</p>
+		<div class="citizen-details">
+			<table class="details-table">
+				<tr>
+					<th class="text-heading-class">Name of Citizen</th>
+					<th class="text-heading-class text-heading-class-address">Address</th>
+				</tr>
+				<tr>
+					<td><span class="text-details" th:text="${ownerName}">NA</span></td>
+					<td><span class="text-details" th:text="${address}">NA</span></td>
+				</tr>
+			</table>
+		</div>
+	</div>
 
-
+	<!-- Property ID and QR Code -->
+	<table class="details-table">
+		<tr>
+			<th class="text-heading-class"><img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="QR Code" />
+				<span class="text-heading-class">Property ID: </span><span class="property-id" th:text="${propertyId}">NA</span>
+			</th>
+			<th class="text-heading-class text-heading-class-address property-id-td">
+				<img class="tag-line" src="http://localhost:908/formBuilder/web/img/tag-line-blue.png" alt="Citizen Seva Tag Line"/>
+			</th>
+		</tr>
+	</table>
+	<div class="footer-logo">
+		&nbsp;
+	</div>
 </body>
 
 </html>
