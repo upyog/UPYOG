@@ -5,7 +5,8 @@ import { useHistory, useLocation, useParams, Redirect } from "react-router-dom";
 import ArrearSummary from "./arrear-summary";
 import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
-import TimerValues from "../../../timer-values/timerValues";
+import TimerServices from "../../../timer-Services/timerServices";
+import { timerEnabledForBusinessService } from "./utils";
 
 const BillDetails = ({ paymentRules, businessService }) => {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
         businessService,
         consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode,
       });
-
+     
   let Useruuid = data?.Bill?.[0]?.userId || "";
   let requestCriteria = [
     "/user/_search",
@@ -167,12 +168,14 @@ const BillDetails = ({ paymentRules, businessService }) => {
         name: bill.payerName,
         mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
     } 
-    else if (businessService === "adv-services" || businessService==="chb-services") {
+    else if (timerEnabledForBusinessService(businessService)) {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
         paymentAmount, 
         tenantId: billDetails.tenantId, 
         propertyId: propertyId ,
-        timerValue:state?.timerValue,});
+        timerValue:state?.timerValue,
+        SlotSearchData:state?.SlotSearchData,
+      });
       } 
     else {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
@@ -203,14 +206,14 @@ const BillDetails = ({ paymentRules, businessService }) => {
             keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
             note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
           />
-          {(businessService === "adv-services" || businessService === "chb-services") && (
+          {timerEnabledForBusinessService(businessService) && (
             <CardSubHeader 
               style={{ 
                 textAlign: 'right', 
                 fontSize: "24px"
               }}
             >
-            <TimerValues businessService={businessService} consumerCode={consumerCode} timerValues={state?.timerValue} t={t}/>
+            <TimerServices businessService={businessService} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
             </CardSubHeader>
           )}
           </div>
