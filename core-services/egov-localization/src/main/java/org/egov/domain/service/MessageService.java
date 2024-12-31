@@ -151,7 +151,7 @@ public class MessageService {
 	private List<Message> getMessages(MessageSearchCriteria searchCriteria) {
 		final List<Message> cachedMessages = messageCacheRepository.getComputedMessages(searchCriteria.getLocale(),
 				searchCriteria.getTenantId());
-		if (cachedMessages != null) {
+		if (!CollectionUtils.isEmpty(cachedMessages)) {
 			return cachedMessages;
 		}
 		final List<Message> computedMessages = computeMessageList(searchCriteria.getLocale(),
