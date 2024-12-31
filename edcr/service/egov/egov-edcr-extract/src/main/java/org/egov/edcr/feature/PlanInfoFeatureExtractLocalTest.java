@@ -657,17 +657,25 @@ public class PlanInfoFeatureExtractLocalTest extends FeatureExtract {
 		if (StringUtils.isNotBlank(plotNo))
 			pi.setPlotNo(plotNo);
 
-		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
-		if (StringUtils.isNotBlank(khataNo))
-			pi.setKhataNo(khataNo);
+//		String khataNo = planInfoProperties.get(DxfFileConstants.KHATA_NO);
+//		if (StringUtils.isNotBlank(khataNo))
+//			pi.setKhataNo(khataNo);
+		
+		String khasraNo = planInfoProperties.get(DxfFileConstants.KHASRA_NO);
+		if (StringUtils.isNotBlank(khasraNo))
+			pi.setKhasraNo(khasraNo);
+		
+		String khatuniNo = planInfoProperties.get(DxfFileConstants.KHATUNI_NO);
+		if (StringUtils.isNotBlank(khatuniNo))
+			pi.setKhatuniNo(khatuniNo);
 
 		String district = planInfoProperties.get(DxfFileConstants.DISTRICT);
 		if (StringUtils.isNotBlank(district))
 			pi.setDistrict(district);
 
-		String mauza = planInfoProperties.get(DxfFileConstants.MAUZA);
-		if (StringUtils.isNotBlank(mauza))
-			pi.setMauza(mauza);
+//		String mauza = planInfoProperties.get(DxfFileConstants.MAUZA);
+//		if (StringUtils.isNotBlank(mauza))
+//			pi.setMauza(mauza);
 
 		String leaseHoldLand = planInfoProperties.get(DxfFileConstants.LEASEHOLD_LAND);
 		if (StringUtils.isNotBlank(leaseHoldLand)) {

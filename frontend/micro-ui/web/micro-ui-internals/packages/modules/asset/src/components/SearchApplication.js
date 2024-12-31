@@ -8,7 +8,7 @@
  
 
   const ASSETSearchApplication = ({isLoading, t, onSubmit, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, parentRoute, tenantId }) => {
-   
+    
       const isMobile = window.Digit.Utils.browser.isMobile();
       const todaydate = new Date();
       const today = todaydate.toISOString().split("T")[0];
@@ -38,6 +38,7 @@
       },[register, setValue, today, fromDateFormatted])
 
 // Get base path
+
       var base_url = window.location.origin;
     const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
       {
@@ -53,7 +54,47 @@
     actionState && actionState.map((actionstate) => {
       action.push({i18nKey: `${actionstate.name}`, code: `${actionstate.code}`, value: `${actionstate.name}`})
     }) 
+   
 
+    const { data: actionDetail } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "ActionOption" }], {
+      select: (data) => {
+        const formattedData = data?.["ASSET"]?.["ActionOption"];
+        const activeData = formattedData?.filter((item) => item.active === true);
+        console.log('Comming data:- ', activeData)
+        return activeData;
+      },
+    });
+
+    const collectAction = (row) => {
+      const actionMdms = [];
+    
+      actionDetail &&
+        actionDetail.map((opt) => {
+          // this condition use for if asset asign then show return asset if asset not assign then show asset Assign
+          if (
+            (row?.original?.assetAssignment?.isAssigned && opt.code === "AST_RETURN") ||
+            (!row?.original?.assetAssignment?.isAssigned && opt.code === "AST_ASSIGN")
+          ) {
+            actionMdms.push({
+              label: t(opt.code),
+              link: `${opt.url}${row?.original?.["applicationNo"]}`,
+            });
+          } else if (
+            opt.code !== "AST_RETURN" && 
+            opt.code !== "AST_ASSIGN"
+          ) {
+            // Push other options unconditionally
+            actionMdms.push({
+              label: t(opt.code),
+              link: `${opt.url}${row?.original?.["applicationNo"]}`,
+            });
+          }
+        });
+    
+      return actionMdms;
+    };
+    
+  
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
 
@@ -164,22 +205,23 @@
                   };
                 }, []);
 
-                const actionOptions = [
-                  {
-                    label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
-                    link: row?.original?.assetAssignment?.isAssigned
-                      ? `/digit-ui/employee/asset/assetservice/return-assets/${row?.original?.["applicationNo"]}`
-                      : `/digit-ui/employee/asset/assetservice/assign-assets/${row?.original?.["applicationNo"]}`,
-                  },
-                  {
-                    label: t("AST_DISPOSE"),
-                    link: `/digit-ui/employee/asset/assetservice/dispose-assets/${row?.original?.["applicationNo"]}`,
-                  },
-                  {
-                    label: t("AST_DEPRECIATION"),
-                    link: `/digit-ui/employee/asset/assetservice/depreciate-assets/${row?.original?.["applicationNo"]}`,
-                  },
-                ];
+                const actionOptions = collectAction(row);
+                // const actionOptions = [
+                //   {
+                //     label: row?.original?.assetAssignment?.isAssigned ? t("AST_RETURN") : t("AST_ASSIGN"),
+                //     link: row?.original?.assetAssignment?.isAssigned
+                //       ? `/digit-ui/employee/asset/assetservice/return-assets/${row?.original?.["applicationNo"]}`
+                //       : `/digit-ui/employee/asset/assetservice/assign-assets/${row?.original?.["applicationNo"]}`,
+                //   },
+                //   {
+                //     label: t("AST_DISPOSE"),
+                //     link: `/digit-ui/employee/asset/assetservice/dispose-assets/${row?.original?.["applicationNo"]}`,
+                //   },
+                //   {
+                //     label: t("AST_DEPRECIATION"),
+                //     link: `/digit-ui/employee/asset/assetservice/depreciate-assets/${row?.original?.["applicationNo"]}`,
+                //   },
+                // ];
 
                   return (
                     <div ref={menuRef}>

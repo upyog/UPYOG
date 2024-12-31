@@ -113,10 +113,12 @@ public class BookingServiceImpl implements BookingService {
 
 		log.info("loading data based on criteria" + advertisementSearchCriteria);
 
-		if (advertisementSearchCriteria.getMobileNumber() != null) {
+		if (advertisementSearchCriteria.getMobileNumber() != null || advertisementSearchCriteria.getApplicantName() != null) {
 
 			ApplicantDetail applicantDetail = ApplicantDetail.builder()
-					.applicantMobileNo(advertisementSearchCriteria.getMobileNumber()).build();
+					.applicantMobileNo(advertisementSearchCriteria.getMobileNumber())
+					.applicantName(advertisementSearchCriteria.getApplicantName())
+					.build();
 			BookingDetail bookingDetail = BookingDetail.builder().applicantDetail(applicantDetail).build();
 			BookingRequest bookingRequest = BookingRequest.builder().bookingApplication(bookingDetail).requestInfo(info)
 					.build();
@@ -124,6 +126,7 @@ public class BookingServiceImpl implements BookingService {
 			bookingDetail = encryptionService.encryptObject(bookingRequest);
 
 			advertisementSearchCriteria.setMobileNumber(bookingDetail.getApplicantDetail().getApplicantMobileNo());
+			advertisementSearchCriteria.setApplicantName(bookingDetail.getApplicantDetail().getApplicantName());
 
 			log.info("loading data based on criteria after encrypting mobile no : " + advertisementSearchCriteria);
 
@@ -171,6 +174,30 @@ public class BookingServiceImpl implements BookingService {
 		return availabiltityDetailsResponse;
 	}
 	
+//	@Override
+//	public AdvertisementSlotAvailabilityResponse getAdvertisementSlotAvailability(
+//			AdvertisementSlotSearchCriteria criteria, RequestInfo info) {
+//		
+//		log.info("criteria : {}" , criteria);
+//		List<AdvertisementSlotAvailabilityDetail> availabiltityDetails = bookingRepository
+//				.getAdvertisementSlotAvailability(criteria);
+//		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
+//		
+//		List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse = convertToAdvertisementAvailabilityResponse(
+//				criteria, availabiltityDetails);
+//		
+//		Long timerValue =  0l;
+//				
+//		if (criteria.getIsTimerRequired()) {
+//			paymentTimerService.insertBookingIdForTimer(criteria, info, availabiltityDetailsResponse);
+//		}
+//		AdvertisementSlotAvailabilityResponse hallSlotAvailabilityResponse = AdvertisementSlotAvailabilityResponse.builder()
+//				.advertisementSlotAvailabiltityDetails(availabiltityDetailsResponse).timerValue(timerValue)
+//				.build();
+//		
+//		log.info("Availabiltity details response after updating status :" + hallSlotAvailabilityResponse);
+//		return hallSlotAvailabilityResponse;
+//	}
 
 	
 

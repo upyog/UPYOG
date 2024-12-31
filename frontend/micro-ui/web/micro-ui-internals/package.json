@@ -51,7 +51,6 @@
     "dev:ads": "cd packages/modules/ads && yarn start",
     "dev:ew": "cd packages/modules/ew && yarn start",
     "dev:sv": "cd packages/modules/sv && yarn start",
-    "dev:cm": "cd packages/modules/cm && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "buildD:asset": "cd packages/modules/asset && yarn build",
