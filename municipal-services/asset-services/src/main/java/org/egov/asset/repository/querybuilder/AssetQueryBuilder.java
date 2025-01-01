@@ -56,6 +56,7 @@ public class AssetQueryBuilder {
             + "asset.name, "
             + "asset.department, "
             + "asset.status, "
+            + "asset.location, "
             + "asset.assetstatus, "
             + "asset.createdtime, "
             + "assign.isassigned, "
