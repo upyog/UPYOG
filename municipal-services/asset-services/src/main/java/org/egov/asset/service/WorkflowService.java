@@ -2,12 +2,18 @@ package org.egov.asset.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.repository.ServiceRequestRepository;
+import org.egov.asset.util.AssetConstants;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetRequest;
+import org.egov.asset.web.models.AssetUpdate;
+import org.egov.asset.web.models.AssetUpdateRequest;
 import org.egov.asset.web.models.CreationReason;
 import org.egov.asset.web.models.workflow.BusinessService;
 import org.egov.asset.web.models.workflow.BusinessServiceResponse;
@@ -25,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 @Service
 public class WorkflowService {
@@ -87,6 +94,33 @@ public class WorkflowService {
 //		request.getProperty().getWorkflow().setState(state);
 		assetRequest.getAsset().setStatus(state.getApplicationStatus());
 		return state;
+	}
+	
+	public void updateWorkflowForAssetUpdate(@Valid AssetUpdateRequest assetRequest, CreationReason update) {
+		assetRequest.getAssetUpdate().forEach(application ->{
+			ProcessInstance processInstance = getProcessInstanceForAssetUpdate(application, assetRequest.getRequestInfo());
+			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(assetRequest.getRequestInfo(),
+					Collections.singletonList(processInstance));
+			callWorkFlow(workflowRequest);
+		});
+		
+	}
+
+
+	private ProcessInstance getProcessInstanceForAssetUpdate(AssetUpdate assetUpdate, RequestInfo requestInfo) {
+		ProcessInstance processInstance = null;
+		if(StringUtils.isNotEmpty(assetUpdate.getWorkflowAction())) {
+			processInstance = new ProcessInstance();
+			processInstance.setBusinessId(assetUpdate.getApplicationNo());
+			processInstance.setAction(assetUpdate.getWorkflowAction());
+			processInstance.setModuleName(AssetConstants.ASSET_BusinessService);
+			processInstance.setTenantId(assetUpdate.getTenantId());
+			processInstance.setBusinessService(AssetConstants.ASSET_BusinessService);
+			//processInstance.setDocuments(workflow.getDocuments());
+			processInstance.setComment(assetUpdate.getComments());
+		}
+		
+		return processInstance;
 	}
 
 	private ProcessInstanceRequest getProcessInstanceForAsset(Asset asset, RequestInfo requestInfo) {
@@ -222,5 +256,7 @@ public class WorkflowService {
 
 		return null;
 	}
+
+	
 
 }
