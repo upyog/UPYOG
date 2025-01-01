@@ -11,7 +11,7 @@ import { initEngagementComponents } from "@egovernments/digit-ui-module-engageme
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { UICustomizations } from "./Customisations/UICustomizations";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
+import { initWorkbenchComponents } from "@nudmcdgnpm/digit-ui-module-workbench";
 import {
   initPGRComponents,
   PGRReducers,
@@ -23,8 +23,8 @@ const enabledModules = [
   "DSS",
   "NDSS",
   "Utilities",
-  "HRMS",
-  "Engagement",
+  // "HRMS",
+  // "Engagement",
   "Workbench",
   "PGR"
 
