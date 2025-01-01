@@ -21,7 +21,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-workbench":"0.1.0",
+"@nudmcdgnpm/digit-ui-module-workbench":"0.1.0",
 ```
 
 then navigate to App.js
@@ -33,7 +33,7 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
+import { initWorkbenchComponents } from "@nudmcdgnpm/digit-ui-module-workbench";
 
 /** inside enabledModules add this new module key **/
 
