@@ -8,7 +8,7 @@ const AdvertisementModuleCard = ({ imageSrc, title, location, poleNo, price, pat
       faceArea:{code:faceArea,value:faceArea,i18nKey:faceArea},
       adType:{code:adType,value:adType,i18nKey:adType},
       location:{code:location,value:location,i18nKey:location},
-      fromDate: new Date().toISOString().split("T")[0], // Current date
+      fromDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0],
       toDate: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split("T")[0], // 3 months later
       nightLight:{
         i18nKey: "Yes",
