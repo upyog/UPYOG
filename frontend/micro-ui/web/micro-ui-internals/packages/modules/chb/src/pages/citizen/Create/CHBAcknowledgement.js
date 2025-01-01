@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch,useHistory } from "react-router-dom";
@@ -53,10 +53,18 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
     },
     enabled: false, // Disable automatic refetch
   });
-
   const handleMakePayment = async () => {
     try{
     const result = await refetch();
+    let SlotSearchData={
+      tenantId:tenantId,
+      bookingId:mutation.data?.hallsBookingApplication[0].bookingId,
+      communityHallCode: mutation.data?.hallsBookingApplication[0].communityHallCode,
+      bookingStartDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.bookingDate,
+      bookingEndDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[mutation.data?.hallsBookingApplication[0].bookingSlotDetails.length - 1]?.bookingDate,
+      hallCode:mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.hallCode,
+      isTimerRequired:true,
+    };
     const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
       (slot) => slot.slotStaus === "BOOKED"
     );
@@ -66,7 +74,7 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
     } else {
       history.push({
         pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
-        state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue },
+        state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue,SlotSearchData:SlotSearchData },
       });
     }
   }catch (error) {

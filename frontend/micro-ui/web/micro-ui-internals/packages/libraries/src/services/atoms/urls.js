@@ -236,7 +236,7 @@ const Urls = {
   },
 
   cm: {
-    search: "/common-module/validity/_search"
+    search: "/verification-service/validity/_search"
   },
 
 digiLocker:{

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
@@ -10,7 +10,7 @@ import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancell
  * and email address. It provides a structured form step for user input.
  */
 
-const ADSCitizenDetails = ({ t, config, onSelect, userType, formData}) => {
+const ADSCitizenDetails = ({ t, config, onSelect, userType, formData,value=formData.adslist}) => {
   const { pathname: url } = useLocation();
 
   let index = window.location.href.charAt(window.location.href.length - 1);
@@ -18,18 +18,18 @@ const ADSCitizenDetails = ({ t, config, onSelect, userType, formData}) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const [applicantName, setName] = useState(
-    (formData.applicant && formData.applicant[index] && formData.applicant[index].applicantName) || formData?.applicant?.applicantName || user?.name || ""
+    (formData.applicant && formData.applicant[index] && formData.applicant[index].applicantName) || formData?.applicant?.applicantName || value?.existingDataSet?.applicant?.applicantName || ""
   );
   const [emailId, setEmail] = useState(
-    (formData.applicant && formData.applicant[index] && formData.applicant[index].emailId) || formData?.applicant?.emailId || user?.emailId ||""
+    (formData.applicant && formData.applicant[index] && formData.applicant[index].emailId) || formData?.applicant?.emailId || value?.existingDataSet?.applicant?.emailId  ||""
   );
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.applicant && formData.applicant[index] && formData.applicant[index].mobileNumber) ||
+    (formData.applicant && formData.applicant[index] && formData.applicant[index].mobileNumber) ||  value?.existingDataSet?.applicant?.mobileNumber  ||
       formData?.applicant?.mobileNumber ||
       user?.mobileNumber
   );
   const [alternateNumber, setAltMobileNumber] = useState(
-    (formData.applicant && formData.applicant[index] && formData.applicant[index].alternateNumber) || formData?.applicant?.alternateNumber || ""
+    (formData.applicant && formData.applicant[index] && formData.applicant[index].alternateNumber) || formData?.applicant?.alternateNumber ||  value?.existingDataSet?.applicant?.alternateNumber || ""
   );
   function setApplicantName(e) {
     const input = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Remove non-alphabetic characters and non-space characters

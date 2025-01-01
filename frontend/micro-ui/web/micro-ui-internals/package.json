@@ -11,7 +11,8 @@
     "packages/modules/common",
     "packages/modules/dss",
     "packages/modules/chb",
-    "packages/modules/engagement"
+    "packages/modules/engagement",
+    "packages/modules/sv"
   ],
   "license": "MIT",
   "private": true,
@@ -75,7 +76,7 @@
     "build:chb": "cd packages/modules/chb && yarn build",
     "buildD:ads": "cd packages/modules/ads && yarn build",
     "buildD:ew": "cd packages/modules/ew && yarn build",
-    "buildD:sv": "cd packages/modules/sv && yarn build",
+    "build:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"

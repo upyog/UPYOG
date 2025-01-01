@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
+import { CardLabelError, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 export const configAcceptDso = ({ t, dsoData, dso, selectVehicleNo, vehicleNoList, vehicleNo, vehicle, noOfTrips, action }) => {
   return {

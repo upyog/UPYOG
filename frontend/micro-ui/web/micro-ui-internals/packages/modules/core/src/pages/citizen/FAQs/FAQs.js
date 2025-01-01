@@ -1,4 +1,4 @@
-import { Header, TextInput, SearchIconSvg, ArrowForward, Loader, BackButton} from "@upyog/digit-ui-react-components";
+import { Header, TextInput, SearchIconSvg, ArrowForward, Loader, BackButton} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, Fragment, useRef, useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import FaqComponent from "./FaqComponent";
