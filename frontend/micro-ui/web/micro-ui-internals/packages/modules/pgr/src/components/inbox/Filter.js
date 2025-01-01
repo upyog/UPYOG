@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Dropdown, RadioButtons, ActionBar, RemoveableTag, RoundedLabel } from "@upyog/digit-ui-react-components";
-import { ApplyFilterBar, CloseSvg } from "@upyog/digit-ui-react-components";
+import { Dropdown, RadioButtons, ActionBar, RemoveableTag, RoundedLabel } from "@nudmcdgnpm/digit-ui-react-components";
+import { ApplyFilterBar, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Status from "./Status";
 

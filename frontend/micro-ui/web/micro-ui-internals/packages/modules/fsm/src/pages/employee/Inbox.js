@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";

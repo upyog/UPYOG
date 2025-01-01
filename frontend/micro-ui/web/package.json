@@ -10,14 +10,15 @@
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/chb",
-    "micro-ui-internals/packages/modules/engagement"
+    "micro-ui-internals/packages/modules/engagement",
+    "micro-ui-internals/packages/modules/sv"
   ],
   "engines": {
     "node": ">=14"
   },
   "dependencies": {
-    "@nudmcdgnpm/upyog-css": "1.2.6",
-    "@upyog/digit-ui-libraries": "1.8.0",
+    "@nudmcdgnpm/upyog-css": "1.2.7",
+    "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
     "@upyog/digit-ui-module-core": "1.8.2",
@@ -35,7 +36,7 @@
     "@upyog/digit-ui-module-receipts": "1.8.0",
     "@upyog/digit-ui-module-tl": "1.8.10",
     "@upyog/digit-ui-module-ws": "1.8.16",
-    "@upyog/digit-ui-react-components": "1.8.0",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
     "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.8",
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.5",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.3",

@@ -228,6 +228,8 @@ import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 
 import CitizenConsentForm from "./atoms/CitizenConsentForm";
+import AddressDetails from "./molecules/AddressDetails";
+import ApplicantDetails from "./molecules/ApplicantDetails";
 
 export {
   Phone,
@@ -464,5 +466,7 @@ export {
   LoginIcon,
   CitizenConsentForm,
   PTRIcon,
-  CHBIcon
+  CHBIcon,
+  AddressDetails,
+  ApplicantDetails
 };
