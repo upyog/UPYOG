@@ -148,7 +148,7 @@ public class AssetControllerV1 {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping({ "_fetch", "/_fetch/{value}" })
+	//@PostMapping({ "_fetch", "/_fetch/{value}" })
 	public ResponseEntity<?> calculateTLFee(@RequestBody AssetActionRequest actionRequest, @PathVariable String value) {
 
 		AssetActionResponse response = null;
@@ -173,7 +173,7 @@ public class AssetControllerV1 {
 	}
 
 	
-	 //@PostMapping({"assignment/_fetch","/_fetch/{value}"})
+	 @PostMapping({"assignment/_fetch","/_fetch/{value}"})
 	    public ResponseEntity<?> calculateAssetFee(@RequestBody AssetActionRequest actionRequest
 	    										, @PathVariable String value){
 	    	

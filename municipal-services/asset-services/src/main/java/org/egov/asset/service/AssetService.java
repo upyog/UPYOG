@@ -471,6 +471,7 @@ public class AssetService {
 			validateAssetUpdateRequest(assetRequest);
 			appNoToSiteBookingMap = searchAssetFromRequest(assetRequest);
 			assetRequest = validateAndEnrichUpdateAsset(assetRequest, appNoToSiteBookingMap);
+			workflowService.updateWorkflowForAssetUpdate(assetRequest, CreationReason.UPDATE);
 			assetRepository.updateAsset(assetRequest);
 
 		} catch (Exception e) {
