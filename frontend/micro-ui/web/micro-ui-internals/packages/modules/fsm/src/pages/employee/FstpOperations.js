@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { BackButton, Card, AddNewIcon, InboxIcon, ViewReportIcon, CardText, CardHeader, ULBHomeCard } from "@upyog/digit-ui-react-components";
+import { BackButton, Card, AddNewIcon, InboxIcon, ViewReportIcon, CardText, CardHeader, ULBHomeCard } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 

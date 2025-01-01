@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText,DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText,DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./ApplicationTable";
 

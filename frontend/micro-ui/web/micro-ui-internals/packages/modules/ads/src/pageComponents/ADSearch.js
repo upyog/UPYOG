@@ -12,7 +12,7 @@ import {
   Card,
   RadioButtons,
   TextInput,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * ADSSearch component handles the advertisement search functionality, 

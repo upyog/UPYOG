@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@nudmcdgnpm/digit-ui-react-components";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 import Timeline from "../components/CHBTimeline";
 // import { TimerValues } from "../components/TimerValues";
