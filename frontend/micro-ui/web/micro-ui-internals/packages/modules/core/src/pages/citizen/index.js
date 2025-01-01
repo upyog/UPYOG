@@ -19,7 +19,7 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
-import CMSearchCertificate from "./CMSearchCertificate";
+import VSearchCertificate from "./CMSearchCertificate";
 import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
 const sidebarHiddenFor = [
@@ -28,7 +28,7 @@ const sidebarHiddenFor = [
   "/digit-ui/citizen/select-location",
   "/digit-ui/citizen/login",
   "/digit-ui/citizen/register/otp",
-  "/digit-ui/citizen/commonmodule-home" // route for commonmodule
+  "/digit-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
 
 const getTenants = (codes, tenants) => {
@@ -248,8 +248,8 @@ const Home = ({
           <Route path={`${path}/assets/services`}>
             <AssetsQRCode></AssetsQRCode>
           </Route>
-          <Route path={`${path}/commonmodule-home`}>
-            <CMSearchCertificate/>
+          <Route path={`${path}/verificationsearch-home`}>
+            <VSearchCertificate/>
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>

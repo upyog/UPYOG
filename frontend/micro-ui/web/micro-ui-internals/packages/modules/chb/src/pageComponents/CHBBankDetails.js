@@ -3,6 +3,7 @@ import { FormStep, TextInput, CardLabel, Card,CardSubHeader,Toast } from "@upyog
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
+// import { TimerValues } from "../components/TimerValues";
 
 const CHBBankDetails 
  = ({ t, config, onSelect, userType, formData, ownerIndex,searchParams,value=formData.slotlist}) => {
@@ -13,12 +14,12 @@ const CHBBankDetails
    
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  const [accountNumber , setAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountNumber) || formData?.bankdetails?.accountNumber || "");
-  const [confirmAccountNumber , setConfirmAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].confirmAccountNumber) || formData?.bankdetails?.confirmAccountNumber || "");
-  const [ifscCode , setIfscCode ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].ifscCode) || formData?.bankdetails?.ifscCode || "");
-  const [bankName , setBankName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].bankName) || formData?.bankdetails?.bankName || "");
-  const [bankBranchName , setBankBranchName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].bankBranchName) || formData?.bankdetails?.bankBranchName || "");
-  const [accountHolderName , setAccountHolderName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountHolderName) || formData?.bankdetails?.accountHolderName || "");
+  const [accountNumber , setAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountNumber) || formData?.bankdetails?.accountNumber || value?.existingDataSet?.bankdetails?.accountNumber  || "");
+  const [confirmAccountNumber , setConfirmAccountNumber ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].confirmAccountNumber) || formData?.bankdetails?.confirmAccountNumber || value?.existingDataSet?.bankdetails?.confirmAccountNumber  || "");
+  const [ifscCode , setIfscCode ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].ifscCode) || formData?.bankdetails?.ifscCode || value?.existingDataSet?.bankdetails?.ifscCode  || "");
+  const [bankName , setBankName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].bankName) || formData?.bankdetails?.bankName || value?.existingDataSet?.bankdetails?.bankName  || "");
+  const [bankBranchName , setBankBranchName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].bankBranchName) || formData?.bankdetails?.bankBranchName || value?.existingDataSet?.bankdetails?.bankBranchName  || "");
+  const [accountHolderName , setAccountHolderName ] = useState((formData.bankdetails && formData.bankdetails[index] && formData.bankdetails[index].accountHolderName) || formData?.bankdetails?.accountHolderName || value?.existingDataSet?.bankdetails?.accountHolderName  || "");
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -148,9 +149,12 @@ const CHBBankDetails
     }
    <Card>
         <CardSubHeader>
+        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
+            {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} /> */}
+          </div>
         </CardSubHeader>
         <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
       </Card>

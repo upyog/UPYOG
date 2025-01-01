@@ -66,6 +66,17 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
       try {
         // Await the mutation and capture the result directly
         const result = await slotSearchData.mutateAsync(formdata);
+        let SlotSearchData={
+          bookingId:mutation.data?.bookingApplication[0].bookingId,
+          addType: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.addType,
+          bookingStartDate:mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.bookingDate,
+          bookingEndDate: mutation.data?.bookingApplication[0]?.cartDetails?.[mutation.data?.bookingApplication[0].cartDetails.length - 1]?.bookingDate,
+          faceArea: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.faceArea,
+          tenantId: tenantId,
+          location: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.location,
+          nightLight: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.nightLight,
+          isTimerRequired: true
+        };
         const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
         const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;
         if (isSlotBooked) {
@@ -73,7 +84,7 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
         } else {
           history.push({
             pathname: `/digit-ui/citizen/payment/my-bills/${"adv-services"}/${ mutation.data?.bookingApplication[0]?.bookingNo}`,
-            state: { tenantId:tenantId, bookingNo: mutation.data?.bookingApplication[0]?.bookingNo, timerValue:timerValue },
+            state: { tenantId:tenantId, bookingNo: mutation.data?.bookingApplication[0]?.bookingNo, timerValue:timerValue , SlotSearchData:SlotSearchData},
           });
         }
     } catch (error) {
