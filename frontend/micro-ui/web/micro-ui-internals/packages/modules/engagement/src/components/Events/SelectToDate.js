@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError } from "@upyog/digit-ui-react-components";
+import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { isValid, format, startOfToday } from 'date-fns';

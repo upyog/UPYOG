@@ -12,8 +12,11 @@ import {
   Card,
   RadioButtons,
   TextInput,
-} from "@upyog/digit-ui-react-components";
+
+} from "@nudmcdgnpm/digit-ui-react-components";
 import BookingPopup from "../components/BookingPopup";
+
+
 /**
  * ADSSearch component handles the advertisement search functionality, 
  * allowing users to select advertisement types, locations, dates, 

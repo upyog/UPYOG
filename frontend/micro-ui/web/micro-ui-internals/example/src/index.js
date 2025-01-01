@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { initLibraries } from "@upyog/digit-ui-libraries";
+import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import { PGRReducers } from "@upyog/digit-ui-module-pgr";
 import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks } from "@upyog/digit-ui-module-mcollect";
@@ -27,7 +27,7 @@ import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
-// import { Body, TopBar } from "@upyog/digit-ui-react-components";
+// import { Body, TopBar } from "@nudmcdgnpm/digit-ui-react-components";
 import "@nudmcdgnpm/upyog-css";
 
 import { PTRModule, PTRLinks, PTRComponents } from "@nudmcdgnpm/upyog-ui-module-ptr";
@@ -43,9 +43,9 @@ import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv"
 import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
 import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
 
-// import * as comps from "@upyog/digit-ui-react-components";
+// import * as comps from "@nudmcdgnpm/digit-ui-react-components";
 
-// import { subFormRegistry } from "@upyog/digit-ui-libraries";
+// import { subFormRegistry } from "@nudmcdgnpm/digit-ui-libraries";
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
 

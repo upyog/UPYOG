@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Card, CardSubHeader, TextArea, Toast } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Card, CardSubHeader, TextArea, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Timeline from "../components/CHBTimeline";

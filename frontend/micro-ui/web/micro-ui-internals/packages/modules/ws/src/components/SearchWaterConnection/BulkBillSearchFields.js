@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, SearchField, Localities } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, SearchField, Localities } from "@nudmcdgnpm/digit-ui-react-components";
 
 const BulkBillSearchFields = ({ register, control, reset, tenantId, t, setValue }) => {
   const [locality, setLocality] = useState("");

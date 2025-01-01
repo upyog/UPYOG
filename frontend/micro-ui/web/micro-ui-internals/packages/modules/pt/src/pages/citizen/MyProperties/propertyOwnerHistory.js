@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, Loader } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { propertyCardBodyStyle, convertEpochToDate } from "../../../utils";

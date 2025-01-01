@@ -10,7 +10,7 @@ import {
   FormStep,
   CardHeader,
   SubmitBar
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 function WSDisconnectionDocumentsForm({ t, config, onSelect, userType, formData  }) { 

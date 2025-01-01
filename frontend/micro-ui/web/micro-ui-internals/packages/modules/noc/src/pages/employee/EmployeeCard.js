@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard } from "@upyog/digit-ui-react-components";
+import { EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { businessServiceList } from "../../utils";
 

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber, CardHeader } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { businessServiceList } from "../../../utils";

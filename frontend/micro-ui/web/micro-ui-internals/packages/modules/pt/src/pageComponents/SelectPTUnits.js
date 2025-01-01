@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState ,Fragment} from "react";
 import Timeline from "../components/TLTimeline";
 
