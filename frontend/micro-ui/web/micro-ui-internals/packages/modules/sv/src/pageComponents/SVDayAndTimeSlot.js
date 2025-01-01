@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLabel, TextInput, CheckBox, Dropdown } from "@upyog/digit-ui-react-components";
+import { CardLabel, TextInput, CheckBox, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 const DayAndTimeSlot = ({ t, day, onDayToggle, onSameForAllChange, isSameForAll, onTimeChange }) => {
   let validation = {};

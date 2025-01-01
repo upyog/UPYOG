@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { useWatch } from "react-hook-form";
 
 const SearchFormFieldsComponent = ({ formState, Controller, register, control, t, reset, previousPage }) => {

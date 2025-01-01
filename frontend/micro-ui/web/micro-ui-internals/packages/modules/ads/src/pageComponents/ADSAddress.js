@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, TextArea,Card } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, TextArea,Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/ADSTimeline";
@@ -10,7 +10,7 @@ import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancell
  * Integrates with hooks for fetching cities and localities.
  */
 
-const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
+const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.adslist}) => {
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   const allCities = Digit.Hooks.ads.useTenants();
@@ -20,15 +20,15 @@ const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
 
   const user = Digit.UserService.getUser().info;
 
-  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || "");
-  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || "");
-  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || "");
-  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || "");
-  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || "");
-  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || "");
-  const [houseName, setHouseName] = useState((formData.address && formData.address[index] && formData.address[index].houseName) || formData?.address?.houseName || "");
-  const [addressline1, setAddressline1] = useState((formData.address && formData.address[index] && formData.address[index].addressline1) || formData?.address?.addressline1 || "");
-  const [addressline2, setAddressline2] = useState((formData.address && formData.address[index] && formData.address[index].addressline2) || formData?.address?.addressline2 || "");
+  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || value?.existingDataSet?.address?.pincode || "");
+  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || value?.existingDataSet?.address?.city || "");
+  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || value?.existingDataSet?.address?.locality || "");
+  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || value?.existingDataSet?.address?.streetName || "");
+  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || value?.existingDataSet?.address?.houseNo || "");
+  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || value?.existingDataSet?.address?.landmark || "");
+  const [houseName, setHouseName] = useState((formData.address && formData.address[index] && formData.address[index].houseName) || formData?.address?.houseName || value?.existingDataSet?.address?.houseName || "");
+  const [addressline1, setAddressline1] = useState((formData.address && formData.address[index] && formData.address[index].addressline1) || formData?.address?.addressline1 || value?.existingDataSet?.address?.addressline1 || "");
+  const [addressline2, setAddressline2] = useState((formData.address && formData.address[index] && formData.address[index].addressline2) || formData?.address?.addressline2 || value?.existingDataSet?.address?.addressline2 || "");
 
   const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,

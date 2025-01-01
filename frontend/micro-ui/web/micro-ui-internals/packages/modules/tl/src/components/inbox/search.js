@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-// import MobileNumber from "@upyog/digit-ui-react-components/src/atoms/MobileNumber";
+// import MobileNumber from "@nudmcdgnpm/digit-ui-react-components/src/atoms/MobileNumber";
 // import _ from "lodash";
 
 const fieldComponents = {
