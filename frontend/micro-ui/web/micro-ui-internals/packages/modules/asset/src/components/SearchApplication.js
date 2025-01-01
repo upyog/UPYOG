@@ -293,6 +293,7 @@
         const batchSize = 3; // Define batch size to process and add in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
         for (let i = 0; i < data.length; i += batchSize) {
           const batch = data.slice(i, i + batchSize);
+          console.log('comming data:- ', batch);
           const qrPromises = batch.map(async (row, index) => {
             // const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
             const url = `${base_url}/digit-ui/citizen/assets/services?tenantId=${tenantId}&applicationNo=${row.applicationNo}`;
@@ -308,7 +309,14 @@
             doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
             doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
             doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+            // doc.text(`Track Location: ${row.location}`, 70, 60 + yOffset);
+
       
+            //  Add Track Location as a clickable hyperlink
+            const locationURL = `${base_url}/maps/search/${row.location}`;
+            doc.text("Track Location:", 70, 70 + yOffset); // Add label
+            doc.textWithLink(locationURL, 70, 75 + yOffset, { url: locationURL }); // Add clickable URL
+
             // Add horizontal line
             doc.line(10, 80 + yOffset, 200, 80 + yOffset);
           });
