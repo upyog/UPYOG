@@ -143,7 +143,7 @@ public class SWConstants {
 			SEND_BACK_PENDING_FOR_COUNTER_EMPLOYEE_ACTION));
 
 	public static final List<String> CHANNEL_VALUES = Collections
-			.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM"));
+			.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM","ESEWAEMP"));
 	 public static final Map<String, String> USER_TYPE_TO_CHANNEL;
 
 	    static {
