@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ReCAPTCHA from "react-google-recaptcha";
-// import { checkForNA } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import {
     TextInput,
@@ -16,7 +15,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
- * Description: CMSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result
+ * Description: VSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result
  * @author: Khalid Rashid
 
  * @date: 2021-04-15
@@ -25,7 +24,7 @@ import {
  * npm command: npm install react-google-recaptcha --save
 */
 
-const CMSearchCertificate = () => {
+const VSearchCertificate = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
     const [showToast, setShowToast] = useState(null);
@@ -65,10 +64,10 @@ const CMSearchCertificate = () => {
     });
 
     // Hook to fetch the dropdown data
-    const { data: type_of_certificate } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "CommonModule", [{ name: "CertificateType" }],
+    const { data: type_of_certificate } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "VerificationSearch", [{ name: "CertificateType" }],
         {
             select: (data) => {
-                const formattedData = data?.["CommonModule"]?.["CertificateType"]
+                const formattedData = data?.["VerificationSearch"]?.["CertificateType"]
                 return formattedData;
             },
         });
@@ -262,4 +261,4 @@ const CMSearchCertificate = () => {
     );
 };
 
-export default CMSearchCertificate;
+export default VSearchCertificate;
