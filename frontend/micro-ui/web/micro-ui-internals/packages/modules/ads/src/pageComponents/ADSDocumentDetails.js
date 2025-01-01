@@ -8,8 +8,8 @@ import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancell
  * and integrates with a document selection dropdown.
  */
 
-const ADSDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState}) => {
-  const [documents, setDocuments] = useState(formData?.documents?.documents || []);
+const ADSDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState,value=formData.adslist}) => {
+  const [documents, setDocuments] = useState(formData?.documents?.documents ||  value?.existingDataSet?.documents?.documents  || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);

@@ -12,7 +12,10 @@ import {
   Card,
   RadioButtons,
   TextInput,
+
 } from "@nudmcdgnpm/digit-ui-react-components";
+import BookingPopup from "../components/BookingPopup";
+
 
 /**
  * ADSSearch component handles the advertisement search functionality, 
@@ -33,6 +36,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   const [adsType, setAdsType] = useState("" || formData?.adType);
   const [selectedLocation, setSelectedLocation] = useState("" || formData?.location);
   const [selectedFace, setSelectedFace] = useState("" || formData?.faceArea);
+  const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(true);
   const [fromDate, setFromDate] = useState("" || formData?.fromDate);
   // State to manage selected checkboxes
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
@@ -41,7 +45,8 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     (formData.adslist && formData.adslist[index] && formData.adslist[index].Searchdata) || formData?.adslist?.Searchdata || []
   );
   const [showToast, setShowToast] = useState(null);
-
+  const [showModal, setShowModal] = useState(false);
+  const [existingDataSet, setExistingDataSet] = useState("");
   // If no nightLight is provided), default to "Yes"
   const [selectNight, setselectNight] = useState("" || formData?.nightLight || {
     i18nKey: "Yes",
@@ -161,10 +166,10 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.adslist && formData.adslist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, cartDetails, adsType, selectedLocation,selectedFace,selectNight,fromDate,toDate };
+      ownerStep = { ...owner, cartDetails, adsType, selectedLocation,selectedFace,selectNight,fromDate,toDate,existingDataSet };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate };
+      ownerStep = { ...owner, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
     console.log("ownerStep",ownerStep);
@@ -348,9 +353,14 @@ const handleCartClick = () => {
   const handleBookClick = () => {
     if (cartDetails.length === 0) {
       setShowToast({ error: true, label: t("ADS_SELECT_AT_LEAST_ONE_SLOT") });
-    } else {
-      goNext(); // Proceed to the next step
+    } else { 
+    if(isExistingPopupRequired){
+      setShowModal(true);  // Show modal when button is clicked
     }
+    else{
+      goNext();  // Ensure action is called only when submitting
+    }
+  }
   };
   
 const handleCloseCart = () => {
@@ -449,7 +459,7 @@ const handleCloseCart = () => {
               value={fromDate}
               onChange={SetFromDate}
               style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                 validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -466,7 +476,7 @@ const handleCloseCart = () => {
               value={toDate}
               onChange={SetToDate}
               style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                 validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -548,18 +558,32 @@ const handleCloseCart = () => {
             })}
             isPaginationRequired={false}
             totalRecords={data.length}
-            style={{ width: "100%", overflowX: "auto" }} // Make table responsive
+            style={{ width: "100%", overflowX: "auto" }} 
           />
         </Card>
       )}
-      {showToast && (
-        <Toast
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
+      {showModal && (
+      <BookingPopup t={t}
+      closeModal={() => setShowModal(false)} // Close modal when "BA actionCancelOnSubmit={() => setShowModal(false)} 
+      actionCancelOnSubmit={() => setShowModal(false)} // Close modal when "Cancel" is clicked
+      onSubmit={() => {
+      goNext () ;
+      // Ensure action is called only when submitting
+      setShowModal(false); // Close modal after action
+      }}
+      />
+      )}
+     {showModal && (
+        <BookingPopup
+          t={t}
+          closeModal={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          actionCancelOnSubmit={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          onSubmit={() => {
+            goNext();  // Ensure action is called only when submitting
+            setShowModal(false);  // Close modal after action
           }}
+          setExistingDataSet={setExistingDataSet}
+          Searchdata={Searchdata}
         />
       )}
     </React.Fragment>
