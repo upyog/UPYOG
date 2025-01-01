@@ -5,7 +5,7 @@ import {
     CardLabel,
     TextInput,
     MobileNumber,
-} from "@egovernments/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSPlumberPreference = ({ t, config, onSelect, userType, formData }) => {

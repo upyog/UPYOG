@@ -12,4 +12,7 @@ public interface MeterService {
 	List<MeterReading> createMeterReading(MeterConnectionRequest meterConnectionRequest);
 	
 	List<MeterReading> searchMeterReadings(MeterReadingSearchCriteria criteria, RequestInfo requestInfo);
+	
+	List<MeterReading> createMeterReadingBulk(MeterConnectionRequest meterConnectionRequest);
+
 }

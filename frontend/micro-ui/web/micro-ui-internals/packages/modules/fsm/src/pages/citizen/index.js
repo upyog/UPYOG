@@ -1,4 +1,4 @@
-import { BackButton, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, Switch, useLocation } from "react-router-dom";
@@ -6,6 +6,8 @@ import { Redirect, Switch, useLocation } from "react-router-dom";
 const CitizenApp = ({ path }) => {
   const location = useLocation();
   const { t } = useTranslation();
+  let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
+  let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const NewApplicationCitizen = Digit.ComponentRegistryService.getComponent("FSMNewApplicationCitizen");
   const MyApplications = Digit.ComponentRegistryService.getComponent("FSMMyApplications");
   const EmployeeApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMEmployeeApplicationDetails");
@@ -19,7 +21,11 @@ const CitizenApp = ({ path }) => {
   return (
     <React.Fragment>
       <div className="fsm-citizen-wrapper">
-        {location.pathname.includes("/response") || location.pathname.split("/").includes("check") ? null : <BackButton>{t("CS_COMMON_BACK")}</BackButton>}
+        {location.pathname.includes("/response") || location.pathname.split("/").includes("check") ? null : location.pathname.includes("/street") ? (
+          <BackButton getBackPageNumber={() => -4}>{t("CS_COMMON_BACK")}</BackButton>
+        ) : (
+          <BackButton>{t("CS_COMMON_BACK")}</BackButton>
+        )}
         <Switch>
           <PrivateRoute
             path={`${path}/inbox`}

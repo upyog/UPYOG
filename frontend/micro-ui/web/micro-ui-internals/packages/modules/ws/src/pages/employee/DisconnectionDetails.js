@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import * as func from "../../utils";
 import cloneDeep from "lodash/cloneDeep";
@@ -187,9 +187,13 @@ const GetDisconnectionDetails = () => {
     <Fragment>
       <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+          <div style={{display:"flex"}}>
+            <div style={{width:"70%"}}>
           <Header>{t("WS_APPLICATION_DETAILS")} </Header>
+          </div>
+          <div style={{width:"30%", zIndex:"10"}}> 
           <MultiLink
-            className="multilinkWrapper employee-mulitlink-main-div"
+            className="multilinkWrapper employee-mulitlink-main-divNew"
             onHeadClick={() => setShowOptions(!showOptions)}
             displayOptions={showOptions}
             options={dowloadOptions}
@@ -197,6 +201,8 @@ const GetDisconnectionDetails = () => {
             optionsClassName={"employee-options-btn-className"}
             ref={menuRef}
           />
+          </div>
+        </div>
         </div>
         <ApplicationDetailsTemplate
           applicationDetails={applicationDetails}

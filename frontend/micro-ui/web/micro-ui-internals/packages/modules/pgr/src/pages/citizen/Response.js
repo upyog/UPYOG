@@ -1,10 +1,10 @@
 import React ,{useState}from "react";
-import { Card, Banner, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PgrRoutes, getRoute } from "../../constants/Routes";
 import { useTranslation } from "react-i18next";
-
+import getPGRcknowledgementData from "../../utils/getPGRcknowledgementData"
 const GetActionMessage = ({ action }) => {
   const { t } = useTranslation();
   switch (action) {

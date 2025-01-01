@@ -76,6 +76,8 @@ public class Measurement implements Cloneable, Serializable {
     protected BigDecimal area = BigDecimal.ZERO;
 
     protected Boolean isValid;
+    
+    private String roomNumber;
 
     @JsonIgnore
     protected StringBuffer invalidReason;
@@ -88,6 +90,14 @@ public class Measurement implements Cloneable, Serializable {
     
     public String getName() {
         return name;
+    }
+    
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+    
+    public String getRoomNumber() {
+        return roomNumber;
     }
     
     public void setMinimumDistance(BigDecimal minimumDistance) {

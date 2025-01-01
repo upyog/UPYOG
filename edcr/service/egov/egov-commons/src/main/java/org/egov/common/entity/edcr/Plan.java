@@ -94,6 +94,10 @@ public class Plan implements Serializable {
     private PlanInformation planInformation;
     // Plot and Set back details.
     private Plot plot;
+    private BigDecimal roadReserveFront = BigDecimal.ZERO;
+    private BigDecimal roadReserveRear = BigDecimal.ZERO;
+    private BigDecimal roadReserveSide = BigDecimal.ZERO;
+    
 
     // Single plan contain multiple block/building information. Records Existing and proposed block information.
     private List<Block> blocks = new ArrayList<>();
@@ -134,9 +138,34 @@ public class Plan implements Serializable {
     @JsonIgnore
     private transient Map<String, Map<String, Integer>> subFeatureColorCodesMaster = new HashMap<>();
 
-    // Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
-    private Utility utility = new Utility();
+    public BigDecimal getRoadReserveFront() {
+		return roadReserveFront;
+	}
 
+	public void setRoadReserveFront(BigDecimal roadReserveFront) {
+		this.roadReserveFront = roadReserveFront;
+	}
+
+	public BigDecimal getRoadReserveRear() {
+		return roadReserveRear;
+	}
+
+	public void setRoadReserveRear(BigDecimal roadReserveRear) {
+		this.roadReserveRear = roadReserveRear;
+	}
+
+	public BigDecimal getRoadReserveSide() {
+		return roadReserveSide;
+	}
+
+	public void setRoadReserveSide(BigDecimal roadReserveSide) {
+		this.roadReserveSide = roadReserveSide;
+	}
+
+
+	// Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
+    private Utility utility = new Utility();
+   
     // coverage Overall Coverage of all the block. Total area of all the floor/plot area.
     private BigDecimal coverage = BigDecimal.ZERO;
 
@@ -152,6 +181,20 @@ public class Plan implements Serializable {
     private transient List<SepticTank> septicTanks = new ArrayList<>();
     // Trees and plant defined in the plan
     private transient Plantation plantation;
+    
+  
+    
+    private  Map<String, List<Map<String, Object>>> edcrRulesFeatures;
+    
+    public Map<String, List<Map<String, Object>>> getEdcrRulesFeatures() {
+		return edcrRulesFeatures;
+	}
+
+	public void setEdcrRulesFeatures(Map<String, List<Map<String, Object>>> edcrRulesFeatures) {
+		this.edcrRulesFeatures = edcrRulesFeatures;
+	}
+
+	
     // Guard room details
     private transient GuardRoom guardRoom;
     // Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the
@@ -200,6 +243,8 @@ public class Plan implements Serializable {
     private transient Map<String, List<Object>> mdmsMasterData;
     private transient Boolean mainDcrPassed = false;
     private List<ICT> icts = new ArrayList<>();
+    
+    private String coreArea;
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -360,6 +405,8 @@ public class Plan implements Serializable {
     public void setErrors(Map<String, String> errors) {
         this.errors = errors;
     }
+    
+   
 
     public PlanInformation getPlanInformation() {
         return planInformation;
@@ -646,5 +693,14 @@ public class Plan implements Serializable {
     public void setIcts(List<ICT> icts) {
         this.icts = icts;
     }
+    
+    public String getCoreArea() {
+        return coreArea;
+    }
+
+    public void setCoreArea(String coreArea) {
+        this.coreArea = coreArea;
+    }
+
 
 }

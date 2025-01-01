@@ -6,15 +6,22 @@ import digit.repository.rowmapper.ServiceDefinitionRowMapper;
 import digit.repository.rowmapper.ServiceRowMapper;
 import digit.web.models.*;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -29,6 +36,11 @@ public class ServiceRequestRepository {
     @Autowired
     private ServiceQueryBuilder serviceQueryBuilder;
 
+    @Autowired
+	private ObjectMapper mapper;
+
+    @Autowired
+	private RestTemplate restTemplate;
 
     public List<Service> getService(ServiceSearchRequest serviceSearchRequest) {
         ServiceCriteria criteria = serviceSearchRequest.getServiceCriteria();
@@ -60,4 +72,31 @@ public class ServiceRequestRepository {
         log.info("query for search: " + query + " params: " + preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), serviceRowMapper);
     }
+
+    /**
+	 * fetch method which takes the URI and request object
+	 *  and returns response in generic format
+	 * @param uri
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public Map fetchResult(String uri, Object request) {
+		
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		Map response = null;
+		log.info("URI: "+ uri);
+		
+		try {
+			log.info("Request: "+mapper.writeValueAsString(request));
+			response = restTemplate.postForObject(uri, request, Map.class);
+		}catch(HttpClientErrorException e) {
+			log.error("External Service threw an Exception: ",e.getResponseBodyAsString());
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		}catch(JsonProcessingException e) {
+			log.error("Exception while searching user data : ",e);
+		}
+
+		return response;
+	}
 }

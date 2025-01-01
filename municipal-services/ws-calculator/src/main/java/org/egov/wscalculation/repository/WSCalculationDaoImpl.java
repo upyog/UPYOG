@@ -80,8 +80,8 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		String query = queryBuilder.getSearchQueryString(criteria, preparedStatement);
 		if(query == null)
 			return Collections.emptyList();
-		log.debug("Query: " + query);
-		log.debug("Prepared Statement" + preparedStatement.toString());
+		log.info("Query: " + query);
+		log.info("Prepared Statement" + preparedStatement.toString());
 		return jdbcTemplate.query(query, preparedStatement.toArray(), meterReadingRowMapper);
 	}
 	

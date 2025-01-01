@@ -1,4 +1,4 @@
-import { Dropdown, UploadFile, DatePicker } from "@egovernments/digit-ui-react-components";
+import { Dropdown, UploadFile, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
 export const configWSDisConnectApplication = ({

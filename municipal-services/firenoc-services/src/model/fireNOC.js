@@ -130,9 +130,9 @@ const Address = {
         "Unique Identifier of the tenant to which user primarily belongs"
     },
     doorNo: {
-      type: "string",
-      valid_htmlData: true,
-      description: "House number or door number."
+      type: ["string", "null"],
+      description: "House number or door number.",
+      
     },
     latitude: {
       type: "number",
@@ -176,7 +176,7 @@ const Address = {
     landmark: {
       description: "additional landmark to help locate the address",
       valid_htmlData: true,
-      type: "string"
+      type: ["string", "null"]
     },
     city: {
       description:
@@ -185,8 +185,7 @@ const Address = {
       valid_htmlData: true,
     },
     pincode: {
-      type: "string",
-      valid_htmlData: true,
+      type: ["string", "null"],
       description:
         "PIN code of the address. Indian pincodes will usually be all numbers."
     },
@@ -196,18 +195,16 @@ const Address = {
       description: "more address detail as may be needed"
     },
     buildingName: {
-      type: "string",
+      type: ["string", "null"],
       description: "Name of the building",
-      valid_htmlData: true,
       maxLength: 64,
-      minLength: 2
+      minLength: 0
     },
     street: {
-      type: "string",
+      type: ["string", "null"],
       description: "Street Name",
-      valid_htmlData: true,
       maxLength: 64,
-      minLength: 2
+      minLength: 0
     },
     locality: {
       type: "object",

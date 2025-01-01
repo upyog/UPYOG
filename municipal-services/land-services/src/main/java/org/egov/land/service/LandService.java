@@ -63,7 +63,7 @@ public class LandService {
 				owner.setStatus(false);
 			}
 		});
-		repository.save(landRequest);
+		repository.save(landRequest.getLandInfo().getTenantId(), landRequest);
 		return landRequest.getLandInfo();
 	}
 
@@ -93,7 +93,7 @@ public class LandService {
 			}
 		});
 
-		repository.update(landRequest);
+		repository.update(landRequest.getLandInfo().getTenantId(), landRequest);
 		List<OwnerInfo> activeOwnerList = new ArrayList<OwnerInfo>();
 		if(landRequest.getLandInfo().getOwners().size()>1) {
 			landRequest.getLandInfo().getOwners().forEach(owner -> {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { TypeSelectCard } from "@egovernments/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
+import { TypeSelectCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, RadioOrSelect, RadioButtons, CitizenInfoLabel } from "@nudmcdgnpm/digit-ui-react-components";
 
 const TLInfoLabel = ({ t, config, onSelect, userType, formData }) => {
   return (

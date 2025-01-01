@@ -1,6 +1,6 @@
 import React from "react";
-import { ActionBar, CloseSvg } from "@egovernments/digit-ui-react-components";
-import { ApplyFilterBar } from "@egovernments/digit-ui-react-components";
+import { ActionBar, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { ApplyFilterBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Status from "./Status";
 import ServiceCategory from "./ServiceCategory";

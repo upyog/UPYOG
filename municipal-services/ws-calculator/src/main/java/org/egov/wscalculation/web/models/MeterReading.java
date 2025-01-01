@@ -112,6 +112,10 @@ public class MeterReading {
 	@SafeHtml
 	@JsonProperty("tenantId")
 	private String tenantId = null;
+	
+	@SafeHtml
+	@JsonProperty("status")
+	private String status = null;
 
 	public MeterReading id(String id) {
 		this.id = id;

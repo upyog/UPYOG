@@ -13,7 +13,7 @@ import {
   Toast,
   StatusTable,
   Row,
-} from "@egovernments/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useLocation, Link, useHistory } from "react-router-dom";
@@ -58,6 +58,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
   }, [error, propertyDetails]);
   useEffect(() => {
     onSelect("cpt", { details: propertyDetails?.Properties[0] });
+    sessionStorage.setItem("Digit_FSM_PT",JSON.stringify(propertyDetails?.Properties[0]))
     localStorage.setItem("pgrProperty",JSON.stringify(propertyDetails?.Properties[0]))
   }, [propertyDetails, pathname]);
 
@@ -95,12 +96,13 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
 
   const getOwnerNames = (propertyData) => {
     const getActiveOwners = propertyData?.owners?.filter(owner => owner?.active);
-    const getOwnersList = getActiveOwners?.map(activeOwner => activeOwner?.name)?.join(",");
+    const getOwnersList = getActiveOwners.sort((a,b)=> a?.additionalDetails?.ownerSequence- b?.additionalDetails?.ownerSequence)?.map(activeOwner => activeOwner?.name)?.join(",");
     return getOwnersList ? getOwnersList : t("NA");
   }
 
   let clns = "";
   if (window.location.href.includes("/ws/")) clns = ":"
+
   return (
     <React.Fragment>
      {(window.location.href.includes("/tl/") ? (!(formData?.tradedetils?.[0]?.structureType?.code === "MOVABLE") && (isEmpNewApplication || isEmpRenewLicense) ) : true) && <div>
@@ -125,12 +127,10 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
         <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
-      &nbsp; {window.location.href.includes("/pgr/")?"":"|"}
-       &nbsp;
-      {window.location.href.includes("/pgr/")?"":
+      &nbsp; | &nbsp;
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
         <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
-      </span>}
+      </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
           <header className="card-section-header" style={{ marginBottom: "5px", marginTop: "20px" }}>

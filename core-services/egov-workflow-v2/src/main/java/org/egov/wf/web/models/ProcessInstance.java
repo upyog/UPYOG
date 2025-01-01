@@ -88,7 +88,7 @@ public class ProcessInstance   {
         private List<Action> nextActions = null;
 
         @JsonProperty("stateSla")
-        private Long stateSla = null;
+        private Long stateSla = 0L;
 
         @JsonProperty("businesssServiceSla")
         private Long businesssServiceSla = null;

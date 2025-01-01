@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Header, ResponseComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
 import { useHistory, Link } from "react-router-dom";
@@ -59,7 +59,7 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
         new Date(bill.billDetails[0].expiryDate).getFullYear().toString()
       }`,
       ChannelNo: bill?.consumerCode || t("CS_NA"),
-      ServiceCategory: bill.businessService ? bill.businessService.split(".")[bill.businessService.split(".").length - 1] : t("CS_NA"),
+       ServiceCategory: bill.businessService ? t(bill.businessService.split(".")[bill.businessService.split(".").length - 1]) : t("CS_NA"),
     };
   });
 

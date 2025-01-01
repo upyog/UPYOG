@@ -65,7 +65,7 @@ public class EnrichmentService {
 		if (fsmRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase(FSMConstants.CITIZEN)) {
 			User citzen = new User();
 			BeanUtils.copyProperties(fsmRequest.getRequestInfo().getUserInfo(), citzen);
-			if (fsmRequest.getFsm().getCitizen() != null && fsmRequest.getFsm().getCitizen().getGender() != null) {
+			if (fsmRequest.getFsm().getCitizen() != null) {
 				UserDetailResponse userDetailResponse = userService
 						.updateApplicantsGender(fsmRequest.getFsm().getCitizen(), fsmRequest.getRequestInfo());
 				citzen = userDetailResponse.getUser().get(0);

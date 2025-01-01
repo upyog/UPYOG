@@ -53,13 +53,17 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import org.egov.commons.mdms.BpaMdmsUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -69,10 +73,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanInformation;
@@ -181,16 +184,21 @@ public class EdcrRestService {
 
     @Transactional
     public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file,
-            Map<String, List<Object>> masterData) {
+            Map<String, List<Object>> masterData){
         EdcrApplication edcrApplication = new EdcrApplication();
         edcrApplication.setMdmsMasterData(masterData);
+        
+        System.out.println("coeArea " + edcrRequest.getCoreArea());
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         if (ApplicationType.OCCUPANCY_CERTIFICATE.toString().equalsIgnoreCase(edcrRequest.getAppliactionType())) {
             edcrApplicationDetail.setComparisonDcrNumber(edcrRequest.getComparisonEdcrNumber());
         }
+        
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
+        edcrApplication.setCoreArea(edcrRequest.getCoreArea());
+        System.out.println("-----"+ edcrApplication.getCoreArea());
         if (isNotBlank(edcrRequest.getApplicantName()))
             edcrApplication.setApplicantName(edcrRequest.getApplicantName());
         else
@@ -207,7 +215,7 @@ public class EdcrRestService {
         if (edcrRequest.getPermitDate() != null) {
             edcrApplication.setPermitApplicationDate(edcrRequest.getPermitDate());
         }
-
+       
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         edcrApplication.setDxfFile(file);
 
@@ -371,6 +379,7 @@ public class EdcrRestService {
         edcrDetail.setTransactionNumber(edcrApplnDtl.getApplication().getTransactionNumber());
         LOG.info("edcr number == " + edcrApplnDtl.getDcrNumber());
         edcrDetail.setEdcrNumber(edcrApplnDtl.getDcrNumber());
+       
         edcrDetail.setStatus(edcrApplnDtl.getStatus());
         LOG.info("application number ==" + edcrApplnDtl.getApplication().getApplicationNumber());
         edcrDetail.setApplicationNumber(edcrApplnDtl.getApplication().getApplicationNumber());
@@ -425,6 +434,7 @@ public class EdcrRestService {
             if (file == null) {
                 Plan pl1 = new Plan();
                 PlanInformation pi = new PlanInformation();
+               
                 pi.setApplicantName(edcrApplnDtl.getApplication().getApplicantName());
                 pl1.setPlanInformation(pi);
                 edcrDetail.setPlanDetail(pl1);
@@ -433,6 +443,7 @@ public class EdcrRestService {
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Plan pl1 = mapper.readValue(file, Plan.class);
                 pl1.getPlanInformation().setApplicantName(edcrApplnDtl.getApplication().getApplicantName());
+               
                 if (LOG.isInfoEnabled())
                     LOG.info("**************** Plan detail object **************" + pl1);
                 edcrDetail.setPlanDetail(pl1);
@@ -1070,5 +1081,4 @@ public class EdcrRestService {
         cal1.set(Calendar.MILLISECOND, 999);
         return cal1.getTime();
     }
-
 }

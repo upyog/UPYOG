@@ -58,6 +58,11 @@
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
+			<id>AsposeJavaAPI</id>
+			<name>Aspose Java API</name>
+			<url>http://releases.aspose.com/repo/</url>
+		</repository> 
+		<repository>
 			<id>javaxt.com</id>
 			<url>http://www.javaxt.com/maven</url>
 		</repository>
@@ -178,7 +183,7 @@
 		<javaxt.core.version>1.7.8</javaxt.core.version>
 		<recaptcha.version>0.0.8</recaptcha.version>
 		<jcaptcha.version>2.0-alpha-1</jcaptcha.version>
-		<pdfbox.version>2.0.4</pdfbox.version>
+		<pdfbox.version>2.0.28</pdfbox.version>
 		<itextpdf.version>5.0.6</itextpdf.version>
 
 		<!-- Plugin dependency versions -->
@@ -203,6 +208,11 @@
 						<groupId>org.yaml</groupId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.aspose</groupId>
+				<artifactId>aspose-cad</artifactId>
+				<version>20.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.egov.edcr</groupId>
@@ -305,6 +315,7 @@
 				<version>${javax-servlet-jstl-version}</version>
 				<scope>provided</scope>
 			</dependency>
+			
 			<dependency>
 				<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
 				<artifactId>jboss-jsp-api_2.3_spec</artifactId>
@@ -432,7 +443,6 @@
 				<artifactId>jackson-datatype-jdk8</artifactId>
 				<version>${jackson-version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
@@ -544,6 +554,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
 				<version>${xerces-version}</version>

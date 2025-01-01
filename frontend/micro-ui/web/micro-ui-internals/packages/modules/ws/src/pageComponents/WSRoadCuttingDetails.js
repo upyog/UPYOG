@@ -1,5 +1,5 @@
-import { CardLabel, Dropdown, LabelFieldPair, LinkButton, TextInput, CardLabelError, DeleteIcon } from "@egovernments/digit-ui-react-components";
-import _ from "lodash";
+import { CardLabel, Dropdown, LabelFieldPair, LinkButton, TextInput, CardLabelError, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import _, { filter } from "lodash";
 import React, { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { stringReplaceAll } from "../utils";
@@ -21,7 +21,7 @@ const WSRoadCuttingDetails = ({ config, onSelect, userType, formData, setError, 
   const isEditScreen = pathname.includes("/modify-application/" ) 
 
   const stateCode = Digit.ULBService.getStateId();
-  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.ws.useMDMS(stateCode, "sw-services-calculation", ["RoadType"]);
+  const { isMdmsLoading, data: mdmsData } = Digit.Hooks.ws.useMDMS(stateCode, window.location.href.includes("sewerage")?"sw-services-calculation":"ws-services-calculation", ["RoadType"]);
   
   const [roadCuttingDetails, setRoadCuttingDetails] = useState(formData?.roadCuttingDetails || [createRoadCuttingDetails()]);
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
@@ -94,10 +94,11 @@ const RoadCuttForm = (_props) => {
   const { errors } = localFormState;
 
   const roadCuttingTypeMenu = useMemo(() => {
-    const RoadTypes = mdmsData?.["sw-services-calculation"]?.RoadType || [];
-    RoadTypes?.forEach(data => data.i18nKey = `WS_ROADTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
-    return RoadTypes;
-  }, [mdmsData]);
+    const RoadTypes = window.location.href.includes("sewerage")?mdmsData?.["sw-services-calculation"]?.RoadType : mdmsData?.["ws-services-calculation"]?.RoadType || [];
+    const filteredRoadTypes = RoadTypes.filter(data => data?.isActive === true); // Filter out road types with isActive: true
+    filteredRoadTypes.forEach(data => data.i18nKey = `WS_ROADTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
+    return filteredRoadTypes;
+}, [mdmsData]);
 
   useEffect(() => {
     trigger();

@@ -1,4 +1,4 @@
-import { DetailsCard, Loader, Table, Modal } from "@egovernments/digit-ui-react-components";
+import { DetailsCard, Loader, Table, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
@@ -26,7 +26,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
-  const { data: updateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
+  const { data: updateNumberConfig } = Digit.Hooks.useCommonMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
     select: (data) => {
       return data?.PropertyTax?.UpdateNumber?.[0];
     },
@@ -113,7 +113,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
       {
         Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
         disableSortBy: true,
-        Cell: ({ row }) => GetCell(`${row.original.owners.map((ob) => ob.name).join(",")}` || ""),
+        Cell: ({ row }) => GetCell(row.original.owners.additionalDetails!==null ? `${row?.original?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence).map((ob) => ob.name).join(",")}`: `${row.original.owners.map((ob) => ob.name).join(",")}` || ""),
       },
       {
         Header: t("ES_INBOX_LOCALITY"),
@@ -170,7 +170,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
   };
 
   const tableData = Object.values(data?.FormattedData || {}) || [];
-  if(ptSearchConfig?.ptSearchCount&&payload.locality&&tableData&&tableData.length>ptSearchConfig.ptSearchCount){
+  if(ptSearchConfig?.ptSearchCount&&payload.locality&&tableData&&tableData.length>ptSearchConfig?.ptSearchCount){
     !showToast &&setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
     return null;
   }

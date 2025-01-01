@@ -1,5 +1,7 @@
 package org.egov.wscalculation.web.models;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -26,4 +28,8 @@ public class MeterConnectionRequest {
 	@JsonProperty("meterReadings")
 	@Valid
 	private MeterReading meterReading = null;
+	
+	@JsonProperty("meterReadingList")
+	@Valid
+	private List<MeterReading> meterReadingList = null;
 }

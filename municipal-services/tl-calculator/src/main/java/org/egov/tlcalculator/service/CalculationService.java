@@ -234,7 +234,8 @@ public class CalculationService {
      */
   private FeeAndBillingSlabIds getTradeUnitFeeAndBillingSlabIds(TradeLicense license, CalculationType calculationType){
 
-      List<BigDecimal> tradeUnitFees = new LinkedList<>();
+	  log.info("Calculation Type is", calculationType);
+	  List<BigDecimal> tradeUnitFees = new LinkedList<>();
       List<TradeUnit> tradeUnits = license.getTradeLicenseDetail().getTradeUnits();
       List<String> billingSlabIds = new LinkedList<>();
       int i = 0;

@@ -24,6 +24,9 @@ public class MeterReadingSearchCriteria {
     @JsonProperty("offset")
     private Integer offset;
 
+    @JsonProperty("locality")
+    private String locality;
+    
     @JsonProperty("limit")
     private Integer limit;
 

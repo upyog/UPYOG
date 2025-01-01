@@ -10,7 +10,7 @@ import {
   RemoveableTag,
   Toast,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, useMemo } from "react";
 import { render } from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -162,9 +162,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         // Additonal details
         payload.additionalDetails = {};
         if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
+        if (formData?.data?.boundaryWallLength) payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength;
         if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
         if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
         if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
+        if(formData?.data?.bpaData?.bpaApprovalResponse[0]?.additionalDetails?.propertyID) payload.additionalDetails.propertyID=formData?.data?.bpaData?.bpaApprovalResponse[0]?.additionalDetails?.propertyID
 
         //For LandInfo
         payload.landInfo = formData?.data?.bpaData?.bpaApprovalResponse?.[0].landInfo || {};
@@ -234,7 +236,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           <Row
             className="border-none"
             label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
-            text={<ActionButton label={t("BPA_UPLOADED_PLAN_DXF")} jumpTo={data?.updatedDxfFile} />}
+            text={<ActionButton label={t("Uploaded Plan.pdf")} jumpTo={data?.updatedDxfFile} />}
           ></Row>
           <Row
             className="border-none"

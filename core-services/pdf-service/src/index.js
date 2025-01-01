@@ -115,7 +115,10 @@ var fontDescriptors = {
   },
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
-    bold: "src/fonts/BalooPaaji2-Bold.ttf"
+    bold: "src/fonts/BalooPaaji2-Bold.ttf",
+  },
+  AnmolUni:{
+    normal: "src/fonts/AnmolUni.ttf"
   }
 };
 
@@ -123,7 +126,8 @@ var defaultFontMapping = {
   en_IN: 'default',
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
-  od_IN: 'BalooBhaina'
+  od_IN: 'BalooBhaina',
+  pn_IN: 'AnmolUni'
 }
 
 const printer = new pdfMakePrinter(fontDescriptors);
@@ -1102,11 +1106,12 @@ const generateQRCodes = async (
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
     let urlQR='',qrtext;
-    if(key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
+    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt'|| key == 'chbservice-receipt' || key == 'advservice-receipt' || key == 'advpermissionletter' || key == 'svservice-receipt' || key == 'svcertificate')
     {
       urlQR=egov_host;
-
       urlQR=urlQR.concat(qrmapping.value);
+
+      //urlQR=qrmapping.value.concat(" ").concat(urlQR);
     }
     if(urlQR=='')
     qrtext = mustache.render(qrmapping.value, variableTovalueMap);

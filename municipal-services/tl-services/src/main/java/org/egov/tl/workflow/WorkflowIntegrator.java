@@ -50,6 +50,8 @@ public class WorkflowIntegrator {
 	private static final String UUIDKEY = "uuid";
 
 	private static final String TLMODULENAMEVALUE = "TL";
+	
+	private static final String STATESLA = "stateSla";
 
 	private static final String BPAMODULENAMEVALUE = "BPAREG";
 
@@ -130,6 +132,7 @@ public class WorkflowIntegrator {
 				if (!CollectionUtils.isEmpty(license.getAssignee()))
 					obj.put(ASSIGNEEKEY, uuidmaps);
 				obj.put(DOCUMENTSKEY, license.getWfDocuments());
+				obj.put(STATESLA, 0);
 				array.add(obj);
 			}
 		}

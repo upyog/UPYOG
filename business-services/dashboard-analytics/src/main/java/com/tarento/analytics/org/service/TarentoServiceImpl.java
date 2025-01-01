@@ -3,6 +3,7 @@ package com.tarento.analytics.org.service;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +26,6 @@ import com.tarento.analytics.dto.AggregateDto;
 import com.tarento.analytics.dto.AggregateRequestDto;
 import com.tarento.analytics.dto.CummulativeDataRequestDto;
 import com.tarento.analytics.dto.DashboardHeaderDto;
-import com.tarento.analytics.dto.Plot;
 import com.tarento.analytics.dto.RoleDto;
 import com.tarento.analytics.enums.ChartType;
 import com.tarento.analytics.exception.AINException;
@@ -68,9 +68,10 @@ public class TarentoServiceImpl implements ClientService {
 
 
 	@Override
-	@Cacheable(value="versions", key="#request.hashKey")
+	//@Cacheable(value="versions", key="#request.hashKey")
 	public AggregateDto getAggregatedData(AggregateRequestDto request, List<RoleDto> roles) throws AINException, IOException {
 		// Read visualization Code
+		logger.info("inside Tarento AggregateDto");
 		String internalChartId = request.getVisualizationCode();
 		ObjectNode aggrObjectNode = JsonNodeFactory.instance.objectNode();
 		ObjectNode insightAggrObjectNode = JsonNodeFactory.instance.objectNode();
@@ -84,10 +85,49 @@ public class TarentoServiceImpl implements ClientService {
 			filters.put("tenantId", filters.get("ulb"));
 		}
 		
+		Map<String, String> indexes = new HashMap<>();
 		
 		// Load Chart API configuration to Object Node for easy retrieval later
 		ObjectNode node = configurationLoader.get(Constants.ConfigurationFiles.CHART_API_CONFIG);
 		ObjectNode chartNode = (ObjectNode) node.get(internalChartId);
+		ObjectMapper mapper2 = new ObjectMapper();
+	    String json2 = mapper2.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
+		
+		// added pivot code from here
+		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
+	        queries.forEach(query -> {
+	            String module = query.get(Constants.JsonPaths.MODULE).asText();
+	            String indexName = "";
+	            if (request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) ||
+	                    request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
+	                    query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
+	                    request.getModuleLevel().equals(module)) {
+	
+	                indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+	                
+	                String initialIndexName = indexName;
+	                
+
+	                boolean isDefaultPresent = false;
+	                boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval() != null && !request.getRequestDate().getInterval().isEmpty());
+	                String interval = isRequestContainsInterval ? request.getRequestDate().getInterval() : (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText() : "");
+	                logger.info("interval :: {} "+interval);
+					logger.info("VisualizationCode :: {} "+request.getVisualizationCode());
+					logger.info("Before constructing indexName :: {} "+indexName);
+					if (indexName.contains("*") && !StringUtils.isBlank(interval)) {
+						//if interval is coming as year changed to month to match data
+						if(interval.equals("year")){
+							interval = "month";
+						}
+						indexName = indexName.replace("*", interval);
+					} else if (indexName.contains("*") && StringUtils.isBlank(interval)) {
+						indexName = indexName.replace("*", "month");
+					}
+					indexes.put(indexName, initialIndexName);
+		            ((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
+	            }
+	        });
+	        ((ObjectNode) chartNode).put(Constants.JsonPaths.QUERIES, queries);
 		InsightsConfiguration insightsConfig = null;
 		if(chartNode.get(Constants.JsonPaths.INSIGHT) != null) { 
 			insightsConfig = mapper.treeToValue(chartNode.get(Constants.JsonPaths.INSIGHT), InsightsConfiguration.class);
@@ -96,7 +136,9 @@ public class TarentoServiceImpl implements ClientService {
 		boolean isDefaultPresent = chartType.equals(ChartType.LINE) && chartNode.get(Constants.JsonPaths.INTERVAL)!=null;
 		boolean isRequestContainsInterval = null == request.getRequestDate() ? false : (request.getRequestDate().getInterval()!=null && !request.getRequestDate().getInterval().isEmpty()) ;
 		String interval = isRequestContainsInterval? request.getRequestDate().getInterval(): (isDefaultPresent ? chartNode.get(Constants.JsonPaths.INTERVAL).asText():"");
-
+		ObjectMapper mapper1 = new ObjectMapper();
+	    String json1 = mapper1.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode);
+		logger.info("CHART NODE before  executeConfiguredQueries:: {}"+json1);
 		executeConfiguredQueries(chartNode, aggrObjectNode, nodes, request, interval);
 		request.setChartNode(chartNode);
 		ResponseRecorder responseRecorder = new ResponseRecorder();
@@ -133,7 +175,16 @@ public class TarentoServiceImpl implements ClientService {
 				aggregateDto = insightsHandler.getInsights(aggregateDto, request.getVisualizationCode(), request.getModuleLevel(), insightsConfig,request.getResponseRecorder());
 			}
 		}
-
+		
+		if(!queries.isEmpty())
+			queries.forEach(query -> {
+	            String indexName = indexes.get(query.get(Constants.JsonPaths.INDEX_NAME).asText());
+	       
+	            if(!StringUtils.isBlank(indexName))
+	            	((ObjectNode) query).put(Constants.JsonPaths.INDEX_NAME, indexName);
+	        });
+		ObjectMapper mapper = new ObjectMapper();
+	    String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(chartNode.get(Constants.JsonPaths.QUERIES));
 		return aggregateDto;
 	}
 
@@ -147,18 +198,22 @@ public class TarentoServiceImpl implements ClientService {
 	 *                 be fetched from  AggregateRequestDto
 	 */
 	private void executeConfiguredQueries(ObjectNode chartNode, ObjectNode aggrObjectNode, ObjectNode nodes, AggregateRequestDto request, String interval) {
+		logger.info("nodes :: {}"+nodes);
 		preHandle(request, chartNode, mdmsApiMappings);
 
 		ArrayNode queries = (ArrayNode) chartNode.get(Constants.JsonPaths.QUERIES);
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
+		
 			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
 					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
 					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
 					request.getModuleLevel().equals(module)) {
 				
+
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
+				logger.info("indexName in  executeConfiguredQueries:: {}"+indexName);
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
 				try {
 					JsonNode aggrNode = restService.search(indexName,objectNode.toString());

@@ -9,7 +9,7 @@ import {
   MobileNumber,
   CardSectionHeader,
   TextInput,
-} from "@egovernments/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -133,13 +133,13 @@ const OwnerForm = (_props) => {
     if (!(_.isEqual(formValue, part))) {
       setPart({...formValue});
 
-      Object.keys(formValue).map((data) => {
+      Object.keys(formValue)?.map((data) => {
         if (data != "key" && formValue[data] != undefined && formValue[data] != "" && formValue[data] != null && !isErrors) {
           setIsErrors(true);
         }
       });
       setOwners((prev) =>
-        prev.map((o) => {
+        prev?.map((o) => {
           return o.key && o.key === owner.key ? { ...o, ...formValue } : { ...o };
         })
       );
@@ -197,7 +197,7 @@ const OwnerForm = (_props) => {
                       control={control}
                       name="instituionName"
                       defaultValue={owner?.instituionName}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z_@./()#&+-\s]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
                       render={(props)=>(
                         <TextInput
                           t={t}
@@ -346,7 +346,7 @@ const OwnerForm = (_props) => {
                      control={control}
                      name={"altContactNumber"}
                      defaultValue={owner?.altContactNumber}
-                     rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^$|^[0][1-9][0-9]{9}$|^[1-9][0-9]{9}$/.test(val) ? false : t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")) } }}
+                     //rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^$|^[0][1-9][0-9]{9}$|^[1-9][0-9]{9}$/.test(val) ? false : t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")) } }}
                      render={(props)=>(
                       <MobileNumber
                         type={"text"}
@@ -559,7 +559,11 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"emailId"}
                       defaultValue={owner?.emailId}
-                      // rules={{ validate: (e) => ((e && getPattern("Email").test(e)) || !e ? true : t("INVALID_EMAIL")) }}
+                      rules={{ validate: (e) => {
+                        if(!e) return true;
+                        /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/.test(e)|| t("CORE_INVALID_EMAIL_ID_PATTERN")
+                      }
+                      }}
                       render={(props) => (
                         <TextInput
                           value={props.value}
@@ -692,16 +696,27 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
       setOwners([...JSON.parse(sessionStorage.getItem("ownersFromProperty"))]);
     }
   },[formData, formData?.cpt?.details?.propertyId])
-
   useEffect(() => {
-    if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length > 1) clearErrors("mulipleOwnerError");
-    if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length == 1)
-      setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
-    const data = owners.map((e) => {
+    if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") {
+      if (owners.length > 1) {
+        // Multiple owners, clear the error if it exists
+        clearErrors("mulipleOwnerError");
+      } else if (owners.length === 1) {
+        // Only one owner, set the error
+        setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+    } else {
+      // Not a multiple owner case, clear any errors
+      clearErrors("mulipleOwnerError");
+    }
+  
+    // Map the owners data and trigger onSelect
+    const data = owners?.map((e) => {
       return e;
     });
     onSelect(config?.key, data);
-  }, [owners]);
+  }, [owners, clearErrors, setError, onSelect]);
+  
 
   useEffect(() => {
     onSelect("tradedetils1", previousLicenseDetails);
@@ -710,8 +725,12 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     if (window.location.href.includes("tl/new-application")) {
       setOwners([createOwnerDetails()]);
-      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS")
+      console.log("ownersowners",owners)
+      if (formData?.ownershipCategory?.code == "INDIVIDUAL.MULTIPLEOWNERS" && owners.length < 2)
+      {
         setError("mulipleOwnerError", { type: "owner_missing", message: `TL_ERROR_MULTIPLE_OWNER` });
+      }
+        
     }
   }, [formData?.ownershipCategory?.code]);
 
@@ -721,13 +740,13 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     if (formData?.tradeUnits?.length > 0 && !isRenewal ) {
       let flag = true;
-      owners.map((data) => {
-        Object.keys(data).map((dta) => {
+      owners?.map((data) => {
+        Object.keys(data)?.map((dta) => {
           if (dta != "key" && data[dta]) flag = false;
         });
       });
-      formData?.tradeUnits.map((data) => {
-        Object.keys(data).map((dta) => {
+      formData?.tradeUnits?.map((data) => {
+        Object.keys(data)?.map((dta) => {
           if (dta != "key" && data[dta] != undefined && data[data] != "" && data[data] != null) {
           } else {
             if (flag) setOwners([createOwnerDetails()]);
@@ -766,7 +785,7 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
 
   return (
     <React.Fragment>
-      {owners.map((owner, index) => (
+      {owners?.map((owner, index) => (
         <OwnerForm key={owner.key} index={index} owner={owner} {...commonProps} />
       ))}
       {formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" ? (

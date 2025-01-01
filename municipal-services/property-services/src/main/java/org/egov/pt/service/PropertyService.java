@@ -1,14 +1,7 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -47,16 +40,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PropertyService {
-	
+
 	@Autowired
 	private BillingService billingService;
-	
+
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
 
 	@Autowired
 	private PropertyProducer producer;
-	
+
 	@Autowired
 	private NotificationService notifService;
 
@@ -103,6 +96,7 @@ public class PropertyService {
 
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
+		String tenantId = request.getProperty().getTenantId();
 		userService.createUser(request);
 		if (config.getIsWorkflowEnabled()
 				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
@@ -115,7 +109,7 @@ public class PropertyService {
 
 		/* Fix this.
 		 * For FUZZY-search, This code to be un-commented when privacy is enabled
-		 
+
 		//Push PLAIN data to fuzzy search index
 		producer.push(config.getSavePropertyFuzzyTopic(), request);
 		*
@@ -142,46 +136,46 @@ public class PropertyService {
 	 * @return List of updated properties
 	 */
 	public Property updateProperty(PropertyRequest request) {
-		
+
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
-		
+
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
-		
+
 		boolean isRequestForStatusChange=CreationReason.STATUS.equals(request.getProperty().getCreationReason());
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
 		else if(isNumberDifferent)
 			processMobileNumberUpdate(request, propertyFromSearch);
-			
+
 		else
 		{
 			if(isRequestForStatusChange)
 			{
-				 BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
-				 
-				 BigDecimal dueAmount= new BigDecimal("0");
-				 if (billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1) 
-				 {
-			     dueAmount = billResponse.getBill().get(0).getTotalAmount();
-				 }
-				 
-			     log.info("No. of Active Bills==="+ ((billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1)?billResponse.getBill().size(): "0"));
-			     log.info("Amount Due is "+ dueAmount);
-			     if(dueAmount.compareTo(BigDecimal.ZERO)>0)
-			    	 throw new CustomException("EG_PT_ERROR_ACTIVE_BILL_PRESENT",
-								"Clear Pending dues before De-Enumerating the property");
-							
+				BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
+
+				BigDecimal dueAmount= new BigDecimal("0");
+				if (billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1)
+				{
+					dueAmount = billResponse.getBill().get(0).getTotalAmount();
+				}
+
+				log.info("No. of Active Bills==="+ ((billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1)?billResponse.getBill().size(): "0"));
+				log.info("Amount Due is "+ dueAmount);
+				if(dueAmount.compareTo(BigDecimal.ZERO)>0)
+					throw new CustomException("EG_PT_ERROR_ACTIVE_BILL_PRESENT",
+							"Clear Pending dues before De-Enumerating the property");
+
 				else
-			    	 processPropertyUpdate(request, propertyFromSearch); 
-				
+					processPropertyUpdate(request, propertyFromSearch);
+
 			}
 			else
 			{
-			processPropertyUpdate(request, propertyFromSearch);
+				processPropertyUpdate(request, propertyFromSearch);
 			}
 		}
 
@@ -194,7 +188,7 @@ public class PropertyService {
 
 		/* Fix this.
 		 * For FUZZY-search, This code to be un-commented when privacy is enabled
-		 
+
 		//Push PLAIN data to fuzzy search index
 		producer.push(config.getSavePropertyFuzzyTopic(), fuzzyPropertyRequest);
 		*
@@ -203,58 +197,59 @@ public class PropertyService {
 		/* decrypt here */
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
 	}
-	
+
 	/*
 		Method to check if the update request is for updating owner mobile numbers
 	*/
-	
+
 	private boolean checkIsRequestForMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
 		Map <String, String> uuidToMobileNumber = new HashMap <String, String>();
 		List <OwnerInfo> owners = propertyFromSearch.getOwners();
-		
+
 		for(OwnerInfo owner : owners) {
 			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
 		}
-		
+
 		List <OwnerInfo> ownersFromRequest = request.getProperty().getOwners();
-		
+
 		Boolean isNumberDifferent = false;
-		
+
 		for(OwnerInfo owner : ownersFromRequest) {
 			if(uuidToMobileNumber.containsKey(owner.getUuid()) && !uuidToMobileNumber.get(owner.getUuid()).equals(owner.getMobileNumber())) {
 				isNumberDifferent = true;
 				break;
 			}
 		}
-		
+
 		return isNumberDifferent;
 	}
-	
+
 	/*
 		Method to process owner mobile number update
 	*/
-	
+
 	private void processMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
-		
-				if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
-					userService.createUser(request);
-				} else {			
-					updateOwnerMobileNumbers(request,propertyFromSearch);
-				}
-				
-				enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
-				util.mergeAdditionalDetails(request, propertyFromSearch);
-				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);		
+
+		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
+			userService.createUser(request);
+		} else {
+			updateOwnerMobileNumbers(request,propertyFromSearch);
+		}
+
+		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 	}
 
 	/**
-	 * Method to process Property update 
+	 * Method to process Property update
 	 *
 	 * @param request
 	 * @param propertyFromSearch
 	 */
 	private void processPropertyUpdate(PropertyRequest request, Property propertyFromSearch) {
 
+		String tenantId = request.getProperty().getTenantId();
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
@@ -308,23 +303,23 @@ public class PropertyService {
 			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 		}
 	}
-	
+
 	/*
 		Method to update owners mobile number
 	*/
 
 	private void updateOwnerMobileNumbers(PropertyRequest request, Property propertyFromSearch) {
-		
-		
+
+
 		Map <String, String> uuidToMobileNumber = new HashMap <String, String>();
 		List <OwnerInfo> owners = propertyFromSearch.getOwners();
-		
+
 		for(OwnerInfo owner : owners) {
 			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
 		}
-		
+
 		userService.updateUserMobileNumber(request, uuidToMobileNumber);
-		notifService.sendNotificationForMobileNumberUpdate(request, propertyFromSearch,uuidToMobileNumber);		
+		notifService.sendNotificationForMobileNumberUpdate(request, propertyFromSearch,uuidToMobileNumber);
 	}
 
 	/**
@@ -335,6 +330,7 @@ public class PropertyService {
 	 */
 	private void processOwnerMutation(PropertyRequest request, Property propertyFromSearch) {
 
+		String tenantId = request.getProperty().getTenantId();
 		propertyValidator.validateMutation(request, propertyFromSearch);
 		userService.createUserForMutation(request, !propertyFromSearch.getStatus().equals(Status.INWORKFLOW));
 		enrichmentService.enrichAssignes(request.getProperty());
@@ -390,6 +386,7 @@ public class PropertyService {
 
 	private void terminateWorkflowAndReInstatePreviousRecord(PropertyRequest request, Property propertyFromSearch) {
 
+		String tenantId = request.getProperty().getTenantId();
 		/* current record being rejected */
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 
@@ -414,11 +411,11 @@ public class PropertyService {
 
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 	}
-	
-	
+
+
 	public List<Property> enrichProperty(List<Property> properties, RequestInfo requestInfo)
 	{
-        log.info("In Fetch Bill for Defaulter notice +++++++++++++++++++");
+		log.info("In Fetch Bill for Defaulter notice +++++++++++++++++++");
 
 		BillResponse billResponse=new BillResponse();
 		List<Property> defaulterProperties=new ArrayList<>();
@@ -461,7 +458,7 @@ public class PropertyService {
 						int fromYear=new Date(fromDate).getYear()+1900;
 						int toYear=new Date(toDate).getYear()+1900;
 						assessmentYear=assessmentYear==null? fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")":
-							assessmentYear.concat(",").concat(fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")");
+								assessmentYear.concat(",").concat(fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")");
 					}
 					property.setDueAmountYear(assessmentYear);
 
@@ -469,11 +466,11 @@ public class PropertyService {
 				}
 
 			}
-	        log.info("Property Id "+property.getPropertyId() + " added in defaulter notice with Due " +property.getDueAmount() + " for year " +property.getDueAmountYear());
+			log.info("Property Id "+property.getPropertyId() + " added in defaulter notice with Due " +property.getDueAmount() + " for year " +property.getDueAmountYear());
 
 		}
 		return defaulterProperties;
-		
+
 	}
 
 	/**
@@ -514,6 +511,8 @@ public class PropertyService {
 				log.info("In Property Search before filtering");
 
 				filterPropertiesForUser(properties, criteria.getOwnerIds());
+				log.info("After filtering properties for user");
+				log.info("Properties after filtering: {}", properties);
 			} else {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 			}
@@ -524,10 +523,17 @@ public class PropertyService {
 		}
 
 		/* Decrypt here */
-		 if(criteria.getIsSearchInternal())
+		if(criteria.getIsSearchInternal())
 			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_DECRYPT_MODEL, Property.class, requestInfo);
 		else if(!criteria.getIsRequestForOldDataEncryption())
 			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_MODEL, Property.class, requestInfo);
+
+		/* Decrypt here */
+		if(criteria.getIsSearchInternal())
+			return encryptionDecryptionUtil.decryptObject(properties, "PropertyDecrypDisabled", Property.class, requestInfo);
+		else if(!criteria.getIsRequestForOldDataEncryption())
+			return encryptionDecryptionUtil.decryptObject(properties, "Property", Property.class, requestInfo);
+
 
 		return properties;
 	}
@@ -562,7 +568,12 @@ public class PropertyService {
 
 
 	List<Property> getPropertiesPlainSearch(PropertyCriteria criteria, RequestInfo requestInfo) {
-		
+		String schemaTenantId = null;
+		if(criteria.getTenantId()!=null){
+			schemaTenantId = criteria.getTenantId();
+		} else if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
+			schemaTenantId = criteria.getTenantIds().iterator().next();
+		}
 		if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit())
 			criteria.setLimit(config.getMaxSearchLimit());
 		if(criteria.getLimit()==null)
@@ -586,7 +597,7 @@ public class PropertyService {
 			propertyCriteria.setUuids(new HashSet<>(uuids));
 		}
 		propertyCriteria.setLimit(criteria.getLimit());
-		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, true);
+		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, schemaTenantId, true);
 		if(properties.isEmpty())
 			return Collections.emptyList();
 		Set<String> ownerIds = properties.stream().map(Property::getOwners).flatMap(List::stream)
@@ -600,42 +611,42 @@ public class PropertyService {
 	}
 
 	public Property addAlternateNumber(PropertyRequest request) {
-		
+
 		Property propertyFromSearch = unmaskingUtil.getPropertyUnmasked(request);
 		propertyValidator.validateAlternateMobileNumberInformation(request, propertyFromSearch);
 		userService.createUserForAlternateNumber(request);
-		
-		request.getProperty().setAlternateUpdated(true);		
-		
+
+		request.getProperty().setAlternateUpdated(true);
+
 		Map <String, String> uuidToAlternateMobileNumber = new HashMap <String, String>();
 		List <OwnerInfo> owners = propertyFromSearch.getOwners();
-		
+
 		for(OwnerInfo owner : owners) {
-			
+
 			if(owner.getAlternatemobilenumber()!=null) {
-			   uuidToAlternateMobileNumber.put(owner.getUuid(), owner.getAlternatemobilenumber());
+				uuidToAlternateMobileNumber.put(owner.getUuid(), owner.getAlternatemobilenumber());
 			}
 			else {
 				uuidToAlternateMobileNumber.put(owner.getUuid(), " ");
 			}
 		}
-		
-		notifService.sendNotificationForAlternateNumberUpdate(request, propertyFromSearch,uuidToAlternateMobileNumber);	
-		
+
+		notifService.sendNotificationForAlternateNumberUpdate(request, propertyFromSearch,uuidToAlternateMobileNumber);
+
 		//enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 		util.mergeAdditionalDetails(request, propertyFromSearch);
-		
+
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
-		
+
 		request.getProperty().setWorkflow(null);
-		
+
 		return request.getProperty();
 	}
-	
+
 	public Integer count(RequestInfo requestInfo, @Valid PropertyCriteria propertyCriteria) {
 		propertyCriteria.setIsInboxSearch(false);
-        Integer count = repository.getCount(propertyCriteria, requestInfo);
-        return count;
+		Integer count = repository.getCount(propertyCriteria, requestInfo);
+		return count;
 	}
 
 }

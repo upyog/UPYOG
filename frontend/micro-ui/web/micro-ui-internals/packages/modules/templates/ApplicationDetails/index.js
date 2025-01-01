@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
@@ -13,7 +13,7 @@ import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBa
 import ApplicationDetailsWarningPopup from "./components/ApplicationDetailsWarningPopup";
 
 const ApplicationDetails = (props) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -34,6 +34,7 @@ const ApplicationDetails = (props) => {
     mutate,
     nocMutation,
     workflowDetails,
+    id,
     businessService,
     closeToast,
     moduleCode,
@@ -46,7 +47,8 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails
+    clearDataDetails,
+    isAction=false
   } = props;
   
   useEffect(() => {
@@ -56,6 +58,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    sessionStorage.setItem("SELECTED_ACTION", action?.action);
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -195,6 +198,7 @@ const ApplicationDetails = (props) => {
         <React.Fragment>
           <ApplicationDetailsContent
             applicationDetails={applicationDetails}
+            id={id}
             workflowDetails={workflowDetails}
             isDataLoading={isDataLoading}
             applicationData={applicationData}
@@ -234,6 +238,7 @@ const ApplicationDetails = (props) => {
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
+            isAction={isAction} // isAction is added to enable or disable the action bar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}

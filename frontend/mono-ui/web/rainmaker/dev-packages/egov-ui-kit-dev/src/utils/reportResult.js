@@ -842,7 +842,7 @@ class ShowField extends Component {
     return (
       <thead>
         <tr className="report-table-header">
-          <th key={"S. No."} className="report-header-cell">
+          <th key={"S. No."} className="report-header-cell" style={{width:"50px"}}>
             <Label className="report-header-row-label" labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold" }} label={"RT_SNO"} />
           </th>
           {metaData && metaData.reportDetails && metaData.reportDetails.selectiveDownload && (
@@ -854,7 +854,7 @@ class ShowField extends Component {
             reportResult.reportHeader.map((item, i) => {
               if (item.showColumn) {
                 return (
-                  <th key={i} className="report-header-cell" data-orderable={item && item.label && item.label.includes("date") ? "false" : "true"}>
+                  <th key={i} style={{width:"200px"}} className="report-header-cell" data-orderable={item && item.label && item.label.includes("date") ? "false" : "true"}>
                     <Label
                       className="report-header-row-label"
                       labelStyle={{ wordWrap: "unset", wordBreak: "unset", fontWeight: "bold" }}
@@ -1025,7 +1025,18 @@ class ShowField extends Component {
     //     reportResultArray.push(reportDataArray);
     //   })
     // }
+  
+  let url=window.location.href
+  //uncomment below line for localhost environment
+  //let redirectingUrl=url.split("report")[0] +"digit-ui/employee/pgr/complaint/details/"
 
+  //comment below line for local host environment   
+  let redirectingUrl=url.split("employee")[0]+"digit-ui/employee/pgr/complaint/details/"  
+  
+  function redirectToPage(e,grievanceId){
+    e.preventDefault()
+    window.location.href=redirectingUrl+grievanceId;
+  }
     return (
       <tbody>
         {reportResult.hasOwnProperty("reportData") &&
@@ -1070,6 +1081,19 @@ class ShowField extends Component {
                   //array for particular row
                   var respHeader = reportHeaderObj[itemIndex];
                   if (respHeader.showColumn) {
+                    if(window.location.href.includes("GrievanceReopenRecord") && reportResult.reportHeader[0].name=="businessid"){
+                      return (
+                        <td
+                          key={itemIndex}
+                          style={this.getStyleForCell(itemIndex)}
+                  
+                          onClick={(e)=> redirectToPage(e,dataItem[0])}                     
+                        >
+                          {respHeader.defaultValue ? <a href="javascript:void(0)">{checkIfDate(item, itemIndex)}</a> : checkIfDate(item, itemIndex)}
+                        </td>
+                      );
+
+                    }
                     return (
                       <td
                         key={itemIndex}
@@ -1252,11 +1276,12 @@ class ShowField extends Component {
     let self = this;
     const viewTabel = () => {
       return (
-        <div>
+        <div style={{ width:"100%", overflowX:"auto"}}>
           <table
             id="reportTable"
             style={{
               width: "100%",
+              tableLayout:"fixed"
             }}
             className="table table-striped table-bordered"
           >
@@ -1277,9 +1302,9 @@ class ShowField extends Component {
               />
             </div>
           ) : (
-            ""
+           <br/>
           )}
-          <br />
+          
         </div>
       );
     };

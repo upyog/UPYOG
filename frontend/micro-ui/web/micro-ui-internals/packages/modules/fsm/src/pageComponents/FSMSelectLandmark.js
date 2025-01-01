@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectLandmark = ({ t, config, onSelect, formData, userType }) => {
-  const [landmark, setLandmark] = useState();
+
+  //let property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT")||"{}")
+  let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
+{
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+}
+
+  const [landmark, setLandmark] = useState(property?.propertyDetails?.address?.landmark);
 
   const [error, setError] = useState("");
 
@@ -60,10 +68,10 @@ const FSMSelectLandmark = ({ t, config, onSelect, formData, userType }) => {
         value={landmark}
         onChange={onChange}
         onSelect={(data) => onSelect(config.key, { ...formData[config.key], ...data })}
-        onSkip={onSkip}
+        //onSkip={onSkip}
         t={t}
         forcedError={t(error)}
-        isDisabled={landmark ? false : true}
+        isDisabled={false}
       ></FormStep>
     </React.Fragment>
   );

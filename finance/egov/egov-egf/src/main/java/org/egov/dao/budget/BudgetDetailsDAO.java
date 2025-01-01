@@ -73,21 +73,22 @@ import org.egov.model.budget.BudgetUsage;
 public interface BudgetDetailsDAO {
     public boolean consumeEncumbranceBudget(Long financialyearid, Integer moduleid, String referencenumber, String departmentcode,
             Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
-            List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
+            List<Long> budgetheadid, Long fundid, double amount, String appropriationnumber) throws ValidationException;
 
     public BudgetUsage consumeEncumbranceBudget(String appropriationnumber, Long financialyearid, Integer moduleid,
             String referencenumber, String departmentcode, Long functionid, Integer functionaryid, Integer schemeid,
-            Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
+            Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Long fundid, double amount)
             throws ValidationException;
 
     public void releaseEncumbranceBudget(Long financialyearid, Integer moduleid, String referencenumber, String departmentcode,
             Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
-            List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
+            List<Long> budgetheadid, Long fundid, double amount, String appropriationnumber) throws ValidationException;
 
     public BudgetUsage releaseEncumbranceBudget(String appropriationnumber, Long financialyearid, Integer moduleid,
             String referencenumber, String departmentcode, Long functionid, Integer functionaryid, Integer schemeid,
-            Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
+            Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Long fundid, double amount)
             throws ValidationException;
+    
 
     public BigDecimal getActualBudgetUtilized(Map<String, Object> paramMap) throws ValidationException;
 
@@ -95,11 +96,11 @@ public interface BudgetDetailsDAO {
 
     public BigDecimal getPlanningBudgetAvailable(Long financialyearid, String departmentcode, Long functionid,
             Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
-            Integer fundid) throws ValidationException;
+            Long fundid) throws ValidationException;
     
     public List<BudgetDetail> getBudgetAvailableDetail(Long financialyearid, Integer departmentid, Long functionid,
             Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
-            Integer fundid) throws ValidationException;
+            Long fundid) throws ValidationException;
 
     public BigDecimal getBudgetedAmtForYear(Map<String, Object> paramMap) throws ValidationException;
 
@@ -126,7 +127,7 @@ public interface BudgetDetailsDAO {
 
     public List<BudgetGroup> getBudgetHeadForGlcodeList(List<CChartOfAccounts> coa) throws ValidationException;
 
-    public BigDecimal getPlannigBudgetBy(Integer fundId, Integer deptId, Date asOnDate);
+    public BigDecimal getPlannigBudgetBy(Long fundId, Integer deptId, Date asOnDate);
 
     public BigDecimal getPlanningBudgetUsage(BudgetDetail bd);
 
@@ -140,6 +141,6 @@ public interface BudgetDetailsDAO {
 
     void delete(BudgetDetail entity);
 
-    public List<CFunction> getFunctionsByFundAndDepartment(final Integer fund, final Long department)
+    public List<CFunction> getFunctionsByFundAndDepartment(final Long fund, final Long department)
             throws ValidationException;
 }

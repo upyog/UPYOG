@@ -109,6 +109,7 @@ const Search = ({ path }) => {
     params,
     {enabled:paramerror===""}
   );
+  console.log("SSSSSSSSSSSSSS")
   return (
     <Search
       t={t}

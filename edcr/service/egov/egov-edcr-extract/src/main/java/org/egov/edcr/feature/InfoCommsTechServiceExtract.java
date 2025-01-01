@@ -89,7 +89,7 @@ public class InfoCommsTechServiceExtract extends FeatureExtract {
                                             DxfFileConstants.DIMENSION_HEIGHT_COLOR_CODE);
                                     if (!heights.isEmpty())
                                         ictDoor.setHeight(heights.get(0));
-                                    ict.getDoors().add(ictDoor);
+                                  //  ict.getDoors().add(ictDoor);
                                 }
                             }
 

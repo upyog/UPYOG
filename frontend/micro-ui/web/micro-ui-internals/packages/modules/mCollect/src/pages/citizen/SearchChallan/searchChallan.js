@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu } from "@egovernments/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@egovernments/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown } from "@egovernments/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
   const [mobileNumberError, setmobileNumberError] = useState(null);
   // moduleCode, type, config = {}, payload = []
 
-  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService");
+  const { data: Menu, isLoading } = Digit.Hooks.mcollect.useMCollectMDMS(tenantId, "BillingService", "BusinessService", "[?(@.type=='Adhoc' && @.isActive==true)]");
   if (isLoading) {
     return <Loader />;
   }

@@ -1,22 +1,78 @@
 export const newConfig = [
   {
-    head: "ES_NEW_APPLICATION_PROPERTY_DETAILS",
+    
+      head: "",
+      body: [
+        
+        {
+          type: "component",
+          route: "search-property",
+          isMandatory: true,
+          component: "CPTSearchProperty", 
+          key: "cptsearchproperty",
+          withoutLabel: true,
+          nextStep: 'search-results',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "search-results",
+          isMandatory: true,
+          component: "CPTSearchResults", 
+          key: "cptsearchresults",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "create-property", 
+          isMandatory: true,
+          component: "CPTCreateProperty", 
+          key: "cptcreateproperty",
+          withoutLabel: true,
+          isSkipEnabled : true,
+          nextStep: 'acknowledge-create-property',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "acknowledge-create-property", 
+          isMandatory: true,
+          component: "CPTAcknowledgement", 
+          key: "cptacknowledgement",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "property-details",
+          isMandatory: true,
+          component: "CPTPropertyDetails", 
+          key: "propertydetails",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        
+      ],
+  },
+  {
+    head: "FSM_NEW_APPLICATION_PROPERTY",
     body: [
       {
-        label: "ES_NEW_APPLICATION_PROPERTY_ID",
-        isMandatory: true,
+        component: "CPTPropertySearchNSummary",
+        withoutLabel: true,
+        key: "cpt",
         type: "component",
-        route: "property-id",
-        key: "propertyID",
-        component: "SelectPropertyID",
-        texts: {
-          headerCaption: "",
-          header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
-          cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
-          submitBarLabel: "CS_COMMON_NEXT",
-        },
-        nextStep: "property-type",
-      },
+        hideInCitizen: true
+      }
+    ]
+  },
+    {
+    head: "ES_NEW_APPLICATION_PROPERTY_DETAILS",
+    body: [
       {
         label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
         isMandatory: true,

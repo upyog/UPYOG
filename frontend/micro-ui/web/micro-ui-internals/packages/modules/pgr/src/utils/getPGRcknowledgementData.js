@@ -1,3 +1,4 @@
+import { ComplaintDetails } from "../pages/employee/ComplaintDetails";
 
  const getMohallaLocale = (value = "", tenantId = "") => {
   let convertedValue = convertDotValues(tenantId);
@@ -40,34 +41,38 @@
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
-   
+   console.log("complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE",complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE)
       return {
         t: t,
         tenantId: tenantInfo?.code,
         name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
         email: tenantInfo?.emailId,
         phoneNumber: tenantInfo?.contactNumber,
-        heading: t("PGR_ACKNOWLEDGEMENT"),
+        heading: t("NEW_GRIEVANCE_APPLICATION"),
+        applicationNumber:complaintDetails?.service?.serviceRequestId,
         details: [
           {
             title: t("CS_TITLE_APPLICATION_DETAILS"),
             values: [
-              { title: t("PGR_APPLICATION_NO"), value: complaintDetails?.service?.serviceRequestId},
               {
                 title: t("CS_COMPLAINT_FILED_DATE"),
                 value: Digit.DateUtils.ConvertTimestampToDate(complaintDetails?.audit?.details?.createdTime, "dd/MM/yyyy"),
               },
               {
                 title: t("CS_COMPLAINT_TYPE"),
-                value: complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE,
+                value: t(complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_TYPE),
               },
               {
                 title: t("CS_COMPLAINT_SUB_TYPE"),
-                value: complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE,
+                value: t(complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE),
+              },
+              {
+                title: t("CS_COMPLAINT_PRIORITY_LEVEL"),
+                value: t(complaintDetails?.service?.priority),
               },
               {
                 title: t("CS_COMPLAINT_ADDITIONAL_DETAILS"),
-                value: complaintDetails?.details?.CS_COMPLAINT_ADDTIONAL_DETAILS,
+                value: complaintDetails?.details?.CS_COMPLAINT_ADDTIONAL_DETAILS||"NA",
               },
             ],
           },
@@ -81,8 +86,8 @@ const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
                 value: t(`${getMohallaLocale(complaintDetails?.service?.address?.locality?.code, tenantInfo?.code)}`) || t("CS_NA"),
               },
               { title: t("PGR_ADDRESS_STREET_NAME"), value: complaintDetails?.service?.address?.street || t("CS_NA") },
-              { title: t("PGR_ADDRESS_HOUSE_NO"), value: complaintDetails?.service?.address?.doorNo || t("CS_NA") },
-              { title: t("PGR_ADDRESS_LANDMARK"), value: complaintDetails?.service?.address?.landmark || t("CS_NA") },
+              // { title: t("PGR_ADDRESS_HOUSE_NO"), value: complaintDetails?.service?.address?.doorNo || t("CS_NA") },
+              // { title: t("PGR_ADDRESS_LANDMARK"), value: complaintDetails?.service?.address?.landmark || t("CS_NA") },
             ],
           },
          

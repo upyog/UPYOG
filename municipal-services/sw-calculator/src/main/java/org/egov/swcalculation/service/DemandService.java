@@ -2,6 +2,7 @@ package org.egov.swcalculation.service;
 
 import static org.egov.swcalculation.constants.SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
 
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,25 +32,12 @@ import org.egov.swcalculation.repository.SewerageCalculatorDao;
 import org.egov.swcalculation.util.CalculatorUtils;
 import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
+import org.egov.swcalculation.web.models.*;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationCriteria;
 import org.egov.swcalculation.web.models.CalculationReq;
-import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.Demand.StatusEnum;
-import org.egov.swcalculation.web.models.DemandDetail;
-import org.egov.swcalculation.web.models.DemandDetailAndCollection;
-import org.egov.swcalculation.web.models.DemandNotificationObj;
-import org.egov.swcalculation.web.models.DemandRequest;
-import org.egov.swcalculation.web.models.DemandResponse;
-import org.egov.swcalculation.web.models.GetBillCriteria;
-import org.egov.swcalculation.web.models.MigrationCount;
-import org.egov.swcalculation.web.models.Property;
-import org.egov.swcalculation.web.models.RequestInfoWrapper;
-import org.egov.swcalculation.web.models.SewerageConnection;
-import org.egov.swcalculation.web.models.SewerageConnectionRequest;
-import org.egov.swcalculation.web.models.TaxHeadEstimate;
-import org.egov.swcalculation.web.models.TaxPeriod;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -60,6 +48,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+
+import static org.egov.swcalculation.constants.SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
 
 @Service
 @Slf4j
@@ -121,13 +111,13 @@ public class DemandService {
 	private EnrichmentService enrichmentService;
 
 	private Object calculationReq;
-
+	private SewerageConnectionRequest request;
+	private RequestInfo requestInfo;
 
 
 	/**
 	 * Creates or updates Demand
 	 * 
-	 * @param requestInfo The RequestInfo of the calculation request
 	 * @param calculations The Calculation Objects for which demand has to be generated or updated
 	 */
 	public List<Demand> generateDemand(CalculationReq request, List<Calculation> calculations,
@@ -200,8 +190,6 @@ public class DemandService {
 	/**
 	 * Creates demand for the given list of calculations
 	 * 
-	 * @param requestInfo
-	 *            The RequestInfo of the calculation request
 	 * @param calculations
 	 *            List of calculation object
 	 * @return Demands that are created
@@ -990,8 +978,7 @@ public class DemandService {
 	}
 	
 	/**
-	 * 
-	 * @param master - List of MDMS master data
+	 *
 	 * @param requestInfo - Request Info Object
 	 * @param tenantId - Tenant Id
 	 * @param bulkBillCriteria - Critera for bulk bill generation
@@ -1238,6 +1225,5 @@ public class DemandService {
 		}
 		return demandList;
 	}
-		
 
 }

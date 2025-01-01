@@ -4,11 +4,29 @@ import { PaymentService } from "../services/elements/Payment";
 export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...filters }, config = {}) => {
   const queryClient = useQueryClient();
   const { mobileNumber, tenantId } = Digit.UserService.getUser()?.info || {};
+  const tenant = Digit.ULBService.getCitizenCurrentTenant();
   const params = { mobileNumber, businessService, ...filters };
   if (!params["mobileNumber"]) delete params["mobileNumber"];
+
+  /* For these business services, the fetchBill API does not require mobileNumber.
+    sriranjan sir has approved these changes
+  */
+  const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services"];
+  // Early return if businessService is in the skip list
+  if (skipBusinessServices.includes(businessService)) {
+    return {
+      isLoading: false,
+      error: null,
+      isError: false,
+      data: null,
+      status: 'skipped',
+      revalidate: () => queryClient.invalidateQueries(["citizenBillsForBuisnessService", businessService]),
+    };
+  }
+
   const { isLoading, error, isError, data, status } = useQuery(
     ["citizenBillsForBuisnessService", businessService, { ...params }],
-    () => Digit.PaymentService.fetchBill(tenantId, { ...params }),
+    () => Digit.PaymentService.fetchBill(window.location.href.includes("mcollect")?tenant:tenantId, { ...params }),
     {
       refetchOnMount: true,
       retry: false,
@@ -142,6 +160,17 @@ export const useDemandSearch = ({ consumerCode, businessService, tenantId }, con
   const queryFn = () => Digit.PaymentService.demandSearch(tenantId, consumerCode, businessService);
   const queryData = useQuery(["demand_search", { consumerCode, businessService, tenantId }], queryFn, { refetchOnMount: "always", ...config });
   return queryData;
+};
+
+export const useAssetQrCode = ({ tenantId, ...params }, config = {}) => {     
+  return useQuery(
+    ["assets_Reciept_Search", { tenantId, params },config],
+    () => Digit.PaymentService.useAssetQrCodeService(tenantId, params),
+    {
+      refetchOnMount: false,
+      ...config,
+    }
+  );
 };
 
 export const useRecieptSearch = ({ tenantId, businessService, ...params }, config = {}) => {

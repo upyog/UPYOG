@@ -37,6 +37,8 @@ function renderError(res, errorMessage, errorCode) {
   if (errorCode == undefined) errorCode = 500;
   res.status(errorCode).send({ errorMessage });
 }
+
+
 router.post(
     "/wnsbill",
     asyncMiddleware(async function (req, res, next) {
@@ -436,8 +438,7 @@ router.post(
         bussinessService: bussinessService,
         isConsolidated: isConsolidated,
         consumerCode: consumerCode,
-        jobid: jobid,
-        propertyId: propertyId
+        jobid: jobid
       };
 
       try {

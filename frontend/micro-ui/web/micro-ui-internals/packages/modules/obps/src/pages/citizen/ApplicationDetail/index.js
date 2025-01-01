@@ -1,4 +1,4 @@
-import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader } from "@egovernments/digit-ui-react-components";
+import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -28,17 +28,18 @@ const ApplicationDetails = () => {
     },
     {}
   );
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   useEffect(() => {
     if (License?.tradeLicenseDetail?.applicationDocuments?.length) {
       const fileStoresIds = License?.tradeLicenseDetail?.applicationDocuments?.map((document) => document?.fileStoreId);
-      Digit.UploadServices.Filefetch(fileStoresIds, tenantId.split(".")[0]).then((res) => setDocuments(res?.data));
+      Digit.UploadServices.Filefetch(fileStoresIds, stateCode).then((res) => setDocuments(res?.data));
     }
   }, [License]);
 
   useEffect(() => {
     if (License) {
       if (reciept_data?.Payments?.length > 0) {
+        //console.log("reciept_data?.Payments",reciept_data?.Payments)
         setDowloadOptions([
           {
             label: t("TL_RECEIPT"),
@@ -46,7 +47,8 @@ const ApplicationDetails = () => {
               downloadAndPrintReciept(
                 reciept_data?.Payments?.[0]?.paymentDetails?.[0]?.businessService || "BPAREG",
                 License?.applicationNumber,
-                License?.tenantId
+                License?.tenantId,
+                reciept_data?.Payments
               ),
           },
         ]);
@@ -66,13 +68,22 @@ const ApplicationDetails = () => {
       }
     });
   }
-
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
   if (isLoading) return <Loader />;
 
   return (
     <Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"980px"}}>
+        {/* <div style={{display:'flex'}}> */}
         <Header styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }}>{t("BPA_TASK_DETAILS_HEADER")}</Header>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+         
         {reciept_data?.Payments?.length > 0 && (
           // <div style={{right: "3%", top: "20px", position: "absolute"}}>
           <MultiLink
@@ -82,7 +93,11 @@ const ApplicationDetails = () => {
             options={dowloadOptions}
             style={{ top: "90px" }}
           />
-        )}
+        )}        
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        {/* </div> */}
+        </div>
+        
       </div>
       <div>
         <Card>
@@ -160,9 +175,11 @@ const ApplicationDetails = () => {
             })}
           </Card>
         )}
+        <div id="timeline">
         <Card>
           <ApplicationTimeline id={id} tenantId={License?.tenantId} />
         </Card>
+        </div>       
       </div>
     </Fragment>
   );

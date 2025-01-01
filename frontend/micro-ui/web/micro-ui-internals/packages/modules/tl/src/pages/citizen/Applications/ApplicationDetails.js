@@ -11,7 +11,7 @@ import {
   LinkLabel,
   LinkButton,
   StatusTable,
-} from "@egovernments/digit-ui-react-components";
+} from  "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -35,6 +35,8 @@ const TLApplicationDetails = () => {
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("CITIZEN_TL_MUTATION_HAPPENED", false);
   const { tenants } = storeData || {};
   const isMobile = window.Digit.Utils.browser.isMobile();
+  const [viewTimeline, setViewTimeline]=useState(false);
+  const stateId = Digit.ULBService.getStateId();
   let multiBoxStyle = {
     border: "groove",
     background: "#FAFAFA",
@@ -82,7 +84,7 @@ const TLApplicationDetails = () => {
     id: id,
     moduleCode: businessService,
   });
-
+  
   let workflowDocs = [];
   if (wfdata) {
     wfdata?.timeline?.map((ob) => {
@@ -94,7 +96,14 @@ const TLApplicationDetails = () => {
       }
     });
   }
-
+  
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   if (isLoading || iswfLoading) {
     return <Loader />;
   }
@@ -113,14 +122,14 @@ const TLApplicationDetails = () => {
 
   const downloadPaymentReceipt = async () => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
-    if (!receiptFile?.fileStoreIds?.[0]) {
-      const newResponse = await Digit.PaymentService.generatePdf(tenantId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: newResponse.filestoreIds[0] });
-      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
-      setShowOptions(false);
-    } else {
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
+     if (receiptFile?.filestoreIds[0]!==null) {
+      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: receiptFile.filestoreIds[0] });
       window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
+      setShowOptions(false);      
+    } else {
+      const newResponse = await Digit.PaymentService.generatePdf(stateId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(stateId, { fileStoreIds: newResponse.filestoreIds[0] });
+      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
       setShowOptions(false);
     }
   };
@@ -160,17 +169,22 @@ const TLApplicationDetails = () => {
             onClick: handleDownloadPdf,
           },
         ];
-
+        
+  const ownersSequences= (application?.[0]?.tradeLicenseDetail?.owners?.additionalDetails!==null)? application?.[0]?.tradeLicenseDetail?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence) : [];
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px"}}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+       
         <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
           displayOptions={showOptions}
           options={dowloadOptions}
         />
+        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        </div>        
       </div>
       <Card style={{ position: "relative" }}>
         {application?.map((application, index) => {
@@ -239,7 +253,7 @@ const TLApplicationDetails = () => {
                 textStyle={{wordBreak:"break-word"}}
               />
               <CardSectionHeader>{t("TL_OWNERSHIP_DETAILS_HEADER")}</CardSectionHeader>
-              {application?.tradeLicenseDetail.owners.map((ele, index) => {
+              {ownersSequences.map((ele, index) => {
                 return application?.tradeLicenseDetail?.subOwnerShipCategory.includes("INSTITUTIONAL") ? (
                   <div key={index} style={multiBoxStyle}>
                     <CardSectionHeader style={multiHeaderStyle}>{`${t("TL_PAYMENT_PAID_BY_PLACEHOLDER")} - ` + (index + 1)}</CardSectionHeader>
@@ -275,6 +289,7 @@ const TLApplicationDetails = () => {
                     <Row className="border-none" label={`${t("TL_COMMON_TABLE_COL_OWN_NAME")}`} text={t(ele.name)} textStyle={{ wordBreak:"break-word" }} />
                     <Row className="border-none" label={`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}`} text={t(ele.gender)} textStyle={{ wordBreak:"break-word" }} />
                     <Row className="border-none" label={`${t("TL_MOBILE_NUMBER_LABEL")}`} text={t(ele.mobileNumber)} textStyle={{ wordBreak:"break-word" }} />
+                    <Row className="border-none" label={`${t("TL_EMAIL_ID_LABEL")}`} text={t(ele.emailId || t("CS_NA"))} textStyle={{ wordBreak:"break-word" }} />
                     <Row className="border-none" label={`${t("TL_GUARDIAN_S_NAME_LABEL")}`} text={t(ele.fatherOrHusbandName)} textStyle={{ wordBreak:"break-word" }} />
                     <Row className="border-none" label={`${t("TL_RELATIONSHIP_WITH_GUARDIAN_LABEL")}`} text={t(ele.relationship)} textStyle={{ wordBreak:"break-word" }} />
                   </div>
@@ -393,6 +408,7 @@ const TLApplicationDetails = () => {
                   </div>
                 </div>
               )}
+              <div id="timeline">
               <TLWFApplicationTimeline application={application} id={id} />
               {application?.status === "CITIZENACTIONREQUIRED" ? (
                 <Link
@@ -404,6 +420,7 @@ const TLApplicationDetails = () => {
                   <SubmitBar label={t("COMMON_EDIT")} />
                 </Link>
               ) : null}
+              </div>
               {/* //TODO: change the actions to be fulfilled from workflow nextactions */}
               {application?.status === "PENDINGPAYMENT" ? (
                 <Link

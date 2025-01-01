@@ -57,6 +57,8 @@ public class DcrReportBlockDetail {
     private BigDecimal coverageArea;
 
     private BigDecimal buildingHeight;
+    
+    private BigDecimal buildingHeightExcludingMP; // Building height excluding mumty and parapet
 
     private List<DcrReportFloorDetail> dcrReportFloorDetails;
 
@@ -80,6 +82,14 @@ public class DcrReportBlockDetail {
 
     public void setBuildingHeight(BigDecimal buildingHeight) {
         this.buildingHeight = buildingHeight;
+    }
+    
+    public BigDecimal getBuildingHeightExcludingMP() {
+        return buildingHeightExcludingMP;
+    }
+
+    public void setBuildingHeightExcludingMPt(BigDecimal buildingHeightExcludingMP) {
+        this.buildingHeightExcludingMP = buildingHeightExcludingMP;
     }
 
     public void setCoverageArea(BigDecimal coverageArea) {

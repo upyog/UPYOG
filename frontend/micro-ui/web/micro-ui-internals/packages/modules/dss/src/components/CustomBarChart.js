@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -13,8 +13,13 @@ const formatValue = (value, symbol,type) => {
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
     return `${Pformatter.format(Number(value).toFixed(2))}`;
     */
-   
-    return `${Number(value).toFixed()}`;
+   if(type == "others" && value >100)
+   {
+    return `${Number(100).toFixed()}`;
+   }
+    else {
+      return `${Number(value).toFixed()}`;
+    }
   }
   else if(type =="revenue")
   {
@@ -159,16 +164,13 @@ const CustomBarChart = ({
     filters: value?.filters,
     moduleLevel: value?.moduleLevel || moduleCode,
   });
-  console.log("hhhhhhhh",data)
   const chartData = useMemo(() => {
     if (!response) return null;
-    console.log("ressssssssss",response?.responseData)
     let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
    
     setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
-      console.log("barrrrrrr",plotValue,data)
       let type =""
       if(possibleValues.includes(data?.id))
       {
@@ -251,7 +253,7 @@ const CustomBarChart = ({
       </ResponsiveContainer>
       {chartData?.length > 3 && showDrillDown && (
         <p className="showMore" onClick={goToDrillDownCharts}>
-          {t("DSS_SHOW_MORE")}
+          {window.location.href.includes("fsm") ? "" : t("DSS_SHOW_MORE")}
         </p>
       )}
     </Fragment>

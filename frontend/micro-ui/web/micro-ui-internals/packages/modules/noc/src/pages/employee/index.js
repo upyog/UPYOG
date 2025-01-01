@@ -1,4 +1,4 @@
-import { BreadCrumb, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BreadCrumb, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import SearchApplication from "./SearchApplication";

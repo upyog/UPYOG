@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -49,6 +49,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     try {
       let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
       data.tenantId = tenantId;
+      console.log("isPropertyMutation",isPropertyMutation,data)
       let formdata = !window.location.href.includes("edit-application")
         ? isPropertyMutation
           ? data

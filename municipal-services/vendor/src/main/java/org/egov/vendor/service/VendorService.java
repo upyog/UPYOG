@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import org.egov.vendor.config.VendorConfiguration;
 import org.egov.vendor.driver.web.model.Driver;
 import org.egov.vendor.repository.VendorRepository;
 import org.egov.vendor.util.VendorConstants;
+import org.egov.vendor.util.VendorErrorConstants;
 import org.egov.vendor.util.VendorUtil;
 import org.egov.vendor.validator.VendorValidator;
 import org.egov.vendor.web.model.Vendor;
@@ -66,7 +68,7 @@ public class VendorService {
 			throw new CustomException("Invalid TenantId", " Application cannot be create at StateLevel");
 		}
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-		vendorValidator.validateCreateOrUpdateRequest(vendorRequest, mdmsData, true);
+		vendorValidator.validateCreateOrUpdateRequest(vendorRequest, mdmsData, true, requestInfo);
 		enrichmentService.enrichCreate(vendorRequest);
 		vendorRepository.save(vendorRequest);
 		return vendorRequest.getVendor();
@@ -127,7 +129,7 @@ public class VendorService {
 		}
 
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
-		vendorValidator.validateCreateOrUpdateRequest(vendorRequest, mdmsData, false);
+		vendorValidator.validateCreateOrUpdateRequest(vendorRequest, mdmsData, false, requestInfo);
 		enrichmentService.enrichUpdate(vendorRequest);
 		updateVendor(vendorRequest, tenantId);
 

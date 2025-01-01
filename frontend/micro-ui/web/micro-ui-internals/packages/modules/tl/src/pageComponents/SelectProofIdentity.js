@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelDesc, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, FormStep, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
 import { getOwnersfromProperty } from "../utils";

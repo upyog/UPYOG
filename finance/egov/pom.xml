@@ -124,9 +124,9 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>JSPRESSO</id>
-            <url>http://repository.jspresso.org/maven2/</url>
-        </repository>
+			<id>javaxt.com</id>
+			<url>http://www.javaxt.com/maven</url>
+		</repository>
     </repositories>
 
     <pluginRepositories>
@@ -229,7 +229,7 @@
         <google-guava-version>23.2-jre</google-guava-version>
         <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
-        <jcaptcha.version>2.0-alpha-1</jcaptcha.version>
+        <!-- <jcaptcha.version>2.0-alpha-1</jcaptcha.version> -->
         <javaxt.core.version>1.7.8</javaxt.core.version>
         <pdfbox.version>2.0.4</pdfbox.version>
         <bouncycastle.version>1.60</bouncycastle.version>
@@ -857,7 +857,7 @@
                 <artifactId>recaptcha4j</artifactId>
                 <version>${recaptcha.version}</version>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>com.octo.captcha</groupId>
                 <artifactId>jcaptcha</artifactId>
                 <version>${jcaptcha.version}</version>
@@ -876,7 +876,7 @@
                 <groupId>com.octo.captcha</groupId>
                 <artifactId>jcaptcha-api</artifactId>
                 <version>${jcaptcha.version}</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>com.jhlabs</groupId>
                 <artifactId>filters</artifactId>
@@ -1283,14 +1283,14 @@
             <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
             <artifactId>recaptcha4j</artifactId>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.octo.captcha</groupId>
             <artifactId>jcaptcha</artifactId>
         </dependency>
         <dependency>
             <groupId>com.octo.captcha</groupId>
             <artifactId>jcaptcha-api</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>com.jhlabs</groupId>
             <artifactId>filters</artifactId>

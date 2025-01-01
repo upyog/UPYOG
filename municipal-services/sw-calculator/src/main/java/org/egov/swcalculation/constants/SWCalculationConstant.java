@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.swcalculation.web.models.DemandStatus;
 
@@ -288,7 +289,8 @@ public class SWCalculationConstant {
 
 	public static final String ADHOC_REBATE = "adhocRebate";
 	
-	public static final Long APPLICATION_FEE_DEMAND_END_DATE = 157784760000l;
+	//public static final Long APPLICATION_FEE_DEMAND_END_DATE = 157784760000l;
+	public static final Long APPLICATION_FEE_DEMAND_END_DATE = 63072000000l;
 	
 	public static final Long APPLICATION_FEE_DEMAND_EXP_DATE = 220898664000l;
 	
@@ -380,5 +382,9 @@ public class SWCalculationConstant {
 	public static final String PENDING_FOR_DISCONNECTION_EXECUTION = "PENDING_FOR_DISCONNECTION_EXECUTION";
 
 	public static final String DISCONNECTION_EXECUTED = "DISCONNECTION_EXECUTED";
+	
+	public static final String TENANTID_MDC_STRING = "TENANTID";
 
+
+	public static Map<String, Object> masterMap;
 }

@@ -1,5 +1,11 @@
 package org.egov.waterconnection.service;
 
+import static org.egov.waterconnection.constants.WCConstants.APPROVE_CONNECTION;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.PlainAccessRequest;
@@ -23,6 +29,7 @@ import org.egov.waterconnection.web.models.workflow.ProcessInstance;
 import org.egov.waterconnection.workflow.WorkflowIntegrator;
 import org.egov.waterconnection.workflow.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -216,6 +223,9 @@ public class WaterServiceImpl implements WaterService {
 	 */
 	public List<WaterConnection> search(SearchCriteria criteria, RequestInfo requestInfo) {
 		List<WaterConnection> waterConnectionList;
+
+		waterConnectionValidator.validateSearch(criteria);
+
 		//Creating copies of apiPlainAcessRequests for decryption process
 		//Any decryption process returns the  requestInfo with only the already used plain Access Request fields
 
@@ -328,7 +338,8 @@ public class WaterServiceImpl implements WaterService {
 		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
 		BusinessService businessService = workflowService.getBusinessService(waterConnectionRequest.getWaterConnection().getTenantId(), 
 				waterConnectionRequest.getRequestInfo(), config.getBusinessServiceValue());
-		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
+
+		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getTenantId(), waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
 		if (isPlumberSwapped)
@@ -390,7 +401,7 @@ public class WaterServiceImpl implements WaterService {
 		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
 		BusinessService businessService = workflowService.getBusinessService(waterConnectionRequest.getWaterConnection().getTenantId(), 
 		waterConnectionRequest.getRequestInfo(), config.getDisconnectBusinessServiceName());
-		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
+		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getTenantId(),waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
 		if (isPlumberSwapped)
@@ -423,7 +434,11 @@ public class WaterServiceImpl implements WaterService {
 		//Call workflow
 		wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		//check for edit and send edit notification
-		//waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
+		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
+		//Enrich file store Id After payment
+		enrichmentService.enrichFileStoreIds(waterConnectionRequest);
+//		userService.createUser(waterConnectionRequest);
+		enrichmentService.postStatusEnrichment(waterConnectionRequest);
 
 		/* encrypt here */
 		waterConnectionRequest.setWaterConnection(encryptConnectionDetails(waterConnectionRequest.getWaterConnection()));
@@ -461,7 +476,7 @@ public class WaterServiceImpl implements WaterService {
 		validateProperty.validatePropertyFields(property,waterConnectionRequest.getRequestInfo());
 		BusinessService businessService = workflowService.getBusinessService(waterConnectionRequest.getWaterConnection().getTenantId(), 
 		waterConnectionRequest.getRequestInfo(), config.getReconnectBusinessServiceName());
-		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
+		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getTenantId(),waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
 		if (isPlumberSwapped)
@@ -528,10 +543,11 @@ public class WaterServiceImpl implements WaterService {
 	 * @param requestInfo
 	 * @return water connection
 	 */
-	public WaterConnection getConnectionForUpdateRequest(String id, RequestInfo requestInfo) {
+	public WaterConnection getConnectionForUpdateRequest(String tenantId, String id, RequestInfo requestInfo) {
 		Set<String> ids = new HashSet<>(Arrays.asList(id));
 		SearchCriteria criteria = new SearchCriteria();
 		criteria.setIds(ids);
+		criteria.setTenantId(tenantId);
 		List<WaterConnection> connections = getWaterConnectionsList(criteria, requestInfo);
 		if (CollectionUtils.isEmpty(connections)) {
 			StringBuilder builder = new StringBuilder();
@@ -543,9 +559,11 @@ public class WaterServiceImpl implements WaterService {
 	}
 
 	private List<WaterConnection> getAllWaterApplications(WaterConnectionRequest waterConnectionRequest) {
+
 		WaterConnection waterConnection = waterConnectionRequest.getWaterConnection();
         SearchCriteria criteria = SearchCriteria.builder()
 				.connectionNumber(Stream.of(waterConnection.getConnectionNo().toString()).collect(Collectors.toSet())).build();
+		criteria.setTenantId(waterConnection.getTenantId());
 		if(waterConnectionRequest.isDisconnectRequest() ||
 				!StringUtils.isEmpty(waterConnection.getConnectionNo()))
 			criteria.setIsInternalCall(true);
@@ -558,7 +576,7 @@ public class WaterServiceImpl implements WaterService {
 		BusinessService businessService = workflowService.getBusinessService(
 				waterConnectionRequest.getWaterConnection().getTenantId(), waterConnectionRequest.getRequestInfo(),
 				config.getModifyWSBusinessServiceName());
-		WaterConnection searchResult = getConnectionForUpdateRequest(
+		WaterConnection searchResult = getConnectionForUpdateRequest(waterConnectionRequest.getWaterConnection().getTenantId(),
 				waterConnectionRequest.getWaterConnection().getId(), waterConnectionRequest.getRequestInfo());
 
 		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), searchResult.getPlumberInfo());
@@ -690,7 +708,6 @@ public class WaterServiceImpl implements WaterService {
 		}
 		return waterConnection;
 	}
-
 
 	/**
 	 * Decrypts waterConnection details

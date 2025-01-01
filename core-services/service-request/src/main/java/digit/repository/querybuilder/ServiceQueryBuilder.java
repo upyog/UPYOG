@@ -71,11 +71,11 @@ public class ServiceQueryBuilder {
         // order services based on their createdtime in latest first manner
         query.append(ORDERBY_CREATEDTIME);
 
-        if(ObjectUtils.isEmpty(serviceSearchRequest.getPagination()))
-            prepareDefaultPaginationObject(serviceSearchRequest);
+        // if(ObjectUtils.isEmpty(serviceSearchRequest.getPagination()))
+        //     prepareDefaultPaginationObject(serviceSearchRequest);
 
-        // Pagination to limit results
-        addPagination(query, preparedStmtList, serviceSearchRequest.getPagination());
+        // // Pagination to limit results
+        // addPagination(query, preparedStmtList, serviceSearchRequest.getPagination());
 
         return IDS_WRAPPER_QUERY.replace("{HELPER_TABLE}", query.toString());
     }
@@ -120,8 +120,7 @@ public class ServiceQueryBuilder {
 
         // Append limit
         query.append(" LIMIT ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() :
-                ((pagination.getLimit() > config.getMaxLimit()) ? config.getMaxLimit() : pagination.getLimit()));
+        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
     }
 
 

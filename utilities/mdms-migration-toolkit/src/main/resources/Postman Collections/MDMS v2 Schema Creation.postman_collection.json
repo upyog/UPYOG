@@ -1,0 +1,2111 @@
+{
+	"info": {
+		"_postman_id": "610ff799-688a-464d-bf80-982a5dd2d45e",
+		"name": "MDMS v2 Schema Creation",
+		"description": "- \"tenant\" collection variable is for the schema being added to database\n    \n- \"userTenant\" collection variable is for the auth token API, user specific tenant id to be added\n- \"i\" variable will always be 0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20639397",
+		"_collection_link": "https://egov-impl.postman.co/workspace/eGovernments~d979de3f-e9cc-4dbe-8bf9-9742e0a8cd78/collection/20639397-610ff799-688a-464d-bf80-982a5dd2d45e?action=share&source=collection_link&creator=20639397"
+	},
+	"item": [
+		{
+			"name": "Employee Auth Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.collectionVariables.set(\"authToken\", jsonData.access_token);",
+							"",
+							"var userInfo, userReqInfo;",
+							"for(let key in jsonData)",
+							"{",
+							"if(key.includes('UserRequest')){",
+							"   console.log(JSON.stringify(jsonData[key]));",
+							"   userInfo = JSON.stringify(jsonData[key])",
+							"}",
+							"}",
+							"pm.collectionVariables.set(\"userReqInfo\", userInfo);",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "upyog.niua.org"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en;q=0.9"
+					},
+					{
+						"key": "authorization",
+						"value": "{{authorization}}"
+					},
+					{
+						"key": "content-type",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "origin",
+						"value": "https://upyog.niua.org"
+					},
+					{
+						"key": "referer",
+						"value": "https://upyog.niua.org/employee/user/login"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"108\", \"Google Chrome\";v=\"108\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "read",
+							"type": "text"
+						},
+						{
+							"key": "tenantId",
+							"value": "{{userTenant}}",
+							"type": "text"
+						},
+						{
+							"key": "userType",
+							"value": "EMPLOYEE",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/user/oauth/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "_",
+							"value": "{{_}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Employee Auth Token",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "upyog.niua.org"
+							},
+							{
+								"key": "accept",
+								"value": "application/json, text/plain, */*"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-GB,en;q=0.9"
+							},
+							{
+								"key": "authorization",
+								"value": "{{authorization}}"
+							},
+							{
+								"key": "content-type",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "origin",
+								"value": "https://upyog.niua.org"
+							},
+							{
+								"key": "referer",
+								"value": "https://upyog.niua.org/employee/user/login"
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"108\", \"Google Chrome\";v=\"108\""
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0"
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Linux\""
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "read",
+									"type": "text"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}",
+									"type": "text"
+								},
+								{
+									"key": "userType",
+									"value": "{{userType}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/user/oauth/token",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"oauth",
+								"token"
+							],
+							"query": [
+								{
+									"key": "_",
+									"value": "{{_}}",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 27 Feb 2024 09:09:44 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-RateLimit-Remaining-rate-limit-application_user_user_oauth_token_user_oauth_token_192.168.66.34",
+							"value": "3"
+						},
+						{
+							"key": "X-RateLimit-Remaining-Quota-rate-limit-application_user_user_oauth_token_user_oauth_token_192.168.66.34",
+							"value": "10000"
+						},
+						{
+							"key": "X-RateLimit-Quota-rate-limit-application_user_user_oauth_token_user_oauth_token_192.168.66.34",
+							"value": "10000"
+						},
+						{
+							"key": "X-RateLimit-Reset-rate-limit-application_user_user_oauth_token_user_oauth_token_192.168.66.34",
+							"value": "60000"
+						},
+						{
+							"key": "X-RateLimit-Limit-rate-limit-application_user_user_oauth_token_user_oauth_token_192.168.66.34",
+							"value": "4"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1; mode=block"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "x-correlation-id",
+							"value": "79c23713-7363-42b2-a124-9161a2dc4f68"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15724800; includeSubDomains"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"4163a5be-b3a9-4f81-a24f-0fbb4d961d79\",\n    \"token_type\": \"bearer\",\n    \"refresh_token\": \"e74af6c2-db80-41b1-b60c-53e7b5dfb723\",\n    \"expires_in\": 1857,\n    \"scope\": \"read\",\n    \"ResponseInfo\": {\n        \"api_id\": \"\",\n        \"ver\": \"\",\n        \"ts\": \"\",\n        \"res_msg_id\": \"\",\n        \"msg_id\": \"\",\n        \"status\": \"Access Token generated successfully\"\n    },\n    \"UserRequest\": {\n        \"id\": 10883,\n        \"uuid\": \"2e17a032-b113-4911-9449-fb53ba7a385a\",\n        \"userName\": \"MDMSAD2\",\n        \"name\": \"Jason\",\n        \"mobileNumber\": \"9100000041\",\n        \"emailId\": null,\n        \"locale\": null,\n        \"type\": \"EMPLOYEE\",\n        \"roles\": [\n            {\n                \"name\": \"Localisation admin\",\n                \"code\": \"LOC_ADMIN\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"name\": \"MDMS ADMIN\",\n                \"code\": \"MDMS_ADMIN\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"name\": \"Employee\",\n                \"code\": \"EMPLOYEE\",\n                \"tenantId\": \"pg\"\n            }\n        ],\n        \"active\": true,\n        \"tenantId\": \"pg\",\n        \"permanentCity\": null\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "RAINMAKER-PGR",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"RAINMAKER-PGR.ComplainClosingTime\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"type\": \"object\",",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"required\": [",
+							"        \"ComplainMaxIdleTime\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"ComplainMaxIdleTime\"",
+							"      ],",
+							"      \"properties\": {",
+							"        \"ComplainMaxIdleTime\": {",
+							"          \"type\": \"number\",",
+							"          \"default\": 3600000,",
+							"          \"minimum\": 0",
+							"        }",
+							"      }",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"RAINMAKER-PGR.ServiceDefs\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"type\": \"object\",",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"required\": [",
+							"        \"serviceCode\",",
+							"        \"name\",",
+							"        \"keywords\",",
+							"        \"department\",",
+							"        \"slaHours\",",
+							"        \"menuPath\",",
+							"        \"active\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"serviceCode\"",
+							"      ],",
+							"      \"properties\": {",
+							"        \"name\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"order\": {",
+							"          \"type\": \"integer\"",
+							"        },",
+							"        \"active\": {",
+							"          \"type\": \"boolean\"",
+							"        },",
+							"        \"keywords\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"menuPath\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"slaHours\": {",
+							"          \"type\": \"integer\",",
+							"          \"default\": 336,",
+							"          \"minimum\": 1",
+							"        },",
+							"        \"department\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"serviceCode\": {",
+							"          \"type\": \"string\"",
+							"        }",
+							"      },",
+							"      \"x-ref-schema\": [",
+							"        {",
+							"          \"fieldPath\": \"department\",",
+							"          \"schemaCode\": \"common-masters.Department\"",
+							"        }",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"RAINMAKER-PGR.UIConstants\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"type\": \"object\",",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"required\": [",
+							"        \"REOPENSLA\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"REOPENSLA\"",
+							"      ],",
+							"      \"properties\": {",
+							"        \"REOPENSLA\": {",
+							"          \"type\": \"integer\",",
+							"          \"default\": 432000000",
+							"        }",
+							"      }",
+							"    },",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TradeLicense",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.AccessoriesCategory\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"code\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"uom\": {",
+							"          \"type\": [",
+							"            \"string\",",
+							"            \"null\"",
+							"          ],",
+							"          \"enum\": [",
+							"            \"HP\"",
+							"          ]",
+							"        },",
+							"        \"active\": {",
+							"          \"type\": \"boolean\",",
+							"          \"default\": true",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"code\",",
+							"        \"uom\",",
+							"        \"active\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"code\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.ApplicationType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"code\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"active\": {",
+							"          \"type\": \"boolean\",",
+							"          \"default\": true",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"code\",",
+							"        \"active\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"code\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.Documents\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"code\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"documentType\": {",
+							"          \"type\": \"string\"",
+							"        },",
+							"        \"required\": {",
+							"          \"type\": \"boolean\",",
+							"          \"default\": true",
+							"        },",
+							"        \"active\": {",
+							"          \"type\": \"boolean\",",
+							"          \"default\": true",
+							"        },",
+							"        \"dropdownData\": {",
+							"          \"type\": \"array\",",
+							"          \"items\": {",
+							"            \"type\": \"object\",",
+							"            \"properties\": {",
+							"              \"code\": {",
+							"                \"type\": \"string\"",
+							"              },",
+							"              \"active\": {",
+							"                \"type\": \"boolean\",",
+							"                \"default\": false",
+							"              }",
+							"            },",
+							"            \"additionalProperties\": false,",
+							"            \"required\": [",
+							"              \"code\",",
+							"              \"active\"",
+							"            ]",
+							"          }",
+							"        },",
+							"        \"description\": {",
+							"          \"type\": \"string\"",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"code\",",
+							"        \"documentType\",",
+							"        \"required\",",
+							"        \"active\",",
+							"        \"dropdownData\",",
+							"        \"description\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"code\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.Penalty\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"rate\": {",
+							"          \"type\": \"integer\",",
+							"          \"default\": 10,",
+							"          \"minimum\": 0",
+							"        },",
+							"        \"minAmount\": {",
+							"          \"type\": \"number\",",
+							"          \"minimum\": 0",
+							"        },",
+							"        \"flatAmount\": {",
+							"          \"type\": \"number\",",
+							"          \"minimum\": 0",
+							"        },",
+							"        \"fromFY\": {",
+							"          \"type\": \"string\",",
+							"          \"pattern\": \"^\\\\d{4}-\\\\d{2}$\"",
+							"        },",
+							"        \"startingDay\": {",
+							"          \"type\": \"string\",",
+							"          \"pattern\": \"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"rate\",",
+							"        \"minAmount\",",
+							"        \"flatAmount\",",
+							"        \"fromFY\",",
+							"        \"startingDay\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"fromFY\",",
+							"        \"startingDay\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.Rebate\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"rate\": {",
+							"          \"type\": \"integer\",",
+							"          \"minimum\": 0",
+							"        },",
+							"        \"maxAmount\": {",
+							"          \"type\": [",
+							"            \"null\",",
+							"            \"integer\"",
+							"          ],",
+							"          \"minimum\": 0",
+							"        },",
+							"        \"flatAmount\": {",
+							"          \"type\": \"number\",",
+							"          \"minimum\": 0",
+							"        },",
+							"        \"fromFY\": {",
+							"          \"type\": \"string\",",
+							"          \"pattern\": \"^\\\\d{4}-\\\\d{2}$\"",
+							"        },",
+							"        \"endingDay\": {",
+							"          \"type\": \"string\",",
+							"          \"pattern\": \"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"rate\",",
+							"        \"flatAmount\",",
+							"        \"fromFY\",",
+							"        \"endingDay\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"fromFY\",",
+							"        \"endingDay\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.ReminderPeriods\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"tenantId\": {",
+							"          \"type\": \"string\",",
+							"            \"enum\": [",
+							"                \"pg.citya\",",
+							"                \"pg.cityb\",",
+							"                \"pg.cityc\",",
+							"                \"pg.cityd\",",
+							"                \"pg.citye\"",
+							"            ]",
+							"        },",
+							"        \"reminderInterval\": {",
+							"          \"type\": \"integer\",",
+							"          \"default\": 691200000",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"tenantId\",",
+							"        \"reminderInterval\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"tenantId\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.TradeRenewal\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"      \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"      \"type\": \"object\",",
+							"      \"properties\": {",
+							"        \"renewalPeriod\": {",
+							"          \"type\": \"integer\",",
+							"          \"default\": 7889400000,",
+							"          \"minimum\": 0",
+							"        }",
+							"      },",
+							"      \"additionalProperties\": false,",
+							"      \"required\": [",
+							"        \"renewalPeriod\"",
+							"      ],",
+							"      \"x-unique\": [",
+							"        \"renewalPeriod\"",
+							"      ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.TradeType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"            \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"            \"type\": \"object\",",
+							"            \"properties\": {",
+							"                \"name\": {",
+							"                    \"type\": \"string\"",
+							"                },",
+							"                \"code\": {",
+							"                    \"type\": \"string\"",
+							"                },",
+							"                \"uom\": {",
+							"                    \"type\": [",
+							"                        \"string\",",
+							"                        \"null\"",
+							"                    ]",
+							"                },",
+							"                \"applicationDocument\": {",
+							"                    \"type\": \"array\",",
+							"                    \"items\": {",
+							"                        \"type\": [",
+							"                            \"object\",",
+							"                            \"string\"",
+							"                        ],",
+							"                        \"properties\": {",
+							"                            \"applicationType\": {",
+							"                                \"type\": \"string\"",
+							"                            },",
+							"                            \"documentList\": {",
+							"                                \"type\": \"array\",",
+							"                                \"items\": {",
+							"                                    \"type\": \"string\"",
+							"                                }",
+							"                            }",
+							"                        },",
+							"                        \"additionalProperties\": false,",
+							"                        \"required\": []",
+							"                    }",
+							"                },",
+							"                \"verificationDocument\": {",
+							"                    \"type\": \"array\",",
+							"                    \"items\": {",
+							"                        \"type\": [",
+							"                            \"string\",",
+							"                            \"null\"",
+							"                        ]",
+							"                    }",
+							"                },",
+							"                \"active\": {",
+							"                    \"type\": \"boolean\"",
+							"                },",
+							"                \"type\": {",
+							"                    \"type\": \"string\"",
+							"                },",
+							"                \"validityPeriod\": {",
+							"                    \"type\": [",
+							"                        \"null\",",
+							"                        \"number\"",
+							"                    ]",
+							"                },",
+							"                \"restrictions\": {",
+							"                    \"type\": \"object\",",
+							"                    \"properties\": {",
+							"                        \"maxPlotArea\": {",
+							"                            \"type\": \"number\"",
+							"                        },",
+							"                        \"maxBulidingheight\": {",
+							"                            \"type\": \"number\"",
+							"                        },",
+							"                        \"maxFloors\": {",
+							"                            \"type\": \"number\"",
+							"                        }",
+							"                    },",
+							"                    \"required\": [",
+							"                        \"maxPlotArea\",",
+							"                        \"maxBulidingheight\",",
+							"                        \"maxFloors\"",
+							"                    ]",
+							"                }",
+							"            },",
+							"            \"additionalProperties\": false,",
+							"            \"required\": [",
+							"                \"code\",",
+							"                \"applicationDocument\",",
+							"                \"verificationDocument\",",
+							"                \"active\",",
+							"                \"type\"",
+							"            ],",
+							"            \"x-unique\": [",
+							"                \"code\"",
+							"            ]",
+							"        },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.documentObj\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"        \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"        \"title\": \"Generated schema for Root\",",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"allowedDocs\": {",
+							"            \"type\": \"array\",",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                \"documentType\": {",
+							"                    \"type\": \"string\"",
+							"                },",
+							"                \"applicationType\": {",
+							"                    \"type\": \"array\",",
+							"                    \"items\": {",
+							"                    \"type\": \"string\",",
+							"                    \"enum\": [",
+							"                        \"NEW\",",
+							"                        \"RENEWAL\"",
+							"                    ]",
+							"                    }",
+							"                },",
+							"                \"required\": {",
+							"                    \"type\": \"boolean\"",
+							"                }",
+							"                },",
+							"                \"required\": [",
+							"                \"documentType\",",
+							"                \"applicationType\",",
+							"                \"required\"",
+							"                ]",
+							"            }",
+							"            },",
+							"            \"tradeType\": {",
+							"            \"type\": \"string\"",
+							"            }",
+							"        },",
+							"        \"required\": [",
+							"            \"allowedDocs\",",
+							"            \"tradeType\"",
+							"        ],",
+							"        \"x-unique\": [",
+							"            \"tradeType\"",
+							"        ]",
+							"    },",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"TradeLicense.CalculationType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"        \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"        \"title\": \"Generated schema for Root\",",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"tradeType\": {",
+							"            \"type\": \"string\"",
+							"            },",
+							"            \"accessory\": {",
+							"            \"type\": \"string\"",
+							"            },",
+							"            \"financialYear\": {",
+							"            \"type\": \"string\",",
+							"            \"pattern\": \"^\\\\d{4}-\\\\d{2}$\"",
+							"            },",
+							"            \"active\": {",
+							"            \"type\": \"boolean\",",
+							"            \"default\": true",
+							"            }",
+							"        },",
+							"        \"required\": [",
+							"            \"tradeType\",",
+							"            \"accessory\",",
+							"            \"financialYear\",",
+							"            \"active\"",
+							"        ],",
+							"        \"x-unique\": [",
+							"            \"tradeType\",",
+							"            \"financialYear\"",
+							"        ]",
+							"    },",
+							"        \"isActive\": true",
+							"    }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "common-masters",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.bdTemplate\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"template\",\"code\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"template\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.CancelCurrentBillReasons\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.CancelReceiptReason\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.CensusYear\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"tenantId\",\"name\",\"code\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"tenantId\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.CitizenConsentForm\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"isCitizenConsentFormEnabled\",\"checkBoxLabels\",\"id\"],\"x-unique\":[\"id\"],\"properties\":{\"id\":{\"type\":\"number\"},\"checkBoxLabels\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"linkPrefix\",\"link\",\"linkId\",\"linkPostfix\",\"en_IN\"],\"properties\":{\"link\":{\"type\":\"string\"},\"en_IN\":{\"type\":\"string\"},\"linkId\":{\"type\":\"string\"},\"linkPrefix\":{\"type\":\"string\"},\"linkPostfix\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"isCitizenConsentFormEnabled\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.CommonInboxConfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"moduleName\",\"BusinessService\",\"roles\",\"active\",\"locality\",\"localityModule\",\"redirectConfig\"],\"x-unique\":[\"BusinessService\"],\"properties\":{\"roles\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"active\":{\"type\":\"boolean\",\"default\":true},\"locality\":{\"type\":\"boolean\",\"default\":true},\"moduleName\":{\"type\":\"string\"},\"localityModule\":{\"type\":\"string\"},\"redirectConfig\":{\"type\":\"object\",\"required\":[\"INITIATED\",\"DEFAULT\"],\"properties\":{\"DEFAULT\":{\"type\":\"string\"},\"INITIATED\":{\"type\":\"string\"}},\"additionalProperties\":false},\"BusinessService\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.CronJobAPIConfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"jobName\",\"active\",\"method\",\"url\",\"payload\",\"header\"],\"x-unique\":[\"url\"],\"properties\":{\"url\":{\"type\":\"string\"},\"active\":{\"type\":\"string\"},\"header\":{\"type\":\"object\",\"required\":[\"Content-Type\"],\"properties\":{\"Content-Type\":{\"type\":\"string\"}},\"additionalProperties\":false},\"method\":{\"type\":\"string\"},\"jobName\":{\"type\":\"string\"},\"payload\":{\"type\":\"object\",\"required\":[\"RequestInfo\"],\"properties\":{\"RequestInfo\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.Department\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.Designation\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"name\",\"description\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"description\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.DocumentType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"maxFileSize\":{\"type\":\"number\"},\"allowedFormat\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.GenderType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.IdFormat\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"format\",\"idname\"],\"x-unique\":[\"idname\"],\"properties\":{\"format\":{\"type\":\"string\"},\"idname\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.OwnerShipCategory\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.OwnerType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.StateInfo\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"qrCodeURL\",\"bannerUrl\",\"logoUrl\",\"logoUrlWhite\",\"statelogo\",\"hasLocalisation\",\"defaultUrl\",\"languages\",\"localizationModules\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"logoUrl\":{\"type\":\"string\"},\"bannerUrl\":{\"type\":\"string\"},\"languages\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"label\",\"value\"],\"properties\":{\"label\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"qrCodeURL\":{\"type\":\"string\"},\"statelogo\":{\"type\":\"string\"},\"defaultUrl\":{\"type\":\"object\",\"required\":[\"citizen\",\"employee\"],\"properties\":{\"citizen\":{\"type\":\"string\"},\"employee\":{\"type\":\"string\"}},\"additionalProperties\":false},\"logoUrlWhite\":{\"type\":\"string\"},\"hasLocalisation\":{\"type\":\"boolean\",\"default\":true},\"localizationModules\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"label\",\"value\"],\"properties\":{\"label\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.StructureType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.TablePaginationOptions\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rowsPerPageOptions\",\"defaultValue\",\"id\"],\"x-unique\":[\"id\"],\"properties\":{\"id\":{\"type\":\"number\"},\"defaultValue\":{\"type\":\"integer\"},\"rowsPerPageOptions\":{\"type\":\"array\",\"items\":{\"type\":\"integer\"}}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.uiCommonPay\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"headerBandLabel\",\"receiptKey\",\"billKey\",\"cancelReceipt\",\"cancelBill\",\"arrears\",\"buttons\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"arrears\":{\"type\":\"boolean\",\"default\":true},\"billKey\":{\"type\":\"string\"},\"buttons\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"label\",\"citizenUrl\",\"employeeUrl\"],\"properties\":{\"label\":{\"type\":\"string\"},\"citizenUrl\":{\"type\":\"string\"},\"employeeUrl\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"pdfModule\":{\"type\":\"string\"},\"cancelBill\":{\"type\":\"boolean\",\"default\":true},\"receiptKey\":{\"type\":\"string\"},\"cancelReceipt\":{\"type\":\"boolean\",\"default\":true},\"headerBandLabel\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.UOM\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.UomCategory\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"id\",\"tenantId\",\"uomCategory\",\"name\",\"code\",\"description\",\"fromDate\",\"toDate\"],\"x-unique\":[\"code\"],\"properties\":{\"id\":{\"type\":\"integer\"},\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"toDate\":{\"type\":\"integer\"},\"fromDate\":{\"type\":\"integer\"},\"tenantId\":{\"type\":\"string\"},\"description\":{\"type\":\"string\"},\"uomCategory\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"common-masters.wfSlaConfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"id\",\"slotPercentage\",\"positiveSlabColor\",\"negativeSlabColor\",\"middleSlabColor\"],\"x-unique\":[\"id\"],\"properties\":{\"id\":{\"type\":\"integer\"},\"slotPercentage\":{\"type\":\"integer\"},\"middleSlabColor\":{\"type\":\"string\"},\"negativeSlabColor\":{\"type\":\"string\"},\"positiveSlabColor\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PropertyTax",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.CancerCess\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\"],\"x-unique\":[\"fromFY\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"maxAmount\":{\"type\":[\"number\",\"null\"]},\"minAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.ChargeSlabs\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"floorNo\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"floorNo\":{\"type\":\"integer\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.CommonFieldsConfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"head\",\"body\"],\"x-unique\":[\"head\"],\"properties\":{\"body\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"route\",\"component\",\"nextStep\",\"key\",\"texts\"],\"properties\":{\"key\":{\"type\":\"string\"},\"type\":{\"type\":\"string\"},\"route\":{\"type\":\"string\"},\"texts\":{\"type\":\"object\",\"required\":[\"header\",\"cardText\"],\"properties\":{\"header\":{\"type\":\"string\"},\"cardText\":{\"type\":\"string\"},\"nextText\":{\"type\":\"string\"},\"skipText\":{\"type\":\"string\"},\"headerCaption\":{\"type\":\"string\"},\"submitBarLabel\":{\"type\":\"string\"},\"skipAndContinueText\":{\"type\":\"string\"}},\"additionalProperties\":false},\"nextStep\":{\"type\":\"string\"},\"component\":{\"type\":\"string\"},\"isMandatory\":{\"type\":\"boolean\",\"default\":true},\"withoutLabel\":{\"type\":\"boolean\",\"default\":true},\"hideInEmployee\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false}},\"head\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.ConstructionSubType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"id\":{\"type\":\"string\"},\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.ConstructionType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"id\":{\"type\":\"string\"},\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.Documents\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"documentType\",\"required\",\"active\",\"hasDropdown\",\"additionalDetails\",\"dropdownData\",\"description\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"required\":{\"type\":\"boolean\",\"default\":false},\"description\":{\"type\":\"string\"},\"hasDropdown\":{\"type\":\"boolean\",\"default\":true},\"documentType\":{\"type\":\"string\"},\"dropdownData\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"code\",\"active\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false}},\"digit-citizen\":{\"type\":\"boolean\",\"default\":true},\"additionalDetails\":{\"type\":\"object\",\"required\":[\"enabledActions\"],\"properties\":{\"enabledActions\":{\"type\":\"object\",\"required\":[\"assess\",\"reassess\",\"update\",\"create\"],\"properties\":{\"assess\":{\"type\":\"object\",\"required\":[\"disableUpload\",\"disableDropdown\"],\"properties\":{\"disableUpload\":{\"type\":\"boolean\",\"default\":false},\"disableDropdown\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false},\"create\":{\"type\":\"object\",\"required\":[\"disableUpload\",\"disableDropdown\"],\"properties\":{\"disableUpload\":{\"type\":\"boolean\",\"default\":false},\"disableDropdown\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false},\"update\":{\"type\":\"object\",\"required\":[\"disableUpload\",\"disableDropdown\"],\"properties\":{\"disableUpload\":{\"type\":\"boolean\",\"default\":false},\"disableDropdown\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false},\"reassess\":{\"type\":\"object\",\"required\":[\"disableUpload\",\"disableDropdown\"],\"properties\":{\"disableUpload\":{\"type\":\"boolean\",\"default\":false},\"disableDropdown\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false}},\"additionalProperties\":false}},\"additionalProperties\":false}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.DuesOnPTMutation\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"module\",\"code\",\"enabled\",\"fetchConsumerUrl\",\"fecthBillUrl\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"module\":{\"type\":\"string\"},\"enabled\":{\"type\":\"boolean\",\"default\":true},\"fecthBillUrl\":{\"type\":\"string\"},\"fetchConsumerUrl\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.FireCess\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\",\"dynamicFirecess\",\"dynamicRates\"],\"x-unique\":[\"fromFY\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"maxAmount\":{\"type\":[\"number\",\"null\"]},\"minAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]},\"dynamicRates\":{\"type\":\"object\",\"required\":[\"firecess_inflammable\",\"firecess_building_height\",\"firecess_category_major\"],\"properties\":{\"firecess_inflammable\":{\"type\":\"integer\"},\"firecess_category_major\":{\"type\":\"integer\"},\"firecess_building_height\":{\"type\":\"integer\"}},\"additionalProperties\":false},\"dynamicFirecess\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.Floor\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"description\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"description\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.Interest\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\",\"startingDay\"],\"x-unique\":[\"fromFY\",\"startingDay\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"maxAmount\":{\"type\":[\"number\",\"null\"]},\"minAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]},\"startingDay\":{\"type\":\"string\",\"pattern\":\"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.MapConfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"defaultConfig\",\"id\"],\"x-unique\":[\"id\"],\"properties\":{\"id\":{\"type\":\"number\"},\"defaultConfig\":{\"type\":\"object\",\"required\":[\"lat\",\"lng\"],\"properties\":{\"lat\":{\"type\":\"number\",\"default\":31.6160638},\"lng\":{\"type\":\"number\",\"default\":74.8978579}},\"additionalProperties\":false}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.MutationDocuments\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"documentType\",\"required\",\"active\",\"hasDropdown\",\"dropdownData\",\"description\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":false},\"required\":{\"type\":\"boolean\",\"default\":false},\"description\":{\"type\":\"string\"},\"hasDropdown\":{\"type\":\"boolean\",\"default\":false},\"documentType\":{\"type\":\"string\"},\"dropdownData\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"code\",\"active\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false}}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.MutationPenalty\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\",\"startingDay\",\"mutationPaymentPeriodInMonth\"],\"x-unique\":[\"fromFY\",\"startingDay\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"minAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]},\"startingDay\":{\"type\":\"string\",\"pattern\":\"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"},\"mutationPaymentPeriodInMonth\":{\"type\":\"string\",\"default\":\"06\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.MutationReason\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.MutationRebate\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\",\"endingDay\",\"mutationPaymentPeriodInMonth\"],\"x-unique\":[\"fromFY\",\"endingDay\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"endingDay\":{\"type\":\"string\",\"pattern\":\"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"},\"maxAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]},\"mutationPaymentPeriodInMonth\":{\"type\":\"string\",\"default\":\"06\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.OccupancyType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.OwnerShipCategory\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.OwnerType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"fromFY\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"exemption\":{\"type\":\"object\",\"required\":[\"rate\"],\"properties\":{\"rate\":{\"type\":[\"number\",\"null\"]},\"maxAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]}},\"additionalProperties\":false}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.OwnerTypeDocument\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"ownerTypeCode\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"ownerTypeCode\":{\"type\":\"string\"}},\"x-ref-schema\":[{\"fieldPath\":\"ownerTypeCode\",\"schemaCode\":\"PropertyTax.OwnerType\"}],\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.Penalty\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\",\"startingDay\"],\"x-unique\":[\"fromFY\",\"startingDay\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"minAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]},\"startingDay\":{\"type\":\"string\",\"pattern\":\"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.PropertyConfiguration\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"Mutation\",\"id\"],\"x-unique\":[\"id\"],\"properties\":{\"id\":{\"type\":\"number\"},\"Mutation\":{\"type\":\"object\",\"required\":[\"RegistrationDetails\",\"MutationDetails\"],\"properties\":{\"MutationDetails\":{\"type\":\"boolean\",\"default\":true},\"RegistrationDetails\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.PropertySubType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"propertyType\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"propertyType\":{\"type\":\"string\"}},\"x-ref-schema\":[{\"fieldPath\":\"propertyType\",\"schemaCode\":\"PropertyTax.PropertyType\"}],\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.PropertyType\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"propertyType\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.PTApplication\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"creationReason\",\"businessService\",\"action\",\"editAction\"],\"x-unique\":[\"businessService\"],\"properties\":{\"action\":{\"type\":\"string\"},\"editAction\":{\"type\":\"string\"},\"creationReason\":{\"type\":\"string\"},\"businessService\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.PTWorkflow\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"businessService\",\"initialAction\",\"inWorkflowStatusAllowed\",\"enable\"],\"x-unique\":[\"businessService\",\"initialAction\"],\"properties\":{\"enable\":{\"type\":\"boolean\",\"default\":false},\"initialAction\":{\"type\":\"string\"},\"businessService\":{\"type\":\"string\"},\"inWorkflowStatusAllowed\":{\"type\":\"boolean\",\"default\":false}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.ReasonForTransfer\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.Rebate\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"rate\",\"fromFY\",\"endingDay\"],\"x-unique\":[\"fromFY\",\"endingDay\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"endingDay\":{\"type\":\"string\",\"pattern\":\"^\\\\d{2}/\\\\d{2}/\\\\d{4}$\"},\"maxAmount\":{\"type\":[\"number\",\"null\"]},\"flatAmount\":{\"type\":[\"number\",\"null\"]}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.RentalDetails\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.SubOwnerShipCategory\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"ownerShipCategory\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"ownerShipCategory\":{\"type\":\"string\"}},\"x-ref-schema\":[{\"fieldPath\":\"ownerShipCategory\",\"schemaCode\":\"PropertyTax.OwnerShipCategory\"}],\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.UpdateNumber\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"invalidPattern\",\"invalidNumber\",\"warningEnabled\",\"skipEnabled\",\"documents\"],\"x-unique\":[\"invalidNumber\"],\"properties\":{\"documents\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"active\",\"code\",\"description\",\"documentType\",\"hasDropdown\",\"required\",\"inputProps\",\"maxFileSize\"],\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\"},\"required\":{\"type\":\"boolean\",\"default\":false},\"inputProps\":{\"type\":\"object\",\"required\":[\"accept\"],\"properties\":{\"accept\":{\"type\":\"string\"}},\"additionalProperties\":false},\"description\":{\"type\":\"string\"},\"hasDropdown\":{\"type\":\"boolean\",\"default\":false},\"maxFileSize\":{\"type\":\"integer\"},\"documentType\":{\"type\":\"string\"},\"dropdownData\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\"}}}}},\"additionalProperties\":false}},\"skipEnabled\":{\"type\":\"boolean\",\"default\":true},\"invalidNumber\":{\"type\":\"string\"},\"invalidPattern\":{\"type\":\"string\"},\"warningEnabled\":{\"type\":\"boolean\",\"default\":true}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.UsageCategory\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"fromFY\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"exemption\":{\"type\":\"object\",\"properties\":{\"rate\":{\"type\":[\"number\",\"null\"],\"default\":0},\"maxAmount\":{\"type\":[\"number\",\"null\"],\"default\":0},\"flatAmount\":{\"type\":[\"number\",\"null\"],\"default\":0}}}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.UsageCategoryDetail\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"usageCategorySubMinor\",\"active\",\"fromFY\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"exemption\":{\"type\":[\"object\",\"null\"],\"required\":[\"rate\",\"maxAmount\",\"flatAmount\"],\"properties\":{\"rate\":{\"type\":\"number\"},\"maxAmount\":{\"type\":\"number\"},\"flatAmount\":{\"type\":\"number\"}}},\"usageCategorySubMinor\":{\"type\":\"string\"}},\"x-ref-schema\":[{\"fieldPath\":\"usageCategorySubMinor\",\"schemaCode\":\"PropertyTax.UsageCategorySubMinor\"}],\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.UsageCategoryMajor\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"fromFY\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.UsageCategoryMinor\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"fromFY\",\"usageCategoryMajor\",\"exemption\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"exemption\":{\"type\":\"object\",\"required\":[\"rate\",\"maxAmount\",\"flatAmount\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"maxAmount\":{\"type\":\"integer\"},\"flatAmount\":{\"type\":\"integer\"}},\"additionalProperties\":false},\"usageCategoryMajor\":{\"type\":\"string\"}},\"x-ref-schema\":[{\"fieldPath\":\"usageCategoryMajor\",\"schemaCode\":\"PropertyTax.UsageCategoryMajor\"}],\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"PropertyTax.UsageCategorySubMinor\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"name\",\"code\",\"active\",\"fromFY\",\"usageCategoryMinor\",\"exemption\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"fromFY\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"exemption\":{\"type\":[\"object\",\"null\"],\"required\":[\"rate\",\"maxAmount\",\"flatAmount\"],\"properties\":{\"rate\":{\"type\":\"integer\"},\"maxAmount\":{\"type\":\"integer\"},\"flatAmount\":{\"type\":\"integer\"}},\"additionalProperties\":false},\"usageCategoryMinor\":{\"type\":\"string\"}},\"x-ref-schema\":[{\"fieldPath\":\"usageCategoryMinor\",\"schemaCode\":\"PropertyTax.UsageCategoryMinor\"}],\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tenant",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.assessmentconfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"tenant\",\"enabled\",\"financialyear\",\"isRented\"],\"x-unique\":[\"tenant\"],\"properties\":{\"tenant\":{\"type\":\"string\"},\"enabled\":{\"type\":\"boolean\"},\"isRented\":{\"type\":\"boolean\"},\"financialyear\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.citymodule\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"module\",\"code\",\"bannerImage\",\"active\",\"order\",\"tenants\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"order\":{\"type\":\"integer\"},\"active\":{\"type\":\"boolean\"},\"module\":{\"type\":\"string\"},\"tenants\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"bannerImage\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.footer\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"service\",\"receiptFooterContent\",\"billFooterContent\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"service\":{\"type\":\"string\"},\"billFooterContent\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"disclaimer\",\"order\"],\"properties\":{\"order\":{\"type\":\"string\"},\"disclaimer\":{\"type\":\"string\"}},\"additionalProperties\":false}},\"receiptFooterContent\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"required\":[\"disclaimer\",\"order\"],\"properties\":{\"order\":{\"type\":\"string\"},\"disclaimer\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.nationalInfo\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"stateCode\",\"stateName\",\"code\",\"name\",\"active\",\"module\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"active\":{\"type\":\"boolean\"},\"module\":{\"type\":\"string\"},\"stateCode\":{\"type\":\"string\"},\"stateName\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.reassessmentconfig\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"tenant\",\"financialyear\"],\"x-unique\":[\"tenant\"],\"properties\":{\"tenant\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"financialyear\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.tenantInfo\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"districtCode\",\"population\",\"malePopulation\",\"femalePopultion\",\"workingPopulation\",\"literacyRate\",\"languagesSpoken\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"population\":{\"type\":\"string\"},\"districtCode\":{\"type\":\"string\"},\"literacyRate\":{\"type\":\"string\"},\"malePopulation\":{\"type\":\"string\"},\"femalePopultion\":{\"type\":\"string\"},\"languagesSpoken\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"workingPopulation\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"tenant.tenants\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"code\",\"name\",\"description\",\"logoId\",\"imageId\",\"type\",\"city\",\"contactNumber\",\"helpLineNumber\"],\"x-unique\":[\"code\"],\"properties\":{\"city\":{\"type\":\"object\",\"required\":[\"name\",\"districtCode\",\"districtName\",\"regionName\",\"ulbGrade\",\"longitude\",\"latitude\",\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"captcha\":{\"type\":\"null\"},\"latitude\":{\"type\":\"number\"},\"ulbGrade\":{\"type\":\"string\"},\"localName\":{\"type\":\"null\"},\"longitude\":{\"type\":\"number\"},\"regionName\":{\"type\":\"string\"},\"districtCode\":{\"type\":\"string\"},\"districtName\":{\"type\":\"string\"},\"shapeFileLocation\":{\"type\":\"null\"}},\"additionalProperties\":false},\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"type\":{\"type\":\"string\"},\"logoId\":{\"type\":\"string\"},\"address\":{\"type\":\"null\"},\"emailId\":{\"type\":\"null\"},\"imageId\":{\"type\":\"string\"},\"domainUrl\":{\"type\":\"null\"},\"twitterUrl\":{\"type\":\"null\"},\"description\":{\"type\":\"string\"},\"facebookUrl\":{\"type\":\"null\"},\"contactNumber\":{\"type\":\"string\"},\"helpLineNumber\":{\"type\":\"string\"}},\"additionalProperties\":false},",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BillingService",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"BillingService.BusinessService\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"title\":\"Generated schema for Root\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"businessService\",\"code\",\"collectionModesNotAllowed\",\"partPaymentAllowed\",\"isAdvanceAllowed\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"billGineiURL\":{\"type\":\"string\"},\"businessService\":{\"type\":\"string\"},\"demandUpdateTime\":{\"type\":\"number\",\"default\":86400000},\"isAdvanceAllowed\":{\"type\":\"boolean\",\"deault\":false},\"minAmountPayable\":{\"type\":\"number\",\"default\":100},\"partPaymentAllowed\":{\"type\":\"boolean\",\"deault\":true},\"isBillAmendmentEnabled\":{\"type\":\"boolean\",\"deault\":true},\"isVoucherCreationEnabled\":{\"type\":\"boolean\",\"deault\":true},\"collectionModesNotAllowed\":{\"type\":\"array\",\"items\":{\"enum\":[\"DD\",\"OFFLINE_NEFT\",\"OFFLINE_RTGS\",\"POSTAL_ORDER\"],\"type\":\"string\"}}},\"x-ref-schema\":[]},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"BillingService.TaxHeadMaster\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"title\":\"Generated schema for Root\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"category\",\"service\",\"name\",\"code\",\"isDebit\",\"isActualDemand\",\"order\"],\"x-unique\":[\"code\"],\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"order\":{\"type\":\"string\"},\"isDebit\":{\"type\":\"boolean\",\"deault\":true},\"service\":{\"type\":\"string\"},\"category\":{\"type\":\"string\"},\"isRequired\":{\"type\":\"boolean\"},\"isActualDemand\":{\"type\":\"boolean\",\"deault\":true}},\"x-ref-schema\":[{\"fieldPath\":\"service\",\"schemaCode\":\"BillingService.BusinessService\"}]},",
+							"    \"isActive\": true",
+							"  },",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"BillingService.TaxPeriod\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"title\":\"Generated schema for Root\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"fromDate\",\"toDate\",\"periodCycle\",\"service\",\"code\",\"financialYear\"],\"x-unique\":[\"code\",\"financialYear\"],\"properties\":{\"code\":{\"type\":\"string\"},\"toDate\":{\"type\":\"number\"},\"service\":{\"type\":\"string\"},\"fromDate\":{\"type\":\"number\"},\"periodCycle\":{\"type\":\"string\",\"default\":\"ANNUAL\"},\"financialYear\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"}},\"x-ref-schema\":[{\"fieldPath\":\"service\",\"schemaCode\":\"BillingService.BusinessService\"}]},",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "egf-master",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"egf-master.FinancialYear\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {\"type\":\"object\",\"title\":\"Generated schema for Root\",\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"required\":[\"tenantId\",\"finYearRange\",\"name\",\"code\",\"startingDate\",\"endingDate\",\"active\",\"isActiveForPosting\",\"isClosed\",\"transferClosingBalance\",\"module\"],\"x-unique\":[\"module\"],\"properties\":{\"code\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"name\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"active\":{\"type\":\"boolean\",\"default\":true},\"module\":{\"enum\":[\"PT\",\"TL\",\"WS\",\"SW\",\"FIRENOC\"],\"type\":\"string\"},\"isClosed\":{\"type\":\"boolean\",\"default\":false},\"tenantId\":{\"enum\":[\"pg\"],\"type\":\"string\",\"default\":\"pg\"},\"endingDate\":{\"type\":\"number\"},\"finYearRange\":{\"type\":\"string\",\"pattern\":\"^\\\\d{4}-\\\\d{2}$\"},\"startingDate\":{\"type\":\"number\"},\"isActiveForPosting\":{\"type\":\"boolean\",\"default\":true},\"transferClosingBalance\":{\"type\":\"boolean\",\"default\":false}}},",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "StakeholderRegistraition",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data= [",
+							"  {",
+							"    \"tenantId\": pm.collectionVariables.get('tenant'),",
+							"    \"code\": \"StakeholderRegistraition.TradeTypetoRoleMapping\",",
+							"    \"description\": \"  \",",
+							"    \"definition\": {",
+							"        \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+							"        \"title\": \"Generated schema for Root\",",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"tradeType\": {",
+							"            \"type\": \"string\"",
+							"            },",
+							"            \"role\": {",
+							"            \"type\": \"array\",",
+							"            \"items\": {",
+							"                \"type\": \"string\"",
+							"            }",
+							"            },",
+							"            \"endstate\": {",
+							"            \"type\": \"string\"",
+							"            },",
+							"            \"applicationFee\": {",
+							"            \"type\": \"number\"",
+							"            },",
+							"            \"docTypes\": {",
+							"            \"type\": [",
+							"                \"array\",",
+							"                \"null\"",
+							"            ],",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                \"code\": {",
+							"                    \"type\": \"string\"",
+							"                },",
+							"                \"info\": {",
+							"                    \"type\": \"string\"",
+							"                },",
+							"                \"required\": {",
+							"                    \"type\": \"boolean\",",
+							"                    \"default\": true",
+							"                }",
+							"                },",
+							"                \"required\": [",
+							"                \"code\",",
+							"                \"info\",",
+							"                \"required\"",
+							"                ]",
+							"            }",
+							"            }",
+							"        },",
+							"        \"required\": [",
+							"            \"tradeType\",",
+							"            \"role\",",
+							"            \"endstate\",",
+							"            \"applicationFee\",",
+							"            \"docTypes\"",
+							"        ],",
+							"        \"x-unique\": [",
+							"            \"tradeType\"",
+							"        ]",
+							"        },",
+							"    \"isActive\": true",
+							"  }",
+							"]",
+							"",
+							"pm.collectionVariables.set(\"data\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"data\");",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.collectionVariables.get(\"i\")]))",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"data\");",
+							"",
+							"var items = pm.collectionVariables.get(\"i\");",
+							"",
+							"",
+							"if (items < data.length){",
+							"",
+							"    pm.collectionVariables.set(\"i\", Number(items) + 1);",
+							"",
+							"    pm.execution.setNextRequest(pm.info.requestName);",
+							"}else{",
+							"    pm.collectionVariables.set(\"i\", 0);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {{userReqInfo}}\n    },\n    \"SchemaDefinition\": {{req}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/mdms-v2/schema/v1/_create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"mdms-v2",
+						"schema",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://egov-sandbox.niua.org",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "MDMSAD2",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tenant",
+			"value": "pg",
+			"type": "string"
+		},
+		{
+			"key": "userTenant",
+			"value": "pg",
+			"type": "string"
+		},
+		{
+			"key": "i",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "req",
+			"value": ""
+		},
+		{
+			"key": "data",
+			"value": ""
+		},
+		{
+			"key": "authToken",
+			"value": ""
+		},
+		{
+			"key": "userReqInfo",
+			"value": ""
+		}
+	]
+}

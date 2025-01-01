@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Loader } from "@egovernments/digit-ui-react-components";
-import { Dropdown } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectChannel = ({ t, config, onSelect, formData = {}, userType }) => {

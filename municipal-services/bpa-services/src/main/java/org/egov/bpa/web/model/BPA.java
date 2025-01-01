@@ -51,6 +51,10 @@ public class BPA   {
   private String edcrNumber = null;
 
   @SafeHtml
+  @JsonProperty("applicationType")
+  private String applicationType = null;
+
+  @SafeHtml
   @JsonProperty("riskType")
   private String riskType = null;
   
@@ -496,4 +500,12 @@ public class BPA   {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+public String getApplicationType() {
+	return applicationType;
+}
+
+public void setApplicationType(String applicationType) {
+	this.applicationType = applicationType;
+}
 }
