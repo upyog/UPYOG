@@ -5,11 +5,22 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class TLConstants {
 
+	
+	
+	public static final String MDMS_WC_ROLE_MODLENAME = "common-masters";
+	
+	public static final String MDMS_WC_ROLE_MASTERNAME = "thirdparty";
+	public static final String MODULE_NAME = "pb";
+	public static final String MDMS_RESPONSE_KEY = "MdmsRes";
+	public static final String CATEGORY_KEY = "category";
+	public static final String ROLE_CODE_KEY = "rolecode";
 
     public static  final String businessService_TL = "TL";
 
@@ -116,7 +127,22 @@ public class TLConstants {
     public static final String NOTIFICATION_OBJECT_REMOVED = "tl.en.edit.object.removed";
 
     public static final String NOTIFICATION_OBJECT_REMOVED_EMAIL = "tl.en.edit.object.removed.email";
+    public static final Map<String, String> USER_TYPE_TO_CHANNEL;
 
+    static {
+        USER_TYPE_TO_CHANNEL = new HashMap<>();
+        USER_TYPE_TO_CHANNEL.put("EMPLOYEE", "COUNTER");
+        USER_TYPE_TO_CHANNEL.put("CITIZEN", "CITIZEN");
+        USER_TYPE_TO_CHANNEL.put("SYSTEM", "SYSTEM");
+    }
+    
+    public static final Map<String, String> USER_ROLE_TO_CHANNEL;
+
+    static {
+    	USER_ROLE_TO_CHANNEL = new HashMap<>();
+    	USER_ROLE_TO_CHANNEL.put("ESEWAEMP", "ESEWAEMP");
+    	
+    }
 
     public static final String NOTIFICATION_OBJECT_MODIFIED = "tl.en.edit.object.modified";
 

@@ -92,7 +92,13 @@ public class PTConstants {
 
 
 	// Variable names for diff
-
+	public static final String MDMS_WC_ROLE_MODLENAME = "common-masters";
+	
+	public static final String MDMS_WC_ROLE_MASTERNAME = "thirdparty";
+	public static final String MODULE_NAME = "pb";
+	public static final String MDMS_RESPONSE_KEY = "MdmsRes";
+	public static final String CATEGORY_KEY = "category";
+	public static final String ROLE_CODE_KEY = "rolecode";
 
     public static final String VARIABLE_ACTION = "action";
 

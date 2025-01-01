@@ -2,7 +2,9 @@ package org.egov.waterconnection.constants;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WCConstants {
 
@@ -37,6 +39,14 @@ public class WCConstants {
 	public static final String INVALID_CONNECTION_TYPE = "Invalid Connection Type";
 
 	public static final String METERED_CONNECTION = "Metered";
+	
+	public static final String MDMS_WC_ROLE_MODLENAME = "common-masters";
+	
+	public static final String MDMS_WC_ROLE_MASTERNAME = "thirdparty";
+	public static final String MODULE_NAME = "pb";
+	public static final String MDMS_RESPONSE_KEY = "MdmsRes";
+	public static final String CATEGORY_KEY = "category";
+	public static final String ROLE_CODE_KEY = "rolecode";
 
 	// WS actions
 
@@ -153,7 +163,24 @@ public class WCConstants {
 					SEND_BACK_FOR_DOCUMENT_VERIFICATION_PENDING_FOR_DOCUMENT_VERIFICATION,SEND_BACK_PENDING_FOR_COUNTER_EMPLOYEE_ACTION));
 
 	public static final List<String> CHANNEL_VALUES = Collections.unmodifiableList(Arrays.asList("CITIZEN", "CFC_COUNTER", "MIGRATION", "DATA_ENTRY", "SYSTEM"));
+	
+	 public static final Map<String, String> USER_TYPE_TO_CHANNEL;
 
+	    static {
+	        USER_TYPE_TO_CHANNEL = new HashMap<>();
+	        USER_TYPE_TO_CHANNEL.put("EMPLOYEE", "CFC_COUNTER");
+	        USER_TYPE_TO_CHANNEL.put("CITIZEN", "CITIZEN");
+	        USER_TYPE_TO_CHANNEL.put("SYSTEM", "SYSTEM");
+	    }
+	    
+	    public static final Map<String, String> USER_ROLE_TO_CHANNEL;
+
+	    static {
+	    	USER_ROLE_TO_CHANNEL = new HashMap<>();
+	    	USER_ROLE_TO_CHANNEL.put("ESEWAEMP", "ESEWAEMP");
+	    	
+	    }
+	    
 	public static final String USREVENTS_EVENT_TYPE = "SYSTEMGENERATED";
 
 	public static final String USREVENTS_EVENT_NAME = "WATER CONNECTION";

@@ -1,11 +1,17 @@
 package org.egov.tl.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.IdGenRepository;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.util.TradeUtil;
 import org.egov.tl.web.models.*;
+import org.egov.tl.web.models.TradeLicenseDetail.ChannelEnum;
 import org.egov.tl.web.models.Idgen.IdResponse;
 import org.egov.tl.web.models.user.UserDetailResponse;
 import org.egov.tl.web.models.workflow.BusinessService;
@@ -15,12 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 //import org.springframework.util.StringUtils;
+import org.egov.tl.repository.ServiceRequestRepository;
 
 import com.jayway.jsonpath.JsonPath;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import static org.egov.tl.util.TLConstants.*;
+
 
 
 @Service
@@ -44,13 +52,15 @@ public class EnrichmentService {
         this.workflowService = workflowService;
     }
 
-
+	@Autowired
+	private ServiceRequestRepository serviceRequestRepository;
     /**
      * Enriches the incoming createRequest
      * @param tradeLicenseRequest The create request for the tradeLicense
      */
     public void enrichTLCreateRequest(TradeLicenseRequest tradeLicenseRequest,Object mdmsData) {
-        RequestInfo requestInfo = tradeLicenseRequest.getRequestInfo();
+    	
+    	RequestInfo requestInfo = tradeLicenseRequest.getRequestInfo();
         String uuid = requestInfo.getUserInfo().getUuid();
         AuditDetails auditDetails = tradeUtil.getAuditDetails(uuid, true);
         tradeLicenseRequest.getLicenses().forEach(tradeLicense -> {
@@ -87,6 +97,70 @@ public class EnrichmentService {
                         });
                     break;
             }
+            
+            
+            
+            
+            
+            String roleCodeName=null;
+
+    		String userType = requestInfo.getUserInfo().getType().toUpperCase();
+
+    		
+    		Object thirdPartyData = fetchThirdPartyIntegration(requestInfo, config.getStateLevelTenantId(), TLConstants.MDMS_WC_ROLE_MODLENAME , TLConstants.MDMS_WC_ROLE_MASTERNAME, userType,true);
+
+    		 Map<String, String> roleMap = new HashMap<>();
+    		 
+    	        if (thirdPartyData instanceof Map) {
+    	            List<Map<String, Object>> thirdPartyList = (List<Map<String, Object>>) 
+    	                Optional.ofNullable((Map<String, Object>) thirdPartyData)
+    	                        .map(data -> (Map<String, Object>) data.get(TLConstants.MDMS_RESPONSE_KEY))
+    	                        .map(mdmsRes -> (Map<String, Object>) mdmsRes.get(TLConstants.MDMS_WC_ROLE_MODLENAME))
+    	                        .map(commonMasters -> (List<Map<String, Object>>) commonMasters.get(TLConstants.MDMS_WC_ROLE_MASTERNAME))
+    	                        .orElse(Collections.emptyList());
+
+    	            thirdPartyList.forEach(role -> {
+    	                String category = (String) role.get(TLConstants.CATEGORY_KEY);
+    	                String roleCode = (String) role.get(TLConstants.ROLE_CODE_KEY);
+    	                roleMap.put(category, roleCode);
+    	            });
+    	        }
+    	        
+    	        List<String> requestRoles = requestInfo
+    	                .getUserInfo()
+    	                .getRoles()
+    	                .stream()
+    	                .map(Role::getCode) 
+    	                .collect(Collectors.toList());
+
+    	        for (String roleCode : roleMap.values()) {
+    	            if (requestRoles.contains(roleCode)) {
+    	            	roleCodeName=roleCode;
+    	            	
+    	            }
+    	        }
+
+
+    		if (roleCodeName != null) {
+    			ChannelEnum channel = ChannelEnum.valueOf(roleCodeName);
+    	        tradeLicense.getTradeLicenseDetail().setChannel(channel);
+    		} else {
+    		    if (TLConstants.USER_TYPE_TO_CHANNEL.containsKey(userType)) {
+    		    	String channelName = TLConstants.USER_TYPE_TO_CHANNEL.get(userType);
+    		        ChannelEnum channel = ChannelEnum.valueOf(channelName);
+    		        tradeLicense.getTradeLicenseDetail().setChannel(channel);
+        	        } else {
+    		        throw new IllegalStateException(
+    		            String.format("Unable to determine channel for userType: %s and roles: %s", 
+    		                          userType, 
+    		                          requestInfo
+    		                              .getUserInfo()
+    		                              .getRoles()
+    		                              .stream()
+    		                              .map(role -> role != null ? role.getCode() : "null")
+    		                              .collect(Collectors.toList()))); 
+    		    }
+    		}
             tradeLicense.getTradeLicenseDetail().getAddress().setTenantId(tradeLicense.getTenantId());
             tradeLicense.getTradeLicenseDetail().getAddress().setId(UUID.randomUUID().toString());
             tradeLicense.getTradeLicenseDetail().getTradeUnits().forEach(tradeUnit -> {
@@ -183,6 +257,36 @@ public class EnrichmentService {
                 .map(IdResponse::getId).collect(Collectors.toList());
     }
 
+    
+    
+public Object fetchThirdPartyIntegration(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String userType, Boolean active) {
+	    
+		
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, active);
+	    
+	    // Add master detail with the dynamic filter
+	    masterDetails.add(MasterDetail.builder()
+	            .name(TLConstants.MDMS_WC_ROLE_MASTERNAME)
+	            .filter(filter)
+	            .build());
+
+     
+        List<ModuleDetail> wfModuleDtls = Collections.singletonList(ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(TLConstants.MDMS_WC_ROLE_MODLENAME).build());
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(wfModuleDtls)
+                .tenantId(config.getStateLevelTenantId())
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+        String uRi=config.getMdmsHost()+config.getMdmsEndPoint();
+        Object result = serviceRequestRepository.fetchmdmsResult(uRi, mdmsCriteriaReq);
+
+
+	    return result;
+	}
 
     /**
      * Sets the ApplicationNumber for given TradeLicenseRequest

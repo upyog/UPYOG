@@ -1,23 +1,36 @@
 package org.egov.pt.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Institution;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.common.contract.request.Role;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.pt.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -38,7 +51,9 @@ public class EnrichmentService {
 
 	@Autowired
 	private UserService userService;
-
+	
+	@Autowired
+	private ServiceRequestRepository serviceRequestRepository;
 
 
     /**
@@ -49,6 +64,47 @@ public class EnrichmentService {
 
 		RequestInfo requestInfo = request.getRequestInfo();
 		Property property = request.getProperty();
+		String roleCodeName=null;
+
+		String userType = requestInfo.getUserInfo().getType().toUpperCase();
+		Object thirdPartyData = fetchThirdPartyIntegration(requestInfo, config.getStateLevelTenantId(), PTConstants.MDMS_WC_ROLE_MODLENAME , PTConstants.MDMS_WC_ROLE_MASTERNAME, userType,true);
+
+		 Map<String, String> roleMap = new HashMap<>();
+		 
+	        if (thirdPartyData instanceof Map) {
+	            List<Map<String, Object>> thirdPartyList = (List<Map<String, Object>>) 
+	                Optional.ofNullable((Map<String, Object>) thirdPartyData)
+	                        .map(data -> (Map<String, Object>) data.get(PTConstants.MDMS_RESPONSE_KEY))
+	                        .map(mdmsRes -> (Map<String, Object>) mdmsRes.get(PTConstants.MDMS_WC_ROLE_MODLENAME))
+	                        .map(commonMasters -> (List<Map<String, Object>>) commonMasters.get(PTConstants.MDMS_WC_ROLE_MASTERNAME))
+	                        .orElse(Collections.emptyList());
+
+	            thirdPartyList.forEach(role -> {
+	                String category = (String) role.get(PTConstants.CATEGORY_KEY);
+	                String roleCode = (String) role.get(PTConstants.ROLE_CODE_KEY);
+	                roleMap.put(category, roleCode);
+	            });
+	        }
+	        
+	        List<String> requestRoles =requestInfo
+	                .getUserInfo()
+	                .getRoles()
+	                .stream()
+	                .map(Role::getCode) 
+	                .collect(Collectors.toList());
+
+	        for (String roleCode : roleMap.values()) {
+	            if (requestRoles.contains(roleCode)) {
+	            	roleCodeName=roleCode;
+	            	
+	            }
+	        }
+	        if (roleCodeName != null) {
+	        	Channel channel = Channel.valueOf(roleCodeName); // Example conversion
+	        	property.setChannel(channel);
+			}
+
+		
 		
 		property.setAccountId(requestInfo.getUserInfo().getUuid());
 		enrichUuidsForPropertyCreate(requestInfo, property);
@@ -56,6 +112,35 @@ public class EnrichmentService {
 		enrichBoundary(property, requestInfo);
 	}
 
+	
+public Object fetchThirdPartyIntegration(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String userType, Boolean active) {
+	    
+		
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, active);
+	    
+	    // Add master detail with the dynamic filter
+	    masterDetails.add(MasterDetail.builder()
+	            .name(PTConstants.MDMS_WC_ROLE_MASTERNAME)
+	            .filter(filter)
+	            .build());
+
+     
+        List<ModuleDetail> wfModuleDtls = Collections.singletonList(ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(PTConstants.MDMS_WC_ROLE_MODLENAME).build());
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(wfModuleDtls)
+                .tenantId(config.getStateLevelTenantId())
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+        String uRi=config.getMdmsHost()+config.getMdmsEndpoint();
+        Object result = serviceRequestRepository.fetchmdmsResult(uRi, mdmsCriteriaReq);
+
+
+	    return result;
+	}
 	private void enrichUuidsForPropertyCreate(RequestInfo requestInfo, Property property) {
 		
 		AuditDetails propertyAuditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
