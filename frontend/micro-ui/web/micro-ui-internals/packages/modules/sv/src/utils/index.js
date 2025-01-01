@@ -181,7 +181,7 @@ export const svPayloadData = (data) =>{
     specialCategory: data?.specialCategoryData?.ownerCategory?.code,
     isInvolved: data?.owner?.spouseDependentChecked,
     fatherName: "",
-    gender: "N/A",
+    gender: "O",
     id: "",
     mobileNo: "",
     name: data?.owner?.units?.[0]?.spouseName,
