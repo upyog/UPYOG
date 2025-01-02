@@ -20,7 +20,7 @@ public class TradeLicenseDetails implements CommonDetailsMapper {
 				: null;
 
 		if (tradeDetailNode == null) {
-			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("")
+			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("").name("N/A").mobileNumber("N/A")
 					.build();
 		}
 		
@@ -29,20 +29,29 @@ public class TradeLicenseDetails implements CommonDetailsMapper {
 		String validFromString = "NA";
 		String validToString = "NA";
 		String status = tradeDetailNode.path("status").asText("");
-		String applicationNumber = tradeDetailNode.path("licenseNumber").asText("");
+		String applicationNumber = tradeDetailNode.path("applicationNumber").asText("");
 		String moduleName = "BPA";
 		if (!"APPROVED".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
-			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A")
+			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A").name("N/A").mobileNumber("N/A")
 					.address("N/A").status("Pending").moduleName(moduleName).build();
 		}
+        // Extract owner details (name and mobile number)
+        JsonNode ownerNode = tradeDetailNode.path("tradeLicenseDetail").path("owners").isArray()
+                && tradeDetailNode.path("tradeLicenseDetail").path("owners").size() > 0
+                ? tradeDetailNode.path("tradeLicenseDetail").path("owners").get(0)
+                : null;
+
+        String ownerName = ownerNode != null ? ownerNode.path("name").asText("N/A") : "N/A";
+        String ownerMobileNumber = ownerNode != null ? CommonDetailUtil.maskMobileNumber (ownerNode.path("mobileNumber").asText("N/A")) : "N/A";
+        
 		if (validFrom != 0L && validTo != 0L) {
 			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validFrom), "dd-MM-yyyy");
 			validToString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validTo), "dd-MM-yyyy");
 		}
 		
 		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString)
-				.toDate(validToString).address("N/A").moduleName(moduleName)
+				.toDate(validToString).address("N/A").moduleName(moduleName).name(ownerName).mobileNumber(ownerMobileNumber)
 				.status(status).build();
 	}
 
