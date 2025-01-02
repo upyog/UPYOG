@@ -33,9 +33,6 @@ public class GarbageAccountSchedulerService {
 	@Autowired
 	private MdmsService mdmsService;
 
-	@Autowired
-	private NotificationService notificationService;
-
 	public Object generateBill(RequestInfoWrapper requestInfoWrapper) {
 
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
@@ -74,10 +71,6 @@ public class GarbageAccountSchedulerService {
 						.tenantId(garbageAccount.getTenantId()).businessService(GrbgConstants.BUSINESS_SERVICE)
 						.consumerCode(garbageAccount.getGrbgApplicationNumber()).build();
 				BillResponse billResponse = billService.generateBill(requestInfoWrapper.getRequestInfo(), billCriteria);
-
-				// triggerNotifications
-				notificationService.triggerNotificationsGenerateBill(garbageAccount, billResponse.getBill().get(0),
-						requestInfoWrapper);
 
 			});
 		}

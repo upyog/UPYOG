@@ -3,7 +3,7 @@ serviceMaps:
   mappings:
   - version: 1.0
     description: Persists pgr service request in tables
-    name: pgr-services
+    name : pgr-services
     fromTopic: save-pgr-request
     isTransaction: true
     queryMaps:
