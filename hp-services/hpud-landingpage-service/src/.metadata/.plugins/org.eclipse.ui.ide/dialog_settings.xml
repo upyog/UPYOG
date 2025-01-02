@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="installedFeatures">
+		<item value="org.eclipse.buildship:3.1.9.v20240115-1636"/>
+		<item value="org.eclipse.egit.gitflow.feature:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.egit:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.emf.common:2.31.0.v20240314-0928"/>
+		<item value="org.eclipse.emf.ecore:2.37.0.v20240203-0859"/>
+		<item value="org.eclipse.epp.mpc:1.10.3.v20240228-1000"/>
+		<item value="org.eclipse.help:2.3.1800.v20240601-0610"/>
+		<item value="org.eclipse.jdt:3.19.500.v20240601-0610"/>
+		<item value="org.eclipse.jgit.gpg.bc:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.jgit.http.apache:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.jgit.lfs:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.jgit.ssh.apache:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.jgit:6.10.0.202406032230-r"/>
+		<item value="org.eclipse.jst.common.fproj.enablement.jdt:3.30.0.v202405122323"/>
+		<item value="org.eclipse.justj.openjdk.hotspot.jre.full:21.0.3.v20240426-1530"/>
+		<item value="org.eclipse.m2e.feature:2.6.1.20240602-2342"/>
+		<item value="org.eclipse.m2e.logback.feature:2.6.1.20240411-1743"/>
+		<item value="org.eclipse.m2e.wtp.feature:1.6.1.20231024-1618"/>
+		<item value="org.eclipse.mylyn.wikitext.feature:4.3.0.v20240602-0603"/>
+		<item value="org.eclipse.pde:3.15.400.v20240601-0610"/>
+		<item value="org.eclipse.platform:4.32.0.v20240601-0610"/>
+		<item value="org.eclipse.rcp:4.32.0.v20240601-0610"/>
+		<item value="org.eclipse.tm.terminal.connector.ssh.feature:11.6.0.202403071917"/>
+		<item value="org.eclipse.tm.terminal.control.feature:11.6.0.202403071917"/>
+		<item value="org.eclipse.tm.terminal.feature:11.6.0.202403071917"/>
+		<item value="org.eclipse.tm.terminal.view.feature:11.6.0.202403071917"/>
+		<item value="org.eclipse.userstorage:1.2.0.v20210517-0327"/>
+		<item value="org.eclipse.wst.common.fproj:3.7.4.v202308161955"/>
+		<item value="org.jboss.tools.m2e.wro4j.feature:1.2.1.202301111328"/>
+		<item value="org.sonatype.m2e.egit.feature:0.17.0.202209271423"/>
+	</list>
+</section>
