@@ -306,14 +306,14 @@ public class UserTypeQueryBuilder {
                 + ":accountlocked,:bloodgroup,:photo,:identificationmark,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby,:alternatemobilenumber) ";
     }
     public String getDigilockerUpdateQuery(){
-        return "update eg_user set digilockerid=:DigilockerID where username=:username and tenantid=:tenantid ";
+        return "update eg_user set digilockerid=:DigilockerID where id=:id";
     }
     public String getUpdateUserQuery() {
         return "update eg_user set salutation=:Salutation,dob=:Dob,locale=:Locale,password=:Password,pwdexpirydate=:PasswordExpiryDate,mobilenumber=:MobileNumber,altcontactnumber=:AltContactNumber,emailid=:EmailId,active=:Active,name=:Name,gender=:Gender,pan=:Pan,aadhaarnumber=:AadhaarNumber,"
                 + "type=:Type,guardian=:Guardian,guardianrelation=:GuardianRelation,signature=:Signature," +
                 "accountlocked=:AccountLocked, accountlockeddate=:AccountLockedDate, bloodgroup=:BloodGroup," +
                 "photo=:Photo, identificationmark=:IdentificationMark,lastmodifieddate=:LastModifiedDate," +
-                "lastmodifiedby=:LastModifiedBy, alternatemobilenumber=:alternatemobilenumber where username=:username and tenantid=:tenantid and type=:type";
+                "lastmodifiedby=:LastModifiedBy, alternatemobilenumber=:alternatemobilenumber, digilockerid=:DigilockerID where username=:username and tenantid=:tenantid and type=:type";
     }
 
 
