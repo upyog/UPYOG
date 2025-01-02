@@ -95,7 +95,7 @@
 
     <distributionManagement>
         <repository>
-            <id>http://nexus-repo.digit.org/nexus/content/groups/public/</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov ERP Releases Repository</name>
             <url>http://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
         </repository>

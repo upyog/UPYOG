@@ -67,11 +67,14 @@ const VSearchCertificate = () => {
     const { data: type_of_certificate } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "VerificationSearch", [{ name: "CertificateType" }],
         {
             select: (data) => {
-                const formattedData = data?.["VerificationSearch"]?.["CertificateType"]
+                const formattedData = data?.["VerificationSearch"]?.["CertificateType"].map((details) => {
+                    return { i18nKey: `${details.name}`, code: `${details.code}`, active: `${details.active}` };
+                  });
                 return formattedData;
             },
         });
 
+    
     // sets ishuman to be true based on token
     useEffect(() => {
         if (token) {
@@ -119,7 +122,7 @@ const VSearchCertificate = () => {
                 ])
                 setistable(true);
             } else {
-                setShowToast({ label: "Application doesn't exist", warning: true })
+                setShowToast({ label: t("VS_APPLICATION_DOESNOT_EXIST"), warning: true })
             }
         }
     }
@@ -127,7 +130,7 @@ const VSearchCertificate = () => {
     // columns defined to be passed in applicationtable
     const columns = [
         { Header: t("CITIZEN_NAME"), accessor: "name" },
-        { Header: t("CITIZEN_ADDRESS"), accessor: "address" },
+        { Header: t("CITIZEN_MOBILE_NO"), accessor: "address" },
         { Header: t("CERTIFICATE_NUMBER"), accessor: "certificateNumber" },
         { Header: t("ISSUE_DATE"), accessor: "issueDate" },
         { Header: t("VALID_UPTO"), accessor: "validUpto" },
@@ -168,6 +171,7 @@ const VSearchCertificate = () => {
                                     onBlur={props.onBlur}
                                     option={type_of_certificate}
                                     optionKey="i18nKey"
+                                    optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
                                     t={t}
                                     disable={false}
                                     placeholder={"Please type and select the certificate type"}
