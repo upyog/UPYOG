@@ -20,7 +20,7 @@ public class PetDetailsMapper implements CommonDetailsMapper {
 				: null;
 
 		if (petDetailNode == null) {
-			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("")
+			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("").name("NA").mobileNumber("NA")
 					.build();
 		}
 		
@@ -29,10 +29,12 @@ public class PetDetailsMapper implements CommonDetailsMapper {
 		String validToString = "NA";
 		String status = petDetailNode.path("status").asText("");
 		String applicationNumber = petDetailNode.path("applicationNumber").asText("");
+		String ownerName = petDetailNode.path("applicantName").asText("NA");
+        String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(petDetailNode.path("mobileNumber").asText("NA"));
 		String moduleName = "pet-services";
 		if (!"Approved".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
-			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A")
+			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A").name("NA").mobileNumber("NA")
 					.address("N/A").status("Pending").moduleName(moduleName).build();
 		}
 		if (validityDate != 0L) {
@@ -52,7 +54,7 @@ public class PetDetailsMapper implements CommonDetailsMapper {
 		               .append(addressDetails.path("pincode").asText(""));
 		}
 
-		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString)
+		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString).name(ownerName).mobileNumber(ownerMobileNumber)
 				.toDate(validToString).address(fullAddress.toString().replaceAll(",\\s*$", "")).moduleName(moduleName)
 				.status(status).build();
 	}
