@@ -21,7 +21,7 @@ public class StreetVendingDetailsMapper implements CommonDetailsMapper {
 				: null;
 
 		if (svDetailNode == null) {
-			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("")
+			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").name("").mobileNumber("").status("").applicationNumber("")
 					.build();
 		}
 
@@ -31,10 +31,21 @@ public class StreetVendingDetailsMapper implements CommonDetailsMapper {
 		String status = svDetailNode.path("applicationStatus").asText("");
 		String applicationNumber = svDetailNode.path("applicationNo").asText("");
 		String moduleName = "Street-Vending";
+		String ownerName = "NA";
+		String ownerMobileNumber = "NA";
+		
+		// Fetch vendor details
+        JsonNode vendorDetails = svDetailNode.path("vendorDetail");
+        if (vendorDetails.isArray() && vendorDetails.size() > 0) {
+            JsonNode vendorNode = vendorDetails.get(0);
+            ownerName = vendorNode.path("name").asText("NA");
+            ownerMobileNumber = CommonDetailUtil.maskMobileNumber(vendorNode.path("mobileNo").asText("NA"));
+        }
+			
 		if (!"REGISTRATIONCOMPLETED".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
 			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A")
-					.address("N/A").status("Pending").moduleName(moduleName).build();
+					.address("N/A").name("N/A").mobileNumber("N/A").status("Pending").moduleName(moduleName).build();
 		}
 		if (approvalDate != 0L) {
 			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(approvalDate), "dd-MM-yyyy");
@@ -52,7 +63,7 @@ public class StreetVendingDetailsMapper implements CommonDetailsMapper {
 					.append(addressNode.path("city").asText(""));
 		}
 
-		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString)
+		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString).name(ownerName).mobileNumber(ownerMobileNumber)
 				.toDate(validToString).address(fullAddress.toString().replaceAll(",\\s*$", "")).moduleName(moduleName)
 				.status(status).build();
 	}

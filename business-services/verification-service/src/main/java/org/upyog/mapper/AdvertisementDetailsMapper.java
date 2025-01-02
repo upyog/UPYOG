@@ -1,6 +1,7 @@
 package org.upyog.mapper;
 
 import org.springframework.stereotype.Component;
+import org.upyog.util.CommonDetailUtil;
 import org.upyog.web.models.CommonDetails;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,7 +21,7 @@ public class AdvertisementDetailsMapper implements CommonDetailsMapper {
 				&& json.path("bookingApplication").size() > 0 ? json.path("bookingApplication").get(0) : null;
 
 		if (bookingApplication == null) {
-			return CommonDetails.builder().applicationNumber("N/A").fromDate("N/A").toDate("N/A").address("N/A")
+			return CommonDetails.builder().applicationNumber("N/A").fromDate("N/A").toDate("N/A").address("N/A").name("N/A").mobileNumber("N/A")
 					.status("N/A").build();
 		}
 
@@ -28,6 +29,7 @@ public class AdvertisementDetailsMapper implements CommonDetailsMapper {
 		// Extract the application number and status
 		String applicationNumber = bookingApplication.path("bookingNo").asText("N/A");
 		String status = bookingApplication.path("bookingStatus").asText("N/A");
+		
 		String moduleName = "Advertisement";
 		if (!"BOOKED".equalsIgnoreCase(status)) {
 	        // If not BOOKED, set status as Pending and other details as N/A
@@ -36,6 +38,8 @@ public class AdvertisementDetailsMapper implements CommonDetailsMapper {
 	                .fromDate("N/A")
 	                .toDate("N/A")
 	                .address("N/A")
+	                .name("N/A")
+	                .mobileNumber("N/A")
 	                .status("Pending")
 	                .moduleName(moduleName)
 	                .build();
@@ -52,9 +56,15 @@ public class AdvertisementDetailsMapper implements CommonDetailsMapper {
 			toDate = cartDetails.get(cartDetails.size() - 1).path("bookingDate").asText("N/A");
 			location = cartDetails.get(0).path("location").asText("N/A"); // Map location to address
 		}
+		
+		// Extract applicant details
+        JsonNode applicantDetail = bookingApplication.path("applicantDetail");
+        String ownerName = applicantDetail.path("applicantName").asText("N/A");
+        String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(applicantDetail.path("applicantMobileNo").asText("N/A"));
+
 
 		// Build and return the CommonDetails object
-		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(fromDate).toDate(toDate)
+		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(fromDate).toDate(toDate).name(ownerName).mobileNumber(ownerMobileNumber)
 				.address(location).moduleName(moduleName)
 				.status(status).build();
 	}

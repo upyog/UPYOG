@@ -1,6 +1,7 @@
 package org.upyog.mapper;
 
 import org.springframework.stereotype.Component;
+import org.upyog.util.CommonDetailUtil;
 import org.upyog.web.models.CommonDetails;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -20,7 +21,7 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 				&& json.path("EwasteApplication").size() > 0 ? json.path("EwasteApplication").get(0) : null;
 
 		if (EwasteApplication == null) {
-			return CommonDetails.builder().applicationNumber("N/A").fromDate("N/A").toDate("N/A").address("N/A")
+			return CommonDetails.builder().applicationNumber("N/A").fromDate("N/A").toDate("N/A").address("N/A").name("N/A").mobileNumber("N/A")
 					.status("N/A").build();
 		}
 
@@ -36,6 +37,8 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 	                .fromDate("N/A")
 	                .toDate("N/A")
 	                .address("N/A")
+	                .name("N/A")
+	                .mobileNumber("N/A")
 	                .status("Pending")
 	                .moduleName(moduleName)
 	                .build();
@@ -44,11 +47,12 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 		String fromDate = "N/A";
 		String toDate = "N/A";
 		String location = "N/A";
-		
+		String ownerName = EwasteApplication.path("applicant").path("applicantName").asText("N/A");
+		String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(EwasteApplication.path("applicant").path("mobileNumber").asText("N/A"));
 
 
 		// Build and return the CommonDetails object
-		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(fromDate).toDate(toDate)
+		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(fromDate).toDate(toDate).name(ownerName).mobileNumber(ownerMobileNumber)
 				.address(location).moduleName(moduleName)
 				.status(status).build();
 	}
