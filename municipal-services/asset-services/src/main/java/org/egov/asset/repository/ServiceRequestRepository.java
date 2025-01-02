@@ -51,4 +51,29 @@ public class ServiceRequestRepository {
 
         return response;
     }
+
+    public <T> T fetchResultWithPathParams(StringBuilder uri, Map<String, String> pathParams, Class<T> responseType) {
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+        try {
+            // Build the URI with path parameters
+            for (Map.Entry<String, String> entry : pathParams.entrySet()) {
+                String placeholder = "{" + entry.getKey() + "}";
+                uri = new StringBuilder(uri.toString().replace(placeholder, entry.getValue()));
+            }
+
+            log.debug("Resolved URI: {}", uri);
+
+            // Make the GET request
+            return restTemplate.getForObject(uri.toString(), responseType);
+
+        } catch (HttpClientErrorException e) {
+            log.error("External Service threw an Exception: {}", e.getMessage(), e);
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            log.error("Exception while fetching from service: {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
 }
