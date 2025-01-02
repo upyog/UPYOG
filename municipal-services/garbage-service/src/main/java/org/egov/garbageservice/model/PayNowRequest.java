@@ -19,6 +19,8 @@ public class PayNowRequest {
 
 	private List<String> garbageApplicationNumbers;
 
+	private List<String> garbageUuid;
+
 	private List<String> billStatus;
 
 	private String month;
