@@ -20,7 +20,7 @@ public class PropertyDetailsMapper implements CommonDetailsMapper {
 				: null;
 
 		if (propertyDetailNode == null) {
-			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("")
+			return CommonDetails.builder().fromDate("NA").toDate("NA").address("").status("").applicationNumber("").name("NA").mobileNumber("NA")
 					.build();
 		}
 		
@@ -30,9 +30,15 @@ public class PropertyDetailsMapper implements CommonDetailsMapper {
 		String status = propertyDetailNode.path("status").asText("");
 		String applicationNumber = propertyDetailNode.path("propertyId").asText("");
 		String moduleName = "PT";
+		
+		// Extracting name and mobile number from the owner details
+        JsonNode ownerDetails = propertyDetailNode.path("owners").get(0);
+        String ownerName = ownerDetails.path("name").asText("N/A");
+        String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(ownerDetails.path("mobileNumber").asText("N/A"));
+        
 		if (!"ACTIVE".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
-			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A")
+			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate("N/A").toDate("N/A").name("N/A").mobileNumber("N/A")
 					.address("N/A").status("Pending").moduleName(moduleName).build();
 		}
 		if (validityDate != 0L) {
@@ -50,7 +56,7 @@ public class PropertyDetailsMapper implements CommonDetailsMapper {
 	               .append(addressDetails.path("pincode").asText(""));
 				}
 		
-		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString)
+		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString).name(ownerName).mobileNumber(ownerMobileNumber)
 				.toDate(validToString).address(fullAddress.toString().replaceAll(",\\s*$", "")).moduleName(moduleName)
 				.status(status).build();
 	}
