@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.upyog.adv.config.BookingConfiguration;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentTimerService {
 
 	@Autowired
+	@Lazy
 	private BookingRepository bookingRepository;
 
 	@Autowired
@@ -34,9 +36,10 @@ public class PaymentTimerService {
 		
 	}
 	@Transactional
-	public void deleteBookingIdForTimer(String bookingId) {
+	public void deleteBookingIdForTimer(String bookingId, RequestInfo requestInfo) {
 		log.info("Creating timer entry for booking id : {}", bookingId);
-		bookingRepository.deleteBookingIdForTimer(bookingId);
+		bookingRepository.deleteBookingIdForTimer(bookingId, requestInfo);
+		
 	}
 	
 

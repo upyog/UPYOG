@@ -1,15 +1,18 @@
 package org.upyog.adv.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.enums.BookingStatusEnum;
+import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.repository.IdGenRepository;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.AuditDetails;
@@ -28,6 +31,10 @@ public class EnrichmentService {
 
 	@Autowired
 	private IdGenRepository idGenRepository;
+	
+	@Autowired
+	@Lazy
+	private BookingRepository bookingRepository;
 
 	public void enrichCreateBookingRequest(BookingRequest bookingRequest) {
 		String bookingId = BookingUtil.getRandonUUID();
@@ -127,7 +134,10 @@ public class EnrichmentService {
 	}
 	
 	public void enrichCreateAdvertisementDraftApplicationRequest(BookingRequest bookingRequest) {
-		String draftId = BookingUtil.getRandonUUID();
+		// String draftId = BookingUtil.getRandonUUID();
+		List<Map<String, Object>> result = bookingRepository
+				.isDraftIdExistInDraft(bookingRequest.getRequestInfo().getUserInfo().getUuid());
+		String draftId = (String) result.get(0).get("draft_id");
 		log.info("Enriching create draft street vending application with draft id :" + draftId);
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
@@ -135,7 +145,7 @@ public class EnrichmentService {
 
 		bookingDetail.setDraftId(draftId);
 		bookingDetail.setAuditDetails(auditDetails);
-		
+
 	}
 	
 	public void enrichUpdateAdvertisementDraftApplicationRequest(BookingRequest bookingRequest) {
