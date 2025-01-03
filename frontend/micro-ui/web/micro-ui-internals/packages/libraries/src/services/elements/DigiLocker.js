@@ -29,9 +29,9 @@ export const DigiLockerService = {
       userService: true,
       data:data,
     }),
-    auth: ( data ) =>
+    oauth: ( data ) =>
     Request({
-      url: Urls.digiLocker.auth,
+      url: Urls.digiLocker.oauth,
       useCache: false,
       method: "POST",
       auth: true,
