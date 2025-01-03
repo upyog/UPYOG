@@ -69,5 +69,10 @@ public class BookingTimerService {
 		log.info("Deleting timer entry for booking id : {}", bookingId);
 		bookingRepository.deleteBookingTimer(bookingId, true);
 	}
+
+	public List<BookingPaymentTimerDetails> getBookingFromTimerTable(RequestInfo info, CommunityHallSlotSearchCriteria criteria) {
+		List<BookingPaymentTimerDetails> bookingPaymentTimerDetails= bookingRepository.getBookingTimerByCreatedBy(info,criteria);
+		return bookingPaymentTimerDetails;
+	}
 	
 }
