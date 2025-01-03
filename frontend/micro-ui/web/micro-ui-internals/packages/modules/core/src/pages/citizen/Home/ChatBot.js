@@ -85,7 +85,7 @@ function ChatBot() {
         <button
           style={{
             position: "fixed",
-            bottom: "20px",
+            bottom: "30px",
             right: "20px",
             padding: "10px",
             fontSize: "16px",
