@@ -48,5 +48,13 @@ public interface BookingRepository {
 	void scheduleTimerDelete();
 
 	void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status);
+
+	void updateBookingSynchronously(BookingRequest advertisementBookingRequest);
+
+	List<Map<String, Object>> getDraftData(String uuid);
+
+	List<AdvertisementSlotAvailabilityDetail> getBookedSlotsFromTimer(AdvertisementSlotSearchCriteria criteria);
+
+	void updateTimerBookingId(String bookingId, String bookingNo, String draftIdFromDraft);
 	
 }
