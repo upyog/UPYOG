@@ -38,7 +38,7 @@ public class PaymentTimerService {
 	@Transactional
 	public void deleteBookingIdForTimer(String bookingId, RequestInfo requestInfo) {
 		log.info("Creating timer entry for booking id : {}", bookingId);
-		bookingRepository.deleteBookingIdForTimer(bookingId, requestInfo);
+		bookingRepository.deleteBookingIdForTimer(bookingId);
 		
 	}
 	
