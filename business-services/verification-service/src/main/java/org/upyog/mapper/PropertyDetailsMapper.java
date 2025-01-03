@@ -16,8 +16,8 @@ public class PropertyDetailsMapper implements CommonDetailsMapper {
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode propertyDetailNode = json.path("Properties").isArray() && json.path("Properties").size() > 0
-				? json.path("Properties").get(0)
+		JsonNode propertyDetailNode = json.path(PropertyApplications).isArray() && json.path(PropertyApplications).size() > 0
+				? json.path(PropertyApplications).get(0)
 				: null;
 
 		if (propertyDetailNode == null) {

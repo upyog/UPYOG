@@ -15,8 +15,8 @@ public class FireNocDetailsMapper implements CommonDetailsMapper {
 	
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode fireNocDetail = json.path("FireNOCs").isArray()
-				&& json.path("FireNOCs").size() > 0 ? json.path("FireNOCs").get(0) : null;
+		JsonNode fireNocDetail = json.path(FireNocApplication).isArray()
+				&& json.path(FireNocApplication).size() > 0 ? json.path(FireNocApplication).get(0) : null;
 
 		if (fireNocDetail == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA)

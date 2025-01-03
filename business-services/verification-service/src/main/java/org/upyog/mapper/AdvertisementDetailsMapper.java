@@ -17,8 +17,8 @@ public class AdvertisementDetailsMapper implements CommonDetailsMapper {
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
 		// Access the first element of the bookingApplication array
-		JsonNode bookingApplication = json.path("bookingApplication").isArray()
-				&& json.path("bookingApplication").size() > 0 ? json.path("bookingApplication").get(0) : null;
+		JsonNode bookingApplication = json.path(AdvertisementBookingApplication).isArray()
+				&& json.path(AdvertisementBookingApplication).size() > 0 ? json.path(AdvertisementBookingApplication).get(0) : null;
 
 		if (bookingApplication == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA)

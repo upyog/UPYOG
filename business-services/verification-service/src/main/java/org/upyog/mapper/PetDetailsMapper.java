@@ -15,8 +15,8 @@ public class PetDetailsMapper implements CommonDetailsMapper {
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode petDetailNode = json.path("PetRegistrationApplications").isArray() && json.path("PetRegistrationApplications").size() > 0
-				? json.path("PetRegistrationApplications").get(0)
+		JsonNode petDetailNode = json.path(PetApplications).isArray() && json.path(PetApplications).size() > 0
+				? json.path(PetApplications).get(0)
 				: null;
 
 		if (petDetailNode == null) {

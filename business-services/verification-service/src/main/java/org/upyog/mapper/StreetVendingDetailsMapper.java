@@ -16,8 +16,8 @@ public class StreetVendingDetailsMapper implements CommonDetailsMapper {
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode svDetailNode = json.path("SVDetail").isArray() && json.path("SVDetail").size() > 0
-				? json.path("SVDetail").get(0)
+		JsonNode svDetailNode = json.path(StreetVendingApplication).isArray() && json.path(StreetVendingApplication).size() > 0
+				? json.path(StreetVendingApplication).get(0)
 				: null;
 
 		if (svDetailNode == null) {

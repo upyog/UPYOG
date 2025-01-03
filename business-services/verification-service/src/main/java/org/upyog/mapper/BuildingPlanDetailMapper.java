@@ -15,8 +15,8 @@ public class BuildingPlanDetailMapper implements CommonDetailsMapper {
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode bpaDetailNode = json.path("BPA").isArray() && json.path("BPA").size() > 0
-				? json.path("BPA").get(0)
+		JsonNode bpaDetailNode = json.path(BpaApplication).isArray() && json.path(BpaApplication).size() > 0
+				? json.path(BpaApplication).get(0)
 				: null;
 
 		if (bpaDetailNode == null) {
@@ -29,7 +29,7 @@ public class BuildingPlanDetailMapper implements CommonDetailsMapper {
 		String validToString = NA;
 		String status = bpaDetailNode.path("status").asText(EmptyString);
 		String applicationNumber = bpaDetailNode.path("applicationNo").asText(EmptyString);
-		String moduleName = "BPA";
+		String moduleName = BpaApplication;
 		if (!"APPROVED".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
 			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(NA).toDate(NA)

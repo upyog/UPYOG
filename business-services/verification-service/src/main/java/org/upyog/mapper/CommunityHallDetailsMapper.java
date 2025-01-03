@@ -18,8 +18,8 @@ public class CommunityHallDetailsMapper implements CommonDetailsMapper {
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
 		// Access the first element of the HallApplication array
 		
-		JsonNode HallApplication = json.path("hallsBookingApplication").isArray()
-				&& json.path("hallsBookingApplication").size() > 0 ? json.path("hallsBookingApplication").get(0) : null;
+		JsonNode HallApplication = json.path(CommunityHallApplication).isArray()
+				&& json.path(CommunityHallApplication).size() > 0 ? json.path(CommunityHallApplication).get(0) : null;
 
 		if (HallApplication == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA)

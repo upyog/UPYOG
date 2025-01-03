@@ -18,8 +18,8 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
 		// Access the first element of the EwasteApplication array
 		
-		JsonNode EwasteApplication = json.path("EwasteApplication").isArray()
-				&& json.path("EwasteApplication").size() > 0 ? json.path("EwasteApplication").get(0) : null;
+		JsonNode EwasteApplication = json.path(EwasteApplications).isArray()
+				&& json.path(EwasteApplications).size() > 0 ? json.path(EwasteApplications).get(0) : null;
 
 		if (EwasteApplication == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA)

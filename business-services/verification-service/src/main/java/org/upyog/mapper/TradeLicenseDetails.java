@@ -15,8 +15,8 @@ public class TradeLicenseDetails implements CommonDetailsMapper {
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode tradeDetailNode = json.path("Licenses").isArray() && json.path("Licenses").size() > 0
-				? json.path("Licenses").get(0)
+		JsonNode tradeDetailNode = json.path(TradeApplications).isArray() && json.path(TradeApplications).size() > 0
+				? json.path(TradeApplications).get(0)
 				: null;
 
 		if (tradeDetailNode == null) {

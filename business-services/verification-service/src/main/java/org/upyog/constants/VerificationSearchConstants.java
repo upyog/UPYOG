@@ -13,5 +13,16 @@ public class VerificationSearchConstants {
 	public static final String PropertyModule = "property";
 	public static final String StreetVendingModule = "streetvending";
 	public static final String TradeLicenseModule = "tradelicense";
-	
+	public static final String AdvertisementBookingApplication = "bookingApplication";
+	public static final String BpaApplication = "BPA";
+	public static final String CommunityHallApplication = "hallsBookingApplication";
+	public static final String EwasteApplications = "EwasteApplication";
+	public static final String FireNocApplication = "FireNOCs";
+	public static final String PetApplications = "PetRegistrationApplications";
+	public static final String PropertyApplications = "Properties";
+	public static final String StreetVendingApplication = "SVDetail";
+	public static final String TradeApplications = "Licenses";
+
+
+
 }
