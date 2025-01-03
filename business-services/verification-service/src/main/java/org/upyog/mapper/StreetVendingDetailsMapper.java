@@ -11,25 +11,25 @@ public class StreetVendingDetailsMapper implements CommonDetailsMapper {
 
 	@Override
 	public String getModuleName() {
-		return StreetVendingModule;
+		return STREET_VENDING_MODULE_NAME;
 	}
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode svDetailNode = json.path(StreetVendingApplication).isArray() && json.path(StreetVendingApplication).size() > 0
-				? json.path(StreetVendingApplication).get(0)
+		JsonNode svDetailNode = json.path(STREET_VENDING_APPLICATIONS).isArray() && json.path(STREET_VENDING_APPLICATIONS).size() > 0
+				? json.path(STREET_VENDING_APPLICATIONS).get(0)
 				: null;
 
 		if (svDetailNode == null) {
-			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EmptyString).name(EmptyString).mobileNumber(EmptyString).status(EmptyString).applicationNumber(EmptyString)
+			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EMPTY_STRING).name(EMPTY_STRING).mobileNumber(EMPTY_STRING).status(EMPTY_STRING).applicationNumber(EMPTY_STRING)
 					.build();
 		}
 
 		long approvalDate = svDetailNode.path("approvalDate").asLong(0L); 
 		String validFromString = NA;
 		String validToString = NA;
-		String status = svDetailNode.path("applicationStatus").asText(EmptyString);
-		String applicationNumber = svDetailNode.path("applicationNo").asText(EmptyString);
+		String status = svDetailNode.path("applicationStatus").asText(EMPTY_STRING);
+		String applicationNumber = svDetailNode.path("applicationNo").asText(EMPTY_STRING);
 		String moduleName = "Street-Vending";
 		String ownerName = NA;
 		String ownerMobileNumber = NA;
@@ -48,7 +48,7 @@ public class StreetVendingDetailsMapper implements CommonDetailsMapper {
 					.address(NA).name(NA).mobileNumber(NA).status("Pending").moduleName(moduleName).build();
 		}
 		if (approvalDate != 0L) {
-			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(approvalDate), Date);
+			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(approvalDate), DATE_FORMAT);
 			validToString = CommonDetailUtil.addOneYearToEpoch(String.valueOf(approvalDate)); // Add one year
 		}
 

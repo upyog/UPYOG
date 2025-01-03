@@ -10,17 +10,17 @@ public class TradeLicenseDetails implements CommonDetailsMapper {
 	
 	@Override
 	public String getModuleName() {
-		return TradeLicenseModule;
+		return TRADE_LICENSE_MODULE_NAME;
 	}
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode tradeDetailNode = json.path(TradeApplications).isArray() && json.path(TradeApplications).size() > 0
-				? json.path(TradeApplications).get(0)
+		JsonNode tradeDetailNode = json.path(TRADE_APPLICATIONS).isArray() && json.path(TRADE_APPLICATIONS).size() > 0
+				? json.path(TRADE_APPLICATIONS).get(0)
 				: null;
 
 		if (tradeDetailNode == null) {
-			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EmptyString).status(EmptyString).applicationNumber(EmptyString).name(NA).mobileNumber(NA)
+			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EMPTY_STRING).status(EMPTY_STRING).applicationNumber(EMPTY_STRING).name(NA).mobileNumber(NA)
 					.build();
 		}
 		
@@ -28,8 +28,8 @@ public class TradeLicenseDetails implements CommonDetailsMapper {
 		long validTo = tradeDetailNode.path("validTo").asLong(0L);
 		String validFromString = NA;
 		String validToString = NA;
-		String status = tradeDetailNode.path("status").asText(EmptyString);
-		String applicationNumber = tradeDetailNode.path("applicationNumber").asText(EmptyString);
+		String status = tradeDetailNode.path("status").asText(EMPTY_STRING);
+		String applicationNumber = tradeDetailNode.path("applicationNumber").asText(EMPTY_STRING);
 		String moduleName = "BPA";
 		if (!"APPROVED".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
@@ -46,8 +46,8 @@ public class TradeLicenseDetails implements CommonDetailsMapper {
         String ownerMobileNumber = ownerNode != null ? CommonDetailUtil.maskMobileNumber (ownerNode.path("mobileNumber").asText(NA)) : NA;
         
 		if (validFrom != 0L && validTo != 0L) {
-			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validFrom), Date);
-			validToString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validTo), Date);
+			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validFrom), DATE_FORMAT);
+			validToString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validTo), DATE_FORMAT);
 		}
 		
 		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString)

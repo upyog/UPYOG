@@ -10,13 +10,13 @@ public class FireNocDetailsMapper implements CommonDetailsMapper {
 
 	@Override
     public String getModuleName() {
-        return FireNocModule;
+        return FIRE_NOC_MODULE_NAME;
     }
 	
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode fireNocDetail = json.path(FireNocApplication).isArray()
-				&& json.path(FireNocApplication).size() > 0 ? json.path(FireNocApplication).get(0) : null;
+		JsonNode fireNocDetail = json.path(FIRE_NOC_APPLICATIONS).isArray()
+				&& json.path(FIRE_NOC_APPLICATIONS).size() > 0 ? json.path(FIRE_NOC_APPLICATIONS).get(0) : null;
 
 		if (fireNocDetail == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA)

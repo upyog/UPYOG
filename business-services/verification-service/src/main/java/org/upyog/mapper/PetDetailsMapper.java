@@ -10,25 +10,25 @@ public class PetDetailsMapper implements CommonDetailsMapper {
 
 	@Override
 	public String getModuleName() {
-		return PetModule;
+		return PET_MODULE_NAME;
 	}
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode petDetailNode = json.path(PetApplications).isArray() && json.path(PetApplications).size() > 0
-				? json.path(PetApplications).get(0)
+		JsonNode petDetailNode = json.path(PET_APPLICATIONS).isArray() && json.path(PET_APPLICATIONS).size() > 0
+				? json.path(PET_APPLICATIONS).get(0)
 				: null;
 
 		if (petDetailNode == null) {
-			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EmptyString).status(EmptyString).applicationNumber(EmptyString).name(NA).mobileNumber(NA)
+			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EMPTY_STRING).status(EMPTY_STRING).applicationNumber(EMPTY_STRING).name(NA).mobileNumber(NA)
 					.build();
 		}
 		
 		long validityDate = petDetailNode.path("validityDate").asLong(0L);
 		String validFromString = NA;
 		String validToString = NA;
-		String status = petDetailNode.path("status").asText(EmptyString);
-		String applicationNumber = petDetailNode.path("applicationNumber").asText(EmptyString);
+		String status = petDetailNode.path("status").asText(EMPTY_STRING);
+		String applicationNumber = petDetailNode.path("applicationNumber").asText(EMPTY_STRING);
 		String ownerName = petDetailNode.path("applicantName").asText(NA);
         String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(petDetailNode.path("mobileNumber").asText(NA));
 		String moduleName = "pet-services";
@@ -38,13 +38,13 @@ public class PetDetailsMapper implements CommonDetailsMapper {
 					.address(NA).status("Pending").moduleName(moduleName).build();
 		}
 		if (validityDate != 0L) {
-			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validityDate), Date);
+			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validityDate), DATE_FORMAT);
 			validToString = CommonDetailUtil.addOneYearToEpoch(String.valueOf(validityDate)); // Add one year
 		}
 		
 
 		return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(validFromString).name(ownerName).mobileNumber(ownerMobileNumber)
-				.toDate(validToString).address(EmptyString).moduleName(moduleName)
+				.toDate(validToString).address(EMPTY_STRING).moduleName(moduleName)
 				.status(status).build();
 	}
 

@@ -11,25 +11,25 @@ public class PropertyDetailsMapper implements CommonDetailsMapper {
 	
 	@Override
 	public String getModuleName() {
-		return PropertyModule;
+		return PROPERTY_MODULE_NAME;
 	}
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode propertyDetailNode = json.path(PropertyApplications).isArray() && json.path(PropertyApplications).size() > 0
-				? json.path(PropertyApplications).get(0)
+		JsonNode propertyDetailNode = json.path(PROPERTY_APPLICATIONS).isArray() && json.path(PROPERTY_APPLICATIONS).size() > 0
+				? json.path(PROPERTY_APPLICATIONS).get(0)
 				: null;
 
 		if (propertyDetailNode == null) {
-			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EmptyString).status(EmptyString).applicationNumber(EmptyString).name(EmptyString).mobileNumber(EmptyString)
+			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EMPTY_STRING).status(EMPTY_STRING).applicationNumber(EMPTY_STRING).name(EMPTY_STRING).mobileNumber(EMPTY_STRING)
 					.build();
 		}
 		
 		long validityDate = propertyDetailNode.path("owners").get(0).path("createdDate").asLong(0L);
 		String validFromString = NA;
 		String validToString = NA;
-		String status = propertyDetailNode.path("status").asText(EmptyString);
-		String applicationNumber = propertyDetailNode.path("propertyId").asText(EmptyString);
+		String status = propertyDetailNode.path("status").asText(EMPTY_STRING);
+		String applicationNumber = propertyDetailNode.path("propertyId").asText(EMPTY_STRING);
 		String moduleName = "PT";
 		
 		// Extracting name and mobile number from the owner details
@@ -43,7 +43,7 @@ public class PropertyDetailsMapper implements CommonDetailsMapper {
 					.address(NA).status("Pending").moduleName(moduleName).build();
 		}
 		if (validityDate != 0L) {
-			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validityDate), Date);
+			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(validityDate), DATE_FORMAT);
 			validToString = CommonDetailUtil.addOneYearToEpoch(String.valueOf(validityDate)); // Add one year
 		}
 	

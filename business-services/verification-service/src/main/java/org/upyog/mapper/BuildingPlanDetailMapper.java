@@ -10,33 +10,33 @@ public class BuildingPlanDetailMapper implements CommonDetailsMapper {
 	
 	@Override
 	public String getModuleName() {
-		return BuildingPlanApprovalModule;
+		return BPA_MODULE_NAME;
 	}
 
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
-		JsonNode bpaDetailNode = json.path(BpaApplication).isArray() && json.path(BpaApplication).size() > 0
-				? json.path(BpaApplication).get(0)
+		JsonNode bpaDetailNode = json.path(BPA_APPLICATIONS).isArray() && json.path(BPA_APPLICATIONS).size() > 0
+				? json.path(BPA_APPLICATIONS).get(0)
 				: null;
 
 		if (bpaDetailNode == null) {
-			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EmptyString).status(EmptyString).applicationNumber(EmptyString)
+			return CommonDetails.builder().fromDate(NA).toDate(NA).address(EMPTY_STRING).status(EMPTY_STRING).applicationNumber(EMPTY_STRING)
 					.build();
 		}
 		
 		long approvalDate = bpaDetailNode.path("approvalDate").asLong(0L);
 		String validFromString = NA;
 		String validToString = NA;
-		String status = bpaDetailNode.path("status").asText(EmptyString);
-		String applicationNumber = bpaDetailNode.path("applicationNo").asText(EmptyString);
-		String moduleName = BpaApplication;
+		String status = bpaDetailNode.path("status").asText(EMPTY_STRING);
+		String applicationNumber = bpaDetailNode.path("applicationNo").asText(EMPTY_STRING);
+		String moduleName = BPA_APPLICATIONS;
 		if (!"APPROVED".equalsIgnoreCase(status)) {
 			// If not Completed, set status as Pending and other details as N/A
 			return CommonDetails.builder().applicationNumber(applicationNumber).fromDate(NA).toDate(NA)
 					.address(NA).status("Pending").moduleName(moduleName).build();
 		}
 		if (approvalDate != 0L) {
-			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(approvalDate), Date);
+			validFromString = CommonDetailUtil.convertToFormattedDate(String.valueOf(approvalDate), DATE_FORMAT);
 			validToString = CommonDetailUtil.addOneYearToEpoch(String.valueOf(approvalDate)); // Add one year
 		}
 		

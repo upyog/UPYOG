@@ -11,15 +11,15 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 
 	@Override
     public String getModuleName() {
-        return EwasteModule;
+        return EWASTE_MODULE_NAME;
     }
 	
 	@Override
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
 		// Access the first element of the EwasteApplication array
 		
-		JsonNode EwasteApplication = json.path(EwasteApplications).isArray()
-				&& json.path(EwasteApplications).size() > 0 ? json.path(EwasteApplications).get(0) : null;
+		JsonNode EwasteApplication = json.path(EWASTE_APPLICATIONS).isArray()
+				&& json.path(EWASTE_APPLICATIONS).size() > 0 ? json.path(EWASTE_APPLICATIONS).get(0) : null;
 
 		if (EwasteApplication == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA)
