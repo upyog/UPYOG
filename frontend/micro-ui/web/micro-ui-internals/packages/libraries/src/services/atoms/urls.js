@@ -202,7 +202,7 @@ digiLocker:{
   token:"/requester-services-dx/user/token/citizen",
   issueDoc:"/requester-services-dx/user/issuedfiles",
   uri:"/requester-services-dx/user/file",
-  auth:"/user/auth/_digilocker"
+  oauth:"/user/digilocker/oauth/token"
 },
   engagement: {
     document: {
