@@ -398,10 +398,10 @@ public class AssetService {
 			if (StringUtils.equalsIgnoreCase(assetBusinessService, AssetConstants.ASSET_BusinessService)) {
 				for (Role role : roles) {
 					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_CREATOR)) {
-						roleCodes.add(AssetConstants.ASSET_CREATOR);
+						roleCodes.add(AssetConstants.ASSET_WF_CREATOR);
 					}
 					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_APPROVER)) {
-						roleCodes.add(AssetConstants.ASSET_APPROVER);
+						roleCodes.add(AssetConstants.ASSET_WF_APPROVER);
 					}
 				}
 			}
