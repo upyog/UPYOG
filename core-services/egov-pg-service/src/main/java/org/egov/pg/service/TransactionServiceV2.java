@@ -17,6 +17,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransactionDetailsWrapper;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
@@ -115,6 +116,16 @@ public class TransactionServiceV2 {
 			producer.push(appProperties.getSaveTxnTopic(),
 					new org.egov.pg.models.TransactionRequest(requestInfo, transaction));
 			producer.push(appProperties.getSaveTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
+
+			// Enrich transaction Details by generating uuid, txnid, audit details and
+			// additional details
+			if (!CollectionUtils.isEmpty(transaction.getTransactionDetails())) {
+				enrichmentService.populateTransactionsDetails(transaction, requestInfo);
+				transaction.getTransactionDetails().forEach(transactionDetails -> {
+					producer.push(appProperties.getSaveTxnDetailsTopic(),
+							TransactionDetailsWrapper.builder().transactionDetails(transactionDetails).build());
+				});
+			}
 
 			transactions.add(transaction);
 		});
