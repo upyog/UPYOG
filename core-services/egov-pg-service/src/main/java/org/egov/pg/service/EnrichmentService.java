@@ -113,19 +113,6 @@ public class EnrichmentService {
 
 	public void populateTransactionsDetails(Transaction transaction, RequestInfo requestInfo) {
 
-		Object additionalDetails;
-
-		if (Objects.isNull(transaction.getAdditionalDetails())) {
-			additionalDetails = objectMapper.createObjectNode();
-			((ObjectNode) additionalDetails).set("taxAndPayments",
-					objectMapper.valueToTree(transaction.getTaxAndPayments()));
-		} else {
-			Map<String, Object> additionDetailsMap = objectMapper.convertValue(transaction.getAdditionalDetails(),
-					Map.class);
-			additionDetailsMap.put("taxAndPayments", (Object) transaction.getTaxAndPayments());
-			additionalDetails = objectMapper.convertValue(additionDetailsMap, Object.class);
-		}
-
 		AuditDetails auditDetails = AuditDetails.builder()
 				.createdBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
 				.createdTime(System.currentTimeMillis()).build();
@@ -133,7 +120,6 @@ public class EnrichmentService {
 		transaction.getTransactionDetails().forEach(transactionDetails -> {
 			transactionDetails.setUuid(UUID.randomUUID().toString());
 			transactionDetails.setTxnId(transaction.getTxnId());
-			transactionDetails.setAdditionalDetails(additionalDetails);
 			transactionDetails.setAuditDetails(auditDetails);
 		});
 	}

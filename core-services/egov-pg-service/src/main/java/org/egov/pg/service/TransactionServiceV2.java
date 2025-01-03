@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,14 +18,17 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransactionDetails;
 import org.egov.pg.models.TransactionDetailsWrapper;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
+import org.egov.pg.repository.TransactionDetailsRepository;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.ResponseInfo;
 import org.egov.pg.web.models.TransactionCriteriaV2;
+import org.egov.pg.web.models.TransactionDetailsCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionRequestV2;
 import org.egov.pg.web.models.TransactionResponseV2;
@@ -63,6 +67,9 @@ public class TransactionServiceV2 {
 
 	@Autowired
 	private TransactionRepository transactionRepository;
+
+	@Autowired
+	private TransactionDetailsRepository transactionDetailsRepository;
 
 	@Autowired
 	private PaymentsService paymentsService;
@@ -143,8 +150,51 @@ public class TransactionServiceV2 {
 	 */
 	public List<Transaction> getTransactions(TransactionCriteriaV2 transactionCriteriaV2) {
 		log.info(transactionCriteriaV2.toString());
+		List<Transaction> transactions = new ArrayList<>();
 		try {
-			return transactionRepository.fetchTransactions(transactionCriteriaV2);
+			if (!CollectionUtils.isEmpty(transactionCriteriaV2.getBillIds())) {
+				TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
+						.billIds(transactionCriteriaV2.getBillIds()).build();
+
+				List<TransactionDetails> transactionDetails = transactionDetailsRepository
+						.fetchTransactionDetails(transactionDetailsCriteria);
+
+				Set<String> txnIds = transactionDetails.stream().map(TransactionDetails::getTxnId)
+						.collect(Collectors.toSet());
+				Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
+						.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
+
+				if (!CollectionUtils.isEmpty(txnIds)) {
+					TransactionCriteriaV2 criteriaV2 = TransactionCriteriaV2.builder().txnIds(txnIds).build();
+					transactions = transactionRepository.fetchTransactions(criteriaV2);
+				}
+
+				transactions.forEach(transaction -> {
+					transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
+				});
+
+			} else {
+				transactions = transactionRepository.fetchTransactions(transactionCriteriaV2);
+
+				Set<String> txnIdsToFetch = transactions.stream().map(Transaction::getTxnId)
+						.collect(Collectors.toSet());
+
+				if (!txnIdsToFetch.isEmpty()) {
+					TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
+							.txnIds(txnIdsToFetch).build();
+					List<TransactionDetails> transactionDetails = transactionDetailsRepository
+							.fetchTransactionDetails(transactionDetailsCriteria);
+
+					Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
+							.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
+
+					transactions.forEach(transaction -> {
+						transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
+					});
+				}
+			}
+
+			return transactions;
 		} catch (DataAccessException e) {
 			log.error("Unable to fetch data from the database for criteria: " + transactionCriteriaV2.toString(), e);
 			throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");

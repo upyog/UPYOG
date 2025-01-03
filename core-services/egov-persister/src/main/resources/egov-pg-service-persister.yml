@@ -70,7 +70,7 @@ serviceMaps:
    fromTopic: save-pg-txns-details
    isTransaction: true
    queryMaps:   
-    - query: INSERT INTO eg_pg_transactions_details (uuid, txn_id, txn_amount, bill_id, consumer_code, additional_details, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?::numeric, ?, ?, ?::jsonb, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pg_transactions_details (uuid, txn_id, txn_amount, bill_id, consumer_code, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?::numeric, ?, ?, ?, ?, ?, ?);
       basePath: TransactionDetails
       jsonMaps:
       
@@ -83,10 +83,6 @@ serviceMaps:
       - jsonPath: $.TransactionDetails.billId
       
       - jsonPath: $.TransactionDetails.consumerCode
-      
-      - jsonPath: $.TransactionDetails.additionalDetails
-        type: JSON
-        dbType: JSONB
       
       - jsonPath: $.TransactionDetails.auditDetails.createdBy
        

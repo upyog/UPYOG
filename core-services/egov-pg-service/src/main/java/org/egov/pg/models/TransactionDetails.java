@@ -27,9 +27,6 @@ public class TransactionDetails {
 
 	private String consumerCode;
 
-	@JsonProperty("additionalDetails")
-	private Object additionalDetails;
-
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
