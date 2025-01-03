@@ -195,7 +195,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           {formData.asset.assetsubtype["value"]}/{formData.asset.BookPagereference}
         </CardCaption>
       </Card>
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} >
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}
+              isDisabled={!assetDetails["purchaseDate"] || !assetDetails["modeOfPossessionOrAcquisition"] || !assetDetails["purchaseOrderNumber"]}>
         <React.Fragment>
           <div>
             {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")} *`}
