@@ -18,7 +18,9 @@ public enum Channel {
   
   LEGACY_MIGRATION("LEGACY_MIGRATION"),
 	
-  MIGRATION("MIGRATION");
+  MIGRATION("MIGRATION"),
+  
+  ESEWAEMP("ESEWAEMP");
 
   private String value;
 

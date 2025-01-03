@@ -67,6 +67,9 @@ public class TLConfiguration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+    
     @Value("${egov.idgen.tl.applicationNum.name}")
     private String applicationNumberIdgenNameTL;
 

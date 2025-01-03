@@ -2,12 +2,18 @@ package org.egov.waterconnection.service;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
@@ -26,11 +32,15 @@ import org.egov.waterconnection.web.models.users.UserDetailResponse;
 import org.egov.waterconnection.web.models.users.UserSearchRequest;
 import org.egov.waterconnection.web.models.workflow.ProcessInstance;
 import org.egov.waterconnection.workflow.WorkflowService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -69,6 +79,11 @@ public class EnrichmentService {
 	@Autowired
 	private WaterServiceImpl waterService;
 
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
@@ -92,22 +107,73 @@ public class EnrichmentService {
 	 */
 	@SuppressWarnings("unchecked")
 	public void enrichWaterConnection(WaterConnectionRequest waterConnectionRequest, int reqType) {
+	String roleCodeName=null;
 		AuditDetails auditDetails = waterServicesUtil
 				.getAuditDetails(waterConnectionRequest.getRequestInfo().getUserInfo().getUuid(), true);
 		waterConnectionRequest.getWaterConnection().setAuditDetails(auditDetails);
 		waterConnectionRequest.getWaterConnection().setId(UUID.randomUUID().toString());
 		waterConnectionRequest.getWaterConnection().setStatus(StatusEnum.ACTIVE);
+		/*
+		 *Changing Hard coded channel and moving hardcoded part to constant
+		 *Moreover adding 3rd party channer config here on the basis  of role if it contains particular role.
+		 *Abhishek Rana -- 30-12-2024
+		 *		 */
+		
+		String userType = waterConnectionRequest.getRequestInfo().getUserInfo().getType().toUpperCase();
 
-		if(waterConnectionRequest.getWaterConnection().getChannel() == null){
-			if(waterConnectionRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("EMPLOYEE") )
-				waterConnectionRequest.getWaterConnection().setChannel("CFC_COUNTER");
-			if(waterConnectionRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN") )
-				waterConnectionRequest.getWaterConnection().setChannel("CITIZEN");
-			if(waterConnectionRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("SYSTEM") )
-				waterConnectionRequest.getWaterConnection().setChannel("SYSTEM");
+		
+		Object thirdPartyData = fetchThirdPartyIntegration(waterConnectionRequest.getRequestInfo(), config.getStateLevelTenantId(), WCConstants.MDMS_WC_ROLE_MODLENAME , WCConstants.MDMS_WC_ROLE_MASTERNAME, userType,true);
+
+		 Map<String, String> roleMap = new HashMap<>();
+		 
+	        if (thirdPartyData instanceof Map) {
+	            List<Map<String, Object>> thirdPartyList = (List<Map<String, Object>>) 
+	                Optional.ofNullable((Map<String, Object>) thirdPartyData)
+	                        .map(data -> (Map<String, Object>) data.get(WCConstants.MDMS_RESPONSE_KEY))
+	                        .map(mdmsRes -> (Map<String, Object>) mdmsRes.get(WCConstants.MDMS_WC_ROLE_MODLENAME))
+	                        .map(commonMasters -> (List<Map<String, Object>>) commonMasters.get(WCConstants.MDMS_WC_ROLE_MASTERNAME))
+	                        .orElse(Collections.emptyList());
+
+	            thirdPartyList.forEach(role -> {
+	                String category = (String) role.get(WCConstants.CATEGORY_KEY);
+	                String roleCode = (String) role.get(WCConstants.ROLE_CODE_KEY);
+	                roleMap.put(category, roleCode);
+	            });
+	        }
+	        
+	        List<String> requestRoles = waterConnectionRequest.getRequestInfo()
+	                .getUserInfo()
+	                .getRoles()
+	                .stream()
+	                .map(Role::getCode) 
+	                .collect(Collectors.toList());
+
+	        for (String roleCode : roleMap.values()) {
+	            if (requestRoles.contains(roleCode)) {
+	            	roleCodeName=roleCode;
+	            	
+	            }
+	        }
+
+
+		if (roleCodeName != null) {
+		    waterConnectionRequest.getWaterConnection().setChannel(roleCodeName);
+		} else {
+		    if (WCConstants.USER_TYPE_TO_CHANNEL.containsKey(userType)) {
+		        waterConnectionRequest.getWaterConnection().setChannel(WCConstants.USER_TYPE_TO_CHANNEL.get(userType));
+		    } else {
+		        throw new IllegalStateException(
+		            String.format("Unable to determine channel for userType: %s and roles: %s", 
+		                          userType, 
+		                          waterConnectionRequest.getRequestInfo()
+		                              .getUserInfo()
+		                              .getRoles()
+		                              .stream()
+		                              .map(role -> role != null ? role.getCode() : "null")
+		                              .collect(Collectors.toList()))); 
+		    }
 		}
 
-		//Application creation date
 		HashMap<String, Object> additionalDetail = new HashMap<>();
 		if (waterConnectionRequest.getWaterConnection().getAdditionalDetails() == null) {
 			for (String constValue : WCConstants.ADDITIONAL_OBJ_CONSTANT) {
@@ -196,6 +262,36 @@ public class EnrichmentService {
 			}
 		}
 		waterConnectionRequest.getWaterConnection().setAdditionalDetails(additionalDetail);
+	}
+	
+	
+	public Object fetchThirdPartyIntegration(RequestInfo requestInfo, String tenantId, String moduleName, String masterName, String userType, Boolean active) {
+	    
+		
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		String filter = String.format("[?(@.category=='%s' && @.active==%b)]", userType, active);
+	    
+	    // Add master detail with the dynamic filter
+	    masterDetails.add(MasterDetail.builder()
+	            .name(WCConstants.MDMS_WC_ROLE_MASTERNAME)
+	            .filter(filter)
+	            .build());
+
+     
+        List<ModuleDetail> wfModuleDtls = Collections.singletonList(ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(WCConstants.MDMS_WC_ROLE_MODLENAME).build());
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(wfModuleDtls)
+                .tenantId(config.getStateLevelTenantId())
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+        String uRi=config.getMdmsHost()+config.getMdmsUrl();
+        Object result = serviceRequestRepository.fetchmdmsResult(uRi, mdmsCriteriaReq);
+
+
+	    return result;
 	}
 	
 

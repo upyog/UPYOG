@@ -96,6 +96,8 @@ public class TradeLicenseDetail   {
     
     CITIZEN("CITIZEN"),
     
+    ESEWAEMP("ESEWAEMP"),
+    
     DATAENTRY("DATAENTRY");
 
     private String value;
