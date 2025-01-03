@@ -302,7 +302,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 			jdbcTemplate.update(AdvertisementBookingQueryBuilder.BOOKING_UPDATE_QUERY, status, lastUpdateBy,
 					lastUpdatedTime, receiptNo, receiptDate, bookingId);
 		} else {
-			jdbcTemplate.update(AdvertisementBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, bookingId, lastUpdateBy, lastUpdatedTime);
+			jdbcTemplate.update(AdvertisementBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, lastUpdateBy, lastUpdatedTime, bookingId);
 		}
 
 		jdbcTemplate.update(AdvertisementBookingQueryBuilder.CART_UPDATE_QUERY, status,
