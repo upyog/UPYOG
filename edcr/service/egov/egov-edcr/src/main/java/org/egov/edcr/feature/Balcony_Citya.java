@@ -138,22 +138,16 @@ public class Balcony_Citya extends FeatureProcess {
        						valueFromColumn.add("permissibleValue");
 
        						List<Map<String, Object>> permissibleValue = new ArrayList<>();
-       						try {
+       					
+       						
        							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
        							LOG.info("permissibleValue" + permissibleValue);
-       						
-
-       						} catch (NullPointerException e) {
-
-       							LOG.error("Permissible Value for Balcony not found--------", e);
-       							return null;
-       						}
-
-
-       						
+ 
 
        						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
        							balconyValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+       						}else {
+       							balconyValue = BigDecimal.ZERO;
        						}
        			
                             if (minWidth.compareTo(balconyValue.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,

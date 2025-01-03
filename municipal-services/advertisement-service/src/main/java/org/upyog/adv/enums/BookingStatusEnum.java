@@ -7,7 +7,8 @@ public enum BookingStatusEnum {
 	CANCELLATION_REQUESTED,
 	PENDING_FOR_PAYMENT,
 	PAYMENT_FAILED,
-	CANCELLED;
+	CANCELLED,
+	BOOKING_EXPIRED;
 	
 	String status;
 	
