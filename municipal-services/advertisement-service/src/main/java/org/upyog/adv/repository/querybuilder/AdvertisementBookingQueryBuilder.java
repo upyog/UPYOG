@@ -53,7 +53,7 @@ public class AdvertisementBookingQueryBuilder {
 	        + "SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE booking_id=?";
 	
 	public static final String UPDATE_BOOKING_STATUS =  "update eg_adv_booking_detail set booking_status = ?, lastmodifiedby=?, lastmodifiedtime=? "
-			+ " where booking_id in (?) ";
+			+ " where booking_id = ?";
 
 	private static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timer(booking_id, createdby, createdtime, status, booking_no, lastmodifiedby, lastmodifiedtime, add_type, location, face_area, night_light, booking_start_date, booking_end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::DATE);\n";
 
