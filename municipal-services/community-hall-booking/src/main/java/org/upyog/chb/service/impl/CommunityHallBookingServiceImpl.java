@@ -1,9 +1,13 @@
 package org.upyog.chb.service.impl;
 
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -27,6 +31,7 @@ import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
 import org.upyog.chb.web.models.ApplicantDetail;
+import org.upyog.chb.web.models.BookingPaymentTimerDetails;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
@@ -280,18 +285,50 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsList = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
 		
+
+		
 		Long timerValue =  0l;
 				
 		if(criteria.getIsTimerRequired()) {
 			 timerValue =  bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
 		}
-		
+		availabiltityDetailsList =  checkTimerTableForAvailaibility(info, criteria,availabiltityDetails);
 		CommunityHallSlotAvailabilityResponse hallSlotAvailabilityResponse = CommunityHallSlotAvailabilityResponse.builder()
 				.hallSlotAvailabiltityDetails(availabiltityDetailsList).timerValue(timerValue)
 				.build();
 		
 		log.info("Availabiltity details response after updating status :" + hallSlotAvailabilityResponse);
 		return hallSlotAvailabilityResponse;
+	}
+/// to check the timer table
+	private List<CommunityHallSlotAvailabilityDetail> checkTimerTableForAvailaibility(
+			RequestInfo info, CommunityHallSlotSearchCriteria criteria,
+			List<CommunityHallSlotAvailabilityDetail> availabilityDetails) {
+
+		List<BookingPaymentTimerDetails> timerDetails = bookingTimerService.getBookingFromTimerTable(info, criteria);
+
+		Set<BookingPaymentTimerDetails> timerDetailsSet = new HashSet<>(timerDetails);
+
+		// Update slot status using contains() and EqualsAndHashCode
+		availabilityDetails.forEach(detail -> {
+			// Create a dummy BookingPaymentTimerDetails object for comparison
+			BookingPaymentTimerDetails timerDetailsForComparison = BookingPaymentTimerDetails.builder().tenantId(detail.getTenantId())
+					.hallcode(detail.getHallCode()).communityHallcode(detail.getCommunityHallCode())
+					.bookingDate(Date.valueOf(detail.getBookingDate())) // Convert String to Date
+					.build();
+
+			boolean isCreatedByCurrentUser = timerDetails.stream().anyMatch(
+					timer -> timer.equals(timerDetailsForComparison) && timer.getCreatedBy().equals(info.getUserInfo().getUuid()));
+
+			if (timerDetailsSet.contains(timerDetailsForComparison) && !isCreatedByCurrentUser) {
+				detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+			} else {
+				detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+			}
+		});
+
+		return availabilityDetails;
+
 	}
 
 	/**

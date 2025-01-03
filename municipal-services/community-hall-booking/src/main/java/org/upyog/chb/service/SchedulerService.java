@@ -25,7 +25,7 @@ public class SchedulerService {
 	 */
 	@Scheduled(fixedRate = 5 * 60 * 1000) // Runs every 5 minutes
 	public void cleanupExpiredEntries() {
-
+		deleteExpiredBookings();
 	}
 
 	@Transactional
