@@ -135,9 +135,9 @@ public class EnrichmentService {
 	
 	public void enrichCreateAdvertisementDraftApplicationRequest(BookingRequest bookingRequest) {
 		// String draftId = BookingUtil.getRandonUUID();
-		List<Map<String, Object>> result = bookingRepository
-				.isDraftIdExistInDraft(bookingRequest.getRequestInfo().getUserInfo().getUuid());
-		String draftId = (String) result.get(0).get("draft_id");
+		List<Map<String, Object>> draftData = bookingRepository
+				.getDraftData(bookingRequest.getRequestInfo().getUserInfo().getUuid());
+		String draftId = (String) draftData.get(0).get("draft_id");
 		log.info("Enriching create draft street vending application with draft id :" + draftId);
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();

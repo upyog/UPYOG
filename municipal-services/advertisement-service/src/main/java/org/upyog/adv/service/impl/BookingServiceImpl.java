@@ -104,8 +104,8 @@ public class BookingServiceImpl implements BookingService {
 		BookingDetail bookingDetails = encryptionService.decryptObject(bookingRequest.getBookingApplication(),
 				bookingRequest.getRequestInfo());
 
-		List<Map<String, Object>> result = bookingRepository.isDraftIdExistInDraft(uuid);
-		String draftIdFromDraft = (String) result.get(0).get("draft_id");
+		List<Map<String, Object>> draftData = bookingRepository.getDraftData(uuid);
+		String draftIdFromDraft = (String) draftData.get(0).get("draft_id");
 
 		bookingRepository.updateTimerBookingId(bookingId, bookingDetails.getBookingNo(), draftIdFromDraft);
 		//bookingRepository.updateBookingSynchronously(bookingId, uuid, null,
@@ -228,14 +228,14 @@ public class BookingServiceImpl implements BookingService {
 			}
 		});
 
-		slotAvailaibilityFromTimerTable(availabiltityDetailsResponse, criteria, requestInfo);
+		updateSlotAvailaibilityStatus(availabiltityDetailsResponse, criteria, requestInfo);
 
 		log.info("Availability details response after updating status: " + availabiltityDetailsResponse);
 
 		return availabiltityDetailsResponse;
 	}
 
-	public void slotAvailaibilityFromTimerTable(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse, AdvertisementSlotSearchCriteria criteria,
+	public void updateSlotAvailaibilityStatus(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse, AdvertisementSlotSearchCriteria criteria,
 			 RequestInfo requestInfo) {
 
 		// Fetch already booked slots from the timer table
@@ -384,9 +384,9 @@ public class BookingServiceImpl implements BookingService {
 		} else {
 
 			enrichmentService.enrichCreateAdvertisementDraftApplicationRequest(bookingRequest);
-			List<Map<String, Object>> result = bookingRepository
-					.isDraftIdExistInDraft(bookingRequest.getRequestInfo().getUserInfo().getUuid());
-			String draftIdInDraft = (String) result.get(0).get("draft_id");
+			List<Map<String, Object>> draftData = bookingRepository
+					.getDraftData(bookingRequest.getRequestInfo().getUserInfo().getUuid());
+			String draftIdInDraft = (String) draftData.get(0).get("draft_id");
 			if (draftIdInDraft == null) {
 				bookingRepository.saveDraftApplication(bookingRequest);
 			}

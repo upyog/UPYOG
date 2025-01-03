@@ -159,7 +159,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 		List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookindIdFromCriteria);
 //	    
 		// Check if draft ID exists in the timer table (separate from bookingId check)
-		List<Map<String, Object>> draftResult = isDraftIdExistInDraft(uuid);
+		List<Map<String, Object>> draftResult = getDraftData(uuid);
 
 //	    if (result.isEmpty()) {
 //	        // Booking ID does not exist, insert new booking entry
@@ -220,7 +220,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 	}
 
 	
-	public List<Map<String, Object>> isDraftIdExistInDraft(String uuid) {
+	public List<Map<String, Object>> getDraftData(String uuid) {
 	    String query = queryBuilder.checkDraftIdExists(uuid);
 		List<Map<String, Object>> resultDraft = jdbcTemplate.queryForList(query, uuid);
 		return resultDraft;
@@ -228,7 +228,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 	}
 
 
-	public void deleteBookingIdForTimer(String bookingId, RequestInfo requestInfo) {
+	public void deleteBookingIdForTimer(String bookingId) {
 		String query = queryBuilder.deleteBookingIdForTimer(bookingId);
 		// String draftQuery = queryBuilder.deleteDraftIdForTimer(bookingId);
 
@@ -302,11 +302,11 @@ public class BookingRepositoryImpl implements BookingRepository {
 			jdbcTemplate.update(AdvertisementBookingQueryBuilder.BOOKING_UPDATE_QUERY, status, lastUpdateBy,
 					lastUpdatedTime, receiptNo, receiptDate, bookingId);
 		} else {
-			jdbcTemplate.update(AdvertisementBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, bookingId);
+			jdbcTemplate.update(AdvertisementBookingQueryBuilder.UPDATE_BOOKING_STATUS, status, bookingId, lastUpdateBy, lastUpdatedTime);
 		}
 
 		jdbcTemplate.update(AdvertisementBookingQueryBuilder.CART_UPDATE_QUERY, status,
-				bookingId);
+				bookingId, lastUpdateBy, lastUpdatedTime);
 
 		jdbcTemplate.update(AdvertisementBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
 
