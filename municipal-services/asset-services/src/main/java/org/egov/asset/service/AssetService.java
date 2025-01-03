@@ -167,12 +167,13 @@ public class AssetService {
 		try {
 			if (!CollectionUtils.isEmpty(rolesWithinTenant)) {
 				for (String r : rolesWithinTenant) {
-					if (r.equalsIgnoreCase(AssetConstants.ASSET_WF_APPROVER)) {
+					if (r.equalsIgnoreCase(AssetConstants.ASSET_APPROVER)) {
 						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORAPPROVAL);
 						statusWithRoles.add(AssetConstants.STATUS_APPROVED);
 						statusWithRoles.add(AssetConstants.STATUS_REJECTED);
 					}
-					if (r.equalsIgnoreCase(AssetConstants.ASSET_WF_CREATOR)) {
+					if (r.equalsIgnoreCase(AssetConstants.ASSET_CREATOR)) {
+						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORAPPROVAL);
 						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORMODIFICATION);
 						statusWithRoles.add(AssetConstants.STATUS_INITIATE);
 					}
