@@ -306,7 +306,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 		}
 
 		jdbcTemplate.update(AdvertisementBookingQueryBuilder.CART_UPDATE_QUERY, status,
-				bookingId, lastUpdateBy, lastUpdatedTime);
+				 lastUpdateBy, lastUpdatedTime, bookingId);
 
 		jdbcTemplate.update(AdvertisementBookingQueryBuilder.INSERT_BOOKING_DETAIL_AUDIT_QUERY, bookingId);
 
