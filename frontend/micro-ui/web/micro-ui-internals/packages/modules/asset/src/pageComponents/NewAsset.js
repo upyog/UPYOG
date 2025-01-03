@@ -143,7 +143,6 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       if (name === "purchaseDate") {
         calculateAssetAge(value);
       }
-
       return updatedData;
     });
   };
@@ -196,7 +195,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           {formData.asset.assetsubtype["value"]}/{formData.asset.BookPagereference}
         </CardCaption>
       </Card>
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} >
         <React.Fragment>
           <div>
             {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")} *`}
@@ -342,6 +341,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                   }}
+                  
                 />
 
           <div>
