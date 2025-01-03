@@ -132,4 +132,20 @@ public class CommonDetailUtil {
 
 		return null; // Return null if parsing fails
 	}
+	
+	/**
+	 * Masks the given mobile number, showing the first 3 and last 3 digits while masking the middle digits.
+	 * Example: Input - 9999007890, Output - 999****890
+	 * 
+	 * @author Shivank-NIUA
+	 * @param mobileNumber The original mobile number.
+	 * @return Masked mobile number or "NA" if input is invalid.
+	 */
+	public static String maskMobileNumber(String mobileNumber) {
+	    if (mobileNumber == null || mobileNumber.length() < 7) { // Ensure mobile number has at least 7 digits
+	        return "NA";
+	    }
+	    // Extract first 3 and last 3 digits, mask the middle
+	    return mobileNumber.substring(0, 3) + "****" + mobileNumber.substring(mobileNumber.length() - 3);
+	}
 }

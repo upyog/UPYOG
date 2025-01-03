@@ -55,6 +55,8 @@ public class AdvertisementSlotAvailabilityDetail {
 	@JsonProperty("slotStaus")
 	private String slotStaus;
 	
+	private String uuid;
+	
 	public Boolean isNightLight() {
 	        return nightLight;
 	    }
