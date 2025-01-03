@@ -59,20 +59,19 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 
 				AuditDetails auditdetails = getAuditDetail(rs, "property");
 
-				String institutionId = rs.getString("institutionid");
+				//String institutionId = rs.getString("institutionid");
 				Institution institute = null;
 				
-				if (null != institutionId) {
-					
-					institute = Institution.builder()
-						.nameOfAuthorizedPerson(rs.getString("nameOfAuthorizedPerson"))
-						.tenantId(rs.getString("institutiontenantid"))
-						.designation(rs.getString("designation"))
-						.name(rs.getString("institutionName"))
-						.type(rs.getString("institutionType"))
-						.id(institutionId)
-						.build();
-				}
+				/*
+				 * if (null != institutionId) {
+				 * 
+				 * institute = Institution.builder()
+				 * .nameOfAuthorizedPerson(rs.getString("nameOfAuthorizedPerson"))
+				 * .tenantId(rs.getString("institutiontenantid"))
+				 * .designation(rs.getString("designation"))
+				 * .name(rs.getString("institutionName")) .type(rs.getString("institutionType"))
+				 * .id(institutionId) .build(); }
+				 */
 
 				Double landArea = rs.getDouble("landArea");
 				if (rs.wasNull()) {
@@ -139,46 +138,39 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		
 		List<Unit> units = currentProperty.getUnits();
 
-		String unitId = rs.getString("unitid");
-		if (null == unitId)
-			return;
-
-		if (!CollectionUtils.isEmpty(units))
-			for (Unit unit : units) {
-				if (unit.getId().equals(unitId))
-					return;
-			}
+		/*
+		 * String unitId = rs.getString("unitid"); if (null == unitId) return;
+		 * 
+		 * if (!CollectionUtils.isEmpty(units)) for (Unit unit : units) { if
+		 * (unit.getId().equals(unitId)) return; }
+		 */
 		
-		Long constructionDate = 0 == rs.getLong("constructionDate") ? null : rs.getLong("constructionDate");
+		//Long constructionDate = 0 == rs.getLong("constructionDate") ? null : rs.getLong("constructionDate");
 
-		ConstructionDetail consDetail = ConstructionDetail.builder()
-				.constructionType(rs.getString("constructionType"))
-				.dimensions(getadditionalDetail(rs, "dimensions"))
-				.constructionDate(constructionDate)
-				.superBuiltUpArea(rs.getBigDecimal("unitspba"))
-				.builtUpArea(rs.getBigDecimal("builtUpArea"))
-				.carpetArea(rs.getBigDecimal("carpetArea"))
-				.plinthArea(rs.getBigDecimal("plinthArea"))
-				.build();
-
+		/*
+		 * ConstructionDetail consDetail = ConstructionDetail.builder()
+		 * //.constructionType(rs.getString("constructionType"))
+		 * //.dimensions(getadditionalDetail(rs, "dimensions"))
+		 * //.constructionDate(constructionDate)
+		 * //.superBuiltUpArea(rs.getBigDecimal("unitspba"))
+		 * //.builtUpArea(rs.getBigDecimal("builtUpArea"))
+		 * //.carpetArea(rs.getBigDecimal("carpetArea"))
+		 * .plinthArea(rs.getBigDecimal("plinthArea")) .build();
+		 */
 		
-		BigDecimal arv = rs.getBigDecimal("arv");
-		if (null != arv)
-			arv = arv.stripTrailingZeros();
-
-		Unit unit = Unit.builder()
-				.occupancyType(rs.getString("occupancyType"))
-				.usageCategory(rs.getString("unitusageCategory"))
-				.occupancyDate(rs.getLong("occupancyDate"))
-				.active(rs.getBoolean("isunitactive"))
-				.unitType(rs.getString("unitType"))
-				.constructionDetail(consDetail)
-				.floorNo(rs.getInt("floorno"))
-				.arv(arv)
-				.id(unitId)
-				.build();
-		
-		currentProperty.addUnitsItem(unit);
+		/*
+		 * BigDecimal arv = rs.getBigDecimal("arv"); if (null != arv) arv =
+		 * arv.stripTrailingZeros();
+		 */
+		/*
+		 * Unit unit = Unit.builder() .occupancyType(rs.getString("occupancyType"))
+		 * .usageCategory(rs.getString("unitusageCategory"))
+		 * .occupancyDate(rs.getLong("occupancyDate"))
+		 * .active(rs.getBoolean("isunitactive")) .unitType(rs.getString("unitType"))
+		 * //.constructionDetail(consDetail) .floorNo(rs.getInt("floorno")) //.arv(arv)
+		 * //.id(unitId) .build();
+		 */
+		//currentProperty.addUnitsItem(unit);
 	}
 
 	
@@ -192,30 +184,24 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 * @throws SQLException
 	 */
 	private void addDocToProperty(ResultSet rs, Property property) throws SQLException {
-
-		String docId = rs.getString("pdocid");
-		String entityId = rs.getString("pdocentityid");
-		List<Document> docs = property.getDocuments();
-		
-		if (!(docId != null && entityId.equals(property.getId())))
-			return;
-
-		if (!CollectionUtils.isEmpty(docs))
-			for (Document doc : docs) {
-				if (doc.getId().equals(docId))
-					return;
-			}
-
-		Document doc =  Document.builder()
-			.status(Status.fromValue(rs.getString("pdocstatus")))
-			.documentType(rs.getString("pdoctype"))
-			.fileStoreId(rs.getString("pdocfileStore"))
-			.documentUid(rs.getString("pdocuid"))
-			.id(docId)
-			.build();
-		
-		property.addDocumentsItem(doc);
-	}
+		/*
+		 * 
+		 * String docId = rs.getString("pdocid"); String entityId =
+		 * rs.getString("pdocentityid"); List<Document> docs = property.getDocuments();
+		 * 
+		 * if (!(docId != null && entityId.equals(property.getId()))) return;
+		 * 
+		 * if (!CollectionUtils.isEmpty(docs)) for (Document doc : docs) { if
+		 * (doc.getId().equals(docId)) return; }
+		 * 
+		 * Document doc = Document.builder()
+		 * .status(Status.fromValue(rs.getString("pdocstatus")))
+		 * .documentType(rs.getString("pdoctype"))
+		 * .fileStoreId(rs.getString("pdocfileStore"))
+		 * .documentUid(rs.getString("pdocuid")) .id(docId) .build();
+		 * 
+		 * property.addDocumentsItem(doc);
+		 */}
 	
 	/**
 	 * Adds Owner Object to Property
@@ -273,30 +259,24 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 * @throws SQLException
 	 */
 	private void addDocToOwner(ResultSet rs, OwnerInfo owner) throws SQLException {
-		
-		String docId = rs.getString("owndocid");
-		String 	entityId = rs.getString("owndocentityId");
-		List<Document> docs = owner.getDocuments();
-
-		if (!(null != docId && entityId.equals(owner.getOwnerInfoUuid())))
-			return;
-
-		if (!CollectionUtils.isEmpty(docs))
-			for (Document doc : docs) {
-				if (doc.getId().equals(docId))
-					return;
-			}
-	
-		Document doc = Document.builder()
-			.status(Status.fromValue(rs.getString("owndocstatus")))
-			.fileStoreId(rs.getString("owndocfileStore"))
-			.documentType(rs.getString("owndoctype"))
-			.documentUid(rs.getString("owndocuid"))
-			.id(docId)
-			.build();
-		
-		owner.addDocumentsItem(doc);
-	}
+		/*
+		 * 
+		 * //String docId = rs.getString("owndocid"); //String entityId =
+		 * rs.getString("owndocentityId"); List<Document> docs = owner.getDocuments();
+		 * 
+		 * if (!(null != docId && entityId.equals(owner.getOwnerInfoUuid()))) return;
+		 * 
+		 * if (!CollectionUtils.isEmpty(docs)) for (Document doc : docs) { if
+		 * (doc.getId().equals(docId)) return; }
+		 * 
+		 * Document doc = Document.builder()
+		 * .status(Status.fromValue(rs.getString("owndocstatus")))
+		 * .fileStoreId(rs.getString("owndocfileStore"))
+		 * .documentType(rs.getString("owndoctype"))
+		 * .documentUid(rs.getString("owndocuid")) .id(docId) .build();
+		 * 
+		 * owner.addDocumentsItem(doc);
+		 */}
 
 	
 	/**
