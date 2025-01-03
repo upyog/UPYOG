@@ -67,8 +67,8 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				User user = User.builder().id(rs.getString("ptown_userid")).build();
 				Connection connection=new Connection();
 				try {
-					connection.setPropertyId(rs.getString("pid"));
-					connection.setOldConnectionNo(rs.getString("oldpid"));
+					connection.setPropertyId(rs.getString("propertyId"));
+					connection.setOldConnectionNo(rs.getString("oldPropertyId"));
 					connection.setStatus(rs.getString("conn_status"));
 					connection.setAdditionalDetails(rs.getObject("conn_add"));
 				} catch (Exception ex) {
@@ -77,6 +77,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				}
 				bill = Bill.builder()
 					.id(billId)
+					.propertyId(rs.getString("propertyId")) // Set the pid here
 					.totalAmount(BigDecimal.ZERO)
 					.tenantId(rs.getString("b_tenantid"))
 					.payerName(rs.getString("b_payername"))

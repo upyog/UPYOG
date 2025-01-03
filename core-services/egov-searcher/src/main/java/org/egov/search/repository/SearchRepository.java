@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Comparator;
 import org.egov.custom.mapper.billing.impl.Bill;
 import org.egov.custom.mapper.billing.impl.BillRowMapper;
+import org.egov.custom.mapper.billing.impl.IntegratedBillRowMapper;
 import org.egov.search.model.Definition;
+import org.egov.search.model.PropertyBasedBill;
 import org.egov.search.model.SearchRequest;
 import org.egov.search.utils.SearchUtils;
 import org.egov.tracer.model.CustomException;
@@ -41,6 +43,10 @@ public class SearchRepository {
 
 	@Autowired
 	private BillRowMapper rowMapper;
+	
+	@Autowired
+	private IntegratedBillRowMapper integratedRowMapper;
+	
 			
 	public List<String> fetchData(SearchRequest searchRequest, Definition definition) {
         Map<String, Object> preparedStatementValues = new HashMap<>();
@@ -54,16 +60,37 @@ public class SearchRepository {
 	
 	public Object fetchWithCustomMapper(SearchRequest searchRequest, Definition searchDefinition) {
         Map<String, Object> preparedStatementValues = new HashMap<>();
-		String query = searchUtils.buildQuery(searchRequest, searchDefinition.getSearchParams(), searchDefinition.getQuery(), preparedStatementValues);
+		
+        String query = searchUtils.buildQuery(searchRequest, searchDefinition.getSearchParams(), searchDefinition.getQuery(), preparedStatementValues);
 		try {
 			log.info("Final Query: " + query);
 			//log.debug("preparedStatementValues: " + preparedStatementValues);
-			List<Bill> result = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
-	        Map<String, String> business = (Map<String, String>) searchRequest.getSearchCriteria();
+			List<PropertyBasedBill> result = null;
+			List<Bill> result1 = null;
+
+			 Map<String, Object> searchCriteria = (Map<String, Object>) searchRequest.getSearchCriteria();
+
+			    // Validate searchCriteria and get the URL
+			    String url = null;
+			    if (searchCriteria != null) {
+			        url = (String) searchCriteria.get("url");
+			    }
+
+			    // Check if URL contains 'integrated'
+			    if (url != null && url.contains("integrated")) {
+			        log.info("URL contains 'integrated': " + url);
+			        // Add logic specific to integrated billing URLs
+			        result = namedParameterJdbcTemplate.query(query, preparedStatementValues, integratedRowMapper);
+			    } else {
+			        log.info("URL does not contain 'integrated': " + url);
+			        result1 = namedParameterJdbcTemplate.query(query, preparedStatementValues, rowMapper);
+			    }
+			
+			Map<String, String> business = (Map<String, String>) searchRequest.getSearchCriteria();
 	        
-	        String businesService=business.get("businesService");
-	     if ((businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS")) && !result.isEmpty())
-			Collections.sort(result.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+	        String businesService = business.get("businesService");
+//	     if ((businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS")) && !result.isEmpty())
+//			Collections.sort(result.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
 
 
 			return result;
