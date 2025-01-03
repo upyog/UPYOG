@@ -26,6 +26,7 @@ import org.egov.pg.web.models.ResponseInfo;
 import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionRequestV2;
+import org.egov.pg.web.models.CreateChecksums;
 import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.pg.web.models.User;
 import org.egov.tracer.model.CustomException;
@@ -255,5 +256,40 @@ public class TransactionServiceV2 {
 				.totalPayableAmount(totalPayableAmount).callbackUrl(callbackUrl).orderIdArray(orderIdArray)
 				.consumerCodeArray(consumerCodeArray).user(user).build();
 	}
+	
+	public List<String> createChecksum(CreateChecksums transactionRequests) {
+	    List<String> checksums = new ArrayList<>();
+		RequestInfo requestInfo = transactionRequests.getRequestInfo();
+	    // Iterate over transactions
+	    transactionRequests.getTransactions().forEach(transaction -> {
+//	        if ("PAYTM".equalsIgnoreCase(transaction.getGateway())) {
+	            try {
+	                Gateway gateway = gatewayService.getGateway("PAYTM");
+	                
+	                if (gateway == null) {
+	                    throw new IllegalStateException("Gateway not found: PAYTM");
+	                }
+	                
+	                String checksum = gateway.generateChecksum(transaction,requestInfo);
+	                
+	                if (checksum != null && !checksum.isEmpty()) {
+	                    checksums.add(checksum); // Add to the list of checksums
+	                } else {
+	                    throw new IllegalStateException("Generated checksum is null or empty for transaction: " + transaction);
+	                }
+	            } catch (Exception e) {
+	                // Log the error and continue processing other transactions
+	                System.err.println("Error generating checksum for transaction: " + transaction);
+	                e.printStackTrace();
+	            }
+	        }
+//	        else {
+//	        	System.out.println("notpaytm");	        }
+//	    }
+	);
+	    
+	    return checksums; // Return all checksums
+	}
+
 
 }

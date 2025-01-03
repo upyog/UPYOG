@@ -1,8 +1,24 @@
 package org.egov.pg.service.gateways.paytm;
 
 import com.paytm.pg.merchant.CheckSumServiceHelper;
+
+import java.io.InputStreamReader;
 import lombok.extern.slf4j.Slf4j;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.util.Random;
+import org.json.JSONObject;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.web.models.CheckSumTransaction;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
@@ -37,6 +53,7 @@ public class PaytmGateway implements Gateway {
     private final String INDUSTRY_TYPE_ID;
     private final String CHANNEL_ID;
     private final String WEBSITE;
+    private final String TID;
 
     private final boolean ACTIVE;
 
@@ -54,6 +71,8 @@ public class PaytmGateway implements Gateway {
         WEBSITE = environment.getRequiredProperty("paytm.merchant.website");
         MERCHANT_URL_DEBIT = environment.getRequiredProperty("paytm.url.debit");
         MERCHANT_URL_STATUS = environment.getRequiredProperty("paytm.url.status");
+        TID = environment.getRequiredProperty("paytm.merchant.secret.tid");
+
 
     }
 
@@ -161,5 +180,105 @@ public class PaytmGateway implements Gateway {
     public String generateRedirectFormData(Transaction transaction) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public String generateChecksum(CheckSumTransaction transaction,RequestInfo requestInfo ) {
+//    	 TreeMap<String, String> paramMap = new TreeMap<>();
+//         paramMap.put("MID", MID);
+//         paramMap.put("ORDER_ID", transaction.getTxnId());
+//         paramMap.put("CUST_ID", requestInfo.getUserInfo().getUserName());
+//         paramMap.put("INDUSTRY_TYPE_ID", INDUSTRY_TYPE_ID);
+//         paramMap.put("CHANNEL_ID", CHANNEL_ID);
+//         paramMap.put("TXN_AMOUNT", Utils.formatAmtAsRupee(transaction.getTxnAmount()));
+//         paramMap.put("WEBSITE", WEBSITE);
+//         paramMap.put("EMAIL", requestInfo.getUserInfo().getEmailId());
+//         paramMap.put("MOBILE_NO", requestInfo.getUserInfo().getMobileNumber());
+//         paramMap.put("CALLBACK_URL", transaction.getCallbackUrl());
+    	   LocalDateTime now = LocalDateTime.now();
+           
+           // Define the desired format
+           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+           
+           // Format the current date and time
+           String formattedDateTime = now.format(formatter);
+           System.out.println(formattedDateTime+"jgjhkj");
+           TreeMap<String, String> Map = new TreeMap<>();
+			
+   		
+   		Map.put("paytmMid", MID);//put  mid  here Testin39635949826983//Gaurav09015494045385//s-Prachi65794223240821  , p-Prachi57804451957605
+   		Map.put("paytmTid", TID);//put  tid  here 70000398//10714205  //10955450
+   		Map.put("transactionDateTime", formattedDateTime);// ("2022-03-15 9:42:00")); //
+   		Map.put("merchantTransactionId", "8778943322132908"+ new Random().nextInt(10000));
+   		Map.put("transactionAmount", "100");
+//    	 paramMap.put("paytmMid", MID);
+//    	 paramMap.put("paytmTid", TID);
+//    	 paramMap.put("transactionDateTime", formattedDateTime);
+//    	 paramMap.put("merchantTransactionId", transaction.getMerchantTransactionId());
+//    	 if(transaction.getMerchantReferenceNo() != null) {
+//    		 paramMap.put("merchantReferenceNo", transaction.getMerchantReferenceNo());
+//    	 }
+//    	 
+//    	 paramMap.put("transactionAmount", transaction.getTransactionAmount());
+//    	 if(transaction.getMerchantExtendedInfo() != null) {
+//        	 paramMap.put("merchantExtendedInfo", transaction.getMerchantExtendedInfo().toString()); 
+//    	 }
+
+         try {
+        	 for (Map.Entry<String, String> entry : Map.entrySet()) {
+        		    if (entry.getValue() == null || entry.getValue().isEmpty()) {
+        		        throw new IllegalArgumentException("Missing or empty parameter: " + entry.getKey());
+        		    }
+        		}
+        	 
+     		String checksum = CheckSumServiceHelper.getCheckSumServiceHelper().genrateCheckSum(MERCHANT_KEY,Map); // oon!1%!ftW!#HnB4//URclyb7U2QNj2L3G  , s- XtR3WxzZkWmlVlt3	//Merchant key
+    		JSONObject Obj = new JSONObject(Map);
+    		String post_data = Obj.toString();
+    		//("2022-01-12 16:27:00")//2022-03-15 9:27:00//
+    		System.out.println("Request:\n" + post_data);
+    						
+    		  String body = "{\"head\":{\"version\":\"3.1\",\"requestTimeStamp\":\"" +
+    				  (formattedDateTime)+ "\"," + "\"channelId\":\"EDC\",\"checksum\":\"" + checksum
+    		  + "\"},\"body\":" + post_data + "}";
+    		
+    		
+    		System.out.println("Request:\n" + body);
+    		
+    		URL url = new URL("https://securegw-stage.paytm.in/ecr/payment/request");
+    		
+    	
+//    		URL url = new URL("https://securegw-edc.paytm.in/ecr/payment/request");
+    		HttpURLConnection connection = null;
+    		connection = (HttpURLConnection) url.openConnection();
+    		connection.setRequestMethod("POST");
+    		connection.setRequestProperty("Content-Type", "application/json");
+    		connection.setUseCaches(false);
+    		connection.setDoOutput(true);
+    		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+    		wr.writeBytes(body);
+    		wr.close();
+    		InputStream is = connection.getInputStream();
+    		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+    		StringBuilder response = new StringBuilder();
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			response.append(line);
+    			response.append('\r');				
+    	}
+    		rd.close();
+    		System.out.println("URL:\n" + url);
+    		System.out.println("Request:\n" + body);
+    		System.out.println("Response:\n" + response);
+        	 
+        	 
+        	 
+//        	  String checkSum = CheckSumServiceHelper.getCheckSumServiceHelper().genrateCheckSum(MERCHANT_KEY, paramMap);
+//              paramMap.put("CHECKSUMHASH", checkSum);
+              return checksum;
+         }
+         catch (Exception e) {
+             log.error("Paytm Checksum generation failed", e);
+             throw new CustomException("CHECKSUM_GEN_FAILED", "Hash generation failed, gateway redirect URI cannot be generated");
+         }
     }
 }

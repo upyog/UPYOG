@@ -3,7 +3,10 @@ package org.egov.pg.service;
 import java.net.URI;
 import java.util.Map;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.web.models.CheckSumTransaction;
+
 
 
 /**
@@ -59,4 +62,9 @@ public interface Gateway {
     String transactionIdKeyInResponse();
 
     String generateRedirectFormData(Transaction transaction );
+    
+    default String generateChecksum(CheckSumTransaction transaction,RequestInfo requestInfo ) {
+    	return null;
+    }
+
 }
