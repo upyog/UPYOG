@@ -186,7 +186,8 @@ public class UserController {
     @PostMapping("/auth/_digilocker")
     public Object authDigiLocker(@RequestBody @Valid CreateUserRequest createUserRequest, @RequestHeader HttpHeaders headers) {
         UserSearchRequest request = new UserSearchRequest();
-        request.setMobileNumber(createUserRequest.getUser().getMobileNumber());
+        //request.setMobileNumber(createUserRequest.getUser().getMobileNumber());
+        request.setUserName(createUserRequest.getUser().getMobileNumber());
         //request.setDigilockerSearch(isDigiLockerSearch);
         request.setTenantId(createUserRequest.getUser().getTenantId());
         List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
