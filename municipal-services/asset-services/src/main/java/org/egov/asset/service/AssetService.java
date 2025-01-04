@@ -19,6 +19,7 @@ import javax.validation.Valid;
 
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.dto.AssetAssignmentDTO;
+import org.egov.asset.dto.AssetAddressDTO;
 import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.dto.AssetSearchDTO;
 import org.egov.asset.repository.AssetRepository;
@@ -167,13 +168,15 @@ public class AssetService {
 		try {
 			if (!CollectionUtils.isEmpty(rolesWithinTenant)) {
 				for (String r : rolesWithinTenant) {
-					if (r.equalsIgnoreCase(AssetConstants.ASSET_WF_APPROVER)) {
+					if (r.equalsIgnoreCase(AssetConstants.ASSET_APPROVER)) {
 						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORAPPROVAL);
 						statusWithRoles.add(AssetConstants.STATUS_APPROVED);
 						statusWithRoles.add(AssetConstants.STATUS_REJECTED);
 					}
-					if (r.equalsIgnoreCase(AssetConstants.ASSET_WF_CREATOR)) {
+					if (r.equalsIgnoreCase(AssetConstants.ASSET_CREATOR)) {
 						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORMODIFICATION);
+						statusWithRoles.add(AssetConstants.STATUS_PENDINGFORAPPROVAL);
+						statusWithRoles.add(AssetConstants.STATUS_APPROVED);
 						statusWithRoles.add(AssetConstants.STATUS_INITIATE);
 					}
 				}
@@ -197,6 +200,8 @@ public class AssetService {
 		if (asset.getAssetAssignment() != null) {
 			assetSearchDTO.setAssetAssignment(modelMapper.map(asset.getAssetAssignment(), AssetAssignmentDTO.class));
 		}
+		assetSearchDTO.setAddressDetails(modelMapper.map(asset.getAddressDetails(), AssetAddressDTO.class));
+
 		return assetSearchDTO;
 	}
 
@@ -397,10 +402,10 @@ public class AssetService {
 			if (StringUtils.equalsIgnoreCase(assetBusinessService, AssetConstants.ASSET_BusinessService)) {
 				for (Role role : roles) {
 					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_CREATOR)) {
-						roleCodes.add(AssetConstants.ASSET_CREATOR);
+						roleCodes.add(AssetConstants.ASSET_WF_CREATOR);
 					}
 					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_APPROVER)) {
-						roleCodes.add(AssetConstants.ASSET_APPROVER);
+						roleCodes.add(AssetConstants.ASSET_WF_APPROVER);
 					}
 				}
 			}
