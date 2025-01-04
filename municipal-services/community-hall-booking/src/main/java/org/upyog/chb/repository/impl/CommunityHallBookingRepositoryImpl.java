@@ -230,7 +230,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 			batchArgs.add(new Object[] { bookingId, createdBy, createdTime, "ACTIVE", // Status
 					null, // Booking No (optional, replace with actual value if available)
 					communitycode, hallcode, date, // Booking Date
-					tenantId });
+					tenantId, lastModifiedBy, lastModifiedTime });
 		}
 
 		// Execute batch insert
