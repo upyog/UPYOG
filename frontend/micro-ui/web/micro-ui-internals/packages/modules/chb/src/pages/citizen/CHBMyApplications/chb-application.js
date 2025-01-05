@@ -119,7 +119,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
         <Link to={`/digit-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />
         </Link> 
-        {(application.bookingStatus === "BOOKED" || application.bookingStatus === "PAYMENT_FAILED") && (
+        {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED") && (
         <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}  style={{ margin: "20px" }}/>
         )}
       </div>
