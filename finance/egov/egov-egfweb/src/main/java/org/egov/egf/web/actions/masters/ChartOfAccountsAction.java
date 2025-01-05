@@ -278,14 +278,15 @@ public class ChartOfAccountsAction extends BaseFormAction {
             populateAccountCodePurpose();
     		return EDIT;
     	}
-        setPurposeOnCoa();
         updateOnly = true;
         populateAccountDetailType();
         model.setIsActiveForPosting(activeForPosting);
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
         dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
+        
         setPurposeOnCoa();
+        populateAccountCodePurpose();
         chartOfAccountsService.persist(model);
         saveCoaDetails(model);
         populateAccountDetailTypeList();
