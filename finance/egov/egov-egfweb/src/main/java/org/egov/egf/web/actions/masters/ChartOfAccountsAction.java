@@ -127,7 +127,6 @@ public class ChartOfAccountsAction extends BaseFormAction {
     boolean budgetCheckRequired = false;
     Long coaId;
     Long parentId;
-    Long purposeId;
 
     @Autowired
     AppConfigValueService appConfigValuesService;
@@ -702,9 +701,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
             setClassification(parent);
             model.setGlcode(generatedGlcode.concat(newGlcode));
             model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
-            model.setPurposeId(purposeId);           
+            setPurposeOnCoa();
+            populateAccountCodePurpose();
 
-            //setPurposeOnCoa();
             model.setIsActiveForPosting(activeForPosting);
             populateAccountDetailType();
             chartOfAccountsService.persist(model);
