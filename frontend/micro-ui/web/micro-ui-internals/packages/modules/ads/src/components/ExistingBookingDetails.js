@@ -11,22 +11,27 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
   const [filters, setFilters] = useState(null);
   const [isDataSet, setIsDataSet] = useState(false); // State to track if data has been set
 
-  // // Define the slot_search hook to refetch data on search
-  // const {refetch} = Digit.Hooks.ads.useADSSlotSearch({
-  //   tenantId:tenantId,
-  //   filters: {
-  //     bookingId:"5gdfgsfgdsfsgfsd2345234sdfs",
-  //     communityHallCode:Searchdata.communityHallCode,
-  //     bookingStartDate:Searchdata.bookingStartDate,
-  //     bookingEndDate:Searchdata.bookingEndDate,
-  //     hallCode:Searchdata.hallCode,
-  //     isTimerRequired:true,
-  //   }
-  // });
+  // Slot search data for Ads (Advertisement)
+  const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
 
-  const setchbData = (application) => {
-    // const result =refetch();
-    console.log("application",application);
+  // Prepare form data for Advertisement Service
+  const formdata = {
+    advertisementSlotSearchCriteria: {
+      bookingId:"",
+      addType: Searchdata?.addType,
+      bookingStartDate: Searchdata?.bookingStartDate,
+      bookingEndDate: Searchdata?.bookingEndDate,
+      faceArea: Searchdata?.faceArea,
+      tenantId: tenantId,
+      location: Searchdata?.location,
+      nightLight: Searchdata?.nightLight,
+      isTimerRequired: true,
+    },
+  };
+
+  const setchbData = async(application) => {
+    const result=await slotSearchData.mutateAsync(formdata);
+    const timerValue = result?.advertisementSlotAvailabiltityDetails[0].timerValue;
     const newSessionData = {
       documents: {
         documents: application?.documents?.map(doc => ({
@@ -49,9 +54,9 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
         alternateNumber: application?.applicantDetail?.applicantAlternateMobileNo,
         emailId: application?.applicantDetail?.applicantEmailId,
       },
-      // timervalue:{
-      //   timervalue:result?.timerValue || 10
-      // }
+      timervalue:{
+        timervalue:timerValue || 0
+      }
     };
     setExistingDataSet(newSessionData);
     setIsDataSet(true);  // Set the flag to true after data is set
