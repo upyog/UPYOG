@@ -285,6 +285,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
         dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
+        setPurposeOnCoa();
         chartOfAccountsService.persist(model);
         saveCoaDetails(model);
         populateAccountDetailTypeList();
