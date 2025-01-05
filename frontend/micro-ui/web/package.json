@@ -10,6 +10,7 @@
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/chb",
+    "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/sv"
   ],

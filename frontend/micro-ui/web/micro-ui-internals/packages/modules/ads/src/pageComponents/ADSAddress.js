@@ -1,9 +1,10 @@
 import React, { useEffect, useState} from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, TextArea,Card } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel,CardSubHeader, Dropdown, TextArea,Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
+import {TimerValues} from "../components/TimerValues";
 
 /*
  * ADSAddress component for capturing address details.
@@ -94,7 +95,15 @@ const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.ad
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
       <Card>
-       <ADSCartAndCancellationPolicyDetails/>
+      <div style={{ position: "relative" }}>
+        <CardSubHeader style={{ position: "absolute",right:0}}>
+        <TimerValues 
+          timerValues={value?.existingDataSet?.timervalue?.timervalue} 
+          SlotSearchData={value?.Searchdata} 
+        />
+        </CardSubHeader>
+        <ADSCartAndCancellationPolicyDetails/>
+      </div>
       </Card>
       <FormStep
         config={config}
