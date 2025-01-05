@@ -151,7 +151,7 @@
 								name="chartOfAccount.purpose" />:</strong></td>
 					<td class="bluebox"><s:select list="dropdownData.purposeList"
 							listKey="id" listValue="name" name="purposeId" headerKey=""
-							headerValue="%{getText('lbl.choose.options')}" value="model.purpose"></s:select></td>
+							headerValue="%{getText('lbl.choose.options')}" value="model.purposeId"></s:select></td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.accountDetailType" />:</strong></td>
 					<td width="22%"><s:select
