@@ -38,7 +38,6 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     const [selectBirthAdoption, setSelectBirthAdoption] = useState(convertToObject(renewApplication?.petDetails?.birthDate || renewApplication?.petDetails?.adoptionDate ? (renewApplication?.petDetails?.birthDate ? "Birth" : "Adoption") : null) || convertToObject(formData?.pets?.birthDate || formData?.pets?.adoptionDate ? (formData?.pets?.birthDate ? "Birth" : "Adoption") : null) || [{ i18nKey: "", code: "" }]);
     const [birthDate, setBirthDate] = useState(convertEpochToDate(renewApplication?.petDetails?.birthDate) || formData?.pets?.birthDate || "");
     const [adoptionDate, setAdoptionDate] = useState(convertEpochToDate(renewApplication?.petDetails?.adoptionDate) || formData?.pets?.adoptionDate || "");
-    const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
 
     const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType"); // hook for pettype data
@@ -67,9 +66,12 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
         }
       });
 
+
       useEffect(() => {
         // To set the petColor
+        if(renewApplication?.petDetails){
         setpetColor(pet_color?.filter((color) => color?.colourCode === renewApplication?.petDetails?.petColor)?.[0])
+        }
       }, [pet_color])
 
     const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
