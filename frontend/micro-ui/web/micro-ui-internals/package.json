@@ -10,8 +10,6 @@
     "packages/modules/core",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/chb",
-    "packages/modules/ads",
     "packages/modules/engagement",
     "packages/modules/sv"
   ],
@@ -74,7 +72,7 @@
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
-    "build:chb": "cd packages/modules/chb && yarn build",
+    "buildD:chb": "cd packages/modules/chb && yarn build",
     "buildD:ads": "cd packages/modules/ads && yarn build",
     "buildD:ew": "cd packages/modules/ew && yarn build",
     "build:sv": "cd packages/modules/sv && yarn build",
