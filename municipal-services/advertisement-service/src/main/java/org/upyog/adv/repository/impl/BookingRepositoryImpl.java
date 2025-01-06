@@ -29,6 +29,7 @@ import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.repository.querybuilder.AdvertisementBookingQueryBuilder;
 import org.upyog.adv.repository.rowmapper.AdvertisementDraftApplicationRowMapper;
 import org.upyog.adv.repository.rowmapper.AdvertisementSlotAvailabilityRowMapper;
+import org.upyog.adv.repository.rowmapper.AdvertisementUpdateSlotAvailabilityRowMapper;
 import org.upyog.adv.repository.rowmapper.BookingCartDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.BookingDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.DocumentDetailsRowMapper;
@@ -75,6 +76,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 	private AdvertisementBookingQueryBuilder queryBuilder;
 	@Autowired
 	private AdvertisementSlotAvailabilityRowMapper availabilityRowMapper;
+	@Autowired
+	private AdvertisementUpdateSlotAvailabilityRowMapper availabilityUpdateRowMapper;
 	@Autowired
 	private AdvertisementDraftApplicationRowMapper draftApplicationRowMapper;
 	@Autowired
@@ -405,20 +408,14 @@ public class BookingRepositoryImpl implements BookingRepository {
 
 		log.info("getBookedSlotsFromTimer: Final query: {}", query);
 		log.info("Parameters: {}", paramsList);
+		
+		List<AdvertisementSlotAvailabilityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(),
+				paramsList.toArray(), availabilityUpdateRowMapper);
 
-		return jdbcTemplate.query(query.toString(), paramsList.toArray(), (rs, rowNum) -> {
-			AdvertisementSlotAvailabilityDetail detail = new AdvertisementSlotAvailabilityDetail();
-			detail.setBookingId(rs.getString("booking_id"));
-			detail.setAddType(rs.getString("add_type"));
-			detail.setLocation(rs.getString("location"));
-			detail.setFaceArea(rs.getString("face_area"));
-			detail.setNightLight(rs.getBoolean("night_light"));
-			detail.setBookingDate(rs.getString("booking_start_date"));
-			detail.setBookingStartDate(rs.getString("booking_start_date"));
-			detail.setBookingEndDate(rs.getString("booking_end_date"));
-			detail.setUuid(rs.getString("createdby"));
-			return detail;
-		});
+		log.info("Fetched slot availabilty details : " + availabiltityDetails);
+		
+		return availabiltityDetails;
+
 	}
 
 	@Override
