@@ -302,7 +302,7 @@ const dashboardAccess = () =>{
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const dashboardRoles = ["DASHBOARD_EMPLOYEE"];
   const DASHBOARD_ACCESS = userRoles?.filter((role) => dashboardRoles?.includes(role));
-  return DASHBOARD_ACCESS?.length > -1;
+  return DASHBOARD_ACCESS?.length > 0;
 };
 
 const wsAccess = () => {
