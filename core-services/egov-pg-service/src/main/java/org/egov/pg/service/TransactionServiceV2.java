@@ -176,22 +176,7 @@ public class TransactionServiceV2 {
 			} else {
 				transactions = transactionRepository.fetchTransactions(transactionCriteriaV2);
 
-				Set<String> txnIdsToFetch = transactions.stream().map(Transaction::getTxnId)
-						.collect(Collectors.toSet());
-
-				if (!txnIdsToFetch.isEmpty()) {
-					TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
-							.txnIds(txnIdsToFetch).build();
-					List<TransactionDetails> transactionDetails = transactionDetailsRepository
-							.fetchTransactionDetails(transactionDetailsCriteria);
-
-					Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
-							.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
-
-					transactions.forEach(transaction -> {
-						transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
-					});
-				}
+				mapTransactionDetails(transactions);
 			}
 
 			return transactions;
@@ -260,7 +245,28 @@ public class TransactionServiceV2 {
 		if (CollectionUtils.isEmpty(newTxns)) {
 			return null;
 		}
+
+		mapTransactionDetails(newTxns);
+
 		return newTxns;
+	}
+
+	private void mapTransactionDetails(List<Transaction> transactions) {
+		Set<String> txnIdsToFetch = transactions.stream().map(Transaction::getTxnId).collect(Collectors.toSet());
+
+		if (!txnIdsToFetch.isEmpty()) {
+			TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
+					.txnIds(txnIdsToFetch).build();
+			List<TransactionDetails> transactionDetails = transactionDetailsRepository
+					.fetchTransactionDetails(transactionDetailsCriteria);
+
+			Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
+					.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
+
+			transactions.forEach(transaction -> {
+				transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
+			});
+		}
 	}
 
 	private void updateDemandsAndBillByTransactionDetails(Transaction newTxn, RequestInfo requestInfo) {
