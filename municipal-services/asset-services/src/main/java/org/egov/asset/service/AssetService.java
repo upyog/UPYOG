@@ -405,6 +405,16 @@ public class AssetService {
 				}
 			}
 
+			if (StringUtils.equalsIgnoreCase(assetBusinessService, AssetConstants.ASSET_BusinessService)) {
+				for (Role role : roles) {
+					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_WF_CREATOR)) {
+						roleCodes.add(AssetConstants.ASSET_WF_CREATOR);
+					}
+					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_WF_APPROVER)) {
+						roleCodes.add(AssetConstants.ASSET_WF_APPROVER);
+					}
+				}
+			}
 		} catch (Exception e) {
 			throw new RuntimeException("Roles does not exists!!!");
 		}
@@ -423,29 +433,25 @@ public class AssetService {
 		return roleCodes;
 	}
 	
-	public AssetActionResponse getAllcounts() {
-		AssetActionResponse response = new AssetActionResponse();
-        List<Map<String, Object>> statusList = null;
-        statusList = assetRepository.getAllCounts();
-        
-        if (!CollectionUtils.isEmpty(statusList)) {
-        	response.setCountsData(
-		                statusList.stream()
-		                        .filter(Objects::nonNull) // Ensure no null entries
-		                        .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate non-empty entries
-		                        .collect(Collectors.toList())); // Collect the filtered list
-			  
-			  if (statusList.get(0).containsKey("total_applications")) {
-		            Object totalApplicationsObj = statusList.get(0).get("total_applications");
-		            if (totalApplicationsObj instanceof Number) { // Ensure the value is a number
-		            	response.setApplicationTotalCount(((Number) totalApplicationsObj).longValue());
-		            } else {
-		                throw new IllegalArgumentException("total_applications is not a valid number");
-		            }
-		        }
-		}
-        return response;
-	}	
+	/*
+	 * public AssetActionResponse getAllcounts() { AssetActionResponse response =
+	 * new AssetActionResponse(); List<Map<String, Object>> statusList = null;
+	 * statusList = assetRepository.getAllCounts();
+	 * 
+	 * if (!CollectionUtils.isEmpty(statusList)) { response.setCountsData(
+	 * statusList.stream() .filter(Objects::nonNull) // Ensure no null entries
+	 * .filter(status -> StringUtils.isNotEmpty(status.toString())) // Validate
+	 * non-empty entries .collect(Collectors.toList())); // Collect the filtered
+	 * list
+	 * 
+	 * if (statusList.get(0).containsKey("total_applications")) { Object
+	 * totalApplicationsObj = statusList.get(0).get("total_applications"); if
+	 * (totalApplicationsObj instanceof Number) { // Ensure the value is a number
+	 * response.setApplicationTotalCount(((Number)
+	 * totalApplicationsObj).longValue()); } else { throw new
+	 * IllegalArgumentException("total_applications is not a valid number"); } } }
+	 * return response; }
+	 */	
 	
 
 	/*

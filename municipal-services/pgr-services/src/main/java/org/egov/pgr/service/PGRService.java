@@ -7,12 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.producer.Producer;
 import org.egov.pgr.repository.PGRRepository;
+import org.egov.pgr.repository.rowmapper.PGRQueryBuilder;
 import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.validator.ServiceRequestValidator;
+import org.egov.pgr.web.models.CountStatusRequest;
+import org.egov.pgr.web.models.CountStatusResponse;
+import org.egov.pgr.web.models.CountStatusUpdate;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
@@ -198,5 +204,21 @@ public class PGRService {
 	public int getComplaintTypes() {
 		
 		return Integer.valueOf(config.getComplaintTypes());
+	}
+
+
+	public @Valid CountStatusRequest getStatusCount(@Valid CountStatusRequest request) {
+	
+		List<CountStatusUpdate> count = null;
+		CountStatusResponse response = null;
+		try {
+			
+			 count = repository.countSearch(request);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		request.setCountStatusUpdate(count);
+		return request;
 	}
 }

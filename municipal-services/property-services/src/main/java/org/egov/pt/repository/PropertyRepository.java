@@ -14,6 +14,7 @@ import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.oldProperty.PropertyInfo;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
@@ -101,6 +102,13 @@ public class PropertyRepository {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>());
+	}
+	
+	public List<PropertyInfo> getPropertyId(PropertyCriteria criteria){
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true);
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>());
+		
 	}
 
 	public List<Property> getPropertiesForBulkSearch(PropertyCriteria criteria, Boolean isPlainSearch) {
