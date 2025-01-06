@@ -366,12 +366,12 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
     if(!pathname.includes("correspondence")){
     let ownerStep = { ...owner, pincode, city, locality, houseNo, landmark, addressline1, addressline2 };
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
     } else {
       owner = formData?.correspondenceAddress;
       let ownerStep = { ...owner, cpincode, ccity, clocality, chouseNo, clandmark, caddressline1, caddressline2, isAddressSame };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
-      handleSaveasDraft();
+      window.location.href.includes("edit")?null: handleSaveasDraft();
     }
   };
 
