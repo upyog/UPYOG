@@ -10,8 +10,6 @@
     "packages/modules/core",
     "packages/modules/common",
     "packages/modules/dss",
-    "packages/modules/chb",
-    "packages/modules/ads",
     "packages/modules/engagement",
     "packages/modules/sv"
   ],
