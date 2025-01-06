@@ -183,7 +183,7 @@ public class UserController {
         return  createResponseforUpdate(updatedUser);
     }
 
-    @PostMapping("/auth/_digilocker")
+    @PostMapping("/digilocker/oauth/token")
     public Object authDigiLocker(@RequestBody @Valid CreateUserRequest createUserRequest, @RequestHeader HttpHeaders headers) {
         UserSearchRequest request = new UserSearchRequest();
         //request.setMobileNumber(createUserRequest.getUser().getMobileNumber());
