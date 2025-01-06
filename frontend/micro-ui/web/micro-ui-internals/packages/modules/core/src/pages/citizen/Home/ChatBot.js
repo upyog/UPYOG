@@ -10,20 +10,22 @@ function ChatBot() {
     setIsOpen(!isOpen);
   };
 
+  const apiEndPoint = 'http://43.205.156.175:8000/chatbot';
+
   const handleMessageSend = async () => {
     if (input.trim() !== "") {
       setMessages([...messages, { sender: "user", text: input }]);
       setInput("");
   
       try {
-        const response = await fetch('https://selco-demo.ddns.net/chat', {
+        const response = await fetch(apiEndPoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: input }),
+          body: JSON.stringify({ user_input: input }),
         });
-  
+        console.log("Response from Await",response);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
