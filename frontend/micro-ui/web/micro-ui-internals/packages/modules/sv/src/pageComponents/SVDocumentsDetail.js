@@ -279,7 +279,7 @@ const transformDocuments = (documents) => {
   const handleSubmit = () => {
     let documentStep = { ...formData.documents, documents };
     onSelect(config.key, documentStep);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
   };
 
   const onSkip = () => onSelect();
@@ -339,7 +339,7 @@ function SVDocuments({
   const previousDocument = previousData?.documentDetails?.find((item) => item?.documentType?.includes(doc?.code));
   const editdatas = editdata?.documentDetails?.find((item) => item?.documentType?.includes(doc?.code));
   const user = Digit.UserService.getUser().info;
-
+console.log("filetererrsrsrs",filteredDocument);
   const [selectedDocument, setSelectedDocument] = useState(
     previousDocument
     ?{ ...previousDocument, active: doc?.active === true, code: previousDocument?.documentType, i18nKey: previousDocument?.documentType}
@@ -361,7 +361,7 @@ function SVDocuments({
   );
 
   const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(previousDocument?.fileStoreId||editdatas?.fileStoreId||filteredDocument?.fileStoreId || null);
+  const [uploadedFile, setUploadedFile] = useState(filteredDocument?.fileStoreId || previousDocument?.fileStoreId||editdatas?.fileStoreId|| null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSVSelectDocument = (value) => 
