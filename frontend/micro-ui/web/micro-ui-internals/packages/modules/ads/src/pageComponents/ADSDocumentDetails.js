@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
+import {TimerValues} from "../components/TimerValues";
 /**
  * ADSDocumentDetails component allows users to upload required documents
  * for the ADS application. It manages document state, validates uploads,
@@ -49,7 +50,15 @@ const ADSDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
     <div>
       <Timeline currentStep={3} />
       <Card>
-       <ADSCartAndCancellationPolicyDetails/>
+      <div style={{ position: "relative" }}>
+        <CardSubHeader style={{ position: "absolute",right:0}}>
+        <TimerValues 
+          timerValues={value?.existingDataSet?.timervalue?.timervalue} 
+          SlotSearchData={value?.Searchdata} 
+        />
+        </CardSubHeader>
+        <ADSCartAndCancellationPolicyDetails/>
+      </div>
       </Card>
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>

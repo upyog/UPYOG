@@ -3,6 +3,7 @@ import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } fro
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
+import {TimerValues} from "../components/TimerValues";
 
 /*
  * The ADSCitizenDetails component is responsible for gathering and validating 
@@ -71,7 +72,15 @@ const ADSCitizenDetails = ({ t, config, onSelect, userType, formData,value=formD
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
       <Card>
-       <ADSCartAndCancellationPolicyDetails/>
+      <div style={{ position: "relative" }}>
+        <CardSubHeader style={{ position: "absolute",right:0}}>
+        <TimerValues 
+          timerValues={value?.existingDataSet?.timervalue?.timervalue} 
+          SlotSearchData={value?.Searchdata} 
+        />
+        </CardSubHeader>
+        <ADSCartAndCancellationPolicyDetails/>
+      </div>
       </Card>
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!applicantName || !mobileNumber || !emailId}>
         <div>

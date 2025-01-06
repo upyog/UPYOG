@@ -40,7 +40,7 @@
 // Get base path
 
       var base_url = window.location.origin;
-    const { data: actionState } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
+    const { data: actionState } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "Action" }],
       {
         select: (data) => {
             const formattedData = data?.["ASSET"]?.["Action"]
@@ -56,20 +56,35 @@
     }) 
    
 
-    const { data: actionDetail } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "ActionOption" }], {
+    const { data: actionDetail } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "ActionOption" }], {
       select: (data) => {
         const formattedData = data?.["ASSET"]?.["ActionOption"];
         const activeData = formattedData?.filter((item) => item.active === true);
-        console.log('Comming data:- ', activeData)
         return activeData;
       },
     });
+    
+    //This is a pdf generate function
+    // const printCertificate = async () => {
+    //   let response = await Digit.PaymentService.generatePdf(tenantId, { Assets: [data?.asset-report?.[0]] }, "asset-report");
+    //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    // };
 
+    const printReport = async (applicationNo) => {
+      const applicationDetails = await Digit.ASSETService.search({  tenantId,
+        filters: { applicationNo: applicationNo }});
+      let response = await Digit.PaymentService.generatePdf(tenantId, { Assets: [applicationDetails?.Assets?.[0]] }, "asset-report");
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    };
+    
     const collectAction = (row) => {
       const actionMdms = [];
     
       actionDetail &&
         actionDetail.map((opt) => {
+          
           // this condition use for if asset asign then show return asset if asset not assign then show asset Assign
           if (
             (row?.original?.assetAssignment?.isAssigned && opt.code === "AST_RETURN") ||
@@ -238,14 +253,34 @@
                             zIndex: 1000,
                           }}>
                             {actionOptions.map((option, index) => (
-                              <Link key={index} to={option.link} style={{
-                                display: 'block',
-                                padding: '8px',
-                                textDecoration: 'none',
-                                color: 'black',
-                              }}>
-                                {option.label}
-                              </Link>
+                              option.label === "Reports" ? (
+                                <div 
+                                  key={index}  // Ensure each element has a unique key
+                                  onClick={() => printReport(row.original?.["applicationNo"])}  // Wrap printReport in an arrow function
+                                  style={{
+                                    display: 'block',
+                                    padding: '8px',
+                                    textDecoration: 'none',
+                                    color: 'black',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  {option.label}
+                                </div>
+                              ) : (
+                                <Link 
+                                  key={index}  // Add key for the Link element as well
+                                  to={option.link} 
+                                  style={{
+                                    display: 'block',
+                                    padding: '8px',
+                                    textDecoration: 'none',
+                                    color: 'black',
+                                  }}
+                                >
+                                  {option.label}
+                                </Link>
+                              )
                             ))}
                           </div>
                         )}
@@ -293,6 +328,7 @@
         const batchSize = 3; // Define batch size to process and add in a page so that QR code generation and PDF creation don't overwhelm the system's memory.
         for (let i = 0; i < data.length; i += batchSize) {
           const batch = data.slice(i, i + batchSize);
+          console.log('comming data:- ', batch);
           const qrPromises = batch.map(async (row, index) => {
             // const url = `https://niuatt.niua.in/digit-ui/employee/asset/assetservice/applicationsearch/application-details/${row.applicationNo}`;
             const url = `${base_url}/digit-ui/citizen/assets/services?tenantId=${tenantId}&applicationNo=${row.applicationNo}`;
@@ -308,7 +344,14 @@
             doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
             doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
             doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+            // doc.text(`Track Location: ${row.location}`, 70, 60 + yOffset);
+
       
+            //  Add Track Location as a clickable hyperlink
+            const locationURL = `${base_url}/maps/search/${row.location}`;
+            doc.text("Track Location:", 70, 70 + yOffset); // Add label
+            doc.textWithLink(locationURL, 70, 75 + yOffset, { url: locationURL }); // Add clickable URL
+
             // Add horizontal line
             doc.line(10, 80 + yOffset, 200, 80 + yOffset);
           });

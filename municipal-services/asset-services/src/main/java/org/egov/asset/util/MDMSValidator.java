@@ -7,10 +7,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -45,7 +42,7 @@ public class MDMSValidator {
      */
     public Map<String, List<String>> getAttributeValues(Object mdmsData) {
 
-        List<String> modulepaths = Arrays.asList(AssetConstants.ASSET_JSONPATH_CODE);
+        List<String> modulepaths = Collections.singletonList(AssetConstants.ASSET_JSONPATH_CODE);
         final Map<String, List<String>> mdmsResMap = new HashMap<>();
         modulepaths.forEach(modulepath -> {
             try {

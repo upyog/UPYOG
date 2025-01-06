@@ -109,7 +109,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     const mutation = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
       advertisementSlotSearchCriteria: {
-        bookingId:null,
+        bookingId:"",
         addType: Searchdata.addType,
         bookingStartDate: Searchdata.bookingStartDate,
         bookingEndDate:Searchdata.bookingEndDate,
@@ -166,10 +166,10 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.adslist && formData.adslist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, cartDetails, adsType, selectedLocation,selectedFace,selectNight,fromDate,toDate,existingDataSet };
+      ownerStep = { ...owner,Searchdata, cartDetails, adsType, selectedLocation,selectedFace,selectNight,fromDate,toDate,existingDataSet };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate,existingDataSet };
+      ownerStep = { ...owner,Searchdata, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
     console.log("ownerStep",ownerStep);

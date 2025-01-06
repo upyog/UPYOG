@@ -8,9 +8,9 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
-  const [ownerCategory, setownerCategory]=useState(convertToObject(previousData?.disabilityStatus||editdata?.disabilityStatus)||formData?.specialCategoryData?.ownerCategory || "");
-  const [enrollmentId, setenrollmentId]=useState(previousData?.enrollmentId||editdata?.enrollmentId||formData?.specialCategoryData?.enrollmentId || "");
-  const [beneficiary, setbeneficiary] =useState(convertToObject(previousData?.benificiaryOfSocialSchemes||editdata?.benificiaryOfSocialSchemes)||formData?.specialCategoryData?.beneficiary || "");
+  const [ownerCategory, setownerCategory]=useState(formData?.specialCategoryData?.ownerCategory || convertToObject(previousData?.disabilityStatus||editdata?.disabilityStatus)|| "");
+  const [enrollmentId, setenrollmentId]=useState(formData?.specialCategoryData?.enrollmentId || previousData?.enrollmentId||editdata?.enrollmentId|| "");
+  const [beneficiary, setbeneficiary] =useState(formData?.specialCategoryData?.beneficiary || convertToObject(previousData?.benificiaryOfSocialSchemes||editdata?.benificiaryOfSocialSchemes)|| "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "100%" };
   const [file, setFile] = useState(null);
   const filteredDraftDocument = previousData?.documentDetails?.find((item) => item?.documentType?.includes(ownerCategory?.code));
@@ -104,7 +104,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
     setenrollmentId(e.target.value);
   }
 
-  //Custom function fo rthe payload whic we can use while goint to next
+  //Custom function for the payload whic we can use while goint to next
 
   const handleSaveasDraft=()=>{
     let vendordetails = [];
@@ -344,7 +344,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
   let category = formData.specialCategoryData;
   let categoryStep = { ...category, ownerCategory, beneficiary,uploadedFile,enrollmentId };
   onSelect(config.key, categoryStep,false);
-  handleSaveasDraft();
+  window.location.href.includes("edit")?null: handleSaveasDraft();
   };
 
   const onSkip = () => onSelect();

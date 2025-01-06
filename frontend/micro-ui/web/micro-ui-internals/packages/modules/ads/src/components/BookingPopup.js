@@ -1,6 +1,5 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import { Modal, Card,SubmitBar} from "@upyog/digit-ui-react-components";
-import {useForm } from "react-hook-form";
 import { ExistingBookingDetails } from "./ExistingBookingDetails";
 
 const Close = () => (
@@ -23,14 +22,49 @@ const CloseBtn = (props) => {
 const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) => {
    
     const [showExistingBookingDetails, setShowExistingBookingDetails] = useState(false);
-
+    const [isDataSet, setIsDataSet] = useState(false); // State to track if data has been set
+    const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const handleExistingDetailsClick = () => {
         setShowExistingBookingDetails(true); // Show the BookingSearchDetails component
     };
     const Heading = (props) => {
         return showExistingBookingDetails && <h1 className="heading-m">{props.t("ADS_MY_BOOKINGS_HEADER")}</h1>;
     };
-    const {handleSubmit } = useForm();
+     // Slot search data for Ads (Advertisement)
+    const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
+
+    // Prepare form data for Advertisement Service
+    const formdata = {
+        advertisementSlotSearchCriteria: {
+        bookingId:"",
+        addType: Searchdata?.addType,
+        bookingStartDate: Searchdata?.bookingStartDate,
+        bookingEndDate: Searchdata?.bookingEndDate,
+        faceArea: Searchdata?.faceArea,
+        tenantId: tenantId,
+        location: Searchdata?.location,
+        nightLight: Searchdata?.nightLight,
+        isTimerRequired:true,
+        },
+    };
+     const setchbData = async() => {
+            const result=await slotSearchData.mutateAsync(formdata);
+            const timerValue = result?.advertisementSlotAvailabiltityDetails[0].timerValue;
+            const newSessionData = {
+              timervalue:{
+                timervalue:timerValue || 10
+              }
+            };
+            setExistingDataSet(newSessionData);
+            setIsDataSet(true);  // Set the flag to true after data is set
+          };
+        
+          useEffect(() => {
+            if (isDataSet) { // If data is set, call onSubmit
+              onSubmit();
+              setIsDataSet(false);  // Reset the flag after onSubmit is called
+            }
+          }, [isDataSet, onSubmit]);
 
     return (
         <React.Fragment>
@@ -52,7 +86,7 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
                     alignItems: 'center', 
                 }}>
                     {!showExistingBookingDetails && <SubmitBar label={t("USE_EXISTING_DETAILS")} onSubmit={handleExistingDetailsClick} />}
-                    {!showExistingBookingDetails &&<SubmitBar label={t("FILL_NEW_DETAILS")} onSubmit={handleSubmit(onSubmit)} />}
+                    {!showExistingBookingDetails &&<SubmitBar label={t("FILL_NEW_DETAILS")} onSubmit={setchbData} />}
                 </div>
             </Card>
         </Modal>

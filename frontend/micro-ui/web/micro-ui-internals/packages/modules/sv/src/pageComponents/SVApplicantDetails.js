@@ -518,7 +518,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       dependentNameChecked
     };
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
 
   };
 

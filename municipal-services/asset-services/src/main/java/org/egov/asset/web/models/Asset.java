@@ -8,6 +8,7 @@ import org.egov.asset.dto.AssetDTO;
 import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -154,8 +155,17 @@ public class Asset implements AssetDTO {
     @JsonProperty("assetStatus")
     private String assetStatus;
 
+    @JsonProperty("originalBookValue")
+    private String originalBookValue;
 
+    @JsonProperty("minimumValue")
+    private String minimumValue;
 
+    @JsonProperty("islegacyData")
+    private String islegacyData;
+
+    @Transient
+    private String accumulatedDepreciartion;
 
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;

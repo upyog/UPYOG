@@ -45,5 +45,11 @@ public class CommonDetails {
 
 	@JsonProperty("address")
 	private String address = null;
+	
+	@JsonProperty("name")
+	private String name = null;
+	
+	@JsonProperty("mobileNumber")
+	private String mobileNumber = null;
 
 }
