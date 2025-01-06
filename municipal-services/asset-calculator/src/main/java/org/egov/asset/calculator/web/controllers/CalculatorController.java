@@ -46,11 +46,12 @@ public class CalculatorController {
 	@PostMapping("/depreciation/_calculate")
 	public ResponseEntity<CalculationRes> calculate(@Valid @RequestBody CalculationReq calculationReq) {
 		CalculationRes calculationRes = calculationService.calculate(calculationReq);
-
+		log.info("Depreciation calculation response: {}", calculationRes.getMessage());
 		CalculationRes response = CalculationRes.builder()
 				.message(calculationRes.getMessage())
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(calculationReq.getRequestInfo(), true))
 				.build();
+		// Log the response for debugging
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

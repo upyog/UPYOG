@@ -1,8 +1,12 @@
 package org.egov.asset.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.repository.ServiceRequestRepository;
+import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.calcontract.CalculationReq;
+import org.egov.asset.web.models.calcontract.CalculationRes;
+import org.egov.asset.web.models.calcontract.CalulationCriteria;
 import org.egov.asset.web.models.calcontract.DepreciationRes;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +26,25 @@ public class AssetCalculationClient {
         this.config = config;
     }
 
-    public Object triggerDepreciationCalculation(String tenantId, String assetId) {
+    public CalculationRes triggerDepreciationCalculation(AssetRequest assetRequest) {
         StringBuilder uri = new StringBuilder(config.getAssetCalculatorServiceHost()+config.getAssetCalculatorDepreciationApi());
 
         // Prepare request payload
         CalculationReq calculationReq = new CalculationReq();
-        calculationReq.getCalulationCriteria().setTenantId(tenantId);
-        calculationReq.getCalulationCriteria().setAssetId(assetId);
+        calculationReq.setRequestInfo(assetRequest.getRequestInfo());
+        calculationReq.setCalulationCriteria(new CalulationCriteria());
+        calculationReq.getCalulationCriteria().setTenantId(assetRequest.getRequestInfo().getUserInfo().getTenantId());
+        calculationReq.getCalulationCriteria().setAssetId(assetRequest.getAsset().getId());
+
+        Object rawResponse = apiClient.fetchResult(uri, calculationReq);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Convert raw response to CalculationRes
+        CalculationRes calculationRes = objectMapper.convertValue(rawResponse, CalculationRes.class);
+
 
         // Call API and get response
-        return apiClient.fetchResult(uri, calculationReq);
+        return calculationRes;
     }
 
     public DepreciationRes getAssetDepreciationList(String tenantId, String assetId) {

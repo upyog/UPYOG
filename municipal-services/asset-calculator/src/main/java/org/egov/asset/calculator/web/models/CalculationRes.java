@@ -29,7 +29,5 @@ public class CalculationRes {
 	@JsonProperty("Message")
 	@Valid
 	private String message;
-
-	
 	
 }
