@@ -53,7 +53,8 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
             const newSessionData = {
               timervalue:{
                 timervalue:timerValue || 10
-              }
+              },
+             draftId:result?.draftId || ""
             };
             setExistingDataSet(newSessionData);
             setIsDataSet(true);  // Set the flag to true after data is set
