@@ -683,8 +683,10 @@ public class UserService {
     }
     
     public Object updateDigilockerID(User user, User existingUser, RequestInfo requestInfo) {        
-    	log.info("User", existingUser);                
-    	if (existingUser.getDigilockerid()!=null) {
+    	if(existingUser.getDigilockerid() != null && !existingUser.getDigilockerid().equals(user.getDigilockerid())){
+            throw new IllegalArgumentException("Digilocker Id provided does not match the Digilocker Id in the database for the user");
+        }
+    	else if (existingUser.getDigilockerid()!=null) {
         	return getAccess(user, user.getOtpReference());
         	}
     	else {

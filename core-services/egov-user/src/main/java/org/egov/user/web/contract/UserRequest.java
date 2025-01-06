@@ -33,6 +33,10 @@ public class UserRequest {
     private String userName;
 
     @SafeHtml
+    @Size(max = 40)
+    private String access_token;
+
+    @SafeHtml
     @Size(max = 5)
     private String salutation;
 
@@ -157,6 +161,7 @@ public class UserRequest {
     public UserRequest(User user) {
 
         this.id = user.getId();
+        this.access_token = user.getAccess_token();
         this.userName = user.getUsername();
         this.salutation = user.getSalutation();
         this.name = user.getName();
