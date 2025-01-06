@@ -287,3 +287,33 @@
 .status-card.green {
   background-color: rgba(75, 31, 165, 0.60);
 }
+
+.typing_indicator {
+  display: flex;
+  gap: 4px;
+}
+
+.typing_indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: #90949c;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.typing_indicator span:nth-child(1) { 
+  animation-delay: -0.32s; 
+}
+
+.typing_indicator span:nth-child(2) { 
+  animation-delay: -0.16s; 
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { 
+    transform: translateY(0); 
+  }
+  40% { 
+    transform: translateY(-6px); 
+  }
+}
