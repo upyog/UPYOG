@@ -37,4 +37,7 @@ public interface BookingService {
 	
 	public String deleteAdvertisementDraft(String draftId);
 
+	String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
+			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo);
+
 }

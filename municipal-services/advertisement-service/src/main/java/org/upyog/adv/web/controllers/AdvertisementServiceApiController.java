@@ -122,8 +122,10 @@ public class AdvertisementServiceApiController {
 				.getAdvertisementSlotAvailability(slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
 		ResponseInfo info = BookingUtil.createReponseInfo(slotSearchRequest.getRequestInfo(),
 				BookingConstants.ADVERTISEMENT_AVAILABILITY_SEARCH, StatusEnum.SUCCESSFUL);
+		String draftId = bookingService.getDraftId(applications, slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
 		AdvertisementSlotAvailabilityResponse response = AdvertisementSlotAvailabilityResponse.builder()
-				.advertisementSlotAvailabiltityDetails(applications).responseInfo(info).build();
+				.advertisementSlotAvailabiltityDetails(applications).responseInfo(info).draftId(draftId).
+				build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	

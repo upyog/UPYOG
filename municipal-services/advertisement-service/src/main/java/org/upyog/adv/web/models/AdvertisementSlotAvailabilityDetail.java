@@ -45,6 +45,10 @@ public class AdvertisementSlotAvailabilityDetail {
 //	private long remainingTimerValue;
 	
 	private String bookingDate;
+	
+	private String bookingStartDate;
+	
+	private String bookingEndDate;
 
 //	private String fromTime;
 //

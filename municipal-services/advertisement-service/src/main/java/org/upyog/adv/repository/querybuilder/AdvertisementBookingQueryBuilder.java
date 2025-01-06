@@ -62,16 +62,20 @@ public class AdvertisementBookingQueryBuilder {
 	private static final String PAYMENT_TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
 
 	public static final String DraftID_DELETE_QUERY = "DELETE FROM eg_adv_draft_detail WHERE draft_id = ?";
+	
+	public static final String TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
 
 	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = 
 		    "DELETE FROM eg_adv_payment_timer " +	
 		    		"WHERE ? - createdtime > ? AND booking_id = ?";
 	
-	private static final String DRAFTID_DELETE_BOOKINGID = 
+	public static final String DRAFTID_DELETE_TIMER = 
 		    "DELETE FROM eg_adv_draft_detail " +	
 		    		"WHERE ? - createdtime > ? AND draft_id = ?";
 	
 	private static final String FETCH_BOOKINGID_TO_DELETE = "SELECT booking_id FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
+	
+	public static final String FETCH_DRAFTID_TO_DELETE = "SELECT draft_id FROM eg_adv_draft_detail WHERE ? - createdtime > ?";
 
 	private static final String FETCH_TIMER = "SELECT booking_id, createdtime FROM eg_adv_payment_timer WHERE booking_id IN (%s)";
 
@@ -129,10 +133,6 @@ public class AdvertisementBookingQueryBuilder {
 
 	public String deleteBookingIdPaymentTimer() {
 		return PAYMENT_TIMER_DELETE_BOOKINGID;
-	}
-	
-	public String deleteDraftIdPaymentTimer() {
-		return DRAFTID_DELETE_BOOKINGID;
 	}
 	
 	public String updateBookingDetail() {

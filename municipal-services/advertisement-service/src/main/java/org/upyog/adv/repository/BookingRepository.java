@@ -53,7 +53,7 @@ public interface BookingRepository {
 
 	List<Map<String, Object>> getDraftData(String uuid);
 
-	List<AdvertisementSlotAvailabilityDetail> getBookedSlotsFromTimer(AdvertisementSlotSearchCriteria criteria);
+	List<AdvertisementSlotAvailabilityDetail> getBookedSlotsFromTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
 
 	void updateTimerBookingId(String bookingId, String bookingNo, String draftIdFromDraft);
 	
