@@ -1,5 +1,7 @@
 package org.egov.user.web.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.egov.common.contract.response.ResponseInfo;
@@ -15,13 +17,15 @@ import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.web.contract.*;
 import org.egov.user.web.contract.auth.CustomUserDetails;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -185,30 +189,60 @@ public class UserController {
 
     @PostMapping("/digilocker/oauth/token")
     public Object authDigiLocker(@RequestBody @Valid CreateUserRequest createUserRequest, @RequestHeader HttpHeaders headers) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8270/requester-services-dx/user/details";
         UserSearchRequest request = new UserSearchRequest();
-        //request.setMobileNumber(createUserRequest.getUser().getMobileNumber());
-        request.setUserName(createUserRequest.getUser().getMobileNumber());
-        //request.setDigilockerSearch(isDigiLockerSearch);
-        request.setTenantId(createUserRequest.getUser().getTenantId());
-        List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
-        if ( !userContracts.isEmpty()) {   
-        	
-        	User existingUser = userContracts.get(0).toUser(); 
-        	User user = new User().toUser(existingUser);
-        	user.setDigilockerid(createUserRequest.getUser().getDigilockerid());
-        	user.setDigilockerRegistration(isDigiLockerRegistration);            
-        	Object updatedUser = userService.updateDigilockerID(user, existingUser, createUserRequest.getRequestInfo());            
-        	return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 
-        } else {
-            User user = createUserRequest.toDomain(true);
-            user.setUsername(user.getMobileNumber());
-            user.setDigilockerRegistration(isDigiLockerRegistration);
-            user.setDigilockerid(createUserRequest.getUser().getDigilockerid());
-            Object createdUser = userService.registerWithLogin(user, createUserRequest.getRequestInfo());
-            return new ResponseEntity<>(createdUser, HttpStatus.OK);
+        TokenReq tokenReq = TokenReq.builder()
+                .authToken(createUserRequest.getUser().getAccess_token())
+                .build();
+
+        TokenRequest tokenRequest = TokenRequest.builder()
+                .requestInfo(createUserRequest.getRequestInfo())
+                .tokenReq(tokenReq)
+                .build();
+
+        HttpEntity<TokenRequest> entity = new HttpEntity<>(tokenRequest, headers);
+
+        ResponseEntity<String> validationApiResponse;
+        try {
+            validationApiResponse = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Validation failed: " + e.getResponseBodyAsString(), e);
         }
+
+        String validationApiResponseBody = validationApiResponse.getBody();
+        JSONObject jsonResponse = new JSONObject(validationApiResponseBody);
+        JSONObject userRes = jsonResponse.getJSONObject("UserRes");
+        String validationMobileNumber = userRes.getString("mobile");
+
+        if (validationMobileNumber.equals(createUserRequest.getUser().getMobileNumber())) {
+
+            request.setUserName(createUserRequest.getUser().getMobileNumber());
+            request.setTenantId(createUserRequest.getUser().getTenantId());
+
+            List<UserSearchResponseContent> userContracts = searchUsers(request, headers).getUserSearchResponseContent();
+            if (!userContracts.isEmpty()) {
+
+                User existingUser = userContracts.get(0).toUser();
+                User user = new User().toUser(existingUser);
+                user.setDigilockerid(createUserRequest.getUser().getDigilockerid());
+                user.setDigilockerRegistration(isDigiLockerRegistration);
+                Object updatedUser = userService.updateDigilockerID(user, existingUser, createUserRequest.getRequestInfo());
+                return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+
+            } else {
+                User user = createUserRequest.toDomain(true);
+                user.setUsername(user.getMobileNumber());
+                user.setDigilockerRegistration(isDigiLockerRegistration);
+                user.setDigilockerid(createUserRequest.getUser().getDigilockerid());
+                Object createdUser = userService.registerWithLogin(user, createUserRequest.getRequestInfo());
+                return new ResponseEntity<>(createdUser, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("Mobile number validation failed", HttpStatus.BAD_REQUEST);
     }
+
 
 
 
