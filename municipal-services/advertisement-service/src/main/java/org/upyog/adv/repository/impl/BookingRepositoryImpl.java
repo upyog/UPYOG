@@ -193,39 +193,9 @@ public class BookingRepositoryImpl implements BookingRepository {
 		} else if (!draftResult.isEmpty() && bookindIdFromCriteria.isEmpty()) {
 			if (result.isEmpty())
 				bookingId = (String) draftResult.get(0).get("draft_id");
+			
+			checkExistingTimerData(bookingId, criteria, requestInfo, availabiltityDetailsResponse);
 
-			List<AdvertisementSlotAvailabilityDetail> bookedSlots = bookingRepository.getBookedSlotsFromTimer(criteria,
-					requestInfo);
-
-			// Check if the criteria matches any existing entry
-			Optional<AdvertisementSlotAvailabilityDetail> matchedSlot = bookedSlots.stream()
-					.filter(slot -> Objects.equals(slot.getAddType(), criteria.getAddType())
-							&& Objects.equals(slot.getLocation(), criteria.getLocation())
-							&& Objects.equals(slot.getFaceArea(), criteria.getFaceArea())
-							&& Objects.equals(slot.getNightLight(), criteria.getNightLight())
-							&& Objects.equals(slot.getBookingStartDate(), criteria.getBookingStartDate())
-							&& Objects.equals(slot.getBookingEndDate(), criteria.getBookingEndDate()))
-					.findFirst();
-
-			if (matchedSlot.isPresent()) {
-				log.info("Matched slot found: {}", matchedSlot.isPresent());
-				Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
-				if (!remainingTime.isEmpty()) {
-					long remainingTimeValue = remainingTime.get(bookingId);
-					availabiltityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
-				}
-			} else {
-				log.info("No Matched slots found. Deleting non-matching booking entry with ID: {}", bookingId);
-
-				String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
-
-				String timerDeleteQuery = AdvertisementBookingQueryBuilder.TIMER_DELETE_QUERY;
-
-				jdbcTemplate.update(draftDeleteQuery, bookingId);
-
-				jdbcTemplate.update(timerDeleteQuery, bookingId);
-
-			}
 		} else if (!result.isEmpty() && result.get(0).get("booking_no") != null) {
 
 			Map<String, Long> remainingTime = getRemainingTimerValues(bookindIdFromCriteria);
@@ -234,6 +204,45 @@ public class BookingRepositoryImpl implements BookingRepository {
 		}
 
 	}
+	
+	public void checkExistingTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse) {
+		
+		List<AdvertisementSlotAvailabilityDetail> bookedSlots = bookingRepository.getBookedSlotsFromTimer(criteria,
+				requestInfo);
+
+		// Check if the criteria matches any existing entry
+		Optional<AdvertisementSlotAvailabilityDetail> matchedSlot = bookedSlots.stream()
+				.filter(slot -> Objects.equals(slot.getAddType(), criteria.getAddType())
+						&& Objects.equals(slot.getLocation(), criteria.getLocation())
+						&& Objects.equals(slot.getFaceArea(), criteria.getFaceArea())
+						&& Objects.equals(slot.getNightLight(), criteria.getNightLight())
+						&& Objects.equals(slot.getBookingStartDate(), criteria.getBookingStartDate())
+						&& Objects.equals(slot.getBookingEndDate(), criteria.getBookingEndDate()))
+				.findFirst();
+
+		if (matchedSlot.isPresent()) {
+			log.info("Matched slot found: {}", matchedSlot.isPresent());
+			Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
+			if (!remainingTime.isEmpty()) {
+				long remainingTimeValue = remainingTime.get(bookingId);
+				availabiltityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
+			}
+		} else {
+			log.info("No Matched slots found. Deleting non-matching booking entry with ID: {}", bookingId);
+
+			String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
+
+			String timerDeleteQuery = AdvertisementBookingQueryBuilder.TIMER_DELETE_QUERY;
+
+			jdbcTemplate.update(draftDeleteQuery, bookingId);
+
+			jdbcTemplate.update(timerDeleteQuery, bookingId);
+
+		}
+		
+	}
+	
 	
 	public List<Map<String, Object>> getDraftData(String uuid) {
 		String query = queryBuilder.checkDraftIdExists(uuid);
@@ -377,9 +386,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 			RequestInfo requestInfo) {
 		List<Object> paramsList = new ArrayList<>();
 
-		StringBuilder query = new StringBuilder(
-				"SELECT booking_id, createdby, add_type, location, face_area, night_light, booking_start_date, booking_end_date "
-						+ "FROM eg_adv_payment_timer WHERE createdby = ?");
+		StringBuilder query = queryBuilder.getTimerData();
 
 		String createdBy = requestInfo.getUserInfo().getUuid();
 		paramsList.add(createdBy);

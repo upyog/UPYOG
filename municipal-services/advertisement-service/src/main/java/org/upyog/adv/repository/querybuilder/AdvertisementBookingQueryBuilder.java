@@ -73,6 +73,10 @@ public class AdvertisementBookingQueryBuilder {
 		    "DELETE FROM eg_adv_draft_detail " +	
 		    		"WHERE ? - createdtime > ? AND draft_id = ?";
 	
+	public static final String GET_TIMER_DATA = 
+		    "SELECT booking_id, createdby, add_type, location, face_area, night_light, booking_start_date, booking_end_date "
+		    + "FROM eg_adv_payment_timer WHERE createdby = ?";
+	
 	private static final String FETCH_BOOKINGID_TO_DELETE = "SELECT booking_id FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
 	
 	public static final String FETCH_DRAFTID_TO_DELETE = "SELECT draft_id FROM eg_adv_draft_detail WHERE ? - createdtime > ?";
@@ -378,6 +382,11 @@ public class AdvertisementBookingQueryBuilder {
 		paramsList.add(searchCriteria.getBookingStartDate());
 		paramsList.add(searchCriteria.getBookingEndDate());
 
+		return builder;
+	}
+
+	public StringBuilder getTimerData() {
+		StringBuilder builder = new StringBuilder(GET_TIMER_DATA);
 		return builder;
 	}
 
