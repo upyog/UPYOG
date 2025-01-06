@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = { "tenantId", "hallCode", "communityHallCode", "bookingDate"})
+@EqualsAndHashCode(of = { "tenantId", "hallcode", "communityHallcode", "bookingDate"})
 public class BookingPaymentTimerDetails {
 
 	/**
