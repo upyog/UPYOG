@@ -10,6 +10,7 @@ import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
+import org.egov.asset.web.models.maintenance.AssetMaintenanceRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,4 +192,34 @@ public class EnrichmentService {
         request.getAssetDisposal().setAuditDetails(auditDetails);
     }
 
+    /**
+     * Enriches Asset Maintenance creation request by adding audit details and unique identifiers.
+     *
+     * @param request The AssetMaintenanceRequest object containing maintenance details to be enriched.
+     */
+    public void enrichMaintenanceCreateOperations(AssetMaintenanceRequest request) {
+        log.info("Enriching Asset Maintenance Create Request");
+
+        // Generate audit details
+        AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
+
+        // Set audit details and unique identifier for the maintenance record
+        request.getAssetMaintenance().setAuditDetails(auditDetails);
+        request.getAssetMaintenance().setMaintenanceId(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Enriches Asset Maintenance update request by adding audit details.
+     *
+     * @param request The AssetMaintenanceRequest object containing maintenance details to be enriched.
+     */
+    public void enrichMaintenanceUpdateOperations(AssetMaintenanceRequest request) {
+        log.info("Enriching Asset Maintenance Update Request");
+
+        // Generate audit details
+        AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
+
+        // Set audit details for the maintenance record
+        request.getAssetMaintenance().setAuditDetails(auditDetails);
+    }
 }
