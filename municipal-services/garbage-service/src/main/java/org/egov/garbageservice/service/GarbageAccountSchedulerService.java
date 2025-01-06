@@ -21,8 +21,6 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class GarbageAccountSchedulerService {
 
-	private static final String EMPLOYEE = "EMPLOYEE";
-
 	@Autowired
 	private GarbageAccountService garbageAccountService;
 

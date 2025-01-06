@@ -5,17 +5,16 @@ import org.egov.garbageservice.model.GarbageAccountActionRequest;
 import org.egov.garbageservice.model.GarbageAccountActionResponse;
 import org.egov.garbageservice.model.GarbageAccountRequest;
 import org.egov.garbageservice.model.GarbageAccountResponse;
+import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.service.GarbageAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -58,10 +57,11 @@ public class GarbageAccountController {
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
 
-	@GetMapping("/_payNow")
-	public ResponseEntity<?> payNowGrbgBill(@RequestParam(value = "id", required = true) String userUuid) {
+	@PostMapping("/_payNow")
+	public ResponseEntity<?> payNowGrbgBill(@RequestBody PayNowRequest payNowRequest) {
+
 		GarbageAccountActionResponse response = null;
-		response = service.payNowGrbgBill(userUuid);
+		response = service.payNowGrbgBill(payNowRequest);
 
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
