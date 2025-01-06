@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   // const [chatHistory,setChatHistory] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
@@ -16,6 +26,7 @@ function ChatBot() {
     if (input.trim() !== "") {
       setMessages([...messages, { sender: "user", text: input }]);
       setInput("");
+      setIsLoading(true);
   
       try {
         const response = await fetch(apiEndPoint, {
@@ -34,6 +45,7 @@ function ChatBot() {
         const botReply = data.response; 
   
         setTimeout(() => {
+          setIsLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "bot", text: botReply },
@@ -43,6 +55,7 @@ function ChatBot() {
         console.error("Error fetching response:", error);
         // Handle error or fallback message
         setTimeout(() => {
+          setIsLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "bot", text: "Sorry, I'm having trouble understanding you right now." },
@@ -202,6 +215,26 @@ function ChatBot() {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
+                <div
+                  style={{
+                    maxWidth: "70%",
+                    padding: "10px",
+                    borderRadius: "10px",
+                    backgroundColor: "#e4e6eb",
+                    color: "black",
+                  }}
+                >
+                  <div className="typing_indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
           <div
             style={{
