@@ -1,10 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   // const [chatHistory,setChatHistory] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Create a ref to track the bottom of messages container
+  const messagesEndRef = useRef(null);
+
+    // Function to scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll effect - triggers whenever messages array updates
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
@@ -16,6 +30,7 @@ function ChatBot() {
     if (input.trim() !== "") {
       setMessages([...messages, { sender: "user", text: input }]);
       setInput("");
+      setIsLoading(true);  // Show loading indicator while waiting for response
   
       try {
         const response = await fetch(apiEndPoint, {
@@ -34,6 +49,7 @@ function ChatBot() {
         const botReply = data.response; 
   
         setTimeout(() => {
+          setIsLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "bot", text: botReply },
@@ -43,6 +59,7 @@ function ChatBot() {
         console.error("Error fetching response:", error);
         // Handle error or fallback message
         setTimeout(() => {
+          setIsLoading(false);
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: "bot", text: "Sorry, I'm having trouble understanding you right now." },
@@ -202,6 +219,37 @@ function ChatBot() {
                 </div>
               </div>
             ))}
+            {/* Loading Indicator
+            - Shows three animated dots when isLoading is true
+            - Uses CSS modules for styling
+            - Appears in same style as bot messages for consistency */}
+            {isLoading && (
+              <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
+                <div
+                  style={{
+                    maxWidth: "70%",
+                    padding: "10px",
+                    borderRadius: "10px",
+                    backgroundColor: "#e4e6eb",
+                    color: "black",
+                  }}
+                >{/**
+                Each span tag represents one of the three animated dots (...) in the loading indicator. 
+                We use three separate spans because each dot needs to animate independently to 
+                create that nice wave-like motion effect. */}
+                  <div className="typing_indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Invisible div for auto-scrolling
+            - Referenced by messagesEndRef
+            - Used as target for scrollIntoView
+            - Placed at bottom of message container */}
+            <div ref={messagesEndRef} />
           </div>
           <div
             style={{

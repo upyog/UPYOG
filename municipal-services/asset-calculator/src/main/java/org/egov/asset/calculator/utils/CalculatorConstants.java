@@ -3,7 +3,9 @@ package org.egov.asset.calculator.utils;
 public class CalculatorConstants {
 
 
-	private CalculatorConstants() {
+
+
+    private CalculatorConstants() {
 	}
 
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID_TENANT_ID_MDMS_KEY";
@@ -12,6 +14,8 @@ public class CalculatorConstants {
 	public static final  String SLM = "SLM";
 	public static final  String DBM = "DBM";
 	public static final String USER = "SYSTEM";
+	public static final Long SECONDS_IN_A_DAY = 86400L;
+	public static final Long MILLISECONDS_IN_A_SECOND = 1000L;
 
 
 

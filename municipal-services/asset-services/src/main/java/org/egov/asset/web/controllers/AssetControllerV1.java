@@ -111,14 +111,18 @@ public class AssetControllerV1 {
 
     // Trigger particular asset Depriciation calculation from start
     @RequestMapping(value = "depriciation/_process", method = RequestMethod.POST)
-    public ResponseEntity<AssetResponse> triggerDepreciationCalculation(
+    public ResponseEntity<CalculationRes> triggerDepreciationCalculation(
             @ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
-        Object apiresponse = assetCalculationClient.triggerDepreciationCalculation(assetRequest.getRequestInfo().getUserInfo().getTenantId(), assetRequest.getAsset().getId());
-        log.info("Depreciaiton api response : ", apiresponse.toString());
-        AssetResponse response = AssetResponse.builder().assets((List<AssetDTO>) assetRequest.getAsset())
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+        CalculationRes apiresponse = assetCalculationClient.triggerDepreciationCalculation(assetRequest);
+        log.info("Depreciaiton api response : {}", apiresponse.getMessage());
+//        List<AssetDTO> assets = new ArrayList<AssetDTO>();
+//        assets.add(assetRequest.getAsset());
+//        AssetResponse response = AssetResponse.builder().assets(assets)
+//                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+//                .build();
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(apiresponse, HttpStatus.OK);
     }
 
     // Trigger particular asset Depriciation calculation from start

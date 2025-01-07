@@ -131,7 +131,7 @@ public class ProcessDepreciationV2 {
             asset.setBookValue(BigDecimal.valueOf(asset.getOriginalBookValue()).doubleValue());
             //LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate());
             // Convert purchase date from milliseconds to LocalDate
-            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / 86400000); // Convert milliseconds to days
+            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / CalculatorConstants.SECONDS_IN_A_DAY); // Convert milliseconds to days
             if (purchaseDate == null) {
                 log.warn("Skipping asset with null purchase date: {}", asset.getId());
                 return; // Skip if purchase date is null any case if it is.
@@ -170,7 +170,7 @@ public class ProcessDepreciationV2 {
 
             log.info("Processing Non legacy Data, legacyData Flag = {}", legacyData );
             // Validate purchase date and anniversary date
-            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / 86400000); // Convert milliseconds to days
+            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / CalculatorConstants.SECONDS_IN_A_DAY); // Convert milliseconds to days
             if (purchaseDate == null) {
                 log.warn("Skipping asset with null purchase date: {}", asset.getId());
                 return;
@@ -219,22 +219,29 @@ public class ProcessDepreciationV2 {
         BigDecimal depreciationRate = null; // set static value for testing
         String depreciationMethod = null;
 
-        Object[] result = mdmsDataRepository.findDepreciationRateByCategoryAndPurchaseDate(category.trim(), purchaseDate);
-        log.debug("Fetched depreciation rate for rate, method: {}", result[0]);
+        Object[] result = mdmsDataRepository.findDepreciationRateByCategoryAndPurchaseDate(category.trim(), purchaseDate*CalculatorConstants.MILLISECONDS_IN_A_SECOND);
+        try {
+            log.debug("Fetched depreciation rate for rate, method: {}", result[0]);
 
-        // Check if result is a nested array
-        if (((Object[]) result).length > 0 && ((Object[]) result)[0] instanceof Object[]) {
-            Object[] innerArray = (Object[]) ((Object[]) result)[0];
-             depreciationRate = (innerArray[0] instanceof BigDecimal) ? (BigDecimal) innerArray[0] : null;
-             depreciationMethod = (innerArray[1] instanceof String) ? (String) innerArray[1] : null;
+            // Check if result is a nested array
+            if (((Object[]) result).length > 0 && ((Object[]) result)[0] instanceof Object[]) {
+                Object[] innerArray = (Object[]) ((Object[]) result)[0];
+                depreciationRate = (innerArray[0] instanceof BigDecimal) ? (BigDecimal) innerArray[0] : null;
+                depreciationMethod = (innerArray[1] instanceof String) ? (String) innerArray[1] : null;
 
-            if (depreciationRate == null || depreciationMethod == null) {
-                throw new IllegalArgumentException("Depreciation details are incomplete.");
+                if (depreciationRate == null || depreciationMethod == null) {
+                    throw new IllegalArgumentException("Depreciation details are incomplete.");
 
+                }
+                log.info("Depreciation Rate is : {} and method is :{} ", depreciationRate, depreciationMethod);
+                return new DepreciationRateDTO(depreciationRate, depreciationMethod);
             }
-            log.info("Depreciation Rate is : {} and method is :{} ", depreciationRate, depreciationMethod);
-            return new DepreciationRateDTO(depreciationRate, depreciationMethod);
         }
+        catch (Exception e) {
+            log.error("Unexpected error while fetching depreciation rate: {}", e.getMessage(), e);
+            throw new RuntimeException("An unexpected error occurred while processing depreciation data.", e);
+        }
+
         log.info("Depreciation Rate is : {} and method is :{} ", depreciationRate, depreciationMethod);
         return new DepreciationRateDTO(depreciationRate, depreciationMethod);
     }

@@ -101,6 +101,12 @@ public class AssetConfiguration {
     @Value("${persister.update.asset.disposal.topic}")
     private String updateAssetDisposal;
 
+    @Value("${persister.save.asset.maintenance.topic}")
+    private String saveAssetMaintenance;
+
+    @Value("${persister.update.asset.maintenance.topic}")
+    private String updateAssetMaintenance;
+
 
     @PostConstruct
     public void initialize() {

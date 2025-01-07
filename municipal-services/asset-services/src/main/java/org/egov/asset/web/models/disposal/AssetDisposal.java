@@ -60,6 +60,9 @@ public class AssetDisposal {
     @JsonProperty("glCode")
     private String glCode;
 
+//    @JsonProperty("additionalDetails")
+//    private Object additionalDetails;
+
     @JsonIgnore
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
