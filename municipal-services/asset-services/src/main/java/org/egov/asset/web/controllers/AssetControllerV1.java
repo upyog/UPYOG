@@ -192,4 +192,9 @@ public class AssetControllerV1 {
 	    	return new ResponseEntity(response, HttpStatus.OK);
 	    }
 	
+		/*
+		 * @GetMapping("/getAllCounts") public ResponseEntity<?> getAllCounts() { return
+		 * ResponseEntity.ok(assetService.getAllcounts()); }
+		 */
+	
 }

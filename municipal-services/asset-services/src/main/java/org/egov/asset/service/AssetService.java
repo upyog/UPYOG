@@ -410,6 +410,16 @@ public class AssetService {
 				}
 			}
 
+			if (StringUtils.equalsIgnoreCase(assetBusinessService, AssetConstants.ASSET_BusinessService)) {
+				for (Role role : roles) {
+					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_WF_CREATOR)) {
+						roleCodes.add(AssetConstants.ASSET_WF_CREATOR);
+					}
+					if (StringUtils.equalsIgnoreCase(role.getCode(), AssetConstants.ASSET_WF_APPROVER)) {
+						roleCodes.add(AssetConstants.ASSET_WF_APPROVER);
+					}
+				}
+			}
 		} catch (Exception e) {
 			throw new RuntimeException("Roles does not exists!!!");
 		}
