@@ -140,9 +140,11 @@ public class TransactionService {
 		log.info(transactionCriteria.toString());
 		List<Transaction> transactions = new ArrayList<>();
 		try {
-			if (!StringUtils.isEmpty(transactionCriteria.getBillId())) {
+			if (!StringUtils.isEmpty(transactionCriteria.getBillId())
+					|| !StringUtils.isEmpty(transactionCriteria.getConsumerCode())) {
 				TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
-						.billIds(Collections.singleton(transactionCriteria.getBillId())).build();
+						.billIds(Collections.singleton(transactionCriteria.getBillId()))
+						.consumerCodes(Collections.singleton(transactionCriteria.getConsumerCode())).build();
 
 				List<TransactionDetails> transactionDetails = transactionDetailsRepository
 						.fetchTransactionDetails(transactionDetailsCriteria);
