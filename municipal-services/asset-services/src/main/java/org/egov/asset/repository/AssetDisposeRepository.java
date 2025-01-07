@@ -45,10 +45,14 @@ public class AssetDisposeRepository {
         producer.push(config.getUpdateAssetDisposal(), assetDisposalRequest);
     }
 
-    public List<AssetDisposal> search(AssetDisposalSearchCriteria criteria) {
+    public List<AssetDisposal> search(AssetDisposalSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getDisposalSearchQuery(criteria, preparedStmtList);
-        log.info("Final query: {}", query);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), assetDisposalRowMapper);
+        String query = null;
+        if (searchCriteria != null) {
+            query = queryBuilder.getDisposalSearchQuery(searchCriteria, preparedStmtList);
+            log.info("Final asset disposal search query: {}", query);
+            return jdbcTemplate.query(query, preparedStmtList.toArray(), assetDisposalRowMapper);
+        }
+        return  null;
     }
 }

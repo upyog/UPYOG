@@ -25,7 +25,7 @@ import java.util.List;
 public class AssetMaintenanceService {
 
     @Autowired
-    private AssetMaintenanceRepository maintenanceRepository;
+    private AssetMaintenanceRepository assetMaintenanceRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -39,14 +39,6 @@ public class AssetMaintenanceService {
     @Autowired
     private EnrichmentService enrichmentService;
 
-    @Autowired
-    private AssetMaintenanceQueryBuilder maintenanceQueryBuilder;
-
-    @Autowired
-    private AssetMaintenanceRowMapper maintenanceRowMapper;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     /**
      * Create a new AssetMaintenance record.
@@ -73,7 +65,7 @@ public class AssetMaintenanceService {
         enrichmentService.enrichMaintenanceCreateOperations(request);
 
         // Push the request to Kafka
-        maintenanceRepository.save(request);
+        assetMaintenanceRepository.save(request);
 
         return maintenance;
     }
@@ -103,7 +95,7 @@ public class AssetMaintenanceService {
         enrichmentService.enrichMaintenanceUpdateOperations(request);
 
         // Push the update request to Kafka
-        maintenanceRepository.update(request);
+        assetMaintenanceRepository.update(request);
 
         return maintenance;
     }
@@ -116,13 +108,7 @@ public class AssetMaintenanceService {
      * @return List of AssetMaintenance records matching the criteria.
      */
     public List<AssetMaintenance> searchMaintenances(AssetMaintenanceSearchCriteria searchCriteria, RequestInfo requestInfo) {
-        log.debug("Asset maintenance service method search called");
 
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = maintenanceQueryBuilder.getSearchQuery(searchCriteria, preparedStmtList);
-
-        log.info("Final query: {}", query);
-
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), maintenanceRowMapper);
+            return  assetMaintenanceRepository.search(searchCriteria);
     }
 }

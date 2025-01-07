@@ -18,6 +18,8 @@ public class AssetMaintenanceSearchCriteria {
 
     private String tenantId; // Tenant ID for multi-tenancy
 
+    private List<String> maintenanceIds;
+
     private List<String> assetIds; // List of asset IDs to filter
 
     private String maintenanceType; // Maintenance type to filter (e.g., Preventive, Corrective)

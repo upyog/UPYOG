@@ -27,7 +27,6 @@ import java.util.List;
 public class AssetMaintenance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("maintenanceId")
     private String maintenanceId;
 
@@ -35,6 +34,9 @@ public class AssetMaintenance {
     @Column(nullable = false)
     @JsonProperty("assetId")
     private String assetId;
+
+    @JsonProperty("tenantId")
+    private String tenantId;
 
     @JsonProperty("currentLifeOfAsset")
     private String currentLifeOfAsset;
