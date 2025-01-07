@@ -58,8 +58,8 @@ export const ASSETSearch = {
     const response = await ASSETService.search({ tenantId, filters });
     return response.Assets[0];
   },
-  RegistrationDetails: ({ Assets: response, combinedData, t }) => {
-
+  RegistrationDetails: ({ Assets: response, combinedData, t , applicationDetails}) => {
+console.log('first:= ', applicationDetails);
     const formatDate = (epochTime) => {
       if (!epochTime) return '';
       const date = new Date(epochTime);
@@ -69,6 +69,16 @@ export const ASSETSearch = {
         year: 'numeric'
       }).replace(/\//g, '/');
     };
+      const slotlistRows = applicationDetails?.DepreciationDetails?.map((row) => (
+        [
+          row.fromDate,
+          row.toDate,
+          row.depreciationValue,
+          row.bookValue,
+          row.rate,
+          row.oldBookValue
+        ]
+      )) || [];
     return [
 
       {
@@ -145,15 +155,30 @@ export const ASSETSearch = {
           ],
         },
       },
+      {
+        title:"AST_Depriciation",
+        asSectionHeader: true,
+        isTable: true,
+        headers: [`${t("Start Date")}` , `${t("End Date")}`, "Depreciation Value", "Book Value", "Rate", "Old Book Value"],
+        tableRows: slotlistRows,
+      },
     ];
   },
   applicationDetails: async (t, tenantId, applicationNo, userType, combinedData, args) => {
+    
     const filter = { applicationNo, ...args };
     const response = await ASSETSearch.application(tenantId, filter);
-
+    const applicationDetails = await Digit.ASSETService.depriciationList({
+        Asset: {
+        tenantId,
+        id: "00689305-aeb1-4100-9992-0a5913dd6c6c",
+        accountId: ""
+        }
+      });
+      
     return {
       tenantId: response.tenantId,
-      applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, combinedData, t }),
+      applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, combinedData, t, applicationDetails }),
       applicationData: response,
       transformToAppDetailsForEmployee: ASSETSearch.RegistrationDetails,
 

@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 
 const useAssetApplicationDetail = (t, tenantId, applicationNo, config = {}, userType, args) => {
   const stateTenantId = Digit.ULBService.getStateId();
-
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const defaultSelect = (data) => {
      let applicationDetails = data.applicationDetails.map((obj) => {
       return obj;
@@ -41,6 +41,11 @@ const useAssetApplicationDetail = (t, tenantId, applicationNo, config = {}, user
     } else {
       combinedData = [];
     }
+
+  //   const processDepreciation = async(assetId) => {
+     
+   
+  // }
 
   return useQuery(
     ["APPLICATION_SEARCH", "ASSET_SEARCH", applicationNo, userType, combinedData,  args],

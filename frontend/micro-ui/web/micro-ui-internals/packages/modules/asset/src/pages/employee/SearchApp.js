@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState,useEffect } from "react"
 import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
@@ -60,6 +60,16 @@ const SearchApp = ({path, parentRoute}) => {
        config,
       );
 
+      //toaster msg with
+    useEffect(() => {
+        if (showToast) {
+          const timer = setTimeout(() => {
+            setShowToast(null);
+          }, 1500); // Close toast after 1.5 seconds
+
+          return () => clearTimeout(timer); // Clear timer on cleanup
+        }
+      }, [showToast]);
 
     return <React.Fragment>
         <ASSETSearchApplication t={t} isLoading={isLoading} parentRoute={parentRoute} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 

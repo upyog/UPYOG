@@ -49,7 +49,7 @@ const componentsToRegister = {
   NewDocument,
   ASTCheckPage,
   NewResponse,
-  ApplicationDetails: ApplicationDetails,
+  ApplicationDetails,
   AssetResponse: Response, 
   returnResponse:ReturnResponse,
   AssetAssign,
