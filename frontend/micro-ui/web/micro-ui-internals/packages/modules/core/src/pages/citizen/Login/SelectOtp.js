@@ -24,7 +24,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     let TokenReq = {
       code_verifier: localStorage.getItem('code_verfier_register'),
       code: code, module: "REGISTER",
-      redirect_uri: "http://localhost:3000/digit-ui/citizen/login/otp",
+      redirect_uri: "https://upyog-test.niua.org/digit-ui/citizen/login/otp",
     }
    console.log("token",code,TokenReq,localStorage.getItem("code_verfier_register"))
     const data = await Digit.DigiLockerService.token({TokenReq })
