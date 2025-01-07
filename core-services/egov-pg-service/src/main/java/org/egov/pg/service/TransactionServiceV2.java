@@ -152,9 +152,11 @@ public class TransactionServiceV2 {
 		log.info(transactionCriteriaV2.toString());
 		List<Transaction> transactions = new ArrayList<>();
 		try {
-			if (!CollectionUtils.isEmpty(transactionCriteriaV2.getBillIds())) {
+			if (!CollectionUtils.isEmpty(transactionCriteriaV2.getBillIds())
+					|| !CollectionUtils.isEmpty(transactionCriteriaV2.getConsumerCodes())) {
 				TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
-						.billIds(transactionCriteriaV2.getBillIds()).build();
+						.billIds(transactionCriteriaV2.getBillIds())
+						.consumerCodes(transactionCriteriaV2.getConsumerCodes()).build();
 
 				List<TransactionDetails> transactionDetails = transactionDetailsRepository
 						.fetchTransactionDetails(transactionDetailsCriteria);
