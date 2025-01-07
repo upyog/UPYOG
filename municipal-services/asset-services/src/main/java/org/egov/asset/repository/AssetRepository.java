@@ -122,7 +122,6 @@ public class AssetRepository {
 				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
 		}
 	}
-	
 
 	public List<AssetUpdate> getAssetDataFromDB(AssetSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();

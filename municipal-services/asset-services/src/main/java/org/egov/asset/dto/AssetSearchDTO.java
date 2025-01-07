@@ -1,7 +1,6 @@
 package org.egov.asset.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
 @Data
@@ -51,5 +50,10 @@ public class AssetSearchDTO implements AssetDTO{
     
     @JsonProperty("assetAssignment")
     AssetAssignmentDTO assetAssignment;
+    
+    @JsonProperty("addressDetails")
+    AssetAddressDTO addressDetails;
+    
+    
 
 }

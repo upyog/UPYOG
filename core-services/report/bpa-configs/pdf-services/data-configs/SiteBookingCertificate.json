@@ -7,12 +7,6 @@
       {
         "direct":[
           {
-            "variable":"applicationNumber",
-            "value":{
-              "path":"$.applicationNumber"
-            }
-          },
-          {
            "variable":"qrCode",
             "value":{
               "path":"$.qrCodeText"
@@ -98,9 +92,33 @@
             }
           },
           {
+           "variable":"ulbName",
+            "value":{
+              "path":"$.ulbName"
+            }
+          },
+          {
+           "variable":"ulbType",
+            "value":{
+              "path":"$.ulbType"
+            }
+          },
+          {
            "variable":"total",
             "value":{
               "path":"$.total"
+            }
+          },
+          {
+           "variable":"approvalTime",
+            "value":{
+              "path":"$.approvalTime"
+            }
+          },
+          {
+           "variable":"approvalDate",
+            "value":{
+              "path":"$.approvalDate"
             }
           }
         ]
