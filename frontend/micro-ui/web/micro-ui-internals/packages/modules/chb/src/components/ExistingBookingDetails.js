@@ -99,7 +99,16 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
   }
 
   const filteredApplications = data?.hallsBookingApplication || [];
+  const applicationContainerStyle = {
+    padding: '10px',
+    margin: '10px 0',
+    border: '1px solid #ccc',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+  };
 
+  const applicationContainerHoverStyle = {
+    boxShadow: '1px 4px 4px 7px rgba(0, 0, 0, 0.5)', // Black shadow with 50% opacity
+  };
   return (
     <React.Fragment>
       <div>
@@ -107,11 +116,19 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
           filteredApplications.map((application, index) => (
             <div key={index}> 
               <Card
+               style={{ ...applicationContainerStyle, cursor: "pointer" }}
+               onMouseEnter={(e) => {
+                 e.currentTarget.style.backgroundColor = applicationContainerHoverStyle.backgroundColor;
+                 e.currentTarget.style.boxShadow = applicationContainerHoverStyle.boxShadow;
+               }}
+               onMouseLeave={(e) => {
+                 e.currentTarget.style.backgroundColor = '';
+                 e.currentTarget.style.boxShadow = '';
+               }}
                 onClick={() => {
                   // Trigger the setchbData function with the clicked application data
                   setchbData(application);
                 }}
-                style={{ cursor: "pointer" }}
               >
                 <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
                 <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />

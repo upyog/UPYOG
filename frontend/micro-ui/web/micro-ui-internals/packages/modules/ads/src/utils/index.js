@@ -79,8 +79,9 @@ export const setCartDetails = (data) => {
     };
 
   }) || [];
+  let draftId=adslist?.existingDataSet?.draftId;
 
-  data.adslist = cartDetails;
+  data.adslist = {cartDetails,draftId};
   return data;
 }
 export const setApplicantDetails = (data) => {
@@ -121,13 +122,14 @@ export const ADSDataConvert = (data) => {
 const formdata={
   bookingApplication: {
     tenantId: data.tenantId,
+    draftId:data.adslist.draftId,
     applicantDetail:{
       ...data.applicant
     },
     address:data.address,
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
-    cartDetails:data.adslist,
+    cartDetails:data.adslist.cartDetails,
 
     workflow:null
   }
