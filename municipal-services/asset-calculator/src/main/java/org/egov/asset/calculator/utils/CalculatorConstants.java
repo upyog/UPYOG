@@ -3,6 +3,8 @@ package org.egov.asset.calculator.utils;
 public class CalculatorConstants {
 
 
+
+
 	private CalculatorConstants() {
 	}
 
@@ -12,6 +14,7 @@ public class CalculatorConstants {
 	public static final  String SLM = "SLM";
 	public static final  String DBM = "DBM";
 	public static final String USER = "SYSTEM";
+	public static final Long SECONDS_IN_A_DAY = 86400L;
 
 
 

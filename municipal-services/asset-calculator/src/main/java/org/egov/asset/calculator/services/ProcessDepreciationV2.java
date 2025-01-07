@@ -131,7 +131,7 @@ public class ProcessDepreciationV2 {
             asset.setBookValue(BigDecimal.valueOf(asset.getOriginalBookValue()).doubleValue());
             //LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate());
             // Convert purchase date from milliseconds to LocalDate
-            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / 86400000); // Convert milliseconds to days
+            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / CalculatorConstants.SECONDS_IN_A_DAY); // Convert milliseconds to days
             if (purchaseDate == null) {
                 log.warn("Skipping asset with null purchase date: {}", asset.getId());
                 return; // Skip if purchase date is null any case if it is.
@@ -170,7 +170,7 @@ public class ProcessDepreciationV2 {
 
             log.info("Processing Non legacy Data, legacyData Flag = {}", legacyData );
             // Validate purchase date and anniversary date
-            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / 86400000); // Convert milliseconds to days
+            LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / CalculatorConstants.SECONDS_IN_A_DAY); // Convert milliseconds to days
             if (purchaseDate == null) {
                 log.warn("Skipping asset with null purchase date: {}", asset.getId());
                 return;

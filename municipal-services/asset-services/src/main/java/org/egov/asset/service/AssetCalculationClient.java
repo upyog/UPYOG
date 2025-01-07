@@ -1,6 +1,7 @@
 package org.egov.asset.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.repository.ServiceRequestRepository;
 import org.egov.asset.web.models.AssetRequest;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class AssetCalculationClient {
 
@@ -28,7 +30,7 @@ public class AssetCalculationClient {
 
     public CalculationRes triggerDepreciationCalculation(AssetRequest assetRequest) {
         StringBuilder uri = new StringBuilder(config.getAssetCalculatorServiceHost()+config.getAssetCalculatorDepreciationApi());
-
+        log.info("URI to calculate depreciation is : {}", uri);
         // Prepare request payload
         CalculationReq calculationReq = new CalculationReq();
         calculationReq.setRequestInfo(assetRequest.getRequestInfo());
@@ -51,7 +53,7 @@ public class AssetCalculationClient {
         String assetCalculatorHost = config.getAssetCalculatorServiceHost();
         String depreciationDetailsApi = config.getAssetCalculatorDepreciationListApi();
         StringBuilder uri = new StringBuilder(assetCalculatorHost + depreciationDetailsApi);
-
+        log.info("URI to fetch list is {}", uri);
         // Define path parameters using HashMap
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("assetId", assetId);
