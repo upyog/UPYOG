@@ -1,22 +1,35 @@
 package org.egov.pgr.repository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.pgr.repository.rowmapper.CountRowMapper;
 import org.egov.pgr.repository.rowmapper.PGRQueryBuilder;
 import org.egov.pgr.repository.rowmapper.PGRRowMapper;
 import org.egov.pgr.util.PGRConstants;
 import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.pgr.web.models.CountStatusRequest;
+import org.egov.pgr.web.models.CountStatusUpdate;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 @Repository
 @Slf4j
@@ -28,7 +41,13 @@ public class PGRRepository {
     private PGRRowMapper rowMapper;
 
     private JdbcTemplate jdbcTemplate;
+    
+    private ObjectMapper mapper;
 
+    @Autowired
+    private CountRowMapper countRowMapper;
+    
+    
     @Autowired
     public PGRRepository(PGRQueryBuilder queryBuilder, PGRRowMapper rowMapper, JdbcTemplate jdbcTemplate) {
         this.queryBuilder = queryBuilder;
@@ -96,6 +115,75 @@ public class PGRRepository {
 		dynamicData.put(PGRConstants.AVERAGE_RESOLUTION_TIME, averageResolutionTime);
 
 		return dynamicData;
+	}
+
+
+	public List<CountStatusUpdate> countSearch(@Valid CountStatusRequest request) throws JsonProcessingException {
+		List<String> preparedStatementValues = new ArrayList<>();
+        //StringBuilder searchQuery = new StringBuilder(queryBuilder.COUNT_QUERY);
+        StringBuilder searchQuery = new StringBuilder(queryBuilder.COUNT_APPLCATIONSTATUS_SUMMARY); 
+        log.info(searchQuery.toString());
+        searchQuery = addWhereClause(searchQuery, preparedStatementValues, request);
+        return jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), countRowMapper);
+	}
+
+
+	private StringBuilder addWhereClause(StringBuilder searchQuery, List preparedStatementValues,
+			@Valid CountStatusRequest request) throws JsonProcessingException {
+		
+		boolean isValid = request.getCountStatusUpdate().stream()
+			    .allMatch(i -> StringUtils.isEmpty(i.getTenantId()) &&
+			                   StringUtils.isEmpty(i.getServiceCode()) &&
+			                   (i.getAdditionalDetails() == null) &&
+			                   StringUtils.isEmpty(i.getDateRange()) &&
+			                   (i.getEndDate() == null && i.getEndDate() == null));
+
+			if (isValid) {
+			    return searchQuery;
+			}
+		
+		 searchQuery.append(" WHERE");
+	        boolean isAppendAndClause = false;
+	        
+	        for(CountStatusUpdate i : request.getCountStatusUpdate()) {
+	        	 if(!StringUtils.isEmpty(i.getTenantId())){
+	 	        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+	 	        	searchQuery.append(" pt.tenantid = ? ");
+	 	        	preparedStatementValues.add(i.getTenantId());
+	 	        }
+	 	        if(!StringUtils.isEmpty(i.getServiceCode())) {
+	 	        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+	 	        	searchQuery.append(" pt.servicecode = ? ");
+	 	        	 preparedStatementValues.add(i.getServiceCode());
+	 	        }
+	 			/*
+	 			 * if(!StringUtils.isEmpty(request.getCountStatusUpdate().getDateRange())){
+	 			 * isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+	 			 * searchQuery.append(" pt.servicecode = ? "); }
+	 			 */
+	 	        if(null != i.getEndDate() && null != i.getEndDate()) {
+	 	        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+	 	        	searchQuery.append(" pt.lastmodifiedtime between ? AND ? ");
+	 	        	 preparedStatementValues.add(i.getFromDate());
+	 	        	preparedStatementValues.add(i.getEndDate());
+	 	        }
+	 	        if(null!=(i.getAdditionalDetails())) {
+	 	        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+	 	            searchQuery.append(" pt.additionaldetails @> ?::jsonb ");
+	 	            preparedStatementValues.add(new ObjectMapper().writeValueAsString(i.getAdditionalDetails()));
+	 	        }
+	 	        
+	 		
+	        }
+	        return searchQuery; 
+	}
+
+
+	private boolean addAndClauseIfRequired(boolean b, StringBuilder searchQuery) {
+		  if (b)
+			  searchQuery.append(" AND");
+
+	        return true;
 	}
 
 
