@@ -562,16 +562,15 @@ const handleCloseCart = () => {
           />
         </Card>
       )}
-      {showModal && (
-      <BookingPopup t={t}
-      closeModal={() => setShowModal(false)} // Close modal when "BA actionCancelOnSubmit={() => setShowModal(false)} 
-      actionCancelOnSubmit={() => setShowModal(false)} // Close modal when "Cancel" is clicked
-      onSubmit={() => {
-      goNext () ;
-      // Ensure action is called only when submitting
-      setShowModal(false); // Close modal after action
-      }}
-      />
+     {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
       )}
      {showModal && (
         <BookingPopup

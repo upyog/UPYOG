@@ -96,7 +96,7 @@ const VSearchCertificate = () => {
      * Asynchronously fetches module data based on the provided certificate name and number.
      * If both certificate_name and certificate_No are provided, it retrieves the application details
      * from the CMServices. If the application exists, it updates the state with the relevant details,
-     * including name, address, certificate number, issue date, validity date, and status.
+     * including name, mobileNumber, certificate number, issue date, validity date, and status.
      * If the application does not exist, it displays a warning toast notification.
      */
     const ModuleData = async () => {
@@ -113,7 +113,7 @@ const VSearchCertificate = () => {
                 setUpdatedData([
                     {
                         name: applicationData?.name || "NA",
-                        address: applicationData?.address || "NA",
+                        mobileNumber: applicationData?.mobileNumber || "NA",
                         certificateNumber: applicationData?.applicationNumber || "NA",
                         issueDate: applicationData?.fromDate || "NA",
                         validUpto: applicationData?.toDate || "NA",
@@ -130,7 +130,7 @@ const VSearchCertificate = () => {
     // columns defined to be passed in applicationtable
     const columns = [
         { Header: t("CITIZEN_NAME"), accessor: "name" },
-        { Header: t("CITIZEN_MOBILE_NO"), accessor: "address" },
+        { Header: t("CITIZEN_MOBILE_NO"), accessor: "mobileNumber" },
         { Header: t("CERTIFICATE_NUMBER"), accessor: "certificateNumber" },
         { Header: t("ISSUE_DATE"), accessor: "issueDate" },
         { Header: t("VALID_UPTO"), accessor: "validUpto" },
@@ -141,7 +141,7 @@ const VSearchCertificate = () => {
     const [updatedData, setUpdatedData] = useState([
         {
             name: "",
-            address: "",
+            mobileNumber: "",
             certificateNumber: "",
             issueDate: "",
             validUpto: "",
