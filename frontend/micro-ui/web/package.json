@@ -40,7 +40,7 @@
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.5",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.4",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.3",
-    "@nudmcdgnpm/upyog-ui-module-ads":"1.2.6",
+    "@nudmcdgnpm/upyog-ui-module-ads":"1.2.7",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
