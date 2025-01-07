@@ -4,21 +4,25 @@ import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.egov.common.contract.request.User;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.constants.PgConstants;
-import org.egov.pg.models.CollectionPayment;
 import org.egov.pg.models.TaxAndPayment;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.GatewayService;
 import org.egov.pg.service.PaymentsService;
 import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +93,27 @@ public class TransactionValidator {
 		}
 
 		return statuses.get(0);
+	}
+	
+	public List<Transaction> validateUpdateTxnV2(Map<String, String> requestParams) {
+
+		Optional<String> optional = gatewayService.getTxnId(requestParams);
+
+		if (!optional.isPresent())
+			throw new CustomException("MISSING_UPDATE_TXN_ID", "Cannot process request, missing transaction id");
+
+		Set<String> set = optional.map(s -> new HashSet<>(Arrays.asList(s.split(",")))).orElseGet(HashSet::new);
+
+		TransactionCriteriaV2 transactionCriteriaV2 = TransactionCriteriaV2.builder().txnIds(set).build();
+
+		List<Transaction> statuses = transactionRepository.fetchTransactions(transactionCriteriaV2);
+
+		// TODO Add to error queue
+		if (statuses.isEmpty()) {
+			throw new CustomException("TXN_UPDATE_NOT_FOUND", "Transaction not found");
+		}
+
+		return statuses;
 	}
 
 	public boolean skipGateway(Transaction transaction) {

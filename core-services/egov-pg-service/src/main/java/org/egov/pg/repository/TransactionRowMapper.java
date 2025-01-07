@@ -45,6 +45,7 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
 
         JsonNode additionalDetails = null;
         List<TaxAndPayment> taxAndPayments = null;
+        String orderId = null;
 
         if( ! isNull(resultSet.getObject("additional_details"))){
             String additionalDetailsJson = ((PGobject) resultSet.getObject("additional_details")).getValue();
@@ -54,6 +55,9 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
                 if(additionalDetails.hasNonNull("taxAndPayments")){
                     taxAndPayments = taxAndPaymentsReader.readValue(additionalDetails.get("taxAndPayments"));
                 }
+				if (additionalDetails.hasNonNull("ORDER_ID")) {
+					orderId = additionalDetails.get("ORDER_ID").asText();
+				}
             } catch (IOException e) {
                 throw new CustomException("TXN_FETCH_FAILED", "Failed to deserialize data");
             }
@@ -75,6 +79,8 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
                 .gatewayStatusMsg(resultSet.getString("gateway_status_msg"))
                 .receipt(resultSet.getString("receipt"))
                 .consumerCode(resultSet.getString("consumer_code"))
+                .module(resultSet.getString("module"))
+                .orderId(orderId)
                 .additionalDetails(additionalDetails)
                 .taxAndPayments(taxAndPayments)
                 .auditDetails(auditDetails)

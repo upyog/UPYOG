@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -15,12 +17,17 @@ import org.egov.pg.models.BillDetail;
 import org.egov.pg.models.CollectionPayment;
 import org.egov.pg.models.CollectionPaymentDetail;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransactionDetails;
+import org.egov.pg.models.TransactionDetailsWrapper;
 import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
+import org.egov.pg.repository.TransactionDetailsRepository;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.pg.web.models.TransactionCriteriaV2;
+import org.egov.pg.web.models.TransactionDetailsCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TransactionService {
+	
+	@Autowired
+	private TransactionDetailsRepository transactionDetailsRepository;
 
 	private TransactionValidator validator;
 	private GatewayService gatewayService;
@@ -97,6 +107,23 @@ public class TransactionService {
 		producer.push(appProperties.getSaveTxnTopic(),
 				new org.egov.pg.models.TransactionRequest(requestInfo, transaction));
 		producer.push(appProperties.getSaveTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
+		
+		if (CollectionUtils.isEmpty(transaction.getTransactionDetails())) {
+			// populate transaction Details object
+			transaction.setTransactionDetails(
+					Collections.singletonList(TransactionDetails.builder().txnAmount(transaction.getTxnAmount())
+							.billId(transaction.getBillId()).consumerCode(transaction.getConsumerCode()).build()));
+		}
+
+		// Enrich transaction Details by generating uuid, txnid, audit details and
+		// additional details
+		if (!CollectionUtils.isEmpty(transaction.getTransactionDetails())) {
+			enrichmentService.populateTransactionsDetails(transaction, requestInfo);
+			transaction.getTransactionDetails().forEach(transactionDetails -> {
+				producer.push(appProperties.getSaveTxnDetailsTopic(),
+						TransactionDetailsWrapper.builder().transactionDetails(transactionDetails).build());
+			});
+		}
 
 		return transaction;
 	}
@@ -111,8 +138,35 @@ public class TransactionService {
 	 */
 	public List<Transaction> getTransactions(TransactionCriteria transactionCriteria) {
 		log.info(transactionCriteria.toString());
+		List<Transaction> transactions = new ArrayList<>();
 		try {
-			return transactionRepository.fetchTransactions(transactionCriteria);
+			if (!StringUtils.isEmpty(transactionCriteria.getBillId())) {
+				TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
+						.billIds(Collections.singleton(transactionCriteria.getBillId())).build();
+
+				List<TransactionDetails> transactionDetails = transactionDetailsRepository
+						.fetchTransactionDetails(transactionDetailsCriteria);
+
+				Set<String> txnIds = transactionDetails.stream().map(TransactionDetails::getTxnId)
+						.collect(Collectors.toSet());
+				Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
+						.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
+
+				if (!CollectionUtils.isEmpty(txnIds)) {
+					TransactionCriteriaV2 criteriaV2 = TransactionCriteriaV2.builder().txnIds(txnIds).build();
+					transactions = transactionRepository.fetchTransactions(criteriaV2);
+				}
+
+				transactions.forEach(transaction -> {
+					transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
+				});
+			} else {
+				transactions = transactionRepository.fetchTransactions(transactionCriteria);
+
+				mapTransactionDetails(transactions);
+			}
+
+			return transactions;
 		} catch (DataAccessException e) {
 			log.error("Unable to fetch data from the database for criteria: " + transactionCriteria.toString(), e);
 			throw new CustomException("FETCH_TXNS_FAILED", "Unable to fetch transactions from store");
@@ -168,9 +222,28 @@ public class TransactionService {
 		// update demands and bill
 		updateDemandsAndBillByTransactionDetails(newTxn, requestInfo);
 		
+		mapTransactionDetails(Collections.singletonList(newTxn));
+		
 		return Collections.singletonList(newTxn);
 	}
+	
+	private void mapTransactionDetails(List<Transaction> transactions) {
+		Set<String> txnIdsToFetch = transactions.stream().map(Transaction::getTxnId).collect(Collectors.toSet());
 
+		if (!txnIdsToFetch.isEmpty()) {
+			TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
+					.txnIds(txnIdsToFetch).build();
+			List<TransactionDetails> transactionDetails = transactionDetailsRepository
+					.fetchTransactionDetails(transactionDetailsCriteria);
+
+			Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
+					.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
+
+			transactions.forEach(transaction -> {
+				transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
+			});
+		}
+	}
 	
 	private void updateDemandsAndBillByTransactionDetails(Transaction newTxn, RequestInfo requestInfo) {
 		

@@ -2,10 +2,6 @@ package org.egov.garbageservice.model;
 
 import java.util.List;
 
-import org.egov.common.contract.request.RequestInfo;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,12 +13,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GarbageAccountActionRequest {
+public class PayNowRequest {
 
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo = null;
+	private String userUuid;
 
-	private List<String> applicationNumbers;
+	private List<String> garbageApplicationNumbers;
+
+	private List<String> garbageUuid;
 
 	private List<String> billStatus;
 
