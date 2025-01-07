@@ -305,8 +305,12 @@ public class TransactionServiceV2 {
 
 		for (Transaction transaction : transactions) {
 			orderIdArray.add(transaction.getOrderId());
-			consumerCodeArray.add(transaction.getConsumerCode());
 			totalPayableAmount = totalPayableAmount.add(new BigDecimal(transaction.getTxnAmount().toString()));
+			if (!CollectionUtils.isEmpty(transaction.getTransactionDetails())) {
+				for (TransactionDetails transactionDetails : transaction.getTransactionDetails()) {
+					consumerCodeArray.add(transactionDetails.getConsumerCode());
+				}
+			}
 		}
 
 		if (null != callbackUrl) {
