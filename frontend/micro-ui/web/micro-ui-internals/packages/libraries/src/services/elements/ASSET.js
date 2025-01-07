@@ -45,6 +45,28 @@ export const ASSETService = {
         params: {},
         auth: true,
       }),
+      depriciationProcess: (details, tenantId) =>
+        Request({
+          url: Urls.asset.depriciationProcess,
+          data: details,
+          useCache: false,
+          setTimeParam: false,
+          userService: true,
+          method: "POST",
+          params: {},
+          auth: true,
+        }),
+        depriciationList: (details, tenantId) =>
+          Request({
+            url: Urls.asset.depriciationList,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+          }),
       return_asset: (details, tenantId) =>
         Request({
           url: Urls.asset.return_asset,

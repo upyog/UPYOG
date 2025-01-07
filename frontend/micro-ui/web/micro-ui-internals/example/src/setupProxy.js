@@ -91,7 +91,9 @@ module.exports = function (app) {
     "/adv-services/booking/v1/_slot-search",
     "/adv-services/booking/v1/_estimate",
     "/employee-dashboard/_search",
-    "/verification-service/validity/_search"
+    "/verification-service/validity/_search",
+    "/asset-services/v1/assets/depriciation/_process",
+    "/asset-services/v1/assets/depriciation/list"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };
