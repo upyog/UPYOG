@@ -7,13 +7,10 @@ import PTRWFApplicationTimeline from "../../pageComponents/PTRWFApplicationTimel
 import { convertEpochToDate } from "../../utils";
 
 import get from "lodash/get";
-import { size } from "lodash";
 
 const PTRApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const { acknowledgementIds, tenantId } = useParams();
-  const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
@@ -234,8 +231,7 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_PET_SEX")} text={pet_details?.petDetails?.petGender || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_IDENTIFICATION_MARK")} text={pet_details?.petDetails?.identificationMark || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
-            {pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={convertEpochToDate(pet_details?.petDetails?.birthDate) || t("CS_NA")} />}
-            {pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={convertEpochToDate(pet_details?.petDetails?.adoptionDate) || t("CS_NA")} />}
+            {pet_details?.petDetails?.birthDate ? pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={convertEpochToDate(pet_details?.petDetails?.birthDate) || t("CS_NA")} /> : pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={convertEpochToDate(pet_details?.petDetails?.adoptionDate) || t("CS_NA")} />}
           </StatusTable>
 
           <PTRWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
