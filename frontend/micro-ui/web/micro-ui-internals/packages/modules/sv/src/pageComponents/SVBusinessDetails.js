@@ -109,7 +109,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
           disabled={!validateDaysOfOperation()}
           onChange={handleToggleIsSameForAll}
         />
-        <h4 style={{ marginLeft: "8px" }}>Select All</h4>
+        <h4 style={{ marginLeft: "8px" }}>{t("SV_SELECT_ALL")}</h4>
       </div>
     ),
     Cell: () => (
