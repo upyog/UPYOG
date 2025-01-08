@@ -10,6 +10,9 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
 
     private final Class<T> mappedClass;
@@ -34,7 +37,9 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 Map<String, Object> columnValueMap = new HashMap<>();
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnLabel(i).toLowerCase(); // Column name in lowercase
+                    log.info("column name  {}", columnName);
                     Object columnValue = rs.getObject(i);
+                    log.info("column value {} ", columnValue);
                     columnName = columnName.replace("_", "");
                     columnValueMap.put(columnName, columnValue);
                 }
