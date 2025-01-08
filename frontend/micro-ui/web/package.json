@@ -13,6 +13,8 @@
     "micro-ui-internals/packages/modules/sv",
     "micro-ui-internals/packages/modules/ew",
     "micro-ui-internals/packages/modules/ptr"
+    "micro-ui-internals/packages/modules/asset"
+
   ],
   "engines": {
     "node": ">=14"
