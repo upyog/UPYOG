@@ -171,7 +171,7 @@ console.log('first:= ', applicationDetails);
     const applicationDetails = await Digit.ASSETService.depriciationList({
         Asset: {
         tenantId,
-        id: "00689305-aeb1-4100-9992-0a5913dd6c6c",
+        id: response.id,
         accountId: ""
         }
       });
