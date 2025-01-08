@@ -2,6 +2,7 @@ package org.upyog.adv.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -56,5 +57,13 @@ public interface BookingRepository {
 	List<AdvertisementSlotAvailabilityDetail> getBookedSlotsFromTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
 
 	void updateTimerBookingId(String bookingId, String bookingNo, String draftIdFromDraft);
+
+	void updateStatusForTimer(String bookingNo, String status);
+
+	Optional<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
+			RequestInfo requestInfo);
+
+	void checkExistingTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			AdvertisementSlotAvailabilityDetail detail);
 	
 }
