@@ -3,7 +3,6 @@ import { useQuery } from "react-query";
 
 const useAssetApplicationDetail = (t, tenantId, applicationNo, config = {}, userType, args) => {
   const stateTenantId = Digit.ULBService.getStateId();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const defaultSelect = (data) => {
      let applicationDetails = data.applicationDetails.map((obj) => {
       return obj;
