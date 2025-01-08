@@ -3,6 +3,7 @@ package org.upyog.chb.repository;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,14 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     String fieldName = field.getName().toLowerCase(); // Match field name to column name
                     if (columnValueMap.containsKey(fieldName)) {
                         field.setAccessible(true);
-                        field.set(instance, columnValueMap.get(fieldName));
+                        Object value = columnValueMap.get(fieldName);
+
+                        // Handle LocalDate conversion
+                        if (field.getType().equals(LocalDate.class) && value instanceof java.sql.Date) {
+                            value = ((java.sql.Date) value).toLocalDate();
+                        }
+
+                        field.set(instance, value);
                     }
                 }
 
