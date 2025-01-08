@@ -39,5 +39,7 @@ public interface BookingService {
 
 	String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
 			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo);
+	
+	public boolean setSlotBookedFlag(List<AdvertisementSlotAvailabilityDetail> details);
 
 }
