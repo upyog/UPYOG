@@ -56,7 +56,8 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
       },
       timervalue:{
         timervalue:timerValue || 0
-      }
+      },
+      draftId:result?.draftId || ""
     };
     setExistingDataSet(newSessionData);
     setIsDataSet(true);  // Set the flag to true after data is set

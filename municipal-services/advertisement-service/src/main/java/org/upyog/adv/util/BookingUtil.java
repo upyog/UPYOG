@@ -73,6 +73,15 @@ public class BookingUtil {
 	public static Long minusOneDay(LocalDate date) {
 		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
+	
+	public static boolean isDateWithinRange(String startDate, String endDate, String bookingDate) {
+	    LocalDate start = LocalDate.parse(startDate);
+	    LocalDate end = LocalDate.parse(endDate);
+	    LocalDate booking = LocalDate.parse(bookingDate);
+
+	    return (booking.isEqual(start) || booking.isAfter(start)) &&
+	           (booking.isEqual(end) || booking.isBefore(end));
+	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
 		if(dateFormat == null) {

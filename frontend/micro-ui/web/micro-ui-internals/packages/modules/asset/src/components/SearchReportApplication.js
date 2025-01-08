@@ -93,7 +93,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           
           },
           {
-            Header: t("AST_NAME_LABELffff"),
+            Header: t("AST_NAME_LABEL"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["assetName"]}`)
             },
