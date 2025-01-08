@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +72,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	@Autowired
 	private BookingTimerService bookingTimerService;
-	
 	
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -275,83 +275,75 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	public CommunityHallSlotAvailabilityResponse getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria, RequestInfo info) {
 		if (criteria.getCommunityHallCode() == null && CollectionUtils.isEmpty(criteria.getHallCodes())) {
-			throw new CustomException("INVALID_HALL_CODE",
-					"Invalid hall code provided for slot search");
+			throw new CustomException("INVALID_HALL_CODE", "Invalid hall code provided for slot search");
 		}
-		log.info("criteria : {}" , criteria);
+		log.info("criteria : {}", criteria);
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
-		
+
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsList = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
-		
 
-		
-		Long timerValue =  0l;
-				
-		if(criteria.getIsTimerRequired()) {
-			 timerValue =  bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
+		Long timerValue = -1l;
+		availabiltityDetailsList = checkTimerTableForAvailaibility(info, criteria, availabiltityDetailsList);
+		boolean bookingAllowed = availabiltityDetailsList.stream()
+				.anyMatch(detail -> BookingStatusEnum.BOOKED.toString().equals(detail.getSlotStaus()));
+
+		if (!bookingAllowed && criteria.getIsTimerRequired()) {
+			timerValue = bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
 		}
-		availabiltityDetailsList =  checkTimerTableForAvailaibility(info, criteria,availabiltityDetailsList);
-		CommunityHallSlotAvailabilityResponse hallSlotAvailabilityResponse = CommunityHallSlotAvailabilityResponse.builder()
-				.hallSlotAvailabiltityDetails(availabiltityDetailsList).timerValue(timerValue)
-				.build();
-		
+
+		CommunityHallSlotAvailabilityResponse hallSlotAvailabilityResponse = CommunityHallSlotAvailabilityResponse
+				.builder().hallSlotAvailabiltityDetails(availabiltityDetailsList).timerValue(timerValue).build();
+
 		log.info("Availabiltity details response after updating status :" + hallSlotAvailabilityResponse);
 		return hallSlotAvailabilityResponse;
 	}
 /// to check the timer table
 	private List<CommunityHallSlotAvailabilityDetail> checkTimerTableForAvailaibility(
 	        RequestInfo info, CommunityHallSlotSearchCriteria criteria,
-	        List<CommunityHallSlotAvailabilityDetail> availabilityDetails) {
+			List<CommunityHallSlotAvailabilityDetail> availabilityDetails) {
 
-	    List<BookingPaymentTimerDetails> timerDetails = bookingTimerService.getBookingFromTimerTable(info, criteria);
+		List<BookingPaymentTimerDetails> timerDetails = bookingTimerService.getBookingFromTimerTable(info, criteria);
 
-	    // If timer details are null or empty, return availability details as is
-	    if (timerDetails == null || timerDetails.isEmpty()) {
-	        log.info("Timer details are null or empty, returning availability details as is.");
-	        return availabilityDetails;
-	    }
+		// If timer details are null or empty, return availability details as is
+		if (timerDetails == null || timerDetails.isEmpty()) {
+			log.info("Timer details are null or empty, returning availability details as is.");
+			return availabilityDetails;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		Set<BookingPaymentTimerDetails> timerDetailsSet = new HashSet<>(timerDetails);
+		availabilityDetails.forEach(detail -> {
+			try {
+				LocalDate parsedDate = LocalDate.parse(detail.getBookingDate(), formatter);
+				// Create a BookingPaymentTimerDetails object for comparison
+				BookingPaymentTimerDetails timerDetailsForComparison = BookingPaymentTimerDetails.builder()
+						.tenantId(detail.getTenantId()).hallcode(detail.getHallCode())
+						.communityHallcode(detail.getCommunityHallCode()).bookingDate(parsedDate).build();
+				log.info("Timer Details from db : " + timerDetailsForComparison.toString());
+				// Check if the timerDetails set contains this booking and if it's created by
+				// the current user
+				boolean isCreatedByCurrentUser = timerDetails.stream()
+						.anyMatch(timer -> timer.equals(timerDetailsForComparison)
+								&& timer.getCreatedBy().equals(info.getUserInfo().getUuid()));
+				boolean existingBookingIdCheck = criteria.getBookingId() != null
+						&& criteria.getBookingId().equals(timerDetailsForComparison.getBookingId());
+				// Update the slot status based on the comparison
+				if (timerDetailsSet.contains(timerDetailsForComparison) && !isCreatedByCurrentUser
+						&& !existingBookingIdCheck) {
+					detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+				} else {
+					detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+				}
 
-	    Set<BookingPaymentTimerDetails> timerDetailsSet = new HashSet<>(timerDetails);
+			} catch (Exception e) {
+				log.error("Invalid date format for booking date: {}", detail.getBookingDate(), e);
+				detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+			}
+		});
 
-	    availabilityDetails.forEach(detail -> {
-
-	        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	        sdf.setLenient(false); // Strict parsing
-
-	        try {
-	            // Parse the booking date into a java.util.Date
-	            java.util.Date parsedDate = sdf.parse(detail.getBookingDate());
-
-	            // Create a BookingPaymentTimerDetails object for comparison
-	            BookingPaymentTimerDetails timerDetailsForComparison = BookingPaymentTimerDetails.builder()
-	                    .tenantId(detail.getTenantId())
-	                    .hallcode(detail.getHallCode())
-	                    .communityHallcode(detail.getCommunityHallCode())
-	                    .bookingDate(new Date(parsedDate.getTime())) // Convert to java.sql.Date
-	                    .build();
-
-	            // Check if the timerDetails set contains this booking and if it's created by the current user
-	            boolean isCreatedByCurrentUser = timerDetails.stream()
-	                    .anyMatch(timer -> timer.equals(timerDetailsForComparison)
-	                            && timer.getCreatedBy().equals(info.getUserInfo().getUuid()));
-
-	            // Update the slot status based on the comparison
-	            if (timerDetailsSet.contains(timerDetailsForComparison) && !isCreatedByCurrentUser) {
-	                detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
-	            } else {
-	                detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
-	            }
-
-	        } catch (ParseException e) {
-	            log.error("Invalid date format for booking date: {}", detail.getBookingDate(), e);
-	            detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
-	        }
-	    });
-
-	    return availabilityDetails;
+		return availabilityDetails;
 	}
 
 
