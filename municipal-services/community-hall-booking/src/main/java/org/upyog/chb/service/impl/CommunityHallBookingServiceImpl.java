@@ -330,11 +330,15 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				boolean existingBookingIdCheck = criteria.getBookingId() != null
 						&& criteria.getBookingId().equals(timerDetailsForComparison.getBookingId());
 				// Update the slot status based on the comparison
-				if (timerDetailsSet.contains(timerDetailsForComparison) && !isCreatedByCurrentUser
-						&& !existingBookingIdCheck) {
-					detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
-				} else {
-					detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+				if (timerDetailsSet.contains(timerDetailsForComparison)) {
+					log.info("Booking created by user id {} and booking id {} ", criteria.getBookingId(),
+							info.getUserInfo().getUuid());
+					if (isCreatedByCurrentUser && existingBookingIdCheck) {
+						log.info("inside booking created by me with same booking id ");
+						detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+					} else {
+						detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+					}
 				}
 
 			} catch (Exception e) {
