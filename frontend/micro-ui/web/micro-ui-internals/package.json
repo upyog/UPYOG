@@ -13,8 +13,8 @@
     "packages/modules/engagement",
     "packages/modules/sv",
     "packages/modules/ew",
-    "packages/modules/ptr"
-    "packages/modules/asset"
+    "packages/modules/ptr",
+    "packages/modules/ads"
   ],
   "license": "MIT",
   "private": true,
