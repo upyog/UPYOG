@@ -1,6 +1,6 @@
 package org.upyog.chb.web.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +31,7 @@ public class BookingPaymentTimerDetails {
 	private String communityHallcode;
 	private String hallcode;
 	private String status;
-	private Date bookingDate;
+	private LocalDate bookingDate;
 	private String tenantId;
 
 }
