@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -15,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(of = { "tenantId", "hallcode", "communityHallcode", "bookingDate"})
+@ToString
 public class BookingPaymentTimerDetails {
 
 	private String bookingId; // Maps to booking_id
