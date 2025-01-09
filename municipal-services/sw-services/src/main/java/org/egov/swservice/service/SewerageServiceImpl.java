@@ -102,16 +102,21 @@ public class SewerageServiceImpl implements SewerageService {
 	@Override
 	public List<SewerageConnection> createSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		int reqType = SWConstants.CREATE_APPLICATION;
-		
+		Boolean isMigration=false;
 		if (sewerageConnectionRequest.isDisconnectRequest()) {
 			reqType = SWConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(sewerageConnectionRequest);
+		}
+		
+		if(sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails().toString().contains("isMigrated"))
+		{
+			isMigration=true;
 		}
 		else if (sewerageConnectionRequest.isReconnectRequest()) {
 			reqType = SWConstants.RECONNECTION;
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
-		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
+		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)&& !isMigration) {
 			List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 			if (prevSewerageConnectionList.size() > 0) {
 				for (SewerageConnection previousConnectionsListObj : prevSewerageConnectionList) {
