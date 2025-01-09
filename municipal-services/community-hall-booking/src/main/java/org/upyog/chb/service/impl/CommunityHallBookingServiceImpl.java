@@ -1,15 +1,12 @@
 package org.upyog.chb.service.impl;
 
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -287,10 +284,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		Long timerValue = -1l;
 		availabiltityDetailsList = checkTimerTableForAvailaibility(info, criteria, availabiltityDetailsList);
-//		boolean bookingAllowed = availabiltityDetailsList.stream()
-//				.anyMatch(detail -> BookingStatusEnum.BOOKED.toString().equals(detail.getSlotStaus()));
-//		!bookingAllowed &&
-		if ( criteria.getIsTimerRequired()) {
+		boolean bookingAllowed = availabiltityDetailsList.stream()
+				.anyMatch(detail -> BookingStatusEnum.BOOKED.toString().equals(detail.getSlotStaus()));
+
+		if (!bookingAllowed && criteria.getIsTimerRequired()) {
 			timerValue = bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
 		}
 
@@ -300,56 +297,55 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		log.info("Availabiltity details response after updating status :" + hallSlotAvailabilityResponse);
 		return hallSlotAvailabilityResponse;
 	}
-/// to check the timer table
-	private List<CommunityHallSlotAvailabilityDetail> checkTimerTableForAvailaibility(
-	        RequestInfo info, CommunityHallSlotSearchCriteria criteria,
-			List<CommunityHallSlotAvailabilityDetail> availabilityDetails) {
 
-		List<BookingPaymentTimerDetails> timerDetails = bookingTimerService.getBookingFromTimerTable(info, criteria);
 
-		// If timer details are null or empty, return availability details as is
-		if (timerDetails == null || timerDetails.isEmpty()) {
-			log.info("Timer details are null or empty, returning availability details as is.");
-			return availabilityDetails;
-		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		Set<BookingPaymentTimerDetails> timerDetailsSet = new HashSet<>(timerDetails);
-		availabilityDetails.forEach(detail -> {
-			try {
-				LocalDate parsedDate = LocalDate.parse(detail.getBookingDate(), formatter);
-				// Create a BookingPaymentTimerDetails object for comparison
-				BookingPaymentTimerDetails timerDetailsForComparison = BookingPaymentTimerDetails.builder()
-						.tenantId(detail.getTenantId()).hallcode(detail.getHallCode())
-						.communityHallcode(detail.getCommunityHallCode()).bookingDate(parsedDate).build();
-				log.info("Timer Details from db : " + timerDetailsForComparison.toString());
-				// Check if the timerDetails set contains this booking and if it's created by
-				// the current user
-				boolean isCreatedByCurrentUser = timerDetails.stream()
-						.anyMatch(timer -> timer.equals(timerDetailsForComparison)
-								&& timer.getCreatedBy().equals(info.getUserInfo().getUuid()));
-				boolean existingBookingIdCheck = criteria.getBookingId() != null
-						&& criteria.getBookingId().equals(timerDetailsForComparison.getBookingId());
-				// Update the slot status based on the comparison
-				if (timerDetailsSet.contains(timerDetailsForComparison)) {
-					log.info("Booking created by user id {} and booking id {} ", criteria.getBookingId(),
-							info.getUserInfo().getUuid());
-					if (isCreatedByCurrentUser && existingBookingIdCheck) {
-						log.info("inside booking created by me with same booking id ");
-						detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
-					} else {
-						detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
-					}
-				}
 
-			} catch (Exception e) {
-				log.error("Invalid date format for booking date: {}", detail.getBookingDate(), e);
-				detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
-			}
-		});
+private List<CommunityHallSlotAvailabilityDetail> checkTimerTableForAvailaibility(
+            RequestInfo info, CommunityHallSlotSearchCriteria criteria,
+		List<CommunityHallSlotAvailabilityDetail> availabilityDetails) {
 
+	List<BookingPaymentTimerDetails> timerDetails = bookingTimerService.getBookingFromTimerTable(info, criteria);
+
+	// If timer details are null or empty, return availability details as is
+	if (timerDetails == null || timerDetails.isEmpty()) {
+		log.info("Timer details are null or empty, returning availability details as is.");
 		return availabilityDetails;
 	}
 
+	Map<CommunityHallSlotAvailabilityDetail, CommunityHallSlotAvailabilityDetail> slotDetailsMap = availabilityDetails
+			.stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
+	log.info("Timer Details from db : " + timerDetails);
+
+	timerDetails.forEach(detail -> {
+		// Create a Slot availability object for comparison
+		CommunityHallSlotAvailabilityDetail availabilityDetail = CommunityHallSlotAvailabilityDetail.builder()
+				.communityHallCode(detail.getCommunityHallcode()).hallCode(detail.getHallcode())
+				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(detail.getBookingDate(), "dd-MM-yyyy"))
+				.tenantId(detail.getTenantId()).build();
+
+		// Check if the timerDetails set contains this booking and if it's created by
+		// the current user
+		// Update the slot status based on the comparison
+		if (availabilityDetails.contains(availabilityDetail)) {
+			log.info("Booking created by user id {} and booking id {} ", criteria.getBookingId(),
+					info.getUserInfo().getUuid());
+			CommunityHallSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
+			log.info("Slot Availability detail ::: " + slotAvailabilityDetail.toString());
+			boolean isCreatedByCurrentUser = detail.getCreatedBy().equals(info.getUserInfo().getUuid());
+			boolean existingBookingIdCheck = detail.getBookingId().equals(criteria.getBookingId());
+
+			if (isCreatedByCurrentUser && existingBookingIdCheck) {
+				log.info("inside booking created by me with same booking id ");
+				slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+			} else {
+				slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+			}
+		}
+
+	});
+
+	return availabilityDetails;
+}
 
 
 
