@@ -37,4 +37,5 @@ public class AssetErrorConstants {
 
     public static final String EG_ASSET_WF_ERROR_KEY_NOT_FOUND = "EG ASSET WF ERROR KEY NOT FOUND";
 
+    public static final String ASSET_NOT_FOUND = "ASSET_NOT_FOUND";
 }

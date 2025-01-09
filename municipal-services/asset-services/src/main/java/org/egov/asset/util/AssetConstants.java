@@ -43,4 +43,9 @@ public class AssetConstants {
     public static final String ASSET_VERIFIER = "ASSET_VERIFIER";
     public static final String INVALID_SEARCH = "INVALID SEARCH";
 
+    public static final String ASSET_STATUS_DISPOSED = "0";
+    public static final String ASSET_USAGE_DISPOSED = "DISPOSED";
+    public static final String ASSET_NOT_FOUND = "ASSET_NOT_FOUND";
+    public static final String ASSET_STATUS_DISPOSED_AND_SOLD = "ASSET_STATUS_DISPOSED_AND_SOLD";
+    public static final String ASSET_USAGE_DISPOSED_AND_SOLD = "-1";
 }
