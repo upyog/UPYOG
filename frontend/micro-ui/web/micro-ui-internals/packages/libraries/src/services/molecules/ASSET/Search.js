@@ -33,6 +33,7 @@ const getData = (res, combinedData) => {
   rows.push({ title: "AST_INVOICE_NUMBER", value: res?.invoiceNumber });
   rows.push({ title: "AST_PURCHASE_DATE", value: convertTimestampToDate(res?.purchaseDate) });
   rows.push({ title: "AST_PURCHASE_ORDER", value: res?.purchaseOrderNumber });
+  rows.push({ title: "AST_LIFE", value: res?.lifeOfAsset });
   rows.push({ title: "AST_LOCATION_DETAILS", value: res?.location });
   rows.push({ title: "AST_PURCHASE_COST", value: res?.purchaseCost });
   rows.push({ title: "AST_ACQUISITION_COST", value: res?.acquisitionCost });

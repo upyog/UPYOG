@@ -716,6 +716,38 @@ const OwnerForm = (_props) => {
           {/* <CardLabelError style={errorStyle}>{localFormState.touched.purchaseOrderNumber ? errors?.purchaseOrderNumber?.message : ""}</CardLabelError> */}
 
           <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("AST_LIFE")}</CardLabel>
+            <div className="field">
+              <Controller
+                control={control}
+                name={"lifeOfAsset"}
+                defaultValue={comingDataFromAPI?.purchaseOrderNumber}
+                rules={{
+                  required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                  validate: {
+                    pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
+                  },
+                }}
+                render={(props) => (
+                  <TextInput
+                    value={props.value}
+                    disable={false}
+                    autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "purchaseOrderNumber"}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      setFocusIndex({ index: editAssignDetails.key, type: "purchaseOrderNumber" });
+                    }}
+                    onBlur={(e) => {
+                      setFocusIndex({ index: -1 });
+                      props.onBlur(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
+
+          <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_LOCATION_DETAILS")}</CardLabel>
             <div className="field">
               <Controller
