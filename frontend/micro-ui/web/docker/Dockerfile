@@ -21,6 +21,7 @@ RUN yarn add @upyog/digit-ui-module-bills
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ptr
 RUN yarn add @nudmcdgnpm/upyog-ui-module-cm
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ads
+RUN yarn add @nudmcdgnpm/upyog-ui-module-chb
 RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
 RUN yarn add @nudmcdgnpm/upyog-ui-module-asset
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ew
