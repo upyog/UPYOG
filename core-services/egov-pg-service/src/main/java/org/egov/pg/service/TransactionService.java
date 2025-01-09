@@ -140,33 +140,8 @@ public class TransactionService {
 		log.info(transactionCriteria.toString());
 		List<Transaction> transactions = new ArrayList<>();
 		try {
-			if (!StringUtils.isEmpty(transactionCriteria.getBillId())
-					|| !StringUtils.isEmpty(transactionCriteria.getConsumerCode())) {
-				TransactionDetailsCriteria transactionDetailsCriteria = TransactionDetailsCriteria.builder()
-						.billIds(Collections.singleton(transactionCriteria.getBillId()))
-						.consumerCodes(Collections.singleton(transactionCriteria.getConsumerCode())).build();
-
-				List<TransactionDetails> transactionDetails = transactionDetailsRepository
-						.fetchTransactionDetails(transactionDetailsCriteria);
-
-				Set<String> txnIds = transactionDetails.stream().map(TransactionDetails::getTxnId)
-						.collect(Collectors.toSet());
-				Map<String, List<TransactionDetails>> transactionDetailsMap = transactionDetails.stream()
-						.collect(Collectors.groupingBy(TransactionDetails::getTxnId));
-
-				if (!CollectionUtils.isEmpty(txnIds)) {
-					TransactionCriteriaV2 criteriaV2 = TransactionCriteriaV2.builder().txnIds(txnIds).build();
-					transactions = transactionRepository.fetchTransactions(criteriaV2);
-				}
-
-				transactions.forEach(transaction -> {
-					transaction.setTransactionDetails(transactionDetailsMap.get(transaction.getTxnId()));
-				});
-			} else {
-				transactions = transactionRepository.fetchTransactions(transactionCriteria);
-
-				mapTransactionDetails(transactions);
-			}
+			transactions = transactionRepository.fetchTransactions(transactionCriteria);
+			mapTransactionDetails(transactions);
 
 			return transactions;
 		} catch (DataAccessException e) {
