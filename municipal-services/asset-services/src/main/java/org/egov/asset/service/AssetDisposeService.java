@@ -98,13 +98,7 @@ public class AssetDisposeService {
     }
 
     public List<AssetDisposal> searchDisposals(AssetDisposalSearchCriteria searchCriteria, RequestInfo requestInfo) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = null;
-        if (searchCriteria != null) {
-            query = assetDisposalQueryBuilder.getDisposalSearchQuery(searchCriteria, preparedStmtList);
-            log.info("Final query: " + query);
-            return jdbcTemplate.query(query, preparedStmtList.toArray(), assetDisposalRowMapper);
-        }
-        return null;
+
+        return assetDisposeRepository.search(searchCriteria);
     }
 }

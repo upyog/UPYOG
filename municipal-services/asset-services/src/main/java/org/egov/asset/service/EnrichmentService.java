@@ -203,6 +203,16 @@ public class EnrichmentService {
         // Generate audit details
         AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
 
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(request.getAssetMaintenance().getDocuments())) {
+            request.getAssetMaintenance().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
+
         // Set audit details and unique identifier for the maintenance record
         request.getAssetMaintenance().setAuditDetails(auditDetails);
         request.getAssetMaintenance().setMaintenanceId(UUID.randomUUID().toString());

@@ -15,11 +15,25 @@ public class AssetDisposalQueryBuilder {
     @Autowired
     private AssetConfiguration config;
 
-    private static final String BASE_QUERY = "SELECT disposal.disposal_id, disposal.asset_id, disposal.tenant_id, disposal.life_of_asset, "
-            + "disposal.current_age_of_asset, disposal.is_asset_disposed_in_facility, disposal.disposal_date, "
-            + "disposal.reason_for_disposal, disposal.amount_received, disposal.purchaser_name, "
-            + "disposal.payment_mode, disposal.receipt_number, disposal.comments, disposal.gl_code, "
-            + "disposal.created_at, disposal.created_by, disposal.updated_at, disposal.updated_by "
+    private static final String BASE_QUERY = "SELECT "
+            + "disposal.disposal_id, "
+            + "disposal.asset_id, "
+            + "disposal.tenant_id, "
+            + "disposal.life_of_asset, "
+            + "disposal.current_age_of_asset, "
+            + "disposal.is_asset_disposed_in_facility, "
+            + "disposal.disposal_date, "
+            + "disposal.reason_for_disposal, "
+            + "disposal.amount_received, "
+            + "disposal.purchaser_name, "
+            + "disposal.payment_mode, "
+            + "disposal.receipt_number, "
+            + "disposal.comments, "
+            + "disposal.gl_code, "
+            + "disposal.created_at, "
+            + "disposal.created_by, "
+            + "disposal.updated_at, "
+            + "disposal.updated_by "
             + "FROM eg_asset_disposal_details disposal ";
 
     private final String paginationWrapper = "SELECT * FROM " +
@@ -41,15 +55,6 @@ public class AssetDisposalQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" disposal.tenant_id = ? ");
             preparedStmtList.add(criteria.getTenantId());
-        }
-
-        // Add application numbers filter
-        if (!CollectionUtils.isEmpty(criteria.getApplicationNos())) {
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" disposal.application_no IN (")
-                    .append(createQuery(criteria.getApplicationNos()))
-                    .append(") ");
-            addToPreparedStatement(preparedStmtList, criteria.getApplicationNos());
         }
 
         // Add asset IDs filter
