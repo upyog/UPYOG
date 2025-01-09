@@ -65,7 +65,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
                 		  result = provider.authenticate(authentication);
                 	  
                 	 // break;
-                  }  
+                  }
+                  else if (thirdPartyName!=null && thirdPartyName.equalsIgnoreCase("EODB")) {
+                    if (provider.getClass().getName().contains("EoDbAuthenticationProvider"))
+                    result = provider.authenticate(authentication);
+                }   
                 else 
                 	result = provider.authenticate(authentication);
                  if (result != null)

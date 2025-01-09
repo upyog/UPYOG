@@ -11,6 +11,7 @@ import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.UserService;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
+import org.egov.user.domain.service.utils.EodbApi;
 import org.egov.user.web.contract.auth.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +47,9 @@ public class EoDbAuthenticationProvider implements AuthenticationProvider {
     // TODO Remove default error handling provided by TokenEndpoint.class
 
     private UserService userService;
+    
+    @Autowired
+    private EodbApi eodbApi;
 
     @Autowired
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
@@ -134,8 +140,21 @@ public class EoDbAuthenticationProvider implements AuthenticationProvider {
         	// TODO Change the business logic for EODB
             if (true) 
             {
+            	try {
+            	JsonNode response = eodbApi.getCAFData(password);
+            	System.out.println(response);
+            	boolean status = response.get("success").asBoolean();
+            	if(status) {
+            		isPasswordMatched = true;
+            	}
+            	else {
+            		isPasswordMatched = false;
+            	}
+            	}catch(Exception ex) {
+            		isPasswordMatched = false;
+            	}
                 //for automation allow fixing otp validation to a fixed otp
-                isPasswordMatched = true;
+                
             } else {
                 isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
             }
