@@ -3,6 +3,7 @@ package org.upyog.chb.repository;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
 
     private final Class<T> mappedClass;
@@ -34,7 +38,9 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 Map<String, Object> columnValueMap = new HashMap<>();
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnLabel(i).toLowerCase(); // Column name in lowercase
+                    log.info("column name  {}", columnName);
                     Object columnValue = rs.getObject(i);
+                    log.info("column value {} ", columnValue);
                     columnName = columnName.replace("_", "");
                     columnValueMap.put(columnName, columnValue);
                 }
@@ -44,7 +50,14 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     String fieldName = field.getName().toLowerCase(); // Match field name to column name
                     if (columnValueMap.containsKey(fieldName)) {
                         field.setAccessible(true);
-                        field.set(instance, columnValueMap.get(fieldName));
+                        Object value = columnValueMap.get(fieldName);
+
+                        // Handle LocalDate conversion
+                        if (field.getType().equals(LocalDate.class) && value instanceof java.sql.Date) {
+                            value = ((java.sql.Date) value).toLocalDate();
+                        }
+
+                        field.set(instance, value);
                     }
                 }
 

@@ -11,7 +11,10 @@
     "packages/modules/common",
     "packages/modules/dss",
     "packages/modules/engagement",
-    "packages/modules/sv"
+    "packages/modules/sv",
+    "packages/modules/ew",
+    "packages/modules/ptr",
+    "packages/modules/ads"
   ],
   "license": "MIT",
   "private": true,

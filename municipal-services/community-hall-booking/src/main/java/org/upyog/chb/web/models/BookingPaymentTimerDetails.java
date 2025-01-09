@@ -1,6 +1,6 @@
 package org.upyog.chb.web.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -15,13 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(of = { "tenantId", "hallcode", "communityHallcode", "bookingDate"})
+@ToString
 public class BookingPaymentTimerDetails {
-
-	/**
-	 * booking_id CHARACTER VARYING(64) NOT NULL UNIQUE, createdBy CHARACTER
-	 * VARYING(64) NOT NULL, createdTime BIGINT NOT NULL, lastModifiedBy CHARACTER
-	 * VARYING(64), lastModifiedTime BIGINT
-	 */
 
 	private String bookingId; // Maps to booking_id
 	private String createdBy; // Maps to createdBy
@@ -31,7 +27,7 @@ public class BookingPaymentTimerDetails {
 	private String communityHallcode;
 	private String hallcode;
 	private String status;
-	private Date bookingDate;
+	private LocalDate bookingDate;
 	private String tenantId;
 
 }

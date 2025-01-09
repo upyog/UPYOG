@@ -24,7 +24,7 @@ public class AdvertisementUpdateSlotAvailabilityRowMapper implements ResultSetEx
 					.location(rs.getString("location"))
 					.faceArea(rs.getString("face_area"))
 					.nightLight(rs.getBoolean("night_light")) 
-					.bookingDate(rs.getString("booking_start_date"))
+					.bookingDate(rs.getString("booking_date"))
 					.bookingStartDate(rs.getString("booking_start_date"))
 					.bookingEndDate(rs.getString("booking_end_date"))
 					.uuid(rs.getString("createdby"))

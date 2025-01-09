@@ -82,6 +82,16 @@ public class BookingUtil {
 	    return (booking.isEqual(start) || booking.isAfter(start)) &&
 	           (booking.isEqual(end) || booking.isBefore(end));
 	}
+	
+	
+	public static boolean isDateRangeOverlap(String searchStart, String searchEnd, String bookedStart, String bookedEnd) {
+	    LocalDate searchStartDate = LocalDate.parse(searchStart);
+	    LocalDate searchEndDate = LocalDate.parse(searchEnd);
+	    LocalDate bookedStartDate = LocalDate.parse(bookedStart);
+	    LocalDate bookedEndDate = LocalDate.parse(bookedEnd);
+
+	    return !(searchStartDate.isAfter(bookedEndDate) || searchEndDate.isBefore(bookedStartDate));
+	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
 		if(dateFormat == null) {
