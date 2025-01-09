@@ -56,7 +56,7 @@ public class SewarageController {
 		{
 			isMigration=true;
 		}
-		List<SewerageConnection> sewerageConnection = sewarageService.createSewerageConnection(sewerageConnectionRequest);
+		List<SewerageConnection> sewerageConnection = sewarageService.createFullUpdateSewerageConnection(sewerageConnectionRequest);
 		SewerageConnectionResponse response = SewerageConnectionResponse.builder().sewerageConnections(sewerageConnection)
 				.responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(sewerageConnectionRequest.getRequestInfo(), true))
