@@ -381,6 +381,42 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             style={{ width: "50%" }}
           />
 
+<div>
+            {`${t("AST_LIFE")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="lifeOfAsset"
+            value={assetDetails["lifeOfAsset"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
 
         <div>
             {`${t("AST_LOCATION_DETAILS")} *`}

@@ -162,6 +162,7 @@ export const Assetdata = (data) => {
       acquisitionCost: convertStringToFloat(data?.assetDetails?.acquisitionCost),
       bookValue: data?.assetDetails?.bookValue,
       originalBookValue: data?.assetDetails?.bookValue,
+      lifeOfAsset: data?.assetDetails?.lifeOfAsset,
       islegacyData: false,
       minimumValue: 0,
       assetStatus: 1,

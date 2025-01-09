@@ -194,6 +194,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
             />
             <Row
+              label={t("AST_LIFE")}
+              text={`${t(checkForNA(assetDetails?.lifeOfAsset))}`}
+              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
+            />
+            <Row
               label={t("AST_LOCATION_DETAILS")}
               text={`${t(checkForNA(assetDetails?.location))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}

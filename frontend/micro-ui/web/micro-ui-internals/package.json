@@ -15,7 +15,8 @@
     "packages/modules/ew",
     "packages/modules/ptr",
     "packages/modules/ads",
-    "packages/modules/chb"
+    "packages/modules/chb",
+    "packages/modules/asset"
   ],
   "license": "MIT",
   "private": true,
@@ -57,7 +58,7 @@
     "dev:sv": "cd packages/modules/sv && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
-    "buildD:asset": "cd packages/modules/asset && yarn build",
+    "build:asset": "cd packages/modules/asset && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "buildD:pt": "cd packages/modules/pt && yarn build",
