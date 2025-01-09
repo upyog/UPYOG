@@ -287,10 +287,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		Long timerValue = -1l;
 		availabiltityDetailsList = checkTimerTableForAvailaibility(info, criteria, availabiltityDetailsList);
-		boolean bookingAllowed = availabiltityDetailsList.stream()
-				.anyMatch(detail -> BookingStatusEnum.BOOKED.toString().equals(detail.getSlotStaus()));
-
-		if (!bookingAllowed && criteria.getIsTimerRequired()) {
+//		boolean bookingAllowed = availabiltityDetailsList.stream()
+//				.anyMatch(detail -> BookingStatusEnum.BOOKED.toString().equals(detail.getSlotStaus()));
+//		!bookingAllowed &&
+		if ( criteria.getIsTimerRequired()) {
 			timerValue = bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
 		}
 
