@@ -59,15 +59,16 @@ public class AssetDisposeService {
         AssetDisposal disposal = request.getAssetDisposal();
         Asset asset = assetUtil.fetchAssetById(disposal.getAssetId(), tenantId);
 
-        // Update the asset's status and usage based on disposal details
-        assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
-
         // Enrich and save disposal details
         enrichmentService.enrichDisposalCreateOperations(request);
         assetDisposeRepository.save(request);
 
         // Update the asset in the system
-        updateAssetInSystem(request.getRequestInfo(), asset);
+        // Update the asset's status and usage if disposal date is provided
+        if (disposal.getDisposalDate() != null) {
+            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
+            //updateAssetInSystem(request.getRequestInfo(), asset);
+        }
 
         return disposal;
     }
@@ -96,7 +97,7 @@ public class AssetDisposeService {
         // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
             assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
-            updateAssetInSystem(request.getRequestInfo(), asset);
+            //updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
         return disposal;
