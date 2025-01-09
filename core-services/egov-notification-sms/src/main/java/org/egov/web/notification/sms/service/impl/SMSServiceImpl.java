@@ -2,6 +2,7 @@ package org.egov.web.notification.sms.service.impl;
 
 import org.egov.tracer.model.CustomException;
 import org.egov.web.notification.sms.config.SMSProperties;
+import org.egov.web.notification.sms.models.SMSSentRequest;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.models.UserSearchResponse;
 import org.egov.web.notification.sms.service.BaseSMSService;
@@ -36,22 +37,26 @@ public class SMSServiceImpl implements SMSService {
 			+ " is One Time Password for RTI Portal. State Information Commission Himachal Pradesh";
 
 	@Override
-	public void sendSMS(String number, String userUuid) {
+	public void sendSMS(SMSSentRequest smsSentRequest) {
+
+		if (!smsSentRequest.isValid()) {
+			throw new CustomException("INVALID REQUEST", "Mobile number or User uuid is missing.");
+		}
 
 		// validate user
-		UserSearchResponse userSearchResponse = userService.searchUser(userUuid);
+		UserSearchResponse userSearchResponse = userService.searchUser(smsSentRequest.getUserUuid());
 
 		if (null == userSearchResponse || CollectionUtils.isEmpty(userSearchResponse.getUserSearchResponseContent())) {
 			throw new CustomException("USER NOT FOUND", "User not found for given user uuid.");
 		}
 
 		// get otp from otp service
-		String otp = otpService.createOtp(userUuid);
+		String otp = otpService.createOtp(smsSentRequest.getUserUuid());
 		String smsBody = SMS_BODY;
 		smsBody = smsBody.replace(OTP_PLACEHOLDER, otp);
 
-		Sms sms = Sms.builder().mobileNumber(number).message(smsBody).templateId(smsProperties.getSmsDefaultTmplid())
-				.build();
+		Sms sms = Sms.builder().mobileNumber(smsSentRequest.getNumber()).message(smsBody)
+				.templateId(smsProperties.getSmsDefaultTmplid()).build();
 
 		baseSmsService.sendSMS(sms);
 	}

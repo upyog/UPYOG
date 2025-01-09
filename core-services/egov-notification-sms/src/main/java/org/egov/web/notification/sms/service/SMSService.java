@@ -1,7 +1,9 @@
 package org.egov.web.notification.sms.service;
 
+import org.egov.web.notification.sms.models.SMSSentRequest;
+
 public interface SMSService {
 
-	void sendSMS(String number, String userUuid);
+	void sendSMS(SMSSentRequest smsSentRequest);
 
 }
