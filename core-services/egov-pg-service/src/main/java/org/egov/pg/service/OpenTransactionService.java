@@ -31,6 +31,10 @@ public class OpenTransactionService {
 
 	public List<Transaction> initiateOpenTransaction(@Valid OpenTransactionRequest openTransactionRequest) {
 
+		if (!openTransactionRequest.isValid()) {
+			throw new CustomException("INVALID REQUEST", "User uuid is missing.");
+		}
+
 		// validate user
 		UserSearchResponse userSearchResponse = userService.searchUser(openTransactionRequest.getUserUuid());
 

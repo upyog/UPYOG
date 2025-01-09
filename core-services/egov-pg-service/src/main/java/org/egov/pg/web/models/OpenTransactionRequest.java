@@ -1,5 +1,7 @@
 package org.egov.pg.web.models;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -36,5 +38,9 @@ public class OpenTransactionRequest {
 	@JsonProperty("Transactions")
 	@Valid
 	private List<Transaction> transactions;
+
+	public boolean isValid() {
+		return isNotEmpty(userUuid);
+	}
 
 }
