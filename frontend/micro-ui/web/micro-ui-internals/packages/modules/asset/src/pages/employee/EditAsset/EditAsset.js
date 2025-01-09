@@ -56,7 +56,7 @@ const onFormValueChange = (setValue, formData, formState) => {
 };
 const convertStringToFloat = (amountString) => {
   // Remove commas if present and convert to float
-  const cleanedString = amountString.replace(/,/g, '');
+  const cleanedString = String(amountString).replace(/,/g, '');
   
   // Convert to float and return
   const floatValue = parseFloat(cleanedString);
@@ -67,7 +67,7 @@ const convertStringToFloat = (amountString) => {
 
 
   const onSubmit = (data) => {
-    console.log('Edit Coming data:- ', data);
+    
     const formData = {
       accountId: applicationDetails?.applicationData?.applicationData?.accountId,
       tenantId: applicationDetails?.applicationData?.applicationData?.tenantId,
@@ -86,6 +86,7 @@ const convertStringToFloat = (amountString) => {
       invoiceNumber: data?.editAssignDetails?.[0]?.invoiceNumber,
       purchaseDate: convertDateToEpoch(data?.editAssignDetails?.[0]?.purchaseDate),
       purchaseOrderNumber: data?.editAssignDetails?.[0]?.purchaseOrderNumber,
+      lifeOfAsset: data?.editAssignDetails?.[0]?.lifeOfAsset,
       location: data?.editAssignDetails?.[0]?.location,
       purchaseCost: convertStringToFloat(data?.editAssignDetails?.[0]?.purchaseCost),
       acquisitionCost: convertStringToFloat(data?.editAssignDetails?.[0]?.acquisitionCost),
@@ -128,6 +129,7 @@ const convertStringToFloat = (amountString) => {
         },
       }, 
     };
+    console.log('Form Data:- ', formData);
 
     history.replace("/digit-ui/employee/asset/assetservice/edit-response", { Assets: formData }); 
     

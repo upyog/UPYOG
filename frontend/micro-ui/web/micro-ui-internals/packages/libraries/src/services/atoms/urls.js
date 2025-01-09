@@ -203,8 +203,8 @@ const Urls = {
     search: "/asset-services/v1/assets/_search",
     update: "/asset-services/v1/assets/_update",
     assign: "/asset-services/v1/assets/assignment/_create",
-    depriciationProcess:"/asset-services/v1/assets/depriciation/_process",  //this api for assetDepriciationProcess
-    depriciationList:"/asset-services/v1/assets/depriciation/list",   // this api for list of assetDepriciation
+    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  //this api for assetDepriciationProcess
+    depriciationList:"/asset-services/v1/assets/depreciation/list",   // this api for list of assetDepriciation
     return_asset: "/asset-services/v1/assets/assignment/_update",
     assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
   },
