@@ -6,9 +6,10 @@ import org.egov.asset.repository.AssetDisposeRepository;
 import org.egov.asset.repository.AssetRepository;
 import org.egov.asset.repository.querybuilder.AssetDisposalQueryBuilder;
 import org.egov.asset.repository.rowmapper.AssetDisposalRowMapper;
-import org.egov.asset.util.AssetErrorConstants;
-import org.egov.asset.util.AssetValidator;
-import org.egov.asset.util.MdmsUtil;
+import org.egov.asset.util.*;
+import org.egov.asset.web.models.Asset;
+import org.egov.asset.web.models.AssetRequest;
+import org.egov.asset.web.models.AssetSearchCriteria;
 import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.disposal.AssetDisposal;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -31,74 +34,103 @@ public class AssetDisposeService {
     private AssetDisposeRepository assetDisposeRepository;
 
     @Autowired
-    private ObjectMapper objectMapper; // Inject ObjectMapper
-
-    @Autowired
-    MdmsUtil util;
-
-    @Autowired
-    AssetRepository assetRepository;
-
-    @Autowired
-    AssetValidator assetValidator;
+    AssetService assetService;
 
     @Autowired
     EnrichmentService enrichmentService;
 
     @Autowired
-    AssetDisposalQueryBuilder assetDisposalQueryBuilder;
+    private AssetUtil assetUtil;
 
-    @Autowired
-    AssetDisposalRowMapper assetDisposalRowMapper;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
+    /**
+     * Create a new asset disposal record.
+     *
+     * @param request The AssetDisposalRequest containing disposal details.
+     * @return The created AssetDisposal object.
+     */
     public AssetDisposal createDisposal(AssetDisposalRequest request) {
         log.debug("Asset disposal service method create called");
-        RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = request.getRequestInfo().getUserInfo().getTenantId().split("\\.")[0];
-        Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 
-        // Ensure the disposalDate is valid (epoch time)
-        if (request.getAssetDisposal() == null || request.getAssetDisposal().getDisposalDate() <= 0) {
-            throw new IllegalArgumentException("Invalid disposal data");
-        }
+        // Validate the disposal request
+        assetUtil.validateDisposalRequest(request);
 
+        // Extract tenant ID and fetch asset details
+        String tenantId = assetUtil.extractTenantId(request);
         AssetDisposal disposal = request.getAssetDisposal();
+        Asset asset = assetUtil.fetchAssetById(disposal.getAssetId(), tenantId);
 
-        // Enrich the disposal request with necessary details
+        // Update the asset's status and usage based on disposal details
+        assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
+
+        // Enrich and save disposal details
         enrichmentService.enrichDisposalCreateOperations(request);
-        //disposal.setAuditDetails(auditDetails);
-
         assetDisposeRepository.save(request);
+
+        // Update the asset in the system
+        updateAssetInSystem(request.getRequestInfo(), asset);
+
         return disposal;
     }
 
+    /**
+     * Update an existing asset disposal record.
+     *
+     * @param request The AssetDisposalRequest containing updated disposal details.
+     * @return The updated AssetDisposal object.
+     */
     public AssetDisposal updateDisposal(@Valid AssetDisposalRequest request) {
         log.debug("Asset disposal service method update called");
-        RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = request.getRequestInfo().getUserInfo().getTenantId().split("\\.")[0];
-        Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 
-        AssetDisposal assetDisposal = request.getAssetDisposal();
+        // Validate the disposal request
+        assetUtil.validateDisposalRequest(request);
 
-        // Check if the asset exists
-        if (assetDisposal == null) {
-            throw new CustomException(AssetErrorConstants.UPDATE_ERROR, "AssetDisposalRequest Not found in the System: " + assetDisposal);
+        // Extract tenant ID and fetch asset details
+        String tenantId = assetUtil.extractTenantId(request);
+        AssetDisposal disposal = request.getAssetDisposal();
+        Asset asset = assetUtil.fetchAssetById(disposal.getAssetId(), tenantId);
+
+        // Enrich and update disposal details
+        enrichmentService.enrichDisposalUpdateOperations(request);
+        assetDisposeRepository.update(request);
+
+        // Update the asset's status and usage if disposal date is provided
+        if (disposal.getDisposalDate() != null) {
+            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
+            updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
-        // Enrich the disposal request with necessary details
-        enrichmentService.enrichDisposalUpdateOperations(request);
-        //assetDisposal.setAuditDetails(auditDetails);
-
-        // Save the updated record
-        assetDisposeRepository.update(request);
-        return assetDisposal;
+        return disposal;
     }
 
+    /**
+     * Update the asset in the system using AssetService.
+     *
+     * @param requestInfo The RequestInfo object.
+     * @param asset       The Asset object to update.
+     */
+    private void updateAssetInSystem(RequestInfo requestInfo, Asset asset) {
+        AssetRequest assetRequest = AssetRequest.builder()
+                .requestInfo(requestInfo)
+                .asset(asset)
+                .build();
+        assetService.update(assetRequest);
+        log.info("Updated asset ID: {} with status: {} and usage: {}",
+                asset.getId(), asset.getAssetStatus(), asset.getAssetUsage());
+    }
+
+
+    /**
+     * Searches for asset disposals based on the given search criteria.
+     *
+     * @param searchCriteria The criteria used to filter the asset disposals.
+     * @param requestInfo    The request information containing user and tenant details.
+     * @return A list of AssetDisposal objects that match the search criteria.
+     */
     public List<AssetDisposal> searchDisposals(AssetDisposalSearchCriteria searchCriteria, RequestInfo requestInfo) {
 
+        // Delegates the search operation to the repository layer
+        // The repository performs the database query based on the provided search criteria
         return assetDisposeRepository.search(searchCriteria);
     }
+
 }
