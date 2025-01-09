@@ -38,12 +38,5 @@ public class User {
     @Size(max = 36)
     private String uuid;
     
-    private Boolean active;
-    
-    @Size(max = 256)
-    private String locale;
-    
-    @Size(max = 256)
-    private String permanentCity;
 }
 
