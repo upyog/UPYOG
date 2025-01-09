@@ -92,6 +92,12 @@ public class SMSProperties {
 
     @Value("${sms.enabled:false}")
     private boolean smsEnabled;
+    
+    @Value("${egov.user.host}")
+	private String userServiceHostUrl;
+
+	@Value("${egov.user.search.endpoint}")
+	private String userSearchEndpoint;
 
     @Setter(AccessLevel.PROTECTED) private List<Pattern> whitelistPatterns;
     @Setter(AccessLevel.PROTECTED) private List<Pattern> blacklistPatterns;

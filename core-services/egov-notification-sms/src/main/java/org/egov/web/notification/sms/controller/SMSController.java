@@ -1,7 +1,5 @@
 package org.egov.web.notification.sms.controller;
 
-import org.egov.web.notification.sms.models.Category;
-import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +16,10 @@ public class SMSController {
 	SMSService smsService;
 
 	@GetMapping
-	public ResponseEntity<?> test(@RequestParam(value = "number", required = true) String number,
-			@RequestParam(value = "msg", required = true) String msg,
-			@RequestParam(value = "category", required = true) Category category,
-			@RequestParam(value = "expirytime", required = true) Long expirytime) {
+	public ResponseEntity<?> sendSms(@RequestParam(value = "number", required = true) String number,
+			@RequestParam(value = "userUuid", required = true) String userUuid) {
 
-		// Sms sms = new Sms(number, sms, Category.OTP, expirytime);
-
-		Sms sms = new Sms(number, msg, category, expirytime, "1007045301736516403");
-
-		smsService.sendSMS(sms);
+		smsService.sendSMS(number, userUuid);
 
 		return ResponseEntity.ok().body("Message sent successfully");
 	}
