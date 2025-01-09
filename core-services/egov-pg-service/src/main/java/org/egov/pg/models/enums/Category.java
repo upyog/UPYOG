@@ -1,4 +1,4 @@
-package org.egov.pg.web.models;
+package org.egov.pg.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
