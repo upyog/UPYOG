@@ -69,7 +69,12 @@ public class UserController {
     @Value("${digilocker.search}")
     private boolean isDigiLockerSearch;
 
-
+    @Value("${requester.service.host}")
+    private String requesterServiceHost;
+    
+    @Value("${requester.service.endpoint}")
+    private String requesterServiceEndpoint;
+    
     @Autowired
     public UserController(UserService userService, TokenService tokenService) {
         this.userService = userService;
@@ -190,7 +195,8 @@ public class UserController {
     @PostMapping("/digilocker/oauth/token")
     public Object authDigiLocker(@RequestBody @Valid CreateUserRequest createUserRequest, @RequestHeader HttpHeaders headers) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8270/requester-services-dx/user/details";
+       // String url = "http://localhost:8270/requester-services-dx/user/details";
+        
         UserSearchRequest request = new UserSearchRequest();
 
         TokenReq tokenReq = TokenReq.builder()
@@ -206,7 +212,8 @@ public class UserController {
 
         ResponseEntity<String> validationApiResponse;
         try {
-            validationApiResponse = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        	validationApiResponse = restTemplate.exchange(requesterServiceHost + requesterServiceEndpoint , HttpMethod.POST, entity, String.class);
+            //validationApiResponse = restTemplate.exchange(url, HttpMethod.POST, entity, Strings.class);
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("Validation failed: " + e.getResponseBodyAsString(), e);
         }

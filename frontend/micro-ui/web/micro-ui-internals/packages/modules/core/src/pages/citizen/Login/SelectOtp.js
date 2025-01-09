@@ -43,12 +43,12 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
 }
 
 const user = { 
-  access_token:data?.TokenReq?.access_token,
+  access_token:data?.TokenRes?.access_token,
   tenantId: "pg", 
-  digilockerid:data?.TokenReq?.digilockerid,
-  name:data?.TokenReq?.name,
+  digilockerid:data?.TokenRes?.digilockerid,
+  name:data?.TokenRes?.name,
   dob: formatDate(data?.TokenRes?.dob),
-  gender:data?.TokenReq?.gender,
+  gender:data?.TokenRes?.gender,
   mobileNumber: data?.TokenRes.mobile, 
 };
 
