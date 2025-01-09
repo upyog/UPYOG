@@ -248,32 +248,91 @@ const checkboxColumn = {
 };
 
 const handleCartClick = () => {
+  // Step 1: Check if any rows are selected
   if (selectedCheckboxes.length === 0) {
     setShowToast({ error: true, label: t("ADS_SELECT_AT_LEAST_ONE_SLOT") });
-  } else {
-    // Get selected rows based on selectedCheckboxes
-    const selectedRows = data.filter(row => selectedCheckboxes.includes(row.slotId));
-
-    // Create a unique identifier for each row based on addType, faceArea, bookingDate, and location
-    const newlyAddedRows = selectedRows.filter(selectedRow => 
-      !cartDetails.some(cartRow => 
-        cartRow.addType === selectedRow.addType &&
-        cartRow.faceArea === selectedRow.faceArea &&
-        cartRow.bookingDate === selectedRow.bookingDate &&
-        cartRow.location === selectedRow.location
-      )
-    );
-
-    if (newlyAddedRows.length > 0) {
-      setCartDetails(prevCart => [...prevCart, ...newlyAddedRows]);
-      setShowToast({ success: true, label: `${newlyAddedRows.length} item(s) added to cart.` });
-    } else {
-      setShowToast({ error: true, label: t("ADS_ITEM_ALREADY_IN_CART") });
-    }
-
-    // Clear selected checkboxes
-    setSelectedCheckboxes([]);
+    return;
   }
+
+  // Get selected rows based on selectedCheckboxes
+  const selectedRows = data.filter(row => selectedCheckboxes.includes(row.slotId));
+
+  // Step 2: Extract cart slot information including addType, faceArea, and location
+  const cartSlotDetails = cartDetails.map(cartRow => ({
+    slotId: cartRow.slotId,
+    addType: cartRow.addType,
+    location: cartRow.location,
+    faceArea: cartRow.faceArea,
+    bookingDate: cartRow.bookingDate
+  }));
+
+  // Step 3: Extract selected slot information in the same format
+  const selectedSlotDetails = selectedRows.map(row => ({
+    slotId: row.slotId,
+    addTypeCode: row.addTypeCode,
+    faceAreaCode: row.faceAreaCode,
+    locationCode: row.locationCode,
+    addType: row.addType,
+    location: row.location,
+    faceArea: row.faceArea,
+    price:row.price,
+    bookingDate: row.bookingDate
+  }));
+
+  // Step 4: Check if any selected slotId is already in the cart (based on addType, location, faceArea, and bookingDate)
+  const duplicateSlot = selectedSlotDetails.some(selectedRow => 
+    cartSlotDetails.some(cartRow =>
+      cartRow.addType === selectedRow.addType &&
+      cartRow.location === selectedRow.location &&
+      cartRow.faceArea === selectedRow.faceArea &&
+      cartRow.bookingDate === selectedRow.bookingDate
+    )
+  );
+
+  if (duplicateSlot) {
+    setShowToast({ error: true, label: t("ADS_ITEM_ALREADY_IN_CART") });
+    setSelectedCheckboxes([]);  // Clear selected checkboxes if duplicate found
+    return;
+  }
+
+  // Step 5: Group the slots by `addType`, `location`, `faceArea`
+  const groupedSlots = {};
+  [...cartSlotDetails, ...selectedSlotDetails].forEach(row => {
+    const key = `${row.addType}-${row.location}-${row.faceArea}`;
+    if (!groupedSlots[key]) {
+      groupedSlots[key] = [];
+    }
+    groupedSlots[key].push(row);
+  });
+
+  // Step 6: Check for consecutive slotIds in each group
+  for (let groupKey in groupedSlots) {
+    const group = groupedSlots[groupKey];
+    
+    // Sort the group by `slotId` to check for consecutiveness
+    const sortedGroup = group.sort((a, b) => a.slotId - b.slotId);
+
+    // Check for gaps between consecutive slotIds
+    for (let i = 1; i < sortedGroup.length; i++) {
+      const prev = sortedGroup[i - 1];
+      const current = sortedGroup[i];
+
+      // If there is a gap greater than 1 between slotIds, show an error
+      if (current.slotId - prev.slotId > 1) {
+        setShowToast({ error: true, label: t("ADS_SLOT_DATE_NOT_CONSECUTIVE") });
+        setSelectedCheckboxes([]); // Clear selected checkboxes
+        return;
+      }
+    }
+  }
+
+  // Step 7: Add new rows to the cart (if no duplicates and consecutive check passed)
+  setCartDetails(prevCart => [...prevCart, ...selectedSlotDetails]);
+
+  setShowToast({ success: true, label: `${selectedSlotDetails.length} item(s) added to cart.` });
+
+  // Step 8: Clear selected checkboxes after adding to cart
+  setSelectedCheckboxes([]);
 };
   const enhancedColumns = [checkboxColumn, ...columns];
 
