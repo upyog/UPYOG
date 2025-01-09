@@ -297,17 +297,44 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
   
 
-  const handleBookClick = () => {
-    if (!isCheckboxSelected) {
-      setShowToast({ error: true, label:t("CHB_SELECT_AT_LEAST_ONE_SLOT")});
-    } else {
-      if(isExistingPopupRequired){
-      setShowModal(true);  // Show modal when button is clicked
-      }else{
-        goNext();  // Ensure action is called only when submitting
+const handleBookClick = () => {
+  if (bookingSlotDetails.length > 0) {
+    // Sort the bookingSlotDetails by slotId to check for consecutive IDs
+    const sortedSlots = [...bookingSlotDetails].sort((a, b) => a.slotId - b.slotId);
+
+    // Check if the slotId is consecutive
+    let isConsecutive = true;
+    for (let i = 1; i < sortedSlots.length; i++) {
+      if (sortedSlots[i].slotId !== sortedSlots[i - 1].slotId + 1) {
+        isConsecutive = false;
+        break;
       }
     }
-  };
+
+    if (isConsecutive) {
+      // Proceed with the booking
+      if (isExistingPopupRequired) {
+        setShowModal(true);  // Show modal if required
+      } else {
+        goNext();  // Continue if no popup is needed
+      }
+    } else {
+      // Show toast if the slot IDs are not consecutive
+      setShowToast({ error: true, label: t("CHB_SELECT_CONSECUTIVE_SLOT") });
+    }
+  } else {
+    // If no slots are selected, show a toast message to select at least one slot
+    if (!isCheckboxSelected) {
+      setShowToast({ error: true, label: t("CHB_SELECT_AT_LEAST_ONE_SLOT") });
+    } else {
+      if (isExistingPopupRequired) {
+        setShowModal(true);  // Show modal when button is clicked
+      } else {
+        goNext();  // Proceed to next step if no popup is needed
+      }
+    }
+  }
+};
   
   useEffect(() => {
     if (showToast) {
