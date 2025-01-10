@@ -95,22 +95,22 @@
 
     <distributionManagement>
         <repository>
-            <id>repo.egovernments.org</id>
+            <id>http://nexus-repo.digit.org/nexus/content/groups/public/</id>
             <name>eGov ERP Releases Repository</name>
-            <url>http://repo.egovernments.org/nexus/content/repositories/releases/</url>
+            <url>http://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov ERP Snapshots Repository</name>
-            <url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov Public Repository Group</name>
-            <url>http://repo.egovernments.org/nexus/content/groups/public/</url>
+            <url>http://nexus-repo.digit.org/nexus/content/groups/public/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -124,16 +124,16 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-			<id>javaxt.com</id>
-			<url>http://www.javaxt.com/maven</url>
-		</repository>
+            <id>javaxt.com</id>
+            <url>http://www.javaxt.com/maven</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov Public Repository Group</name>
-            <url>http://repo.egovernments.org/nexus/content/groups/public/</url>
+            <url>http://nexus-repo.digit.org/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -263,7 +263,7 @@
         <module>egov-egfweb</module>
         <module>egov-collectionweb</module>
         <module>egov-ear</module>
-       
+
     </modules>
 
     <dependencyManagement>
@@ -1395,12 +1395,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
-		<dependency>
-    		<groupId>org.owasp.esapi</groupId>
-    		<artifactId>esapi</artifactId>
-    		<version>2.2.3.1</version>
-		</dependency>
+
+        <dependency>
+            <groupId>org.owasp.esapi</groupId>
+            <artifactId>esapi</artifactId>
+            <version>2.2.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>
