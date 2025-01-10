@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -49,7 +50,8 @@ public class WorkflowInboxService {
 		}
 
 		User loggedinUser = info.getUserInfo();
-		Set<String> loggedinUserRoles = loggedinUser.getRoles().stream().map(Role::getCode).collect(Collectors.toSet());
+		Set<String> loggedinUserRoles = loggedinUser.getRoles().stream().filter(role -> StringUtils
+				.equalsIgnoreCase(role.getTenantId(), tenantId)).map(Role::getCode).collect(Collectors.toSet());
 
 		instance.getNextActions().stream().forEach(action -> {
 			Set<String> actionRolesSet = new HashSet<>(action.getRoles());
