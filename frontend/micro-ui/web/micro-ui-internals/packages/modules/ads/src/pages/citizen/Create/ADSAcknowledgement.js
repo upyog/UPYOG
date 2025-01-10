@@ -49,17 +49,17 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
   const user = Digit.UserService.getUser().info;
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
   let formdata = {
-    advertisementSlotSearchCriteria: {
-      bookingId:mutation.data?.bookingApplication[0].bookingId,
-      addType: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.addType,
-      bookingStartDate:mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.bookingDate,
-      bookingEndDate: mutation.data?.bookingApplication[0]?.cartDetails?.[mutation.data?.bookingApplication[0].cartDetails.length - 1]?.bookingDate,
-      faceArea: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.faceArea,
+    advertisementSlotSearchCriteria: mutation.data?.bookingApplication[0]?.cartDetails.map((item) => ({
+      bookingId: mutation.data?.bookingApplication[0].bookingId,
+      addType: item?.addType,
+      bookingStartDate: item?.bookingDate,
+      bookingEndDate: item?.bookingDate,
+      faceArea: item?.faceArea,
       tenantId: tenantId,
-      location: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.location,
-      nightLight: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.nightLight,
-      isTimerRequired: true
-    }
+      location: item?.location,
+      nightLight: item?.nightLight,
+      isTimerRequired: true,
+    })),
   };
  
     const handleMakePayment = async () => {
@@ -67,15 +67,9 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
         // Await the mutation and capture the result directly
         const result = await slotSearchData.mutateAsync(formdata);
         let SlotSearchData={
-          bookingId:mutation.data?.bookingApplication[0].bookingId,
-          addType: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.addType,
-          bookingStartDate:mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.bookingDate,
-          bookingEndDate: mutation.data?.bookingApplication[0]?.cartDetails?.[mutation.data?.bookingApplication[0].cartDetails.length - 1]?.bookingDate,
-          faceArea: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.faceArea,
+          bookingId: mutation.data?.bookingApplication[0].bookingId,
           tenantId: tenantId,
-          location: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.location,
-          nightLight: mutation.data?.bookingApplication[0]?.cartDetails?.[0]?.nightLight,
-          isTimerRequired: true
+          cartDetails: mutation.data?.bookingApplication[0]?.cartDetails,
         };
         const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
         const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;

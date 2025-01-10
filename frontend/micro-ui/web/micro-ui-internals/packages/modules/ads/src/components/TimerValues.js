@@ -12,17 +12,17 @@ export const TimerValues = ({t, timerValues, SlotSearchData}) => {
    
    // Prepare form data for Advertisement Service
    const formdata = {
-     advertisementSlotSearchCriteria: {
-       bookingId:"",
-       addType: SlotSearchData?.addType,
-       bookingStartDate: SlotSearchData?.bookingStartDate,
-       bookingEndDate: SlotSearchData?.bookingEndDate,
-       faceArea: SlotSearchData?.faceArea,
-       tenantId: tenantId,
-       location: SlotSearchData?.location,
-       nightLight: SlotSearchData?.nightLight,
-       isTimerRequired: true,
-     },
+    advertisementSlotSearchCriteria: SlotSearchData.map((item) => ({
+      bookingId: "",
+      addType: item?.addTypeCode,
+      bookingStartDate: item?.bookingDate,
+      bookingEndDate: item?.bookingDate,
+      faceArea: item?.faceAreaCode,
+      tenantId: tenantId,
+      location: item?.location,
+      nightLight: item?.nightLight,
+      isTimerRequired: true,
+    })),
    };
     
 

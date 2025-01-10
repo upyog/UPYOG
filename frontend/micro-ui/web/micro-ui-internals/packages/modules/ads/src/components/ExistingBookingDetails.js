@@ -13,20 +13,20 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
 
   // Slot search data for Ads (Advertisement)
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
-
+  
   // Prepare form data for Advertisement Service
   const formdata = {
-    advertisementSlotSearchCriteria: {
-      bookingId:"",
-      addType: Searchdata?.addType,
-      bookingStartDate: Searchdata?.bookingStartDate,
-      bookingEndDate: Searchdata?.bookingEndDate,
-      faceArea: Searchdata?.faceArea,
+    advertisementSlotSearchCriteria: Searchdata.map((item) => ({
+      bookingId: "",
+      addType: item?.addTypeCode,
+      bookingStartDate: item?.bookingDate,
+      bookingEndDate: item?.bookingDate,
+      faceArea: item?.faceAreaCode,
       tenantId: tenantId,
-      location: Searchdata?.location,
-      nightLight: Searchdata?.nightLight,
+      location: item?.location,
+      nightLight: item?.nightLight,
       isTimerRequired: true,
-    },
+    })),
   };
 
   const setchbData = async(application) => {
