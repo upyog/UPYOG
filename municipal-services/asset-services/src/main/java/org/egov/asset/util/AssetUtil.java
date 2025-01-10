@@ -110,18 +110,42 @@ public class AssetUtil {
     }
 
     /**
-     * Updates the asset's status and usage based on whether it is disposed of in a facility.
+     * Updates the asset's status and usage based on the provided status or disposal condition.
      *
      * @param asset                The Asset object to update.
-     * @param isDisposedInFacility Whether the asset is disposed of in a facility.
+     * @param isDisposedInFacility A boolean indicating if the asset is disposed in a facility.
+     * @param status               A custom status to set for the asset (optional).
      */
-    public void updateAssetStatusAndUsage(Asset asset, Boolean isDisposedInFacility) {
-        if (Boolean.TRUE.equals(isDisposedInFacility)) {
+    public void updateAssetStatusAndUsage(Asset asset, Boolean isDisposedInFacility, String status) {
+        if (status != null && !status.trim().isEmpty()) {
+            // Handle status-based updates using a switch case
+            switch (status) {
+                case AssetConstants.ASSET_STATUS_DISPOSED:
+                    asset.setAssetStatus(status);
+                    asset.setAssetUsage(AssetConstants.ASSET_USAGE_DISPOSED);
+                    break;
+
+                case AssetConstants.ASSET_STATUS_DISPOSED_AND_SOLD:
+                    asset.setAssetStatus(status);
+                    asset.setAssetUsage(AssetConstants.ASSET_USAGE_DISPOSED_AND_SOLD);
+                    break;
+                case AssetConstants.ASSET_STATUS_REPAIRED:
+                    asset.setAssetStatus(status);
+                    asset.setAssetUsage(AssetConstants.ASSET_USAGE_ASSET_STATUS_REPAIRED);
+                    break;
+                default:
+                    asset.setAssetStatus(status);
+                    //throw new IllegalArgumentException("Invalid asset status: " + status);
+            }
+        } else if (Boolean.TRUE.equals(isDisposedInFacility)) {
+            // If no custom status is provided and the asset is disposed in a facility:
             asset.setAssetStatus(AssetConstants.ASSET_STATUS_DISPOSED);
             asset.setAssetUsage(AssetConstants.ASSET_USAGE_DISPOSED);
         } else {
+            // If no custom status is provided and the asset is not disposed in a facility:
             asset.setAssetStatus(AssetConstants.ASSET_STATUS_DISPOSED_AND_SOLD);
             asset.setAssetUsage(AssetConstants.ASSET_USAGE_DISPOSED_AND_SOLD);
         }
     }
+
 }

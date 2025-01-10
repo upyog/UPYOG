@@ -33,8 +33,15 @@ public class AssetDisposalQueryBuilder {
             + "disposal.created_at, "
             + "disposal.created_by, "
             + "disposal.updated_at, "
-            + "disposal.updated_by "
-            + "FROM eg_asset_disposal_details disposal ";
+            + "disposal.updated_by, "
+            + "disposal.asset_disposal_status, "
+            + "doc.documentid, "
+            + "doc.documenttype, "
+            + "doc.filestoreid, "
+            + "doc.documentuid, "
+            + "doc.docdetails "
+            + "FROM eg_asset_maintenance maintenance "
+            + "LEFT OUTER JOIN eg_asset_document doc ON maintenance.maintenance_id = doc.assetid";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
