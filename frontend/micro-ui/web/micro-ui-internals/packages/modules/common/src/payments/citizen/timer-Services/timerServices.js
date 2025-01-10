@@ -23,25 +23,24 @@ const TimerServices = ({ businessService, t, timerValues, SlotSearchData = "" })
   // Slot search data for Ads (Advertisement)
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
 
-  // Prepare form data for Advertisement Service
-  const formdata = {
-    advertisementSlotSearchCriteria:SlotSearchData?.cartDetails.map((item) => ({
-      bookingId: SlotSearchData?.bookingId,
-      addType: item?.addType,
-      bookingStartDate: item?.bookingDate,
-      bookingEndDate: item?.bookingDate,
-      faceArea: item?.faceArea,
-      tenantId: SlotSearchData?.tenantId,
-      location: item?.location,
-      nightLight: item?.nightLight,
-      isTimerRequired: true,
-    })),
-  };
-
   useEffect(() => {
     const fetchSlotData = async () => {
       try {
         if (businessService === "adv-services") {
+          // Prepare form data for Advertisement Service
+            const formdata = {
+              advertisementSlotSearchCriteria:SlotSearchData?.cartDetails.map((item) => ({
+                bookingId: SlotSearchData?.bookingId,
+                addType: item?.addType,
+                bookingStartDate: item?.bookingDate,
+                bookingEndDate: item?.bookingDate,
+                faceArea: item?.faceArea,
+                tenantId: SlotSearchData?.tenantId,
+                location: item?.location,
+                nightLight: item?.nightLight,
+                isTimerRequired: true,
+              })),
+            };
           // Fetching data for Advertisement Service
           const result = await slotSearchData.mutateAsync(formdata);
           const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
