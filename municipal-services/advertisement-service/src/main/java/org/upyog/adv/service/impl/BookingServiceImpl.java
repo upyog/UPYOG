@@ -1,11 +1,14 @@
 package org.upyog.adv.service.impl;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -31,7 +34,6 @@ import org.upyog.adv.util.MdmsUtil;
 import org.upyog.adv.validator.BookingValidator;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
-import org.upyog.adv.web.models.AdvertisementSlotAvailabilityResponse;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.ApplicantDetail;
 import org.upyog.adv.web.models.BookingDetail;
@@ -169,31 +171,45 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 	@Override
-	public List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
+	public List<AdvertisementSlotAvailabilityDetail> checkAdvertisementSlotAvailability(
 			AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
 
-		List<AdvertisementSlotAvailabilityDetail> availabiltityDetails = bookingRepository
+		List<AdvertisementSlotAvailabilityDetail> availabilityDetails = bookingRepository
 				.getAdvertisementSlotAvailability(criteria);
-		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
+		log.info("Fetched availability details: " + availabilityDetails);
 
-		List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse = convertToAdvertisementAvailabilityResponse(
-				criteria, availabiltityDetails, requestInfo);
-		
-		String draftId = updateSlotAvailaibilityStatus(availabiltityDetailsResponse, criteria, requestInfo);
-	    log.info("Availability details after updating status: " + availabiltityDetailsResponse);
-	    
-	    boolean isSlotBooked = setSlotBookedFlag(availabiltityDetailsResponse);
-		
+		List<AdvertisementSlotAvailabilityDetail> availabilityDetailsResponse = convertToAdvertisementAvailabilityResponse(
+				criteria, availabilityDetails, requestInfo);
 
-		if (!isSlotBooked && criteria.getIsTimerRequired()) {
-			paymentTimerService.insertBookingIdForTimer(criteria, requestInfo, availabiltityDetailsResponse);
-		}
-	
-		log.info("Availabiltity details response after updating status :" + availabiltityDetailsResponse);
+		updateSlotAvailaibilityStatusFromTimer(availabilityDetailsResponse, criteria, requestInfo);
+		log.info("Updated availability details: " + availabilityDetailsResponse);
 
-		return availabiltityDetailsResponse;
+		return availabilityDetailsResponse;
 	}
 	
+	@Override
+	public List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
+	        List<AdvertisementSlotSearchCriteria> criteriaList, RequestInfo requestInfo) {
+
+	    List<AdvertisementSlotAvailabilityDetail> allAvailabilityDetails = new ArrayList<>();
+	        
+	    for (AdvertisementSlotSearchCriteria criteria : criteriaList) {
+	        List<AdvertisementSlotAvailabilityDetail> availabilityDetails = checkAdvertisementSlotAvailability(criteria, requestInfo);
+	        allAvailabilityDetails.addAll(availabilityDetails);
+	      
+	    }
+
+	    boolean isTimerRequiredForAnyCriteria = criteriaList.stream()
+	            .anyMatch(criteria -> criteria.getIsTimerRequired());
+	    
+	    if (isTimerRequiredForAnyCriteria && !setSlotBookedFlag(allAvailabilityDetails)) {
+	        // Insert the timer for all criteria at once
+	        paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
+	        log.info("Inserted booking ID for timer for all criteria.");
+	    }
+
+	    return allAvailabilityDetails;
+	}
 
 	@Override
 	public boolean setSlotBookedFlag(List<AdvertisementSlotAvailabilityDetail> details) {
@@ -201,7 +217,6 @@ public class BookingServiceImpl implements BookingService {
 	    return details.stream()
 	            .anyMatch(slot -> BookingStatusEnum.BOOKED.toString().equals(slot.getSlotStaus()));
 	}
-
 
 
 	private List<AdvertisementSlotAvailabilityDetail> convertToAdvertisementAvailabilityResponse(
@@ -249,42 +264,64 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 
-	public String updateSlotAvailaibilityStatus(List<AdvertisementSlotAvailabilityDetail> availabilityDetailsResponse,
-	        AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) {
 
-	    String draftId = "";
+	public List<AdvertisementSlotAvailabilityDetail> updateSlotAvailaibilityStatusFromTimer(
+			List<AdvertisementSlotAvailabilityDetail> availabilityDetailsResponse,
+			AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) { 
 
-	    // Use the refactored method to find a matched slot
-	    Optional<AdvertisementSlotAvailabilityDetail> matchedSlot = bookingRepository.getBookedSlots(criteria, requestInfo);
+		List<AdvertisementSlotAvailabilityDetail> bookedSlotsFromTimer = bookingRepository.getBookedSlots(criteria,
+				requestInfo);
+		if (bookedSlotsFromTimer == null || bookedSlotsFromTimer.isEmpty()) {
+			log.info("Timer details are null or empty, returning availability details as is.");
+		}
 
-	    if (matchedSlot.isPresent()) {
-	        draftId = matchedSlot.get().getBookingId(); // Get the bookingId from the matched slot
-	        String uuid = matchedSlot.get().getUuid();
-
-	        availabilityDetailsResponse.forEach(detail -> {
-	            // If the current slot matches, set it to BOOKED status
-	            detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
-
-	            // Check if the current user created the slot and set availability
-	            if (requestInfo.getUserInfo() != null && requestInfo.getUserInfo().getUuid() != null
-	                    && requestInfo.getUserInfo().getUuid().equals(uuid)) {
-	                detail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString()); // Force it to AVAILABLE if the UUID matches
-	            }
-	        });
-	    }
-
-	    return draftId;
-	}
-
-	
-	@Override
-	public String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
-			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo) {
+		Set<AdvertisementSlotAvailabilityDetail> timerDetailsSet = new HashSet<>(bookedSlotsFromTimer);
 		
-	String draftId = updateSlotAvailaibilityStatus(availabiltityDetailsResponse, criteria, RequestInfo);
+		Map<AdvertisementSlotAvailabilityDetail, AdvertisementSlotAvailabilityDetail> slotDetailsMap = availabilityDetailsResponse
+				.stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
+		log.info("Timer Details from db : " + bookedSlotsFromTimer);
 
-	return draftId != null && !draftId.isEmpty() ? draftId : null;
+		bookedSlotsFromTimer.forEach(detail -> {
+			// LocalDate parsedDate = LocalDate.parse(detail.getBookingDate(), formatter);
+			// Create a BookingPaymentTimerDetails object for comparison
+			AdvertisementSlotAvailabilityDetail availabilityDetail = AdvertisementSlotAvailabilityDetail.builder()
+					.addType(detail.getAddType()).location(detail.getLocation()).faceArea(detail.getFaceArea())
+					.nightLight(detail.getNightLight()).bookingDate(detail.getBookingDate()).build();
+
+			// Check if the timerDetails set contains this booking and if it's created by
+			// the current user
+			// Update the slot status based on the comparison
+			if (availabilityDetailsResponse.contains(availabilityDetail)) {
+				log.info("Booking created by user id {} and booking id {} ", criteria.getBookingId(),
+						requestInfo.getUserInfo().getUuid());
+				AdvertisementSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
+
+				boolean isCreatedByCurrentUser = detail.getUuid().equals(requestInfo.getUserInfo().getUuid());
+				// boolean existingBookingIdCheck =
+				// detail.getBookingId().equals(criteria.getBookingId());
+
+				if (isCreatedByCurrentUser) {
+					log.info("inside booking created by me with same booking id ");
+					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+				} else {
+					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+				}
+			}
+
+		});
+
+		return availabilityDetailsResponse;
+
 	}
+	
+//	@Override
+//	public String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
+//			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo) {
+//		
+//	String draftId = updateSlotAvailaibilityStatusFromTimer(availabiltityDetailsResponse, criteria, RequestInfo);
+//
+//	return draftId != null && !draftId.isEmpty() ? draftId : null;
+//	}
 
 	private AdvertisementSlotAvailabilityDetail createAdvertisementSlotAvailabiltityDetail(
 			AdvertisementSlotSearchCriteria criteria, LocalDate date) {

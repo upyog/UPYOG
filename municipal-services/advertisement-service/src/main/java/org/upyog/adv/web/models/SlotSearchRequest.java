@@ -1,5 +1,7 @@
 package org.upyog.adv.web.models;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -34,7 +36,7 @@ public class SlotSearchRequest {
 
 	@Valid
 	@JsonProperty("advertisementSlotSearchCriteria")
-	private  AdvertisementSlotSearchCriteria criteria; 
+	private  List<AdvertisementSlotSearchCriteria> criteria; 
 	
 
 	
