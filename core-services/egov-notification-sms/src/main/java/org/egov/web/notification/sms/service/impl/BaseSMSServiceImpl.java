@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -34,6 +35,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -41,6 +43,7 @@ import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Service
 abstract public class BaseSMSServiceImpl implements BaseSMSService, SMSBodyBuilder {
 
     //private static final String SMS_RESPONSE_NOT_SUCCESSFUL = "Sms response not successful";
@@ -88,6 +91,11 @@ abstract public class BaseSMSServiceImpl implements BaseSMSService, SMSBodyBuild
             return;
         }
         log.info("calling submitToExternalSmsService() method");
+        
+		if (StringUtils.isEmpty(sms.getTemplateId())) {
+			sms.setTemplateId(smsProperties.getSmsDefaultTmplid());
+		}
+        
         submitToExternalSmsService(sms);
     }
 
