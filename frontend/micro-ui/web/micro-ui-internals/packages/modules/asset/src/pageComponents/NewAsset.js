@@ -123,7 +123,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const handleInputChange = (e) => {
     // Get the name & value from the input and select field
     const { name, value } = e.target ? e.target : { name: e.name, value: e };
-
+    
+    if (name === 'lifeOfAsset' && value.length > 3) { // Validation for life of Asset
+      alert('Maximum limit is 3 digits only!');
+      return false;
+    }
     setAssetDetails((prevData) => {
       // Update the current field
       const updatedData = {
