@@ -66,7 +66,7 @@ public class AssetDisposeService {
         // Update the asset in the system
         // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
-            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
+            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), null);
             //updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
@@ -96,27 +96,11 @@ public class AssetDisposeService {
 
         // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
-            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility());
+            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), null);
             //updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
         return disposal;
-    }
-
-    /**
-     * Update the asset in the system using AssetService.
-     *
-     * @param requestInfo The RequestInfo object.
-     * @param asset       The Asset object to update.
-     */
-    private void updateAssetInSystem(RequestInfo requestInfo, Asset asset) {
-        AssetRequest assetRequest = AssetRequest.builder()
-                .requestInfo(requestInfo)
-                .asset(asset)
-                .build();
-        assetService.update(assetRequest);
-        log.info("Updated asset ID: {} with status: {} and usage: {}",
-                asset.getId(), asset.getAssetStatus(), asset.getAssetUsage());
     }
 
 
@@ -134,4 +118,19 @@ public class AssetDisposeService {
         return assetDisposeRepository.search(searchCriteria);
     }
 
+    /**
+     * Update the asset in the system using AssetService.
+     *
+     * @param requestInfo The RequestInfo object.
+     * @param asset       The Asset object to update.
+     */
+    private void updateAssetInSystem(RequestInfo requestInfo, Asset asset) {
+        AssetRequest assetRequest = AssetRequest.builder()
+                .requestInfo(requestInfo)
+                .asset(asset)
+                .build();
+        assetService.update(assetRequest);
+        log.info("Updated asset ID: {} with status: {} and usage: {}",
+                asset.getId(), asset.getAssetStatus(), asset.getAssetUsage());
+    }
 }

@@ -40,6 +40,7 @@ public class AssetMaintenanceRowMapper implements RowMapper<AssetMaintenance> {
                 .postConditionRemarks(rs.getString("post_condition_remarks"))
                 .preConditionRemarks(rs.getString("pre_condition_remarks"))
                 .description(rs.getString("description"))
+                .assetMaintenanceStatus(rs.getString("asset_maintenance_status"))
                 .additionalDetails(mapAdditionalDetails(rs))
                 .build();
 

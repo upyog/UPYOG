@@ -177,6 +177,16 @@ public class EnrichmentService {
     public void enrichDisposalCreateOperations(AssetDisposalRequest request) {
         log.info("Enriching Other Operations Request");
         AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
+
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(request.getAssetDisposal().getDocuments())) {
+            request.getAssetDisposal().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
         request.getAssetDisposal().setAuditDetails(auditDetails);
         request.getAssetDisposal().setDisposalId(UUID.randomUUID().toString());
     }
@@ -189,6 +199,17 @@ public class EnrichmentService {
     public void enrichDisposalUpdateOperations(AssetDisposalRequest request) {
         log.info("Enriching Other Operations Request");
         AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
+
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(request.getAssetDisposal().getDocuments())) {
+            request.getAssetDisposal().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
+
         request.getAssetDisposal().setAuditDetails(auditDetails);
     }
 

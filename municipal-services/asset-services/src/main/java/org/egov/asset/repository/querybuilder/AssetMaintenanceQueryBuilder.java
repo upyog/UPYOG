@@ -37,6 +37,7 @@ public class AssetMaintenanceQueryBuilder {
                     + "maintenance.post_condition_remarks, "
                     + "maintenance.pre_condition_remarks, "
                     + "maintenance.description, "
+                    + "maintenance.asset_maintenance_status, "
                     + "doc.documentid, "
                     + "doc.documenttype, "
                     + "doc.filestoreid, "

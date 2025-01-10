@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.asset.web.models.AuditDetails;
+import org.egov.asset.web.models.Document;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.Valid;
+import java.util.List;
 
 
 @Data
@@ -60,8 +63,17 @@ public class AssetDisposal {
     @JsonProperty("glCode")
     private String glCode;
 
-//    @JsonProperty("additionalDetails")
-//    private Object additionalDetails;
+    // Remarks before maintenance
+    @JsonProperty("assetDisposalStatus")
+    private String assetDisposalStatus;
+
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails;
+
+    // Attached documents disposal
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents;
 
     @JsonIgnore
     @JsonProperty("auditDetails")

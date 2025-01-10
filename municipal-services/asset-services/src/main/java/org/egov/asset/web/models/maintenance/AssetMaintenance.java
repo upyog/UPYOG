@@ -89,6 +89,10 @@ public class AssetMaintenance {
     @JsonProperty("preConditionRemarks")
     private String preConditionRemarks;
 
+    // Remarks before maintenance
+    @JsonProperty("assetMaintenanceStatus")
+    private String assetMaintenanceStatus;
+
     // Attached documents for maintenance
     @JsonProperty("documents")
     @Valid
