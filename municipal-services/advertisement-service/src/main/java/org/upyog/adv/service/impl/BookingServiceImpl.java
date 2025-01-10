@@ -1,12 +1,9 @@
 package org.upyog.adv.service.impl;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -20,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
 import org.upyog.adv.repository.BookingRepository;
@@ -61,9 +57,6 @@ public class BookingServiceImpl implements BookingService {
 
 	@Autowired
 	private DemandService demandService;
-
-	@Autowired
-	private BookingConfiguration config;
 
 	@Autowired
 	private PaymentTimerService paymentTimerService;
@@ -202,7 +195,9 @@ public class BookingServiceImpl implements BookingService {
 	    boolean isTimerRequiredForAnyCriteria = criteriaList.stream()
 	            .anyMatch(criteria -> criteria.getIsTimerRequired());
 	    
-	    if (isTimerRequiredForAnyCriteria && !setSlotBookedFlag(allAvailabilityDetails)) {
+	   boolean slotBookedFlag = setSlotBookedFlag(allAvailabilityDetails);
+	   log.info("Slot booked flag for criteria : " + slotBookedFlag);
+	    if (isTimerRequiredForAnyCriteria && !slotBookedFlag) {
 	        // Insert the timer for all criteria at once
 	        paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
 	        log.info("Inserted booking ID for timer for all criteria.");
@@ -275,15 +270,11 @@ public class BookingServiceImpl implements BookingService {
 			log.info("Timer details are null or empty, returning availability details as is.");
 		}
 
-		Set<AdvertisementSlotAvailabilityDetail> timerDetailsSet = new HashSet<>(bookedSlotsFromTimer);
-		
 		Map<AdvertisementSlotAvailabilityDetail, AdvertisementSlotAvailabilityDetail> slotDetailsMap = availabilityDetailsResponse
 				.stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
 		log.info("Timer Details from db : " + bookedSlotsFromTimer);
 
 		bookedSlotsFromTimer.forEach(detail -> {
-			// LocalDate parsedDate = LocalDate.parse(detail.getBookingDate(), formatter);
-			// Create a BookingPaymentTimerDetails object for comparison
 			AdvertisementSlotAvailabilityDetail availabilityDetail = AdvertisementSlotAvailabilityDetail.builder()
 					.addType(detail.getAddType()).location(detail.getLocation()).faceArea(detail.getFaceArea())
 					.nightLight(detail.getNightLight()).bookingDate(detail.getBookingDate()).build();

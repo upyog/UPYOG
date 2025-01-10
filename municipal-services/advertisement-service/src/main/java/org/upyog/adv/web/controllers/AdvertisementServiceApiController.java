@@ -2,7 +2,6 @@ package org.upyog.adv.web.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.adv.constants.BookingConstants;
 import org.upyog.adv.enums.BookingStatusEnum;
-import org.upyog.adv.kafka.consumer.PaymentUpdateConsumer;
 import org.upyog.adv.service.AdvertisementValidationService;
 import org.upyog.adv.service.BookingService;
 import org.upyog.adv.service.DemandService;
@@ -34,8 +32,6 @@ import org.upyog.adv.web.models.ResponseInfo.StatusEnum;
 import org.upyog.adv.web.models.SlotSearchRequest;
 import org.upyog.adv.web.models.billing.Demand;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -49,19 +45,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdvertisementServiceApiController {
 
-	private final ObjectMapper objectMapper;
 
-	private final HttpServletRequest request;
 	
-	private final AdvertisementValidationService validationService;
-
-
 	@Autowired
-	public AdvertisementServiceApiController(ObjectMapper objectMapper, HttpServletRequest request, AdvertisementValidationService validationService) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-		this.validationService = validationService;
-	}
+	private AdvertisementValidationService validationService;
 
 	@Autowired
 	private BookingService bookingService;
@@ -70,8 +57,6 @@ public class AdvertisementServiceApiController {
 	private DemandService demandService;
 	
 	
-	@Autowired
-	private PaymentUpdateConsumer paymentUpdateConsumer;
 
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementResponse> createBooking(
