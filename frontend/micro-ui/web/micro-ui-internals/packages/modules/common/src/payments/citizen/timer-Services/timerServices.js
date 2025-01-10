@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Toast } from '@nudmcdgnpm/digit-ui-react-components';
 
-const TimerServices = ({ businessService, t, timerValues, SlotSearchData = "" }) => {
+const TimerServices = ({ businessService, t, timerValues, SlotSearchData = "", setTime }) => {
   const [timeRemaining, setTimeRemaining] = useState(0); // Initialize with `timerValues`
   const [showToast, setShowToast] = useState(null);
   const [hasFetched, setHasFetched] = useState(false); // To track if data has been fetched once
@@ -89,12 +89,12 @@ const TimerServices = ({ businessService, t, timerValues, SlotSearchData = "" })
           return prevTime - 1;
         });
       }, 1000);
-
+       setTime(timeRemaining);
       // Cleanup interval when the timer is cleared or component unmounts
       return () => clearInterval(interval);
     }
   }, [timeRemaining]);
-
+    
   // Toast cleanup (hide after 2 seconds)
   useEffect(() => {
     if (showToast) {
