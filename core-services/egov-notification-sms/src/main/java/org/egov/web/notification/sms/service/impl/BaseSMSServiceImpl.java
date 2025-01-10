@@ -92,10 +92,6 @@ abstract public class BaseSMSServiceImpl implements BaseSMSService, SMSBodyBuild
         }
         log.info("calling submitToExternalSmsService() method");
         
-		if (StringUtils.isEmpty(sms.getTemplateId())) {
-			sms.setTemplateId(smsProperties.getSmsDefaultTmplid());
-		}
-        
         submitToExternalSmsService(sms);
     }
 
