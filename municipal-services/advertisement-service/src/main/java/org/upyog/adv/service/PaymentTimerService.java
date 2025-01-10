@@ -28,11 +28,11 @@ public class PaymentTimerService {
 	private BookingConfiguration config;
 
 	@Transactional
-	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,  List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse
+	public void insertBookingIdForTimer(List<AdvertisementSlotSearchCriteria> criteria, RequestInfo requestInfo,  List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse
 			) {
 		bookingRepository.insertBookingIdForTimer(criteria, requestInfo, availabiltityDetailsResponse.get(0));
 		long timerValue = config.getPaymentTimer();
-		log.info("Creating timer entry for booking id : {} with timer value : {}", criteria.getBookingId(), timerValue);
+		//log.info("Creating timer entry for booking id : {} with timer value : {}", criteria.getBookingId(), timerValue);
 		
 	}
 	@Transactional

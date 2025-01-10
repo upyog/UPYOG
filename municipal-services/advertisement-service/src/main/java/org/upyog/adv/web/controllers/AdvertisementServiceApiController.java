@@ -118,20 +118,27 @@ public class AdvertisementServiceApiController {
 	@RequestMapping(value = "/v1/_slot-search", method = RequestMethod.POST)
 	public ResponseEntity<AdvertisementSlotAvailabilityResponse> v1GetAdvertisementSlotAvailablity(
 			@Valid @RequestBody SlotSearchRequest slotSearchRequest) {
+
 		List<AdvertisementSlotAvailabilityDetail> applications = bookingService
 				.getAdvertisementSlotAvailability(slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
+
+		boolean isSlotBooked = bookingService.setSlotBookedFlag(applications);
+
+		// String draftId = bookingService.getDraftId(applications,
+		// slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
+
 		ResponseInfo info = BookingUtil.createReponseInfo(slotSearchRequest.getRequestInfo(),
 				BookingConstants.ADVERTISEMENT_AVAILABILITY_SEARCH, StatusEnum.SUCCESSFUL);
-		String draftId = bookingService.getDraftId(applications, slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
-		boolean isSlotBooked = bookingService.setSlotBookedFlag(applications);
-		 AdvertisementSlotAvailabilityResponse response = AdvertisementSlotAvailabilityResponse.builder()
-		            .advertisementSlotAvailabiltityDetails(applications)
-		            .responseInfo(info)
-		            .draftId(draftId)
-		            .SlotBooked(isSlotBooked)
-		            .build(); 
+
+		AdvertisementSlotAvailabilityResponse response = AdvertisementSlotAvailabilityResponse.builder()
+				.advertisementSlotAvailabiltityDetails(applications).responseInfo(info)
+				// .draftId(draftId)
+				.slotBooked(isSlotBooked).build();
+
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+
 	
 	 @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
 	    public ResponseEntity<AdvertisementResponse> v1UpdateAdvertisementBooking(

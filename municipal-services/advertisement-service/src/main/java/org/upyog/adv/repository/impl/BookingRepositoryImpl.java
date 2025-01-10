@@ -61,9 +61,6 @@ public class BookingRepositoryImpl implements BookingRepository {
 
 	@Autowired
 	private BookingConfiguration bookingConfiguration;
-	@Lazy
-	@Autowired
-	private BookingRepository bookingRepository;
 	@Autowired
 	private BookingDetailRowmapper bookingRowmapper;
 	@Autowired
@@ -139,130 +136,144 @@ public class BookingRepositoryImpl implements BookingRepository {
 		return count;
 	}
 
-	@Override
-	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
-			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse) {
-		String bookingId = "";
-		String bookindIdFromCriteria = criteria.getBookingId();
-		String tenantId = requestInfo.getUserInfo().getTenantId();
-		String uuid = requestInfo.getUserInfo().getUuid();
-		String createdBy = requestInfo.getUserInfo().getUuid();
-		long createdTime = BookingUtil.getCurrentTimestamp();
-		String lastModifiedBy = requestInfo.getUserInfo().getUuid();
-		long lastModifiedTime = BookingUtil.getCurrentTimestamp();
-		String status = BookingConstants.ACTIVE;
-		String addType = criteria.getAddType();
-		String location = criteria.getLocation();
-		String faceArea = criteria.getFaceArea();
-		Boolean nightLight = criteria.getNightLight();
-		String bookingStartDate = criteria.getBookingStartDate();
-		String bookingEndDate = criteria.getBookingEndDate();
-		String bookingNo = "";
-		LocalDate startDate = LocalDate.parse(bookingStartDate);
-		LocalDate endDate = LocalDate.parse(bookingEndDate);
+	public void insertBookingIdForTimer(
+	        List<AdvertisementSlotSearchCriteria> criteriaList,
+	        RequestInfo requestInfo,
+	        AdvertisementSlotAvailabilityDetail availabilityDetailsResponse) {
+	    
+	    String tenantId = requestInfo.getUserInfo().getTenantId();
+	    String uuid = requestInfo.getUserInfo().getUuid();
 
-		
-		// Check if bookingId already exists in the timer table
-		String checkQuery = queryBuilder.checkBookingIdExists(bookindIdFromCriteria);
-		List<Map<String, Object>> result = jdbcTemplate.queryForList(checkQuery, bookindIdFromCriteria);
-//	    
-		// Check if draft ID exists in the timer table (separate from bookingId check)
-		List<Map<String, Object>> draftResult = getDraftData(uuid);
-		
-		if (draftResult.isEmpty() && bookindIdFromCriteria.isEmpty()) {
-			// Handle the case when a draft ID exists for the booking
-			BookingRequest draftBooking = new BookingRequest();
-			BookingDetail bookingApplication = new BookingDetail();
-			bookingApplication.setTenantId(tenantId);
-			bookingApplication.setDraftId(BookingUtil.getRandonUUID());
-			bookingApplication.setAuditDetails(BookingUtil.getAuditDetails(uuid, true));
-			draftBooking.setBookingApplication(bookingApplication);
+	    // Step 1: Fetch or create draft ID
+	    String draftId = fetchDraftId(criteriaList, uuid, tenantId);
 
-			// bookingRepository.saveDraftApplication(draftBooking);
-			String draftQuery = AdvertisementBookingQueryBuilder.DRAFT_QUERY;
-			String emptyJsonb = "{}";
-			jdbcTemplate.update(draftQuery, draftBooking.getBookingApplication().getDraftId(), tenantId, uuid,
-					emptyJsonb, createdBy, lastModifiedBy, createdTime, lastModifiedTime);
+	    // Step 2: If no existing draft ID, perform the batch insert
+	    if (draftId == null) {
+	        draftId = insertNewDraftId(criteriaList, uuid, tenantId);
+	        processBatchInsert(criteriaList, draftId, uuid);
+	        setTimerValue(availabilityDetailsResponse);
+	    }
 
-			// Use draft ID as booking ID
-			bookingId = draftBooking.getBookingApplication().getDraftId();
-			  while (!startDate.isAfter(endDate)) {
-		            String bookingDate = startDate.toString();  
-
-		            String query = queryBuilder.insertBookingIdForTimer(bookingId);
-		            jdbcTemplate.update(query, bookingId, createdBy, createdTime, status, bookingNo, lastModifiedBy,
-		                    lastModifiedTime, addType, location, faceArea, nightLight, bookingStartDate, bookingEndDate, bookingDate);
-
-		            startDate = startDate.plusDays(1);
-		        }
-			long timerValue = bookingConfiguration.getPaymentTimer();
-			availabiltityDetailsResponse.setTimerValue(timerValue / 1000);
-
-		} else if (!draftResult.isEmpty() && bookindIdFromCriteria.isEmpty()) {
-			if (result.isEmpty())
-				bookingId = (String) draftResult.get(0).get("draft_id");
-			
-			checkExistingTimerData(bookingId, criteria, requestInfo, availabiltityDetailsResponse);
-
-		} else if (!result.isEmpty() && result.get(0).get("booking_no") != null) {
-
-			Map<String, Long> remainingTime = getRemainingTimerValues(bookindIdFromCriteria);
-			long remainingTimeValue = remainingTime.get(bookindIdFromCriteria);
-			availabiltityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
-		}
-
+	    // Step 3: Process timer data
+	    processTimerData(draftId, criteriaList, requestInfo, availabilityDetailsResponse);
 	}
 
-	
-	public void checkExistingTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
-	        AdvertisementSlotAvailabilityDetail availabilityDetailsResponse) {
+	private String fetchDraftId(List<AdvertisementSlotSearchCriteria> criteriaList, String uuid, String tenantId) {
+		
+		//To insert the same drfatId/bookingId in timer table
+	    String draftId = criteriaList.stream()
+	            .filter(criteria -> criteria.getBookingId() != null && !criteria.getBookingId().isEmpty())
+	            .map(AdvertisementSlotSearchCriteria::getBookingId)
+	            .findFirst()
+	            .orElse(null);
 
-	    
-	    Optional<AdvertisementSlotAvailabilityDetail> matchedSlot = getBookedSlots(criteria, requestInfo);
+	    // Check if the booking ID exists in the timer table
+	    List<Map<String, Object>> bookingListFromTimer = jdbcTemplate.queryForList(
+	            queryBuilder.checkBookingIdExists(draftId), draftId);
 
-	    if (matchedSlot.isPresent()) {
-	        log.info("Matched slot found: {}", matchedSlot.get());
-	        Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
-	        if (!remainingTime.isEmpty()) {
-	            long remainingTimeValue = remainingTime.get(bookingId);
-	            availabilityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
+	    if (!bookingListFromTimer.isEmpty()) {
+	        return draftId;
+	    }
+
+	    // Check if draft ID exists in the draft table
+	    List<Map<String, Object>> draftList = getDraftData(uuid);
+	    if (!draftList.isEmpty()) {
+	        return (String) draftList.get(0).get("draft_id");
+	    }
+
+	    return null;
+	}
+
+	private String insertNewDraftId(List<AdvertisementSlotSearchCriteria> criteriaList, String uuid, String tenantId) {
+	    long createdTime = BookingUtil.getCurrentTimestamp();
+	    String draftId = BookingUtil.getRandonUUID();
+
+	    jdbcTemplate.update(AdvertisementBookingQueryBuilder.DRAFT_QUERY,
+	            draftId, tenantId, uuid, "{}",
+	            uuid, uuid, createdTime, createdTime);
+
+	    return draftId;
+	}
+
+	private void processBatchInsert(List<AdvertisementSlotSearchCriteria> criteriaList, String draftId, String uuid) {
+	    long createdTime = BookingUtil.getCurrentTimestamp();
+	    String status = BookingConstants.ACTIVE;
+
+	    List<Object[]> batchArgs = new ArrayList<>();
+	    for (AdvertisementSlotSearchCriteria criteria : criteriaList) {
+	        LocalDate startDate = LocalDate.parse(criteria.getBookingStartDate());
+	        LocalDate endDate = LocalDate.parse(criteria.getBookingEndDate());
+
+	        while (!startDate.isAfter(endDate)) {
+	            batchArgs.add(new Object[]{
+	                    draftId, uuid, createdTime, status, "", uuid, createdTime,
+	                    criteria.getAddType(), criteria.getLocation(), criteria.getFaceArea(), criteria.getNightLight(), 
+	                    criteria.getBookingStartDate(), criteria.getBookingEndDate(), startDate.toString()
+	            });
+	            startDate = startDate.plusDays(1);
 	        }
-	    } else {
-	        log.info("No Matched slots found. Deleting non-matching booking entry with ID: {}", bookingId);
+	    }
 
-	        String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
-	        String timerDeleteQuery = AdvertisementBookingQueryBuilder.TIMER_DELETE_QUERY;
+	    jdbcTemplate.batchUpdate(AdvertisementBookingQueryBuilder.PAYMENT_TIMER_QUERY, batchArgs);
+	}
 
-	        jdbcTemplate.update(draftDeleteQuery, bookingId);
-	        jdbcTemplate.update(timerDeleteQuery, bookingId);
+	private void setTimerValue(AdvertisementSlotAvailabilityDetail availabilityDetailsResponse) {
+	    long timerValue = bookingConfiguration.getPaymentTimer();
+	    availabilityDetailsResponse.setTimerValue(timerValue / 1000); // Convert milliseconds to seconds
+	}
+
+	private void processTimerData(String draftId, 
+	                              List<AdvertisementSlotSearchCriteria> criteriaList, 
+	                              RequestInfo requestInfo, 
+	                              AdvertisementSlotAvailabilityDetail availabilityDetailsResponse) {
+	    for (AdvertisementSlotSearchCriteria criteria : criteriaList) {
+	        getTimerData(draftId, criteria, requestInfo, availabilityDetailsResponse, criteriaList);
 	    }
 	}
+
+
+	public void getTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+	        AdvertisementSlotAvailabilityDetail availabilityDetailsResponse, List<AdvertisementSlotSearchCriteria> criteriaList) {
+
+	    
+		List<AdvertisementSlotAvailabilityDetail> matchedSlots = getBookedSlots(criteria, requestInfo);
+
+		if (!matchedSlots.isEmpty()) {
+		    log.info("Matched slot found: {}", matchedSlots);
+		    Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
+
+		    if (!remainingTime.isEmpty() && remainingTime.containsKey(bookingId)) {
+		        long remainingTimeValue = remainingTime.get(bookingId);
+		        availabilityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
+		    }
+		} else {
+		    log.info("No Matched slots found. Deleting non-matching booking entry with ID: {}", bookingId);
+
+		     String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
+		     String timerDeleteQuery = AdvertisementBookingQueryBuilder.TIMER_DELETE_QUERY;
+
+		     jdbcTemplate.update(draftDeleteQuery, bookingId);
+		     jdbcTemplate.update(timerDeleteQuery, bookingId);
+		     
+		     insertBookingIdForTimer(criteriaList, requestInfo, availabilityDetailsResponse);
+		}}
 	
+
 	@Override
-	public Optional<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
+	public List<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
 	        RequestInfo requestInfo) {
 
 	    // Fetch the already booked slots from the timer table
-	    List<AdvertisementSlotAvailabilityDetail> bookedSlots = bookingRepository.getBookedSlotsFromTimer(criteria, requestInfo);
+		List<AdvertisementSlotAvailabilityDetail> bookedSlots = getBookedSlotsFromTimer(criteria, requestInfo);
 
-	    // If there are no booked slots, return an empty Optional
-	    if (bookedSlots.isEmpty()) {
-	        return Optional.empty();
-	    }
+		// If there are no booked slots, return an empty list
+		if (bookedSlots.isEmpty()) {
+		    return Collections.emptyList();
+		}
 
-	    // Check for a matching slot from the fetched booked slots
-	    return bookedSlots.stream()
-	            .filter(slot -> Objects.equals(slot.getAddType(), criteria.getAddType())
-	                    && Objects.equals(slot.getLocation(), criteria.getLocation())
-	                    && Objects.equals(slot.getFaceArea(), criteria.getFaceArea())
-	                    && Objects.equals(slot.getNightLight(), criteria.getNightLight())
-	                    && BookingUtil.isDateRangeOverlap(criteria.getBookingStartDate(),
-                                criteria.getBookingEndDate(),
-                                slot.getBookingStartDate(),
-                                slot.getBookingEndDate()))
-	            .findFirst();
+		return bookedSlots;
+
 	}
-
 
 	
 	public List<Map<String, Object>> getDraftData(String uuid) {
@@ -439,12 +450,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 			paramsList.add(criteria.getNightLight());
 		}
 
-		if (criteria.getBookingStartDate() != null && criteria.getBookingEndDate() != null) {
-			query.append(" AND booking_start_date <= ? AND booking_end_date >= ?");
-			paramsList.add(java.sql.Date.valueOf(criteria.getBookingEndDate()));
-			paramsList.add(java.sql.Date.valueOf(criteria.getBookingStartDate()));
-		}
-
+//		if (criteria.getBookingStartDate() != null && criteria.getBookingEndDate() != null) {
+//			query.append(" AND booking_start_date <= ? AND booking_end_date >= ?");
+//			paramsList.add(java.sql.Date.valueOf(criteria.getBookingEndDate()));
+//			paramsList.add(java.sql.Date.valueOf(criteria.getBookingStartDate()));
+//		}
+		
 		log.info("getBookedSlotsFromTimer: Final query: {}", query);
 		log.info("Parameters: {}", paramsList);
 		

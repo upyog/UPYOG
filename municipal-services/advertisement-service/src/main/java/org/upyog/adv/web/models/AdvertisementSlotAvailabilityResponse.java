@@ -47,7 +47,7 @@ public class AdvertisementSlotAvailabilityResponse   {
 	
 	private String draftId;
 	
-	private boolean SlotBooked;
+	private boolean slotBooked;
 
 
 }

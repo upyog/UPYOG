@@ -32,7 +32,7 @@ public interface BookingRepository {
 
 	//Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
 	
-	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+	void insertBookingIdForTimer(List<AdvertisementSlotSearchCriteria> criteria, RequestInfo requestInfo,
 			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse);
 	
 	Map<String, Long> getRemainingTimerValues(String bookingId);
@@ -60,10 +60,10 @@ public interface BookingRepository {
 
 	void updateStatusForTimer(String bookingNo, String status);
 
-	Optional<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
+	List<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
 			RequestInfo requestInfo);
 
-	void checkExistingTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
-			AdvertisementSlotAvailabilityDetail detail);
+	void getTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			AdvertisementSlotAvailabilityDetail detail,  List<AdvertisementSlotSearchCriteria> criteriaList);
 	
 }
