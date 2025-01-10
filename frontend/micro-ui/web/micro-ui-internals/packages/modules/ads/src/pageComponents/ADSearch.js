@@ -108,7 +108,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
 
     const mutation = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
-      advertisementSlotSearchCriteria: {
+      advertisementSlotSearchCriteria: [{
         bookingId:"",
         addType: Searchdata.addType,
         bookingStartDate: Searchdata.bookingStartDate,
@@ -118,7 +118,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
         location:Searchdata.location,
         nightLight:Searchdata.nightLight,
         isTimerRequired: false
-      }
+      }]
     };
     
   useEffect(() => {
@@ -641,7 +641,7 @@ const handleCloseCart = () => {
             setShowModal(false);  // Close modal after action
           }}
           setExistingDataSet={setExistingDataSet}
-          Searchdata={Searchdata}
+          Searchdata={cartDetails}
         />
       )}
     </React.Fragment>

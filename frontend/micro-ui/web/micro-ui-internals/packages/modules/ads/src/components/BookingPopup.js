@@ -35,17 +35,17 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
 
     // Prepare form data for Advertisement Service
     const formdata = {
-        advertisementSlotSearchCriteria: {
-        bookingId:"",
-        addType: Searchdata?.addType,
-        bookingStartDate: Searchdata?.bookingStartDate,
-        bookingEndDate: Searchdata?.bookingEndDate,
-        faceArea: Searchdata?.faceArea,
-        tenantId: tenantId,
-        location: Searchdata?.location,
-        nightLight: Searchdata?.nightLight,
-        isTimerRequired:true,
-        },
+        advertisementSlotSearchCriteria: Searchdata.map((item) => ({
+            bookingId: "",
+            addType: item?.addTypeCode,
+            bookingStartDate: item?.bookingDate,
+            bookingEndDate: item?.bookingDate,
+            faceArea: item?.faceAreaCode,
+            tenantId: tenantId,
+            location: item?.location,
+            nightLight: item?.nightLight,
+            isTimerRequired: true,
+          })),
     };
      const setchbData = async() => {
             const result=await slotSearchData.mutateAsync(formdata);
