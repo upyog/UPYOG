@@ -22,7 +22,7 @@ const EWCard = () => {
   const EW_CEMP = Digit.UserService.hasAccess(["EW_VENDOR"]) || false;
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
-    moduleName: t("TITLE_E_WASTE"),
+    moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("TITLE_E_WASTE")}</div>,
     kpis: [],
     links:links.filter(link=>!link?.role||EW_CEMP),
   };

@@ -12,7 +12,8 @@
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/ads",
     "micro-ui-internals/packages/modules/chb",
-    "micro-ui-internals/packages/modules/asset"
+    "micro-ui-internals/packages/modules/asset",
+    "micro-ui-internals/packages/modules/ew"
 
   ],
   "engines": {

@@ -13,7 +13,8 @@
     "packages/modules/engagement",
     "packages/modules/ads",
     "packages/modules/chb",
-    "packages/modules/asset"
+    "packages/modules/asset",
+    "packages/modules/ew"
   ],
   "license": "MIT",
   "private": true,
@@ -76,7 +77,7 @@
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "build:chb": "cd packages/modules/chb && yarn build",
     "build:ads": "cd packages/modules/ads && yarn build",
-    "buildD:ew": "cd packages/modules/ew && yarn build",
+    "build:ew": "cd packages/modules/ew && yarn build",
     "buildD:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
