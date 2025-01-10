@@ -62,6 +62,8 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
     },
   });
 
+  console.log('comming from mdms :- ', actionDetail);
+
   const printReport = async (applicationNo) => {
 
     const applicationDetails = await Digit.ASSETService.search({
@@ -87,12 +89,14 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
           actionMdms.push({
             label: t(opt.code),
             link: `${opt.url}${row?.original?.["applicationNo"]}`,
+            code: opt.code
           });
         } else if ( opt.code !== "AST_RETURN" && opt.code !== "AST_ASSIGN") {
           // Push other options unconditionally
           actionMdms.push({
             label: t(opt.code),
-            link: `${opt.url}${row?.original?.["applicationNo"]}`
+            link: `${opt.url}${row?.original?.["applicationNo"]}`,
+            code: opt.code
           });
         }
       });
@@ -233,7 +237,7 @@ catch (error) {
                     zIndex: 1000,
                   }}>
                     {actionOptions.map((option, index) => (
-                      option.label === "Asset Certificate" ? (
+                      option.code === "AST_CERTIFICATE" ? (
                         <div
                           key={index}  // Ensure each element has a unique key
                           onClick={() => printReport(row.original?.["applicationNo"])}  // Wrap printReport in an arrow function
