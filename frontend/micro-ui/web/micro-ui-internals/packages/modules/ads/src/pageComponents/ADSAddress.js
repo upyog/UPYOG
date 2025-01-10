@@ -99,7 +99,7 @@ const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.ad
         <CardSubHeader style={{ position: "absolute",right:0}}>
         <TimerValues 
           timerValues={value?.existingDataSet?.timervalue?.timervalue} 
-          SlotSearchData={value?.Searchdata} 
+          SlotSearchData={value?.cartDetails} 
         />
         </CardSubHeader>
         <ADSCartAndCancellationPolicyDetails/>

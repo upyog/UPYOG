@@ -43,17 +43,17 @@ const formatTime = (seconds) => {
 */
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
-      advertisementSlotSearchCriteria: {
-        bookingId:application?.bookingId,
-        addType: application?.cartDetails?.[0]?.addType,
-        bookingStartDate:application?.cartDetails?.[0]?.bookingDate,
-        bookingEndDate: application?.cartDetails?.[application.cartDetails.length - 1]?.bookingDate,
-        faceArea: application?.cartDetails?.[0]?.faceArea,
+      advertisementSlotSearchCriteria:application?.cartDetails.map((item) => ({
+        bookingId: application?.bookingId,
+        addType: item?.addType,
+        bookingStartDate: item?.bookingDate,
+        bookingEndDate: item?.bookingDate,
+        faceArea: item?.faceArea,
         tenantId: tenantId,
-        location: application?.cartDetails?.[0]?.location,
-        nightLight: application?.cartDetails?.[0]?.nightLight,
-        isTimerRequired: true
-      }
+        location: item?.location,
+        nightLight: item?.nightLight,
+        isTimerRequired: true,
+      })),
     };
    
   const getBookingDateRange = (bookingSlotDetails) => {
@@ -76,14 +76,8 @@ const formatTime = (seconds) => {
           const result = await slotSearchData.mutateAsync(formdata);
           let SlotSearchData={
             bookingId:application?.bookingId,
-            addType: application?.cartDetails?.[0]?.addType,
-            bookingStartDate:application?.cartDetails?.[0]?.bookingDate,
-            bookingEndDate: application?.cartDetails?.[application.cartDetails.length - 1]?.bookingDate,
-            faceArea: application?.cartDetails?.[0]?.faceArea,
             tenantId: tenantId,
-            location: application?.cartDetails?.[0]?.location,
-            nightLight: application?.cartDetails?.[0]?.nightLight,
-            isTimerRequired: true
+            cartDetails:application?.cartDetails,
           };
           const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
           const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;

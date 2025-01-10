@@ -5,7 +5,7 @@ const TimerServices = ({ businessService, t, timerValues, SlotSearchData = "" })
   const [timeRemaining, setTimeRemaining] = useState(0); // Initialize with `timerValues`
   const [showToast, setShowToast] = useState(null);
   const [hasFetched, setHasFetched] = useState(false); // To track if data has been fetched once
-
+  
   // Refetch logic for CHB (Community Hall Booking)
   const { refetch } = Digit.Hooks.chb.useChbSlotSearch({
     tenantId: SlotSearchData?.tenantId,
@@ -25,17 +25,17 @@ const TimerServices = ({ businessService, t, timerValues, SlotSearchData = "" })
 
   // Prepare form data for Advertisement Service
   const formdata = {
-    advertisementSlotSearchCriteria: {
+    advertisementSlotSearchCriteria:SlotSearchData?.cartDetails.map((item) => ({
       bookingId: SlotSearchData?.bookingId,
-      addType: SlotSearchData?.addType,
-      bookingStartDate: SlotSearchData?.bookingStartDate,
-      bookingEndDate: SlotSearchData?.bookingEndDate,
-      faceArea: SlotSearchData?.faceArea,
+      addType: item?.addType,
+      bookingStartDate: item?.bookingDate,
+      bookingEndDate: item?.bookingDate,
+      faceArea: item?.faceArea,
       tenantId: SlotSearchData?.tenantId,
-      location: SlotSearchData?.location,
-      nightLight: SlotSearchData?.nightLight,
+      location: item?.location,
+      nightLight: item?.nightLight,
       isTimerRequired: true,
-    },
+    })),
   };
 
   useEffect(() => {
