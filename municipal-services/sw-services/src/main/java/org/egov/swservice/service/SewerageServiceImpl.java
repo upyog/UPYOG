@@ -154,9 +154,11 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
 		userService.createUser(sewerageConnectionRequest);
 		// call work-flow
+		if (!isMigration)
+		{
 		if (config.getIsExternalWorkFlowEnabled())
 			wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
-
+		}
 		/* encrypt here */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
 		/* encrypt here for connection holder details */
