@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,7 +14,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -154,8 +151,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 	        setTimerValue(availabilityDetailsResponse);
 	    }
 
-	    // Step 3: Process timer data
-	    processTimerData(draftId, criteriaList, requestInfo, availabilityDetailsResponse);
+	    // Step 3: getAndInsertTimerData timer data
+	    getAndInsertTimerData(draftId, criteriaList, requestInfo, availabilityDetailsResponse);
 	}
 
 	private String fetchDraftId(List<AdvertisementSlotSearchCriteria> criteriaList, String uuid, String tenantId) {
@@ -222,7 +219,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 	    availabilityDetailsResponse.setTimerValue(timerValue / 1000); // Convert milliseconds to seconds
 	}
 
-	private void processTimerData(String draftId, 
+	private void getAndInsertTimerData(String draftId, 
 	                              List<AdvertisementSlotSearchCriteria> criteriaList, 
 	                              RequestInfo requestInfo, 
 	                              AdvertisementSlotAvailabilityDetail availabilityDetailsResponse) {
@@ -236,10 +233,10 @@ public class BookingRepositoryImpl implements BookingRepository {
 	        AdvertisementSlotAvailabilityDetail availabilityDetailsResponse, List<AdvertisementSlotSearchCriteria> criteriaList) {
 
 	    
-		List<AdvertisementSlotAvailabilityDetail> matchedSlots = getBookedSlots(criteria, requestInfo);
+		List<AdvertisementSlotAvailabilityDetail> blockedSlots = getBookedSlots(criteria, requestInfo);
 
-		if (!matchedSlots.isEmpty()) {
-		    log.info("Matched slot found: {}", matchedSlots);
+		if (!blockedSlots.isEmpty()) {
+		    log.info("Matched slot found: {}", blockedSlots);
 		    Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
 
 		    if (!remainingTime.isEmpty() && remainingTime.containsKey(bookingId)) {
