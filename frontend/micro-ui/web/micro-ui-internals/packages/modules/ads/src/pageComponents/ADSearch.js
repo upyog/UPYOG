@@ -343,7 +343,7 @@ const handleCartClick = () => {
       formData?.faceArea &&
       formData?.fromDate &&
       formData?.toDate &&
-      formData?.nightLight && formData?.location
+      formData?.nightLight && formData?.location &&  CalculationTypeData
     ) {
       let unitPrice;
       let location=formData?.location?.value;

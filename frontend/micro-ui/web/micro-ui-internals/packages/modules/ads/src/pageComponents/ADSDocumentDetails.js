@@ -15,7 +15,8 @@ const ADSDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
   const [enableSubmit, setEnableSubmit] = useState(true);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
 
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const mutation = Digit.Hooks.ads.useADSCreateAPI();
  const stateId = Digit.ULBService.getStateId();
   
 
@@ -23,6 +24,49 @@ const ADSDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
   
 
   const handleSubmit = () => {
+    let cartDetails = value?.cartDetails.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
+        bookingFromTime: "06:00",
+        bookingToTime: "05:59",
+        status:"BOOKING_CREATED"
+      };
+    });
+     // Create the formdata object
+     const formdata = {
+      bookingApplication: {
+        tenantId: tenantId,
+        draftId:formData?.applicant?.draftId,
+        applicantDetail: {
+          applicantName:formData?.applicant?.applicantName,
+          applicantMobileNo: formData?.applicant?.mobileNumber,
+          applicantAlternateMobileNo:formData?.applicant?.alternateNumber,
+          applicantEmailId:formData?.applicant?.emailId,
+        },
+        addressdetails:{
+          pincode:formData?.address?.pincode,
+          city:formData?.address?.city?.city?.name,
+          cityCode:formData?.address?.city?.city?.code,
+          locality:formData?.address?.locality?.i18nKey,
+          localityCode:formData?.address?.locality?.code,
+          streetName:formData?.address?.streetName,
+          addressLine1:formData?.address?.addressline1,
+          addressLine2:formData?.address?.addressline2,
+          houseNo:formData?.address?.houseNo,
+          landmark:formData?.address?.landmark,
+        },
+        documents:documents,
+        cartDetails: cartDetails,
+        bookingStatus: "BOOKING_CREATED",
+      },
+      isDraftApplication: true,
+    };
+    // Trigger the mutation
+    mutation.mutate(formdata);
     let document = formData.documents;
     let documentStep;
     documentStep = { ...document, documents: documents };

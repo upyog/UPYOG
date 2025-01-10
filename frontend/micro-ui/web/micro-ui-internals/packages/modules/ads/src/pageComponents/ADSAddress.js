@@ -15,12 +15,12 @@ const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.ad
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   const allCities = Digit.Hooks.ads.useTenants();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const {pathname} = useLocation();
   let validation = {};
 
   const user = Digit.UserService.getUser().info;
-
+  const mutation = Digit.Hooks.ads.useADSCreateAPI();
   const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || value?.existingDataSet?.address?.pincode || "");
   const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || value?.existingDataSet?.address?.city || "");
   const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || value?.existingDataSet?.address?.locality || "");
@@ -75,8 +75,51 @@ const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.ad
   const setaddressline2 = (e) => {
     setAddressline2(e.target.value)
   }
-
+  
   const goNext = () => {
+    let cartDetails = value?.cartDetails.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
+        bookingFromTime: "06:00",
+        bookingToTime: "05:59",
+        status:"BOOKING_CREATED"
+      };
+    });
+     // Create the formdata object
+     const formdata = {
+      bookingApplication: {
+        tenantId: tenantId,
+        draftId:formData?.applicant?.draftId,
+        applicantDetail: {
+          applicantName:formData?.applicant?.applicantName,
+          applicantMobileNo: formData?.applicant?.mobileNumber,
+          applicantAlternateMobileNo:formData?.applicant?.alternateNumber,
+          applicantEmailId:formData?.applicant?.emailId,
+        },
+        addressdetails:{
+          pincode: pincode,
+          city:city?.city?.name,
+          cityCode:city?.city?.code,
+          locality:locality?.i18nKey,
+          localityCode:locality?.code,
+          streetName:streetName,
+          addressLine1:addressline1,
+          addressLine2:addressline2,
+          houseNo:houseNo,
+          landmark:landmark,
+        },
+
+        cartDetails: cartDetails,
+        bookingStatus: "BOOKING_CREATED",
+      },
+      isDraftApplication: true,
+    };
+    // Trigger the mutation
+    mutation.mutate(formdata);
     let applicantData = formData.address && formData.address[index];
     let applicantStep = { ...applicantData, pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2 };
     onSelect(config.key, { ...formData[config.key], ...applicantStep }, false, index);

@@ -18,6 +18,8 @@ const ADSCitizenDetails = ({ t, config, onSelect, userType, formData,value=formD
 
   let validation = {};
   const user = Digit.UserService.getUser().info;
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const mutation = Digit.Hooks.ads.useADSCreateAPI();
   const [applicantName, setName] = useState(
     (formData.applicant && formData.applicant[index] && formData.applicant[index].applicantName) || formData?.applicant?.applicantName || value?.existingDataSet?.applicant?.applicantName || ""
   );
@@ -50,16 +52,51 @@ const ADSCitizenDetails = ({ t, config, onSelect, userType, formData,value=formD
 
   const goNext = () => {
     let applicantData = formData.applicant && formData.applicant[index];
-    let applicantStep;
-    if (userType === "citizen") {
-      applicantStep = { ...applicantData, applicantName, mobileNumber, alternateNumber, emailId };
-      onSelect(config.key, { ...formData[config.key], ...applicantStep }, false, index);
-    } else {
-      applicantStep = { ...applicantData, applicantName, mobileNumber, alternateNumber, emailId };
-      onSelect(config.key, applicantStep, false, index);
-    }
+    // Create the formdata object
+    let cartDetails = value?.cartDetails.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
+        bookingFromTime: "06:00",
+        bookingToTime: "05:59",
+        status:"BOOKING_CREATED"
+      };
+    });
+    const formdata = {
+      bookingApplication: {
+        tenantId: tenantId,
+        applicantDetail: {
+          applicantName: applicantName,
+          applicantMobileNo: mobileNumber,
+          applicantAlternateMobileNo: alternateNumber,
+          applicantEmailId: emailId,
+        },
+        cartDetails: cartDetails,
+        bookingStatus: "BOOKING_CREATED",
+      },
+      isDraftApplication: true,
+    };
+  
+    // Trigger the mutation
+    mutation.mutate(formdata, {
+      onSuccess: (data) => {
+        const newDraftId = data?.bookingApplication[0]?.draftId;
+        // Now, only execute the logic you want after the mutation is successful
+        let applicantStep;
+        if (userType === "citizen") {
+          applicantStep = { ...applicantData, applicantName, mobileNumber, alternateNumber, emailId,draftId: newDraftId};
+          onSelect(config.key, { ...formData[config.key], ...applicantStep }, false, index);
+        } else {
+          applicantStep = { ...applicantData, applicantName, mobileNumber, alternateNumber, emailId,draftId: newDraftId };
+          onSelect(config.key, applicantStep, false, index);
+        }
+      },
+    });
   };
-
+  
   const onSkip = () => onSelect();
 
   useEffect(() => {

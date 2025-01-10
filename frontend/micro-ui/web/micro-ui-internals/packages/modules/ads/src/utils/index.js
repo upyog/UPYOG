@@ -87,14 +87,14 @@ export const setCartDetails = (data) => {
 export const setApplicantDetails = (data) => {
     let { applicant } = data;
   
-    let propApplicant = {
+    let Applicant = {
       applicantName:applicant?.applicantName,
       applicantMobileNo:applicant?.mobileNumber,
       applicantAlternateMobileNo:applicant?.alternateNumber,
       applicantEmailId:applicant?.emailId,
     };
-  
-    data.applicant = propApplicant;
+    let draftId=applicant?.draftId;
+    data.applicant = {Applicant,draftId};
     return data;
   };
 
@@ -122,9 +122,9 @@ export const ADSDataConvert = (data) => {
 const formdata={
   bookingApplication: {
     tenantId: data.tenantId,
-    draftId:data.adslist.draftId,
+    draftId:data.applicant.draftId,
     applicantDetail:{
-      ...data.applicant
+      ...data.applicant.Applicant
     },
     address:data.address,
     ...data.documents,

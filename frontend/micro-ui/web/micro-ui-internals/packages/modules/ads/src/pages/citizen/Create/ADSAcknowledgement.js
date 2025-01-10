@@ -1,5 +1,5 @@
-import { Banner, Card, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect } from "react";
+import { Banner, Card, Loader, Row, StatusTable, SubmitBar,Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import React, {useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch,useHistory } from "react-router-dom";
 import { ADSDataConvert } from "../../../utils";
@@ -47,6 +47,7 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
   const { tenants } = storeData || {};
   const history = useHistory();
   const user = Digit.UserService.getUser().info;
+  const [showToast, setShowToast] = useState(null);
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
   let formdata = {
     advertisementSlotSearchCriteria: mutation.data?.bookingApplication[0]?.cartDetails.map((item) => ({
@@ -82,7 +83,7 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
           });
         }
     } catch (error) {
-        console.error("Error making payment:", error);
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
     };
   useEffect(() => {
@@ -95,7 +96,15 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
     } catch (err) {}
   }, []);
 
-
+  
+useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 2 seconds
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
   ) : (
@@ -130,6 +139,16 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
       <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
        </Link>
      )}
+     {showToast && (
+             <Toast
+               error={showToast.error}
+               warning={showToast.warning}
+               label={t(showToast.label)}
+               onClose={() => {
+                 setShowToast(null);
+               }}
+             />
+      )}
     </Card>
   );
 };
