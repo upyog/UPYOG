@@ -19,6 +19,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
   const applicationNumber = state?.applicationNumber;
+  const [Time, setTime ] = useState(0);
 
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
@@ -181,7 +182,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
     }
   };
-
+  
   const onChangeAmount = (value) => {
     setError("");
     if (isNaN(value) || value.includes(".")) {
@@ -213,7 +214,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
                 fontSize: "24px"
               }}
             >
-            <TimerServices businessService={businessService} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
+            <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
             </CardSubHeader>
           )}
           </div>

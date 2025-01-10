@@ -38,6 +38,7 @@ export const SelectPaymentType = (props) => {
   const propertyId = state?.propertyId;
   const stateTenant = Digit.ULBService.getStateId();
   const { control, handleSubmit } = useForm();
+  const [Time, setTime ] = useState(0);
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
     { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? connectionNo : consumerCode, businessService },
@@ -210,7 +211,7 @@ export const SelectPaymentType = (props) => {
                 fontSize: "24px"
               }}
             >
-          <TimerServices businessService={businessService} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
+          <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData  } />
             </CardSubHeader>
           )}
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
@@ -226,7 +227,7 @@ export const SelectPaymentType = (props) => {
               render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
             />
           )}
-          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} />}
+          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} disabled={timerEnabledForBusinessService(businessService)? Time ===0:null} />}       
         </Card>
       </form>
       <InfoBanner label={t("CS_COMMON_INFO")} text={t("CS_PAYMENT_REDIRECT_NOTICE")} />
