@@ -263,6 +263,7 @@ const handleCartClick = () => {
     addType: cartRow.addType,
     location: cartRow.location,
     faceArea: cartRow.faceArea,
+    nightLight: cartRow.nightLight,
     bookingDate: cartRow.bookingDate
   }));
 
@@ -287,6 +288,7 @@ const handleCartClick = () => {
       cartRow.addType === selectedRow.addType &&
       cartRow.location === selectedRow.location &&
       cartRow.faceArea === selectedRow.faceArea &&
+      cartRow.nightLight === selectedRow.nightLight &&
       cartRow.bookingDate === selectedRow.bookingDate
     )
   );
@@ -300,7 +302,7 @@ const handleCartClick = () => {
   // Step 5: Group the slots by `addType`, `location`, `faceArea`
   const groupedSlots = {};
   [...cartSlotDetails, ...selectedSlotDetails].forEach(row => {
-    const key = `${row.addType}-${row.location}-${row.faceArea}`;
+    const key = `${row.addType}-${row.location}-${row.faceArea}-${row.nightLight}`;
     if (!groupedSlots[key]) {
       groupedSlots[key] = [];
     }
