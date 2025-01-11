@@ -68,6 +68,15 @@ public class AssetRepository {
     }
 
     /**
+     * Pushes the request on update topic through kafka
+     *
+     * @param assetRequest The asset update request
+     */
+    public void updateAssetInSystem(AssetRequest assetRequest) {
+        producer.push(config.getUpdateAssetStatusInSystem(), assetRequest);
+    }
+
+    /**
      * Pushes the request on update assignment topic through kafka
      *
      * @param assetRequest The asset update request
