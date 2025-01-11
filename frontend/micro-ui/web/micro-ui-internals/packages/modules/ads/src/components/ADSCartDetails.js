@@ -48,8 +48,6 @@ const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
     },
     { Header: t("ADD_TYPE"), accessor: "addType" },
     { Header: t("FACE_AREA"), accessor: "faceArea" },
-    { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
-    { Header: t("UNIT_PRICE"), accessor: "price" },
     {
       Header: t("ADS_NIGHT_LIGHT"),
       accessor: "nightLight",
@@ -57,6 +55,8 @@ const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
         <div>{value ? t("Yes") : t("No")}</div>
       ),
     },
+    { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
+    { Header: t("UNIT_PRICE"), accessor: "price" },
     { Header: t("ADS_STATUS"), accessor: "status",
       Cell: ({ value }) => (
         <div className="sla-cell-success">{value}</div>
@@ -97,7 +97,16 @@ const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
         isPaginationRequired={false}
         totalRecords={cartDetails.length}
       />
-      <div style={{ padding: "20px", fontSize: "18px", fontWeight: "bold" }}>
+      <div style={{
+            position: "sticky", // Keeps it fixed relative to the modal
+            bottom: 0,
+            backgroundColor: "#fff",
+            padding: "15px 20px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            boxShadow: "0 -2px 5px rgba(0,0,0,0.1)", // Optional for a better UI
+            zIndex: 10, // Ensures it stays on top of other content
+          }}>
         Total Price: {calculateTotalPrice()} 
       </div>
     </Modal>
