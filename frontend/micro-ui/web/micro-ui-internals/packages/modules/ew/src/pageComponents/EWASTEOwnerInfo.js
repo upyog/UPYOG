@@ -88,11 +88,12 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             value={applicantName}
             onChange={setOwnerName}
             ValidationRequired={true}
-            validation = {{
+            {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z-.`' ]*$",
+              pattern: "^[a-zA-Z ]+$",
               type: "text",
-            }}
+              title: t("EW_ENTER_CORRECT_NAME"),
+            })}
           />
 
           <CardLabel>{`${t("EWASTE_MOBILE_NUMBER")}`}</CardLabel>
