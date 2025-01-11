@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile,MultiUploadWrapper, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 
@@ -335,33 +335,31 @@ function SVDocuments({
   previousData
 
 }) {
+
   const filteredDocument = documents?.find((item) => item?.documentType?.includes(doc?.code));
   const previousDocument = previousData?.documentDetails?.find((item) => item?.documentType?.includes(doc?.code));
   const editdatas = editdata?.documentDetails?.find((item) => item?.documentType?.includes(doc?.code));
   const user = Digit.UserService.getUser().info;
-console.log("filetererrsrsrs",filteredDocument);
-  const [selectedDocument, setSelectedDocument] = useState(
-    previousDocument
-    ?{ ...previousDocument, active: doc?.active === true, code: previousDocument?.documentType, i18nKey: previousDocument?.documentType}
-    : doc?.dropdownData?.length === 1
-    ? doc?.dropdownData[0]
-    : {}
-    ||
-    editdatas
-    ?{ ...editdatas, active: doc?.active === true, code: editdatas?.documentType, i18nKey: editdatas?.documentType}
-    : doc?.dropdownData?.length === 1
-    ? doc?.dropdownData[0]
-    : {}
-    ||
-    filteredDocument
-      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType, i18nKey: filteredDocument?.documentType}
-      : doc?.dropdownData?.length === 1
-      ? doc?.dropdownData[0]
-      : {}
-  );
-
+  const getDocumentData = (document) => {
+    return document
+      ? {
+          ...document,
+          active: doc?.active === true,
+          code: document?.documentType,
+          i18nKey: document?.documentType,
+        }
+      : null;
+  };
+  
+  const initialDocument = 
+    getDocumentData(previousDocument) ||
+    getDocumentData(editdatas) ||
+    getDocumentData(filteredDocument) ||
+    (doc?.dropdownData?.length === 1 ? doc?.dropdownData[0] : {});
+  
+  const [selectedDocument, setSelectedDocument] = useState(initialDocument);
   const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(filteredDocument?.fileStoreId || previousDocument?.fileStoreId||editdatas?.fileStoreId|| null);
+  const [uploadedFile, setUploadedFile] = useState(initialDocument?.fileStoreId || null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSVSelectDocument = (value) => 
