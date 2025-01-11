@@ -398,13 +398,13 @@ public class AdvertisementBookingQueryBuilder {
 	    paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingStartDate()));
 	    paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingEndDate()));
 
-		// Check if both bookingStartDate and bookingEndDate are provided
-//		if (searchCriteria.getBookingStartDate() != null && searchCriteria.getBookingEndDate() != null) {
-//			builder.append(" AND (booking_start_date <= ?::DATE AND booking_end_date >= ?::DATE)");
-//			paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingEndDate())); // End date
-//			paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingStartDate())); // Start date
-//
-//		}
+		/* Check if both bookingStartDate and bookingEndDate are provided
+		if (searchCriteria.getBookingStartDate() != null && searchCriteria.getBookingEndDate() != null) {
+			builder.append(" AND (booking_start_date <= ?::DATE AND booking_end_date >= ?::DATE)");
+			paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingEndDate())); // End date
+			paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingStartDate())); // Start date
+
+		} */
 
 		return builder;
 	}

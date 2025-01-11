@@ -229,7 +229,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 	}
 
 
-	public void getTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+	/* public void getTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
 	        AdvertisementSlotAvailabilityDetail availabilityDetailsResponse, List<AdvertisementSlotSearchCriteria> criteriaList) {
 
 	    
@@ -253,8 +253,53 @@ public class BookingRepositoryImpl implements BookingRepository {
 		     jdbcTemplate.update(timerDeleteQuery, bookingId);
 		     
 		     insertBookingIdForTimer(criteriaList, requestInfo, availabilityDetailsResponse);
-		}}
+		}} */
 	
+	
+		public void getTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			            AdvertisementSlotAvailabilityDetail availabilityDetailsResponse,
+			            List<AdvertisementSlotSearchCriteria> criteriaList) {
+			
+			List<AdvertisementSlotAvailabilityDetail> blockedSlots = getBookedSlots(criteria, requestInfo);
+			
+			if (!blockedSlots.isEmpty()) {
+			log.info("Matched slot found: {}", blockedSlots);
+			
+			boolean dateMatched = blockedSlots.stream().anyMatch(slot ->
+			   slot.getBookingStartDate().equals(criteria.getBookingStartDate()) &&
+			   slot.getBookingEndDate().equals(criteria.getBookingEndDate())
+			);
+			
+			if (!dateMatched) {
+			log.info("Dates do not match, deleting old entry: {}", bookingId);
+			
+			String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
+			String timerDeleteQuery = AdvertisementBookingQueryBuilder.TIMER_DELETE_QUERY;
+			
+			jdbcTemplate.update(draftDeleteQuery, bookingId);
+			jdbcTemplate.update(timerDeleteQuery, bookingId);
+			
+			insertBookingIdForTimer(criteriaList, requestInfo, availabilityDetailsResponse);
+			} else {
+			Map<String, Long> remainingTime = getRemainingTimerValues(bookingId);
+			if (!remainingTime.isEmpty() && remainingTime.containsKey(bookingId)) {
+			   long remainingTimeValue = remainingTime.get(bookingId);
+			   availabilityDetailsResponse.setTimerValue(remainingTimeValue / 1000);
+			}
+			}
+			} else {
+			log.info("No Matched slots found. Deleting non-matching booking entry with ID: {}", bookingId);
+			
+			String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
+			String timerDeleteQuery = AdvertisementBookingQueryBuilder.TIMER_DELETE_QUERY;
+			
+			jdbcTemplate.update(draftDeleteQuery, bookingId);
+			jdbcTemplate.update(timerDeleteQuery, bookingId);
+			
+			insertBookingIdForTimer(criteriaList, requestInfo, availabilityDetailsResponse);
+			}
+			}
+
 
 	@Override
 	public List<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
@@ -662,11 +707,11 @@ public class BookingRepositoryImpl implements BookingRepository {
 				bookingapplication.getBookingId());
 
 		jdbcTemplate.update(cartQuery, cartDetail.getStatus(), auditDetails.getLastModifiedBy(),
-				auditDetails.getLastModifiedTime(), cartDetail.getCartId());
+				auditDetails.getLastModifiedTime(), bookingapplication.getBookingId());
 
 		jdbcTemplate.update(bookingAuditQuery, bookingapplication.getBookingId());
 
-		jdbcTemplate.update(cartAuditQuery, cartDetail.getCartId());
+		jdbcTemplate.update(cartAuditQuery, bookingapplication.getBookingId());
 	}
 
 }
