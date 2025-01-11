@@ -1,7 +1,7 @@
 {
     "name": "@nudmcdgnpm/upyog-ui-module-ads",
     "description": "Advertisement Module",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "license": "MIT",
     "main": "dist/index.js",
     "module": "dist/index.modern.js",

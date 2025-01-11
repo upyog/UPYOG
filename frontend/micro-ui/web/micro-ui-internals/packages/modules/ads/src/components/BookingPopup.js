@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import { Modal, Card,SubmitBar} from "@upyog/digit-ui-react-components";
+import { Modal, Card,SubmitBar} from "@nudmcdgnpm/digit-ui-react-components";
 import { ExistingBookingDetails } from "./ExistingBookingDetails";
 
 const Close = () => (
