@@ -56,6 +56,10 @@ public class AssetConfiguration {
     @Value("${persister.update.assetdetails.topic}")
     private String updateTopic;
 
+    @Value("${persister.update.assetstatus.insystem.topics}")
+    private String updateAssetStatusInSystem;
+
+
     @Value("${persister.save.assetassignment.topic}")
     private String saveAssignmentTopic;
 

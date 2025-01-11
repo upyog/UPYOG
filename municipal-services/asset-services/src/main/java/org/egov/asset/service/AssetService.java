@@ -228,7 +228,7 @@ public class AssetService {
         enrichmentService.enrichAssetUpdateRequest(assetRequest, mdmsData);
 
         // Update the asset data in the repository
-        assetRepository.update(assetRequest);
+        assetRepository.updateAssetInSystem(assetRequest);
 
         return assetRequest.getAsset();
     }

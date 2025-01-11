@@ -57,12 +57,6 @@ public class AssetDisposeService {
         // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
             assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), disposal.getAssetDisposalStatus());
-            ProcessInstance workflow = ProcessInstance.builder()
-                    .businessService("asset-create")
-                    .action("APPROVE")
-                    .moduleName("asset-services")
-                    .build();
-            asset.setWorkflow(workflow);
             updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
