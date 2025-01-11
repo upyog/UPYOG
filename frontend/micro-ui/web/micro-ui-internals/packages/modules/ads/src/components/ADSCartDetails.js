@@ -51,6 +51,18 @@ const ADSCartDetails = ({ onClose,cartDetails, setCartDetails }) => {
     { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
     { Header: t("UNIT_PRICE"), accessor: "price" },
     {
+      Header: t("ADS_NIGHT_LIGHT"),
+      accessor: "nightLight",
+      Cell: ({ value }) => (
+        <div>{value ? t("Yes") : t("No")}</div>
+      ),
+    },
+    { Header: t("ADS_STATUS"), accessor: "status",
+      Cell: ({ value }) => (
+        <div className="sla-cell-success">{value}</div>
+      ),
+     },
+    {
       Header: t("DELETE_KEY"),
       accessor: "delete",
       Cell: ({ row }) => (

@@ -276,7 +276,9 @@ const handleCartClick = () => {
     location: row.location,
     faceArea: row.faceArea,
     price:row.price,
-    bookingDate: row.bookingDate
+    nightLight: row.nightLight==="Yes"?true:false,
+    bookingDate: row.bookingDate,
+    status: row.status.props.children
   }));
 
   // Step 4: Check if any selected slotId is already in the cart (based on addType, location, faceArea, and bookingDate)
