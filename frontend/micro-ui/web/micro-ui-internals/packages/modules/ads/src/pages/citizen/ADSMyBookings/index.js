@@ -32,7 +32,7 @@ export const ADSMyApplications = () => {
 
   let initialFilters = !isNaN(parseInt(filter))
     ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId };
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, mobileNumber:user?.mobileNumber };
 
   useEffect(() => {
     setFilters(initialFilters);
