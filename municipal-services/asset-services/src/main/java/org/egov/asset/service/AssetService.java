@@ -207,6 +207,33 @@ public class AssetService {
     }
 
     /**
+     * Validates and updates an existing Asset record in the system.
+     *
+     * @param assetRequest The request containing asset details to be updated.
+     * @return The updated Asset object.
+     */
+    public Asset updateAssetInSystem(@Valid AssetRequest assetRequest) {
+        log.debug("Asset update service method called");
+        RequestInfo requestInfo = assetRequest.getRequestInfo();
+        String tenantId = assetRequest.getAsset().getTenantId().split("\\.")[0];
+        Object mdmsData = util.mDMSCall(requestInfo, tenantId);
+        Asset asset = assetRequest.getAsset();
+
+        // Check if the asset exists
+        if (asset.getId() == null) {
+            throw new CustomException(AssetErrorConstants.UPDATE_ERROR, "Asset Not found in the System: " + asset);
+        }
+
+        // Enrich the asset update request with necessary details
+        enrichmentService.enrichAssetUpdateRequest(assetRequest, mdmsData);
+
+        // Update the asset data in the repository
+        assetRepository.update(assetRequest);
+
+        return assetRequest.getAsset();
+    }
+
+    /**
      * Assigns an asset to a new owner or location.
      *
      * @param assetRequest The request containing asset assignment details.
