@@ -120,17 +120,17 @@ public class AssetUtil {
         if (status != null && !status.trim().isEmpty()) {
             // Handle status-based updates using a switch case
             switch (status) {
-                case AssetConstants.ASSET_STATUS_DISPOSED:
-                    asset.setAssetStatus(status);
+                case AssetConstants.ASSET_USAGE_DISPOSED:
+                    asset.setAssetStatus(AssetConstants.ASSET_STATUS_DISPOSED);
                     asset.setAssetUsage(AssetConstants.ASSET_USAGE_DISPOSED);
                     break;
 
-                case AssetConstants.ASSET_STATUS_DISPOSED_AND_SOLD:
-                    asset.setAssetStatus(status);
+                case AssetConstants.ASSET_USAGE_DISPOSED_AND_SOLD:
+                    asset.setAssetStatus(AssetConstants.ASSET_STATUS_DISPOSED_AND_SOLD);
                     asset.setAssetUsage(AssetConstants.ASSET_USAGE_DISPOSED_AND_SOLD);
                     break;
-                case AssetConstants.ASSET_STATUS_REPAIRED:
-                    asset.setAssetStatus(status);
+                case AssetConstants.ASSET_USAGE_ASSET_STATUS_REPAIRED:
+                    asset.setAssetStatus(AssetConstants.ASSET_STATUS_REPAIRED);
                     asset.setAssetUsage(AssetConstants.ASSET_USAGE_ASSET_STATUS_REPAIRED);
                     break;
                 default:

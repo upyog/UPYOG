@@ -1,29 +1,19 @@
 package org.egov.asset.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.repository.AssetDisposeRepository;
-import org.egov.asset.repository.AssetRepository;
-import org.egov.asset.repository.querybuilder.AssetDisposalQueryBuilder;
-import org.egov.asset.repository.rowmapper.AssetDisposalRowMapper;
-import org.egov.asset.util.*;
+import org.egov.asset.util.AssetUtil;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetRequest;
-import org.egov.asset.web.models.AssetSearchCriteria;
-import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.disposal.AssetDisposal;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
 import org.egov.asset.web.models.disposal.AssetDisposalSearchCriteria;
+import org.egov.asset.web.models.workflow.ProcessInstance;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -66,8 +56,14 @@ public class AssetDisposeService {
         // Update the asset in the system
         // Update the asset's status and usage if disposal date is provided
         if (disposal.getDisposalDate() != null) {
-            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), null);
-            //updateAssetInSystem(request.getRequestInfo(), asset);
+            assetUtil.updateAssetStatusAndUsage(asset, disposal.getIsAssetDisposedInFacility(), disposal.getAssetDisposalStatus());
+            ProcessInstance workflow = ProcessInstance.builder()
+                    .businessService("asset-create")
+                    .action("APPROVE")
+                    .moduleName("asset-services")
+                    .build();
+            asset.setWorkflow(workflow);
+            updateAssetInSystem(request.getRequestInfo(), asset);
         }
 
         return disposal;
