@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar, Toast,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Toast,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
@@ -43,17 +43,17 @@ const formatTime = (seconds) => {
 */
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
-      advertisementSlotSearchCriteria: {
-        bookingId:application?.bookingId,
-        addType: application?.cartDetails?.[0]?.addType,
-        bookingStartDate:application?.cartDetails?.[0]?.bookingDate,
-        bookingEndDate: application?.cartDetails?.[application.cartDetails.length - 1]?.bookingDate,
-        faceArea: application?.cartDetails?.[0]?.faceArea,
+      advertisementSlotSearchCriteria:application?.cartDetails.map((item) => ({
+        bookingId: application?.bookingId,
+        addType: item?.addType,
+        bookingStartDate: item?.bookingDate,
+        bookingEndDate: item?.bookingDate,
+        faceArea: item?.faceArea,
         tenantId: tenantId,
-        location: application?.cartDetails?.[0]?.location,
-        nightLight: application?.cartDetails?.[0]?.nightLight,
-        isTimerRequired: true
-      }
+        location: item?.location,
+        nightLight: item?.nightLight,
+        isTimerRequired: true,
+      })),
     };
    
   const getBookingDateRange = (bookingSlotDetails) => {
@@ -74,6 +74,11 @@ const formatTime = (seconds) => {
         try {
           // Await the mutation and capture the result directly
           const result = await slotSearchData.mutateAsync(formdata);
+          let SlotSearchData={
+            bookingId:application?.bookingId,
+            tenantId: tenantId,
+            cartDetails:application?.cartDetails,
+          };
           const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
           const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;
           if (isSlotBooked) {
@@ -81,7 +86,7 @@ const formatTime = (seconds) => {
           } else {
             history.push({
               pathname: `/digit-ui/citizen/payment/my-bills/${"adv-services"}/${application?.bookingNo}`,
-              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue },
+              state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue, SlotSearchData:SlotSearchData },
             });
           }
       } catch (error) {
@@ -117,7 +122,7 @@ const formatTime = (seconds) => {
         <Link to={`/digit-ui/citizen/ads/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />
         </Link>
-        {application.bookingStatus !== "BOOKED" && (
+        {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT")  && (
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} style={{ margin: "20px" }} />
         )}
       </div>

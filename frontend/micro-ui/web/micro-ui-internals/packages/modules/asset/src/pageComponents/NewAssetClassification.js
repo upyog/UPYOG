@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown, TextArea } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -87,7 +87,18 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
 
   const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory"); // hooks for Asset Parent Category
 
-  const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
+  // const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
+
+  // For Sub Catagories
+  const { data: Asset_Parent_Sub_Type } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetSubCategory" }], {
+    select: (data) => {
+      const formattedData = data?.["ASSET"]?.["AssetSubCategory"];
+      const activeData = formattedData?.filter((item) => item.active === true);
+      return activeData;
+    },
+  });  
+  console.log('E data:- ', Asset_Parent_Sub_Type);
+
 
   const { data: sourceofFinanceMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "SourceFinance" }], {
     select: (data) => {

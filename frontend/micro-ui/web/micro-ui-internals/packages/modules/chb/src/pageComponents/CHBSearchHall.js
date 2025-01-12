@@ -12,10 +12,11 @@ import {
   Toast,
   InfoIcon,
   Card
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { addDays, startOfDay, endOfDay, format, differenceInCalendarDays } from 'date-fns';
 import ChbCommunityHallDetails from "../components/ChbCommunityHallDetails";
+import BookingPopup from "../components/BookingPopup";
 
 const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
   const { pathname: url } = useLocation();
@@ -35,8 +36,11 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     formData?.slotlist?.Searchdata ||
     []
   );
+  const [existingDataSet, setExistingDataSet] = useState("");
+  const [showModal,setShowModal] = useState(false)
   const [showToast, setShowToast] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(true);
   const dateRangePickerRef = useRef(null);
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [hallCode, setHallCode] = useState(
@@ -143,10 +147,10 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.slotlist && formData.slotlist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata, existingDataSet };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata };
+      ownerStep = { ...owner, bookingSlotDetails, selectedHall, hallCode,Searchdata,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -293,14 +297,45 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
 
   
 
-  const handleBookClick = () => {
-    if (!isCheckboxSelected) {
-      setShowToast({ error: true, label:t("CHB_SELECT_AT_LEAST_ONE_SLOT")});
-    } else {
-      goNext();
-    }
-  };
+const handleBookClick = () => {
+  if (bookingSlotDetails.length > 0) {
+    // Sort the bookingSlotDetails by slotId to check for consecutive IDs
+    const sortedSlots = [...bookingSlotDetails].sort((a, b) => a.slotId - b.slotId);
 
+    // Check if the slotId is consecutive
+    let isConsecutive = true;
+    for (let i = 1; i < sortedSlots.length; i++) {
+      if (sortedSlots[i].slotId !== sortedSlots[i - 1].slotId + 1) {
+        isConsecutive = false;
+        break;
+      }
+    }
+
+    if (isConsecutive) {
+      // Proceed with the booking
+      if (isExistingPopupRequired) {
+        setShowModal(true);  // Show modal if required
+      } else {
+        goNext();  // Continue if no popup is needed
+      }
+    } else {
+      // Show toast if the slot IDs are not consecutive
+      setShowToast({ error: true, label: t("CHB_SELECT_CONSECUTIVE_SLOT") });
+    }
+  } else {
+    // If no slots are selected, show a toast message to select at least one slot
+    if (!isCheckboxSelected) {
+      setShowToast({ error: true, label: t("CHB_SELECT_AT_LEAST_ONE_SLOT") });
+    } else {
+      if (isExistingPopupRequired) {
+        setShowModal(true);  // Show modal when button is clicked
+      } else {
+        goNext();  // Proceed to next step if no popup is needed
+      }
+    }
+  }
+};
+  
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
@@ -448,6 +483,20 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
           }}
         />
       )}
+      {showModal && (
+        <BookingPopup
+          t={t}
+          closeModal={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          actionCancelOnSubmit={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          onSubmit={() => {
+            goNext();  // Ensure action is called only when submitting
+            setShowModal(false);  // Close modal after action
+          }}
+          setExistingDataSet={setExistingDataSet}
+          Searchdata={Searchdata}
+        />
+      )}
+
     </React.Fragment>
   );
 };

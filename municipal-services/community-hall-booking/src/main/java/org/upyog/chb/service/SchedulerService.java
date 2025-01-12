@@ -25,12 +25,12 @@ public class SchedulerService {
 	 */
 	@Scheduled(fixedRate = 5 * 60 * 1000) // Runs every 5 minutes
 	public void cleanupExpiredEntries() {
-
+		log.info("Delete Expired Booking task running...:::.....:::");
+		deleteExpiredBookings();
 	}
 
 	@Transactional
 	public void deleteExpiredBookings() {
-
 		List<BookingPaymentTimerDetails> bookingPaymentTimerDetails = bookingRepository.getExpiredBookingTimer();
 		List<String> bookingList = bookingPaymentTimerDetails.stream().map(detail -> detail.getBookingId())
 				.collect(Collectors.toList());

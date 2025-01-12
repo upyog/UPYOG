@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar,Toast,CardSubHeader } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar,Toast,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
@@ -63,6 +63,16 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
   const handleMakePayment = async () => {
     try {
     const result = await refetch();
+    let SlotSearchData={
+      tenantId: application?.tenantId,
+      bookingId:application?.bookingId,
+      communityHallCode: application?.communityHallCode,
+      bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
+      bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
+      hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+      isTimerRequired:true
+
+    }
     const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
       (slot) => slot.slotStaus === "BOOKED"
     );
@@ -72,7 +82,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
     } else {
       history.push({
         pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${application?.bookingNo}`,
-        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue },
+        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
       });
     }
   } catch (error) {
@@ -108,8 +118,8 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
       <div>
         <Link to={`/digit-ui/citizen/chb/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />
-        </Link>
-        {application.bookingStatus !== "BOOKED" && (
+        </Link> 
+        {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && (
         <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}  style={{ margin: "20px" }}/>
         )}
       </div>

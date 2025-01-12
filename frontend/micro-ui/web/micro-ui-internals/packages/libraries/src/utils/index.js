@@ -297,6 +297,14 @@ const hrmsAccess = () => {
   return HRMS_ACCESS?.length > 0;
 };
 
+const dashboardAccess = () =>{
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const dashboardRoles = ["DASHBOARD_EMPLOYEE"];
+  const DASHBOARD_ACCESS = userRoles?.filter((role) => dashboardRoles?.includes(role));
+  return DASHBOARD_ACCESS?.length > 0;
+};
+
 const wsAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -358,5 +366,6 @@ export default {
   adsAccess,
   ewAccess,
   svAccess,
+  dashboardAccess,
   ...privacy
 };

@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardSubHeader, CardText, CheckBox, LinkButton, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, CheckBox, LinkButton, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -191,6 +191,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             <Row
               label={t("AST_PURCHASE_ORDER")}
               text={`${t(checkForNA(assetDetails?.purchaseOrderNumber))}`}
+              actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
+            />
+            <Row
+              label={t("AST_LIFE")}
+              text={`${t(checkForNA(assetDetails?.lifeOfAsset))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/assets`} />}
             />
             <Row

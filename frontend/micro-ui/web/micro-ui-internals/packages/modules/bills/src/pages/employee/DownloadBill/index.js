@@ -1,4 +1,4 @@
-import { Header, DownloadIcon, Table, Loader, Toast, DetailsCard } from "@upyog/digit-ui-react-components";
+import { Header, DownloadIcon, Table, Loader, Toast, DetailsCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import DesktopInbox from "../../../components/inbox/BillsDesktopInbox";

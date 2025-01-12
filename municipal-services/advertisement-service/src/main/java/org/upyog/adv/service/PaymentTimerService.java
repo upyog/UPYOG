@@ -1,17 +1,15 @@
 package org.upyog.adv.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.upyog.adv.config.BookingConfiguration;
 import org.upyog.adv.repository.BookingRepository;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
-import org.upyog.adv.web.models.BookingDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,23 +18,25 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentTimerService {
 
 	@Autowired
+	@Lazy
 	private BookingRepository bookingRepository;
 
-	@Autowired
-	private BookingConfiguration config;
+//	@Autowired
+//	private BookingConfiguration config;
 
 	@Transactional
-	public void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,  List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse
+	public void insertBookingIdForTimer(List<AdvertisementSlotSearchCriteria> criteria, RequestInfo requestInfo,  List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse
 			) {
 		bookingRepository.insertBookingIdForTimer(criteria, requestInfo, availabiltityDetailsResponse.get(0));
-		long timerValue = config.getPaymentTimer();
-		log.info("Creating timer entry for booking id : {} with timer value : {}", criteria.getBookingId(), timerValue);
+		//long timerValue = config.getPaymentTimer();
+		//log.info("Creating timer entry for booking id : {} with timer value : {}", criteria.getBookingId(), timerValue);
 		
 	}
 	@Transactional
-	public void deleteBookingIdForTimer(String bookingId) {
+	public void deleteBookingIdForTimer(String bookingId, RequestInfo requestInfo) {
 		log.info("Creating timer entry for booking id : {}", bookingId);
 		bookingRepository.deleteBookingIdForTimer(bookingId);
+		
 	}
 	
 

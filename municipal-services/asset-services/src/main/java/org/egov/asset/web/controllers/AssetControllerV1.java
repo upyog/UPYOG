@@ -2,13 +2,22 @@ package org.egov.asset.web.controllers;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.dto.AssetDTO;
+import org.egov.asset.service.AssetCalculationClient;
+import org.egov.asset.service.AssetDisposeService;
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetResponse;
 import org.egov.asset.web.models.AssetSearchCriteria;
+import org.egov.asset.web.models.calcontract.CalculationReq;
+import org.egov.asset.web.models.calcontract.CalculationRes;
+import org.egov.asset.web.models.calcontract.DepreciationDetail;
+import org.egov.asset.web.models.calcontract.DepreciationRes;
+import org.egov.asset.web.models.disposal.AssetDisposalRequest;
+import org.egov.asset.web.models.disposal.AssetDisposalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +29,7 @@ import java.util.List;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-12T12:56:34.514+05:30")
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/assets")
 public class AssetControllerV1 {
@@ -29,6 +39,9 @@ public class AssetControllerV1 {
 
     @Autowired
     AssetService assetService;
+
+    @Autowired
+    AssetCalculationClient assetCalculationClient;
 
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
@@ -95,4 +108,34 @@ public class AssetControllerV1 {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // Trigger particular asset Depreciation calculation from start
+    @RequestMapping(value = "depreciation/_process", method = RequestMethod.POST)
+    public ResponseEntity<CalculationRes> triggerDepreciationCalculation(
+            @ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
+
+        CalculationRes apiresponse = assetCalculationClient.triggerDepreciationCalculation(assetRequest);
+        log.info("Depreciaiton api response : {}", apiresponse.getMessage());
+//        List<AssetDTO> assets = new ArrayList<AssetDTO>();
+//        assets.add(assetRequest.getAsset());
+//        AssetResponse response = AssetResponse.builder().assets(assets)
+//                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+//                .build();
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(apiresponse, HttpStatus.OK);
+    }
+
+    // Trigger particular asset Depreciation calculation from start
+    @RequestMapping(value = "depreciation/list", method = RequestMethod.POST)
+    public ResponseEntity<DepreciationRes> getAssetDepreciationList(
+            @ApiParam(value = "Details for updating existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
+        DepreciationRes apiresponse = assetCalculationClient.getAssetDepreciationList(assetRequest.getRequestInfo().getUserInfo().getTenantId(), assetRequest.getAsset().getId());
+        List<DepreciationDetail> clonedDetails = new ArrayList<>(apiresponse.getDepreciation());
+        DepreciationRes response = DepreciationRes.builder()
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(null, true))
+                .depreciation(clonedDetails)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

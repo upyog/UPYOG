@@ -11,7 +11,6 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-import org.upyog.adv.repository.impl.BookingRepositoryImpl;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.Address;
 import org.upyog.adv.web.models.ApplicantDetail;

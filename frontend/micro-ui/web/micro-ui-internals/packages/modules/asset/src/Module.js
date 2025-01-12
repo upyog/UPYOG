@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
+import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -49,7 +49,7 @@ const componentsToRegister = {
   NewDocument,
   ASTCheckPage,
   NewResponse,
-  ApplicationDetails: ApplicationDetails,
+  ApplicationDetails,
   AssetResponse: Response, 
   returnResponse:ReturnResponse,
   AssetAssign,

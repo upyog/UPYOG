@@ -2,7 +2,7 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 #FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
-RUN yarn add @upyog/digit-ui-libraries
+RUN yarn add @nudmcdgnpm/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-fsm
 RUN yarn add @upyog/digit-ui-module-pt
 RUN yarn add @upyog/digit-ui-module-tl
@@ -21,6 +21,7 @@ RUN yarn add @upyog/digit-ui-module-bills
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ptr
 RUN yarn add @nudmcdgnpm/upyog-ui-module-cm
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ads
+RUN yarn add @nudmcdgnpm/upyog-ui-module-chb
 RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
 RUN yarn add @nudmcdgnpm/upyog-ui-module-asset
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ew

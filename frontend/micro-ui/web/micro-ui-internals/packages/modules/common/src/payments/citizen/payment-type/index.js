@@ -13,14 +13,15 @@ import {
   Toast,
   CardText,
   CardSubHeader,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
 import { stringReplaceAll } from "../bills/routes/bill-details/utils";
 import $ from "jquery";
 import { makePayment } from "./payGov";
-import TimerValues from "../timer-values/timerValues";
+import TimerServices from "../timer-Services/timerServices";
+import { timerEnabledForBusinessService } from "../bills/routes/bill-details/utils";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
@@ -37,6 +38,7 @@ export const SelectPaymentType = (props) => {
   const propertyId = state?.propertyId;
   const stateTenant = Digit.ULBService.getStateId();
   const { control, handleSubmit } = useForm();
+  const [Time, setTime ] = useState(0);
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
     { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? connectionNo : consumerCode, businessService },
@@ -202,14 +204,14 @@ export const SelectPaymentType = (props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Header>{t("PAYMENT_CS_HEADER")}</Header>
         <Card>
-        {(businessService === "adv-services" || businessService==="chb-services") && (
+        {timerEnabledForBusinessService(businessService) && (
             <CardSubHeader 
               style={{ 
                 textAlign: 'right', 
                 fontSize: "24px"
               }}
             >
-          <TimerValues businessService={businessService} consumerCode={consumerCode} timerValues={state?.timerValue} t={t}/>
+          <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData  } />
             </CardSubHeader>
           )}
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
@@ -225,7 +227,7 @@ export const SelectPaymentType = (props) => {
               render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
             />
           )}
-          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} />}
+          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} disabled={timerEnabledForBusinessService(businessService)? Time ===0:null} />}       
         </Card>
       </form>
       <InfoBanner label={t("CS_COMMON_INFO")} text={t("CS_PAYMENT_REDIRECT_NOTICE")} />

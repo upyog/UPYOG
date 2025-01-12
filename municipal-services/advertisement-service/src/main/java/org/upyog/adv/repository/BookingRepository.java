@@ -2,6 +2,7 @@ package org.upyog.adv.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -31,7 +32,7 @@ public interface BookingRepository {
 
 	//Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
 	
-	void insertBookingIdForTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+	void insertBookingIdForTimer(List<AdvertisementSlotSearchCriteria> criteria, RequestInfo requestInfo,
 			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse);
 	
 	Map<String, Long> getRemainingTimerValues(String bookingId);
@@ -48,5 +49,21 @@ public interface BookingRepository {
 	void scheduleTimerDelete();
 
 	void updateBookingSynchronously(String bookingId, String uuid, PaymentDetail paymentDetail, String status);
+
+	void updateBookingSynchronously(BookingRequest advertisementBookingRequest);
+
+	List<Map<String, Object>> getDraftData(String uuid);
+
+	List<AdvertisementSlotAvailabilityDetail> getBookedSlotsFromTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
+
+	void updateTimerBookingId(String bookingId, String bookingNo, String draftIdFromDraft);
+
+	void updateStatusForTimer(String bookingNo, String status);
+
+	List<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
+			RequestInfo requestInfo);
+
+	void getTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
+			AdvertisementSlotAvailabilityDetail detail,  List<AdvertisementSlotSearchCriteria> criteriaList);
 	
 }

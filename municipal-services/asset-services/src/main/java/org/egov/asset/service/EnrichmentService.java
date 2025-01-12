@@ -9,6 +9,8 @@ import org.egov.asset.util.AssetUtil;
 import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AuditDetails;
+import org.egov.asset.web.models.disposal.AssetDisposalRequest;
+import org.egov.asset.web.models.maintenance.AssetMaintenanceRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,4 +157,100 @@ public class EnrichmentService {
         assetRequest.getAsset().setAuditDetails(auditDetails);
     }
 
+
+    /**
+     * Enriches other Asset operations (e.g., assignment, disposal) by adding audit details and unique identifiers.
+     *
+     * @param requestInfo The request object containing asset operation details to be enriched.
+     */
+    public AuditDetails enrichOtherOperations(RequestInfo requestInfo) {
+        log.info("Enriching Other Operations Request");
+        // Set audit details for the asset assignment
+        return assetUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+    }
+
+    /**
+     * Enriches other Asset operations (e.g., assignment, disposal) by adding audit details and unique identifiers.
+     *
+     * @param request The AssetDisposalRequest object containing asset operation details to be enriched.
+     */
+    public void enrichDisposalCreateOperations(AssetDisposalRequest request) {
+        log.info("Enriching Other Operations Request");
+        AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
+
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(request.getAssetDisposal().getDocuments())) {
+            request.getAssetDisposal().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
+        request.getAssetDisposal().setAuditDetails(auditDetails);
+        request.getAssetDisposal().setDisposalId(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Enriches other Asset operations (e.g., assignment, disposal) by adding audit details and unique identifiers.
+     *
+     * @param request The AssetDisposalRequest object containing asset operation details to be enriched.
+     */
+    public void enrichDisposalUpdateOperations(AssetDisposalRequest request) {
+        log.info("Enriching Other Operations Request");
+        AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
+
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(request.getAssetDisposal().getDocuments())) {
+            request.getAssetDisposal().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
+
+        request.getAssetDisposal().setAuditDetails(auditDetails);
+    }
+
+    /**
+     * Enriches Asset Maintenance creation request by adding audit details and unique identifiers.
+     *
+     * @param request The AssetMaintenanceRequest object containing maintenance details to be enriched.
+     */
+    public void enrichMaintenanceCreateOperations(AssetMaintenanceRequest request) {
+        log.info("Enriching Asset Maintenance Create Request");
+
+        // Generate audit details
+        AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), true);
+
+        // Enrich documents with unique identifiers if present
+        if (!CollectionUtils.isEmpty(request.getAssetMaintenance().getDocuments())) {
+            request.getAssetMaintenance().getDocuments().forEach(document -> {
+                if (document.getDocumentId() == null) {
+                    document.setDocumentId(UUID.randomUUID().toString());
+                    document.setDocumentUid(UUID.randomUUID().toString());
+                }
+            });
+        }
+
+        // Set audit details and unique identifier for the maintenance record
+        request.getAssetMaintenance().setAuditDetails(auditDetails);
+        request.getAssetMaintenance().setMaintenanceId(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Enriches Asset Maintenance update request by adding audit details.
+     *
+     * @param request The AssetMaintenanceRequest object containing maintenance details to be enriched.
+     */
+    public void enrichMaintenanceUpdateOperations(AssetMaintenanceRequest request) {
+        log.info("Enriching Asset Maintenance Update Request");
+
+        // Generate audit details
+        AuditDetails auditDetails = assetUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(), false);
+
+        // Set audit details for the maintenance record
+        request.getAssetMaintenance().setAuditDetails(auditDetails);
+    }
 }

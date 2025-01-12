@@ -71,7 +71,7 @@ export const setCartDetails = (data) => {
       addType:slot.addTypeCode,
       faceArea:slot.faceAreaCode,
       location:slot.locationCode,
-      nightLight:slot.nightLight==="Yes"? true : false,
+      nightLight:slot.nightLight,
       bookingDate:slot.bookingDate,
       bookingFromTime: "06:00",
       bookingToTime: "05:59",
@@ -79,21 +79,22 @@ export const setCartDetails = (data) => {
     };
 
   }) || [];
+  let draftId=adslist?.existingDataSet?.draftId;
 
-  data.adslist = cartDetails;
+  data.adslist = {cartDetails,draftId};
   return data;
 }
 export const setApplicantDetails = (data) => {
     let { applicant } = data;
   
-    let propApplicant = {
+    let Applicant = {
       applicantName:applicant?.applicantName,
       applicantMobileNo:applicant?.mobileNumber,
       applicantAlternateMobileNo:applicant?.alternateNumber,
       applicantEmailId:applicant?.emailId,
     };
-  
-    data.applicant = propApplicant;
+    let draftId=applicant?.draftId;
+    data.applicant = {Applicant,draftId};
     return data;
   };
 
@@ -121,13 +122,14 @@ export const ADSDataConvert = (data) => {
 const formdata={
   bookingApplication: {
     tenantId: data.tenantId,
+    draftId:data.applicant.draftId,
     applicantDetail:{
-      ...data.applicant
+      ...data.applicant.Applicant
     },
     address:data.address,
     ...data.documents,
     bookingStatus:"BOOKING_CREATED",
-    cartDetails:data.adslist,
+    cartDetails:data.adslist.cartDetails,
 
     workflow:null
   }

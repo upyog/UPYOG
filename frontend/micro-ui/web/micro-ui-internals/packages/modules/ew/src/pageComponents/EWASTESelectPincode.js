@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
@@ -24,10 +24,9 @@ const EWASTESelectPincode = ({ t, config, onSelect, formData = {}, userType, reg
       name: "pincode",
       validation: {
         minlength: 6,
-        maxlength: 7,
+        maxlength: 6,
         pattern: "[0-9]+",
-        max: "9999999",
-        // title: t("EWASTE_ADDRESS_PINCODE_INVALID"),
+        max: "999999",
       },
     },
   ];

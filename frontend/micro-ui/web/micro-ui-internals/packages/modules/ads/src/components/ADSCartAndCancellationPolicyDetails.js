@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText,DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText,DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./ApplicationTable";
 
@@ -62,7 +62,13 @@ const ADSCartAndCancellationPolicyDetails = () => {
     },
     { Header: t("ADD_TYPE"), accessor: "addType" },
     { Header: t("FACE_AREA"), accessor: "faceArea" },
-    { Header: t("ADS_NIGHT_LIGHT"), accessor: "nightLight" },
+    {
+      Header: t("ADS_NIGHT_LIGHT"),
+      accessor: "nightLight",
+      Cell: ({ value }) => (
+        <div>{value ? t("Yes") : t("No")}</div>
+      ),
+    },
     { Header: t("BOOKING_DATE"), accessor: "bookingDate" },
     {
       Header: t("DELETE_KEY"),
@@ -80,7 +86,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
       addType:details.addTypeCode,
       faceArea:details.faceAreaCode,
       location:details.locationCode,
-      nightLight:details.nightLight==="Yes"?true:false,
+      nightLight:details.nightLight,
       bookingDate:details.bookingDate,
       bookingFromTime: "06:00",
       bookingToTime: "05:59",

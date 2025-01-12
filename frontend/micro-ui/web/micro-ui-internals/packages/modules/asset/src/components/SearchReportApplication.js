@@ -4,14 +4,9 @@
 *  You can customize the Number of table and data you want to show in PDF and Exel. 
 */
 
-
-
-
-
-
 import React, { useCallback, useMemo, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form";
-import {SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@upyog/digit-ui-react-components";
+import {SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -25,7 +20,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
     const today = todaydate.toISOString().split("T")[0];
     const user = Digit.UserService.getUser();
    const allCities = Digit.Hooks.asset.useTenants();
-
+   var base_url = window.location.origin;
   
     
 
@@ -98,7 +93,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
           
           },
           {
-            Header: t("AST_NAME_LABELffff"),
+            Header: t("AST_NAME_LABEL"),
             Cell: ({ row }) => {
               return GetCell(`${row?.original?.["assetName"]}`)
             },
@@ -182,6 +177,7 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
 
 
 const downloadQRReport = async () => {
+  console.log('I am here ');
   const doc = new jsPDF();
   const generateQRCode = async (text) => {
     return await QRCode.toDataURL(text);
@@ -201,6 +197,7 @@ const downloadQRReport = async () => {
       Asset Classification: ${row.assetClassification}
       Asset Parent Category: ${row.assetParentCategory}
       Asset Name: ${row.assetName}
+      Location: "https://www.google.com/maps/search/%7B%7BaddressDetailsLat%7D%7D,%7B%7BaddressDetailsLong/@28.588163,77.2308992,15z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D"
       `;
       const qrCodeURL = await generateQRCode(url);
       const yOffset = (index % batchSize) * 90;
@@ -214,6 +211,7 @@ const downloadQRReport = async () => {
       doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
       doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
       doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+      doc.text(`Location: "https://www.google.com/maps/search/%7B%7BaddressDetailsLat%7D%7D,%7B%7BaddressDetailsLong/@28.588163,77.2308992,15z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D"`, 70, 60 + yOffset);
 
       // Add horizontal line
       doc.line(10, 80 + yOffset, 200, 80 + yOffset);

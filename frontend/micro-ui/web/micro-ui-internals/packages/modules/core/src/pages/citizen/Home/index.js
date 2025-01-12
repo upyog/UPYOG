@@ -15,12 +15,12 @@ import {
   OBPSIcon,
   WSICon,
   CHBIcon
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
 import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
-
+import ChatBot from "./ChatBot";
 const Home = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -180,6 +180,7 @@ const Home = () => {
             </div>
           )
         ) : null}
+        <ChatBot/>
       </div>
     </div>
   );

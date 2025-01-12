@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, CardCaption, LabelFieldPair, TextInput, Toast, Dropdown, TextArea } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, CardCaption, LabelFieldPair, TextInput, Toast, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -714,6 +714,39 @@ const OwnerForm = (_props) => {
             </div>
           </LabelFieldPair>
           {/* <CardLabelError style={errorStyle}>{localFormState.touched.purchaseOrderNumber ? errors?.purchaseOrderNumber?.message : ""}</CardLabelError> */}
+
+          <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("AST_LIFE")}</CardLabel>
+            <div className="field">
+              <Controller
+                control={control}
+                name={"lifeOfAsset"}
+                defaultValue={comingDataFromAPI?.purchaseOrderNumber}
+                rules={{
+                  required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                  validate: {
+                    pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
+                  },
+                }}
+                render={(props) => (
+                  <TextInput
+                    value={props.value}
+                    disable={false}
+                    autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "lifeOfAsset"}
+                    onChange={(e) => {
+                      if((e.target.value).length > 3) { alert('Maximum limit is 3 digits only!'); return false }
+                      props.onChange(e.target.value);
+                      setFocusIndex({ index: editAssignDetails.key, type: "lifeOfAsset" });
+                    }}
+                    onBlur={(e) => {
+                      setFocusIndex({ index: -1 });
+                      props.onBlur(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_LOCATION_DETAILS")}</CardLabel>

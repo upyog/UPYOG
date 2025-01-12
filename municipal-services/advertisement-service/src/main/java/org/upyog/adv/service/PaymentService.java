@@ -108,6 +108,13 @@ public class PaymentService {
         	
         	if(Transaction.TxnStatusEnum.FAILURE.equals(transactionStatus)){
         		status = BookingStatusEnum.PAYMENT_FAILED;
+        		
+        		bookingRepo.updateStatusForTimer(BookingStatusEnum.PAYMENT_FAILED.toString(), bookingNo);
+        	}
+        	
+        	if(Transaction.TxnStatusEnum.PENDING.equals(transactionStatus)){
+        		
+        		bookingRepo.updateStatusForTimer(BookingStatusEnum.PENDING_FOR_PAYMENT.toString(), bookingNo);
         	}
         	log.info("For booking no : " + bookingNo + " transaction id : " + transaction.getTxnId());
         	

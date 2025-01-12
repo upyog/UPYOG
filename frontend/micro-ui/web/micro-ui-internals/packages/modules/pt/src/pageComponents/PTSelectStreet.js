@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput ,CardLabelError} from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput ,CardLabelError} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";

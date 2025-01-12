@@ -20,7 +20,7 @@ public interface BookingService {
 
 	BookingDetail createBooking(@Valid BookingRequest bookingRequest);
 	
-	List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) ;
+	List<AdvertisementSlotAvailabilityDetail> checkAdvertisementSlotAvailability(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo) ;
 
 	List<BookingDetail> getBookingDetails(AdvertisementSearchCriteria bookingSearchCriteria, RequestInfo info);
 	Integer getBookingCount(@Valid AdvertisementSearchCriteria criteria, @NonNull RequestInfo requestInfo);
@@ -36,5 +36,13 @@ public interface BookingService {
 			@Valid AdvertisementSearchCriteria criteria);
 	
 	public String deleteAdvertisementDraft(String draftId);
+
+//	String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
+//			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo);
+	
+	public boolean setSlotBookedFlag(List<AdvertisementSlotAvailabilityDetail> details);
+
+	List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
+			List<AdvertisementSlotSearchCriteria> criteriaList, RequestInfo requestInfo);
 
 }

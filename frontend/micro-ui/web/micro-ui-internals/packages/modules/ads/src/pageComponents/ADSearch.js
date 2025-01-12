@@ -12,7 +12,10 @@ import {
   Card,
   RadioButtons,
   TextInput,
-} from "@upyog/digit-ui-react-components";
+
+} from "@nudmcdgnpm/digit-ui-react-components";
+import BookingPopup from "../components/BookingPopup";
+
 
 /**
  * ADSSearch component handles the advertisement search functionality, 
@@ -33,6 +36,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
   const [adsType, setAdsType] = useState("" || formData?.adType);
   const [selectedLocation, setSelectedLocation] = useState("" || formData?.location);
   const [selectedFace, setSelectedFace] = useState("" || formData?.faceArea);
+  const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(true);
   const [fromDate, setFromDate] = useState("" || formData?.fromDate);
   // State to manage selected checkboxes
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
@@ -41,7 +45,8 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     (formData.adslist && formData.adslist[index] && formData.adslist[index].Searchdata) || formData?.adslist?.Searchdata || []
   );
   const [showToast, setShowToast] = useState(null);
-
+  const [showModal, setShowModal] = useState(false);
+  const [existingDataSet, setExistingDataSet] = useState("");
   // If no nightLight is provided), default to "Yes"
   const [selectNight, setselectNight] = useState("" || formData?.nightLight || {
     i18nKey: "Yes",
@@ -103,8 +108,8 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
 
     const mutation = Digit.Hooks.ads.useADSSlotSearch();
     let formdata = {
-      advertisementSlotSearchCriteria: {
-        bookingId:null,
+      advertisementSlotSearchCriteria: [{
+        bookingId:"",
         addType: Searchdata.addType,
         bookingStartDate: Searchdata.bookingStartDate,
         bookingEndDate:Searchdata.bookingEndDate,
@@ -113,7 +118,7 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
         location:Searchdata.location,
         nightLight:Searchdata.nightLight,
         isTimerRequired: false
-      }
+      }]
     };
     
   useEffect(() => {
@@ -161,10 +166,10 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
     let owner = formData.adslist && formData.adslist[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, cartDetails, adsType, selectedLocation,selectedFace,selectNight,fromDate,toDate };
+      ownerStep = { ...owner,Searchdata, cartDetails, adsType, selectedLocation,selectedFace,selectNight,fromDate,toDate,existingDataSet };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate };
+      ownerStep = { ...owner,Searchdata, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
     console.log("ownerStep",ownerStep);
@@ -243,32 +248,95 @@ const checkboxColumn = {
 };
 
 const handleCartClick = () => {
+  // Step 1: Check if any rows are selected
   if (selectedCheckboxes.length === 0) {
     setShowToast({ error: true, label: t("ADS_SELECT_AT_LEAST_ONE_SLOT") });
-  } else {
-    // Get selected rows based on selectedCheckboxes
-    const selectedRows = data.filter(row => selectedCheckboxes.includes(row.slotId));
-
-    // Create a unique identifier for each row based on addType, faceArea, bookingDate, and location
-    const newlyAddedRows = selectedRows.filter(selectedRow => 
-      !cartDetails.some(cartRow => 
-        cartRow.addType === selectedRow.addType &&
-        cartRow.faceArea === selectedRow.faceArea &&
-        cartRow.bookingDate === selectedRow.bookingDate &&
-        cartRow.location === selectedRow.location
-      )
-    );
-
-    if (newlyAddedRows.length > 0) {
-      setCartDetails(prevCart => [...prevCart, ...newlyAddedRows]);
-      setShowToast({ success: true, label: `${newlyAddedRows.length} item(s) added to cart.` });
-    } else {
-      setShowToast({ error: true, label: t("ADS_ITEM_ALREADY_IN_CART") });
-    }
-
-    // Clear selected checkboxes
-    setSelectedCheckboxes([]);
+    return;
   }
+
+  // Get selected rows based on selectedCheckboxes
+  const selectedRows = data.filter(row => selectedCheckboxes.includes(row.slotId));
+
+  // Step 2: Extract cart slot information including addType, faceArea, and location
+  const cartSlotDetails = cartDetails.map(cartRow => ({
+    slotId: cartRow.slotId,
+    addType: cartRow.addType,
+    location: cartRow.location,
+    faceArea: cartRow.faceArea,
+    nightLight: cartRow.nightLight,
+    bookingDate: cartRow.bookingDate
+  }));
+
+  // Step 3: Extract selected slot information in the same format
+  const selectedSlotDetails = selectedRows.map(row => ({
+    slotId: row.slotId,
+    addTypeCode: row.addTypeCode,
+    faceAreaCode: row.faceAreaCode,
+    locationCode: row.locationCode,
+    addType: row.addType,
+    location: row.location,
+    faceArea: row.faceArea,
+    price:row.price,
+    nightLight: row.nightLight==="Yes"?true:false,
+    bookingDate: row.bookingDate,
+    status: row.status.props.children
+  }));
+
+  // Step 4: Check if any selected slotId is already in the cart (based on addType, location, faceArea, and bookingDate)
+  const duplicateSlot = selectedSlotDetails.some(selectedRow => 
+    cartSlotDetails.some(cartRow =>
+      cartRow.addType === selectedRow.addType &&
+      cartRow.location === selectedRow.location &&
+      cartRow.faceArea === selectedRow.faceArea &&
+      cartRow.nightLight === selectedRow.nightLight &&
+      cartRow.bookingDate === selectedRow.bookingDate
+    )
+  );
+
+  if (duplicateSlot) {
+    setShowToast({ error: true, label: t("ADS_ITEM_ALREADY_IN_CART") });
+    setSelectedCheckboxes([]);  // Clear selected checkboxes if duplicate found
+    return;
+  }
+
+  // Step 5: Group the slots by `addType`, `location`, `faceArea`
+  const groupedSlots = {};
+  [...cartSlotDetails, ...selectedSlotDetails].forEach(row => {
+    const key = `${row.addType}-${row.location}-${row.faceArea}-${row.nightLight}`;
+    if (!groupedSlots[key]) {
+      groupedSlots[key] = [];
+    }
+    groupedSlots[key].push(row);
+  });
+
+  // Step 6: Check for consecutive slotIds in each group
+  for (let groupKey in groupedSlots) {
+    const group = groupedSlots[groupKey];
+    
+    // Sort the group by `slotId` to check for consecutiveness
+    const sortedGroup = group.sort((a, b) => a.slotId - b.slotId);
+
+    // Check for gaps between consecutive slotIds
+    for (let i = 1; i < sortedGroup.length; i++) {
+      const prev = sortedGroup[i - 1];
+      const current = sortedGroup[i];
+
+      // If there is a gap greater than 1 between slotIds, show an error
+      if (current.slotId - prev.slotId > 1) {
+        setShowToast({ error: true, label: t("ADS_SLOT_DATE_NOT_CONSECUTIVE") });
+        setSelectedCheckboxes([]); // Clear selected checkboxes
+        return;
+      }
+    }
+  }
+
+  // Step 7: Add new rows to the cart (if no duplicates and consecutive check passed)
+  setCartDetails(prevCart => [...prevCart, ...selectedSlotDetails]);
+
+  setShowToast({ success: true, label: `${selectedSlotDetails.length} item(s) added to cart.` });
+
+  // Step 8: Clear selected checkboxes after adding to cart
+  setSelectedCheckboxes([]);
 };
   const enhancedColumns = [checkboxColumn, ...columns];
 
@@ -279,7 +347,7 @@ const handleCartClick = () => {
       formData?.faceArea &&
       formData?.fromDate &&
       formData?.toDate &&
-      formData?.nightLight && formData?.location
+      formData?.nightLight && formData?.location &&  CalculationTypeData
     ) {
       let unitPrice;
       let location=formData?.location?.value;
@@ -348,9 +416,14 @@ const handleCartClick = () => {
   const handleBookClick = () => {
     if (cartDetails.length === 0) {
       setShowToast({ error: true, label: t("ADS_SELECT_AT_LEAST_ONE_SLOT") });
-    } else {
-      goNext(); // Proceed to the next step
+    } else { 
+    if(isExistingPopupRequired){
+      setShowModal(true);  // Show modal when button is clicked
     }
+    else{
+      goNext();  // Ensure action is called only when submitting
+    }
+  }
   };
   
 const handleCloseCart = () => {
@@ -449,7 +522,7 @@ const handleCloseCart = () => {
               value={fromDate}
               onChange={SetFromDate}
               style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                 validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -466,7 +539,7 @@ const handleCloseCart = () => {
               value={toDate}
               onChange={SetToDate}
               style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
               rules={{
                 required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                 validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -548,11 +621,11 @@ const handleCloseCart = () => {
             })}
             isPaginationRequired={false}
             totalRecords={data.length}
-            style={{ width: "100%", overflowX: "auto" }} // Make table responsive
+            style={{ width: "100%", overflowX: "auto" }} 
           />
         </Card>
       )}
-      {showToast && (
+     {showToast && (
         <Toast
           error={showToast.error}
           warning={showToast.warning}
@@ -560,6 +633,19 @@ const handleCloseCart = () => {
           onClose={() => {
             setShowToast(null);
           }}
+        />
+      )}
+     {showModal && (
+        <BookingPopup
+          t={t}
+          closeModal={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          actionCancelOnSubmit={() => setShowModal(false)}  // Close modal when "BACK" is clicked
+          onSubmit={() => {
+            goNext();  // Ensure action is called only when submitting
+            setShowModal(false);  // Close modal after action
+          }}
+          setExistingDataSet={setExistingDataSet}
+          Searchdata={cartDetails}
         />
       )}
     </React.Fragment>

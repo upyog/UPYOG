@@ -1,4 +1,4 @@
-import { CaseIcon, Header, InboxComposer } from "@upyog/digit-ui-react-components";
+import { CaseIcon, Header, InboxComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";

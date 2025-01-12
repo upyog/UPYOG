@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ReCAPTCHA from "react-google-recaptcha";
-// import { checkForNA } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import {
     TextInput,
@@ -13,10 +12,10 @@ import {
     Header,
     Toast,
     Loader,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
- * Description: CMSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result
+ * Description: VSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result
  * @author: Khalid Rashid
 
  * @date: 2021-04-15
@@ -25,7 +24,7 @@ import {
  * npm command: npm install react-google-recaptcha --save
 */
 
-const CMSearchCertificate = () => {
+const VSearchCertificate = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
     const [showToast, setShowToast] = useState(null);
@@ -65,14 +64,17 @@ const CMSearchCertificate = () => {
     });
 
     // Hook to fetch the dropdown data
-    const { data: type_of_certificate } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "CommonModule", [{ name: "CertificateType" }],
+    const { data: type_of_certificate } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "VerificationSearch", [{ name: "CertificateType" }],
         {
             select: (data) => {
-                const formattedData = data?.["CommonModule"]?.["CertificateType"]
+                const formattedData = data?.["VerificationSearch"]?.["CertificateType"].map((details) => {
+                    return { i18nKey: `${details.name}`, code: `${details.code}`, active: `${details.active}` };
+                  });
                 return formattedData;
             },
         });
 
+    
     // sets ishuman to be true based on token
     useEffect(() => {
         if (token) {
@@ -94,7 +96,7 @@ const CMSearchCertificate = () => {
      * Asynchronously fetches module data based on the provided certificate name and number.
      * If both certificate_name and certificate_No are provided, it retrieves the application details
      * from the CMServices. If the application exists, it updates the state with the relevant details,
-     * including name, address, certificate number, issue date, validity date, and status.
+     * including name, mobileNumber, certificate number, issue date, validity date, and status.
      * If the application does not exist, it displays a warning toast notification.
      */
     const ModuleData = async () => {
@@ -111,7 +113,7 @@ const CMSearchCertificate = () => {
                 setUpdatedData([
                     {
                         name: applicationData?.name || "NA",
-                        address: applicationData?.address || "NA",
+                        mobileNumber: applicationData?.mobileNumber || "NA",
                         certificateNumber: applicationData?.applicationNumber || "NA",
                         issueDate: applicationData?.fromDate || "NA",
                         validUpto: applicationData?.toDate || "NA",
@@ -120,7 +122,7 @@ const CMSearchCertificate = () => {
                 ])
                 setistable(true);
             } else {
-                setShowToast({ label: "Application doesn't exist", warning: true })
+                setShowToast({ label: t("VS_APPLICATION_DOESNOT_EXIST"), warning: true })
             }
         }
     }
@@ -128,7 +130,7 @@ const CMSearchCertificate = () => {
     // columns defined to be passed in applicationtable
     const columns = [
         { Header: t("CITIZEN_NAME"), accessor: "name" },
-        { Header: t("CITIZEN_ADDRESS"), accessor: "address" },
+        { Header: t("CITIZEN_MOBILE_NO"), accessor: "mobileNumber" },
         { Header: t("CERTIFICATE_NUMBER"), accessor: "certificateNumber" },
         { Header: t("ISSUE_DATE"), accessor: "issueDate" },
         { Header: t("VALID_UPTO"), accessor: "validUpto" },
@@ -139,7 +141,7 @@ const CMSearchCertificate = () => {
     const [updatedData, setUpdatedData] = useState([
         {
             name: "",
-            address: "",
+            mobileNumber: "",
             certificateNumber: "",
             issueDate: "",
             validUpto: "",
@@ -169,6 +171,7 @@ const CMSearchCertificate = () => {
                                     onBlur={props.onBlur}
                                     option={type_of_certificate}
                                     optionKey="i18nKey"
+                                    optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
                                     t={t}
                                     disable={false}
                                     placeholder={"Please type and select the certificate type"}
@@ -262,4 +265,4 @@ const CMSearchCertificate = () => {
     );
 };
 
-export default CMSearchCertificate;
+export default VSearchCertificate;

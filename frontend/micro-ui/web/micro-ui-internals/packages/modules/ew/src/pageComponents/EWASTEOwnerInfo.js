@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/EWASTETimeline";
@@ -88,11 +88,12 @@ const EWOwnerDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
             value={applicantName}
             onChange={setOwnerName}
             ValidationRequired={true}
-            validation = {{
+            {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z-.`' ]*$",
+              pattern: "^[a-zA-Z ]+$",
               type: "text",
-            }}
+              title: t("EW_ENTER_CORRECT_NAME"),
+            })}
           />
 
           <CardLabel>{`${t("EWASTE_MOBILE_NUMBER")}`}</CardLabel>

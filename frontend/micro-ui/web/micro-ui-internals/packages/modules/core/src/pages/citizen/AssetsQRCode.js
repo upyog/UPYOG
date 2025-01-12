@@ -1,7 +1,8 @@
 import React from "react";
-import { Card, Row, CardHeader, StatusTable } from "@upyog/digit-ui-react-components";
+import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 const AssetsQRCode = ({ path }) => {
+    var base_url = window.location.origin;
     const { t } = useTranslation();
     const convertEpochToDate = (dateEpoch) => {
         // Returning NA in else case because new Date(null) returns Current date from calender
@@ -55,6 +56,7 @@ const AssetsQRCode = ({ path }) => {
 
         },
     );
+    console.log('PaymentReceipt:- ', PaymentReceipt);
     return (
         <React.Fragment>
             <div style={{ width: "100%" }}>
@@ -67,6 +69,21 @@ const AssetsQRCode = ({ path }) => {
                             <Row label={t("Assets Name")} text={PaymentReceipt?.Assets[0]?.assetName || "NA"}  />
                             <Row label={t("City")} text={PaymentReceipt?.Assets[0]?.addressDetails?.city || "NA"}  />
                             <Row label={t("Purchase Cost")} text={PaymentReceipt?.Assets[0]?.purchaseCost || "NA"}  />
+                            <Row 
+                             label={t("Location Track")} 
+                             text={
+                                    PaymentReceipt?.Assets[0]?.location ? (
+                                    <a 
+                                        href={`https://www.google.com/maps/search/${PaymentReceipt.Assets[0].location}`} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: "none", color: "blue" }}
+                                    >
+                                        Track Location
+                                    </a>
+                                    ) : "NA"
+                                }
+                            />
                             {/* <Row label={t("CR_RECEIPT_PAYMENT_DATE")} text={convertEpochToDate(PaymentReceipt?.Payments[0]?.paymentDetails[0].receiptDate) || "NA"} />
                             <Row label={t("CR_RECEIPT_PAYER_NAME")} text={PaymentReceipt?.Payments[0].payerName || "NA"} />
                             <Row label={t("CR_RECEIPT_PAYER_NUMBER")} text={PaymentReceipt?.Payments[0].mobileNumber || "NA"} />

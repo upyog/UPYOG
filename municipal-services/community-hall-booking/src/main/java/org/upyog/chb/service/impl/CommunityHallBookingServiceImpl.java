@@ -4,6 +4,9 @@ package org.upyog.chb.service.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -27,6 +30,7 @@ import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
 import org.upyog.chb.web.models.ApplicantDetail;
+import org.upyog.chb.web.models.BookingPaymentTimerDetails;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
@@ -65,7 +69,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	@Autowired
 	private BookingTimerService bookingTimerService;
-	
 	
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -269,30 +272,82 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	public CommunityHallSlotAvailabilityResponse getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria, RequestInfo info) {
 		if (criteria.getCommunityHallCode() == null && CollectionUtils.isEmpty(criteria.getHallCodes())) {
-			throw new CustomException("INVALID_HALL_CODE",
-					"Invalid hall code provided for slot search");
+			throw new CustomException("INVALID_HALL_CODE", "Invalid hall code provided for slot search");
 		}
-		log.info("criteria : {}" , criteria);
+		log.info("criteria : {}", criteria);
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
-		
+
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsList = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
-		
-		Long timerValue =  0l;
-				
-		if(criteria.getIsTimerRequired()) {
-			 timerValue =  bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
+
+		Long timerValue = -1l;
+		availabiltityDetailsList = checkTimerTableForAvailaibility(info, criteria, availabiltityDetailsList);
+		boolean bookingAllowed = availabiltityDetailsList.stream()
+				.anyMatch(detail -> BookingStatusEnum.BOOKED.toString().equals(detail.getSlotStaus()));
+
+		if (!bookingAllowed && criteria.getIsTimerRequired()) {
+			timerValue = bookingTimerService.getTimerValue(criteria, info, availabiltityDetailsList);
 		}
-		
-		CommunityHallSlotAvailabilityResponse hallSlotAvailabilityResponse = CommunityHallSlotAvailabilityResponse.builder()
-				.hallSlotAvailabiltityDetails(availabiltityDetailsList).timerValue(timerValue)
-				.build();
-		
+
+		CommunityHallSlotAvailabilityResponse hallSlotAvailabilityResponse = CommunityHallSlotAvailabilityResponse
+				.builder().hallSlotAvailabiltityDetails(availabiltityDetailsList).timerValue(timerValue).build();
+
 		log.info("Availabiltity details response after updating status :" + hallSlotAvailabilityResponse);
 		return hallSlotAvailabilityResponse;
 	}
+
+
+
+private List<CommunityHallSlotAvailabilityDetail> checkTimerTableForAvailaibility(
+            RequestInfo info, CommunityHallSlotSearchCriteria criteria,
+		List<CommunityHallSlotAvailabilityDetail> availabilityDetails) {
+
+	List<BookingPaymentTimerDetails> timerDetails = bookingTimerService.getBookingFromTimerTable(info, criteria);
+
+	// If timer details are null or empty, return availability details as is
+	if (timerDetails == null || timerDetails.isEmpty()) {
+		log.info("Timer details are null or empty, returning availability details as is.");
+		return availabilityDetails;
+	}
+
+	Map<CommunityHallSlotAvailabilityDetail, CommunityHallSlotAvailabilityDetail> slotDetailsMap = availabilityDetails
+			.stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
+	log.info("Timer Details from db : " + timerDetails);
+
+	timerDetails.forEach(detail -> {
+		// Create a Slot availability object for comparison
+		CommunityHallSlotAvailabilityDetail availabilityDetail = CommunityHallSlotAvailabilityDetail.builder()
+				.communityHallCode(detail.getCommunityHallcode()).hallCode(detail.getHallcode())
+				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(detail.getBookingDate(), "dd-MM-yyyy"))
+				.tenantId(detail.getTenantId()).build();
+
+		// Check if the timerDetails set contains this booking and if it's created by
+		// the current user
+		// Update the slot status based on the comparison
+		if (availabilityDetails.contains(availabilityDetail)) {
+			log.info("Booking created by user id {} and booking id {} ", criteria.getBookingId(),
+					info.getUserInfo().getUuid());
+			CommunityHallSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
+			log.info("Slot Availability detail ::: " + slotAvailabilityDetail.toString());
+			boolean isCreatedByCurrentUser = detail.getCreatedBy().equals(info.getUserInfo().getUuid());
+			boolean existingBookingIdCheck = detail.getBookingId().equals(criteria.getBookingId());
+
+			if (isCreatedByCurrentUser && existingBookingIdCheck) {
+				log.info("inside booking created by me with same booking id ");
+				slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
+			} else {
+				slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
+			}
+		}
+
+	});
+
+	return availabilityDetails;
+}
+
+
 
 	/**
 	 * 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 // Importing required components and hooks from React and digit-ui
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, ImageUploadHandler } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, ImageUploadHandler } from "@nudmcdgnpm/digit-ui-react-components";
 // Importing Timeline component
 import Timeline from "../components/PTRTimeline";
 
@@ -81,7 +81,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
             if (document?.code === "PET.PETPHOTO" && !pathname.includes("revised-application")) {
               return (
                 <div key={index}>
-                  <CardLabel className="card-label-smaller">{t("PET_PETPHOTO")}</CardLabel>
+                  <CardLabel className="card-label-smaller" style={{display: "inline"}}>{t("PET_PETPHOTO")}<span style={{color: "#b0242c"}}>{t("PET_ONLY_PNG_ALLOWED")} </span></CardLabel>
                   <div style={{marginLeft: user?.type==="EMPLOYEE"?"37%":""}}>
                   <ImageUploadHandler
                     tenantId={stateId}

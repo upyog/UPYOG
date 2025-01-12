@@ -1,4 +1,4 @@
-import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

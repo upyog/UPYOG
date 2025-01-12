@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel,Dropdown, LinkButton,Toast} from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel,Dropdown, LinkButton,Toast} from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 import GIS from "./GIS";
 import Timeline from "../components/Timeline";
@@ -13,16 +13,16 @@ import ApplicationTable from "../components/inbox/ApplicationTable";
  * The goNext function validates input and passes the collected data to the parent component.
  */
 
-const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
+const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, previousData }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
-  const [vendingType, setvendingType] = useState(convertToObject(previousData?.vendingActivity||editdata?.vendingActivity)||formData?.businessDetails?.vendingType || "");
-  const [vendingZones, setvendingZones] = useState(convertToObject(previousData?.vendingZone||editdata?.vendingZone)||formData?.businessDetails?.vendingZones || "");
+  const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || convertToObject(previousData?.vendingActivity||editdata?.vendingActivity)||formData?.businessDetails?.vendingType || "");
+  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || convertToObject(previousData?.vendingZone||editdata?.vendingZone)|| "");
   const [location, setlocation] = useState(formData?.businessDetails?.location || "");
-  const [areaRequired, setareaRequired] = useState(previousData?.vendingArea||editdata?.vendingArea||formData?.businessDetails?.areaRequired || "");
-  const [nameOfAuthority, setnameOfAuthority] = useState(previousData?.localAuthorityName||editdata?.localAuthorityName||formData?.businessDetails?.nameOfAuthority || "");
-  const [vendingLiscence, setvendingLiscence] = useState(previousData?.vendingLiscence||editdata?.vendingLiscence||formData?.businessDetails?.vendingLiscence || "");
+  const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea||editdata?.vendingArea|| "");
+  const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || previousData?.localAuthorityName||editdata?.localAuthorityName|| "");
+  const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || previousData?.vendingLiscence||editdata?.vendingLiscence|| "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" }; 
   const [showToast, setShowToast] = useState(null);
   const [isSameForAll, setIsSameForAll] = useState( previousData?.vendingOperationTimeDetails?.length===7||editdata?.vendingOperationTimeDetails?.length===7?true:false || formData?.businessDetails?.isSameForAll); // Flag to check if same for all days 
@@ -106,9 +106,10 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
           className="SVCheckbox"
           type="checkbox"
           checked={isSameForAll}
+          disabled={!validateDaysOfOperation()}
           onChange={handleToggleIsSameForAll}
         />
-        <h4 style={{ marginLeft: "8px" }}>Select All</h4>
+        <h4 style={{ marginLeft: "8px" }}>{t("SV_SELECT_ALL")}</h4>
       </div>
     ),
     Cell: () => (
@@ -471,7 +472,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData,editdata,pr
 
     businessStep = { ...business, vendingType, vendingZones, location, areaRequired, nameOfAuthority, vendingLiscence, daysOfOperation, isSameForAll, backupDays };
     onSelect(config.key, businessStep, false);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
     };
 
   const onSkip = () => onSelect();

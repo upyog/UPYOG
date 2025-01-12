@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Card, CardSubHeader, TextArea, Toast } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Card, CardSubHeader, TextArea, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
+// import { TimerValues } from "../components/TimerValues";
 
 const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = formData.slotlist }) => {
   const { pathname: url } = useLocation();
@@ -11,12 +12,12 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
   const allCities = Digit.Hooks.chb.useTenants();
   let validation = {};
   const user = Digit.UserService.getUser().info;
-  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || "");
+  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || value?.existingDataSet?.address?.pincode || "");
   const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || "");
   const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || "");
-  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || "");
-  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || "");
-  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || "");
+  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || value?.existingDataSet?.address?.streetName  || "");
+  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || value?.existingDataSet?.address?.houseNo  || "");
+  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || value?.existingDataSet?.address?.landmark  || "");
 
   const [localities, setLocalities] = useState([]);
   const [showToast, setShowToast] = useState(null);  // State for Toast
@@ -149,9 +150,12 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : <Timeline currentStep={3} />}
       <Card>
         <CardSubHeader>
+        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
+          {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata}/> */}
+          </div>
         </CardSubHeader>
         <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} />
       </Card>

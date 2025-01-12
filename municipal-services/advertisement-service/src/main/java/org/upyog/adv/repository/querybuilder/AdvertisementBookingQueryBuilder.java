@@ -52,18 +52,38 @@ public class AdvertisementBookingQueryBuilder {
 	public static final String CART_UPDATE_QUERY = "UPDATE public.eg_adv_cart_detail "
 	        + "SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE booking_id=?";
 	
-	public static final String UPDATE_BOOKING_STATUS =  "update eg_adv_booking_detail set booking_status = ?, lastmodifiedby = ?, lastmodifiedtime = ? "
-			+ " where booking_id in (?) ";
+	public static final String UPDATE_BOOKING_STATUS =  "update eg_adv_booking_detail set booking_status = ?, lastmodifiedby=?, lastmodifiedtime=? "
+			+ " where booking_id = ?";
 
-	private static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timer(booking_id, createdby, createdtime, status, booking_no, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?);\n";
+	public static final String PAYMENT_TIMER_QUERY = "INSERT INTO eg_adv_payment_timer(booking_id, createdby, createdtime, status, booking_no, lastmodifiedby, lastmodifiedtime, add_type, location, face_area, night_light, booking_start_date, booking_end_date, booking_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::DATE, ?::DATE);\n";
+
+	public static final String DRAFT_QUERY = "INSERT INTO eg_adv_draft_detail(draft_id, tenant_id, user_uuid, draft_application_data, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?,CAST(? AS jsonb), ?, ?, ?, ?);\n";
 
 	private static final String PAYMENT_TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
 
+	public static final String DraftID_DELETE_QUERY = "DELETE FROM eg_adv_draft_detail WHERE draft_id = ?";
+	
+	public static final String TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
+
 	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = 
-		    "DELETE FROM eg_adv_payment_timer " +
-		    "WHERE ? - createdtime > ? AND booking_id = ?";
+		    "DELETE FROM eg_adv_payment_timer " +	
+		    		"WHERE ? - createdtime > ? AND booking_id = ?";
+	
+	public static final String DRAFTID_DELETE_TIMER = 
+		    "DELETE FROM eg_adv_draft_detail " +	
+		    		"WHERE ? - createdtime > ? AND draft_id = ?";
+	
+	public static final String GET_TIMER_DATA = 
+		    "SELECT booking_id, booking_date, booking_start_date, booking_end_date, createdby, add_type, location, face_area, night_light, status\n"
+		    + " FROM eg_adv_payment_timer "
+		    + " WHERE booking_date >= ?::DATE "
+		    + " AND booking_date <= ?::DATE ";
+		    
+
 	
 	private static final String FETCH_BOOKINGID_TO_DELETE = "SELECT booking_id FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
+	
+	public static final String FETCH_DRAFTID_TO_DELETE = "SELECT draft_id FROM eg_adv_draft_detail WHERE ? - createdtime > ?";
 
 	private static final String FETCH_TIMER = "SELECT booking_id, createdtime FROM eg_adv_payment_timer WHERE booking_id IN (%s)";
 
@@ -81,8 +101,15 @@ public class AdvertisementBookingQueryBuilder {
 		    "face_area, night_light, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime " +
 		    "FROM public.eg_adv_cart_detail WHERE booking_id = ?";
 		
-	private static final String BOOKING_ID_EXISTS_CHECK = "SELECT * FROM eg_adv_payment_timer WHERE booking_id = ?";
+	public static final String BOOKING_ID_EXISTS_CHECK = "SELECT * FROM eg_adv_payment_timer WHERE booking_id = ?";
+
+	public static final String DRAFT_ID_EXISTS_CHECK = "SELECT * FROM eg_adv_draft_detail WHERE user_uuid = ?";
 	
+	public static final String UPDATE_TIMER = "UPDATE eg_adv_payment_timer SET booking_id = ?, booking_no = ? WHERE booking_id = ?";
+	
+	public static final String UPDATE_TIMER_STATUS = "UPDATE eg_adv_payment_timer SET status = ? WHERE booking_no = ?";
+
+
 	
 	private Object createQueryParams(List<String> ids) {
 		StringBuilder builder = new StringBuilder();
@@ -139,6 +166,15 @@ public class AdvertisementBookingQueryBuilder {
 	public String checkBookingIdExists(String bookingId) {
 		return BOOKING_ID_EXISTS_CHECK;
 	}
+	
+	public String checkDraftIdExists( String uuid) {
+		return DRAFT_ID_EXISTS_CHECK;
+	}
+	
+//
+//	public static String updateTimerTableWithBookingId(String tenantId, String booking String uuid) {
+//		return UPDATE_TIMER;
+//	}
 	
 	public String getBookingIdToDelete() {
 		return FETCH_BOOKINGID_TO_DELETE;
@@ -355,5 +391,23 @@ public class AdvertisementBookingQueryBuilder {
 
 		return builder;
 	}
+
+	public StringBuilder getTimerData(AdvertisementSlotSearchCriteria searchCriteria, List<Object> paramsList) {
+		StringBuilder builder = new StringBuilder(GET_TIMER_DATA);
+
+	    paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingStartDate()));
+	    paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingEndDate()));
+
+		/* Check if both bookingStartDate and bookingEndDate are provided
+		if (searchCriteria.getBookingStartDate() != null && searchCriteria.getBookingEndDate() != null) {
+			builder.append(" AND (booking_start_date <= ?::DATE AND booking_end_date >= ?::DATE)");
+			paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingEndDate())); // End date
+			paramsList.add(java.sql.Date.valueOf(searchCriteria.getBookingStartDate())); // Start date
+
+		} */
+
+		return builder;
+	}
+
 
 }

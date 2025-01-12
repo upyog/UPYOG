@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import cloneDeep from "lodash/cloneDeep";
 import { useParams } from "react-router-dom";
-import { Header,MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
+import { Header,MultiLink, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import getPDFData from "../../utils/getTLAcknowledgementData"

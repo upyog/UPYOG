@@ -1,5 +1,5 @@
 import React, { useEffect,useMemo } from "react";
-import { CardLabelError, TextInput, RadioButtons } from "@upyog/digit-ui-react-components";
+import { CardLabelError, TextInput, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 
  const ConvertEpochToDate = (dateEpoch) => {

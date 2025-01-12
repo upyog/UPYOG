@@ -27,7 +27,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-@EqualsAndHashCode(of = { "tenantId", "addType", "location", "faceArea","nightLight", "bookingDate"})
+@EqualsAndHashCode(of = { "addType", "location", "faceArea","nightLight", "bookingDate"})
 public class AdvertisementSlotAvailabilityDetail {
 
 	private String addType;
@@ -45,6 +45,10 @@ public class AdvertisementSlotAvailabilityDetail {
 //	private long remainingTimerValue;
 	
 	private String bookingDate;
+	
+	private String bookingStartDate;
+	
+	private String bookingEndDate;
 
 //	private String fromTime;
 //
@@ -54,6 +58,8 @@ public class AdvertisementSlotAvailabilityDetail {
 
 	@JsonProperty("slotStaus")
 	private String slotStaus;
+	
+	private String uuid;
 	
 	public Boolean isNightLight() {
 	        return nightLight;

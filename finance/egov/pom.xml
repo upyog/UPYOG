@@ -124,9 +124,9 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-			<id>javaxt.com</id>
-			<url>http://www.javaxt.com/maven</url>
-		</repository>
+            <id>javaxt.com</id>
+            <url>http://www.javaxt.com/maven</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -263,7 +263,7 @@
         <module>egov-egfweb</module>
         <module>egov-collectionweb</module>
         <module>egov-ear</module>
-       
+
     </modules>
 
     <dependencyManagement>
@@ -1395,12 +1395,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
-		<dependency>
-    		<groupId>org.owasp.esapi</groupId>
-    		<artifactId>esapi</artifactId>
-    		<version>2.2.3.1</version>
-		</dependency>
+
+        <dependency>
+            <groupId>org.owasp.esapi</groupId>
+            <artifactId>esapi</artifactId>
+            <version>2.2.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>

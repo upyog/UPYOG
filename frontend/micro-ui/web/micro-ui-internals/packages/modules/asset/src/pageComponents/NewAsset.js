@@ -9,7 +9,7 @@ import {
   Card,
   CardHeader,
   CardCaption,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
@@ -123,7 +123,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
   const handleInputChange = (e) => {
     // Get the name & value from the input and select field
     const { name, value } = e.target ? e.target : { name: e.name, value: e };
-
+    
+    if (name === 'lifeOfAsset' && value.length > 3) { // Validation for life of Asset
+      alert('Maximum limit is 3 digits only!');
+      return false;
+    }
     setAssetDetails((prevData) => {
       // Update the current field
       const updatedData = {
@@ -143,7 +147,6 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       if (name === "purchaseDate") {
         calculateAssetAge(value);
       }
-
       return updatedData;
     });
   };
@@ -196,7 +199,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           {formData.asset.assetsubtype["value"]}/{formData.asset.BookPagereference}
         </CardCaption>
       </Card>
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}
+              isDisabled={!assetDetails["purchaseDate"] || !assetDetails["modeOfPossessionOrAcquisition"] || !assetDetails["purchaseOrderNumber"]}>
         <React.Fragment>
           <div>
             {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")} *`}
@@ -342,6 +346,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                   }}
+                  
                 />
 
           <div>
@@ -370,6 +375,42 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             optionKey="i18nKey"
             name="purchaseOrderNumber"
             value={assetDetails["purchaseOrderNumber"]}
+            onChange={handleInputChange}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]*$",
+              type: "text",
+              title: t("PT_NAME_ERROR_MESSAGE"),
+            })}
+            style={{ width: "50%" }}
+          />
+
+<div>
+            {`${t("AST_LIFE")} *`}
+            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              <InfoBannerIcon />
+              <span
+                className="tooltiptext"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "small",
+                  wordWrap: "break-word",
+                  width: "300px",
+                  marginLeft: "15px",
+                  marginBottom: "-10px",
+                }}
+              >
+                {`${t("")} `}
+              </span>
+            </div>
+          </div>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="lifeOfAsset"
+            value={assetDetails["lifeOfAsset"]}
             onChange={handleInputChange}
             {...(validation = {
               isRequired: true,

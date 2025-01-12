@@ -21,17 +21,17 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import { FormStep, TextInput, CardLabel, Toast } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previousData }) => {
   const [bankDetails, setBankDetails] = useState({
-    accountNumber: previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber||formData?.bankdetails?.accountNumber || "",
-    confirmAccountNumber: previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber||formData?.bankdetails?.confirmAccountNumber || "",
-    ifscCode: previousData?.bankDetail?.ifscCode||editdata?.bankDetail?.ifscCode||formData?.bankdetails?.ifscCode || "",
-    bankName: previousData?.bankDetail?.bankName||editdata?.bankDetail?.bankName||formData?.bankdetails?.bankName || "",
-    bankBranchName: previousData?.bankDetail?.bankBranchName||editdata?.bankDetail?.bankBranchName||formData?.bankdetails?.bankBranchName || "",
-    accountHolderName: previousData?.bankDetail?.accountHolderName||editdata?.bankDetail?.accountHolderName||formData?.bankdetails?.accountHolderName || "",
+    accountNumber: formData?.bankdetails?.accountNumber || previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber|| "",
+    confirmAccountNumber: formData?.bankdetails?.confirmAccountNumber || previousData?.bankDetail?.accountNumber||editdata?.bankDetail?.accountNumber|| "",
+    ifscCode: formData?.bankdetails?.ifscCode || previousData?.bankDetail?.ifscCode||editdata?.bankDetail?.ifscCode|| "",
+    bankName: formData?.bankdetails?.bankName || previousData?.bankDetail?.bankName||editdata?.bankDetail?.bankName|| "",
+    bankBranchName: formData?.bankdetails?.bankBranchName || previousData?.bankDetail?.bankBranchName||editdata?.bankDetail?.bankBranchName|| "",
+    accountHolderName: formData?.bankdetails?.accountHolderName || previousData?.bankDetail?.accountHolderName || editdata?.bankDetail?.accountHolderName || "",
   });
   const [showToast, setShowToast] = useState(null);
 
@@ -53,6 +53,12 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       setShowToast({ error: true, label: t("SV_IFSC_CODE_INVALID") });
     }
   }, [bankDetails.ifscCode, t]);
+
+  useEffect(() => {
+      if (bankDetails.accountNumber && bankDetails.confirmAccountNumber && bankDetails.accountNumber === bankDetails.confirmAccountNumber) {
+        setShowToast({ error: false, label: t("SV_ACCOUNT_NUMBER_MATCHES") });
+      }
+    }, [bankDetails.accountNumber, bankDetails.confirmAccountNumber, t]);
 
   useEffect(() => {
     if (bankDetails.ifscCode.length === 11) {
@@ -325,18 +331,13 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
 
   };
 
-
-
-
-
-
   const goNext = () => {
     if (bankDetails.accountNumber !== bankDetails.confirmAccountNumber) {
         setShowToast({ error: true, label: t("SV_INVALID_ACCOUNTNUMBER") });
         return;
       }
     onSelect(config.key, { ...formData.bankdetails, ...bankDetails }, false);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
   };
 
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : null };

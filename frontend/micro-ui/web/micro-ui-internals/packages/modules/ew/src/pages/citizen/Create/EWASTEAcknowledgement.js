@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -39,7 +39,7 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   
   const { t } = useTranslation();
   
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.ew.useEWCreateAPI(data?.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -48,7 +48,7 @@ const EWASTEAcknowledgement = ({ data, onSuccess }) => {
   useEffect(() => {
     try {
       
-      data.tenantId = data?.address?.city?.code;
+      data.tenantId = tenantId;
       let formdata = EWDataConvert(data)
 
       mutation.mutate(formdata, {

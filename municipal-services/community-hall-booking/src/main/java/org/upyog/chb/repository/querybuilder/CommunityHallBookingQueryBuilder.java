@@ -51,9 +51,10 @@ public class CommunityHallBookingQueryBuilder {
 	+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id \n";
 	
 	
-	public static final String PAYMENT_TIMER_INSERT_QUERY = "INSERT INTO eg_chb_payment_timer(booking_id, createdby, createdtime, status) VALUES (?, ?, ?, ?);";
+	//public static final String PAYMENT_TIMER_INSERT_QUERY = "INSERT INTO eg_chb_payment_timer(booking_id, createdby, createdtime, status) VALUES (?, ?, ?, ?);";
+	public static final String PAYMENT_TIMER_INSERT_QUERY = "INSERT INTO eg_chb_payment_timer(booking_id, createdby, createdtime, status, booking_no, community_hall_code, hall_code, booking_date, tenant_id, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-	public static final String PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY = "DELETE FROM eg_chb_payment_timer WHERE booking_id in (?)";
+	public static final String PAYMENT_TIMER_DELETE_FOR_BOOKING_ID_QUERY = "DELETE FROM eg_chb_payment_timer WHERE booking_id IN (%s)";
 	
 	public static final String PAYMENT_TIMER_SELECT_EXPIRED_QUERY = "SELECT * FROM eg_chb_payment_timer WHERE ? - createdtime > ? and status = ?";
 	
@@ -76,7 +77,12 @@ public class CommunityHallBookingQueryBuilder {
 	public static final String UPDATE_BOOKING_STATUS =  "update eg_chb_booking_detail set booking_status = ?, lastmodifiedby = ?, lastmodifiedtime = ? "
 			+ " where booking_id in (?) ";
 	
-	
+	public static final String SELECT_TIMER_QUERY = " SELECT * "
+			+ "		    FROM eg_chb_payment_timer "
+			+ "		    WHERE tenant_id = ? "
+			+ "		      AND community_hall_code = ? "
+			+ "		      AND hall_code = ? "
+			+ "		      AND booking_date BETWEEN ? AND ?;";
 
 	/**
 	 * To give the Search query based on the requirements.

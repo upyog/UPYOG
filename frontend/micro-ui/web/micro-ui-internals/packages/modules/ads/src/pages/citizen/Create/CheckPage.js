@@ -10,7 +10,7 @@ import {
     StatusTable,
     SubmitBar,
     DeleteIcon
-  } from "@upyog/digit-ui-react-components";
+  } from "@nudmcdgnpm/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory } from "react-router-dom";
@@ -58,7 +58,13 @@ import {
     const columns = [
       { Header: `${t("ADS_TYPE")}`, accessor: "addType" },
       { Header: `${t("ADS_FACE_AREA")}`, accessor: "faceArea" },
-      { Header: `${t("ADS_NIGHT_LIGHT")}`, accessor: "nightLight" },
+      {
+        Header: t("ADS_NIGHT_LIGHT"),
+        accessor: "nightLight",
+        Cell: ({ value }) => (
+          <div>{value ? t("Yes") : t("No")}</div>
+        ),
+      },
       { Header: `${t("ADS_DATE")}`, accessor: "bookingDate" },
       {
         Header: t("DELETE_KEY"),

@@ -1,4 +1,4 @@
-import { CardLabel, FormStep,RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber,Toast ,Dropdown } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep,RadioButtons, TextInput, CheckBox, LinkButton, MobileNumber,Toast ,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState,useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
@@ -518,7 +518,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       dependentNameChecked
     };
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
 
   };
 

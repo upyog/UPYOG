@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, CardHeader, Dropdown, TextArea, CheckBox } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, CardHeader, Dropdown, TextArea, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
@@ -366,12 +366,12 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
     if(!pathname.includes("correspondence")){
     let ownerStep = { ...owner, pincode, city, locality, houseNo, landmark, addressline1, addressline2 };
     onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
-    handleSaveasDraft();
+    window.location.href.includes("edit")?null: handleSaveasDraft();
     } else {
       owner = formData?.correspondenceAddress;
       let ownerStep = { ...owner, cpincode, ccity, clocality, chouseNo, clandmark, caddressline1, caddressline2, isAddressSame };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
-      handleSaveasDraft();
+      window.location.href.includes("edit")?null: handleSaveasDraft();
     }
   };
 

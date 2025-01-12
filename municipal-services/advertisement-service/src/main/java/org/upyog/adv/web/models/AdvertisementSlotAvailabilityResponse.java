@@ -44,6 +44,11 @@ public class AdvertisementSlotAvailabilityResponse   {
 	}
 	
 	private Integer count;
+	
+	private String draftId;
+	
+	private boolean slotBooked;
+
 
 }
 

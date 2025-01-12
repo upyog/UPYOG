@@ -48,6 +48,9 @@ public class AssetSearchDTO implements AssetDTO {
     @JsonProperty("assetStatus")
     private String assetStatus;
 
+    @JsonProperty("location")
+    private String location;
+
     @JsonProperty("assetAssignment")
     AssetAssignmentDTO assetAssignment;
 

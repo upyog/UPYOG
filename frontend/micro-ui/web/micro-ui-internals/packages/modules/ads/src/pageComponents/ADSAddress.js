@@ -1,34 +1,35 @@
 import React, { useEffect, useState} from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, TextArea,Card } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel,CardSubHeader, Dropdown, TextArea,Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
+import {TimerValues} from "../components/TimerValues";
 
 /*
  * ADSAddress component for capturing address details.
  * Integrates with hooks for fetching cities and localities.
  */
 
-const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
+const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.adslist}) => {
   const { pathname: url } = useLocation();
   let index = window.location.href.charAt(window.location.href.length - 1);
   const allCities = Digit.Hooks.ads.useTenants();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const {pathname} = useLocation();
   let validation = {};
 
   const user = Digit.UserService.getUser().info;
-
-  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || "");
-  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || "");
-  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || "");
-  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || "");
-  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || "");
-  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || "");
-  const [houseName, setHouseName] = useState((formData.address && formData.address[index] && formData.address[index].houseName) || formData?.address?.houseName || "");
-  const [addressline1, setAddressline1] = useState((formData.address && formData.address[index] && formData.address[index].addressline1) || formData?.address?.addressline1 || "");
-  const [addressline2, setAddressline2] = useState((formData.address && formData.address[index] && formData.address[index].addressline2) || formData?.address?.addressline2 || "");
+  const mutation = Digit.Hooks.ads.useADSCreateAPI();
+  const [pincode, setPincode] = useState((formData.address && formData.address[index] && formData.address[index].pincode) || formData?.address?.pincode || value?.existingDataSet?.address?.pincode || "");
+  const [city, setCity] = useState((formData.address && formData.address[index] && formData.address[index].city) || formData?.address?.city || value?.existingDataSet?.address?.city || "");
+  const [locality, setLocality] = useState((formData.address && formData.address[index] && formData.address[index].locality) || formData?.address?.locality || value?.existingDataSet?.address?.locality || "");
+  const [streetName, setStreetName] = useState((formData.address && formData.address[index] && formData.address[index].streetName) || formData?.address?.streetName || value?.existingDataSet?.address?.streetName || "");
+  const [houseNo, setHouseNo] = useState((formData.address && formData.address[index] && formData.address[index].houseNo) || formData?.address?.houseNo || value?.existingDataSet?.address?.houseNo || "");
+  const [landmark, setLandmark] = useState((formData.address && formData.address[index] && formData.address[index].landmark) || formData?.address?.landmark || value?.existingDataSet?.address?.landmark || "");
+  const [houseName, setHouseName] = useState((formData.address && formData.address[index] && formData.address[index].houseName) || formData?.address?.houseName || value?.existingDataSet?.address?.houseName || "");
+  const [addressline1, setAddressline1] = useState((formData.address && formData.address[index] && formData.address[index].addressline1) || formData?.address?.addressline1 || value?.existingDataSet?.address?.addressline1 || "");
+  const [addressline2, setAddressline2] = useState((formData.address && formData.address[index] && formData.address[index].addressline2) || formData?.address?.addressline2 || value?.existingDataSet?.address?.addressline2 || "");
 
   const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
@@ -74,8 +75,51 @@ const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
   const setaddressline2 = (e) => {
     setAddressline2(e.target.value)
   }
-
+  
   const goNext = () => {
+    let cartDetails = value?.cartDetails.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
+        bookingFromTime: "06:00",
+        bookingToTime: "05:59",
+        status:"BOOKING_CREATED"
+      };
+    });
+     // Create the formdata object
+     const formdata = {
+      bookingApplication: {
+        tenantId: tenantId,
+        draftId:formData?.applicant?.draftId,
+        applicantDetail: {
+          applicantName:formData?.applicant?.applicantName,
+          applicantMobileNo: formData?.applicant?.mobileNumber,
+          applicantAlternateMobileNo:formData?.applicant?.alternateNumber,
+          applicantEmailId:formData?.applicant?.emailId,
+        },
+        addressdetails:{
+          pincode: pincode,
+          city:city?.city?.name,
+          cityCode:city?.city?.code,
+          locality:locality?.i18nKey,
+          localityCode:locality?.code,
+          streetName:streetName,
+          addressLine1:addressline1,
+          addressLine2:addressline2,
+          houseNo:houseNo,
+          landmark:landmark,
+        },
+
+        cartDetails: cartDetails,
+        bookingStatus: "BOOKING_CREATED",
+      },
+      isDraftApplication: true,
+    };
+    // Trigger the mutation
+    mutation.mutate(formdata);
     let applicantData = formData.address && formData.address[index];
     let applicantStep = { ...applicantData, pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2 };
     onSelect(config.key, { ...formData[config.key], ...applicantStep }, false, index);
@@ -94,7 +138,15 @@ const ADSAddress = ({ t, config, onSelect, userType, formData}) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
       <Card>
-       <ADSCartAndCancellationPolicyDetails/>
+      <div style={{ position: "relative" }}>
+        <CardSubHeader style={{ position: "absolute",right:0}}>
+        <TimerValues 
+          timerValues={value?.existingDataSet?.timervalue?.timervalue} 
+          SlotSearchData={value?.cartDetails} 
+        />
+        </CardSubHeader>
+        <ADSCartAndCancellationPolicyDetails/>
+      </div>
       </Card>
       <FormStep
         config={config}

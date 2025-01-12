@@ -1,4 +1,4 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -14,14 +14,13 @@ const ASSETCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("Asset_Test", {});
-  const goNext = (skipStep, index, isAddMultiple, key) => {
 
-    
-    
+  const goNext = (skipStep, index, isAddMultiple, key) => {    
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+      
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
@@ -42,7 +41,6 @@ const ASSETCreate = ({ parentRoute }) => {
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
 
 
-    
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
