@@ -91,93 +91,189 @@ public class SearchUtils {
 	 */
 	public String buildWhereClause(SearchRequest searchRequest, SearchParams searchParam,  Map<String, Object> preparedStatementValues) {
 		StringBuilder whereClause = new StringBuilder();
+
 		String condition = searchParam.getCondition();
+
+		Pattern p = Pattern.compile("->>");
+
 		try {
+
 			
+
 			String request = mapper.writeValueAsString(searchRequest);
+
 			List<Params> paramsList = searchParam.getParams();
+
 			
+
 			for (int i =0; i < paramsList.size(); i++) {
+
 				
+
 				
+
 				Params param = paramsList.get(i);
+
 				Object paramValue = null;
+
 			
+
 				try {
 
+
+
 					if (null != param.getIsConstant()) {
+
 						if (param.getIsConstant())
+
 							paramValue = param.getValue();
+
 						else
+
 							paramValue = JsonPath.read(request, param.getJsonPath());
+
 					} else
+
 						paramValue = JsonPath.read(request, param.getJsonPath());
 
+
+
 					if (null == paramValue)
+
 						continue;
 
+
+
 				} catch (Exception e) {
+
 					log.error("Error while building where clause: " + e.getMessage());
+
 					continue;
+
 				}
+
 				
+
 				/**
+
 				 * Add and clause if necessary
+
 				 */
+
 				if (i > 0) {
+
 					whereClause.append(" " + condition + " ");
+
 				}
-				
+
+				Matcher matcher = p.matcher(param.getName());
+
+				String namedParam = param.getName();
+
+                                if(matcher.find())
+
+                                    namedParam = removeJSONOperatorsForNamedParam(namedParam);
+
 				/**
+
 				 * Array operators
-				 */  
-				String operator=null;
-				if (paramValue instanceof net.minidev.json.JSONArray) {
-					String[] validListOperators = {"NOT IN", "IN"};
-					operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
-					if(!Arrays.asList(validListOperators).contains(operator))
-						operator = " IN "; 
-					whereClause.append(param.getName()).append(operator).append("(").append(":"+param.getName()).append(")");
-				} 
-				/**
-				 * single operators
+
 				 */
+
+				if (paramValue instanceof net.minidev.json.JSONArray) {
+
+					String[] validListOperators = {"NOT IN", "IN"};
+
+					String operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
+
+					if(!Arrays.asList(validListOperators).contains(operator))
+
+						operator = " IN ";
+
+					
+
+					whereClause.append(param.getName()).append(operator).append("(").append(":"+namedParam).append(")");
+
+				} 
+
+				/**
+
+				 * single operators
+
+				 */
+
 				else {
+
 					List<String> validOperators = operators;
-					operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : "=";
+
+					String operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : "=";
+
+
 
 					if (!validOperators.contains(operator)) {
+
 						operator = "=";
+
 					}
+
 					
+
 					if (operator.equals("GE")) {
+
 						operator = ">=";
+
 					} else if (operator.equals("LE")) {
+
 						operator = "<=";
+
 					} else if (operator.equals("NE")) {
+
 						operator = "!=";
+
 					} else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
 
-						preparedStatementValues.put(param.getName(), "%" + paramValue + "%");
+
+
+						paramValue=	 "%" + paramValue + "%";
+
 					} else if (operator.equals("TOUPPERCASE")) {
+
 						
+
 						operator =  "=";
+
 						paramValue = ((String) paramValue).toUpperCase();
+
 					} else if (operator.equals("TOLOWERCASE")) {
 
+
+
 						operator =  "=";
+
 						paramValue = ((String) paramValue).toLowerCase();
+
 					}
-					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + param.getName());
+
+					
+
+					whereClause.append(param.getName()).append(" " + operator + " ").append(":" + namedParam);
 
 				}
-				if(!operator.equals("LIKE"))
-				preparedStatementValues.put(param.getName(), paramValue);
+
+
+
+				preparedStatementValues.put(namedParam, paramValue);
+
 			}
+
 		} catch (Exception e) {
+
 			log.error("Exception while bulding query: ", e);
+
 			throw new CustomException("QUERY_BUILD_ERROR", "Exception while bulding query");
+
 		}
+
 		return whereClause.toString();
 	}
 
@@ -271,5 +367,27 @@ public class SearchUtils {
 		
 		return result;
 	}
+	private String removeJSONOperatorsForNamedParam(String namedParam) {
+        
+        /*
+         * In the param, if contain the json operators then removing those special characters from param setting as param name
+         * for named param. ex, if param name is like bpa.additionadetails->>'applicationtype' then removing the single
+         * quote(') and json operator (->>) and setting named param name as bpa.additionadetailsapplicationtype.
+         */
+        String namedParamTemp = namedParam.replace("'", "");
+        StringBuilder namedParamRes = new StringBuilder();
+        Pattern pattern = Pattern.compile("->>");
+        Matcher m = pattern.matcher(namedParamTemp);
+        int lastIndex = 0;
+        if (m.find()) {
+            namedParamRes.append(namedParamTemp, lastIndex, m.start());
+            lastIndex = m.end();
+        }
+
+        if (lastIndex < namedParamTemp.length())
+            namedParamRes.append(namedParamTemp, lastIndex, namedParamTemp.length());
+        return namedParamRes.toString();
+    }
+
 
 }
