@@ -14,6 +14,7 @@ if (property !== "undefined")
 {
   property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
+console.log("propertyproperty",property)
   const {
     control,
     formState: localFormState,
@@ -28,8 +29,8 @@ if (property !== "undefined")
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details") || window.location.href.includes("tl/edit-application-details/") || window.location.href.includes("/tl/tradelicence/new-application/street") || window.location.href.includes("/tl/tradelicence/renew-trade") || window.location.href.includes("/tl/tradelicence/edit-application") ;
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
-  const [street, setStreet] = useState(property?.propertyDetails?.address?.street);
-  const [doorNo, setDoorNo] = useState(property?.propertyDetails?.address?.doorNo);
+  const [street, setStreet] = useState(property?.propertyDetails?.address?.street ||property?.address?.street );
+  const [doorNo, setDoorNo] = useState(property?.propertyDetails?.address?.doorNo ||property?.address?.doorNo);
   let inputs;
   if (window.location.href.includes("tl")) {
     inputs = config.inputs;
@@ -213,7 +214,7 @@ if (property !== "undefined")
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
-        _defaultValues={{ street: property.propertyDetails.address.street, doorNo: property.propertyDetails.address.doorNo }}
+        _defaultValues={{ street: property?.propertyDetails?.address?.street || property?.address?.street, doorNo: property?.propertyDetails?.address?.doorNo || property?.address?.doorNo}}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
         onSkip={onSkip}

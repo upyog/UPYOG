@@ -39,7 +39,7 @@ class UserLogin extends Component {
   fetchoption() {
     fetch(
       window.location.origin +
-        "/egov-mdms-service/v1/_get?moduleName=tenant&masterName=tenants&tenantId=pb",
+        "/egov-mdms-service/v1/_get?moduleName=tenant&masterName=tenants&tenantId=pg",
       {
         method: "POST",
         headers: {

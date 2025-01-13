@@ -143,7 +143,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
         </div> */}
       </FormComposer>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div className="EmployeeLoginFooter">
+      {/* <div className="EmployeeLoginFooter">
         <img
           alt="Powered by DIGIT"
           src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER_BW")}
@@ -152,7 +152,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
             window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
           }}
         />{" "}
-      </div>
+      </div> */}
     </Background>
   );
 };

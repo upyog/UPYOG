@@ -10,6 +10,7 @@
     "packages/modules/common",
     "packages/modules/pt",
     "packages/modules/core",
+    "packages/modules/obps",
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/fsm"
@@ -62,7 +63,7 @@
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
     "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
-    "buildD:obps": "cd packages/modules/obps && yarn build",
+    "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",

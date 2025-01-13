@@ -51,7 +51,7 @@ const user = {
   gender:data?.TokenRes?.gender,
   mobileNumber: data?.TokenRes.mobile, 
 };
-console.log("user",user)
+
 const authData = await Digit.DigiLockerService.oauth(user);
 console.log("authData",authData)
 
