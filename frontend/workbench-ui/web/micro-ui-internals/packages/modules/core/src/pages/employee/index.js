@@ -114,7 +114,7 @@ const EmployeeApp = ({
                 <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />
               </ErrorBoundary>
             </div>
-            <div className="employee-home-footer">
+            {/* <div className="employee-home-footer">
               <img
                 alt="Powered by DIGIT"
                 src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")}
@@ -123,7 +123,7 @@ const EmployeeApp = ({
                   window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
                 }}
               />
-            </div>
+            </div> */}
           </div>
         </Route>
         <Route>
