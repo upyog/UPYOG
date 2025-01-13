@@ -10,7 +10,6 @@ import java.util.Map;
 import org.egov.web.notification.sms.config.SMSConstants;
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
-import org.egov.web.notification.sms.service.BaseSMSService;
 import org.egov.web.notification.sms.service.SMSBodyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "MSDG")
-public class MSDGSMSServiceImpl extends BaseSMSService {
+public class MSDGSMSServiceImpl extends BaseSMSServiceImpl {
 
     @Autowired
     private SMSProperties smsProperties;
