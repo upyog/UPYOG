@@ -165,6 +165,8 @@ public class SewerageServiceImpl implements SewerageService {
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
 
 		sewerageDao.saveSewerageConnection(sewerageConnectionRequest);
+		if (!isMigration)
+		{
 		String previousApplicationStatus = workflowService.getApplicationStatus(
 				sewerageConnectionRequest.getRequestInfo(),
 				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
@@ -175,7 +177,11 @@ public class SewerageServiceImpl implements SewerageService {
 
 		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
 		sewerageDao.updateSewerageConnection(sewerageConnectionRequest, isStateUpdatable);
-
+		}
+		else
+		{
+			log.info("Skipping Update for migrated connection");
+		}
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
 
