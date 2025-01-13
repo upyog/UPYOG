@@ -30,6 +30,8 @@ public class GarbageAccountActionRequest {
 
 	private String year;
 
+	private List<String> propertyIds;
+
 	@Builder.Default
 	private Boolean isEmptyBillFilter = false;
 

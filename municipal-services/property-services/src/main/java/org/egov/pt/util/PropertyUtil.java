@@ -61,6 +61,14 @@ public class PropertyUtil extends CommonUtils {
 	 * @param properties         List of property whose owner's are to be populated
 	 *                           from userDetailResponse
 	 */
+	public static final String BUSINESS_SERVICE_PROPERTY_BOOKING = "PROPERTY";
+	public static final String PROPERTY_CITIZEN = "CITIZEN";
+	public static final String PROPERTY_CSR = "CSR";
+	public static final String PROPERTY_GRO = "GRO";
+	public static final String PROPERTY_DGRO = "DGRO";
+	public static final String PROPERTY_PGR_LME = "PGR_LME";
+	public static final String PROPERTY_CFC = "CFC";
+	public static final String STATUS_RESOLVED = "RESOLVED";
 	public void enrichOwner(UserDetailResponse userDetailResponse, List<Property> properties, Boolean isSearchOpen) {
 
 		List<OwnerInfo> users = userDetailResponse.getUser();

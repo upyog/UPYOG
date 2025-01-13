@@ -41,14 +41,19 @@ public class AssetQueryBuilder {
             + "assign.department, "
             + "assign.assigneddate, "
             + "assign.returndate, "
-            + "assign.assignmentId "  
+            + "assign.assignmentId,"  
+            + "address.street "  
             + "FROM eg_asset_assetdetails asset "
-            + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid";
+            + LEFT_OUTER_JOIN_STRING + "eg_asset_assignmentdetails assign on asset.id = assign.assetid"
+            + LEFT_OUTER_JOIN_STRING + "eg_asset_addressdetails address on asset.id = address.asset_id";
 
     
     private final String paginationWrapper = "SELECT * FROM "
             + "(SELECT *, DENSE_RANK() OVER () offset_ FROM " + "({})"
             + " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
+    
+    private static final String ORDER_BY_CLAUSE = " ORDER BY asset.createdtime DESC"; // Use ASC or DESC as needed
+
     
     //private final String countWrapper = "SELECT COUNT(DISTINCT(bpa_id)) FROM ({INTERNAL_QUERY}) as asset_count";
 	
@@ -166,6 +171,7 @@ public class AssetQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdtime >= ").append(criteria.getFromDate());
         }
+        builder.append(ORDER_BY_CLAUSE);
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
 	
@@ -283,6 +289,7 @@ public class AssetQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" asset.createdtime >= ").append(criteria.getFromDate());
         }
+        builder.append(ORDER_BY_CLAUSE);
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
 	/**

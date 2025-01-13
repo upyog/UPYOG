@@ -122,13 +122,6 @@ public class AssetRepository {
 				return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
 		}
 	}
-	
-	public List<Map<String, Object>> getAllCounts() {
-		List<Map<String, Object>> statusList = null;
-		String query = "SELECT SUM(COUNT(*)) OVER () AS total_applications,EXTRACT(MONTH FROM TO_TIMESTAMP(createdtime / 1000)) AS month,COUNT(*) AS application_count FROM eg_wf_processinstance_v2 WHERE modulename = 'SITE' AND action = 'APPROVE' GROUP BY month ORDER BY month";
-		statusList =jdbcTemplate.queryForList(query);
-        return statusList;
-	}
 
 	public List<AssetUpdate> getAssetDataFromDB(AssetSearchCriteria searchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();

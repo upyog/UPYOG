@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-pg-txns
    isTransaction: true
    queryMaps:
-    - query: INSERT INTO eg_pg_transactions (txn_id, txn_amount, txn_status, gateway,bill_id, "module", order_id, product_info,user_uuid, user_name, mobile_number, email_id, name, user_tenant_id,  tenant_id, gateway_txn_id, gateway_payment_mode, gateway_status_code, gateway_status_msg, created_time, last_modified_time, additional_details, consumer_code) VALUES (?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?);
+    - query: INSERT INTO eg_pg_transactions (txn_id, txn_amount, txn_status, gateway, bill_id, "module", order_id, product_info,user_uuid, user_name, mobile_number, email_id, name, user_tenant_id,  tenant_id, gateway_txn_id, gateway_payment_mode, gateway_status_code, gateway_status_msg, created_time, last_modified_time, additional_details, consumer_code, created_by, last_modified_by) VALUES (?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?);
 
       basePath: Transaction
       jsonMaps:
@@ -59,6 +59,39 @@ serviceMaps:
          dbType: JSONB
 
        - jsonPath: $.Transaction.consumerCode
+       
+       - jsonPath: $.Transaction.auditDetails.createdBy
+       
+       - jsonPath: $.Transaction.auditDetails.lastModifiedBy
+       
+ - version: 1.0
+   name: pg-service
+   description: Persists transaction details requests / response to and from gateways
+   fromTopic: save-pg-txns-details
+   isTransaction: true
+   queryMaps:   
+    - query: INSERT INTO eg_pg_transactions_details (uuid, txn_id, txn_amount, bill_id, consumer_code, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?::numeric, ?, ?, ?, ?, ?, ?);
+      basePath: TransactionDetails
+      jsonMaps:
+      
+      - jsonPath: $.TransactionDetails.uuid
+      
+      - jsonPath: $.TransactionDetails.txnId
+      
+      - jsonPath: $.TransactionDetails.txnAmount
+      
+      - jsonPath: $.TransactionDetails.billId
+      
+      - jsonPath: $.TransactionDetails.consumerCode
+      
+      - jsonPath: $.TransactionDetails.auditDetails.createdBy
+       
+      - jsonPath: $.TransactionDetails.auditDetails.lastModifiedBy
+      
+      - jsonPath: $.TransactionDetails.auditDetails.createdTime
+
+      - jsonPath: $.TransactionDetails.auditDetails.lastModifiedTime
+     
 
 
 

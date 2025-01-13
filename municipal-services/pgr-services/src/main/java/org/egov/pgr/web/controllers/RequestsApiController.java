@@ -97,5 +97,13 @@ public class RequestsApiController{
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    
+    @RequestMapping(value="/request/_countStatus", method = RequestMethod.POST)
+    public ResponseEntity<CountStatusResponse> requestCountStatuspost(@Valid @RequestBody CountStatusRequest request) throws IOException{
+    	request = pgrService.getStatusCount(request);
+    	 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true);
+    	 CountStatusResponse response = CountStatusResponse.builder().responseInfo(responseInfo).countStatusUpdate(request.getCountStatusUpdate()).build();
+    	return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }
