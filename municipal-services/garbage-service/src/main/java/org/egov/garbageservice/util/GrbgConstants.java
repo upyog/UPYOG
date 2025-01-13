@@ -89,6 +89,9 @@ public class GrbgConstants {
 	@Value(("${state.level.tenant.id}"))
 	private String stateLevelTenantId;
 
+	@Value(("${egov.grbg.bill.expiry.after}"))
+	private String grbgBillExpiryAfter;
+
 	@Value("${frontend.base.uri}")
 	public String frontEndBaseUri;
 

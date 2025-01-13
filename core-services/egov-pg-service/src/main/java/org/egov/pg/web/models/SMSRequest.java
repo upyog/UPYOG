@@ -1,5 +1,7 @@
 package org.egov.pg.web.models;
 
+import org.egov.pg.models.enums.Category;
+
 import lombok.*;
 
 @Getter

@@ -7,7 +7,7 @@ import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.egov.web.notification.sms.consumer.contract.SMSRequest;
 import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.RequestContext;
-import org.egov.web.notification.sms.service.SMSService;
+import org.egov.web.notification.sms.service.BaseSMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SmsNotificationListener {
 
     private final ApplicationContext context;
-    private SMSService smsService;
+    private BaseSMSService smsService;
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
 
     @Autowired
@@ -44,7 +44,7 @@ public class SmsNotificationListener {
     @Autowired
     public SmsNotificationListener(
             ApplicationContext context,
-            SMSService smsService,
+            BaseSMSService smsService,
             CustomKafkaTemplate<String, SMSRequest> kafkaTemplate) {
         this.smsService = smsService;
         this.context = context;
