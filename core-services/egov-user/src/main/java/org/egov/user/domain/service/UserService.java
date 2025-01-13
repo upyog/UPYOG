@@ -145,7 +145,9 @@ public class UserService {
         /* encrypt here */
 
         userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User", UserSearchCriteria.class);
+        log.info("userSearchCriteria"+ userSearchCriteria);
         List<User> users = userRepository.findAll(userSearchCriteria);
+        log.info("users"+users);
 
         if (users.isEmpty())
             throw new UserNotFoundException(userSearchCriteria);
