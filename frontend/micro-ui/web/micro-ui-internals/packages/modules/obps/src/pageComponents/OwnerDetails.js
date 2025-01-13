@@ -244,23 +244,20 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             return;
         }
 
-        if (ownerNo === ownersCopy?.[indexValue]?.userName && (ownerRoleCheck?.code !== "BPA_ARCHITECT" && ownerRoleCheck?.code !== "BPA_SUPERVISOR")) {
+        if (ownerNo === ownersCopy?.[indexValue]?.userName) {
             setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED_TOGGLE_MSG" });
             return;
         }
 
         const matchingOwnerIndex = ownersCopy.findIndex(item => item.userName === ownerNo);
 
-        if (matchingOwnerIndex > -1 && (ownerRoleCheck?.code !== "BPA_ARCHITECT" && ownerRoleCheck?.code !== "BPA_SUPERVISOR")) {
-            setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED" });
-            return;
-        } else {
+       
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
             let found = usersResponse?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
-            if (usersResponse?.user?.length === 0) {
-                setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
-                return;
-            } else {
+            // if (usersResponse?.user?.length === 0) {
+            //     setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
+            //     return;
+            // } else {
                 const userData = usersResponse?.user?.[0];
                 userData.gender = userData.gender ? { code: userData.gender, active: true, i18nKey: `COMMON_GENDER_${userData.gender}` } : "";
                 if(userData?.dob) userData.dob = convertDateToEpoch(userData?.dob);
@@ -276,14 +273,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if(values[indexValue]?.mobileNumber && values[indexValue]?.name && values[indexValue]?.gender?.code) setCanmovenext(true);
                 else setCanmovenext(false);
 
-                if(found){
-                    setCanmovenext(false);
-                    setownerRoleCheck(found);
-                    setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
-                    return;
-                }
-            }
-        }
+                // if(found){
+                //     setCanmovenext(false);
+                //     setownerRoleCheck(found);
+                //     setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
+                //     return;
+                // }
+            // }
+        
     }
 
     const getUserData = async (data,tenant) => {
@@ -300,13 +297,13 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           found = ob?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
             if(fields.find((fi) => !(fi?.uuid && !(found)) && ((fi?.name === ob?.user?.[0]?.name && fi?.mobileNumber === ob?.user?.[0]?.mobileNumber) || (fi?.mobileNumber === ob?.user?.[0]?.mobileNumber && found))))
             {
-                flag = true;
+                //flag = true;
                 foundMobileNo.push(ob?.user?.[0]?.mobileNumber);
             }
         })
 
-        if(foundMobileNo?.length > 0)
-        setShowToast({ key: "true", error: true, message: `${t("BPA_OWNER_VALIDATION_1")} ${foundMobileNo?.join(", ")} ${t("BPA_OWNER_VALIDATION_2")}` });
+        // if(foundMobileNo?.length > 0)
+        // setShowToast({ key: "true", error: true, message: `${t("BPA_OWNER_VALIDATION_1")} ${foundMobileNo?.join(", ")} ${t("BPA_OWNER_VALIDATION_2")}` });
         if(flag == true)
         return false;
         else 
