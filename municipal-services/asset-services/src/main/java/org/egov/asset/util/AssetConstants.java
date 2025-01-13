@@ -68,6 +68,7 @@ public class AssetConstants {
 	public static final String ACTION_REVOCATE = "REVOCATE";
 	public static final String ACTION_CANCEL = "CANCEL";
 	public static final String EMPLOYEE = "EMPLOYEE";
+	public static final String CITIZEN = "CITIZEN";
 	public static final String ASSET_APPROVER = "ASSET_APPROVER";
 	public static final String ASSET_CREATOR = "ASSET_CREATOR"; 
 	public static final String ASSET_VERIFIER = "ASSET_VERIFIER";

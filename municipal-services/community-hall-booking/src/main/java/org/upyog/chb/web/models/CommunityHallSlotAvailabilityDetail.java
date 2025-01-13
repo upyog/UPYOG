@@ -27,7 +27,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-@EqualsAndHashCode(of = { "tenantId", "hallCode", "communityHallCode", "bookingDate"})
+@EqualsAndHashCode(of = { "tenantId", "hallCode", "communityHallCode", "bookingDate","bookingToDate"})
 public class CommunityHallSlotAvailabilityDetail {
 
 	private String communityHallCode;
@@ -44,6 +44,8 @@ public class CommunityHallSlotAvailabilityDetail {
 
 	@JsonProperty("slotStaus")
 	private String slotStaus;
+	
+	private String bookingToDate;
 	
 	
 

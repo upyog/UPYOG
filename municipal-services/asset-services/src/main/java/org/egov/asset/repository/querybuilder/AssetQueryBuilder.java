@@ -194,9 +194,9 @@ public class AssetQueryBuilder {
                 builder.append(" asset.tenantid like ?");
                 preparedStmtList.add('%' + criteria.getTenantId() + '%');
             } else {
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" asset.tenantid=? ");
-                preparedStmtList.add(criteria.getTenantId());
+                // addClauseIfRequired(preparedStmtList, builder);
+                // builder.append(" asset.tenantid=? ");
+                // preparedStmtList.add(criteria.getTenantId());
             }
         }
 		

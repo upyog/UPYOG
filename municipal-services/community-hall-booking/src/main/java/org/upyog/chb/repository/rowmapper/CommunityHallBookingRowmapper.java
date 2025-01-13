@@ -112,6 +112,7 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 				.streetName(rs.getString("street_name"))
 				.locality(rs.getString("locality"))
 				.localityCode(rs.getString("locality_code"))
+				.additionalDetails(rs.getString("additionaldetail"))
 				.build();
 		
 		return address;

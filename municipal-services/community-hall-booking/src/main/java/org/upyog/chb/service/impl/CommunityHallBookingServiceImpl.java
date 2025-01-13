@@ -59,6 +59,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	private CHBEncryptionService encryptionService;
 	
 	
+	
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : "
@@ -87,7 +88,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		 */
 
 		// 3.Update workflow of the application
-		// workflowService.updateWorkflow(communityHallsBookingRequest,
+		 //workflowService.updateWorkflow(communityHallsBookingRequest,
 		// WorkflowStatus.CREATE);
 
 		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);

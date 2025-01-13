@@ -95,6 +95,8 @@ serviceMaps:
 
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
           
+          - jsonPath: $.hallsBookingApplication.bookingSlotDetails.*.bookingToDate
+          
        - query: INSERT INTO public.eg_chb_document_detail(document_detail_id, booking_id, document_type, filestore_id, createdby,
                lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
          basePath: hallsBookingApplication.documents.*
@@ -171,6 +173,8 @@ serviceMaps:
           - jsonPath: $.hallsBookingApplication.address.streetName
 
           - jsonPath: $.hallsBookingApplication.address.localityCode
+          
+          - jsonPath: $.hallsBookingApplication.address.additionalDetails
           
           
  - version: 1.0

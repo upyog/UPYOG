@@ -1,6 +1,7 @@
 package org.upyog.chb.service;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,11 +108,24 @@ public class DemandService {
 	}
 	
 	private LocalDate getMaxBookingDate(CommunityHallBookingDetail bookingDetail) {
-		
-		return bookingDetail.getBookingSlotDetails().stream().map(detail -> CommunityHallBookingUtil.parseStringToLocalDate(detail.getBookingDate()))
-				.max( LocalDate :: compareTo)
-		        .get();
+	    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Assuming the incoming format
+	    DateTimeFormatter expectedFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy"); // Expected format
+
+	    return bookingDetail.getBookingSlotDetails().stream()
+	        .map(detail -> {
+	            String bookingDate = detail.getBookingDate();
+
+	            // Convert from input format to the expected format
+	            LocalDate parsedDate = LocalDate.parse(bookingDate, inputFormatter);
+	            String formattedDate = parsedDate.format(expectedFormatter);
+
+	            // Pass the correctly formatted date to the utility method
+	            return CommunityHallBookingUtil.parseStringToLocalDate(formattedDate);
+	        })
+	        .max(LocalDate::compareTo)
+	        .orElseThrow(() -> new IllegalArgumentException("No booking dates available"));
 	}
+
 	
 	
 	
