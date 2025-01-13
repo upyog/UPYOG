@@ -26,6 +26,10 @@ public class ValidActionResponce {
 	@Builder.Default
 	private List<Action> nextValidAction = new ArrayList<>();
 
+	@JsonProperty("action")
+	@Builder.Default
+	private List<String> action = new ArrayList<>();
+
 	@JsonProperty("isUpdatable")
 	@Builder.Default
 	private Boolean isUpdatable = false;
