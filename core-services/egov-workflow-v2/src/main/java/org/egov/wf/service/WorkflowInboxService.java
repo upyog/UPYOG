@@ -43,6 +43,7 @@ public class WorkflowInboxService {
 		validActionResponse.setModuleName(instance.getModuleName());
 
 		List<Action> validAction = new ArrayList<>();
+		List<String> actionList = new ArrayList<>();
 		if (instance.getState().getIsTerminateState()) {
 			validActionResponse.setNextValidAction(validAction);
 
@@ -50,17 +51,20 @@ public class WorkflowInboxService {
 		}
 
 		User loggedinUser = info.getUserInfo();
-		Set<String> loggedinUserRoles = loggedinUser.getRoles().stream().filter(role -> StringUtils
-				.equalsIgnoreCase(role.getTenantId(), tenantId)).map(Role::getCode).collect(Collectors.toSet());
+		Set<String> loggedinUserRoles = loggedinUser.getRoles().stream()
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(Role::getCode)
+				.collect(Collectors.toSet());
 
 		instance.getNextActions().stream().forEach(action -> {
 			Set<String> actionRolesSet = new HashSet<>(action.getRoles());
 			if (actionRolesSet.stream().anyMatch(loggedinUserRoles::contains)) {
 				validAction.add(action);
+				actionList.add(action.getAction());
 			}
 		});
 
 		validActionResponse.setNextValidAction(validAction);
+		validActionResponse.setAction(actionList);
 
 		validActionResponse.setIsUpdatable(instance != null && instance.getState() != null
 				&& !CollectionUtils.isEmpty(validActionResponse.getNextValidAction())
