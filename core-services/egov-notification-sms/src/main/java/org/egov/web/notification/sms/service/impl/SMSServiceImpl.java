@@ -1,10 +1,16 @@
 package org.egov.web.notification.sms.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.egov.tracer.model.CustomException;
-import org.egov.web.notification.sms.config.SMSProperties;
+import org.egov.web.notification.sms.constants.SMSConstants;
 import org.egov.web.notification.sms.models.SMSSentRequest;
+import org.egov.web.notification.sms.models.SMSTemplate;
+import org.egov.web.notification.sms.models.SMSTemplateSearchCriteria;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.models.UserSearchResponse;
+import org.egov.web.notification.sms.repository.SMSTemplateRepository;
 import org.egov.web.notification.sms.service.BaseSMSService;
 import org.egov.web.notification.sms.service.OtpService;
 import org.egov.web.notification.sms.service.SMSService;
@@ -23,13 +29,13 @@ public class SMSServiceImpl implements SMSService {
 	private BaseSMSService baseSmsService;
 
 	@Autowired
-	private SMSProperties smsProperties;
-
-	@Autowired
 	private UserService userService;
 
 	@Autowired
 	private OtpService otpService;
+
+	@Autowired
+	private SMSTemplateRepository smsTemplateRepository;
 
 	private static final String OTP_PLACEHOLDER = "{otp}";
 
@@ -52,13 +58,30 @@ public class SMSServiceImpl implements SMSService {
 
 		// get otp from otp service
 		String otp = otpService.createOtp(smsSentRequest.getUserUuid());
-		String smsBody = SMS_BODY;
+
+		SMSTemplate smsTemplate = getSmsTemplate(SMSConstants.TEMPLATE_NAME_OTP);
+
+		if (null == smsTemplate) {
+			throw new CustomException("SMS TEMPLATE NOT FOUND", "SMS template not found.");
+		}
+
+		String smsBody = smsTemplate.getSmsBody();
 		smsBody = smsBody.replace(OTP_PLACEHOLDER, otp);
 
 		Sms sms = Sms.builder().mobileNumber(smsSentRequest.getNumber()).message(smsBody)
-				.templateId(smsProperties.getSmsDefaultTmplid()).build();
+				.templateId(smsTemplate.getTemplateId()).build();
 
 		baseSmsService.sendSMS(sms);
+	}
+
+	private SMSTemplate getSmsTemplate(String templateName) {
+		SMSTemplate smsTemplate = null;
+		List<SMSTemplate> smsTemplates = smsTemplateRepository.fetchSmsTemplate(
+				SMSTemplateSearchCriteria.builder().templateNames(Arrays.asList(templateName)).build());
+		if (!CollectionUtils.isEmpty(smsTemplates)) {
+			smsTemplate = smsTemplates.get(0);
+		}
+		return smsTemplate;
 	}
 
 }
