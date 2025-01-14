@@ -93,7 +93,8 @@ module.exports = function (app) {
     "/employee-dashboard/_search",
     "/verification-service/validity/_search",
     "/asset-services/v1/assets/depreciation/_process",
-    "/asset-services/v1/assets/depreciation/list"
+    "/asset-services/v1/assets/depreciation/list",
+    "/asset-services/v1/disposal/_create"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

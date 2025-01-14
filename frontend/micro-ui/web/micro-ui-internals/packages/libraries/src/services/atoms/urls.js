@@ -207,6 +207,7 @@ const Urls = {
     depriciationList:"/asset-services/v1/assets/depreciation/list",   // this api for list of assetDepriciation
     return_asset: "/asset-services/v1/assets/assignment/_update",
     assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
+    assetDisposedCreate: "/asset-services/v1/disposal/_create"
   },
   ew: {
     create: "/ewaste-services/ewaste-request/_create",
