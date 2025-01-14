@@ -303,9 +303,6 @@ public class BookingServiceImpl implements BookingService {
 				boolean existingBookingIdCheck =
 				detail.getBookingId().equals(criteria.getBookingId());
 				
-				 String draftId = getDraftId(availabilityDetailsResponse, requestInfo);
-				
-
 				if (isCreatedByCurrentUser) {
 					log.info("inside booking created by me with same booking id ");
 					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
