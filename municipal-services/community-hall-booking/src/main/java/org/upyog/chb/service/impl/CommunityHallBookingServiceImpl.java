@@ -250,7 +250,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		bookingRepository.updateBookingSynchronously(bookingDetail.getBookingId(), communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), paymentDetail, status.toString());
 		if(deleteBookingTimer) {
 			log.info("Deleting booking timer with booking id  {}", communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
-			bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
+			bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId(), false);
 		}
 	}
 
