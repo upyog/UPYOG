@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@egovernments/digit-ui-react-components";
 import DesktopInbox from "../../../components/Messages/DesktopInbox";
 import MobileInbox from "../../../components/Messages/MobileInbox";
 

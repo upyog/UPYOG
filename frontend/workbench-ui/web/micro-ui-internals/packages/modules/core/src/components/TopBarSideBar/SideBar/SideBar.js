@@ -15,7 +15,7 @@ import {
   PropertyHouse,
   ReceiptIcon,
   CaseIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import ReactTooltip from "react-tooltip";
 import { set } from "lodash";
 import { useHistory, useLocation, Link } from "react-router-dom";
@@ -202,13 +202,13 @@ const Sidebar = ({ data }) => {
             let leftIcon =
               IconsObject[iconName] || IconsObject.collections;
             if (iconKey === "dynamic") {
-              var IconComp = require("@upyog/digit-ui-react-components")?.[
+              var IconComp = require("@egovernments/digit-ui-react-components")?.[
                 iconName
               ];
               leftIcon = IconComp ? <IconComp /> : leftIcon;
             }
             if (iconKey === "svg") {
-              var IconComp = require("@upyog/digit-ui-react-components")?.SVG?.[iconName];
+              var IconComp = require("@egovernments/digit-ui-react-components")?.SVG?.[iconName];
               leftIcon = IconComp ? <IconComp fill="white" /> : leftIcon;
             }
             const isParentActive = selectedParent === itemKey;
@@ -312,13 +312,13 @@ const Sidebar = ({ data }) => {
             let leftIcon =
               IconsObject[iconName] || IconsObject.collections;
             if (iconKey === "dynamic") {
-              var IconComp = require("@upyog/digit-ui-react-components")?.[
+              var IconComp = require("@egovernments/digit-ui-react-components")?.[
                 iconName
               ];
               leftIcon = IconComp ? <IconComp /> : leftIcon;
             }
             if (iconKey === "svg") {
-              var IconComp = require("@upyog/digit-ui-react-components")?.SVG?.[iconName];
+              var IconComp = require("@egovernments/digit-ui-react-components")?.SVG?.[iconName];
               leftIcon = IconComp ? <IconComp fill="white" /> : leftIcon;
             }
             const isChildActive = selectedChild === subItems.item.path;

@@ -19,7 +19,6 @@
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
-    "publish:css": "cd packages/css && yarn publish --access public",
     "dev:libraries": "cd packages/libraries && yarn start",
     "dev:components": "cd packages/react-components && yarn start",
     "dev:example": "cd example && yarn start",
@@ -49,9 +48,10 @@
   "resolutions": {
     "**/@babel/runtime": "7.20.1",
     "**/babel-preset-react-app": "10.0.0",
-    "**/ajv": "8.11.2",
+    "**/styled-components": "5.0.0",
     "fast-uri":"2.1.0",
-    "**/styled-components": "5.0.0"
+    "**/babel-loader": "8.2.2"
+    
   },
   "devDependencies": {
     "husky": "7.0.4",
@@ -66,7 +66,7 @@
   "dependencies": {
     "lodash": "4.17.21",
     "microbundle-crl": "0.13.11",
-    "@upyog/digit-ui-react-components": "1.8.4",
+    "@egovernments/digit-ui-react-components": "1.8.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "6.15.8",

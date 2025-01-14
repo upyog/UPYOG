@@ -2,9 +2,6 @@
 FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
-
-RUN yarn add @upyog/digit-ui-react-components@1.8.4
-
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=8168"
@@ -16,7 +13,7 @@ RUN ls -lah
 RUN cd web/ \
     &&  ./install-deps.sh \
     && yarn install \
-    && yarn build
+    && yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine

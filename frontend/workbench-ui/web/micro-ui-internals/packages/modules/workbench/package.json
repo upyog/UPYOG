@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-workbench",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "description": "Workbench",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
@@ -18,7 +18,7 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-    "@upyog/digit-ui-react-components": "1.8.4",
+    "@egovernments/digit-ui-react-components": "1.8.4",
     "@rjsf/core": "5.10.0",
     "@rjsf/utils": "5.10.0",
     "@rjsf/validator-ajv8": "5.10.0",
@@ -31,14 +31,6 @@
     "react-router-dom": "5.3.0",
     "react-select": "5.7.4",
     "xlsx": "0.17.5"
-  },
-  "resolutions":  {
-    "**/babel-loader": "8.2.2",
-    "**/@babel/core": "7.14.0",
-    "**/@babel/preset-env": "7.14.0",
-    "**/@babel/plugin-transform-modules-commonjs": "7.14.0",
-    "**/polished":"4.2.2",
-    "**/styled-components": "5.0.0"
   },
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",

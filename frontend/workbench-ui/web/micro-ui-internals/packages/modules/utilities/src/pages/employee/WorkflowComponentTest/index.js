@@ -1,4 +1,4 @@
-import { WorkflowActions, WorkflowTimeline, Card } from "@upyog/digit-ui-react-components";
+import { WorkflowActions, WorkflowTimeline, Card } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
 //works-ui/employee/dss/workflow?tenantId=pg.citya&applicationNo=WO/2022-23/000375&businessService=contract-approval-mukta&moduleCode=contract

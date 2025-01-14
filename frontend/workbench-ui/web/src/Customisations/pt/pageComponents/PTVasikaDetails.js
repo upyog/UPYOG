@@ -1,4 +1,4 @@
-import { CardLabel, CitizenInfoLabel, FormStep, LabelFieldPair, TextInput,CardLabelError } from "@upyog/digit-ui-react-components";
+import { CardLabel, CitizenInfoLabel, FormStep, LabelFieldPair, TextInput,CardLabelError } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 var validation ={};
 const PTVasikaDetails = ({ t, config, onSelect, value, userType, formData }) => {

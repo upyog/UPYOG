@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, DocumentIcon, PMBIcon } from "@upyog/digit-ui-react-components";
+import { Card, DocumentIcon, PMBIcon } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
