@@ -83,6 +83,19 @@ public class CommunityHallBookingUtil {
 		String formattedDate = date.format(formatter);
 		return formattedDate;
 	}
+	
+	public static String convertDateFormat(String date, String dateFormat) {
+		if(dateFormat == null) {
+			dateFormat = DATE_FORMAT;
+		}
+		LocalDate localDate = parseStringToLocalDate(date);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+		// Format the LocalDate
+		String formattedDate = localDate.format(formatter);
+		return formattedDate;
+	}
+	
+	
 
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
 		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))

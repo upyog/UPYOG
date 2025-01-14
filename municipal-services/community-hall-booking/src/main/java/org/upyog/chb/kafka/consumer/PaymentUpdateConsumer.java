@@ -10,7 +10,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
-import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.service.PaymentNotificationService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 
@@ -31,7 +30,7 @@ public class PaymentUpdateConsumer {
 	public void paymentSuccess(final HashMap<String, Object> record,
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
-		log.info("CHB Appplication Received to update workflow after PAY for topic : " + topic);
+		log.info("CHB Appplication Received to update status after payment success : " + topic);
 		//TODO: need to remove after testing
 		log.info("Strigifed json : " + CommunityHallBookingUtil.beuatifyJson(record));
 		try {
