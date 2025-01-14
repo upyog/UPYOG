@@ -31,6 +31,7 @@ import org.upyog.adv.validator.BookingValidator;
 import org.upyog.adv.web.models.AdvertisementDraftDetail;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
+import org.upyog.adv.web.models.AdvertisementSlotAvailabilityResponse;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.ApplicantDetail;
 import org.upyog.adv.web.models.BookingDetail;
@@ -87,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
 		// ENcrypt PII data of applicant
 		encryptionService.encryptObject(bookingRequest);
 
-	    demandService.createDemand(bookingRequest, mdmsData, true);
+	  //  demandService.createDemand(bookingRequest, mdmsData, true);
 
 		// 4.Persist the request using persister service
 		bookingRepository.saveBooking(bookingRequest);
@@ -207,13 +208,14 @@ public class BookingServiceImpl implements BookingService {
 	        // Insert the timer for all criteria at once
 	        paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
 	        log.info("Inserted booking ID for timer for all criteria.");
-	    }else {
-	    String draftId = getDraftId(allAvailabilityDetails, requestInfo);
-	    if(draftId != null) {
-	    	bookingRepository.getAndInsertTimerData(draftId, criteriaList, requestInfo, allAvailabilityDetails.get(0));
-
-		}
 	    }
+//	    else {
+//	    String draftId = getDraftId(allAvailabilityDetails, requestInfo);
+//	    if(draftId != null) {
+//	    	bookingRepository.getAndInsertTimerData(draftId, criteriaList, requestInfo, allAvailabilityDetails.get(0));
+//
+//		}
+//	    }
 	   
 	    return allAvailabilityDetails;
 	}
@@ -300,8 +302,11 @@ public class BookingServiceImpl implements BookingService {
 				boolean isCreatedByCurrentUser = detail.getUuid().equals(requestInfo.getUserInfo().getUuid());
 				boolean existingBookingIdCheck =
 				detail.getBookingId().equals(criteria.getBookingId());
+				
+				 String draftId = getDraftId(availabilityDetailsResponse, requestInfo);
+				 boolean draftIdCheck = draftId.equals(criteria.getDraftId());
 
-				if (isCreatedByCurrentUser) {
+				if (isCreatedByCurrentUser && existingBookingIdCheck || (draftIdCheck)) {
 					log.info("inside booking created by me with same booking id ");
 					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
 				} else {
