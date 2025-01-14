@@ -298,10 +298,10 @@ public class BookingServiceImpl implements BookingService {
 				AdvertisementSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
 
 				boolean isCreatedByCurrentUser = detail.getUuid().equals(requestInfo.getUserInfo().getUuid());
-				 boolean existingBookingIdCheck =
-				 detail.getBookingId().equals(criteria.getBookingId());
+				boolean existingBookingIdCheck =
+				detail.getBookingId().equals(criteria.getBookingId());
 
-				if (isCreatedByCurrentUser && existingBookingIdCheck) {
+				if (isCreatedByCurrentUser) {
 					log.info("inside booking created by me with same booking id ");
 					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
 				} else {
@@ -315,6 +315,7 @@ public class BookingServiceImpl implements BookingService {
 
 	}
 	
+	@Override
 	public String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
             RequestInfo requestInfo) {
 		List<AdvertisementDraftDetail> draftData = bookingRepository.getDraftData(requestInfo.getUserInfo().getUuid());
