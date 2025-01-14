@@ -60,7 +60,7 @@ export const ASSETSearch = {
     return response.Assets[0];
   },
   RegistrationDetails: ({ Assets: response, combinedData, t , applicationDetails}) => {
-console.log('first:= ', applicationDetails);
+ 
     const formatDate = (epochTime) => {
       if (!epochTime) return '';
       const date = new Date(epochTime);
@@ -157,12 +157,21 @@ console.log('first:= ', applicationDetails);
         },
       },
       {
-        title:"AST_Depriciation",
+        title: "AST_Depriciation",
         asSectionHeader: true,
         isTable: true,
-        headers: [`${t("Start Date")}` , `${t("End Date")}`, "Depreciation Value", "Book Value", "Rate", "Old Book Value"],
+        headers: slotlistRows.length > 0
+          ? [
+              `${t("Start Date")}`,
+              `${t("End Date")}`,
+              "Depreciation Value",
+              "Book Value",
+              "Rate",
+              "Old Book Value"
+            ]
+          : [`${t("AST_NODEPRECIATIONDATA")}`],
         tableRows: slotlistRows,
-      },
+      }
     ];
   },
   applicationDetails: async (t, tenantId, applicationNo, userType, combinedData, args) => {

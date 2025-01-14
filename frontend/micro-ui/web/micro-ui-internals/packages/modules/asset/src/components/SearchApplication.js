@@ -62,7 +62,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
     },
   });
 
-  console.log('comming from mdms :- ', actionDetail);
+ 
 
   const printReport = async (applicationNo) => {
 
@@ -203,7 +203,6 @@ catch (error) {
           };
         }, []);
         const actionOptions = collectAction(row);
-        console.log('Testing :- ', actionOptions);
      
         // const actionOptions = [
         //   {
@@ -343,13 +342,14 @@ catch (error) {
         doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
         doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
         doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+        doc.text(`Track: ${row.location}`, 70, 70 + yOffset);
         // doc.text(`Track Location: ${row.location}`, 70, 60 + yOffset);
 
 
         //  Add Track Location as a clickable hyperlink
-        const locationURL = `${base_url}/maps/search/${row.location}`;
-        doc.text("Track Location:", 70, 70 + yOffset); // Add label
-        doc.textWithLink(locationURL, 70, 75 + yOffset, { url: locationURL }); // Add clickable URL
+        // const locationURL = `${row.location}`;
+        // doc.text("Track:", 70, 70 + yOffset); // Add label
+        // doc.textWithLink(locationURL, 70, 75 + yOffset, { url: locationURL }); // Add clickable URL
 
         // Add horizontal line
         doc.line(10, 80 + yOffset, 200, 80 + yOffset);
