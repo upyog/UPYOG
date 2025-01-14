@@ -66,4 +66,9 @@ public interface BookingRepository {
 	void getTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
 			AdvertisementSlotAvailabilityDetail detail,  List<AdvertisementSlotSearchCriteria> criteriaList);
 	
+	void getAndInsertTimerData(String draftId, 
+            List<AdvertisementSlotSearchCriteria> criteriaList, 
+            RequestInfo requestInfo, 
+            AdvertisementSlotAvailabilityDetail availabilityDetailsResponse);
+	
 }

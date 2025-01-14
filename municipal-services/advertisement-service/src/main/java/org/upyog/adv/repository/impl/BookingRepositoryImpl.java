@@ -219,10 +219,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 	    availabilityDetailsResponse.setTimerValue(timerValue / 1000); // Convert milliseconds to seconds
 	}
 
-	private void getAndInsertTimerData(String draftId, 
+	@Override
+	public void getAndInsertTimerData(String draftId, 
 	                              List<AdvertisementSlotSearchCriteria> criteriaList, 
 	                              RequestInfo requestInfo, 
 	                              AdvertisementSlotAvailabilityDetail availabilityDetailsResponse) {
+
 	    for (AdvertisementSlotSearchCriteria criteria : criteriaList) {
 	        getTimerData(draftId, criteria, requestInfo, availabilityDetailsResponse, criteriaList);
 	    }
@@ -256,6 +258,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 		}} */
 	
 	
+	    @Override
 		public void getTimerData(String bookingId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
 			            AdvertisementSlotAvailabilityDetail availabilityDetailsResponse,
 			            List<AdvertisementSlotSearchCriteria> criteriaList) {
@@ -270,7 +273,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 			   slot.getBookingEndDate().equals(criteria.getBookingEndDate())
 			);
 			
-			if (!dateMatched) {
+			if (!dateMatched ) {
 			log.info("Dates do not match, deleting old entry: {}", bookingId);
 			
 			String draftDeleteQuery = AdvertisementBookingQueryBuilder.DraftID_DELETE_QUERY;
