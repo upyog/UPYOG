@@ -28,6 +28,7 @@ import org.upyog.adv.service.PaymentTimerService;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.util.MdmsUtil;
 import org.upyog.adv.validator.BookingValidator;
+import org.upyog.adv.web.models.AdvertisementDraftDetail;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
@@ -99,8 +100,13 @@ public class BookingServiceImpl implements BookingService {
 		BookingDetail bookingDetails = encryptionService.decryptObject(bookingRequest.getBookingApplication(),
 				bookingRequest.getRequestInfo());
 
-		List<Map<String, Object>> draftData = bookingRepository.getDraftData(uuid);
-		String draftIdFromDraft = (String) draftData.get(0).get("draft_id");
+		List<AdvertisementDraftDetail> draftData = bookingRepository.getDraftData(uuid);
+		
+		String draftIdFromDraft = "";
+
+		if (draftData != null && !draftData.isEmpty()) {
+		     draftIdFromDraft = draftData.get(0).getDraftId(); 
+		}
 
 		bookingRepository.updateTimerBookingId(bookingId, bookingDetails.getBookingNo(), draftIdFromDraft);
 
@@ -189,7 +195,7 @@ public class BookingServiceImpl implements BookingService {
 	    for (AdvertisementSlotSearchCriteria criteria : criteriaList) {
 	        List<AdvertisementSlotAvailabilityDetail> availabilityDetails = checkAdvertisementSlotAvailability(criteria, requestInfo);
 	        allAvailabilityDetails.addAll(availabilityDetails);
-	      
+	       
 	    }
 
 	    boolean isTimerRequiredForAnyCriteria = criteriaList.stream()
@@ -201,8 +207,14 @@ public class BookingServiceImpl implements BookingService {
 	        // Insert the timer for all criteria at once
 	        paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
 	        log.info("Inserted booking ID for timer for all criteria.");
-	    }
+	    }else {
+	    String draftId = getDraftId(allAvailabilityDetails, requestInfo);
+	    if(draftId != null) {
+	    	bookingRepository.getAndInsertTimerData(draftId, criteriaList, requestInfo, allAvailabilityDetails.get(0));
 
+		}
+	    }
+	   
 	    return allAvailabilityDetails;
 	}
 
@@ -250,9 +262,7 @@ public class BookingServiceImpl implements BookingService {
 			}
 
 		});
-
-		//updateSlotAvailaibilityStatus(availabiltityDetailsResponse, criteria, requestInfo);
-
+		
 		log.info("Availability details response after updating status: " + availabiltityDetailsResponse);
 
 		return availabiltityDetailsResponse;
@@ -288,10 +298,10 @@ public class BookingServiceImpl implements BookingService {
 				AdvertisementSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
 
 				boolean isCreatedByCurrentUser = detail.getUuid().equals(requestInfo.getUserInfo().getUuid());
-				// boolean existingBookingIdCheck =
-				// detail.getBookingId().equals(criteria.getBookingId());
+				 boolean existingBookingIdCheck =
+				 detail.getBookingId().equals(criteria.getBookingId());
 
-				if (isCreatedByCurrentUser) {
+				if (isCreatedByCurrentUser && existingBookingIdCheck) {
 					log.info("inside booking created by me with same booking id ");
 					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
 				} else {
@@ -305,14 +315,17 @@ public class BookingServiceImpl implements BookingService {
 
 	}
 	
-//	@Override
-//	public String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
-//			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo) {
-//		
-//	String draftId = updateSlotAvailaibilityStatusFromTimer(availabiltityDetailsResponse, criteria, RequestInfo);
-//
-//	return draftId != null && !draftId.isEmpty() ? draftId : null;
-//	}
+	public String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
+            RequestInfo requestInfo) {
+		List<AdvertisementDraftDetail> draftData = bookingRepository.getDraftData(requestInfo.getUserInfo().getUuid());
+
+		if (draftData != null && !draftData.isEmpty()) {
+		    String draftId = draftData.get(0).getDraftId(); 
+		    return (draftId != null && !draftId.isEmpty()) ? draftId : null;
+		}
+		return null;
+	}
+
 
 	private AdvertisementSlotAvailabilityDetail createAdvertisementSlotAvailabiltityDetail(
 			AdvertisementSlotSearchCriteria criteria, LocalDate date) {
@@ -426,15 +439,22 @@ public class BookingServiceImpl implements BookingService {
 			// Update existing draft
 			enrichmentService.enrichUpdateAdvertisementDraftApplicationRequest(bookingRequest);
 			bookingRepository.updateDraftApplication(bookingRequest);
-		} else {
+		}else {
+		    enrichmentService.enrichCreateAdvertisementDraftApplicationRequest(bookingRequest);
+		    
+		    List<AdvertisementDraftDetail> draftData = bookingRepository
+		            .getDraftData(bookingRequest.getRequestInfo().getUserInfo().getUuid());
+		    
+		   
+		    if (draftData != null && !draftData.isEmpty()) {
+		        String draftIdInDraft = draftData.get(0).getDraftId(); 
+		        
+		        if (draftIdInDraft == null) {
+		            bookingRepository.saveDraftApplication(bookingRequest);
+		        }
+		    }
+		
 
-			enrichmentService.enrichCreateAdvertisementDraftApplicationRequest(bookingRequest);
-			List<Map<String, Object>> draftData = bookingRepository
-					.getDraftData(bookingRequest.getRequestInfo().getUserInfo().getUuid());
-			String draftIdInDraft = (String) draftData.get(0).get("draft_id");
-			if (draftIdInDraft == null) {
-				bookingRepository.saveDraftApplication(bookingRequest);
-			}
 		}
 
 		// Return the enriched booking application object
