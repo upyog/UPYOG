@@ -28,7 +28,7 @@
       const [bookingDetails,setBookingDetails]=useState("");
       const [showModal,setShowModal] = useState(false)
       const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-      const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
+      const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
     
       let menu = [];
 

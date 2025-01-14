@@ -923,6 +923,23 @@ const getWSTaxHeadMasterCritera = (tenantId, moduleCode, type) => ({
   },
 });
 
+const getMasterDataCategory = (tenantId, moduleCode, masterName, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: masterName,
+          },
+        ],
+      },
+    ],
+  },
+});
+
 const getHowItWorksJSON = (tenantId) => ({
       moduleDetails: [
       {
@@ -991,6 +1008,51 @@ const GetEgovLocations = (MdmsRes) => {
     name: obj.localname,
     i18nKey: obj.localname,
   }));
+};
+
+const getChbCommunityHalls = (MdmsRes) => {
+  return MdmsRes["CHB"].CommunityHalls.filter((CommunityHalls) => CommunityHalls.active).map((chbHallDetails) => {
+    return {
+      ...chbHallDetails,
+      i18nKey: `CHB_COMMUNITY_HALLS_${chbHallDetails.name}`,
+    };
+  });
+};
+
+const getChbHallCode = (MdmsRes) => {
+  return MdmsRes["CHB"].HallCode.filter((HallCode) => HallCode.active).map((chbHallCodeDetails) => {
+    return {
+      ...chbHallCodeDetails,
+      i18nKey: `CHB_HALL_CODE_${chbHallCodeDetails.code}`,
+    };
+  });
+};
+
+const getPetType = (MdmsRes) => {
+  return MdmsRes["PetService"].PetType.filter((PetType) => PetType.active).map((petDetails) => {
+    return {
+      ...petDetails,
+      i18nKey: `PTR_PET_TYPE_${petDetails.code}`,
+    };
+  });
+};
+
+const getBreedType = (MdmsRes) => {
+  return MdmsRes["PetService"].BreedType.filter((BreedType) => BreedType.active).map((breedDetails) => {
+    return {
+      ...breedDetails,
+      i18nKey: `PTR_BREED_TYPE_${breedDetails.code}`,
+    };
+  });
+};
+
+const PTRGenderType = (MdmsRes) => {
+  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((ptrgenders) => {
+    return {
+      ...ptrgenders,
+      i18nKey: `PTR_GENDER_${ptrgenders.code}`,
+    };
+  });
 };
 
 const GetServiceDefs = (MdmsRes, moduleCode) => MdmsRes[`RAINMAKER-${moduleCode}`].ServiceDefs.filter((def) => def.active);
@@ -1409,6 +1471,16 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return GetTripNumber(MdmsRes);
     case "ReceivedPaymentType":
       return GetReceivedPaymentType(MdmsRes);
+    case "ChbCommunityHalls":
+      return getChbCommunityHalls(MdmsRes);
+    case "ChbHallCode":
+      return getChbHallCode(MdmsRes);
+    case "PetType":
+      return getPetType(MdmsRes);
+    case "BreedType":
+      return getBreedType(MdmsRes);
+    case "GenderType":
+      return PTRGenderType(MdmsRes);
     default:
       return MdmsRes;
   }
@@ -1735,5 +1807,23 @@ export const MdmsServiceV2 = {
   },
   getStaticDataJSON: (tenantId) => {
     return MdmsServiceV2.call(tenantId, getStaticData());
-  }
+  },
+
+
+  /**
+ * getMasterData - Fetches master data based on the provided criteria.
+ * 
+ * @param {string} tenantId - The ID of the tenant for which the data is being fetched.
+ * @param {string} moduleCode - The module code associated with the master data.
+ * @param {string} masterName - The name of the master data to be fetched.
+ * @param {string} type - The type to be passed in switch case for fetching filtered data.
+ * 
+ * @description
+ * This function retrieves master data by calling the `MdmsServiceV2.getDataByCriteria` method.
+ * It constructs the criteria for fetching the data using the `getMasterDataCategory` function,
+ * which is passed the tenantId, moduleCode, masterName, and type as parameters.
+ */
+  getMasterData: (tenantId, moduleCode, masterName, type) => {
+    return MdmsServiceV2.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode);
+  },
 };

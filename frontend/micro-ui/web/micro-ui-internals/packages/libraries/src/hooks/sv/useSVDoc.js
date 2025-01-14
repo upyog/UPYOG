@@ -1,13 +1,13 @@
-import { MdmsService } from "../../services/elements/MDMS";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 import { useQuery } from "react-query";
 
 const useSVDoc = (tenantId, moduleCode, type, config = {}) => {
   
   const useSVDocumentsRequiredScreen = () => {
-    return useQuery("SV_DOCUMENT_REQ_SCREEN", () => MdmsService.getSVDocuments(tenantId, moduleCode), config);
+    return useQuery("SV_DOCUMENT_REQ_SCREEN", () => MdmsServiceV2.getMasterData(tenantId, moduleCode, "Documents"), config);
   };
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
+    return useQuery([tenantId, moduleCode, type], () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config);
   };
 
   switch (type) {

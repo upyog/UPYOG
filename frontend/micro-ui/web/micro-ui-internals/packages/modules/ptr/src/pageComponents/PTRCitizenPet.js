@@ -11,7 +11,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, renewApplicati
     let validation = {};
 
     // custom hook for getting petcolor data from mdms and format it according to the dropdown need
-    let { data: pet_color } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
+    let { data: pet_color } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "PetService", [{ name: "PetColor" }],
     {
       select: (data) => {
         const formattedData = data?.["PetService"]?.["PetColor"].map((petone) => {

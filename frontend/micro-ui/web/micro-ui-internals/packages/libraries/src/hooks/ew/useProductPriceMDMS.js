@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 
 const useProductPriceMDMS = (tenantId, moduleCode, type, config = {}) => {
    const useProductPrices = () => {
-    return useQuery("PRODUCT_PRICES", () => MdmsService.EWProductPrice(tenantId, moduleCode), config);
+    return useQuery("PRODUCT_PRICES", () => MdmsServiceV2.getMasterData(tenantId, moduleCode, "ProductName"), config);
   };
 
   switch (type) {
