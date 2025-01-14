@@ -209,13 +209,13 @@ public class BookingServiceImpl implements BookingService {
 	        paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
 	        log.info("Inserted booking ID for timer for all criteria.");
 	    }
-//	    else {
-//	    String draftId = getDraftId(allAvailabilityDetails, requestInfo);
-//	    if(draftId != null) {
-//	    	bookingRepository.getAndInsertTimerData(draftId, criteriaList, requestInfo, allAvailabilityDetails.get(0));
-//
-//		}
-//	    }
+/*	    else {
+	    String draftId = getDraftId(allAvailabilityDetails, requestInfo);
+	    if(draftId != null) {
+	    	bookingRepository.getAndInsertTimerData(draftId, criteriaList, requestInfo, allAvailabilityDetails.get(0));
+
+		}
+	    } */  
 	   
 	    return allAvailabilityDetails;
 	}
