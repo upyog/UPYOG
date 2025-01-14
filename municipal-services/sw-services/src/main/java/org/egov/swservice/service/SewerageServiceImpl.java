@@ -100,18 +100,26 @@ public class SewerageServiceImpl implements SewerageService {
 	 */
 
 	@Override
-	public List<SewerageConnection> createSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
+	public List<SewerageConnection> createFullUpdateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		int reqType = SWConstants.CREATE_APPLICATION;
-		
+
+		Boolean isMigration=false;
+
+
 		if (sewerageConnectionRequest.isDisconnectRequest()) {
 			reqType = SWConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(sewerageConnectionRequest);
+		}
+		
+		if(sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails().toString().contains("isMigrated"))
+		{
+			isMigration=true;
 		}
 		else if (sewerageConnectionRequest.isReconnectRequest()) {
 			reqType = SWConstants.RECONNECTION;
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
-		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
+		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)&& !isMigration) {
 			List<SewerageConnection> prevSewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 			if (prevSewerageConnectionList.size() > 0) {
 				for (SewerageConnection previousConnectionsListObj : prevSewerageConnectionList) {
@@ -143,31 +151,31 @@ public class SewerageServiceImpl implements SewerageService {
 		validateProperty.validatePropertyFields(property,sewerageConnectionRequest.getRequestInfo());
 		mDMSValidator.validateMasterForCreateRequest(sewerageConnectionRequest);
 		enrichmentService.enrichSewerageConnection(sewerageConnectionRequest, reqType);
+		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
 		userService.createUser(sewerageConnectionRequest);
 		// call work-flow
+		if (!isMigration)
+		{
 		if (config.getIsExternalWorkFlowEnabled())
 			wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
-
+		}
 		/* encrypt here */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
 		/* encrypt here for connection holder details */
 		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
 
 		sewerageDao.saveSewerageConnection(sewerageConnectionRequest);
+		String previousApplicationStatus = workflowService.getApplicationStatus(
+				sewerageConnectionRequest.getRequestInfo(),
+				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(), config.getBusinessServiceValue());
+		BusinessService businessService = workflowService.getBusinessService(config.getBusinessServiceValue(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
+				sewerageConnectionRequest.getRequestInfo());
 
-		/* decrypt here 
-		sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnectionRequest.getSewerageConnection(), WNS_ENCRYPTION_MODEL, SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
-		//PlumberInfo masked during Create call of New Application
-		if (reqType == 0)
-			sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnectionRequest.getSewerageConnection(), WNS_PLUMBER_ENCRYPTION_MODEL, SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
-		//PlumberInfo unmasked during create call of Disconnect/Modify Applications
-		else
-			sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnectionRequest.getSewerageConnection(), "WnSConnectionPlumberDecrypDisabled", SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
+		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
+		sewerageDao.updateSewerageConnection(sewerageConnectionRequest, isStateUpdatable);
 
-		List<OwnerInfo> connectionHolders = sewerageConnectionRequest.getSewerageConnection().getConnectionHolders();
-		if (!CollectionUtils.isEmpty(connectionHolders))
-			sewerageConnectionRequest.getSewerageConnection().setConnectionHolders(encryptionDecryptionUtil.decryptObject(connectionHolders, WNS_OWNER_ENCRYPTION_MODEL, OwnerInfo.class, sewerageConnectionRequest.getRequestInfo()));
-*/
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
 

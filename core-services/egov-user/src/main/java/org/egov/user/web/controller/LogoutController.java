@@ -28,7 +28,7 @@ public class LogoutController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/_logout")
+    @PostMapping("/_logout_old")
     public ResponseInfo deleteToken(@RequestBody TokenWrapper tokenWrapper) throws Exception {
         String accessToken = tokenWrapper.getAccessToken();
         OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
@@ -36,6 +36,14 @@ public class LogoutController {
         return new ResponseInfo("", "", System.currentTimeMillis(), "", "", "Logout successfully");
     }
 
+    
+    @PostMapping("/_logout")
+    public ResponseInfo deleteToken(@RequestParam("access_token") String accessToken) throws Exception {
+      // String accessToken = tokenWrapper.getAccessToken();
+        OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
+        tokenStore.removeAccessToken(redisToken);
+        return new ResponseInfo("", "", System.currentTimeMillis(), "", "", "Logout successfully");
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleError(Exception ex) {
         ex.printStackTrace();
