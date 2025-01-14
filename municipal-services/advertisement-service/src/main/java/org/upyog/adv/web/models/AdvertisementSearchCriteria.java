@@ -36,6 +36,9 @@ public class AdvertisementSearchCriteria {
     
     @JsonProperty("applicantName")
     private String applicantName;
+    
+    @JsonProperty("faceArea")
+    private String faceArea;
 
     @JsonProperty("bookingNo")
     private String bookingNo;

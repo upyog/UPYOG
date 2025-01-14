@@ -29,7 +29,8 @@ public class AdvertisementBookingQueryBuilder {
 					+ "landmark, city, city_code, pincode, street_name, locality, locality_code \n"
 					+ "FROM public.eg_adv_booking_detail ecbd \n"
 					+ "join public.eg_adv_applicant_detail appl on ecbd.booking_id = appl.booking_id \n"
-					+ "join public.eg_adv_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id ");
+					+ "join public.eg_adv_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id");
+				  
 
 	private static final String slotDetailsQuery = "select * from public.eg_adv_cart_detail where booking_id in (";
 
@@ -79,8 +80,6 @@ public class AdvertisementBookingQueryBuilder {
 		    + " WHERE booking_date >= ?::DATE "
 		    + " AND booking_date <= ?::DATE ";
 		    
-
-	
 	private static final String FETCH_BOOKINGID_TO_DELETE = "SELECT booking_id FROM eg_adv_payment_timer WHERE ? - createdtime > ?";
 	
 	public static final String FETCH_DRAFTID_TO_DELETE = "SELECT draft_id FROM eg_adv_draft_detail WHERE ? - createdtime > ?";
@@ -207,108 +206,104 @@ public class AdvertisementBookingQueryBuilder {
 	 * @param preparedStmtList values to be replaced on the query
 	 * @return Final Search Query
 	 */
+
 	public String getAdvertisementSearchQuery(AdvertisementSearchCriteria criteria, List<Object> preparedStmtList) {
-		StringBuilder builder;
+		StringBuilder builder = criteria.isCountCall() ? new StringBuilder(bookingDetailsCountCount)
+				: new StringBuilder(bookingDetailsQuery);
 
-		if (criteria.isCountCall()) {
-			builder = new StringBuilder(bookingDetailsCountCount);
-		} else {
-			builder = new StringBuilder(bookingDetailsQuery);
-		}
+		builder.append(" join public.eg_adv_cart_detail ecsd ON ecsd.booking_id = ecbd.booking_id ");
 
-		if (criteria.getFromDate() != null || criteria.getToDate() != null) {
-			builder.append(" join public.eg_adv_cart_detail ecsd ON ecsd.booking_id = ecbd.booking_id ");
-		}
-
+		// Tenant ID
 		if (criteria.getTenantId() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
 			if (criteria.getTenantId().split("\\.").length == 1) {
-
-				addClauseIfRequired(preparedStmtList, builder);
 				builder.append(" ecbd.tenant_id like ?");
 				preparedStmtList.add('%' + criteria.getTenantId() + '%');
 			} else {
-				addClauseIfRequired(preparedStmtList, builder);
 				builder.append(" ecbd.tenant_id=? ");
 				preparedStmtList.add(criteria.getTenantId());
 			}
 		}
-		List<String> ids = criteria.getBookingIds();
-		if (!CollectionUtils.isEmpty(ids)) {
+
+		// Booking IDs
+		if (!CollectionUtils.isEmpty(criteria.getBookingIds())) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.booking_id IN (").append(createQueryParams(ids)).append(")");
-			addToPreparedStatement(preparedStmtList, ids);
+			builder.append(" ecbd.booking_id IN (").append(createQueryParams(criteria.getBookingIds())).append(") ");
+			addToPreparedStatement(preparedStmtList, criteria.getBookingIds());
 		}
 
-		String bookingNo = criteria.getBookingNo();
-		if (bookingNo != null) {
-			List<String> applicationNos = Arrays.asList(bookingNo.split(","));
+		// Booking No
+		if (criteria.getBookingNo() != null) {
+			List<String> bookingNos = Arrays.asList(criteria.getBookingNo().split(","));
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.booking_no IN (").append(createQueryParams(applicationNos)).append(")");
-			addToPreparedStatement(preparedStmtList, applicationNos);
+			builder.append(" ecbd.booking_no IN (").append(createQueryParams(bookingNos)).append(")");
+			addToPreparedStatement(preparedStmtList, bookingNos);
 		}
 
-		String status = criteria.getStatus();
-		if (status != null) {
+		// Status
+		if (criteria.getStatus() != null) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.booking_status =  ? ");
-			preparedStmtList.add(status);
-		}
-		
-		String applicantName = criteria.getApplicantName();
-		if (applicantName != null) {
-		    applicantName = applicantName.trim();
-		    addClauseIfRequired(preparedStmtList, builder);
-		    builder.append(" appl.applicant_name = ? ");
-		    preparedStmtList.add(applicantName);
+			builder.append(" ecbd.booking_status = ? ");
+			preparedStmtList.add(criteria.getStatus());
 		}
 
+		// Applicant Name
+		if (criteria.getApplicantName() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" appl.applicant_name = ? ");
+			preparedStmtList.add(criteria.getApplicantName().trim());
+		}
 
-		String mobileNo = criteria.getMobileNumber();
-		if (mobileNo != null) {
-			List<String> mobileNos = Arrays.asList(mobileNo.split(","));
+		// Face Area
+		if (criteria.getFaceArea() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" ecsd.face_area = ? ");
+			preparedStmtList.add(criteria.getFaceArea());
+		}
+
+		// Mobile Numbers
+		if (criteria.getMobileNumber() != null) {
+			List<String> mobileNos = Arrays.asList(criteria.getMobileNumber().split(","));
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" appl.applicant_mobile_no IN (").append(createQueryParams(mobileNos)).append(")");
 			addToPreparedStatement(preparedStmtList, mobileNos);
 		}
 
-		// createdby search criteria
-		List<String> createdBy = criteria.getCreatedBy();
-		if (!CollectionUtils.isEmpty(createdBy)) {
-
+		// Created By
+		if (!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecbd.createdby IN (").append(createQueryParams(createdBy)).append(")");
-			addToPreparedStatement(preparedStmtList, createdBy);
+			builder.append(" ecbd.createdby IN (").append(createQueryParams(criteria.getCreatedBy())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
 		}
 
-		// From booking date to booking date search criteria
-		final String DATE_CAST = " ?::DATE ";
-		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
-			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecsd.booking_date BETWEEN ").append(DATE_CAST).append(" AND ").append(DATE_CAST);
-			preparedStmtList.add(criteria.getFromDate());
-			preparedStmtList.add(criteria.getToDate());
-		} else if (criteria.getFromDate() != null && criteria.getToDate() == null) {
-			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecsd.booking_date >= ").append(DATE_CAST);
-			preparedStmtList.add(criteria.getFromDate());
-		} else if (criteria.getFromDate() == null && criteria.getToDate() != null) {
-			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" ecsd.booking_date <= ").append(DATE_CAST);
-			preparedStmtList.add(criteria.getToDate());
-		}
+		// Date Filtering
+		appendDateFilters(criteria, preparedStmtList, builder);
 
-		String query = null;
-
-		if (criteria.isCountCall()) {
-			// pagination attributes not required for count query
-			query = builder.toString();
-		} else {
-			// Add pagination attributes for booking details query
-			query = addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
-		}
+		// Pagination
+		String query = criteria.isCountCall() ? builder.toString()
+				: addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 
 		return query;
 	}
+
+
+	private void appendDateFilters(AdvertisementSearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
+		final String DATE_CAST = "TO_DATE(CAST(? AS TEXT), 'YYYY-MM-DD')";
+		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
+		    addClauseIfRequired(preparedStmtList, builder);
+		    builder.append(" (ecsd.booking_date >= ").append(DATE_CAST)
+		           .append(" AND ecsd.booking_date <= ").append(DATE_CAST)
+		           .append(" OR TO_TIMESTAMP(ecbd.application_date / 1000) >= ").append(DATE_CAST)
+		           .append(" AND TO_TIMESTAMP(ecbd.application_date / 1000) <= ").append(DATE_CAST).append(") ");
+		    preparedStmtList.add(criteria.getFromDate());
+		    preparedStmtList.add(criteria.getToDate());
+		    preparedStmtList.add(criteria.getFromDate());
+		    preparedStmtList.add(criteria.getToDate());
+		}
+
+
+	}
+
 
 	/**
 	 * add if clause to the Statement if required or else AND
