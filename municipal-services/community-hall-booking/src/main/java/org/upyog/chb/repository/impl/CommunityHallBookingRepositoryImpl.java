@@ -361,7 +361,6 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
      */
 	@Override
     public int updateBookingTimer(String bookingId) {
-       long createdTime = CommunityHallBookingUtil.getCurrentTimestamp();
        return jdbcTemplate.update(CommunityHallBookingQueryBuilder.UPADTE_BOOKING_PAYMENT_TIMER_VALUE_QUERY, "PENDING", bookingId);
     }
 
