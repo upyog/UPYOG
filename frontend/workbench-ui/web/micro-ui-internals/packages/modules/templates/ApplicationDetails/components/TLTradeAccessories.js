@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CardSubHeader, StatusTable, Row, CardSectionHeader } from "@upyog/digit-ui-react-components";
+import { CardSubHeader, StatusTable, Row, CardSectionHeader } from "@egovernments/digit-ui-react-components";
 
 function TLTradeAccessories({ units }) {
   const { t } = useTranslation();

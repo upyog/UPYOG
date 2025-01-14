@@ -7,7 +7,7 @@
 ## Install
 
 ```bash
-npm install --save @upyog/digit-ui-react-components
+npm install --save @egovernments/digit-ui-react-components
 ```
 
 ## Limitation
@@ -25,7 +25,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@upyog/digit-ui-react-components":"1.5.24",
+"@egovernments/digit-ui-react-components":"1.5.24",
 ```
 
 then navigate to App.js
@@ -38,7 +38,7 @@ Syntax for importing any component;
 
 ```jsx
 import React, { Component } from "react";
-import MyComponent from "@upyog/digit-ui-react-components";
+import MyComponent from "@egovernments/digit-ui-react-components";
 
 class Example extends Component {
   render() {
@@ -49,7 +49,7 @@ class Example extends Component {
 Syntax for the Inbox Composers
 
 ```jsx
-    import { InboxSearchComposer } from "@upyog/digit-ui-react-components";
+    import { InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 
     <React.Fragment>
       <Header className="works-header-search">{t(updatedConfig?.label)}</Header>
@@ -62,7 +62,7 @@ Syntax for the Inbox Composers
 Syntax for the FormComposersV2
 
 ```jsx
-    import { FormComposerV2 as FormComposer } from "@upyog/digit-ui-react-components";
+    import { FormComposerV2 as FormComposer } from "@egovernments/digit-ui-react-components";
 
    <React.Fragment>
       <Header >{t("CREATE_HEADER")}</Header>

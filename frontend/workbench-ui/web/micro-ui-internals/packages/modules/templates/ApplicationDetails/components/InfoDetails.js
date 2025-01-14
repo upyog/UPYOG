@@ -1,5 +1,5 @@
 import React from "react";
-import { InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { InfoBannerIcon } from "@egovernments/digit-ui-react-components";
 
 const EyeSvgINdex = ({ style }) => {
   return <span>

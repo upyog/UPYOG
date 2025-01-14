@@ -16,7 +16,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ReactTooltip from "react-tooltip";
 
@@ -47,7 +47,7 @@ const SubMenu = ({ item }) => {
   let leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
   const iconArr = item?.icon?.leftIcon?.split?.(":") || item?.leftIcon?.split?.(":");
   if (iconArr?.[0] == "dynamic") {
-    var IconComp = require("@upyog/digit-ui-react-components")?.[iconArr?.[1]];
+    var IconComp = require("@egovernments/digit-ui-react-components")?.[iconArr?.[1]];
     leftIcon = IconComp ? <IconComp /> : leftIcon;
   }
   const getModuleName = item?.moduleName?.replace(/[ -]/g, "_");

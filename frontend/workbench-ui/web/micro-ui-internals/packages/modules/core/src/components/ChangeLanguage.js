@@ -1,4 +1,4 @@
-import { CustomButton, Dropdown } from "@upyog/digit-ui-react-components";
+import { CustomButton, Dropdown } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 
 const ChangeLanguage = (prop) => {

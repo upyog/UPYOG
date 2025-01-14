@@ -1,4 +1,4 @@
-import { FormStep } from "@upyog/digit-ui-react-components";
+import { FormStep } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
 const SelectName = ({ config, onSelect, t, isDisabled }) => {

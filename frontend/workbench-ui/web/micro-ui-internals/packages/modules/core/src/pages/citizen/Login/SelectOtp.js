@@ -1,4 +1,4 @@
-import { CardLabelError, CardText, FormStep, OTPInput } from "@upyog/digit-ui-react-components";
+import { CardLabelError, CardText, FormStep, OTPInput } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 

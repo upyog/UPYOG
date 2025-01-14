@@ -47,13 +47,13 @@ import { Accessibility } from "@egovernments/digit-ui-svg-components";
 # from digit-ui-react-components
 
 ```jsx
-import { SVG } from "@upyog/digit-ui-react-components";
+import { SVG } from "@egovernments/digit-ui-react-components";
 
 <SVG.Accessibility />;
 
 or;
 
-import { SVG } from "@upyog/digit-ui-react-components";
+import { SVG } from "@egovernments/digit-ui-react-components";
 
 const { Accessibility } = SVG;
 <Accessibility />;

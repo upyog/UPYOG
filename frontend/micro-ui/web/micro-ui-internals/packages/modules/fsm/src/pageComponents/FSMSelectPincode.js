@@ -59,19 +59,38 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   }, [pincode]);
 
   function onChange(e) {
-    setPincode(e.target.value);
-    setPincodeServicability(null);
+    e.preventDefault();
+    const newInput = e.target.value; // Get the new input value
+    const updatedPincode = newInput; // Update directly based on the current input value
+  
+    setPincode(updatedPincode); // Update the state with the new value
+    setPincodeServicability(null); // Reset serviceability message
+  
     if (userType === "employee") {
-      const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item.toString() === e.target.value));
+      console.log("setPincodeServicability");
+      const foundValue = tenants?.find((obj) =>
+        obj.pincode?.find((item) => item.toString() === updatedPincode)
+      );
       if (foundValue) {
-        const city = tenants.filter((obj) => obj.pincode?.find((item) => item == e.target.value))[0];
-        onSelect(config.key, { ...formData.address, city, pincode: e.target.value, slum: null });
+        const city = tenants.find((obj) =>
+          obj.pincode?.find((item) => item === updatedPincode)
+        );
+        onSelect(config.key, {
+          ...formData.address,
+          city,
+          pincode: updatedPincode,
+          slum: null,
+        });
       } else {
-        onSelect(config.key, { ...formData.address, pincode: e.target.value });
+        onSelect(config.key, {
+          ...formData.address,
+          pincode: updatedPincode,
+        });
         setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
       }
     }
   }
+  
 
   const goNext = async (data) => {
     const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item == data?.pincode));

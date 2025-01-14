@@ -1,6 +1,6 @@
 import {
   BackButton, CloseSvg, CustomButton, DownloadImgIcon, Header, Loader, PDFSvg
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 

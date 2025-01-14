@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation, Route } from "react-router-dom";
-import { BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BackButton, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import DocumentCategories from "./Documents/DocumentCategories";
 import ViewDocument from "./Documents/ViewDocument";
 import Response from "./CitizenSurvey/Response";

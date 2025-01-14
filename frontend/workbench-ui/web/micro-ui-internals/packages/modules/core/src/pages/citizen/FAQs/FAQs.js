@@ -1,4 +1,4 @@
-import { BackButton, Header, Loader, SearchIconSvg } from "@upyog/digit-ui-react-components";
+import { BackButton, Header, Loader, SearchIconSvg } from "@egovernments/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import FaqComponent from "./FaqComponent";

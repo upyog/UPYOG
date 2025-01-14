@@ -1,4 +1,4 @@
-import { BackButton, Dropdown, FormComposer, FormComposerV2, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposer, FormComposerV2, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -133,7 +133,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         <Header />
       </FormComposerV2>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      {/* <div className="employee-login-home-footer" style={{ backgroundColor: "unset" }}>
+      <div className="employee-login-home-footer" style={{ backgroundColor: "unset" }}>
         <img
           alt="Powered by DIGIT"
           src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER_BW")}
@@ -142,7 +142,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
             window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
           }}
         />{" "}
-      </div> */}
+      </div>
     </Background>
   );
 };

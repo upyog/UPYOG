@@ -1,4 +1,4 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
 

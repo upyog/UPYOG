@@ -1,7 +1,7 @@
 import {
   AppContainer, Card,
   CardCaption, Header, Loader
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import DocumentCard from "../../../components/Documents/DocumentCard";

@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react"
-import { InboxComposer, DocumentIcon } from "@upyog/digit-ui-react-components";
+import { InboxComposer, DocumentIcon } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFieldsComponent";
 import SearchFormFieldsComponents from "./SearchFieldsComponents";

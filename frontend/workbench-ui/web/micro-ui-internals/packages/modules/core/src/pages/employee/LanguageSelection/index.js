@@ -1,4 +1,4 @@
-import { Card, CustomButton, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CustomButton, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -43,7 +43,7 @@ const LanguageSelection = () => {
         </div>
         <SubmitBar style={{ width: "100%" }} label={t(`CORE_COMMON_CONTINUE`)} onSubmit={handleSubmit} />
       </Card>
-      {/* <div className="EmployeeLoginFooter">
+      <div className="EmployeeLoginFooter">
         <img
           alt="Powered by DIGIT"
           src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER_BW")}
@@ -52,7 +52,7 @@ const LanguageSelection = () => {
             window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
           }}
         />{" "}
-      </div> */}
+      </div>
     </Background>
   );
 };

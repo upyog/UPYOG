@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 import { useTranslation } from "react-i18next";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 
 const customStyles = {
   control: (provided, state) => ({
