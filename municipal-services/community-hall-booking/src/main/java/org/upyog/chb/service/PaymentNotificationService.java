@@ -85,8 +85,9 @@ public class PaymentNotificationService {
 						.requestInfo(paymentRequest.getRequestInfo()).hallsBookingApplication(bookingDetail).build();
 				
 				//now updating booking status directly using jdbc template
+				//deleting booking timer
 				bookingService.updateBookingSynchronously(bookingRequest, paymentRequest.getPayment().getPaymentDetails().get(0), BookingStatusEnum.BOOKED,
-						false);
+						true);
 				
 			}
 		} catch (IllegalArgumentException e) {

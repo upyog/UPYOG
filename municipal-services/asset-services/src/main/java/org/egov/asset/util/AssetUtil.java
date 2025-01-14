@@ -74,7 +74,7 @@ public class AssetUtil {
      * @param request The AssetDisposalRequest to validate.
      */
     public void validateDisposalRequest(AssetDisposalRequest request) {
-        if (request.getAssetDisposal() == null || request.getAssetDisposal().getDisposalDate() <= 0) {
+        if (request.getAssetDisposal() == null) {
             throw new IllegalArgumentException("Invalid disposal data");
         }
     }

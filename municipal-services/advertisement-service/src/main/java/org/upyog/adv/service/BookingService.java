@@ -1,7 +1,6 @@
 package org.upyog.adv.service;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -37,12 +36,11 @@ public interface BookingService {
 	
 	public String deleteAdvertisementDraft(String draftId);
 
-//	String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse,
-//			AdvertisementSlotSearchCriteria criteria, RequestInfo RequestInfo);
-	
 	public boolean setSlotBookedFlag(List<AdvertisementSlotAvailabilityDetail> details);
 
 	List<AdvertisementSlotAvailabilityDetail> getAdvertisementSlotAvailability(
 			List<AdvertisementSlotSearchCriteria> criteriaList, RequestInfo requestInfo);
+
+	String getDraftId(List<AdvertisementSlotAvailabilityDetail> availabiltityDetailsResponse, RequestInfo requestInfo);
 
 }
