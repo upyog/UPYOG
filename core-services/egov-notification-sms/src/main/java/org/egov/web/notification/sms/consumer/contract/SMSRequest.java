@@ -1,6 +1,7 @@
 package org.egov.web.notification.sms.consumer.contract;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,6 +17,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 public class SMSRequest {
 
     @Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")

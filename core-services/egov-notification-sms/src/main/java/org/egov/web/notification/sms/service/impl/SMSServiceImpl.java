@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.egov.tracer.model.CustomException;
 import org.egov.web.notification.sms.constants.SMSConstants;
+import org.egov.web.notification.sms.consumer.contract.SMSRequest;
+import org.egov.web.notification.sms.models.OTPSentRequest;
 import org.egov.web.notification.sms.models.SMSSentRequest;
 import org.egov.web.notification.sms.models.SMSTemplate;
 import org.egov.web.notification.sms.models.SMSTemplateSearchCriteria;
@@ -39,25 +41,22 @@ public class SMSServiceImpl implements SMSService {
 
 	private static final String OTP_PLACEHOLDER = "{otp}";
 
-	private static final String SMS_BODY = OTP_PLACEHOLDER
-			+ " is One Time Password for RTI Portal. State Information Commission Himachal Pradesh";
-
 	@Override
-	public void sendSMS(SMSSentRequest smsSentRequest) {
+	public void sendOtp(OTPSentRequest otpSentRequest) {
 
-		if (!smsSentRequest.isValid()) {
+		if (!otpSentRequest.isValid()) {
 			throw new CustomException("INVALID REQUEST", "Mobile number or User uuid is missing.");
 		}
 
 		// validate user
-		UserSearchResponse userSearchResponse = userService.searchUser(smsSentRequest.getUserUuid());
+		UserSearchResponse userSearchResponse = userService.searchUser(otpSentRequest.getUserUuid());
 
 		if (null == userSearchResponse || CollectionUtils.isEmpty(userSearchResponse.getUserSearchResponseContent())) {
 			throw new CustomException("USER NOT FOUND", "User not found for given user uuid.");
 		}
 
 		// get otp from otp service
-		String otp = otpService.createOtp(smsSentRequest.getUserUuid());
+		String otp = otpService.createOtp(otpSentRequest.getUserUuid());
 
 		SMSTemplate smsTemplate = getSmsTemplate(SMSConstants.TEMPLATE_NAME_OTP);
 
@@ -68,7 +67,7 @@ public class SMSServiceImpl implements SMSService {
 		String smsBody = smsTemplate.getSmsBody();
 		smsBody = smsBody.replace(OTP_PLACEHOLDER, otp);
 
-		Sms sms = Sms.builder().mobileNumber(smsSentRequest.getNumber()).message(smsBody)
+		Sms sms = Sms.builder().mobileNumber(otpSentRequest.getNumber()).message(smsBody)
 				.templateId(smsTemplate.getTemplateId()).build();
 
 		baseSmsService.sendSMS(sms);
@@ -82,6 +81,40 @@ public class SMSServiceImpl implements SMSService {
 			smsTemplate = smsTemplates.get(0);
 		}
 		return smsTemplate;
+	}
+
+	@Override
+	public void sendSMS(SMSSentRequest smsSentRequest) {
+
+		if (!smsSentRequest.isValid()) {
+			throw new CustomException("INVALID REQUEST", "Mobile number or Message is missing.");
+		}
+
+		SMSTemplate smsTemplate = getSmsTemplate(smsSentRequest.getTemplateName());
+
+		if (null == smsTemplate) {
+			throw new CustomException("SMS TEMPLATE NOT FOUND", "SMS template not found.");
+		}
+
+		Sms sms = Sms.builder().mobileNumber(smsSentRequest.getMobileNumber()).message(smsSentRequest.getMessage())
+				.templateId(smsTemplate.getTemplateId()).build();
+
+		baseSmsService.sendSMS(sms);
+
+	}
+
+	@Override
+	public SMSRequest populateSMSRequest(SMSSentRequest smsSentRequest) {
+
+		SMSTemplate smsTemplate = getSmsTemplate(smsSentRequest.getTemplateName());
+
+		if (null == smsTemplate) {
+			throw new CustomException("SMS TEMPLATE NOT FOUND", "SMS template not found.");
+		}
+
+		return SMSRequest.builder().mobileNumber(smsSentRequest.getMobileNumber()).message(smsSentRequest.getMessage())
+				.category(smsSentRequest.getCategory()).expiryTime(smsSentRequest.getExpiryTime())
+				.templateId(smsTemplate.getTemplateId()).build();
 	}
 
 }
