@@ -65,9 +65,9 @@ public class BookingTimerService {
 	}
 	
 	@Transactional
-	public void deleteBookingTimer(String bookingId) {
+	public void deleteBookingTimer(String bookingId, boolean updateBookingStatus) {
 		log.info("Deleting timer entry for booking id : {}", bookingId);
-		bookingRepository.deleteBookingTimer(bookingId, true);
+		bookingRepository.deleteBookingTimer(bookingId, updateBookingStatus);
 	}
 
 	public List<BookingPaymentTimerDetails> getBookingFromTimerTable(RequestInfo info, CommunityHallSlotSearchCriteria criteria) {
