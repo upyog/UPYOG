@@ -6,6 +6,8 @@ import java.util.Map;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.web.models.CheckSumTransaction;
+import org.egov.pg.service.gateways.paytm.PaymentStatusResponse;
+
 
 
 
@@ -63,8 +65,4 @@ public interface Gateway {
 
     String generateRedirectFormData(Transaction transaction );
     
-    default String generateChecksum(CheckSumTransaction transaction,RequestInfo requestInfo ) {
-    	return null;
-    }
-
 }

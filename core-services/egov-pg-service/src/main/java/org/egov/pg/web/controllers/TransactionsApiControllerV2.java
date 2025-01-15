@@ -16,6 +16,7 @@ import org.egov.pg.web.models.ResponseInfo;
 import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionRequestV2;
 import org.egov.pg.web.models.CreateChecksums;
+import org.egov.pg.service.gateways.paytm.PaymentStatusResponse;
 import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +119,7 @@ public class TransactionsApiControllerV2 {
 		return new ResponseEntity<>(gateways, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/gateway/create/_payment")
+	@PostMapping(value = "/paytm/create/_payment")
 	public ResponseEntity<Map<String, List<String>>> createChecksum(@RequestBody CreateChecksums transactionRequests) {
 	    // Validate input
 	    if (transactionRequests == null || transactionRequests.getTransactions() == null || transactionRequests.getTransactions().isEmpty()) {
@@ -128,25 +129,44 @@ public class TransactionsApiControllerV2 {
 
 	    try {
 	        // Generate checksums
-	        List<String> checksums = transactionServiceV2.createChecksum(transactionRequests);
+	        List<String> transactions = transactionServiceV2.createTransaction(transactionRequests);
 
-	        if (checksums == null || checksums.isEmpty()) {
+	        if (transactions == null || transactions.isEmpty()) {
 	            log.warn("Checksum generation returned no values for the given transactions.");
 	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	        }
 
 	        // Create a response structure
 	        Map<String, List<String>> response = new TreeMap<>();
-	        response.put("checksums", checksums);
+	        response.put("TransactionIds", transactions);
 //	        response.put("status", "success");
 
-	        log.debug("Checksums generated successfully: " + checksums);
+	        log.debug("Checksums generated successfully: " + transactions);
 	        return new ResponseEntity<>(response, HttpStatus.OK);
 	    } catch (Exception e) {
 	        log.error("Error occurred while generating checksums: ", e);
 	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+	
+	@PostMapping(value = "/paytm/verify/_payment")
+	public ResponseEntity<List<PaymentStatusResponse>> verifyPayment(@RequestBody CreateChecksums transactionRequests) {
+	    // Validate input
+	    if (transactionRequests == null || transactionRequests.getTransactions() == null || transactionRequests.getTransactions().isEmpty()) {
+	        log.error("Invalid transaction request: Request body is null or empty.");
+	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	    }
+//        List<String> checksums = 
+        		List<PaymentStatusResponse> response = transactionServiceV2.verifyPayment(transactionRequests);
+
+//        Map<String, List<String>> response = new TreeMap<>();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+        
+
+	}
+	
+	
 
 
 
