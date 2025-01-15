@@ -64,6 +64,10 @@ public class AdvertisementBookingQueryBuilder {
 
 	public static final String DraftID_DELETE_QUERY = "DELETE FROM eg_adv_draft_detail WHERE draft_id = ?";
 	
+	public static final String Draft_DELETE_QUERY = "DELETE FROM eg_adv_draft_detail WHERE user_uuid = ?";
+	
+	public static final String TIMER_DELETE_QUERY_BY_UUID = "DELETE FROM eg_adv_payment_timer WHERE createdby = ?";
+	
 	public static final String TIMER_DELETE_QUERY = "DELETE FROM eg_adv_payment_timer WHERE booking_id = ?";
 
 	private static final String PAYMENT_TIMER_DELETE_BOOKINGID = 

@@ -204,18 +204,15 @@ public class BookingServiceImpl implements BookingService {
 	    
 	   boolean slotBookedFlag = setSlotBookedFlag(allAvailabilityDetails);
 	   log.info("Slot booked flag for criteria : " + slotBookedFlag);
+	   if (isTimerRequiredForAnyCriteria) {
+	    bookingRepository.deleteDataFromTimerAndDraft(requestInfo.getUserInfo().getUuid(), criteriaList.get(0).getDraftId(), criteriaList.get(0).getBookingId());
+	   }
 	    if (isTimerRequiredForAnyCriteria && !slotBookedFlag) {
 	        // Insert the timer for all criteria at once
 	        paymentTimerService.insertBookingIdForTimer(criteriaList, requestInfo, allAvailabilityDetails);
 	        log.info("Inserted booking ID for timer for all criteria.");
 	    }
-/*	    else {
-	    String draftId = getDraftId(allAvailabilityDetails, requestInfo);
-	    if(draftId != null) {
-	    	bookingRepository.getAndInsertTimerData(draftId, criteriaList, requestInfo, allAvailabilityDetails.get(0));
 
-		}
-	    } */  
 	   
 	    return allAvailabilityDetails;
 	}
@@ -295,15 +292,19 @@ public class BookingServiceImpl implements BookingService {
 			// the current user
 			// Update the slot status based on the comparison
 			if (availabilityDetailsResponse.contains(availabilityDetail)) {
-				log.info("Booking created by user id {} and booking id {} ", criteria.getBookingId(),
-						requestInfo.getUserInfo().getUuid());
+				
 				AdvertisementSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
 
 				boolean isCreatedByCurrentUser = detail.getUuid().equals(requestInfo.getUserInfo().getUuid());
 				boolean existingBookingIdCheck =
 				detail.getBookingId().equals(criteria.getBookingId());
 				
-				if (isCreatedByCurrentUser) {
+				boolean draftIdCheck = false;
+				 String draftId = getDraftId(availabilityDetailsResponse, requestInfo);
+				 if(!criteria.getDraftId().isEmpty()) {
+				  draftIdCheck = draftId.equals(criteria.getDraftId());
+				 }
+				if (isCreatedByCurrentUser && existingBookingIdCheck || (draftIdCheck)) {
 					log.info("inside booking created by me with same booking id ");
 					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
 				} else {

@@ -71,5 +71,7 @@ public interface BookingRepository {
             List<AdvertisementSlotSearchCriteria> criteriaList, 
             RequestInfo requestInfo, 
             AdvertisementSlotAvailabilityDetail availabilityDetailsResponse);
+
+	void deleteDataFromTimerAndDraft(String uuid, String draftId, String bookingId);
 	
 }

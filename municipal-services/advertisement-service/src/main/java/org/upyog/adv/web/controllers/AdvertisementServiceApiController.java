@@ -109,15 +109,15 @@ public class AdvertisementServiceApiController {
 
 		boolean isSlotBooked = bookingService.setSlotBookedFlag(applications);
 
-		// String draftId = bookingService.getDraftId(applications,
-		// slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
+		String draftId = bookingService.getDraftId(applications,
+	    slotSearchRequest.getRequestInfo());
 
 		ResponseInfo info = BookingUtil.createReponseInfo(slotSearchRequest.getRequestInfo(),
 				BookingConstants.ADVERTISEMENT_AVAILABILITY_SEARCH, StatusEnum.SUCCESSFUL);
 
 		AdvertisementSlotAvailabilityResponse response = AdvertisementSlotAvailabilityResponse.builder()
 				.advertisementSlotAvailabiltityDetails(applications).responseInfo(info)
-				// .draftId(draftId)
+			    .draftId(draftId)
 				.slotBooked(isSlotBooked).build();
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
