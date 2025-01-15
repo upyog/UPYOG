@@ -22,8 +22,8 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class DemandService {
 
-//    @Autowired
-//    private CalculationService calculationService;
+    @Autowired
+    private GrbgConstants grbgConfig;
 
 	@Autowired
 	private DemandRepository demandRepository;
@@ -37,6 +37,9 @@ public class DemandService {
 
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
 				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(grbgConfig.getGrbgBillExpiryAfter()));
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
 		// create demand of 1 month
 		Demand demandOne = Demand.builder().consumerCode(garbageAccount.getGrbgApplicationNumber())
 				.demandDetails(Arrays.asList(demandDetail)).minimumAmountPayable(taxAmount)
@@ -44,6 +47,7 @@ public class DemandService {
 				.taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000))
 						.getTime())
 //                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
+				.fixedBillExpiryDate(cal.getTimeInMillis())
 				.consumerType(garbageAccount.getGrbgApplicationNumber()).businessService(GrbgConstants.BUSINESS_SERVICE)
 				.build();
 

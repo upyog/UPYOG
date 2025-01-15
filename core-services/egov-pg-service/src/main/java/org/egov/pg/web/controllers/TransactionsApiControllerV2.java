@@ -9,8 +9,10 @@ import javax.validation.Valid;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.GatewayService;
+import org.egov.pg.service.OpenTransactionService;
 import org.egov.pg.service.TransactionServiceV2;
 import org.egov.pg.utils.ResponseInfoFactory;
+import org.egov.pg.web.models.OpenTransactionRequest;
 import org.egov.pg.web.models.RequestInfoWrapper;
 import org.egov.pg.web.models.ResponseInfo;
 import org.egov.pg.web.models.TransactionCriteriaV2;
@@ -40,6 +42,9 @@ public class TransactionsApiControllerV2 {
 
 	@Autowired
 	private TransactionServiceV2 transactionServiceV2;
+
+	@Autowired
+	private OpenTransactionService openTransactionService;
 
 	@Autowired
 	private GatewayService gatewayService;
@@ -169,5 +174,14 @@ public class TransactionsApiControllerV2 {
 	
 
 
+
+	@PostMapping(value = "/transaction/v2/_openTransaction")
+	public ResponseEntity<TransactionResponseV2> openTransaction(
+			@Valid @RequestBody OpenTransactionRequest openTransactionRequest) {
+
+		List<Transaction> transactions = openTransactionService.initiateOpenTransaction(openTransactionRequest);
+		TransactionResponseV2 response = openTransactionService.prepareResponse(transactions);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 }

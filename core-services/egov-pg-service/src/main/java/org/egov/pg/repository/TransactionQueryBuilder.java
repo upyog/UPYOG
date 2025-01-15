@@ -139,12 +139,6 @@ class TransactionQueryBuilder {
 					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getUserUuids()), preparedStmtList))
 					.append(" )");
 		}
-		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getBillIds())) {
-			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
-			builder.append(" pg.bill_id IN ( ").append(
-					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getBillIds()), preparedStmtList))
-					.append(" )");
-		}
 		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getTxnStatus())) {
 			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
 			builder.append(" pg.txn_status IN ( ").append(

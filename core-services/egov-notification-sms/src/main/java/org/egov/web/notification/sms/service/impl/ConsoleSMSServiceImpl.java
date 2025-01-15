@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "Console")
-public class ConsoleSMSServiceImpl extends BaseSMSService {
+public class ConsoleSMSServiceImpl extends BaseSMSServiceImpl {
 
     @Override
     protected void submitToExternalSmsService(Sms sms) {

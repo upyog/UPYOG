@@ -52,6 +52,7 @@ import org.egov.garbageservice.model.GrbgCollectionUnit;
 import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
+import org.egov.garbageservice.model.UserSearchResponse;
 import org.egov.garbageservice.model.contract.DmsRequest;
 import org.egov.garbageservice.model.contract.PDFRequest;
 import org.egov.garbageservice.repository.GarbageAccountRepository;
@@ -123,7 +124,7 @@ public class GarbageAccountService {
 	private BillService billService;
 
 	@Autowired
-	private EncryptionService encryptionService;
+	private UserService userService;
 
 	public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
 
@@ -714,7 +715,6 @@ public class GarbageAccountService {
 
 		grbObject.put("createdTime", "sjgjkhd");
 
-
 //		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 
 		grbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
@@ -1296,10 +1296,16 @@ public class GarbageAccountService {
 			criteria.setPropertyId(garbageAccountActionRequest.getPropertyIds());
 		}
 		
+
 		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getGarbageIds())) {
 			criteria.setGarbageId(garbageAccountActionRequest.getGarbageIds());
 		}
 		
+
+		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getGarbageUuid())) {
+			criteria.setUuid(garbageAccountActionRequest.getGarbageUuid());
+		}
+
 
 		// search application number
 		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
@@ -1496,6 +1502,11 @@ public class GarbageAccountService {
 		}
 
 		// validate user
+		UserSearchResponse userSearchResponse = userService.searchUser(payNowRequest.getUserUuid());
+
+		if (null == userSearchResponse || CollectionUtils.isEmpty(userSearchResponse.getUserSearchResponseContent())) {
+			throw new CustomException("USER NOT FOUND", "User not found for given user uuid.");
+		}
 
 		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
 				.applicationNumbers(payNowRequest.getGarbageApplicationNumbers())
@@ -1504,6 +1515,10 @@ public class GarbageAccountService {
 				.propertyIds(payNowRequest.getPropertyIds())
 				.requestInfo(RequestInfo.builder()
 						.userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build()).build())
+
+				.propertyIds(payNowRequest.getPropertyIds()).garbageUuid(payNowRequest.getGarbageUuid())
+				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build())
+						.build())
 				.build();
 
 		GarbageAccountActionResponse garbageAccountActionResponse = getApplicationDetails(garbageAccountActionRequest);

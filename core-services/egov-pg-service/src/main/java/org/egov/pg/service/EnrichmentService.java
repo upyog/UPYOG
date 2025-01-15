@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.constants.PgConstants;
@@ -109,5 +110,18 @@ public class EnrichmentService {
         newTxn.setReceipt(currentTxnStatus.getReceipt());
 
     }
+
+	public void populateTransactionsDetails(Transaction transaction, RequestInfo requestInfo) {
+
+		AuditDetails auditDetails = AuditDetails.builder()
+				.createdBy(requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null)
+				.createdTime(System.currentTimeMillis()).build();
+
+		transaction.getTransactionDetails().forEach(transactionDetails -> {
+			transactionDetails.setUuid(UUID.randomUUID().toString());
+			transactionDetails.setTxnId(transaction.getTxnId());
+			transactionDetails.setAuditDetails(auditDetails);
+		});
+	}
 
 }

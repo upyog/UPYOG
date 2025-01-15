@@ -1,19 +1,27 @@
 package org.egov.pg.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.*;
-import org.egov.pg.constants.TransactionAdditionalFields;
-import org.egov.pg.web.models.User;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
-import java.util.Map;
+
+import org.egov.pg.constants.TransactionAdditionalFields;
+import org.egov.pg.web.models.User;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Transaction object representing a transaction
@@ -45,10 +53,10 @@ public class Transaction {
 	/**
 	 * Unique bill ID associated with the transaction
 	 */
-	@SafeHtml
+//	@SafeHtml
 	@JsonProperty("billId")
-	@NotNull
-	@Size(min = 1)
+//	@NotNull
+//	@Size(min = 1)
 	private String billId;
 
 	/**
@@ -62,10 +70,10 @@ public class Transaction {
 	/**
 	 * Backward compatibility
 	 */
-	@SafeHtml
+//	@SafeHtml
 	@JsonProperty("consumerCode")
-	@NotNull
-	@Size(min = 1, max = 128)
+//	@NotNull
+//	@Size(min = 1, max = 128)
 	private String consumerCode;
 
 	@JsonProperty("orderId")
@@ -118,6 +126,9 @@ public class Transaction {
 	@NotNull
 	@Valid
 	private User user;
+
+	@JsonProperty("TransactionDetails")
+	private List<TransactionDetails> transactionDetails;
 
 	@JsonProperty("redirectUrl")
 	private String redirectUrl;
@@ -191,7 +202,7 @@ public class Transaction {
 		FAILURE("FAILURE"),
 
 		PENDING("PENDING"),
-		
+
 		CAPTURED("CAPTURED");
 
 		private String value;

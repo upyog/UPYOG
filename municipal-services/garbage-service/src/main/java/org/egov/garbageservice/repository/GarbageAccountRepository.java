@@ -209,6 +209,7 @@ public class GarbageAccountRepository {
         if (CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId()) 
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())
+        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
         		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
@@ -245,6 +246,12 @@ public class GarbageAccountRepository {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.property_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getPropertyId(),
                     preparedStatementValues)).append(" )");
+        }
+        
+        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+        	searchQuery.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
+        			preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())) {
