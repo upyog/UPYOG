@@ -35,47 +35,46 @@ const createAssetcommonforAll = () => ({
     key: Date.now(),
 });
 
-const AssetDispose = ({ config, onSelect, formData, formState, clearErrors }) => {
+const AssetMaintenance = ({ config, onSelect, formData, formState, clearErrors }) => {
     const { t } = useTranslation();
-    const [disposeDetails, setdisposeDetails] = useState(formData?.disposeDetails || [createAssetcommonforAll()]);
+    const [maintenanceDetails, setMaintenanceDetails] = useState(formData?.maintenanceDetails || [createAssetcommonforAll()]);
     
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
      const [error, setError] = useState(null);
     
     useEffect(() => {
-        onSelect(config?.key, disposeDetails);
+        onSelect(config?.key, maintenanceDetails);
 
-    }, [disposeDetails]);
+    }, [maintenanceDetails]);
 
       
-
     const commonProps = {
         focusIndex,
-        allAssets: disposeDetails,
+        allAssets: maintenanceDetails,
         setFocusIndex,
         formData,
         formState,
-        setdisposeDetails,
+        setMaintenanceDetails,
         t,
         setError,
         clearErrors,
         config
     };
-
+    
     return (
         <React.Fragment>
-            {disposeDetails.map((disposeDetails, index) => (
-                <OwnerForm key={disposeDetails.key} index={index} disposeDetails={disposeDetails} {...commonProps} />
+            {maintenanceDetails.map((maintenanceDetails, index) => (
+                <OwnerForm key={maintenanceDetails.key} index={index} maintenanceDetails={maintenanceDetails} {...commonProps} />
             ))}
         </React.Fragment>
     )
 };
 const OwnerForm = (_props) => {
     const {
-        disposeDetails,
+        maintenanceDetails,
         focusIndex,
         allAssets,
-        setdisposeDetails,
+        setMaintenanceDetails,
         t,
         config,
         setError,
@@ -102,174 +101,66 @@ const OwnerForm = (_props) => {
     const [applicationData, setApplicationData] = useState({});
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
    
-    useEffect(() => {
-        if (applicationDetails) {
-            const age = calculateAssetAge(applicationDetails?.applicationData?.applicationData?.purchaseDate);
-            register("currentAgeOfAsset");
-            register("assetId");
-            register("lifeOfAsset");
-            setValue("currentAgeOfAsset", age); 
-            setValue("assetId", applicationDetails?.applicationData?.applicationData?.id); 
-            setValue("lifeOfAsset", applicationDetails?.applicationData?.applicationData?.lifeOfAsset); 
-        }
-    }, [applicationDetails]);
-
-
-    useEffect(() => {
-        if (!_.isEqual(part, formValue)) {
-            setPart({ ...formValue });
-            setdisposeDetails((prev) => prev.map((o) => (o.key && o.key === disposeDetails.key ? { ...o, ...formValue/*, ..._ownerType*/ } : { ...o })));
-            trigger();
-        }
-    }, [formValue]);
+    
 
     useEffect(() => {
         if (Object.keys(errors).length && !_.isEqual(formState.errors[config.key]?.type || {}, errors))
             setError(config.key, { type: errors });
         else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
     }, [errors]);
+const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
-    const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
-
-  
-// Function to toggle the visibility
-  const toggleDisposed = () => {
-    setIsDisposed(!isDisposed);
-  };
-
-  function calculateAssetAge(purchaseDate) {
-    // Convert purchaseDate (Unix timestamp) to JavaScript Date object
-    const purchaseDateObj = new Date(purchaseDate * 1000); // Convert seconds to milliseconds
-    const currentDate = new Date();
-
-    // Calculate the difference in time (milliseconds)
-    const differenceInTime = currentDate - purchaseDateObj;
-
-    // Convert time difference to days
-    const differenceInDays = Math.floor(differenceInTime / (1000 * 60 * 60 * 24));
-
-    // Return the total number of days
-    return differenceInDays;
-}
-
-
-    useEffect(() => {
-        register("fileStoreId");
-        if (uploadedFile) {
-            setValue("fileStoreId", uploadedFile);
+    const typeOfServices = [
+        {
+          code: "AMC",
+          i18nKey: "AST_AMC",
+        },
+        {
+          code: "CMC",
+          i18nKey: "AST_CMC",
+        },
+        {
+          code: "OTHER",
+          i18nKey: "AST_OTHER",
         }
-        console.log("Form State:", formState);
-        console.log("Form Values:", formValue);
-        console.log("Uploaded File:", uploadedFile);
-    }, [uploadedFile, register, setValue]);
-
-    const reasonDisposal = [
+      ];
+      const routineMaintenance = [
         {
-          code: "End of Life",
-          i18nKey: "END_OF_LIFE",
+          code: "MONTHLY",
+          i18nKey: "AST_MONTHLY_SERVICE",
         },
         {
-          code: "Obsolete(outdated)",
-          i18nKey: "OBSOLETE(OUTDATED)",
+          code: "QUARTERLY",
+          i18nKey: "AST_QUARTERLY_SERVICE",
         },
         {
-          code: "Damaged",
-          i18nKey: "DAMAGED",
+          code: "HALF YEARLY",
+          i18nKey: "AST_HALF_YEARLY_SERVICE",
         },
         {
-          code: "Others",
-          i18nKey: "OTHERS",
+          code: "YEARLY",
+          i18nKey: "AST_YEARLY_SERVICE",
         },
+        {
+          code: "OTHER",
+          i18nKey: "AST_OTHER_SERVICE",
+        }
       ];
 
-    function selectfile(e) {
-        console.log('Test upload file is caming :- ', e.target.files)
-        setFile(e.target.files[0]);
-        
-    }
 
-    useEffect(() => {
-        if (file) {
-          if (file.size >= 5242880) {
-            setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-            setUploadedFile(null); // Clear previous successful upload
-          } else {
-            setError(""); // Clear any previous errors
-            Digit.UploadServices.Filestorage("ASSET", file, Digit.ULBService.getStateId())
-            .then(response => {
-                console.log('Upload Response:', response);
-                if (response?.data?.files?.length > 0) {
-                setUploadedFile(response.data.files[0].fileStoreId);
-                } else {
-                setError(t("CS_FILE_UPLOAD_ERROR"));
-                }
-            })
-            .catch(() => setError(t("CS_FILE_UPLOAD_ERROR")));
-          }
-        }
-      }, [file, t]);
-
-      // Sample function to handle file selection
-const handleFileSelection = (selectedFile) => {
-    setFile(selectedFile);
-  };
-
-  const selectFile = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      // Example validation for file size (e.g., max 5MB)
-      if (selectedFile.size > 5 * 1024 * 1024) {
-        setUploadError("File size should not exceed 5MB");
-        return;
-      }
   
-      // Set the file if validation passes
-      setFile(selectedFile);
-      setUploadError(""); // Clear any previous errors
-      // Optionally, you can call props.onChange(selectedFile) if needed
-    }
-  };
     return (
         <React.Fragment>
             <div style={{ marginBottom: "16px" }}>
                 <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
-                    {allAssets?.length > 2 ? (
-                        <div style={{ marginBottom: "16px", padding: "5px", cursor: "pointer", textAlign: "right" }}>
-                            X
-                        </div>
-                    ) : null}
-
-                    <StatusTable>
-                        <Row
-                            label={t("AST_NAME")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
-                        />
-                    </StatusTable>
-                    <StatusTable>
-                        <Row
-                            label={t("AST_CURRENT_COST")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.bookValue))}`}
-                        />
-                    </StatusTable>
-                    <StatusTable>
-                        <Row
-                            label={t("AST_LIFE")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`}
-                        />
-                    </StatusTable>
-                    <StatusTable>
-                        <Row
-                            label={t("AST_RESIDUAL_LIFE")}
-                            text={''}
-                        />
-                    </StatusTable>
+                  
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_DISPOSAL_DATE")}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
                                 name={"disposalDate"}
-                                defaultValue={disposeDetails?.disposalDate}
+                                defaultValue={maintenanceDetails?.disposalDate}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -294,18 +185,18 @@ const handleFileSelection = (selectedFile) => {
 
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_REASON_DISPOSAL")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_TYPE_OF_SERVICE")}</CardLabel>
                         <Controller
                             control={control}
                             name={"reasonForDisposal"}
-                            defaultValue={disposeDetails?.reasonForDisposal}
+                            defaultValue={maintenanceDetails?.reasonForDisposal}
                             render={(props) => (
                                 <Dropdown
                                     className="form-field"
                                     selected={props.value}
                                     select={props.onChange}
                                     onBlur={props.onBlur}
-                                    option={reasonDisposal}
+                                    option={typeOfServices}
                                     optionKey="i18nKey"
                                     t={t}
                                 />
@@ -319,7 +210,7 @@ const handleFileSelection = (selectedFile) => {
                             <Controller
                                 control={control}
                                 name={"comments"}
-                                defaultValue={disposeDetails?.comments}
+                                defaultValue={maintenanceDetails?.comments}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -328,10 +219,10 @@ const handleFileSelection = (selectedFile) => {
                                     <TextArea
                                     type={"textarea"}
                                         value={props.value}
-                                        autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "comments"}
+                                        autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "comments"}
                                         onChange={(e) => {
                                             props.onChange(e.target.value);
-                                            setFocusIndex({ index: disposeDetails.key, type: "comments" });
+                                            setFocusIndex({ index: maintenanceDetails.key, type: "comments" });
                                         }}
                                         onBlur={(e) => {
                                             setFocusIndex({ index: -1 });
@@ -349,7 +240,7 @@ const handleFileSelection = (selectedFile) => {
                             <Controller
                                 control={control}
                                 name={"amountReceived"}
-                                defaultValue={disposeDetails?.amountReceived}
+                                defaultValue={maintenanceDetails?.amountReceived}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: {
@@ -361,10 +252,10 @@ const handleFileSelection = (selectedFile) => {
                                     <TextInput
                                         value={props.value}
                                         // disable={isEditScreen}
-                                        autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "amountReceived"}
+                                        autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "amountReceived"}
                                         onChange={(e) => {
                                             props.onChange(e.target.value);
-                                            setFocusIndex({ index: disposeDetails.key, type: "amountReceived" });
+                                            setFocusIndex({ index: maintenanceDetails.key, type: "amountReceived" });
                                         }}
                                         onBlur={(e) => {
                                             setFocusIndex({ index: -1 });
@@ -383,7 +274,7 @@ const handleFileSelection = (selectedFile) => {
                             <Controller
                                 control={control}
                                 name={"isAssetDisposedInFacility"}
-                                defaultValue={disposeDetails?.isAssetDisposedInFacility}
+                                defaultValue={maintenanceDetails?.isAssetDisposedInFacility}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: {
@@ -394,7 +285,7 @@ const handleFileSelection = (selectedFile) => {
                                 render={(props) => (
                                     <CheckBox
                                                 label={t(" If disposed in facility, amount received will become zero")}
-                                                onChange={toggleDisposed}
+                                                // onChange={toggleDisposed}
                                                 styles={{ height: "auto" }}
                                                 value={props.value}
                                                 checked={!isDisposed}
@@ -406,7 +297,7 @@ const handleFileSelection = (selectedFile) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                            <CardLabel className="card-label-smaller">{t("AST_DISPOSE_RECIPT")}</CardLabel>
+                            <CardLabel className="card-label-smaller">{t("AST_SERVICE_UNDER_WARRANTY")}</CardLabel>
                             <div className="field">
                             <Controller
                                 control={control}
@@ -414,7 +305,7 @@ const handleFileSelection = (selectedFile) => {
                                 render={(props) => (
                                 <UploadFile
                                     id={"disposalFile"}
-                                    onUpload={selectFile}
+                                    // onUpload={selectFile}
                                     onDelete={() => {
                                     setFile(null);
                                     props.onChange(null); // Clear the file in form state
@@ -437,7 +328,7 @@ const handleFileSelection = (selectedFile) => {
                                 <Controller
                                     control={control}
                                     name={"purchaserName"}
-                                    defaultValue={disposeDetails?.purchaserName}
+                                    defaultValue={maintenanceDetails?.purchaserName}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -449,10 +340,10 @@ const handleFileSelection = (selectedFile) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "purchaserName"}
+                                            autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "purchaserName"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "purchaserName" });
+                                                setFocusIndex({ index: maintenanceDetails.key, type: "purchaserName" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -470,7 +361,7 @@ const handleFileSelection = (selectedFile) => {
                                 <Controller
                                     control={control}
                                     name={"paymentMode"}
-                                    defaultValue={disposeDetails?.paymentMode}
+                                    defaultValue={maintenanceDetails?.paymentMode}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -482,10 +373,10 @@ const handleFileSelection = (selectedFile) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "paymentMode"}
+                                            autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "paymentMode"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "paymentMode" });
+                                                setFocusIndex({ index: maintenanceDetails.key, type: "paymentMode" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -503,7 +394,7 @@ const handleFileSelection = (selectedFile) => {
                                 <Controller
                                     control={control}
                                     name={"receiptNumber"}
-                                    defaultValue={disposeDetails?.receiptNumber}
+                                    defaultValue={maintenanceDetails?.receiptNumber}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -515,10 +406,10 @@ const handleFileSelection = (selectedFile) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "receiptNumber"}
+                                            autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "receiptNumber"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "receiptNumber" });
+                                                setFocusIndex({ index: maintenanceDetails.key, type: "receiptNumber" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -536,7 +427,7 @@ const handleFileSelection = (selectedFile) => {
                                 <Controller
                                     control={control}
                                     name={"employeeCode"}
-                                    defaultValue={disposeDetails?.employeeCode}
+                                    defaultValue={maintenanceDetails?.employeeCode}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -548,10 +439,10 @@ const handleFileSelection = (selectedFile) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "employeeCode"}
+                                            autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "employeeCode"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "employeeCode" });
+                                                setFocusIndex({ index: maintenanceDetails.key, type: "employeeCode" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -579,4 +470,4 @@ const handleFileSelection = (selectedFile) => {
     );
 };
 
-export default AssetDispose;
+export default AssetMaintenance;

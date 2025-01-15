@@ -7,10 +7,13 @@ import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
+import DisposeResponse from "./pages/AssetDisposeResponse";
+import ProcessDepreciationResponse from "./pages/ProcessDepreciationResponse";
 import ReturnResponse from "./pages/ReturnResponse";
 import { TableConfig } from "./config/inbox-table-config";
 import NewAssetApplication from "./pages/employee/NewAssetApplication";
 import DisposeApplication from "./pages/employee/DisposeAssetApplication";
+import MaintenanceApplication from "./pages/employee/MaintenanceAssetApplication";
 import AssetDocuments from "./pageComponents/AssetDocuments";
 import AssetPincode from "./pageComponents/AssetPincode";
 import AssetAddress from "./pageComponents/AssetAddress";
@@ -24,6 +27,7 @@ import ASTCheckPage from "./pages/employee/TestApplication/Create/CheckPage"
 import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 import AssetAssign from "./pageComponents/AssetAssign";
 import AssetDispose from "./pageComponents/AssetDispose";
+import AssetMaintenance from "./pageComponents/AssetMaintenance";
 import ReturnAsset from "./pages/employee/ReturnAsset";
 import ReturnAssignedAsset from "./pageComponents/ReturnAssignedAsset";
 // import EditAsset from "./pages/employee/EditAsset";
@@ -38,6 +42,7 @@ import EditResponse from "./pages/employee/EditResponse";
 const componentsToRegister = {
   AssignAssetApplication: NewAssetApplication,
   DisposeApplication,
+  MaintenanceApplication,
   AssetDocuments,
   AssetPincode,
   AssetAddress,
@@ -51,9 +56,12 @@ const componentsToRegister = {
   NewResponse,
   ApplicationDetails,
   AssetResponse: Response, 
+  DisposeResponse, 
+  ProcessDepreciationResponse,
   returnResponse:ReturnResponse,
   AssetAssign,
   AssetDispose,
+  AssetMaintenance,
   returnAssets:ReturnAsset,
   ReturnAssignedAsset,
   editAsset:EditAsset,

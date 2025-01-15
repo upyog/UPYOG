@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useEffect, useState, useRef } from "react"
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header,Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { useRouteMatch, Link } from "react-router-dom";
+import { useRouteMatch, Link, useHistory } from "react-router-dom";
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
@@ -11,6 +11,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
   const isMobile = window.Digit.Utils.browser.isMobile();
   const todaydate = new Date();
   const today = todaydate.toISOString().split("T")[0];
+  const history = useHistory();
   // Calculate the date 7 days ago
   const fromDate = new Date(todaydate);
   fromDate.setDate(todaydate.getDate() - 7);  // Subtract 7 days from today
@@ -104,22 +105,21 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
     return actionMdms;
   };
 
-const processDepreciation = async(applicationNo , assetId) => {
-  try{
-    const applicationDetails = await Digit.ASSETService.depriciationProcess({
-    Asset: {
-    tenantId,
-    id: assetId,
-    accountId: ""
+  const processDepreciation = async (applicationNo, assetId) => {
+    try {
+      const applicationDetails = await Digit.ASSETService.depriciationProcess({
+        Asset: {
+          tenantId,
+          id: assetId,
+          accountId: ""
+        }
+      });
+      if(applicationDetails)
+      history.replace("/digit-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails });
+    } catch (error) {
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
-  });
-  setShowToast({ error: false, label:applicationDetails.Message});  
-}
-catch (error) {
-  setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
-  }
-  
-}
+  };
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
 

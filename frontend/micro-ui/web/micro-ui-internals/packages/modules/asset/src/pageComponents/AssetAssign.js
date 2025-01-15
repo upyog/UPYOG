@@ -73,9 +73,6 @@ const AssetAssign = ({ config, onSelect, formData, setError, formState, clearErr
         designationNamefromMDMS.push({ i18nKey: `${designation.name}`, code: `${designation.code}`, value: `${designation.name}` })
     })
 
-    console.log("Testing data is comming or not", designationNamefromMDMS);
-
-
     const commonProps = {
         focusIndex,
         allAssets: assigndetails,
