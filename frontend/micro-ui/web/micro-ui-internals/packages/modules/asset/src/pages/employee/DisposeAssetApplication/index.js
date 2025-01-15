@@ -54,7 +54,7 @@ const DisposeAssetApplication = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log('data :', data);
+
     
     const formData = {
         disposalId:"",
@@ -99,36 +99,36 @@ const DisposeAssetApplication = () => {
           });
           if(applicationDetails){
             console.log('success data is coming')
-            setShowToast({ error: false, label: 'Asset Dispose Successfully'});
+            // setShowToast({ error: false, label: 'Asset Dispose Successfully'});
+            history.replace("/digit-ui/employee/asset/assetservice/asset-dispose-response", { AssetDisposal: applicationDetails }); 
           }
         }
         catch (error) {
           setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
           }
-          //history.replace("/digit-ui/employee/asset/assetservice/assign-response", { AssetDisposal: formData }); 
         };
     
  const configs = disposeConfig;    
   return (
     <div>
-    <FormComposer
-      heading={t("AST_DISPOSE_ASSET")}
-      isDisabled={!canSubmit}
-      label={t("ES_COMMON_APPLICATION_SUBMIT")}
-      config={configs.map((config) => {
-       
-        return {
-          ...config,
-          body: config.body.filter((a) => !a.hideInEmployee),
-        };
-      })}
-      fieldStyle={{ marginRight: 0 }}
-      cardStyle={{Width: 60}}
-      onSubmit={onSubmit}
-      defaultValues={defaultValues}
-      onFormValueChange={onFormValueChange}
-     
-    />
+      <FormComposer
+        heading={t("AST_DISPOSE_ASSET")}
+        isDisabled={!canSubmit}
+        label={t("ES_COMMON_APPLICATION_SUBMIT")}
+        config={configs.map((config) => {
+        
+          return {
+            ...config,
+            body: config.body.filter((a) => !a.hideInEmployee),
+          };
+        })}
+        fieldStyle={{ marginRight: 0 }}
+        cardStyle={{Width: 60}}
+        onSubmit={onSubmit}
+        defaultValues={defaultValues}
+        onFormValueChange={onFormValueChange}
+      
+      />
     {showToast && (
               <Toast
                 error={showToast.error}
@@ -138,8 +138,8 @@ const DisposeAssetApplication = () => {
                   setShowToast(null);
                 }}
               />
-  )}
-            </div>
+      )}
+      </div>
   );
 };
 
