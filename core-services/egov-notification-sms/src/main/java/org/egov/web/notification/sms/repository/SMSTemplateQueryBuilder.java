@@ -33,6 +33,10 @@ public class SMSTemplateQueryBuilder {
 					.append(" )");
 		}
 
+		// fetch only active record
+		isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+		builder.append(" is_active = true");
+
 		return builder.toString();
 	}
 

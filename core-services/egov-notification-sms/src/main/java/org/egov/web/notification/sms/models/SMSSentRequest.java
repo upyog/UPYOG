@@ -43,7 +43,7 @@ public class SMSSentRequest {
 	private String templateName;
 
 	public boolean isValid() {
-		return isNotEmpty(mobileNumber) && isNotEmpty(message);
+		return isNotEmpty(mobileNumber) && isNotEmpty(message) && isNotEmpty(templateName);
 	}
 
 }

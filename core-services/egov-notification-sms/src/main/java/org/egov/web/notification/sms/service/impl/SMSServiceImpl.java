@@ -41,6 +41,9 @@ public class SMSServiceImpl implements SMSService {
 
 	private static final String OTP_PLACEHOLDER = "{otp}";
 
+	private static final String SMS_BODY_OTP = OTP_PLACEHOLDER
+			+ " is One Time Password for RTI Portal. State Information Commission Himachal Pradesh";
+
 	@Override
 	public void sendOtp(OTPSentRequest otpSentRequest) {
 
@@ -58,13 +61,13 @@ public class SMSServiceImpl implements SMSService {
 		// get otp from otp service
 		String otp = otpService.createOtp(otpSentRequest.getUserUuid());
 
-		SMSTemplate smsTemplate = getSmsTemplate(SMSConstants.TEMPLATE_NAME_OTP);
+		SMSTemplate smsTemplate = getSmsTemplate(SMSConstants.TEMPLATE_NAME_LOGIN_OTP);
 
 		if (null == smsTemplate) {
 			throw new CustomException("SMS TEMPLATE NOT FOUND", "SMS template not found.");
 		}
 
-		String smsBody = smsTemplate.getSmsBody();
+		String smsBody = SMS_BODY_OTP;
 		smsBody = smsBody.replace(OTP_PLACEHOLDER, otp);
 
 		Sms sms = Sms.builder().mobileNumber(otpSentRequest.getNumber()).message(smsBody)
@@ -87,7 +90,7 @@ public class SMSServiceImpl implements SMSService {
 	public void sendSMS(SMSSentRequest smsSentRequest) {
 
 		if (!smsSentRequest.isValid()) {
-			throw new CustomException("INVALID REQUEST", "Mobile number or Message is missing.");
+			throw new CustomException("INVALID REQUEST", "Mobile number or Message or Template Name is missing.");
 		}
 
 		SMSTemplate smsTemplate = getSmsTemplate(smsSentRequest.getTemplateName());
