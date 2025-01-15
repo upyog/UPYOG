@@ -76,12 +76,18 @@ const ADSAcknowledgement = ({ data, onSuccess }) => {
         const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;
         if (isSlotBooked) {
           setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
-        } else {
+        }else if(user.type==="CITIZEN") {
           history.push({
             pathname: `/digit-ui/citizen/payment/my-bills/${"adv-services"}/${ mutation.data?.bookingApplication[0]?.bookingNo}`,
             state: { tenantId:tenantId, bookingNo: mutation.data?.bookingApplication[0]?.bookingNo, timerValue:timerValue , SlotSearchData:SlotSearchData},
           });
         }
+          else if(user.type==="EMPLOYEE") {
+            history.push({
+              pathname: `/digit-ui/employee/payment/collect/${"adv-services"}/${mutation.data?.bookingApplication[0]?.bookingNo}`,
+              state: { tenantId:tenantId, bookingNo: mutation.data?.bookingApplication[0]?.bookingNo, timerValue:timerValue , SlotSearchData:SlotSearchData},
+            });
+          }
     } catch (error) {
       setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
@@ -121,12 +127,7 @@ useEffect(() => {
          {user.type==="CITIZEN" &&(<Link to={`/digit-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
-        {user.type==="EMPLOYEE" &&(
-         <Link to={`/digit-ui/employee/payment/collect/${"adv-services"}/${mutation.data?.bookingApplication[0].bookingNo}`}>
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-          </Link> )}
-          {user.type==="CITIZEN" &&(
-            <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />)}
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
       </div>
     )}
     {!mutation.isSuccess && user.type==="CITIZEN" &&(
