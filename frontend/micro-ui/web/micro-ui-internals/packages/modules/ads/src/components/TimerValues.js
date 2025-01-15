@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Toast } from '@nudmcdgnpm/digit-ui-react-components';
 
-export const TimerValues = ({t, timerValues, SlotSearchData}) => {
+export const TimerValues = ({t, timerValues, SlotSearchData,draftId=""}) => {
   const [timeRemaining, setTimeRemaining] = useState(0); // Initialize with `timerValues`
   const [showToast, setShowToast] = useState(null);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
@@ -21,6 +21,7 @@ export const TimerValues = ({t, timerValues, SlotSearchData}) => {
       tenantId: tenantId,
       location: item?.location,
       nightLight: item?.nightLight,
+      draftId:draftId,
       isTimerRequired: true,
     })),
    };
