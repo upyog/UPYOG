@@ -29,6 +29,7 @@ import org.upyog.adv.repository.rowmapper.AdvertisementDraftIdRowMapper;
 import org.upyog.adv.repository.rowmapper.AdvertisementSlotAvailabilityRowMapper;
 import org.upyog.adv.repository.rowmapper.AdvertisementUpdateSlotAvailabilityRowMapper;
 import org.upyog.adv.repository.rowmapper.BookingCartDetailRowmapper;
+import org.upyog.adv.repository.rowmapper.BookingDetailIdRowmapper;
 import org.upyog.adv.repository.rowmapper.BookingDetailRowmapper;
 import org.upyog.adv.repository.rowmapper.DocumentDetailsRowMapper;
 import org.upyog.adv.util.BookingUtil;
@@ -137,7 +138,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 	@Override
 	public void deleteDataFromTimerAndDraft(String uuid, String draftId, String bookingId) {
 
-		if (draftId.isEmpty() && bookingId.isEmpty()) {
+		if (StringUtils.isBlank(draftId) && StringUtils.isBlank(bookingId)) {
 			log.info("Deleting Timer and draft entry: {}", bookingId);
 
 			String draftDeleteQuery = AdvertisementBookingQueryBuilder.Draft_DELETE_QUERY;
@@ -176,8 +177,12 @@ public class BookingRepositoryImpl implements BookingRepository {
 				.map(AdvertisementSlotSearchCriteria::getBookingId).findFirst().orElse(null);
 
 		// Check if the booking ID exists in the timer table
-		List<Map<String, Object>> bookingListFromTimer = jdbcTemplate
-				.queryForList(queryBuilder.checkBookingIdExists(draftId), draftId);
+		List<BookingDetail> bookingListFromTimer = jdbcTemplate.query(
+			    AdvertisementBookingQueryBuilder.BOOKING_ID_EXISTS_CHECK, 
+			    new Object[] { draftId }, 
+			    new BookingDetailIdRowmapper() 
+			);
+
 
 		if (!bookingListFromTimer.isEmpty()) {
 			return draftId;

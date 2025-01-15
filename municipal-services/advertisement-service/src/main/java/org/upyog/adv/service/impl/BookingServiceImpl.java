@@ -296,15 +296,15 @@ public class BookingServiceImpl implements BookingService {
 				AdvertisementSlotAvailabilityDetail slotAvailabilityDetail = slotDetailsMap.get(availabilityDetail);
 
 				boolean isCreatedByCurrentUser = detail.getUuid().equals(requestInfo.getUserInfo().getUuid());
-				boolean existingBookingIdCheck =
+				boolean existingBookingId =
 				detail.getBookingId().equals(criteria.getBookingId());
 				
-				boolean draftIdCheck = false;
+				boolean existingDraftId = false;
 				 String draftId = getDraftId(availabilityDetailsResponse, requestInfo);
-				 if(!criteria.getDraftId().isEmpty()) {
-				  draftIdCheck = draftId.equals(criteria.getDraftId());
+				 if(!StringUtils.isBlank(criteria.getDraftId())) {
+					 existingDraftId = draftId.equals(criteria.getDraftId());
 				 }
-				if (isCreatedByCurrentUser && existingBookingIdCheck || (draftIdCheck)) {
+				if (isCreatedByCurrentUser && (existingBookingId || existingDraftId)) {
 					log.info("inside booking created by me with same booking id ");
 					slotAvailabilityDetail.setSlotStaus(BookingStatusEnum.AVAILABLE.toString());
 				} else {
