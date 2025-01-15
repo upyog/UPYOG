@@ -60,6 +60,8 @@ export const ADSMyApplications = () => {
   const statusOptions = [
     { i18nKey: "Booked", code: "BOOKED", value: t("ADS_BOOKED") },
     { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("ADS_BOOKING_IN_PROGRES") },
+    { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
+    { i18nKey: "Booking Expired", code: "BOOKING_EXPIRED", value: t("BOOKING_EXPIRED") },
     { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") },
   ];
 

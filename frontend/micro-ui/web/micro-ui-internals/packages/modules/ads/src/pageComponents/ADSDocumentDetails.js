@@ -98,7 +98,7 @@ const ADSDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
         <CardSubHeader style={{ position: "absolute",right:0}}>
         <TimerValues 
           timerValues={value?.existingDataSet?.timervalue?.timervalue} 
-          SlotSearchData={value?.cartDetails} 
+          SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId}
         />
         </CardSubHeader>
         <ADSCartAndCancellationPolicyDetails/>

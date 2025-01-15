@@ -53,6 +53,8 @@ export const CHBMyApplications = () => {
   const statusOptions = [
     { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
     { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+    { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
+    { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
     { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
   ];
 

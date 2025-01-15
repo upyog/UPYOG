@@ -72,12 +72,18 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
 
     if (isSlotBooked) {
       setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
-    } else {
+    } else if(user.type==="CITIZEN") {
       history.push({
         pathname: `/digit-ui/citizen/payment/my-bills/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
         state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue,SlotSearchData:SlotSearchData },
       });
     }
+      else if(user.type==="EMPLOYEE") {
+        history.push({
+          pathname: `/digit-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`,
+          state: { tenantId:tenantId, bookingNo: mutation.data?.hallsBookingApplication[0].bookingNo,timerValue:result?.data?.timerValue,SlotSearchData:SlotSearchData },
+        });
+      }
   }catch (error) {
     setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
   }
@@ -118,13 +124,7 @@ const CHBAcknowledgement = ({ data, onSuccess }) => {
          {user.type==="CITIZEN" &&(<Link to={`/digit-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
-        {user.type==="EMPLOYEE" &&(
-         <Link to={`/digit-ui/employee/payment/collect/${"chb-services"}/${mutation.data?.hallsBookingApplication[0].bookingNo}`}>
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-          </Link> )}
-          {user.type==="CITIZEN" &&(
         <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}/>
-        )}
       </div>
     )}
     {!mutation.isSuccess && user.type==="CITIZEN" &&(
