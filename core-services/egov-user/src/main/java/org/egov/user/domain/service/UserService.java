@@ -219,7 +219,7 @@ public class UserService {
             if (altmobnumber != null) {
                 searchCriteria.setAlternatemobilenumber(altmobnumber);
             }
-        log.info("Search Criteria :-", searchCriteria);
+        log.info("Search Criteria :-"+ searchCriteria);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
         /* decrypt here / final reponse decrypted*/
