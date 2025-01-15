@@ -203,7 +203,7 @@ public class UserService {
 
     public List<org.egov.user.domain.model.User> searchUsers(UserSearchCriteria searchCriteria,
                                                              boolean isInterServiceCall, RequestInfo requestInfo) {
-
+    	log.info("searchCriteria"+searchCriteria);
         searchCriteria.validate(isInterServiceCall);
 
         searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
