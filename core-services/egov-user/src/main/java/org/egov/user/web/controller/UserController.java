@@ -269,6 +269,8 @@ public class UserController {
     private UserSearchResponse searchUsers(@RequestBody UserSearchRequest request, HttpHeaders headers) {
 
         UserSearchCriteria searchCriteria = request.toDomain();
+        log.info("searchCriteria_in controller"+searchCriteria);
+        log.info("headers"+headers);
 
         if (!isInterServiceCall(headers)) {
             if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
