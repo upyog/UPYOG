@@ -264,6 +264,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
                         >
                           {option.label}
                         </div>)
+                        : (option.code === "AST_DISPOSE" && row?.original?.assetStatus === "0") ? null
                         : (
                           <Link
                             key={index}  // Add key for the Link element as well
@@ -278,7 +279,6 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
                             {option.label}
                           </Link>
                         )
-
                     ))}
                   </div>
                 )}
