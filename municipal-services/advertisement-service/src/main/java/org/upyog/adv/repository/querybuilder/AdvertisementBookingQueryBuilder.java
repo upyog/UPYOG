@@ -292,21 +292,23 @@ public class AdvertisementBookingQueryBuilder {
 
 
 	private void appendDateFilters(AdvertisementSearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
-		final String DATE_CAST = "TO_DATE(CAST(? AS TEXT), 'YYYY-MM-DD')";
-		if (criteria.getFromDate() != null && criteria.getToDate() != null) {
-		    addClauseIfRequired(preparedStmtList, builder);
-		    builder.append(" (ecsd.booking_date >= ").append(DATE_CAST)
-		           .append(" AND ecsd.booking_date <= ").append(DATE_CAST)
-		           .append(" OR TO_TIMESTAMP(ecbd.application_date / 1000) >= ").append(DATE_CAST)
-		           .append(" AND TO_TIMESTAMP(ecbd.application_date / 1000) <= ").append(DATE_CAST).append(") ");
-		    preparedStmtList.add(criteria.getFromDate());
-		    preparedStmtList.add(criteria.getToDate());
-		    preparedStmtList.add(criteria.getFromDate());
-		    preparedStmtList.add(criteria.getToDate());
-		}
+	    if (criteria.getFromDate() != null && criteria.getToDate() != null) {
+	        addClauseIfRequired(preparedStmtList, builder);
 
+	        // Booking date: it's a DATE field
+	        builder.append(" (ecsd.booking_date BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD')");
 
+	        // Application date: it's a BIGINT(Timestamp) storing epoch milliseconds
+	        builder.append(" OR TO_TIMESTAMP(ecbd.application_date / 1000) BETWEEN ")
+	               .append("TO_TIMESTAMP(? || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AND ")
+	               .append("TO_TIMESTAMP(? || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS'))");
+	        preparedStmtList.add(criteria.getFromDate());
+	        preparedStmtList.add(criteria.getToDate());
+	        preparedStmtList.add(criteria.getFromDate());
+	        preparedStmtList.add(criteria.getToDate());
+	    }
 	}
+
 
 
 	/**
