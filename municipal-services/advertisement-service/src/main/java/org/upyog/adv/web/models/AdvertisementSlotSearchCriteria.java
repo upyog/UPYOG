@@ -32,6 +32,8 @@ public class AdvertisementSlotSearchCriteria {
 	private Boolean nightLight;
 	
 	private String bookingId;
+	
+	private String draftId;
 
 	private Boolean isTimerRequired;
 	

@@ -20,6 +20,7 @@ import {
   import Timeline from "../../../components/ADSTimeline";
   import ADSDocument from "../../../pageComponents/ADSDocument";
   import ApplicationTable from "../../../components/ApplicationTable";
+  import { TimerValues } from "../../../components/TimerValues";
 
 /**
  * CheckPage component displays a summary of the applicant's details,
@@ -106,7 +107,15 @@ import {
       <React.Fragment>
        {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
       <Card>
-        <CardHeader>{t("ADS_SUMMARY")}</CardHeader>
+        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+              <CardHeader>{t("ADS_SUMMARY")}</CardHeader>
+              <CardSubHeader>
+                <TimerValues 
+                timerValues={params?.adslist?.existingDataSet?.timervalue?.timervalue} 
+                SlotSearchData={params?.adslist?.cartDetails} draftId={params?.adslist?.existingDataSet?.draftId}
+              />
+              </CardSubHeader>
+              </div>
         <div>
         <CardText>{t("ADS_CHECK_CHECK_YOUR_ANSWERS_TEXT")}</CardText>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("ADS_APPLICANT_DETAILS")}</CardSubHeader>

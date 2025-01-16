@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.upyog.adv.web.models.AdvertisementDraftDetail;
 import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
@@ -52,7 +53,7 @@ public interface BookingRepository {
 
 	void updateBookingSynchronously(BookingRequest advertisementBookingRequest);
 
-	List<Map<String, Object>> getDraftData(String uuid);
+	List<AdvertisementDraftDetail> getDraftData(String uuid);
 
 	List<AdvertisementSlotAvailabilityDetail> getBookedSlotsFromTimer(AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo);
 
@@ -65,5 +66,12 @@ public interface BookingRepository {
 
 	void getTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
 			AdvertisementSlotAvailabilityDetail detail,  List<AdvertisementSlotSearchCriteria> criteriaList);
+	
+	void getAndInsertTimerData(String draftId, 
+            List<AdvertisementSlotSearchCriteria> criteriaList, 
+            RequestInfo requestInfo, 
+            AdvertisementSlotAvailabilityDetail availabilityDetailsResponse);
+
+	void deleteDataFromTimerAndDraft(String uuid, String draftId, String bookingId);
 	
 }

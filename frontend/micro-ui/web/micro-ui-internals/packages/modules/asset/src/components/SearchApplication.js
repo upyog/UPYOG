@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useEffect, useState, useRef } from "react"
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header,Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { useRouteMatch, Link } from "react-router-dom";
+import { useRouteMatch, Link, useHistory } from "react-router-dom";
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
@@ -11,6 +11,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
   const isMobile = window.Digit.Utils.browser.isMobile();
   const todaydate = new Date();
   const today = todaydate.toISOString().split("T")[0];
+  const history = useHistory();
   // Calculate the date 7 days ago
   const fromDate = new Date(todaydate);
   fromDate.setDate(todaydate.getDate() - 7);  // Subtract 7 days from today
@@ -62,7 +63,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
     },
   });
 
-  console.log('comming from mdms :- ', actionDetail);
+ 
 
   const printReport = async (applicationNo) => {
 
@@ -104,22 +105,21 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
     return actionMdms;
   };
 
-const processDepreciation = async(applicationNo , assetId) => {
-  try{
-    const applicationDetails = await Digit.ASSETService.depriciationProcess({
-    Asset: {
-    tenantId,
-    id: assetId,
-    accountId: ""
+  const processDepreciation = async (applicationNo, assetId) => {
+    try {
+      const applicationDetails = await Digit.ASSETService.depriciationProcess({
+        Asset: {
+          tenantId,
+          id: assetId,
+          accountId: ""
+        }
+      });
+      if(applicationDetails)
+      history.replace("/digit-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails });
+    } catch (error) {
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
-  });
-  setShowToast({ error: false, label:applicationDetails.Message});  
-}
-catch (error) {
-  setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
-  }
-  
-}
+  };
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
 
@@ -167,7 +167,7 @@ catch (error) {
     {
       Header: t("AST_DEPARTMENT_LABEL"),
       Cell: ({ row }) => {
-        return GetCell(`${t('COMMON_MASTERS_DEPARTMENT_' + row?.original?.["department"])}`)
+        return GetCell(`${t('COMMON_MASTERS_DEPARTMENT_'+row?.original?.["department"])}`)
       },
       disableSortBy: true,
     },
@@ -203,7 +203,6 @@ catch (error) {
           };
         }, []);
         const actionOptions = collectAction(row);
-        console.log('Testing :- ', actionOptions);
      
         // const actionOptions = [
         //   {
@@ -343,13 +342,14 @@ catch (error) {
         doc.text(`Asset Classification: ${row.assetClassification}`, 70, 40 + yOffset);
         doc.text(`Asset Parent Category: ${row.assetParentCategory}`, 70, 50 + yOffset);
         doc.text(`Asset Name: ${row.assetName}`, 70, 60 + yOffset);
+        doc.text(`Track: ${row.location}`, 70, 70 + yOffset);
         // doc.text(`Track Location: ${row.location}`, 70, 60 + yOffset);
 
 
         //  Add Track Location as a clickable hyperlink
-        const locationURL = `${base_url}/maps/search/${row.location}`;
-        doc.text("Track Location:", 70, 70 + yOffset); // Add label
-        doc.textWithLink(locationURL, 70, 75 + yOffset, { url: locationURL }); // Add clickable URL
+        // const locationURL = `${row.location}`;
+        // doc.text("Track:", 70, 70 + yOffset); // Add label
+        // doc.textWithLink(locationURL, 70, 75 + yOffset, { url: locationURL }); // Add clickable URL
 
         // Add horizontal line
         doc.line(10, 80 + yOffset, 200, 80 + yOffset);

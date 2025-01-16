@@ -386,6 +386,15 @@ const handleCartClick = () => {
       unitPrice = item?.[calculationTypeKey]?.[0]?.amount;
     }
     if (adsType && startDate && endDate && faceArea && location && nightLight) {
+
+      // Check if startDate is less than endDate
+    if (new Date(startDate) > new Date(endDate)) {
+      setShowToast({
+        error: true,
+        label: t("ADS_INVALID_DATE_RANGE"), // You can customize this message
+      });
+      return; // Exit function if validation fails
+    }
       const filters = {
         addType: addType,
         faceArea:faceArea,
