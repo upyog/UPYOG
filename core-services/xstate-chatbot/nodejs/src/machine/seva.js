@@ -393,7 +393,7 @@ const sevaMachine = Machine({
                 output :"3797439",
                 type :"template"
              }
-             dialog.sendMessage(context, templateContent, true);
+             //dialog.sendMessage(context, templateContent, true);
           })();
           }),
           on: {
