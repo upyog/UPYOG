@@ -42,13 +42,12 @@ const AssetDispose = ({ config, onSelect, formData, formState, clearErrors }) =>
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
      const [error, setError] = useState(null);
     
+    //  this is use for state set
     useEffect(() => {
         onSelect(config?.key, disposeDetails);
-
     }, [disposeDetails]);
 
       
-
     const commonProps = {
         focusIndex,
         allAssets: disposeDetails,
@@ -101,7 +100,7 @@ const OwnerForm = (_props) => {
     const [uploadError, setUploadError] = useState("");
     const [applicationData, setApplicationData] = useState({});
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-   
+    console.log('Check data of application details:- ', applicationDetails);
     useEffect(() => {
         if (applicationDetails) {
             const age = calculateAssetAge(applicationDetails?.applicationData?.applicationData?.purchaseDate);
@@ -183,9 +182,7 @@ const OwnerForm = (_props) => {
       ];
 
     function selectfile(e) {
-        console.log('Test upload file is caming :- ', e.target.files)
         setFile(e.target.files[0]);
-        
     }
 
     useEffect(() => {
@@ -229,6 +226,42 @@ const handleFileSelection = (selectedFile) => {
       // Optionally, you can call props.onChange(selectedFile) if needed
     }
   };
+
+  const calculateResidualLife = () => {
+    let purchaseDate = applicationDetails?.applicationData?.applicationData?.purchaseDate; // in seconds
+    let lifeOfAsset = applicationDetails?.applicationData?.applicationData?.lifeOfAsset;   // in years
+    let currentDate = Date.now(); // in milliseconds
+  
+    // Convert purchaseDate from seconds to milliseconds
+    let purchaseDateInMs = purchaseDate * 1000;
+  
+    // Calculate the difference in milliseconds
+    let diffInMs = currentDate - purchaseDateInMs;
+  
+    // Convert milliseconds to years
+    let diffInYears = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
+  
+    // Calculate residual life
+    let residualLife = lifeOfAsset - diffInYears;
+  
+    // Check if residual life is negative or zero
+    if (residualLife <= 0) {
+      return "0 years, 0 months, 0 days";
+    }
+  
+    // Split residual life into years, months, and days
+    let years = Math.floor(residualLife);
+    let fractionalYear = residualLife - years;
+  
+    let totalDaysInFractionalYear = fractionalYear * 365.25;
+    let months = Math.floor(totalDaysInFractionalYear / 30.44); // Average month length
+    let days = Math.round(totalDaysInFractionalYear % 30.44);
+  
+    console.log(`Residual life: ${years} years, ${months} months, ${days} days`);
+  
+    return `${years} years, ${months} months, ${days} days`;
+  };
+  
     return (
         <React.Fragment>
             <div style={{ marginBottom: "16px" }}>
@@ -260,7 +293,7 @@ const handleFileSelection = (selectedFile) => {
                     <StatusTable>
                         <Row
                             label={t("AST_RESIDUAL_LIFE")}
-                            text={''}
+                            text={calculateResidualLife( )}
                         />
                     </StatusTable>
                     <LabelFieldPair>
