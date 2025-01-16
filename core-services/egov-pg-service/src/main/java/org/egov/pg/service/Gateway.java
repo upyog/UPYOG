@@ -3,10 +3,7 @@ package org.egov.pg.service;
 import java.net.URI;
 import java.util.Map;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.models.Transaction;
-import org.egov.pg.web.models.CheckSumTransaction;
-import org.egov.pg.service.gateways.paytm.PaymentStatusResponse;
 
 
 
