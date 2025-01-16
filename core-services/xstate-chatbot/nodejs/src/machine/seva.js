@@ -39,14 +39,14 @@ const sevaMachine = Machine({
             question: {
               onEntry: assign((context, event) => {
                 context.onboarding = {};
-                // let message = messages.onboarding.onboardingLocale.question;
+                 let message = messages.onboarding.onboardingLocale.question;
                 context.grammer = grammer.locale.question;
                  var templateContent = {
-                  output: "3797439",
+                  output: "3797433",
                   type: "template"
                 };
-                dialog.sendMessage(context, templateContent, true);
-                // dialog.sendMessage(context, message, true);
+                //dialog.sendMessage(context, templateContent, true);
+                 dialog.sendMessage(context, message, true);
               }),
               on: {
                 USER_MESSAGE: 'process'
@@ -314,8 +314,8 @@ const sevaMachine = Machine({
                   type: "template",
                   params: params
                 };
-                dialog.sendMessage(context, templateContent, true);
-                //dialog.sendMessage(context, message, true);
+                //dialog.sendMessage(context, templateContent, true);
+                dialog.sendMessage(context, message, true);
               }),
               always: '#sevamenu'
         }
@@ -390,7 +390,7 @@ const sevaMachine = Machine({
             await new Promise(resolve => setTimeout(resolve, 1000));
             dialog.sendMessage(context, dialog.get_message(messages.sevamenu.question, context.user.locale), true);
             var templateContent={
-                output :"3797433",
+                output :"3797439",
                 type :"template"
              }
              dialog.sendMessage(context, templateContent, true);
