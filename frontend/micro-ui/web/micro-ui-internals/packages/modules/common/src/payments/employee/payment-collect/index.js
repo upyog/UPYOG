@@ -17,12 +17,11 @@ export const CollectPayment = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
   const queryClient = useQueryClient();
-  const {state}=useLocation();
+  const {state,search}=useLocation();
   const { path: currentPath } = useRouteMatch();
   let { consumerCode, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [Time, setTime ] = useState(0);
-  const search = useLocation().search;
   if (window.location.href.includes("ISWSAPP")) consumerCode = new URLSearchParams(search).get("applicationNumber");
   if (window.location.href.includes("ISWSCON") || ModuleWorkflow === "WS") consumerCode = decodeURIComponent(consumerCode);
 
