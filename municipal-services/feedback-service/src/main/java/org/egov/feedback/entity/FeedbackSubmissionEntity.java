@@ -50,7 +50,7 @@ public class FeedbackSubmissionEntity {
     private String action; // Added this field, assuming you want it as per your DB structure
 
     @Type(type = "json")
-    @Column(name = "json_column", columnDefinition = "jsonb")
+    @Column(name = "additionaldetail", columnDefinition = "jsonb")
     private JsonNode additionalDetail;
 
     @Column(name = "createdBy", length = 150)
