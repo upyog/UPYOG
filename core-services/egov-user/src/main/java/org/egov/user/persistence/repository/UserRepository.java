@@ -166,7 +166,7 @@ public class UserRepository {
 			saveUserRoles(user);
 			if(user.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("EMPLOYEE"))
 			{
-				saveHrmsEmployee(savedUser);
+				//saveHrmsEmployee(savedUser);
 			}
 		}
 		final Address savedCorrespondenceAddress = saveAddress(user.getCorrespondenceAddress(), savedUser.getId(),
