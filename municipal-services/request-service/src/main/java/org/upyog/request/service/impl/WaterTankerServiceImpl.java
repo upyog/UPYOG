@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WaterTankerServiceImpl implements WaterTankerService {
 	
-	
 	@Autowired
 	EnrichmentService enrichmentService;
 	
@@ -25,8 +24,6 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Override
 	public WaterTankerBookingDetail createWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest) {
-
-		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
 
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
 		
