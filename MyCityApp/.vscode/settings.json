@@ -1,0 +1,16 @@
+{
+  "files.autoSave": "afterDelay",
+  "spellright.language": [
+    "en"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext"
+  ],
+  "spellright.parserByClass": {
+    "dart": {
+      "parser": "plain"
+    }
+  }
+}
