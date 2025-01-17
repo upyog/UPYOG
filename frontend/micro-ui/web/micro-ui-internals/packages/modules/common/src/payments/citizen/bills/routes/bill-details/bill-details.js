@@ -139,13 +139,15 @@ const BillDetails = ({ paymentRules, businessService }) => {
     }
   }, [isLoading]); 
 
-  const onSubmit = () => {debugger
+  const onSubmit = () => {
+    debugger
     let paymentAmount =
       paymentType === t("CS_PAYMENT_FULL_AMOUNT")
-        ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.advanceAmount:getTotal()
+        ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.totalAmount - application?.pdfData?.advanceAmount:getTotal()
         : amount || businessService === "FSM.TRIP_CHARGES"
         ? application?.pdfData?.advanceAmount
         : amount;
+        console.log("paymentAmountpaymentAmount",paymentAmount,businessService,application)
     if (window.location.href.includes("mcollect")) {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=mcollect`, {
         paymentAmount,
@@ -247,7 +249,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
                 <TextInput className="text-indent-xl" onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
               )
             ) : businessService === "FSM.TRIP_CHARGES" ? (
-              <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount} onChange={() => {}} disable={true} />
+              <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
             ):((
               <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
             ))}
