@@ -8,7 +8,8 @@ import {
     StatusTable,
     TextArea,
     Dropdown,
-    CheckBox
+    CheckBox,
+    UploadFile
 } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -20,61 +21,33 @@ import { checkForNA } from "../utils";
 
 const createAssetcommonforAll = () => ({
 
-    department: "",
-    assignedUser: "",
-    designation: "",
-    employeeCode: "",
-    transferDate: "",
-    returnDate: "",
-    allocatedDepartment: "",
+    disposalDate: "",
+    reasonForDisposal: "",
+    comments: "",
+    amountReceived: "",
+    isAssetDisposedInFacility : true,
+    purchaserName: "",
+    paymentMode: "",
+    receipt: "",
+    disposedFacility :"",
+    currentAgeOfAsset:"",
+    assetId:"",
     key: Date.now(),
 });
 
-const AssetDispose = ({ config, onSelect, formData, setError, formState, clearErrors }) => {
+const AssetDispose = ({ config, onSelect, formData, formState, clearErrors }) => {
     const { t } = useTranslation();
-
-
     const [disposeDetails, setdisposeDetails] = useState(formData?.disposeDetails || [createAssetcommonforAll()]);
-
+    
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+     const [error, setError] = useState(null);
+    
+    //  this is use for state set
     useEffect(() => {
         onSelect(config?.key, disposeDetails);
-
     }, [disposeDetails]);
 
-
-
-    const { data: departmentName } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Department" }],
-        {
-            select: (data) => {
-                const formattedData = data?.["common-masters"]?.["Department"]
-                const activeData = formattedData?.filter(item => item.active === true);
-                return activeData;
-            },
-        });
-
-
-    let departNamefromMDMS = [];
-
-    departmentName && departmentName.map((departmentname) => {
-        departNamefromMDMS.push({ i18nKey: `${departmentname.name}`, code: `${departmentname.code}`, value: `${departmentname.name}` })
-    })
-
-
-    const { data: designationData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "Designation" }],
-        {
-            select: (data) => {
-                const formattedData = data?.["common-masters"]?.["Designation"]
-                const activeData = formattedData?.filter(item => item.active === true);
-                return activeData;
-            },
-        });
-    const designationNamefromMDMS = [];
-
-    designationData && designationData.map((designation) => {
-        designationNamefromMDMS.push({ i18nKey: `${designation.name}`, code: `${designation.code}`, value: `${designation.name}` })
-    })
-
+      
     const commonProps = {
         focusIndex,
         allAssets: disposeDetails,
@@ -85,9 +58,7 @@ const AssetDispose = ({ config, onSelect, formData, setError, formState, clearEr
         t,
         setError,
         clearErrors,
-        config,
-        departNamefromMDMS,
-        designationNamefromMDMS
+        config
     };
 
     return (
@@ -109,23 +80,38 @@ const OwnerForm = (_props) => {
         setError,
         clearErrors,
         formState,
-        setFocusIndex,
-        departNamefromMDMS,
-        designationNamefromMDMS
+        setFocusIndex
     } = _props;
 
 
     const [showToast, setShowToast] = useState(null);
-    const [isDisposed, setIsDisposed] = useState(true);
+    const [isDisposed, setIsDisposed] = useState(false);
+    const [currentAgeOfAsset, setCurrentAgeOfAsset] = useState('');
 
-    const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
+    const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger,register } = useForm();
     const formValue = watch();
     const { errors } = localFormState;
 
     const { id: applicationNo } = useParams();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
     const [part, setPart] = React.useState({});
+    const [file, setFile] = useState(null);
+    const [uploadedFile, setUploadedFile] = useState("");
+    const [uploadError, setUploadError] = useState("");
+    const [applicationData, setApplicationData] = useState({});
+    const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
+    console.log('Check data of application details:- ', applicationDetails);
+    useEffect(() => {
+        if (applicationDetails) {
+            const age = calculateAssetAge(applicationDetails?.applicationData?.applicationData?.purchaseDate);
+            register("currentAgeOfAsset");
+            register("assetId");
+            register("lifeOfAsset");
+            setValue("currentAgeOfAsset", age); 
+            setValue("assetId", applicationDetails?.applicationData?.applicationData?.id); 
+            setValue("lifeOfAsset", applicationDetails?.applicationData?.applicationData?.lifeOfAsset); 
+        }
+    }, [applicationDetails]);
 
 
     useEffect(() => {
@@ -149,6 +135,33 @@ const OwnerForm = (_props) => {
   const toggleDisposed = () => {
     setIsDisposed(!isDisposed);
   };
+
+  function calculateAssetAge(purchaseDate) {
+    // Convert purchaseDate (Unix timestamp) to JavaScript Date object
+    const purchaseDateObj = new Date(purchaseDate * 1000); // Convert seconds to milliseconds
+    const currentDate = new Date();
+
+    // Calculate the difference in time (milliseconds)
+    const differenceInTime = currentDate - purchaseDateObj;
+
+    // Convert time difference to days
+    const differenceInDays = Math.floor(differenceInTime / (1000 * 60 * 60 * 24));
+
+    // Return the total number of days
+    return differenceInDays;
+}
+
+
+    useEffect(() => {
+        register("fileStoreId");
+        if (uploadedFile) {
+            setValue("fileStoreId", uploadedFile);
+        }
+        console.log("Form State:", formState);
+        console.log("Form Values:", formValue);
+        console.log("Uploaded File:", uploadedFile);
+    }, [uploadedFile, register, setValue]);
+
     const reasonDisposal = [
         {
           code: "End of Life",
@@ -168,6 +181,87 @@ const OwnerForm = (_props) => {
         },
       ];
 
+    function selectfile(e) {
+        setFile(e.target.files[0]);
+    }
+
+    useEffect(() => {
+        if (file) {
+          if (file.size >= 5242880) {
+            setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+            setUploadedFile(null); // Clear previous successful upload
+          } else {
+            setError(""); // Clear any previous errors
+            Digit.UploadServices.Filestorage("ASSET", file, Digit.ULBService.getStateId())
+            .then(response => {
+                console.log('Upload Response:', response);
+                if (response?.data?.files?.length > 0) {
+                setUploadedFile(response.data.files[0].fileStoreId);
+                } else {
+                setError(t("CS_FILE_UPLOAD_ERROR"));
+                }
+            })
+            .catch(() => setError(t("CS_FILE_UPLOAD_ERROR")));
+          }
+        }
+      }, [file, t]);
+
+      // Sample function to handle file selection
+const handleFileSelection = (selectedFile) => {
+    setFile(selectedFile);
+  };
+
+  const selectFile = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      // Example validation for file size (e.g., max 5MB)
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        setUploadError("File size should not exceed 5MB");
+        return;
+      }
+  
+      // Set the file if validation passes
+      setFile(selectedFile);
+      setUploadError(""); // Clear any previous errors
+      // Optionally, you can call props.onChange(selectedFile) if needed
+    }
+  };
+
+  const calculateResidualLife = () => {
+    let purchaseDate = applicationDetails?.applicationData?.applicationData?.purchaseDate; // in seconds
+    let lifeOfAsset = applicationDetails?.applicationData?.applicationData?.lifeOfAsset;   // in years
+    let currentDate = Date.now(); // in milliseconds
+  
+    // Convert purchaseDate from seconds to milliseconds
+    let purchaseDateInMs = purchaseDate * 1000;
+  
+    // Calculate the difference in milliseconds
+    let diffInMs = currentDate - purchaseDateInMs;
+  
+    // Convert milliseconds to years
+    let diffInYears = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
+  
+    // Calculate residual life
+    let residualLife = lifeOfAsset - diffInYears;
+  
+    // Check if residual life is negative or zero
+    if (residualLife <= 0) {
+      return "0 years, 0 months, 0 days";
+    }
+  
+    // Split residual life into years, months, and days
+    let years = Math.floor(residualLife);
+    let fractionalYear = residualLife - years;
+  
+    let totalDaysInFractionalYear = fractionalYear * 365.25;
+    let months = Math.floor(totalDaysInFractionalYear / 30.44); // Average month length
+    let days = Math.round(totalDaysInFractionalYear % 30.44);
+  
+    console.log(`Residual life: ${years} years, ${months} months, ${days} days`);
+  
+    return `${years} years, ${months} months, ${days} days`;
+  };
+  
     return (
         <React.Fragment>
             <div style={{ marginBottom: "16px" }}>
@@ -181,25 +275,25 @@ const OwnerForm = (_props) => {
                     <StatusTable>
                         <Row
                             label={t("AST_NAME")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
+                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
                         />
                     </StatusTable>
                     <StatusTable>
                         <Row
                             label={t("AST_CURRENT_COST")}
-                            text={`${t(checkForNA('COMMON_MASTERS_DEPARTMENT_'+applicationDetails?.applicationData?.applicationData?.department))}`}
+                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.bookValue))}`}
                         />
                     </StatusTable>
                     <StatusTable>
                         <Row
                             label={t("AST_LIFE")}
-                            text={`${t(checkForNA('COMMON_MASTERS_DEPARTMENT_'+applicationDetails?.applicationData?.applicationData?.department))}`}
+                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`}
                         />
                     </StatusTable>
                     <StatusTable>
                         <Row
                             label={t("AST_RESIDUAL_LIFE")}
-                            text={`${t(checkForNA('COMMON_MASTERS_DEPARTMENT_'+applicationDetails?.applicationData?.applicationData?.department))}`}
+                            text={calculateResidualLife( )}
                         />
                     </StatusTable>
                     <LabelFieldPair>
@@ -207,8 +301,8 @@ const OwnerForm = (_props) => {
                         <div className="field">
                             <Controller
                                 control={control}
-                                name={"transferDate"}
-                                defaultValue={disposeDetails?.transferDate}
+                                name={"disposalDate"}
+                                defaultValue={disposeDetails?.disposalDate}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -226,15 +320,18 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
+
+                  
                     <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
                     
+
+
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_REASON_DISPOSAL")}</CardLabel>
-
                         <Controller
                             control={control}
-                            name={"designation"}
-                            defaultValue={disposeDetails?.designation}
+                            name={"reasonForDisposal"}
+                            defaultValue={disposeDetails?.reasonForDisposal}
                             render={(props) => (
                                 <Dropdown
                                     className="form-field"
@@ -248,15 +345,14 @@ const OwnerForm = (_props) => {
                             )}
                         />
                     </LabelFieldPair>
-
                     <CardLabelError style={errorStyle}>{localFormState.touched.designation ? errors?.designation?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_ADD_COMMENTS")}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
-                                name={"assignedUser"}
-                                defaultValue={disposeDetails?.assignedUser}
+                                name={"comments"}
+                                defaultValue={disposeDetails?.comments}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
@@ -265,10 +361,10 @@ const OwnerForm = (_props) => {
                                     <TextArea
                                     type={"textarea"}
                                         value={props.value}
-                                        autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "assignedUser"}
+                                        autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "comments"}
                                         onChange={(e) => {
                                             props.onChange(e.target.value);
-                                            setFocusIndex({ index: disposeDetails.key, type: "assignedUser" });
+                                            setFocusIndex({ index: disposeDetails.key, type: "comments" });
                                         }}
                                         onBlur={(e) => {
                                             setFocusIndex({ index: -1 });
@@ -285,23 +381,23 @@ const OwnerForm = (_props) => {
                         <div className="field">
                             <Controller
                                 control={control}
-                                name={"employeeCode"}
-                                defaultValue={disposeDetails?.employeeCode}
+                                name={"amountReceived"}
+                                defaultValue={disposeDetails?.amountReceived}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: {
                                         pattern: (val) =>
                                             /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                                     },
-                                }}
+                                }}  
                                 render={(props) => (
                                     <TextInput
                                         value={props.value}
                                         // disable={isEditScreen}
-                                        autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "employeeCode"}
+                                        autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "amountReceived"}
                                         onChange={(e) => {
                                             props.onChange(e.target.value);
-                                            setFocusIndex({ index: disposeDetails.key, type: "employeeCode" });
+                                            setFocusIndex({ index: disposeDetails.key, type: "amountReceived" });
                                         }}
                                         onBlur={(e) => {
                                             setFocusIndex({ index: -1 });
@@ -319,8 +415,8 @@ const OwnerForm = (_props) => {
                         <div className="field" style={{ marginTop: "20px", marginBottom: "20px" }}>
                             <Controller
                                 control={control}
-                                name={"employeeCode"}
-                                defaultValue={disposeDetails?.employeeCode}
+                                name={"isAssetDisposedInFacility"}
+                                defaultValue={disposeDetails?.isAssetDisposedInFacility}
                                 rules={{
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     validate: {
@@ -333,22 +429,48 @@ const OwnerForm = (_props) => {
                                                 label={t(" If disposed in facility, amount received will become zero")}
                                                 onChange={toggleDisposed}
                                                 styles={{ height: "auto" }}
-                                                //disabled={!agree}
+                                                value={props.value}
+                                                checked={!isDisposed}
                                               />
                                 )}
                             />
                         </div>
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
+
+                    <LabelFieldPair>
+                            <CardLabel className="card-label-smaller">{t("AST_DISPOSE_RECIPT")}</CardLabel>
+                            <div className="field">
+                            <Controller
+                                control={control}
+                                name={"disposalFile"}
+                                render={(props) => (
+                                <UploadFile
+                                    id={"disposalFile"}
+                                    onUpload={selectFile}
+                                    onDelete={() => {
+                                    setFile(null);
+                                    props.onChange(null); // Clear the file in form state
+                                    }}
+                                    message={file ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+                                    accept="image/*, .pdf, .png, .jpeg, .jpg"
+                                    buttonType="button"
+                                    error={uploadError || !file} // Show error if uploadError is not empty or no file
+                                />
+                                )}
+                            />
+                            </div>
+                        </LabelFieldPair>
+
                     { isDisposed && 
-                    <div>
+                    <div style={{ marginTop:'15px'}}>
                         <LabelFieldPair>
                             <CardLabel className="card-label-smaller">{t("AST_PURCHASER_NAME")}</CardLabel>
                             <div className="field">
                                 <Controller
                                     control={control}
-                                    name={"employeeCode"}
-                                    defaultValue={disposeDetails?.employeeCode}
+                                    name={"purchaserName"}
+                                    defaultValue={disposeDetails?.purchaserName}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -360,10 +482,10 @@ const OwnerForm = (_props) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "employeeCode"}
+                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "purchaserName"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "employeeCode" });
+                                                setFocusIndex({ index: disposeDetails.key, type: "purchaserName" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -380,8 +502,8 @@ const OwnerForm = (_props) => {
                             <div className="field">
                                 <Controller
                                     control={control}
-                                    name={"employeeCode"}
-                                    defaultValue={disposeDetails?.employeeCode}
+                                    name={"paymentMode"}
+                                    defaultValue={disposeDetails?.paymentMode}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -393,10 +515,10 @@ const OwnerForm = (_props) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "employeeCode"}
+                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "paymentMode"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "employeeCode" });
+                                                setFocusIndex({ index: disposeDetails.key, type: "paymentMode" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -413,8 +535,8 @@ const OwnerForm = (_props) => {
                             <div className="field">
                                 <Controller
                                     control={control}
-                                    name={"employeeCode"}
-                                    defaultValue={disposeDetails?.employeeCode}
+                                    name={"receiptNumber"}
+                                    defaultValue={disposeDetails?.receiptNumber}
                                     rules={{
                                         required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                         validate: {
@@ -426,10 +548,10 @@ const OwnerForm = (_props) => {
                                         <TextInput
                                             value={props.value}
                                             // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "employeeCode"}
+                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "receiptNumber"}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "employeeCode" });
+                                                setFocusIndex({ index: disposeDetails.key, type: "receiptNumber" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });
@@ -476,8 +598,7 @@ const OwnerForm = (_props) => {
                         <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
                     </div>
                     }
-
-                </div>
+             </div>
             </div>
             {showToast?.label && (
                 <Toast

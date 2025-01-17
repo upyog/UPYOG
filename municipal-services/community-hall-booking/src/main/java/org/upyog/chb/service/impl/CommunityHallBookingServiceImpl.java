@@ -249,7 +249,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		communityHallsBookingRequest.setHallsBookingApplication(bookingDetail);
 		bookingRepository.updateBookingSynchronously(bookingDetail.getBookingId(), communityHallsBookingRequest.getRequestInfo().getUserInfo().getUuid(), paymentDetail, status.toString());
 		if(deleteBookingTimer) {
-			bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
+			log.info("Deleting booking timer with booking id  {}", communityHallsBookingRequest.getHallsBookingApplication().getBookingId());
+			bookingTimerService.deleteBookingTimer(communityHallsBookingRequest.getHallsBookingApplication().getBookingId(), false);
 		}
 	}
 
@@ -320,7 +321,7 @@ private List<CommunityHallSlotAvailabilityDetail> checkTimerTableForAvailaibilit
 		// Create a Slot availability object for comparison
 		CommunityHallSlotAvailabilityDetail availabilityDetail = CommunityHallSlotAvailabilityDetail.builder()
 				.communityHallCode(detail.getCommunityHallcode()).hallCode(detail.getHallcode())
-				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(detail.getBookingDate(), "dd-MM-yyyy"))
+				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(detail.getBookingDate(), CommunityHallBookingConstants.DATE_FORMAT))
 				.tenantId(detail.getTenantId()).build();
 
 		// Check if the timerDetails set contains this booking and if it's created by

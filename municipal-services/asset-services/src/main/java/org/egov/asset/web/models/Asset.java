@@ -156,7 +156,7 @@ public class Asset implements AssetDTO {
     private String assetStatus;
 
     @JsonProperty("originalBookValue")
-    private String originalBookValue;
+    private double originalBookValue;
 
     @JsonProperty("minimumValue")
     private String minimumValue;

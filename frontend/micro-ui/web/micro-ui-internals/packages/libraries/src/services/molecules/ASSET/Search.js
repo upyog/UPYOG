@@ -38,6 +38,7 @@ const getData = (res, combinedData) => {
   rows.push({ title: "AST_PURCHASE_COST", value: res?.purchaseCost });
   rows.push({ title: "AST_ACQUISITION_COST", value: res?.acquisitionCost });
   rows.push({ title: "AST_BOOK_VALUE", value: res?.bookValue });
+  rows.push({ title: "AST_ORIGINAL_VALUE", value: res?.originalBookValue });
   return rows
 }
 const extractValue = (key) => {
@@ -60,7 +61,7 @@ export const ASSETSearch = {
     return response.Assets[0];
   },
   RegistrationDetails: ({ Assets: response, combinedData, t , applicationDetails}) => {
-console.log('first:= ', applicationDetails);
+ 
     const formatDate = (epochTime) => {
       if (!epochTime) return '';
       const date = new Date(epochTime);
@@ -157,12 +158,21 @@ console.log('first:= ', applicationDetails);
         },
       },
       {
-        title:"AST_Depriciation",
+        title: "AST_DEPRICIATION",
         asSectionHeader: true,
         isTable: true,
-        headers: [`${t("Start Date")}` , `${t("End Date")}`, "Depreciation Value", "Book Value", "Rate", "Old Book Value"],
+        headers: slotlistRows.length > 0
+          ? [
+              `${t("Start Date")}`,
+              `${t("End Date")}`,
+              "Depreciation Value",
+              "Book Value",
+              "Rate",
+              "Old Book Value"
+            ]
+          : [`${t("AST_NO_DEPRECIATION_DATA")}`],
         tableRows: slotlistRows,
-      },
+      }
     ];
   },
   applicationDetails: async (t, tenantId, applicationNo, userType, combinedData, args) => {

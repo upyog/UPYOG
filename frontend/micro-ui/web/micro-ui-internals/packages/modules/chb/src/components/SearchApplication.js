@@ -134,11 +134,47 @@
                   setShowModal(true);
                   setBookingDetails(row?.original);
                 };
-
-                const handleNavigate = (url) => {
-                  history.push(url); // Use history.push for navigation
+                const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
+                  tenantId: application?.tenantId,
+                  filters: {
+                    bookingId:application?.bookingId,
+                    communityHallCode: application?.communityHallCode,
+                    bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
+                    bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
+                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+                    isTimerRequired:true
+                  },
+                  enabled: false, // Disable automatic refetch
+                });
+                const handleMakePayment = async () => {
+                  try {
+                  const result = await refetch();
+                  let SlotSearchData={
+                    tenantId: application?.tenantId,
+                    bookingId:application?.bookingId,
+                    communityHallCode: application?.communityHallCode,
+                    bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
+                    bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
+                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+                    isTimerRequired:true
+              
+                  }
+                  const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
+                    (slot) => slot.slotStaus === "BOOKED"
+                  );
+              
+                  if (isSlotBooked) {
+                    setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
+                  } else {
+                    history.push({
+                      pathname: `/digit-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
+                      state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
+                    });
+                  }
+                } catch (error) {
+                  setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+                  }
                 };
-
                 return (
                   <div ref={menuRef}>
                     <React.Fragment>
@@ -180,7 +216,7 @@
                           {/* Action for Collect Payment */}
                           {application?.bookingStatus !== "BOOKED" && (
                             <div
-                              onClick={() => handleNavigate(`/digit-ui/employee/payment/collect/chb-services/${row?.original?.bookingNo}`)}
+                              onClick={() => handleMakePayment()}
                               style={{
                                 display: 'block',
                                 padding: '8px',
@@ -203,6 +239,8 @@
         const statusOptions = [
           { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
           { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+          { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
+          { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
           { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
         ];
       const onSort = useCallback((args) => {

@@ -14,6 +14,17 @@ export const ASSETService = {
       params: {},
       auth: true,
     }),
+    assetDisposedCreate: (details, tenantId) =>
+      Request({
+        url: Urls.asset.assetDisposedCreate,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+      }),  
   search: ({ tenantId, filters, auth }) =>
     Request({
       url: Urls.asset.search,

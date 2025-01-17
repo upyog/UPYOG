@@ -140,11 +140,43 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                 setShowModal(true);
                 setBookingDetails(row?.original);
               };
-
-              const handleNavigate = (url) => {
-                history.push(url); 
-              };
-
+                const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
+                let formdata = {
+                  advertisementSlotSearchCriteria:application?.cartDetails.map((item) => ({
+                    bookingId: application?.bookingId,
+                    addType: item?.addType,
+                    bookingStartDate: item?.bookingDate,
+                    bookingEndDate: item?.bookingDate,
+                    faceArea: item?.faceArea,
+                    tenantId: tenantId,
+                    location: item?.location,
+                    nightLight: item?.nightLight,
+                    isTimerRequired: true,
+                  })),
+                };
+                const handleMakePayment = async () => {
+                  try {
+                    // Await the mutation and capture the result directly
+                    const result = await slotSearchData.mutateAsync(formdata);
+                    let SlotSearchData={
+                      bookingId:application?.bookingId,
+                      tenantId: tenantId,
+                      cartDetails:application?.cartDetails,
+                    };
+                    const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
+                    const timerValue=result?.advertisementSlotAvailabiltityDetails[0].timerValue;
+                    if (isSlotBooked) {
+                      setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
+                    } else {
+                      history.push({
+                        pathname: `/digit-ui/employee/payment/collect/${"adv-services"}/${application?.bookingNo}`,
+                        state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue, SlotSearchData:SlotSearchData },
+                      });
+                    }
+                } catch (error) {
+                  setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+                }
+                };
               return (
                 <div ref={menuRef}>
                   <React.Fragment>
@@ -186,7 +218,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
                         {/* Action for Collect Payment */}
                         {application?.bookingStatus !== "BOOKED" && (
                           <div
-                            onClick={() => handleNavigate(`/digit-ui/employee/payment/collect/adv-services/${row?.original?.bookingNo}`)}
+                            onClick={() => handleMakePayment()}
                             style={{
                               display: 'block',
                               padding: '8px',
@@ -209,6 +241,8 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, se
       const statusOptions = [
         { i18nKey: "Booked", code: "BOOKED", value: t("ADS_BOOKED") },
         { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("ADS_BOOKING_IN_PROGRES") },
+        { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
+        { i18nKey: "Booking Expired", code: "BOOKING_EXPIRED", value: t("BOOKING_EXPIRED") },
         { i18nKey: "Cancelled", code: "CANCELLED", value: t("ADS_CANCELLED") }
       ];
     const onSort = useCallback((args) => {

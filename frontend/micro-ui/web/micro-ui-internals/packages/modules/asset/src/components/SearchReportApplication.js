@@ -177,7 +177,6 @@ const ASSETReportApplication = ({tenantId, isLoading, userType, t, onSubmit, dat
 
 
 const downloadQRReport = async () => {
-  console.log('I am here ');
   const doc = new jsPDF();
   const generateQRCode = async (text) => {
     return await QRCode.toDataURL(text);

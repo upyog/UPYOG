@@ -91,7 +91,7 @@ export const convertDateToEpoch = (dateString) => {
   }
 };
 
-const convertStringToFloat = (amountString) => {
+export const convertStringToFloat = (amountString) => {
   // Remove commas if present and convert to float
   const cleanedString = amountString.replace(/,/g, '');
   
@@ -115,7 +115,7 @@ export const Assetdata = (data) => {
     "purchaseOrderNumber",
     "purchaseCost",
     "location",
-    "warranty" 
+    "lifeOfAsset" 
   ];
 
   // Ensure data?.assetDetails exists before attempting to filter
@@ -154,18 +154,16 @@ export const Assetdata = (data) => {
       invoiceNumber: data?.assetDetails?.invoiceNumber,
       purchaseDate: convertDateToEpoch(data?.assetDetails?.purchaseDate),
       purchaseOrderNumber: data?.assetDetails?.purchaseOrderNumber,
-      warranty: data?.assetDetails?.warranty?.code,
       assetAge: data?.assetDetails?.assetAge,
       location: data?.assetDetails?.location,
-      // purchaseCost: data?.assetDetails?.purchaseCost,
+      lifeOfAsset: data?.assetDetails?.lifeOfAsset,
       purchaseCost: convertStringToFloat(data?.assetDetails?.purchaseCost),
       acquisitionCost: convertStringToFloat(data?.assetDetails?.acquisitionCost),
       bookValue: data?.assetDetails?.bookValue,
       originalBookValue: data?.assetDetails?.bookValue,
-      lifeOfAsset: data?.assetDetails?.lifeOfAsset,
       islegacyData: false,
       minimumValue: 0,
-      assetStatus: 1,
+      assetStatus: "1",
       action: "",
       businessService: "asset-create",
 

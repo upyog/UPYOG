@@ -34,6 +34,7 @@ const BannerPicker = (props) => {
 };
 
 const Response = (props) => {
+  console.log('For coming data from props in response:- ', props)
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const history = useHistory();
@@ -54,8 +55,6 @@ const Response = (props) => {
 
   const mutation = Digit.Hooks.asset.useAssignCreateAPI(tenantId, state.key !== "UPDATE");
   const mutation1 = Digit.Hooks.asset.useAssignCreateAPI(tenantId, false);
-
-  
 
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
