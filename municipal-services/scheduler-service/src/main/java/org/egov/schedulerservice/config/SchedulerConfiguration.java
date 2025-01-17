@@ -21,4 +21,10 @@ public class SchedulerConfiguration {
 	@Value("${egov.garbage.endpoint.bill-generator}")
 	private String garbageBillGeneratorEndpoint;
 
+	@Value("${egov.bill.context.host}")
+	private String billServiceHostUrl;
+
+	@Value("${egov.bill.endpoint.bill-expiry}")
+	private String billExpityEndpoint;
+
 }
