@@ -17,7 +17,7 @@ public class AssetMaintenanceQueryBuilder {
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
     private static final String BASE_QUERY =
-            "SELECT maintenance.maintenance_id, "
+            "SELECT DISTINCT maintenance.maintenance_id, "
                     + "maintenance.asset_id, "
                     + "maintenance.tenant_id, "
                     + "maintenance.current_life_of_asset, "

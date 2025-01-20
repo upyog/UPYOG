@@ -17,7 +17,7 @@ public class AssetDisposalQueryBuilder {
 
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
-    private static final String BASE_QUERY = "SELECT "
+    private static final String BASE_QUERY = "SELECT DISTINCT "
             + "disposal.disposal_id, "
             + "disposal.asset_id, "
             + "disposal.tenant_id, "
