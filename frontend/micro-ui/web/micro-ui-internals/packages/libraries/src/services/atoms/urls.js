@@ -203,11 +203,13 @@ const Urls = {
     search: "/asset-services/v1/assets/_search",
     update: "/asset-services/v1/assets/_update",
     assign: "/asset-services/v1/assets/assignment/_create",
-    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  //this api for assetDepriciationProcess
-    depriciationList:"/asset-services/v1/assets/depreciation/list",   // this api for list of assetDepriciation
-    return_asset: "/asset-services/v1/assets/assignment/_update",
-    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
-    assetDisposedCreate: "/asset-services/v1/disposal/_create"
+    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  
+    maintenance:"/asset-services/maintenance/v1/_create",   
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",    
+    assetDisposedCreate: "/asset-services/v1/disposal/_create",
+    depriciationList:"/asset-services/v1/assets/depreciation/list",   
+    maintenanceList:"/asset-services/maintenance/v1/_search",   
+    disposalList:"/asset-services/v1/disposal/_search"   
   },
   ew: {
     create: "/ewaste-services/ewaste-request/_create",

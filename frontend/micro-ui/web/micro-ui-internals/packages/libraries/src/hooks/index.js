@@ -286,6 +286,7 @@ import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+import useMaintenanceAPI from "./asset/useMaintenanceAPI";
 import useReturnAPI from "./asset/useReturnAPI";
 import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 
@@ -606,6 +607,7 @@ const asset = {
   useAssetparentSubType,
   useTenants: useTenantsASSET,
   useAssignCreateAPI,
+  useMaintenanceAPI,
   useReturnAPI,
   useEditUpdateAPI
 };
