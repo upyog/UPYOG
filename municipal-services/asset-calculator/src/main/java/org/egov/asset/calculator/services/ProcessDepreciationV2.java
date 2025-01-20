@@ -132,9 +132,9 @@ public class ProcessDepreciationV2 {
             //LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate());
             // Convert purchase date from milliseconds to LocalDate
             LocalDate purchaseDate = LocalDate.ofEpochDay(asset.getPurchaseDate() / CalculatorConstants.SECONDS_IN_A_DAY); // Convert milliseconds to days
-            if (purchaseDate == null) {
-                log.warn("Skipping asset with null purchase date: {}", asset.getId());
-                return; // Skip if purchase date is null any case if it is.
+            if (purchaseDate == null || asset.getLifeOfAsset() == null) {
+                log.warn("Skipping asset due to missing mandatory fields: {}", asset.getId());
+                return;
             }
 
             // Calculate asset life details
@@ -156,7 +156,7 @@ public class ProcessDepreciationV2 {
                 log.info("Asset life expired. Calculating depreciation only until {}", lifeEndDate);
             }
 
-            while (startDate.isBefore(lifeEndDate) || startDate.isEqual(lifeEndDate)) {
+            while (startDate.isBefore(lifeEndDate) || (startDate.isEqual(lifeEndDate) && !startDate.isAfter(currentDate))) {
                 DepreciationRateDTO  depreciationRateDTO = fetchDepreciationRateAndMethod(asset.getAssetCategory(), asset.getPurchaseDate());
 
                 if (depreciationRateDTO == null) {
