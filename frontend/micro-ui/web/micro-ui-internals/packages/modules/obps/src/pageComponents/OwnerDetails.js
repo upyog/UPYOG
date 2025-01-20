@@ -254,10 +254,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
        
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
             let found = usersResponse?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
-            // if (usersResponse?.user?.length === 0) {
-            //     setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
-            //     return;
-            // } else {
+            if (usersResponse?.user?.length === 0) {
+                setShowToast({ key: "true", warning: true, message: "ERR_MOBILE_NUMBER_NOT_REGISTERED" });
+                return;
+            } else {
                 const userData = usersResponse?.user?.[0];
                 userData.gender = userData.gender ? { code: userData.gender, active: true, i18nKey: `COMMON_GENDER_${userData.gender}` } : "";
                 if(userData?.dob) userData.dob = convertDateToEpoch(userData?.dob);
@@ -279,7 +279,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 //     setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
                 //     return;
                 // }
-            // }
+             }
         
     }
 
@@ -318,11 +318,34 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             window.scrollTo(0,0);
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
-        else {
+        else {      
+            console.log("fields...",fields)   
+            for (const field of fields){
+              const userPresent = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
+              if (userPresent?.user?.length==0){
+              await Digit.UserService.userCreate(Digit.ULBService.getStateId(), { userName: field?.mobileNumber,mobileNumber: field?.mobileNumber, name: field?.name, gender:field?.gender?.code,emailId:field?.emailId, active: true, type:"citizen", roles: [             {
+                     "name": "Citizen",
+                     "code": "CITIZEN",
+                     "tenantId": "pg"
+                 }
+             ], }, {})
+            }
+            }  
+            let userData=[];
+            for (const field of fields){
+            const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
+            if(usersResponse?.user?.[0]?.dob){ 
+                usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
+            if (usersResponse?.user?.[0]?.createdDate) {
+                    usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
+                    usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
+                    usersResponse.user[0].pwdExpiryDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.pwdExpiryDate);
+            }
+            userData.push(usersResponse?.user?.[0]);             
+            }
             let owner = formData.owners;
             let ownerStep;
-            ownerStep = { ...owner, owners: fields, ownershipCategory: ownershipCategory };
-
+            ownerStep = { ...owner, owners: userData, ownershipCategory: ownershipCategory };
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -334,7 +357,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
-                        gender: owner.gender.code,
+                        gender: owner.gender.code || owner.gender,
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
