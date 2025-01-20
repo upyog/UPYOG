@@ -62,9 +62,9 @@ public class AssetDisposalRowMapper implements RowMapper<AssetDisposal> {
         // Mapping AuditDetails
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setCreatedBy(rs.getString("created_by"));
-        auditDetails.setCreatedTime(rs.getLong("created_time"));
-        auditDetails.setLastModifiedBy(rs.getString("last_modified_by"));
-        auditDetails.setLastModifiedTime(rs.getLong("last_modified_time"));
+        auditDetails.setCreatedTime(rs.getLong("created_at"));
+        auditDetails.setLastModifiedBy(rs.getString("updated_by"));
+        auditDetails.setLastModifiedTime(rs.getLong("updated_at"));
         disposal.setAuditDetails(auditDetails);
 
         // Mapping Documents
