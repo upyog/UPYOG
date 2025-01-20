@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details (
     booking_id character varying(64),
     booking_no character varying(30),
+    tenant_id character varying(64),
     tanker_type character varying(30) NOT NULL,
     tanker_quantity integer,
     water_quantity integer,
@@ -66,6 +67,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_address_details (
 CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details_auditdetails (
     booking_id character varying(64),
     booking_no character varying(30),
+    tenant_id character varying(64),
     tanker_type character varying(30) NOT NULL,
     tanker_quantity integer,
     water_quantity integer,

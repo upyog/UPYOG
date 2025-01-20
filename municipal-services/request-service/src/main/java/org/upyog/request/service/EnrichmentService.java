@@ -42,6 +42,7 @@ public class EnrichmentService {
 		waterTankerDetail.setApplicationDate(auditDetails.getCreatedTime());
 		waterTankerDetail.setBookingStatus(RequestServiceStatus.valueOf(waterTankerDetail.getBookingStatus()).toString());
 		waterTankerDetail.setAuditDetails(auditDetails);
+		waterTankerDetail.setTenantId(waterTankerRequest.getWaterTankerBookingDetail().getTenantId());	
 		
 		/* List<String> customIds = getIdList(requestInfo, waterTankerDetail.getTenantId(),
 				config.getWaterTankerApplicationKey(), config.getWaterTankerApplicationFormat(), 1);
