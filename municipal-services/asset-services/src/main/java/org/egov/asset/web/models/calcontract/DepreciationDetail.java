@@ -55,4 +55,7 @@ public class DepreciationDetail {
 
     @Column(name = "updated_by", nullable = false)
     private String updatedBy;
+
+    @Column(name = "depreciationMethod")
+    private String depreciationMethod;
 }
