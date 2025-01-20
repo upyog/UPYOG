@@ -5,6 +5,6 @@ import org.upyog.request.service.web.models.WaterTankerBookingRequest;
 
 public interface WaterTankerService {
 	
-	public WaterTankerBookingDetail createWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest);
+	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest);
 
 }

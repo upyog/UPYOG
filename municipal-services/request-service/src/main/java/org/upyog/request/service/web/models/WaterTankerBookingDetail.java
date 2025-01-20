@@ -34,56 +34,56 @@ import lombok.ToString;
 @Builder
 @ToString
 public class WaterTankerBookingDetail {
-	
+
 	@JsonProperty("bookingId")
 	private String bookingId;
-	
+
 	private String bookingNo;
-	
+
 	private String tankerType;
 
-    private String tankerQuantity;
+	private int tankerQuantity;
 
-    private String waterQuantity;
+	private int waterQuantity;
 
-    private String description;
+	private String description;
 
-    @JsonFormat(pattern = RequestServiceUtil.DATE_FORMAT)
-    private LocalDate deliveryDate;
-  
-    @JsonFormat(pattern = "HH:mm")
-    private LocalTime deliveryTime;
-  
-    private String extraCharge;
- 
-    private String vendorId;
+	@JsonFormat(pattern = RequestServiceUtil.DATE_FORMAT)
+	private LocalDate deliveryDate;
 
-    private String vehicleId;
+	@JsonFormat(pattern = "HH:mm")
+	private LocalTime deliveryTime;
 
-    private String driverId;
-	
+	private String extraCharge;
+
+	private String vendorId;
+
+	private String vehicleId;
+
+	private String driverId;
+
 	private Long paymentDate;
 
 	private Long applicationDate;
-	
+
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String tenantId;
-	
+
 	@JsonProperty("bookingStatus")
 	private String bookingStatus;
-	
+
 	private String receiptNo;
-	
+
 	private String permissionLetterFilestoreId;
-	
+
 	private String paymentReceiptFilestoreId;
-	
+
 	@Valid
 	private ApplicantDetail applicantDetail;
-	
-	@Valid 
+
+	@Valid
 	private Address address;
-	
+
 	private AuditDetails auditDetails;
-	
+
 }

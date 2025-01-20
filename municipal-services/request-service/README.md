@@ -16,3 +16,6 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+
+This service facilitates the booking of water tankers, allowing users to request and manage their water tanker reservations efficiently. It supports features such as booking creation, scheduling delivery times, and managing associated details such as tanker type and quantity.
+

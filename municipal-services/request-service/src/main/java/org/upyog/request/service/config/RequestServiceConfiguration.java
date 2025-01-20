@@ -20,18 +20,6 @@ import lombok.Setter;
 @Import({ TracerConfiguration.class })
 public class RequestServiceConfiguration {
 
-	/*
-	 * // Pagination config for search results
-	 * 
-	 * @Value("${egov.street-vening.default.limit}") private Integer defaultLimit;
-	 * 
-	 * @Value("${egov.street-vending.default.offset}") private Integer
-	 * defaultOffset;
-	 * 
-	 * @Value("${egov.chb.max.limit}") private Integer maxSearchLimit;
-	 * 
-	 * // Workflow configs
-	 */
 	@Value("${egov.workflow.host}")
 	private String wfHost;
 
@@ -65,5 +53,21 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
+	
+	@Value("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+
+    @Value("${egov.url.shortner.endpoint}")
+    private String urShortnerPath;
+    
+    @Value("${egov.user.create.path}")
+    private String userCreateEndpoint;
+
+    @Value("${egov.user.search.path}")
+    private String userSearchEndpoint;
+
+    @Value("${egov.user.update.path}")
+    private String userUpdateEndpoint;
+
 
 }

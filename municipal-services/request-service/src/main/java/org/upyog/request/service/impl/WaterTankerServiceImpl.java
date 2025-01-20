@@ -1,6 +1,5 @@
 package org.upyog.request.service.impl;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.request.service.EnrichmentService;
@@ -23,10 +22,13 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	RequestServiceRepository requestServiceRepository;
 
 	@Override
-	public WaterTankerBookingDetail createWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest) {
+	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest) {
+
+		log.info("Create water tanker booking for user : " + waterTankerRequest.getRequestInfo().getUserInfo().getUuid()
+				+ " for the request : " + waterTankerRequest.getWaterTankerBookingDetail());
 
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
-		
+
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
 
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();

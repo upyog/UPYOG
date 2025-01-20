@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.upyog.request.service.config.RequestServiceConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
 
@@ -14,19 +15,16 @@ public class UrlShortenerUtil {
 
     @Autowired
     private RestTemplate restTemplate;
-
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
-
-    @Value("${egov.url.shortner.endpoint}")
-    private String urShortnerPath;
+    
+    @Autowired
+    private RequestServiceConfiguration config;
 
     public String getShortenedUrl(String url){
 
         HashMap<String,String> body = new HashMap<>();
         body.put("url",url);
-        StringBuilder builder = new StringBuilder(urlShortnerHost);
-        builder.append(urShortnerPath);
+        StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
+        builder.append(config.getUrShortnerPath());
         String res = restTemplate.postForObject(builder.toString(), body, String.class);
 
         if(StringUtils.isEmpty(res)){

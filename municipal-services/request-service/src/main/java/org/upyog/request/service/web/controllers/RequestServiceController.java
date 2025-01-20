@@ -34,7 +34,7 @@ public class RequestServiceController {
 			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true) @Valid @RequestBody WaterTankerBookingRequest waterTankerbookingRequest) {
 		log.info("waterTankerbookingRequest : {}" , waterTankerbookingRequest);
 
-		WaterTankerBookingDetail waterTankerDetail = waterTankerService.createWaterTankerBooking(waterTankerbookingRequest);
+		WaterTankerBookingDetail waterTankerDetail = waterTankerService.createNewWaterTankerBookingRequest(waterTankerbookingRequest);
 	
 		ResponseInfo info = RequestServiceUtil.createReponseInfo(waterTankerbookingRequest.getRequestInfo(),
 				RequestServiceConstants.BOOKING_CREATED, StatusEnum.SUCCESSFUL);
