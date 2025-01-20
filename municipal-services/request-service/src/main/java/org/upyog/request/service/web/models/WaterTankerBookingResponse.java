@@ -1,0 +1,47 @@
+package org.upyog.request.service.web.models;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * A Object holds the community halls for booking
+ */
+@ApiModel(description = "A Object holds the water tanker for booking")
+@Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class WaterTankerBookingResponse {
+
+	private ResponseInfo responseInfo;
+
+	@JsonProperty("waterTankerBookingDetail")
+	@Valid
+	private List<WaterTankerBookingDetail> waterTankerBookingApplication;
+
+	public void addNewWaterTankerBookingApplication(WaterTankerBookingDetail waterTankerbookingDetail) {
+		if (this.waterTankerBookingApplication == null) {
+			this.waterTankerBookingApplication = new ArrayList<WaterTankerBookingDetail>();
+		}
+		this.waterTankerBookingApplication.add(waterTankerbookingDetail);
+
+	}
+}
+

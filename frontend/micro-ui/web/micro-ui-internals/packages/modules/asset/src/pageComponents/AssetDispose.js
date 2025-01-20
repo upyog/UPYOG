@@ -100,7 +100,6 @@ const OwnerForm = (_props) => {
     const [uploadError, setUploadError] = useState("");
     const [applicationData, setApplicationData] = useState({});
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-    console.log('Check data of application details:- ', applicationDetails);
     useEffect(() => {
         if (applicationDetails) {
             const age = calculateAssetAge(applicationDetails?.applicationData?.applicationData?.purchaseDate);
@@ -157,10 +156,7 @@ const OwnerForm = (_props) => {
         if (uploadedFile) {
             setValue("fileStoreId", uploadedFile);
         }
-        console.log("Form State:", formState);
-        console.log("Form Values:", formValue);
-        console.log("Uploaded File:", uploadedFile);
-    }, [uploadedFile, register, setValue]);
+    }, [uploadedFile, register, setValue]); 
 
     const reasonDisposal = [
         {
@@ -256,8 +252,6 @@ const handleFileSelection = (selectedFile) => {
     let totalDaysInFractionalYear = fractionalYear * 365.25;
     let months = Math.floor(totalDaysInFractionalYear / 30.44); // Average month length
     let days = Math.round(totalDaysInFractionalYear % 30.44);
-  
-    console.log(`Residual life: ${years} years, ${months} months, ${days} days`);
   
     return `${years} years, ${months} months, ${days} days`;
   };
@@ -552,39 +546,6 @@ const handleFileSelection = (selectedFile) => {
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
                                                 setFocusIndex({ index: disposeDetails.key, type: "receiptNumber" });
-                                            }}
-                                            onBlur={(e) => {
-                                                setFocusIndex({ index: -1 });
-                                                props.onBlur(e);
-                                            }}
-                                        />
-                                    )}
-                                />
-                            </div>
-                        </LabelFieldPair>
-                        <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
-                        <LabelFieldPair>
-                            <CardLabel className="card-label-smaller">{t("AST_DISPOSAL_CODE")}</CardLabel>
-                            <div className="field">
-                                <Controller
-                                    control={control}
-                                    name={"employeeCode"}
-                                    defaultValue={disposeDetails?.employeeCode}
-                                    rules={{
-                                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                                        validate: {
-                                            pattern: (val) =>
-                                                /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
-                                        },
-                                    }}
-                                    render={(props) => (
-                                        <TextInput
-                                            value={props.value}
-                                            // disable={isEditScreen}
-                                            autoFocus={focusIndex.index === disposeDetails?.key && focusIndex.type === "employeeCode"}
-                                            onChange={(e) => {
-                                                props.onChange(e.target.value);
-                                                setFocusIndex({ index: disposeDetails.key, type: "employeeCode" });
                                             }}
                                             onBlur={(e) => {
                                                 setFocusIndex({ index: -1 });

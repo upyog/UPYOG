@@ -181,7 +181,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
    
  //later will convert it into the action bar same as i have iused in ApplicationDetailsActionBar.js file in template
     {
-      Header: t("AST_ACTIONS"),
+      Header: t("AST_ACTIONS"),// take action button
       Cell: ({ row }) => {
         const [isMenuOpen, setIsMenuOpen] = useState(false);
         const menuRef = useRef();
@@ -235,7 +235,14 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
                     padding: '8px',
                     zIndex: 1000,
                   }}>
-                    {actionOptions.map((option, index) => (
+                    {actionOptions
+                  .filter(option => {
+                    // Only show AST_CERTIFICATE if assetStatus is "0"
+                    if (row?.original?.assetStatus === "0") {
+                      return option.code === "AST_CERTIFICATE";
+                    }
+                    return true; // Show all options otherwise
+                  }) .map((option, index) => (
                       option.code === "AST_CERTIFICATE" ? (
                         <div
                           key={index}  // Ensure each element has a unique key
@@ -250,7 +257,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
                         >
                           {option.label}
                         </div>
-                      ) : (option.label === "Process Depreciation") ?
+                      ) : (option.code === "AST_DEPRECIATION" ) ?  
                         (<div
                           key={index}  // Ensure each element has a unique key
                           onClick={() => processDepreciation(row.original?.["applicationNo"], row.original?.["id"])}  // Wrap printReport in an arrow function
@@ -264,7 +271,6 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
                         >
                           {option.label}
                         </div>)
-                        : (option.code === "AST_DISPOSE" && row?.original?.assetStatus === "0") ? null
                         : (
                           <Link
                             key={index}  // Add key for the Link element as well
