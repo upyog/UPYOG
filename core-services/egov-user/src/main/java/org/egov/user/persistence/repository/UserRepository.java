@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.egov.tracer.model.CustomException;
+import org.egov.user.config.UserServiceConstants;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
@@ -529,7 +530,6 @@ public class UserRepository {
      */
     private void saveUserRoles(User entityUser) {
         List<Map<String, Object>> batchValues = new ArrayList<>(entityUser.getRoles().size());
-
         for (Role role : entityUser.getRoles()) {
             batchValues.add(
                     new MapSqlParameterSource("role_code", role.getCode())
@@ -538,6 +538,15 @@ public class UserRepository {
                             .addValue("user_tenantid", entityUser.getTenantId())
                             .addValue("lastmodifieddate", new Date())
                             .getValues());
+            if(UserServiceConstants.CLIENT_ID.equals(entityUser.getClientId())) {          	
+            batchValues.add(
+                    new MapSqlParameterSource("role_code", entityUser.getClientId())
+                            .addValue("role_tenantid", role.getTenantId())
+                            .addValue("user_id", entityUser.getId())
+                            .addValue("user_tenantid", entityUser.getTenantId())
+                            .addValue("lastmodifieddate", new Date())
+                            .getValues());
+            }
         }
         namedParameterJdbcTemplate.batchUpdate(RoleQueryBuilder.INSERT_USER_ROLES,
                 batchValues.toArray(new Map[entityUser.getRoles().size()]));
