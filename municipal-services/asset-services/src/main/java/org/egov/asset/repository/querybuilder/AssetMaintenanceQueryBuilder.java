@@ -40,8 +40,8 @@ public class AssetMaintenanceQueryBuilder {
                     + "maintenance.pre_condition_remarks, "
                     + "maintenance.description, "
                     + "maintenance.asset_maintenance_status "
-                    + "FROM eg_asset_maintenance maintenance "
-                    + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON maintenance.asset_id = doc.assetid";
+                    + "FROM eg_asset_maintenance maintenance ";
+                    //+ LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON maintenance.asset_id = doc.assetid ";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_time DESC) AS offset_ FROM " +
