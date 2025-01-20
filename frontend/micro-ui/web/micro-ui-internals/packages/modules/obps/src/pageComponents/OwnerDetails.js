@@ -319,7 +319,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
         else {      
-            console.log("fields...",fields)   
             for (const field of fields){
               const userPresent = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
               if (userPresent?.user?.length==0){
