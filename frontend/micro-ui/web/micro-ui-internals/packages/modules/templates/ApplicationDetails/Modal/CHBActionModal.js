@@ -25,7 +25,6 @@ const CloseBtn = (props) => {
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
 
-  console.log("applicationData",applicationData);
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
@@ -47,7 +46,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [disableActionSubmit, setDisableActionSubmit] = useState(false);
 
   
-
+ 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
@@ -57,67 +56,66 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }
 
   useEffect(() => {
-    (async () => {
-      setError(null);
-      if (file) {
-        if (file.size >= 5242880) {
-          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-        } else {
-          try {
-            const response = await Digit.UploadServices.Filestorage("CHB", file, Digit.ULBService.getStateId());
-            if (response?.data?.files?.length > 0) {
-              setUploadedFile(response?.data?.files[0]?.fileStoreId);
-            } else {
+      (async () => {
+        setError(null);
+        if (file) {
+          if (file.size >= 5242880) {
+            setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+          } else {
+            try {
+            const response = await Digit.UploadServices.Filestorage("CHB", file, tenantId);
+              if (response?.data?.files?.length > 0) {
+                setUploadedFile(response?.data?.files[0]?.fileStoreId);
+              } else {
+                setError(t("CS_FILE_UPLOAD_ERROR"));
+              }
+            } catch (err) {
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
-          } catch (err) {
-            setError(t("CS_FILE_UPLOAD_ERROR"));
           }
         }
-      }
-    })();
-  }, [file]);
+      })();
+    }, [file]);
   
 
   function submit(data) {
-      let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
+      let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
       if (uploadedFile)
         workflow["documents"] = [
           {
             documentType: action?.action + " DOC",
             fileName: file?.name,
-            filestoreId: uploadedFile,
+            fileStoreId: uploadedFile,
           },
         ];
       submitAction({
-        hallsBookingApplication: [
+        hallsBookingApplication: 
           {
             ...applicationData,
             workflow,
           },
-        ],
       });
    
   }
 
-  useEffect(() => {
+   useEffect(() => {
     if (action) {
       setConfig(
-          configCHBApproverApplication({
-            t,
-            action,
-            approvers,
-            selectedApprover,
-            setSelectedApprover,
-            selectFile,
-            uploadedFile,
-            setUploadedFile,
-            businessService,
-          })
-        );
+        configCHBApproverApplication({
+          t,
+          action,
+          approvers,
+          selectedApprover,
+          setSelectedApprover,
+          selectFile,
+          uploadedFile,
+          setUploadedFile,
+          businessService,
+        })
+      );
       
     }
-  }, [action, approvers, uploadedFile]);
+    }, [action, approvers, uploadedFile]);
 
   return action && config.form ? (
     <Modal

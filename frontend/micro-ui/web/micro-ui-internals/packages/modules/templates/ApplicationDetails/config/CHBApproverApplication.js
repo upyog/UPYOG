@@ -15,18 +15,21 @@ export const configCHBApproverApplication = ({
 }) => {
   return {
     label: {
-      heading: `WF_${action?.action}_APPLICATION`,
-      submit: `WF_${businessService}_${action?.action}`,
-      cancel: "ES_CHB_COMMON_CANCEL",
+      heading: `CHB_${action?.action}`,
+      submit: `CHB_${action?.action}`,
+      cancel: "CS_COMMON_BACK",
     },
     form: [
       {
         body: [  
           {
-            label: t("ES_CHB_ACTION_COMMENTS"),
+            label: t("ES_CHB_ACTION_COMMENTS") + " *",
             type: "textarea",
             populators: {
               name: "comments",
+              validation: {
+                required: true,
+              },
             },
           },
           {
@@ -38,9 +41,7 @@ export const configCHBApproverApplication = ({
                 onDelete={() => {
                   setUploadedFile(null);
                 }}
-                showHint={true}
-                hintText={t("CHB_ATTACH_RESTRICTIONS_SIZE")}
-                message={uploadedFile ? `1 ${t(`ES_CHB_ACTION_FILEUPLOADED`)}` : t(`ES_CHB_ACTION_NO_FILEUPLOADED`)}
+                message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
               />
             ),
           },

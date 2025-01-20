@@ -60,7 +60,7 @@ const inboxConfig = (tenantId, filters) => ({
     _searchFn: () => EwService.search({ tenantId, filters }),
   },
   CHB: {
-    services: ["chb"],
+    services: ["booking-refund"],
     searchResponseKey: "hallsBookingApplication",
     businessIdsParamForSearch: "bookingNo",
     businessIdAliasForSearch: "bookingNo",

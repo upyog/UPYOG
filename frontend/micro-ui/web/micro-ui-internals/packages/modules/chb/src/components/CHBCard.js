@@ -10,7 +10,7 @@ const CHBCard = () => {
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
     ModuleCode: "CHB",
-    filters: { limit: 10, offset: 0, services: ["chb"] },
+    filters: { limit: 10, offset: 0, services: ["booking-refund"] },
 
     config: {
       select: (data) => {
@@ -28,11 +28,11 @@ const CHBCard = () => {
     return null;
   }
   const links=[
-    // {
-    //   count: isLoading ? "-" : total?.totalCount,
-    //   label: t("ES_COMMON_INBOX"),
-    //   link: `/digit-ui/employee/chb/inbox`,
-    // },
+    {
+      count: isLoading ? "-" : total?.totalCount,
+      label: t("ES_COMMON_INBOX"),
+      link: `/digit-ui/employee/chb/inbox`,
+    },
     {
       label: t("ES_NEW_COMMUNITY_HALL_BOOKING"),
       link: `/digit-ui/employee/chb/bookHall/searchhall`,
@@ -47,11 +47,11 @@ const CHBCard = () => {
     Icon: <CHBIcon/>,
     moduleName: t("ACTION_TEST_CHB"),
     kpis: [
-      // {
-      //   count: total?.totalCount,
-      //   label: t("ES_TITLE_INBOX"),
-      //   link: `/digit-ui/employee/chb/searchHall/inbox`,
-      // },
+      {
+        count: total?.totalCount,
+        label: t("ES_TITLE_INBOX"),
+        link: `/digit-ui/employee/chb/searchHall/inbox`,
+      },
     ],
     links:links.filter(link=>!link?.role||CHB_CEMP),
   };

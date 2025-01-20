@@ -331,27 +331,19 @@ export const filterFunctions = {
   },
   
   CHB: (filtersArg) => {
-    console.log("filer",filtersArg )
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
     const workflowFilters = {};
 
-    const { applicationNumber, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
+    const { bookingNo, mobileNumber,communityHallCode, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
 
-    if (filtersArg?.applicationNumber) {
-      searchFilters.applicationNumber = filtersArg?.applicationNumber;
+    if (filtersArg?.bookingNo) {
+      searchFilters.bookingNo = filtersArg?.bookingNo;
     }
     
     if (applicationStatus && applicationStatus?.[0]) {
       workflowFilters.applicationStatus = applicationStatus.map((status) => status.code).join(",");
-    }
-    if (filtersArg?.locality?.length) {
-      searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop()).join(",");
-    }
-
-    if (filtersArg?.locality?.code) {
-      searchFilters.locality = filtersArg?.locality?.code;
     }
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
@@ -360,8 +352,11 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if (applicationNumber) {
-      searchFilters.applicationNumber = applicationNumber;
+    if (bookingNo) {
+      searchFilters.bookingNo = bookingNo;
+    }
+    if(communityHallCode){
+      searchFilters.communityHallCode = communityHallCode.code;
     }
     if (sortBy) {
       searchFilters.sortBy = sortBy;

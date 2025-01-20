@@ -203,23 +203,12 @@ export const filterFunctions = {
     const searchFilters = {};
     const workflowFilters = {};
 
-    const { applicationNumbers, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
-
-    if (filtersArg?.applicationNumber) {
-      searchFilters.applicationNumber = filtersArg?.applicationNumber;
-    }
-    if (filtersArg?.applicationNumbers) {
-      searchFilters.applicationNumber = applicationNumbers;
-    }
-    
+    const { bookingNo, mobileNumber,communityHallCode, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
     if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
       workflowFilters.status = applicationStatus.map((status) => status.uuid);
       if (applicationStatus?.some((e) => e.nonActionableRole)) {
         searchFilters.fetchNonActionableRecords = true;
       }
-    }
-    if (filtersArg?.locality?.length) {
-      searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop());
     }
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -227,16 +216,21 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-
+    if(bookingNo) {   
+      searchFilters.bookingNo = bookingNo;
+    }
+    if(communityHallCode){
+      searchFilters.communityHallCode = communityHallCode.code;
+    }
 
     if (services) {
       workflowFilters.businessService = services;
     }
     searchFilters["isInboxSearch"] = true;
-    searchFilters["creationReason"] = ["CREATE"];
+    searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "chb-services";
 
-
+    
     
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },

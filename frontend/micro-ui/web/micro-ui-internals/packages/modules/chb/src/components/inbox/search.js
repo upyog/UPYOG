@@ -10,25 +10,21 @@ import {
   DatePicker,
   MobileNumber,
   Dropdown,
-  Localities,
 } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
 const fieldComponents = {
-  date: DatePicker,
   mobileNumber: MobileNumber,
-//   Locality: (props) => (
-//     <Localities
-//       tenantId={Digit.ULBService.getCurrentTenantId()}
-//       selectLocality={props.onChange}
-//       keepNull={false}
-//       boundaryType="revenue"
-//       selected={props.value}
-//       disableLoader={true}
-//       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
-//     />
-//   ),
+  Dropdown:(props) => (
+    <Dropdown
+      selected={props.value}
+      select={props.onChange}
+      option={props.options}
+      optionKey="i18nKey"
+      t={props.t}
+    />
+  ),
 };
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
@@ -36,6 +32,13 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   const { handleSubmit, reset, watch, control, setError, clearErrors, formState, setValue } = useForm({
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
+  let HallName = [];
+  hallList && hallList.map((slot) => {
+    HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`});
+  });
+  
 
   const form = watch();
 
@@ -50,28 +53,6 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   };
 
   const mobileView = innerWidth <= 640;
-
-  // useEffect(() => {
-  //   searchFields.forEach(({ pattern, name, maxLength, minLength, errorMessages, ...el }) => {
-  //     const value = form[name];
-  //     const error = formState.errors[name];
-  //     if (pattern) {
-  //       if (!new RegExp(pattern).test(value) && !error)
-  //         setError(name, { type: "pattern", message: t(errorMessages?.pattern) || t(`PATTERN_${name.toUpperCase()}_FAILED`) });
-  //       else if (new RegExp(pattern).test(value) && error?.type === "pattern") clearErrors([name]);
-  //     }
-  //     if (minLength) {
-  //       if (value?.length < minLength && !error)
-  //         setError(name, { type: "minLength", message: t(errorMessages?.minLength || `MINLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length >= minLength && error?.type === "minLength") clearErrors([name]);
-  //     }
-  //     if (maxLength) {
-  //       if (value?.length > maxLength && !error)
-  //         setError(name, { type: "maxLength", message: t(errorMessages?.maxLength || `MAXLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length <= maxLength && error?.type === "maxLength") clearErrors([name]);
-  //     }
-  //   });
-  // }, [form, formState, setError, clearErrors]);
 
 
   const onSubmitInput = (data) => {
@@ -114,7 +95,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
       </LinkLabel>
     );
   };
-
+  
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
@@ -149,7 +130,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         <Controller
                           render={(props) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />;
+                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} options={HallName} t={t}/>;
                           }}
                           name={input.name}
                           control={control}
