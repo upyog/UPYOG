@@ -36,12 +36,7 @@ public class AssetDisposalQueryBuilder {
             + "disposal.created_by, "
             + "disposal.updated_at, "
             + "disposal.updated_by, "
-            + "disposal.asset_disposal_status, "
-            + "doc.documentid, "
-            + "doc.documenttype, "
-            + "doc.filestoreid, "
-            + "doc.documentuid, "
-            + "doc.docdetails "
+            + "disposal.asset_disposal_status "
             + "FROM eg_asset_disposal_details disposal "
             + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON disposal.asset_id = doc.assetid";
 

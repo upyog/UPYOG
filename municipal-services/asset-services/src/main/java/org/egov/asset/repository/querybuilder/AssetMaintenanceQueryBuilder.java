@@ -39,12 +39,7 @@ public class AssetMaintenanceQueryBuilder {
                     + "maintenance.post_condition_remarks, "
                     + "maintenance.pre_condition_remarks, "
                     + "maintenance.description, "
-                    + "maintenance.asset_maintenance_status, "
-                    + "doc.documentid, "
-                    + "doc.documenttype, "
-                    + "doc.filestoreid, "
-                    + "doc.documentuid, "
-                    + "doc.docdetails "
+                    + "maintenance.asset_maintenance_status "
                     + "FROM eg_asset_maintenance maintenance "
                     + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON maintenance.asset_id = doc.assetid";
 
