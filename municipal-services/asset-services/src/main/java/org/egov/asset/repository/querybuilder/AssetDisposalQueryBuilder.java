@@ -15,6 +15,8 @@ public class AssetDisposalQueryBuilder {
     @Autowired
     private AssetConfiguration config;
 
+    private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
+
     private static final String BASE_QUERY = "SELECT "
             + "disposal.disposal_id, "
             + "disposal.asset_id, "
@@ -41,7 +43,7 @@ public class AssetDisposalQueryBuilder {
             + "doc.documentuid, "
             + "doc.docdetails "
             + "FROM eg_asset_disposal_details disposal "
-            + "LEFT OUTER JOIN eg_asset_document doc ON disposal.disposal_id = doc.assetid";
+            + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON disposal.asset_id = doc.assetid";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
