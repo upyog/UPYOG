@@ -423,18 +423,26 @@ public class PaymentRepository {
 		if (Isapp) {
 			if (businessservice.equals("WS")) {
 				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.applicationno = '" + consumerCode + "'";
+						+ " where a1.applicationno = '" + consumerCode + "'"
+						+ " and a1.status='Active'"
+						+ " and a2.status='ACTIVE';";
 			} else {
 				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.applicationno = '" + consumerCode + "'";
+						+ " where a1.applicationno = '" + consumerCode + "'"
+						+ " and a1.status='Active'"
+						+ " and a2.status='ACTIVE';";
 			}
 		} else {
 			if (businessservice.equals("WS")) {
 				queryString = "select a2.landarea from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.connectionno = '" + consumerCode + "'";
+						+ " where a1.connectionno = '" + consumerCode + "'"
+						+ " and a1.status='Active'"
+						+ " and a2.status='ACTIVE';";
 			} else {
 				queryString = "select a2.landarea from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.connectionno = '" + consumerCode + "'";
+						+ " where a1.connectionno = '" + consumerCode + "'"
+						+ " and a1.status='Active'"
+						+ " and a2.status='ACTIVE';";
 			}
 		}
 		log.info("Query: " + queryString);
@@ -460,20 +468,24 @@ public class PaymentRepository {
 	if (Isapp) {
 	    if(businessservice.equals("WS")) {
 		 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.applicationno = '"+consumerCode+"'";
+				+ " where a1.applicationno = '"+consumerCode+"'"
+				+ " and a2.status='ACTIVE';";
 	    }else {
 	    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-	 				+ " where a1.applicationno = '"+consumerCode+"'";
+	 				+ " where a1.applicationno = '"+consumerCode+"'"
+	 				+ " and a2.status='ACTIVE';";
 	    }
 	}
 	else
 	{
 		  if(businessservice.equals("WS")) {
 				 queryString = "select a2.usagecategory from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-						+ " where a1.connectionno = '"+consumerCode+"'";
+						+ " where a1.connectionno = '"+consumerCode+"'"
+						+ " and a2.status='ACTIVE';";
 			    }else {
 			    	 queryString = "select a2.usagecategory from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-			 				+ " where a1.connectionno = '"+consumerCode+"'";
+			 				+ " where a1.connectionno = '"+consumerCode+"'"
+			 				+ " and a2.status='ACTIVE';";
 			    }	
 	}
 		log.info("Query: " +queryString);
@@ -496,18 +508,22 @@ public class PaymentRepository {
 	if (Isapp) {
 	    if(businessservice.equals("WS")) {
 		 queryString = "select a2.propertyid from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-				+ " where a1.applicationno = '"+consumerCode+"'";
+				+ " where a1.applicationno = '"+consumerCode+"'"
+				+ " and a2.status='ACTIVE';";
 	    }else {
 	    	 queryString = "select a2.propertyid from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-	 				+ " where a1.applicationno = '"+consumerCode+"'";
+	 				+ " where a1.applicationno = '"+consumerCode+"'"
+	 				+ " and a2.status='ACTIVE';";
 	    }}
 	else {
 		 if(businessservice.equals("WS")) {
 			 queryString = "select a2.propertyid from eg_ws_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-					+ " where a1.connectionno = '"+consumerCode+"'";
+					+ " where a1.connectionno = '"+consumerCode+"'"
+					+ " and a2.status='ACTIVE';";
 		    }else {
 		    	 queryString = "select a2.propertyid from eg_sw_connection a1 inner join eg_pt_property a2 on a1.property_id= a2.propertyid"
-		 				+ " where a1.connectionno = '"+consumerCode+"'";
+		 				+ " where a1.connectionno = '"+consumerCode+"'"
+		 				+ " and a2.status='ACTIVE';";
 		    }
 		
 	}
@@ -533,13 +549,15 @@ public class PaymentRepository {
 	    	 queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_ws_connection a1 "
 	 				+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 	 				+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-	 				+ " where a1.applicationno='"+consumerCode+"';";
+	 				+ " where a1.applicationno='"+consumerCode+"'"
+	 				+ " and a2.status='ACTIVE';";
 	 			       
 	    }else {               
 	    	queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_sw_connection a1 "
 					+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 					+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-					+ " where a1.applicationno='"+consumerCode+"';";
+					+ " where a1.applicationno='"+consumerCode+"'"
+					+ " and a2.status='ACTIVE';";
 				       
 	    }
 	    }
@@ -548,13 +566,15 @@ public class PaymentRepository {
 			 queryString = "select CONCAT(doorno,'.',buildingname,'.',city) as address from eg_ws_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.connectionno='"+consumerCode+"';";
+						+ " where a1.connectionno='"+consumerCode+"';"
+						+ " and a2.status='ACTIVE';";
 					       
 		    }else {
 		    	queryString = "select   CONCAT(doorno,'.',buildingname,'.',city) as address from eg_sw_connection a1 "
 						+ " inner join eg_pt_property a2 on a1.property_id = a2.propertyid "
 						+ " inner join eg_pt_address a3 on a2.id=a3.propertyid "
-						+ " where a1.connectionno='"+consumerCode+"';";
+						+ " where a1.connectionno='"+consumerCode+"';"
+						+ " and a2.status='ACTIVE';";
 					     
 		    }
 		
@@ -692,7 +712,7 @@ public class PaymentRepository {
 	        queryString.append("eg_sw_connection a1 ");
 	    }
 
-	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active'");
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active' and a2.status='ACTIVE' ");
 
 	    // Prepare parameters using MapSqlParameterSource
 	    MapSqlParameterSource preparedStatementValues = new MapSqlParameterSource();
@@ -735,7 +755,7 @@ public class PaymentRepository {
 	        queryString.append("eg_sw_connection a1 ");
 	    }
 
-	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active'");
+	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid WHERE a1.status = 'Active' and a2.status='ACTIVE' ");
 
 	    // Adding conditions dynamically for consumer codes
 	    if (!CollectionUtils.isEmpty(consumerCodes)) {
@@ -776,7 +796,8 @@ public class PaymentRepository {
 
 	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid ")
 	               .append("INNER JOIN eg_pt_address a3 ON a2.id = a3.propertyid ")
-	               .append("WHERE a1.status = 'Active'");
+	               .append("WHERE a1.status = 'Active'")
+	               .append(" AND a2.status = 'ACTIVE'");
 
 	    // Add condition for consumer codes if present
 	    if (!CollectionUtils.isEmpty(consumerCodes)) {
@@ -821,7 +842,8 @@ public class PaymentRepository {
 	    }
 
 	    queryString.append("INNER JOIN eg_pt_property a2 ON a1.property_id = a2.propertyid ")
-	               .append("WHERE a1.status = 'Active'");
+	               .append("WHERE a1.status = 'Active'")
+	               .append(" AND a2.status = 'ACTIVE'");
 
 	    // Add condition for consumer codes if present
 	    if (!CollectionUtils.isEmpty(consumerCodes)) {
