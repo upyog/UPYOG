@@ -64,38 +64,38 @@ public class AssetMaintenanceRowMapper implements RowMapper<AssetMaintenance> {
         auditDetails.setLastModifiedTime(rs.getLong("last_modified_time"));
         assetMaintenance.setAuditDetails(auditDetails);
 
-        // Mapping Documents
-        try {
-            String documentId = rs.getString("documentid");
-            String documentType = rs.getString("documenttype");
-            String fileStoreId = rs.getString("filestoreid");
-            String documentUid = rs.getString("documentuid");
-            String docDetailsStr = rs.getString("docdetails");
-
-            Object docDetails = null;
-            if (docDetailsStr != null && !docDetailsStr.isEmpty()) {
-                docDetails = objectMapper.readTree(docDetailsStr);
-            }
-
-            Document document = Document.builder()
-                    .documentId(documentId)
-                    .documentType(documentType)
-                    .fileStoreId(fileStoreId)
-                    .documentUid(documentUid)
-                    .docDetails(docDetails)
-                    .build();
-
-            // Add the document to the AssetMaintenance object
-            List<Document> documents = assetMaintenance.getDocuments();
-            if (documents == null) {
-                documents = new ArrayList<>();
-                assetMaintenance.setDocuments(documents);
-            }
-            documents.add(document);
-        } catch (Exception e) {
-            // Handle exceptions during document mapping
-            e.printStackTrace();
-        }
+//        // Mapping Documents
+//        try {
+//            String documentId = rs.getString("documentid");
+//            String documentType = rs.getString("documenttype");
+//            String fileStoreId = rs.getString("filestoreid");
+//            String documentUid = rs.getString("documentuid");
+//            String docDetailsStr = rs.getString("docdetails");
+//
+//            Object docDetails = null;
+//            if (docDetailsStr != null && !docDetailsStr.isEmpty()) {
+//                docDetails = objectMapper.readTree(docDetailsStr);
+//            }
+//
+//            Document document = Document.builder()
+//                    .documentId(documentId)
+//                    .documentType(documentType)
+//                    .fileStoreId(fileStoreId)
+//                    .documentUid(documentUid)
+//                    .docDetails(docDetails)
+//                    .build();
+//
+//            // Add the document to the AssetMaintenance object
+//            List<Document> documents = assetMaintenance.getDocuments();
+//            if (documents == null) {
+//                documents = new ArrayList<>();
+//                assetMaintenance.setDocuments(documents);
+//            }
+//            documents.add(document);
+//        } catch (Exception e) {
+//            // Handle exceptions during document mapping
+//            e.printStackTrace();
+//        }
     }
 
     /**

@@ -36,9 +36,10 @@ public class AssetDisposalQueryBuilder {
             + "disposal.created_by, "
             + "disposal.updated_at, "
             + "disposal.updated_by, "
+            + "disposal.additional_details, "
             + "disposal.asset_disposal_status "
-            + "FROM eg_asset_disposal_details disposal "
-            + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON disposal.asset_id = doc.assetid";
+            + "FROM eg_asset_disposal_details disposal ";
+           // + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON disposal.asset_id = doc.assetid ";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
@@ -59,6 +60,15 @@ public class AssetDisposalQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" disposal.tenant_id = ? ");
             preparedStmtList.add(criteria.getTenantId());
+        }
+
+        // Add maintenance IDs filter
+        if (!CollectionUtils.isEmpty(criteria.getDisposalIds())) {
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" disposal.disposal_id IN (")
+                    .append(createQuery(criteria.getDisposalIds()))
+                    .append(") ");
+            addToPreparedStatement(preparedStmtList, criteria.getDisposalIds());
         }
 
         // Add asset IDs filter
@@ -85,16 +95,6 @@ public class AssetDisposalQueryBuilder {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" disposal.disposal_date <= ? ");
             preparedStmtList.add(criteria.getToDate());
-        }
-
-        // Add reason for disposal filter
-        if (criteria.getReasonForDisposal() != null) {
-            List<String> reasons = Arrays.asList(criteria.getReasonForDisposal().split(","));
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" disposal.reason_for_disposal IN (")
-                    .append(createQuery(reasons))
-                    .append(") ");
-            addToPreparedStatement(preparedStmtList, reasons);
         }
 
         // Add pagination

@@ -17,7 +17,7 @@ public class AssetMaintenanceQueryBuilder {
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
     private static final String BASE_QUERY =
-            "SELECT DISTINCT maintenance.maintenance_id, "
+            "SELECT  maintenance.maintenance_id, "
                     + "maintenance.asset_id, "
                     + "maintenance.tenant_id, "
                     + "maintenance.current_life_of_asset, "
@@ -40,8 +40,8 @@ public class AssetMaintenanceQueryBuilder {
                     + "maintenance.pre_condition_remarks, "
                     + "maintenance.description, "
                     + "maintenance.asset_maintenance_status "
-                    + "FROM eg_asset_maintenance maintenance "
-                    + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON maintenance.asset_id = doc.assetid";
+                    + "FROM eg_asset_maintenance maintenance ";
+                    //+ LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON maintenance.asset_id = doc.assetid ";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_time DESC) AS offset_ FROM " +
