@@ -40,8 +40,8 @@ public class AssetDisposalQueryBuilder {
             + "doc.filestoreid, "
             + "doc.documentuid, "
             + "doc.docdetails "
-            + "FROM eg_asset_maintenance maintenance "
-            + "LEFT OUTER JOIN eg_asset_document doc ON maintenance.maintenance_id = doc.assetid";
+            + "FROM eg_asset_disposal_details disposal "
+            + "LEFT OUTER JOIN eg_asset_document doc ON disposal.disposal_id = doc.assetid";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
@@ -72,6 +72,7 @@ public class AssetDisposalQueryBuilder {
                     .append(") ");
             addToPreparedStatement(preparedStmtList, criteria.getAssetIds());
         }
+
 
         // Add disposal date filter
         if (criteria.getFromDate() != null && criteria.getToDate() != null) {
