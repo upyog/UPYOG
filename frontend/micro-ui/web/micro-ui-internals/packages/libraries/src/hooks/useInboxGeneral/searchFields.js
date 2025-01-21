@@ -95,13 +95,14 @@ const inboxSearchFields = {
   ],
     CHB: [
       {
-        label: "CHB_APPLICATION_NUMBER",
+        label: "CHB_BOOKING_NO",
         name: "bookingNo",
         roles: [],
       },
       {
-        label: "CHB_HALL_NAME",
-        name: "hallName",
+        label: "CHB_COMMUNITY_HALL_NAME",
+        name: "communityHallCode",
+        type: "Dropdown",
         roles: [],
       },
       {

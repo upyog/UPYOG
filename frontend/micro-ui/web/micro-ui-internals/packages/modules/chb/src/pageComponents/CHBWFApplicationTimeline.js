@@ -8,24 +8,23 @@ import CHBWFCaption from "./CHBWFCaption";
 const CHBWFApplicationTimeline = (props) => {
   
   const { t } = useTranslation();
-  const businessService = props?.application?.workflow?.businessService;
-  // const businessService = "ptr";
+  const businessService = "booking-refund";
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
     id: props.application?.bookingNo,
     moduleCode: businessService,
   });
-  
+
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
   const getTimelineCaptions = (checkpoint) => {
-    
-    if (checkpoint.state === "OPEN")
-    {
+
+    if (checkpoint.state === "OPEN") 
+      {
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
@@ -42,9 +41,9 @@ const CHBWFApplicationTimeline = (props) => {
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       return <CHBWFCaption data={caption} OpenImage={OpenImage} />;
-    } 
-    
-   
+    }
+
+
     else {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
@@ -52,42 +51,6 @@ const CHBWFApplicationTimeline = (props) => {
         comment: t(checkpoint?.comment),
       };
       return <CHBWFCaption data={caption} />;
-    }
-  };
-
-  const showNextActions = (nextActions) => {
-    let nextAction = nextActions[0];
-    const next = nextActions.map((action) => action.action);
-    if (next.includes("PAY") || next.includes("EDIT")) {
-      let currentIndex = next.indexOf("EDIT") || next.indexOf("PAY");
-      currentIndex = currentIndex != -1 ? currentIndex : next.indexOf("PAY");
-      nextAction = nextActions[currentIndex];
-    }
-    switch (nextAction?.action) {
-      case "PAY":
-        return (
-          props?.userType === 'citizen'
-          ? (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-            <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.bookingNo}`, state: { tenantId: props.application.tenantId, bookingNo : props?.application?.bookingNo } }}
-            >
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-            </Link>
-          </div>
-          ) : null
-        );
-      
-      case "SUBMIT_FEEDBACK":
-        return (
-          <div style={{ marginTop: "24px" }}>
-            <Link to={`/digit-ui/citizen/fsm/rate/${props.id}`}>
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
-            </Link>
-          </div>
-        );
-      default:
-        return null;
     }
   };
 
@@ -113,27 +76,16 @@ const CHBWFApplicationTimeline = (props) => {
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
-                  
-                  let timelineStatusPostfix = "";
-                  if (window.location.href.includes("/obps/")) {
-                    if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
-                    timelineStatusPostfix = `_NOT_DONE`
-                    else if(checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                    timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                    else
-                    timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                  }
+                data?.timeline.map((checkpoint, index) => {
+
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                       //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
-                       label={t(
-                        `ES_PTR_COMMON_STATUS_${data?.processInstances[index].state?.["state"]
-                        }${timelineStatusPostfix}`
-                      )}
+                        label={t(
+                          `${data?.processInstances[index].state?.["state"]}`
+                        )}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
                     </React.Fragment>
@@ -143,7 +95,6 @@ const CHBWFApplicationTimeline = (props) => {
           )}
         </Fragment>
       )}
-      {data && showNextActions(data?.nextActions)}
     </React.Fragment>
   );
 };

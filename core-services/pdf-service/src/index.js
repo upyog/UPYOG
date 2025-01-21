@@ -1106,7 +1106,7 @@ const generateQRCodes = async (
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
     let urlQR='',qrtext;
-    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt'|| key == 'chbservice-receipt' || key == 'advservice-receipt' || key == 'advpermissionletter' || key == 'svservice-receipt' || key == 'svcertificate')
+    if(key == 'mcollect-challan' || key == 'firenoc-receipt' || key == 'property-receipt' || key == 'bpa-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt'|| key == 'chbservice-receipt' || key == 'advservice-receipt' || key == 'advpermissionletter' || key == 'svservice-receipt' || key == 'svcertificate' || key == 'svidentitycard')
     {
       urlQR=egov_host;
       urlQR=urlQR.concat(qrmapping.value);
