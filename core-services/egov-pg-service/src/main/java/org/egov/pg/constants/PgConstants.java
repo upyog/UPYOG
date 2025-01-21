@@ -14,6 +14,11 @@ public class PgConstants {
     public static final String PG_NOTIFICATION = "PG_NOTIFICATION";
     public static final String PG_MODULE = "egov-pg";
 
+    public static final String CCAVENUE_PCOMMAND = "orderStatusTracker";
+    public static final String CCAVENUE_TYPE = "JSON";
+    public static final String CCAVENUE_VERSION= "1.2";
+
+    
     private PgConstants() {
     }
 

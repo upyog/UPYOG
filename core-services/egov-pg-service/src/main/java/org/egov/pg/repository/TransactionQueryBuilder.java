@@ -11,7 +11,8 @@ class TransactionQueryBuilder {
             ".mobile_number, pg.email_id, pg.name, pg.user_tenant_id, pg.tenant_id, pg.gateway_txn_id, pg.gateway_payment_mode, " +
             "pg.gateway_status_code, pg.gateway_status_msg, pg.receipt, pg.additional_details,  pg.created_by, pg" +
             ".created_time, pg.last_modified_by, pg.last_modified_time " +
-            "FROM eg_pg_transactions pg ";
+            "FROM eg_pg_transactions pg "+
+            "join egbs_bill_v1 as bill on pg.bill_id=bill.id  ";
 
     private TransactionQueryBuilder() {
     }
@@ -28,9 +29,9 @@ class TransactionQueryBuilder {
     }
 
     private static String buildQueryForTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
-        String preparedQuery = buildQuery(transactionCriteria, preparedStmtList);
-
-        StringBuilder builder = new StringBuilder(preparedQuery);
+        String preparedQuery = buildQueryforscheduler(transactionCriteria, preparedStmtList);
+        StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
+       // StringBuilder builder = new StringBuilder(preparedQuery);
 
         if (!preparedQuery.contains("WHERE"))
             builder.append(" WHERE ");
@@ -39,10 +40,14 @@ class TransactionQueryBuilder {
 
         builder.append(" pg.created_time >= ? ");
         preparedStmtList.add(startTime);
-        builder.append(" AND ");
-        builder.append(" pg.created_time <= ? ");
+      
+        
+        builder.append(" AND pg.created_time <= ? ");
         preparedStmtList.add(endTime);
 
+        
+        builder.append(" AND pg.txn_status <= 'PENDING' ");
+        
         return builder.toString();
     }
 
@@ -70,7 +75,7 @@ class TransactionQueryBuilder {
         if (!Objects.isNull(transactionCriteria.getTxnStatus())) {
             queryParams.put("pg.txn_status", transactionCriteria.getTxnStatus().toString());
         }
-
+//
         if (!Objects.isNull(transactionCriteria.getConsumerCode())) {
             queryParams.put("pg.consumer_code", transactionCriteria.getConsumerCode());
         }
@@ -81,6 +86,30 @@ class TransactionQueryBuilder {
 
 
 
+        if (!queryParams.isEmpty()) {
+
+            builder.append(" WHERE ");
+
+            Iterator<Map.Entry<String, Object>> iterator = queryParams.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Object> entry = iterator.next();
+                builder.append(entry.getKey()).append(" = ? ");
+
+                preparedStmtList.add(entry.getValue());
+
+                if (iterator.hasNext())
+                    builder.append(" AND ");
+            }
+        }
+
+        return builder.toString();
+    }
+    
+    
+    
+    private static String buildQueryforscheduler(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
+        StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
+        Map<String, Object> queryParams = new HashMap<>();
         if (!queryParams.isEmpty()) {
 
             builder.append(" WHERE ");

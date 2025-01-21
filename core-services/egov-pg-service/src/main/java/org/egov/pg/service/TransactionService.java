@@ -146,24 +146,12 @@ public class TransactionService {
 
         Transaction newTxn = null;
 
-	if(currentTxnStatus.getGateway().contentEquals("CCAVANUE")) {     	 
-      		 if(validator.skipGateway(currentTxnStatus)) {
-               newTxn = currentTxnStatus;
-           } else{
-               newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
-
-               // Enrich the new transaction status before persisting
-              enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
-            // Check if transaction is successful, amount matches etc
-               if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
-               	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
-              	paymentsService.registerPayment(request);
-               }
-           } 
-           }else {
-       	   if(validator.skipGateway(currentTxnStatus)) {
+       	   if(validator.skipGateway(currentTxnStatus)) 
+       	   {
                   newTxn = currentTxnStatus;
-              } else{
+            } 
+       	   else
+       	   {
                   newTxn = gatewayService.getLiveStatus(currentTxnStatus, requestParams);
 
                   // Enrich the new transaction status before persisting
@@ -171,18 +159,23 @@ public class TransactionService {
                // Check if transaction is successful, amount matches etc
                   if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
                   	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
-                  	paymentsService.registerPayment(request);
+                  	try {
+                  		paymentsService.registerPayment(request);
+                  	}
+                  	catch (Exception e) {
+                        log.warn("Skipping this transaction due to error: {}", request.getTransaction().getTxnId(), e);
+                    }
                   }
-              } 
+               
           }
 
         
         TransactionDump dump = TransactionDump.builder()
                 .txnId(currentTxnStatus.getTxnId())
-                .txnResponse(newTxn.getResponseJson())
+                .txnResponse(newTxn.getResponseJson()) // Convert JSONObject to String
                 .auditDetails(newTxn.getAuditDetails())
                 .build();
-
+        log.info("dumps "+dump);
         producer.push(appProperties.getUpdateTxnTopic(), new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
         producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
 
@@ -222,6 +215,7 @@ public class TransactionService {
                   enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
                // Check if transaction is successful, amount matches etc
                   if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
+                	  log.info("id"+ currentTxnStatus.getTxnId());
                   	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
                   	paymentsService.registerPayment(request);
                   }
