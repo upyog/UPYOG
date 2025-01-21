@@ -43,6 +43,7 @@ const AssetMaintenance = ({ config, onSelect, formData, formState, clearErrors, 
     const { t } = useTranslation();
     const [maintenanceDetails, setMaintenanceDetails] = useState(formData?.maintenanceDetails || [createAssetcommonforAll()]);
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+
     useEffect(() => {
         onSelect(config?.key, maintenanceDetails);
 
@@ -60,6 +61,7 @@ const AssetMaintenance = ({ config, onSelect, formData, formState, clearErrors, 
         clearErrors,
         config
     };
+
 
     return (
         <React.Fragment>
@@ -101,6 +103,51 @@ const OwnerForm = (_props) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
 
+    const { data: maintainenceTypeMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceType" }], {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["AssetMaintenanceType"];
+            const activeData = formattedData?.filter((item) => item.active === true);
+            return activeData;
+        },
+    }); // Note : used direct custom MDMS to get the Data ,Do not copy and paste without understanding the Context
+
+    let maintenanceOpt = [];
+
+    maintainenceTypeMDMS &&
+        maintainenceTypeMDMS.map((maintainenceType) => {
+            maintenanceOpt.push({ i18nKey: `AST_${maintainenceType.code}`, code: `${maintainenceType.code}`, value: `${maintainenceType.name}` });
+        });
+
+        const { data:paymentTypeOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetPaymentType" }], {
+            select: (data) => {
+              const formattedData = data?.["ASSET"]?.["AssetPaymentType"];
+              const activeData = formattedData?.filter((item) => item.active === true);
+              return activeData;
+            },
+          });
+        
+          let paymentTypeOpt = [];
+        
+          paymentTypeOptMDMS &&
+          paymentTypeOptMDMS.map((row) => {
+            paymentTypeOpt.push({ i18nKey: `AST_${row.code}`, code: `${row.code}`, value: `${row.name}` });
+            });
+
+        const { data:maintenanceCycleOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceType" }], {
+            select: (data) => {
+              const formattedData = data?.["ASSET"]?.["AssetMaintenanceType"];
+              const activeData = formattedData?.filter((item) => item.active === true);
+              return activeData;
+            },
+          });
+        
+          let maintenanceCycleOpt = [];
+        
+          paymentTypeOptMDMS &&
+          paymentTypeOptMDMS.map((rowType) => {
+            maintenanceCycleOpt.push({ i18nKey: `AST_${rowType.code}`, code: `${rowType.code}`, value: `${rowType.name}` });
+            });
+
     useEffect(() => {
         if (applicationDetails) {
             register("assetId");
@@ -125,48 +172,48 @@ const OwnerForm = (_props) => {
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
-    const maintenanceOpt = [
-        {
-            code: "PREVENTIVE",
-            i18nKey: "PREVENTIVE",
-        },
-        {
-            code: "CORRECTIVE",
-            i18nKey: "CORRECTIVE",
-        }
-    ];
-    const paymentTypeOpt = [
-        {
-            code: "WARRANTY",
-            i18nKey: "PREVENTIVE",
-        },
-        {
-            code: "AMC",
-            i18nKey: "CORRECTIVE",
-        },
-        {
-            code: "TO BE PAID",
-            i18nKey: "TO_BE_PAID",
-        }
-    ];
-    const maintenanceCycleOpt = [
-        {
-            code: "MONTHLY",
-            i18nKey: "MONTHLY",
-        },
-        {
-            code: "QUARTERLY",
-            i18nKey: "QUARTERLY",
-        },
-        {
-            code: "HALF YEARLY",
-            i18nKey: "HALF_YEARLY",
-        },
-        {
-            code: "YEARLY",
-            i18nKey: "YEARLY",
-        }
-    ];
+    // const maintenanceOpt = [
+    //     {
+    //         code: "PREVENTIVE",
+    //         i18nKey: "PREVENTIVE",
+    //     },
+    //     {
+    //         code: "CORRECTIVE",
+    //         i18nKey: "CORRECTIVE",
+    //     }
+    // ];
+    // const paymentTypeOpt = [
+    //     {
+    //         code: "WARRANTY",
+    //         i18nKey: "PREVENTIVE",
+    //     },
+    //     {
+    //         code: "AMC",
+    //         i18nKey: "CORRECTIVE",
+    //     },
+    //     {
+    //         code: "TO BE PAID",
+    //         i18nKey: "TO_BE_PAID",
+    //     }
+    // ];
+    // const maintenanceCycleOpt = [
+    //     {
+    //         code: "MONTHLY",
+    //         i18nKey: "MONTHLY",
+    //     },
+    //     {
+    //         code: "QUARTERLY",
+    //         i18nKey: "QUARTERLY",
+    //     },
+    //     {
+    //         code: "HALF YEARLY",
+    //         i18nKey: "HALF_YEARLY",
+    //     },
+    //     {
+    //         code: "YEARLY",
+    //         i18nKey: "YEARLY",
+    //     }
+    // ];
     const handleSelect = (value) => {
         register("warrantyStatus");
         setValue("warrantyStatus", value);
@@ -212,24 +259,24 @@ const OwnerForm = (_props) => {
 
         const currentDate = new Date(date);
         switch (cycle.code) {
-          case 'MONTHLY':
-            currentDate.setMonth(currentDate.getMonth() + 1)
-            ;
-            break;
-          case 'QUARTERLY':
-            currentDate.setMonth(currentDate.getMonth() + 3);
-            break;
-          case 'HALF_YEARLY':
-            currentDate.setMonth(currentDate.getMonth() + 6);
-            break;
-          case 'YEARLY':
-            currentDate.setFullYear(currentDate.getFullYear() + 1);
-            break;
-          default:
-            break;
+            case 'MONTHLY':
+                currentDate.setMonth(currentDate.getMonth() + 1)
+                    ;
+                break;
+            case 'QUARTERLY':
+                currentDate.setMonth(currentDate.getMonth() + 3);
+                break;
+            case 'HALF_YEARLY':
+                currentDate.setMonth(currentDate.getMonth() + 6);
+                break;
+            case 'YEARLY':
+                currentDate.setFullYear(currentDate.getFullYear() + 1);
+                break;
+            default:
+                break;
         }
         return currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-      };
+    };
 
     return (
         <React.Fragment>
@@ -396,7 +443,7 @@ const OwnerForm = (_props) => {
                                     //   const today = new Date();
                                     //   return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
                                     // },
-                                  }}
+                                }}
                                 render={(props) => (
                                     <TextInput
                                         type="date"
@@ -410,7 +457,7 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                     <LabelFieldPair>
+                    <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_CYCLE")}</CardLabel>
 
                         <Controller
@@ -425,10 +472,10 @@ const OwnerForm = (_props) => {
                                         props.onChange(value);
                                         const date = control.getValues("assetMaintenanceDate");
                                         if (date) {
-                                          const nextDate = calculateNextDate(date, value);
-                                          control.setValue("assetNextMaintenanceDate", nextDate);
+                                            const nextDate = calculateNextDate(date, value);
+                                            control.setValue("assetNextMaintenanceDate", nextDate);
                                         }
-                                      }}
+                                    }}
                                     onBlur={props.onBlur}
                                     option={maintenanceCycleOpt}
                                     optionKey="i18nKey"
@@ -442,7 +489,7 @@ const OwnerForm = (_props) => {
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_NEXT_MAINTENANCE_DATE")}</CardLabel>
                         <div className="field">
-                             <Controller
+                            <Controller
                                 control={control}
                                 name={"assetNextMaintenanceDate"}
                                 defaultValue={maintenanceDetails?.assetNextMaintenanceDate}
@@ -450,18 +497,18 @@ const OwnerForm = (_props) => {
                                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                                     // validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                                     validate: (val) => {
-                                      const selectedDate = new Date(val);
-                                      const today = new Date();
-                                      return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
+                                        const selectedDate = new Date(val);
+                                        const today = new Date();
+                                        return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
                                     },
-                                  }}
+                                }}
                                 render={(props) => (
                                     <TextInput
                                         type="date"
                                         value={props.value}
                                         onChange={(e) => {
                                             props.onChange(e.target.value);
-                                        }}s
+                                        }} s
                                     // Remove the max attribute to allow future dates
                                     />
                                 )}
@@ -588,7 +635,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.vendor ? errors?.vendor?.message : ""}</CardLabelError>
 
-                   
+
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PARTS_TO_BE_ADDED")}</CardLabel>
