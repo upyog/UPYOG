@@ -91,6 +91,9 @@ public class BillRowMapperV2 implements ResultSetExtractor<List<BillV2>>{
 				if (bill.getId().equals(billDetail.getBillId())) {
 					bill.addBillDetailsItem(billDetail);
 					bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getAmount()));
+					bill.setMaxExpiryDate(null != bill.getMaxExpiryDate()
+							? Math.max(bill.getMaxExpiryDate(), billDetail.getExpiryDate())
+							: billDetail.getExpiryDate());
 				}
 			}
 			

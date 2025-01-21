@@ -1294,6 +1294,10 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getPropertyIds())) {
 			criteria.setPropertyId(garbageAccountActionRequest.getPropertyIds());
 		}
+		
+		if (!CollectionUtils.isEmpty(garbageAccountActionRequest.getGarbageUuid())) {
+			criteria.setUuid(garbageAccountActionRequest.getGarbageUuid());
+		}
 
 		// search application number
 		List<GarbageAccount> accounts = garbageAccountRepository.searchGarbageAccount(criteria);
@@ -1499,8 +1503,9 @@ public class GarbageAccountService {
 		GarbageAccountActionRequest garbageAccountActionRequest = GarbageAccountActionRequest.builder()
 				.applicationNumbers(payNowRequest.getGarbageApplicationNumbers())
 				.billStatus(payNowRequest.getBillStatus()).month(payNowRequest.getMonth()).year(payNowRequest.getYear())
-				.propertyIds(payNowRequest.getPropertyIds()).requestInfo(RequestInfo.builder()
-						.userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build()).build())
+				.propertyIds(payNowRequest.getPropertyIds()).garbageUuid(payNowRequest.getGarbageUuid())
+				.requestInfo(RequestInfo.builder().userInfo(User.builder().uuid(payNowRequest.getUserUuid()).build())
+						.build())
 				.build();
 
 		GarbageAccountActionResponse garbageAccountActionResponse = getApplicationDetails(garbageAccountActionRequest);

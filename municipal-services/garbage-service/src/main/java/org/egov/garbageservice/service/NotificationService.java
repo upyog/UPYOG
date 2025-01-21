@@ -15,7 +15,7 @@ import org.egov.garbageservice.model.Email;
 import org.egov.garbageservice.model.EmailRequest;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgAddress;
-import org.egov.garbageservice.model.SMSRequest;
+import org.egov.garbageservice.model.SMSSentRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.GrbgUtils;
 import org.egov.garbageservice.util.RequestInfoWrapper;
@@ -71,8 +71,8 @@ public class NotificationService {
 
 	public void sendSms(String message, String mobileNumber) {
 
-		SMSRequest smsRequest = SMSRequest.builder().message(message).mobileNumber(mobileNumber)
-				.category(SMSCategory.NOTIFICATION).build();
+		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
+				.category(SMSCategory.NOTIFICATION).templateName("OTP").build(); // TODO
 
 		kafkaTemplate.send(smsTopic, smsRequest);
 	}

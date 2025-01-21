@@ -23,7 +23,7 @@ import java.net.*;
 @Service
 @Slf4j
 @ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "Generic")
-public class GenericSMSServiceImpl extends BaseSMSService {
+public class GenericSMSServiceImpl extends BaseSMSServiceImpl {
 
     @Value("${sms.url.dont_encode_url:true}")
     private boolean dontEncodeURL;

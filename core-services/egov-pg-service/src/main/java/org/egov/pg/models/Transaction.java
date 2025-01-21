@@ -53,10 +53,10 @@ public class Transaction {
 	/**
 	 * Unique bill ID associated with the transaction
 	 */
-	@SafeHtml
+//	@SafeHtml
 	@JsonProperty("billId")
-	@NotNull
-	@Size(min = 1)
+//	@NotNull
+//	@Size(min = 1)
 	private String billId;
 
 	/**
@@ -70,10 +70,10 @@ public class Transaction {
 	/**
 	 * Backward compatibility
 	 */
-	@SafeHtml
+//	@SafeHtml
 	@JsonProperty("consumerCode")
-	@NotNull
-	@Size(min = 1, max = 128)
+//	@NotNull
+//	@Size(min = 1, max = 128)
 	private String consumerCode;
 
 	@JsonProperty("orderId")

@@ -25,7 +25,6 @@ import javax.net.ssl.X509TrustManager;
 
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
-import org.egov.web.notification.sms.service.BaseSMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "NIC")
-public class NICSMSServiceImpl extends BaseSMSService {
+public class NICSMSServiceImpl extends BaseSMSServiceImpl {
 
 	@Autowired
 	private SMSProperties smsProperties;
