@@ -11,7 +11,7 @@ const CHBWFCaption = ({ data,OpenImage }) => {
       <p>{data.name}</p>
       {data.mobileNumber && <TelePhone mobile={data.mobileNumber} />}
       {data.source && <p>{t("ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_" + data.source.toUpperCase())}</p>}
-      {data.comment && <Reason otherComment={data?.otherComment} headComment={data?.comment}></Reason>}
+      {data.comment && <CHBWFReason otherComment={data?.otherComment} headComment={data?.comment}></CHBWFReason>}
       {data?.wfComment ? <div>{data?.wfComment?.map( e => 
       <div className="TLComments">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
