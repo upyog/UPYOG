@@ -37,6 +37,7 @@ public class AssetDisposalQueryBuilder {
             + "disposal.updated_at, "
             + "disposal.updated_by, "
             + "disposal.asset_disposal_status, "
+            + "disposal.additional_details, "
             + "doc.documentid, "
             + "doc.documenttype, "
             + "doc.filestoreid, "
