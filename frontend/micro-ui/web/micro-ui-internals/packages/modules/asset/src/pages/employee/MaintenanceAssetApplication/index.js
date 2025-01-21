@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { maintenanceConfig } from "../../../config/Create/maintenanceConfig";
+import { convertDateToEpoch } from "../../../utils";
 
 const MaintenanceAssetApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -47,6 +48,8 @@ const MaintenanceAssetApplication = () => {
         warrantyStatus: data?.maintenanceDetails?.[0]?.warrantyStatus?.code,    
         assetWarrantyDescription: data?.maintenanceDetails?.[0]?.assetWarrantyDescription,
         amcDetails: data?.maintenanceDetails?.[0]?.amcDetails,
+        assetMaintenanceDate: convertDateToEpoch(data?.maintenanceDetails?.[0]?.assetMaintenanceDate),
+        assetNextMaintenanceDate: convertDateToEpoch(data?.maintenanceDetails?.[0]?.assetNextMaintenanceDate),
         maintenanceType: data?.maintenanceDetails?.[0]?.maintenanceType?.code,
         paymentType: data?.maintenanceDetails?.[0]?.paymentType?.code,
         costOfMaintenance :data?.maintenanceDetails?.[0]?.costOfMaintenance,
@@ -70,9 +73,9 @@ const MaintenanceAssetApplication = () => {
                 "documentUid": data?.maintenanceDetails?.[0]?.preConditionFile
             },
             {
-              "documentType": "ASSET.MAINTENANCE.DOC1",
-              "fileStoreId": "d359f7fd-aad1-4b46-9496-d47a55b0c36f",
-              "documentUid": "d359f7fd-aad1-4b46-9496-d47a55b0c36f"
+              "documentType": "ASSET.MAINTENANCE.DOC2",
+              "fileStoreId": data?.maintenanceDetails?.[0]?.postConditionFile,
+              "documentUid": data?.maintenanceDetails?.[0]?.postConditionFile
           }
         ],
         auditDetails: {
@@ -82,7 +85,7 @@ const MaintenanceAssetApplication = () => {
           lastModifiedTime: ""
       }
     };
-    console.log(formData)
+    
     history.replace("/digit-ui/employee/asset/assetservice/maintenance", { AssetMaintenance: formData });
 
   };
