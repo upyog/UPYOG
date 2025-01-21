@@ -17,7 +17,7 @@ public class AssetDisposalQueryBuilder {
 
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
-    private static final String BASE_QUERY = "SELECT DISTINCT "
+    private static final String BASE_QUERY = "SELECT "
             + "disposal.disposal_id, "
             + "disposal.asset_id, "
             + "disposal.tenant_id, "
@@ -44,8 +44,8 @@ public class AssetDisposalQueryBuilder {
             + "doc.documentuid, "
             + "doc.docdetails "
             + "FROM eg_asset_disposal_details disposal "
-            + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON disposal.asset_id = doc.assetid "
-            + " AND doc.documenttype IN ('ASSET.DISPOSE.DOC1')";
+            + LEFT_OUTER_JOIN_STRING + " eg_asset_disposal_documents doc ON disposal.disposal_id = doc.disposalid ";
+            //+ " AND doc.documenttype IN ('ASSET.DISPOSE.DOC1')";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
