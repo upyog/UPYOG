@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details (
     vendor_id character varying(64),
     vehicle_id character varying(64),
     driver_id character varying(64),
+    booking_createdby character varying(64), -- created by Citizen or Employee
     createdby character varying(64),
     lastmodifiedby character varying(64),
     createdtime bigint NOT NULL,
@@ -78,8 +79,21 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details_auditdetails (
     vendor_id character varying(64),
     vehicle_id character varying(64),
     driver_id character varying(64),
+    booking_createdby character varying(64),
     createdby character varying(64),
     lastmodifiedby character varying(64),
     createdtime bigint NOT NULL,
     lastmodifiedtime bigint
 );
+
+CREATE INDEX IF NOT EXISTS idx_upyog_rs_tanker_booking_details_booking_no ON upyog_rs_tanker_booking_details(booking_no);
+CREATE INDEX IF NOT EXISTS idx_upyog_rs_tanker_booking_details_createdby ON upyog_rs_tanker_booking_details(createdby);
+CREATE INDEX IF NOT EXISTS idx_upyog_rs_tanker_booking_details_tenant_id ON upyog_rs_tanker_booking_details(tenant_id);
+
+CREATE INDEX IF NOT EXISTS idx_upyog_rs_applicant_details_booking_id ON upyog_rs_applicant_details(booking_id);
+CREATE INDEX IF NOT EXISTS idx_upyog_rs_applicant_details_mobile_number ON upyog_rs_applicant_details(mobile_number);
+
+CREATE INDEX IF NOT EXISTS idx_upyog_rs_address_details_applicant_id ON upyog_rs_address_details(applicant_id);
+
+CREATE SEQUENCE IF NOT EXISTS seq_water_tanker_booking_id;
+

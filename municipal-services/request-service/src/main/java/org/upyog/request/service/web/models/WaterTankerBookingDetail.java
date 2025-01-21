@@ -65,6 +65,8 @@ public class WaterTankerBookingDetail {
 	private Long paymentDate;
 
 	private Long applicationDate;
+	
+	private String bookingCreatedBy;  // Created by Citizen or Employee
 
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String tenantId;

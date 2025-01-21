@@ -37,10 +37,10 @@ public class RequestServiceConfiguration {
 
 	/** Used for application no creation **/
 
-	@Value("${egov.idgen.water-tanker.application.id.name}")
+	@Value("${egov.idgen.water.tanker.booking.id.name}")
 	private String waterTankerApplicationKey;
 
-	@Value("${egov.idgen.water-tanker.application.id.format}")
+	@Value("${egov.idgen.water.tanker.booking.id.format}")
 	private String waterTankerApplicationFormat;
 
 	// Kafka topics for saving street vending data
