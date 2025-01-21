@@ -59,6 +59,8 @@ public class AssetMaintenanceRowMapper implements ResultSetExtractor<List<AssetM
                         .preConditionRemarks(rs.getString("pre_condition_remarks"))
                         .description(rs.getString("description"))
                         .assetMaintenanceStatus(rs.getString("asset_maintenance_status"))
+                        .assetMaintenanceDate(rs.getLong("asset_maintenance_date"))
+                        .assetNextMaintenanceDate(rs.getLong("asset_next_maintenance_date"))
                         .additionalDetails(mapAdditionalDetails(rs))
                         .documents(new ArrayList<>()) // Initialize documents list
                         .build();
