@@ -184,7 +184,7 @@ class _EmpPtScreenState extends State<EmpPtScreen> {
 
           final pt.EmpPtModel ptInboxes = snapshot.data;
 
-          if (!isNotNullOrEmpty(ptInboxes.items)) {
+          if (snapshot.data == null || ptInboxes.items!.isEmpty) {
             return Center(
               child: Text(getLocalizedString(i18.inbox.NO_APPLICATION)),
             );
@@ -284,15 +284,9 @@ class _EmpPtScreenState extends State<EmpPtScreen> {
         } else {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             case ConnectionState.active:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             default:
               return const SizedBox.shrink();
           }

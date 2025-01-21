@@ -117,9 +117,7 @@ class _EmpWaterDetailsState extends State<EmpWaterDetails> {
   String getFileStoreIds() {
     if (!isNotNullOrEmpty(
       _waterController.waterConnection?.documents,
-    )) {
-      return '';
-    }
+    )) return '';
 
     List fileIds = [];
     for (var element in _waterController.waterConnection!.documents!) {
@@ -460,9 +458,11 @@ class _EmpWaterDetailsState extends State<EmpWaterDetails> {
                                     ],
                                   ),
 
-                                  if (isNotNullOrEmpty(
-                                    _waterController.waterConnection?.documents,
-                                  ))
+                                  if (_waterController
+                                              .waterConnection?.documents !=
+                                          null &&
+                                      _waterController.waterConnection!
+                                          .documents!.isNotEmpty)
                                     BuildExpansion(
                                       title: getLocalizedString(
                                         i18.waterSewerage.DOCUMENT_DETAILS,
@@ -899,74 +899,73 @@ class _EmpWaterDetailsState extends State<EmpWaterDetails> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          final fileUrl =
-              fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-          final docType =
-              _waterController.waterConnection?.documents?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
-          return isNotNullOrEmpty(docType)
-              ? Tooltip(
-                  message: getLocalizedString(
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = _waterController.waterConnection?.documents!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .first;
+          return Column(
+            children: [
+              Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: BaseConfig.greyColor2,
+                  // border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    _fileController.getFileType(fileUrl).$1,
+                    size: 40,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Tooltip(
+                message: getLocalizedString(
+                  docType?.documentType,
+                  module: Modules.WS,
+                ),
+                child: SmallTextNotoSans(
+                  text: getLocalizedString(
                     docType?.documentType,
                     module: Modules.WS,
                   ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: BaseConfig.greyColor2,
-                          // border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            _fileController.getFileType(fileUrl!).$1,
-                            size: 40,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      SmallTextNotoSans(
-                        text: getLocalizedString(
-                          docType?.documentType,
-                          module: Modules.WS,
-                        ),
-                        color: Colors.grey.shade600,
-                        maxLine: 2,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ).ripple(() {
-                    final fileType = _fileController.getFileType(fileUrl).$2;
-                    dPrint('FileType: ${fileType.name}');
-                    if (fileType.name == FileExtType.pdf.name) {
-                      showTypeDialogue(
-                        context,
-                        url: fileUrl,
-                        isPdf: true,
-                        title: getLocalizedString(
-                          docType?.documentType,
-                          module: Modules.WS,
-                        ),
-                      );
-                    } else {
-                      showTypeDialogue(
-                        context,
-                        url: fileUrl,
-                        title: getLocalizedString(
-                          docType?.documentType,
-                          module: Modules.WS,
-                        ),
-                      );
-                    }
-                  }),
-                )
-              : const SizedBox.shrink();
+                  color: Colors.grey.shade600,
+                  maxLine: 2,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ).ripple(() {
+            final fileType = _fileController.getFileType(fileUrl).$2;
+            dPrint('FileType: ${fileType.name}');
+            if (fileType.name == FileExtType.pdf.name) {
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                isPdf: true,
+                title: getLocalizedString(
+                  docType?.documentType,
+                  module: Modules.WS,
+                ),
+              );
+            } else {
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                title: getLocalizedString(
+                  docType?.documentType,
+                  module: Modules.WS,
+                ),
+              );
+            }
+          });
         },
       ),
     );

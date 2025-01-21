@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/components/image_placeholder.dart';
 import 'package:mobile_app/config/base_config.dart';
@@ -17,9 +18,10 @@ import 'package:mobile_app/utils/dashboard_icon_role.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/big_text.dart';
+import 'package:mobile_app/widgets/medium_text.dart';
 import 'package:mobile_app/widgets/news_card.dart';
 import 'package:mobile_app/widgets/small_text.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -90,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, o) {
             final services = [
               // _buildRecentServices(o),
-              _citizenServices(o),
+              _citizenServices(o).marginOnly(top: 10.h),
             ];
             return Scaffold(
               //endDrawer: _buildHomeHeader(context, authController, o),
@@ -138,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return services[index];
                                 },
                                 onPageChanged: (index) {
-                                  print(index);
+                                  dPrint(index.toString());
                                   setState(() {
                                     _currentPage = index;
                                   });
@@ -149,31 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                 ),
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.endDocked,
-              floatingActionButton: Padding(
-                padding: const EdgeInsets.only(bottom: 80.0),
-                child: Obx(() {
-                  if (_authController1.isValidUser) {
-                    return IconButton(
-                      onPressed: () async {
-                        const url =
-                            'https://upyog.niua.org/digit-ui/citizen/login';
-
-                        await launchURL(url,
-                            mode: LaunchMode.externalApplication);
-                      },
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                        size: 40,
-                        color: BaseConfig.appThemeColor1,
-                      ),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                }),
               ),
             );
           },
@@ -237,8 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               dPrint(service.title);
                               // TODO: Navigate to respective screen
                               if (!_authController1.isValidUser) {
-                                // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                                Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                                Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
                                 return;
                               }
                               if (service.title == i18.common.HELP_GRIEVANCE) {
@@ -267,9 +243,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Get.toNamed(AppRoutes.FIRE_NOC_SCREEN);
                               }
                               if (service.title == i18.common.MCOLLECT) {
-                                await _commonController.fetchLabels(
-                                  modules: Modules.UC,
-                                );
                                 Get.toNamed(AppRoutes.MY_CHALLANS);
                               }
                             },
@@ -311,273 +284,280 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget _buildRecentServices(Orientation o) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           InterText(
-  //             text: 'Your recent services',
-  //             fontWeight: FontWeight.w800,
-  //             size: o == Orientation.portrait ? 16.sp : 8.sp,
-  //             color: BaseConfig.textColor2,
-  //           ).paddingSymmetric(
-  //             horizontal: 16.w,
-  //           ),
-  //           IconButton(
-  //             onPressed: () {
-  //               //TODO: View format
-  //             },
-  //             icon: SvgPicture.asset(
-  //               BaseConfig.listSvg,
-  //               height: 11.h,
-  //               width: 16.w,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //       // SizedBox(height: 4.h),
+  Widget _buildRecentServices(Orientation o) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            InterText(
+              text: 'Your recent services',
+              fontWeight: FontWeight.w800,
+              size: o == Orientation.portrait ? 16.sp : 8.sp,
+              color: BaseConfig.textColor2,
+            ).paddingSymmetric(
+              horizontal: 16.w,
+            ),
+            IconButton(
+              onPressed: () {
+                //TODO: View format
+              },
+              icon: SvgPicture.asset(
+                BaseConfig.listSvg,
+                height: 11.h,
+                width: 16.w,
+              ),
+            ),
+          ],
+        ),
+        // SizedBox(height: 4.h),
 
-  //       //[x] Grievance card
-  //       ListTile(
-  //         leading: SvgPicture.asset(
-  //           BaseConfig.ticketSvg,
-  //           height: o == Orientation.portrait ? 16.h : 24.h,
-  //         ),
-  //         title: MediumText(
-  //           text: 'Ticket  1- Grievance',
-  //           size: o == Orientation.portrait ? 17.sp : 9.sp,
-  //           fontWeight: FontWeight.w400,
-  //         ),
-  //         subtitle: Row(
-  //           children: [
-  //             SmallText(
-  //               text: 'Pending resolution',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.appThemeColor1,
-  //             ),
-  //             SizedBox(width: 4.w),
-  //             SmallText(
-  //               text: '• 2 days ago',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.subTextColor,
-  //             ),
-  //           ],
-  //         ),
-  //         trailing: IconButton(
-  //           onPressed: () {
-  //             //[x] TODO: Implement some action menu
-  //           },
-  //           icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
-  //         ),
-  //         contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //         onTap: () {
-  //           //[x] TODO: Navigate to details page
-  //           if (!_authController1.isValidUser) {
-  //             Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-  //             return;
-  //           }
-  //           Get.toNamed(AppRoutes.GRIEVANCES_SCREEN);
-  //         },
-  //       ),
-  //       //[x] Property tax card
-  //       // SizedBox(height: 24.h),
-  //       ListTile(
-  //         leading: SvgPicture.asset(
-  //           BaseConfig.propertySvg,
-  //           height: o == Orientation.portrait ? 18.h : 30.h,
-  //           colorFilter:
-  //               const ColorFilter.mode(Color(0xFF974602), BlendMode.srcIn),
-  //         ),
-  //         title: MediumText(
-  //           text: 'Property tax',
-  //           size: o == Orientation.portrait ? 17.sp : 9.sp,
-  //           fontWeight: FontWeight.w400,
-  //         ),
-  //         subtitle: Row(
-  //           children: [
-  //             SmallText(
-  //               text: 'Application review',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.subTextColor,
-  //             ),
-  //             SizedBox(width: 4.w),
-  //             SmallText(
-  //               text: '• 3 days ago',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.subTextColor,
-  //             ),
-  //           ],
-  //         ),
-  //         trailing: IconButton(
-  //           onPressed: () {},
-  //           icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
-  //         ),
-  //         contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //         onTap: () {
-  //           if (!_authController1.isValidUser) {
-  //             Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-  //             return;
-  //           }
-  //           Get.toNamed(AppRoutes.MY_PROPERTIES);
-  //         },
-  //       ),
+        //[x] Grievance card
+        ListTile(
+          leading: SvgPicture.asset(
+            BaseConfig.ticketSvg,
+            height: o == Orientation.portrait ? 16.h : 24.h,
+          ),
+          title: MediumText(
+            text: 'Ticket  1- Grievance',
+            size: o == Orientation.portrait ? 17.sp : 9.sp,
+            fontWeight: FontWeight.w400,
+          ),
+          subtitle: Row(
+            children: [
+              SmallText(
+                text: 'Pending resolution',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.appThemeColor1,
+              ),
+              SizedBox(width: 4.w),
+              SmallText(
+                text: '• 2 days ago',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.subTextColor,
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              //[x] TODO: Implement some action menu
+            },
+            icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          onTap: () {
+            //[x] TODO: Navigate to details page
+            if (!_authController1.isValidUser) {
+              Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+              return;
+            }
+            Get.toNamed(AppRoutes.GRIEVANCES_SCREEN);
+          },
+        ),
+        //[x] Property tax card
+        // SizedBox(height: 24.h),
+        ListTile(
+          leading: SvgPicture.asset(
+            BaseConfig.propertySvg,
+            height: o == Orientation.portrait ? 18.h : 30.h,
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF974602), BlendMode.srcIn),
+          ),
+          title: MediumText(
+            text: 'Property tax',
+            size: o == Orientation.portrait ? 17.sp : 9.sp,
+            fontWeight: FontWeight.w400,
+          ),
+          subtitle: Row(
+            children: [
+              SmallText(
+                text: 'Application review',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.subTextColor,
+              ),
+              SizedBox(width: 4.w),
+              SmallText(
+                text: '• 3 days ago',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.subTextColor,
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          onTap: () {
+            if (!_authController1.isValidUser) {
+              Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+              return;
+            }
+            Get.toNamed(AppRoutes.MY_PROPERTIES);
+          },
+        ),
 
-  //       //[x] Water connection card
-  //       ListTile(
-  //         leading: SvgPicture.asset(
-  //           BaseConfig.ticketSvg,
-  //           height: o == Orientation.portrait ? 14.h : 22.h,
-  //         ),
-  //         title: MediumText(
-  //           text: 'Ticket  1- Grievance',
-  //           size: o == Orientation.portrait ? 17.sp : 9.sp,
-  //           fontWeight: FontWeight.w400,
-  //         ),
-  //         subtitle: Row(
-  //           children: [
-  //             SmallText(
-  //               text: 'Pending resolution',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.appThemeColor1,
-  //             ),
-  //             SizedBox(width: 4.w),
-  //             SmallText(
-  //               text: '• 2 days ago',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.subTextColor,
-  //             ),
-  //           ],
-  //         ),
-  //         trailing: IconButton(
-  //           onPressed: () {
-  //             //[x] TODO: Implement some action menu
-  //           },
-  //           icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
-  //         ),
-  //         contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //         onTap: () {
-  //           //[x] TODO: Navigate to details page
-  //         },
-  //       ),
-  //       //[x] Property tax card
-  //       ListTile(
-  //         leading: SvgPicture.asset(
-  //           BaseConfig.waterSvg,
-  //           height: o == Orientation.portrait ? 16.h : 24.h,
-  //         ),
-  //         title: MediumText(
-  //           text: 'Water connection',
-  //           size: o == Orientation.portrait ? 17.sp : 9.sp,
-  //           fontWeight: FontWeight.w400,
-  //         ),
-  //         subtitle: Row(
-  //           children: [
-  //             SmallText(
-  //               text: 'Application review',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.textColor,
-  //             ),
-  //             SizedBox(width: 4.w),
-  //             SmallText(
-  //               text: '• 3 days ago',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.subTextColor,
-  //             ),
-  //           ],
-  //         ),
-  //         trailing: IconButton(
-  //           onPressed: () {
-  //             //[x] TODO: Implement some action menu
-  //           },
-  //           icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
-  //         ),
-  //         contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //         onTap: () {
-  //           if (!_authController1.isValidUser) {
-  //             Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-  //             return;
-  //           }
-  //           Get.toNamed(AppRoutes.WATER_SEWERAGE);
-  //         },
-  //       ),
+        //[x] Water connection card
+        ListTile(
+          leading: SvgPicture.asset(
+            BaseConfig.ticketSvg,
+            height: o == Orientation.portrait ? 14.h : 22.h,
+          ),
+          title: MediumText(
+            text: 'Ticket  1- Grievance',
+            size: o == Orientation.portrait ? 17.sp : 9.sp,
+            fontWeight: FontWeight.w400,
+          ),
+          subtitle: Row(
+            children: [
+              SmallText(
+                text: 'Pending resolution',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.appThemeColor1,
+              ),
+              SizedBox(width: 4.w),
+              SmallText(
+                text: '• 2 days ago',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.subTextColor,
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              //[x] TODO: Implement some action menu
+            },
+            icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          onTap: () {
+            //[x] TODO: Navigate to details page
+          },
+        ),
+        //[x] Property tax card
+        ListTile(
+          leading: SvgPicture.asset(
+            BaseConfig.waterSvg,
+            height: o == Orientation.portrait ? 16.h : 24.h,
+          ),
+          title: MediumText(
+            text: 'Water connection',
+            size: o == Orientation.portrait ? 17.sp : 9.sp,
+            fontWeight: FontWeight.w400,
+          ),
+          subtitle: Row(
+            children: [
+              SmallText(
+                text: 'Application review',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.textColor,
+              ),
+              SizedBox(width: 4.w),
+              SmallText(
+                text: '• 3 days ago',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.subTextColor,
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              //[x] TODO: Implement some action menu
+            },
+            icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          onTap: () {
+            if (!_authController1.isValidUser) {
+              Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
+              return;
+            }
+            Get.toNamed(AppRoutes.WATER_SEWERAGE);
+          },
+        ),
 
-  //       //[x] Ticket card
-  //       ListTile(
-  //         leading: SvgPicture.asset(
-  //           BaseConfig.ticketSvg,
-  //           height: o == Orientation.portrait ? 16.h : 24.h,
-  //         ),
-  //         title: MediumText(
-  //           text: 'Ticket 2',
-  //           size: o == Orientation.portrait ? 17.sp : 9.sp,
-  //           fontWeight: FontWeight.w400,
-  //         ),
-  //         subtitle: Row(
-  //           children: [
-  //             SmallText(
-  //               text: 'Resolved',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.textColor,
-  //             ),
-  //             SizedBox(width: 4.w),
-  //             SmallText(
-  //               text: '• 4 days ago',
-  //               size: o == Orientation.portrait ? 13.sp : 7.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: BaseConfig.subTextColor,
-  //             ),
-  //           ],
-  //         ),
-  //         trailing: IconButton(
-  //           onPressed: () {
-  //             //[x] TODO: Implement some action menu
-  //           },
-  //           icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
-  //         ),
-  //         contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //         onTap: () {
-  //           //[x] TODO: Navigate to details page
-  //         },
-  //       ),
+        //[x] Ticket card
+        ListTile(
+          leading: SvgPicture.asset(
+            BaseConfig.ticketSvg,
+            height: o == Orientation.portrait ? 16.h : 24.h,
+          ),
+          title: MediumText(
+            text: 'Ticket 2',
+            size: o == Orientation.portrait ? 17.sp : 9.sp,
+            fontWeight: FontWeight.w400,
+          ),
+          subtitle: Row(
+            children: [
+              SmallText(
+                text: 'Resolved',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.textColor,
+              ),
+              SizedBox(width: 4.w),
+              SmallText(
+                text: '• 4 days ago',
+                size: o == Orientation.portrait ? 13.sp : 7.sp,
+                fontWeight: FontWeight.w400,
+                color: BaseConfig.subTextColor,
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              //[x] TODO: Implement some action menu
+            },
+            icon: const Icon(Icons.more_horiz, color: BaseConfig.dotBlueColor),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          onTap: () {
+            //[x] TODO: Navigate to details page
+          },
+        ),
 
-  //       //[x] See more button
-  //       Align(
-  //         alignment: Alignment.centerLeft,
-  //         child: TextButton(
-  //           onPressed: () {
-  //             //[x] TODO: Implement see more action
-  //           },
-  //           child: SmallText(
-  //             text: 'See More',
-  //             size: o == Orientation.portrait ? 17.sp : 9.sp,
-  //             fontWeight: FontWeight.w400,
-  //             color: BaseConfig.lightAmber,
-  //           ),
-  //         ).paddingOnly(left: o == Orientation.portrait ? 0 : 12.w),
-  //       ),
-  //       SizedBox(height: 24.h),
-  //     ],
-  //   );
-  // }
+        //[x] See more button
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            onPressed: () {
+              //[x] TODO: Implement see more action
+            },
+            child: SmallText(
+              text: 'See More',
+              size: o == Orientation.portrait ? 17.sp : 9.sp,
+              fontWeight: FontWeight.w400,
+              color: BaseConfig.lightAmber,
+            ),
+          ).paddingOnly(left: o == Orientation.portrait ? 0 : 12.w),
+        ),
+        SizedBox(height: 24.h),
+      ],
+    );
+  }
 
   Widget _buildLatestNews(Orientation o) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        InterText(
+          text: getLocalizedString(i18.common.WHATS_NEW),
+          fontWeight: FontWeight.w800,
+          size: o == Orientation.portrait ? 16.sp : 8.sp,
+          color: BaseConfig.textColor2,
+        ),
+        SizedBox(height: 18.h),
         SizedBox(
-          height: o == Orientation.portrait ? 280.h : 220.h,
+          height: o == Orientation.portrait ? 210.h : 220.h,
           child: PageView.builder(
             controller: _pageController,
             itemCount: BaseConfig.APP_HOME_BANNERS.split(',').length,
@@ -590,13 +570,24 @@ class _HomeScreenState extends State<HomeScreen> {
               final img = BaseConfig.APP_HOME_BANNERS.split(',')[index];
               return FractionallySizedBox(
                 widthFactor: 1 / _pageController.viewportFraction,
-                child: NewsCard(
-                  img: img,
-                  orientation: o,
-                  pageController: _pageController,
-                ),
+                child: NewsCard(img: img, orientation: o),
               );
             },
+          ),
+        ),
+        SizedBox(
+          height: 12.h,
+        ),
+        SmoothPageIndicator(
+          controller: _pageController,
+          count: BaseConfig.APP_HOME_BANNERS.split(',').length,
+          effect: ExpandingDotsEffect(
+            dotHeight: 6.h,
+            dotWidth: o == Orientation.portrait ? 6.w : 3.w,
+            expansionFactor: 2,
+            spacing: 4.w,
+            activeDotColor: BaseConfig.appThemeColor1,
+            dotColor: BaseConfig.dotGrayColor,
           ),
         ),
       ],
@@ -713,76 +704,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            authController.isValidUser
-                ? IconButton(
-                    onPressed: () {
-                      // Get.toNamed(
-                      //   AppRoutes.PROFILE,
-                      //   arguments: {
-                      //     'showBackBtn': true,
-                      //   },
-                      // );
+            if (authController.isValidUser)
+              IconButton(
+                onPressed: () {
+                  // Get.toNamed(
+                  //   AppRoutes.PROFILE,
+                  //   arguments: {
+                  //     'showBackBtn': true,
+                  //   },
+                  // );
+                },
+                icon: CircleAvatar(
+                  radius: 20.r,
+                  backgroundColor: Colors.transparent,
+                  child: StreamBuilder(
+                    stream: _editProfileController.streamCtrl.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return showCircularIndicator();
+                      }
+                      if (snapshot.hasData && !snapshot.hasError) {
+                        if (snapshot.data is String || snapshot.data == null) {
+                          CircleAvatar(
+                            backgroundColor: BaseConfig.greyColor2,
+                            radius: 20.r,
+                            child: const Icon(
+                              Icons.account_circle_outlined,
+                              size: 30,
+                            ),
+                          );
+                        }
+                        final user = snapshot.data as User;
+                        return ImagePlaceHolder(
+                          radius: 20.r,
+                          iconSize: 30,
+                          height: 155.h,
+                          width: 155.w,
+                          padding: EdgeInsets.zero,
+                          iconColor: BaseConfig.greyColor1,
+                          photoUrl: user.photo?.split(',').first,
+                        );
+                      } else {
+                        return CircleAvatar(
+                          backgroundColor: BaseConfig.greyColor2,
+                          radius: 20.r,
+                          child: const Icon(
+                            Icons.account_circle_outlined,
+                            size: 30,
+                          ),
+                          // child: const Icon(
+                          //   BaseConfig.headerProfilePlaceholderIcon,
+                          //   color: BaseConfig.greyColor1,
+                          //   size: 30,
+                          // ),
+                        );
+                      }
                     },
-                    icon: CircleAvatar(
-                      radius: 20.r,
-                      backgroundColor: Colors.transparent,
-                      child: StreamBuilder(
-                        stream: _editProfileController.streamCtrl.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return showCircularIndicator();
-                          }
-                          if (snapshot.hasData && !snapshot.hasError) {
-                            if (snapshot.data is String ||
-                                snapshot.data == null) {
-                              CircleAvatar(
-                                backgroundColor: BaseConfig.greyColor2,
-                                radius: 20.r,
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 30,
-                                ),
-                              );
-                            }
-                            final user = snapshot.data as User;
-                            return ImagePlaceHolder(
-                              radius: 20.r,
-                              iconSize: 30,
-                              height: 155.h,
-                              width: 155.w,
-                              padding: EdgeInsets.zero,
-                              iconColor: Colors.white,
-                              backgroundColor: BaseConfig.appThemeColor1,
-                              photoUrl: user.photo?.split(',').first,
-                            );
-                          } else {
-                            return CircleAvatar(
-                              backgroundColor: BaseConfig.greyColor2,
-                              radius: 20.r,
-                              child: const Icon(
-                                Icons.person,
-                                size: 30,
-                              ),
-                              // child: const Icon(
-                              //   BaseConfig.headerProfilePlaceholderIcon,
-                              //   color: BaseConfig.greyColor1,
-                              //   size: 30,
-                              // ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  )
-                : ImagePlaceHolder(
-                    radius: 20.r,
-                    iconSize: 30,
-                    height: 155.h,
-                    width: 155.w,
-                    padding: EdgeInsets.zero,
-                    iconColor: BaseConfig.greyColor1,
                   ),
+                ),
+              ),
           ],
         ),
       ],

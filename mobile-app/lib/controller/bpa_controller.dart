@@ -129,7 +129,7 @@ class BpaController extends GetxController {
       isLoading.value = false;
     } catch (e, s) {
       isLoading.value = false;
-      dPrint('GetBpaApplicationsError: $e');
+      print('GetBpaApplicationsError: $e');
       streamCtrl.add('Bpa Application Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -153,7 +153,7 @@ class BpaController extends GetxController {
       bpaElement = bpa.bpaele!.first;
       streamCtrlInd.add(bpa);
     } catch (e, s) {
-      dPrint('GetBpaApplicationsError: $e');
+      print('GetBpaApplicationsError: $e');
       streamCtrlInd.add('Bpa Application Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -177,7 +177,7 @@ class BpaController extends GetxController {
       );
       bpaRes = bpaResponse;
     } catch (e, s) {
-      dPrint('getIndividualBpaAppDCR-Error: $e');
+      print('getIndividualBpaAppDCR-Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return bpaRes;
@@ -210,7 +210,7 @@ class BpaController extends GetxController {
       scrutiny = scrutinyResponse;
       streamCtrlInd.add(scrutiny);
     } catch (e, s) {
-      dPrint('GetScrutinyApplicationsError: $e');
+      print('GetScrutinyApplicationsError: $e');
       streamCtrlInd.add('Scrutiny Application Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -298,7 +298,7 @@ class BpaController extends GetxController {
 
       comparison = comparisonRes;
     } catch (e, s) {
-      dPrint('getComparisonData Error: $e');
+      print('getComparisonData Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
 
@@ -378,7 +378,7 @@ class BpaController extends GetxController {
       dPrint('EMP BPA: ${empBpaModel?.items!.length}');
       streamCtrl.add(empBpaModel);
     } catch (e, s) {
-      dPrint('GetEmpBpaInboxError: $e');
+      print('GetEmpBpaInboxError: $e');
       streamCtrl.add('Emp BPA Inbox Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -396,7 +396,6 @@ class BpaController extends GetxController {
   }
 
   void setDefaultLimit() {
-    lengthBpa.value = 0;
     limit = 10;
     offset = 0;
   }
@@ -419,14 +418,14 @@ class BpaController extends GetxController {
 
       bpa = Bpa.fromJson(empRes);
 
-      dPrint('------Action Update------');
-      dPrint(bpa.toJson());
+      print('------Action Update------');
+      print(bpa.toJson());
       if (bpa.responseInfo!.status == 'successful') {
         return (true, bpa.bpaele?.firstOrNull?.applicationNo);
       }
       return (false, null);
     } catch (e, s) {
-      dPrint('BPA_UpdateEmpTlActionError: $e');
+      print('BPA_UpdateEmpTlActionError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
       return (false, null);
     }

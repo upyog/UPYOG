@@ -51,13 +51,6 @@ class PaymentController extends GetxController {
 
   RxInt length = 0.obs;
 
-  void hidePaymentLoader() {
-    isLoading.value = false;
-    isPaymentConditionEnabled1.value = false;
-    isPaymentConditionEnabled2.value = false;
-    isPaymentButtonEnabled.value = true;
-  }
-
   Future<List<Payment>?> getPaymentDetails({
     required String token,
     required String consumerCodes,

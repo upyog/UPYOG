@@ -4,7 +4,8 @@ import 'package:mobile_app/utils/constants/api_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/utils.dart';
 
-class NotificationRepository {
+class NotificationRepository{
+
   static final BaseService _baseService = BaseService();
 
   static Future<dynamic> getNotificationApplications({
@@ -14,7 +15,7 @@ class NotificationRepository {
   }) async {
     final local = await getLocal();
     final response = await _baseService.makeRequest(
-      url: _getUrlNotificationString(type),
+      url: _getUrlNotifiString(type),
       method: RequestType.POST,
       body: {},
       requestInfo: RequestInfo(authToken: token, local: local),
@@ -24,7 +25,7 @@ class NotificationRepository {
     return response;
   }
 
-  static String? _getUrlNotificationString(NotificationType type) {
+  static String? _getUrlNotifiString(NotificationType type) {
     switch (type) {
       case NotificationType.SEARCH:
         return Url.NOTIFICATION_SEARCH;
@@ -32,6 +33,12 @@ class NotificationRepository {
         return Url.NOTIFICATION_UPDATE;
       case NotificationType.COUNT:
         return Url.NOTIFICATION_COUNT;
+      default:
+        return null;
     }
   }
+
+
+
+
 }

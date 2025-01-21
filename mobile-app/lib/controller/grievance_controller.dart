@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:mobile_app/model/citizen/grievance/grievance.dart';
 import 'package:mobile_app/repository/grievance_repository.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
-import 'package:mobile_app/utils/utils.dart';
 
 class GrievanceController extends GetxController {
   var streamCtrl = StreamController.broadcast();
@@ -13,7 +12,7 @@ class GrievanceController extends GetxController {
   // For timeline service
   late ServiceWrapper timelineServiceWrapper;
   int limit = 10, offset = 0;
-  RxInt length = 0.obs;
+  RxInt lengthGriev = 0.obs;
   RxBool isLoading = false.obs, isMore = false.obs;
 
   @override
@@ -29,7 +28,7 @@ class GrievanceController extends GetxController {
     String? mobileNo,
   }) async {
     isLoading.value = true;
-    if (length.value >= limit) {
+    if (lengthGriev.value >= limit) {
       offset += limit;
       limit = 10;
       await getGrievance(token: token, tenantId: tenantId, mobileNo: mobileNo);
@@ -61,11 +60,11 @@ class GrievanceController extends GetxController {
       if (grievanceRes != null) {
         grievance = Grievance.fromJson(grievanceRes);
         streamCtrl.add(grievance);
-        length.value = grievance.serviceWrappers?.length ?? 0;
+        lengthGriev.value = grievance.serviceWrappers?.length ?? 0;
       }
     } catch (e, s) {
       streamCtrl.add('Grievance Error');
-      dPrint('getGrievance Error: ${e.toString()}');
+      print('getGrievance Error: ${e.toString()}');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -88,7 +87,7 @@ class GrievanceController extends GetxController {
         grievance = Grievance.fromJson(grievanceRes);
       }
     } catch (e, s) {
-      dPrint('getIndividualGrievance Error: ${e.toString()}');
+      print('getIndividualGrievance Error: ${e.toString()}');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }

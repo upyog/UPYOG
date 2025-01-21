@@ -46,8 +46,6 @@ class _TradeLicenseApplicationScreenState
   }
 
   void getTlApplication() async {
-    await _commonController.fetchLabels(modules: Modules.TL);
-
     TenantTenant tenant = await getCityTenant();
 
     _tlController.getTlApplications(
@@ -55,6 +53,7 @@ class _TradeLicenseApplicationScreenState
       tenantId: tenant.code,
       renewalTlApp: TradeAppType.NONE.name,
     );
+    await _commonController.fetchLabels(modules: Modules.TL);
   }
 
   @override
@@ -131,7 +130,7 @@ class _TradeLicenseApplicationScreenState
                                           text: 'New TL\nApplications',
                                           onPressed: () {
                                             Get.toNamed(
-                                              AppRoutes.NEW_TL_APPLICATIONS,
+                                              AppRoutes.TL_VIEW_ALL,
                                             );
                                           },
                                           icon: const Icon(Icons.list_alt),
@@ -141,8 +140,7 @@ class _TradeLicenseApplicationScreenState
                                           text: 'Renewal\nApplications',
                                           onPressed: () {
                                             Get.toNamed(
-                                              AppRoutes.TL_APP_RENEWAL,
-                                            );
+                                                AppRoutes.TL_APP_RENEWAL,);
                                           },
                                           icon: const Icon(Icons.autorenew),
                                         ),

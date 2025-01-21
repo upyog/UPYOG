@@ -59,7 +59,6 @@ class FireNocController extends GetxController {
   }
 
   void setDefaultLimit() {
-    length.value = 0;
     limit = 10;
     offset = 0;
   }
@@ -114,15 +113,14 @@ class FireNocController extends GetxController {
   }
 
   Future<void> getFireNocFeeDetailPayment({
-    required String token,
-    required String consumerCodes,
+    required String? token,
+    required String? consumerCodes,
     required String tenantId,
-    required String businessService,
   }) async {
+    if (token == null && token!.isEmpty) return;
     try {
       final fireNocFeeResponse = await FireNocRepository.getFireNocPayment(
         token: token,
-        businessService: businessService,
         query: {
           'tenantId': tenantId,
           'consumerCodes': consumerCodes,
@@ -138,11 +136,12 @@ class FireNocController extends GetxController {
   }
 
   Future<void> getFireNocFeeDetailBill({
-    required String token,
-    required String consumerCodes,
+    required String? token,
+    required String? consumerCodes,
     required String tenantId,
     required BusinessService businessService,
   }) async {
+    if (token == null && token!.isEmpty) return;
     try {
       final fireNocBillFeeResponse = await PaymentRepository.fetchBill(
         token: token,

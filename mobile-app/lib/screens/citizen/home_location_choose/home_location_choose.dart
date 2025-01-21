@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:mobile_app/components/gradient_btn.dart';
 import 'package:mobile_app/components/text_formfield_normal.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/common_controller.dart';
@@ -293,7 +294,7 @@ class _HomeLocationChooseState extends State<HomeLocationChoose> {
                               height: 16.h,
                             ),
                             SizedBox(
-                              // height: 0.65.sw,
+                              height: 0.65.sw,
                               width: Get.width,
                               child: _buildView(
                                 languageController.mdmsResTenant.tenants
@@ -325,35 +326,41 @@ class _HomeLocationChooseState extends State<HomeLocationChoose> {
     LanguageController languageController,
     orientation,
   ) {
+    var cityList = languageController.mdmsResTenant.tenants!;
+    var filteredCity = <TenantTenant>[];
+
+    for (var tenant in cityList) {
+      bool isInPopularCities = _languageCtrl.popularCities?.any((popularCity) {
+            return popularCity.code == tenant.code;
+          }) ??
+          false;
+
+      if (!isInPopularCities) {
+        filteredCity.add(tenant);
+      }
+    }
+
     return SizedBox(
       width: Get.width,
-      height: isNotNullOrEmpty(
-        _languageCtrl.popularCities,
-      )
-          ? 0.65.sw
-          : Get.height * 0.5,
+      height: 0.65.sw,
       child: Column(
         children: [
           if (noResultsFound)
             const Center(child: Text('No Other Cities Found')),
-          if (isNotNullOrEmpty(tenants) && !noResultsFound) ...[
+          if (filteredCity.isNotEmpty && !noResultsFound) ...[
             SizedBox(
               width: Get.width,
-              height: isNotNullOrEmpty(
-                _languageCtrl.popularCities,
-              )
-                  ? 0.65.sw
-                  : Get.height * 0.5,
+              height: 0.65.sw,
               child: ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: isNotNullOrEmpty(filteredOtherCities)
                     ? filteredOtherCities.length
-                    : tenants!.length,
+                    : filteredCity.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   TenantTenant tenant = isNotNullOrEmpty(filteredOtherCities)
                       ? filteredOtherCities[index]
-                      : tenants![index];
+                      : filteredCity[index];
                   return _buildTenant(tenant, orientation);
                 },
               ),
@@ -366,8 +373,9 @@ class _HomeLocationChooseState extends State<HomeLocationChoose> {
 
   Widget _buildTenant(TenantTenant tenant, Orientation orientation) {
     return Obx(() {
-      bool isSelected = (cityController.selectedCity.value == tenant.code) ||
-          (cityController.cityName.value == tenant.name);
+      //bool isSelected = cityController.selectedCity.value == tenant.city!.districtCode;
+      bool isSelected = cityController.selectedCity.value == tenant.code ||
+          cityController.cityName.value == tenant.name;
 
       return Column(
         children: [
@@ -397,8 +405,8 @@ class _HomeLocationChooseState extends State<HomeLocationChoose> {
               cityController.selectedCity.value = tenant.code!;
               cityController.cityName.value = tenant.name!;
               await cityController.setSelectedCity(tenant);
-              dPrint("------------Checking tenant pg district code");
-              dPrint('${tenant.city!.districtCode}');
+              print("------------Checking tenant pg district code");
+              print('${tenant.city!.districtCode}');
             },
           ),
           const Divider(color: Colors.grey), // Keep the divider
@@ -407,234 +415,234 @@ class _HomeLocationChooseState extends State<HomeLocationChoose> {
     });
   }
 
-  // //popup dialoge
-  // void _detectLocation() {
-  //   Get.dialog(
-  //     AlertDialog(
-  //       insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //       contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(8.r),
-  //       ),
-  //       backgroundColor: BaseConfig.mainBackgroundColor,
-  //       content: SizedBox(
-  //         // height: 258.h,
-  //         width: Get.width,
-  //         child: SingleChildScrollView(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             crossAxisAlignment: CrossAxisAlignment.center,
-  //             children: <Widget>[
-  //               Container(
-  //                 width: 48.w,
-  //                 height: 48.h,
-  //                 decoration: BoxDecoration(
-  //                   borderRadius: BorderRadius.circular(50),
-  //                   color: BaseConfig.lightIndigoColor,
-  //                 ),
-  //                 child: const Icon(
-  //                   Icons.location_on_outlined,
-  //                   color: BaseConfig.appThemeColor1,
-  //                   size: 24,
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 20.h,
-  //               ),
-  //               MediumTextNotoSans(
-  //                 text: 'Access Required',
-  //                 fontWeight: FontWeight.w700,
-  //                 size: 16.h,
-  //               ),
-  //               SizedBox(
-  //                 height: 14.h,
-  //               ),
-  //               Wrap(
-  //                 children: [
-  //                   SmallTextNotoSans(
-  //                     text: 'Allow ',
-  //                     fontWeight: FontWeight.w400,
-  //                     size: 14.h,
-  //                   ),
-  //                   SmallTextNotoSans(
-  //                     text: '${BaseConfig.APP_NAME} Vision ',
-  //                     fontWeight: FontWeight.w700,
-  //                     size: 14.h,
-  //                   ),
-  //                   SmallTextNotoSans(
-  //                     text: 'to access your ',
-  //                     fontWeight: FontWeight.w400,
-  //                     size: 14.h,
-  //                   ),
-  //                 ],
-  //               ),
-  //               SmallTextNotoSans(
-  //                 text: 'Location.',
-  //                 fontWeight: FontWeight.w400,
-  //                 size: 14.h,
-  //               ),
-  //               SizedBox(
-  //                 height: 16.h,
-  //               ),
-  //               const Divider(
-  //                 color: BaseConfig.borderColor,
-  //               ),
-  //               SizedBox(
-  //                 height: 16.h,
-  //               ),
-  //               Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: SizedBox(
-  //                       height: 44.h,
-  //                       child: gradientBtn(
-  //                         text: 'Deny',
-  //                         buttonColor: Colors.white,
-  //                         horizonPadding: 5,
-  //                         textColor: BaseConfig.appThemeColor1,
-  //                         onPressed: () {
-  //                           Get.back();
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Expanded(
-  //                     child: SizedBox(
-  //                       height: 44.h,
-  //                       child: gradientBtn(
-  //                         text: 'Allow',
-  //                         horizonPadding: 5,
-  //                         onPressed: () {
-  //                           cityController.fetchPosition();
-  //                           Get.back();
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //     barrierDismissible: false,
-  //   );
-  // }
+  //popup dialoge
+  void _detectLocation() {
+    Get.dialog(
+      AlertDialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+        contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        backgroundColor: BaseConfig.mainBackgroundColor,
+        content: SizedBox(
+          // height: 258.h,
+          width: Get.width,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: 48.w,
+                  height: 48.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: BaseConfig.lightIndigoColor,
+                  ),
+                  child: const Icon(
+                    Icons.location_on_outlined,
+                    color: BaseConfig.appThemeColor1,
+                    size: 24,
+                  ),
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                MediumTextNotoSans(
+                  text: 'Access Required',
+                  fontWeight: FontWeight.w700,
+                  size: 16.h,
+                ),
+                SizedBox(
+                  height: 14.h,
+                ),
+                Wrap(
+                  children: [
+                    SmallTextNotoSans(
+                      text: 'Allow ',
+                      fontWeight: FontWeight.w400,
+                      size: 14.h,
+                    ),
+                    SmallTextNotoSans(
+                      text: 'Upyog Vision ',
+                      fontWeight: FontWeight.w700,
+                      size: 14.h,
+                    ),
+                    SmallTextNotoSans(
+                      text: 'to access your ',
+                      fontWeight: FontWeight.w400,
+                      size: 14.h,
+                    ),
+                  ],
+                ),
+                SmallTextNotoSans(
+                  text: 'Location.',
+                  fontWeight: FontWeight.w400,
+                  size: 14.h,
+                ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                const Divider(
+                  color: BaseConfig.borderColor,
+                ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 44.h,
+                        child: gradientBtn(
+                          text: 'Deny',
+                          buttonColor: Colors.white,
+                          horizonPadding: 5,
+                          textColor: BaseConfig.appThemeColor1,
+                          onPressed: () {
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: 44.h,
+                        child: gradientBtn(
+                          text: 'Allow',
+                          horizonPadding: 5,
+                          onPressed: () {
+                            cityController.fetchPosition();
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
 
-  // void _detectLocationLand() {
-  //   Get.dialog(
-  //     AlertDialog(
-  //       insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
-  //       contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(8.r),
-  //       ),
-  //       backgroundColor: BaseConfig.mainBackgroundColor,
-  //       content: SizedBox(
-  //         // height: 258.h,
-  //         width: Get.width,
-  //         child: SingleChildScrollView(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             crossAxisAlignment: CrossAxisAlignment.center,
-  //             children: <Widget>[
-  //               Container(
-  //                 width: 35.w,
-  //                 height: 100.h,
-  //                 decoration: BoxDecoration(
-  //                   borderRadius: BorderRadius.circular(50),
-  //                   color: BaseConfig.lightIndigoColor,
-  //                 ),
-  //                 child: Icon(
-  //                   Icons.location_on_outlined,
-  //                   color: BaseConfig.appThemeColor1,
-  //                   size: 15.sp,
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 20.h,
-  //               ),
-  //               MediumTextNotoSans(
-  //                 text: 'Access Required',
-  //                 fontWeight: FontWeight.w700,
-  //                 size: 7.sp,
-  //               ),
-  //               SizedBox(
-  //                 height: 14.h,
-  //               ),
-  //               Wrap(
-  //                 children: [
-  //                   SmallTextNotoSans(
-  //                     text: 'Allow ',
-  //                     fontWeight: FontWeight.w400,
-  //                     size: 7.sp,
-  //                   ),
-  //                   SmallTextNotoSans(
-  //                    text: '${BaseConfig.APP_NAME} Vision ',
-  //                     fontWeight: FontWeight.w700,
-  //                     size: 7.sp,
-  //                   ),
-  //                   SmallTextNotoSans(
-  //                     text: 'to access your ',
-  //                     fontWeight: FontWeight.w400,
-  //                     size: 7.sp,
-  //                   ),
-  //                 ],
-  //               ),
-  //               SmallTextNotoSans(
-  //                 text: 'Location.',
-  //                 fontWeight: FontWeight.w400,
-  //                 size: 7.sp,
-  //               ),
-  //               SizedBox(
-  //                 height: 16.h,
-  //               ),
-  //               const Divider(
-  //                 color: BaseConfig.borderColor,
-  //               ),
-  //               SizedBox(
-  //                 height: 16.h,
-  //               ),
-  //               Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: SizedBox(
-  //                       height: 50.h,
-  //                       child: gradientBtn(
-  //                         text: 'Deny',
-  //                         fontSize: 8.sp,
-  //                         buttonColor: Colors.white,
-  //                         horizonPadding: 5,
-  //                         textColor: BaseConfig.appThemeColor1,
-  //                         onPressed: () {
-  //                           Get.back();
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Expanded(
-  //                     child: SizedBox(
-  //                       height: 50.h,
-  //                       child: gradientBtn(
-  //                         text: 'Allow',
-  //                         fontSize: 8.sp,
-  //                         horizonPadding: 5,
-  //                         onPressed: () {
-  //                           cityController.fetchPosition();
-  //                           Get.back();
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //     barrierDismissible: false,
-  //   );
-  // }
+  void _detectLocationLand() {
+    Get.dialog(
+      AlertDialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+        contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        backgroundColor: BaseConfig.mainBackgroundColor,
+        content: SizedBox(
+          // height: 258.h,
+          width: Get.width,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: 35.w,
+                  height: 100.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: BaseConfig.lightIndigoColor,
+                  ),
+                  child: Icon(
+                    Icons.location_on_outlined,
+                    color: BaseConfig.appThemeColor1,
+                    size: 15.sp,
+                  ),
+                ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                MediumTextNotoSans(
+                  text: 'Access Required',
+                  fontWeight: FontWeight.w700,
+                  size: 7.sp,
+                ),
+                SizedBox(
+                  height: 14.h,
+                ),
+                Wrap(
+                  children: [
+                    SmallTextNotoSans(
+                      text: 'Allow ',
+                      fontWeight: FontWeight.w400,
+                      size: 7.sp,
+                    ),
+                    SmallTextNotoSans(
+                      text: 'Upyog Vision ',
+                      fontWeight: FontWeight.w700,
+                      size: 7.sp,
+                    ),
+                    SmallTextNotoSans(
+                      text: 'to access your ',
+                      fontWeight: FontWeight.w400,
+                      size: 7.sp,
+                    ),
+                  ],
+                ),
+                SmallTextNotoSans(
+                  text: 'Location.',
+                  fontWeight: FontWeight.w400,
+                  size: 7.sp,
+                ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                const Divider(
+                  color: BaseConfig.borderColor,
+                ),
+                SizedBox(
+                  height: 16.h,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 50.h,
+                        child: gradientBtn(
+                          text: 'Deny',
+                          fontSize: 8.sp,
+                          buttonColor: Colors.white,
+                          horizonPadding: 5,
+                          textColor: BaseConfig.appThemeColor1,
+                          onPressed: () {
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: 50.h,
+                        child: gradientBtn(
+                          text: 'Allow',
+                          fontSize: 8.sp,
+                          horizonPadding: 5,
+                          onPressed: () {
+                            cityController.fetchPosition();
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
 }

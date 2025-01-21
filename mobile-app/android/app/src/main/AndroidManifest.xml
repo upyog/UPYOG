@@ -26,7 +26,7 @@
     </queries>
     
     <application
-        android:label="MyCity"
+        android:label="UPYOG"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon1">
         <activity

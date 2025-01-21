@@ -106,9 +106,8 @@ class _FireNocState extends State<FireNocApplication> {
                                   return IconButton(
                                     onPressed: () async {
                                       await fnController.loadMore(
-                                        token: _authController
-                                                .token?.accessToken ??
-                                            '',
+                                        token:
+                                            _authController.token!.accessToken!,
                                       );
                                     },
                                     icon: const Icon(

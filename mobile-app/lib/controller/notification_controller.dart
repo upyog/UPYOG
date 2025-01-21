@@ -72,14 +72,14 @@ class NotificationController extends GetxController {
         query: query,
         type: NotificationType.SEARCH,
       );
-      dPrint('API Notification Response: $res');
+      print('API Notification Response: $res');
 
       notificationList = NotificationList.fromJson(res);
       length.value = notificationList.events?.length ?? 0;
 
       isLoading.value = false;
     } catch (e, s) {
-      dPrint('getNotificationError: $e');
+      print('getNotificationError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     } finally {
       isLoading.value = false;
@@ -104,10 +104,10 @@ class NotificationController extends GetxController {
         query: query,
         type: NotificationType.UPDATE,
       );
-      dPrint('API Notification Updated: $res');
+      print('API Notification Updated: $res');
       isLoading.value = false;
     } catch (e, s) {
-      dPrint('updateNotificationError: $e');
+      print('updateNotificationError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     } finally {
       isLoading.value = false;
@@ -134,13 +134,13 @@ class NotificationController extends GetxController {
 
       if (res['ResponseInfo']['status'] == "successful") {
         totalCount.value = res['unreadCount'];
-        dPrint('Notification Count Res: ${totalCount.value}');
+        print('Notification Count Res: ${totalCount.value}');
       } else {
-        dPrint('Notification Count Res: $res');
+        print('Notification Count Res: $res');
       }
       isLoading.value = false;
     } catch (e, s) {
-      dPrint('countNotificationError: $e');
+      print('countNotificationError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     } finally {
       isLoading.value = false;

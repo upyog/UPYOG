@@ -299,9 +299,7 @@ class _ProfileScreenState extends State<EmpProfileScreen> {
                     dPrint('Click: ${fileController.imageFile}');
                     if (fileController.imageFile == null &&
                         _editProfileController.userProfile.user?.first.photo ==
-                            null) {
-                      return;
-                    }
+                            null) return;
                     _showDeleteDialogue(
                       context,
                       fileController.imageFile,

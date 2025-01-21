@@ -84,17 +84,16 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
     try {
       if (showTakeActionButton()) {
         await _fireNocController.getFireNocFeeDetailBill(
-          token: _authController.token!.accessToken!,
-          consumerCodes: fireNoc.fireNocDetails!.applicationNumber!,
+          token: _authController.token?.accessToken,
+          consumerCodes: fireNoc.fireNocDetails?.applicationNumber,
           tenantId: fireNoc.tenantId!,
           businessService: BusinessService.FIRENOC,
         );
       } else {
         await _fireNocController.getFireNocFeeDetailPayment(
-          token: _authController.token!.accessToken!,
-          consumerCodes: fireNoc.fireNocDetails!.applicationNumber!,
+          token: _authController.token?.accessToken,
+          consumerCodes: fireNoc.fireNocDetails?.applicationNumber,
           tenantId: fireNoc.tenantId!,
-          businessService: '',
         );
       }
     } catch (e) {
@@ -103,7 +102,7 @@ class _FireNocApplicationDetailsState extends State<FireNocApplicationDetails> {
   }
 
   String getFileStoreIds() {
-    if (fireNoc.fireNocDetails!.additionalDetail?.documents == null) {
+    if (fireNoc.fireNocDetails?.additionalDetail?.documents == null) {
       return '';
     }
     List fileIds = [];

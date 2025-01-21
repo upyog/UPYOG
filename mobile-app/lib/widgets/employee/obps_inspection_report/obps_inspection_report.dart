@@ -51,16 +51,14 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
   init() {
     try {
       checkList = _dynamicFormController.filterCheckList(
-        applicationType: item
-            .businessObject!.additionalDetails!.applicationType!
-            .toUpperCase(),
-        serviceType:
-            item.businessObject!.additionalDetails!.serviceType!.toUpperCase(),
+        applicationType:
+            item.businessObject!.additionalDetails!.applicationType!,
+        serviceType: item.businessObject!.additionalDetails!.serviceType!,
         businessService: item.businessObject!.businessService!,
-        wfState: item.processInstance!.state!.state!.toUpperCase(),
+        wfState: item.processInstance!.state!.state!,
       );
     } catch (e) {
-      dPrint('Error while fetching checklist: $e');
+      print('Error while fetching checklist: $e');
     }
   }
 
@@ -213,10 +211,7 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           BigTextNotoSans(
-            text: getLocalizedString(
-              i18.building.INSPECTION_REPORT,
-              module: Modules.BPA,
-            ),
+            text: 'Inspection Report',
             fontWeight: FontWeight.w600,
             size: 16.sp,
           ),
@@ -224,10 +219,7 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
             height: 10.h,
           ),
           ColumnHeaderTextField(
-            label: getLocalizedString(
-              i18.building.INSPECTION_DATE,
-              module: Modules.BPA,
-            ),
+            label: 'Inspection Date',
             hintText: _dynamicFormController.selectedDate != null
                 ? _dynamicFormController.getSelectedDate()
                 : 'dd-mm-yyyy',
@@ -273,10 +265,7 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
             height: 10.h,
           ),
           BigTextNotoSans(
-            text: getLocalizedString(
-              i18.building.INSPECTION_CHECKLIST,
-              module: Modules.BPA,
-            ),
+            text: 'Checklist',
             fontWeight: FontWeight.w600,
             size: 16.sp,
           ),
@@ -346,10 +335,7 @@ class _ObpsInspectionReportState extends State<ObpsInspectionReport> {
             height: 10.h,
           ),
           BigTextNotoSans(
-            text: getLocalizedString(
-              i18.building.INSPECTION_DOCUMENTS,
-              module: Modules.BPA,
-            ),
+            text: 'Documents',
             fontWeight: FontWeight.w600,
             size: 16.sp,
           ),

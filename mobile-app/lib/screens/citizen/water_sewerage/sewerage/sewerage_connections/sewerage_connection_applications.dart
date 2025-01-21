@@ -51,7 +51,6 @@ class _SewerageConnectionApplicationsState
 
   init() async {
     _isLoading.value = true;
-    _waterController.length.value = 0;
     tenant = await getCityTenant();
     _waterController.getSewerageMyApplications(
       tenantId: tenant.code!,

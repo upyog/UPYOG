@@ -108,7 +108,7 @@ class ObpsDynamicFormController extends GetxController {
       empMdmsResModel = EmpMdmsResModel.fromJson(empRes);
       bpaObps = empMdmsResModel.mdmsResEmp?.bpaObps;
     } catch (e, s) {
-      dPrint('GetMdmsObps Error: $e');
+      print('GetMdmsObps Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -119,14 +119,14 @@ class ObpsDynamicFormController extends GetxController {
     required String businessService,
     required String wfState,
   }) {
-    final riskType = getRiskType(businessService.toUpperCase());
+    final riskType = getRiskType(businessService);
 
-    if (isNotNullOrEmpty(bpaObps?.checkList)) {
+    if (bpaObps != null) {
       for (var element in bpaObps!.checkList!) {
-        if (element.applicationType?.toUpperCase() == applicationType &&
-            element.serviceType?.toUpperCase() == serviceType &&
-            element.riskType?.toUpperCase() == riskType &&
-            element.wfState?.toUpperCase() == wfState) {
+        if (element.applicationType == applicationType &&
+            element.serviceType == serviceType &&
+            element.riskType == riskType &&
+            element.wfState == wfState) {
           checkList = element;
           return element;
         }
@@ -184,7 +184,7 @@ class ObpsDynamicFormController extends GetxController {
       }
       return true;
     } catch (e) {
-      dPrint('validatedField error: $e');
+      print('validatedField error: $e');
       return false;
     }
   }

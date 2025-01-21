@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:mobile_app/model/employee/emp_challans/emp_challans_model.dart';
 import 'package:mobile_app/repository/challan_repository.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
-import 'package:mobile_app/utils/utils.dart';
 
 class ChallanController extends GetxController {
   Challans? challans;
@@ -35,7 +34,7 @@ class ChallanController extends GetxController {
       return challans?.challans?.firstOrNull?.challanNo;
     } catch (e, s) {
       isLoading.value = false;
-      dPrint('createChallan Error: $e');
+      print('createChallan Error: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return null;

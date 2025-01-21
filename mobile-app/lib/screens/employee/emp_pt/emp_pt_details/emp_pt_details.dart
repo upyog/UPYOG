@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:mobile_app/components/documents_not_found/documents_not_found.dart';
 import 'package:mobile_app/components/error_page/network_error.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
@@ -109,9 +108,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
   String getFileStoreIds() {
     if (!isNotNullOrEmpty(
       _ptController.myProperties?.properties?.firstOrNull?.documents,
-    )) {
-      return '';
-    }
+    )) return '';
 
     List fileIds = [];
     for (var element
@@ -399,7 +396,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
                 ],
               ),
             ],
-            if (isNotNullOrEmpty(_ptController.property.documents)) ...[
+            if (_ptController.property.documents != null) ...[
               BuildExpansion(
                 title: getLocalizedString(i18.common.DOCUMENTS),
                 tilePadding: EdgeInsets.only(left: 7.w),
@@ -705,7 +702,7 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
 
   Widget _buildDocuments(FileStore fileStore) {
     return fileStore.fileStoreIds!.isEmpty
-        ? const DocumentsNotFound(module: Modules.PT)
+        ? const BigTextNotoSans(text: 'Document not found!')
             .paddingSymmetric(horizontal: 10.0)
         : Padding(
             padding: const EdgeInsets.all(10.0),
@@ -720,75 +717,75 @@ class _EmpPtDetailsScreenState extends State<EmpPtDetailsScreen> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final fileUrl =
-                    fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-                final docType = _ptController
-                    .myProperties?.properties?.first.documents
-                    ?.firstWhereOrNull(
-                  (element) =>
-                      element.fileStoreId == fileStore.fileStoreIds?[index].id,
-                );
-                return isNotNullOrEmpty(docType)
-                    ? Column(
-                        children: [
-                          Container(
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                              color: BaseConfig.greyColor2,
-                              // border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                _fileController.getFileType(fileUrl!).$1,
-                                size: 40,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Tooltip(
-                            message: getLocalizedString(
-                              docType!.documentType,
-                              module: Modules.PT,
-                            ),
-                            child: SmallTextNotoSans(
-                              text: getLocalizedString(
-                                docType.documentType,
-                                module: Modules.PT,
-                              ),
-                              color: Colors.grey.shade600,
-                              maxLine: 2,
-                              textOverflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ).ripple(() {
-                        final fileType =
-                            _fileController.getFileType(fileUrl).$2;
-                        dPrint('FileType: ${fileType.name}');
-                        if (fileType.name == FileExtType.pdf.name) {
-                          showTypeDialogue(
-                            context,
-                            url: fileUrl,
-                            isPdf: true,
-                            title: getLocalizedString(
-                              docType.documentType,
-                              module: Modules.PT,
-                            ),
-                          );
-                        } else {
-                          showTypeDialogue(
-                            context,
-                            url: fileUrl,
-                            title: getLocalizedString(
-                              docType.documentType,
-                              module: Modules.PT,
-                            ),
-                          );
-                        }
-                      })
-                    : const SizedBox.shrink();
+                    fileStore.fileStoreIds![index].url!.split(',').first;
+                final docType =
+                    _ptController.myProperties!.properties!.first.documents!
+                        .where(
+                          (element) =>
+                              element.fileStoreId ==
+                              fileStore.fileStoreIds![index].id,
+                        )
+                        .toList()
+                        .first;
+                return Column(
+                  children: [
+                    Container(
+                      width: Get.width,
+                      decoration: BoxDecoration(
+                        color: BaseConfig.greyColor2,
+                        // border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          _fileController.getFileType(fileUrl).$1,
+                          size: 40,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Tooltip(
+                      message: getLocalizedString(
+                        docType.documentType,
+                        module: Modules.PT,
+                      ),
+                      child: MediumText(
+                        text: getLocalizedString(
+                          docType.documentType,
+                          module: Modules.PT,
+                        ),
+                        color: Colors.grey.shade600,
+                        maxLine: 2,
+                        textOverflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ).ripple(() {
+                  final fileType = _fileController.getFileType(fileUrl).$2;
+                  dPrint('FileType: ${fileType.name}');
+                  if (fileType.name == FileExtType.pdf.name) {
+                    showTypeDialogue(
+                      context,
+                      url: fileUrl,
+                      isPdf: true,
+                      title: getLocalizedString(
+                        docType.documentType,
+                        module: Modules.PT,
+                      ),
+                    );
+                  } else {
+                    showTypeDialogue(
+                      context,
+                      url: fileUrl,
+                      title: getLocalizedString(
+                        docType.documentType,
+                        module: Modules.PT,
+                      ),
+                    );
+                  }
+                });
               },
             ),
           );

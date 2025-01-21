@@ -104,10 +104,9 @@ class _EmpLoginScreen2State extends State<EmpLoginScreen2> {
                                         children: [
                                           IconButton(
                                             onPressed: () {
-                                              // Get.toNamed(
-                                              //   AppRoutes.SELECT_CITIZEN,
-                                              // );
-                                              Get.back();
+                                              Get.toNamed(
+                                                AppRoutes.SELECT_CITIZEN,
+                                              );
                                             },
                                             icon: Icon(
                                               Icons.arrow_back_ios,
@@ -256,8 +255,7 @@ class _EmpLoginScreen2State extends State<EmpLoginScreen2> {
                                         IconButton(
                                           onPressed: () {
                                             Get.toNamed(
-                                              AppRoutes.SELECT_CATEGORY,
-                                              // AppRoutes.SELECT_CITIZEN,
+                                              AppRoutes.SELECT_CITIZEN,
                                             );
                                           },
                                           icon: Icon(

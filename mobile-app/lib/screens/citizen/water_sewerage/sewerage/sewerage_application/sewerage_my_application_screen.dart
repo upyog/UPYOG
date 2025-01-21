@@ -48,7 +48,6 @@ class _SewerageMyApplicationsScreenState
 
   init() async {
     _isLoading.value = true;
-    _waterController.length.value = 0;
     tenant = await getCityTenant();
     _waterController.getSewerageMyApplications(
       tenantId: tenant.code!,
@@ -191,11 +190,10 @@ class _SewerageMyApplicationsScreenState
                                       item.applicationStatus,
                                       module: Modules.WS,
                                     ),
-                                    statusColor: getStatusColor(
-                                      '${item.applicationStatus}',
-                                    ),
+                                    statusColor:
+                                        getStatusColor('${item.status}'),
                                     statusBackColor: getStatusBackColor(
-                                      '${item.applicationStatus}',
+                                      '${item.status}',
                                     ),
                                   ).paddingOnly(bottom: 16);
                                 }

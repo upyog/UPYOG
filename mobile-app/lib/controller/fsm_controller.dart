@@ -5,7 +5,6 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/model/citizen/fsm/fsm.dart';
 import 'package:mobile_app/repository/fsm_repoository.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
-import 'package:mobile_app/utils/utils.dart';
 
 class FsmController extends GetxController {
   var streamCtrl = StreamController.broadcast();
@@ -29,7 +28,6 @@ class FsmController extends GetxController {
   }
 
   void setDefaultLimit() {
-    length.value = 0;
     limit = 10;
     offset = 0;
   }
@@ -52,10 +50,10 @@ class FsmController extends GetxController {
       fsmModel = fsmResponse;
       streamCtrl.add(fsmModel);
       length.value = fsmModel.fsm?.length ?? 0;
-      dPrint("Fire Noc --------------------------------");
-      dPrint(fsmModel.toJson());
+      print("Fire Noc --------------------------------");
+      print(fsmModel.toJson());
     } catch (e, s) {
-      dPrint('GET FSM APPLICATION ERROR: $e');
+      print('GET FSM APPLICATION ERROR: $e');
       streamCtrl.add('FSM APPLICATION ERROR');
       ErrorHandler.allExceptionsHandler(e, s);
     }

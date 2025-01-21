@@ -141,43 +141,26 @@ PropertyAdditionalDetails _$PropertyAdditionalDetailsFromJson(
           : NoO.fromJson(json['noOofBasements'] as Map<String, dynamic>)
       ..heightAbove36Feet = json['heightAbove36Feet'] as bool?
       ..subusagetypeofrentedarea = json['Subusagetypeofrentedarea']
-      ..isAnyPartOfThisFloorUnOccupied = json['IsAnyPartOfThisFloorUnOccupied']
-      ..owners = (json['owners'] as List<dynamic>?)
-          ?.map((e) => OwnerAd.fromJson(e as Map<String, dynamic>))
-          .toList()
-      ..applicationStatus = json['applicationStatus'] as String?
-      ..isRainwaterHarvesting = json['isRainwaterHarvesting'] as bool?;
+      ..isAnyPartOfThisFloorUnOccupied = json['IsAnyPartOfThisFloorUnOccupied'];
 
 Map<String, dynamic> _$PropertyAdditionalDetailsToJson(
-    PropertyAdditionalDetails instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('uid', instance.uid);
-  writeNotNull('basement1', instance.basement1);
-  writeNotNull('basement2', instance.basement2);
-  writeNotNull('noOfFloors', instance.noOfFloors);
-  writeNotNull('builtUpArea', instance.builtUpArea);
-  writeNotNull('electricity', instance.electricity);
-  writeNotNull('inflammable', instance.inflammable);
-  writeNotNull('propertyType', instance.propertyType);
-  writeNotNull('subusagetype', instance.subusagetype);
-  writeNotNull('structureType', instance.structureType);
-  writeNotNull('noOofBasements', instance.noOofBasements);
-  writeNotNull('heightAbove36Feet', instance.heightAbove36Feet);
-  writeNotNull('Subusagetypeofrentedarea', instance.subusagetypeofrentedarea);
-  writeNotNull('IsAnyPartOfThisFloorUnOccupied',
-      instance.isAnyPartOfThisFloorUnOccupied);
-  writeNotNull('owners', instance.owners);
-  writeNotNull('applicationStatus', instance.applicationStatus);
-  writeNotNull('isRainwaterHarvesting', instance.isRainwaterHarvesting);
-  return val;
-}
+        PropertyAdditionalDetails instance) =>
+    <String, dynamic>{
+      'uid': instance.uid,
+      'basement1': instance.basement1,
+      'basement2': instance.basement2,
+      'noOfFloors': instance.noOfFloors,
+      'builtUpArea': instance.builtUpArea,
+      'electricity': instance.electricity,
+      'inflammable': instance.inflammable,
+      'propertyType': instance.propertyType,
+      'subusagetype': instance.subusagetype,
+      'structureType': instance.structureType,
+      'noOofBasements': instance.noOofBasements,
+      'heightAbove36Feet': instance.heightAbove36Feet,
+      'Subusagetypeofrentedarea': instance.subusagetypeofrentedarea,
+      'IsAnyPartOfThisFloorUnOccupied': instance.isAnyPartOfThisFloorUnOccupied,
+    };
 
 AgeOfProperty _$AgeOfPropertyFromJson(Map<String, dynamic> json) =>
     AgeOfProperty()
@@ -314,45 +297,6 @@ Map<String, dynamic> _$DocumentToJson(Document instance) => <String, dynamic>{
       'documentUid': instance.documentUid,
       'auditDetails': instance.auditDetails,
       'status': instance.status,
-    };
-
-OwnerAd _$OwnerAdFromJson(Map<String, dynamic> json) => OwnerAd()
-  ..name = json['name'] as String?
-  ..status = json['status'] as String?
-  ..documents = json['documents'] as List<dynamic>?
-  ..ownerType = json['ownerType'] as String?
-  ..mobileNumber = json['mobileNumber'] as String?
-  ..permanentAddress = json['permanentAddress'] as String?
-  ..additionalDetails = json['additionalDetails'] == null
-      ? null
-      : OwnerAdditionalDetailsPt.fromJson(
-          json['additionalDetails'] as Map<String, dynamic>)
-  ..fatherOrHusbandName = json['fatherOrHusbandName'] as String?
-  ..sameAsPropertyAddress = json['sameAsPropertyAddress'] as bool?;
-
-Map<String, dynamic> _$OwnerAdToJson(OwnerAd instance) => <String, dynamic>{
-      'name': instance.name,
-      'status': instance.status,
-      'documents': instance.documents,
-      'ownerType': instance.ownerType,
-      'mobileNumber': instance.mobileNumber,
-      'permanentAddress': instance.permanentAddress,
-      'additionalDetails': instance.additionalDetails,
-      'fatherOrHusbandName': instance.fatherOrHusbandName,
-      'sameAsPropertyAddress': instance.sameAsPropertyAddress,
-    };
-
-OwnerAdditionalDetailsPt _$OwnerAdditionalDetailsPtFromJson(
-        Map<String, dynamic> json) =>
-    OwnerAdditionalDetailsPt()
-      ..ownerName = json['ownerName'] as String?
-      ..ownerSequence = (json['ownerSequence'] as num?)?.toInt();
-
-Map<String, dynamic> _$OwnerAdditionalDetailsPtToJson(
-        OwnerAdditionalDetailsPt instance) =>
-    <String, dynamic>{
-      'ownerName': instance.ownerName,
-      'ownerSequence': instance.ownerSequence,
     };
 
 Owner _$OwnerFromJson(Map<String, dynamic> json) => Owner()

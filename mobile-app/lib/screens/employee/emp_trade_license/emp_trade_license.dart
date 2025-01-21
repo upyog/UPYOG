@@ -35,8 +35,6 @@ class EmpTradeLicense extends StatefulWidget {
 
 class _EmpTradeLicenseState extends State<EmpTradeLicense> {
   final _authController = Get.find<AuthController>();
-  final _commonController = Get.find<CommonController>();
-
   final _tlController = Get.find<TradeLicenseController>();
   // final _fileController = Get.find<FileController>();
   final _localityController = Get.put(LocalityController());
@@ -46,7 +44,7 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
   final pageController = PageController(viewportFraction: 1.05, keepPage: true);
   var isSelected = false;
   late TenantTenant tenantCity;
-  var isLoading = false.obs, moduleLoaded = false.obs;
+  var isLoading = false.obs;
 
   bool get isValidToken => _authController.token?.accessToken != null;
 
@@ -62,9 +60,6 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
   }
 
   Future<void> _fetchInbox() async {
-    await _commonController.fetchLabels(modules: Modules.TL).then((_) {
-      moduleLoaded.value = true;
-    });
     tenantCity = await getCityTenantEmployee();
     await _tlController.getEmpTlInboxApplications(
       token: _authController.token!.accessToken!,
@@ -95,14 +90,12 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
     return Scaffold(
       appBar: HeaderTop(
         titleWidget: Obx(
-          () => moduleLoaded.value
-              ? Wrap(
-                  children: [
-                    Text(getLocalizedString(i18.common.TRADE_LICENSE)),
-                    Text(' (${_tlController.empTlCount.value})'),
-                  ],
-                )
-              : const SizedBox.shrink(),
+          () => Wrap(
+            children: [
+              Text(getLocalizedString(i18.common.TRADE_LICENSE)),
+              Text(' (${_tlController.empTlCount.value})'),
+            ],
+          ),
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
@@ -115,7 +108,7 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
               height: Get.height,
               width: Get.width,
               child: Obx(
-                () => isLoading.value && !moduleLoaded.value
+                () => isLoading.value
                     ? showCircularIndicator()
                     : SingleChildScrollView(
                         child: Column(
@@ -148,6 +141,7 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
                                       ),
                                     ),
                                     onPressed: () {
+                                      //TODO: Implement filter functionality
                                       _openFilterBottomSheet(isSelected, o);
                                     },
                                     icon: SvgPicture.asset(
@@ -306,15 +300,9 @@ class _EmpTradeLicenseState extends State<EmpTradeLicense> {
         } else {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             case ConnectionState.active:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             default:
               return const SizedBox.shrink();
           }

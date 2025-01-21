@@ -7,7 +7,6 @@ import 'package:mobile_app/controller/location_controller.dart';
 import 'package:mobile_app/screens/citizen/home/home_screen.dart';
 import 'package:mobile_app/screens/citizen/home/my_certificates/my_certificates.dart';
 import 'package:mobile_app/screens/citizen/home_location_choose/home_location_choose.dart';
-import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/bottomNavBarWidget.dart';
 
 class BottomNavigationPage extends StatefulWidget {
@@ -56,11 +55,11 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         onTap: (index) {
           if (index == 3) {
             _scaffoldKey.currentState
-                ?.openEndDrawer(); 
+                ?.openEndDrawer(); // Open the drawer when tab 2 is selected
           } else {
             setState(() {
               selectedTab = index;
-              dPrint(selectedTab);
+              print(selectedTab);
             });
           }
         },

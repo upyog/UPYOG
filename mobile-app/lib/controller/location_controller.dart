@@ -111,7 +111,7 @@ class CityController extends GetxController {
         update();
       }
     } catch (e) {
-      dPrint('GetCityName Error: $e');
+      print(e);
     }
   }
 
@@ -119,7 +119,7 @@ class CityController extends GetxController {
     var cityList = Get.find<LanguageController>().mdmsResTenant.tenants!;
     for (var tenant in cityList) {
       if (tenant.name == name) {
-        dPrint('City selected from location: ${tenant.code}');
+        print('City selected from location: ${tenant.code}');
         setSelectedCity(tenant);
         cityName.value = name;
         selectedCity.value = tenant.code!;

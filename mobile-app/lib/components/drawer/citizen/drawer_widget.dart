@@ -66,7 +66,8 @@ class DrawerWidget extends StatelessWidget {
         ).ripple(() {
           Navigator.of(context).pop();
         }),
-        if (isNotNullOrEmpty(_languageController.stateInfo?.languages))
+        if (_languageController.stateInfo != null &&
+            _languageController.stateInfo!.languages!.isNotEmpty)
           ListTile(
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -153,8 +154,7 @@ class DrawerWidget extends StatelessWidget {
           if (_authController.isValidUser) {
             return showLogoutDialog();
           } else {
-            // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-            return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+            return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
           }
         }),
         drawerItem(
@@ -187,19 +187,14 @@ class DrawerWidget extends StatelessWidget {
         children: [
           ImagePlaceHolder(
             photoUrl: _editProfileController.userProfile.getUserPhoto(),
-            backgroundColor: BaseConfig.appThemeColor1,
-            iconColor: Colors.white,
           ),
-          if (isNotNullOrEmpty(
-            _editProfileController.userProfile.user?.firstOrNull?.name,
-          ))
+          if (_editProfileController.userProfile.user?.first.name != null)
             Tooltip(
               message: _editProfileController.userProfile.user!.first.name!,
               child: SizedBox(
                 width: Get.width / 2,
                 child: BigTextNotoSans(
-                  text: _editProfileController
-                      .userProfile.user!.first.name!.capitalize!,
+                  text: _editProfileController.userProfile.user!.first.name!,
                   fontWeight: FontWeight.w600,
                   maxLine: 1,
                   textOverflow: TextOverflow.ellipsis,
@@ -208,9 +203,8 @@ class DrawerWidget extends StatelessWidget {
                 ),
               ),
             ).marginOnly(top: 10),
-          if (isNotNullOrEmpty(
-            _editProfileController.userProfile.user?.firstOrNull?.mobileNumber,
-          ))
+          if (_editProfileController.userProfile.user?.first.mobileNumber !=
+              null)
             MediumTextNotoSans(
               text:
                   _editProfileController.userProfile.user!.first.mobileNumber!,
@@ -301,13 +295,8 @@ class DrawerWidget extends StatelessWidget {
                           onPressed: () async {
                             _authController.nameController.value.text = '';
                             _authController.passwordController.value.text = '';
-                            _authController.isNumberValid.value = false;
-                            _authController.isOtpValid.value = false;
-                            _authController.termsCondition.value = false;
-                            _authController.isButtonEnabled.value = false;
                             clearData();
-                            // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                            Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                            Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
                           },
                         ),
                       ),

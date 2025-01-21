@@ -7,7 +7,6 @@ import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
 import 'package:mobile_app/routes/routes.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
-import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/benefit_point.dart';
 import 'package:mobile_app/widgets/grid_card.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
@@ -183,17 +182,25 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                                   ),
                                   SizedBox(width: 8.w),
                                   SmallTextNotoSans(
-                                    text: (isNotNullOrEmpty(
-                                      _languageController.mdmsStaticData
-                                          ?.mdmsRes?.commonMasters?.staticData,
-                                    ))
+                                    text: (_languageController
+                                                    .mdmsStaticData
+                                                    ?.mdmsRes
+                                                    ?.commonMasters
+                                                    ?.staticData !=
+                                                null &&
+                                            _languageController
+                                                .mdmsStaticData!
+                                                .mdmsRes!
+                                                .commonMasters!
+                                                .staticData!
+                                                .isNotEmpty)
                                         ? _languageController
-                                                .mdmsStaticData
-                                                ?.mdmsRes
-                                                ?.commonMasters
-                                                ?.staticData
-                                                ?.firstOrNull
-                                                ?.obps
+                                                .mdmsStaticData!
+                                                .mdmsRes!
+                                                .commonMasters!
+                                                .staticData!
+                                                .first
+                                                .obps
                                                 ?.helpline
                                                 ?.contactOne ??
                                             "-"
@@ -215,17 +222,25 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                                   ),
                                   SizedBox(width: 8.w),
                                   SmallTextNotoSans(
-                                    text: (isNotNullOrEmpty(
-                                      _languageController.mdmsStaticData
-                                          ?.mdmsRes?.commonMasters?.staticData,
-                                    ))
+                                    text: (_languageController
+                                                    .mdmsStaticData
+                                                    ?.mdmsRes
+                                                    ?.commonMasters
+                                                    ?.staticData !=
+                                                null &&
+                                            _languageController
+                                                .mdmsStaticData!
+                                                .mdmsRes!
+                                                .commonMasters!
+                                                .staticData!
+                                                .isNotEmpty)
                                         ? _languageController
-                                                .mdmsStaticData
-                                                ?.mdmsRes
-                                                ?.commonMasters
-                                                ?.staticData
-                                                ?.firstOrNull
-                                                ?.obps
+                                                .mdmsStaticData!
+                                                .mdmsRes!
+                                                .commonMasters!
+                                                .staticData!
+                                                .first
+                                                .obps
                                                 ?.helpline
                                                 ?.contactTwo ??
                                             "-"
@@ -260,20 +275,25 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                                         : 6.sp,
                                     onPressed: () async {
                                       Uri googleUrl = Uri.parse(
-                                        (isNotNullOrEmpty(
-                                          _languageController
-                                              .mdmsStaticData
-                                              ?.mdmsRes
-                                              ?.commonMasters
-                                              ?.staticData,
-                                        ))
+                                        (_languageController
+                                                        .mdmsStaticData
+                                                        ?.mdmsRes
+                                                        ?.commonMasters
+                                                        ?.staticData !=
+                                                    null &&
+                                                _languageController
+                                                    .mdmsStaticData!
+                                                    .mdmsRes!
+                                                    .commonMasters!
+                                                    .staticData!
+                                                    .isNotEmpty)
                                             ? _languageController
-                                                    .mdmsStaticData
-                                                    ?.mdmsRes
-                                                    ?.commonMasters
-                                                    ?.staticData
-                                                    ?.firstOrNull
-                                                    ?.obps
+                                                    .mdmsStaticData!
+                                                    .mdmsRes!
+                                                    .commonMasters!
+                                                    .staticData!
+                                                    .first
+                                                    .obps
                                                     ?.viewMapLocation ??
                                                 ""
                                             : "-",
@@ -304,20 +324,25 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                                   SizedBox(width: 8.w),
                                   Expanded(
                                     child: SmallTextNotoSans(
-                                      text: (isNotNullOrEmpty(
-                                        _languageController
-                                            .mdmsStaticData
-                                            ?.mdmsRes
-                                            ?.commonMasters
-                                            ?.staticData,
-                                      ))
+                                      text: (_languageController
+                                                      .mdmsStaticData
+                                                      ?.mdmsRes
+                                                      ?.commonMasters
+                                                      ?.staticData !=
+                                                  null &&
+                                              _languageController
+                                                  .mdmsStaticData!
+                                                  .mdmsRes!
+                                                  .commonMasters!
+                                                  .staticData!
+                                                  .isNotEmpty)
                                           ? _languageController
-                                                  .mdmsStaticData
-                                                  ?.mdmsRes
-                                                  ?.commonMasters
-                                                  ?.staticData
-                                                  ?.firstOrNull
-                                                  ?.obps
+                                                  .mdmsStaticData!
+                                                  .mdmsRes!
+                                                  .commonMasters!
+                                                  .staticData!
+                                                  .first
+                                                  .obps
                                                   ?.serviceCenter ??
                                               "-"
                                           : "-",
@@ -361,7 +386,7 @@ class _BdPlanApproveApplicationState extends State<BdPlanApproveApplication> {
                           padding: const EdgeInsets.all(10.0),
                           child: BenefitPoint(
                             text:
-                                'Building plan permit validity is ${isNotNullOrEmpty(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData) ? _languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData?.firstOrNull?.obps?.validity ?? "-" : "-"} day',
+                                'Building plan permit validity is ${(_languageController.mdmsStaticData?.mdmsRes?.commonMasters?.staticData != null && _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.isNotEmpty) ? _languageController.mdmsStaticData!.mdmsRes!.commonMasters!.staticData!.first.obps?.validity ?? "-" : "-"} day',
                             o: o,
                           ),
                         ),

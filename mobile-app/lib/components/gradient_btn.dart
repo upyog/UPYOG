@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,13 +38,6 @@ Widget gradientBtn({
         //     MaterialStateProperty.all(Size(Get.width, 50)),
         backgroundColor: WidgetStateProperty.all(Colors.transparent),
         shadowColor: WidgetStateProperty.all(Colors.transparent),
-        overlayColor: WidgetStateProperty.resolveWith(
-          (states) {
-            return states.contains(WidgetState.pressed)
-                ? BaseConfig.appThemeColor1.withOpacity(0.5)
-                : null;
-          },
-        ),
       ),
       onPressed: onPressed,
       child: isLoading
@@ -53,12 +47,12 @@ Widget gradientBtn({
               ),
             )
           : BigTextNotoSans(
-              text: text,
-              color: textColor,
-              size: fontSize,
-              fontWeight: fontWeight,
-              textOverflow: TextOverflow.ellipsis,
-            ),
+          text: text,
+          color: textColor,
+          size: fontSize,
+          fontWeight: fontWeight,
+          textOverflow: TextOverflow.ellipsis,
+                  ),
     ),
   ).paddingSymmetric(horizontal: horizonPadding);
 }

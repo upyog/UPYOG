@@ -188,8 +188,8 @@ class PaymentDetail {
   String? billId;
   @JsonKey(name: 'bill')
   Bill? bill;
-  @JsonKey(name: 'additionalDetails', includeIfNull: false)
-  AdditionalDetailsClass? additionalDetails;
+  @JsonKey(name: 'additionalDetails')
+  dynamic additionalDetails;
   @JsonKey(name: 'auditDetails')
   AuditDetails? auditDetails;
 
@@ -199,59 +199,6 @@ class PaymentDetail {
       _$PaymentDetailFromJson(json);
 
   Map<String, dynamic> toJson() => _$PaymentDetailToJson(this);
-}
-
-@JsonSerializable()
-class AdditionalDetailsClass {
-  @JsonKey(name: 'assessmentYears', includeIfNull: false)
-  String? assessmentYears;
-  @JsonKey(name: 'arrearArray', includeIfNull: false)
-  List<Array>? arrearArray;
-  @JsonKey(name: 'taxArray', includeIfNull: false)
-  List<Array>? taxArray;
-
-  AdditionalDetailsClass();
-
-  factory AdditionalDetailsClass.fromJson(Map<String, dynamic> json) =>
-      _$AdditionalDetailsClassFromJson(json);
-
-  Map<String, dynamic> toJson() => _$AdditionalDetailsClassToJson(this);
-}
-
-@JsonSerializable()
-class Array {
-  @JsonKey(name: 'year')
-  String? year;
-  @JsonKey(name: 'tax')
-  int? tax;
-  @JsonKey(name: 'firecess')
-  dynamic firecess;
-  @JsonKey(name: 'cancercess')
-  dynamic cancercess;
-  @JsonKey(name: 'penalty')
-  dynamic penalty;
-  @JsonKey(name: 'rebate')
-  dynamic rebate;
-  @JsonKey(name: 'interest')
-  dynamic interest;
-  @JsonKey(name: 'usageExemption')
-  dynamic usageExemption;
-  @JsonKey(name: 'specialCategoryExemption')
-  dynamic specialCategoryExemption;
-  @JsonKey(name: 'adhocPenalty')
-  dynamic adhocPenalty;
-  @JsonKey(name: 'adhocRebate')
-  dynamic adhocRebate;
-  @JsonKey(name: 'roundoff')
-  dynamic roundOff;
-  @JsonKey(name: 'total')
-  int? total;
-
-  Array();
-
-  factory Array.fromJson(Map<String, dynamic> json) => _$ArrayFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ArrayToJson(this);
 }
 
 @JsonSerializable()

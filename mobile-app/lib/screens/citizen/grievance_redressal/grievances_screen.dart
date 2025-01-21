@@ -8,8 +8,10 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
+import 'package:mobile_app/controller/file_controller.dart';
 import 'package:mobile_app/controller/grievance_controller.dart';
 import 'package:mobile_app/controller/language_controller.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/model/citizen/grievance/grievance.dart' as gr;
 import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/routes/routes.dart';
@@ -38,13 +40,12 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
   final _authController = Get.find<AuthController>();
   final _editProfileController = Get.find<EditProfileController>();
   final _grievanceController = Get.find<GrievanceController>();
+  final _fileController = Get.find<FileController>();
   final pageController = PageController(viewportFraction: 1.05, keepPage: true);
   final _commonController = Get.find<CommonController>();
   final _languageController = Get.find<LanguageController>();
 
   bool get isValidToken => _authController.token?.accessToken != null;
-
-  final _selectedIndex = 0.obs;
 
   @override
   void initState() {
@@ -53,22 +54,25 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
   }
 
   Future<void> _fetchLabelsAsync() async {
-    _grievanceController.length.value = 0;
     await _commonController.fetchLabels(modules: Modules.PGR);
     await _fetchGrievance();
   }
 
   Future<void> _fetchGrievance() async {
-    try {
-      TenantTenant tenantCity = await getCityTenant();
-      await _grievanceController.getGrievance(
-        token: _authController.token!.accessToken!,
-        tenantId: '${tenantCity.code}',
-        mobileNo: _editProfileController.userProfile.user!.first.mobileNumber!,
-      );
-    } catch (e) {
-      dPrint('Grievance Error: $e');
-    }
+    TenantTenant tenantCity = await getCityTenant();
+    await _grievanceController.getGrievance(
+      token: _authController.token!.accessToken!,
+      tenantId: '${tenantCity.code}',
+      mobileNo: _editProfileController.userProfile.user!.first.mobileNumber!,
+    );
+  }
+
+  Future<FileStore?> getTimelinesFile1(fileStoreIds, serviceWrappers) async {
+    return await _fileController.getFiles(
+      token: _authController.token!.accessToken!,
+      tenantId: serviceWrappers.service!.tenantId!,
+      fileStoreIds: fileStoreIds,
+    );
   }
 
   @override
@@ -92,10 +96,9 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                     return const NoApplicationFoundWidget();
                   }
                   final gr.Grievance data = snapshot.data;
-                  final complaintResolved = data.complaintsResolved ?? 0;
-                  final averageComplaintResolved =
-                      data.averageResolutionTime ?? 0;
-                  final complaintTypes = data.complaintTypes ?? 0;
+                  final complaintResolved = data.complaintsResolved;
+                  final averagecomplaintResolved = data.averageResolutionTime;
+                  final complaintTypes = data.complaintTypes;
                   final openGrievanceList = data.serviceWrappers
                       ?.where(
                         (element) => (element.service?.applicationStatus ==
@@ -118,7 +121,7 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                       )
                       .toList();
 
-                  if (!isNotNullOrEmpty(data.serviceWrappers)) {
+                  if (data.serviceWrappers!.isEmpty) {
                     return const NoApplicationFoundWidget();
                   } else {
                     return SingleChildScrollView(
@@ -202,20 +205,25 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                   ),
                                                   SizedBox(width: 8.w),
                                                   SmallTextNotoSans(
-                                                    text: (isNotNullOrEmpty(
-                                                      _languageController
-                                                          .mdmsStaticData
-                                                          ?.mdmsRes
-                                                          ?.commonMasters
-                                                          ?.staticData,
-                                                    ))
+                                                    text: (_languageController
+                                                                    .mdmsStaticData
+                                                                    ?.mdmsRes
+                                                                    ?.commonMasters
+                                                                    ?.staticData !=
+                                                                null &&
+                                                            _languageController
+                                                                .mdmsStaticData!
+                                                                .mdmsRes!
+                                                                .commonMasters!
+                                                                .staticData!
+                                                                .isNotEmpty)
                                                         ? _languageController
-                                                                .mdmsStaticData
-                                                                ?.mdmsRes
-                                                                ?.commonMasters
-                                                                ?.staticData
-                                                                ?.firstOrNull
-                                                                ?.pgr
+                                                                .mdmsStaticData!
+                                                                .mdmsRes!
+                                                                .commonMasters!
+                                                                .staticData!
+                                                                .first
+                                                                .pgr
                                                                 ?.helpline
                                                                 ?.contactOne ??
                                                             "-"
@@ -240,20 +248,25 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                   ),
                                                   SizedBox(width: 8.w),
                                                   SmallTextNotoSans(
-                                                    text: (isNotNullOrEmpty(
-                                                      _languageController
-                                                          .mdmsStaticData
-                                                          ?.mdmsRes
-                                                          ?.commonMasters
-                                                          ?.staticData,
-                                                    ))
+                                                    text: (_languageController
+                                                                    .mdmsStaticData
+                                                                    ?.mdmsRes
+                                                                    ?.commonMasters
+                                                                    ?.staticData !=
+                                                                null &&
+                                                            _languageController
+                                                                .mdmsStaticData!
+                                                                .mdmsRes!
+                                                                .commonMasters!
+                                                                .staticData!
+                                                                .isNotEmpty)
                                                         ? _languageController
-                                                                .mdmsStaticData
-                                                                ?.mdmsRes
-                                                                ?.commonMasters
-                                                                ?.staticData
-                                                                ?.firstOrNull
-                                                                ?.pgr
+                                                                .mdmsStaticData!
+                                                                .mdmsRes!
+                                                                .commonMasters!
+                                                                .staticData!
+                                                                .first
+                                                                .pgr
                                                                 ?.helpline
                                                                 ?.contactTwo ??
                                                             "-"
@@ -294,20 +307,25 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                         : 6.sp,
                                                     onPressed: () async {
                                                       Uri googleUrl = Uri.parse(
-                                                        (isNotNullOrEmpty(
-                                                          _languageController
-                                                              .mdmsStaticData
-                                                              ?.mdmsRes
-                                                              ?.commonMasters
-                                                              ?.staticData,
-                                                        ))
+                                                        (_languageController
+                                                                        .mdmsStaticData
+                                                                        ?.mdmsRes
+                                                                        ?.commonMasters
+                                                                        ?.staticData !=
+                                                                    null &&
+                                                                _languageController
+                                                                    .mdmsStaticData!
+                                                                    .mdmsRes!
+                                                                    .commonMasters!
+                                                                    .staticData!
+                                                                    .isNotEmpty)
                                                             ? _languageController
-                                                                    .mdmsStaticData
-                                                                    ?.mdmsRes
-                                                                    ?.commonMasters
-                                                                    ?.staticData
-                                                                    ?.firstOrNull
-                                                                    ?.pgr
+                                                                    .mdmsStaticData!
+                                                                    .mdmsRes!
+                                                                    .commonMasters!
+                                                                    .staticData!
+                                                                    .first
+                                                                    .pgr
                                                                     ?.viewMapLocation ??
                                                                 ""
                                                             : "",
@@ -341,20 +359,25 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                                   SizedBox(width: 8.w),
                                                   Expanded(
                                                     child: SmallTextNotoSans(
-                                                      text: (isNotNullOrEmpty(
-                                                        _languageController
-                                                            .mdmsStaticData
-                                                            ?.mdmsRes
-                                                            ?.commonMasters
-                                                            ?.staticData,
-                                                      ))
+                                                      text: (_languageController
+                                                                      .mdmsStaticData
+                                                                      ?.mdmsRes
+                                                                      ?.commonMasters
+                                                                      ?.staticData !=
+                                                                  null &&
+                                                              _languageController
+                                                                  .mdmsStaticData!
+                                                                  .mdmsRes!
+                                                                  .commonMasters!
+                                                                  .staticData!
+                                                                  .isNotEmpty)
                                                           ? _languageController
-                                                                  .mdmsStaticData
-                                                                  ?.mdmsRes
-                                                                  ?.commonMasters
-                                                                  ?.staticData
-                                                                  ?.firstOrNull
-                                                                  ?.pgr
+                                                                  .mdmsStaticData!
+                                                                  .mdmsRes!
+                                                                  .commonMasters!
+                                                                  .staticData!
+                                                                  .first
+                                                                  .pgr
                                                                   ?.serviceCenter ??
                                                               "-"
                                                           : "-",
@@ -389,15 +412,12 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Obx(
-                                    () => MediumTextNotoSans(
-                                      text:
-                                          'My Complaints ${_selectedIndex.value == 0 ? '(${openGrievanceList?.length ?? 0})' : '(${closedGrievanceList?.length ?? 0})'}',
-                                      fontWeight: FontWeight.w700,
-                                      size: o == Orientation.portrait
-                                          ? 14.sp
-                                          : 8.sp,
-                                    ),
+                                  MediumTextNotoSans(
+                                    text: 'My Complaints',
+                                    fontWeight: FontWeight.w700,
+                                    size: o == Orientation.portrait
+                                        ? 14.sp
+                                        : 8.sp,
                                   ),
                                   TextButtonNotoSans(
                                     padding: EdgeInsets.symmetric(
@@ -470,7 +490,7 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                                     SizedBox(height: 12.h),
                                     BenefitPoint(
                                       text:
-                                          '$averageComplaintResolved days is the average complaint resolution time',
+                                          '$averagecomplaintResolved days is the average complaint resolution time',
                                       o: o,
                                     ),
                                     SizedBox(height: 12.h),
@@ -529,10 +549,6 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
         tabHeight: o == Orientation.portrait ? null : 70.h,
         tabText1: 'Open Requests',
         tabText2: 'Closed Requests',
-        onTap: (index) {
-          dPrint('TabBarWidget onTap: $index');
-          _selectedIndex.value = index;
-        },
         children: [
           //Tab -1: Open
           Obx(
@@ -547,7 +563,7 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                       itemBuilder: (context, index) {
                         final serviceWrappers = openGrievanceList?[index];
 
-                        return isNotNullOrEmpty(serviceWrappers)
+                        return serviceWrappers != null
                             ? OpenRequestWidget(
                                 serviceWrapper: serviceWrappers,
                                 o: o,
@@ -570,7 +586,7 @@ class _GrievancesScreenState extends State<GrievancesScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, i) {
                         final serviceWrappers = closedGrievanceList?[i];
-                        return isNotNullOrEmpty(serviceWrappers)
+                        return serviceWrappers != null
                             ? ClosedRequestWidget(
                                 serviceWrapper: serviceWrappers,
                                 o: o,
@@ -598,7 +614,7 @@ class OpenRequestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ComplainCard(
-      title: isNotNullOrEmpty(serviceWrapper.service?.serviceCode)
+      title: serviceWrapper.service?.serviceCode != null
           ? getLocalizedString(
               '${i18.common.SERVICE_DEFS}${serviceWrapper.service?.serviceCode}'
                   .toUpperCase(),
@@ -617,7 +633,7 @@ class OpenRequestWidget extends StatelessWidget {
         serviceWrapper.service!.applicationStatus!,
       ),
       statusBackColor: getGrievanceStatusBackColor(
-        serviceWrapper.service?.applicationStatus ?? '',
+        serviceWrapper.service!.applicationStatus!,
       ),
       o: o,
       onTap: () {
@@ -644,7 +660,7 @@ class ClosedRequestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ComplainCard(
-      title: isNotNullOrEmpty(serviceWrapper.service?.serviceCode)
+      title: serviceWrapper.service?.serviceCode != null
           ? getLocalizedString(
               '${i18.common.SERVICE_DEFS}${serviceWrapper.service?.serviceCode}'
                   .toUpperCase(),
@@ -660,13 +676,14 @@ class ClosedRequestWidget extends StatelessWidget {
       ),
       rating: serviceWrapper.service?.rating,
       statusColor: getGrievanceStatusTextColor(
-        serviceWrapper.service?.applicationStatus ?? '',
+        serviceWrapper.service!.applicationStatus!,
       ),
       statusBackColor: getGrievanceStatusBackColor(
-        serviceWrapper.service?.applicationStatus ?? '',
+        serviceWrapper.service!.applicationStatus!,
       ),
       o: o,
       onTap: () {
+        //TODO: Navigate to Details Screen
         Get.toNamed(
           AppRoutes.GRIEVANCES_DETAILS_SCREEN,
           arguments: {

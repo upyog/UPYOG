@@ -225,18 +225,6 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
     }
   }
 
-  bool isPaymentAvailable() {
-    var status = {
-      BpaStatus.PENDING_FEE.name,
-      BpaStatus.PENDING_APPL_FEE_PAYMENT.name,
-      BpaStatus.PENDING_SANC_FEE_PAYMENT.name,
-      BpaStatus.PENDING_APPL_FEE.name,
-      BpaStatus.PENDING_SANC_FEE.name,
-    };
-
-    return status.contains(newBpaData.status);
-  }
-
   void goPayment(BpaElement bpaEle) async {
     if (!_authController.isValidUser) return;
 
@@ -507,7 +495,13 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
             ? showCircularIndicator()
             : newBpaData.status == BpaStatus.CITIZEN_APPROVAL_INPROCESS.name
                 ? _buildBottomBarTakeAction(o: o)
-                : isPaymentAvailable()
+                : newBpaData.status == BpaStatus.PENDING_FEE.name ||
+                        newBpaData.status ==
+                            BpaStatus.PENDING_APPL_FEE_PAYMENT.name ||
+                        newBpaData.status ==
+                            BpaStatus.PENDING_SANC_FEE_PAYMENT.name ||
+                        newBpaData.status == BpaStatus.PENDING_APPL_FEE.name ||
+                        newBpaData.status == BpaStatus.PENDING_SANC_FEE.name
                     ? _makePayment(newBpaData.status)
                     : const SizedBox.shrink(),
       ),
@@ -2789,12 +2783,14 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          final fileUrl =
-              fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-          final docType = nocElement.documents?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = nocElement.documents!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .firstOrNull;
 
           final docName = isNotNullOrEmpty(docType?.documentType)
               ? getLocalizedString(
@@ -2816,7 +2812,7 @@ class _BuildingDetailScreenState extends State<BuildingDetailScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
-                      _fileController.getFileType(fileUrl!).$1,
+                      _fileController.getFileType(fileUrl).$1,
                       size: 40,
                       color: Colors.grey.shade600,
                     ),

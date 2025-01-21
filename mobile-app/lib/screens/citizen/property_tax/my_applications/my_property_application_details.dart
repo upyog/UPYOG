@@ -109,9 +109,8 @@ class _MyPropertyApplicationDetailsState
       tenantId: properties.tenantId!,
       token: _authController.token!.accessToken!,
       consumerCode: properties.acknowledgementNumber!,
-      service: (properties.workflow?.businessService ==
-                  BusinessService.PT_MUTATION.name &&
-              properties.creationReason == CreationReason.MUTATION.name)
+      service: properties.workflow?.businessService ==
+              BusinessService.PT_MUTATION.name
           ? BusinessService.PT_MUTATION.name
           : BusinessService.PT.name,
     );
@@ -142,9 +141,7 @@ class _MyPropertyApplicationDetailsState
         onPressed: () => Navigator.of(context).pop(),
       ),
       bottomNavigationBar:
-          (properties.creationReason == CreationReason.MUTATION.name &&
-                  properties.additionalDetails?.applicationStatus ==
-                      'FIELDVERIFIED')
+          properties.creationReason == CreationReason.MUTATION.name
               ? _makePayment()
               : null,
       body: SizedBox(
@@ -679,7 +676,7 @@ class _MyPropertyApplicationDetailsState
       );
 
   Widget _buildDocuments(FileStore fileStore) {
-    return (!isNotNullOrEmpty(fileStore.fileStoreIds))
+    return (fileStore.fileStoreIds == null || fileStore.fileStoreIds!.isEmpty)
         ? const DocumentsNotFound(module: Modules.PT)
         : Padding(
             padding: const EdgeInsets.all(10.0),
@@ -694,11 +691,15 @@ class _MyPropertyApplicationDetailsState
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final fileUrl =
-                    fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-                final docType = properties.documents?.firstWhereOrNull(
-                  (element) =>
-                      element.fileStoreId == fileStore.fileStoreIds?[index].id,
-                );
+                    fileStore.fileStoreIds![index].url!.split(',').first;
+                final docType = properties.documents
+                    ?.where(
+                      (element) =>
+                          element.fileStoreId ==
+                          fileStore.fileStoreIds![index].id,
+                    )
+                    .toList()
+                    .firstOrNull;
                 return isNotNullOrEmpty(docType)
                     ? Column(
                         children: [
@@ -712,7 +713,7 @@ class _MyPropertyApplicationDetailsState
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Icon(
-                                _fileController.getFileType(fileUrl!).$1,
+                                _fileController.getFileType(fileUrl).$1,
                                 size: 40.sp,
                                 color: Colors.grey.shade600,
                               ),

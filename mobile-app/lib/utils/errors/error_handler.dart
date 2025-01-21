@@ -7,7 +7,7 @@ import 'package:mobile_app/utils/utils.dart';
 
 class ErrorHandler {
   static void logError(String error, [StackTrace? stackTrace]) {
-    dPrint(error);
+    print(error);
   }
 
   static Future<bool> handleApiException(
@@ -17,8 +17,7 @@ class ErrorHandler {
     switch (e.exceptionType) {
       case ExceptionType.UNAUTHORIZED:
         await clearData();
-        // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-        Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+        Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
         // final userType = await getUserType();
         // if (userType == UserType.CITIZEN.name) {
         //   await clearData();
@@ -59,11 +58,8 @@ class ErrorHandler {
     } else if (e is DioException) {
       status = true;
       ErrorHandler.logError(e.toString(), stackTrace);
-      showErrorDialog(
-        e.response?.statusCode.toString() ?? '',
-        e.message,
-        e.response?.requestOptions.uri.toString() ?? '',
-      );
+      showErrorDialog(e.response?.statusCode.toString() ?? '', e.message,
+          e.response?.requestOptions.uri.toString() ?? '',);
     } else if (e is String || e is int?) {
       status = true;
       ErrorHandler.logError(e.toString(), stackTrace);

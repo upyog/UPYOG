@@ -10,6 +10,7 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/file_controller.dart';
 import 'package:mobile_app/controller/inbox_controller.dart';
+import 'package:mobile_app/controller/payment_controller.dart';
 import 'package:mobile_app/controller/property_controller.dart';
 import 'package:mobile_app/controller/timeline_controller.dart';
 import 'package:mobile_app/controller/water_controller.dart';
@@ -51,7 +52,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
   final _timelineController = Get.find<TimelineController>();
   // final _downloadController = Get.find<DownloadController>();
   final _waterController = Get.find<WaterController>();
-  // final _paymentController = Get.find<PaymentController>();
+  final _paymentController = Get.find<PaymentController>();
   final _inboxController = Get.find<InboxController>();
   final _commonController = Get.find<CommonController>();
 
@@ -123,9 +124,7 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
   String getFileStoreIds() {
     if (!isNotNullOrEmpty(
       _waterController.sewerageConnection?.documents,
-    )) {
-      return '';
-    }
+    )) return '';
 
     List fileIds = [];
     for (var element in _waterController.sewerageConnection!.documents!) {
@@ -862,74 +861,73 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          final fileUrl =
-              fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-          final docType =
-              _waterController.sewerageConnection?.documents?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
-          return isNotNullOrEmpty(docType)
-              ? Tooltip(
-                  message: getLocalizedString(
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = _waterController.sewerageConnection?.documents!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .first;
+          return Column(
+            children: [
+              Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: BaseConfig.greyColor2,
+                  // border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    _fileController.getFileType(fileUrl).$1,
+                    size: 40,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Tooltip(
+                message: getLocalizedString(
+                  docType?.documentType,
+                  module: Modules.WS,
+                ),
+                child: SmallTextNotoSans(
+                  text: getLocalizedString(
                     docType?.documentType,
                     module: Modules.WS,
                   ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: BaseConfig.greyColor2,
-                          // border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            _fileController.getFileType(fileUrl!).$1,
-                            size: 40,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SmallTextNotoSans(
-                        text: getLocalizedString(
-                          docType?.documentType,
-                          module: Modules.WS,
-                        ),
-                        color: Colors.grey.shade600,
-                        maxLine: 2,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ).ripple(() {
-                    final fileType = _fileController.getFileType(fileUrl).$2;
-                    dPrint('FileType: ${fileType.name}');
-                    if (fileType.name == FileExtType.pdf.name) {
-                      showTypeDialogue(
-                        context,
-                        url: fileUrl,
-                        isPdf: true,
-                        title: getLocalizedString(
-                          docType?.documentType,
-                          module: Modules.WS,
-                        ),
-                      );
-                    } else {
-                      showTypeDialogue(
-                        context,
-                        url: fileUrl,
-                        title: getLocalizedString(
-                          docType?.documentType,
-                          module: Modules.WS,
-                        ),
-                      );
-                    }
-                  }),
-                )
-              : const SizedBox.shrink();
+                  color: Colors.grey.shade600,
+                  maxLine: 2,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ).ripple(() {
+            final fileType = _fileController.getFileType(fileUrl).$2;
+            dPrint('FileType: ${fileType.name}');
+            if (fileType.name == FileExtType.pdf.name) {
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                isPdf: true,
+                title: getLocalizedString(
+                  docType?.documentType,
+                  module: Modules.WS,
+                ),
+              );
+            } else {
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                title: getLocalizedString(
+                  docType?.documentType,
+                  module: Modules.WS,
+                ),
+              );
+            }
+          });
         },
       ),
     );
@@ -983,64 +981,64 @@ class _EmpSwDetailsScreenState extends State<EmpSwDetailsScreen> {
     );
   }
 
-  // Widget _buildFeeDetails() {
-  //   return BuildCard(
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         BigTextNotoSans(
-  //           text: getLocalizedString(
-  //             i18.waterSewerage.FEE_DETAILS_HEADER,
-  //             module: Modules.WS,
-  //           ),
-  //           fontWeight: FontWeight.w600,
-  //           size: 16.sp,
-  //         ),
-  //         const SizedBox(height: 10),
-  //         if (_paymentController.billInfo?.bill?.first.billDetails?.first
-  //                 .billAccountDetails !=
-  //             null) ...[
-  //           for (int i = 0;
-  //               i <
-  //                   _paymentController.billInfo!.bill!.first.billDetails!.first
-  //                       .billAccountDetails!.length;
-  //               i++)
-  //             ColumnHeaderText(
-  //               label: getLocalizedString(
-  //                 _paymentController.billInfo!.bill!.first.billDetails!.first
-  //                     .billAccountDetails![i].taxHeadCode!
-  //                     .toUpperCase(),
-  //                 module: Modules.WS,
-  //               ),
-  //               text: _paymentController.billInfo!.bill!.first.billDetails!
-  //                           .first.billAccountDetails![i].amount !=
-  //                       null
-  //                   ? '₹${_paymentController.billInfo!.bill!.first.billDetails!.first.billAccountDetails![i].amount.doubleToString()}'
-  //                   : 'N/A',
-  //             ).marginOnly(bottom: 10),
-  //         ],
-  //         ColumnHeaderText(
-  //           label: getLocalizedString(
-  //             i18.waterSewerage.TOTAL_AMOUNT_DUE,
-  //             module: Modules.WS,
-  //           ),
-  //           text: _paymentController.billInfo?.bill?.first.totalAmount == null
-  //               ? '₹0'
-  //               : '₹${_paymentController.billInfo!.bill!.first.totalAmount}',
-  //           fontWeight: FontWeight.w900,
-  //           textSize: 16.0,
-  //         ),
-  //         const SizedBox(height: 10),
-  //         ColumnHeaderText(
-  //           label: getLocalizedString(
-  //             i18.waterSewerage.APPLICATION_STATUS,
-  //             module: Modules.WS,
-  //           ),
-  //           text: _paymentController.billInfo?.bill?.first.status ?? 'N/A',
-  //           textColor: Colors.red,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildFeeDetails() {
+    return BuildCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BigTextNotoSans(
+            text: getLocalizedString(
+              i18.waterSewerage.FEE_DETAILS_HEADER,
+              module: Modules.WS,
+            ),
+            fontWeight: FontWeight.w600,
+            size: 16.sp,
+          ),
+          const SizedBox(height: 10),
+          if (_paymentController.billInfo?.bill?.first.billDetails?.first
+                  .billAccountDetails !=
+              null) ...[
+            for (int i = 0;
+                i <
+                    _paymentController.billInfo!.bill!.first.billDetails!.first
+                        .billAccountDetails!.length;
+                i++)
+              ColumnHeaderText(
+                label: getLocalizedString(
+                  _paymentController.billInfo!.bill!.first.billDetails!.first
+                      .billAccountDetails![i].taxHeadCode!
+                      .toUpperCase(),
+                  module: Modules.WS,
+                ),
+                text: _paymentController.billInfo!.bill!.first.billDetails!
+                            .first.billAccountDetails![i].amount !=
+                        null
+                    ? '₹${_paymentController.billInfo!.bill!.first.billDetails!.first.billAccountDetails![i].amount.doubleToString()}'
+                    : 'N/A',
+              ).marginOnly(bottom: 10),
+          ],
+          ColumnHeaderText(
+            label: getLocalizedString(
+              i18.waterSewerage.TOTAL_AMOUNT_DUE,
+              module: Modules.WS,
+            ),
+            text: _paymentController.billInfo?.bill?.first.totalAmount == null
+                ? '₹0'
+                : '₹${_paymentController.billInfo!.bill!.first.totalAmount}',
+            fontWeight: FontWeight.w900,
+            textSize: 16.0,
+          ),
+          const SizedBox(height: 10),
+          ColumnHeaderText(
+            label: getLocalizedString(
+              i18.waterSewerage.APPLICATION_STATUS,
+              module: Modules.WS,
+            ),
+            text: _paymentController.billInfo?.bill?.first.status ?? 'N/A',
+            textColor: Colors.red,
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -95,9 +95,9 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             FireNocStatus.PENDING_PAYMENT.name) {
       await _fireNocController
           .getFireNocFeeDetailBill(
-        token: _authController.token!.accessToken!,
+        token: _authController.token?.accessToken,
         consumerCodes:
-            _fireNocController.fireNoc!.fireNocDetails!.applicationNumber!,
+            _fireNocController.fireNoc?.fireNocDetails?.applicationNumber,
         tenantId: _fireNocController.fireNoc!.tenantId!,
         businessService: BusinessService.FIRENOC,
       )
@@ -109,10 +109,9 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
     } else {
       await _fireNocController
           .getFireNocFeeDetailPayment(
-        token: _authController.token!.accessToken!,
-        businessService: process.businessService!,
+        token: _authController.token?.accessToken,
         consumerCodes:
-            _fireNocController.fireNoc!.fireNocDetails!.applicationNumber!,
+            _fireNocController.fireNoc!.fireNocDetails?.applicationNumber,
         tenantId: _fireNocController.fireNoc!.tenantId!,
       )
           .then((_) {
@@ -327,8 +326,8 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                                     i18.noc.NOC_APPLICATION_NO,
                                     module: Modules.NOC,
                                   ),
-                                  text: _fireNocController.fireNoc
-                                          ?.fireNocDetails?.applicationNumber ??
+                                  text: _fireNocController.fireNoc!
+                                          .fireNocDetails?.applicationNumber ??
                                       "N/A",
                                 ).paddingOnly(bottom: 10),
                                 ColumnHeaderText(
@@ -342,8 +341,8 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                                 ColumnHeaderText(
                                   label:
                                       getLocalizedString(i18.common.NOC_TYPE),
-                                  text: _fireNocController.fireNoc
-                                          ?.fireNocDetails?.fireNocType ??
+                                  text: _fireNocController.fireNoc!
+                                          .fireNocDetails?.fireNocType ??
                                       "N/A",
                                 ).paddingOnly(bottom: 10),
                                 ColumnHeaderText(
@@ -382,10 +381,10 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                                   if (value && !_isFeeFetch) _getFee();
                                 },
                                 children: [
-                                  if (_fireNocController.fireNoc?.fireNocDetails
+                                  if (_fireNocController.fireNoc!.fireNocDetails
                                               ?.status ==
                                           FireNocStatus.INITIATED.name ||
-                                      _fireNocController.fireNoc?.fireNocDetails
+                                      _fireNocController.fireNoc!.fireNocDetails
                                               ?.status ==
                                           FireNocStatus
                                               .PENDING_PAYMENT.name) ...[
@@ -507,9 +506,8 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                                     ?.additionalDetail
                                     ?.ownerAuditionalDetail
                                     ?.documents,
-                              )) ...[
+                              ))
                                 _buildDoc(),
-                              ],
                             ],
                           ),
                         ),
@@ -751,7 +749,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_PROPERTY_TYPE,
             module: Modules.NOC,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.noOfBuildings ??
+          text: _fireNocController.fireNoc!.fireNocDetails?.noOfBuildings ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
@@ -765,28 +763,18 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_BUILDING_USAGE,
             module: Modules.NOC,
           ),
-          text: isNotNullOrEmpty(
-            _fireNocController
-                .fireNoc?.fireNocDetails?.buildings?.firstOrNull?.usageType,
-          )
-              ? getLocalizedString(
-                  'FIRENOC_BUILDINGTYPE_${_fireNocController.fireNoc!.fireNocDetails!.buildings!.first.usageType!.split('.').first}',
-                )
-              : "N/A",
+          text: getLocalizedString(
+            'FIRENOC_BUILDINGTYPE_${_fireNocController.fireNoc!.fireNocDetails!.buildings!.first.usageType!.split('.').first}',
+          ),
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
           label: getLocalizedString(
             i18.noc.NOC_BUILDING_USAGE_SUBTYPE,
             module: Modules.NOC,
           ),
-          text: isNotNullOrEmpty(
-            _fireNocController
-                .fireNoc?.fireNocDetails?.buildings?.firstOrNull?.usageType,
-          )
-              ? getLocalizedString(
-                  'FIRENOC_BUILDINGTYPE_${_fireNocController.fireNoc!.fireNocDetails!.buildings!.first.usageType!.split('.').first}_SUBDIVISIONA_1',
-                )
-              : "N/A",
+          text: getLocalizedString(
+            'FIRENOC_BUILDINGTYPE_${_fireNocController.fireNoc!.fireNocDetails!.buildings!.first.usageType!.split('.').first}_SUBDIVISIONA_1',
+          ),
         ).paddingOnly(bottom: 10),
       ],
     );
@@ -803,20 +791,20 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
           label: getLocalizedString(
             i18.noc.NOC_APPLICANT_MOBILE,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.mobileNumber ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
           label: getLocalizedString(i18.common.NOC_APPLICANT_NAME),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.name ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
           label: getLocalizedString(i18.noc.NOC_GENDER, module: Modules.NOC),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
-                  ?.owners?.firstOrNull?.gender ??
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
+                  ?.owners?.first.gender ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
@@ -824,7 +812,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_APPLICANT_FATHER,
             module: Modules.NOC,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.fatherOrHusbandName ??
               "N/A",
         ).paddingOnly(bottom: 10),
@@ -832,7 +820,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
           label: getLocalizedString(
             i18.noc.NOC_APPLICANT_RELATIONSHIP,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.relationship ??
               "N/A",
         ).paddingOnly(bottom: 10),
@@ -849,7 +837,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
           label: getLocalizedString(
             i18.common.NOC_APPLICANT_EMAIL,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.emailId ??
               "N/A",
         ).paddingOnly(bottom: 10),
@@ -857,7 +845,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
           label: getLocalizedString(
             i18.noc.NOC_APPLICANT_PAN,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.pan ??
               "N/A",
         ).paddingOnly(bottom: 10),
@@ -866,7 +854,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_APPLICANT_CORRESPONDENCE,
             module: Modules.NOC,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.applicantDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.applicantDetails
                   ?.owners?.first.correspondenceAddress ??
               "N/A",
         ).paddingOnly(bottom: 10),
@@ -886,7 +874,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
           label:
               getLocalizedString(i18.noc.NOC_PROPERTY_ID, module: Modules.NOC),
           text: _fireNocController
-                  .fireNoc?.fireNocDetails?.propertyDetails?.propertyId ??
+                  .fireNoc!.fireNocDetails?.propertyDetails?.propertyId ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
@@ -894,15 +882,10 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_PROPERTY_CITY,
             module: Modules.NOC,
           ),
-          text: isNotNullOrEmpty(
-            _fireNocController
-                .fireNoc?.fireNocDetails?.propertyDetails?.address?.city,
-          )
-              ? getLocalizedString(
-                  '${i18.common.LOCATION_PREFIX}${BaseConfig.STATE_TENANT_ID}_${_fireNocController.fireNoc!.fireNocDetails!.propertyDetails!.address!.city!.split('.').last}'
-                      .toUpperCase(),
-                )
-              : "N/A",
+          text: getLocalizedString(
+            '${i18.common.LOCATION_PREFIX}${BaseConfig.STATE_TENANT_ID}_${_fireNocController.fireNoc!.fireNocDetails?.propertyDetails?.address?.city?.split('.').last}'
+                .toUpperCase(),
+          ),
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
           label: getLocalizedString(
@@ -910,7 +893,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             module: Modules.NOC,
           ),
           text: _fireNocController
-                  .fireNoc?.fireNocDetails?.propertyDetails?.address?.doorNo ??
+                  .fireNoc!.fireNocDetails?.propertyDetails?.address?.doorNo ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
@@ -918,7 +901,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_PROPERTY_COLONY,
             module: Modules.NOC,
           ),
-          text: _fireNocController.fireNoc?.fireNocDetails?.propertyDetails
+          text: _fireNocController.fireNoc!.fireNocDetails?.propertyDetails
                   ?.address?.buildingName ??
               "N/A",
         ).paddingOnly(bottom: 10),
@@ -928,7 +911,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             module: Modules.NOC,
           ),
           text: _fireNocController
-                  .fireNoc?.fireNocDetails?.propertyDetails?.address?.street ??
+                  .fireNoc!.fireNocDetails?.propertyDetails?.address?.street ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
@@ -937,7 +920,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             module: Modules.NOC,
           ),
           text: getLocalizedString(
-            _fireNocController.fireNoc?.fireNocDetails?.propertyDetails?.address
+            _fireNocController.fireNoc!.fireNocDetails?.propertyDetails?.address
                 ?.locality?.code,
           ),
         ).paddingOnly(bottom: 10),
@@ -945,7 +928,7 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
           label:
               getLocalizedString(i18.noc.NOC_PROPERTY_PIN, module: Modules.NOC),
           text: _fireNocController
-                  .fireNoc?.fireNocDetails?.propertyDetails?.address?.pincode ??
+                  .fireNoc!.fireNocDetails?.propertyDetails?.address?.pincode ??
               "N/A",
         ).paddingOnly(bottom: 10),
         ColumnHeaderText(
@@ -953,13 +936,9 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
             i18.noc.NOC_PROPERTY_FIRESTATION,
             module: Modules.NOC,
           ),
-          text: isNotNullOrEmpty(
-            _fireNocController.fireNoc?.fireNocDetails?.firestationId,
-          )
-              ? getLocalizedString(
-                  'FIRENOC_FIRESTATIONS_${_fireNocController.fireNoc!.fireNocDetails!.firestationId}',
-                )
-              : "N/A",
+          text: getLocalizedString(
+            'FIRENOC_FIRESTATIONS_${_fireNocController.fireNoc!.fireNocDetails?.firestationId}',
+          ),
         ).paddingOnly(bottom: 10),
       ],
     );
@@ -1043,9 +1022,9 @@ class _EmpFireNocDetailsState extends State<EmpFireNocDetails> {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: isNotNullOrEmpty(fileUrl)
+                        child: fileUrl != null
                             ? Icon(
-                                _fileController.getFileType(fileUrl!).$1,
+                                _fileController.getFileType(fileUrl).$1,
                                 size: 40,
                                 color: Colors.grey.shade600,
                               )

@@ -294,6 +294,7 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
                               height: 16.h,
                             ),
                             SizedBox(
+                              height: 0.65.sw,
                               width: Get.width,
                               child: _buildView(
                                 languageController.mdmsResTenant.tenants
@@ -307,11 +308,7 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
                         ],
                       ),
                       SizedBox(
-                        height: isNotNullOrEmpty(
-                          _languageCtrl.popularCities,
-                        )
-                            ? 21.h
-                            : 40,
+                        height: 21.h,
                       ),
                       gradientBtn(
                         height: 44.h,
@@ -351,35 +348,41 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
     LanguageController languageController,
     orientation,
   ) {
+    var cityList = languageController.mdmsResTenant.tenants!;
+    var filteredCity = <TenantTenant>[];
+
+    for (var tenant in cityList) {
+      bool isInPopularCities = _languageCtrl.popularCities?.any((popularCity) {
+            return popularCity.code == tenant.code;
+          }) ??
+          false;
+
+      if (!isInPopularCities) {
+        filteredCity.add(tenant);
+      }
+    }
+
     return SizedBox(
       width: Get.width,
-      height: isNotNullOrEmpty(
-        _languageCtrl.popularCities,
-      )
-          ? 0.65.sw
-          : Get.height * 0.5,
+      height: 0.65.sw,
       child: Column(
         children: [
           if (noResultsFound)
             const Center(child: Text('No Other Cities Found')),
-          if (isNotNullOrEmpty(tenants) && !noResultsFound) ...[
+          if (filteredCity.isNotEmpty && !noResultsFound) ...[
             SizedBox(
               width: Get.width,
-              height: isNotNullOrEmpty(
-                _languageCtrl.popularCities,
-              )
-                  ? 0.65.sw
-                  : Get.height * 0.5,
+              height: 0.65.sw,
               child: ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: isNotNullOrEmpty(filteredOtherCities)
                     ? filteredOtherCities.length
-                    : tenants!.length,
+                    : filteredCity.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   TenantTenant tenant = isNotNullOrEmpty(filteredOtherCities)
                       ? filteredOtherCities[index]
-                      : tenants![index];
+                      : filteredCity[index];
                   return _buildTenant(tenant, orientation);
                 },
               ),
@@ -392,8 +395,9 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
 
   Widget _buildTenant(TenantTenant tenant, Orientation orientation) {
     return Obx(() {
-      bool isSelected = (cityController.selectedCity.value == tenant.name) ||
-          (cityController.cityName.value == tenant.name);
+      //bool isSelected = cityController.selectedCity.value == tenant.city!.districtCode;
+      bool isSelected = cityController.selectedCity.value == tenant.name ||
+          cityController.cityName.value == tenant.name;
 
       return Column(
         children: [
@@ -423,8 +427,8 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
               cityController.selectedCity.value = tenant.code!;
               cityController.cityName.value = tenant.name!;
               await cityController.setSelectedCity(tenant);
-              dPrint("------------Checking tenant pg district code");
-              dPrint('${tenant.city!.districtCode}');
+              print("------------Checking tenant pg district code");
+              print('${tenant.city!.districtCode}');
             },
           ),
           const Divider(color: Colors.grey), // Keep the divider
@@ -433,7 +437,6 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
     });
   }
 
-  /** 
   //popup dialoge
   void _detectLocation() {
     Get.dialog(
@@ -484,7 +487,7 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
                       size: 14.h,
                     ),
                     SmallTextNotoSans(
-                      text: '${BaseConfig.APP_NAME} Vision ',
+                      text: 'Upyog Vision ',
                       fontWeight: FontWeight.w700,
                       size: 14.h,
                     ),
@@ -598,7 +601,7 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
                       size: 7.sp,
                     ),
                     SmallTextNotoSans(
-                      text: '${BaseConfig.APP_NAME} Vision ',
+                      text: 'Upyog Vision ',
                       fontWeight: FontWeight.w700,
                       size: 7.sp,
                     ),
@@ -664,6 +667,4 @@ class _LocationChooseScreenState extends State<LocationChooseScreen> {
       barrierDismissible: false,
     );
   }
-
-  **/
 }

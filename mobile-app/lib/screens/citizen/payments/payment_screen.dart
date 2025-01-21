@@ -127,6 +127,7 @@ class PaymentScreen extends StatelessWidget {
             const SizedBox(height: 30),
             if (_paymentController.isPaymentButtonEnabled.value)
               Obx(() {
+                //_paymentController.isLoading.value;
                 return FilledButtonApp(
                   text: 'Pay',
                   width: Get.width,

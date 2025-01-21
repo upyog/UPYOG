@@ -174,24 +174,24 @@ class _LoginScreenState extends State<LoginScreen>
                           fit: BoxFit.fill,
                         ),
                       ),
-                      // Positioned(
-                      //   top: 25.h,
-                      //   right: 20.w,
-                      //   child: Padding(
-                      //     padding: EdgeInsets.only(top: 8.h),
-                      //     child: TextButton(
-                      //       onPressed: () {
-                      //         skipButton();
-                      //       },
-                      //       child: SmallTextNotoSans(
-                      //         text: 'Skip',
-                      //         color: BaseConfig.appThemeColor1,
-                      //         fontWeight: FontWeight.w700,
-                      //         size: 14.sp,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      Positioned(
+                        top: 25.h,
+                        right: 20.w,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: TextButton(
+                            onPressed: () {
+                              skipButton();
+                            },
+                            child: SmallTextNotoSans(
+                              text: 'Skip',
+                              color: BaseConfig.appThemeColor1,
+                              fontWeight: FontWeight.w700,
+                              size: 14.sp,
+                            ),
+                          ),
+                        ),
+                      ),
                       Positioned(
                         top: 300.h,
                         child: Container(

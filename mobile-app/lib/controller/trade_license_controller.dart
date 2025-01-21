@@ -111,9 +111,10 @@ class TradeLicenseController extends GetxController {
 
   /// Get Trade License owners list by application id
   Future<void> getOwnersLicenseByAppID({
-    required String token,
+    required String? token,
     required String applicationNo,
   }) async {
+    if (token == null && token!.isEmpty) return;
 
     final tenantCity = await getCityTenant();
 

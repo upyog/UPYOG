@@ -10,8 +10,10 @@ import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
+import 'package:mobile_app/controller/file_controller.dart';
 import 'package:mobile_app/controller/grievance_controller.dart';
 import 'package:mobile_app/model/citizen/date_filter_model.dart';
+import 'package:mobile_app/model/citizen/files/file_store.dart';
 import 'package:mobile_app/model/citizen/grievance/grievance.dart' as gr;
 import 'package:mobile_app/model/citizen/grievance/grievance.dart';
 import 'package:mobile_app/model/citizen/localization/language.dart';
@@ -47,6 +49,7 @@ class _GrievanceComplaintsViewAllState
   final _authController = Get.find<AuthController>();
   final _editProfileController = Get.find<EditProfileController>();
   final _grievanceController = Get.find<GrievanceController>();
+  final _fileController = Get.find<FileController>();
 
   final searchController = TextEditingController();
 
@@ -94,12 +97,19 @@ class _GrievanceComplaintsViewAllState
   }
 
   Future<void> _fetchGrievance() async {
-    _grievanceController.length.value = 0;
     TenantTenant tenantCity = await getCityTenant();
     await _grievanceController.getGrievance(
       token: _authController.token!.accessToken!,
       tenantId: '${tenantCity.code}',
       mobileNo: _editProfileController.userProfile.user!.first.mobileNumber!,
+    );
+  }
+
+  Future<FileStore?> getTimelinesFile1(fileStoreIds, serviceWrappers) async {
+    return await _fileController.getFiles(
+      token: _authController.token!.accessToken!,
+      tenantId: serviceWrappers.service!.tenantId!,
+      fileStoreIds: fileStoreIds,
     );
   }
 
@@ -137,9 +147,11 @@ class _GrievanceComplaintsViewAllState
       List<DateOpenedFilter> selectedDates =
           dateOpenedFilters.where((filter) => filter.isSelected).toList();
 
+      // Check if selectedStatus and selectedDates are empty
       bool isStatusEmpty = selectedStatus.isEmpty;
       bool isDatesEmpty = selectedDates.isEmpty;
 
+      // Apply filters only if selectedStatus or selectedDates are not empty
       if (!isStatusEmpty || !isDatesEmpty) {
         serviceWrappersSearch = _grievanceController.grievance.serviceWrappers
             ?.where((serviceWrapper) {
@@ -161,6 +173,7 @@ class _GrievanceComplaintsViewAllState
           return statusMatch && dateMatch;
         }).toList();
       } else {
+        // If both selectedStatus and selectedDates are empty, show all results
         serviceWrappersSearch = _grievanceController.grievance.serviceWrappers;
       }
     });
@@ -180,7 +193,7 @@ class _GrievanceComplaintsViewAllState
           children: [
             Text(getLocalizedString(i18.grievance.GRIEVANCE)),
             Obx(
-              () => Text(' (${_grievanceController.length})'),
+              () => Text(' (${_grievanceController.lengthGriev})'),
             ),
           ],
         ),

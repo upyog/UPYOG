@@ -48,7 +48,7 @@ Future _firebaseBackgroundMessage(RemoteMessage message) async {
     );
 
     notificationBadgeCount(notification);
-
+    
     print('''
       Notification received in background...
       title: ${message.notification!.title}
@@ -138,8 +138,7 @@ Future main() async {
           if (authController.isValidUser) {
             Get.offAllNamed(AppRoutes.BOTTOM_NAV);
           } else {
-            // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-            Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+            Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
           }
         }
       });

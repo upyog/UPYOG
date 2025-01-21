@@ -18,6 +18,7 @@ import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/big_text.dart';
 import 'package:mobile_app/widgets/news_card.dart';
 import 'package:mobile_app/widgets/small_text.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class EmpDashboard extends StatefulWidget {
   const EmpDashboard({super.key});
@@ -193,8 +194,7 @@ class _EmpDashboardState extends State<EmpDashboard> {
                                 onPressed: () async {
                                   //TODO: Navigate to respective screen
                                   if (!_authController1.isValidUser) {
-                                    // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                                    Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                                    Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
                                     return;
                                   }
 
@@ -207,6 +207,9 @@ class _EmpDashboardState extends State<EmpDashboard> {
                                       i18.common.TRADE_LICENSE) {
                                     Get.toNamed(
                                       AppRoutes.EMP_TRADE_LICENSE,
+                                    );
+                                    await _commonController.fetchLabels(
+                                      modules: Modules.TL,
                                     );
                                   }
                                   if (service.title ==
@@ -288,8 +291,15 @@ class _EmpDashboardState extends State<EmpDashboard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        InterText(
+          text: getLocalizedString(i18.common.WHATS_NEW),
+          fontWeight: FontWeight.w800,
+          size: o == Orientation.portrait ? 16.sp : 8.sp,
+          color: BaseConfig.textColor2,
+        ),
+        SizedBox(height: 18.h),
         SizedBox(
-          height: o == Orientation.portrait ? 280.h : 220.h,
+          height: o == Orientation.portrait ? 210.h : 220.h,
           child: PageView.builder(
             controller: _pageController,
             itemCount: BaseConfig.APP_HOME_BANNERS.split(',').length,
@@ -302,13 +312,24 @@ class _EmpDashboardState extends State<EmpDashboard> {
               final img = BaseConfig.APP_HOME_BANNERS.split(',')[index];
               return FractionallySizedBox(
                 widthFactor: 1 / _pageController.viewportFraction,
-                child: NewsCard(
-                  img: img,
-                  orientation: o,
-                  pageController: _pageController,
-                ),
+                child: NewsCard(img: img, orientation: o),
               );
             },
+          ),
+        ),
+        SizedBox(
+          height: 12.h,
+        ),
+        SmoothPageIndicator(
+          controller: _pageController,
+          count: BaseConfig.APP_HOME_BANNERS_EMP.split(',').length,
+          effect: ExpandingDotsEffect(
+            dotHeight: 6.h,
+            dotWidth: o == Orientation.portrait ? 6.w : 3.w,
+            expansionFactor: 2,
+            spacing: 4.w,
+            activeDotColor: BaseConfig.appThemeColor1,
+            dotColor: BaseConfig.dotGrayColor,
           ),
         ),
       ],

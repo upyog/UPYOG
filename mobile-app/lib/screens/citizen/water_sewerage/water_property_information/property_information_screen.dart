@@ -9,7 +9,6 @@ import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/big_text.dart';
-import 'package:mobile_app/widgets/build_expansion.dart';
 import 'package:mobile_app/widgets/colum_header_text.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 
@@ -154,88 +153,74 @@ class WaterPropertyInformationScreen extends StatelessWidget {
               text: properties.properties?.first.address?.street ?? 'N/A',
             ),
             const SizedBox(height: 10),
-            BuildExpansion(
-              tilePadding: const EdgeInsets.all(0),
-              title: getLocalizedString(
+            BigTextNotoSans(
+              text: getLocalizedString(
                 i18.tlProperty.PROPERTY_DETAILS_SUB,
                 module: Modules.PT,
               ),
-              children: [
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.tlProperty.PROPERTY_TYPE,
-                    module: Modules.PT,
-                  ),
-                  text: isNotNullOrEmpty(
-                    properties.properties?.first.propertyType,
-                  )
-                      ? getLocalizedString(
-                          '${i18.propertyTax.PROPERTYTAX_BILLING_SLAB}${properties.properties?.first.propertyType!.split('.').first}'
-                              .toUpperCase(),
-                          module: Modules.PT,
-                        )
-                      : 'N/A',
-                ),
-                const SizedBox(height: 10),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.tlProperty.USE,
-                    module: Modules.PT,
-                  ),
-                  text: isNotNullOrEmpty(
-                    properties.properties?.first.usageCategory,
-                  )
-                      ? getLocalizedString(
-                          '${i18.propertyTax.PROPERTYTAX_BILLING_SLAB}${properties.properties?.first.usageCategory}',
-                          module: Modules.PT,
-                        )
-                      : 'N/A',
-                ),
-                const SizedBox(height: 10),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.tlProperty.AREA,
-                    module: Modules.PT,
-                  ),
-                  text: properties.properties?.first.landArea
-                          ?.toInt()
-                          .toString() ??
-                      'N/A',
-                ),
-                const SizedBox(height: 10),
-                ColumnHeaderText(
-                  label: getLocalizedString(
-                    i18.tlProperty.NO_OF_FLOOR,
-                    module: Modules.PT,
-                  ),
-                  text:
-                      isNotNullOrEmpty(properties.properties?.first.noOfFloors)
-                          ? '${properties.properties!.first.noOfFloors}'
-                          : 'N/A',
-                ),
-              ],
+              fontWeight: FontWeight.w600,
+              size: 16.sp,
             ),
-            BuildExpansion(
-              tilePadding: const EdgeInsets.all(0),
-              title: getLocalizedString(
+            const SizedBox(height: 10),
+            ColumnHeaderText(
+              label: getLocalizedString(
+                i18.tlProperty.PROPERTY_TYPE,
+                module: Modules.PT,
+              ),
+              text: isNotNullOrEmpty(properties.properties?.first.propertyType)
+                  ? getLocalizedString(
+                      '${i18.propertyTax.PROPERTYTAX_BILLING_SLAB}${properties.properties?.first.propertyType!.split('.').first}'
+                          .toUpperCase(),
+                      module: Modules.PT,
+                    )
+                  : 'N/A',
+            ),
+            const SizedBox(height: 10),
+            ColumnHeaderText(
+              label: getLocalizedString(i18.tlProperty.USE, module: Modules.PT),
+              text: isNotNullOrEmpty(properties.properties?.first.usageCategory)
+                  ? getLocalizedString(
+                      '${i18.propertyTax.PROPERTYTAX_BILLING_SLAB}${properties.properties?.first.usageCategory}',
+                      module: Modules.PT,
+                    )
+                  : 'N/A',
+            ),
+            const SizedBox(height: 10),
+            ColumnHeaderText(
+              label:
+                  getLocalizedString(i18.tlProperty.AREA, module: Modules.PT),
+              text: properties.properties?.first.landArea?.toInt().toString() ??
+                  'N/A',
+            ),
+            const SizedBox(height: 10),
+            ColumnHeaderText(
+              label: getLocalizedString(
+                i18.tlProperty.NO_OF_FLOOR,
+                module: Modules.PT,
+              ),
+              text: isNotNullOrEmpty(properties.properties?.first.noOfFloors)
+                  ? '${properties.properties!.first.noOfFloors}'
+                  : 'N/A',
+            ),
+            const SizedBox(height: 10),
+            BigTextNotoSans(
+              text: getLocalizedString(
                 i18.tlProperty.OWNER_DETAILS_SUB,
                 module: Modules.PT,
               ),
-              children: [
-                ListView.builder(
-                  itemCount: properties.properties?.first.owners?.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final owner =
-                        properties.properties?.firstOrNull?.owners?[index];
-                    return isNotNullOrEmpty(owner)
-                        ? _buildOwnerCard(owner, index + 1)
-                            .paddingOnly(bottom: 10)
-                        : const SizedBox.shrink();
-                  },
-                ),
-              ],
+              fontWeight: FontWeight.w600,
+              size: 16.sp,
+            ),
+            const SizedBox(height: 10),
+            ListView.builder(
+              itemCount: properties.properties?.first.owners?.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final owner = properties.properties?.first.owners?[index];
+                return _buildOwnerCard(owner, index + 1)
+                    .paddingOnly(bottom: 10);
+              },
             ),
             const SizedBox(height: 16),
           ],
