@@ -232,4 +232,12 @@ public class BillRepositoryV2 {
 		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
 	}
 	
+	public Integer updateBillStatusToExpiredByBillId(Set<String> billIds) {
+		UpdateBillCriteria updateBillCriteria = UpdateBillCriteria.builder().billIds(billIds)
+				.statusToBeUpdated(BillStatus.EXPIRED).build();
+		List<Object> preparedStmtList = new ArrayList<>();
+		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
+		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
+	}
+	
 }

@@ -760,5 +760,9 @@ public class BillServicev2 {
 		}
 		return ownerPlainRequestFieldsList;
 	}
+
+	public Integer updateBillStatusToExpire(Set<String> billIds) {
+		return billRepository.updateBillStatusToExpiredByBillId(billIds);
+	}
 	
 }

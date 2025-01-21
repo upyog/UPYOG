@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class SMSRequest {
+public class SMSSentRequest {
 	private String mobileNumber;
 	private String message;
 	private SMSCategory category;
+	private String templateId;
+	private String templateName;
 }

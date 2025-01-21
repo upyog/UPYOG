@@ -52,8 +52,9 @@ public class WorkflowInboxService {
 
 		User loggedinUser = info.getUserInfo();
 		Set<String> loggedinUserRoles = loggedinUser.getRoles().stream()
-				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)).map(Role::getCode)
-				.collect(Collectors.toSet());
+				.filter(role -> StringUtils.equalsIgnoreCase(role.getTenantId(), tenantId)
+						|| role.getCode().equalsIgnoreCase("CITIZEN"))
+				.map(Role::getCode).collect(Collectors.toSet());
 
 		instance.getNextActions().stream().forEach(action -> {
 			Set<String> actionRolesSet = new HashSet<>(action.getRoles());
