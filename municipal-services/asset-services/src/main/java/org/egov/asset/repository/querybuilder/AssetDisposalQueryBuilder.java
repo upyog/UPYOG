@@ -44,7 +44,7 @@ public class AssetDisposalQueryBuilder {
             + "doc.docdetails "
             + "FROM eg_asset_disposal_details disposal "
             + LEFT_OUTER_JOIN_STRING + " eg_asset_document doc ON disposal.asset_id = doc.assetid "
-            + " AND doc.documenttype IN ('ASSET.DISPOSAL.DOC1')";
+            + " AND doc.documenttype IN ('ASSET.DISPOSE.DOC1')";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_at DESC) AS offset_ FROM " +
