@@ -29,7 +29,7 @@ public class RequestServiceController {
 	@Autowired
 	WaterTankerService waterTankerService;
 
-	@PostMapping("/v1/_create")
+	@PostMapping("/water-tanker/v1/_create")
 	public ResponseEntity<WaterTankerBookingResponse> createWaterTankerBooking(
 			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true) @Valid @RequestBody WaterTankerBookingRequest waterTankerbookingRequest) {
 		log.info("waterTankerbookingRequest : {}" , waterTankerbookingRequest);
