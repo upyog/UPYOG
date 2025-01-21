@@ -45,12 +45,12 @@ public class EnrichmentService {
 		waterTankerDetail.setAuditDetails(auditDetails);
 		waterTankerDetail.setTenantId(waterTankerRequest.getWaterTankerBookingDetail().getTenantId());	
 		
-	 /*   List<String> customIds = getIdList(requestInfo, waterTankerDetail.getTenantId(),
+	    List<String> customIds = getIdList(requestInfo, waterTankerDetail.getTenantId(),
 				config.getWaterTankerApplicationKey(), config.getWaterTankerApplicationFormat(), 1);
 
 		log.info("Enriched application request application no :" + customIds.get(0));
 
-		waterTankerDetail.setBookingNo(customIds.get(0)); */
+		waterTankerDetail.setBookingNo(customIds.get(0)); 
 
 		
 		waterTankerDetail.setTankerType(waterTankerRequest.getWaterTankerBookingDetail().getTankerType());			
