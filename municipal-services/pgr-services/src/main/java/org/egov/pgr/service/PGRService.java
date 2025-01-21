@@ -24,6 +24,7 @@ import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
 import org.egov.pgr.web.models.ServiceStatusUpdateRequest;
 import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -229,6 +230,11 @@ public class PGRService {
 				.serviceRequestId(request.getServiceRequestId()).tenantId(request.getTenantId()).build();
 
 		List<ServiceWrapper> serviceWrappers = search(request.getRequestInfo(), requestSearchCriteria);
+		
+		if (null == serviceWrappers || CollectionUtils.isEmpty(serviceWrappers)
+				|| null == serviceWrappers.get(0).getService()) {
+			throw new CustomException("SERVICE NOT FOUND", "No service found with given service request id.");
+		}
 
 		Service service = serviceWrappers.get(0).getService();
 
