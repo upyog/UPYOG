@@ -3,6 +3,28 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
+/*
+    CHBCard Component
+    
+    This component renders a module card displaying relevant information and links related to 
+    Community Hall Booking (CHB) in the application.
+
+    It fetches data related to inbox counts and other relevant statistics using the `useNewInboxGeneral` hook.
+    The data includes:
+      - `totalCount`: Total number of items in the inbox
+
+    Key Features:
+      - Displays the total count of items in the inbox, or "-" while loading.
+      - Dynamically generates links for:
+        - Inbox
+        - Community Hall Booking Search
+        - My Bookings
+      - Customizes links and data based on user roles (e.g., CHB_CEMP).
+
+    The component also ensures:
+      - It only renders if the user has the necessary `chbAccess`.
+      - Access control is applied for specific links, depending on roles (like `CHB_CEMP`).
+  */
 const CHBCard = () => {
   const { t } = useTranslation();
 

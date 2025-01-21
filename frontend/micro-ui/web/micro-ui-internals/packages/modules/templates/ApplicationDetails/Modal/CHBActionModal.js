@@ -3,6 +3,22 @@ import React, { useState, useEffect } from "react";
 
 import { configCHBApproverApplication} from "../config";
 
+/*
+  ActionModal Component
+  
+  This component is responsible for rendering a modal that allows an approver to take action 
+  on a specific task. It includes form fields for comments and file uploads, and provides the 
+  ability to select an approver from a list fetched via an API. When the form is submitted, 
+  it triggers the `submitAction` function with the necessary data.
+  
+  Key Features:
+  - **File Upload**: Handles file upload with size validation (max 5MB).
+  - **Approver Selection**: Dynamically loads approvers based on roles and sets the selected approver.
+  - **Form Configuration**: Configures the form dynamically based on the `action` prop.
+  - **Error Handling**: Displays error messages for file uploads or other validation issues.
+  - **Submit Action**: Calls the provided `submitAction` function with the form data when submitted.
+*/
+
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;

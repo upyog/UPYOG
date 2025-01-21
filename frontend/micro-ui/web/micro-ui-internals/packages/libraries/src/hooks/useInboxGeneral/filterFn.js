@@ -331,13 +331,17 @@ export const filterFunctions = {
   },
   
   CHB: (filtersArg) => {
+     // Get the current user's UUID (user identifier)
     let { uuid } = Digit.UserService.getUser()?.info || {};
-
+    
+    // Initialize empty objects for search filters and workflow filters
     const searchFilters = {};
     const workflowFilters = {};
 
+    // Destructure the filters passed in the arguments
     const { bookingNo, mobileNumber,communityHallCode, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
 
+     // Add filter for booking number if provided
     if (filtersArg?.bookingNo) {
       searchFilters.bookingNo = filtersArg?.bookingNo;
     }
@@ -349,21 +353,28 @@ export const filterFunctions = {
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
     }
+
+    // Add filter for mobile number if provided
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
     if (bookingNo) {
       searchFilters.bookingNo = bookingNo;
     }
+
+     // Add filter for community hall code if provided
     if(communityHallCode){
       searchFilters.communityHallCode = communityHallCode.code;
     }
+
+    // Add filter for sorting, if provided
     if (sortBy) {
       searchFilters.sortBy = sortBy;
     }
     if (sortOrder) {
       searchFilters.sortOrder = sortOrder;
     }
+    // Add filter for business services if provided
     if (services) {
       workflowFilters.businessServices = services.join();
     }

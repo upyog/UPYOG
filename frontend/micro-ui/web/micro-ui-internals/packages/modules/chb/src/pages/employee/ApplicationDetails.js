@@ -6,6 +6,13 @@
     import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
     import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 
+/*
+    The ApplicationDetails component fetches and displays details of a community hall booking 
+    based on a booking number from the URL parameter. It includes functionality for displaying 
+    download options like receipt and permission letter, managing workflow details, and handling 
+    PDF generation for receipts/letters. The component integrates with hooks for data fetching 
+    and mutation, and provides a UI for interacting with the application details.
+  */
 
     const ApplicationDetails = () => {
       const { t } = useTranslation();

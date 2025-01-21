@@ -27,6 +27,13 @@ const fieldComponents = {
   ),
 };
 
+/*
+    A dynamic search form for applications, allowing users to filter by various fields
+    such as mobile number, and hall codes,booking no. 
+    The form adapts to both mobile and desktop views, with input validation and error handling.
+    It also includes functionality for clearing search filters.
+  */
+
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
   const { t } = useTranslation();
   const { handleSubmit, reset, watch, control, setError, clearErrors, formState, setValue } = useForm({

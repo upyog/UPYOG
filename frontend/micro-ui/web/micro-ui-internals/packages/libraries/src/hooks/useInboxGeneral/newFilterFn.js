@@ -196,7 +196,32 @@ export const filterFunctions = {
     return { requestId,searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   CHB: (filtersArg) => {
-    
+     /*
+      This function constructs search and workflow filters based on the provided arguments (`filtersArg`).
+      It handles various optional filters such as booking number, mobile number, community hall code,
+      and application status. The function also supports pagination and sorting parameters.
+
+      - **searchFilters**: Filters related to search query parameters such as mobile number, booking number, etc.
+      - **workflowFilters**: Filters related to the workflow, such as status, assignee, and business service.
+      - It includes special handling for "ASSIGNED_TO_ME" to filter by the current user's UUID.
+      - If any non-actionable roles are detected in the application status, it adds a flag to fetch non-actionable records.
+      - Returns the constructed filters along with pagination (`limit`, `offset`), sorting (`sortBy`, `sortOrder`), and other flags.
+
+      Key filters:
+      - **bookingNo**: Filters by booking number.
+      - **mobileNumber**: Filters by mobile number.
+      - **communityHallCode**: Filters by community hall code.
+      - **applicationStatus**: Filters by application status (maps status to UUIDs).
+      - **services**: Filters by business services.
+      - **isInboxSearch**: Always set to `true` to mark this as an inbox search.
+      - **creationReason**: Set to an empty array as a placeholder filter.
+      - **moduleName**: Set to "chb-services" to identify the workflow module.
+
+      Returns:
+      - `searchFilters`: Contains search-related filters.
+      - `workflowFilters`: Contains workflow-related filters.
+      - Pagination and sorting parameters: `limit`, `offset`, `sortBy`, `sortOrder`.
+    */
 
     let { uuid } = Digit.UserService.getUser()?.info || {};
 

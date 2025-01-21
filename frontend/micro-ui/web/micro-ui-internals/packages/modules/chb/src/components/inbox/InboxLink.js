@@ -3,6 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+
+ /*
+    Renders a card displaying dynamic links related to the CHB service.
+    Links are filtered based on the provided businessService and the user's roles.
+    Displays links such as "New Community Hall Booking" and "My Bookings".
+  */
 const InboxLinks = ({ parentRoute, businessService }) => {
   const { t } = useTranslation();
 

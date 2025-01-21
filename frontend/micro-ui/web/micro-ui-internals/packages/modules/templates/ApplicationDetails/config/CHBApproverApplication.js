@@ -1,6 +1,18 @@
 import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
+/*
+  Configuration for the CHB Approver Application Form
+  
+  This function, `configCHBApproverApplication`, is used to return a configuration object 
+  for rendering the CHB approver form in the application.
+
+  The configuration includes:
+  - Dynamic labels for the form's heading, submit, and cancel actions.
+  - A comment field where users can provide comments (required).
+  - A file upload section that allows users to upload files, with conditional validation 
+    depending on whether the action requires a file upload.
+*/
 export const configCHBApproverApplication = ({
   t,
   action,

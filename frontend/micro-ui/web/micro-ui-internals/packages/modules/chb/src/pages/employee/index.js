@@ -7,6 +7,13 @@ import Inbox from "./Inbox";
 // import PaymentDetails from "./PaymentDetails";
 import SearchApp from "./SearchApp";
 
+ /*
+    EmployeeApp is a routing container for various components related to employee interactions
+    within the Community Hall Booking (CHB) module. It handles multiple routes such as inbox 
+    management, hall booking creation, application search, and application details display.
+
+    It dynamically renders different child components based on the route and user type.
+  */
 const EmployeeApp = ({ path, url, userType }) => {
   const { t } = useTranslation();
   const location = useLocation();
