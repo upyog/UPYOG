@@ -11,7 +11,8 @@
     "packages/modules/common",
     "packages/modules/dss",
     "packages/modules/engagement",
-    "packages/modules/asset"
+    "packages/modules/asset",
+    "packages/modules/wt"
   ],
   "license": "MIT",
   "private": true,
@@ -51,6 +52,7 @@
     "dev:ads": "cd packages/modules/ads && yarn start",
     "dev:ew": "cd packages/modules/ew && yarn start",
     "dev:sv": "cd packages/modules/sv && yarn start",
+    "dev:wt": "cd packages/modules/wt && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:asset": "cd packages/modules/asset && yarn build",
@@ -77,6 +79,7 @@
     "buildD:ew": "cd packages/modules/ew && yarn build",
     "buildD:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
+    "build:wt": "cd packages/modules/wt && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },

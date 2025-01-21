@@ -95,6 +95,7 @@ module.exports = function (app) {
     "/asset-services/v1/assets/depreciation/_process",
     "/asset-services/v1/assets/depreciation/list",
     "/asset-services/v1/disposal/_create",
+    "/request-service/water-tanker/v1/_create",
     "/asset-services/maintenance/v1/_create",
     "/asset-services/maintenance/v1/_search",
     "/asset-services/v1/disposal/_search"

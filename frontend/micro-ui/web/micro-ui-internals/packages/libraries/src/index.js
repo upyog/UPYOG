@@ -59,6 +59,7 @@ import { EwService } from "./services/elements/EW";
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
 import {CustomService} from "./services/elements/CustomService";    
 import { CMServices } from "./services/elements/CM";
+import { WTService } from "./services/elements/WT";
    
 
 
@@ -129,6 +130,7 @@ const initLibraries = () => {
   setupLibraries("SVService", SVService);
   setupLibraries("CMServices", CMServices);
   setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
+  setupLibraries("WTService",WTService);
 
   return new Promise((resolve) => {
     initI18n(resolve);
