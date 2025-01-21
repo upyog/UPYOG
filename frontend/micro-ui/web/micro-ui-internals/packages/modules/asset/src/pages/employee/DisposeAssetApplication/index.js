@@ -54,7 +54,6 @@ const DisposeAssetApplication = () => {
 
   const onSubmit = async (data) => {
 
-    
     const formData = {
         disposalId:"",
         assetId: data?.disposeDetails?.[0]?.assetId,
