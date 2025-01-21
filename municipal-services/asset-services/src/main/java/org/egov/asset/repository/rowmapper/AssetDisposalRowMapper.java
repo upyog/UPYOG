@@ -62,43 +62,43 @@ public class AssetDisposalRowMapper implements RowMapper<AssetDisposal> {
         // Mapping AuditDetails
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setCreatedBy(rs.getString("created_by"));
-        auditDetails.setCreatedTime(rs.getLong("created_time"));
-        auditDetails.setLastModifiedBy(rs.getString("last_modified_by"));
-        auditDetails.setLastModifiedTime(rs.getLong("last_modified_time"));
+        auditDetails.setCreatedTime(rs.getLong("created_at"));
+        auditDetails.setLastModifiedBy(rs.getString("updated_by"));
+        auditDetails.setLastModifiedTime(rs.getLong("updated_at"));
         disposal.setAuditDetails(auditDetails);
 
-        // Mapping Documents
-        try {
-            String documentId = rs.getString("documentid");
-            String documentType = rs.getString("documenttype");
-            String fileStoreId = rs.getString("filestoreid");
-            String documentUid = rs.getString("documentuid");
-            String docDetailsStr = rs.getString("docdetails");
-
-            Object docDetails = null;
-            if (docDetailsStr != null && !docDetailsStr.isEmpty()) {
-                docDetails = objectMapper.readTree(docDetailsStr);
-            }
-
-            Document document = Document.builder()
-                    .documentId(documentId)
-                    .documentType(documentType)
-                    .fileStoreId(fileStoreId)
-                    .documentUid(documentUid)
-                    .docDetails(docDetails)
-                    .build();
-
-            // Add the document to the AssetMaintenance object
-            List<Document> documents = disposal.getDocuments();
-            if (documents == null) {
-                documents = new ArrayList<>();
-                disposal.setDocuments(documents);
-            }
-            documents.add(document);
-        } catch (Exception e) {
-            // Handle exceptions during document mapping
-            e.printStackTrace();
-        }
+//        // Mapping Documents
+//        try {
+//            String documentId = rs.getString("documentid");
+//            String documentType = rs.getString("documenttype");
+//            String fileStoreId = rs.getString("filestoreid");
+//            String documentUid = rs.getString("documentuid");
+//            String docDetailsStr = rs.getString("docdetails");
+//
+//            Object docDetails = null;
+//            if (docDetailsStr != null && !docDetailsStr.isEmpty()) {
+//                docDetails = objectMapper.readTree(docDetailsStr);
+//            }
+//
+//            Document document = Document.builder()
+//                    .documentId(documentId)
+//                    .documentType(documentType)
+//                    .fileStoreId(fileStoreId)
+//                    .documentUid(documentUid)
+//                    .docDetails(docDetails)
+//                    .build();
+//
+//            // Add the document to the AssetMaintenance object
+//            List<Document> documents = disposal.getDocuments();
+//            if (documents == null) {
+//                documents = new ArrayList<>();
+//                disposal.setDocuments(documents);
+//            }
+//            documents.add(document);
+//        } catch (Exception e) {
+//            // Handle exceptions during document mapping
+//            e.printStackTrace();
+//        }
     }
 
     /**

@@ -7,6 +7,7 @@ import ASSETCard from "./components/ASSETCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
+import Maintenance from "./pages/Maintenance";
 import DisposeResponse from "./pages/AssetDisposeResponse";
 import ProcessDepreciationResponse from "./pages/ProcessDepreciationResponse";
 import ReturnResponse from "./pages/ReturnResponse";
@@ -56,6 +57,7 @@ const componentsToRegister = {
   NewResponse,
   ApplicationDetails,
   AssetResponse: Response, 
+  Maintenance, 
   DisposeResponse, 
   ProcessDepreciationResponse,
   returnResponse:ReturnResponse,
