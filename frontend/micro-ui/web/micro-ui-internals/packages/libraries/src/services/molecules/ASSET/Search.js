@@ -186,13 +186,13 @@ export const ASSETSearch = {
         isTable: true,
         headers: slotlistRows.length > 0
           ? [
-            `${t("START_DATE")}`,
-            `${t("END_DATE")}`,
-            `${t("DEPRECIATION_VALUE")}`,
-            `${t("BOOK_VALUE")}`,
-            `${t("RATE")}`,
-            `${t("DEPRECIATION_METHOD")}`,
-            `${t("OLD_BOOK_VALUE")}`
+            `${t("AST_START_DATE")}`,
+            `${t("AST_END_DATE")}`,
+            `${t("AST_DEPRECIATION_VALUE")}`,
+            `${t("AST_BOOK_VALUE")}`,
+            `${t("AST_RATE")}`,
+            `${t("AST_DEPRECIATION_METHOD")}`,
+            `${t("AST_OLD_BOOK_VALUE")}`
           ]
           : [`${t("AST_NO_DEPRECIATION_DATA")}`],
         tableRows: slotlistRows,
@@ -203,12 +203,12 @@ export const ASSETSearch = {
         isTable: true,
         headers: maintenanceListRows.length > 0
           ? [
-            `${t("VENDOR")}`,
-            `${t("WARRANTY_STATUS")}`,
-            `${t("COST_OF_MAINTENANCE")}`,
-            `${t("MAINTENANCE_CYCLE")}`,
-            `${t("MAINTENANCE_TYPE")}`,
-            `${t("POST_CONDITION_REMARKS")}`
+            `${t("AST_VENDOR")}`,
+            `${t("AST_WARRANTY_STATUS")}`,
+            `${t("AST_COST_OF_MAINTENANCE")}`,
+            `${t("AST_MAINTENANCE_CYCLE")}`,
+            `${t("AST_MAINTENANCE_TYPE")}`,
+            `${t("AST_POST_CONDITION_REMARKS")}`
           ]
           : [`${t("AST_NO_MAINTENANCE_DATA")}`],
         tableRows: maintenanceListRows,
@@ -219,12 +219,12 @@ export const ASSETSearch = {
         isTable: true,
         headers: disposalListListRows.length > 0
           ? [
-            `${t("DISPOSAL_DATE")}`,
-            `${t("REASON_DISPOSAL")}`,
-            `${t("GL_CODE")}`,
-            `${t("ASSET_DISPOSAL_STATUS")}`,
-            `${t("MAINTENANCE_TYPE")}`,
-            `${t("AGE_OF_ASSET")}`
+            `${t("AST_DISPOSAL_DATE")}`,
+            `${t("AST_REASON_DISPOSAL")}`,
+            `${t("AST_GL_CODE")}`,
+            `${t("AST_DISPOSAL_STATUS")}`,
+            `${t("AST_MAINTENANCE_TYPE")}`,
+            `${t("AST_AGE_OF_ASSET")}`
           ]
           : [`${t("AST_NO_DISPOSAL_DATA")}`],
         tableRows: disposalListListRows,
