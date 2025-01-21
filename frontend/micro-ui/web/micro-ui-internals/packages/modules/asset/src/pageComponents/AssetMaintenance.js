@@ -39,7 +39,7 @@ const createAssetcommonforAll = () => ({
 });
 
 const AssetMaintenance = ({ config, onSelect, formData, formState, clearErrors, setError }) => {
-    
+
     const { t } = useTranslation();
     const [maintenanceDetails, setMaintenanceDetails] = useState(formData?.maintenanceDetails || [createAssetcommonforAll()]);
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
@@ -64,7 +64,7 @@ const AssetMaintenance = ({ config, onSelect, formData, formState, clearErrors, 
     return (
         <React.Fragment>
             {maintenanceDetails.map((maintenanceDetails, index) => (
-                <OwnerForm key={maintenanceDetails.key} index={index} maintenanceDetails={maintenanceDetails} {...commonProps}/>
+                <OwnerForm key={maintenanceDetails.key} index={index} maintenanceDetails={maintenanceDetails} {...commonProps} />
             ))}
         </React.Fragment>
     )
@@ -88,7 +88,7 @@ const OwnerForm = (_props) => {
     const [supportingDocumentFile, setSupportingDocumentFile] = useState(null);
     const [preConditionFile, setPreConditionFile] = useState(null);
     const [postConditionFile, setPostConditionFile] = useState(null);
-    
+
     const [uploadError, setUploadError] = useState("");
     const [warrantyExp, setWarrantyExp] = useState("NA");
 
@@ -172,16 +172,16 @@ const OwnerForm = (_props) => {
         setValue("warrantyStatus", value);
         setWarrantyExp(value);
     };
-    
+
     // Common function to handle file upload
     const handleFileUpload = (e, setFileStoreId) => {
         const file = e.target.files[0];
         if (file.size >= 5242880) {
-           
+
             setError("supportingDocument", { message: t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED") }); // Set error for supportingDocument
             setFileStoreId(null); // Clear previous successful upload
         } else {
-            
+
             //setError("supportingDocument", { message: "" }); // Clear any previous errors
             Digit.UploadServices.Filestorage("ASSET", file, Digit.ULBService.getStateId())
                 .then(response => {
@@ -204,11 +204,32 @@ const OwnerForm = (_props) => {
 
         register("postConditionFile");
         setValue("postConditionFile", postConditionFile);
-        // console.log("supportingDocumentFile: -", supportingDocumentFile);
-        // console.log("preConditionFile: -", preConditionFile);
-        // console.log("postConditionFile: -", postConditionFile);
+
 
     }, [supportingDocumentFile, preConditionFile, postConditionFile]);
+
+    const calculateNextDate = (date, cycle) => {
+
+        const currentDate = new Date(date);
+        switch (cycle.code) {
+          case 'MONTHLY':
+            currentDate.setMonth(currentDate.getMonth() + 1)
+            ;
+            break;
+          case 'QUARTERLY':
+            currentDate.setMonth(currentDate.getMonth() + 3);
+            break;
+          case 'HALF_YEARLY':
+            currentDate.setMonth(currentDate.getMonth() + 6);
+            break;
+          case 'YEARLY':
+            currentDate.setFullYear(currentDate.getFullYear() + 1);
+            break;
+          default:
+            break;
+        }
+        return currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      };
 
     return (
         <React.Fragment>
@@ -230,6 +251,12 @@ const OwnerForm = (_props) => {
                         <Row
                             label={t("AST_NAME")}
                             text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
+                        />
+                    </StatusTable>
+                    <StatusTable>
+                        <Row
+                            label={t("AST_APPLICATION_NO")}
+                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
                         />
                     </StatusTable>
                     <StatusTable>
@@ -335,7 +362,7 @@ const OwnerForm = (_props) => {
                             </div>
                         )}
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("MAINTENANCE_TYPE")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_TYPE")}</CardLabel>
 
                         <Controller
                             control={control}
@@ -354,10 +381,95 @@ const OwnerForm = (_props) => {
                             )}
                         />
                     </LabelFieldPair>
-
-
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("PAYMENT_TYPE")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_DATE")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"assetMaintenanceDate"}
+                                defaultValue={maintenanceDetails?.assetMaintenanceDate}
+                                rules={{
+                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                                    // validate: (val) => {
+                                    //   const selectedDate = new Date(val);
+                                    //   const today = new Date();
+                                    //   return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
+                                    // },
+                                  }}
+                                render={(props) => (
+                                    <TextInput
+                                        type="date"
+                                        value={props.value}
+                                        onChange={(e) => {
+                                            props.onChange(e.target.value);
+                                        }}
+                                    // Remove the max attribute to allow future dates
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                     <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_CYCLE")}</CardLabel>
+
+                        <Controller
+                            control={control}
+                            name={"maintenanceCycle"}
+                            defaultValue={maintenanceDetails?.maintenanceCycle}
+                            render={(props) => (
+                                <Dropdown
+                                    className="form-field"
+                                    selected={props.value}
+                                    select={(value) => {
+                                        props.onChange(value);
+                                        const date = control.getValues("assetMaintenanceDate");
+                                        if (date) {
+                                          const nextDate = calculateNextDate(date, value);
+                                          control.setValue("assetNextMaintenanceDate", nextDate);
+                                        }
+                                      }}
+                                    onBlur={props.onBlur}
+                                    option={maintenanceCycleOpt}
+                                    optionKey="i18nKey"
+                                    t={t}
+                                />
+                            )}
+                        />
+                    </LabelFieldPair>
+
+                    <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_NEXT_MAINTENANCE_DATE")}</CardLabel>
+                        <div className="field">
+                             <Controller
+                                control={control}
+                                name={"assetNextMaintenanceDate"}
+                                defaultValue={maintenanceDetails?.assetNextMaintenanceDate}
+                                rules={{
+                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                    // validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                                    validate: (val) => {
+                                      const selectedDate = new Date(val);
+                                      const today = new Date();
+                                      return selectedDate >= today ? true : t("ERR_DATE_MUST_BE_TODAY_OR_FUTURE");
+                                    },
+                                  }}
+                                render={(props) => (
+                                    <TextInput
+                                        type="date"
+                                        value={props.value}
+                                        onChange={(e) => {
+                                            props.onChange(e.target.value);
+                                        }}s
+                                    // Remove the max attribute to allow future dates
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_PAYMENT_TYPE")}</CardLabel>
                         <Controller
                             control={control}
                             name={"paymentType"}
@@ -379,7 +491,7 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("COST_MAINTENANCE_OVERHEAD")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_COST_MAINTENANCE_OVERHEAD")}</CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -476,28 +588,7 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.vendor ? errors?.vendor?.message : ""}</CardLabelError>
 
-                    <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_CYCLE")}</CardLabel>
-
-                        <Controller
-                            control={control}
-                            name={"maintenanceCycle"}
-                            defaultValue={maintenanceDetails?.maintenanceCycle}
-                            render={(props) => (
-                                <Dropdown
-                                    className="form-field"
-                                    selected={props.value}
-                                    select={props.onChange}
-                                    onBlur={props.onBlur}
-                                    option={maintenanceCycleOpt}
-                                    optionKey="i18nKey"
-                                    t={t}
-                                />
-                            )}
-                        />
-                    </LabelFieldPair>
-
-                    <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
+                   
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PARTS_TO_BE_ADDED")}</CardLabel>
@@ -544,7 +635,7 @@ const OwnerForm = (_props) => {
                                             setSupportingDocumentFile(null);
                                             props.onChange(null);
                                         }}
-                                        message={supportingDocumentFile  ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+                                        message={supportingDocumentFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
                                         accept="image/*, .pdf, .png, .jpeg, .jpg"
                                         buttonType="button"
                                         error={uploadError || !supportingDocumentFile} // Show error if uploadError is not empty or no file
