@@ -5,7 +5,6 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/model/common/locality/locality_model.dart';
 import 'package:mobile_app/repository/locality_repository.dart';
 import 'package:mobile_app/utils/errors/error_handler.dart';
-import 'package:mobile_app/utils/utils.dart';
 
 class LocalityController extends GetxController {
   //Controller
@@ -59,7 +58,7 @@ class LocalityController extends GetxController {
       isLoading.value = false;
     } catch (e, s) {
       isLoading.value = false;
-      dPrint('fetchLocality Error: ${e.toString()}');
+      print('fetchLocality Error: ${e.toString()}');
       streamCtrl.addError('Locality Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }

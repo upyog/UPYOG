@@ -54,18 +54,13 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
   }
 
   void _init() async {
-    try {
-      isLoading.value = true;
-      _bpaController.setDefaultLimit();
-      await _commonController.fetchLabels(modules: Modules.BPA);
-      await _commonController.fetchLabels(modules: Modules.BPAREG);
-      await _commonController.fetchLabels(modules: Modules.PG);
-      isLoading.value = false;
-      await _fetchInbox();
-    } catch (e) {
-      dPrint('BPA init error: $e');
-      isLoading.value = false;
-    }
+    isLoading.value = true;
+    _bpaController.setDefaultLimit();
+    await _commonController.fetchLabels(modules: Modules.BPA);
+    await _commonController.fetchLabels(modules: Modules.BPAREG);
+    await _commonController.fetchLabels(modules: Modules.PG);
+    await _fetchInbox();
+    isLoading.value = false;
   }
 
   Future<void> _fetchInbox() async {
@@ -214,9 +209,9 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
                           },
                         ),
                       )
-                    : Center(
+                    : const Center(
                         child: SmallTextNotoSans(
-                          text: getLocalizedString(i18.inbox.NO_APPLICATION),
+                          text: 'No items found!',
                           color: BaseConfig.greyColor3,
                         ),
                       );
@@ -301,15 +296,9 @@ class _EmpBpaObpsScreenState extends State<EmpBpaObpsScreen> {
         } else {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             case ConnectionState.active:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             default:
               return const SizedBox.shrink();
           }

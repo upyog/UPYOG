@@ -142,22 +142,23 @@ class WaterController extends GetxController {
   }
 
   bool isDownloadAvailable(String? status, String? applicationStatus) {
-    final activeStatuses = {
-      WsStatus.CONNECTION_ACTIVATED.name,
-      WsStatus.PENDING_APPROVAL_FOR_CONNECTION.name,
-    };
+    bool isConnectionActivated = (status == WsStatus.ACTIVE.name &&
+        (applicationStatus == WsStatus.CONNECTION_ACTIVATED.name ||
+            applicationStatus ==
+                WsStatus.PENDING_APPROVAL_FOR_CONNECTION.name));
 
-    final pendingOrActivatedStatuses = {
-      WsStatus.CONNECTION_ACTIVATED.name,
-      WsStatus.PENDING_FOR_DISCONNECTION_EXECUTION.name,
-      WsStatus.PENDING_FOR_CONNECTION_ACTIVATION.name,
-    };
+    bool isDisconnectionExecuted = (status == WsStatus.INACTIVE.name &&
+        applicationStatus == WsStatus.DISCONNECTION_EXECUTED.name);
 
-    return (status == WsStatus.ACTIVE.name &&
-            activeStatuses.contains(applicationStatus)) ||
-        (status == WsStatus.INACTIVE.name &&
-            applicationStatus == WsStatus.DISCONNECTION_EXECUTED.name) ||
-        pendingOrActivatedStatuses.contains(applicationStatus);
+    bool isPendingOrActivated = (applicationStatus ==
+            WsStatus.CONNECTION_ACTIVATED.name ||
+        applicationStatus ==
+            WsStatus.PENDING_FOR_DISCONNECTION_EXECUTION.name ||
+        applicationStatus == WsStatus.PENDING_FOR_CONNECTION_ACTIVATION.name);
+
+    return isConnectionActivated ||
+        isDisconnectionExecuted ||
+        isPendingOrActivated;
   }
 
   /// Get my water applications
@@ -209,7 +210,7 @@ class WaterController extends GetxController {
       streamCtrl.add(water);
     } catch (e, s) {
       streamCtrl.add('getWaterMyApplications Error');
-      dPrint('getWaterMyApplications Error: $e');
+      print('getWaterMyApplications Error: $e');
       await ErrorHandler.allExceptionsHandler(e, s);
     }
   }

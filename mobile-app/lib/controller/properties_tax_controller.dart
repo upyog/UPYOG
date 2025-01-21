@@ -61,7 +61,6 @@ class PropertiesTaxController extends GetxController {
   }
 
   void setDefaultLimit() {
-    length.value = 0;
     limit = 10;
     offset = 0;
   }
@@ -97,7 +96,7 @@ class PropertiesTaxController extends GetxController {
         query: query,
       );
 
-      dPrint('API Response: $res');
+      print('API Response: $res');
 
       myProperties = PtMyProperties.fromJson(res);
 
@@ -105,7 +104,7 @@ class PropertiesTaxController extends GetxController {
 
       isLoading.value = false;
     } catch (e, s) {
-      dPrint('getPropertiesError: $e');
+      print('getPropertiesError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     } finally {
       isLoading.value = false;
@@ -161,7 +160,7 @@ class PropertiesTaxController extends GetxController {
       length.value = myProperties?.properties?.length ?? 0;
     } catch (e, s) {
       streamCtrl.add('getPropertiesError');
-      dPrint('getPropertiesError: $e');
+      print('getPropertiesError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -202,7 +201,7 @@ class PropertiesTaxController extends GetxController {
       );
       myProp = PtMyProperties.fromJson(propIdRes);
     } catch (e, s) {
-      dPrint('getPropertiesError: $e');
+      print('getPropertiesError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return myProp;
@@ -221,7 +220,7 @@ class PropertiesTaxController extends GetxController {
           'consumerCodes': consumerCodes,
         },
       );
-      dPrint('VerifyPayment Data: ${paymentRes['Payments'][0]}');
+      print('VerifyPayment Data: ${paymentRes['Payments'][0]}');
       final getPayments = paymentRes['Payments'];
       if (getPayments != []) {
         for (var payment in getPayments) {
@@ -231,7 +230,7 @@ class PropertiesTaxController extends GetxController {
       }
     } catch (e, s) {
       paymentList = [];
-      dPrint('GetMyPaymentsError: $e');
+      print('GetMyPaymentsError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return paymentList;
@@ -265,7 +264,7 @@ class PropertiesTaxController extends GetxController {
         value = res['count'];
       }
     } catch (e, s) {
-      dPrint('getPropertiesCountError: $e');
+      print('getPropertiesCountError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
 
@@ -304,7 +303,7 @@ class PropertiesTaxController extends GetxController {
       billInfo = BillInfo.fromJson(billRes);
       length.value = billInfo?.bill?.length ?? 0;
     } catch (e, s) {
-      dPrint('GetMyPaymentsError: $e');
+      print('GetMyPaymentsError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
     return billInfo;
@@ -372,7 +371,7 @@ class PropertiesTaxController extends GetxController {
       streamCtrl.add(empPtModel);
       dPrint('EMP PT: ${empPtModel.items?.length}');
     } catch (e, s) {
-      dPrint('GetEmpTlInboxError: $e');
+      print('GetEmpTlInboxError: $e');
       streamCtrl.add('Emp PT Inbox Error');
       ErrorHandler.allExceptionsHandler(e, s);
     }
@@ -413,9 +412,9 @@ class PropertiesTaxController extends GetxController {
 
       myProperties = PtMyProperties.fromJson(res);
       property = myProperties!.properties!.first;
-      dPrint('getMyPropertiesEmp: $res');
+      print('getMyPropertiesEmp: $res');
     } catch (e, s) {
-      dPrint('getPropertiesEmpError: $e');
+      print('getPropertiesEmpError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -437,8 +436,8 @@ class PropertiesTaxController extends GetxController {
       );
 
       myProperties = PtMyProperties.fromJson(empRes);
-      dPrint('------Action Update------');
-      dPrint(myProperties!.toJson());
+      print('------Action Update------');
+      print(myProperties!.toJson());
       if (myProperties!.responseInfo!.status == 'successful') {
         return (
           true,
@@ -448,7 +447,7 @@ class PropertiesTaxController extends GetxController {
 
       return (false, null);
     } catch (e, s) {
-      dPrint('PT_UpdateEmpPTActionError: $e');
+      print('PT_UpdateEmpPTActionError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
       return (false, null);
     }

@@ -43,6 +43,7 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
     try {
       serviceWrapper = Get.arguments['serviceWrappers'];
 
+      // For timeline service
       _grievanceController.timelineServiceWrapper = serviceWrapper!;
 
       if (_authController.isValidUser) {
@@ -58,7 +59,7 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
         _isLoading.value = false;
       }
     } catch (e) {
-      dPrint('Error in _getServiceWrapper: $e');
+      print('Error in _getServiceWrapper: $e');
     }
   }
 
@@ -160,21 +161,19 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
                   SizedBox(height: 16.h),
                   _DetailsBody(
                     o: o,
-                    serviceWrapper: serviceWrapper,
+                    serviceWrapper: serviceWrapper!,
                   ),
                   SizedBox(height: 16.h),
                   const Divider(
                     color: BaseConfig.borderColor,
                   ),
-                  if (isNotNullOrEmpty(serviceWrapper?.service)) ...[
-                    SizedBox(height: 16.h),
-                    TimelineWidget2(
-                      modules: Modules.PGR,
-                      tenantId: serviceWrapper!.service!.tenantId!,
-                      businessIds: serviceWrapper!.service!.serviceRequestId!,
-                      status: serviceWrapper!.service!.applicationStatus!,
-                    ),
-                  ],
+                  SizedBox(height: 16.h),
+                  TimelineWidget2(
+                    modules: Modules.PGR,
+                    tenantId: serviceWrapper!.service!.tenantId!,
+                    businessIds: serviceWrapper!.service!.serviceRequestId!,
+                    status: serviceWrapper!.service!.applicationStatus!,
+                  ),
                 ],
               ),
             ),
@@ -188,9 +187,9 @@ class _GrievanceDetailsScreenState extends State<GrievanceDetailsScreen> {
 class _DetailsBody extends StatelessWidget {
   const _DetailsBody({
     this.o = Orientation.portrait,
-    this.serviceWrapper,
+    required this.serviceWrapper,
   });
-  final ServiceWrapper? serviceWrapper;
+  final ServiceWrapper serviceWrapper;
   final Orientation o;
 
   @override
@@ -205,7 +204,7 @@ class _DetailsBody extends StatelessWidget {
             WrapText(
               title:
                   '${getLocalizedString(i18.grievance.DETAILS_ID, module: Modules.PGR)}: ',
-              text: '${serviceWrapper?.service?.serviceRequestId}',
+              text: '${serviceWrapper.service?.serviceRequestId}',
               o: o,
             ),
             SizedBox(height: 8.h),
@@ -214,7 +213,7 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_COMPLAINT_FILED_DATE,
                 module: Modules.PGR,
               )}: ',
-              text: serviceWrapper?.service?.auditDetails?.createdTime
+              text: serviceWrapper.service?.auditDetails?.createdTime
                       .toCustomDateFormat() ??
                   'N/A',
               o: o,
@@ -237,9 +236,9 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_SUB_TYPE,
                 module: Modules.PGR,
               )}: ',
-              text: isNotNullOrEmpty(serviceWrapper?.service?.serviceCode)
+              text: serviceWrapper.service?.serviceCode != null
                   ? getLocalizedString(
-                      '${i18.common.SERVICE_DEFS}${serviceWrapper!.service!.serviceCode}'
+                      '${i18.common.SERVICE_DEFS}${serviceWrapper.service?.serviceCode}'
                           .toUpperCase(),
                       module: Modules.PGR,
                     )
@@ -276,7 +275,7 @@ class _DetailsBody extends StatelessWidget {
             WrapText(
               title:
                   '${getLocalizedString(i18.grievance.DETAILS_ID, module: Modules.PGR)}: ',
-              text: '${serviceWrapper?.service?.serviceRequestId}',
+              text: '${serviceWrapper.service?.serviceRequestId}',
               o: o,
             ),
             SizedBox(height: 8.h),
@@ -285,7 +284,7 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_COMPLAINT_FILED_DATE,
                 module: Modules.PGR,
               )}: ',
-              text: serviceWrapper?.service?.auditDetails?.createdTime
+              text: serviceWrapper.service?.auditDetails?.createdTime
                       .toCustomDateFormat() ??
                   'N/A',
               o: o,
@@ -308,9 +307,9 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_SUB_TYPE,
                 module: Modules.PGR,
               )}: ',
-              text: isNotNullOrEmpty(serviceWrapper?.service?.serviceCode)
+              text: serviceWrapper.service?.serviceCode != null
                   ? getLocalizedString(
-                      '${i18.common.SERVICE_DEFS}${serviceWrapper!.service!.serviceCode}'
+                      '${i18.common.SERVICE_DEFS}${serviceWrapper.service?.serviceCode}'
                           .toUpperCase(),
                       module: Modules.PGR,
                     )
@@ -321,7 +320,7 @@ class _DetailsBody extends StatelessWidget {
             WrapText(
               title:
                   '${getLocalizedString(i18.grievance.DETAILS_PRIORITY, module: Modules.PGR)}: ',
-              text: serviceWrapper?.service?.priority ?? 'N/A',
+              text: '${serviceWrapper.service?.priority}',
               o: o,
             ),
             SizedBox(height: 8.h),
@@ -330,9 +329,7 @@ class _DetailsBody extends StatelessWidget {
                 i18.grievance.DETAILS_ADDITIONAL_DETAILS,
                 module: Modules.PGR,
               )}: ',
-              text: isNotNullOrEmpty(serviceWrapper?.service?.description)
-                  ? '${serviceWrapper!.service!.description}'
-                  : 'N/A',
+              text: serviceWrapper.service?.description ?? 'N/A',
               o: o,
             ),
             SizedBox(height: 8.h),
@@ -347,10 +344,10 @@ class _DetailsBody extends StatelessWidget {
                 Row(
                   children: [
                     if (isNotNullOrEmpty(
-                      serviceWrapper?.service?.address?.landmark,
+                      serviceWrapper.service?.address?.landmark,
                     )) ...[
                       SmallTextNotoSans(
-                        text: serviceWrapper!.service!.address!.landmark!,
+                        text: serviceWrapper.service!.address!.landmark!,
                         maxLine: 4,
                         fontWeight: FontWeight.w600,
                         size: o == Orientation.portrait ? 12.sp : 6.sp,
@@ -358,11 +355,11 @@ class _DetailsBody extends StatelessWidget {
                       const SmallTextNotoSans(text: ', '),
                     ],
                     if (isNotNullOrEmpty(
-                      serviceWrapper?.service?.address?.locality?.code,
+                      serviceWrapper.service?.address?.locality?.code,
                     )) ...[
                       SmallTextNotoSans(
                         text: getLocalizedString(
-                          serviceWrapper!.service!.address!.locality!.code,
+                          serviceWrapper.service?.address?.locality?.code,
                         ),
                         maxLine: 4,
                         fontWeight: FontWeight.w600,
@@ -371,10 +368,10 @@ class _DetailsBody extends StatelessWidget {
                       const SmallTextNotoSans(text: ', '),
                     ],
                     if (isNotNullOrEmpty(
-                      serviceWrapper?.service?.address?.city,
+                      serviceWrapper.service?.address?.city,
                     )) ...[
                       SmallTextNotoSans(
-                        text: serviceWrapper!.service!.address!.city!,
+                        text: serviceWrapper.service!.address!.city!,
                         maxLine: 4,
                         fontWeight: FontWeight.w600,
                         size: o == Orientation.portrait ? 12.sp : 6.sp,

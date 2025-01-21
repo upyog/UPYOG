@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         selectedDate = picked;
         formattedDate = formatDate(picked, format: 'dd-MM-yyyy');
-        dPrint(formattedDate);
+        print(formattedDate);
         user.dobCtrl.text = formattedDate;
       });
     }
@@ -151,8 +151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       user.photo = null;
     }
     _editProfileController.user.getText();
-    dPrint("-----------User Details Chk--------");
-    dPrint(user.toJson());
+    print("-----------User Details Chk--------");
+    print(user.toJson());
     await _editProfileController
         .updateProfile(
       token: token!,
@@ -279,11 +279,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     dPrint('Click: ${fileController.imageFile}');
                     if (fileController.imageFile == null &&
                         _editProfileController.userProfile.user?.first.photo ==
-                            null) {
-                      {
-                    }
-                      return;
-                    }
+                            null) return;
                     _showDeleteDialogue(
                       context,
                       fileController.imageFile,

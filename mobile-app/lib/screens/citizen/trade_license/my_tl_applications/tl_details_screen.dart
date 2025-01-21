@@ -38,6 +38,7 @@ import 'package:mobile_app/widgets/header_widgets.dart';
 import 'package:mobile_app/widgets/medium_text.dart';
 import 'package:mobile_app/widgets/small_text.dart';
 import 'package:mobile_app/widgets/timeline_widget.dart/timeline_wdget.dart';
+import 'package:rxdart/rxdart.dart';
 
 class TLDetailsScreen extends StatefulWidget {
   const TLDetailsScreen({super.key});
@@ -56,12 +57,12 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
   final _commonController = Get.find<CommonController>();
   final _paymentController = Get.find<PaymentController>();
 
-  final propertiesFuture = Completer<Properties?>();
-
   late tl.License license;
   late tl.TradeLicenseDetail _tradeLicenseDetail;
 
   List<tl.ApplicationDocument> appDocuments = [];
+  final BehaviorSubject<Properties?> propertiesStream =
+      BehaviorSubject<Properties?>();
 
   bool _dataFetched = false;
   bool _isTimelineFetch = false;
@@ -72,6 +73,7 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
   void initState() {
     super.initState();
     _getArgs();
+    // _getProperties();
     _fetchLabelsAsync();
   }
 
@@ -94,21 +96,22 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
     try {
       if (_dataFetched) return;
       TenantTenant tenantCity = await getCityTenant();
-      final properties = await _propertyController.getPropertiesByID(
+      await _propertyController
+          .getPropertiesByID(
         token: _authController.token!.accessToken!,
         propertyId: _tlController.propertyId,
         tenantCity: tenantCity.code!,
-      );
+      )
+          .then((val) {
+        _dataFetched = true;
+        propertiesStream.sink.add(val);
+      });
 
-      _dataFetched = true;
-
-      propertiesFuture.complete(properties);
-    } catch (e, s) {
-      propertiesFuture.completeError(e, s);
-      _dataFetched = false;
+      setState(() {});
+    } catch (e) {
+      propertiesStream.sink.addError(e);
       dPrint('Error: $e');
     }
-    setState(() {});
   }
 
   String getFileStoreIds() {
@@ -161,6 +164,7 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
 
   @override
   dispose() {
+    propertiesStream.close();
     _dataFetched = false;
     super.dispose();
   }
@@ -399,9 +403,8 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                       _isOwnerFetch = true;
                                       await _tlController
                                           .getOwnersLicenseByAppID(
-                                        token: _authController
-                                                .token?.accessToken ??
-                                            '',
+                                        token:
+                                            _authController.token?.accessToken,
                                         applicationNo:
                                             license.applicationNumber!,
                                       );
@@ -451,8 +454,7 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                             () => _tlController
                                                 .getOwnersLicenseByAppID(
                                               token: _authController
-                                                      .token?.accessToken ??
-                                                  '',
+                                                  .token?.accessToken,
                                               applicationNo:
                                                   license.applicationNumber!,
                                             ),
@@ -498,24 +500,24 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                     const SizedBox(height: 20),
                                   ],
                                 ),
-                              if (isNotNullOrEmpty(
-                                license.tradeLicenseDetail?.accessories,
-                              ))
+                              if (license.tradeLicenseDetail?.accessories !=
+                                  null)
                                 BuildExpansion(
                                   title: getLocalizedString(
                                     i18.tradeLicense.ACCESSORY,
                                     module: Modules.TL,
                                   ),
                                   children: [
+                                    //TODO: Accessories
                                     ListView.builder(
                                       shrinkWrap: true,
-                                      itemCount: license.tradeLicenseDetail!
-                                          .accessories!.length,
+                                      itemCount: license.tradeLicenseDetail
+                                          ?.accessories?.length,
                                       physics: AppPlatforms.platformPhysics(),
                                       itemBuilder: (context, index) {
                                         var accessory = license
-                                            .tradeLicenseDetail!
-                                            .accessories?[index];
+                                            .tradeLicenseDetail
+                                            ?.accessories?[index];
                                         return _buildAccessories(
                                           accessory!,
                                           index + 1,
@@ -537,43 +539,21 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                   }
                                 },
                                 children: [
-                                  FutureBuilder(
-                                    future: propertiesFuture.future,
+                                  StreamBuilder(
+                                    stream: propertiesStream.stream,
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasError &&
-                                          snapshot.hasData) {
-                                        if (snapshot.data is String ||
-                                            snapshot.data == null) {
-                                          return Center(
-                                            child: Text(
-                                              getLocalizedString(
-                                                i18.inbox.NO_APPLICATION,
-                                              ),
-                                            ),
-                                          );
-                                        }
-
-                                        Properties? property = snapshot.data;
-
-                                        if (!isNotNullOrEmpty(
-                                          property?.properties,
-                                        )) {
-                                          return Center(
-                                            child: Text(
-                                              getLocalizedString(
-                                                i18.inbox.NO_APPLICATION,
-                                              ),
-                                            ),
-                                          );
-                                        }
-
+                                          snapshot.hasData &&
+                                          snapshot
+                                              .data!.properties!.isNotEmpty) {
+                                        Properties property = snapshot.data!;
                                         return Column(
                                           children: [
                                             ColumnHeaderText(
                                               label: getLocalizedString(
                                                 i18.tlProperty.ID,
                                               ),
-                                              text: property!.properties!.first
+                                              text: property.properties!.first
                                                       .propertyId ??
                                                   'N/A',
                                             ).paddingOnly(left: 7),
@@ -651,10 +631,10 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                                         );
                                       } else {
                                         switch (snapshot.connectionState) {
-                                          case ConnectionState.waiting ||
-                                                ConnectionState.active:
+                                          case ConnectionState.waiting:
                                             return showCircularIndicator();
-
+                                          case ConnectionState.active:
+                                            return showCircularIndicator();
                                           default:
                                             return const SizedBox.shrink();
                                         }
@@ -749,7 +729,7 @@ class _TLDetailsScreenState extends State<TLDetailsScreen> {
                   color: const Color.fromRGBO(80, 90, 95, 1.0),
                 ),
                 BigTextNotoSans(
-                  text: ' - $index',
+                  text: ' $index',
                   size: 16.sp,
                   fontWeight: FontWeight.w600,
                   color: const Color.fromRGBO(80, 90, 95, 1.0),

@@ -9,7 +9,6 @@ import 'package:mobile_app/controller/water_controller.dart';
 import 'package:mobile_app/screens/employee/emp_dashboard/emp_dashboard.dart';
 import 'package:mobile_app/screens/employee/emp_home_city/emp_home_city.dart';
 import 'package:mobile_app/utils/enums/emp_enums.dart';
-import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/employee/emp_nav_bar.dart';
 
 class EmpBottomNavigationPage extends StatefulWidget {
@@ -87,7 +86,7 @@ class _EmpBottomNavigationPageState extends State<EmpBottomNavigationPage> {
           } else {
             setState(() {
               selectedTab = index;
-              dPrint(selectedTab);
+              print(selectedTab);
             });
           }
         },

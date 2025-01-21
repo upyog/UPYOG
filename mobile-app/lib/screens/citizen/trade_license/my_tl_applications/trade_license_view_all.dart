@@ -20,14 +20,14 @@ import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/complain_card.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 
-class NewTlApplications extends StatefulWidget {
-  const NewTlApplications({super.key});
+class TradeLicenseViewAll extends StatefulWidget {
+  const TradeLicenseViewAll({super.key});
 
   @override
-  State<NewTlApplications> createState() => _NewTlApplicationsState();
+  State<TradeLicenseViewAll> createState() => _TradeLicenseViewAllState();
 }
 
-class _NewTlApplicationsState extends State<NewTlApplications> {
+class _TradeLicenseViewAllState extends State<TradeLicenseViewAll> {
   final _authController = Get.find<AuthController>();
   final _tlController = Get.find<TradeLicenseController>();
   final _paymentController = Get.find<PaymentController>();
@@ -40,7 +40,6 @@ class _NewTlApplicationsState extends State<NewTlApplications> {
   }
 
   void getTlApplication() async {
-    _tlController.length.value = 0;
     TenantTenant tenant = await getCityTenant();
 
     _tlController.getTlApplications(

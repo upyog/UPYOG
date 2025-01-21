@@ -344,7 +344,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                             SizedBox(
                               height: 10.h,
                             ),
-                            _buildBasicDetail(),
+                            _buildLicenseDetail(),
                             SizedBox(
                               height: 10.h,
                             ),
@@ -361,13 +361,13 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                       ColumnHeaderText(
                                         label: getLocalizedString(
                                           i18.building.PLOT_AREA,
-                                          module: Modules.BPA,
                                         ),
-                                        text: isNotNullOrEmpty(
-                                          _edrcData?.planDetail
-                                              ?.planInfoProperties?.plotAreaM2,
-                                        )
-                                            ? '${_edrcData!.planDetail!.planInfoProperties!.plotAreaM2} ${getLocalizedString(i18.building.BPA_SQ_FT_LABEL, module: Modules.BPA)}'
+                                        text: _edrcData
+                                                    ?.planDetail
+                                                    ?.planInfoProperties
+                                                    ?.plotAreaM2 !=
+                                                null
+                                            ? '${_edrcData?.planDetail?.planInfoProperties!.plotAreaM2} sq.ft'
                                             : "N/A",
                                       ),
                                       SizedBox(
@@ -379,7 +379,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                           module: Modules.BPA,
                                         ),
                                         text: _edrcData?.planDetail
-                                                ?.planInfoProperties?.plotNo ??
+                                                ?.planInfoProperties!.plotNo ??
                                             "N/A",
                                       ),
                                       SizedBox(
@@ -402,7 +402,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                           i18.building.HOLDING_NUM,
                                           module: Modules.BPA,
                                         ),
-                                        text: "N/A",
+                                        text: "NA",
                                       ),
                                       SizedBox(
                                         height: 10.h,
@@ -412,7 +412,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                           i18.building.LAND_REGIS_DETAIL,
                                           module: Modules.BPA,
                                         ),
-                                        text: "N/A",
+                                        text: "NA",
                                       ),
                                       SizedBox(
                                         height: 10.h,
@@ -422,7 +422,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                           i18.building.BOUNDARY_WALL_LEN,
                                           module: Modules.BPA,
                                         ),
-                                        text: "N/A",
+                                        text: "NA",
                                       ),
                                       SizedBox(
                                         height: 10.h,
@@ -454,10 +454,9 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                       ),
                                     ],
                                   ),
-                                  if (isNotNullOrEmpty(
-                                    _edrcData?.planDetail?.blocks?.first
-                                        .building?.floors,
-                                  ))
+                                  if (_edrcData?.planDetail?.blocks?.first
+                                          .building?.floors !=
+                                      null)
                                     BuildExpansion(
                                       title: getLocalizedString(
                                         i18.building.BLOCKWISE_OCCUPANCY,
@@ -527,6 +526,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                       ColumnHeaderText(
                                         label: getLocalizedString(
                                           i18.building.LANDMARK,
+                                          module: Modules.BPA,
                                         ),
                                         text: _bpaData
                                                 ?.landInfo?.address?.landmark ??
@@ -547,8 +547,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                       ColumnHeaderText(
                                         label:
                                             getLocalizedString(i18.common.NAME),
-                                        text: _bpaData?.landInfo?.owners
-                                                ?.firstOrNull?.name ??
+                                        text: _bpaData?.landInfo?.owners?.first
+                                                .name ??
                                             "N/A",
                                       ),
                                       SizedBox(
@@ -559,8 +559,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                           i18.building.GENDER,
                                           module: Modules.BPA,
                                         ),
-                                        text: _bpaData?.landInfo?.owners
-                                                ?.firstOrNull?.gender ??
+                                        text: _bpaData?.landInfo?.owners?.first
+                                                .gender ??
                                             "N/A",
                                       ),
                                       SizedBox(
@@ -570,8 +570,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                         label: getLocalizedString(
                                           i18.common.MOBILE_NUMBER,
                                         ),
-                                        text: _bpaData?.landInfo?.owners
-                                                ?.firstOrNull?.mobileNumber ??
+                                        text: _bpaData?.landInfo?.owners?.first
+                                                .mobileNumber ??
                                             "N/A",
                                       ),
                                       SizedBox(
@@ -581,8 +581,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                         label: getLocalizedString(
                                           i18.common.EMAIL_ID,
                                         ),
-                                        text: _bpaData?.landInfo?.owners
-                                                ?.firstOrNull?.emailId ??
+                                        text: _bpaData?.landInfo?.owners?.first
+                                                .emailId ??
                                             "N/A",
                                       ),
                                       SizedBox(
@@ -593,8 +593,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                           i18.building.PRIMARY_OWNER,
                                           module: Modules.BPA,
                                         ),
-                                        text: _bpaData?.landInfo?.owners
-                                                ?.firstOrNull?.isPrimaryOwner
+                                        text: _bpaData?.landInfo?.owners?.first
+                                                .isPrimaryOwner
                                                 .toString() ??
                                             "N/A",
                                       ),
@@ -604,7 +604,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                                     ],
                                   ),
                                   //---------------------Document Details-------------------------------
-                                  if (isNotNullOrEmpty(_bpaData?.documents))
+                                  if (_bpaData?.documents != null &&
+                                      _bpaData!.documents!.isNotEmpty)
                                     BuildExpansion(
                                       title: getLocalizedString(
                                         i18.building.DOCUMENT_DETAILS,
@@ -731,7 +732,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
     );
   }
 
-  Widget _buildBasicDetail() {
+  Widget _buildLicenseDetail() {
     return BuildCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -763,11 +764,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               i18.building.APPLICATION_TYPE,
               module: Modules.BPA,
             ),
-            text: isNotNullOrEmpty(_bpaData?.additionalDetails?.applicationType)
-                ? getLocalizedString(
-                    '${i18.building.BPA_APP_STATUS_PREF}${_bpaData?.additionalDetails?.applicationType}',
-                  )
-                : "N/A",
+            text: _bpaData?.additionalDetails?.applicationType ?? "N/A",
           ),
           SizedBox(
             height: 10.h,
@@ -777,9 +774,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               i18.buildingReg.SERVICE_TYPE,
               module: Modules.BPAREG,
             ),
-            text: isNotNullOrEmpty(_bpaData?.additionalDetails?.serviceType)
-                ? getLocalizedString(_bpaData?.additionalDetails?.serviceType)
-                : "N/A",
+            text: _bpaData?.additionalDetails?.serviceType ?? "N/A",
           ),
           SizedBox(
             height: 10.h,
@@ -1044,7 +1039,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               i18.building.SUB_OCCUPANCY,
               module: Modules.BPA,
             ),
-            text: "N/A",
+            text: "NA",
           ),
           SizedBox(
             height: 10.h,
@@ -1244,7 +1239,7 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               module: Modules.BPA,
             ),
             text:
-                '${_edrcData?.planDetail?.planInformation?.demolitionArea} ${getLocalizedString(i18.building.BPA_SQ_MTRS_LABEL, module: Modules.BPA)}',
+                '${_edrcData?.planDetail?.planInformation?.demolitionArea} sq.mtrs',
           ),
           SizedBox(
             height: 10.h,
@@ -1446,10 +1441,9 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               i18.building.TOTAL_BUILDUP_AREA,
               module: Modules.BPA,
             ),
-            text: isNotNullOrEmpty(
-              _edrcData?.planDetail?.virtualBuilding?.totalBuitUpArea,
-            )
-                ? '${_edrcData?.planDetail?.virtualBuilding?.totalBuitUpArea} ${getLocalizedString(i18.building.BPA_SQ_MTRS_LABEL, module: Modules.BPA)}'
+            text: _edrcData?.planDetail?.virtualBuilding?.totalBuitUpArea !=
+                    null
+                ? '${_edrcData?.planDetail?.virtualBuilding?.totalBuitUpArea} sq.mtrs'
                 : "N/A",
           ),
           SizedBox(
@@ -1515,7 +1509,8 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
               );
             } else {
               switch (snapshot.connectionState) {
-                case ConnectionState.waiting || ConnectionState.active:
+                case ConnectionState.waiting:
+                case ConnectionState.active:
                   return showCircularIndicator();
                 default:
                   return const SizedBox.shrink();
@@ -1643,59 +1638,60 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          final fileUrl = fileStore.fileStoreIds?[index].url?.split(',').first;
-          final docType = nocElement.documents?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = nocElement.documents!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .first;
 
-          final docName = isNotNullOrEmpty(docType?.documentType)
+          final docName = isNotNullOrEmpty(docType.documentType)
               ? getLocalizedString(
-                  docType!.documentType!,
+                  docType.documentType!,
                 )
               : 'N/A';
 
-          return isNotNullOrEmpty(docType)
-              ? Tooltip(
-                  message: docName,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: BaseConfig.greyColor2,
-                          // border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            _fileController.getFileType(fileUrl!).$1,
-                            size: 40,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SmallTextNotoSans(
-                        text: docName,
-                        color: Colors.grey.shade600,
-                        maxLine: 2,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ).ripple(() {
-                    final fileType = _fileController.getFileType(fileUrl).$2;
-                    dPrint('FileType: ${fileType.name}');
-                    showTypeDialogue(
-                      context,
-                      url: fileUrl,
-                      isPdf: fileType == FileExtType.pdf,
-                      title: docName,
-                    );
-                  }),
-                )
-              : const SizedBox.shrink();
+          return Tooltip(
+            message: docName,
+            child: Column(
+              children: [
+                Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: BaseConfig.greyColor2,
+                    // border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      _fileController.getFileType(fileUrl).$1,
+                      size: 40,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SmallTextNotoSans(
+                  text: docName,
+                  color: Colors.grey.shade600,
+                  maxLine: 2,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ).ripple(() {
+              final fileType = _fileController.getFileType(fileUrl).$2;
+              dPrint('FileType: ${fileType.name}');
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                isPdf: fileType == FileExtType.pdf,
+                title: docName,
+              );
+            }),
+          );
         },
       ),
     );
@@ -1784,7 +1780,6 @@ class _EmpBpaObpsDetailsState extends State<EmpBpaObpsDetails> {
                               i18.building.BPA_TOT_AMT_PAID,
                               module: Modules.BPA,
                             ),
-                            fontWeight: FontWeight.bold,
                             text: '₹${paymentDetail.totalAmountPaid ?? 'N/A'}',
                           ),
                           SizedBox(height: 10.h),

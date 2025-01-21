@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/components/error_page/network_error.dart';
+import 'package:mobile_app/components/filter/filter_bottomsheet.dart';
+import 'package:mobile_app/components/locality_widget/locality_selection_widget.dart';
 import 'package:mobile_app/config/base_config.dart';
 import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
@@ -18,6 +20,7 @@ import 'package:mobile_app/utils/extension/extension.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/complain_card.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
+import 'package:mobile_app/widgets/medium_text.dart';
 
 class EmpFireNocScreen extends StatefulWidget {
   const EmpFireNocScreen({super.key});
@@ -99,7 +102,7 @@ class _EmpFireNocScreenState extends State<EmpFireNocScreen> {
           width: Get.width,
           child: SingleChildScrollView(
             child: Column(
-              children: [
+              children: [ 
                 _buildBody(o),
               ],
             ).paddingSymmetric(horizontal: 16.w, vertical: 20.h),
@@ -179,13 +182,13 @@ class _EmpFireNocScreenState extends State<EmpFireNocScreen> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
+                height: Get.height / 2,
+                child: showCircularIndicator().marginOnly(top: 20.h),
               );
             case ConnectionState.active:
               return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
+                height: Get.height / 2,
+                child: showCircularIndicator().marginOnly(top: 20.h),
               );
             default:
               return const SizedBox.shrink();
@@ -195,41 +198,41 @@ class _EmpFireNocScreenState extends State<EmpFireNocScreen> {
     );
   }
 
-  // void _openFilterBottomSheet(bool isSelected, Orientation o) {
-  //   Get.bottomSheet(
-  //     StatefulBuilder(
-  //       builder: (context, setState) {
-  //         return FilterBottomSheet(
-  //           title: getLocalizedString(i18.inbox.FILTER_BY),
-  //           content: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               MediumTextNotoSans(
-  //                 text: '${getLocalizedString(i18.inbox.LOCALITY)}:',
-  //                 fontWeight: FontWeight.w500,
-  //                 size: o == Orientation.portrait ? 14.sp : 8.sp,
-  //               ),
+  void _openFilterBottomSheet(bool isSelected, Orientation o) {
+    Get.bottomSheet(
+      StatefulBuilder(
+        builder: (context, setState) {
+          return FilterBottomSheet(
+            title: getLocalizedString(i18.inbox.FILTER_BY),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MediumTextNotoSans(
+                  text: '${getLocalizedString(i18.inbox.LOCALITY)}:',
+                  fontWeight: FontWeight.w500,
+                  size: o == Orientation.portrait ? 14.sp : 8.sp,
+                ),
 
-  //               SizedBox(height: 16.h),
+                SizedBox(height: 16.h),
 
-  //               //TODO: Locality Selection Widget
-  //               const LocalitySelectionWidget(),
-  //             ],
-  //           ),
-  //           onApply: () {
-  //             // applyFilter();
-  //             Get.back();
-  //           },
-  //           onCancel: () {
-  //             Get.back();
-  //           },
-  //           orientation: o,
-  //         );
-  //       },
-  //     ),
-  //     isScrollControlled: true,
-  //     isDismissible: false,
-  //     enableDrag: false,
-  //   );
-  // }
+                //TODO: Locality Selection Widget
+                const LocalitySelectionWidget(),
+              ],
+            ),
+            onApply: () {
+              // applyFilter();
+              Get.back();
+            },
+            onCancel: () {
+              Get.back();
+            },
+            orientation: o,
+          );
+        },
+      ),
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+    );
+  }
 }

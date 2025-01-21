@@ -46,7 +46,6 @@ class _WsMyApplicationsScreenState extends State<WsMyApplicationsScreen> {
 
   init() async {
     _isLoading.value = true;
-    _waterController.length.value = 0;
     tenant = await getCityTenant();
     _waterController.getWaterMyApplications(
       tenantId: tenant.code!,
@@ -135,8 +134,10 @@ class _WsMyApplicationsScreenState extends State<WsMyApplicationsScreen> {
                                   return Obx(
                                     () {
                                       if (_waterController.isLoading.value) {
+                                        // Show loading indicator while fetching more data
                                         return showCircularIndicator();
                                       } else {
+                                        // Show "load more" button
                                         return IconButton(
                                           onPressed: () {
                                             _waterController.loadMoreWaterApp(
@@ -182,11 +183,10 @@ class _WsMyApplicationsScreenState extends State<WsMyApplicationsScreen> {
                                       item.applicationStatus,
                                       module: Modules.WS,
                                     ),
-                                    statusColor: getStatusColor(
-                                      '${item.applicationStatus}',
-                                    ),
+                                    statusColor:
+                                        getStatusColor('${item.status}'),
                                     statusBackColor: getStatusBackColor(
-                                      '${item.applicationStatus}',
+                                      '${item.status}',
                                     ),
                                   ).paddingOnly(bottom: 16);
                                 }

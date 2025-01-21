@@ -47,14 +47,15 @@ snackBar(String txt1, String txt2, Color color, {int seconds = 3}) {
   );
 }
 
-dPrint(Object? value, {bool enableLog = false}) {
+dPrint(String text, {bool enableLog = false}) {
   if (kDebugMode) {
     if (enableLog) {
-      log('$value');
+      log(text);
       return;
     }
-    print(value);
+    debugPrint(text);
   }
+  if (kReleaseMode) {}
 }
 
 void showSnackBar(BuildContext context, String text) {
@@ -228,8 +229,7 @@ Future<dynamic> getCityTenant() async {
   final jsonData = await HiveService.getData(Constants.HOME_CITY);
   if (jsonData == null) {
     await clearData();
-    // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-    return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+    return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
   }
   final json = jsonDecode(jsonData);
   final tenant = TenantTenant.fromJson(json);
@@ -240,8 +240,7 @@ Future<dynamic> getCityTenantEmployee() async {
   final jsonData = await HiveService.getData(Constants.HOME_CITY_EMP);
   if (jsonData == null) {
     await clearData();
-    // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-    return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+    return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
   }
   final json = jsonDecode(jsonData);
   final tenant = TenantTenant.fromJson(json);
@@ -655,7 +654,7 @@ String getRiskType(String wfState) {
     case 'BPA':
       return 'HIGH';
     case 'BPA_LOW':
-      return 'LOW';
+      return 'Low';
     default:
       throw ArgumentError('Invalid status: $wfState');
   }
@@ -756,6 +755,7 @@ String getLastTwoPart(String input) {
   } else if (parts.isNotEmpty) {
     return parts.last;
   }
+
   return '';
 }
 

@@ -150,7 +150,7 @@ class _WaterMyApplicationDetailsScreenState
                     i18.waterSewerage.AMT_DUE_LABEL,
                     module: Modules.WS,
                   ),
-                  text: isNotNullOrEmpty(billInfo.bill?.firstOrNull?.totalAmount)
+                  text: isNotNullOrEmpty(billInfo.bill?.first.totalAmount)
                       ? '₹${billInfo.bill!.first.totalAmount}'
                       : '₹0',
                 )
@@ -350,6 +350,7 @@ class _WaterMyApplicationDetailsScreenState
                                 ),
                               ),
                               onTap: () async {
+                                //TODO: Download Pdf
 
                                 _waterController.isLoading.value = true;
 
@@ -751,61 +752,61 @@ class _WaterMyApplicationDetailsScreenState
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          final fileUrl =
-              fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-          final docType = waterConnection.documents?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = waterConnection.documents!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .first;
 
-          final docName = isNotNullOrEmpty(docType?.documentType)
+          final docName = isNotNullOrEmpty(docType.documentType)
               ? getLocalizedString(
-                  filterAndModifyDocName(docType!.documentType!),
+                  filterAndModifyDocName(docType.documentType!),
                   module: Modules.WS,
                 )
               : 'N/A';
 
-          return isNotNullOrEmpty(docType)
-              ? Tooltip(
-                  message: docName,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: BaseConfig.greyColor2,
-                          // border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            _fileController.getFileType(fileUrl!).$1,
-                            size: 40,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SmallTextNotoSans(
-                        text: docName,
-                        color: Colors.grey.shade600,
-                        maxLine: 2,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ).ripple(() {
-                    final fileType = _fileController.getFileType(fileUrl).$2;
-                    dPrint('FileType: ${fileType.name}');
-                    showTypeDialogue(
-                      context,
-                      url: fileUrl,
-                      title: docName,
-                      isPdf: fileType == FileExtType.pdf,
-                    );
-                  }),
-                )
-              : const SizedBox.shrink();
+          return Tooltip(
+            message: docName,
+            child: Column(
+              children: [
+                Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: BaseConfig.greyColor2,
+                    // border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      _fileController.getFileType(fileUrl).$1,
+                      size: 40,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SmallTextNotoSans(
+                  text: docName,
+                  color: Colors.grey.shade600,
+                  maxLine: 2,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ).ripple(() {
+              final fileType = _fileController.getFileType(fileUrl).$2;
+              dPrint('FileType: ${fileType.name}');
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                title: docName,
+                isPdf: fileType == FileExtType.pdf,
+              );
+            }),
+          );
         },
       ),
     );
@@ -829,7 +830,7 @@ class _WaterMyApplicationDetailsScreenState
               module: Modules.WS,
             ),
             text: getLocalizedString(
-              '${i18.waterSewerage.APPLICATION_TYPE}${waterConnection.applicationType}'
+              '${i18.waterSewerage.SERVICE_NAME_SEWERAGE}${waterConnection.applicationType}'
                   .toUpperCase(),
               module: Modules.WS,
             ),
@@ -856,7 +857,7 @@ class _WaterMyApplicationDetailsScreenState
           ),
           const SizedBox(height: 10),
           if (isNotNullOrEmpty(
-            _paymentController.billInfo?.bill?.firstOrNull?.billDetails?.firstOrNull
+            _paymentController.billInfo?.bill?.first.billDetails?.firstOrNull
                 ?.billAccountDetails,
           )) ...[
             for (int i = 0;

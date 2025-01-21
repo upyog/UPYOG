@@ -66,8 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
               transition: Transition.fade,
             );
           } else {
-            // Get.offNamed(AppRoutes.SELECT_CITIZEN);
-            Get.offNamed(AppRoutes.SELECT_CATEGORY);
+            Get.offNamed(AppRoutes.SELECT_CITIZEN);
           }
         }
       } else {
@@ -77,8 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
             transition: Transition.fade,
           );
         } else {
-          // Get.offNamed(AppRoutes.SELECT_CITIZEN);
-          Get.offNamed(AppRoutes.SELECT_CATEGORY);
+          Get.offNamed(AppRoutes.SELECT_CITIZEN);
         }
       }
       _isLoading.value = false;

@@ -269,10 +269,6 @@ class _BillsDetailScreenState extends State<BillsDetailScreen> {
     //   tenant = await getCityTenantEmployee();
     // }
 
-    dPrint(module.name);
-
-    Get.find<PaymentController>().hidePaymentLoader();
-
     Get.to(
       () => PaymentScreen(
         token: _authController.token!.accessToken!,

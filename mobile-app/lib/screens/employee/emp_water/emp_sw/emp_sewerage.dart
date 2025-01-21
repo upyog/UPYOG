@@ -281,15 +281,9 @@ class _EmpSewerageScreenState extends State<EmpSewerageScreen> {
         } else {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             case ConnectionState.active:
-              return SizedBox(
-                height: Get.height / 1.5,
-                child: showCircularIndicator(),
-              );
+              return showCircularIndicator().marginOnly(top: 20.h);
             default:
               return const SizedBox.shrink();
           }

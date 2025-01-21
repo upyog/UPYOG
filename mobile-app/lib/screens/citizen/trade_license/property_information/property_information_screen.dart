@@ -195,7 +195,7 @@ class PropertyInformationScreen extends StatelessWidget {
               onExpansionChanged: (p0) async {
                 if (p0 && !_tlController.isOwnerDetails.value) {
                   await _tlController.getOwnersLicenseByAppID(
-                    token: _authController.token?.accessToken ?? '',
+                    token: _authController.token?.accessToken,
                     applicationNo: license.applicationNumber!,
                   );
                 }
@@ -222,7 +222,7 @@ class PropertyInformationScreen extends StatelessWidget {
                       return networkErrorPage(
                         context,
                         () => _tlController.getOwnersLicenseByAppID(
-                          token: _authController.token?.accessToken ?? '',
+                          token: _authController.token?.accessToken,
                           applicationNo: license.applicationNumber!,
                         ),
                       );

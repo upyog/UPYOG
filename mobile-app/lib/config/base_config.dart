@@ -2,37 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/utils/dashboard_icon_role.dart';
 
 class BaseConfig {
-  static const String APP_NAME = "MyCity";
-
-  //App Logo can be changed following the below path from pubspec.yaml
-  // and run command: dart run flutter_launcher_icons:generate
-  // image_path: "assets/images/launcherIcon1.png"
-
-  // Change native splash logo from pubspec.yaml
-  // and run command: dart run flutter_native_splash:create
-  // image: "assets/images/launcherIcon1.png"
-  // branding: "assets/images/niuaWithName.png"
+  static const String APP_NAME = "UPYOG";
+  static const String STATE_TENANT_ID = 'pg';
+  static const String AUTHORIZATION_KEY = 'ZWdvdi11c2VyLWNsaWVudDo=';
 
   static const String PROD_URL = "https://upyog.niua.org/";
   static const String DEV_URL = "https://upyog-test.niua.org/";
   static const String STAGE_URL = "https://upyog-sandbox.niua.org/";
 
-  static const String STATE_TENANT_ID = 'pg';
-
-  static const String AUTHORIZATION_KEY = 'ZWdvdi11c2VyLWNsaWVudDo=';
-  static const String upyogBannerIconPng = "assets/images/upyogBannerIcon.png";
+  // Logo
   static const String HOME_HEADER_LOGO = "assets/images/home_header_logo.png";
-  static const String APP_LOGIN_BANNERS =
-      "assets/images/banner1.jpeg,assets/images/banner2.jpeg,assets/images/banner3.jpeg,assets/images/banner1.jpeg,assets/images/banner2.jpeg,assets/images/banner3.jpeg";
-
   static const String APP_HOME_BANNERS =
       "assets/images/banner1.jpeg,assets/images/banner2.jpeg,assets/images/banner3.jpeg";
-
-  static const String APP_LOGIN_BANNERS_TEXT =
-      "Open Digital Platform, Single Window services to citizens, Increase the efficiency and productivity of ULBs, Integrated view of ULB information, Provide timely & reliable management information, Standards-based Approach";
-
   static const String APP_HOME_BANNERS_EMP =
       "assets/images/bannerEmp1.jpeg,assets/images/bannerEmp2.jpeg,assets/images/bannerEmp3.jpeg";
+  static const String APP_LOGO = "assets/images/logo.png";
   static const String UPYOG_LOGO = "assets/images/upyoglogo.png";
   static const String LOGIN_BACK_PNG = "assets/images/loginBack.png";
   static const String LOGIN_BACK_NEW_PNG = "assets/images/loginBacknew.png";
@@ -182,55 +166,7 @@ class BaseConfig {
   static const String homeUiCardMcIcon = "assets/images/miscellaneous.svg";
   static const String profileStartCameraIcon = "assets/images/star_camera.svg";
 
-  /* -------------------------------------------------------------------------- */
-  /*                        ULB Service Management Icons                        */
-  /* -------------------------------------------------------------------------- */
-  static const String g2gServiceManagementIcon =
-      "assets/v2_images/g2g_service.png";
-  static const String eGovernanceServiceIcon =
-      "assets/v2_images/e_governance.png";
-  static const String requestManagementIcon =
-      "assets/v2_images/request_management.png";
-  static const String ulbServiceManagementIcon =
-      "assets/v2_images/ulb_service.png";
-  static const String reportsAndDashboardIcon =
-      "assets/v2_images/reports_dashboard.png";
-
-  static const String aboutCityIcon = "assets/v2_images/about_city.png";
-  static const String reportGrievanceIcon =
-      "assets/v2_images/report_grievance.png";
-  static const String bookingIcon = "assets/v2_images/booking.png";
-  static const String updatesHubIcon = "assets/v2_images/update_hub.png";
-  static const String placesIcon = "assets/v2_images/places.png";
-  static const String parkingNavigationIcon = "assets/v2_images/navigation.png";
-  static const String faqEnquiriesIcon = "assets/v2_images/faq.png";
-  static const String convenienceIcon = "assets/v2_images/convenience.png";
-  static const String publicAnalyticsIcon = "assets/v2_images/analytics.png";
-
-  static const String customerSupportIcon =
-      "assets/v2_images/customer_support.png";
-
-  /* -------------------------------------------------------------------------- */
-  /*                           Citizen Home Icons                               */
-  /* -------------------------------------------------------------------------- */
-  static const String aboutIcon = "assets/v2_images/info.png";
-  static const String grievanceIcon = "assets/v2_images/information.png";
-  static const String waterSewerageIcon = "assets/v2_images/briefcase.png";
-  static const String propertyIcon = "assets/v2_images/apartment.png";
-  static const String billIcon = "assets/v2_images/invoice.png";
-  static const String desludgingIcon = "assets/v2_images/mini_truck.png";
-  static const String fireIcon = "assets/v2_images/fire.png";
-  static const String govtIcon = "assets/v2_images/museum.png";
-  static const String enquiryIcon = "assets/v2_images/help.png";
-  static const String utilitiesIcon = "assets/v2_images/utilities.png";
-  static const String permitsIcon = "assets/v2_images/permits.png";
-  static const String sosIcon = "assets/v2_images/sos.png";
-  static const String homeIcon = "assets/v2_images/home.png";
-  static const String gridIcon = "assets/v2_images/grid.png";
-
-  /* -------------------------------------------------------------------------- */
-  /*                                 UC Collect                                 */
-  /* -------------------------------------------------------------------------- */
+  //UC_collect
   static const String ucCollectIconSvg = "assets/icons/domain.svg";
 
   static const IconData ptMyPropertiesIcon = Icons.apartment;
@@ -260,6 +196,7 @@ class BaseConfig {
   static const String splashBuildingPng = "assets/images/splashBuilding.png";
   static const String loginBuildingPng = "assets/images/loginBuilding.png";
   static const String newloginBuildingPng = "assets/images/newBuildingImg.png";
+  static const String upyogBannerIconPng = "assets/images/upyogBannerIcon.png";
   static const String delhiBuildingPng = "assets/images/delhi.png";
   static const String hyderabadBuildingPng = "assets/images/hyderabad.png";
   static const String bengaluruBuildingPng = "assets/images/bengaluru.png";

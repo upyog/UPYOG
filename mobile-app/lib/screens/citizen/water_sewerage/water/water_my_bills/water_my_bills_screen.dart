@@ -50,7 +50,7 @@ class _WsMyBillsScreenState extends State<WsMyBillsScreen> {
 
   void init() async {
     try {
-      billLength.value = 0;
+      _waterController.length.value = 0;
       final TenantTenant tenant = await getCityTenant();
       final tenantId = tenant.code!;
       final token = _authController.token?.accessToken!;

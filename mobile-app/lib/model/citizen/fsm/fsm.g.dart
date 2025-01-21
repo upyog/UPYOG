@@ -35,7 +35,7 @@ Fsm _$FsmFromJson(Map<String, dynamic> json) => Fsm()
   ..additionalDetails = json['additionalDetails'] == null
       ? null
       : FsmAdditionalDetails.fromJson(
-          json['additionalDetails'] as Map<String, dynamic>)
+          json['additionalDetails'] as Map<String, dynamic>,)
   ..applicationStatus = json['applicationStatus'] as String?
   ..source = json['source'] as String?
   ..sanitationtype = json['sanitationtype'] as String?
@@ -98,7 +98,7 @@ Map<String, dynamic> _$FsmToJson(Fsm instance) => <String, dynamic>{
     };
 
 FsmAdditionalDetails _$FsmAdditionalDetailsFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, dynamic> json,) =>
     FsmAdditionalDetails()
       ..roadWidth = json['roadWidth'] as String?
       ..propertyId = json['propertyID'] as String?
@@ -110,7 +110,7 @@ FsmAdditionalDetails _$FsmAdditionalDetailsFromJson(
           .toList();
 
 Map<String, dynamic> _$FsmAdditionalDetailsToJson(
-        FsmAdditionalDetails instance) =>
+        FsmAdditionalDetails instance,) =>
     <String, dynamic>{
       'roadWidth': instance.roadWidth,
       'propertyID': instance.propertyId,
@@ -177,18 +177,18 @@ Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
     };
 
 AddressAdditionalDetails _$AddressAdditionalDetailsFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, dynamic> json,) =>
     AddressAdditionalDetails()
       ..boundaryType = json['boundaryType'] as String?
       ..gramPanchayat = json['gramPanchayat'] == null
           ? null
           : GramPanchayat.fromJson(
-              json['gramPanchayat'] as Map<String, dynamic>)
+              json['gramPanchayat'] as Map<String, dynamic>,)
       ..village = checkVillageFromJson(json['village'])
       ..newGramPanchayat = json['newGramPanchayat'] as String?;
 
 Map<String, dynamic> _$AddressAdditionalDetailsToJson(
-        AddressAdditionalDetails instance) =>
+        AddressAdditionalDetails instance,) =>
     <String, dynamic>{
       'boundaryType': instance.boundaryType,
       'gramPanchayat': instance.gramPanchayat,
@@ -378,7 +378,7 @@ PitDetail _$PitDetailFromJson(Map<String, dynamic> json) => PitDetail()
   ..additionalDetails = json['additionalDetails'] == null
       ? null
       : PitDetailAdditionalDetails.fromJson(
-          json['additionalDetails'] as Map<String, dynamic>);
+          json['additionalDetails'] as Map<String, dynamic>,);
 
 Map<String, dynamic> _$PitDetailToJson(PitDetail instance) => <String, dynamic>{
       'type': instance.type,
@@ -394,14 +394,14 @@ Map<String, dynamic> _$PitDetailToJson(PitDetail instance) => <String, dynamic>{
     };
 
 PitDetailAdditionalDetails _$PitDetailAdditionalDetailsFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, dynamic> json,) =>
     PitDetailAdditionalDetails()
       ..fileStoreId = json['fileStoreId'] == null
           ? null
           : FileStoreId.fromJson(json['fileStoreId'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$PitDetailAdditionalDetailsToJson(
-        PitDetailAdditionalDetails instance) =>
+        PitDetailAdditionalDetails instance,) =>
     <String, dynamic>{
       'fileStoreId': instance.fileStoreId,
     };

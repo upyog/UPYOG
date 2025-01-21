@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:mime/mime.dart';
 import 'package:mobile_app/env/app_config.dart';
 import 'package:mobile_app/model/citizen/bpa_model/bpa_model.dart';
@@ -174,8 +173,6 @@ class FileController extends GetxController {
         return (Icons.picture_as_pdf, FileExtType.pdf);
       case 'dxf':
         return (Icons.area_chart, FileExtType.dxf);
-      case 'docs':
-        return (Symbols.dock, FileExtType.docs);
       default:
         return (Icons.picture_as_pdf, FileExtType.none);
     }
@@ -207,7 +204,6 @@ class FileController extends GetxController {
     required PdfKey key,
     License? license,
     Payment? payment,
-    List<Payment?>? payments,
     SewerageConnection? sewerageConnection,
     WaterConnection? waterConnection,
     BpaElement? bpaElement,
@@ -231,10 +227,6 @@ class FileController extends GetxController {
       } else if (payment != null) {
         body = {
           'Payments': [payment.toJson()],
-        };
-      } else if (payments != null) {
-        body = {
-          'Payments': payments.map((e) => e!.toJson()).toList(),
         };
       } else if (sewerageConnection != null) {
         body = {

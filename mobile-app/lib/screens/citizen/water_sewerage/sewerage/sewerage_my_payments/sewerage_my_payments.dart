@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mobile_app/components/error_page/network_error.dart';
 import 'package:mobile_app/components/filled_button_app.dart';
@@ -57,7 +56,7 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
   }
 
   void init() async {
-    sewerageLength.value = 0;
+    _waterController.length.value = 0;
     TenantTenant tenant = await getCityTenant();
     final tenantId = tenant.code!;
     final token = _authController.token?.accessToken!;
@@ -126,15 +125,14 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
 
   /// Merge all owners name
   String? getOwnersName(List<Owner>? owners) {
-    if (isNotNullOrEmpty(owners)) {
-      String ownerNames = '';
-      for (var owner in owners!) {
-        ownerNames += '${owner.name}, ';
-      }
-      return ownerNames.substring(0, ownerNames.length - 2);
-    } else {
+    if (owners == null || owners.isEmpty) {
       return null;
     }
+    String ownerNames = '';
+    for (var owner in owners) {
+      ownerNames += '${owner.name}, ';
+    }
+    return ownerNames.substring(0, ownerNames.length - 2);
   }
 
   @override
@@ -303,7 +301,7 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
     required bool isLoading,
   }) =>
       Padding(
-        padding: EdgeInsets.all(10.w),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -313,7 +311,7 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
                 i18.waterSewerage.CS_PAYMENT_AMOUNT_DUE_WITHOUT_SYMBOL,
                 module: Modules.WS,
               ),
-              text: isNotNullOrEmpty(payment?.totalAmountPaid)
+              text: payment?.totalAmountPaid != null
                   ? '₹ ${payment?.totalAmountPaid?.toInt()}'
                   : 'N/A',
               fontWeight: FontWeight.bold,
@@ -325,7 +323,7 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
                 i18.waterSewerage.SERVICE_NAME_LABEL,
                 module: Modules.WS,
               ),
-              text: isNotNullOrEmpty(payment?.paymentDetails?.firstOrNull)
+              text: payment?.paymentDetails?.firstOrNull != null
                   ? getLocalizedString(
                       '${i18.waterSewerage.WNS_SERVICE_TYPE}${payment!.paymentDetails!.first.businessService!}',
                       module: Modules.WS,
@@ -355,8 +353,7 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
                 i18.waterSewerage.WS_RECEIPT_NO_LABEL,
                 module: Modules.WS,
               ),
-              text:
-                  payment?.paymentDetails?.firstOrNull?.receiptNumber ?? 'N/A',
+              text: payment?.paymentDetails?.first.receiptNumber ?? 'N/A',
             ),
             const SizedBox(height: 10),
             ColumnHeaderText(
@@ -364,7 +361,7 @@ class _SewerageMyPaymentsState extends State<SewerageMyPayments> {
                 i18.waterSewerage.WS_RECEIPT_DATE_LABEL,
                 module: Modules.WS,
               ),
-              text: payment?.paymentDetails?.firstOrNull?.bill?.billDate
+              text: payment?.paymentDetails?.first.bill?.billDate
                       ?.toCustomDateFormat(pattern: 'dd/MM/yyyy') ??
                   'N/A',
             ),

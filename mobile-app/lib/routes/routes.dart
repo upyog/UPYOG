@@ -1,13 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:get/get.dart';
-import 'package:mobile_app/MyCity/screens/home/business_home/business_home.dart';
-import 'package:mobile_app/MyCity/screens/home/citizen_home/citizen_home.dart';
-import 'package:mobile_app/MyCity/screens/home/official_home/official_home.dart';
-import 'package:mobile_app/MyCity/screens/home/official_home/reports_and_dashboard/reports_and_dashboard.dart';
-import 'package:mobile_app/MyCity/screens/home/official_home/ulb_service_management/ulb_service_managment.dart';
-import 'package:mobile_app/MyCity/screens/home/select_category.dart';
-import 'package:mobile_app/MyCity/screens/home/visitor_home/visitor_home.dart';
 import 'package:mobile_app/binding/challan_binding.dart';
 import 'package:mobile_app/binding/fire_noc_binding.dart';
 import 'package:mobile_app/binding/fsm_binding.dart';
@@ -50,9 +43,9 @@ import 'package:mobile_app/screens/citizen/property_tax/my_properties/properties
 import 'package:mobile_app/screens/citizen/property_tax/my_properties/property_tax_screen.dart';
 import 'package:mobile_app/screens/citizen/property_tax/my_properties_screen.dart';
 import 'package:mobile_app/screens/citizen/sign_up/signup_screen.dart';
-import 'package:mobile_app/screens/citizen/trade_license/my_tl_applications/new_tl_applications.dart';
-import 'package:mobile_app/screens/citizen/trade_license/my_tl_applications/trade_license_details/tl_details_screen.dart';
+import 'package:mobile_app/screens/citizen/trade_license/my_tl_applications/tl_details_screen.dart';
 import 'package:mobile_app/screens/citizen/trade_license/my_tl_applications/trade_license_renewal.dart';
+import 'package:mobile_app/screens/citizen/trade_license/my_tl_applications/trade_license_view_all.dart';
 import 'package:mobile_app/screens/citizen/trade_license/property_information/property_information_screen.dart';
 import 'package:mobile_app/screens/citizen/trade_license/trade_license_screen.dart';
 import 'package:mobile_app/screens/citizen/water_sewerage/sewerage/sewerage_application/sewerage_my_application_details.dart';
@@ -90,7 +83,7 @@ import 'package:mobile_app/screens/employee/emp_water/emp_sw/emp_sw_details/emp_
 import 'package:mobile_app/screens/employee/emp_water/emp_water_edit_application/emp_water_edit_application.dart';
 import 'package:mobile_app/screens/employee/emp_water/emp_ws/emp_water_details/emp_water_details.dart';
 import 'package:mobile_app/screens/employee/emp_water/emp_ws/emp_water_screen.dart';
-import 'package:mobile_app/screens/select_citizen/select_citizen_new.dart';
+import 'package:mobile_app/screens/select_citizen/select_citizen.dart';
 import 'package:mobile_app/screens/splash/splash_screen.dart';
 
 class AppRoutes {
@@ -164,7 +157,7 @@ class AppRoutes {
   static const String SEWERAGE_MY_CERTIFICATES = '/SEWERAGE_MY_CERTIFICATES';
   static const String PROPERTY_MY_CERTIFICATES = '/PROPERTY_MY_CERTIFICATES';
   static const String TRADE_LICENSE_APPROVED = '/TRADE_LICENSE_APPROVED';
-  static const String NEW_TL_APPLICATIONS = '/NEW_TL_APPLICATIONS';
+  static const String TL_VIEW_ALL = '/TL_VIEW_ALL';
   static const String TL_APP_RENEWAL = '/TL_APP_RENEWAL';
   static const String FIRE_NOC_SCREEN = '/FIRE_NOC_SCREEN';
   static const String FIRE_NOC_SCREEN_DETAIL = '/FIRE_NOC_SCREEN_DETAIL';
@@ -172,8 +165,6 @@ class AppRoutes {
   static const String MY_CHALLANS = '/MY_CHALLANS';
   static const String FSM_SCREEN = '/FSM_SCREEN';
   static const String FSM_SCREEN_DETAIL = '/FSM_SCREEN_DETAIL';
-  static const String SELECT_CATEGORY = '/SELECT_CATEGORY';
-  static const String CITIZEN_HOME = '/CITIZEN_HOME';
   /* -------------------------------------------------------------------------- */
   /*                               Employee Routes                              */
   /* -------------------------------------------------------------------------- */
@@ -202,16 +193,6 @@ class AppRoutes {
   //EMP - FireNoc
   static const String EMP_FIRE_NOC = '/EMP_FIRE_NOC';
   static const String EMP_FIRE_NOC_DETAILS = '/EMP_FIRE_NOC_DETAILS';
-
-  /* -------------------------------------------------------------------------- */
-  /*                             My City App Routes                             */
-  /* -------------------------------------------------------------------------- */
-  static const String OFFICIAL = '/OFFICIAL';
-  static const String ULB_SERVICE_MANAGEMENT = '/ULB_SERVICE_MANAGEMENT';
-  static const String REPORTS_AND_DASHBOARD = '/REPORTS_AND_DASHBOARD';
-
-  static const String VISITOR = '/VISITOR';
-  static const String BUSINESS_HOME = '/BUSINESS_HOME';
 
   /* -------------------------------------------------------------------------- */
   /*                                  Get Pages                                 */
@@ -250,7 +231,7 @@ class AppRoutes {
       page: () => const TradeLicenseApplicationScreen(),
     ),
     GetPage(name: TL_DETAILS, page: () => const TLDetailsScreen()),
-    GetPage(name: NEW_TL_APPLICATIONS, page: () => const NewTlApplications()),
+    GetPage(name: TL_VIEW_ALL, page: () => const TradeLicenseViewAll()),
     GetPage(name: TL_APP_RENEWAL, page: () => const TradeLicenseRenewal()),
     GetPage(name: PROPERTY_INFO, page: () => PropertyInformationScreen()),
     GetPage(name: LOCATION_CHOOSE, page: () => const LocationChooseScreen()),
@@ -264,7 +245,7 @@ class AppRoutes {
     GetPage(name: MY_PROPERTIES, page: () => const MyPropertiesScreen()),
     GetPage(
       name: PROPERTY_APPLICATIONS,
-      page: () => MyPropertyApplications(),
+      page: () => const MyPropertyApplications(),
     ),
     GetPage(
       name: MY_PROPERTIES_DETAILS,
@@ -394,8 +375,6 @@ class AppRoutes {
       page: () => const FsmApplication(),
     ),
     GetPage(name: FSM_SCREEN_DETAIL, page: () => const FsmApplicationDetails()),
-    GetPage(name: SELECT_CATEGORY, page: () => const SelectCategory()),
-    GetPage(name: CITIZEN_HOME, page: () => const CitizenHome()),
 
     /* -------------------------------------------------------------------------- */
     /*                               EMPLOYEE ROUTES                              */
@@ -444,21 +423,5 @@ class AppRoutes {
       name: EMP_FIRE_NOC_DETAILS,
       page: () => const EmpFireNocDetails(),
     ),
-
-    /* -------------------------------------------------------------------------- */
-    /*                             My City App Routes                             */
-    /* -------------------------------------------------------------------------- */
-    GetPage(name: OFFICIAL, page: () => const OfficialHomeScreen()),
-    GetPage(
-      name: ULB_SERVICE_MANAGEMENT,
-      page: () => const UlbServiceManagementScreen(),
-    ),
-    GetPage(
-      name: REPORTS_AND_DASHBOARD,
-      page: () => const ReportsAndDashboardScreen(),
-    ),
-
-    GetPage(name: VISITOR, page: () => const VisitorHomeScreen()),
-    GetPage(name: BUSINESS_HOME, page: () => const BusinessHome()),
   ];
 }

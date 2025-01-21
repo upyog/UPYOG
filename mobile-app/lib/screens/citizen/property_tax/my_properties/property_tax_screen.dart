@@ -38,134 +38,117 @@ class _PropertyTaxScreenState extends State<PropertyTaxScreen> {
     if (!_authController.isValidUser) return;
     _propertiesTaxController.getMyPropertiesStream(
       token: _authController.token!.accessToken!,
+      //isMyApplication: false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return OrientationBuilder(
-      builder: (context, orientation) {
+      builder: (context, o) {
         return Scaffold(
-          appBar: _buildAppBar(orientation),
-          body: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: PropertyListStreamBuilder(
-              stream: _propertiesTaxController.streamCtrl.stream,
-              authController: _authController,
-              propertiesTaxController: _propertiesTaxController,
+          appBar: HeaderTop(
+            titleWidget: Wrap(
+              children: [
+                Text(
+                  getLocalizedString(i18.common.PROPERTY_TAX),
+                ),
+                Obx(() => Text(' (${_propertiesTaxController.length.value})')),
+              ],
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+            orientation: o,
+          ),
+          body: SizedBox(
+            height: Get.height,
+            width: Get.width,
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: StreamBuilder(
+                stream: _propertiesTaxController.streamCtrl.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return showCircularIndicator();
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    if (snapshot.data is String || snapshot.data == null) {
+                      return const NoApplicationFoundWidget();
+                    }
+                    final PtMyProperties myProperties = snapshot.data!;
+                    final propertyList = myProperties.properties
+                        ?.where(
+                          (e) =>
+                              e.status == ApplicationStatus.ACTIVE.value ||
+                              e.status == ApplicationStatus.INACTIVE.value,
+                        )
+                        .toList();
+                    if (propertyList!.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: propertyList.length >= 10
+                            ? propertyList.length + 1
+                            : propertyList.length,
+                        itemBuilder: (context, index) {
+                          if (index == propertyList.length &&
+                              propertyList.length >= 10) {
+                            return Obx(() {
+                              if (_propertiesTaxController.isLoading.value) {
+                                return showCircularIndicator();
+                              } else {
+                                return IconButton(
+                                  onPressed: () async {
+                                    await _propertiesTaxController.loadMore(
+                                      token:
+                                          _authController.token!.accessToken!,
+                                      //isMyApplication: false,
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.expand_circle_down_outlined,
+                                    size: 30,
+                                    color: BaseConfig.appThemeColor1,
+                                  ),
+                                );
+                              }
+                            });
+                          } else {
+                            var property = propertyList[index];
+                            return ComplainCard(
+                              title: property.owners?.first.name?.capitalize ??
+                                  "N/A",
+                              id: '${getLocalizedString(i18.propertyTax.PROPERTY_ID)}: ${property.propertyId}',
+                              date:
+                                  'Date: ${property.auditDetails!.createdTime.toCustomDateFormat()}',
+                              onTap: () {
+                                Get.toNamed(
+                                  AppRoutes.MY_PROPERTIES_DETAILS,
+                                  arguments: property,
+                                );
+                              },
+                              status: getLocalizedString(
+                                '${i18.propertyTax.PT_COMMON}${property.status}'
+                                    .toUpperCase(),
+                                module: Modules.PT,
+                              ),
+                              statusColor: getStatusColor('${property.status}'),
+                              statusBackColor:
+                                  getStatusBackColor('${property.status}'),
+                            ).paddingOnly(bottom: 12);
+                          }
+                        },
+                      );
+                    } else {
+                      return const NoApplicationFoundWidget();
+                    }
+                  } else {
+                    return const NoApplicationFoundWidget();
+                  }
+                },
+              ),
             ),
           ),
         );
       },
-    );
-  }
-
-  HeaderTop _buildAppBar(Orientation orientation) {
-    return HeaderTop(
-      titleWidget: Wrap(
-        children: [
-          Text(getLocalizedString(i18.common.PROPERTY_TAX)),
-          Obx(() => Text(' (${_propertiesTaxController.length.value})')),
-        ],
-      ),
-      onPressed: () => Navigator.of(context).pop(),
-      orientation: orientation,
-    );
-  }
-}
-
-class PropertyListStreamBuilder extends StatelessWidget {
-  final Stream stream;
-  final AuthController authController;
-  final PropertiesTaxController propertiesTaxController;
-
-  const PropertyListStreamBuilder({
-    super.key,
-    required this.stream,
-    required this.authController,
-    required this.propertiesTaxController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: stream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return showCircularIndicator();
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (snapshot.hasData) {
-          return _buildPropertyList(snapshot.data as PtMyProperties);
-        } else {
-          return const NoApplicationFoundWidget();
-        }
-      },
-    );
-  }
-
-  Widget _buildPropertyList(PtMyProperties myProperties) {
-    final propertyList = myProperties.properties
-        ?.where(
-          (e) =>
-              e.status == ApplicationStatus.ACTIVE.value ||
-              e.status == ApplicationStatus.INACTIVE.value,
-        )
-        .toList();
-
-    if (!isNotNullOrEmpty(propertyList)) {
-      return const NoApplicationFoundWidget();
-    }
-
-    return ListView.builder(
-      itemCount: propertyList!.length >= 10
-          ? propertyList.length + 1
-          : propertyList.length,
-      itemBuilder: (context, index) {
-        if (index == propertyList.length && propertyList.length >= 10) {
-          return Obx(() {
-            return propertiesTaxController.isLoading.value
-                ? showCircularIndicator()
-                : IconButton(
-                    onPressed: () => propertiesTaxController.loadMore(
-                      token: authController.token!.accessToken!,
-                    ),
-                    icon: const Icon(
-                      Icons.expand_circle_down_outlined,
-                      size: 30,
-                      color: BaseConfig.appThemeColor1,
-                    ),
-                  );
-          });
-        } else {
-          var property = propertyList[index];
-          return PropertyCard(property: property).paddingOnly(bottom: 12);
-        }
-      },
-    );
-  }
-}
-
-class PropertyCard extends StatelessWidget {
-  final Property property;
-
-  const PropertyCard({super.key, required this.property});
-
-  @override
-  Widget build(BuildContext context) {
-    return ComplainCard(
-      title: property.owners?.first.name?.capitalize ?? "N/A",
-      id: '${getLocalizedString(i18.propertyTax.PROPERTY_ID)}: ${property.propertyId}',
-      date: 'Date: ${property.auditDetails!.createdTime.toCustomDateFormat()}',
-      onTap: () {
-        Get.toNamed(AppRoutes.MY_PROPERTIES_DETAILS, arguments: property);
-      },
-      status: getLocalizedString(
-        '${i18.propertyTax.PT_COMMON}${property.status}'.toUpperCase(),
-        module: Modules.PT,
-      ),
-      statusColor: getStatusColor('${property.status}'),
-      statusBackColor: getStatusBackColor('${property.status}'),
     );
   }
 }

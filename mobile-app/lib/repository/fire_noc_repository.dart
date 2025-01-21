@@ -31,14 +31,10 @@ class FireNocRepository {
   static Future<dynamic> getFireNocPayment({
     required String token,
     required Map<String, dynamic> query,
-    String? businessService,
   }) async {
     final local = await getLocal();
-    final url = isNotNullOrEmpty(businessService)
-        ? '${Url.COLLECTION}$businessService/_search'
-        : '${Url.COLLECTION}_search';
     final response = await _baseService.makeRequest(
-      url: url,
+      url: '${Url.COLLECTION}_search',
       method: RequestType.POST,
       body: {},
       requestInfo: RequestInfo(authToken: token, local: local),

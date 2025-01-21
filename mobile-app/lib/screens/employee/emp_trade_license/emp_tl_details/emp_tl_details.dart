@@ -110,9 +110,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
   String getFileStoreIds() {
     if (!isNotNullOrEmpty(
       _item?.businessObject?.tradeLicenseDetail?.applicationDocuments,
-    )) {
-      return '';
-    }
+    )) return '';
 
     List fileIds = [];
     for (var element
@@ -360,10 +358,11 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                                         const SizedBox(height: 20),
                                       ],
                                     ),
-                                  if (isNotNullOrEmpty(
-                                    _item?.businessObject?.tradeLicenseDetail
-                                        ?.additionalDetail?.propertyId,
-                                  ))
+
+                                  if (_item?.businessObject?.tradeLicenseDetail
+                                          ?.additionalDetail?.propertyId !=
+                                      null)
+                                    // Property Details
                                     BuildExpansion(
                                       title: getLocalizedString(
                                         i18.common.EMP_PROPERTY_DETAILS,
@@ -377,6 +376,8 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                                         const SizedBox(height: 10),
                                       ],
                                     ),
+
+                                  //TODO: Documents
                                   if (isNotNullOrEmpty(
                                     _item?.businessObject?.tradeLicenseDetail
                                         ?.applicationDocuments,
@@ -450,14 +451,15 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          final fileUrl =
-              fileStore.fileStoreIds![index].url!.split(',').firstOrNull;
-          final docType = _item
-              ?.businessObject?.tradeLicenseDetail?.applicationDocuments
-              ?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = _item!
+              .businessObject!.tradeLicenseDetail!.applicationDocuments!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .firstOrNull;
           return isNotNullOrEmpty(docType)
               ? Column(
                   children: [
@@ -471,7 +473,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
                       child: Padding(
                         padding: EdgeInsets.all(8.w),
                         child: Icon(
-                          fileController.getFileType(fileUrl!).$1,
+                          fileController.getFileType(fileUrl).$1,
                           size: 40,
                           color: Colors.grey.shade600,
                         ),
@@ -549,10 +551,11 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               'N/A',
         ),
         SizedBox(height: 8.h),
+        //TODO: Address Details
         _buildAddress(o, item),
         TextButton(
-          onPressed: () async {
-            await _commonController.fetchLabels(modules: Modules.PT);
+          onPressed: () {
+            //TODO: Details page
             Get.toNamed(
               AppRoutes.EMP_PROPERTY_INFO,
               arguments: {
@@ -590,59 +593,64 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
           text: '${getLocalizedString(
             i18.tlProperty.ADDRESS,
           )}: ',
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
           size: o == Orientation.portrait ? 12.sp : 6.sp,
         ),
         Wrap(
           children: [
-            if (isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.address?.doorNo,
-            )) ...[
+            if (item.businessObject?.tradeLicenseDetail?.address?.doorNo !=
+                null) ...[
               SmallTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!.doorNo!,
                 maxLine: 4,
+                fontWeight: FontWeight.w600,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
               const SmallTextNotoSans(text: ', '),
             ],
-            if (isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.address?.street,
-            )) ...[
+            if (item.businessObject?.tradeLicenseDetail?.address?.street !=
+                null) ...[
               SmallTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!.street!,
                 maxLine: 4,
+                fontWeight: FontWeight.w600,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
               const SmallTextNotoSans(text: ', '),
             ],
-            if (isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.address?.landmark,
-            )) ...[
+            if (item.businessObject?.tradeLicenseDetail?.address?.landmark !=
+                null) ...[
               SmallTextNotoSans(
                 text:
                     item.businessObject!.tradeLicenseDetail!.address!.landmark!,
                 maxLine: 4,
+                fontWeight: FontWeight.w600,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
               const SmallTextNotoSans(text: ', '),
             ],
-            if (isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.address?.locality?.name,
-            )) ...[
+            if (item.businessObject?.tradeLicenseDetail?.address?.locality
+                        ?.name !=
+                    null &&
+                item.businessObject!.tradeLicenseDetail!.address!.locality!
+                    .name!.isNotEmpty) ...[
               SmallTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!
                     .locality!.name!,
                 maxLine: 4,
+                fontWeight: FontWeight.w600,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
               const SmallTextNotoSans(text: ', '),
             ],
-            if (isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.address?.city,
-            )) ...[
+            if (item.businessObject?.tradeLicenseDetail?.address?.city !=
+                    null &&
+                item.businessObject!.tradeLicenseDetail!.address!.city!
+                    .isNotEmpty) ...[
               SmallTextNotoSans(
                 text: item.businessObject!.tradeLicenseDetail!.address!.city!,
                 maxLine: 4,
+                fontWeight: FontWeight.w600,
                 size: o == Orientation.portrait ? 12.sp : 6.sp,
               ),
             ],
@@ -802,7 +810,7 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               i18.tradeLicense.EMP_FINANCIAL_YEAR,
               module: Modules.TL,
             ),
-            text: isNotNullOrEmpty(item.businessObject?.financialYear)
+            text: item.businessObject?.financialYear != null
                 ? 'FY${item.businessObject?.financialYear}'
                 : 'N/A',
           ),
@@ -828,13 +836,10 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               i18.tradeLicense.EMP_STRUCT_TYPE,
               module: Modules.TL,
             ),
-            text: isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.structureType,
-            )
-                ? item.businessObject!.tradeLicenseDetail!.structureType!
-                    .split('.')
-                    .first
-                : 'N/A',
+            text: item.businessObject?.tradeLicenseDetail?.structureType
+                    ?.split('.')
+                    .first ??
+                'N/A',
           ),
           SizedBox(height: 8.h),
           ColumnHeaderText(
@@ -842,13 +847,10 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               i18.tradeLicense.EMP_STRUCT_SUB_TYPE,
               module: Modules.TL,
             ),
-            text: isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.structureType,
-            )
-                ? item.businessObject!.tradeLicenseDetail!.structureType!
-                    .split('.')
-                    .last
-                : 'N/A',
+            text: item.businessObject?.tradeLicenseDetail?.structureType
+                    ?.split('.')
+                    .last ??
+                'N/A',
           ),
           SizedBox(height: 8.h),
           ColumnHeaderText(
@@ -866,13 +868,9 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               i18.tradeLicense.EMP_GST_NUMBER,
               module: Modules.TL,
             ),
-            text: isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.additionalDetail
-                  ?.tradeGstNo,
-            )
-                ? item.businessObject!.tradeLicenseDetail!.additionalDetail!
-                    .tradeGstNo!
-                : 'N/A',
+            text: item.businessObject?.tradeLicenseDetail?.additionalDetail
+                    ?.tradeGstNo ??
+                'N/A',
           ),
           SizedBox(height: 8.h),
           ColumnHeaderText(
@@ -880,12 +878,9 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               i18.tradeLicense.EMP_OPERATIONAL_SQ_FT,
               module: Modules.TL,
             ),
-            text: isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.operationalArea,
-            )
-                ? item.businessObject!.tradeLicenseDetail!.operationalArea!
-                    .toString()
-                : 'N/A',
+            text: item.businessObject?.tradeLicenseDetail?.operationalArea
+                    .toString() ??
+                'N/A',
           ),
           SizedBox(height: 8.h),
           ColumnHeaderText(
@@ -893,12 +888,9 @@ class _EmpTlDetailsScreenState extends State<EmpTlDetailsScreen> {
               i18.tradeLicense.EMP_NUMBER_OF_EMP,
               module: Modules.TL,
             ),
-            text: isNotNullOrEmpty(
-              item.businessObject?.tradeLicenseDetail?.noOfEmployees,
-            )
-                ? item.businessObject!.tradeLicenseDetail!.noOfEmployees!
-                    .toString()
-                : 'N/A',
+            text: item.businessObject?.tradeLicenseDetail?.noOfEmployees
+                    .toString() ??
+                'N/A',
           ),
           SizedBox(height: 8.h),
         ],

@@ -115,42 +115,36 @@ class Property {
 
 @JsonSerializable()
 class PropertyAdditionalDetails {
-  @JsonKey(name: 'uid', includeIfNull: false)
+  @JsonKey(name: 'uid')
   String? uid;
-  @JsonKey(name: 'basement1', includeIfNull: false)
+  @JsonKey(name: 'basement1')
   dynamic basement1;
-  @JsonKey(name: 'basement2', includeIfNull: false)
+  @JsonKey(name: 'basement2')
   dynamic basement2;
-  @JsonKey(name: 'noOfFloors', includeIfNull: false)
+  @JsonKey(name: 'noOfFloors')
   dynamic noOfFloors;
-  @JsonKey(name: 'builtUpArea', includeIfNull: false)
+  @JsonKey(name: 'builtUpArea')
   dynamic builtUpArea;
-  @JsonKey(name: 'electricity', includeIfNull: false)
+  @JsonKey(name: 'electricity')
   String? electricity;
-  @JsonKey(name: 'inflammable', includeIfNull: false)
+  @JsonKey(name: 'inflammable')
   bool? inflammable;
-  @JsonKey(name: 'propertyType', includeIfNull: false)
+  @JsonKey(name: 'propertyType')
   PropertyType? propertyType;
-  @JsonKey(name: 'subusagetype', includeIfNull: false)
+  @JsonKey(name: 'subusagetype')
   dynamic subusagetype;
   // @JsonKey(name: 'ageOfProperty')
   // AgeOfProperty? ageOfProperty;
-  @JsonKey(name: 'structureType', includeIfNull: false)
+  @JsonKey(name: 'structureType')
   dynamic structureType;
-  @JsonKey(name: 'noOofBasements', includeIfNull: false)
+  @JsonKey(name: 'noOofBasements')
   NoO? noOofBasements;
-  @JsonKey(name: 'heightAbove36Feet', includeIfNull: false)
+  @JsonKey(name: 'heightAbove36Feet')
   bool? heightAbove36Feet;
-  @JsonKey(name: 'Subusagetypeofrentedarea', includeIfNull: false)
+  @JsonKey(name: 'Subusagetypeofrentedarea')
   dynamic subusagetypeofrentedarea;
-  @JsonKey(name: 'IsAnyPartOfThisFloorUnOccupied', includeIfNull: false)
+  @JsonKey(name: 'IsAnyPartOfThisFloorUnOccupied')
   dynamic isAnyPartOfThisFloorUnOccupied;
-  @JsonKey(name: 'owners', includeIfNull: false)
-  List<OwnerAd>? owners;
-  @JsonKey(name: 'applicationStatus', includeIfNull: false)
-  String? applicationStatus;
-  @JsonKey(name: 'isRainwaterHarvesting', includeIfNull: false)
-  bool? isRainwaterHarvesting;
 
   PropertyAdditionalDetails();
 
@@ -336,50 +330,6 @@ class Document {
       _$DocumentFromJson(json);
 
   Map<String, dynamic> toJson() => _$DocumentToJson(this);
-}
-
-@JsonSerializable()
-class OwnerAd {
-  @JsonKey(name: 'name')
-  String? name;
-  @JsonKey(name: 'status')
-  String? status;
-  @JsonKey(name: 'documents')
-  List<dynamic>? documents;
-  @JsonKey(name: 'ownerType')
-  String? ownerType;
-  @JsonKey(name: 'mobileNumber')
-  String? mobileNumber;
-  @JsonKey(name: 'permanentAddress')
-  String? permanentAddress;
-  @JsonKey(name: 'additionalDetails')
-  OwnerAdditionalDetailsPt? additionalDetails;
-  @JsonKey(name: 'fatherOrHusbandName')
-  String? fatherOrHusbandName;
-  @JsonKey(name: 'sameAsPropertyAddress')
-  bool? sameAsPropertyAddress;
-
-  OwnerAd();
-
-  factory OwnerAd.fromJson(Map<String, dynamic> json) =>
-      _$OwnerAdFromJson(json);
-
-  Map<String, dynamic> toJson() => _$OwnerAdToJson(this);
-}
-
-@JsonSerializable()
-class OwnerAdditionalDetailsPt {
-  @JsonKey(name: 'ownerName')
-  String? ownerName;
-  @JsonKey(name: 'ownerSequence')
-  int? ownerSequence;
-
-  OwnerAdditionalDetailsPt();
-
-  factory OwnerAdditionalDetailsPt.fromJson(Map<String, dynamic> json) =>
-      _$OwnerAdditionalDetailsPtFromJson(json);
-
-  Map<String, dynamic> toJson() => _$OwnerAdditionalDetailsPtToJson(this);
 }
 
 @JsonSerializable()

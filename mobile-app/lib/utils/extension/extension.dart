@@ -19,24 +19,20 @@ extension OnPressed on Widget {
     Function onPressed,
     double radiusSiz, {
     double borderRadius = 0.0,
-    Color rippleColor = Colors.grey, // Added parameter for ripple color
   }) =>
-      Material(
-        color: Colors.transparent,
-        child: InkWell(
-          radius: radiusSiz,
-          splashColor: rippleColor.withOpacity(0.5), // Ripple color
-          highlightColor: Colors.transparent,
-          splashFactory: InkRipple.splashFactory,
+      InkWell(
+        radius: radiusSiz,
+        splashColor: Colors.grey.withOpacity(0.5),
+        highlightColor: Colors.transparent,
+        splashFactory: InkRipple.splashFactory,
+        borderRadius: BorderRadius.circular(borderRadius),
+        customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
-          customBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          onTap: () {
-            onPressed();
-          },
-          child: this,
         ),
+        onTap: () {
+          onPressed();
+        },
+        child: this,
       );
 }
 

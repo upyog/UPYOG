@@ -19,10 +19,10 @@ enum Modules {
 
 extension ModulesExtension on Modules {
   static const actionNames = {
-    Modules.COMMON: "rainmaker-common",
-    Modules.PGR: "rainmaker-pgr",
-    Modules.TL: "rainmaker-tl",
-    Modules.PT: "rainmaker-pt",
+    Modules.COMMON: "rainmaker-common", //Don't change
+    Modules.PGR: "rainmaker-pgr", //Don't change
+    Modules.TL: "rainmaker-tl", //Don't change
+    Modules.PT: "rainmaker-pt", //Don't change
     Modules.BND: "rainmaker-bnd",
     Modules.BPA: "rainmaker-bpa",
     Modules.BPAREG: "rainmaker-bpareg",

@@ -73,7 +73,7 @@ class EditProfileController extends GetxController {
       userProfile = profileRes;
     } catch (e, s) {
       streamCtrl.add('Profile Error');
-      dPrint('GetProfileError: $e');
+      print('GetProfileError: $e');
       ErrorHandler.allExceptionsHandler(e, s);
     }
   }
@@ -107,14 +107,14 @@ class EditProfileController extends GetxController {
         );
       }
     } catch (e, s) {
-      dPrint('updateProfileError: $e');
+      print('updateProfileError: $e');
       ErrorHandler.logError(e.toString(), s);
     }
   }
 
   /// Remove unsupported field for request body
   Map _userRequest(User userData) {
-    userData.dob = userData.dob?.replaceAll('-', '/');
+    userData.dob = userData.dob!.replaceAll('-', '/');
     var userJson = userData.toJson();
     userJson.remove('salutation');
     userJson.remove('altContactNumber');
@@ -171,7 +171,7 @@ class EditProfileController extends GetxController {
         confirmPwd.value.text = '';
       }
     } catch (e, s) {
-      dPrint('updateProfileError: $e');
+      print('updateProfileError: $e');
       snackBar(
         "updateProfileError:",
         "$e",

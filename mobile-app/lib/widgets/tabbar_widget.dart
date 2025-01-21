@@ -11,7 +11,6 @@ class TabBarWidget extends StatelessWidget {
     this.tabHeight,
     this.tabWidth,
     this.paddingWidth,
-    this.onTap,
   });
 
   final String? tabText1;
@@ -20,7 +19,6 @@ class TabBarWidget extends StatelessWidget {
   final double? tabHeight;
   final double? tabWidth;
   final double? paddingWidth;
-  final Function(int)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +53,6 @@ class TabBarWidget extends StatelessWidget {
               unselectedLabelColor: BaseConfig.greyColor1,
               labelColor: BaseConfig.mainBackgroundColor,
               tabs: tabs,
-              onTap: onTap  ,
             ),
           ),
           const SizedBox(

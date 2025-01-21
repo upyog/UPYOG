@@ -9,8 +9,7 @@ Widget loginRedirectPage() {
   return Center(
     child: FilledButtonApp(
       text: getLocalizedString(i18.common.LOGIN),
-      onPressed: () => Get.offAllNamed(AppRoutes.SELECT_CATEGORY),
-      // onPressed: () => Get.offAllNamed(AppRoutes.SELECT_CITIZEN),
+      onPressed: () => Get.offAllNamed(AppRoutes.SELECT_CITIZEN),
     ),
   );
 }

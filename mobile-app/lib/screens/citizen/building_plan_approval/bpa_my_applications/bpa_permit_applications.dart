@@ -7,8 +7,11 @@ import 'package:mobile_app/controller/auth_controller.dart';
 import 'package:mobile_app/controller/bpa_controller.dart';
 import 'package:mobile_app/controller/common_controller.dart';
 import 'package:mobile_app/controller/edit_profile_controller.dart';
+import 'package:mobile_app/controller/payment_controller.dart';
 import 'package:mobile_app/model/citizen/bpa_model/bpa_model.dart';
+import 'package:mobile_app/model/citizen/localization/language.dart';
 import 'package:mobile_app/routes/routes.dart';
+import 'package:mobile_app/screens/citizen/payments/payment_screen.dart';
 import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
@@ -28,16 +31,17 @@ class _BpaPermitApplicationsState extends State<BpaPermitApplications> {
   final _authController = Get.find<AuthController>();
   final _bpaController = Get.find<BpaController>();
   final _editProfileController = Get.find<EditProfileController>();
+  final _paymentController = Get.find<PaymentController>();
 
   @override
   void initState() {
-    super.initState();
     _bpaController.setDefaultLimit();
+    super.initState();
     getBpaAppFun();
   }
 
   Future<void> getBpaAppFun() async {
-    final tenant = await getCityTenant();
+    final TenantTenant tenant = await getCityTenant();
     final accessToken = _authController.token?.accessToken;
 
     if (accessToken != null) {
@@ -53,154 +57,167 @@ class _BpaPermitApplicationsState extends State<BpaPermitApplications> {
     }
   }
 
-  //   void goPayment(BpaElement bpaEle) async {
-//     if (!_authController.isValidUser) return;
+  void goPayment(BpaElement bpaEle) async {
+    if (!_authController.isValidUser) return;
 
-//     final billInfo = await _paymentController.getPayment(
-//       token: _authController.token!.accessToken!,
-//       consumerCode: bpaEle.applicationNo!,
-//       businessService: getBpaServiceStatus(bpaEle.status!),
-//       tenantId: bpaEle.tenantId!,
-//     );
+    final billInfo = await _paymentController.getPayment(
+      token: _authController.token!.accessToken!,
+      consumerCode: bpaEle.applicationNo!,
+      businessService: getBpaServiceStatus(bpaEle.status!),
+      tenantId: bpaEle.tenantId!,
+    );
 
-//     Get.to(
-//       () => PaymentScreen(
-//         token: _authController.token!.accessToken!,
-//         consumerCode: bpaEle.applicationNo!,
-//         businessService: getBpaServiceStatus(bpaEle.status!),
-//         cityTenantId: bpaEle.tenantId!,
-//         module: Modules.BPA.name,
-//         billId: billInfo?.bill?.first.id ?? '',
-//         totalAmount: '${billInfo?.bill?.first.totalAmount}',
-//       ),
-//     );
-//   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: StreamBuilder(
-          stream: _bpaController.streamCtrl.stream,
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return showCircularIndicator();
-            } else if (snapshot.hasError) {
-              return networkErrorPage(context, () => getBpaAppFun());
-            } else if (!snapshot.hasData || snapshot.data is String) {
-              return const NoApplicationFoundWidget();
-            } else {
-              final Bpa bpaData = snapshot.data;
-              return isNotNullOrEmpty(bpaData.bpaele)
-                  ? BpaListView(
-                      bpaData: bpaData,
-                      bpaController: _bpaController,
-                      token: _authController.token!.accessToken!,
-                      mobileNumber: _editProfileController
-                              .userProfile.user?.first.mobileNumber ??
-                          '',
-                    )
-                  : const NoApplicationFoundWidget();
-            }
-          },
-        ),
+    Get.to(
+      () => PaymentScreen(
+        token: _authController.token!.accessToken!,
+        consumerCode: bpaEle.applicationNo!,
+        businessService: getBpaServiceStatus(bpaEle.status!),
+        cityTenantId: bpaEle.tenantId!,
+        module: Modules.BPA.name,
+        billId: billInfo?.bill?.first.id ?? '',
+        totalAmount: '${billInfo?.bill?.first.totalAmount}',
       ),
     );
   }
 
-  HeaderTop _buildAppBar() {
-    return HeaderTop(
-      titleWidget: Wrap(
-        children: [
-          const Text("Permit Applications"),
-          Obx(() => Text(' (${_bpaController.lengthBpa})')),
-        ],
-      ),
-      onPressed: () => Navigator.of(context).pop(),
-    );
-  }
-}
-
-class BpaListView extends StatelessWidget {
-  final Bpa bpaData;
-  final BpaController bpaController;
-  final String token, mobileNumber;
-
-  const BpaListView({
-    super.key,
-    required this.bpaData,
-    required this.bpaController,
-    required this.token,
-    required this.mobileNumber,
-  });
-
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: bpaData.bpaele!.length >= 10
-          ? bpaData.bpaele!.length + 1
-          : bpaData.bpaele!.length,
-      shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        if (index == bpaData.bpaele!.length && bpaData.bpaele!.length >= 10) {
-          return Obx(() {
-            return bpaController.isLoading.value
-                ? showCircularIndicator()
-                : IconButton(
-                    onPressed: () async {
-                      final tenant = await getCityTenant();
-                      await bpaController.loadMoreBpaApp(
-                        token: token,
-                        applicationType: BpaAppType.BUILDING_PLAN_SCRUTINY.name,
-                        tenantId: tenant.code!,
-                        mobileNumber: mobileNumber,
+    return OrientationBuilder(
+      builder: (context, o) {
+        return Scaffold(
+          appBar: HeaderTop(
+            orientation: o,
+            titleWidget: Wrap(
+              children: [
+                const Text("Permit Applications"),
+                Obx(
+                  () => Text(' (${_bpaController.lengthBpa})'),
+                ),
+              ],
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          body: SizedBox(
+            height: Get.height,
+            width: Get.width,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                child: StreamBuilder(
+                  stream: _bpaController.streamCtrl.stream,
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data is String || snapshot.data == null) {
+                        return const NoApplicationFoundWidget();
+                      }
+                      Bpa bpaData = snapshot.data;
+                      if (bpaData.bpaele!.isNotEmpty) {
+                        return SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: ListView.builder(
+                            itemCount: bpaData.bpaele!.length >= 10
+                                ? bpaData.bpaele!.length + 1
+                                : bpaData.bpaele?.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              if (index == bpaData.bpaele?.length &&
+                                  bpaData.bpaele!.length >= 10) {
+                                return Obx(() {
+                                  if (_bpaController.isLoading.value) {
+                                    return showCircularIndicator();
+                                  } else {
+                                    return IconButton(
+                                      onPressed: () async {
+                                        final TenantTenant tenant =
+                                            await getCityTenant();
+                                        _bpaController.loadMoreBpaApp(
+                                          token: _authController
+                                              .token!.accessToken!,
+                                          applicationType: BpaAppType
+                                              .BUILDING_PLAN_SCRUTINY.name,
+                                          tenantId: tenant.code!,
+                                          mobileNumber: _editProfileController
+                                              .userProfile
+                                              .user
+                                              ?.first
+                                              .mobileNumber,
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.expand_circle_down_outlined,
+                                        size: 30,
+                                        color: BaseConfig.appThemeColor1,
+                                      ),
+                                    );
+                                  }
+                                });
+                              } else {
+                                final newBpaData = bpaData.bpaele?[index];
+                                return newBpaData != null
+                                    ? ComplainCard(
+                                        title: getLocalizedString(
+                                          newBpaData.additionalDetails
+                                                  ?.applicationType ??
+                                              "N/A",
+                                        ),
+                                        id: 'Application ID: ${newBpaData.applicationNo}',
+                                        date:
+                                            'Application Date: ${newBpaData.auditDetails?.createdTime.toCustomDateFormat()}',
+                                        onTap: () {
+                                          Get.toNamed(
+                                            AppRoutes
+                                                .BUILDING_APPLICATION_DETAILS,
+                                            arguments: {
+                                              'newBpaData': newBpaData,
+                                            },
+                                          );
+                                        },
+                                        status: getLocalizedString(
+                                          '${i18.building.BPA_APP_STATUS_PREF}${newBpaData.status}',
+                                          module: Modules.BPA,
+                                        ),
+                                        statusColor: getStatusColor(
+                                          '${newBpaData.status}',
+                                        ),
+                                        statusBackColor: getStatusBackColor(
+                                          '${newBpaData.status}',
+                                        ),
+                                      ).paddingOnly(bottom: 16)
+                                    : const SizedBox.shrink();
+                              }
+                            },
+                          ),
+                        );
+                      } else {
+                        return const NoApplicationFoundWidget();
+                      }
+                    } else if (snapshot.hasError) {
+                      return networkErrorPage(
+                        context,
+                        () => getBpaAppFun(),
                       );
-                    },
-                    icon: const Icon(
-                      Icons.expand_circle_down_outlined,
-                      size: 30,
-                      color: BaseConfig.appThemeColor1,
-                    ),
-                  );
-          });
-        } else {
-          final newBpaData = bpaData.bpaele![index];
-          return BpaApplicationCard(newBpaData: newBpaData);
-        }
-      },
-    );
-  }
-}
-
-class BpaApplicationCard extends StatelessWidget {
-  final BpaElement newBpaData;
-
-  const BpaApplicationCard({super.key, required this.newBpaData});
-
-  @override
-  Widget build(BuildContext context) {
-    return ComplainCard(
-      title: getLocalizedString(
-        newBpaData.additionalDetails?.applicationType ?? "N/A",
-      ),
-      id: 'Application ID: ${newBpaData.applicationNo}',
-      date:
-          'Application Date: ${newBpaData.auditDetails?.createdTime.toCustomDateFormat()}',
-      onTap: () {
-        Get.toNamed(
-          AppRoutes.BUILDING_APPLICATION_DETAILS,
-          arguments: {'newBpaData': newBpaData},
+                    } else {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                        case ConnectionState.active:
+                          return SizedBox(
+                            height: Get.height * 0.8,
+                            child: showCircularIndicator(),
+                          );
+                        default:
+                          return const SizedBox.shrink();
+                      }
+                    }
+                  },
+                ),
+              ),
+            ),
+          ),
         );
       },
-      status: getLocalizedString(
-        '${i18.building.BPA_APP_STATUS_PREF}${newBpaData.status}',
-        module: Modules.BPA,
-      ),
-      statusColor: getStatusColor(newBpaData.status!),
-      statusBackColor: getStatusBackColor(newBpaData.status!),
-    ).paddingOnly(bottom: 16);
+    );
   }
 }

@@ -51,7 +51,7 @@ class _SewerageBillScreenState extends State<SewerageBillScreen> {
 
   void init() async {
     try {
-      billLength.value = 0;
+      _waterController.length.value = 0;
 
       final TenantTenant tenant = await getCityTenant();
       final tenantId = tenant.code!;

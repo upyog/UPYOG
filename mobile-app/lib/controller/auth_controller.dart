@@ -146,7 +146,7 @@ class AuthController extends GetxController {
         // Get.toNamed(
         //   AppRoutes.LOGIN,
         // );
-        dPrint(signUpRes);
+        print(signUpRes);
       }
     } on CustomException catch (e) {
       isLoading.value = false;
@@ -247,10 +247,9 @@ class AuthController extends GetxController {
       );
 
       if (otpRes != null) {
-        dPrint('OTP: $otpRes', enableLog: true);
+        print(otpRes);
         disableNumberField.value = false;
-        // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-        Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+        Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
       }
     } on CustomException catch (e) {
       if (e.statusCode == 400 && e.exceptionType == ExceptionType.FETCHDATA) {

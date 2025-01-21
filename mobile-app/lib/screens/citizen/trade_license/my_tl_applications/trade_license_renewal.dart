@@ -16,8 +16,10 @@ import 'package:mobile_app/utils/constants/i18_key_constants.dart';
 import 'package:mobile_app/utils/enums/app_enums.dart';
 import 'package:mobile_app/utils/enums/modules.dart';
 import 'package:mobile_app/utils/extension/extension.dart';
+import 'package:mobile_app/utils/platforms/platforms.dart';
 import 'package:mobile_app/utils/utils.dart';
 import 'package:mobile_app/widgets/complain_card.dart';
+import 'package:mobile_app/widgets/empty_box.dart';
 import 'package:mobile_app/widgets/header_widgets.dart';
 
 class TradeLicenseRenewal extends StatefulWidget {
@@ -189,24 +191,24 @@ class _TradeLicenseRenewalState extends State<TradeLicenseRenewal> {
     );
   }
 
-  // Widget _buildTlApplication(tl.TradeLicense tradeLicense) {
-  //   return tradeLicense.licenses!.isEmpty
-  //       ? const EmptyBox(text: 'Trade application not found')
-  //       : ListView.builder(
-  //           itemCount: tradeLicense.licenses!.length,
-  //           shrinkWrap: true,
-  //           physics: AppPlatforms.platformPhysics(),
-  //           itemBuilder: (context, index) {
-  //             final license = tradeLicense.licenses![index];
-  //             return ListTile(
-  //               contentPadding: EdgeInsets.zero,
-  //               subtitle: _subTitleBuildCard(
-  //                 license: license,
-  //               ),
-  //             );
-  //           },
-  //         );
-  // }
+  Widget _buildTlApplication(tl.TradeLicense tradeLicense) {
+    return tradeLicense.licenses!.isEmpty
+        ? const EmptyBox(text: 'Trade application not found')
+        : ListView.builder(
+            itemCount: tradeLicense.licenses!.length,
+            shrinkWrap: true,
+            physics: AppPlatforms.platformPhysics(),
+            itemBuilder: (context, index) {
+              final license = tradeLicense.licenses![index];
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                subtitle: _subTitleBuildCard(
+                  license: license,
+                ),
+              );
+            },
+          );
+  }
 
   Widget _subTitleBuildCard({
     required tl.License license,

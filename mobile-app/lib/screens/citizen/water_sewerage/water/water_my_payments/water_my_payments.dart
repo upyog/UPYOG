@@ -58,7 +58,8 @@ class _WaterMyPaymentsState extends State<WaterMyPayments> {
 
   void init() async {
     try {
-      waterLength.value = 0;
+      _waterController.length.value = 0;
+
       TenantTenant tenant = await getCityTenant();
       final tenantId = tenant.code!;
       final token = _authController.token?.accessToken!;
@@ -262,7 +263,6 @@ class _WaterMyPaymentsState extends State<WaterMyPayments> {
                     tenantId: payment.tenantId!,
                     token: _authController.token!.accessToken!,
                   );
-
                   if (newFileStore != null &&
                       newFileStore.fileStoreIds != null &&
                       newFileStore.fileStoreIds!.isNotEmpty) {

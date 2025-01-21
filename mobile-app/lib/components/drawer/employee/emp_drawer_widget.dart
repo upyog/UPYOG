@@ -154,8 +154,7 @@ class EmpDrawerWidget extends StatelessWidget {
           if (_authController.isValidUser) {
             return showLogoutDialog();
           } else {
-            // return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-            return Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+            return Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
           }
         }),
         drawerItem(
@@ -280,7 +279,7 @@ class EmpDrawerWidget extends StatelessWidget {
                           text: getLocalizedString(i18.common.LOGOUT_CANCEL),
                           buttonColor: BaseConfig.mainBackgroundColor,
                           horizonPadding: 5,
-                          fontSize: 12.sp,
+                          fontSize: 14.sp,
                           textColor: BaseConfig.appThemeColor1,
                           onPressed: () {
                             Get.back();
@@ -294,13 +293,12 @@ class EmpDrawerWidget extends StatelessWidget {
                         child: gradientBtn(
                           text: getLocalizedString(i18.common.LOGOUT_YES),
                           horizonPadding: 5.w,
-                          fontSize: 12.sp,
+                          fontSize: 14.sp,
                           onPressed: () async {
                             clearData();
                             _authController.nameController.value.text = '';
                             _authController.passwordController.value.text = '';
-                            // Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
-                            Get.offAllNamed(AppRoutes.SELECT_CATEGORY);
+                            Get.offAllNamed(AppRoutes.SELECT_CITIZEN);
                           },
                         ),
                       ),

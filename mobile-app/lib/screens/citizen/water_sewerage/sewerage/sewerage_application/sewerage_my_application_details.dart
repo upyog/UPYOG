@@ -289,10 +289,7 @@ class _SewerageMyApplicationDetailsState
                                       .additionalDetails!
                                       .estimationFileStoreId!,
                                 );
-
-                                final fileId =
-                                    ids?.fileStoreIds?.firstOrNull?.url;
-
+                                var fileId = ids?.fileStoreIds?.first.url;
                                 if (fileId != null && context.mounted) {
                                   _downloadController.starFileDownload(
                                     url: fileId,
@@ -337,9 +334,8 @@ class _SewerageMyApplicationDetailsState
                                   fileStoreIds: sewerageConnection
                                       .additionalDetails!.sanctionFileStoreId!,
                                 );
-                                final fileId =
+                                var fileId =
                                     ids?.fileStoreIds?.firstOrNull?.url;
-
                                 if (fileId != null && context.mounted) {
                                   _downloadController.starFileDownload(
                                     url: fileId,
@@ -367,6 +363,8 @@ class _SewerageMyApplicationDetailsState
                                 ),
                               ),
                               onTap: () async {
+                                //TODO: Download Pdf
+
                                 _waterController.isLoading.value = true;
 
                                 final pdfFileStoreId =
@@ -765,61 +763,61 @@ class _SewerageMyApplicationDetailsState
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          final fileUrl =
-              fileStore.fileStoreIds?[index].url?.split(',').firstOrNull;
-          final docType = sewerageConnection.documents?.firstWhereOrNull(
-            (element) =>
-                element.fileStoreId == fileStore.fileStoreIds?[index].id,
-          );
+          final fileUrl = fileStore.fileStoreIds![index].url!.split(',').first;
+          final docType = sewerageConnection.documents!
+              .where(
+                (element) =>
+                    element.fileStoreId == fileStore.fileStoreIds![index].id,
+              )
+              .toList()
+              .first;
 
-          final docName = isNotNullOrEmpty(docType?.documentType)
+          final docName = isNotNullOrEmpty(docType.documentType)
               ? getLocalizedString(
-                  filterAndModifyDocName(docType!.documentType!),
+                  filterAndModifyDocName(docType.documentType!),
                   module: Modules.WS,
                 )
               : 'N/A';
 
-          return isNotNullOrEmpty(docType)
-              ? Tooltip(
-                  message: docName,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: BaseConfig.greyColor2,
-                          // border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            _fileController.getFileType(fileUrl!).$1,
-                            size: 40,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SmallTextNotoSans(
-                        text: docName,
-                        color: Colors.grey.shade600,
-                        maxLine: 2,
-                        textOverflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ).ripple(() {
-                    final fileType = _fileController.getFileType(fileUrl).$2;
-                    dPrint('FileType: ${fileType.name}');
-                    showTypeDialogue(
-                      context,
-                      url: fileUrl,
-                      isPdf: fileType == FileExtType.pdf,
-                      title: docName,
-                    );
-                  }),
-                )
-              : const SizedBox.shrink();
+          return Tooltip(
+            message: docName,
+            child: Column(
+              children: [
+                Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: BaseConfig.greyColor2,
+                    // border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      _fileController.getFileType(fileUrl).$1,
+                      size: 40,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SmallTextNotoSans(
+                  text: docName,
+                  color: Colors.grey.shade600,
+                  maxLine: 2,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ).ripple(() {
+              final fileType = _fileController.getFileType(fileUrl).$2;
+              dPrint('FileType: ${fileType.name}');
+              showTypeDialogue(
+                context,
+                url: fileUrl,
+                isPdf: fileType == FileExtType.pdf,
+                title: docName,
+              );
+            }),
+          );
         },
       ),
     );
@@ -844,7 +842,7 @@ class _SewerageMyApplicationDetailsState
               module: Modules.WS,
             ),
             text: getLocalizedString(
-              '${i18.waterSewerage.APPLICATION_TYPE}${sewerageConnection.applicationType}'
+              '${i18.waterSewerage.SERVICE_NAME_SEWERAGE}${sewerageConnection.applicationType}'
                   .toUpperCase(),
               module: Modules.WS,
             ),
