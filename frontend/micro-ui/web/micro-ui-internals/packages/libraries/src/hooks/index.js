@@ -331,7 +331,9 @@ import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
-
+import useTenantsVENDOR from "./vendor/useTenants";
+import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
+import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
 
 const wt={
   useTankerCreateAPI
@@ -443,6 +445,12 @@ const dss = {
   useGetChart,
 };
 
+const vendor = {
+  useTenants:useTenantsVENDOR,
+  useEmpvendorCreate,
+  useEmpvendorSearch
+
+}
 const mcollect = {
   useCommonMDMS,
   useMCollectMDMS,
@@ -745,7 +753,8 @@ const Hooks = {
   ew,
   cm,
   useCustomBackNavigation,
-  wt
+  wt,
+  vendor
 };
 
 export default Hooks;

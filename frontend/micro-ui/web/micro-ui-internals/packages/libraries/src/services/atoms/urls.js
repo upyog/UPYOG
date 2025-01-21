@@ -248,6 +248,12 @@ const Urls = {
     create: "/request-service/water-tanker/v1/_create"
   },
 
+  vendor: {
+    create: "/vendor-services/vendor/_create",
+    search: "/vendor-services/vendor/_search",
+
+  },
+
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",
