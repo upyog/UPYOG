@@ -210,7 +210,7 @@ export const ASSETSearch = {
             `${t("MAINTENANCE_TYPE")}`,
             `${t("POST_CONDITION_REMARKS")}`
           ]
-          : [`${t("AST_NO_DEPRECIATION_DATA")}`],
+          : [`${t("AST_NO_MAINTENANCE_DATA")}`],
         tableRows: maintenanceListRows,
       },
       {
@@ -226,7 +226,7 @@ export const ASSETSearch = {
             `${t("MAINTENANCE_TYPE")}`,
             `${t("AGE_OF_ASSET")}`
           ]
-          : [`${t("AST_NO_DEPRECIATION_DATA")}`],
+          : [`${t("AST_NO_DISPOSAL_DATA")}`],
         tableRows: disposalListListRows,
       }
     ];
@@ -256,14 +256,10 @@ export const ASSETSearch = {
       searchCriteria: {
         tenantId,
         assetIds: [response?.id],
-        fromDate: 1700000000000,
-        toDate: 1730000000000,
-        reasonForDisposal: "Obsolete, Damaged",
         limit: 10,
         offset: 0
       }
     });
-    console.log('disposalList := ', disposalList);
     
     return {
       tenantId: response.tenantId,
