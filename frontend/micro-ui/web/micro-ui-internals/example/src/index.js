@@ -42,6 +42,7 @@ import {
 import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
 import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
 import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
+import { WTModule, WTLinks, WTComponents } from "@nudmcdgnpm/upyog-ui-module-wt";
 
 // import * as comps from "@nudmcdgnpm/digit-ui-react-components";
 
@@ -80,7 +81,8 @@ const enabledModules = [
   "ADS",
   "SV",
   "EW",
-  "CHB"
+  "CHB",
+  "WT"
 ];
 
 const initTokens = (stateCode) => {
@@ -143,7 +145,10 @@ const initDigitUI = () => {
   ...EWComponents,
   CHBModule,
   CHBLinks,
-  ...CHBComponents
+  ...CHBComponents,
+  WTModule,
+  WTLinks,
+  ...WTComponents
   });
 
   initFSMComponents();
