@@ -1,3 +1,4 @@
+//Main Config File designed for rendering of Components in multistep forms
 export const commonConfig =
     [
         {

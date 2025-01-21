@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
+//first component which will show the details for the application form
 
 const InfoPage = ({ t, onSelect}) => {
   sessionStorage.removeItem("docReqScreenByBack");

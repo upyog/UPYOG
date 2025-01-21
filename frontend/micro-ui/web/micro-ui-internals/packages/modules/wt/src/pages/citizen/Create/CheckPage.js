@@ -5,6 +5,10 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA } from "../../../utils";
 
+/* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
+In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
+*/
+
   const ActionButton = ({ jumpTo }) => {
     const { t } = useTranslation();
     const history = useHistory();
@@ -20,9 +24,9 @@ import { checkForNA } from "../../../utils";
   const WTCheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
     const {owner,requestDetails,address} = value;
+    console.log("reqtewdead",requestDetails);
     const [agree, setAgree] = useState(false);
-
-
+    const immediateRequired = (requestDetails?.extraCharge) ? "YES":"NO"
 
     const setdeclarationhandler = () => {
       setAgree(!agree);
@@ -127,6 +131,10 @@ import { checkForNA } from "../../../utils";
               <Row
               label={t("WT_DESCRIPTION")}
               text={`${t(checkForNA(requestDetails?.description))}`}
+              />
+              <Row
+              label={t("WT_IMMEDIATE")}
+              text={`${t(checkForNA(immediateRequired))}`}
               />
           </StatusTable>
     

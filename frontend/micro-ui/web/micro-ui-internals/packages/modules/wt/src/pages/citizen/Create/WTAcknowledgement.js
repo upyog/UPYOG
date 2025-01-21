@@ -58,7 +58,7 @@ const BannerPicker = (props) => {
 const WTAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.wt.useTankerCreateAPI("pg.citya"); 
+  const mutation = Digit.Hooks.wt.useTankerCreateAPI(tenantId); 
   const user = Digit.UserService.getUser().info;
 
   useEffect(() => {
@@ -70,6 +70,9 @@ const WTAcknowledgement = ({ data, onSuccess }) => {
     }
   }, []);
 
+  /*custom hook to prevent going back in Acknowledgement /success response page
+  * if you click Back then it will redirect you to Home page 
+  */
   Digit.Hooks.useCustomBackNavigation({
     redirectPath: '/digit-ui/citizen'
   })

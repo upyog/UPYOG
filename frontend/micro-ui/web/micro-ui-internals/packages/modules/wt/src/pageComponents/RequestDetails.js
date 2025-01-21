@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
+
+/**
+ * Major Page which is developed for Request/Booking detail page
+ * 
+ */
+
 
 const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
@@ -12,9 +18,11 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const [deliveryDate, setdeliveryDate] = useState(formData?.requestDetails?.deliveryDate || "");
   const [description, setdescription] = useState(formData?.requestDetails?.description || "");
   const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime || "");
-
+  const [extraCharge, setextraCharge] = useState(formData?.requestDetails?.extraCharge || false)
  
 
+
+  
   // Custom time input component
   const TimeInput = () => {
     return (
@@ -102,6 +110,10 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   };
 
 
+  const setextrachargeHandler = () => {
+    setextraCharge(!extraCharge);
+  }
+
   function setDescription(e) {
     setdescription(e.target.value);
   }
@@ -116,7 +128,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const goNext = () => {
     let requestDetails = formData.requestDetails;
-    let request = { ...requestDetails, tankerType, deliveryDate, tankerQuantity, waterQuantity, deliveryTime, description };
+    let request = { ...requestDetails, tankerType, deliveryDate, tankerQuantity, waterQuantity, deliveryTime, description, extraCharge };
     onSelect(config.key, request, false);
   };
 
@@ -137,7 +149,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
     if (userType === "citizen") {
       goNext();
     }
-  }, [tankerType, deliveryDate, tankerQuantity, waterQuantity, deliveryTime, description]);
+  }, [tankerType, deliveryDate, tankerQuantity, waterQuantity, deliveryTime, description,extraCharge]);
 
   return (
     <React.Fragment>
@@ -145,7 +157,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
         config={config}
         onSelect={goNext}
         t={t}
-        isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description}
+        isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description || !extraCharge}
       >
         <div>
           <CardLabel>{`${t("WT_TANKER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
@@ -235,6 +247,14 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />
+          <div style={{ display: "flex", gap: "22px" }}>
+            <CardLabel>{`${t("WT_IMMEDIATE")}`}<span className="astericColor">*</span></CardLabel>
+            <CheckBox
+                label={t("WT_IMMEDIATE")}
+                onChange={setextrachargeHandler}
+                checked={extraCharge}
+            />
+            </div>
         </div>
       </FormStep>
     </React.Fragment>

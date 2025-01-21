@@ -14,9 +14,8 @@ export const checkForNA = (value = "") => {
 };
 
 
-
+//Custom function which will return the formdata and inside formdata we are building the Payload.
 export const waterTankerPayload = (data) =>{
-  console.log("datatatattatatta",data);
   const formdata={
     waterTankerBookingDetail: {
         tenantId: data?.tenantId,
@@ -26,7 +25,7 @@ export const waterTankerPayload = (data) =>{
         description: data?.requestDetails?.description,
         deliveryDate: data?.requestDetails?.deliveryDate,
         deliveryTime: data?.requestDetails?.deliveryTime,
-        extraCharge: "NO",
+        extraCharge: (data?.requestDetails?.extraCharge) ? "Y":"N",
 
         applicantDetail: {
             applicantName: data?.owner?.applicantName,

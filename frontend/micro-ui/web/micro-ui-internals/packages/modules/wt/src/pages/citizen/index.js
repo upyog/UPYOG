@@ -2,7 +2,7 @@ import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-rea
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
-
+// Main Routing Page used for routing accorss the Water Tanker Module
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const WTCreate = Digit?.ComponentRegistryService?.getComponent("WTCreate");
