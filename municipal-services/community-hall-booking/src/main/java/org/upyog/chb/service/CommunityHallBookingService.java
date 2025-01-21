@@ -6,9 +6,12 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.chb.enums.BookingStatusEnum;
+import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
+import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
@@ -25,5 +28,11 @@ public interface CommunityHallBookingService {
 	CommunityHallBookingDetail updateBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest, PaymentDetail paymentDetail, BookingStatusEnum bookingStatusEnum);
 
 	List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(CommunityHallSlotSearchCriteria criteria);
+
+	CommunityHallBookingActionResponse getApplicationDetails( @Valid CommunityHallBookingActionRequest communityHallActionRequest);
+	
+	CommunityHallBookingDetail updateStatus( @Valid CommunityHallBookingUpdateStatusRequest communityHallBookingUpdateStatusRequest);
+
+	
 
 }

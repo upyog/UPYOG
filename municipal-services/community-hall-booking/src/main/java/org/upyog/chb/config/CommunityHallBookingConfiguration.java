@@ -184,6 +184,9 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
 	
+	@Value("${egov.bill.search.endpoint}")
+	private String billSearchEndpoint;
+	
 	
 	//Module and business name
 	@Value("${chb.module.name}")
@@ -208,6 +211,9 @@ public class CommunityHallBookingConfiguration {
 	
 	@Value("${chb.claculation.tax.applicable}")
 	private String applicableTaxes;
+	
+	@Value(("${egov.chb.bill.expiry.after}"))
+	private String chbBillExpiryAfter;
 	
 
 }

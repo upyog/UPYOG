@@ -88,8 +88,12 @@ public class CommunityHallBookingDetail {
 	private AuditDetails auditDetails;
 	
  	private ProcessInstance workflow;
-	
 
+	private Asset asset;
+
+	 @JsonProperty("applicationStatus")
+	 private String applicationStatus;
+		
 	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetail uploadedDocumentDetailsItem) {
 		if (this.uploadedDocumentDetails == null) {
 			this.uploadedDocumentDetails = new ArrayList<>();

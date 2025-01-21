@@ -1,9 +1,13 @@
 package org.upyog.chb.service.impl;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -15,20 +19,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
+import org.upyog.chb.constants.WorkflowStatus;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
+import org.upyog.chb.service.BillingService;
 import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
+import org.upyog.chb.service.WorkflowService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
+import org.upyog.chb.web.models.ApplicationDetail;
+import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
+import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.collection.Bill;
+import org.upyog.chb.web.models.collection.BillResponse;
+import org.upyog.chb.web.models.collection.BillSearchCriteria;
+import org.upyog.chb.web.models.collection.GenerateBillCriteria;
 
 import digit.models.coremodels.PaymentDetail;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +66,13 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired
+	 private WorkflowService workflowService;
 
+	@Autowired
+	private BillingService billingService;
+	
 	@Autowired
 	private MdmsUtil mdmsUtil;
 	
@@ -88,11 +109,18 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		 */
 
 		// 3.Update workflow of the application
-		 //workflowService.updateWorkflow(communityHallsBookingRequest,
-		// WorkflowStatus.CREATE);
+		 workflowService.updateWorkflow(communityHallsBookingRequest);
 
 		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 
+		
+		// fetch/create bill
+        GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+        									.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
+        									.businessService("chb-services")
+        									.consumerCode(communityHallsBookingRequest.getHallsBookingApplication().getBookingNo()).build();
+       billingService.generateBill(communityHallsBookingRequest.getRequestInfo(),billCriteria);
+        
 		// 4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
 
@@ -153,6 +181,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		if (bookingNo == null) {
 			return null;
 		}
+		if (status != BookingStatusEnum.BOOKED) {
 		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 				.bookingNo(bookingNo).build();
 		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
@@ -162,8 +191,12 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
+		
+		}
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
+		
+		workflowService.updateWorkflow(communityHallsBookingRequest);
 		//Update payment date and receipt no on successful payment when payment detail object is received
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
@@ -260,5 +293,102 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
 		return availabiltityDetail;
 	}
+
+
+	public CommunityHallBookingActionResponse getApplicationDetails(
+			CommunityHallBookingActionRequest communityHallActionRequest) {
+		
+		if(CollectionUtils.isEmpty(communityHallActionRequest.getApplicationNumbers())) {
+			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+		}
+		
+		CommunityHallBookingActionResponse communityHallActionResponse = CommunityHallBookingActionResponse.builder()
+																.applicationDetails(new ArrayList<>())
+																.build();
+		communityHallActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
+			
+			// search application number
+			CommunityHallBookingSearchCriteria criteria = CommunityHallBookingSearchCriteria.builder()
+					.bookingNo(applicationNumber)
+					.build();
+			List<CommunityHallBookingDetail> petApplications = bookingRepository.getBookingDetails(criteria);
+			
+			CommunityHallBookingDetail communityHallApplication = null != petApplications ? petApplications.get(0): null;	
+			communityHallApplication = encryptionService.decryptObject(communityHallApplication, communityHallActionRequest.getRequestInfo());
+			 ApplicationDetail applicationDetail = getApplicationBillUserDetail(communityHallApplication, communityHallActionRequest.getRequestInfo());
+		 	communityHallActionResponse.getApplicationDetails().add(applicationDetail);
+		});
+		
+		return communityHallActionResponse;
+	}
+	
+	private ApplicationDetail getApplicationBillUserDetail(CommunityHallBookingDetail communityHallApplication,
+			RequestInfo requestInfo) {
+	
+		ApplicationDetail applicationDetail = ApplicationDetail.builder()
+				.applicationNumber(communityHallApplication.getBookingNo())
+				.build();
+
+		// formula
+		StringBuilder feeCalculationFormula = new StringBuilder("Formula: ");
+		
+		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
+		
+
+		// search bill Details
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.tenantId(communityHallApplication.getTenantId())
+				.consumerCode(Collections.singleton(applicationDetail.getApplicationNumber()))
+				.service("chb-services")
+				.build();
+		List<Bill> bills = billingService.searchBill(billSearchCriteria,requestInfo);
+		Map<Object, Object> billDetailsMap = new HashMap<>();
+		if (!CollectionUtils.isEmpty(bills)) {
+			billDetailsMap.put("billId", bills.get(0).getId());
+		// total fee
+			applicationDetail.setTotalPayableAmount(bills.get(0).getTotalAmount());
+		}
+		applicationDetail.setBillDetails(billDetailsMap);
+		
+		// enrich userDetails
+		Map<Object, Object> userDetails = new HashMap<>();
+		userDetails.put("UserName", communityHallApplication.getApplicantDetail().getApplicantName());
+		userDetails.put("MobileNo", communityHallApplication.getApplicantDetail().getApplicantMobileNo());
+		userDetails.put("Email", communityHallApplication.getApplicantDetail().getApplicantEmailId());
+		userDetails.put("Address", new String(communityHallApplication.getAddress().getAddressLine1().concat(", "))
+									.concat(communityHallApplication.getAddress().getPincode()));
+		applicationDetail.setUserDetails(userDetails);
+		return applicationDetail;
+	}
+	
+
+	@Override
+	public CommunityHallBookingDetail updateStatus(
+			@Valid CommunityHallBookingUpdateStatusRequest communityHallBookingUpdateStatusRequest) {
+		// TODO Auto-generated method stub
+		String bookingNo = communityHallBookingUpdateStatusRequest.getBookingNo();
+		log.info("Updating booking for booking no : " + bookingNo);
+		if (bookingNo == null) {
+			return null;
+		}
+		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
+				.bookingNo(bookingNo).build();
+		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+		CommunityHallBookingRequest communityHallBookingRequest = CommunityHallBookingRequest .builder()
+				.hallsBookingApplication(bookingDetails.get(0))
+				.requestInfo(communityHallBookingUpdateStatusRequest.getRequestInfo())
+				 .build();
+		
+		communityHallBookingRequest.getHallsBookingApplication()
+        .setWorkflow(communityHallBookingUpdateStatusRequest.getWorkflow());
+			
+		if (bookingDetails.size() == 0) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Booking no not valid. Failed to update booking status for : " + bookingNo);
+		}
+		return updateBooking(communityHallBookingRequest,null,BookingStatusEnum.BOOKED);
+	}
+	
+
 
 }

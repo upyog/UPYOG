@@ -156,8 +156,6 @@ public class PetRegistrationService {
 			petApplicationSearchCriteria.setStatus(listOfStatus);
 		}
 		
-		
-		
 	}
 	
 	private List<String> getAccountStatusListByRoles(PetApplicationSearchCriteria petApplicationSearchCriteria, List<Role> roles) {
@@ -351,7 +349,8 @@ public class PetRegistrationService {
 		// generate QR code from attributes
 		StringBuilder qr = new StringBuilder();
 		getQRCodeForPdfCreate(tlObject, qr);
-				tlObject.put("qrCodeText", qr.toString());
+		
+		tlObject.put("qrCodeText", qr.toString());
 		
 		String base64Photo = getPetPhoto(petRegistrationApplication,requestInfo);
 		tlObject.put("petPhotoURL", "data:image/png;base64," + base64Photo);

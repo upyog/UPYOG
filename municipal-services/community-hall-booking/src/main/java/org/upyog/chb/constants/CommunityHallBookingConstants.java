@@ -85,6 +85,10 @@ public class CommunityHallBookingConstants {
 	
 	public static final String BILLING_SERVICE = "BillingService";
 	
+	public static final String BILLING_TAX_HEAD_MASTER_CODE = 	"LCF.CommunityHall_Fee";
+	
+
+	
 	// EVENT PAY
 	public static final String EVENT_PAY_TENANTID = "$tenantId";
 

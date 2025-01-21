@@ -2,6 +2,7 @@ package org.upyog.chb.repository;
 
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class ServiceRequestRepository {
     }
 
 
-    public Object fetchResult(StringBuilder uri, Object request) {
+    public Optional<Object> fetchResult(StringBuilder uri, Object request) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
         try {
@@ -45,7 +46,7 @@ public class ServiceRequestRepository {
             log.error("Exception while fetching from searcher: ",e);
         }
 
-        return response;
+        return Optional.ofNullable(response);
     }
     
     public String getShorteningURL(StringBuilder uri, Object request) {

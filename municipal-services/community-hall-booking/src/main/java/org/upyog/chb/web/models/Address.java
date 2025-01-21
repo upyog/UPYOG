@@ -58,7 +58,7 @@ public class Address   {
         private String pincode;
         
         @JsonProperty("additionalDetails")
-  	    private JsonNode additionalDetails = null;
+    	private Object additionalDetails;
         
 }
 

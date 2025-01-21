@@ -19,11 +19,11 @@ public class CommunityHallBookingQueryBuilder {
 	private static final StringBuilder bookingDetailsQuery = new StringBuilder(
 			"SELECT ecbd.booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, \n"
 					+ "booking_status, special_category, purpose, purpose_description, receipt_no, ecbd.createdby, ecbd.createdtime, \n"
-					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id, ecbd.payment_receipt_filestore_id, \n" + "	\n"
-					+ "appl.applicant_detail_id, applicant_name, applicant_email_id, applicant_mobile_no,\n"
+					+ "ecbd.lastmodifiedby, ecbd.lastmodifiedtime,ecbd.permission_letter_filestore_id,ecbd.additionaldetail, ecbd.payment_receipt_filestore_id,ecbd.applicationstatus, \n" + "	\n"
+					+ "appl.applicant_detail_id,appl.additionaldetail, applicant_name, applicant_email_id, applicant_mobile_no,\n"
 					+ "applicant_alternate_mobile_no, account_no, ifsc_code, bank_name, bank_branch_name, \n"
 					+ "account_holder_name, \n" + "\n" + "address_id, door_no, house_no, address_line_1, \n"
-					+ "landmark, city, city_code, pincode, street_name, locality, locality_code\n" + "	\n"
+					+ "landmark, city, city_code, pincode, street_name, addr.additionaldetail,locality, locality_code\n" + "	\n"
 					+ "FROM public.eg_chb_booking_detail ecbd \n"
 					+ "join public.eg_chb_applicant_detail appl on ecbd.booking_id = appl.booking_id\n"
 					+ "join public.eg_chb_address_detail addr on appl.applicant_detail_id = addr.applicant_detail_id ");

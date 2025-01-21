@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.common.contract.request.User;
@@ -31,6 +33,7 @@ public class DemandService {
 	@Autowired
 	private CommunityHallBookingConfiguration config;
 	
+
 	@Autowired
 	private CalculationService calculationService;
 
@@ -63,14 +66,24 @@ public class DemandService {
 		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
 		
-		List<DemandDetail> demandDetails = calculationService.calculateDemand(bookingRequest);
+		List<DemandDetail> demandDetails = new LinkedList<>();
+		demandDetails.add(DemandDetail.builder()
+		.collectionAmount(BigDecimal.ZERO)
+		.taxAmount(BigDecimal.valueOf(500.00))
+				.taxHeadMasterCode(CommunityHallBookingConstants.BILLING_TAX_HEAD_MASTER_CODE).tenantId(bookingDetail.getTenantId()).build());
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(config.getChbBillExpiryAfter()));
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
+		//List<DemandDetail> demandDetails = calculationService.calculateDemand(bookingRequest);
 		
 		LocalDate maxdate = getMaxBookingDate(bookingDetail);
 		
 		Demand demand = Demand.builder().consumerCode(consumerCode)
 				 .demandDetails(demandDetails).payer(owner)
+				 .minimumAmountPayable(BigDecimal.valueOf(500.00))
 				 .tenantId(tenantId)
 				.taxPeriodFrom(CommunityHallBookingUtil.getCurrentTimestamp()).taxPeriodTo(CommunityHallBookingUtil.minusOneDay(maxdate))
+				.fixedBillExpiryDate(cal.getTimeInMillis())
 				.consumerType(config.getModuleName()).businessService(config.getBusinessServiceName()).additionalDetails(null).build();
 
 		
@@ -84,6 +97,9 @@ public class DemandService {
 		log.info("Sending call to billing service for generating demand for booking no : " + consumerCode);
 		return demandRepository.saveDemand(bookingRequest.getRequestInfo(), demands);
 	}
+	
+	
+	
 	
 	
 	public List<Demand> getDemand(CommunityHallDemandEstimationCriteria estimationCriteria){

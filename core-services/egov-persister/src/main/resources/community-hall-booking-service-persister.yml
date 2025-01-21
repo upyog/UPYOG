@@ -29,6 +29,8 @@ serviceMaps:
           - jsonPath: $.hallsBookingApplication.lastModifiedBy
           
           - jsonPath: $.hallsBookingApplication.lastModifiedDate
+          
+          - jsonPath: $.hallsBookingApplication.applicationStatus
 
 
 
@@ -38,7 +40,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-       - query: INSERT INTO public.eg_chb_booking_detail(booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, booking_status, special_category, purpose, purpose_description, createdby, createdtime, lastmodifiedby, lastmodifiedtime, booking_ref_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+       - query: INSERT INTO public.eg_chb_booking_detail(booking_id, booking_no, payment_date, application_date, tenant_id, community_hall_code, booking_status, special_category, purpose, purpose_description, createdby, createdtime, lastmodifiedby, lastmodifiedtime, booking_ref_no,applicationstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
          basePath: hallsBookingApplication
          jsonMaps:
           - jsonPath: $.hallsBookingApplication.bookingId
@@ -70,6 +72,8 @@ serviceMaps:
           - jsonPath: $.hallsBookingApplication.auditDetails.lastModifiedTime
 
           - jsonPath: $.hallsBookingApplication.bookingRefNo
+          
+          - jsonPath: $.hallsBookingApplication.applicationStatus
           
        - query: INSERT INTO public.eg_chb_slot_detail(slot_id, booking_id, hall_code, booking_date, booking_from_time, booking_to_time, status, 
                createdby, createdtime, lastmodifiedby, lastmodifiedtime,capacity,booking_to_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);

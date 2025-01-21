@@ -75,6 +75,7 @@ public class ApplicantDetail   {
     
     @JsonProperty("additionalDetails")
 	private Object additionalDetails;
+    
 
     
 }

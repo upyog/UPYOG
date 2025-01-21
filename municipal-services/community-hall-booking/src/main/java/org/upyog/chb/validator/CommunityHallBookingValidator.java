@@ -40,8 +40,8 @@ public class CommunityHallBookingValidator {
 		if(!isSameHallCode(bookingRequest.getHallsBookingApplication().getBookingSlotDetails())) {
 			throw new CustomException(CommunityHallBookingConstants.MULTIPLE_HALL_CODES_ERROR, "Booking of multiple halls are not allowed");
 		}
-		 mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
-		 validateDuplicateDocuments(bookingRequest);
+		 //mdmsValidator.validateMdmsData(bookingRequest, mdmsData);
+		// validateDuplicateDocuments(bookingRequest);
 	}
 
 	public void validateUpdate(CommunityHallBookingRequest bookingRequest, Object mdmsData) {
