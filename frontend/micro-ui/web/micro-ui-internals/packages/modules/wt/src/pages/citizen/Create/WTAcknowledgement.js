@@ -2,10 +2,10 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { svPayloadData,svUpdatePayload } from "../../../utils";
-import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
+import { waterTankerPayload } from "../../../utils";
 
-/* This component, SVAcknowledgement, is responsible for displaying the acknowledgement 
+
+/* This component, WTAcknowledgement, is responsible for displaying the acknowledgement 
  of a service request submission. It utilizes the Digit UI library components for 
  rendering the UI elements. 
 
@@ -27,13 +27,13 @@ import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 const GetActionMessage = (props) => {
     const { t } = useTranslation();
     if (props.isSuccess) {
-      return window.location.href.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): t("SV_SUBMIT_SUCCESSFULL");
+      return t("WT_SUBMIT_SUCCESSFULL");
     }
     else if (props.isLoading){
-      return t("SV_APPLICATION_PENDING");
+      return t("WT_APPLICATION_PENDING");
     }
     else if (!props.isSuccess)
-    return t("SV_APPLICATION_FAILED");
+    return t("WT_APPLICATION_FAILED");
   };
 
 
@@ -47,46 +47,45 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props)}
-      applicationNumber={props.data?.SVDetail?.applicationNo}
-      info={props.isSuccess ? props.t("SV_APPLICATION_NO") : ""}
+      applicationNumber={props.data?.waterTankerBookingDetail?.bookingNo}
+      info={props.isSuccess ? props.t("WT_BOOKING_NO") : ""}
       successful={props.isSuccess}
       style={{width: "100%"}}
     />
   );
 };
 
-const SVAcknowledgement = ({ data, onSuccess }) => {
+const WTAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.sv.useSvCreateApi(tenantId,!window.location.href.includes("edit")); 
+  const mutation = Digit.Hooks.wt.useTankerCreateAPI(tenantId); 
   const user = Digit.UserService.getUser().info;
-  const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const { tenants } = storeData || {};
 
   useEffect(() => {
     try {
       data.tenantId = tenantId;
-      let formdata = window.location.href.includes("edit") ?
-      svUpdatePayload(data,t):
-      svPayloadData(data)
+      let formdata = waterTankerPayload(data);
       mutation.mutate(formdata, {onSuccess});
     } catch (err) {
     }
   }, []);
 
+  /*custom hook to prevent going back in Acknowledgement /success response page
+  * if you click Back then it will redirect you to Home page 
+  */
   Digit.Hooks.useCustomBackNavigation({
     redirectPath: '/digit-ui/citizen'
   })
 
-  const handleDownloadPdf = async () => {
-    const { SVDetail = [] } = mutation.data;
-    let SVData = (SVDetail) || {};
-    const tenantInfo = tenants.find((tenant) => tenant.code === SVData.tenantId);
-    let tenantId = SVData.tenantId || tenantId;
+//   const handleDownloadPdf = async () => {
+//     const { SVDetail = [] } = mutation.data;
+//     let SVData = (SVDetail) || {};
+//     const tenantInfo = tenants.find((tenant) => tenant.code === SVData.tenantId);
+//     let tenantId = SVData.tenantId || tenantId;
    
-    const data = await getSVAcknowledgementData({ ...SVData }, tenantInfo, t);
-    Digit.Utils.pdf.generate(data);
-  };
+//     const data = await getSVAcknowledgementData({ ...SVData }, tenantInfo, t);
+//     Digit.Utils.pdf.generate(data);
+//   };
 
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
@@ -102,7 +101,7 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
+      {/* {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />} */}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
@@ -115,4 +114,4 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
   );
 };
 
-export default SVAcknowledgement;
+export default WTAcknowledgement;

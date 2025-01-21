@@ -244,6 +244,10 @@ const Urls = {
     search: "/verification-service/validity/_search"
   },
 
+  wt:{
+    create: "/request-service/water-tanker/v1/_create"
+  },
+
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",

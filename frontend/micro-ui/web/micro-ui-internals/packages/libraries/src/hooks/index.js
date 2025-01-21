@@ -329,6 +329,13 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
+import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
+import useTankerCreateAPI from "./wt/useTankerCreateAPI";
+
+
+const wt={
+  useTankerCreateAPI
+};
 
 const pgr = {
   useComplaintDetails,
@@ -348,7 +355,6 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
-
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -737,7 +743,9 @@ const Hooks = {
   chb,
   ads,
   ew,
-  cm
+  cm,
+  useCustomBackNavigation,
+  wt
 };
 
 export default Hooks;
