@@ -40,6 +40,7 @@ const MaintenanceAssetApplication = () => {
   };
 
   const onSubmit = (data) => {
+    console.log('data :-', data)
     const formData = {
         maintenanceId: "",
         assetId: data?.maintenanceDetails?.[0]?.assetId,
@@ -57,10 +58,12 @@ const MaintenanceAssetApplication = () => {
         vendor:data?.maintenanceDetails?.[0]?.vendor,
         maintenanceCycle:data?.maintenanceDetails?.[0]?.maintenanceCycle.code,
         partsAddedOrReplaced:data?.maintenanceDetails?.[0]?.partsAddedOrReplaced,
+        preConditionRemarks: data?.maintenanceDetails?.[0]?.preConditionRemarks,
         postConditionRemarks:data?.maintenanceDetails?.[0]?.postConditionRemarks,
-        preConditionRemarks: "Initial inspection",
-        isAMCExpired: false,
-        isWarrantyExpired: false,
+        isAMCExpired: data?.maintenanceDetails?.[0]?.isAMCExpired,
+        isWarrantyExpired: data?.maintenanceDetails?.[0]?.isWarrantyExpired,
+        isLifeOfAssetAffected:data?.maintenanceDetails?.[0]?.isLifeOfAssetAffected.code,
+        assetMaintenanceIncreasedYear:data?.maintenanceDetails?.[0]?.assetMaintenanceIncreasedYear.code,
         documents: [
             {
                 "documentType": "ASSET.MAINTENANCE.DOC3",
