@@ -286,6 +286,7 @@ import useTenantsASSET from "./asset/useTenants"
 import useASSETApplicationAction from "./asset/useASSETApplicationAction";
 import useAssetparentSubType from "./asset/useAssetparentSubType";
 import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+import useMaintenanceAPI from "./asset/useMaintenanceAPI";
 import useReturnAPI from "./asset/useReturnAPI";
 import useEditUpdateAPI from "./asset/useEditUpdateAPI";
 
@@ -328,6 +329,15 @@ import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
 import useADSDocumentSearch from "./ads/useADSDocumentSearch";
 import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
+import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
+import useTankerCreateAPI from "./wt/useTankerCreateAPI";
+import useTenantsVENDOR from "./vendor/useTenants";
+import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
+import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
+
+const wt={
+  useTankerCreateAPI
+};
 
 const pgr = {
   useComplaintDetails,
@@ -347,7 +357,6 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
-
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -436,6 +445,12 @@ const dss = {
   useGetChart,
 };
 
+const vendor = {
+  useTenants:useTenantsVENDOR,
+  useEmpvendorCreate,
+  useEmpvendorSearch
+
+}
 const mcollect = {
   useCommonMDMS,
   useMCollectMDMS,
@@ -606,6 +621,7 @@ const asset = {
   useAssetparentSubType,
   useTenants: useTenantsASSET,
   useAssignCreateAPI,
+  useMaintenanceAPI,
   useReturnAPI,
   useEditUpdateAPI
 };
@@ -735,7 +751,10 @@ const Hooks = {
   chb,
   ads,
   ew,
-  cm
+  cm,
+  useCustomBackNavigation,
+  wt,
+  vendor
 };
 
 export default Hooks;

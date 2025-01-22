@@ -156,6 +156,7 @@ const OwnerForm = (_props) => {
         if (uploadedFile) {
             setValue("fileStoreId", uploadedFile);
         }
+        console.log('test valie :- ',uploadedFile);
     }, [uploadedFile, register, setValue]); 
 
     const reasonDisposal = [

@@ -182,9 +182,8 @@
                         label={t("WF_TAKE_ACTION")}
                         onSubmit={toggleMenu}
                         disabled={
-                          application?.bookingStatus === "CANCELLED" ||
-                          application?.bookingStatus === "EXPIRED"
-                        } // Disable button
+                          !["BOOKED", "BOOKING_CREATED", "PAYMENT_FAILED", "PENDING_FOR_PAYMENT"].includes(application?.bookingStatus)
+                        } // Disable button if bookingStatus is not one of the allowed values
                       />
                       {isMenuOpen && (
                         <div
@@ -214,7 +213,7 @@
                           )}
             
                           {/* Action for Collect Payment */}
-                          {application?.bookingStatus !== "BOOKED" && (
+                          {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && (
                             <div
                               onClick={() => handleMakePayment()}
                               style={{

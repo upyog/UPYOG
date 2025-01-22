@@ -332,7 +332,7 @@ const CHBApplicationDetails = () => {
             </Card>
          </StatusTable>
 
-          {/* <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
+          <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
           {showToast && (
             <Toast
               error={showToast.key}
@@ -342,7 +342,7 @@ const CHBApplicationDetails = () => {
                 setShowToast(null);
               }}
             />
-          )} */}
+          )}
         </Card>
 
         {/* {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />} */}

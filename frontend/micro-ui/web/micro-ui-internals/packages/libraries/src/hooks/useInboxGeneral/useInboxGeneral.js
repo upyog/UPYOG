@@ -59,14 +59,6 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.EW,
     _searchFn: () => EwService.search({ tenantId, filters }),
   },
-  CHB: {
-    services: ["chb"],
-    searchResponseKey: "hallsBookingApplication",
-    businessIdsParamForSearch: "bookingNo",
-    businessIdAliasForSearch: "bookingNo",
-    fetchFilters: filterFunctions.CHB,
-    _searchFn: () => CHBServices.search({ tenantId, filters }),
-  },
   SV: {
     services: ["street-vending"],
     searchResponseKey: "SVDetails",

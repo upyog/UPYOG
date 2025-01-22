@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,12 +45,12 @@ public class EnrichmentService {
 		waterTankerDetail.setAuditDetails(auditDetails);
 		waterTankerDetail.setTenantId(waterTankerRequest.getWaterTankerBookingDetail().getTenantId());	
 		
-		/* List<String> customIds = getIdList(requestInfo, waterTankerDetail.getTenantId(),
+	    List<String> customIds = getIdList(requestInfo, waterTankerDetail.getTenantId(),
 				config.getWaterTankerApplicationKey(), config.getWaterTankerApplicationFormat(), 1);
 
 		log.info("Enriched application request application no :" + customIds.get(0));
 
-		waterTankerDetail.setBookingNo(customIds.get(0)); */
+		waterTankerDetail.setBookingNo(customIds.get(0)); 
 
 		
 		waterTankerDetail.setTankerType(waterTankerRequest.getWaterTankerBookingDetail().getTankerType());			
@@ -58,7 +59,11 @@ public class EnrichmentService {
 		waterTankerDetail.setDescription(waterTankerRequest.getWaterTankerBookingDetail().getDescription());
 		waterTankerDetail.setDeliveryDate(waterTankerRequest.getWaterTankerBookingDetail().getDeliveryDate());
 		waterTankerDetail.setDeliveryTime(waterTankerRequest.getWaterTankerBookingDetail().getDeliveryTime());
-
+		String roles = waterTankerRequest.getRequestInfo().getUserInfo().getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(", "));
+		waterTankerDetail.setBookingCreatedBy(roles);
 		
 		waterTankerDetail.getApplicantDetail().setBookingId(bookingId);
 		waterTankerDetail.getApplicantDetail().setApplicantId(RequestServiceUtil.getRandonUUID());

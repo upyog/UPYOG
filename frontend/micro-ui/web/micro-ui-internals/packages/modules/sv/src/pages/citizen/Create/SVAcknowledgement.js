@@ -74,6 +74,10 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
     }
   }, []);
 
+  Digit.Hooks.useCustomBackNavigation({
+    redirectPath: '/digit-ui/citizen'
+  })
+
   const handleDownloadPdf = async () => {
     const { SVDetail = [] } = mutation.data;
     let SVData = (SVDetail) || {};

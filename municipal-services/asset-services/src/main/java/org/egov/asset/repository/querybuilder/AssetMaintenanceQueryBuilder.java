@@ -14,6 +14,8 @@ public class AssetMaintenanceQueryBuilder {
     @Autowired
     private AssetConfiguration config;
 
+    private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
+
     private static final String BASE_QUERY =
             "SELECT maintenance.maintenance_id, "
                     + "maintenance.asset_id, "
@@ -38,13 +40,16 @@ public class AssetMaintenanceQueryBuilder {
                     + "maintenance.pre_condition_remarks, "
                     + "maintenance.description, "
                     + "maintenance.asset_maintenance_status, "
+                    + "maintenance.asset_maintenance_date,"
+                    + "maintenance.asset_next_maintenance_date,"
                     + "doc.documentid, "
                     + "doc.documenttype, "
                     + "doc.filestoreid, "
                     + "doc.documentuid, "
                     + "doc.docdetails "
                     + "FROM eg_asset_maintenance maintenance "
-                    + "LEFT OUTER JOIN eg_asset_document doc ON maintenance.maintenance_id = doc.assetid";
+                    + LEFT_OUTER_JOIN_STRING + " eg_asset_maintenance_documents doc ON maintenance.maintenance_id = doc.maintenanceid ";
+                    //+ " AND doc.documenttype IN ('ASSET.MAINTENANCE.DOC1', 'ASSET.MAINTENANCE.DOC2', 'ASSET.MAINTENANCE.DOC3')";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_time DESC) AS offset_ FROM " +

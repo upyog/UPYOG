@@ -10,7 +10,10 @@
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/engagement",
-    "micro-ui-internals/packages/modules/asset"
+    "micro-ui-internals/packages/modules/asset",
+    "micro-ui-internals/packages/modules/wt",
+    "micro-ui-internals/packages/modules/chb",
+    "micro-ui-internals/packages/modules/vendor"
   ],
   "engines": {
     "node": ">=14"
@@ -41,6 +44,8 @@
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.5",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.5",
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.9",
+    "@nudmcdgnpm/upyog-ui-module-wt":"1.0.0",
+    "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.0",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
