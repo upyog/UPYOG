@@ -114,9 +114,17 @@ public class PTConstants {
 
     public static final String VARIABLE_OWNER = "ownerInfo";
 
+    public static final String VARIABLE_ID = "id";
+
+    public static final String VARIABLE_NAME = "name";
+
+    public static final String VARIABLE_DESIGNATION = "designation";
+
+    public static final String VARIABLE_AUTHORIZEDPERSON = "nameOfAuthorizedPerson";
+
 
     public static final List<String> FIELDS_TO_IGNORE = Collections.unmodifiableList(Arrays.asList(VARIABLE_ACTION,VARIABLE_WFDOCUMENTS,
-            VARIABLE_CREATEDBY,VARIABLE_LASTMODIFIEDBY,VARIABLE_CREATEDTIME,VARIABLE_LASTMODIFIEDTIME));
+            VARIABLE_CREATEDBY,VARIABLE_LASTMODIFIEDBY,VARIABLE_CREATEDTIME,VARIABLE_LASTMODIFIEDTIME, VARIABLE_AUTHORIZEDPERSON, VARIABLE_ID, VARIABLE_DESIGNATION, VARIABLE_NAME));
 
     public static final List<String> FIELDS_FOR_OWNER_MUTATION = Collections.unmodifiableList(Arrays.asList("name","gender","fatherOrHusbandName"));
 
