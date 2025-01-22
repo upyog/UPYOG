@@ -14,7 +14,7 @@ public class OtpValidateRequestTest {
         final RequestInfo requestInfo = RequestInfo.builder().build();
         final Otp otp = new Otp("otp", null, "identity", "tenant", false);
         final OtpValidateRequest validateRequest =
-                new OtpValidateRequest(requestInfo, otp);
+                new OtpValidateRequest(requestInfo, otp,false);
 
         final ValidateRequest domain = validateRequest.toDomainValidateRequest();
 
