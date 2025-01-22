@@ -77,7 +77,7 @@ public class PaytmPosGateway implements Gateway {
 			return transaction;
 		}   
 		return Transaction.builder().txnId(currentStatus.getTxnId()).txnAmount(currentStatus.getTxnAmount())
-				.txnStatus(Transaction.TxnStatusEnum.FAILURE).build();
+				.txnStatus(Transaction.TxnStatusEnum.PENDING).build();
     }
 
 
