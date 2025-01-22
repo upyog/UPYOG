@@ -159,7 +159,7 @@ public class PropertyController {
 		PropertyResponse response = PropertyResponse
 				.builder().responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-				.properties(properties).count(count).build();
+				.properties(properties).count(properties.size()).build();
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
