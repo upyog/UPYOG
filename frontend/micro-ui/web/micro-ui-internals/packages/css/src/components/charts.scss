@@ -317,3 +317,17 @@
     transform: translateY(-6px); 
   }
 }
+
+.card-container {
+  width: 100%;  /* Set the width to 100% */
+  padding: 20px;  /* Padding inside the card */
+  border-radius: 8px;  /* Rounded corners */
+  background-color: #f9f9f9;  /* Light background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Shadow effect */
+  margin: 20px 0;  /* Space from the top and bottom */
+  box-sizing: border-box;  /* Ensures padding is included in the element's total width */
+}
+
+.card-container .field {
+  margin-bottom: 10px;  /* Spacing between form fields inside the card */
+}
