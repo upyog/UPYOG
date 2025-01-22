@@ -214,6 +214,8 @@ public class CommunityHallBookingConfiguration {
 	
 	@Value(("${egov.chb.bill.expiry.after}"))
 	private String chbBillExpiryAfter;
-	
+
+	@Value("${egov.asset.search.endpoint}")
+	private String assetSearchEndpoint;
 
 }

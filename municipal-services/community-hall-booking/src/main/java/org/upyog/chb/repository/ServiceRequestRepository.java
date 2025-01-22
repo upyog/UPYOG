@@ -31,7 +31,25 @@ public class ServiceRequestRepository {
     }
 
 
-    public Optional<Object> fetchResult(StringBuilder uri, Object request) {
+    public Object fetchResult(StringBuilder uri, Object request) {
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        Object response = null;
+        try {
+        	log.info("request info : "+ request + " uri : " + uri);
+            response = restTemplate.postForObject(uri.toString(), request, Map.class);
+            log.info("response info : "+ response);
+            
+        }catch(HttpClientErrorException e) {
+            log.error("External Service threw an Exception: ",e);
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        }catch(Exception e) {
+            log.error("Exception while fetching from searcher: ",e);
+        }
+
+        return response;
+    }
+
+    public Optional<Object> fetchResultV1(StringBuilder uri, Object request) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
         try {

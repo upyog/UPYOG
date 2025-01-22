@@ -52,7 +52,7 @@ public class WorkflowService {
 
 		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-		Optional<Object> responseObject = restRepo.fetchResult(url, workflowReq);
+		Optional<Object> responseObject = restRepo.fetchResultV1(url, workflowReq);
 		response = mapper.convertValue(responseObject.get(), ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}

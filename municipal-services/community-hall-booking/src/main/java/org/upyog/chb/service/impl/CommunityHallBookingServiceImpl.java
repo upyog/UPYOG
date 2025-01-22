@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -16,12 +17,18 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
+import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.constants.WorkflowStatus;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
+import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.service.BillingService;
 import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
@@ -32,6 +39,9 @@ import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
 import org.upyog.chb.web.models.ApplicationDetail;
+import org.upyog.chb.web.models.AssetDTO;
+import org.upyog.chb.web.models.AssetResponse;
+import org.upyog.chb.web.models.AssetSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -40,10 +50,13 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.collection.Bill;
 import org.upyog.chb.web.models.collection.BillResponse;
 import org.upyog.chb.web.models.collection.BillSearchCriteria;
 import org.upyog.chb.web.models.collection.GenerateBillCriteria;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.PaymentDetail;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +91,20 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	@Autowired
 	private CHBEncryptionService encryptionService;
+
+	@Autowired
+	private RestTemplate restTemplate;
 	
+	@Autowired
+	private ObjectMapper mapper;
+
+	
+	@Autowired
+	private CommunityHallBookingConfiguration config;
+
+	
+	@Autowired
+	private ServiceRequestRepository serviceRequestRepository;
 	
 	
 	@Override
@@ -388,7 +414,45 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		return updateBooking(communityHallBookingRequest,null,BookingStatusEnum.BOOKED);
 	}
-	
 
+	@Override
+	public List<AssetDTO> fetchAssets(AssetSearchCriteria assetSearchCriteria, RequestInfo requestInfo) {
+		 Object assetResponseEntity=null;
+		// TODO Auto-generated method stub
+
+		RequestInfoWrapper requestBody = RequestInfoWrapper.builder()
+		        .requestInfo(requestInfo)
+		        .build();
+		
+		   	String uri = config.getAssetSearchEndpoint();
+	         uri = uri.concat("?tenantId=").concat(assetSearchCriteria.getTenantId());
+
+			  Object result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
+                .requestInfo(requestInfo).build());                          
+       
+				AssetResponse assetSearchResponse = mapper.convertValue(result, AssetResponse.class);
+
+		// Build the URL for the Asset Search API
+		 
+		// AssetResponse assetSearchResponse = null;
+			try {
+				// assetResponseEntity = restTemplate.postForObject(assetSearchUrl, requestBody,
+				// 		 Object.class);
+
+				// System.out.println(assetResponseEntity);
+				
+				// assetSearchResponse = mapper.convertValue(assetResponseEntity,AssetResponse.class);	
+				
+				System.out.println(assetSearchResponse);
+
+			} catch (Exception e) {
+				log.error("Error occured while user search.", e);
+				throw new CustomException("USER SEARCH ERROR",
+						"Error occured while user search. Message: " + e.getMessage());
+			}
+		  return new ArrayList<>();
+
+		//throw new UnsupportedOperationException("Unimplemented method 'fetchAssets'");
+	}
 
 }

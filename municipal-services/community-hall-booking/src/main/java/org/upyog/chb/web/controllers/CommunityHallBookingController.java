@@ -16,6 +16,8 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
+import org.upyog.chb.web.models.AssetDTO;
+import org.upyog.chb.web.models.AssetSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -100,6 +102,14 @@ public class CommunityHallBookingController {
 	public ResponseEntity<CommunityHallBookingResponse> v1SearchCommunityHallBooking(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
 		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());
+		AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+		
+		assetSearchCriteria.setApplicationNo(applications.get(0).getCommunityHallCode());
+		assetSearchCriteria.setTenantId(criteria.getTenantId());
+
+
+		List<AssetDTO> relatedAssets = bookingService.fetchAssets(assetSearchCriteria, requestInfoWrapper.getRequestInfo());
+
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications)

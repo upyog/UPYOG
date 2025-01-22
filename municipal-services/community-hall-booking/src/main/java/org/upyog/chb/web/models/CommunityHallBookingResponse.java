@@ -36,6 +36,9 @@ public class CommunityHallBookingResponse   {
 	@Valid
 	private List<CommunityHallBookingDetail> hallsBookingApplication; 
 	
+	private List<Asset> assets; 
+
+	
     @JsonProperty("applicationsRenewed")
     private int applicationsRenewed;
     

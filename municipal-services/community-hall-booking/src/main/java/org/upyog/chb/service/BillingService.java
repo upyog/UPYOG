@@ -82,7 +82,7 @@ public class BillingService {
         uri = uri.concat("&service=").concat(billCriteria.getService());
         uri = uri.concat("&consumerCode=").concat(StringUtils.join(billCriteria.getConsumerCode(), ","));
 
-        Optional<Object> result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
+        Optional<Object> result = serviceRequestRepository.fetchResultV1(new StringBuilder(uri),RequestInfoWrapper.builder()
                 .requestInfo(requestInfo).build());                          
        
         BillResponse billResponse = mapper.convertValue(result.get(), BillResponse.class);
