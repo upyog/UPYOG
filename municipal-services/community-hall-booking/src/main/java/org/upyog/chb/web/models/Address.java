@@ -5,7 +5,6 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -48,8 +47,8 @@ public class Address   {
         @NotBlank
         private String cityCode;
 
-        @JsonProperty("locality")
-        private Boundary locality = null;
+        @NotBlank
+        private String locality;
 
         @NotBlank
         private String localityCode;

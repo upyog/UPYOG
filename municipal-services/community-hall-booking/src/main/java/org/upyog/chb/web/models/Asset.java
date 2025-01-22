@@ -74,7 +74,7 @@ public class Asset {
         private String status;
 
         @JsonProperty("addressDetails")
-        private Address addressDetails;
+        private AssetAddress addressDetails;
 
         @JsonIgnore
         @JsonProperty("auditDetails")
