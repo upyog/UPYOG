@@ -7,11 +7,11 @@
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/fsm",
-    "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/core",
-    "micro-ui-internals/packages/modules/dss"
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/obps"
   ],
   "engines": {
     "node": ">=14"
@@ -28,7 +28,7 @@
     "@upyog/digit-ui-module-hrms": "1.8.0",
     "@upyog/digit-ui-module-mcollect": "2.0.0",
     "@upyog/digit-ui-module-commonpt":"2.0.0",
-    "@upyog/digit-ui-module-obps": "2.0.0",
+    "@upyog/digit-ui-module-obps": "2.0.1",
     "@upyog/digit-ui-module-noc": "1.8.0",
     "@upyog/digit-ui-module-pgr": "1.8.4",
     "@upyog/digit-ui-module-pt": "2.0.0",

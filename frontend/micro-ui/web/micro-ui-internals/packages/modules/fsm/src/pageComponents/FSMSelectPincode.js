@@ -16,6 +16,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   {
     property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
   }
+  console.log("dddd11111",formData)
   const inputs = [
     {
       label: "CORE_COMMON_PINCODE",
@@ -30,27 +31,38 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       },
     },
   ];
-  useEffect(()=>{
-    if(property?.propertyDetails?.address?.pincode){ 
-        setPincode(property?.propertyDetails?.address?.pincode);   
-    }
-  },[ property?.propertyDetails?.address?.pincode])
+  // useEffect(()=>{
+  //   if(property?.propertyDetails?.address?.pincode){ 
+  //       setPincode(property?.propertyDetails?.address?.pincode);   
+  //   }
+  // },[ property?.propertyDetails?.address?.pincode])
 
-  useEffect(() => {
-    if (formData?.address?.pincode) {
-      setPincode(formData.address.pincode);
-    }
-    else if(formData?.cpt?.details?.address?.pincode){
-      setPincode(formData?.cpt?.details?.address?.pincode)
-    }
-  }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
+  // useEffect(() => {
+  //   if (formData?.address?.pincode) {
+  //     setPincode(formData.address.pincode);
+  //   }
+  //   else if(formData?.cpt?.details?.address?.pincode){
+  //     setPincode(formData?.cpt?.details?.address?.pincode)
+  //   }
+  // }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
 
+  // useEffect(() => {
+  //   if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
+  //     setPincode(formData?.address?.locality?.pincode || "");
+  //     setPincodeServicability(null);
+  //   }
+  // }, [formData?.address?.locality]);
   useEffect(() => {
     if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
       setPincode(formData?.address?.locality?.pincode || "");
       setPincodeServicability(null);
     }
   }, [formData?.address?.locality]);
+  useEffect(() => {
+    if (userType === "employee" && pincode) {
+      onSelect(config.key, { ...formData.address, pincode: pincode?.[0] || pincode });
+    }
+  }, [pincode]);
 
   useEffect(() => {
     if (userType === "employee" && pincode) {

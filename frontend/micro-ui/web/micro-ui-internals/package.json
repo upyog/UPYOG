@@ -10,10 +10,10 @@
     "packages/modules/common",
     "packages/modules/pt",
     "packages/modules/core",
-    "packages/modules/obps",
     "packages/modules/commonPt",
     "packages/modules/dss",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
+    "packages/modules/obps"
   ],
   "license": "MIT",
   "private": true,
