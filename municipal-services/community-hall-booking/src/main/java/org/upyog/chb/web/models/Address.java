@@ -48,8 +48,8 @@ public class Address   {
         @NotBlank
         private String cityCode;
 
-        @NotBlank
-        private String locality;
+        @JsonProperty("locality")
+        private Boundary locality = null;
 
         @NotBlank
         private String localityCode;

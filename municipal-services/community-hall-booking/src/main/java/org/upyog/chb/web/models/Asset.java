@@ -1,9 +1,5 @@
 package org.upyog.chb.web.models;
 
-import java.util.List;
-import javax.validation.Valid;
-
-
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,7 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Asset  implements AssetDTO {
+public class Asset {
 
 		@JsonProperty("id")
         private String id ;

@@ -1,6 +1,5 @@
 package org.upyog.chb.web.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -31,19 +30,11 @@ import lombok.ToString;
 @Builder
 @ToString
 public class AssetResponse {
+	@JsonProperty("ResponseInfo")
+	private ResponseInfo responseInfo = null;
 
-    @JsonProperty("ResponseInfo")
-    private ResponseInfo responseInfo;
+	@JsonProperty("Assets")
+	@Valid
+	private List<Asset> assets = null;
 
-    @JsonProperty("Assets")
-    @Valid
-    private List<AssetDTO> assets;
-
-    public AssetResponse addAssetsItem(AssetDTO assetsItem) {
-        if (this.assets == null) {
-            this.assets = new ArrayList<>();
-        }
-        this.assets.add(assetsItem);
-        return this;
-    }
 }

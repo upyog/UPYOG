@@ -92,6 +92,9 @@ public class CommunityHallBookingDetail {
 
 	 @JsonProperty("applicationStatus")
 	 private String applicationStatus;
+	 
+	 @JsonProperty("relatedAsset")
+	 private Asset relatedAsset;
 		
 	public CommunityHallBookingDetail addUploadedDocumentDetailsItem(DocumentDetail uploadedDocumentDetailsItem) {
 		if (this.uploadedDocumentDetails == null) {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
-import org.upyog.chb.web.models.AssetDTO;
+import org.upyog.chb.web.models.Asset;
 import org.upyog.chb.web.models.AssetSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
@@ -102,14 +103,9 @@ public class CommunityHallBookingController {
 	public ResponseEntity<CommunityHallBookingResponse> v1SearchCommunityHallBooking(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
 		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());
-		AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
 		
-		assetSearchCriteria.setApplicationNo(applications.get(0).getCommunityHallCode());
-		assetSearchCriteria.setTenantId(criteria.getTenantId());
-
-
-		List<AssetDTO> relatedAssets = bookingService.fetchAssets(assetSearchCriteria, requestInfoWrapper.getRequestInfo());
-
+		bookingService.setRelatedAsset(applications, requestInfoWrapper);
+		
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications)

@@ -6,7 +6,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.upyog.chb.enums.BookingStatusEnum;
-import org.upyog.chb.web.models.AssetDTO;
+import org.upyog.chb.web.models.Asset;
 import org.upyog.chb.web.models.AssetSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
@@ -16,9 +16,9 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.RequestInfoWrapper;
 
 import digit.models.coremodels.PaymentDetail;
-import lombok.NonNull;
 
 public interface CommunityHallBookingService {
 
@@ -36,7 +36,9 @@ public interface CommunityHallBookingService {
 	
 	CommunityHallBookingDetail updateStatus( @Valid CommunityHallBookingUpdateStatusRequest communityHallBookingUpdateStatusRequest);
 
-	List<AssetDTO> fetchAssets(AssetSearchCriteria assetSearchCriteria, RequestInfo requestInfo);
+	List<Asset> fetchAssets(AssetSearchCriteria assetSearchCriteria, RequestInfo requestInfo);
+
+	void setRelatedAsset(List<CommunityHallBookingDetail> applications, @Valid RequestInfoWrapper requestInfoWrapper);
 
 
 	
