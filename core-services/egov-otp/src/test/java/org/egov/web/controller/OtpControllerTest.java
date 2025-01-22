@@ -54,7 +54,7 @@ public class OtpControllerTest {
         this.tokenService = new TokenService(
                 tokenRepository,
                 new BCryptPasswordEncoder(),
-                new OtpConfiguration(90,6, true)
+                new OtpConfiguration(90,6, false, null)
         );
     }
 

@@ -36,6 +36,10 @@ public class OtpController {
     public OtpResponse validateOtp(@RequestBody @Valid OtpValidateRequest request) {
         final Token token = tokenService.validate(request.toDomainValidateRequest());
         token.setNumber(request.toDomainValidateRequest().getOtp());
+        if(request.getReturnToken()) {
+        	String accessToken = tokenService.getUserAccesToken(request.toDomainValidateRequest().getIdentity());
+        	token.setAccessToken(accessToken);
+        }
         return new OtpResponse(token);
     }
 

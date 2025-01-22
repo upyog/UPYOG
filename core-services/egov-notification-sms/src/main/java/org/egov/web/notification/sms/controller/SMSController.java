@@ -22,7 +22,7 @@ public class SMSController {
 
 		smsService.sendOtp(otpSentRequest);
 
-		return ResponseEntity.ok().body("Message sent successfully");
+        return ResponseEntity.ok().body("{\"message\":\"Message sent successfully\"}");
 	}
 
 	@PostMapping(value = "/sms")
