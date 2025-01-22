@@ -1,6 +1,7 @@
 package org.egov.user.domain.service.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,12 +15,14 @@ import org.springframework.http.*;
 @Service
 public class EodbApi{
 	
+	 @Value("${eodb.host.getCAFData}")
+	    private String getCAFData;
+	 @Value("${eodb.tokenhost}")
+	    private String tokenhost;
     @Autowired
     private RestTemplate restTemplate;
     
-    private static final String CAF_DATA_PROD_URL = "https://pbindustries.gov.in/webportal/webportalnode/api/lgtrade/getCAFData";
-    private static final String UAT_CAFD_URL = "http://pbindustries.gov.in/testportalnode/api/lgtrade/getCAFData";
-    private static final String UAT_TOKEN_URL = "https://pbindustries.gov.in/testportalnode/api/iptoken/gettoken";
+ 
     
     public JsonNode getCAFData(String iPin) {
         // Get the token
@@ -43,7 +46,7 @@ public class EodbApi{
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<JsonNode> response = restTemplate.exchange(
-            		UAT_CAFD_URL,
+            		getCAFData,
                     HttpMethod.POST,
                     requestEntity,
                     JsonNode.class
@@ -64,8 +67,8 @@ public class EodbApi{
     
     public String getToken() {
         // Define the request payload
-        String requestPayload = "{\"IntegrationKey\": \"UAT_LG\"}";
-
+    	String requestPayload = "{\"IntegrationKey\": \"UAT_LG\"}";
+    	
         // Create headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -77,12 +80,11 @@ public class EodbApi{
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<JsonNode> response = restTemplate.exchange(
-            		UAT_TOKEN_URL,
-                    HttpMethod.POST,
-                    requestEntity,
-                    JsonNode.class
+                tokenhost,
+                HttpMethod.POST,
+                requestEntity,
+                JsonNode.class
             );
-
             // Check the response status and extract the token
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 JsonNode responseBody = response.getBody();
@@ -96,6 +98,7 @@ public class EodbApi{
             }
         } catch (Exception e) {
             throw new RuntimeException("Error while fetching token: " + e.getMessage(), e);
+            
         }
     }
 

@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.egov.user.config.UserServiceConstants.USER_CLIENT_ID;
+import static org.egov.user.config.UserServiceConstants.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
@@ -219,7 +219,10 @@ public class UserService {
     public User createUser(User user, RequestInfo requestInfo) {
         user.setUuid(UUID.randomUUID().toString());
         user.validateNewUser(createUserValidateName);
-        conditionallyValidateOtp(user);
+        if(!CLIENT_ID.equals(user.getClientId())) {
+        	conditionallyValidateOtp(user);
+        }
+    
         /* encrypt here */
         user = encryptionDecryptionUtil.encryptObject(user, "UserSelf", User.class);
         validateUserUniqueness(user);
@@ -305,6 +308,10 @@ public class UserService {
             map.add("tenantId", user.getTenantId());
             map.add("isInternal", "true");
             map.add("userType", UserType.CITIZEN.name());
+            if(CLIENT_ID.equals(user.getClientId())) {
+            	map.add("thirdPartyName", CLIENT_ID);
+            }
+            
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                     headers);
