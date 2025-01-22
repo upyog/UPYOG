@@ -156,7 +156,10 @@ public class ProcessDepreciationV2 {
                 log.info("Asset life expired. Calculating depreciation only until {}", lifeEndDate);
             }
 
-            while (startDate.isBefore(lifeEndDate) || (startDate.isEqual(lifeEndDate) && !startDate.isAfter(currentDate))) {
+            while (endDate.isBefore(currentDate) || endDate.isEqual(currentDate)) {
+                // Ensure that `endDate` stays within both `currentDate` and `lifeEndDate`
+                if (startDate.isAfter(lifeEndDate) || endDate.isAfter(lifeEndDate)) { break; }
+
                 DepreciationRateDTO  depreciationRateDTO = fetchDepreciationRateAndMethod(asset.getAssetCategory(), asset.getPurchaseDate());
 
                 if (depreciationRateDTO == null) {
