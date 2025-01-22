@@ -457,6 +457,16 @@ public class PTConstants {
     public static final String CREATIONREASON_REPLACE = "$creationReason";
 
     public static final String TRANSACTIONID_REPLACE = "{TRANSACTION_ID}";
+    
+    public static final String BUSINESS_SERVICE_PROPERTY_CITIZEN = "PROPERTY_CITIZEN";
+    
+    public static final String BUSINESS_SERVICE_PROPERTY_EMPLOYEE = "PROPERTY_EMPLOYEE";
+    
+    public static final String MODULE_PROPERTY= "PROPERTY";
+    
+    public static final String USER_ROLE_CITIZEN= "CITIZEN";
+    
+    public static final String USER_ROLE_EMPLOYEE= "EMPLOYEE";
 
 }
 

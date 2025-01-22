@@ -105,5 +105,19 @@ public class RequestsApiController{
     	 CountStatusResponse response = CountStatusResponse.builder().responseInfo(responseInfo).countStatusUpdate(request.getCountStatusUpdate()).build();
     	return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+	@PostMapping(value = "/request/_updateStatus")
+	public ResponseEntity<ServiceResponse> updateStatus(@Valid @RequestBody ServiceStatusUpdateRequest request)
+			throws IOException {
+
+		ServiceRequest enrichedReq = pgrService.updateStatus(request);
+		ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(enrichedReq.getService())
+				.workflow(enrichedReq.getWorkflow()).build();
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+				true);
+		ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo)
+				.serviceWrappers(Collections.singletonList(serviceWrapper)).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 }

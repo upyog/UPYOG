@@ -131,4 +131,13 @@ public class TransactionsApiControllerV2 {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	@PostMapping(value = "/transaction/v2/_openTransaction")
+	public ResponseEntity<TransactionResponseV2> openTransaction(
+			@Valid @RequestBody OpenTransactionRequest openTransactionRequest) {
+
+		List<Transaction> transactions = openTransactionService.initiateOpenTransaction(openTransactionRequest);
+		TransactionResponseV2 response = openTransactionService.prepareResponse(transactions);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 }

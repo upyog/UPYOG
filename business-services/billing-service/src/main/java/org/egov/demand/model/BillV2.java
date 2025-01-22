@@ -63,7 +63,10 @@ public class BillV2 {
 	
 	@JsonProperty("billDate")
 	private Long billDate;
-
+	
+	@JsonProperty("maxExpiryDate")
+	private Long maxExpiryDate;
+	
 	@JsonProperty("consumerCode")
 	@Size(max = 256)
 	private String consumerCode;

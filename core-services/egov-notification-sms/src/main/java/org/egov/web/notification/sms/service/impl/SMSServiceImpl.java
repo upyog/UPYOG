@@ -40,9 +40,11 @@ public class SMSServiceImpl implements SMSService {
 	private SMSTemplateRepository smsTemplateRepository;
 
 	private static final String OTP_PLACEHOLDER = "{otp}";
+	private static final String VALID_FOR_PLACEHOLDER = "{valid_for}";
 
-	private static final String SMS_BODY_OTP = OTP_PLACEHOLDER
-			+ " is One Time Password for RTI Portal. State Information Commission Himachal Pradesh";
+	private static final String SMS_BODY_OTP = "Your OTP for accessing services on the CitizenSeva portal is "
+			+ OTP_PLACEHOLDER + ". This code is valid for " + VALID_FOR_PLACEHOLDER
+			+ " Min. Please do not share this code with anyone. CitizenSeva H.P.";
 
 	@Override
 	public void sendOtp(OTPSentRequest otpSentRequest) {
@@ -67,11 +69,14 @@ public class SMSServiceImpl implements SMSService {
 			throw new CustomException("SMS TEMPLATE NOT FOUND", "SMS template not found.");
 		}
 
+		long otpValidFor = 15; // in minute
+
 		String smsBody = SMS_BODY_OTP;
 		smsBody = smsBody.replace(OTP_PLACEHOLDER, otp);
+		smsBody = smsBody.replace(VALID_FOR_PLACEHOLDER, String.valueOf(otpValidFor));
 
 		Sms sms = Sms.builder().mobileNumber(otpSentRequest.getNumber()).message(smsBody)
-				.templateId(smsTemplate.getTemplateId()).build();
+				.templateId(smsTemplate.getTemplateId()).expiryTime(otpValidFor * 60 * 1000).build();
 
 		baseSmsService.sendSMS(sms);
 	}

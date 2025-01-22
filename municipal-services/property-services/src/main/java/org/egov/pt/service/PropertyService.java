@@ -41,6 +41,7 @@ import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -745,6 +746,25 @@ public class PropertyService {
 			throw new RuntimeException(e.getMessage());
 		}
 		return roleCodes;
+	}
+
+	public Property updateStatus(@Valid PropertyStatusUpdateRequest request) {
+
+		List<Property> properties = searchProperty(
+				PropertyCriteria.builder().propertyIds(Collections.singleton(request.getPropertyId())).build(),
+				request.getRequestInfo());
+
+		if (null == properties || CollectionUtils.isEmpty(properties)) {
+			throw new CustomException("PROPERTY NOT FOUND", "No Property found with given property id.");
+		}
+
+		Property property = properties.get(0);
+		property.setWorkflow(request.getWorkflow());
+
+		PropertyRequest propertyRequest = PropertyRequest.builder().property(property)
+				.requestInfo(request.getRequestInfo()).build();
+
+		return updateProperty(propertyRequest);
 	}
 
 }

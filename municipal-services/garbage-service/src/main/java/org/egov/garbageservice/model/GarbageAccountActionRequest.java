@@ -29,8 +29,6 @@ public class GarbageAccountActionRequest {
 
 	private List<String> propertyIds;
 	
-	private List<Long> garbageIds;
-
 	private List<String> garbageUuid;
 
 	@Builder.Default

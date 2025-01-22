@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class GarbageService {
+public class BillService {
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -22,11 +22,11 @@ public class GarbageService {
 	@Autowired
 	private SchedulerConfiguration applicationConfig;
 
-	public String generateGarbageBills(RequestInfo requestInfo) {
+	public String expireEligibleBill(RequestInfo requestInfo) {
 
 		try {
-			StringBuilder url = new StringBuilder(applicationConfig.getGarbageServiceHostUrl());
-			url.append(applicationConfig.getGarbageBillGeneratorEndpoint());
+			StringBuilder url = new StringBuilder(applicationConfig.getBillServiceHostUrl());
+			url.append(applicationConfig.getBillExpityEndpoint());
 			// Make the POST request
 
 			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
@@ -35,9 +35,9 @@ public class GarbageService {
 					String.class);
 			return responseEntity.getBody();
 		} catch (Exception e) {
-			log.error("Error occured while generating garbage bill.", e);
-			throw new SchedulerServiceException(ErrorConstants.ERR_GARBAGE_SERVICE_ERROR,
-					"Error occured while generating garbage bill. Message: " + e.getMessage());
+			log.error("Error occured while calling bill service.", e);
+			throw new SchedulerServiceException(ErrorConstants.ERR_BILL_SERVICE_ERROR,
+					"Error occured while calling bill service. Message: " + e.getMessage());
 		}
 
 	}

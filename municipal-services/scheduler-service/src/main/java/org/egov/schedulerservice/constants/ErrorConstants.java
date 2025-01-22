@@ -17,4 +17,7 @@ public class ErrorConstants {
 	public static final String ERR_GARBAGE_SERVICE_ERROR = "ERR_GARBAGE_SERVICE_ERROR";
 	public static final String ERR_GARBAGE_SERVICE_ERROR_MSG = "Error occured in garbage service.";
 
+	public static final String ERR_BILL_SERVICE_ERROR = "ERR_BILL_SERVICE_ERROR";
+	public static final String ERR_BILL_SERVICE_ERROR_MSG = "Error occured in bill service.";
+
 }
