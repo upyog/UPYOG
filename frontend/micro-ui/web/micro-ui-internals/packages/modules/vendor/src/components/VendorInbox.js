@@ -224,10 +224,10 @@ const VendorInbox = (props) => {
 
   const onActionSelect = (action, type, data) => {
     if (type === "VEHICLE") {
-      history.push("/digit-ui/employee/fsm/registry/vehicle-details/" + action);
+      history.push("/digit-ui/employee/vendor/registry/vehicle-details/" + action);
     } else {
       let driver = data.find((ele) => ele.name === action);
-      history.push("/digit-ui/employee/fsm/registry/driver-details/" + driver?.id);
+      history.push("/digit-ui/employee/vendor/registry/driver-details/" + driver?.id);
     }
   };
 
@@ -235,7 +235,7 @@ const VendorInbox = (props) => {
   const onSelectAdd = () => {
     switch (props.selectedTab) {
       case "VENDOR":
-        return history.push("/digit-ui/employee/fsm/registry/new-vendor");
+        return history.push("/digit-ui/employee/vendor/registry/new-vendor");
       case "VEHICLE":
         return history.push("/digit-ui/employee/fsm/registry/new-vehicle");
       case "DRIVER":
@@ -259,15 +259,15 @@ const VendorInbox = (props) => {
 
               return (
                 <div>
-                  {/* <span className="link">
-                    <Link to={`/digit-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
+                  <span className="link">
+                    <Link to={"/digit-ui/employee/vendor/registry/vendor-details/" + row.original["id"]}>
                       <div>
-                        {row}
+                        {row.original.name}
                         <br />
                       </div>
                     </Link>
-                  </span> */}
-                  {row.original.name}
+                  </span>
+                  
                 </div>
               );
 
@@ -489,6 +489,10 @@ const VendorInbox = (props) => {
               );
             },
           },
+
+          // {
+          //   Header: t("ES_VENDOR_ADDITIONAL_DETAILS")
+          // }
         ];
 
       //if toggle on vehicle then it will show the below columns

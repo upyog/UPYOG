@@ -18,6 +18,9 @@ import VendorSelectAddress from "./pageComponents/VendorSelectAddress";
 import SearchApp from "./pages/employee/SearchApp";
 import SearchVendor from "./pages/employee/SearchVendor/Index";
 import SelectServiceType from "./pageComponents/SelectServiceType";
+import AddDriver from "./pages/employee/RegisterDriver/AddDriver";
+import EditVendorDetails from "./pages/employee/RegisterVendor/EditVendorDetails";
+import AddVehicle from "./pages/employee/RegisterVehicle/AddVehicle";
 
 
 
@@ -38,6 +41,9 @@ const componentsToRegister = {
   SearchApp,
   SearchVendor,
   SelectServiceType,
+  AddDriver,
+  EditVendorDetails,
+  AddVehicle,
 };
 
 
