@@ -14,16 +14,22 @@ import java.util.Map;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.upyog.request.service.web.models.Address;
+import org.upyog.request.service.web.models.ApplicantDetail;
+import org.upyog.request.service.web.models.AuditDetails;
+import org.upyog.request.service.web.models.WaterTankerBookingDetail;
 
 /**
  * This is generic row mapper that will map columns of table to model classes by extracting from ResultSet
- *  Column name   Model Attribute name      MappingStatus
- *
+ * Column name   Model Attribute name      MappingStatus
+ * <p>
  * createdBy      createdBy                     Yes
  * applicant_name  applicantName                Yes
  * mobileNUmber    mobileNo                     No
  *
  * @param <T>
+ *
+ *     TODO: Need to refactor it and Handle Applicant detail and Address Details
  */
 @Slf4j
 public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
@@ -59,6 +65,7 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
 
                 // Map fields to column values
                 for (Field field : mappedClass.getDeclaredFields()) {
+
                     String fieldName = field.getName().toLowerCase(); // Match field name to column name
                     if (columnValueMap.containsKey(fieldName)) {
                         field.setAccessible(true);
@@ -69,12 +76,49 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
 //                            value = ((java.sql.Date) value).toLocalDate();
 //                        }
 
-                        value = convertValueToFieldType(field,value);
+                        value = convertValueToFieldType(field, value);
 
                         field.set(instance, value);
                     }
+
+
                 }
 
+                // Special handling for WaterTankerBookingDetail
+                if (instance instanceof WaterTankerBookingDetail) {
+                    WaterTankerBookingDetail bookingDetail = (WaterTankerBookingDetail) instance;
+
+                    // Applicant Details
+                    ApplicantDetail applicantDetail = new ApplicantDetail();
+                    applicantDetail.setName(rs.getString("name"));
+                    applicantDetail.setMobileNumber(rs.getString("mobile_number"));
+                    applicantDetail.setGender(rs.getString("gender"));
+                    applicantDetail.setEmailId(rs.getString("email_id"));
+                    applicantDetail.setAlternateNumber(rs.getString("alternate_number"));
+                    bookingDetail.setApplicantDetail(applicantDetail);
+
+                    // Address Details
+                    Address address = new Address();
+                    address.setHouseNo(rs.getString("house_no"));
+                    address.setAddressLine1(rs.getString("address_line_1"));
+                    address.setAddressLine2(rs.getString("address_line_2"));
+                    address.setStreetName(rs.getString("street_name"));
+                    address.setLandmark(rs.getString("landmark"));
+                    address.setCity(rs.getString("city"));
+                    address.setCityCode(rs.getString("city_code"));
+                    address.setLocality(rs.getString("locality"));
+                    address.setLocalityCode(rs.getString("locality_code"));
+                    address.setPincode(rs.getString("pincode"));
+                    bookingDetail.setAddress(address);
+
+                    // Audit Details
+                    AuditDetails auditDetails = new AuditDetails();
+                    auditDetails.setCreatedBy(rs.getString("createdby"));
+                    auditDetails.setCreatedTime(rs.getLong("createdtime"));
+                    auditDetails.setLastModifiedBy(rs.getString("lastModifiedby"));
+                    auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+                    bookingDetail.setAuditDetails(auditDetails);
+                }
                 results.add(instance);
             }
 
