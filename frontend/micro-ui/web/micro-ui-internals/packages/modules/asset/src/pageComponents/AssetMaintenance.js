@@ -9,7 +9,9 @@ import {
     Dropdown,
     TextArea,
     UploadFile,
-    RadioButtons
+    RadioButtons,
+    Card,
+    EditIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -92,10 +94,11 @@ const OwnerForm = (_props) => {
     const [postConditionFile, setPostConditionFile] = useState(null);
 
     const [uploadError, setUploadError] = useState("");
-    const [warrantyExp, setWarrantyExp] = useState("NA");
+    const [warrantyExp, setWarrantyExp] = useState({ i18nKey: "NA", code: "NA" });
+    const [isLifeOfAssetAffected, setIsLifeOfAssetAffected] = useState({ i18nKey: "FALSE", code: "FALSE" });
 
     const [part, setPart] = React.useState({});
-    const { control, formState: localFormState, watch, clearErrors: clearLocalErrors, setValue, trigger, register } = useForm();
+    const { control, formState: localFormState, watch, clearErrors: clearLocalErrors, setValue, trigger, register, getValues } = useForm();
     const formValue = watch();
     const { errors } = localFormState;
 
@@ -118,35 +121,35 @@ const OwnerForm = (_props) => {
             maintenanceOpt.push({ i18nKey: `AST_${maintainenceType.code}`, code: `${maintainenceType.code}`, value: `${maintainenceType.name}` });
         });
 
-        const { data:paymentTypeOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetPaymentType" }], {
-            select: (data) => {
-              const formattedData = data?.["ASSET"]?.["AssetPaymentType"];
-              const activeData = formattedData?.filter((item) => item.active === true);
-              return activeData;
-            },
-          });
-        
-          let paymentTypeOpt = [];
-        
-          paymentTypeOptMDMS &&
-          paymentTypeOptMDMS.map((row) => {
-            paymentTypeOpt.push({ i18nKey: `AST_${row.code}`, code: `${row.code}`, value: `${row.name}` });
-            });
+    const { data: paymentTypeOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetPaymentType" }], {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["AssetPaymentType"];
+            const activeData = formattedData?.filter((item) => item.active === true);
+            return activeData;
+        },
+    });
 
-        const { data:maintenanceCycleOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceType" }], {
-            select: (data) => {
-              const formattedData = data?.["ASSET"]?.["AssetMaintenanceType"];
-              const activeData = formattedData?.filter((item) => item.active === true);
-              return activeData;
-            },
-          });
-        
-          let maintenanceCycleOpt = [];
-        
-          paymentTypeOptMDMS &&
-          paymentTypeOptMDMS.map((rowType) => {
+    let paymentTypeOpt = [];
+
+    paymentTypeOptMDMS &&
+        paymentTypeOptMDMS.map((row) => {
+            paymentTypeOpt.push({ i18nKey: `AST_${row.code}`, code: `${row.code}`, value: `${row.name}` });
+        });
+
+    const { data: maintenanceCycleOptMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetMaintenanceCycle" }], {
+        select: (data) => {
+            const formattedData = data?.["ASSET"]?.["AssetMaintenanceCycle"];
+            const activeData = formattedData?.filter((item) => item.active === true);
+            return activeData;
+        },
+    });
+
+    let maintenanceCycleOpt = [];
+
+    maintenanceCycleOptMDMS &&
+        maintenanceCycleOptMDMS.map((rowType) => {
             maintenanceCycleOpt.push({ i18nKey: `AST_${rowType.code}`, code: `${rowType.code}`, value: `${rowType.name}` });
-            });
+        });
 
     useEffect(() => {
         if (applicationDetails) {
@@ -172,53 +175,46 @@ const OwnerForm = (_props) => {
 
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
-    // const maintenanceOpt = [
-    //     {
-    //         code: "PREVENTIVE",
-    //         i18nKey: "PREVENTIVE",
-    //     },
-    //     {
-    //         code: "CORRECTIVE",
-    //         i18nKey: "CORRECTIVE",
-    //     }
-    // ];
-    // const paymentTypeOpt = [
-    //     {
-    //         code: "WARRANTY",
-    //         i18nKey: "PREVENTIVE",
-    //     },
-    //     {
-    //         code: "AMC",
-    //         i18nKey: "CORRECTIVE",
-    //     },
-    //     {
-    //         code: "TO BE PAID",
-    //         i18nKey: "TO_BE_PAID",
-    //     }
-    // ];
-    // const maintenanceCycleOpt = [
-    //     {
-    //         code: "MONTHLY",
-    //         i18nKey: "MONTHLY",
-    //     },
-    //     {
-    //         code: "QUARTERLY",
-    //         i18nKey: "QUARTERLY",
-    //     },
-    //     {
-    //         code: "HALF YEARLY",
-    //         i18nKey: "HALF_YEARLY",
-    //     },
-    //     {
-    //         code: "YEARLY",
-    //         i18nKey: "YEARLY",
-    //     }
-    // ];
+
     const handleSelect = (value) => {
+        console.log('value :-', value)
+        console.log('value.code :-', value.code);
+        console.log('Setting isWarrantyExpired to:', value.code === 'IN_WARRANTY');
+        console.log('Setting isAMCExpired to:', value.code === 'IN_AMC');
+        switch (value.code) {
+
+            case 'IN_WARRANTY':
+                register("isWarrantyExpired");
+                setValue("isWarrantyExpired", true);
+                register("isAMCExpired");
+                setValue("isAMCExpired", false);
+                break;
+            case 'IN_AMC':
+                register("isWarrantyExpired");
+                setValue("isWarrantyExpired", false);
+                register("isAMCExpired");
+                setValue("isAMCExpired", true);
+                break;
+            case 'NA':
+                register("isWarrantyExpired");
+                setValue("isWarrantyExpired", false);
+                register("isAMCExpired");
+                setValue("isAMCExpired", false);
+                break;
+            default:
+                break;
+        }
+
         register("warrantyStatus");
         setValue("warrantyStatus", value);
         setWarrantyExp(value);
+        return
     };
+
+    // useEffect(() => {
+    //     console.log("isWarrantyExpired:", getValues("isWarrantyExpired"));  this is use for testing purpose
+    //     console.log("isAMCExpired:", getValues("isAMCExpired"));
+    //   }, [warrantyExp]);
 
     // Common function to handle file upload
     const handleFileUpload = (e, setFileStoreId) => {
@@ -278,6 +274,22 @@ const OwnerForm = (_props) => {
         return currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     };
 
+    const handleSelectLifeAffected = (value) => {
+        if (value) {
+            register("isLifeOfAssetAffected");
+            setValue("isLifeOfAssetAffected", value);
+            setIsLifeOfAssetAffected(value)
+        }
+    }
+
+    const maintenanceIncreasedHandle = [
+        { i18nKey: "1 Year", code: "1" },
+        { i18nKey: "2 Year", code: "2" },
+        { i18nKey: "3 Year", code: "3" },
+        { i18nKey: "4 Year", code: "4" },
+        { i18nKey: "5 Year", code: "5" }
+    ];
+
     return (
         <React.Fragment>
             <div style={{ marginBottom: "16px" }}>
@@ -288,38 +300,126 @@ const OwnerForm = (_props) => {
                         </div>
                     ) : null}
 
-                    <StatusTable>
+                    {/* <StatusTable>
                         <Row
                             label={t("AST_ID")}
                             text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.id))}`}
                         />
-                    </StatusTable>
-                    <StatusTable>
-                        <Row
-                            label={t("AST_NAME")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
-                        />
-                    </StatusTable>
-                    <StatusTable>
-                        <Row
-                            label={t("AST_APPLICATION_NO")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
-                        />
-                    </StatusTable>
-                    <StatusTable>
-                        <Row
-                            label={t("AST_PARENT_CATEGORY")}
-                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.category))}`}
-                        />
-                    </StatusTable>
-                    <StatusTable>
+                    </StatusTable> */}
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_ID")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"applicationNo"}
+                                defaultValue={maintenanceDetails?.applicationNo}
+
+                                render={(props) => (
+                                    <TextInput
+                                        value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.id))}`}
+                                        readOnly // Makes the input field readonly
+                                        style={{
+                                            border: "none",  // Removes the border
+                                            backgroundColor: "transparent",  // Optional: makes the background transparent
+                                        }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_APPLICATION_NO")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"applicationNo"}
+                                defaultValue={maintenanceDetails?.applicationNo}
+
+                                render={(props) => (
+                                    <TextInput
+                                        value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
+                                        readOnly // Makes the input field readonly
+                                        style={{
+                                            border: "none",  // Removes the border
+                                            backgroundColor: "transparent",  // Optional: makes the background transparent
+                                        }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                   
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_NAME")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"applicationNo"}
+                                defaultValue={maintenanceDetails?.applicationNo}
+
+                                render={(props) => (
+                                    <TextInput
+                                        value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
+                                        readOnly // Makes the input field readonly
+                                        style={{
+                                            border: "none",  // Removes the border
+                                            backgroundColor: "transparent",  // Optional: makes the background transparent
+                                        }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_PARENT_CATEGORY")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"applicationNo"}
+                                defaultValue={maintenanceDetails?.applicationNo}
+
+                                render={(props) => (
+                                    <TextInput
+                                        value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetParentCategory))}`}
+                                        readOnly // Makes the input field readonly
+                                        style={{
+                                            border: "none",  // Removes the border
+                                            backgroundColor: "transparent",  // Optional: makes the background transparent
+                                        }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                    {/* <StatusTable>
                         <Row
                             label={t("AST_LIFE")}
                             text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`}
                         />
-                    </StatusTable>
+                    </StatusTable> */}
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_WARRANTY_EXPIRED")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_LIFE")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"applicationNo"}
+                                defaultValue={maintenanceDetails?.applicationNo}
+
+                                render={(props) => (
+                                    <TextInput
+                                        value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`}
+                                        readOnly // Makes the input field readonly
+                                        style={{
+                                            border: "none",  // Removes the border
+                                            backgroundColor: "transparent",  // Optional: makes the background transparent
+                                        }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_OPTIONS")}</CardLabel>
                         <div className="field">
                             <RadioButtons
                                 t={t}
@@ -335,10 +435,10 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     {/* if select option in warranty then show */}
-                    {warrantyExp.i18nKey === "IN_WARRANTY" &&
+                    {warrantyExp.code === "IN_WARRANTY" &&
                         (
                             <div>
-                                <LabelFieldPair>
+                                {/* <LabelFieldPair>
                                     <CardLabel className="card-label-smaller">{t("AST_WARRANTY_DESCRIPTION")}</CardLabel>
                                     <div className="field">
                                         <Controller
@@ -366,13 +466,44 @@ const OwnerForm = (_props) => {
                                         />
                                     </div>
                                 </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.assetWarrantyDescription ? errors?.assetWarrantyDescription?.message : ""}</CardLabelError>
+                                <CardLabelError style={errorStyle}>{localFormState.touched.assetWarrantyDescription ? errors?.assetWarrantyDescription?.message : ""}</CardLabelError> */}
+
+                                <LabelFieldPair>
+                                    <CardLabel className="card-label-smaller">{t("AST_WARRANTY_DESCRIPTION")}</CardLabel>
+                                    <div className="field">
+                                        <Controller
+                                            control={control}
+                                            name={"assetWarrantyDescription"}
+                                            defaultValue={maintenanceDetails?.assetWarrantyDescription}
+                                            rules={{
+                                                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                                validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                                            }}
+                                            render={(props) => (
+                                                <TextArea
+                                                    type={"textarea"}
+                                                    value={props.value}
+                                                    autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "assetWarrantyDescription"}
+                                                    onChange={(e) => {
+                                                        props.onChange(e.target.value);
+                                                        setFocusIndex({ index: maintenanceDetails.key, type: "assetWarrantyDescription" });
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        setFocusIndex({ index: -1 });
+                                                        props.onBlur(e);
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </LabelFieldPair>
+                                <CardLabelError style={errorStyle}>{localFormState.touched.assetWarrantyDescription ? errors?.assignedUser?.assetWarrantyDescription : ""}</CardLabelError>
                             </div>
                         )}
-                    {warrantyExp.i18nKey === "IN_AMC" &&
+                    {warrantyExp.code === "IN_AMC" &&
                         (
                             <div>
-                                <LabelFieldPair>
+                                {/* <LabelFieldPair>
                                     <CardLabel className="card-label-smaller">{t("AST_AMC_DETAILS")}</CardLabel>
                                     <div className="field">
                                         <Controller
@@ -404,13 +535,44 @@ const OwnerForm = (_props) => {
                                         />
                                     </div>
                                 </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError>
+                                <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.amcDetails?.message : ""}</CardLabelError> */}
+
+                                <LabelFieldPair>
+                                    <CardLabel className="card-label-smaller">{t("AST_AMC_DETAILS")}</CardLabel>
+                                    <div className="field">
+                                        <Controller
+                                            control={control}
+                                            name={"amcDetails"}
+                                            defaultValue={maintenanceDetails?.amcDetails}
+                                            rules={{
+                                                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                                validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                                            }}
+                                            render={(props) => (
+                                                <TextArea
+                                                    type={"textarea"}
+                                                    value={props.value}
+                                                    autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "amcDetails"}
+                                                    onChange={(e) => {
+                                                        props.onChange(e.target.value);
+                                                        setFocusIndex({ index: maintenanceDetails.key, type: "amcDetails" });
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        setFocusIndex({ index: -1 });
+                                                        props.onBlur(e);
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </LabelFieldPair>
+                                <CardLabelError style={errorStyle}>{localFormState.touched.amcDetails ? errors?.assignedUser?.amcDetails : ""}</CardLabelError>
 
                             </div>
                         )}
+
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_TYPE")}</CardLabel>
-
                         <Controller
                             control={control}
                             name={"maintenanceType"}
@@ -486,6 +648,8 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
 
                     <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
+<EditIcon/>
+
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_NEXT_MAINTENANCE_DATE")}</CardLabel>
                         <div className="field">
@@ -635,8 +799,6 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.vendor ? errors?.vendor?.message : ""}</CardLabelError>
 
-
-
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PARTS_TO_BE_ADDED")}</CardLabel>
                         <div className="field">
@@ -694,7 +856,7 @@ const OwnerForm = (_props) => {
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DOC")}</CardLabel>
-                        <div className="field">
+                        <div className="field" style={{ marginTop: "15px" }}>
                             <Controller
                                 control={control}
                                 name={"preCondition"}
@@ -715,6 +877,37 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DESCRIPTION")}</CardLabel>
+                        <div className="field">
+                            <Controller
+                                control={control}
+                                name={"preConditionRemarks"}
+                                defaultValue={maintenanceDetails?.postConditionRemarks}
+                                rules={{
+                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                    validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                                }}
+                                render={(props) => (
+                                    <TextArea
+                                        type={"textarea"}
+                                        value={props.value}
+                                        autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "preConditionRemarks"}
+                                        onChange={(e) => {
+                                            props.onChange(e.target.value);
+                                            setFocusIndex({ index: maintenanceDetails.key, type: "preConditionRemarks" });
+                                        }}
+                                        onBlur={(e) => {
+                                            setFocusIndex({ index: -1 });
+                                            props.onBlur(e);
+                                        }}
+                                    />
+                                )}
+                            />
+                        </div>
+                    </LabelFieldPair>
+                    <CardLabelError style={errorStyle}>{localFormState.touched.preConditionRemarks ? errors?.assignedUser?.preConditionRemarks : ""}</CardLabelError>
+                    <div className="card-container">
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DOC")}</CardLabel>
                         <div className="field">
@@ -768,6 +961,49 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
+                    <LabelFieldPair>
+                        <CardLabel className="card-label-smaller">{t("AST_IS_LIFE_OF__ASSET_AFFECTED")}</CardLabel>
+                        <div className="field">
+                            <RadioButtons
+                                t={t}
+                                options={[{ i18nKey: true, code: "TRUE" }, { i18nKey: false, code: "FALSE" }]}
+                                optionsKey="code"
+                                name="isLifeOfAssetAffected"
+                                value={isLifeOfAssetAffected}
+                                selectedOption={isLifeOfAssetAffected}
+                                innerStyles={{ display: "inline-block", marginLeft: "20px", paddingBottom: "2px", marginBottom: "2px" }}
+                                onSelect={handleSelectLifeAffected}
+                                isDependent={true}
+                            />
+                        </div>
+                    </LabelFieldPair>
+
+                    {isLifeOfAssetAffected.code === "TRUE" &&
+                        (
+                            <div>
+                                <LabelFieldPair>
+                                    <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_INCREASED_NO_OF_YEAR")}</CardLabel>
+                                    <Controller
+                                        control={control}
+                                        name={"assetMaintenanceIncreasedYear"}
+                                        defaultValue={maintenanceDetails?.assetMaintenanceIncreasedYear}
+                                        render={(props) => (
+                                            <Dropdown
+                                                className="form-field"
+                                                selected={props.value}
+                                                select={props.onChange}
+                                                onBlur={props.onBlur}
+                                                option={maintenanceIncreasedHandle}
+                                                optionKey="i18nKey"
+                                                t={t}
+                                            />
+                                        )}
+                                    />
+                                </LabelFieldPair>
+                                <CardLabelError style={errorStyle}>{localFormState.touched.assetMaintenanceIncreasedYear ? errors?.assetMaintenanceIncreasedYear?.message : ""}</CardLabelError>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             {showToast?.label && (
