@@ -251,7 +251,10 @@ const renderLegend = (value) => {
     </li>
   )
 }
-  const chartData = useMemo(() => constructChartData(response?.responseData?.data));
+const chartData = useMemo(() => {
+  const data=constructChartData(response?.responseData?.data);
+  return data ? data.reverse() : [];
+},[response]);
   console.log("chartDatachartData",chartData,response)
   const tooltipFormatter = (value, name) => {
     return name == "TotalCollection"?`${value} Cr`:`${value}`
