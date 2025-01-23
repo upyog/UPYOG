@@ -1,40 +1,39 @@
 {
-    "requestInfo": {
-    "apiId": "Rainmaker",
-    "ver": ".01",
-    "ts": null,
-    "action": "_create",
-    "did": "1",
-    "key": "",
-    "msgId": "20170310130900|en_IN",
-    "authToken": "44dbcb2b-eb5e-493e-962b-695f49946f5b",
-    "userInfo": {
-      "id": 23287,
-      "uuid": "4632c941-cb1e-4b83-b2d4-200022c1a137",
-      "userName": "PalashS",
-      "name": "Palash S",
-      "mobileNumber": "9949032246",
-      "emailId": null,
-      "type": "EMPLOYEE",
-      "roles": [
-        {
-          "name": "superuser",
-          "code": "SUPERUSER",
-          "tenantId": "pg"
-        },
-        {
-          "name": "Citizen",
-          "code": "Citizen",
-          "tenantId": "pg"
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "action": "",
+        "did": 1,
+        "key": "",
+        "msgId": "20230910130900|en_IN",
+        "requesterId": "",
+        "ts": 1513579888772,
+        "ver": ".01",
+        "authToken": "{{devAuth}}",
+        "userInfo": {
+            "id": 2130,
+            "uuid": "f9517ac8-a630-4b4a-adbf-717a7d99fa5c",
+            "userName": "9999009999",
+            "name": "KS",
+            "mobileNumber": "9999009999",
+            "emailId": "test@test.com",
+            "locale": null,
+            "type": "CITIZEN",
+            "roles": [
+                {
+                    "name": "Citizen",
+                    "code": "CITIZEN",
+                    "tenantId": "pg"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg",
+            "permanentCity": null
         }
-      ],
-      "tenantId": "pg"
-    }
-  },
+    },
     "BusinessServices": [
         {
             "tenantId": "pg",
-            "businessService": "chb",
+            "businessService": "booking-refund",
             "business": "chb-services",
             "businessServiceSla": null,
             "states": [
@@ -42,15 +41,17 @@
                     "sla": null,
                     "state": null,
                     "applicationStatus": null,
-                    "docUploadRequired": true,
+                    "docUploadRequired": false,
                     "isStartState": true,
                     "isTerminateState": false,
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "APPLY",
-                            "nextState": "APPLIED",
+                            "action": "MOVETOEMPLOYEE",
+                            "nextState": "REFUNDPENDING",
                             "roles": [
+                                "CHBEMPLOYEE",
+                                "SYSTEM",
                                 "CITIZEN"
                             ]
                         }
@@ -58,61 +59,75 @@
                 },
                 {
                     "sla": null,
-                    "state": "APPLIED",
-                    "applicationStatus": "APPLIED",
+                    "state": "REFUNDPENDING",
+                    "applicationStatus": "REFUNDPENDING",
                     "docUploadRequired": false,
                     "isStartState": false,
-                    "isTerminateState": true,
-                    "isStateUpdatable": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "PAY",
-                            "nextState": "PAYMENT_DONE",
+                            "action": "FORWARDFORINSPECTION",
+                            "nextState": "INSPECTIONPENDING",
                             "roles": [
-                                "CITIZEN"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "sla": null,
-                    "state": "PAYMENT_DONE",
-                    "applicationStatus": "PAYMENT_DONE",
-                    "docUploadRequired": false,
-                    "isStartState": false,
-                    "isTerminateState": true,
-                    "isStateUpdatable": false,
-                    "actions": [
-                        {
-                            "action": "APPROVE",
-                            "nextState": "APPROVED",
-                            "roles": [
-                                "CHB_APPROVER"
+                                "CHBEMPLOYEE"
                             ]
                         },
                         {
                             "action": "REJECT",
                             "nextState": "REJECTED",
                             "roles": [
-                                "CHB_APPROVER"
+                                "CHBEMPLOYEE"
                             ]
                         }
                     ]
                 },
                 {
                     "sla": null,
-                    "state": "APPROVED",
-                    "applicationStatus": "APPROVED",
+                    "state": "INSPECTIONPENDING",
+                    "applicationStatus": "INSPECTIONPENDING",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "VERIFY",
+                            "nextState": "REFUNDAPPROVALPENDING",
+                            "roles": [
+                                "FIELDINSPECTOR"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "FIELDINSPECTOR"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "REFUNDAPPROVALPENDING",
+                    "applicationStatus": "REFUNDAPPROVALPENDING",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
                     "isStateUpdatable": false,
                     "actions": [
                         {
-                            "action": "REFUND",
-                            "nextState": "BOOKING_COMPLETED",
+                            "action": "APPROVE",
+                            "nextState": "REFUNDAPPROVED",
                             "roles": [
-                                "CHB_APPROVER"
+                                "CHBEMPLOYEE"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "REJECTED",
+                            "roles": [
+                                "CHBEMPLOYEE"
                             ]
                         }
                     ]
@@ -129,8 +144,8 @@
                 },
                 {
                     "sla": null,
-                    "state": "BOOKING_COMPLETED",
-                    "applicationStatus": "BOOKING_COMPLETED",
+                    "state": "REFUNDAPPROVED",
+                    "applicationStatus": "REFUNDAPPROVED",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": true,

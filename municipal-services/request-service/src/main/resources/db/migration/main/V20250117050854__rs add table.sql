@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details_auditdetails (
     water_quantity integer,
     description character varying(100),
     delivery_date date NOT NULL,
-    delivery_time bigint NOT NULL,
+    delivery_time TIME WITHOUT TIME ZONE NOT NULL,
     extra_charge character(1) NOT NULL,
     vendor_id character varying(64),
     vehicle_id character varying(64),
