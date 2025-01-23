@@ -37,7 +37,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
 
 
     // hook for fetching vending type data
-    const { data: vendingTypeData } = Digit.Hooks.useCustomMDMSV2V2(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
+    const { data: vendingTypeData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
         {
             select: (data) => {
                 const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
@@ -50,7 +50,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     })
 
     // hook for fetching vending zone data
-    const { data: vendingZone } = Digit.Hooks.useCustomMDMSV2V2(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+    const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
         {
             select: (data) => {
                 const formattedData = data?.["StreetVending"]?.["VendingZones"]

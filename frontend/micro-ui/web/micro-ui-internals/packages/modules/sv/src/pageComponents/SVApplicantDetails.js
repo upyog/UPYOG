@@ -73,7 +73,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
     }
   }
 
-  const { data: Category } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Category" }],
+  const { data: Category } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Category" }],
     {
       select: (data) => {
         const formattedData = data?.["StreetVending"]?.["Category"]

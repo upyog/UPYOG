@@ -110,7 +110,7 @@ const PropertySearch = ({ t, config, onSelect, userType,formData,renewApplicatio
       }
     }, [shouldFetchDetails, isLoading, isError, applicationDetails, error]);
 
-  const { data: fireStationMDMSData } = Digit.Hooks.useCustomMDMSV2(stateId, "firenoc", [{ name: "FireStations" }],
+  const { data: fireStationMDMSData } = Digit.Hooks.useCustomMDMS(stateId, "firenoc", [{ name: "FireStations" }],
       {
         select: (data) => {
             const formattedData = data?.["firenoc"]?.["FireStations"]

@@ -23,7 +23,7 @@ const ChbCommunityHallDetails = ({ hallId, setShowDetails }) => {
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
-  const { data: communityHalls } = Digit.Hooks.useCustomMDMSV2(tenantId, "CHB", [{ name: "CommunityHalls" }], {
+  const { data: communityHalls } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }], {
     select: (data) => {
       const formattedData = data?.["CHB"]?.["CommunityHalls"];
       return formattedData;

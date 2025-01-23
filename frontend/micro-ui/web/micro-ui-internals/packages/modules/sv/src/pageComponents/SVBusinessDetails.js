@@ -157,7 +157,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const { control } = useForm();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: vendingTypeData } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
+  const { data: vendingTypeData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingActivityType" }],
     {
       select: (data) => {
         const formattedData = data?.["StreetVending"]?.["VendingActivityType"]
@@ -169,7 +169,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
     vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
   })
 
-  const { data: vendingZone } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+  const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
     {
       select: (data) => {
         const formattedData = data?.["StreetVending"]?.["VendingZones"]

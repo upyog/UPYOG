@@ -1010,47 +1010,22 @@ const GetEgovLocations = (MdmsRes) => {
   }));
 };
 
-const getChbCommunityHalls = (MdmsRes) => {
-  return MdmsRes["CHB"].CommunityHalls.filter((CommunityHalls) => CommunityHalls.active).map((chbHallDetails) => {
+
+const getDataWithi18nkey = (MdmsRes, moduleName, masterName, i18nKeyString) => {
+  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
     return {
-      ...chbHallDetails,
-      i18nKey: `CHB_COMMUNITY_HALLS_${chbHallDetails.name}`,
+      ...item,
+      i18nKey: `${i18nKeyString + item.name}`,
     };
   });
 };
 
-const getChbHallCode = (MdmsRes) => {
-  return MdmsRes["CHB"].HallCode.filter((HallCode) => HallCode.active).map((chbHallCodeDetails) => {
+const getDataWithi18nkeyandCode = (MdmsRes, moduleName, masterName, i18nKeyString) => {
+  return MdmsRes[moduleName][masterName].filter((row) => row.active).map((item) => {
     return {
-      ...chbHallCodeDetails,
-      i18nKey: `CHB_HALL_CODE_${chbHallCodeDetails.code}`,
-    };
-  });
-};
-
-const getPetType = (MdmsRes) => {
-  return MdmsRes["PetService"].PetType.filter((PetType) => PetType.active).map((petDetails) => {
-    return {
-      ...petDetails,
-      i18nKey: `PTR_PET_TYPE_${petDetails.code}`,
-    };
-  });
-};
-
-const getBreedType = (MdmsRes) => {
-  return MdmsRes["PetService"].BreedType.filter((BreedType) => BreedType.active).map((breedDetails) => {
-    return {
-      ...breedDetails,
-      i18nKey: `PTR_BREED_TYPE_${breedDetails.code}`,
-    };
-  });
-};
-
-const PTRGenderType = (MdmsRes) => {
-  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((ptrgenders) => {
-    return {
-      ...ptrgenders,
-      i18nKey: `PTR_GENDER_${ptrgenders.code}`,
+      ...item,
+      i18nKey: `${i18nKeyString + item.name}`,
+      code: item.code
     };
   });
 };
@@ -1377,7 +1352,7 @@ const GetDocumentsTypes = (MdmsRes) => MdmsRes["BPA"].DocTypeMapping;
 
 const GetChecklist = (MdmsRes) => MdmsRes["BPA"].CheckList;
 
-const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
+const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, masterName, i18nKeyString) => {
   switch (type) {
     case "citymodule":
       return GetCitiesWithi18nKeys(MdmsRes, moduleCode);
@@ -1471,16 +1446,11 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return GetTripNumber(MdmsRes);
     case "ReceivedPaymentType":
       return GetReceivedPaymentType(MdmsRes);
-    case "ChbCommunityHalls":
-      return getChbCommunityHalls(MdmsRes);
-    case "ChbHallCode":
-      return getChbHallCode(MdmsRes);
-    case "PetType":
-      return getPetType(MdmsRes);
-    case "BreedType":
-      return getBreedType(MdmsRes);
-    case "GenderType":
-      return PTRGenderType(MdmsRes);
+
+    case "i18nKey":
+      return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
+    case "i18nkey&code":
+      return getDataWithi18nkeyandCode(MdmsRes, masterName, i18nKeyString);
     default:
       return MdmsRes;
   }
@@ -1575,14 +1545,15 @@ export const MdmsServiceV2 = {
       )
     );
   },
-  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
+  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode, masterName, i18nKeyString) => {
+    const moduleName = moduleCode; // moduleName is used here to pass unchanged modulecode
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
     }
     const { MdmsRes } = await MdmsServiceV2.call(tenantId, mdmsDetails.details);
-    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
+    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), moduleName, tenantId, masterName, i18nKeyString);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
@@ -1810,7 +1781,7 @@ export const MdmsServiceV2 = {
   },
 
 
-  /**
+/**
  * getMasterData - Fetches master data based on the provided criteria.
  * 
  * @param {string} tenantId - The ID of the tenant for which the data is being fetched.
@@ -1823,7 +1794,7 @@ export const MdmsServiceV2 = {
  * It constructs the criteria for fetching the data using the `getMasterDataCategory` function,
  * which is passed the tenantId, moduleCode, masterName, and type as parameters.
  */
-  getMasterData: (tenantId, moduleCode, masterName, type) => {
-    return MdmsServiceV2.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode);
+  getMasterData: (tenantId, moduleCode, masterName, i18nKeyString = "", type) => {
+    return MdmsServiceV2.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode, masterName, i18nKeyString);
   },
 };

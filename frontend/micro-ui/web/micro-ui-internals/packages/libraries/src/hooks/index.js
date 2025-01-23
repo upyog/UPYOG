@@ -25,6 +25,7 @@ import useCommonMDMS from "./useMDMS";
 import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
 import useCustomMDMSV2 from "./useCustomMDMSV2";
+import useEnabledMDMS from "./useEnabledMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
@@ -734,6 +735,7 @@ const Hooks = {
   ws,
   useCustomMDMS,
   useCustomMDMSV2,
+  useEnabledMDMS,
   useCustomAPIHook,
   reports,
   useGetHowItWorksJSON,

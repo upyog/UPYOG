@@ -43,7 +43,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
 
 
   // TODO: Need To make Master data for special Category inside common-masters so that other modules can use the same instead of using it from PT Master data     
-  const { data: specialCategory } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", [{ name: "OwnerType" }],
+  const { data: specialCategory } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "PropertyTax", [{ name: "OwnerType" }],
     {
       select: (data) => {
         const formattedData = data?.["PropertyTax"]?.["OwnerType"]
@@ -57,7 +57,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
 
 
 
-  const { data: schemes } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Schemes" }],
+  const { data: schemes } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Schemes" }],
     {
       select: (data) => {
         const formattedData = data?.["StreetVending"]?.["Schemes"]

@@ -24,7 +24,7 @@ const ChbCancellationPolicy = ({ slotDetail }) => {
   const { t } = useTranslation();
   const stateId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const { data: cancelpolicyData } = Digit.Hooks.useCustomMDMSV2(tenantId, "CHB", [{ name: "CommunityHalls" }],
+  const { data: cancelpolicyData } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
     {
       select: (data) => {
         const formattedData = data?.["CHB"]?.["CommunityHalls"];
