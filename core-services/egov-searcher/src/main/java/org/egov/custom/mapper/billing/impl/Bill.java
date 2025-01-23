@@ -77,6 +77,12 @@ public class Bill {
 	@JsonProperty("propertyId")
 	private String propertyId;
 	
+	@JsonProperty("pid")
+	private String pid;
+	
+	@JsonProperty("oldpid")
+	private String oldpid;
+	
 	@JsonProperty("oldPropertyId")
 	private String oldPropertyId;
 	

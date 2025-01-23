@@ -88,13 +88,19 @@ public class SearchRepository {
 			
 			Map<String, String> business = (Map<String, String>) searchRequest.getSearchCriteria();
 	        
-	        String businesService = business.get("businesService");
-//	     if ((businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS")) && !result.isEmpty())
-//			Collections.sort(result.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
+	   
+			if (result != null && !result.isEmpty()) {
+			    return result;
+			}
 
+	     else {
+	         String businesService = business.get("businesService");
+		     if ((businesService.equalsIgnoreCase("SW")|| businesService.equalsIgnoreCase("WS")) && !result1.isEmpty())
+				Collections.sort(result1.get(0).getBillDetails(), (b1, b2) -> b2.getFromPeriod().compareTo(b1.getFromPeriod()));
 
-			return result;
-		} catch (CustomException e) {
+	    	 return result1;
+	     		}
+	     } catch (CustomException e) {
 			throw e;
 		}
 	}
