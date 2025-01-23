@@ -1,16 +1,22 @@
-import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
-  const [pincode, setPincode] = useState(formData?.address?.pincode || "");
+  const [pincode, setPincode] = useState(formData?.cpt?.details?.address?.pincode || formData?.address?.pincode || "");
   const [pincodeServicability, setPincodeServicability] = useState(null);
 
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
+  let property = sessionStorage?.getItem("Digit_FSM_PT")
+  if (property !== "undefined")
+  {
+    property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+  }
+  console.log("dddd11111",formData)
   const inputs = [
     {
       label: "CORE_COMMON_PINCODE",
@@ -25,19 +31,38 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
       },
     },
   ];
+  // useEffect(()=>{
+  //   if(property?.propertyDetails?.address?.pincode){ 
+  //       setPincode(property?.propertyDetails?.address?.pincode);   
+  //   }
+  // },[ property?.propertyDetails?.address?.pincode])
 
-  useEffect(() => {
-    if (formData?.address?.pincode) {
-      setPincode(formData.address.pincode);
-    }
-  }, [formData?.address?.pincode]);
+  // useEffect(() => {
+  //   if (formData?.address?.pincode) {
+  //     setPincode(formData.address.pincode);
+  //   }
+  //   else if(formData?.cpt?.details?.address?.pincode){
+  //     setPincode(formData?.cpt?.details?.address?.pincode)
+  //   }
+  // }, [formData?.address?.pincode, formData?.cpt?.details?.address?.pincode]);
 
+  // useEffect(() => {
+  //   if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
+  //     setPincode(formData?.address?.locality?.pincode || "");
+  //     setPincodeServicability(null);
+  //   }
+  // }, [formData?.address?.locality]);
   useEffect(() => {
     if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
       setPincode(formData?.address?.locality?.pincode || "");
       setPincodeServicability(null);
     }
   }, [formData?.address?.locality]);
+  useEffect(() => {
+    if (userType === "employee" && pincode) {
+      onSelect(config.key, { ...formData.address, pincode: pincode?.[0] || pincode });
+    }
+  }, [pincode]);
 
   useEffect(() => {
     if (userType === "employee" && pincode) {
@@ -46,19 +71,38 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   }, [pincode]);
 
   function onChange(e) {
-    setPincode(e.target.value);
-    setPincodeServicability(null);
+    e.preventDefault();
+    const newInput = e.target.value; // Get the new input value
+    const updatedPincode = newInput; // Update directly based on the current input value
+  
+    setPincode(updatedPincode); // Update the state with the new value
+    setPincodeServicability(null); // Reset serviceability message
+  
     if (userType === "employee") {
-      const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item.toString() === e.target.value));
+      console.log("setPincodeServicability");
+      const foundValue = tenants?.find((obj) =>
+        obj.pincode?.find((item) => item.toString() === updatedPincode)
+      );
       if (foundValue) {
-        const city = tenants.filter((obj) => obj.pincode?.find((item) => item == e.target.value))[0];
-        onSelect(config.key, { ...formData.address, city, pincode: e.target.value, slum: null });
+        const city = tenants.find((obj) =>
+          obj.pincode?.find((item) => item === updatedPincode)
+        );
+        onSelect(config.key, {
+          ...formData.address,
+          city,
+          pincode: updatedPincode,
+          slum: null,
+        });
       } else {
-        onSelect(config.key, { ...formData.address, pincode: e.target.value });
+        onSelect(config.key, {
+          ...formData.address,
+          pincode: updatedPincode,
+        });
         setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
       }
     }
   }
+  
 
   const goNext = async (data) => {
     const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item == data?.pincode));
@@ -99,7 +143,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
         t={t}
         config={{ ...config, inputs }}
         onSelect={goNext}
-        _defaultValues={{ pincode }}
+        value={pincode}
         onChange={onChange}
         onSkip={onSkip}
         forcedError={t(pincodeServicability)}
