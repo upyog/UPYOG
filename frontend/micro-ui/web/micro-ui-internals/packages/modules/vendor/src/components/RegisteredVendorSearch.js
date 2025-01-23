@@ -62,27 +62,31 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
     );
   };
 
+  // const onAddClick = () => {
+  //   console.log("clickkkkkeeeddd")
+  //   return history.push("registry/new-vendor");
+  // };
+
   const onAddClick = () => {
-    console.log("clickkkkkeeeddd")
-    return history.push("registry/new-vendor");
+    setShowAddMenu(!showAddMenu);
   };
 
   const searchValidation = (data) => {
     return null;
   };
 
-  // function onActionSelect(action) {
-  //   switch (action) {
-  //     case "VENDOR":
-  //       return history.push("/digit-ui/employee/fsm/registry/new-vendor");
-  //     case "VEHICLE":
-  //       return history.push("/digit-ui/employee/fsm/registry/new-vehicle");
-  //     case "DRIVER":
-  //       return history.push("/digit-ui/employee/fsm/registry/new-driver");
-  //     default:
-  //       break;
-  //   }
-  // }
+  function onActionSelect(action) {
+    switch (action) {
+      case "VENDOR":
+        return history.push("/digit-ui/employee/vendor/registry/new-vendor");
+      case "VEHICLE":
+        return history.push("/digit-ui/employee/vendor/registry/new-vehicle");
+      case "DRIVER":
+        return history.push("/digit-ui/employee/vendor/registry/new-driver");
+      default:
+        break;
+    }
+  }
 
   const getFields = (input) => {
     switch (input.type) {
@@ -157,13 +161,31 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
               >
                 {t("ES_VENDOR_REGISTRY_INBOX_TAB_VENDOR")}
               </button>
+              <button
+                className={selectedTab === "VEHICLE" ? "search-tab-head-selected" : "search-tab-head"}
+                onClick={() => {
+                  clearSearch({});
+                  onTabChange("VEHICLE");
+                }}
+              >
+                {t("ES_FSM_REGISTRY_INBOX_TAB_VEHICLE")}
+              </button>
+              <button
+                className={selectedTab === "DRIVER" ? "search-tab-head-selected" : "search-tab-head"}
+                onClick={() => {
+                  clearSearch({});
+                  onTabChange("DRIVER");
+                }}
+              >
+                {t("ES_FSM_REGISTRY_INBOX_TAB_DRIVER")}
+              </button>
             </div>
             <div className="action-bar-wrap-registry">
               <div className="search-add" onClick={onAddClick}>
-                {t("VENDOR_ADDITIONAL_DETAILS")}
-                {/* <div className="search-add-icon">
+                {t("ES_VENDOR_REGISTRY_INBOX_HEADER_ADD")}
+                <div className="search-add-icon">
                   <AddIcon className="" />
-                </div> */}
+                </div>
               </div>
               {showAddMenu && (
                 <Menu localeKeyPrefix={"ES_FSM_ACTION_CREATE"} options={["VENDOR", "DRIVER", "VEHICLE"]} t={t} onSelect={onActionSelect} />
