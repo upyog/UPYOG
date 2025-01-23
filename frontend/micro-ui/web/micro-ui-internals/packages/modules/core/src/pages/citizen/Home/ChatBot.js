@@ -24,7 +24,7 @@ function ChatBot() {
     setIsOpen(!isOpen);
   };
 
-  const apiEndPoint = 'http://43.205.156.175:8000/chatbot';
+  const apiEndPoint = 'https://upyogchatbot.niua.in:8000/chatbot';
 
   const handleMessageSend = async () => {
     if (input.trim() !== "") {
