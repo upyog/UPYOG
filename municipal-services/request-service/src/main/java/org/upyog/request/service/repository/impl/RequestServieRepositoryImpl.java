@@ -1,15 +1,22 @@
 package org.upyog.request.service.repository.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.upyog.request.service.repository.rowMapper.GenericRowMapper;
 import org.upyog.request.service.config.RequestServiceConfiguration;
 import org.upyog.request.service.kafka.Producer;
 import org.upyog.request.service.repository.RequestServiceRepository;
+import org.upyog.request.service.repository.querybuilder.RequestServiceQueryBuilder;
 import org.upyog.request.service.web.models.PersisterWrapper;
 import org.upyog.request.service.web.models.WaterTankerBookingDetail;
 import org.upyog.request.service.web.models.WaterTankerBookingRequest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.upyog.request.service.web.models.WaterTankerBookingSearchCriteria;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -18,6 +25,14 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 
 	@Autowired
 	private Producer producer;
+
+	@Autowired
+	private RequestServiceQueryBuilder queryBuilder;
+
+
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	RequestServiceConfiguration requestServiceConfiguration;
@@ -31,5 +46,26 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 				waterTankerBookingDetail);
 		producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), persisterWrapper);
 	}
+
+
+	@Override
+	public List<WaterTankerBookingDetail> getWaterTankerBookingDetails(
+			WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
+		//create a list to hold the statement parameter and allow addition of parameter based on search criteria
+		List<Object> preparedStmtList = new ArrayList<>();
+
+		/*passed the preparedStmtList and search criteria inside the getWaterTankerQuery method
+		 developed inside query builder to build and get the data as per search criteria*/
+		String query = queryBuilder.getWaterTankerQuery(waterTankerBookingSearchCriteria, preparedStmtList);
+		log.info("Final query for getWaterTankerBookingDetails {} and paramsList {} : " , preparedStmtList);
+		/*
+		*  Execute the query using JdbcTemplate with a generic row mapper
+		*  Converts result set directly to a list of WaterTankerBookingDetail objects
+		*  Uses custom GenericRowMapper for flexible and recursive object mapping
+		* */
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(WaterTankerBookingDetail.class));
+	}
+
+
 
 }
