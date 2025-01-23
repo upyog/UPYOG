@@ -51,9 +51,18 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 	@Override
 	public List<WaterTankerBookingDetail> getWaterTankerBookingDetails(
 			WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
+		//create a list to hold the statement parameter and allow addition of parameter based on search criteria
 		List<Object> preparedStmtList = new ArrayList<>();
+
+		/*passed the preparedStmtList and search criteria inside the getWaterTankerQuery method
+		 developed inside query builder to build and get the data as per search criteria*/
 		String query = queryBuilder.getWaterTankerQuery(waterTankerBookingSearchCriteria, preparedStmtList);
 		log.info("Final query for getWaterTankerBookingDetails {} and paramsList {} : " , preparedStmtList);
+		/*
+		*  Execute the query using JdbcTemplate with a generic row mapper
+		*  Converts result set directly to a list of WaterTankerBookingDetail objects
+		*  Uses custom GenericRowMapper for flexible and recursive object mapping
+		* */
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(WaterTankerBookingDetail.class));
 	}
 

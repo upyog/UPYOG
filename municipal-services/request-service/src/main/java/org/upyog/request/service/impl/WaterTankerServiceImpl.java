@@ -46,26 +46,40 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	@Override
 	public List<WaterTankerBookingDetail> getWaterTankerBookingDetails(RequestInfo requestInfo,
 															 WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
-
-
+		/*
+		* Retrieve WT booking details from the repository based on search criteria
+		* and and give the data already retrieved to the repository layer
+		* */
 		List<WaterTankerBookingDetail> applications = requestServiceRepository
 				.getWaterTankerBookingDetails(waterTankerBookingSearchCriteria);
+
+		/**
+		 *   Check if the retrieved list is empty using Spring's CollectionUtils
+		 *    Prevents potential null pointer exceptions by returning an empty list
+		 *    Ensures consistent return type and prevents calling methods from handling null
+		 *    */
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
+
+		//Return retrieved application
 		return applications;
 	}
 
-//	@Override
-//	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria,
-//										RequestInfo requestInfo) {
-//		waterTankerBookingSearchCriteria.setCountCall(true);
-//		Integer bookingCount = 0;
-//
-//		waterTankerBookingSearchCriteria = addCreatedByMeToCriteria(waterTankerBookingSearchCriteria, requestInfo);
-//		bookingCount = requestServiceRepository.getApplicationsCount(waterTankerBookingSearchCriteria);
-//
-//		return bookingCount;
-//	}
+	/*  will uncomment later when develop a counter part of the service
+	* 	@Override
+	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria,
+										RequestInfo requestInfo) {
+		waterTankerBookingSearchCriteria.setCountCall(true);
+		Integer bookingCount = 0;
+
+		waterTankerBookingSearchCriteria = addCreatedByMeToCriteria(waterTankerBookingSearchCriteria, requestInfo);
+		bookingCount = requestServiceRepository.getApplicationsCount(waterTankerBookingSearchCriteria);
+
+		return bookingCount;
+	}
+	* */
+
+
 
 }
