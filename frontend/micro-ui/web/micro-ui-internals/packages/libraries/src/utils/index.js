@@ -325,6 +325,14 @@ const swAccess = () => {
   return SW_ACCESS?.length > 0;
 };
 
+const vendorAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const vendorRoles = ["VENDOR"];
+  const VENDOR_ACCESS = userRoles?.filter((role) => vendorRoles?.includes(role));
+  return VENDOR_ACCESS?.length > 0;
+};
+
 
 export default {
   pdf: PDFUtil,
@@ -366,6 +374,7 @@ export default {
   adsAccess,
   ewAccess,
   svAccess,
+  vendorAccess,
   dashboardAccess,
   ...privacy
 };
