@@ -11,7 +11,7 @@ import {
     UploadFile,
     RadioButtons,
     Card,
-    EditIcon
+    InfoBannerIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -289,7 +289,52 @@ const OwnerForm = (_props) => {
         { i18nKey: "4 Year", code: "4" },
         { i18nKey: "5 Year", code: "5" }
     ];
-
+    const Tooltip = ({ message, children }) => {
+        return (
+            <div
+                style={{
+                    position: "relative",
+                    display: "inline-block",
+                }}
+                onMouseEnter={(e) => {
+                    const tooltip = e.currentTarget.querySelector(".tooltiptext");
+                    tooltip.style.visibility = "visible";
+                    tooltip.style.opacity = 1;
+                }}
+                onMouseLeave={(e) => {
+                    const tooltip = e.currentTarget.querySelector(".tooltiptext");
+                    tooltip.style.visibility = "hidden";
+                    tooltip.style.opacity = 0;
+                }}
+            >
+                {children}
+                <span
+                    style={{
+                        visibility: "hidden",
+                        position: "absolute",
+                        backgroundColor: "#555",
+                        color: "#fff",
+                        textAlign: "center",
+                        borderRadius: "4px",
+                        padding: "5px",
+                        fontSize: "small",
+                        wordWrap: "break-word",
+                        width: "300px",
+                        top: "100%",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        marginTop: "5px",
+                        zIndex: "1",
+                        opacity: 0,
+                        transition: "opacity 0.3s ease-in-out",
+                    }}
+                    className="tooltiptext"
+                >
+                    {message}
+                </span>
+            </div>
+        );
+    };
     return (
         <React.Fragment>
             <div style={{ marginBottom: "16px" }}>
@@ -348,7 +393,18 @@ const OwnerForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                   
+                    {/* <StatusTable>
+                        <Row
+                            label={t("AST_APPLICATION_NO")}
+                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
+                        />
+                    </StatusTable> */}
+                    {/* <StatusTable>
+                        <Row
+                            label={t("AST_NAME")}
+                            text={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
+                        />
+                    </StatusTable> */}
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_NAME")}</CardLabel>
                         <div className="field">
@@ -419,7 +475,12 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_OPTIONS")}</CardLabel>
+                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            {t("AST_MAINTENANCE_OPTIONS")}
+                            <Tooltip message={t("AST_CLASSIFICATION_ASSET")}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                        </CardLabel>
                         <div className="field">
                             <RadioButtons
                                 t={t}
@@ -648,8 +709,6 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
 
                     <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
-<EditIcon/>
-
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_NEXT_MAINTENANCE_DATE")}</CardLabel>
                         <div className="field">
@@ -907,102 +966,104 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.preConditionRemarks ? errors?.assignedUser?.preConditionRemarks : ""}</CardLabelError>
-                    <div className="card-container">
-                    <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DOC")}</CardLabel>
-                        <div className="field">
-                            <Controller
-                                control={control}
-                                name={"postCondition"}
-                                render={(props) => (
-                                    <UploadFile
-                                        id={"postCondition"}
-                                        onUpload={(file) => handleFileUpload(file, setPostConditionFile)}
-                                        onDelete={() => {
-                                            setPostConditionFile(null);
-                                            props.onChange(null);
-                                        }}
-                                        message={postConditionFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
-                                        accept="image/*, .pdf, .png, .jpeg, .jpg"
-                                        buttonType="button"
-                                        error={uploadError || !postConditionFile} // Show error if uploadError is not empty or no file
-                                    />
-                                )}
-                            />
-                        </div>
-                    </LabelFieldPair>
-                    <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DESCRIPTION")}</CardLabel>
-                        <div className="field">
-                            <Controller
-                                control={control}
-                                name={"postConditionRemarks"}
-                                defaultValue={maintenanceDetails?.postConditionRemarks}
-                                rules={{
-                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                                    validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
-                                }}
-                                render={(props) => (
-                                    <TextArea
-                                        type={"textarea"}
-                                        value={props.value}
-                                        autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "postConditionRemarks"}
-                                        onChange={(e) => {
-                                            props.onChange(e.target.value);
-                                            setFocusIndex({ index: maintenanceDetails.key, type: "postConditionRemarks" });
-                                        }}
-                                        onBlur={(e) => {
-                                            setFocusIndex({ index: -1 });
-                                            props.onBlur(e);
-                                        }}
-                                    />
-                                )}
-                            />
-                        </div>
-                    </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
-                    <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_IS_LIFE_OF__ASSET_AFFECTED")}</CardLabel>
-                        <div className="field">
-                            <RadioButtons
-                                t={t}
-                                options={[{ i18nKey: true, code: "TRUE" }, { i18nKey: false, code: "FALSE" }]}
-                                optionsKey="code"
-                                name="isLifeOfAssetAffected"
-                                value={isLifeOfAssetAffected}
-                                selectedOption={isLifeOfAssetAffected}
-                                innerStyles={{ display: "inline-block", marginLeft: "20px", paddingBottom: "2px", marginBottom: "2px" }}
-                                onSelect={handleSelectLifeAffected}
-                                isDependent={true}
-                            />
-                        </div>
-                    </LabelFieldPair>
+                    <div style={{ backgroundColor: "#f1f3f4", borderRadius: "8px", padding: "20px" }}>
 
-                    {isLifeOfAssetAffected.code === "TRUE" &&
-                        (
-                            <div>
-                                <LabelFieldPair>
-                                    <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_INCREASED_NO_OF_YEAR")}</CardLabel>
-                                    <Controller
-                                        control={control}
-                                        name={"assetMaintenanceIncreasedYear"}
-                                        defaultValue={maintenanceDetails?.assetMaintenanceIncreasedYear}
-                                        render={(props) => (
-                                            <Dropdown
-                                                className="form-field"
-                                                selected={props.value}
-                                                select={props.onChange}
-                                                onBlur={props.onBlur}
-                                                option={maintenanceIncreasedHandle}
-                                                optionKey="i18nKey"
-                                                t={t}
-                                            />
-                                        )}
-                                    />
-                                </LabelFieldPair>
-                                <CardLabelError style={errorStyle}>{localFormState.touched.assetMaintenanceIncreasedYear ? errors?.assetMaintenanceIncreasedYear?.message : ""}</CardLabelError>
+
+                        <LabelFieldPair>
+                            <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DOC")}</CardLabel>
+                            <div className="field">
+                                <Controller
+                                    control={control}
+                                    name={"postCondition"}
+                                    render={(props) => (
+                                        <UploadFile
+                                            id={"postCondition"}
+                                            onUpload={(file) => handleFileUpload(file, setPostConditionFile)}
+                                            onDelete={() => {
+                                                setPostConditionFile(null);
+                                                props.onChange(null);
+                                            }}
+                                            message={postConditionFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+                                            accept="image/*, .pdf, .png, .jpeg, .jpg"
+                                            buttonType="button"
+                                            error={uploadError || !postConditionFile} // Show error if uploadError is not empty or no file
+                                        />
+                                    )}
+                                />
                             </div>
-                        )}
+                        </LabelFieldPair>
+                        <LabelFieldPair>
+                            <CardLabel className="card-label-smaller">{t("AST_POST_CONDITION_DESCRIPTION")}</CardLabel>
+                            <div className="field">
+                                <Controller
+                                    control={control}
+                                    name={"postConditionRemarks"}
+                                    defaultValue={maintenanceDetails?.postConditionRemarks}
+                                    rules={{
+                                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                        validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                                    }}
+                                    render={(props) => (
+                                        <TextArea
+                                            type={"textarea"}
+                                            value={props.value}
+                                            autoFocus={focusIndex.index === maintenanceDetails?.key && focusIndex.type === "postConditionRemarks"}
+                                            onChange={(e) => {
+                                                props.onChange(e.target.value);
+                                                setFocusIndex({ index: maintenanceDetails.key, type: "postConditionRemarks" });
+                                            }}
+                                            onBlur={(e) => {
+                                                setFocusIndex({ index: -1 });
+                                                props.onBlur(e);
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        </LabelFieldPair>
+                        <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
+                        <LabelFieldPair>
+                            <CardLabel className="card-label-smaller">{t("AST_IS_LIFE_OF__ASSET_AFFECTED")}</CardLabel>
+                            <div className="field">
+                                <RadioButtons
+                                    t={t}
+                                    options={[{ i18nKey: true, code: "TRUE" }, { i18nKey: false, code: "FALSE" }]}
+                                    optionsKey="code"
+                                    name="isLifeOfAssetAffected"
+                                    value={isLifeOfAssetAffected}
+                                    selectedOption={isLifeOfAssetAffected}
+                                    innerStyles={{ display: "inline-block", marginLeft: "20px", paddingBottom: "2px", marginBottom: "2px" }}
+                                    onSelect={handleSelectLifeAffected}
+                                    isDependent={true}
+                                />
+                            </div>
+                        </LabelFieldPair>
+
+                        {isLifeOfAssetAffected.code === "TRUE" &&
+                            (
+                                <div>
+                                    <LabelFieldPair>
+                                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_INCREASED_NO_OF_YEAR")}</CardLabel>
+                                        <Controller
+                                            control={control}
+                                            name={"assetMaintenanceIncreasedYear"}
+                                            defaultValue={maintenanceDetails?.assetMaintenanceIncreasedYear || null}
+                                            render={(props) => (
+                                                <Dropdown
+                                                    className="form-field"
+                                                    selected={props.value}
+                                                    select={props.onChange}
+                                                    onBlur={props.onBlur}
+                                                    option={maintenanceIncreasedHandle}
+                                                    optionKey="i18nKey"
+                                                    t={t}
+                                                />
+                                            )}
+                                        />
+                                    </LabelFieldPair>
+                                    <CardLabelError style={errorStyle}>{localFormState.touched.assetMaintenanceIncreasedYear ? errors?.assetMaintenanceIncreasedYear?.message : ""}</CardLabelError>
+                                </div>
+                            )}
                     </div>
                 </div>
             </div>
