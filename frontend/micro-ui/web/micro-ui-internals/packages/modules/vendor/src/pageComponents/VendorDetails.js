@@ -253,6 +253,28 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
       >
         <div>
 
+
+        <CardLabel>{`${t("VENDOR_ID")}`}</CardLabel>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="VendorId"
+            value={IFSC}
+            //placeholder={"Enter IFSC Code"}
+            onChange={setvendorid}
+            style={{ width: "50%" }}
+            maxLength={11}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[A-Z]{4}0[A-Z0-9]{6}$", // validation for IFSC code
+              type: "text",
+              title: t("INVALID_IFSC_CODE_ERROR_MESSAGE"),
+            })}
+          />
+
           <CardLabel>{`${t("IFSC_CODE")}`}</CardLabel>
           <TextInput
             t={t}

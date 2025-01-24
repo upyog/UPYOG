@@ -1,7 +1,10 @@
 package org.upyog.request.service.impl;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.upyog.request.service.EnrichmentService;
 import org.upyog.request.service.WaterTankerService;
 import org.upyog.request.service.repository.RequestServiceRepository;
@@ -9,6 +12,10 @@ import org.upyog.request.service.web.models.WaterTankerBookingDetail;
 import org.upyog.request.service.web.models.WaterTankerBookingRequest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.upyog.request.service.web.models.WaterTankerBookingSearchCriteria;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -35,5 +42,44 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		return waterTankerDetail;
 	}
+
+	@Override
+	public List<WaterTankerBookingDetail> getWaterTankerBookingDetails(RequestInfo requestInfo,
+															 WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
+		/*
+		* Retrieve WT booking details from the repository based on search criteria
+		* and and give the data already retrieved to the repository layer
+		* */
+		List<WaterTankerBookingDetail> applications = requestServiceRepository
+				.getWaterTankerBookingDetails(waterTankerBookingSearchCriteria);
+
+		/**
+		 *   Check if the retrieved list is empty using Spring's CollectionUtils
+		 *    Prevents potential null pointer exceptions by returning an empty list
+		 *    Ensures consistent return type and prevents calling methods from handling null
+		 *    */
+		if (CollectionUtils.isEmpty(applications)) {
+			return new ArrayList<>();
+		}
+
+		//Return retrieved application
+		return applications;
+	}
+
+	/*  will uncomment later when develop a counter part of the service
+	* 	@Override
+	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria,
+										RequestInfo requestInfo) {
+		waterTankerBookingSearchCriteria.setCountCall(true);
+		Integer bookingCount = 0;
+
+		waterTankerBookingSearchCriteria = addCreatedByMeToCriteria(waterTankerBookingSearchCriteria, requestInfo);
+		bookingCount = requestServiceRepository.getApplicationsCount(waterTankerBookingSearchCriteria);
+
+		return bookingCount;
+	}
+	* */
+
+
 
 }
