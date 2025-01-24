@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public class PetApplicationQueryBuilder {
 
-	public static final String TENANTIDQUERY = "select distinct(tenantid) from eg_tl_tradelicense";
+	public static final String TENANTIDQUERY = "select distinct(tenantid) from eg_ptr_registration;";
 
 //	private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ";
 //
@@ -108,6 +108,12 @@ public class PetApplicationQueryBuilder {
 			// query.append(" ptr.createdtime <= ? ");
 			query.append(" ptr.createdtime <= CAST(? AS bigint) ");
 			preparedStmtList.add(criteria.getToDate());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
+			addClauseIfRequired(query, preparedStmtList);
+			// query.append(" ptr.createdtime <= ? ");
+			query.append(" ptr.validitydate <= ? ");
+			preparedStmtList.add(criteria.getValidityDate());
 		}
 		// order pet registration applications based on their createdtime in latest
 		// first manner

@@ -26,6 +26,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.egov.ptr.util.PTRConstants.*;
+
 @Service
 public class WorkflowService {
 
@@ -57,9 +59,9 @@ public class WorkflowService {
 		ProcessInstance processInstance = new ProcessInstance();
 		processInstance.setBusinessId(application.getApplicationNumber());
 		processInstance.setAction(workflow.getAction());
-		processInstance.setModuleName("pet-services");
+		processInstance.setModuleName(PET_MODULENAME);
 		processInstance.setTenantId(application.getTenantId());
-		processInstance.setBusinessService("ptr");
+		processInstance.setBusinessService(PET_BUSINESSSERVICE);
 		processInstance.setDocuments(workflow.getDocuments());
 		processInstance.setComment(workflow.getComments());
 

@@ -1,9 +1,5 @@
 package org.egov.ptr.util;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 public class PTRConstants {
 
 	private PTRConstants() {
@@ -231,6 +227,8 @@ public class PTRConstants {
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
 
 	public static final String PET_BUSINESSSERVICE = "ptr";
+	
+	public static final String PET_MODULENAME = "pet-services";
 
 	public static final String STATUS_APPLIED = "Applied";
 
@@ -261,8 +259,19 @@ public class PTRConstants {
 	public static final String PET_REGISTRATION_FEE = "PET_REGISTRATION_FEE";
 
 	public static final String PET_MASTER_MODULE_NAME = "PetService";
+	
+	public static final String PET_MASTER_PETTYPE = "PetType";
+	
+	public static final String PET_MASTER_BREEDTYPE = "BreedType";
 
 	public static final String BILLING_SERVICE = "BillingService";
 
 	public static final String CALCULATION_TYPE = "CalculationType";
+	
+	public static final String JSONPATH_PETSERVICE_RESPONSE = "$.MdmsRes.PetService";
+	
+	public static final String SYSTEM_CITIZEN_USERNAME= "8888888888";
+	
+	public static final String PET_TAX_MASTER_CODE= "PET_REGISTRATION_FEE";
+	
 }

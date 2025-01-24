@@ -1,10 +1,14 @@
 package org.egov.ptr.service;
 
-import static org.egov.ptr.util.PTRConstants.*;
+import static org.egov.ptr.util.PTRConstants.ACTION_APPROVE;
+import static org.egov.ptr.util.PTRConstants.NEW_PET_APPLICATION;
+import static org.egov.ptr.util.PTRConstants.PET_BUSINESSSERVICE;
+import static org.egov.ptr.util.PTRConstants.RENEW_PET_APPLICATION;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
@@ -14,10 +18,15 @@ import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
 import org.egov.ptr.validator.PetApplicationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class PetRegistrationService {
 
@@ -102,11 +111,10 @@ public class PetRegistrationService {
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
 	}
 
-	public void runJob(String servicename, String jobname, RequestInfo requestInfo) {
-		if (servicename == null)
-			servicename = PET_BUSINESSSERVICE;
-
-		ptrBatchService.getPetApplicationsAndPerformAction(servicename, jobname, requestInfo);
+	@Scheduled(cron = "0 0 0 01 4 *")
+	public void runJob() {
+		log.info("Expire Pet Applications Scheduler running");
+		ptrBatchService.getPetApplicationsAndPerformAction();
 
 	}
 

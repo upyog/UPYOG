@@ -108,23 +108,24 @@ public class CommonUtils {
 	 * @return Map of MasterData name to the list of code in the MasterData
 	 *
 	 */
-	public Map<String, List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names,
-			String filter, String jsonpath, RequestInfo requestInfo) {
+	public Map<String, List<Map<String, Object>>> getAttributeValues(String tenantId, String moduleName, List<String> names,
+	        String filter, String jsonpath, RequestInfo requestInfo) {
 
-		StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsEndpoint());
-		MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId, moduleName, names, filter, requestInfo);
-		Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
+	    StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsEndpoint());
+	    MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId, moduleName, names, filter, requestInfo);
+	    Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
 
-		try {
-			if (response.isPresent()) {
-				return JsonPath.read(response.get(), jsonpath);
-			}
-		} catch (Exception e) {
-			throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
-					ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
-		}
+	    try {
+	        if (response.isPresent()) {
+	            // Adjusted to return a list of maps instead of list of strings
+	            return JsonPath.read(response.get(), jsonpath);
+	        }
+	    } catch (Exception e) {
+	        throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
+	                ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
+	    }
 
-		return null;
+	    return null;
 	}
 
 	public MdmsCriteriaReq prepareMdMsRequest(String tenantId, String moduleName, List<String> names, String filter,

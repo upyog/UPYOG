@@ -55,12 +55,10 @@ public class EnrichmentService {
 				.createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
 				.lastModifiedTime(System.currentTimeMillis()).build();
 
-		LocalDateTime nextMarch31At8PM = calculateNextMarch31At8PM();
-		long validityDateUnix = nextMarch31At8PM.atZone(ZoneId.systemDefault()).toEpochSecond();
+		long validityDateUnix = petUtil.calculateNextMarch31At8PMInEpoch();
 
 		int index = 0;
 		for (PetRegistrationApplication application : applications) {
-			
 
 			// Set common audit details, ID, and application number
 			application.setAuditDetails(commonAuditDetails);
@@ -86,7 +84,8 @@ public class EnrichmentService {
 	}
 
 	private boolean isNewPetApplication(PetRegistrationApplication application) {
-		return NEW_PET_APPLICATION.equals(application.getApplicationType()) && (application.getPetToken().isEmpty()||application.getPetToken()==null);
+		return NEW_PET_APPLICATION.equals(application.getApplicationType())
+				&& (application.getPetToken().isEmpty() || application.getPetToken() == null);
 	}
 
 	private boolean isRenewPetApplication(PetRegistrationApplication application) {
@@ -134,14 +133,7 @@ public class EnrichmentService {
 		});
 	}
 
-	private LocalDateTime calculateNextMarch31At8PM() {
-		LocalDate today = LocalDate.now();
-		LocalDate nextMarch31 = LocalDate.of(today.getYear(), Month.MARCH, 31);
-		if (today.isAfter(nextMarch31)) {
-			nextMarch31 = nextMarch31.plusYears(1);
-		}
-		return LocalDateTime.of(nextMarch31, LocalTime.of(20, 0));
-	}
+
 
 	public void enrichPetApplicationUponUpdate(PetRegistrationRequest petRegistrationRequest) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
@@ -157,7 +149,7 @@ public class EnrichmentService {
 				application.setStatus(STATUS_APPROVED);
 				if (isNewPetApplication(application)) {
 					enrichNewPetToken(application, petRegistrationRequest.getRequestInfo(), application.getTenantId());
-					log.info("Pet Token Generated : "+ application.getPetToken());
+					log.info("Pet Token Generated : " + application.getPetToken());
 				}
 			}
 		}
