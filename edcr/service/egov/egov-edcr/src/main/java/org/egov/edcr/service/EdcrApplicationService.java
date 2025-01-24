@@ -289,7 +289,7 @@ public class EdcrApplicationService {
   
 
     
-   /* private void updateFile(Plan pl, EdcrApplication edcrApplication) {
+    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
         String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
         String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
 
@@ -414,104 +414,6 @@ public class EdcrApplicationService {
             }
         } catch (IOException e) {
             LOG.error("Error occurred when processing PDF!!!!!", e);
-        }
-    } */
-
-    private void updateFile(Plan pl, EdcrApplication edcrApplication) {
-        String filePath = edcrApplication.getSavedDxfFile().getAbsolutePath();
-        String newFile = edcrApplication.getDxfFile().getOriginalFilename().replace(".dxf", "_system_scrutinized.pdf");
-
-        LOG.info("Starting updateFile method. File path: {}, New file name: {}", filePath, newFile);
-
-        try {
-            // Load the source CAD file
-            LOG.info("Loading source CAD file...");
-            Image objImage = Image.load(filePath);
-
-            // Create an instance of PdfOptions
-            PdfOptions pdfOptions = new PdfOptions();
-            CadRasterizationOptions rasterizationOptions = new CadRasterizationOptions();
-
-            LOG.info("Configuring rasterization options...");
-            rasterizationOptions.setBackgroundColor(Color.getWhite());
-            rasterizationOptions.setDrawType(CadDrawTypeMode.UseObjectColor);
-            rasterizationOptions.setPageWidth(3370); // A0 width in points
-            rasterizationOptions.setPageHeight(2384); // A0 height in points
-            rasterizationOptions.setAutomaticLayoutsScaling(true);
-            rasterizationOptions.setNoScaling(false);
-            pdfOptions.setVectorRasterizationOptions(rasterizationOptions);
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            LOG.info("Exporting CAD to PDF...");
-            objImage.save(outputStream, pdfOptions);
-
-            byte[] pdfBytes = outputStream.toByteArray();
-
-            try (PDDocument document = PDDocument.load(pdfBytes)) {
-                LOG.info("PDF loaded successfully. Modifying the PDF...");
-                PDPageTree pages = document.getPages();
-                PDPage page = pages.get(0);
-
-                PDPageXYZDestination dest = new PDPageXYZDestination();
-                dest.setPage(page);
-
-                float pageWidth = page.getMediaBox().getWidth();
-                float pageHeight = page.getMediaBox().getHeight();
-                int centerX = (int) (pageWidth / 2.0f);
-                int centerY = (int) (pageHeight / 2.0f);
-
-                dest.setLeft(centerX);
-                dest.setTop(centerY);
-                dest.setZoom(1.0f);
-
-                document.getDocumentCatalog().setOpenAction(dest);
-
-                // Add timestamp 
-                LOG.info("Adding timestamp ...");
-                PDPageContentStream contentStream = new PDPageContentStream(document, page,
-                        PDPageContentStream.AppendMode.APPEND, true, true);
-
-                PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
-                graphicsState.setNonStrokingAlphaConstant(0.2f);
-                contentStream.setGraphicsStateParameters(graphicsState);
-
-                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 200);
-                float textWidth = (PDType1Font.HELVETICA_BOLD.getStringWidth(timestamp) / 1000) * 200;
-                float xPos = pageWidth - textWidth - 700;
-                float yPos = 10;
-                contentStream.newLineAtOffset(xPos, yPos);
-                contentStream.showText(timestamp);
-                contentStream.endText();
-                contentStream.close();
-
-                LOG.info("Timestamp added successfully.");
-
-                ByteArrayOutputStream modifiedPdfStream = new ByteArrayOutputStream();
-                document.save(modifiedPdfStream);
-                byte[] modifiedPdfBytes = modifiedPdfStream.toByteArray();
-
-                File f = new File(newFile);
-                LOG.info("Saving the modified PDF to: {}", f.getAbsolutePath());
-                try (FileOutputStream fos = new FileOutputStream(f)) {
-                    if (!f.exists()) f.createNewFile();
-                    fos.write(modifiedPdfBytes);
-                    fos.flush();
-
-                    LOG.info("Uploading the modified PDF...");
-                    FileStoreMapper fileStoreMapper = fileStoreService.store(f, f.getName(),
-                            edcrApplication.getDxfFile().getContentType(), FILESTORE_MODULECODE);
-                    edcrApplication.getEdcrApplicationDetails().get(0).setScrutinizedDxfFileId(fileStoreMapper);
-                    LOG.info("Modified PDF uploaded successfully. File ID: {}", fileStoreMapper.getFileStoreId());
-                } catch (IOException e) {
-                    LOG.error("Error occurred while saving or uploading the file!", e);
-                }
-            } catch (IOException e) {
-                LOG.error("Error occurred while processing the PDF!", e);
-            }
-        } catch (Exception e) {
-            LOG.error("Error occurred during updateFile execution!", e);
         }
     }
 
