@@ -1,7 +1,10 @@
 package org.egov.pg.service.gateways.paytm;
 
-import com.paytm.pg.merchant.CheckSumServiceHelper;
+
+import com.paytm.pg.merchant.*;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
@@ -37,6 +40,7 @@ public class PaytmGateway implements Gateway {
     private final String INDUSTRY_TYPE_ID;
     private final String CHANNEL_ID;
     private final String WEBSITE;
+    private final String TID;
 
     private final boolean ACTIVE;
 
@@ -54,6 +58,8 @@ public class PaytmGateway implements Gateway {
         WEBSITE = environment.getRequiredProperty("paytm.merchant.website");
         MERCHANT_URL_DEBIT = environment.getRequiredProperty("paytm.url.debit");
         MERCHANT_URL_STATUS = environment.getRequiredProperty("paytm.url.status");
+        TID = environment.getRequiredProperty("paytm.merchant.secret.tid");
+
 
     }
 
@@ -97,6 +103,7 @@ public class PaytmGateway implements Gateway {
         treeMap.put("ORDER_ID", currentStatus.getTxnId());
 
         try {
+        	
             String checkSum = CheckSumServiceHelper.getCheckSumServiceHelper().genrateCheckSum(MERCHANT_KEY, treeMap);
             treeMap.put("CHECKSUMHASH", checkSum);
 

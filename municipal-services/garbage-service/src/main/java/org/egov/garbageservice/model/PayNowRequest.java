@@ -28,6 +28,9 @@ public class PayNowRequest {
 	private String year;
 
 	private List<String> propertyIds;
+	
+	private List<Long> garbageIds;
+
 
 	@Builder.Default
 	private Boolean isEmptyBillFilter = false;

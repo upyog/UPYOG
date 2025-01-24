@@ -1,10 +1,12 @@
 package org.egov.pt.repository.builder;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.config.PropertyConfiguration;
@@ -251,8 +253,8 @@ public class PropertyQueryBuilder {
 		else
 			preparedStmtList.add("%" + criteria.getPropertyType().toUpperCase() + "%");
 		preparedStmtList.add(criteria.getLocality());
-		preparedStmtList.add(Status.ACTIVE.toString());
-		preparedStmtList.add(Status.ACTIVE.toString());
+//		preparedStmtList.add(Status.ACTIVE.toString());
+//		preparedStmtList.add(Status.ACTIVE.toString());
 		preparedStmtList.add(currYearS);
 
 		return builder.toString();
@@ -447,13 +449,18 @@ public class PropertyQueryBuilder {
 		 * Inactive owners should never be shown in results
 		*/
 		
-		addClauseIfRequired(preparedStmtList,builder);
-		if(isOnlyTenantId) {
-		builder.append("property.status = ?");
+		if (!CollectionUtils.isEmpty(criteria.getStatus())) {
+			Set<String> statuses = criteria.getStatus().stream().map(Status::name).collect(Collectors.toSet());
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.status IN (").append(createQuery(statuses)).append(")");
+			addToPreparedStatement(preparedStmtList, statuses);
+//		if(isOnlyTenantId) {
+//		builder.append("property.status = ?");
+//		}
+//		else
+//		builder.append("owner.status = ?");
+//		preparedStmtList.add(Status.ACTIVE.toString());
 		}
-		else
-		builder.append("owner.status = ?");
-		preparedStmtList.add(Status.ACTIVE.toString());
 	
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);

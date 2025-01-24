@@ -434,27 +434,19 @@ public class SiteBookingService {
 	}
 
 	private void createAndUploadPDF(SiteBookingRequest siteBookingRequest) {
-        
-		log.info("here0");
-		if (!CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
+  		if (!CollectionUtils.isEmpty(siteBookingRequest.getSiteBookings())) {
 			siteBookingRequest.getSiteBookings().stream().forEach(siteBooking -> {
 
 //				Thread pdfGenerationThread = new Thread(() -> {
-				log.info("here1");
 					if(StringUtils.equalsIgnoreCase(siteBooking.getWorkflowAction(), AdvtConstants.ACTION_APPROVE)) {
 						// validate trade license
-						log.info("here2");
 						validateSiteBookingCertificateGeneration(siteBooking);
-						log.info("here3");
-
 						// create pdf
 						Resource resource = createNoSavePDF(siteBooking, siteBookingRequest.getRequestInfo());
-						log.info("here4");
 
 						//upload pdf
 						DmsRequest dmsRequest = generateDmsRequestBySiteBooking(resource, siteBooking,
 								siteBookingRequest.getRequestInfo());
-						log.info("here5");
 						try {
 							DMSResponse dmsResponse = alfrescoService.uploadAttachment(dmsRequest,
 									siteBookingRequest.getRequestInfo());
@@ -470,9 +462,7 @@ public class SiteBookingService {
 //				pdfGenerationThread.start();
 
 			});
-		}
-		log.info("here6");
-		
+		}		
 	}
 
 	private DmsRequest generateDmsRequestBySiteBooking(Resource resource, SiteBooking siteBooking,

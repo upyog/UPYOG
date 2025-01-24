@@ -1,0 +1,49 @@
+serviceMaps:
+  serviceName: FeedbackService
+  mappings:
+    - version: 1.0
+      name: feedback-service
+      description: Create Feedback Submission
+      fromTopic: create-feedback-submission
+      isTransaction: true
+      queryMaps:
+        - query: >
+            INSERT INTO egov_feedback_submission 
+            (id, serviceId, applicationNo, email, mobileno, useruuid, rating, source, feedbackType, additionalDetail, 
+             status, action,createdBy, lastModifiedBy, createdTime, lastModifiedTime)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+          basePath: $ # Root of the payload
+          jsonMaps:
+            - jsonPath: $.id
+            - jsonPath: $.serviceId
+            - jsonPath: $.applicationNo
+            - jsonPath: $.email
+            - jsonPath: $.mobileNo
+            - jsonPath: $.userUuid
+            - jsonPath: $.rating
+            - jsonPath: $.source
+            - jsonPath: $.feedbackType
+            - jsonPath: $.additionalDetail
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.status
+            - jsonPath: $.action
+            - jsonPath: $.auditDetails.createdBy
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.createdTime
+            - jsonPath: $.auditDetails.lastModifiedTime
+        - query: >
+            INSERT INTO egov_feedback_submission_audit 
+            (id, accountid, feedbackType, feedbackNumber, feedbackId, comment, action, status, createdBy, createdTime) 
+            VALUES (nextval('seq_eg_feedback_audit_id'), ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          basePath: $ # Root of the payload
+          jsonMaps:
+            - jsonPath: $.userUuid                 # Maps to 'accountid'
+            - jsonPath: $.feedbackType             # Maps to 'feedbackType'
+            - jsonPath: $.applicationNo            # Maps to 'feedbackNumber'
+            - jsonPath: $.id                       # Maps to 'feedbackId'
+            - jsonPath: $.comment                  # Maps to 'comment' from the payload
+            - jsonPath: $.action                   # Maps to 'action'
+            - jsonPath: $.status                   # Maps to 'status'
+            - jsonPath: $.auditDetails.createdBy   # Maps to 'createdBy'
+            - jsonPath: $.auditDetails.createdTime # Maps to 'createdTime'

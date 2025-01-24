@@ -19,6 +19,7 @@ public class OtpValidateRequest {
     @JsonProperty("otp")
     @Valid
     private Otp otp;
+    private Boolean returnToken;
 
     public ValidateRequest toDomainValidateRequest() {
         return ValidateRequest.builder()
