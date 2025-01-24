@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.request.service.EnrichmentService;
 import org.upyog.request.service.WaterTankerService;
+import org.upyog.request.service.WorkflowService;
 import org.upyog.request.service.constant.RequestServiceConstants;
 import org.upyog.request.service.repository.RequestServiceRepository;
 import org.upyog.request.service.web.models.WaterTankerBookingDetail;
@@ -29,6 +30,9 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	
 	@Autowired
 	RequestServiceRepository requestServiceRepository;
+	
+	@Autowired
+	WorkflowService workflowService;
 
 	@Override
 	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest) {
@@ -37,6 +41,8 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 				+ " for the request : " + waterTankerRequest.getWaterTankerBookingDetail());
 
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
+		
+		workflowService.updateWorkflowStatus(waterTankerRequest);
 
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
 
