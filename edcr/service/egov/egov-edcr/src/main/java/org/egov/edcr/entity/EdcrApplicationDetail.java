@@ -119,15 +119,7 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     @SafeHtml
     private String tenantId;
     
-	public String propertyId;
 
-    public String getPropertyId() {
-		return propertyId;
-	}
-
-	public void setPropertyId(String propertyId) {
-		this.propertyId = propertyId;
-	}
 
 	@Override
     public Long getId() {
