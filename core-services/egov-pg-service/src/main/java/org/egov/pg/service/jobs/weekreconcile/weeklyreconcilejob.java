@@ -66,7 +66,7 @@ public class weeklyreconcilejob implements Job {
 
        // endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
 
-        List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByTimeRange(TransactionCriteria.builder()
+        List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByweek(TransactionCriteria.builder()
                         .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),startTime, endTime);
 
         

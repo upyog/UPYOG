@@ -46,11 +46,28 @@ class TransactionQueryBuilder {
         preparedStmtList.add(endTime);
 
         
-        builder.append(" AND pg.txn_status <= 'PENDING' ");
+        builder.append(" AND pg.txn_status = 'PENDING' ");
         
         return builder.toString();
     }
 
+    static String getPaymentSearchQueryByweek(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
+        return buildQueryForweeklyTimeRange(transactionCriteria, startTime, endTime, preparedStmtList);
+    }
+    private static String buildQueryForweeklyTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
+        String preparedQuery = buildQueryforscheduler(transactionCriteria, preparedStmtList);
+        StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
+       // StringBuilder builder = new StringBuilder(preparedQuery);
+
+        if (!preparedQuery.contains("WHERE"))
+            builder.append(" WHERE ");
+        else
+            builder.append(" AND ");
+        
+        builder.append(" pg.txn_status = 'PENDING' ");
+        
+        return builder.toString();
+    }
 
     private static String buildQuery(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
         StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
