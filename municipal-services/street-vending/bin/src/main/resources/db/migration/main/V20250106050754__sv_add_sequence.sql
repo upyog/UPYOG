@@ -1,1 +1,0 @@
- CREATE SEQUENCE IF NOT EXISTS seq_street_vending_application_id;
