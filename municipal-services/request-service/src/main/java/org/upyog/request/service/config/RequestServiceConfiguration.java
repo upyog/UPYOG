@@ -69,5 +69,15 @@ public class RequestServiceConfiguration {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
+	// Pagination config for search results
+	@Value("${upyog.request.service.default.limit}")
+	private Integer defaultLimit;
+
+	@Value("${upyog.request.service.default.offset}")
+	private Integer defaultOffset;
+
+	@Value("${upyog.request.service.max.limit}")
+	private Integer maxSearchLimit;
+
 
 }
