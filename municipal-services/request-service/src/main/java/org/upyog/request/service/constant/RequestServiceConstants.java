@@ -4,6 +4,8 @@ public class RequestServiceConstants {
 
 	public static final String BOOKING_CREATED = "Your Water Tanker booking created successfully";
 
-	public static final String APPLICATIONS_FOUND = "Your Water Tanker booking searched successfully";
+	public static final String BOOKING_DETAIL_FOUND = "Your Water Tanker booking searched successfully";
+
+	public static final String CITIZEN = "CITIZEN";
 
 }
