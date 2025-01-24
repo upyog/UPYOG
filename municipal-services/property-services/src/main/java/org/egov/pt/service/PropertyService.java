@@ -41,6 +41,7 @@ import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.util.UnmaskingUtil;
 import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -503,22 +504,22 @@ public class PropertyService {
 				&& (criteria.getDoorNo() != null || criteria.getOldPropertyId() != null)) {
 			properties = fuzzySearchService.getProperties(requestInfo, criteria);
 		} else {
-			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
-
-				log.info("In Property Search");
-				/* converts owner information to associated property ids */
-				Boolean shouldReturnEmptyList = repository.enrichCriteriaFromUser(criteria, requestInfo);
-
-				if (shouldReturnEmptyList)
-					return Collections.emptyList();
-
+//			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
+//
+//				log.info("In Property Search");
+//				/* converts owner information to associated property ids */
+//				Boolean shouldReturnEmptyList = repository.enrichCriteriaFromUser(criteria, requestInfo);
+//
+//				if (shouldReturnEmptyList)
+//					return Collections.emptyList();
+//
+//				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
+//				log.info("In Property Search before filtering");
+//
+//				filterPropertiesForUser(properties, criteria.getOwnerIds());
+//			} else {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
-				log.info("In Property Search before filtering");
-
-				filterPropertiesForUser(properties, criteria.getOwnerIds());
-			} else {
-				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
-			}
+//			}
 
 			properties.forEach(property -> {
 				enrichmentService.enrichBoundary(property, requestInfo);
@@ -765,6 +766,28 @@ public class PropertyService {
 				.requestInfo(request.getRequestInfo()).build();
 
 		return updateProperty(propertyRequest);
+	}
+
+	public void setAllCount(List<Property> properties, PropertyResponse response) {
+
+		if (!CollectionUtils.isEmpty(properties)) {
+			for (Property property : properties) {
+				if (property.getStatus().equals(Status.INITIATED)) {
+					response.setApplicationInitiated(response.getApplicationInitiated() + 1);
+				} else if (property.getStatus().equals(Status.PENDINGFORVERIFICATION)) {
+					response.setApplicationPendingForVerification(response.getApplicationPendingForVerification() + 1);
+				} else if (property.getStatus().equals(Status.PENDINGFORMODIFICATION)) {
+					response.setApplicationPendingForModification(response.getApplicationPendingForModification() + 1);
+				} else if (property.getStatus().equals(Status.PENDINGFORAPPROVAL)) {
+					response.setApplicationPendingForApproval(response.getApplicationPendingForApproval() + 1);
+				} else if (property.getStatus().equals(Status.APPROVED)) {
+					response.setApplicationApproved(response.getApplicationApproved() + 1);
+				} else if (property.getStatus().equals(Status.REJECTED)) {
+					response.setApplicationRejected(response.getApplicationRejected() + 1);
+				}
+			}
+		}
+
 	}
 
 }
