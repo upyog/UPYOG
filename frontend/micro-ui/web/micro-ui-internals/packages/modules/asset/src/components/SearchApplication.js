@@ -115,7 +115,7 @@ const ASSETSearchApplication = ({ isLoading, t, onSubmit, data, count, setShowTo
         }
       });
       if(applicationDetails)
-      history.replace("/digit-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails });
+      history.replace("/digit-ui/employee/asset/assetservice/asset-process-depreciation-response", { ProcessDepreciation: applicationDetails,  applicationNo});
     } catch (error) {
       setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
     }
