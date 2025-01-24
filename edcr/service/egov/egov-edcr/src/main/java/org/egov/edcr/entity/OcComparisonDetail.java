@@ -84,7 +84,7 @@ public class OcComparisonDetail extends AbstractAuditable {
 
     private String tenantId;
     
-    private String propertyId;
+   
 
     @Transient
     private InputStream output;
@@ -173,13 +173,6 @@ public class OcComparisonDetail extends AbstractAuditable {
     public void setPermitDcr(EdcrApplicationDetail permitDcr) {
         this.permitDcr = permitDcr;
     }
-    public String getPropertyId() {
-        return propertyId;
-    }
 
-	public void setPropertyId(String propertyId) {
-		this.propertyId = propertyId;
-		
-	}
 
 }
