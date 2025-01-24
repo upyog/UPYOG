@@ -6,26 +6,11 @@ const VENDORCard = () => {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState("-");
-  // const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
-  //   tenantId: Digit.ULBService.getCurrentTenantId(),
-  //   ModuleCode: "VENDOR",
-  //   filters: { limit: 10, offset: 0, services: ["asset-create"] },
-
-  //   config: {
-  //     select: (data) => {
-  //       return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "0";
-  //     },
-  //     enabled: Digit.Utils.assetAccess(),
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   if (!isFetching && isSuccess) setTotal(data);
-  // }, [isFetching]);
+  
 
   
 
-  if (!Digit.Utils.assetAccess()) {
+  if (!Digit.Utils.vendorAccess()) {
     return null;
   }
   const links=[
@@ -36,18 +21,15 @@ const VENDORCard = () => {
     // },
     {
       label: t("ADDITIONAL_VENDOR_DETAILS"),
-      link: `/digit-ui/employee/vendor/new-application`,
-      role: "VENDOR"
+      link: `/digit-ui/employee/vendor/new-application`
     },
     {
       label: t("VENDOR_NEW_REGISTERATION"),
-      link: `/digit-ui/employee/vendor/registry/new-vendor`,
-      role: "VENDOR"
+      link: `/digit-ui/employee/vendor/registry/new-vendor`
     },
     {
       label: t("SEARCH_VENDOR"),
-      link: `/digit-ui/employee/vendor/search-vendor`,
-      role: "VENDOR"
+      link: `/digit-ui/employee/vendor/search-vendor`
     },
     // {
     //   label: t("MY_ASSET_APPLICATION"),
@@ -59,7 +41,8 @@ const VENDORCard = () => {
     // }
    
   ]
-  const VENDORRole = Digit.UserService.hasAccess(["ASSET_INITIATOR"]) || false;
+  
+  const VENDORRole = Digit.UserService.hasAccess(["VENDOR"]) || false;
 
 
   const propsForModuleCard = {

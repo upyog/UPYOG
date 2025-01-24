@@ -53,7 +53,9 @@ const EmployeeApp = ({ path, url, userType }) => {
   const AddVendor = Digit.ComponentRegistryService.getComponent("AddVendor");
   const SearchVendor = Digit.ComponentRegistryService.getComponent("SearchVendor");
   //const SearchApp = Digit.ComponentRegistryService.getComponent("SearchApp");
-  
+  const AddDriver = Digit.ComponentRegistryService.getComponent("AddDriver");
+  const EditVendorDetails = Digit.ComponentRegistryService.getComponent("EditVendorDetails");
+  const AddVehicle = Digit.ComponentRegistryService.getComponent("AddVehicle");
 
   return (
     <Switch>
@@ -74,6 +76,9 @@ const EmployeeApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/new-application`} component={Create} />
           <PrivateRoute path={`${path}/registry/new-vendor`} component={() => <AddVendor parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-vendor`} component={() => <SearchVendor parentRoute={path} />} />
+          <PrivateRoute path={`${path}/registry/new-driver`} component={() => <AddDriver parentRoute={path} />} />
+          <PrivateRoute path={`${path}/registry/vendor-details`} component={() => <EditVendorDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/registry/new-vehicle`} component={() => <AddVehicle parentRoute={path} />} />
 
           
           {/* <PrivateRoute path={`${path}/new-application`} component={(props) => <Create {...props} parentRoute={path} />} /> */}

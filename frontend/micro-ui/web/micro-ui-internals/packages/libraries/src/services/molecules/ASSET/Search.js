@@ -90,7 +90,7 @@ export const ASSETSearch = {
         row.costOfMaintenance,
         row.maintenanceCycle,
         row.maintenanceType,
-        row.postConditionRemarks
+        row.documents
       ]
     )) || [];
 
@@ -201,6 +201,7 @@ export const ASSETSearch = {
         title: "AST_MAINTENANCE",
         asSectionHeader: true,
         isTable: true,
+        isMaintenance: true,
         headers: maintenanceListRows.length > 0
           ? [
             `${t("AST_VENDOR")}`,
@@ -208,7 +209,7 @@ export const ASSETSearch = {
             `${t("AST_COST_OF_MAINTENANCE")}`,
             `${t("AST_MAINTENANCE_CYCLE")}`,
             `${t("AST_MAINTENANCE_TYPE")}`,
-            `${t("AST_POST_CONDITION_REMARKS")}`
+            `${t("AST_MAINTENANCE_DOCUMENT")}`
           ]
           : [`${t("AST_NO_MAINTENANCE_DATA")}`],
         tableRows: maintenanceListRows,
@@ -251,6 +252,8 @@ export const ASSETSearch = {
         "offset": 0
       }
     });
+
+    console.log('maintenanceList :- ',maintenanceList?.AssetMaintenance[0]?. documents)
 
     const disposalList = await Digit.ASSETService.disposalList({
       searchCriteria: {

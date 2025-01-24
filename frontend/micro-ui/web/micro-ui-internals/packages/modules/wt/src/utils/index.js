@@ -28,10 +28,10 @@ export const waterTankerPayload = (data) =>{
         extraCharge: (data?.requestDetails?.extraCharge) ? "Y":"N",
 
         applicantDetail: {
-            applicantName: data?.owner?.applicantName,
-            applicantMobileNo: data?.owner?.mobileNumber,
-            applicantAlternateMobileNo: data?.owner?.alternateNumber,
-            applicantEmailId: data?.owner?.emailId,
+            name: data?.owner?.applicantName,
+            mobileNumber: data?.owner?.mobileNumber,
+            alternateNumber: data?.owner?.alternateNumber,
+            emailId: data?.owner?.emailId,
             gender: data?.owner?.gender?.code.charAt(0)
         },
         address: {
