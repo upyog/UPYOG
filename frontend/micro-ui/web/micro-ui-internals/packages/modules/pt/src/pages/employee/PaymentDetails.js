@@ -21,7 +21,7 @@ const convertEpochToDate = dateEpoch => {
 //   await Digit.Utils.downloadReceipt(null, businessService, "consolidatedreceipt", undefined, receiptNumber);
 // };
 const printReciept = async (tenantId, payments) => { 
-  console.log("paymentssss",payments)
+  console.log("payments",payments)
   const stateTenant = Digit.ULBService.getStateId();
   let response = { filestoreIds: [payments?.fileStoreId] };
   if (!payments?.fileStoreId) {
