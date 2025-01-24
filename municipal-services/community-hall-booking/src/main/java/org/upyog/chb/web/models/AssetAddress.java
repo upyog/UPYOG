@@ -4,17 +4,24 @@ import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AssetAddress {
 
-	private String addressId;
 
-	private String applicantDetailId;
+	private String type;
 
-	private String doorNo;
 
-	private String houseNo;
-
-	private String streetName;
+	private String street;
 
 	private String addressLine1;
 
@@ -23,14 +30,10 @@ public class AssetAddress {
 	@NotBlank
 	private String city;
 
-	@NotBlank
-	private String cityCode;
 
-	@JsonProperty("locality")
-	private Boundary locality = null;
 
-	@NotBlank
-	private String localityCode;
+
+
 
 	@NotBlank
 	private String pincode;

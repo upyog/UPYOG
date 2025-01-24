@@ -182,6 +182,9 @@ public class Asset  implements AssetDTO {
         private JsonNode assetDetails;
         
         
+        @JsonProperty("bookingStatus")
+        private String bookingStatus;
+        
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
         

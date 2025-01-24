@@ -2,6 +2,7 @@ package org.upyog.chb.service;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,6 +24,8 @@ import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.billing.Demand;
 import org.upyog.chb.web.models.billing.DemandDetail;
+
+import com.google.common.base.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,10 +69,20 @@ public class DemandService {
 		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
 		
+		// Calculate Fees for the booking 
+        long days = calculateDaysBetween(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingDate(), bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingToDate());
+    	Optional<Double> cost = Optional.of(0.0);
+    	
+    	BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
+    		    .multiply(new BigDecimal(bookingRequest.getHallsBookingApplication()
+                        .getRelatedAsset()
+                        .getAssetDetails()
+                        .get("assetCost")
+                        .asText()));
 		List<DemandDetail> demandDetails = new LinkedList<>();
 		demandDetails.add(DemandDetail.builder()
 		.collectionAmount(BigDecimal.ZERO)
-		.taxAmount(BigDecimal.valueOf(500.00))
+		.taxAmount(totalPayableAmount)
 				.taxHeadMasterCode(CommunityHallBookingConstants.BILLING_TAX_HEAD_MASTER_CODE).tenantId(bookingDetail.getTenantId()).build());
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(config.getChbBillExpiryAfter()));
@@ -98,6 +111,17 @@ public class DemandService {
 		return demandRepository.saveDemand(bookingRequest.getRequestInfo(), demands);
 	}
 	
+	 public long calculateDaysBetween(String fromDate, String toDate) {
+	        // Define the date format
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	        // Parse the input strings into LocalDate
+	        LocalDate fromDateParsed = LocalDate.parse(fromDate, formatter);
+	        LocalDate toDateParsed = LocalDate.parse(toDate, formatter);
+
+	        // Calculate the difference in days
+	        return ChronoUnit.DAYS.between(fromDateParsed, toDateParsed);
+	    }
 	
 	
 	

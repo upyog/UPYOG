@@ -115,6 +115,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		// 1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
+
+		
 		// 2. Add fields that has custom logic like booking no, ids using UUID
 		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest);
 		
@@ -129,7 +131,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		// 3.Update workflow of the application
 		 workflowService.updateWorkflow(communityHallsBookingRequest);
-
+		  
+		 setRelatedAssetData(communityHallsBookingRequest);
+		 
 		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 
 		
@@ -142,6 +146,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
         
 		// 4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
+
+		// Rest Update Asset
 
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
@@ -450,6 +456,24 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				communityHallBookingDetail.setRelatedAsset(relatedAssets.get(0));
 			}
 		}
+
+	}
+	
+	
+
+	public void setRelatedAssetData(CommunityHallBookingRequest communityHallsBookingRequest) {
+	
+			AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+
+			assetSearchCriteria.setApplicationNo(communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
+			assetSearchCriteria.setTenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId());
+
+			List<Asset> relatedAssets = fetchAssets(assetSearchCriteria, communityHallsBookingRequest.getRequestInfo());
+
+			if (!CollectionUtils.isEmpty(relatedAssets)) {
+				communityHallsBookingRequest.getHallsBookingApplication().setRelatedAsset(relatedAssets.get(0));
+			}
+		
 
 	}
 

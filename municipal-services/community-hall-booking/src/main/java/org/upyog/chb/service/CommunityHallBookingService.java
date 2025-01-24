@@ -40,6 +40,8 @@ public interface CommunityHallBookingService {
 
 	void setRelatedAsset(List<CommunityHallBookingDetail> applications, @Valid RequestInfoWrapper requestInfoWrapper);
 
+	void setRelatedAssetData(CommunityHallBookingRequest communityHallsBookingRequest);
+
 
 	
 
