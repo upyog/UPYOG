@@ -640,10 +640,10 @@ public class PropertyValidator {
 				&& requestInfo.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
 
 			List<String> listOfStatus = getAccountStatusListByRoles(criteria, requestInfo);
-			if (CollectionUtils.isEmpty(listOfStatus) && CollectionUtils.isEmpty(criteria.getCreatedBy())) {
-				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
-						"Search can't be performed by this Employee due to lack of roles.");
-			}
+//			if (CollectionUtils.isEmpty(listOfStatus) && CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+//				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
+//						"Search can't be performed by this Employee due to lack of roles.");
+//			}
 			if (!CollectionUtils.isEmpty(listOfStatus)) {
 				criteria.setStatus(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
 			}
