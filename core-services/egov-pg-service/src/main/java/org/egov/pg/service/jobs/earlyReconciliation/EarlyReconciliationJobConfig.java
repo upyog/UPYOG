@@ -1,5 +1,7 @@
 package org.egov.pg.service.jobs.earlyReconciliation;
 
+import java.util.Date;
+
 import org.egov.pg.config.AppProperties;
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +21,18 @@ public class EarlyReconciliationJobConfig {
     private AppProperties appProperties;
 
     @Bean
-    @Primary
-    JobDetailFactoryBean earlyReconciliationJobs() {
+    JobDetailFactoryBean earlyReconciliationJobDetail() {
         JobDetailFactoryBean jobDetailFactory = new JobDetailFactoryBean();
         jobDetailFactory.setJobClass(EarlyReconciliationJob.class);
-        jobDetailFactory.setGroup("status-update");
-        jobDetailFactory.setDurability(true);
+        jobDetailFactory.setName("earlyReconciliationJob"); // Unique job name
+        jobDetailFactory.setGroup("status-update"); // Group name
+        jobDetailFactory.setDurability(true); // Ensure job durability
         return jobDetailFactory;
     }
 
     @Bean
-    @Autowired
-    CronTriggerFactoryBean earlyReconciliationTrigger(JobDetail earlyReconciliationJob) {
+    CronTriggerFactoryBean earlyReconciliationTrigger(JobDetail earlyReconciliationJobDetail) {
+        CronTriggerFactoryBean triggerFactory = new CronTriggerFactoryBean();
         int runEvery = appProperties.getEarlyReconcileJobRunInterval();
         Integer runEveryMinutes, runEveryHours;
         runEveryHours = runEvery / 60;
@@ -38,12 +40,11 @@ public class EarlyReconciliationJobConfig {
 
 
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
-        cronTriggerFactoryBean.setJobDetail(earlyReconciliationJob);
+        cronTriggerFactoryBean.setJobDetail(earlyReconciliationJobDetail);
 //        cronTriggerFactoryBean.setCronExpression("0 0/" + appProperties.getReconciliationTimeout().toString() + " * * * ?");
         cronTriggerFactoryBean.setCronExpression("0 " + runEveryHours + "/" + runEveryMinutes + " * * * ?");
         cronTriggerFactoryBean.setGroup("status-update");
         return cronTriggerFactoryBean;
     }
-
 
 }

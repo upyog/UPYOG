@@ -2,6 +2,8 @@ package org.egov.pg.service.jobs.weekreconcile;
 
 
 
+import java.util.Date;
+
 import org.egov.pg.config.AppProperties;
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,25 +22,27 @@ public class weeklylyReconciliationJobConfig {
     private AppProperties appProperties;
 
     @Bean
-    JobDetailFactoryBean weeklyReconciliationJobs() {
+    JobDetailFactoryBean weeklyReconciliationJobDetail() {
         JobDetailFactoryBean jobDetailFactory = new JobDetailFactoryBean();
         jobDetailFactory.setJobClass(weeklyreconcilejob.class);
-        jobDetailFactory.setName("weeklyreconcilejob"); // Explicitly set a unique job name
-        jobDetailFactory.setGroup("weekly-status-update");   // Keep your group name consistent
-        jobDetailFactory.setDurability(true);                // Ensure the job is durable
+        jobDetailFactory.setName("weeklyReconciliationJob"); // Unique job name
+        jobDetailFactory.setGroup("weekly-status-update"); // Group name
+        jobDetailFactory.setDurability(true); // Ensure job durability
         return jobDetailFactory;
     }
 
- 
-
     @Bean
-    @Autowired
-    CronTriggerFactoryBean weeklyReconciliationTrigger(JobDetail weeklyReconciliationJob) {
-        CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
-        cronTriggerFactoryBean.setJobDetail(weeklyReconciliationJob);
-      //  cronTriggerFactoryBean.setCronExpression("0 0 0 ? * SAT"); // Every Saturday at 12:00 AM
-        cronTriggerFactoryBean.setCronExpression("0 15 15 ? * TUE"); // At 12:28 PM every Tuesday
-        cronTriggerFactoryBean.setGroup("weekly-status-update");
-        return cronTriggerFactoryBean;
+    CronTriggerFactoryBean weeklyReconciliationTrigger(JobDetail weeklyReconciliationJobDetail) {
+        CronTriggerFactoryBean triggerFactory = new CronTriggerFactoryBean();
+        triggerFactory.setJobDetail(weeklyReconciliationJobDetail);
+        triggerFactory.setCronExpression("0 0 0 ? * SAT"); // Every Saturday at 12:00 AM
+      //  triggerFactory.setCronExpression("0 0/1 * * * ?"); // Cron expression (every 5 minutes as an example)
+
+        // Delay start by 2 minutes
+      //  triggerFactory.setStartTime(new Date(System.currentTimeMillis() + 2 * 60 * 1000)); // Current time + 2 minutes
+        triggerFactory.setName("weeklyReconciliationTrigger"); // Unique trigger name
+        triggerFactory.setGroup("weekly-status-update");
+        return triggerFactory;
     }
+    
 }

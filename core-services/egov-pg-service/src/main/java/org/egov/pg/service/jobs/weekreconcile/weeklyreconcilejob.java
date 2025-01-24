@@ -13,7 +13,6 @@ import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.service.TransactionService;
-import org.egov.pg.service.jobs.earlyReconciliation.EarlyReconciliationJob;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -60,16 +59,17 @@ public class weeklyreconcilejob implements Job {
      */
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        Integer startTime, endTime;
+      
+    	long endTime = System.currentTimeMillis();
+        long startTime = endTime - TimeUnit.DAYS.toMillis(8);
+        log.info("Weekly reconcilation Started Start Time--- "+startTime+ " ---End Time--- "+endTime);
 
-        startTime = appProperties.getEarlyReconcileJobRunInterval() * 2;
-        endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
+       // endTime = startTime - appProperties.getEarlyReconcileJobRunInterval();
 
         List<Transaction> pendingTxns = transactionRepository.fetchTransactionsByTimeRange(TransactionCriteria.builder()
-                        .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),
-                System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(startTime),
-                System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(endTime));
+                        .txnStatus(Transaction.TxnStatusEnum.PENDING).build(),startTime, endTime);
 
+        
         log.info("Attempting to reconcile {} pending transactions", pendingTxns.size());
 
         for (Transaction txn : pendingTxns) {
