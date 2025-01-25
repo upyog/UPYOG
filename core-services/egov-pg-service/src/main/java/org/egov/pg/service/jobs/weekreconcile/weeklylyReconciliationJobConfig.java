@@ -41,7 +41,6 @@ public class weeklylyReconciliationJobConfig {
         // Delay start by 2 minutes
       //  triggerFactory.setStartTime(new Date(System.currentTimeMillis() + 2 * 60 * 1000)); // Current time + 2 minutes
         triggerFactory.setName("weeklyReconciliationTrigger"); // Unique trigger name
-        triggerFactory.setGroup("weekly-status-update");
         triggerFactory.setGroup("status-update");
         return triggerFactory;
     }
