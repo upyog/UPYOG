@@ -655,6 +655,13 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/scheduler-service/src/main/resources/db"
         image-name: "scheduler-db"
+  - name: "builds/municipal-services/feedback-service"
+  build:
+    - work-dir: "municipal-services/feedback-service"
+      image-name: "feedback-service"
+      dockerfile: "build/maven/Dockerfile"
+    - work-dir: "municipal-services/feedback-service/src/main/resources/db"
+      image-name: "feedback-service-db"
  # Utilities
  
   - name: "builds/upyog/utilities/egov-weekly-impact-notifier"
