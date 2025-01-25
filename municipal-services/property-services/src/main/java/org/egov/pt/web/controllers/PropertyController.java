@@ -153,13 +153,15 @@ public class PropertyController {
 		} else {
 			properties = propertyService.searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo());
 		}
-
+		
 		log.info("Property count after search" + properties.size());
 
 		PropertyResponse response = PropertyResponse
 				.builder().responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				.properties(properties).count(properties.size()).build();
+		
+		propertyService.setAllCount(properties, response);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

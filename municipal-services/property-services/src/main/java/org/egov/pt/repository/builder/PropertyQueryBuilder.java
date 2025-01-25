@@ -444,23 +444,29 @@ public class PropertyQueryBuilder {
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
 		}
 		
+		if (!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+		}
+		
 		/* 
 		 * Condition to evaluate if owner is active.
 		 * Inactive owners should never be shown in results
 		*/
 		
-		if (!CollectionUtils.isEmpty(criteria.getStatus())) {
-			Set<String> statuses = criteria.getStatus().stream().map(Status::name).collect(Collectors.toSet());
-			addClauseIfRequired(preparedStmtList, builder);
-			builder.append("property.status IN (").append(createQuery(statuses)).append(")");
-			addToPreparedStatement(preparedStmtList, statuses);
+//		if (!CollectionUtils.isEmpty(criteria.getStatus())) {
+//			Set<String> statuses = criteria.getStatus().stream().map(Status::name).collect(Collectors.toSet());
+//			addClauseIfRequired(preparedStmtList, builder);
+//			builder.append("property.status IN (").append(createQuery(statuses)).append(")");
+//			addToPreparedStatement(preparedStmtList, statuses);
 //		if(isOnlyTenantId) {
 //		builder.append("property.status = ?");
 //		}
 //		else
 //		builder.append("owner.status = ?");
 //		preparedStmtList.add(Status.ACTIVE.toString());
-		}
+//		}
 	
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);

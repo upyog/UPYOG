@@ -162,7 +162,7 @@ public class PropertyUtil extends CommonUtils {
 						wf.setBusinessService(PTConstants.BUSINESS_SERVICE_PROPERTY_CITIZEN);
 						wf.setModuleName(PTConstants.MODULE_PROPERTY);
 						wf.setAction("INITIATE");
-					} else if (userRoles.contains(PTConstants.USER_ROLE_EMPLOYEE)) {
+					} else {
 						wf.setBusinessService(PTConstants.BUSINESS_SERVICE_PROPERTY_EMPLOYEE);
 						wf.setModuleName(PTConstants.MODULE_PROPERTY);
 						wf.setAction("INITIATE");

@@ -80,5 +80,7 @@ public class PropertyCriteria {
 
 	@Builder.Default
 	private Boolean isRequestForOldDataEncryption = false;
+	
+	 private Set<String> createdBy;
 
 }
