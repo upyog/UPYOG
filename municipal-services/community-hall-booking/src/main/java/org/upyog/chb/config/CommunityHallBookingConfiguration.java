@@ -214,8 +214,14 @@ public class CommunityHallBookingConfiguration {
 	
 	@Value(("${egov.chb.bill.expiry.after}"))
 	private String chbBillExpiryAfter;
+	
+	@Value("${egov.asset.host}")
+	private String assetHost;
 
 	@Value("${egov.asset.search.endpoint}")
 	private String assetSearchEndpoint;
+	
+	@Value("${egov.asset.update.endpoint}")
+	private String assetUpdateEndpoint;
 
 }

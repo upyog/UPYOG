@@ -8,6 +8,8 @@ import org.egov.common.contract.request.RequestInfo;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.web.models.Asset;
 import org.upyog.chb.web.models.AssetSearchCriteria;
+import org.upyog.chb.web.models.AssetUpdate;
+import org.upyog.chb.web.models.AssetUpdateRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -41,6 +43,8 @@ public interface CommunityHallBookingService {
 	void setRelatedAsset(List<CommunityHallBookingDetail> applications, @Valid RequestInfoWrapper requestInfoWrapper);
 
 	void setRelatedAssetData(CommunityHallBookingRequest communityHallsBookingRequest);
+
+	List<AssetUpdate> updateAsset(AssetUpdateRequest assetUpdateRequest);
 
 
 	

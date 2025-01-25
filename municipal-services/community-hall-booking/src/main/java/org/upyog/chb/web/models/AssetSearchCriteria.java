@@ -71,6 +71,9 @@ public class AssetSearchCriteria {
 	@JsonProperty("status")
 	private List<String> listOfstatus;
 
+	@JsonProperty("bookingStatus")
+	private String bookingStatus;
+	
 	public boolean isEmpty() {
 		return (this.tenantId == null && this.status == null && this.ids == null && this.applicationNo == null
 				&& this.approvalNo == null && this.approvalDate == null && this.assetClassification == null

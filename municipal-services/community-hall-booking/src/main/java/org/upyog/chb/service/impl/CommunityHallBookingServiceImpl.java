@@ -36,6 +36,9 @@ import org.upyog.chb.web.models.ApplicationDetail;
 import org.upyog.chb.web.models.Asset;
 import org.upyog.chb.web.models.AssetResponse;
 import org.upyog.chb.web.models.AssetSearchCriteria;
+import org.upyog.chb.web.models.AssetUpdate;
+import org.upyog.chb.web.models.AssetUpdateRequest;
+import org.upyog.chb.web.models.AssetUpdationResponse;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -111,7 +114,15 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 					"Please provide valid tenant id for booking creation");
 		}
 
-		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
+		 setRelatedAssetData(communityHallsBookingRequest);
+		 
+		 if(communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset() == null) {
+			 throw new CustomException("INVALID_BOOKING_CODE",
+						"Community Hall/Ground not availabel for booking. Failed to create booking  for : "
+								+ communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
+		 }
+//		 
+		 Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
 
 		// 1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
@@ -132,7 +143,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		// 3.Update workflow of the application
 		 workflowService.updateWorkflow(communityHallsBookingRequest);
 		  
-		 setRelatedAssetData(communityHallsBookingRequest);
+	
 		 
 		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 
@@ -149,6 +160,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		// Rest Update Asset
 
+		blockAssetBookingStatus(communityHallsBookingRequest);
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
 	
@@ -441,6 +453,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		return new ArrayList<>();
 	}
+	
 
 	@Override
 	public void setRelatedAsset(List<CommunityHallBookingDetail> applications, RequestInfoWrapper requestInfoWrapper) {
@@ -462,19 +475,66 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 
 	public void setRelatedAssetData(CommunityHallBookingRequest communityHallsBookingRequest) {
+
+		AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+
+		assetSearchCriteria
+				.setApplicationNo(communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
+		assetSearchCriteria.setTenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId());
+		assetSearchCriteria.setBookingStatus(CommunityHallBookingConstants.BOOKING_STATUS);
+
+		List<Asset> relatedAssets = fetchAssets(assetSearchCriteria, communityHallsBookingRequest.getRequestInfo());
+
+		if (!CollectionUtils.isEmpty(relatedAssets)) {
+			communityHallsBookingRequest.getHallsBookingApplication().setRelatedAsset(relatedAssets.get(0));
+		} 
+
+	}
 	
-			AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
-
-			assetSearchCriteria.setApplicationNo(communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
-			assetSearchCriteria.setTenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId());
-
-			List<Asset> relatedAssets = fetchAssets(assetSearchCriteria, communityHallsBookingRequest.getRequestInfo());
-
-			if (!CollectionUtils.isEmpty(relatedAssets)) {
-				communityHallsBookingRequest.getHallsBookingApplication().setRelatedAsset(relatedAssets.get(0));
-			}
+	public void blockAssetBookingStatus(CommunityHallBookingRequest communityHallsBookingRequest) {
 		
 
+
+		AssetUpdateRequest searchResult = new AssetUpdateRequest();
+		ObjectMapper objectMapper = new ObjectMapper();
+		AssetUpdate obj = objectMapper.convertValue(communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset(), AssetUpdate.class);
+		List<AssetUpdate> assetList = new ArrayList<>();
+    assetList.add(obj);
+	searchResult.setAssetUpdate(assetList);
+System.out.println(searchResult);
+		// searchResult.setAssetUpdate(assetList);
+		// AssetUpdateRequest searchResults=;
+		// updateAsset(searchResults, communityHallsBookingRequest.getRequestInfo());
+
+		
+
+	}
+
+
+	@Override
+	public List<AssetUpdate> updateAsset(AssetUpdateRequest assetUpdateRequest) {
+	String uri = config.getAssetHost().concat(config.getAssetUpdateEndpoint());
+		
+
+		AssetUpdationResponse assetSearchResponse = null;
+//		try {
+//			assetSearchResponse = restTemplate.postForObject(uri,
+//					RequestInfoWrapper.builder().requestInfo(requestInfo).build(), AssetUpdationResponse.class);
+//
+//			if (assetSearchResponse != null && assetSearchResponse.getAssets() != null) {
+//				// Return the list of assets
+//				return assetSearchResponse.getAssets();
+//			} else {
+//				// Log that no assets were found or response was empty
+//				log.warn("No assets found in the response for tenantId: {}", assetSearchCriteria.getTenantId());
+//			}
+//
+//		} catch (Exception e) {
+//			log.error("Error occured while asset search.", e);
+//			throw new CustomException("ASSET SEARCH ERROR",
+//					"Error occured while asset search. Message: " + e.getMessage());
+//		}
+		return new ArrayList<>();
 	}
 
 

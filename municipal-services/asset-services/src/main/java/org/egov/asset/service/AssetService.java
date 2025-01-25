@@ -154,6 +154,7 @@ public class AssetService {
 			 assets = getAssetsFromCriteria(criteria);
 		} else if (roles.contains(AssetConstants.CITIZEN)) {
 			criteria.setStatus("APPROVED");
+			criteria.setBookingStatus("AVAILABLE");
 			
 			assets = getAssetsFromCriteria(criteria);
 		} else {

@@ -34,6 +34,7 @@ public class AssetQueryBuilder {
             + "asset.name, "
             + "asset.department, "
             + "asset.status, "
+            + "asset.bookingstatus, "
             + "assign.isassigned, "  
             + "assign.assignedusername, "
            + "assign.employeecode, "  
@@ -138,6 +139,13 @@ public class AssetQueryBuilder {
             addToPreparedStatement(preparedStmtList, classificationList);
         }
 		
+        String bookingStatus = criteria.getBookingStatus();
+        if (bookingStatus != null) {
+            List<String> bookingStatusList = Arrays.asList(bookingStatus.split(","));
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.bookingstatus IN (").append(createQuery(bookingStatusList)).append(")");
+            addToPreparedStatement(preparedStmtList, bookingStatusList);
+        }
         
 		// Approval from approvaldate and to approvaldate search criteria 
 		Long approvalDt = criteria.getApprovalDate();
@@ -256,6 +264,13 @@ public class AssetQueryBuilder {
             addToPreparedStatement(preparedStmtList, classificationList);
         }
 		
+        String bookingStatus = criteria.getBookingStatus();
+        if (bookingStatus != null) {
+            List<String> bookingStatusList = Arrays.asList(bookingStatus.split(","));
+            addClauseIfRequired(preparedStmtList, builder);
+            builder.append(" asset.bookingstatus IN (").append(createQuery(bookingStatusList)).append(")");
+            addToPreparedStatement(preparedStmtList, bookingStatusList);
+        }
         
 		// Approval from approvaldate and to approvaldate search criteria 
 		Long approvalDt = criteria.getApprovalDate();

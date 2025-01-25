@@ -70,9 +70,7 @@ public class DemandService {
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
 		
 		// Calculate Fees for the booking 
-        long days = calculateDaysBetween(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingDate(), bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingToDate());
-    	Optional<Double> cost = Optional.of(0.0);
-    	
+        long days = calculateDaysBetween(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingDate(), bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingToDate());    	
     	BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
     		    .multiply(new BigDecimal(bookingRequest.getHallsBookingApplication()
                         .getRelatedAsset()
