@@ -120,4 +120,12 @@ public class Configurations {
 	@Value("${egov.idgen.ack.name}")
 	private String IdGenName;
 
+	@Value("${egov.enc.host}")
+	private String encHost;
+
+	@Value("${egov.enc.encrypt.endpoint}")
+	private String encEncryptURL;
+	
+	@Value("${egov.enc.decrypt.endpoint}")
+	private String encDecryptURL;
 }

@@ -41,6 +41,7 @@
 package org.egov.dx.web.controller;
 
 import java.net.URI;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -48,7 +49,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.dx.service.UserService;
+import org.egov.dx.service.DLRequestService;
 import org.egov.dx.web.models.AuthResponse;
 import org.egov.dx.web.models.IssuedDocument;
 import org.egov.dx.web.models.ResponseInfoFactory;
@@ -73,11 +74,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/digilocker")
+public class DLRequestController {
 	
 	@Autowired
-	private UserService userService;
+	private DLRequestService dlRequestService;
 	
 	@Autowired
 	ResponseInfoFactory responseInfoFactory;
@@ -86,7 +87,7 @@ public class UserController {
     public ResponseEntity<AuthResponse> search(@Valid @RequestBody RequestInfo requestInfo,@RequestParam("module") String module) throws NoSuchAlgorithmException
     { 
 		AuthResponse authResponse=new AuthResponse();
-	    URI redirectionURL=userService.getRedirectionURL(module,authResponse);
+	    URI redirectionURL=dlRequestService.getRedirectionURL(module,authResponse);
 	    authResponse.setRedirectURL(redirectionURL.toString());
 		log.info("Redirection URL"+redirectionURL.toString());
 		return 	new ResponseEntity<>(authResponse,HttpStatus.OK);
@@ -96,7 +97,7 @@ public class UserController {
     public ResponseEntity<AuthResponse> searchForcitizen(@Valid @RequestBody RequestInfo requestInfo,@RequestParam("module") String module) throws NoSuchAlgorithmException
     { 
 		AuthResponse authResponse=new AuthResponse();
-	    URI redirectionURL=userService.getRedirectionURL(module,authResponse);
+	    URI redirectionURL=dlRequestService.getRedirectionURL(module,authResponse);
 	    authResponse.setRedirectURL(redirectionURL.toString());
 		log.info("Redirection URL"+redirectionURL.toString());
 		return 	new ResponseEntity<>(authResponse,HttpStatus.OK);
@@ -106,7 +107,7 @@ public class UserController {
 	@RequestMapping(value = "/token", method = RequestMethod.POST)
     public ResponseEntity<TokenResponse>  getToken(@Valid @RequestBody TokenRequest tokenRequest)    { 
 		
-		TokenRes tokenRes=userService.getToken(tokenRequest.getTokenReq());
+		TokenRes tokenRes=dlRequestService.getToken(tokenRequest.getTokenReq());
 		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
 		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(tokenRes).build();
 
@@ -116,7 +117,7 @@ public class UserController {
 	@RequestMapping(value = "/token/citizen", method = RequestMethod.POST)
     public ResponseEntity<TokenResponse>  getTokenCitizen(@Valid @RequestBody TokenRequest tokenRequest)    { 
 		
-		TokenRes tokenRes=userService.getToken(tokenRequest.getTokenReq());
+		TokenRes tokenRes=dlRequestService.getToken(tokenRequest.getTokenReq());
 		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
 		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(tokenRes).build();
 
@@ -127,7 +128,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/details", method = RequestMethod.POST)
     public ResponseEntity<TokenResponse>  getDetails(@Valid @RequestBody TokenRequest tokenRequest)    { 
-		UserRes userRes=userService.getUser(tokenRequest.getTokenReq());
+		UserRes userRes=dlRequestService.getUser(tokenRequest.getTokenReq());
 		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
 		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(null).userRes(userRes).build();
 		return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
@@ -136,7 +137,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/issuedfiles", method = RequestMethod.POST)
     public ResponseEntity<TokenResponse> getIssuedFiles(@Valid @RequestBody TokenRequest tokenRequest)    { 
-		List<IssuedDocument> issuedDocument=userService.getIssuedDocument(tokenRequest.getTokenReq());
+		List<IssuedDocument> issuedDocument=dlRequestService.getIssuedDocument(tokenRequest.getTokenReq());
 		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
 		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).issuedDocument(issuedDocument).userRes(null).build();
 		return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
@@ -145,7 +146,7 @@ public class UserController {
 	@RequestMapping(value = "/file", method = RequestMethod.POST,produces = {"application/pdf"})
 	@ResponseBody	
     public  byte[] getFile(@Valid @RequestBody TokenRequest tokenRequest)    { 
-		byte[] doc=userService.getDoc(tokenRequest.getTokenReq(),tokenRequest.getTokenReq().getId());
+		byte[] doc=dlRequestService.getDoc(tokenRequest.getTokenReq(),tokenRequest.getTokenReq().getId());
 		return doc;
 	}
 }
