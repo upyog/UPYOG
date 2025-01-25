@@ -89,7 +89,7 @@ const MaintenanceAssetApplication = () => {
       }
     };
     
-    history.replace("/digit-ui/employee/asset/assetservice/maintenance", { AssetMaintenance: formData });
+    history.replace("/digit-ui/employee/asset/assetservice/maintenance", { AssetMaintenance: formData,  applicationNo});
 
   };
 

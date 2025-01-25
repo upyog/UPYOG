@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
@@ -41,6 +41,7 @@ const Maintenance = (props) => {
   const [error, setError] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [enableAudit, setEnableAudit] = useState(false);
+  const [applicationDetail, setApplicationDetail] = useState(null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", false);
 
@@ -48,10 +49,11 @@ const Maintenance = (props) => {
     setShowToast(null);
     setError(null);
   };
-  
+
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
+  // console.log('State value :- ', state?.AssetMaintenance, state?.applicationNo);
 
   const mutation = Digit.Hooks.asset.useMaintenanceAPI(tenantId, state.key !== "UPDATE");
   const mutation1 = Digit.Hooks.asset.useMaintenanceAPI(tenantId, false);
@@ -63,6 +65,14 @@ const Maintenance = (props) => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation1.data]);
 
+  useEffect(() => {
+    if (state?.applicationNo) {
+      setApplicationDetail(state?.applicationNo); // Set success message
+    } else {
+      setError(true); // If not successful, set error flag
+      setApplicationDetail(t("CS_SOMETHING_WENT_WRONG")); // Default error message
+    }
+  }, [state]);
 
   useEffect(() => {
     const onSuccess = async (successRes) => {
@@ -76,6 +86,8 @@ const Maintenance = (props) => {
       setShowToast({ key: "error" });
       setError(error?.response?.data?.Errors[0]?.message || null);
     };
+
+ 
 
     if (!mutationHappened) {
       mutation.mutate(
@@ -106,7 +118,12 @@ const Maintenance = (props) => {
           isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
           isEmployee={props.parentRoute.includes("employee")}
         />
-       
+        <div style={{ padding: "10px", paddingBottom: "10px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
+            <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
+          </Link>
+        </div>
+
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
       <ActionBar>
