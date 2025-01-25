@@ -89,8 +89,7 @@ public class PlanService {
 
         Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
                 featureService.getFeatures());
-        plan.setCoreArea(dcrApplication.getCoreArea());
-        System.out.println("coreArea" + plan.getCoreArea());
+      //  plan.setCoreArea(dcrApplication.getCoreArea());
 
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
         plan = applyRules(plan, amd, cityDetails);

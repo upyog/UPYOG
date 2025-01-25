@@ -244,7 +244,7 @@ public class Plan implements Serializable {
     private transient Boolean mainDcrPassed = false;
     private List<ICT> icts = new ArrayList<>();
     
-    private String coreArea;
+   // private String coreArea;
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -694,13 +694,13 @@ public class Plan implements Serializable {
         this.icts = icts;
     }
     
-    public String getCoreArea() {
+/*    public String getCoreArea() {
         return coreArea;
     }
 
     public void setCoreArea(String coreArea) {
         this.coreArea = coreArea;
-    }
+    } */
 
 
 }

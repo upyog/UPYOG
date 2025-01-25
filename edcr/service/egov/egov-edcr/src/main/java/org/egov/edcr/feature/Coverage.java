@@ -126,13 +126,12 @@ public class Coverage extends FeatureProcess {
 	public Plan process(Plan pl) {
 		LOG.info("inside Coverage process()");
 		validate(pl);
-		System.out.println("coverage corearea" + pl.getCoreArea());
 		BigDecimal totalCoverage = BigDecimal.ZERO;
 		BigDecimal totalCoverageArea = BigDecimal.ZERO;
 //		BigDecimal area = pl.getPlot().getArea(); // add for get total plot area
 		BigDecimal plotArea = pl.getPlot().getArea(); // add for get total plot area
 
-		String coreArea = pl.getCoreArea();
+	//	String coreArea = pl.getCoreArea();
 		int noOfFloors = 0;
 		Set<OccupancyTypeHelper> occupancyList = new HashSet<>();
 		// add for getting OccupancyType
@@ -201,8 +200,10 @@ public class Coverage extends FeatureProcess {
 		if (plotArea.compareTo(BigDecimal.valueOf(0)) > 0 && mostRestrictiveOccupancy != null &&
 				A.equals(mostRestrictiveOccupancy.getType().getCode())
 				) {
+		
 //			occupancyType = mostRestrictiveOccupancy.getType().getCode();
-			permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea, coreArea);
+			//permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea, coreArea);
+			permissibleCoverageValue = getPermissibleCoverageForResidential(plotArea);
 		}
 				//permissibleCoverageValue = getPermissibleCoverageForMix(plotArea);
 //			} else if (A.equals(mostRestrictiveOccupancy.getType().getCode())) { // if
@@ -247,13 +248,10 @@ public class Coverage extends FeatureProcess {
 	/*
 	 * to get coverage permissible value for Residential
 	 */
-	private BigDecimal getPermissibleCoverageForResidential(BigDecimal plotArea, String coreArea) {
+	private BigDecimal getPermissibleCoverageForResidential(BigDecimal plotArea) {
 		LOG.info("inside getPermissibleCoverageForResidential()");
 		BigDecimal permissibleCoverage = BigDecimal.ZERO;
 
-		if(coreArea.equalsIgnoreCase("Yes")) {
-			permissibleCoverage = BigDecimal.valueOf(90);
-		}else {
 		if (plotArea.compareTo(BigDecimal.valueOf(150)) <= 0) {
             permissibleCoverage = BigDecimal.valueOf(90); // 90% coverage for plot area up to 150 sqm
 //            Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
@@ -275,7 +273,7 @@ public class Coverage extends FeatureProcess {
             permissibleCoverage =  BigDecimal.valueOf(40); // 40% coverage for plot area above 1000 sqm
           //  Log.info("permissibleCoverage: for plotare: "+plotArea +"is: "+ permissibleCoverage);
         }
-		}
+	//	}
 		return permissibleCoverage;
 	}
 
