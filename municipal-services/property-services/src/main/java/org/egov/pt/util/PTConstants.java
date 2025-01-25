@@ -467,6 +467,14 @@ public class PTConstants {
     public static final String USER_ROLE_CITIZEN= "CITIZEN";
     
     public static final String USER_ROLE_EMPLOYEE= "EMPLOYEE";
+    
+    public static final String USER_TYPE_CITIZEN = "CITIZEN";
+
+	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
+	
+	public static final String USER_ROLE_PROPERTY_VERIFIER = "PROPERTY_VERIFIER";
+	
+	public static final String USER_ROLE_PROPERTY_APPROVER = "PROPERTY_APPROVER";
 
 }
 

@@ -138,39 +138,39 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		
 		List<Unit> units = currentProperty.getUnits();
 
-		/*
-		 * String unitId = rs.getString("unitid"); if (null == unitId) return;
-		 * 
-		 * if (!CollectionUtils.isEmpty(units)) for (Unit unit : units) { if
-		 * (unit.getId().equals(unitId)) return; }
-		 */
 		
-		//Long constructionDate = 0 == rs.getLong("constructionDate") ? null : rs.getLong("constructionDate");
+		  String unitId = rs.getString("unitid"); if (null == unitId) return;
+		  
+		  if (!CollectionUtils.isEmpty(units)) for (Unit unit : units) { if
+		  (unit.getId().equals(unitId)) return; }
+		 
+		
+		Long constructionDate = 0 == rs.getLong("constructionDate") ? null : rs.getLong("constructionDate");
 
-		/*
-		 * ConstructionDetail consDetail = ConstructionDetail.builder()
-		 * //.constructionType(rs.getString("constructionType"))
-		 * //.dimensions(getadditionalDetail(rs, "dimensions"))
-		 * //.constructionDate(constructionDate)
-		 * //.superBuiltUpArea(rs.getBigDecimal("unitspba"))
-		 * //.builtUpArea(rs.getBigDecimal("builtUpArea"))
-		 * //.carpetArea(rs.getBigDecimal("carpetArea"))
-		 * .plinthArea(rs.getBigDecimal("plinthArea")) .build();
-		 */
 		
-		/*
-		 * BigDecimal arv = rs.getBigDecimal("arv"); if (null != arv) arv =
-		 * arv.stripTrailingZeros();
-		 */
-		/*
-		 * Unit unit = Unit.builder() .occupancyType(rs.getString("occupancyType"))
-		 * .usageCategory(rs.getString("unitusageCategory"))
-		 * .occupancyDate(rs.getLong("occupancyDate"))
-		 * .active(rs.getBoolean("isunitactive")) .unitType(rs.getString("unitType"))
-		 * //.constructionDetail(consDetail) .floorNo(rs.getInt("floorno")) //.arv(arv)
-		 * //.id(unitId) .build();
-		 */
-		//currentProperty.addUnitsItem(unit);
+		  ConstructionDetail consDetail = ConstructionDetail.builder()
+		  .constructionType(rs.getString("constructionType"))
+		  .dimensions(getadditionalDetail(rs, "dimensions"))
+		  .constructionDate(constructionDate)
+		  .superBuiltUpArea(rs.getBigDecimal("unitspba"))
+		  .builtUpArea(rs.getBigDecimal("builtUpArea"))
+		  .carpetArea(rs.getBigDecimal("carpetArea"))
+		  .plinthArea(rs.getBigDecimal("plinthArea")) .build();
+		 
+		
+		
+		  BigDecimal arv = rs.getBigDecimal("arv"); if (null != arv) arv =
+		  arv.stripTrailingZeros();
+		 
+		
+		  Unit unit = Unit.builder() .occupancyType(rs.getString("occupancyType"))
+		  .usageCategory(rs.getString("unitusageCategory"))
+		  .occupancyDate(rs.getLong("occupancyDate"))
+		  .active(rs.getBoolean("isunitactive")) .unitType(rs.getString("unitType"))
+		  .constructionDetail(consDetail) .floorNo(rs.getInt("floorno")) //.arv(arv)
+		  .id(unitId) .build();
+		 
+		currentProperty.addUnitsItem(unit);
 	}
 
 	

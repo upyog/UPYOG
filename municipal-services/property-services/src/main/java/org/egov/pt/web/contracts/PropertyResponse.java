@@ -24,14 +24,39 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropertyResponse   {
+public class PropertyResponse {
 
 	@JsonProperty("ResponseInfo")
-  private ResponseInfo responseInfo;
+	private ResponseInfo responseInfo;
 
-  @JsonProperty("Properties")
-  private List<Property> properties;
-  
-  @JsonProperty("count")
-  private Integer count;
+	@JsonProperty("Properties")
+	private List<Property> properties;
+
+	@JsonProperty("count")
+	private Integer count;
+
+	@Builder.Default
+	@JsonProperty("applicationInitiated")
+	private Integer applicationInitiated = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationPendingForVerification")
+	private Integer applicationPendingForVerification = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationPendingForModification")
+	private Integer applicationPendingForModification = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationPendingForApproval")
+	private Integer applicationPendingForApproval = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationApproved")
+	private Integer applicationApproved = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationRejected")
+	private Integer applicationRejected = 0;
+	
 }
