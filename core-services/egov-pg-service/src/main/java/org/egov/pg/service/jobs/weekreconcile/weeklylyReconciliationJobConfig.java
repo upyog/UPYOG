@@ -26,7 +26,7 @@ public class weeklylyReconciliationJobConfig {
         JobDetailFactoryBean jobDetailFactory = new JobDetailFactoryBean();
         jobDetailFactory.setJobClass(weeklyreconcilejob.class);
         jobDetailFactory.setName("weeklyReconciliationJob"); // Unique job name
-        jobDetailFactory.setGroup("weekly-status-update"); // Group name
+        jobDetailFactory.setGroup("status-update"); // Group name
         jobDetailFactory.setDurability(true); // Ensure job durability
         return jobDetailFactory;
     }
