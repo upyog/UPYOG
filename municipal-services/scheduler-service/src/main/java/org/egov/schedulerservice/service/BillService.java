@@ -1,16 +1,14 @@
 package org.egov.schedulerservice.service;
 
-import java.util.List;
-
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.schedulerservice.contract.bill.Bill;
-import org.egov.schedulerservice.contract.bill.BillRepository;
-import org.egov.schedulerservice.contract.bill.BillResponse;
-import org.egov.schedulerservice.contract.bill.BillSearchCriteria;
-import org.egov.schedulerservice.contract.bill.GenerateBillCriteria;
-import org.egov.schedulerservice.util.ResponseInfoFactory;
+import org.egov.schedulerservice.config.SchedulerConfiguration;
+import org.egov.schedulerservice.constants.ErrorConstants;
+import org.egov.schedulerservice.exception.SchedulerServiceException;
+import org.egov.schedulerservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,32 +17,29 @@ import lombok.extern.slf4j.Slf4j;
 public class BillService {
 
 	@Autowired
-	private BillRepository billRepository;
+	private RestTemplate restTemplate;
 
 	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
-	
+	private SchedulerConfiguration applicationConfig;
 
-    public BillResponse generateBill(RequestInfo requestInfo,GenerateBillCriteria billCriteria){
+	public String expireEligibleBill(RequestInfo requestInfo) {
 
-        BillResponse billResponse = billRepository.fetchBill(billCriteria, requestInfo);
-        
-         return billResponse;
-    }
+		try {
+			StringBuilder url = new StringBuilder(applicationConfig.getBillServiceHostUrl());
+			url.append(applicationConfig.getBillExpityEndpoint());
+			// Make the POST request
 
-	/**
-	 * Searches the bills from DB for given criteria and enriches them with TaxAndPayments array
-	 * 
-	 * @param billCriteria
-	 * @param requestInfo
-	 * @return
-	 */
-	public BillResponse searchBill(BillSearchCriteria billSearchCriteria, RequestInfo requestInfo) {
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
-		List<Bill> bills = billRepository.searchBill(billSearchCriteria, requestInfo);
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
+					String.class);
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Error occured while calling bill service.", e);
+			throw new SchedulerServiceException(ErrorConstants.ERR_BILL_SERVICE_ERROR,
+					"Error occured while calling bill service. Message: " + e.getMessage());
+		}
 
-		return BillResponse.builder().resposneInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
-				.bill(bills).build();
 	}
-	
+
 }

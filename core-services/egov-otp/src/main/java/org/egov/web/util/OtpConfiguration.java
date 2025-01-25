@@ -27,5 +27,8 @@ public class OtpConfiguration {
 
     @Value("${egov.otp.encrypt}")
     private boolean encryptOTP;
+    
+    @Value("${egov.user.host}")
+    private String userHost;
 
 }

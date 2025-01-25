@@ -80,6 +80,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .childGarbageAccounts(new ArrayList<>())
                         .grbgCollectionUnits(new ArrayList<>())
                         .addresses(new ArrayList<>())
+                        .created_by(rs.getString("created_by"))
                         .auditDetails(audit)
                         .build();
 

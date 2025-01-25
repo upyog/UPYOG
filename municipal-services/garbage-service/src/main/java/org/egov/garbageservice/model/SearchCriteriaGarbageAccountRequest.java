@@ -17,7 +17,10 @@ public class SearchCriteriaGarbageAccountRequest {
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
-	
+
 	private SearchCriteriaGarbageAccount searchCriteriaGarbageAccount;
+
+	@Builder.Default
+	private Boolean isSchedulerCall = false;
 
 }

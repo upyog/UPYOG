@@ -1,8 +1,10 @@
 package org.egov.asset.repository;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,26 +32,25 @@ public class RestCallRepository {
 	 * @return Object
 	 * @author vishal
 	 */
-	public Object fetchResult(StringBuilder uri, Object request) {
+
+	public Optional<Object> fetchResult(StringBuilder uri, Object request) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		Object response = null;
+		log.info("URI: " + uri.toString());
 		try {
+			log.info("Request: " + mapper.writeValueAsString(request));
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
+
 			log.error("External Service threw an Exception: ", e);
-			if (!StringUtils.isEmpty(e.getResponseBodyAsString())) {
-				throw new ServiceCallException(e.getResponseBodyAsString());
-			}
+			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
-			log.error("Exception while fetching from searcher: ", e);
-			log.info("req: " + (request));
+
+			log.error("Exception while fetching from external service: ", e);
+			throw new CustomException("REST_CALL_EXCEPTION : " + uri.toString(), e.getMessage());
 		}
-
-		return response;
-
+		return Optional.ofNullable(response);
 	}
-
-
 
 }

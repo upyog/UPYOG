@@ -10,6 +10,9 @@ import java.util.regex.*;
 @Configuration
 @Data
 public class SMSProperties {
+	
+	@Value(("${state.level.tenant.id}"))
+	private String stateLevelTenantId;
 
     @Value("${sms.provider.class}")
     public String gatewayToUse;
@@ -92,6 +95,18 @@ public class SMSProperties {
 
     @Value("${sms.enabled:false}")
     private boolean smsEnabled;
+    
+    @Value("${egov.user.host}")
+	private String userServiceHostUrl;
+
+	@Value("${egov.user.search.endpoint}")
+	private String userSearchEndpoint;
+	
+	@Value("${egov.otp.host}")
+	private String otpServiceHostUrl;
+	
+	@Value("${egov.otp.create.endpoint}")
+	private String otpCreateEndpoint;
 
     @Setter(AccessLevel.PROTECTED) private List<Pattern> whitelistPatterns;
     @Setter(AccessLevel.PROTECTED) private List<Pattern> blacklistPatterns;

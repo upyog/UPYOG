@@ -40,6 +40,7 @@
 package org.egov.demand.service;
 
 import static org.egov.demand.util.Constants.ADVANCE_TAXHEAD_JSONPATH_CODE;
+import static org.egov.demand.util.Constants.TENANT_ID;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -142,9 +143,9 @@ public class DemandService {
 	 * @return
 	 */
 	public DemandResponse create(DemandRequest demandRequest) {
-
+			
 		DocumentContext mdmsData = util.getMDMSData(demandRequest.getRequestInfo(),
-				demandRequest.getDemands().get(0).getTenantId());
+				/*demandRequest.getDemands().get(0).getTenantId()*/TENANT_ID);
 
 		demandValidatorV1.validatedemandForCreate(demandRequest, true, mdmsData);
 

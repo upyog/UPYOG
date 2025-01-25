@@ -2,6 +2,7 @@ package org.egov.pt.validator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.ConstructionDetail;
@@ -606,8 +608,12 @@ public class PropertyValidator {
 			if(criteria.getTenantId() == null)
 				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
 			
-			if(criteria.getTenantId() != null && isCriteriaEmpty)
-				throw new CustomException("EG_PT_INVALID_SEARCH"," Search is not allowed on empty Criteria, Atleast one criteria should be provided with tenantId for " + userType);
+			/*
+			 * if(criteria.getTenantId() != null && isCriteriaEmpty) throw new
+			 * CustomException(
+			 * "EG_PT_INVALID_SEARCH"," Search is not allowed on empty Criteria, Atleast one criteria should be provided with tenantId for "
+			 * + userType);
+			 */
 			
 			allowedParams = Arrays.asList(configs.getEmployeeSearchParams().split(","));
 		}
@@ -626,7 +632,52 @@ public class PropertyValidator {
 
         if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
             throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
+        
+		if (null != requestInfo && null != requestInfo.getUserInfo()
+				&& requestInfo.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_CITIZEN)) {
+			criteria.setCreatedBy(Collections.singleton(requestInfo.getUserInfo().getUuid()));
+		} else if (null != requestInfo && null != requestInfo.getUserInfo()
+				&& requestInfo.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
+
+			List<String> listOfStatus = getAccountStatusListByRoles(criteria, requestInfo);
+//			if (CollectionUtils.isEmpty(listOfStatus) && CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+//				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
+//						"Search can't be performed by this Employee due to lack of roles.");
+//			}
+			if (!CollectionUtils.isEmpty(listOfStatus)) {
+				criteria.setStatus(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
+			}
+		}
+        
     }
+
+	private List<String> getAccountStatusListByRoles(PropertyCriteria criteria, RequestInfo requestInfo) {
+
+		List<String> rolesWithinTenant = getRolesByTenantId(criteria.getTenantId(),
+				requestInfo.getUserInfo().getRoles());
+		Set<String> statusWithRoles = new HashSet<>();
+
+		rolesWithinTenant.stream().forEach(role -> {
+			if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_VERIFIER)) {
+				statusWithRoles.addAll(
+						Arrays.asList(Status.PENDINGFORVERIFICATION.name(), Status.PENDINGFORMODIFICATION.name(),
+								Status.PENDINGFORAPPROVAL.name(), Status.APPROVED.name(), Status.REJECTED.name()));
+			} else if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_APPROVER)) {
+				statusWithRoles.addAll(Arrays.asList(Status.PENDINGFORMODIFICATION.name(),
+						Status.PENDINGFORAPPROVAL.name(), Status.APPROVED.name(), Status.REJECTED.name()));
+			} else {
+				criteria.setCreatedBy(Collections.singleton(requestInfo.getUserInfo().getUuid()));
+			}
+		});
+
+		return new ArrayList<>(statusWithRoles);
+	}
+	
+	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+		List<String> roleCodes = roles.stream().filter(role -> role.getTenantId().equalsIgnoreCase(tenantId))
+				.map(role -> role.getCode()).collect(Collectors.toList());
+		return roleCodes;
+	}
 
 	/**
 	 * Validates if the mobileNumber is 10 digit and starts with 5 or greater

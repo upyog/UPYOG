@@ -7,6 +7,8 @@ import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.egov.web.notification.sms.consumer.contract.SMSRequest;
 import org.egov.web.notification.sms.models.Category;
 import org.egov.web.notification.sms.models.RequestContext;
+import org.egov.web.notification.sms.models.SMSSentRequest;
+import org.egov.web.notification.sms.service.BaseSMSService;
 import org.egov.web.notification.sms.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,8 +59,10 @@ public class SmsNotificationListener {
     public void process(HashMap<String, Object> consumerRecord) {
         RequestContext.setId(UUID.randomUUID().toString());
         SMSRequest request = null;
+        SMSSentRequest smsSentRequest = null;
         try {
-            request = objectMapper.convertValue(consumerRecord, SMSRequest.class);
+        	smsSentRequest = objectMapper.convertValue(consumerRecord, SMSSentRequest.class);
+            request = smsService.populateSMSRequest(smsSentRequest);
             if (request.getExpiryTime() != null && request.getCategory() == Category.OTP) {
                 Long expiryTime = request.getExpiryTime();
                 Long currentTime = System.currentTimeMillis();
@@ -67,10 +71,10 @@ public class SmsNotificationListener {
                     if (!StringUtils.isEmpty(expiredSmsTopic))
                         kafkaTemplate.send(expiredSmsTopic, request);
                 } else {
-                    smsService.sendSMS(request.toDomain());
+                    smsService.sendSMS(smsSentRequest);
                 }
             } else {
-                smsService.sendSMS(request.toDomain());
+                smsService.sendSMS(smsSentRequest);
             }
         } catch (RestClientException rx) {
             log.info("Going to backup SMS Service", rx);

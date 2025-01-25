@@ -24,6 +24,8 @@ public class AssetActionRequest {
 	
 	private List<String> applicationNumbers;
 	
+	private String businessService;
+	
 	private String tenantId;
 	private Boolean isHistoryCall = false;
 

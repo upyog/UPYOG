@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2.BillStatus;
 import org.egov.demand.model.UpdateBillCriteria;
@@ -21,6 +22,8 @@ public class BillQueryBuilder {
 	public static final String REPLACE_STRING = "{replace}";
 	
 	public static final String BILL_STATUS_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE' AND tenantId = ? ";
+	
+	public static final String BILL_STATUS_UPDATE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE'";
 	
 	public static final String INSERT_BILL_QUERY = "INSERT into egbs_bill_v1 "
 			+"(id, tenantid, payername, payeraddress, payeremail, isactive, iscancelled, createdby, createddate, lastmodifiedby, lastmodifieddate,"
@@ -70,14 +73,16 @@ public class BillQueryBuilder {
 	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		
 		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
-		String tenantId = billSearchCriteria.getTenantId();
-		String[] tenantIdChunks = tenantId.split("\\.");
-		if(tenantIdChunks.length == 1){
-			billQuery.append(" WHERE b.tenantid LIKE ? ");
-			preparedStatementValues.add(billSearchCriteria.getTenantId() + '%');
-		}else{
-			billQuery.append(" WHERE b.tenantid = ? ");
-			preparedStatementValues.add(billSearchCriteria.getTenantId());
+		if (!StringUtils.isEmpty(billSearchCriteria.getTenantId())) {
+			String tenantId = billSearchCriteria.getTenantId();
+			String[] tenantIdChunks = tenantId.split("\\.");
+			if (tenantIdChunks.length == 1) {
+				billQuery.append(" WHERE b.tenantid LIKE ? ");
+				preparedStatementValues.add(billSearchCriteria.getTenantId() + '%');
+			} else {
+				billQuery.append(" WHERE b.tenantid = ? ");
+				preparedStatementValues.add(billSearchCriteria.getTenantId());
+			}
 		}
 		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
 		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
@@ -174,18 +179,28 @@ public class BillQueryBuilder {
 		
 		preparedStmtList.add(updateBillCriteria.getStatusToBeUpdated().toString());
 
-		if (updateBillCriteria.getStatusToBeUpdated().equals(BillStatus.CANCELLED)
-				&& updateBillCriteria.getAdditionalDetails() != null) {
+		if (!StringUtils.isEmpty(updateBillCriteria.getTenantId())) {
+			if (updateBillCriteria.getStatusToBeUpdated().equals(BillStatus.CANCELLED)
+					&& updateBillCriteria.getAdditionalDetails() != null) {
 
-			builder.append(BILL_STATUS_UPDATE_BASE_QUERY.replace(REPLACE_STRING, additionalDetailsQuery));
-			preparedStmtList.add(util.getPGObject(updateBillCriteria.getAdditionalDetails()));
-		} else
-			builder.append(BILL_STATUS_UPDATE_BASE_QUERY.replace(REPLACE_STRING, ""));
+				builder.append(BILL_STATUS_UPDATE_BASE_QUERY.replace(REPLACE_STRING, additionalDetailsQuery));
+				preparedStmtList.add(util.getPGObject(updateBillCriteria.getAdditionalDetails()));
+			} else
+				builder.append(BILL_STATUS_UPDATE_BASE_QUERY.replace(REPLACE_STRING, ""));
 
-		/*
-		 * where condition parameters
-		 */
-		preparedStmtList.add(updateBillCriteria.getTenantId());
+			/*
+			 * where condition parameters
+			 */
+			preparedStmtList.add(updateBillCriteria.getTenantId());
+		} else {
+			if (updateBillCriteria.getStatusToBeUpdated().equals(BillStatus.CANCELLED)
+					&& updateBillCriteria.getAdditionalDetails() != null) {
+
+				builder.append(BILL_STATUS_UPDATE_QUERY.replace(REPLACE_STRING, additionalDetailsQuery));
+				preparedStmtList.add(util.getPGObject(updateBillCriteria.getAdditionalDetails()));
+			} else
+				builder.append(BILL_STATUS_UPDATE_QUERY.replace(REPLACE_STRING, ""));
+		}
 
 		if (!CollectionUtils.isEmpty(updateBillCriteria.getBillIds())) {
 

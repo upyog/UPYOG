@@ -18,6 +18,8 @@ public class SearchCriteriaGarbageAccount {
     private List<Long> garbageId;
 
     private List<String> propertyId;
+    
+    private List<String> uuid;
 
     private List<String> type;
 
@@ -37,7 +39,7 @@ public class SearchCriteriaGarbageAccount {
     
     private String parentAccount;
 
-    private String orderBy = "ASC";
+    private String orderBy = "DESC";
 
     private Long startId;
 

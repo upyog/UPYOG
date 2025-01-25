@@ -101,7 +101,7 @@ public class GatewayService {
         return GATEWAY_MAP.containsKey(gateway) && GATEWAY_MAP.get(gateway).isActive();
     }
 
-    private Gateway getGateway(String gateway) {
+    public Gateway getGateway(String gateway) {
         return GATEWAY_MAP.get(gateway).getGateway();
     }
 

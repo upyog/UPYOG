@@ -8,10 +8,12 @@ import org.egov.domain.model.Token;
 public class OtpResponse {
     private ResponseInfo responseInfo;
     private Otp otp;
+    private String accessToken;
 
     public OtpResponse(Token token) {
         if (token != null) {
             otp = new Otp(token);
+            accessToken = token.getAccessToken();
         }
     }
 }

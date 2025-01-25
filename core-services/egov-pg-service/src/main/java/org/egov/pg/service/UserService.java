@@ -10,6 +10,8 @@ import org.egov.pg.repository.ServiceCallRepository;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.User;
 import org.egov.pg.web.models.UserResponse;
+import org.egov.pg.web.models.UserSearchRequest;
+import org.egov.pg.web.models.UserSearchResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -208,4 +210,27 @@ public class UserService {
 
         return response.getUser();
     }
+    
+	public UserSearchResponse searchUser(String userUuid) {
+		StringBuilder url = new StringBuilder(appProperties.getUserServiceHost());
+		url.append(appProperties.getUserServiceSearchPath());
+
+		UserSearchRequest userSearchRequest = UserSearchRequest.builder()
+				.requestInfo(RequestInfo.builder()
+						.userInfo(org.egov.common.contract.request.User.builder().uuid(userUuid).build()).build())
+				.uuid(Collections.singletonList(userUuid)).build();
+
+		UserSearchResponse userSearchResponse = null;
+		try {
+			userSearchResponse = restTemplate.postForObject(url.toString(), userSearchRequest,
+					UserSearchResponse.class);
+		} catch (Exception e) {
+			log.error("Error occured while user search.", e);
+			throw new CustomException("USER SEARCH ERROR",
+					"Error occured while user search. Message: " + e.getMessage());
+		}
+
+		return userSearchResponse;
+	}
+    
 }

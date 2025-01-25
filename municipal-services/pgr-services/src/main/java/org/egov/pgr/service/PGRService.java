@@ -7,16 +7,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.producer.Producer;
 import org.egov.pgr.repository.PGRRepository;
+import org.egov.pgr.repository.rowmapper.PGRQueryBuilder;
 import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.validator.ServiceRequestValidator;
+import org.egov.pgr.web.models.CountStatusRequest;
+import org.egov.pgr.web.models.CountStatusResponse;
+import org.egov.pgr.web.models.CountStatusUpdate;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
+import org.egov.pgr.web.models.ServiceStatusUpdateRequest;
 import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -199,4 +207,44 @@ public class PGRService {
 		
 		return Integer.valueOf(config.getComplaintTypes());
 	}
+
+
+	public @Valid CountStatusRequest getStatusCount(@Valid CountStatusRequest request) {
+	
+		List<CountStatusUpdate> count = null;
+		CountStatusResponse response = null;
+		try {
+			
+			 count = repository.countSearch(request);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		request.setCountStatusUpdate(count);
+		return request;
+	}
+	
+	public ServiceRequest updateStatus(ServiceStatusUpdateRequest request) {
+
+		RequestSearchCriteria requestSearchCriteria = RequestSearchCriteria.builder()
+				.serviceRequestId(request.getServiceRequestId()).tenantId(request.getTenantId()).build();
+
+		List<ServiceWrapper> serviceWrappers = search(request.getRequestInfo(), requestSearchCriteria);
+		
+		if (null == serviceWrappers || CollectionUtils.isEmpty(serviceWrappers)
+				|| null == serviceWrappers.get(0).getService()) {
+			throw new CustomException("SERVICE NOT FOUND", "No service found with given service request id.");
+		}
+
+		Service service = serviceWrappers.get(0).getService();
+
+		service.setApplicationStatus(request.getApplicationStatus());
+
+		ServiceRequest serviceRequest = ServiceRequest.builder().service(service).requestInfo(request.getRequestInfo())
+				.workflow(request.getWorkflow()).build();
+
+		return update(serviceRequest);
+
+	}
+	
 }

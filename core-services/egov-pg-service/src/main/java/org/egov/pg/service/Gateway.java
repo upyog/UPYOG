@@ -6,6 +6,8 @@ import java.util.Map;
 import org.egov.pg.models.Transaction;
 
 
+
+
 /**
  * Gateway operations
  */
@@ -59,4 +61,5 @@ public interface Gateway {
     String transactionIdKeyInResponse();
 
     String generateRedirectFormData(Transaction transaction );
+    
 }

@@ -1,9 +1,16 @@
 package org.egov.pg.repository;
 
 
-import org.egov.pg.web.models.TransactionCriteria;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import java.util.*;
+import org.egov.pg.web.models.TransactionCriteria;
+import org.egov.pg.web.models.TransactionCriteriaV2;
+import org.springframework.util.CollectionUtils;
 
 class TransactionQueryBuilder {
     private static final String SEARCH_TXN_SQL = "SELECT pg.txn_id, pg.txn_amount, pg.txn_status, pg.txn_status_msg, " +
@@ -22,6 +29,14 @@ class TransactionQueryBuilder {
         query = addPagination(query, transactionCriteria, preparedStmtList);
         return query;
     }
+    
+	static String getPaymentSearchQueryByCreatedTimeRange(TransactionCriteriaV2 transactionCriteriaV2,
+			List<Object> preparedStmtList) {
+		String query = buildQuery(transactionCriteriaV2, preparedStmtList);
+		query = addOrderByClause(query);
+		query = addPagination(query, transactionCriteriaV2, preparedStmtList);
+		return query;
+	}
 
     static String getPaymentSearchQueryByCreatedTimeRange(TransactionCriteria transactionCriteria, Long startTime, Long endTime, List<Object> preparedStmtList) {
         return buildQueryForTimeRange(transactionCriteria, startTime, endTime, preparedStmtList);
@@ -99,8 +114,74 @@ class TransactionQueryBuilder {
 
         return builder.toString();
     }
+    
+	private static String buildQuery(TransactionCriteriaV2 transactionCriteriaV2, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
 
-    private static String addPagination(String query, TransactionCriteria transactionCriteria, List<Object>
+		boolean isAppendAndClause = true;
+		builder.append(" WHERE 1=1");
+
+		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getTenantIds())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.tenant_id IN ( ").append(
+					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getTenantIds()), preparedStmtList))
+					.append(" )");
+		}
+		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getTxnIds())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_id IN ( ")
+					.append(getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getTxnIds()), preparedStmtList))
+					.append(" )");
+		}
+		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getUserUuids())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.user_uuid IN ( ").append(
+					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getUserUuids()), preparedStmtList))
+					.append(" )");
+		}
+		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getTxnStatus())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_status IN ( ").append(
+					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getTxnStatus()), preparedStmtList))
+					.append(" )");
+		}
+		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getConsumerCodes())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.consumer_code IN ( ").append(
+					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getConsumerCodes()), preparedStmtList))
+					.append(" )");
+		}
+		if (!CollectionUtils.isEmpty(transactionCriteriaV2.getReceipts())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.receipt IN ( ").append(
+					getQueryForCollection(new ArrayList<>(transactionCriteriaV2.getReceipts()), preparedStmtList))
+					.append(" )");
+		}
+
+		return builder.toString();
+	}
+
+	private static boolean addAndClauseIfRequired(final boolean appendAndClauseFlag, final StringBuilder queryString) {
+		if (appendAndClauseFlag)
+			queryString.append(" AND");
+
+		return true;
+	}
+
+	private static String getQueryForCollection(List<?> ids, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder();
+		Iterator<?> iterator = ids.iterator();
+		while (iterator.hasNext()) {
+			builder.append(" ?");
+			preparedStmtList.add(iterator.next());
+
+			if (iterator.hasNext())
+				builder.append(",");
+		}
+		return builder.toString();
+	}
+
+	private static String addPagination(String query, TransactionCriteria transactionCriteria, List<Object>
             preparedStmtList){
         if (transactionCriteria.getLimit() > 0) {
             query = query + " limit ? ";
@@ -112,6 +193,20 @@ class TransactionQueryBuilder {
         }
 
         return query;
+    }
+    
+    private static String addPagination(String query, TransactionCriteriaV2 transactionCriteriaV2, List<Object>
+    preparedStmtList){
+    	if (transactionCriteriaV2.getLimit() > 0) {
+    		query = query + " limit ? ";
+    		preparedStmtList.add(transactionCriteriaV2.getLimit());
+    	}
+    	if (transactionCriteriaV2.getOffset() > 0) {
+    		query = query + " offset ? ";
+    		preparedStmtList.add(transactionCriteriaV2.getOffset());
+    	}
+    	
+    	return query;
     }
 
     private static String addOrderByClause(String query){
