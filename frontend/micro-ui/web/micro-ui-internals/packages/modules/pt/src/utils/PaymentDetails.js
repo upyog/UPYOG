@@ -211,7 +211,7 @@ taxArray.push(taxRow);
     payments.paymentDetails[0].additionalDetails=details;   
         }   
     
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
+    response = await Digit.PaymentService.generatePdf(stateTenant, { Payments: [{ ...payments }] }, "property-receipt");
   }
   const fileStore = await Digit.PaymentService.printReciept(stateTenant, { fileStoreIds: response.filestoreIds[0] });
   window.open(fileStore[response?.filestoreIds[0]], "_blank");
