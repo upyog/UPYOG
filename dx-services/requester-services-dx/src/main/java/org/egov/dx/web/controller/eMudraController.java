@@ -72,7 +72,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/eSign")
-public class EsignController {
+public class eMudraController {
 	
 	
 	@Autowired

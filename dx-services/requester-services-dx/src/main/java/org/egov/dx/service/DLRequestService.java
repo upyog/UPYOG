@@ -5,11 +5,14 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.AuthResponse;
+import org.egov.dx.web.models.EncReqObject;
+import org.egov.dx.web.models.EncryptionRequest;
 import org.egov.dx.web.models.IssuedDocument;
 import org.egov.dx.web.models.IssuedDocumentList;
 import org.egov.dx.web.models.TokenReq;
@@ -33,7 +36,7 @@ import org.slf4j.MDC;
 
 @Service
 @Slf4j
-public class UserService {
+public class DLRequestService {
 
       
     @Autowired
@@ -49,7 +52,7 @@ public class UserService {
     	 MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     	 params.add("response_type", configurations.getResponseType());
     	 params.add("state", configurations.getState());
-    	 if(module.equalsIgnoreCase("REGISTER")) {
+    	 if(module.equalsIgnoreCase("SSO")) {
         	 params.add("redirect_uri", configurations.getRegisterRedirectURL());
     	 	 params.add("client_id", configurations.getRegisterClientId());}
 
@@ -68,23 +71,22 @@ public class UserService {
     	return uriComponents.toUri();
     }
 
-    public String getCodeChallenge(AuthResponse authResponse) throws NoSuchAlgorithmException
-    {
-    	String codeVerifier=getCodeVerifier();
-    	log.info("verifier is: " +codeVerifier );
-    	authResponse.setCodeverifier(codeVerifier);
-    	MessageDigest digest = MessageDigest.getInstance("SHA-256");
-    	byte[] hash = digest.digest(codeVerifier.getBytes(StandardCharsets.UTF_8));
-    	String encoded = Base64.getEncoder().withoutPadding().encodeToString(hash);
-    	encoded = encoded.replace("+", "-"); //Replace ’+’ with ’-’
-    	encoded= encoded.replace("/", "_");
-    	log.info("challenge is: " +encoded );
-    	
-    	return encoded;
-    	
-    	
-    }
- 
+    public String getCodeChallenge(AuthResponse authResponse) throws NoSuchAlgorithmException   
+    {     
+    	String codeVerifier=getCodeVerifier();     
+    	log.info("verifier is: " +codeVerifier );     
+    	authResponse.setCodeverifier(codeVerifier);     
+    	MessageDigest digest = MessageDigest.getInstance("SHA-256");     
+    	byte[] hash = digest.digest(codeVerifier.getBytes(StandardCharsets.UTF_8));     
+    	String encoded = Base64.getEncoder().withoutPadding().encodeToString(hash);     
+    	encoded = encoded.replace("+", "-"); //Replace ’+’ with ’-’     
+    	encoded= encoded.replace("/", "_");     
+    	log.info("challenge is: " +encoded );        
+    	EncReqObject encReqObject = EncReqObject.builder().tenantId("pg").type("Normal").value(encoded).build();        
+    	EncryptionRequest encryptionRequest = EncryptionRequest.builder().encryptionRequests(Collections.singletonList(encReqObject)).build();        
+    	String newEncoded = restTemplate.postForEntity(configurations.getEncHost() + configurations.getEncEncryptURL(), encryptionRequest, String.class).getBody();     
+    	return newEncoded;              
+    	}
     
     public String getCodeVerifier()
     {
@@ -111,7 +113,7 @@ public class UserService {
          MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
          map.add("code", tokenReq.getCode());
          map.add("grant_type", "authorization_code");
-    	 if(tokenReq.getModule().equalsIgnoreCase("REGISTER")) {
+    	 if(tokenReq.getModule().equalsIgnoreCase("SSO")) {
 	         map.add("client_id", configurations.getRegisterClientId());
 	         map.add("redirect_uri", configurations.getRegisterRedirectURL());
 	         map.add("client_secret", configurations.getRegisterClientSecret());
@@ -122,10 +124,11 @@ public class UserService {
     	     map.add("redirect_uri", configurations.getPtRedirectURL());
     	     map.add("client_secret", configurations.getClientSecret());
     	 }
-         map.add("code_verifier",tokenReq.getCodeVerifier());
+         map.add("dlReqRef",tokenReq.getDlReqRef());
 
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);
+         
          TokenRes tokenRes= restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();
          return tokenRes;
     }
