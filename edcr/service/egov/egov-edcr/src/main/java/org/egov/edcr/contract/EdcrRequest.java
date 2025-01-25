@@ -78,7 +78,7 @@ public class EdcrRequest {
 
     private String appliactionType;
     
-    private String coreArea;
+   // private String coreArea;
 
     private String applicationSubType;
 
@@ -114,13 +114,13 @@ public class EdcrRequest {
         this.applicantName = applicantName;
     }
     
-    public String getCoreArea() {
+  /*  public String getCoreArea() {
         return coreArea;
     }
 
     public void setCoreArea(String coreArea) {
         this.coreArea = coreArea;
-    }
+    } */
 
     public String getTransactionNumber() {
         return transactionNumber;
