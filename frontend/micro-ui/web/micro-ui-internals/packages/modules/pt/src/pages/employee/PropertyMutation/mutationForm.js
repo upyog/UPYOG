@@ -153,7 +153,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
     else {
       submitData.Property.institution=null;
     }
-    console.log("submitData",submitData)
     history.replace("/digit-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
   };
 
