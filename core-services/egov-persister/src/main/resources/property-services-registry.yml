@@ -238,7 +238,7 @@ serviceMaps:
         dbType: JSONB
 
 
-    - query: INSERT INTO eg_pt_unit(id, tenantid, propertyid, floorno, unittype, usagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, superbuiltuparea, arv, constructiontype, constructiondate, dimensions, active, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_unit(id, tenantid, propertyid, floorno, unittype, usagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, superbuiltuparea, arv, constructiontype, constructiondate, dimensions, additional_details, active, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property.units.*
       jsonMaps:
 
@@ -273,6 +273,10 @@ serviceMaps:
       - jsonPath: $.Property.units.*.constructionDetail.constructionDate
 
       - jsonPath: $.Property.units.*.constructionDetail.dimensions
+        type: JSON
+        dbType: JSONB
+      
+      - jsonPath: $.Property.units.*.additionalDetails
         type: JSON
         dbType: JSONB
 
