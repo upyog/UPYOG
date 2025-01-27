@@ -1,4 +1,4 @@
-import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { BillDetailsKeyNoteConfig } from "./billDetailsConfig";

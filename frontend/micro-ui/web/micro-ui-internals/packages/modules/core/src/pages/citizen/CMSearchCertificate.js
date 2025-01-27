@@ -12,7 +12,7 @@ import {
     Header,
     Toast,
     Loader,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 /**
  * Description: VSearchCertificate component renders a form having certificate type, certificate number and a captcha for verification and display's a table as a result

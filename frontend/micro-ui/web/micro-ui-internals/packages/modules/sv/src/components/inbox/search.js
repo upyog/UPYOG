@@ -11,7 +11,7 @@ import {
   MobileNumber,
   Dropdown,
   Localities,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 

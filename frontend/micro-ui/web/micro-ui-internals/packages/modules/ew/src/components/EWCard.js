@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
+import { EmployeeModuleCard, PropertyHouse } from "@upyog/digit-ui-react-components";
 
 const EWCard = () => {
   const { t } = useTranslation();

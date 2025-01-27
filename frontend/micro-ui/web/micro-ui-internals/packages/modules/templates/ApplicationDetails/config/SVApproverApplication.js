@@ -3,7 +3,7 @@
  * Returning the Header ad lable of the card as well as the comment box
  * 
  */
-import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
 import React from "react";
 export const configSVApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, approvers, selectedApprover, setSelectedApprover, isUploading }) => {
   const LoadingSpinner = () => (

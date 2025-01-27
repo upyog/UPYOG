@@ -1,6 +1,6 @@
 import React from "react";
-import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
-import { DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown } from "@upyog/digit-ui-react-components";
+import { DatePicker } from "@upyog/digit-ui-react-components";
 
 export const configScheduleDso = ({ t, rejectMenu, setTrips, trips, applicationCreatedTime = 0, vehicleCapacity, noOfTrips, action }) => {
     return {

@@ -10,7 +10,7 @@ import {
   RemoveableTag,
   Toast,
   Loader,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState, useMemo } from "react";
 import { render } from "react-dom";
 import { useTranslation } from "react-i18next";

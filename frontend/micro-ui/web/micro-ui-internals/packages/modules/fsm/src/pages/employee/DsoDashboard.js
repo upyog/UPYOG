@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader, ShippingTruck, EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, ShippingTruck, EmployeeModuleCard } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 

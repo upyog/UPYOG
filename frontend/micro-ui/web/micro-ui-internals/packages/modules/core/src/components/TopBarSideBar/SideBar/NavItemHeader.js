@@ -16,7 +16,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import ReactTooltip from "react-tooltip";
 import { useTranslation } from 'react-i18next';
 
@@ -50,7 +50,7 @@ const NavItemHeader = props => {
   const leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
   const iconArr=item?.icon?.leftIcon?.split?.(":")|| item?.leftIcon?.split?.(":");
   if(iconArr?.[0]=='dynamic'){
-    var IconComp = require("@nudmcdgnpm/digit-ui-react-components")?.[iconArr?.[1]];
+    var IconComp = require("@upyog/digit-ui-react-components")?.[iconArr?.[1]];
     leftIcon=IconComp?<IconComp/>:leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();

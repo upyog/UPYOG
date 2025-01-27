@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel,Dropdown, UploadFile,Toast} from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel,Dropdown, UploadFile,Toast} from "@upyog/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
 import { transformDocuments } from "../utils";

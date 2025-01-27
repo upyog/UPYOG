@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ApplicationTable from "./ApplicationTable";
-import { CardSubHeader, DeleteIcon, Modal } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardSubHeader, DeleteIcon, Modal } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 //Todo: Work in progress for cart details.

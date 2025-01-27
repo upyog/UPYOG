@@ -12,7 +12,7 @@ import {
   Toast,
   InfoIcon,
   Card
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { DateRangePicker, createStaticRanges } from "react-date-range";
 import { addDays, startOfDay, endOfDay, format, differenceInCalendarDays } from 'date-fns';
 import ChbCommunityHallDetails from "../components/ChbCommunityHallDetails";

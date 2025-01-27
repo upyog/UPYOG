@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, Loader } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 import EventLink from "../Events/EventLink";

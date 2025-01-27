@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
 import FSMLink from "./inbox/FSMLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";
-import { ToggleSwitch } from "@nudmcdgnpm/digit-ui-react-components";
+import { ToggleSwitch } from "@upyog/digit-ui-react-components";
 import RegistrySearch from "./RegistrySearch";
 import { useQueryClient } from "react-query";
 

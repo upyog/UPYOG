@@ -8,7 +8,7 @@ import {
   Dropdown,
   MobileNumber,
   Loader
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 const SearchFields = ({register, control, reset, tenantId, t, previousPage ,formState}) => {
 

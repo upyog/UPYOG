@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LocationSearchCard, LinkButton, Card } from "@nudmcdgnpm/digit-ui-react-components";
+import { LocationSearchCard, LinkButton, Card } from "@upyog/digit-ui-react-components";
 
 const GIS = ({ t, onSelect, formData = {},handleRemove,onSave }) => {
   const [location, setlocation] = useState(formData?.address?.location || {});
