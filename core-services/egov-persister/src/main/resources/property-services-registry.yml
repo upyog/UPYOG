@@ -73,7 +73,7 @@ serviceMaps:
         dbType: JSONB
 
 
-    - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property.owners.*
       jsonMaps:
 
@@ -104,6 +104,10 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedBy
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
+      
+      - jsonPath: $.Property.owners.*.additionalDetails
+        type: JSON
+        dbType: JSONB
 
 
     - query: INSERT INTO eg_pt_document (id, tenantid, entityid, documenttype, filestoreid, documentuid, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
