@@ -55,5 +55,8 @@ public class AssetSearchDTO implements AssetDTO{
     AssetAddressDTO addressDetails;
     
     
+    @JsonProperty("bookingStatus")
+    private String bookingStatus;
+    
 
 }

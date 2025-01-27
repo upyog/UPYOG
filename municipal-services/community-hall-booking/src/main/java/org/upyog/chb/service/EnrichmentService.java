@@ -32,21 +32,18 @@ public class EnrichmentService {
 
 	@Autowired
 	private CommunityHallBookingRepositoryImpl communityHallBookingRepositoryImpl;
-
+	
 	public void enrichCreateBookingRequest(CommunityHallBookingRequest bookingRequest) {
 		 String bookingId = CommunityHallBookingUtil.getRandonUUID();
-		String bookingRefNo = "CHB" + "/" + "B" + "/"
-				+ bookingRequest.getHallsBookingApplication().getAddress().getAddressId()+"/"
-				+ communityHallBookingRepositoryImpl.getNextSequence();
-		log.info("Enriching booking request for booking id :" + bookingId);
-
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		AuditDetails auditDetails = CommunityHallBookingUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-
+		
+		Long seq=communityHallBookingRepositoryImpl.getNextSequence();
 		bookingDetail.setAuditDetails(auditDetails);
 		bookingDetail.setBookingId(bookingId);
-		bookingDetail.setBookingRefNo(bookingRefNo);
+		bookingDetail.setBookingRefNo(getApplicationNo(seq));
+		bookingDetail.setBookingNo(getApplicationNo(seq));
 		bookingDetail.setApplicationDate(auditDetails.getCreatedTime());
 		bookingDetail.setBookingStatus(BookingStatusEnum.valueOf(bookingDetail.getBookingStatus()).toString());
 
@@ -79,10 +76,19 @@ public class EnrichmentService {
 
 		log.info("Enriched booking request for booking no :" + customIds.get(0));
 
-		bookingDetail.setBookingNo(customIds.get(0));
+		//bookingDetail.setBookingNo(customIds.get(0));
+	
+		
 
 	}
 
+	public String getApplicationNo(Long seq) {
+	    String template = "BK-000-[SEQ]";
+	    template = template.replace("[SEQ]", String.valueOf(seq));
+	    // template = template.replace("[ULBNAME]", String.valueOf(ub));
+	    return template;
+	}
+	  
 	/**
 	 * Returns a list of numbers generated from idgen
 	 *

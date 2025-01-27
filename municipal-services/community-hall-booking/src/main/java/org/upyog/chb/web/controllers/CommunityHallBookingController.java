@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,15 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
+import org.upyog.chb.web.models.Asset;
+import org.upyog.chb.web.models.AssetSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
+import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingResponse;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationCriteria;
 import org.upyog.chb.web.models.CommunityHallDemandEstimationResponse;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
@@ -29,6 +35,7 @@ import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.ResponseInfo;
 import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
 import org.upyog.chb.web.models.billing.Demand;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import io.swagger.annotations.ApiParam;
 
@@ -58,7 +65,7 @@ public class CommunityHallBookingController {
 			@ApiParam(value = "Details for the community halls booking time payment and documents", required = true) @Valid @RequestBody CommunityHallBookingRequest communityHallsBookingRequest) {
 		
 		CommunityHallBookingDetail bookingDetail = bookingService.createBooking(communityHallsBookingRequest);
-		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
+	ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_CREATED,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder()
 				.responseInfo(info)
@@ -96,6 +103,9 @@ public class CommunityHallBookingController {
 	public ResponseEntity<CommunityHallBookingResponse> v1SearchCommunityHallBooking(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
             @Valid @ModelAttribute CommunityHallBookingSearchCriteria criteria) {
 		List<CommunityHallBookingDetail> applications = bookingService.getBookingDetails(criteria, requestInfoWrapper.getRequestInfo());
+		
+		bookingService.setRelatedAsset(applications, requestInfoWrapper);
+		
 		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_LIST,
 				StatusEnum.SUCCESSFUL);
 		CommunityHallBookingResponse response = CommunityHallBookingResponse.builder().hallsBookingApplication(applications)
@@ -126,4 +136,28 @@ public class CommunityHallBookingController {
 				.responseInfo(info).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/v1/fetch/CALCULATEFEE", method = RequestMethod.POST)
+    public ResponseEntity<?> calculateTLFee(@RequestBody CommunityHallBookingActionRequest communityHallActionRequest
+    										){
+    	CommunityHallBookingActionResponse response = null;
+    	
+    	response = bookingService.getApplicationDetails(communityHallActionRequest);
+    	
+    	return new ResponseEntity(response, HttpStatus.OK);
+    }
+	
+	
+	@RequestMapping(value = "/v1/_update_status", method = RequestMethod.POST)
+	public ResponseEntity<CommunityHallBookingResponse> v1UpdateStatus(
+			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody CommunityHallBookingUpdateStatusRequest communityHallsBookingUpdateStatusRequest) {
+		CommunityHallBookingDetail bookingDetail = bookingService.updateStatus(communityHallsBookingUpdateStatusRequest);
+		ResponseInfo info = CommunityHallBookingUtil.createReponseInfo(communityHallsBookingUpdateStatusRequest.getRequestInfo(), CommunityHallBookingConstants.COMMUNITY_HALL_BOOKING_UPDATED,
+				StatusEnum.SUCCESSFUL);
+		CommunityHallBookingResponse communityHallResponse = CommunityHallBookingResponse.builder().responseInfo(info)
+				.build();
+		communityHallResponse.addNewHallsBookingApplication(bookingDetail);
+		return new ResponseEntity<CommunityHallBookingResponse>(communityHallResponse, HttpStatus.OK);
+	}
+
 }
