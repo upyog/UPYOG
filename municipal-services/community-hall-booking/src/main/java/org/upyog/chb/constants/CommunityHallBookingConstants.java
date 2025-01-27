@@ -118,6 +118,8 @@ public class CommunityHallBookingConstants {
 
 	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "CHBApplicantDetailDecryptionDisabled";
 	
-	public static final String BOOKING_STATUS = "AVAILABLE";
+	public static final String BOOKING_AVAILABLE_STATUS = "AVAILABLE";
+	
+	public static final String BOOKING_BOOKED_STATUS = "BOOKED";
 
 }

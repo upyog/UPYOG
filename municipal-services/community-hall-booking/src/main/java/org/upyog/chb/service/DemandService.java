@@ -71,12 +71,22 @@ public class DemandService {
 		
 		// Calculate Fees for the booking 
         long days = calculateDaysBetween(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingDate(), bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingToDate());    	
-    	BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
-    		    .multiply(new BigDecimal(bookingRequest.getHallsBookingApplication()
-                        .getRelatedAsset()
-                        .getAssetDetails()
-                        .get("assetCost")
-                        .asText()));
+
+		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
+			    .multiply(new BigDecimal(bookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("gstAssetCost")
+			            .asText())) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(bookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("securityAmount")
+			            .asText())); // Converts securityAmount string to BigDecimal
+    	
+    	
 		List<DemandDetail> demandDetails = new LinkedList<>();
 		demandDetails.add(DemandDetail.builder()
 		.collectionAmount(BigDecimal.ZERO)
@@ -91,7 +101,7 @@ public class DemandService {
 		
 		Demand demand = Demand.builder().consumerCode(consumerCode)
 				 .demandDetails(demandDetails).payer(owner)
-				 .minimumAmountPayable(BigDecimal.valueOf(500.00))
+				 .minimumAmountPayable(totalPayableAmount)
 				 .tenantId(tenantId)
 				.taxPeriodFrom(CommunityHallBookingUtil.getCurrentTimestamp()).taxPeriodTo(CommunityHallBookingUtil.minusOneDay(maxdate))
 				.fixedBillExpiryDate(cal.getTimeInMillis())
@@ -109,17 +119,17 @@ public class DemandService {
 		return demandRepository.saveDemand(bookingRequest.getRequestInfo(), demands);
 	}
 	
-	 public long calculateDaysBetween(String fromDate, String toDate) {
-	        // Define the date format
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public long calculateDaysBetween(String fromDate, String toDate) {
+		// Define the date format
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	        // Parse the input strings into LocalDate
-	        LocalDate fromDateParsed = LocalDate.parse(fromDate, formatter);
-	        LocalDate toDateParsed = LocalDate.parse(toDate, formatter);
+		// Parse the input strings into LocalDate
+		LocalDate fromDateParsed = LocalDate.parse(fromDate, formatter);
+		LocalDate toDateParsed = LocalDate.parse(toDate, formatter);
 
-	        // Calculate the difference in days
-	        return ChronoUnit.DAYS.between(fromDateParsed, toDateParsed);
-	    }
+		// Calculate the difference in days
+		  return ChronoUnit.DAYS.between(fromDateParsed, toDateParsed) + 1;
+	}
 	
 	
 	

@@ -1,7 +1,9 @@
 package org.upyog.chb.service.impl;
 
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,34 +77,31 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 	@Autowired
 	private DemandService demandService;
-	
+
 	@Autowired
-	 private WorkflowService workflowService;
+	private WorkflowService workflowService;
 
 	@Autowired
 	private BillingService billingService;
-	
+
 	@Autowired
 	private MdmsUtil mdmsUtil;
-	
+
 	@Autowired
 	private CHBEncryptionService encryptionService;
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
 
-	
 	@Autowired
 	private CommunityHallBookingConfiguration config;
 
-	
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
-	
+
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
 		log.info("Create community hall booking for user : "
@@ -114,24 +113,23 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 					"Please provide valid tenant id for booking creation");
 		}
 
-		 setRelatedAssetData(communityHallsBookingRequest);
-		 
-		 if(communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset() == null) {
-			 throw new CustomException("INVALID_BOOKING_CODE",
-						"Community Hall/Ground not availabel for booking. Failed to create booking  for : "
-								+ communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
-		 }
+		setRelatedAssetData(communityHallsBookingRequest);
+
+		if (communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset() == null) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Community Hall/Ground not availabel for booking. Failed to create booking  for : "
+							+ communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
+		}
 //		 
-		 Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
+		Object mdmsData = mdmsUtil.mDMSCall(communityHallsBookingRequest.getRequestInfo(), tenantId);
 
 		// 1. Validate request master data to confirm it has only valid data in records
 		hallBookingValidator.validateCreate(communityHallsBookingRequest, mdmsData);
 
-		
 		// 2. Add fields that has custom logic like booking no, ids using UUID
 		enrichmentService.enrichCreateBookingRequest(communityHallsBookingRequest);
-		
-		//ENcrypt PII data of applicant
+
+		// ENcrypt PII data of applicant
 		encryptionService.encryptObject(communityHallsBookingRequest);
 
 		/**
@@ -141,20 +139,17 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		 */
 
 		// 3.Update workflow of the application
-		 workflowService.updateWorkflow(communityHallsBookingRequest);
-		  
-	
-		 
+		workflowService.updateWorkflow(communityHallsBookingRequest);
+
 		demandService.createDemand(communityHallsBookingRequest, mdmsData, true);
 
-		
 		// fetch/create bill
-        GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
-        									.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
-        									.businessService("chb-services")
-        									.consumerCode(communityHallsBookingRequest.getHallsBookingApplication().getBookingNo()).build();
-       billingService.generateBill(communityHallsBookingRequest.getRequestInfo(),billCriteria);
-        
+		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
+				.tenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId())
+				.businessService("chb-services")
+				.consumerCode(communityHallsBookingRequest.getHallsBookingApplication().getBookingNo()).build();
+		billingService.generateBill(communityHallsBookingRequest.getRequestInfo(), billCriteria);
+
 		// 4.Persist the request using persister service
 		bookingRepository.saveCommunityHallBooking(communityHallsBookingRequest);
 
@@ -163,7 +158,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		blockAssetBookingStatus(communityHallsBookingRequest);
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
-	
+
 	@Override
 	public CommunityHallBookingDetail createInitBooking(
 			@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -190,7 +185,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		} else {
 			bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
 		}
-		
+
 		bookingDetails = encryptionService.decryptObject(bookingDetails, info);
 
 		return bookingDetails;
@@ -219,22 +214,24 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			return null;
 		}
 		if (status != BookingStatusEnum.BOOKED) {
-		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
-				.bookingNo(bookingNo).build();
-		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
-		if (bookingDetails.size() == 0) {
-			throw new CustomException("INVALID_BOOKING_CODE",
-					"Booking no not valid. Failed to update booking status for : " + bookingNo);
-		}
+			CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
+					.bookingNo(bookingNo).build();
+			List<CommunityHallBookingDetail> bookingDetails = bookingRepository
+					.getBookingDetails(bookingSearchCriteria);
+			if (bookingDetails.size() == 0) {
+				throw new CustomException("INVALID_BOOKING_CODE",
+						"Booking no not valid. Failed to update booking status for : " + bookingNo);
+			}
 
-		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
-		
+			convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
+
 		}
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
-		
+
 		workflowService.updateWorkflow(communityHallsBookingRequest);
-		//Update payment date and receipt no on successful payment when payment detail object is received
+		// Update payment date and receipt no on successful payment when payment detail
+		// object is received
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
@@ -270,7 +267,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = bookingRepository
 				.getCommunityHallSlotAvailability(criteria);
 		log.info("Availabiltity details fetched from DB :" + availabiltityDetails);
-		
+
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetailsResponse = convertToCommunityHallAvailabilityResponse(
 				criteria, availabiltityDetails);
 
@@ -293,7 +290,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		LocalDate endDate = CommunityHallBookingUtil.parseStringToLocalDate(criteria.getBookingEndDate());
 
 		List<LocalDate> totalDates = new ArrayList<>();
-		//Calculating list of dates for booking
+		// Calculating list of dates for booking
 		while (!startDate.isAfter(endDate)) {
 			totalDates.add(startDate);
 			startDate = startDate.plusDays(1);
@@ -311,7 +308,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			});
 		});
 
-		//Setting hall status to booked if it is already booked by checking in the database entry
+		// Setting hall status to booked if it is already booked by checking in the
+		// database entry
 		availabiltityDetailsResponse.stream().forEach(detail -> {
 			if (availabiltityDetails.contains(detail)) {
 				detail.setSlotStaus(BookingStatusEnum.BOOKED.toString());
@@ -325,79 +323,124 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			CommunityHallSlotSearchCriteria criteria, LocalDate date, String hallCode) {
 		CommunityHallSlotAvailabilityDetail availabiltityDetail = CommunityHallSlotAvailabilityDetail.builder()
 				.communityHallCode(criteria.getCommunityHallCode()).hallCode(hallCode)
-			//Setting slot status available for every hall and hall code
+				// Setting slot status available for every hall and hall code
 				.slotStaus(BookingStatusEnum.AVAILABLE.toString()).tenantId(criteria.getTenantId())
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(date)).build();
 		return availabiltityDetail;
 	}
 
-
 	public CommunityHallBookingActionResponse getApplicationDetails(
 			CommunityHallBookingActionRequest communityHallActionRequest) {
-		
-		if(CollectionUtils.isEmpty(communityHallActionRequest.getApplicationNumbers())) {
-			throw new CustomException("INVALID REQUEST","Provide Application Number.");
+
+		if (CollectionUtils.isEmpty(communityHallActionRequest.getApplicationNumbers())) {
+			throw new CustomException("INVALID REQUEST", "Provide Application Number.");
 		}
-		
+
 		CommunityHallBookingActionResponse communityHallActionResponse = CommunityHallBookingActionResponse.builder()
-																.applicationDetails(new ArrayList<>())
-																.build();
+				.applicationDetails(new ArrayList<>()).build();
 		communityHallActionRequest.getApplicationNumbers().stream().forEach(applicationNumber -> {
-			
+
 			// search application number
 			CommunityHallBookingSearchCriteria criteria = CommunityHallBookingSearchCriteria.builder()
-					.bookingNo(applicationNumber)
-					.build();
+					.bookingNo(applicationNumber).build();
 			List<CommunityHallBookingDetail> petApplications = bookingRepository.getBookingDetails(criteria);
-			
-			CommunityHallBookingDetail communityHallApplication = null != petApplications ? petApplications.get(0): null;	
-			communityHallApplication = encryptionService.decryptObject(communityHallApplication, communityHallActionRequest.getRequestInfo());
-			 ApplicationDetail applicationDetail = getApplicationBillUserDetail(communityHallApplication, communityHallActionRequest.getRequestInfo());
-		 	communityHallActionResponse.getApplicationDetails().add(applicationDetail);
+
+			CommunityHallBookingDetail communityHallApplication = null != petApplications ? petApplications.get(0)
+					: null;
+			communityHallApplication = encryptionService.decryptObject(communityHallApplication,
+					communityHallActionRequest.getRequestInfo());
+			ApplicationDetail applicationDetail = getApplicationBillUserDetail(communityHallApplication,
+					communityHallActionRequest.getRequestInfo());
+			communityHallActionResponse.getApplicationDetails().add(applicationDetail);
 		});
-		
+
 		return communityHallActionResponse;
 	}
-	
+
 	private ApplicationDetail getApplicationBillUserDetail(CommunityHallBookingDetail communityHallApplication,
 			RequestInfo requestInfo) {
-	
-		ApplicationDetail applicationDetail = ApplicationDetail.builder()
-				.applicationNumber(communityHallApplication.getBookingNo())
-				.build();
 
-		// formula
-		StringBuilder feeCalculationFormula = new StringBuilder("Formula: ");
+		ApplicationDetail applicationDetail = ApplicationDetail.builder()
+				.applicationNumber(communityHallApplication.getBookingNo()).build();
+
+		CommunityHallBookingRequest communityHallsBookingRequest = CommunityHallBookingRequest.builder()
+				.hallsBookingApplication(communityHallApplication).requestInfo(requestInfo).build();
+
+		setRelatedAssetData(communityHallsBookingRequest);
+
+		long days = calculateDaysBetween(communityHallApplication.getBookingSlotDetails().get(0).getBookingDate(),
+				communityHallApplication.getBookingSlotDetails().get(0).getBookingToDate());
 		
-		applicationDetail.setFeeCalculationFormula(feeCalculationFormula.toString());
+		// Total Payable amount
+		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
+			    .multiply(new BigDecimal(communityHallsBookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("gstAssetCost")
+			            .asText())) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(communityHallsBookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("securityAmount")
+			            .asText())); // Converts securityAmount string to BigDecimal
 		
+
+
+		// Fee calculation formula
+
+		applicationDetail.setFeeCalculationFormula("From Date: (<b>"
+				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingDate() + "</b>), To Date: " + "(<b>"
+				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingToDate()
+				+ "</b>) = Number Of Days (<b>" + days + "</b>) * Cost per day: (<b>"
+				+ communityHallsBookingRequest
+						.getHallsBookingApplication().getRelatedAsset().getAssetDetails().get("assetCost").asText()
+				+ "</b>) + Tax(<b>"
+				+ communityHallsBookingRequest
+						.getHallsBookingApplication().getRelatedAsset().getAssetDetails().get("gstPercnetage").asText()
+				+ "</b>) + Security(<b>"
+				+ communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset().getAssetDetails()
+						.get("securityAmount").asText()
+				+ ")</b> " + "= Total Payable Amount(<b>" + totalPayableAmount + "</b>)");
 
 		// search bill Details
 		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
 				.tenantId(communityHallApplication.getTenantId())
-				.consumerCode(Collections.singleton(applicationDetail.getApplicationNumber()))
-				.service("chb-services")
+				.consumerCode(Collections.singleton(applicationDetail.getApplicationNumber())).service("chb-services")
 				.build();
-		List<Bill> bills = billingService.searchBill(billSearchCriteria,requestInfo);
+		List<Bill> bills = billingService.searchBill(billSearchCriteria, requestInfo);
 		Map<Object, Object> billDetailsMap = new HashMap<>();
 		if (!CollectionUtils.isEmpty(bills)) {
 			billDetailsMap.put("billId", bills.get(0).getId());
-		// total fee
+			// total fee
 			applicationDetail.setTotalPayableAmount(bills.get(0).getTotalAmount());
 		}
 		applicationDetail.setBillDetails(billDetailsMap);
-		
+
 		// enrich userDetails
 		Map<Object, Object> userDetails = new HashMap<>();
 		userDetails.put("UserName", communityHallApplication.getApplicantDetail().getApplicantName());
 		userDetails.put("MobileNo", communityHallApplication.getApplicantDetail().getApplicantMobileNo());
 		userDetails.put("Email", communityHallApplication.getApplicantDetail().getApplicantEmailId());
 		userDetails.put("Address", new String(communityHallApplication.getAddress().getAddressLine1().concat(", "))
-									.concat(communityHallApplication.getAddress().getPincode()));
+				.concat(communityHallApplication.getAddress().getPincode()));
 		applicationDetail.setUserDetails(userDetails);
 		return applicationDetail;
 	}
 	
+	
+	 public long calculateDaysBetween(String fromDate, String toDate) {
+	        // Define the date format
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	        // Parse the input strings into LocalDate
+	        LocalDate fromDateParsed = LocalDate.parse(fromDate, formatter);
+	        LocalDate toDateParsed = LocalDate.parse(toDate, formatter);
+
+	        // Calculate the difference in days
+	        return ChronoUnit.DAYS.between(fromDateParsed, toDateParsed) + 1;
+	    }
 
 	@Override
 	public CommunityHallBookingDetail updateStatus(
@@ -411,19 +454,18 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 				.bookingNo(bookingNo).build();
 		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
-		CommunityHallBookingRequest communityHallBookingRequest = CommunityHallBookingRequest .builder()
+		CommunityHallBookingRequest communityHallBookingRequest = CommunityHallBookingRequest.builder()
 				.hallsBookingApplication(bookingDetails.get(0))
-				.requestInfo(communityHallBookingUpdateStatusRequest.getRequestInfo())
-				 .build();
-		
+				.requestInfo(communityHallBookingUpdateStatusRequest.getRequestInfo()).build();
+
 		communityHallBookingRequest.getHallsBookingApplication()
-        .setWorkflow(communityHallBookingUpdateStatusRequest.getWorkflow());
-			
+				.setWorkflow(communityHallBookingUpdateStatusRequest.getWorkflow());
+
 		if (bookingDetails.size() == 0) {
 			throw new CustomException("INVALID_BOOKING_CODE",
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
-		return updateBooking(communityHallBookingRequest,null,BookingStatusEnum.BOOKED);
+		return updateBooking(communityHallBookingRequest, null, BookingStatusEnum.BOOKED);
 	}
 
 	@Override
@@ -453,7 +495,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		return new ArrayList<>();
 	}
-	
 
 	@Override
 	public void setRelatedAsset(List<CommunityHallBookingDetail> applications, RequestInfoWrapper requestInfoWrapper) {
@@ -471,8 +512,6 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 
 	}
-	
-	
 
 	public void setRelatedAssetData(CommunityHallBookingRequest communityHallsBookingRequest) {
 
@@ -481,61 +520,56 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		assetSearchCriteria
 				.setApplicationNo(communityHallsBookingRequest.getHallsBookingApplication().getCommunityHallCode());
 		assetSearchCriteria.setTenantId(communityHallsBookingRequest.getHallsBookingApplication().getTenantId());
-		assetSearchCriteria.setBookingStatus(CommunityHallBookingConstants.BOOKING_STATUS);
+		assetSearchCriteria.setBookingStatus(CommunityHallBookingConstants.BOOKING_AVAILABLE_STATUS);
 
 		List<Asset> relatedAssets = fetchAssets(assetSearchCriteria, communityHallsBookingRequest.getRequestInfo());
 
 		if (!CollectionUtils.isEmpty(relatedAssets)) {
 			communityHallsBookingRequest.getHallsBookingApplication().setRelatedAsset(relatedAssets.get(0));
-		} 
+		}
 
 	}
-	
+
 	public void blockAssetBookingStatus(CommunityHallBookingRequest communityHallsBookingRequest) {
-		
 
-
+		communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset()
+				.setBookingStatus(CommunityHallBookingConstants.BOOKING_BOOKED_STATUS);
 		AssetUpdateRequest searchResult = new AssetUpdateRequest();
 		ObjectMapper objectMapper = new ObjectMapper();
-		AssetUpdate obj = objectMapper.convertValue(communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset(), AssetUpdate.class);
+		AssetUpdate obj = objectMapper.convertValue(
+				communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset(), AssetUpdate.class);
 		List<AssetUpdate> assetList = new ArrayList<>();
-    assetList.add(obj);
-	searchResult.setAssetUpdate(assetList);
-System.out.println(searchResult);
-		// searchResult.setAssetUpdate(assetList);
-		// AssetUpdateRequest searchResults=;
-		// updateAsset(searchResults, communityHallsBookingRequest.getRequestInfo());
-
-		
-
+		assetList.add(obj);
+		searchResult.setAssetUpdate(assetList);
+		searchResult.setRequestInfo(communityHallsBookingRequest.getRequestInfo());
+		updateAsset(searchResult);
 	}
-
 
 	@Override
 	public List<AssetUpdate> updateAsset(AssetUpdateRequest assetUpdateRequest) {
-	String uri = config.getAssetHost().concat(config.getAssetUpdateEndpoint());
-		
+		String uri = config.getAssetHost().concat(config.getAssetUpdateEndpoint());
 
 		AssetUpdationResponse assetSearchResponse = null;
-//		try {
-//			assetSearchResponse = restTemplate.postForObject(uri,
-//					RequestInfoWrapper.builder().requestInfo(requestInfo).build(), AssetUpdationResponse.class);
-//
-//			if (assetSearchResponse != null && assetSearchResponse.getAssets() != null) {
-//				// Return the list of assets
-//				return assetSearchResponse.getAssets();
-//			} else {
-//				// Log that no assets were found or response was empty
-//				log.warn("No assets found in the response for tenantId: {}", assetSearchCriteria.getTenantId());
-//			}
-//
-//		} catch (Exception e) {
-//			log.error("Error occured while asset search.", e);
-//			throw new CustomException("ASSET SEARCH ERROR",
-//					"Error occured while asset search. Message: " + e.getMessage());
-//		}
+		try {
+			assetSearchResponse = restTemplate
+					.postForObject(uri,
+							AssetUpdateRequest.builder().requestInfo(assetUpdateRequest.getRequestInfo())
+									.assetUpdate(assetUpdateRequest.getAssetUpdate()).build(),
+							AssetUpdationResponse.class);
+
+			if (assetSearchResponse != null && assetSearchResponse.getAssets() != null) {
+				// Return the list of assets
+				return assetSearchResponse.getAssets();
+			} else {
+				// Log that no assets were found or response was empty
+			}
+
+		} catch (Exception e) {
+			log.error("Error occured while asset search.", e);
+			throw new CustomException("ASSET SEARCH ERROR",
+					"Error occured while asset search. Message: " + e.getMessage());
+		}
 		return new ArrayList<>();
 	}
-
 
 }

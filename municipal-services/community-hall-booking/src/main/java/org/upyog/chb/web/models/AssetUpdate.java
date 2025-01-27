@@ -158,9 +158,8 @@ public class AssetUpdate{
     @JsonProperty("assetStatus")
     private String assetStatus;
     
-    @JsonIgnore
     @JsonProperty("assetDetails")
-    private JsonNode assetDetails;
+    private Object assetDetails;
     
     @JsonProperty("bookingStatus")
     private String bookingStatus;

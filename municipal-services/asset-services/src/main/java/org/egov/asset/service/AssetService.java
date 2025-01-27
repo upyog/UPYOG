@@ -154,7 +154,7 @@ public class AssetService {
 			 assets = getAssetsFromCriteria(criteria);
 		} else if (roles.contains(AssetConstants.CITIZEN)) {
 			criteria.setStatus("APPROVED");
-			criteria.setBookingStatus("AVAILABLE");
+//			criteria.setBookingStatus("AVAILABLE");
 			
 			assets = getAssetsFromCriteria(criteria);
 		} else {
@@ -492,11 +492,13 @@ public class AssetService {
 			validateAssetUpdateRequest(assetRequest);
 			appNoToSiteBookingMap = searchAssetFromRequest(assetRequest);
 			assetRequest = validateAndEnrichUpdateAsset(assetRequest, appNoToSiteBookingMap);
-			workflowService.updateWorkflowForAssetUpdate(assetRequest, CreationReason.UPDATE);
+			if (!AssetConstants.BOOKING_BOOKED_STATUS.equals(assetRequest.getAssetUpdate().get(0).getBookingStatus())) {
+				workflowService.updateWorkflowForAssetUpdate(assetRequest, CreationReason.UPDATE);
+			}
 			assetRepository.updateAsset(assetRequest);
 
 		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 		return assetRequest.getAssetUpdate();
 	}

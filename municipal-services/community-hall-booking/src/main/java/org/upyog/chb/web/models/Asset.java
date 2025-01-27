@@ -167,6 +167,9 @@ public class Asset {
         @JsonProperty("assetDetails")
         private JsonNode assetDetails;
         
+        @JsonProperty("bookingStatus")
+        private String bookingStatus;
+        
         
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;

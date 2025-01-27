@@ -77,6 +77,10 @@ public class AssetConstants {
 	public static final String ASSET_WF_APPROVER = "ASSET_WF_APPROVER";
 	
 	
+	public static final String BOOKING_AVAILABLE_STATUS = "AVAILABLE";
+
+	public static final String BOOKING_BOOKED_STATUS = "BOOKED";
+	
 	
 	public  static String getStatusOrAction(String action, boolean b) {
 		
