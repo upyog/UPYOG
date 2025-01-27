@@ -98,7 +98,7 @@ public class EdcrApplication extends AbstractAuditable {
 
     private String projectType;
     
-    private String coreArea;
+    //private String coreArea;
 
     private transient String permitDateTemp;
 
@@ -268,13 +268,13 @@ public class EdcrApplication extends AbstractAuditable {
         this.projectType = projectType;
     }
     
-    public String getCoreArea() {
+  /*  public String getCoreArea() {
         return coreArea;
     }
 
     public void setCoreArea(String coreArea) {
         this.coreArea = coreArea;
-    }
+    } */
 
     public String getPermitDateTemp() {
         return permitDateTemp;

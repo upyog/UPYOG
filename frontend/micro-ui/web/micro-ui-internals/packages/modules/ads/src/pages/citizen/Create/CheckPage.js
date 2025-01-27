@@ -10,7 +10,7 @@ import {
     StatusTable,
     SubmitBar,
     DeleteIcon
-  } from "@nudmcdgnpm/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory } from "react-router-dom";

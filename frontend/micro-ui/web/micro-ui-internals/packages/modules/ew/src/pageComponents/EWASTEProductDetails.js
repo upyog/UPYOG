@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/EWASTETimeline";
 import { Controller, useForm } from "react-hook-form";
-import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { SubmitBar } from "@upyog/digit-ui-react-components";
 import ProductList from "../components/EWASTEProductList";
 
 const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {

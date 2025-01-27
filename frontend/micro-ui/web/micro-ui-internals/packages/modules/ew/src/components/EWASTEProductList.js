@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ApplicationTable from "./inbox/ApplicationTable";
-import { DeleteIcon, StatusTable, Row } from "@nudmcdgnpm/digit-ui-react-components";
+import { DeleteIcon, StatusTable, Row } from "@upyog/digit-ui-react-components";
 
 const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount,calculatedAmount }) => {
   const handleDelete = (e) => {

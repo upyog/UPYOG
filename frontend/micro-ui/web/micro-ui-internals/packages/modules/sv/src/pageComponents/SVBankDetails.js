@@ -21,7 +21,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from "react";
-import { FormStep, TextInput, CardLabel, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, Toast } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previousData }) => {

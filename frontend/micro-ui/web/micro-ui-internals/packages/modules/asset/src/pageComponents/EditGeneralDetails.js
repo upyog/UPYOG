@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, CardCaption, LabelFieldPair, TextInput, Toast, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, CardLabelError, CardCaption, LabelFieldPair, TextInput, Toast, Dropdown, TextArea } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";

@@ -1,4 +1,4 @@
-import { CardText, CloseSvg, Modal } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardText, CloseSvg, Modal } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

@@ -1,4 +1,4 @@
-import { CitizenHomeCard, CitizenTruck, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { CitizenHomeCard, CitizenTruck, Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";

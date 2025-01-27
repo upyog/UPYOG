@@ -1,4 +1,4 @@
-import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { getPattern } from "../utils";
 import * as func from "../utils";

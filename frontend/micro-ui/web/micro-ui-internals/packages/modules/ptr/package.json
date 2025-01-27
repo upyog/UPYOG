@@ -1,7 +1,7 @@
 {
-  "name": "@nudmcdgnpm/upyog-ui-module-ptr",
+  "name": "@upyog/upyog-ui-module-ptr",
   "author": "Shivank Shukla, Abhijeet Verma & Khalid Rashid",
-  "version": "1.2.8",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
@@ -19,8 +19,8 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-    "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
+      "@upyog/digit-ui-libraries": "3.0.0",
+    "@upyog/digit-ui-react-components": "3.0.0",
     "lodash.merge": "^4.6.2",
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",

@@ -1,4 +1,4 @@
-import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

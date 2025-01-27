@@ -1,4 +1,4 @@
-import { BackButton, CardLabel, CheckBox, FormStep, TextArea, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { BackButton, CardLabel, CheckBox, FormStep, TextArea, Toast } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/Timeline";
 

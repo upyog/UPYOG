@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CardLabel, CardText, CardLabelDesc, CardSubHeader, Modal } from '@nudmcdgnpm/digit-ui-react-components';
+import { CardLabel, CardText, CardLabelDesc, CardSubHeader, Modal } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // Close button component
 const Close = () => (

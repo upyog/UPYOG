@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const CheckSlum = ({ t, config, onSelect, userType, formData }) => {

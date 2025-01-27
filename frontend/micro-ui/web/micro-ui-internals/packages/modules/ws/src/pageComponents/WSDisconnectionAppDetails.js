@@ -7,7 +7,7 @@ import {
   RadioButtons,
   TextArea,
   TextInput
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { stringReplaceAll } from "../utils";
 import { useForm, Controller } from "react-hook-form";

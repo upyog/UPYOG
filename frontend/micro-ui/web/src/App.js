@@ -18,7 +18,7 @@ import {
   paymentConfigs,
 } from "@upyog/digit-ui-module-common";
 import { DigitUI } from "@upyog/digit-ui-module-core";
-import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
+import { initLibraries } from "@upyog/digit-ui-libraries";
 import {
   HRMSModule,
   initHRMSComponents,
@@ -40,18 +40,18 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@nudmcdgnpm/upyog-ui-module-ptr";
-import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-module-asset";
+} from "@upyog/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
 
 import { 
   EWModule, 
   EWLinks, 
   EWComponents }
-  from "@nudmcdgnpm/upyog-ui-module-ew";
+  from "@upyog/upyog-ui-module-ew";
 
-import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
-import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
-import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
+import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
+import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
 
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 

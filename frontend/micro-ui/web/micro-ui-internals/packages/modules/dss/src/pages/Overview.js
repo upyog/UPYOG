@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Loader } from "@upyog/digit-ui-react-components";
 import Layout from "../components/Layout";
 
 const Overview = () => {

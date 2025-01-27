@@ -1,4 +1,4 @@
-import { FormStep, TextInput, CardLabel, LabelFieldPair } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, LabelFieldPair } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
