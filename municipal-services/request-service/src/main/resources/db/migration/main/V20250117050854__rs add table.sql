@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details (
     vehicle_id character varying(64),
     driver_id character varying(64),
     booking_createdby character varying(64), -- created by Citizen or Employee
+    booking_status character varying(64),
     createdby character varying(64),
     lastmodifiedby character varying(64),
     createdtime bigint NOT NULL,
@@ -80,6 +81,7 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details_auditdetails (
     vehicle_id character varying(64),
     driver_id character varying(64),
     booking_createdby character varying(64),
+    booking_status character varying(64),
     createdby character varying(64),
     lastmodifiedby character varying(64),
     createdtime bigint NOT NULL,

@@ -11,4 +11,7 @@ public interface RequestServiceRepository {
 	void saveWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest);
 
 	List<WaterTankerBookingDetail> getWaterTankerBookingDetails(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria);
+
+	Integer getApplicationsCount(WaterTankerBookingSearchCriteria criteria);
+
 }
