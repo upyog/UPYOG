@@ -8,4 +8,10 @@ public class RequestServiceConstants {
 
 	public static final String CITIZEN = "CITIZEN";
 
+	public static final String RS_APPLICANT_DETAIL_ENCRYPTION_KEY = "RSApplicantDetail";
+
+	public static final String RS_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "RSApplicantDetailDecrypDisabled";
+
+	public static final String RS_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "RSApplicantDetailDecryptionDisabled";
+
 }
