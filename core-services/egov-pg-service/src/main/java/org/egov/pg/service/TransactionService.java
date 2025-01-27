@@ -169,12 +169,15 @@ public class TransactionService {
                
           }
 
-        
-        TransactionDump dump = TransactionDump.builder()
-                .txnId(currentTxnStatus.getTxnId())
-                .txnResponse(newTxn.getResponseJson()) // Convert JSONObject to String
-                .auditDetails(newTxn.getAuditDetails())
-                .build();
+       	TransactionDump.TransactionDumpBuilder dumpBuilder = TransactionDump.builder()
+       	        .txnId(currentTxnStatus.getTxnId())
+       	        .auditDetails(newTxn.getAuditDetails());
+
+       	if (newTxn.getResponseJson() != null) {
+       	    dumpBuilder.txnResponse(newTxn.getResponseJson());
+       	}
+
+       	TransactionDump dump = dumpBuilder.build();
         log.info("dumps "+dump);
         producer.push(appProperties.getUpdateTxnTopic(), new org.egov.pg.models.TransactionRequest(requestInfo, newTxn));
         producer.push(appProperties.getUpdateTxnDumpTopic(), new TransactionDumpRequest(requestInfo, dump));
