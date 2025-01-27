@@ -19,7 +19,6 @@ RUN yarn add @upyog/digit-ui-module-common@3.0.2
 RUN yarn add @upyog/digit-ui-module-commonpt@3.0.0
 RUN yarn add @upyog/digit-ui-module-bills@3.0.0
 RUN yarn add @upyog/upyog-ui-module-ptr@3.0.0
-RUN yarn add @upyog/upyog-ui-module-cm@3.0.0
 RUN yarn add @upyog/upyog-ui-module-ads@3.0.1
 RUN yarn add @upyog/upyog-ui-module-chb@3.0.1
 RUN yarn add @upyog/upyog-ui-module-sv@3.0.0
