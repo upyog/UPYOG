@@ -2,12 +2,17 @@
 import { ASSETService } from "../../elements/ASSET";
 
 const convertTimestampToDate = (timestamp) => {
-  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+  // Agar timestamp 13 digits ka hai, to yeh milliseconds mein hai
+  const adjustedTimestamp = timestamp.toString().length === 13 ? timestamp / 1000 : timestamp;
+
+  // Timestamp ko date object mein convert karo
+  const date = new Date(adjustedTimestamp * 1000); // Convert seconds to milliseconds
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, "0");
+
   return `${year}-${month}-${day}`;
-}
+};
 
 const getData = (res, combinedData) => {
 
@@ -85,7 +90,7 @@ export const ASSETSearch = {
     
     const maintenanceListRows = maintenanceList?.AssetMaintenance?.map((row) => (
       [
-        row.assetMaintenanceDate,
+        convertTimestampToDate(row.assetMaintenanceDate),
         row.vendor,
         row.warrantyStatus,
         row.costOfMaintenance,
@@ -96,7 +101,7 @@ export const ASSETSearch = {
 
     const disposalListListRows = disposalList?.AssetDisposals?.map((row) => (
       [
-        row.disposalDate,
+        convertTimestampToDate(row.disposalDate),
         row.reasonForDisposal,
         row.glCode,
         row.assetDisposalStatus,
