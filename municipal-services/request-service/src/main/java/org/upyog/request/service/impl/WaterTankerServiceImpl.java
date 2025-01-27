@@ -42,7 +42,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
 		
-		workflowService.updateWorkflowStatus(waterTankerRequest);
+		workflowService.createWorkflowStatus(waterTankerRequest);
 
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
 
