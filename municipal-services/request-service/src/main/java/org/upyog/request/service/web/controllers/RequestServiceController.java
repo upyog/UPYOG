@@ -55,23 +55,23 @@ public class RequestServiceController {
 
 		applications = waterTankerService.getWaterTankerBookingDetails(requestInfoWrapper.getRequestInfo(),
 				waterTankerBookingSearchCriteria);
-		/*   can be uncommented and implemented later for count of Applications
-		* 		count = waterTankerService.getApplicationsCount(waterTankerBookingSearchCriteria,
-				requestInfoWrapper.getRequestInfo());
-		* */
+
+		count = waterTankerService.getApplicationsCount(waterTankerBookingSearchCriteria,
+		requestInfoWrapper.getRequestInfo());
+
 
 		/*
 		* Create Response Info with success status and used utilize method
 		* to generate standardized response
 		* */
 		ResponseInfo responseInfo = RequestServiceUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
-				RequestServiceConstants.APPLICATIONS_FOUND, StatusEnum.SUCCESSFUL);
+				RequestServiceConstants.BOOKING_DETAIL_FOUND, StatusEnum.SUCCESSFUL);
 		/*
 		*Build search response using builder and retrieve booking details and response metadata
 		* */
 		WaterTankerBookingSearchResponse response = WaterTankerBookingSearchResponse.builder().waterTankerBookingDetails(applications)
 				.responseInfo(responseInfo)
-//				.count(count)
+				.count(count)
 				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

@@ -85,11 +85,11 @@ export const ASSETSearch = {
     
     const maintenanceListRows = maintenanceList?.AssetMaintenance?.map((row) => (
       [
+        row.assetMaintenanceDate,
         row.vendor,
         row.warrantyStatus,
         row.costOfMaintenance,
         row.maintenanceCycle,
-        row.maintenanceType,
         row.documents
       ]
     )) || [];
@@ -204,11 +204,11 @@ export const ASSETSearch = {
         isMaintenance: true,
         headers: maintenanceListRows.length > 0
           ? [
+            `${t("AST_MAINTENANCE_DATE")}`,
             `${t("AST_VENDOR")}`,
             `${t("AST_WARRANTY_STATUS")}`,
             `${t("AST_COST_OF_MAINTENANCE")}`,
             `${t("AST_MAINTENANCE_CYCLE")}`,
-            `${t("AST_MAINTENANCE_TYPE")}`,
             `${t("AST_MAINTENANCE_DOCUMENT")}`
           ]
           : [`${t("AST_NO_MAINTENANCE_DATA")}`],
@@ -224,7 +224,6 @@ export const ASSETSearch = {
             `${t("AST_REASON_DISPOSAL")}`,
             `${t("AST_GL_CODE")}`,
             `${t("AST_DISPOSAL_STATUS")}`,
-            `${t("AST_MAINTENANCE_TYPE")}`,
             `${t("AST_AGE_OF_ASSET")}`
           ]
           : [`${t("AST_NO_DISPOSAL_DATA")}`],

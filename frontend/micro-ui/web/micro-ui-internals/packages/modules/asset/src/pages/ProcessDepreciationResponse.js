@@ -5,15 +5,17 @@ import { useTranslation } from "react-i18next";
 
 const ProcessDepreciationResponse = (props) => {
   const location = useLocation();
-  const { ProcessDepreciation } = location.state || {}; // Getting data from the location state
+  const { ProcessDepreciation, applicationNo } = location.state || {}; // Getting data from the location state
   const { t } = useTranslation();
   const [message, setMessage] = useState(null);
+  const [applicationDetail, setApplicationDetail] = useState(null);
   const [error, setError] = useState(false);
 
   // Dynamically update the banner based on the API response
   useEffect(() => {
     if (ProcessDepreciation && ProcessDepreciation.ResponseInfo.status === "successful") {
       setMessage(ProcessDepreciation.Message); // Set success message
+      setApplicationDetail(applicationNo); // Set success message
     } else {
       setError(true); // If not successful, set error flag
       setMessage(t("CS_SOMETHING_WENT_WRONG")); // Default error message
@@ -39,11 +41,19 @@ const ProcessDepreciationResponse = (props) => {
       <Card>
         {/* Show Banner with success or error message */}
         {message && !error ? (
-          <Banner
+          <div> 
+            <Banner
             message={GetBannerMessage(true, t)} // Success message
+            applicationNumber={applicationDetail}
             info={GetBannerLabel(true, t)} // Success label
             successful={true} // Indicating success status
           />
+        <div style={{ padding: "10px", paddingBottom: "10px",display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
+            <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
+          </Link>
+        </div>
+          </div>
         ) : (
           // Show loading banner while waiting
           <Banner message="Processing..." successful={false} />

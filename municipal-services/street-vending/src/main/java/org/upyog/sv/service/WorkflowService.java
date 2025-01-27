@@ -107,7 +107,7 @@ public class WorkflowService {
 	 */
 	public BusinessService getBusinessService(String tenantId, String businessService, RequestInfo requestInfo) {
 
-		StringBuilder url = getSearchURLWithParams(tenantId, businessService);
+		StringBuilder url = getSearchURLWithBusinessService(tenantId, businessService);
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object result = restRepo.fetchResult(url, requestInfoWrapper);
 		BusinessServiceResponse response = null;
@@ -130,7 +130,7 @@ public class WorkflowService {
 	 * @param tenantId The tenantId for which url is generated
 	 * @return The search url
 	 */
-	private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
+	private StringBuilder getSearchURLWithBusinessService(String tenantId, String businessService) {
 
 		StringBuilder url = new StringBuilder(configs.getWfHost());
 		url.append(configs.getWfBusinessServiceSearchPath());
@@ -148,12 +148,12 @@ public class WorkflowService {
 	 * @param businessService The BusinessService of the application flow
 	 * @return State object to be fetched
 	 */
-	public Boolean isStateUpdatable(String stateCode, BusinessService businessService) {
+	public boolean isStateUpdatable(String stateCode, BusinessService businessService) {
 		for (State state : businessService.getStates()) {
 			if (state.getState() != null && state.getState().equalsIgnoreCase(stateCode))
 				return state.getIsStateUpdatable();
 		}
-		return null;
+		return false;
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class WorkflowService {
 	 *
 	 * @return The search url
 	 */
-	private StringBuilder getWorkflowSearchURLWithParams(String tenantId, String businessId) {
+	private StringBuilder getWorkflowSearchURLWithBusinessId(String tenantId, String businessId) {
 
 		StringBuilder url = new StringBuilder(configs.getWfHost());
 		url.append(configs.getWfProcessInstanceSearchPath());
@@ -181,7 +181,7 @@ public class WorkflowService {
 
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
-		StringBuilder url = getWorkflowSearchURLWithParams(tenantId, businessId);
+		StringBuilder url = getWorkflowSearchURLWithBusinessId(tenantId, businessId);
 
 		Object res = restRepo.fetchResult(url, requestInfoWrapper);
 		ProcessInstanceResponse response = null;

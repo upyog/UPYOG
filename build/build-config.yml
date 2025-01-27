@@ -883,3 +883,11 @@ config:
         dockerfile: "build/maven/Dockerfile"  
       - work-dir: "municipal-services/request-service/src/main/resources/db"
         image-name: "request-service-db" 
+        
+  - name: "builds/upyog/municipal-services/vendor-management"
+    build:
+      - work-dir: "municipal-services/vendor-management"
+        image-name: "vendor-management"
+        dockerfile: "build/maven/Dockerfile"  
+      - work-dir: "municipal-services/vendor-management/src/main/resources/db"
+        image-name: "vendor-management-db" 

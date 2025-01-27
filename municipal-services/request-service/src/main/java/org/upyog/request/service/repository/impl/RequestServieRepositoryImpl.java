@@ -29,8 +29,6 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 	@Autowired
 	private RequestServiceQueryBuilder queryBuilder;
 
-
-
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -64,6 +62,20 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		*  Uses custom GenericRowMapper for flexible and recursive object mapping
 		* */
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(WaterTankerBookingDetail.class));
+	}
+
+	@Override
+	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getWaterTankerQuery(criteria, preparedStatement);
+
+		if (query == null)
+			return 0;
+
+		log.info("Final query for getWaterTankerBookingDetails {} and paramsList {} : " , preparedStatement);
+
+		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+		return count;
 	}
 
 
