@@ -136,8 +136,7 @@ public class DLRequestService {
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);
          
-         TokenRes tokenRes = new TokenRes();
-         //= restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();         
+         TokenRes tokenRes = restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();         
          return tokenRes;
     }
     
