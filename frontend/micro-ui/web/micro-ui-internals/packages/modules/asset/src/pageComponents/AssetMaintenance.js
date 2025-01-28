@@ -477,7 +477,7 @@ const OwnerForm = (_props) => {
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             {t("AST_MAINTENANCE_OPTIONS")}
-                            <Tooltip message={t("AST_CLASSIFICATION_ASSET")}>
+                            <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_OPTIONS")}>
                                 <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
                             </Tooltip>
                         </CardLabel>
@@ -633,7 +633,12 @@ const OwnerForm = (_props) => {
                         )}
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_TYPE")}</CardLabel>
+                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            {t("AST_MAINTENANCE_TYPE")}
+                            <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_TYPE")}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                        </CardLabel>
                         <Controller
                             control={control}
                             name={"maintenanceType"}
@@ -652,7 +657,9 @@ const OwnerForm = (_props) => {
                         />
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_DATE")}</CardLabel>
+                        <CardLabel className="card-label-smaller">
+                            {t("AST_MAINTENANCE_DATE")}
+                        </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -681,7 +688,12 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_MAINTENANCE_CYCLE")}</CardLabel>
+                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            {t("AST_MAINTENANCE_CYCLE")}
+                            <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_CYCLE")}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                        </CardLabel>
 
                         <Controller
                             control={control}
@@ -710,7 +722,12 @@ const OwnerForm = (_props) => {
 
                     <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_NEXT_MAINTENANCE_DATE")}</CardLabel>
+                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                {t("AST_NEXT_MAINTENANCE_DATE")}
+                            <Tooltip message={t("TOOLTIP_AST_NEXT_MAINTENANCE_DATE")}>
+                               <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                        </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -739,7 +756,12 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_PAYMENT_TYPE")}</CardLabel>
+                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            {t("AST_PAYMENT_TYPE")}
+                            <Tooltip message={t("TOOLTIP_AST_PAYMENT_TYPE")}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                        </CardLabel>
                         <Controller
                             control={control}
                             name={"paymentType"}
@@ -761,7 +783,12 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_COST_MAINTENANCE_OVERHEAD")}</CardLabel>
+                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            {t("AST_COST_MAINTENANCE_OVERHEAD")}
+                            <Tooltip message={t("TOOLTIP_AST_COST_MAINTENANCE_OVERHEAD")}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                        </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
@@ -1023,7 +1050,12 @@ const OwnerForm = (_props) => {
                         </LabelFieldPair>
                         <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
                         <LabelFieldPair>
-                            <CardLabel className="card-label-smaller">{t("AST_IS_LIFE_OF__ASSET_AFFECTED")}</CardLabel>
+                            <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                {t("AST_IS_LIFE_OF__ASSET_AFFECTED")}
+                                <Tooltip message={t("TOOLTIP_AST_IS_LIFE_OF__ASSET_AFFECTED")}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                            </Tooltip>
+                            </CardLabel>
                             <div className="field">
                                 <RadioButtons
                                     t={t}

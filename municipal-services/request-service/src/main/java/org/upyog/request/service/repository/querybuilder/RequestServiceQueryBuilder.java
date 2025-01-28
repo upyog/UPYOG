@@ -16,7 +16,7 @@ public class RequestServiceQueryBuilder {
     private RequestServiceConfiguration requestServiceConfiguration;
 
     private static final String BOOKING_DETAILS_SEARCH_QUERY = (
-            "SELECT ursbd.booking_id, booking_no, tanker_type, tanker_quantity, water_quantity, description, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, "
+            "SELECT ursbd.booking_id, booking_no, tanker_type, tanker_quantity, water_quantity, description, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, booking_status, "
                     + "ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, ursbd.lastmodifiedtime, "
                     + "appl.name, mobile_number, gender, email_id, alternate_number, "
                     + "addr.house_no, address_line_1, address_line_2, street_name, landmark, city, city_code, locality, locality_code, pincode "

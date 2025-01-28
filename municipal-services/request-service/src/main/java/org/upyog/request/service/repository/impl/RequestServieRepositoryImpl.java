@@ -29,8 +29,6 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 	@Autowired
 	private RequestServiceQueryBuilder queryBuilder;
 
-
-
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 

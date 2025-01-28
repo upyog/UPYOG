@@ -1,36 +1,36 @@
-package org.upyog.sv.service;
+package org.upyog.request.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.upyog.sv.config.StreetVendingConfiguration;
-import org.upyog.sv.repository.ServiceRequestRepository;
-import org.upyog.sv.web.models.StreetVendingDetail;
-import org.upyog.sv.web.models.StreetVendingRequest;
-import org.upyog.sv.web.models.Workflow;
-import org.upyog.sv.web.models.common.RequestInfoWrapper;
-import org.upyog.sv.web.models.common.User;
-import org.upyog.sv.web.models.workflow.BusinessService;
-import org.upyog.sv.web.models.workflow.BusinessServiceResponse;
-import org.upyog.sv.web.models.workflow.ProcessInstance;
-import org.upyog.sv.web.models.workflow.ProcessInstanceRequest;
-import org.upyog.sv.web.models.workflow.ProcessInstanceResponse;
-import org.upyog.sv.web.models.workflow.State;
+import org.upyog.request.service.config.RequestServiceConfiguration;
+import org.upyog.request.service.repository.ServiceRequestRepository;
+import org.upyog.request.service.web.models.WaterTankerBookingDetail;
+import org.upyog.request.service.web.models.WaterTankerBookingRequest;
+import org.upyog.request.service.web.models.Workflow;
+import org.upyog.request.service.web.models.workflow.BusinessService;
+import org.upyog.request.service.web.models.workflow.BusinessServiceResponse;
+import org.upyog.request.service.web.models.workflow.ProcessInstance;
+import org.upyog.request.service.web.models.workflow.ProcessInstanceRequest;
+import org.upyog.request.service.web.models.workflow.ProcessInstanceResponse;
+import org.upyog.request.service.web.models.workflow.State;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import digit.models.coremodels.RequestInfoWrapper;
 
 @Service
 public class WorkflowService {
 
 	@Autowired
-	private StreetVendingConfiguration configs;
+	private RequestServiceConfiguration configs;
 
 	@Autowired
 	private ServiceRequestRepository restRepo;
@@ -41,11 +41,11 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
-	public State updateWorkflowStatus(StreetVendingRequest streetVendingRequest) {
+	public State createWorkflowStatus(WaterTankerBookingRequest waterTankerRequest) {
 		
-			ProcessInstance processInstance = getProcessInstanceForSV(streetVendingRequest.getStreetVendingDetail(),
-					streetVendingRequest.getRequestInfo());
-			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(streetVendingRequest.getRequestInfo(),
+			ProcessInstance processInstance = getProcessInstanceForRS(waterTankerRequest.getWaterTankerBookingDetail(),
+					waterTankerRequest.getRequestInfo());
+			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(waterTankerRequest.getRequestInfo(),
 					Collections.singletonList(processInstance));
 			State state = callWorkFlow(workflowRequest);
 			
@@ -53,11 +53,11 @@ public class WorkflowService {
 		
 	}
 
-	private ProcessInstance getProcessInstanceForSV(StreetVendingDetail application, RequestInfo requestInfo) {
+	private ProcessInstance getProcessInstanceForRS(WaterTankerBookingDetail application, RequestInfo requestInfo) {
 		Workflow workflow = application.getWorkflow();
 
 		ProcessInstance processInstance = new ProcessInstance();
-		processInstance.setBusinessId(application.getApplicationNo());
+		processInstance.setBusinessId(application.getBookingId());
 		processInstance.setAction(workflow.getAction());
 		processInstance.setModuleName(workflow.getModuleName());
 		processInstance.setTenantId(application.getTenantId());
