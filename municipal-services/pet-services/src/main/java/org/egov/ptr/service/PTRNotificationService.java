@@ -68,10 +68,11 @@ public class PTRNotificationService {
 			log.info("Recipient object in pet: {}", recepient);
 
 			// Add event to the list
-			events.add(
-					Event.builder().tenantId(tenantId).description(message).eventType(PTRConstants.USREVENTS_EVENT_TYPE)
-							.name(PTRConstants.USREVENTS_EVENT_NAME).postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY)
-							.source(Source.WEBAPP).recepient(recepient).eventDetails(null).actions(null).build());
+			Event event = Event.builder().tenantId(tenantId).description(message)
+					.eventType(PTRConstants.USREVENTS_EVENT_TYPE).name(PTRConstants.USREVENTS_EVENT_NAME)
+					.postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+					.eventDetails(null).actions(null).build();
+			events.add(event);
 		}
 
 		// Check if events are created and return EventRequest

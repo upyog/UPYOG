@@ -98,8 +98,6 @@ public class CommonUtils {
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 
-
-
 	/**************************
 	 * JSON MERGE UTILITY METHODS
 	 ****************************************/
@@ -137,7 +135,7 @@ public class CommonUtils {
 		}
 		return mainNode;
 	}
-	
+
 	public long calculateNextMarch31InEpoch() {
 		LocalDate today = LocalDate.now();
 		LocalDate nextMarch31 = LocalDate.of(today.getYear(), Month.MARCH, 31);
@@ -155,6 +153,7 @@ public class CommonUtils {
 	}
 
 	public static long getFinancialYearStart() {
+
 		YearMonth currentYearMonth = YearMonth.now();
 		int year = currentYearMonth.getYear();
 		int month = currentYearMonth.getMonthValue();
@@ -166,9 +165,11 @@ public class CommonUtils {
 
 		LocalDateTime startOfYear = LocalDateTime.of(year, Month.APRIL, 1, 0, 0, 0);
 		return startOfYear.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
 	}
 
 	public static long getFinancialYearEnd() {
+
 		YearMonth currentYearMonth = YearMonth.now();
 		int year = currentYearMonth.getYear();
 		int month = currentYearMonth.getMonthValue();
@@ -180,13 +181,16 @@ public class CommonUtils {
 
 		LocalDateTime endOfYear = LocalDateTime.of(year + 1, Month.MARCH, 31, 23, 59, 59, 999000000);
 		return endOfYear.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
 	}
-	
-    public String getFinancialYearEndDate() {
-        LocalDate today = LocalDate.now();
-        int year = today.getMonthValue() > Month.MARCH.getValue() ? today.getYear() + 1 : today.getYear();
-        LocalDate financialYearEndDate = LocalDate.of(year, Month.MARCH, 31);
-        return financialYearEndDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-    }
-	
+
+	public String getFinancialYearEndDate() {
+
+		LocalDate today = LocalDate.now();
+		int year = today.getMonthValue() > Month.MARCH.getValue() ? today.getYear() + 1 : today.getYear();
+		LocalDate financialYearEndDate = LocalDate.of(year, Month.MARCH, 31);
+		return financialYearEndDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+	}
+
 }

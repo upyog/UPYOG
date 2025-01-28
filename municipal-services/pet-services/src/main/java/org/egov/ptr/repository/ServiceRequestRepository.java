@@ -37,7 +37,7 @@ public class ServiceRequestRepository {
 		Object response = null;
 		log.info("URI: " + uri.toString());
 		try {
-//			log.info("Request: " + mapper.writeValueAsString(request));
+			log.info("Request: " + request);
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 			log.info("Response: " + response);
 		} catch (HttpClientErrorException e) {
