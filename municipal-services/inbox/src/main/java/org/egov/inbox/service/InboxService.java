@@ -446,6 +446,7 @@ public class InboxService {
 				}
 			}
 			
+			// for request service
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
 
 				List<String> applicationNumbers = requestServiceInboxFilterService

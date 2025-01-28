@@ -38,6 +38,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+
+/**
+ * Fetches the application numbers from the searcher service based on the provided search criteria.
+ * 
+ * This method constructs the search request by filtering the search criteria like tenantId, businessService, 
+ * assignee, status, mobileNumber, booking number, and locality, and sends a request to the searcher service 
+ * to fetch matching application numbers. It handles pagination and sorting of the results and also checks 
+ * if a mobile number is provided, in which case it fetches the corresponding user UUIDs.
+ * 
+ * If no mobile number is provided or if no user exists for the given mobile number, it returns an empty list. 
+ * 
+ * @param criteria - The search criteria containing filters like tenantId, businessService, status, etc.
+ * @param StatusIdNameMap - A map that holds status ID and name mappings.
+ * @param requestInfo - The request metadata containing information like api_id, ts, etc.
+ * @return List<String> - A list of application numbers (booking numbers) retrieved from the searcher service.
+ */
+
 public class RequestServiceInboxFilterService {
 		
 		@Value("${egov.user.host}")
@@ -57,6 +74,9 @@ public class RequestServiceInboxFilterService {
 
 		@Autowired
 		private RestTemplate restTemplate;
+		
+		@Autowired
+		private ObjectMapper mapper;
 
 		@Autowired
 		private ServiceRequestRepository serviceRequestRepository;
@@ -135,7 +155,7 @@ public class RequestServiceInboxFilterService {
 				log.info("Checkig ----- ------" + searcherRequest);
 				result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 //				applicationNumbers = JsonPath.read(result, "$.hallsBookingApplication.*.booking_no");
-				ObjectMapper mapper = new ObjectMapper();
+//				ObjectMapper mapper = new ObjectMapper();
 				String jsonString = null;
 				try {
 					jsonString = mapper.writeValueAsString(result);
@@ -149,13 +169,10 @@ public class RequestServiceInboxFilterService {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				// Debugging the JSON String to verify structure
-				System.out.println("Serialized JSON: " + jsonString);
-
+				
 				// Use JsonPath to extract booking numbers
 				applicationNumbers = JsonPath.read(jsonString, "$.waterTankerBookingDetail[*].booking_no");
-				System.out.println("Booking Numbers: " + applicationNumbers);
+				log.info("Booking Numbers: " + applicationNumbers);
 
 			}
 			return applicationNumbers;

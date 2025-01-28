@@ -1,12 +1,15 @@
 package org.upyog.request.service.repository.querybuilder;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.upyog.request.service.config.RequestServiceConfiguration;
-import org.upyog.request.service.web.models.*;
-import java.util.List;
+import org.upyog.request.service.web.models.WaterTankerBookingSearchCriteria;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -49,9 +52,17 @@ public class RequestServiceQueryBuilder {
         }
         if (!ObjectUtils.isEmpty(criteria.getBookingNo())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" ursbd.booking_no = ? ");
-            preparedStmtList.add(criteria.getBookingNo());
+            
+            // Create a comma-separated string of placeholders
+            String bookingNosPlaceholders = String.join(",", Collections.nCopies(criteria.getBookingNo().split(",").length, "?"));
+            
+            query.append(" ursbd.booking_no IN (").append(bookingNosPlaceholders).append(")");
+
+            // Add the booking numbers to the preparedStmtList
+            String[] bookingNumbers = criteria.getBookingNo().split(",");
+            Collections.addAll(preparedStmtList, bookingNumbers);
         }
+
         if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" appl.mobile_number = ? ");
