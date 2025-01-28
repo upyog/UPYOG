@@ -299,7 +299,7 @@ public class PropertyQueryBuilder {
 				&& StringUtils.isNotEmpty(criteria.getTenantId());
 		
 		
-		if(isEmpty)
+		if(isEmpty && !criteria.getIsSchedulerCall())
 			throw new CustomException("EG_PT_SEARCH_ERROR"," No criteria given for the property search");
 		
 		StringBuilder builder = new StringBuilder();
@@ -417,7 +417,7 @@ public class PropertyQueryBuilder {
 
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
+			addToPreparedStatement(preparedStmtList, propertyIds);
 		}
 		
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
@@ -425,7 +425,7 @@ public class PropertyQueryBuilder {
 
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
+			addToPreparedStatement(preparedStmtList, acknowledgementIds);
 		}
 		
 		Set<String> uuids = criteria.getUuids();
@@ -470,9 +470,9 @@ public class PropertyQueryBuilder {
 	
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
-		if (onlyIds || criteria.getIsRequestForCount() || StringUtils.isNotEmpty(criteria.getTenantId()))
-			return builder.toString();
-		else 
+//		if (onlyIds || criteria.getIsRequestForCount() || StringUtils.isNotEmpty(criteria.getTenantId()))
+//			return builder.toString();
+//		else 
 			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
 	}
 

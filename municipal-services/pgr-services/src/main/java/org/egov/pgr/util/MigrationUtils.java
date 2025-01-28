@@ -114,6 +114,7 @@ public class MigrationUtils {
         Map<String, Long> serviceCodeToSLA = new HashMap<>();
 
         MdmsCriteriaReq mdmsCriteriaReq = mdmsUtils.getMDMSRequest(new RequestInfo(),tenantId);
+        log.info("Logger ++++++++++++" + mdmsUtils.getMdmsSearchUrl().toString());
         Object result = repository.fetchResult(mdmsUtils.getMdmsSearchUrl(), mdmsCriteriaReq);
         List<Map<String, Object>> res = new LinkedList<>();
 
