@@ -139,8 +139,7 @@ public class OcComparisonReportService {
         valuesMap.put("dcrNo", permitDcr.getDcrNumber());
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("applicantName", ocDcr.getApplication().getApplicantName());
-        valuesMap.put("reportGeneratedDate", DateUtils.toDefaultDateTimeFormat(new Date()));
-
+        valuesMap.put("reportGeneratedDate", DateUtils.toDefaultDateTimeFormat(new Date()));                
         String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
         valuesMap.put("egovLogo", imageURL);
         valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());

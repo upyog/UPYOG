@@ -220,5 +220,4 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     public void setComparisonDcrNumber(String comparisonDcrNumber) {
         this.comparisonDcrNumber = comparisonDcrNumber;
     }
-
 }
