@@ -10,6 +10,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.util.NotificationUtil;
 import org.egov.ptr.util.PTRConstants;
+import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.event.*;
 import org.egov.ptr.models.event.EventRequest;
@@ -41,36 +42,45 @@ public class PTRNotificationService {
 	}
 
 	private EventRequest getEventsForPTR(PetRegistrationRequest request) {
-
 		List<Event> events = new ArrayList<>();
-		String tenantId = request.getPetRegistrationApplications().get(0).getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
-		List<String> toUsers = new ArrayList<>();
-		String mobileNumber = request.getPetRegistrationApplications().get(0).getMobileNumber();
+		String localizationMessages = util.getLocalizationMessages(
+				request.getPetRegistrationApplications().get(0).getTenantId(), request.getRequestInfo());
 
-		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+		// Iterate over all PetRegistrationApplications
+		for (PetRegistrationApplication application : request.getPetRegistrationApplications()) {
+			String tenantId = application.getTenantId();
+			String mobileNumber = application.getMobileNumber();
 
-		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
-			log.info("UUID search failed!");
+			// Fetch user UUIDs based on mobile number
+			Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+			if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
+				log.info("UUID search failed for mobile number: {}", mobileNumber);
+				continue; // Skip this application if UUID lookup fails
+			}
+
+			// Prepare recipient and message
+			List<String> toUsers = new ArrayList<>();
+			toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
+			String message = util.getCustomizedMsg(request.getRequestInfo(), application, localizationMessages);
+
+			log.info("Message for event in Pet: {}", message);
+			Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+			log.info("Recipient object in pet: {}", recepient);
+
+			// Add event to the list
+			Event event = Event.builder().tenantId(tenantId).description(message)
+					.eventType(PTRConstants.USREVENTS_EVENT_TYPE).name(PTRConstants.USREVENTS_EVENT_NAME)
+					.postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+					.eventDetails(null).actions(null).build();
+			events.add(event);
 		}
 
-		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String message = null;
-		message = util.getCustomizedMsg(request.getRequestInfo(), request.getPetRegistrationApplications().get(0),
-				localizationMessages);
-		log.info("Message for event in Pet:" + message);
-		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-		log.info("Recipient object in pet:" + recepient.toString());
-		events.add(Event.builder().tenantId(tenantId).description(message).eventType(PTRConstants.USREVENTS_EVENT_TYPE)
-				.name(PTRConstants.USREVENTS_EVENT_NAME).postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY)
-				.source(Source.WEBAPP).recepient(recepient).eventDetails(null).actions(null).build());
-
+		// Check if events are created and return EventRequest
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
 		} else {
 			return null;
 		}
-
 	}
 
 	/**

@@ -26,6 +26,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.egov.ptr.util.PTRConstants.*;
+
 @Service
 public class WorkflowService {
 
@@ -41,14 +43,14 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
-	public void updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
-		petRegistrationRequest.getPetRegistrationApplications().forEach(application -> {
+	public State updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
+		PetRegistrationApplication application = petRegistrationRequest.getPetRegistrationApplications().get(0);
 			ProcessInstance processInstance = getProcessInstanceForPTR(application,
 					petRegistrationRequest.getRequestInfo());
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(petRegistrationRequest.getRequestInfo(),
 					Collections.singletonList(processInstance));
-			callWorkFlow(workflowRequest);
-		});
+			State state = callWorkFlow(workflowRequest);
+		return state;
 	}
 
 	private ProcessInstance getProcessInstanceForPTR(PetRegistrationApplication application, RequestInfo requestInfo) {
@@ -57,9 +59,9 @@ public class WorkflowService {
 		ProcessInstance processInstance = new ProcessInstance();
 		processInstance.setBusinessId(application.getApplicationNumber());
 		processInstance.setAction(workflow.getAction());
-		processInstance.setModuleName("pet-services");
+		processInstance.setModuleName(PET_MODULE_NAME);
 		processInstance.setTenantId(application.getTenantId());
-		processInstance.setBusinessService("ptr");
+		processInstance.setBusinessService(PET_BUSINESS_SERVICE);
 		processInstance.setDocuments(workflow.getDocuments());
 		processInstance.setComment(workflow.getComments());
 
