@@ -70,7 +70,7 @@ public class PetApplicationValidator {
 				PET_MASTER_MODULE_NAME, masterNames, null, JSONPATH_PETSERVICE_RESPONSE, request.getRequestInfo());
 
 		if (petMasterData != null && !petMasterData.isEmpty()) {
-			validateMDMSData(masterNames, petMasterData);
+			validateMDMSDataExistence(masterNames, petMasterData);
 
 			// Convert master data to required format for validation
 			Map<String, List<String>> petTypeCodes = petMasterData.entrySet().stream()
@@ -92,7 +92,7 @@ public class PetApplicationValidator {
 	 * @param masterNames
 	 * @param codes
 	 */
-	private void validateMDMSData(List<String> masterNames, Map<String, List<Map<String, Object>>> petcodes) {
+	private void validateMDMSDataExistence(List<String> masterNames, Map<String, List<Map<String, Object>>> petcodes) {
 
 		Map<String, String> errorMap = new HashMap<>();
 		for (String masterName : masterNames) {
