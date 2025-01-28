@@ -43,6 +43,11 @@ public class User   {
         @SafeHtml
         @JsonProperty("uuid")
         private String uuid;
+        
+        @SafeHtml
+        @Size(max = 36)
+        @JsonProperty("digilockerId")
+        private String digilockerid;
 
         @Size(max=64)
         @SafeHtml

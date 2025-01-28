@@ -56,7 +56,9 @@ import org.egov.dx.web.models.ResponseInfoFactory;
 import org.egov.dx.web.models.TokenRequest;
 import org.egov.dx.web.models.TokenRes;
 import org.egov.dx.web.models.TokenResponse;
+import org.egov.dx.web.models.User;
 import org.egov.dx.web.models.UserRes;
+import org.egov.dx.web.models.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -115,14 +117,16 @@ public class DLRequestController {
 	}
 	
 	@RequestMapping(value = "/token/citizen", method = RequestMethod.POST)
-    public ResponseEntity<TokenResponse>  getTokenCitizen(@Valid @RequestBody TokenRequest tokenRequest)    { 
-		
-		TokenRes tokenRes=dlRequestService.getToken(tokenRequest.getTokenReq());
-		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
-		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(tokenRes).build();
+	public ResponseEntity<Object>  getTokenCitizen(@Valid @RequestBody TokenRequest tokenRequest)    {
 
-		 return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
-	}
+	TokenRes tokenRes=dlRequestService.getToken(tokenRequest.getTokenReq());
+	Object user = dlRequestService.getOauthToken(tokenRequest.getRequestInfo() , tokenRes);
+	
+//	ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
+//	TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(tokenRes).build();
+
+	return new ResponseEntity<>(user,HttpStatus.OK);
+}
 	
 	
 	
