@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react"
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
 import ASSETSearchApplication from "../../components/SearchApplication"

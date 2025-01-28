@@ -13,7 +13,7 @@ import {
   BackButton,
   Header,
   DownloadBtnCommon
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 // import { convertEpochToDateDMY } from "../../utils";
 

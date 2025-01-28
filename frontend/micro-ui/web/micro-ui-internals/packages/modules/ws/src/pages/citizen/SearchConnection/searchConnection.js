@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@nudmcdgnpm/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@nudmcdgnpm/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown, Toast } from "@upyog/digit-ui-react-components";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";

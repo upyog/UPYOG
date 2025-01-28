@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Loader, Localities, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Loader, Localities, Toast } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const PTSearchFields = {

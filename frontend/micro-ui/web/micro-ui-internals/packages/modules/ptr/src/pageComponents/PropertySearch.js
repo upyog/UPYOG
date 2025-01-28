@@ -5,7 +5,7 @@ This is a custom component, it will display details based on your Property ID an
 
 
 import React, { useEffect, useState} from "react";
-import { FormStep, TextInput, CardLabel, SearchIcon, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, SearchIcon, Dropdown } from "@upyog/digit-ui-react-components";
 import { Controller, useForm } from "react-hook-form";
 
 const PropertySearch = ({ t, config, onSelect, userType,formData,renewApplication }) => {

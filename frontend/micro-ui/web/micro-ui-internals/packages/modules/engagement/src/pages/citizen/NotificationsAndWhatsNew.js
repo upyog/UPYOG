@@ -1,4 +1,4 @@
-import { Card, CardCaption, Header, Loader, OnGroundEventCard, WhatsNewCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardCaption, Header, Loader, OnGroundEventCard, WhatsNewCard } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, useHistory, useLocation } from "react-router-dom";

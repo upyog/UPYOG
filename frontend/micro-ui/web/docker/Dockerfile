@@ -2,29 +2,28 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 #FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
-RUN yarn add @nudmcdgnpm/digit-ui-libraries
-RUN yarn add @upyog/digit-ui-module-fsm
-RUN yarn add @upyog/digit-ui-module-pt
-RUN yarn add @upyog/digit-ui-module-tl
-RUN yarn add @upyog/digit-ui-module-obps
-RUN yarn add @upyog/digit-ui-module-ws
-RUN yarn add @upyog/digit-ui-module-dss
-RUN yarn add @upyog/digit-ui-module-mcollect
-RUN yarn add @upyog/digit-ui-module-pgr
-RUN yarn add @upyog/digit-ui-module-noc
-RUN yarn add @upyog/digit-ui-module-engagement
-RUN yarn add @upyog/digit-ui-module-hrms
-RUN yarn add @upyog/digit-ui-module-core
-RUN yarn add @upyog/digit-ui-module-common
-RUN yarn add @upyog/digit-ui-module-commonpt
-RUN yarn add @upyog/digit-ui-module-bills
-RUN yarn add @nudmcdgnpm/upyog-ui-module-ptr
-RUN yarn add @nudmcdgnpm/upyog-ui-module-cm
-RUN yarn add @nudmcdgnpm/upyog-ui-module-ads
-RUN yarn add @nudmcdgnpm/upyog-ui-module-chb
-RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
-RUN yarn add @nudmcdgnpm/upyog-ui-module-asset
-RUN yarn add @nudmcdgnpm/upyog-ui-module-ew
+RUN yarn add @upyog/digit-ui-libraries@3.0.0
+RUN yarn add @upyog/digit-ui-module-fsm@3.0.0
+RUN yarn add @upyog/digit-ui-module-pt@3.0.0
+RUN yarn add @upyog/digit-ui-module-tl@3.0.0
+RUN yarn add @upyog/digit-ui-module-obps@3.0.0
+RUN yarn add @upyog/digit-ui-module-ws@3.0.0
+RUN yarn add @upyog/digit-ui-module-dss@3.0.0
+RUN yarn add @upyog/digit-ui-module-mcollect@3.0.0
+RUN yarn add @upyog/digit-ui-module-pgr@3.0.0
+RUN yarn add @upyog/digit-ui-module-noc@3.0.0
+RUN yarn add @upyog/digit-ui-module-engagement@3.0.1
+RUN yarn add @upyog/digit-ui-module-hrms@3.0.0
+RUN yarn add @upyog/digit-ui-module-core@3.0.1
+RUN yarn add @upyog/digit-ui-module-common@3.0.2
+RUN yarn add @upyog/digit-ui-module-commonpt@3.0.0
+RUN yarn add @upyog/digit-ui-module-bills@3.0.0
+RUN yarn add @upyog/upyog-ui-module-ptr@3.0.0
+RUN yarn add @upyog/upyog-ui-module-ads@3.0.1
+RUN yarn add @upyog/upyog-ui-module-chb@3.0.1
+RUN yarn add @upyog/upyog-ui-module-sv@3.0.0
+RUN yarn add @upyog/upyog-ui-module-asset@3.0.0
+RUN yarn add @upyog/upyog-ui-module-ew@3.0.0
 
 ARG WORK_DIR
 WORKDIR /app

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/PTRTimeline";
 import { Controller, useForm } from "react-hook-form";
 import { convertEpochToDate } from "../utils";

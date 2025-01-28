@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, CardSectionHeader, Header, Loader, Row, StatusTable, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardSubHeader, CardSectionHeader, Header, Loader, Row, StatusTable, MultiLink } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams, Link } from "react-router-dom";

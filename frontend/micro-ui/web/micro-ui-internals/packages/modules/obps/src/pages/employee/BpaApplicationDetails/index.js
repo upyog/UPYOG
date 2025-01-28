@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { newConfig as newConfigFI } from "../../../config/InspectionReportConfig";
 import get from "lodash/get";

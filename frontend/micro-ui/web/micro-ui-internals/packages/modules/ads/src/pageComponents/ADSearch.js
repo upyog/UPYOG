@@ -13,7 +13,7 @@ import {
   RadioButtons,
   TextInput,
 
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import BookingPopup from "../components/BookingPopup";
 
 

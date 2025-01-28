@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { BackButton, Card, CardHeader, CardLabelError, CardText, RadioButtons, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { BackButton, Card, CardHeader, CardLabelError, CardText, RadioButtons, SubmitBar } from "@upyog/digit-ui-react-components";
 
 import { LOCALIZATION_KEY } from "../../../constants/Localization";
 import { getRoute, PgrRoutes, PGR_BASE } from "../../../constants/Routes";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LocationSearchCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { LocationSearchCard } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectGeolocation = ({ t, config, onSelect, formData = {} }) => {

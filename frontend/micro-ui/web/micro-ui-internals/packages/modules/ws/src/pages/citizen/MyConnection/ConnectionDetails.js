@@ -15,7 +15,7 @@ import {
   Menu,
   Modal,
   Toast,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import React, { useState, useRef } from "react";

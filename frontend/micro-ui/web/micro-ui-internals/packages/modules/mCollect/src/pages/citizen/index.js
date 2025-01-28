@@ -1,4 +1,4 @@
-import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Redirect, Switch, useRouteMatch } from "react-router-dom";
 // import SearchChallanComponent from "./SearchChallan";

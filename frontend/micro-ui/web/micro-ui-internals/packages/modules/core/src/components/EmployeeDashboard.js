@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from "react-i18next";
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 
 /**
  * @author - Shivank Shukla - NIUA

@@ -14,7 +14,7 @@ import {
   DeathIcon,
   FirenocIcon,
   PTRIcon
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const CitizenSubMenuSideBar = ({ item }) => {

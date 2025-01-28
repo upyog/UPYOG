@@ -1,4 +1,4 @@
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import { getDaysInMonth } from "date-fns";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";

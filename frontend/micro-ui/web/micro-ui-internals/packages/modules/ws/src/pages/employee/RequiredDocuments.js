@@ -1,4 +1,4 @@
-import { ActionBar, Card, CardHeader, CardLabel, CardLabelDesc, CardText, DownloadIcon, Header, Loader, MultiLink, ShareIcon, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components"
+import { ActionBar, Card, CardHeader, CardLabel, CardLabelDesc, CardText, DownloadIcon, Header, Loader, MultiLink, ShareIcon, SubmitBar } from "@upyog/digit-ui-react-components"
 import React, {Fragment, useRef} from "react"
 import { useTranslation } from "react-i18next"
 import { useHistory, useLocation, useParams } from "react-router-dom"

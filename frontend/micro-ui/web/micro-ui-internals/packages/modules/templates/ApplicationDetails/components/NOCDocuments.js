@@ -5,7 +5,7 @@ import {
   StatusTable,
   Row,
   LabelFieldPair
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import DocumentsPreview from "./DocumentsPreview";
 
 function SelectDocument({

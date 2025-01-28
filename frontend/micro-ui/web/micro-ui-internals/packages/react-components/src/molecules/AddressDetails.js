@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "@nudmcdgnpm/digit-ui-react-components";  //imported all from our common library
+import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "@upyog/digit-ui-react-components";  //imported all from our common library
 
 /**
  * Common Address Details component so that developer can use it just by importing it accross the UPYOG.

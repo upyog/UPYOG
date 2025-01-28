@@ -17,7 +17,7 @@ import {
   Loader,
   CardText,
   Header,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {

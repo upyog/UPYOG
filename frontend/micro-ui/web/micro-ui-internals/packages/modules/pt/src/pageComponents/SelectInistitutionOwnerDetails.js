@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { CardHeader, CardLabel, Dropdown, FormStep, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardHeader, CardLabel, Dropdown, FormStep, TextInput } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import Timeline from "../components/TLTimeline";
 

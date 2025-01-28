@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Card, CardHeader, SubmitBar, CitizenInfoLabel, CardText, Loader, CardSubHeader, BackButton, BreadCrumb, Header, CardLabel, CardSectionHeader, CardCaption, ActionBar, PrintBtnCommon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardHeader, SubmitBar, CitizenInfoLabel, CardText, Loader, CardSubHeader, BackButton, BreadCrumb, Header, CardLabel, CardSectionHeader, CardCaption, ActionBar, PrintBtnCommon } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch } from "react-router-dom";
 

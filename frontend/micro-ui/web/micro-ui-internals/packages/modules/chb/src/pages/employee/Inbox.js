@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header } from "@upyog/digit-ui-react-components";
 
 import CHBDesktopInbox from "../../components/CHBDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";

@@ -12,7 +12,7 @@ import {
   CardCaption,
   SubmitBar,
   Loader,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 import { useTranslation } from "react-i18next";
 import { scrutinyDetailsData } from "../utils";
