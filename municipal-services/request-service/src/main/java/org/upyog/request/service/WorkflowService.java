@@ -57,7 +57,7 @@ public class WorkflowService {
 		Workflow workflow = application.getWorkflow();
 
 		ProcessInstance processInstance = new ProcessInstance();
-		processInstance.setBusinessId(application.getBookingId());
+		processInstance.setBusinessId(application.getBookingNo());
 		processInstance.setAction(workflow.getAction());
 		processInstance.setModuleName(workflow.getModuleName());
 		processInstance.setTenantId(application.getTenantId());
