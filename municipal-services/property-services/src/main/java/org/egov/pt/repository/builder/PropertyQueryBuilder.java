@@ -307,18 +307,18 @@ public class PropertyQueryBuilder {
 		//if(!isOnlyTenantId) 
 			 
 		
-		 if (onlyIds)
-			builder.append(ID_QUERY);
-		
-		else if (criteria.getIsRequestForCount()) 
-			builder.append(COUNT_QUERY);
-			
-		else if(isOnlyTenantId) {
-			builder.append(BASE_QUERY);
-		 	log.info("The Base query is :"+builder);
-		}
-			
-		else
+//		 if (onlyIds)
+//			builder.append(ID_QUERY);
+//		
+//		else if (criteria.getIsRequestForCount()) 
+//			builder.append(COUNT_QUERY);
+//			
+//		else if(isOnlyTenantId) {
+//			builder.append(BASE_QUERY);
+//		 	log.info("The Base query is :"+builder);
+//		}
+//			
+//		else
 		 builder.append(QUERY);
 		 
 			  
