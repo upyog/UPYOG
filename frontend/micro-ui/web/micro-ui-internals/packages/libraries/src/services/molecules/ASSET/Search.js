@@ -2,12 +2,17 @@
 import { ASSETService } from "../../elements/ASSET";
 
 const convertTimestampToDate = (timestamp) => {
-  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+  // Agar timestamp 13 digits ka hai, to yeh milliseconds mein hai
+  const adjustedTimestamp = timestamp.toString().length === 13 ? timestamp / 1000 : timestamp;
+
+  // Timestamp ko date object mein convert karo
+  const date = new Date(adjustedTimestamp * 1000); // Convert seconds to milliseconds
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, "0");
+
   return `${year}-${month}-${day}`;
-}
+};
 
 const getData = (res, combinedData) => {
 
@@ -85,18 +90,18 @@ export const ASSETSearch = {
     
     const maintenanceListRows = maintenanceList?.AssetMaintenance?.map((row) => (
       [
+        convertTimestampToDate(row.assetMaintenanceDate),
         row.vendor,
         row.warrantyStatus,
         row.costOfMaintenance,
         row.maintenanceCycle,
-        row.maintenanceType,
         row.documents
       ]
     )) || [];
 
     const disposalListListRows = disposalList?.AssetDisposals?.map((row) => (
       [
-        row.disposalDate,
+        convertTimestampToDate(row.disposalDate),
         row.reasonForDisposal,
         row.glCode,
         row.assetDisposalStatus,
@@ -204,11 +209,11 @@ export const ASSETSearch = {
         isMaintenance: true,
         headers: maintenanceListRows.length > 0
           ? [
+            `${t("AST_MAINTENANCE_DATE")}`,
             `${t("AST_VENDOR")}`,
             `${t("AST_WARRANTY_STATUS")}`,
             `${t("AST_COST_OF_MAINTENANCE")}`,
             `${t("AST_MAINTENANCE_CYCLE")}`,
-            `${t("AST_MAINTENANCE_TYPE")}`,
             `${t("AST_MAINTENANCE_DOCUMENT")}`
           ]
           : [`${t("AST_NO_MAINTENANCE_DATA")}`],
@@ -224,7 +229,6 @@ export const ASSETSearch = {
             `${t("AST_REASON_DISPOSAL")}`,
             `${t("AST_GL_CODE")}`,
             `${t("AST_DISPOSAL_STATUS")}`,
-            `${t("AST_MAINTENANCE_TYPE")}`,
             `${t("AST_AGE_OF_ASSET")}`
           ]
           : [`${t("AST_NO_DISPOSAL_DATA")}`],

@@ -85,6 +85,8 @@ public class WaterTankerBookingDetail {
 
 	@Valid
 	private Address address;
+	
+	private Workflow workflow;
 
 	private AuditDetails auditDetails;
 
