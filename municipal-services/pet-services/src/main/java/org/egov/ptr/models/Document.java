@@ -2,6 +2,8 @@ package org.egov.ptr.models;
 
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -9,8 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Data
 @AllArgsConstructor

@@ -3,9 +3,8 @@ package org.egov.ptr.models.user;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.ptr.models.OwnerInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.egov.common.contract.request.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +18,5 @@ public class UserDetailResponse {
 	ResponseInfo responseInfo;
 
 	@JsonProperty("user")
-	List<OwnerInfo> user;
+	List<User> user;
 }
