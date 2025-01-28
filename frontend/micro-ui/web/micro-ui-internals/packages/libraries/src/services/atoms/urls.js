@@ -245,7 +245,9 @@ const Urls = {
   },
 
   wt:{
-    create: "/request-service/water-tanker/v1/_create"
+    create: "/request-service/water-tanker/v1/_create",
+    update: "/request-service/water-tanker/v1/_update",
+    search: "/request-service/water-tanker/v1/_search",
   },
 
   vendor: {

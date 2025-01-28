@@ -9,6 +9,7 @@ import { EwService } from "../../services/elements/EW";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
+import {WTService} from "../../services/elements/WT";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -66,6 +67,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "bookingNo",
     fetchFilters: filterFunctions.CHB,
     _searchFn: () => CHBServices.search({ tenantId, filters }),
+  },
+  WT: {
+    services: ["watertanker"],
+    searchResponseKey: "waterTankerBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.WT,
+    _searchFn: () => WTService.search({ tenantId, filters }),
   },
 });
 

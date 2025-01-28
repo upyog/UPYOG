@@ -242,6 +242,13 @@ const adsAccess = () => {
   const ADS_ACCESS = userRoles?.filter((role) => adsRoles?.includes(role));
   return ADS_ACCESS?.length > 0;
 };
+const wtAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const wtRoles = ["WT_CEMP"];
+  const WT_ACCESS = userRoles?.filter((role) => wtRoles?.includes(role));
+  return WT_ACCESS?.length > 0;
+};
 
 const ptrAccess = () => {
   const userInfo = Digit.UserService.getUser();
@@ -372,6 +379,7 @@ export default {
   assetAccess,
   chbAccess,
   adsAccess,
+  wtAccess,
   ewAccess,
   svAccess,
   vendorAccess,

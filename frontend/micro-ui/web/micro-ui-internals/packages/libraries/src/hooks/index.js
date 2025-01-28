@@ -331,12 +331,18 @@ import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
+import useTankerSearchAPI from "./wt/useTankerSearchApi";
+import useWTApplicationAction from "./wt/useWTApplicationAction";
+import useWTApplicationDetail from "./wt/useWTApplicationDetail";
 import useTenantsVENDOR from "./vendor/useTenants";
 import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
 import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
 
 const wt={
-  useTankerCreateAPI
+  useTankerCreateAPI,
+  useTankerSearchAPI,
+  useWTApplicationAction,
+  useWTApplicationDetail
 };
 
 const pgr = {
