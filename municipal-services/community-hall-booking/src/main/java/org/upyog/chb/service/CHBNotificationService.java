@@ -64,36 +64,36 @@ public class CHBNotificationService {
 				bookingDetail.getApplicantDetail().getApplicantName());
 		log.info("Fetching localization message for notification");
 		//All notification messages are part of this messages object
-		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-		String message = null;
-		try {
-			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status);
-		}catch (Exception e) {
-			log.error("Exception occcured while fetching message", e);
-			e.printStackTrace();
-		}
-		
-		log.info("Message for sending sms and event : " + message);
-		if (message != null) {
-			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
-				List<SMSRequest> smsRequests = new LinkedList<>();
-				if (config.getIsSMSNotificationEnabled()) {
-					enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
-					if (!CollectionUtils.isEmpty(smsRequests))
-						util.sendSMS(smsRequests);
-				}
-			}
+//		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
+//		String message = null;
+//		try {
+//			 message = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status);
+//		}catch (Exception e) {
+//			log.error("Exception occcured while fetching message", e);
+//			e.printStackTrace();
+//		}
+//		
+//		log.info("Message for sending sms and event : " + message);
+//		if (message != null) {
+//			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+//				List<SMSRequest> smsRequests = new LinkedList<>();
+//				if (config.getIsSMSNotificationEnabled()) {
+//					enrichSMSRequest(bookingRequest, smsRequests, mobileNumberToOwner, message);
+//					if (!CollectionUtils.isEmpty(smsRequests))
+//						util.sendSMS(smsRequests);
+//				}
+//			}
 
-			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
-				if (null != config.getIsUserEventsNotificationEnabled()) {
-					if (config.getIsUserEventsNotificationEnabled()) {
-						EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
-						if (null != eventRequest)
-							util.sendEventNotification(eventRequest);
-					}
-				}
-			}
-		}
+//			if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+//				if (null != config.getIsUserEventsNotificationEnabled()) {
+//					if (config.getIsUserEventsNotificationEnabled()) {
+//						EventRequest eventRequest = getEventsForCommunityHallBooking(bookingRequest, message);
+//						if (null != eventRequest)
+//							util.sendEventNotification(eventRequest);
+//					}
+//				}
+//			}
+//		}
 	}
 
 	/**
@@ -198,13 +198,13 @@ public class CHBNotificationService {
 		Filter masterDataFilter = filter(where(CommunityHallBookingConstants.MODULE).is(moduleName)
 				.and(CommunityHallBookingConstants.ACTION).is(action));
 
-		try {
-			Object response = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
-			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]",
-					masterDataFilter);
-		} catch (Exception e) {
-			log.error("Exception while fetching workflow states to ignore: ", e);
-		}
+//		try {
+//			Object response = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
+//			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]",
+//					masterDataFilter);
+//		} catch (Exception e) {
+//			log.error("Exception while fetching workflow states to ignore: ", e);
+//		}
 
 		return masterData;
 	}

@@ -36,7 +36,9 @@ public class DemandService {
 		User owner = User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
 				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
 		List<DemandDetail> demandDetails = new LinkedList<>();
-		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(taxAmount)
+		demandDetails.add(DemandDetail.builder()
+		.collectionAmount(BigDecimal.ZERO)
+		.taxAmount(taxAmount)
 				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
 
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)

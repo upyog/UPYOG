@@ -3,6 +3,7 @@ package org.upyog.chb.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -51,8 +52,8 @@ public class WorkflowService {
 
 		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-		Object responseObject = restRepo.fetchResult(url, workflowReq);
-		response = mapper.convertValue(responseObject, ProcessInstanceResponse.class);
+		Optional<Object> responseObject = restRepo.fetchResultV1(url, workflowReq);
+		response = mapper.convertValue(responseObject.get(), ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
 	
@@ -62,27 +63,14 @@ public class WorkflowService {
 	 * 
 	 * @param request
 	 */
-	public State updateWorkflow(CommunityHallBookingRequest bookingRequest, WorkflowStatus workflowStatus) {
+	public State updateWorkflow(CommunityHallBookingRequest bookingRequest) {
 
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		
 		ProcessInstanceRequest workflowReq = getProcessInstanceForHallBooking(bookingDetail, bookingRequest.getRequestInfo());
 		State state = callWorkFlow(workflowReq);
-		
-//		if (state.getApplicationStatus().equalsIgnoreCase(configs.getWfStatusActive()) && property.getPropertyId() == null) {
-//			
-//			String pId = utils.getIdList(request.getRequestInfo(), property.getTenantId(), configs.getPropertyIdGenName(), configs.getPropertyIdGenFormat(), 1).get(0);
-//			request.getProperty().setPropertyId(pId);
-//		}
-//		
-//		if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE"))
-//		{	
-//			request.getProperty().setStatus(Status.INACTIVE);
-//		}
-//		else
-//		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
-//		request.getProperty().getWorkflow().setState(state);
-		return state;
+		bookingRequest.getHallsBookingApplication().setApplicationStatus(state.getApplicationStatus());
+	    return state;
 	}
 
 	private ProcessInstanceRequest getProcessInstanceForHallBooking(CommunityHallBookingDetail bookingDetail, RequestInfo requestInfo) {
@@ -94,7 +82,7 @@ public class WorkflowService {
 		processInstance.setBusinessId(bookingDetail.getBookingNo());
 		processInstance.setAction(workflow.getAction());
 		processInstance.setModuleName(workflow.getModuleName());
-		processInstance.setTenantId("hp");//bookingDetail.getTenantId()
+		processInstance.setTenantId(bookingDetail.getTenantId());//
 		processInstance.setBusinessService(workflow.getBusinessService());
 		processInstance.setDocuments(workflow.getDocuments());
 		processInstance.setComment(workflow.getComment());

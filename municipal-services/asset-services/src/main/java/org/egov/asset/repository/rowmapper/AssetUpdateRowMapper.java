@@ -75,6 +75,7 @@ public class AssetUpdateRowMapper implements ResultSetExtractor<List<AssetUpdate
                 	    .assetSubCategory(rs.getString("subCategory"))
                 	    .remarks(rs.getString("remarks"))
                 	    .assetStatus(rs.getString("status"))
+                	    .bookingStatus(rs.getString("bookingstatus"))
                 	    .build();
 
                 assetMap.put(id, currentAsset);

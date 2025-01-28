@@ -171,7 +171,10 @@ public class AssetUpdate{
     private String assetStatus;
     
     @JsonProperty("assetDetails")
-    private JsonNode assetDetails;
+    private Object assetDetails;
+    
+    @JsonProperty("bookingStatus")
+    private String bookingStatus;
     
     
 //  @JsonProperty("parentAssetSpecificDetails")
