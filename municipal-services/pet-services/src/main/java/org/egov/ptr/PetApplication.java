@@ -27,7 +27,8 @@ public class PetApplication {
 
 	@Bean
 	public ObjectMapper objectMapper() {
-		return new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+		return new ObjectMapper()
+//				.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
 				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
 	}
 

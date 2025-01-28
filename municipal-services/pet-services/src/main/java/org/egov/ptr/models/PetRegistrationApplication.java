@@ -54,9 +54,6 @@ public class PetRegistrationApplication {
 	@JsonProperty("address")
 	private Address address = null;
 
-//	@JsonProperty("applicant")
-//	private Applicant applicant = null;
-
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
 

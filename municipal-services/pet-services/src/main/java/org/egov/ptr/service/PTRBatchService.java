@@ -1,7 +1,10 @@
 package org.egov.ptr.service;
 
-import static org.egov.ptr.util.PTRConstants.STATUS_APPROVED;
+import static org.egov.ptr.util.PTRConstants.ACTION_ABOUT_TO_EXPIRE;
+import static org.egov.ptr.util.PTRConstants.ACTION_EXPIRE;
 import static org.egov.ptr.util.PTRConstants.STATUS_EXPIRED;
+import static org.egov.ptr.util.PTRConstants.STATUS_REGISTRATIONCOMPLETED;
+import static org.egov.ptr.util.PTRConstants.SYSTEM_CITIZEN_TENANTID;
 import static org.egov.ptr.util.PTRConstants.SYSTEM_CITIZEN_USERNAME;
 
 import java.util.List;
@@ -14,7 +17,7 @@ import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.user.UserDetailResponse;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
-import org.egov.ptr.util.PetUtil;
+import org.egov.ptr.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,81 +44,122 @@ public class PTRBatchService {
 	private UserService userService;
 
 	@Autowired
-	private PetUtil petUtil;
+	private CommonUtils commonUtils;
+
+	@Autowired
+	private PTRNotificationService notificationService;
 
 	/**
 	 * Searches pet applications, expires their status according to their validity
 	 * date.
 	 */
-	public void getPetApplicationsAndPerformAction() {
+	/**
+	 * Handles expiration of pet applications based on their validity date.
+	 */
+	public void processPetApplicationExpiration() {
 		log.info("Starting pet application expiration process...");
 
-		long validityDateUnix = petUtil.getTodaysEpoch();
-
+		long validityDateUnix = commonUtils.getTodaysEpoch();
 		List<String> tenantIds = repository.fetchPetApplicationTenantIds();
+
 		if (CollectionUtils.isEmpty(tenantIds)) {
 			log.info("No tenant IDs found for processing.");
 			return;
 		}
 
-		tenantIds.forEach(tenantId -> processTenant(tenantId, validityDateUnix));
+		RequestInfo requestInfo = getRequestInfoWithUser();
+		tenantIds.forEach(tenantId -> handleExpirationForTenant(tenantId, validityDateUnix, requestInfo));
 
 		log.info("Pet application expiration process completed.");
 	}
 
-	private void processTenant(String tenantId, long validityDateUnix) {
-		try {
-			RequestInfo requestInfo = getRequestInfoWithUser(tenantId);
-			if (requestInfo == null)
-				return;
+	/**
+	 * Sends advance notifications to pet owners about applications nearing
+	 * expiration.
+	 */
+	public void sendAdvanceNotificationsToPetOwners() {
+		log.info("Starting advance notification process for pet owners...");
 
-			processTenantApplications(tenantId, validityDateUnix, requestInfo);
-		} catch (Exception ex) {
-			log.error("Batch process failed for tenant ID: {}", tenantId, ex);
+		long validityDateUnix = commonUtils.calculateNextMarch31InEpoch();
+		List<String> tenantIds = repository.fetchPetApplicationTenantIds();
+
+		if (CollectionUtils.isEmpty(tenantIds)) {
+			log.info("No tenant IDs found for processing.");
+			return;
 		}
+
+		RequestInfo requestInfo = getRequestInfoWithUser();
+		tenantIds.forEach(tenantId -> fetchAndNotifyApplications(tenantId, validityDateUnix, requestInfo));
+
+		log.info("Advance notification process completed.");
 	}
 
-	private RequestInfo getRequestInfoWithUser(String tenantId) {
-		UserDetailResponse userDetailResponse = userService.searchByUserName(SYSTEM_CITIZEN_USERNAME, tenantId);
-		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
-			log.warn("User not found for tenant '{}'. Skipping processing.", tenantId);
+	private RequestInfo getRequestInfoWithUser() {
+		UserDetailResponse userDetailResponse = userService.searchByUserName(SYSTEM_CITIZEN_USERNAME,
+				SYSTEM_CITIZEN_TENANTID);
+
+		if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+			log.warn("User not found. Skipping processing.");
 			return null;
 		}
+
 		return RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();
 	}
 
-	private void processTenantApplications(String tenantId, long validityDateUnix, RequestInfo requestInfo) {
-		PetApplicationSearchCriteria criteria = PetApplicationSearchCriteria.builder().validityDate(validityDateUnix)
-				.status(STATUS_APPROVED).tenantId(tenantId).build();
+	private void handleExpirationForTenant(String tenantId, long validityDateUnix, RequestInfo requestInfo) {
+		PetApplicationSearchCriteria criteria = buildSearchCriteria(tenantId, validityDateUnix,
+				STATUS_REGISTRATIONCOMPLETED);
 
 		int offset = 0;
 		while (true) {
 			log.info("Fetching applications for tenant: {} with offset: {}", tenantId, offset);
 
-			List<PetRegistrationApplication> petApplications = repository.getApplications(criteria);
-			if (CollectionUtils.isEmpty(petApplications))
+			List<PetRegistrationApplication> applications = repository.getApplications(criteria);
+			if (CollectionUtils.isEmpty(applications))
 				break;
 
-			expireAndUpdatePetApplications(requestInfo, petApplications);
+			processApplicationExpiration(requestInfo, applications);
 
-			offset += petApplications.size();
+			offset += applications.size();
 		}
 	}
 
-	private void expireAndUpdatePetApplications(RequestInfo requestInfo,
-			List<PetRegistrationApplication> applications) {
+	private void fetchAndNotifyApplications(String tenantId, long validityDateUnix, RequestInfo requestInfo) {
+		PetApplicationSearchCriteria criteria = buildSearchCriteria(tenantId, validityDateUnix,
+				STATUS_REGISTRATIONCOMPLETED);
+
+		List<PetRegistrationApplication> applications = repository.getApplications(criteria);
+		if (CollectionUtils.isEmpty(applications)) {
+			log.info("No applications found for tenant: {}", tenantId);
+			return;
+		}
+
+		applications.forEach(app -> app.getWorkflow().setAction(ACTION_ABOUT_TO_EXPIRE));
+
+		PetRegistrationRequest petRequest = new PetRegistrationRequest(requestInfo, applications);
+		notificationService.process(petRequest);
+	}
+
+	private void processApplicationExpiration(RequestInfo requestInfo, List<PetRegistrationApplication> applications) {
 		applications.forEach(app -> {
 			app.setExpireFlag(true);
 			app.setStatus(STATUS_EXPIRED);
+			app.getWorkflow().setAction(ACTION_EXPIRE);
 		});
 
 		PetRegistrationRequest petRequest = new PetRegistrationRequest(requestInfo, applications);
 
-		pushToKafka(petRequest);
+		updateApplicationStatus(petRequest);
 		updateWorkflowStatus(petRequest);
+		notificationService.process(petRequest);
 	}
 
-	private void pushToKafka(PetRegistrationRequest petRequest) {
+	private PetApplicationSearchCriteria buildSearchCriteria(String tenantId, long validityDateUnix, String status) {
+		return PetApplicationSearchCriteria.builder().validityDate(validityDateUnix).status(status).tenantId(tenantId)
+				.build();
+	}
+
+	private void updateApplicationStatus(PetRegistrationRequest petRequest) {
 		try {
 			producer.push(config.getUpdatePtrTopic(), petRequest);
 		} catch (Exception e) {

@@ -43,14 +43,14 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
-	public void updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
-		petRegistrationRequest.getPetRegistrationApplications().forEach(application -> {
+	public State updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
+		PetRegistrationApplication application = petRegistrationRequest.getPetRegistrationApplications().get(0);
 			ProcessInstance processInstance = getProcessInstanceForPTR(application,
 					petRegistrationRequest.getRequestInfo());
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(petRegistrationRequest.getRequestInfo(),
 					Collections.singletonList(processInstance));
-			callWorkFlow(workflowRequest);
-		});
+			State state = callWorkFlow(workflowRequest);
+		return state;
 	}
 
 	private ProcessInstance getProcessInstanceForPTR(PetRegistrationApplication application, RequestInfo requestInfo) {
@@ -59,9 +59,9 @@ public class WorkflowService {
 		ProcessInstance processInstance = new ProcessInstance();
 		processInstance.setBusinessId(application.getApplicationNumber());
 		processInstance.setAction(workflow.getAction());
-		processInstance.setModuleName(PET_MODULENAME);
+		processInstance.setModuleName(PET_MODULE_NAME);
 		processInstance.setTenantId(application.getTenantId());
-		processInstance.setBusinessService(PET_BUSINESSSERVICE);
+		processInstance.setBusinessService(PET_BUSINESS_SERVICE);
 		processInstance.setDocuments(workflow.getDocuments());
 		processInstance.setComment(workflow.getComments());
 

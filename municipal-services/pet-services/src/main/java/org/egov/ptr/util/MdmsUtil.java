@@ -3,14 +3,10 @@ package org.egov.ptr.util;
 import static org.egov.ptr.util.PTRConstants.CALCULATION_TYPE;
 import static org.egov.ptr.util.PTRConstants.PET_MASTER_MODULE_NAME;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -27,16 +23,14 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
 @Component
 @Slf4j
-public class PetUtil extends CommonUtils {
-
-	@Autowired
-	private PetConfiguration configs;
+public class MdmsUtil {
 
 	@Autowired
 	private ServiceRequestRepository restRepo;
@@ -47,22 +41,16 @@ public class PetUtil extends CommonUtils {
 	@Autowired
 	private PetConfiguration config;
 
-	/**
-	 * Utility method to fetch bill for validation of payment
-	 *
-	 * @param propertyId
-	 * @param tenantId
-	 * @param request    //
-	 */
-
-	public List<CalculationType> getcalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
+	public List<CalculationType> getCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
 
 		List<CalculationType> calculationTypes = new ArrayList<CalculationType>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsEndpoint());
 
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestCalculationType(requestInfo, tenantId, moduleName);
-		MdmsResponse mdmsResponse = mapper.convertValue(restRepo.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
+		MdmsResponse mdmsResponse = mapper.convertValue(restRepo.fetchResult(uri, mdmsCriteriaReq).get(),
+				MdmsResponse.class);
+
 		if (mdmsResponse.getMdmsRes().get(PET_MASTER_MODULE_NAME) == null) {
 			throw new CustomException("FEE_NOT_AVAILABLE", "Pet registration fee not available.");
 		}
@@ -103,53 +91,52 @@ public class PetUtil extends CommonUtils {
 		return mdmsCriteriaReq;
 	}
 
-	public long calculateNextMarch31At8PMInEpoch() {
-		LocalDate today = LocalDate.now();
-		LocalDate nextMarch31 = LocalDate.of(today.getYear(), Month.MARCH, 31);
-		if (today.isAfter(nextMarch31)) {
-			nextMarch31 = nextMarch31.plusYears(1);
+	/*********************** MDMS Utitlity Methods *****************************/
+
+	/**
+	 * Fetches all the values of particular attribute as map of fieldname to list
+	 *
+	 * @param tenantId    tenantId from pet request
+	 * @param names       List of String containing the names of all masterdata
+	 *                    whose code has to be extracted
+	 * @param requestInfo RequestInfo of the received Pet request
+	 * @return Map of MasterData name to the list of code in the MasterData
+	 *
+	 */
+	public Map<String, List<Map<String, Object>>> getAttributeValues(String tenantId, String moduleName,
+			List<String> names, String filter, String jsonpath, RequestInfo requestInfo) {
+
+		StringBuilder uri = new StringBuilder(config.getMdmsHost()).append(config.getMdmsEndpoint());
+		MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId, moduleName, names, filter, requestInfo);
+		Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
+
+		try {
+			if (response.isPresent()) {
+				// Adjusted to return a list of maps instead of list of strings
+				return JsonPath.read(response.get(), jsonpath);
+			}
+		} catch (Exception e) {
+			throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
+					ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
 		}
-		LocalDateTime nextMarch31At8PM = LocalDateTime.of(nextMarch31, LocalTime.of(20, 0));
-		return nextMarch31At8PM.atZone(ZoneId.systemDefault()).toEpochSecond();
+
+		return null;
 	}
-	
-	public long getTodaysEpoch() {
-		  LocalDate today = LocalDate.now();
-		  System.out.println("Current date: " + today);
-		  LocalDateTime startOfDay = today.atStartOfDay();
-		  System.out.println("Start of day: " + startOfDay);
-		  return startOfDay.atZone(ZoneId.systemDefault()).toEpochSecond();
-		}
-	
-	public static long getFinancialYearStart() {
-        Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR);
-        int currentMonth = calendar.get(Calendar.MONTH);
 
-        // If current month is Jan-March, start year should be last year (e.g., FY 2023-2024 starts in 2023)
-        if (currentMonth < Calendar.APRIL) {
-            currentYear -= 1;
-        }
+	public MdmsCriteriaReq prepareMdMsRequest(String tenantId, String moduleName, List<String> names, String filter,
+			RequestInfo requestInfo) {
 
-        calendar.set(currentYear, Calendar.APRIL, 1, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+		List<MasterDetail> masterDetails = new ArrayList<>();
 
-        return calendar.getTimeInMillis();
-    }
+		names.forEach(name -> {
+			masterDetails.add(MasterDetail.builder().name(name).filter(filter).build());
+		});
 
-    public static long getFinancialYearEnd() {
-        Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR);
-        int currentMonth = calendar.get(Calendar.MONTH);
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
 
-        // If current month is Jan-March, end year should be current year (e.g., FY 2023-2024 ends in 2024)
-        if (currentMonth < Calendar.APRIL) {
-            currentYear -= 1;
-        }
-
-        calendar.set(currentYear + 1, Calendar.MARCH, 31, 23, 59, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-
-        return calendar.getTimeInMillis();
-    }
 }

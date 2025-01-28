@@ -1,9 +1,9 @@
 package org.egov.ptr.validator;
 
 import static org.egov.ptr.util.PTRConstants.JSONPATH_PETSERVICE_RESPONSE;
+import static org.egov.ptr.util.PTRConstants.PET_MASTER_BREED_TYPE;
 import static org.egov.ptr.util.PTRConstants.PET_MASTER_MODULE_NAME;
-import static org.egov.ptr.util.PTRConstants.PET_MASTER_PETTYPE;
-import static org.egov.ptr.util.PTRConstants.PET_MASTER_BREEDTYPE;
+import static org.egov.ptr.util.PTRConstants.PET_MASTER_PET_TYPE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,21 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.repository.PetRegistrationRepository;
-import org.egov.ptr.service.PetRegistrationService;
-import org.egov.ptr.service.WorkflowService;
-import org.egov.ptr.util.CommonUtils;
+import org.egov.ptr.util.MdmsUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,22 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 public class PetApplicationValidator {
 
 	@Autowired
-	private PetConfiguration configs;
-
-	@Autowired
-	private PetRegistrationService service;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
-	private WorkflowService workflowService;
-
-	@Autowired
 	private PetRegistrationRepository repository;
 
 	@Autowired
-	private CommonUtils util;
+	private MdmsUtil mdmsUtil;
 
 	/**
 	 * Validate the masterData and ctizenInfo of the given petRequest
@@ -80,11 +63,11 @@ public class PetApplicationValidator {
 		PetRegistrationApplication application = request.getPetRegistrationApplications().get(0);
 		String tenantId = application.getTenantId().split("\\.")[0];
 
-		List<String> masterNames = new ArrayList<>(Arrays.asList(PET_MASTER_PETTYPE, PET_MASTER_BREEDTYPE));
+		List<String> masterNames = new ArrayList<>(Arrays.asList(PET_MASTER_PET_TYPE, PET_MASTER_BREED_TYPE));
 
 		// Fetch master data from MDMS
-		Map<String, List<Map<String, Object>>> petMasterData = util.getAttributeValues(tenantId, PET_MASTER_MODULE_NAME,
-				masterNames, null, JSONPATH_PETSERVICE_RESPONSE, request.getRequestInfo());
+		Map<String, List<Map<String, Object>>> petMasterData = mdmsUtil.getAttributeValues(tenantId,
+				PET_MASTER_MODULE_NAME, masterNames, null, JSONPATH_PETSERVICE_RESPONSE, request.getRequestInfo());
 
 		if (petMasterData != null && !petMasterData.isEmpty()) {
 			validateMDMSData(masterNames, petMasterData);
@@ -139,13 +122,13 @@ public class PetApplicationValidator {
 			Map<String, List<String>> codes, Map<String, String> errorMap) {
 
 		// Check for PetType validation
-		if (!codes.get(PET_MASTER_PETTYPE).contains(application.getPetDetails().getPetType())) {
+		if (!codes.get(PET_MASTER_PET_TYPE).contains(application.getPetDetails().getPetType())) {
 			errorMap.put("INVALID_PET_CATEGORY",
 					"The pet category '" + application.getPetDetails().getPetType() + "' does not exist in MDMS");
 		}
 
 		// Check for BreedType validation
-		if (!codes.get(PET_MASTER_BREEDTYPE).contains(application.getPetDetails().getBreedType())) {
+		if (!codes.get(PET_MASTER_BREED_TYPE).contains(application.getPetDetails().getBreedType())) {
 			errorMap.put("INVALID_PET_BREED",
 					"The pet breed '" + application.getPetDetails().getBreedType() + "' does not exist in MDMS");
 		}
