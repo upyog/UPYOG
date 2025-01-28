@@ -14,12 +14,13 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
-} from "@upyog/digit-ui-react-components";
+  CHBIcon
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
 import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
-
+import ChatBot from "./ChatBot";
 const Home = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -89,7 +90,7 @@ const Home = () => {
       // },
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
-        Icon: <WSICon />,
+        Icon: <CHBIcon />,
         onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
       },
     ],
@@ -179,6 +180,7 @@ const Home = () => {
             </div>
           )
         ) : null}
+        <ChatBot/>
       </div>
     </div>
   );

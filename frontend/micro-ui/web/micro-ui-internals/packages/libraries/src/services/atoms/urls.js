@@ -33,6 +33,7 @@ const Urls = {
   UserLogout: "/user/_logout",
 
   Shortener: "/egov-url-shortening/shortener",
+  employeeDashboardSearch: "/employee-dashboard/_search",
 
   fsm: {
     search: "/fsm/v1/_search",
@@ -196,6 +197,51 @@ const Urls = {
     disconnection_notice: "/pdf-service/v1/_createnosave",
     meter_search:"/ws-calculator/meterConnection/_search"
   },
+
+  asset: {
+    create: "/asset-services/v1/assets/_create",
+    search: "/asset-services/v1/assets/_search",
+    update: "/asset-services/v1/assets/_update",
+    assign: "/asset-services/v1/assets/assignment/_create",
+    depriciationProcess:"/asset-services/v1/assets/depreciation/_process",  //this api for assetDepriciationProcess
+    depriciationList:"/asset-services/v1/assets/depreciation/list",   // this api for list of assetDepriciation
+    return_asset: "/asset-services/v1/assets/assignment/_update",
+    assets_Reciept_Search: "/asset-services/v1/assets/_search",     //This url use for  Assets Recipt Detail QR Code 
+    assetDisposedCreate: "/asset-services/v1/disposal/_create"
+  },
+  ew: {
+    create: "/ewaste-services/ewaste-request/_create",
+    search: "/ewaste-services/ewaste-request/_search",
+    update: "/ewaste-services/ewaste-request/_update",
+  },
+
+  sv:{
+    create: "/sv-services/street-vending/_create",
+    search: "/sv-services/street-vending/_search",
+    update: "/sv-services/street-vending/_update",
+    deleteDraft:"/sv-services/street-vending/_deletedraft",
+  },
+
+  chb: {
+    create: "/chb-services/booking/v1/_create",
+    search: "/chb-services/booking/v1/_search",
+    update: "/chb-services/booking/v1/_update",
+    slot_search: "/chb-services/booking/v1/_slot-search",
+    estimateCreate: "/chb-services/booking/v1/_estimate"
+  },
+  ads: {
+    create: "/adv-services/booking/v1/_create",
+    search: "/adv-services/booking/v1/_search",
+    update: "/adv-services/booking/v1/_update",
+    slot_search: "/adv-services/booking/v1/_slot-search",
+    estimateCreate: "/adv-services/booking/v1/_estimate"
+
+  },
+
+  cm: {
+    search: "/verification-service/validity/_search"
+  },
+
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   register :"/requester-services-dx/user/authorization/url/citizen",

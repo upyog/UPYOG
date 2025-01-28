@@ -11,7 +11,7 @@ import {
   Loader,
   Toast,
   Header
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { convertEpochToDateDMY } from "../../utils";
 import SearchFormFieldsComponent from "./SearchFormFieldsComponent";
 import useSearchApplicationTableConfig from "./useTableConfig";

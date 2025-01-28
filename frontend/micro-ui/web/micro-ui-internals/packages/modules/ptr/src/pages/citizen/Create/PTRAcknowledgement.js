@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -8,11 +8,11 @@ import { PetDataConvert } from "../../../utils";
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("ES_PTR_RESPONSE_CREATE_ACTION") : t("CS_PTR_UPDATE_APPLICATION_SUCCESS");
+    return !window.location.href.includes("revised-application") ? t("ES_PTR_RESPONSE_CREATE_ACTION") : t("PTR_REVISED_SUCCESSFULLY");
   } else if (props.isLoading) {
-    return !window.location.href.includes("edit-application") ? t("CS_PTR_APPLICATION_PENDING") : t("CS_PTR_UPDATE_APPLICATION_PENDING");
+    return  t("CS_PTR_APPLICATION_PENDING");
   } else if (!props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("CS_PTR_APPLICATION_FAILED") : t("CS_PTR_UPDATE_APPLICATION_FAILED");
+    return t("CS_PTR_APPLICATION_FAILED");
   }
 };
 
@@ -34,28 +34,18 @@ const BannerPicker = (props) => {
 };
 
 const PTRAcknowledgement = ({ data, onSuccess }) => {
-
-  
   const { t } = useTranslation();
-  
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const user = Digit.UserService.getUser().info;
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
   const { tenants } = storeData || {};
-
 
   useEffect(() => {
     try {
-      
-      data.tenantId = data.address?.city?.code;
+      data.tenantId = tenantId;
       let formdata = PetDataConvert(data)
-      
-
-      
-      mutation.mutate(formdata, {
-        onSuccess,
-      });
+      mutation.mutate(formdata, {onSuccess});
     } catch (err) {
     }
   }, []);
@@ -67,7 +57,6 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
     let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
     let tenantId = Pet.tenantId || tenantId;
-   
     const data = await getPetAcknowledgementData({ ...Pet }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
@@ -87,9 +76,14 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
         )}
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("PTR_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />}
+      {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+      :
+      <Link to={`/digit-ui/employee`}>
+        <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
+      </Link>}
     </Card>
   );
 };

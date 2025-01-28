@@ -140,4 +140,3 @@ public class InboxConfiguration {
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
 }
-

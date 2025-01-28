@@ -149,6 +149,7 @@ public class RainWaterHarvestingExtract extends FeatureExtract {
                         rwh.setRadius(BigDecimal.valueOf(pline.getRadius()));
                         rwh.setPresentInDxf(true);
                         rwh.setTankHeight(dimensionValues);
+                        
                         if (!tankCapacity.isEmpty())
                             rwh.setTankCapacity(BigDecimal.valueOf(Double.parseDouble(tankCapacity)));
 

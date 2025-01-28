@@ -47,6 +47,96 @@ public class BpaMdmsUtil {
         masterDetailSubOccupancyType.setName("SubOccupancyType");
         masterDetailSubOccupancyType.setFilter("$.[?(@.active==true)]");
         bpaMasterDtls.add(masterDetailSubOccupancyType);
+
+        MasterDetail masterDetailEdcrMdmsFeature = new MasterDetail();
+        masterDetailEdcrMdmsFeature.setName("EdcrRulesFeatures");
+        bpaMasterDtls.add(masterDetailEdcrMdmsFeature);
+        
+        MasterDetail masterDetailFar = new MasterDetail();
+        masterDetailFar.setName("Far");
+     //   masterDetailFar.setFilter("$.[?(@.active==true)]");
+        bpaMasterDtls.add(masterDetailFar);
+        
+        MasterDetail masterDetailBalcony = new MasterDetail();
+        masterDetailBalcony.setName("Balcony");
+     //   masterDetailFar.setFilter("$.[?(@.active==true)]");
+        bpaMasterDtls.add(masterDetailBalcony);
+        
+        MasterDetail masterDetailToilet = new MasterDetail();
+        masterDetailToilet.setName("Toilet");
+        bpaMasterDtls.add(masterDetailToilet);
+        
+        MasterDetail masterDetailDoors = new MasterDetail();
+        masterDetailDoors.setName("Doors");
+        bpaMasterDtls.add(masterDetailDoors);
+        
+        MasterDetail masterDetailFrontSetBack = new MasterDetail();
+        masterDetailFrontSetBack.setName("FrontSetBack");
+        bpaMasterDtls.add(masterDetailFrontSetBack);
+        
+        MasterDetail masterDetailKitchen = new MasterDetail();
+        masterDetailKitchen.setName("Kitchen");
+        bpaMasterDtls.add(masterDetailKitchen);
+        
+        MasterDetail masterDetailLanding = new MasterDetail();
+        masterDetailLanding.setName("Landing");
+        bpaMasterDtls.add(masterDetailLanding);
+        
+        MasterDetail masterDetailLift = new MasterDetail();
+        masterDetailLift.setName("Lift");
+        bpaMasterDtls.add(masterDetailLift);
+        
+        MasterDetail masterDetailNonHabitationalDoors = new MasterDetail();
+        masterDetailNonHabitationalDoors.setName("NonHabitationalDoors");
+        bpaMasterDtls.add(masterDetailNonHabitationalDoors);
+        
+        MasterDetail masterDetailNoOfRiser = new MasterDetail();
+        masterDetailNoOfRiser.setName("NoOfRiser");
+        bpaMasterDtls.add(masterDetailNoOfRiser);
+        
+        MasterDetail masterDetailParking = new MasterDetail();
+        masterDetailParking.setName("Parking");
+        bpaMasterDtls.add(masterDetailParking);
+        
+        MasterDetail masterDetailPlantation = new MasterDetail();
+        masterDetailPlantation.setName("Plantation");
+        bpaMasterDtls.add(masterDetailPlantation);
+        
+        MasterDetail masterDetailPlintHeight = new MasterDetail();
+        masterDetailPlintHeight.setName("PlinthHeight");
+        bpaMasterDtls.add(masterDetailPlintHeight);
+        
+        MasterDetail masterDetailRearSetBack = new MasterDetail();
+        masterDetailRearSetBack.setName("RearSetBack");
+        bpaMasterDtls.add(masterDetailRearSetBack);
+        
+        MasterDetail masterDetailRequiredTread = new MasterDetail();
+        masterDetailRequiredTread.setName("RequiredTread");
+        bpaMasterDtls.add(masterDetailRequiredTread);
+        
+        MasterDetail masterDetailRequiredWidth = new MasterDetail();
+        masterDetailRequiredWidth.setName("RequiredWidth");
+        bpaMasterDtls.add(masterDetailRequiredWidth);
+      
+        MasterDetail masterDetailRiserHeight = new MasterDetail();
+        masterDetailRiserHeight.setName("RiserHeight");
+        bpaMasterDtls.add(masterDetailRiserHeight);
+        
+        MasterDetail masterDetailRoomArea = new MasterDetail();
+        masterDetailRoomArea.setName("RoomArea");
+        bpaMasterDtls.add(masterDetailRoomArea);
+        
+        MasterDetail masterDetailRoomWiseDoorArea = new MasterDetail();
+        masterDetailRoomWiseDoorArea.setName("RoomWiseDoorArea");
+        bpaMasterDtls.add(masterDetailRoomWiseDoorArea);
+        
+        MasterDetail masterDetailRoomWiseVentialtion = new MasterDetail();
+        masterDetailRoomWiseVentialtion.setName("RoomWiseVentialtion");
+        bpaMasterDtls.add(masterDetailRoomWiseVentialtion);
+        
+        MasterDetail masterDetailCoverage = new MasterDetail();
+        masterDetailCoverage.setName("Coverage");
+        bpaMasterDtls.add(masterDetailCoverage);
         
         MasterDetail masterDetailUsages = new MasterDetail();
         masterDetailUsages.setName("Usages");
@@ -84,8 +174,19 @@ public class BpaMdmsUtil {
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
+    
+    public Object mDMSCallv2(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getBpaMDMSRequest(requestInfo,
+                tenantId);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrlv2(), mdmsCriteriaReq);
+        return result;
+    }
 
     public StringBuilder getMdmsSearchUrl() {
         return new StringBuilder().append(mdmsConfiguration.getMdmsHost()).append(mdmsConfiguration.getMdmsSearchUrl());
+    }
+    
+    public StringBuilder getMdmsSearchUrlv2() {
+        return new StringBuilder().append(mdmsConfiguration.getMdmsHost()).append(mdmsConfiguration.getMdmsSearchUrlv2());
     }
 }

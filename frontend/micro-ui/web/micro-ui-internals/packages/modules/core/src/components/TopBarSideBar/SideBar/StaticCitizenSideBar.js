@@ -18,8 +18,9 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-  LoginIcon
-} from "@upyog/digit-ui-react-components";
+  LoginIcon,
+  CHBIcon
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import { useTranslation } from "react-i18next";
@@ -83,6 +84,7 @@ const IconsObject = {
   FSMIcon: <FSMIcon className="icon" />,
   WSIcon: <WSICon className="icon" />,
   MCollectIcon: <MCollectIcon className="icon" />,
+  CHBIcon:<CHBIcon className="icon" />,
   BillsIcon: <CollectionIcon className="icon" />,
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,

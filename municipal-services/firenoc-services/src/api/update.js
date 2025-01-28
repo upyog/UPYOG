@@ -52,17 +52,17 @@ export const updateApiResponse = async (request, isExternalCall, next = {}) => {
     get(locationResponse, "TenantBoundary.0.boundary")
   );
 
-  let errors = await validateFireNOCModel(body, mdms);
-  if (errors.length > 0) {
-    return next({
-      errorType: "custom",
-      errorReponse: {
-        ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
-        Errors: errors
-      }
-    });
-    return;
-  }
+  //let errors = await validateFireNOCModel(body, mdms);
+  // if (errors.length > 0) {
+  //   return next({
+  //     errorType: "custom",
+  //     errorReponse: {
+  //       ResponseInfo: requestInfoToResponseInfo(body.RequestInfo, true),
+  //       Errors: errors
+  //     }
+  //   });
+  //   return;
+  // }
 
   body = await addUUIDAndAuditDetails(body, "_update", header);
   let { FireNOCs = [], RequestInfo = {} } = body;

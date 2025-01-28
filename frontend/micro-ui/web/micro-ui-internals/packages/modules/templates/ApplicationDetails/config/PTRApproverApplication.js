@@ -1,16 +1,12 @@
-import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
 export const configPTRApproverApplication = ({
   t,
   action,
-  approvers,
-  selectedApprover,
-  setSelectedApprover,
   selectFile,
   uploadedFile,
   setUploadedFile,
-  assigneeLabel,
   businessService,
 }) => {
   return {

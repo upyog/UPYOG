@@ -13,7 +13,7 @@ import {
   LinkButton,
   Loader,
   Rating,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import TLCaption from "./TLCaption";
 

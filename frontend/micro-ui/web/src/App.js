@@ -18,7 +18,7 @@ import {
   paymentConfigs,
 } from "@upyog/digit-ui-module-common";
 import { DigitUI } from "@upyog/digit-ui-module-core";
-import { initLibraries } from "@upyog/digit-ui-libraries";
+import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import {
   HRMSModule,
   initHRMSComponents,
@@ -40,7 +40,18 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
+} from "@nudmcdgnpm/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@nudmcdgnpm/upyog-ui-module-asset";
+
+import { 
+  EWModule, 
+  EWLinks, 
+  EWComponents }
+  from "@nudmcdgnpm/upyog-ui-module-ew";
+
+import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
+import {CHBModule,CHBLinks,CHBComponents} from "@nudmcdgnpm/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@nudmcdgnpm/upyog-ui-module-ads";
 
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
@@ -70,7 +81,12 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
+  "PTR",
+  "ASSET",
+  "ADS",
+  "SV",
+  "EW",
+  "CHB"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -88,7 +104,21 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PTRModule,
   PTRLinks,
   ...PTRComponents,
-
+  ASSETModule,
+  ASSETLinks,
+  ...ASSETComponents,
+  ADSLinks,
+  ADSModule,
+  ...ADSComponents,
+  SVModule,
+  SVLinks,
+  ...SVComponents,
+  EWModule,
+  EWLinks,
+  ...EWComponents,
+  CHBModule,
+  CHBLinks,
+  ...CHBComponents,
 });
 
 initPGRComponents();

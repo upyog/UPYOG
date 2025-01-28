@@ -5,14 +5,19 @@
   "homepage": "/digit-ui",
   "workspaces": [
     "micro-ui-internals/packages/libraries",
-    "micro-ui-internals/packages/react-components"
+    "micro-ui-internals/packages/react-components",
+    "micro-ui-internals/packages/modules/core",
+    "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/engagement",
+    "micro-ui-internals/packages/modules/asset"
   ],
   "engines": {
     "node": ">=14"
   },
   "dependencies": {
-    "@upyog-niua/upyog-css": "1.0.10",
-    "@upyog/digit-ui-libraries": "1.8.0",
+    "@nudmcdgnpm/upyog-css": "1.2.8",
+    "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
     "@upyog/digit-ui-module-core": "1.8.2",
@@ -20,6 +25,7 @@
     "@upyog/digit-ui-module-dss": "1.8.14",
     "@upyog/digit-ui-module-fsm": "1.8.19",
     "@upyog/digit-ui-module-hrms": "1.8.0",
+    "@nudmcdgnpm/upyog-ui-module-asset": "1.2.9",
     "@upyog/digit-ui-module-mcollect": "1.8.8",
     "@upyog/digit-ui-module-commonpt":"1.8.1",
     "@upyog/digit-ui-module-obps": "1.8.16",
@@ -29,8 +35,12 @@
     "@upyog/digit-ui-module-receipts": "1.8.0",
     "@upyog/digit-ui-module-tl": "1.8.10",
     "@upyog/digit-ui-module-ws": "1.8.16",
-    "@upyog/digit-ui-react-components": "1.8.0",
-    "@upyog-niua/upyog-ui-module-ptr": "1.8.0",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
+    "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.8",
+    "@nudmcdgnpm/upyog-ui-module-sv":"1.2.6",
+    "@nudmcdgnpm/upyog-ui-module-ew":"1.2.5",
+    "@nudmcdgnpm/upyog-ui-module-chb":"1.2.5",
+    "@nudmcdgnpm/upyog-ui-module-ads":"1.2.9",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

@@ -14,7 +14,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@upyog/digit-ui-react-components": "1.8.0",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
     "microbundle-crl": "^0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -24,7 +24,8 @@
     "react-router-dom": "5.3.0",
     "react-tooltip": "4.1.2",
     "redux": "4.1.2",
-    "redux-thunk": "2.4.1"
+    "redux-thunk": "2.4.1",
+    "react-google-recaptcha": "^3.1.0"
   },
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "keywords": [
