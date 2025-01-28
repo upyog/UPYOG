@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.AuthResponse;
 import org.egov.dx.web.models.EncReqObject;
@@ -17,7 +18,10 @@ import org.egov.dx.web.models.IssuedDocument;
 import org.egov.dx.web.models.IssuedDocumentList;
 import org.egov.dx.web.models.TokenReq;
 import org.egov.dx.web.models.TokenRes;
+import org.egov.dx.web.models.User;
+import org.egov.dx.web.models.UserRequest;
 import org.egov.dx.web.models.UserRes;
+import org.egov.dx.web.models.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import io.micrometer.core.ipc.http.HttpSender.Request;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -39,7 +44,9 @@ import org.slf4j.MDC;
 public class DLRequestService {
 
       
-    @Autowired
+    private static final User User = null;
+
+	@Autowired
     private RestTemplate restTemplate;
 
     @Autowired
@@ -85,7 +92,7 @@ public class DLRequestService {
     	EncReqObject encReqObject = EncReqObject.builder().tenantId("pg").type("Normal").value(encoded).build();        
     	EncryptionRequest encryptionRequest = EncryptionRequest.builder().encryptionRequests(Collections.singletonList(encReqObject)).build();        
     	String newEncoded = restTemplate.postForEntity(configurations.getEncHost() + configurations.getEncEncryptURL(), encryptionRequest, String.class).getBody();     
-    	return newEncoded;              
+    	return encoded;              
     	}
     
     public String getCodeVerifier()
@@ -129,7 +136,8 @@ public class DLRequestService {
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);
          
-         TokenRes tokenRes= restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();
+         TokenRes tokenRes = new TokenRes();
+         //= restTemplate.postForEntity(configurations.getApiHost() + configurations.getTokenOauthURI(), request, TokenRes.class).getBody();         
          return tokenRes;
     }
     
@@ -181,4 +189,23 @@ public class DLRequestService {
          
          return entity.getBody().getBytes();
     }
+
+    public Object getOauthToken(RequestInfo requestinfo , TokenRes tokenRes)
+    {
+        RestTemplate restTemplate = new RestTemplate();
+        User user = new User();
+        user.setMobileNumber(tokenRes.getMobile());
+        user.setName(tokenRes.getName());
+        user.setDigilockerid(tokenRes.getDigilockerId());
+        user.setTenantId("pg");
+        
+        UserRequest userRequest = new UserRequest(requestinfo, user);
+        userRequest.setUser(user);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        
+        Object userOauth= restTemplate.postForEntity(configurations.getUserHost() + configurations.getUserEndpoint(), userRequest, Object.class).getBody();
+        return userOauth;
+    }
+    
 }
