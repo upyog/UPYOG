@@ -131,7 +131,7 @@ public class DLRequestService {
     	     map.add("redirect_uri", configurations.getPtRedirectURL());
     	     map.add("client_secret", configurations.getClientSecret());
     	 }
-         map.add("dlReqRef",tokenReq.getDlReqRef());
+        map.add("code_verifier",tokenReq.getDlReqRef());
 
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);
