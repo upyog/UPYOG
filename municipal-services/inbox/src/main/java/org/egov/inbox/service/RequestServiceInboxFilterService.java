@@ -80,6 +80,18 @@ public class RequestServiceInboxFilterService {
 
 		@Autowired
 		private ServiceRequestRepository serviceRequestRepository;
+		
+		/**
+		 * Fetches application numbers from the searcher service based on the provided search criteria.
+		 * It accommodates both module-specific and process-specific search parameters and integrates
+		 * user UUIDs if the mobile number is present in the search criteria.
+		 *
+		 * @param criteria          The inbox search criteria containing module and process-specific filters.
+		 * @param StatusIdNameMap   A map of status IDs to their corresponding status names.
+		 * @param requestInfo       The RequestInfo object containing metadata for the request.
+		 * @return A list of application numbers matching the search criteria, or an empty list if no results are found.
+		 */
+
 
 		public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
 				HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
@@ -177,6 +189,16 @@ public class RequestServiceInboxFilterService {
 			}
 			return applicationNumbers;
 		}
+		
+		/**
+		 * Fetches a list of user UUIDs for the given mobile number, tenant ID, and RequestInfo.
+		 * Utilizes a service request to retrieve user details from the user service.
+		 *
+		 * @param mobileNumber The mobile number of the user.
+		 * @param requestInfo  The RequestInfo object containing metadata for the request.
+		 * @param tenantId     The tenant ID for the user search.
+		 * @return A list of UUIDs of the users matching the search criteria.
+		 */
 
 		private List<String> fetchUserUUID(String mobileNumber, RequestInfo requestInfo, String tenantId) {
 			StringBuilder uri = new StringBuilder();
