@@ -198,11 +198,11 @@ const Urls = {
     meter_search:"/ws-calculator/meterConnection/_search"
   },
 digiLocker:{
-  authorization:"/requester-services-dx/user/authorization/url",
-  register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token/citizen",
-  issueDoc:"/requester-services-dx/user/issuedfiles",
-  uri:"/requester-services-dx/user/file",
+  authorization:"/requester-services-dx/digilocker/authorization/url",
+  register :"/requester-services-dx/digilocker/authorization/url/citizen",
+  token:"/requester-services-dx/digilocker/token/citizen",
+  issueDoc:"/requester-services-dx/digilocker/issuedfiles",
+  uri:"/requester-services-dx/digilocker/file",
   oauth:"/user/digilocker/oauth/token"
 },
   engagement: {
