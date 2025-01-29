@@ -3,6 +3,7 @@ package org.egov.ptr.web.controllers;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -11,18 +12,20 @@ import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.PetRegistrationResponse;
 import org.egov.ptr.service.PetRegistrationService;
+import org.egov.ptr.service.PetSchedulerService;
 import org.egov.ptr.util.ResponseInfoFactory;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import io.swagger.annotations.ApiParam;
 
@@ -34,11 +37,15 @@ public class PetController {
 	private PetRegistrationService petRegistrationService;
 
 	@Autowired
+	private PetSchedulerService petSchedulerService;
+
+	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationCreate(
-			@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
+			@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
+			throws JsonMappingException, JsonProcessingException {
 		List<PetRegistrationApplication> applications = petRegistrationService
 				.registerPtrRequest(petRegistrationRequest);
 		ResponseInfo responseInfo = responseInfoFactory
@@ -63,7 +70,8 @@ public class PetController {
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationUpdate(
-			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
+			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
+			throws JsonMappingException, JsonProcessingException {
 		PetRegistrationApplication application = petRegistrationService.updatePtrApplication(petRegistrationRequest);
 
 		ResponseInfo responseInfo = responseInfoFactory
@@ -73,12 +81,25 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = { "/{servicename}/{jobname}/_batch", "/_batch" }, method = RequestMethod.POST)
-	public ResponseEntity sendReminderAndExpire(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-			@PathVariable(required = false) String servicename, @PathVariable(required = true) String jobname) {
+	@RequestMapping("/trigger-expire-petapplications")
+	public ResponseEntity<String> triggerWorkflowUpdate() {
+		try {
+			petSchedulerService.expirePetApplications();
+			return ResponseEntity.ok("Expire Scheduler triggered successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Failed to trigger scheduler: " + e.getMessage());
+		}
+	}
 
-		petRegistrationService.runJob(servicename, jobname, requestInfoWrapper.getRequestInfo());
-
-		return new ResponseEntity(HttpStatus.ACCEPTED);
+	@RequestMapping("/trigger-advance-notification")
+	public ResponseEntity<String> triggerAdvanceNotification() {
+		try {
+			petSchedulerService.sendNotificationBeforeExpiration();
+			return ResponseEntity.ok("Advance notification Scheduler triggered successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Failed to trigger scheduler: " + e.getMessage());
+		}
 	}
 }
