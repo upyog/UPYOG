@@ -173,13 +173,13 @@ public class RequestServiceInboxFilterService {
 					jsonString = mapper.writeValueAsString(result);
 				} catch (JsonGenerationException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error("JSON Generation error: ", e);
 				} catch (JsonMappingException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					 log.error("JSON Mapping error: ", e);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					 log.error("IO Exception while converting result to JSON: ", e);
 				}
 				
 				// Use JsonPath to extract booking numbers
