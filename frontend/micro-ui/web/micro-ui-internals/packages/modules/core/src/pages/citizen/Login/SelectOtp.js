@@ -23,7 +23,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     let code =window.location.href.split("=")[1].split("&")[0]
     let TokenReq = {
       code_verifier: localStorage.getItem('code_verfier_register'),
-      code: code, module: "REGISTER",
+      code: code, module: "SSO",
       redirect_uri: "https://upyog-test.niua.org/digit-ui/citizen/login/otp",
     }
    console.log("token",code,TokenReq,localStorage.getItem("code_verfier_register"))
