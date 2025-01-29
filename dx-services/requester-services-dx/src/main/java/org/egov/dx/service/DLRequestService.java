@@ -82,7 +82,7 @@ public class DLRequestService {
     {     
     	String codeVerifier=getCodeVerifier();     
     	log.info("verifier is: " +codeVerifier );     
-    	authResponse.setCodeverifier(codeVerifier);     
+    	authResponse.setDlReqRef(codeVerifier);     
     	MessageDigest digest = MessageDigest.getInstance("SHA-256");     
     	byte[] hash = digest.digest(codeVerifier.getBytes(StandardCharsets.UTF_8));     
     	String encoded = Base64.getEncoder().withoutPadding().encodeToString(hash);     
@@ -197,6 +197,8 @@ public class DLRequestService {
         user.setName(tokenRes.getName());
         user.setDigilockerid(tokenRes.getDigilockerId());
         user.setTenantId("pg");
+        user.setAccess_token(tokenRes.getAccessToken());
+        //user.setDob(tokenRes.getDob());
         
         UserRequest userRequest = new UserRequest(requestinfo, user);
         userRequest.setUser(user);
