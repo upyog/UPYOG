@@ -126,6 +126,9 @@ public class Configurations {
 	@Value("${egov.enc.encrypt.endpoint}")
 	private String encEncryptURL;
 	
+	@Value("${egov.enc.decrypt.endpoint}")
+	private String encDecryptURL;
+	
 	@Value("${egov.user.host}")
 	private String UserHost;
 	

@@ -12,6 +12,9 @@ import java.util.Random;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.AuthResponse;
+import org.egov.dx.web.models.CreateUserRequest;
+import org.egov.dx.web.models.DecReqObject;
+import org.egov.dx.web.models.DigiUser;
 import org.egov.dx.web.models.EncReqObject;
 import org.egov.dx.web.models.EncryptionRequest;
 import org.egov.dx.web.models.IssuedDocument;
@@ -34,6 +37,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.micrometer.core.ipc.http.HttpSender.Request;
 import lombok.extern.slf4j.Slf4j;
@@ -81,17 +87,23 @@ public class DLRequestService {
     public String getCodeChallenge(AuthResponse authResponse) throws NoSuchAlgorithmException   
     {     
     	String codeVerifier=getCodeVerifier();     
-    	log.info("verifier is: " +codeVerifier );     
-    	authResponse.setDlReqRef(codeVerifier);     
+    	log.info("verifier is: " +codeVerifier ); 
+    	//authResponse.setDlReqRef(codeVerifier);  
     	MessageDigest digest = MessageDigest.getInstance("SHA-256");     
     	byte[] hash = digest.digest(codeVerifier.getBytes(StandardCharsets.UTF_8));     
     	String encoded = Base64.getEncoder().withoutPadding().encodeToString(hash);     
     	encoded = encoded.replace("+", "-"); //Replace ’+’ with ’-’     
     	encoded= encoded.replace("/", "_");     
     	log.info("challenge is: " +encoded );        
-    	EncReqObject encReqObject = EncReqObject.builder().tenantId("pg").type("Normal").value(encoded).build();        
+    	EncReqObject encReqObject = EncReqObject.builder().tenantId("pg").type("Normal").value(codeVerifier).build();        
     	EncryptionRequest encryptionRequest = EncryptionRequest.builder().encryptionRequests(Collections.singletonList(encReqObject)).build();        
-    	String newEncoded = restTemplate.postForEntity(configurations.getEncHost() + configurations.getEncEncryptURL(), encryptionRequest, String.class).getBody();     
+    	String responseBody= restTemplate.postForEntity(configurations.getEncHost() + configurations.getEncEncryptURL(), encryptionRequest, String.class).getBody();     
+        try {
+       	    String value = new ObjectMapper().readValue(responseBody, String[].class)[0];
+       	 authResponse.setDlReqRef(value);
+       	} catch (Exception e) {
+       	    e.printStackTrace();
+       	}
     	return encoded;              
     	}
     
@@ -131,8 +143,18 @@ public class DLRequestService {
     	     map.add("redirect_uri", configurations.getPtRedirectURL());
     	     map.add("client_secret", configurations.getClientSecret());
     	 }
-        map.add("code_verifier",tokenReq.getDlReqRef());
+         //map.add("code_verifier",tokenReq.getDlReqRef());
 
+         List<String> decReqObject = Collections.singletonList(tokenReq.getDlReqRef());
+         HttpEntity<String> requestEntity = decryptReq(decReqObject);
+        
+         String responseBody = restTemplate.postForEntity(configurations.getEncHost() + configurations.getEncDecryptURL(), requestEntity, String.class).getBody();
+         try {
+        	    String value = new ObjectMapper().readValue(responseBody, String[].class)[0];
+        	    map.add("code_verifier", value);
+        	} catch (Exception e) {
+        	    e.printStackTrace();
+        	}
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);
          
@@ -192,7 +214,7 @@ public class DLRequestService {
     public Object getOauthToken(RequestInfo requestinfo , TokenRes tokenRes)
     {
         RestTemplate restTemplate = new RestTemplate();
-        User user = new User();
+        UserRequest user = new UserRequest();
         user.setMobileNumber(tokenRes.getMobile());
         user.setName(tokenRes.getName());
         user.setDigilockerid(tokenRes.getDigilockerId());
@@ -200,13 +222,28 @@ public class DLRequestService {
         user.setAccess_token(tokenRes.getAccessToken());
         //user.setDob(tokenRes.getDob());
         
-        UserRequest userRequest = new UserRequest(requestinfo, user);
-        userRequest.setUser(user);
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setRequestInfo(requestinfo);
+        createUserRequest.setUser(user);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         
-        Object userOauth= restTemplate.postForEntity(configurations.getUserHost() + configurations.getUserEndpoint(), userRequest, Object.class).getBody();
+        Object userOauth= restTemplate.postForEntity(configurations.getUserHost() + configurations.getUserEndpoint(), createUserRequest, Object.class).getBody();
         return userOauth;
     }
     
+    public HttpEntity<String> decryptReq(List<String> decReqObject){
+        HttpHeaders decryptHeaders = new HttpHeaders();
+        decryptHeaders.setContentType(MediaType.APPLICATION_JSON);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonPayload = null;
+        try {
+            jsonPayload = objectMapper.writeValueAsString(decReqObject);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new HttpEntity<String>(jsonPayload, decryptHeaders);
+
+    }
 }
