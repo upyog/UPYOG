@@ -56,6 +56,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [approvers, setApprovers] = useState([]);
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [error, setError] = useState(null);
  
 
   
