@@ -2,7 +2,6 @@ package org.egov.vendor.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.egov.vendor.web.models.VendorAdditionalDetailsRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -16,16 +15,22 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration {
 
+    private final VendorConfiguration vendorConfiguration;
+
+    public KafkaConfiguration(org.egov.vendor.config.VendorConfiguration vendorConfiguration) {
+        this.vendorConfiguration = vendorConfiguration;
+    }
+
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         JsonDeserializer<Object> deserializer = new JsonDeserializer<>(Object.class);
         deserializer.addTrustedPackages("*");
 
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "vendor-group");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, vendorConfiguration.getBootstrapServers());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, vendorConfiguration.getGroupId());
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, vendorConfiguration.getKeyDeserializerClass());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, vendorConfiguration.getValueDeserializerClass());
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
     }
