@@ -2536,7 +2536,6 @@ export const MdmsService = {
    * which is passed the tenantId, moduleCode, masterName, and type as parameters.
    */
   getMasterData: (tenantId, moduleCode, masterName, i18nKeyString, type) => {
-    console.log("mdms v1 in masterdata :: modulecode:", moduleCode + "| mastername:", masterName + "| i18string:", i18nKeyString + "| type:", type)
     return MdmsService.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode, masterName, i18nKeyString);
   },
 };
