@@ -102,7 +102,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           },
         ];
       submitAction({
-        hallsBookingApplication: 
+        waterTankerBookingDetail: 
           {
             ...applicationData,
             workflow,
