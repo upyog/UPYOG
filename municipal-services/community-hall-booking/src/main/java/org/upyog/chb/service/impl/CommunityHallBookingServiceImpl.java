@@ -471,7 +471,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Override
 	public List<Asset> fetchAssets(AssetSearchCriteria assetSearchCriteria, RequestInfo requestInfo) {
 
-		String uri = config.getAssetSearchEndpoint();
+		String uri = config.getAssetHost().concat(config.getAssetSearchEndpoint());
 		uri = uri.concat("?tenantId=").concat(assetSearchCriteria.getTenantId()).concat("&applicationNo=")
 				.concat(assetSearchCriteria.getApplicationNo());
 

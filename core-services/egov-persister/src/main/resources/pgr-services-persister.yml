@@ -76,7 +76,7 @@ serviceMaps:
 
       - jsonPath: $.service.address.geoLocation.longitude
 
-      - jsonPath: $.service.address.additionDetails
+      - jsonPath: $.service.address.additionalDetails
         type: JSON
         dbType: JSONB
 
