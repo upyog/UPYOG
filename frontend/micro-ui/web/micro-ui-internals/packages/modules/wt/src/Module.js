@@ -8,6 +8,14 @@ import InfoPage from "./pageComponents/InfoPage";
 import RequestDetails from "./pageComponents/RequestDetails";
 import WTCheckPage from "./pages/citizen/Create/CheckPage";
 import WTAcknowledgement from "./pages/citizen/Create/WTAcknowledgement";
+import WTCard from "./components/WTCard";
+import EmployeeApp from "./pages/employee";
+import { WTMyApplications } from "./pages/citizen/MyApplications";
+import WTApplicationDetails from "./pages/citizen/WTApplicationDetails";
+import {TableConfig} from "./config/inbox-table-config";
+import InboxFilter from "./components/inbox/NewInboxFilter";
+import ApplicationDetails from "./pages/employee/ApplicationDetails";
+
 
 
 const componentsToRegister = {
@@ -17,7 +25,11 @@ const componentsToRegister = {
     InfoPage,
     RequestDetails,
     WTCheckPage,
-    WTAcknowledgement
+    WTAcknowledgement,
+    WTApplicationDetails: WTApplicationDetails,
+    WTMyApplications: WTMyApplications,
+    ApplicationDetails: ApplicationDetails,
+
   };
   
   // function to register the component as per standard 
@@ -75,6 +87,9 @@ const componentsToRegister = {
   
   // export the components outside of module to enable and access of module
   export const WTComponents = {
+    WTCard,
     WTModule, 
-    WTLinks
+    WTLinks,
+    WT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+    WTInboxTableConfig: TableConfig,
   };

@@ -98,7 +98,9 @@ module.exports = function (app) {
     "/request-service/water-tanker/v1/_create",
     "/asset-services/maintenance/v1/_create",
     "/asset-services/maintenance/v1/_search",
-    "/asset-services/v1/disposal/_search"
+    "/asset-services/v1/disposal/_search",
+    "/request-service/water-tanker/v1/_search",
+    "/request-service/water-tanker/v1/_update",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

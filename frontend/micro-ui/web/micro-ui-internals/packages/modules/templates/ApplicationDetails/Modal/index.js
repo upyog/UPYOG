@@ -10,7 +10,8 @@ import PTRActionModal from "./PTRActionModal";
 import ASSETActionModal from "./ASSETActionModal";
 import CHBActionModal from "./CHBActionModal";
 import EWActionModal from "./EWActionModal";
-import SVActionModal from "./SVActionModal"
+import SVActionModal from "./SVActionModal";
+import WTActionModal from "./WTActionModal";
 
 
 
@@ -55,6 +56,9 @@ const ActionModal = (props) => {
   }
   if (props?.businessService.includes("street-vending")) {
     return <SVActionModal {...props} />;
+  }
+  if (props?.businessService.includes("watertanker")) {
+    return <WTActionModal {...props} />;
   }
   
   // return <FSMActionModal {...props} />;

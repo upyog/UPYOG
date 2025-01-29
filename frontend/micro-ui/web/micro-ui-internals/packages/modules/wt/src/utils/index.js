@@ -48,7 +48,12 @@ export const waterTankerPayload = (data) =>{
         },
         
         bookingStatus: "BOOKING_CREATED",
-        workflow: null
+        workflow:{
+          action:"APPLY",
+          comments:"",
+          businessService:"watertanker",
+          moduleName:"request-service",
+        }
     },
   };
   return formdata;
