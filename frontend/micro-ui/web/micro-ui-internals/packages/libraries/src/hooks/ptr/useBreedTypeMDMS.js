@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const useBreedTypeMDMS = (tenantId, moduleCode, type,  config = {}) => {
   const useBreed = () => {
-    return useQuery("PTR_FORM_BREED_TYPE", () => MdmsService.PTRBreedType(tenantId, moduleCode ,type), config);
+    return useQuery("PTR_FORM_BREED_TYPE", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "BreedType", "PTR_BREED_TYPE_", "i18nKey"), config);
   };
   
 

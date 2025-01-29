@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const usePTRPetMDMS = (tenantId, moduleCode, type, config = {}) => {
   const usePTRPet = () => {
-    return useQuery("PTR_FORM_PET_TYPE", () => MdmsService.PTRPetType(tenantId, moduleCode ,type), config);
+    return useQuery("PTR_FORM_PET_TYPE", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "PetType", "PTR_PET_TYPE_", "i18nKey"), config);
   };
   
 

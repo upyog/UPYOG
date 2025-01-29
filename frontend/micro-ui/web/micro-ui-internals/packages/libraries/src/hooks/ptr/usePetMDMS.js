@@ -1,18 +1,12 @@
-import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
-
 const usePetMDMS = (tenantId, moduleCode, type, config = {}) => {
-  
-  
-  
+
   const usePetDocumentsRequiredScreen = () => {
-    return useQuery("PT_DOCUMENT_REQ_SCREEN", () => MdmsService.getPetDocumentsRequiredScreen(tenantId, moduleCode), config);
+    return useQuery("PT_DOCUMENT_REQ_SCREEN", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "Documents"), config);
   };
   
-  
-
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
+    return useQuery([tenantId, moduleCode, type], () => Digit.Hooks.useSelectedMDMS().getMultipleTypes(tenantId, moduleCode, type), config);
   };
 
   switch (type) {
