@@ -1,22 +1,22 @@
 package org.upyog.request.service.repository.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.upyog.request.service.repository.rowMapper.GenericRowMapper;
 import org.upyog.request.service.config.RequestServiceConfiguration;
 import org.upyog.request.service.kafka.Producer;
 import org.upyog.request.service.repository.RequestServiceRepository;
 import org.upyog.request.service.repository.querybuilder.RequestServiceQueryBuilder;
+import org.upyog.request.service.repository.rowMapper.GenericRowMapper;
 import org.upyog.request.service.web.models.PersisterWrapper;
 import org.upyog.request.service.web.models.WaterTankerBookingDetail;
 import org.upyog.request.service.web.models.WaterTankerBookingRequest;
-
-import lombok.extern.slf4j.Slf4j;
 import org.upyog.request.service.web.models.WaterTankerBookingSearchCriteria;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
@@ -77,6 +77,15 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 		return count;
 	}
+	
+	@Override
+	public void updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest) {
+		log.info("Updating water tanker request data for booking no : "
+				+ waterTankerRequest.getWaterTankerBookingDetail().getBookingNo());
+		producer.push(requestServiceConfiguration.getWaterTankerApplicationUpdateTopic(), waterTankerRequest);
+
+	}
+
 
 
 

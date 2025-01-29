@@ -14,4 +14,6 @@ public interface RequestServiceRepository {
 
 	Integer getApplicationsCount(WaterTankerBookingSearchCriteria criteria);
 
+	void updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest);
+
 }
