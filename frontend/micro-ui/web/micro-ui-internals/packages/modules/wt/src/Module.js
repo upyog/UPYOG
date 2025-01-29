@@ -91,5 +91,5 @@ const componentsToRegister = {
     WTModule, 
     WTLinks,
     WT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-    WTInboxTableConfig: TableConfig,
+    WTInboxTableConfig: TableConfig
   };

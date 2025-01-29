@@ -125,7 +125,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       );
       
     }
-    }, [action, approvers, uploadedFile]);
+    },[action, approvers, uploadedFile]);
 
   return action && config.form ? (
     <Modal
