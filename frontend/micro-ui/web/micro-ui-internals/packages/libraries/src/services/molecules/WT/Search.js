@@ -24,7 +24,7 @@ export const WTSearch = {
     return [
       {
         title: "WT_BOOKING_NO", 
-        values:[{title: "WT_BOOKING_NO", value: response?.bookingNo || t("CS_NA")}],
+        values:[{title: "WT_BOOKING_NO", value: response?.bookingNo || t("CS_NA")}]
       },
       {
         title: "WT_APPLICANT_DETAILS",
@@ -35,7 +35,7 @@ export const WTSearch = {
           { title: "WT_MOBILE_NUMBER", value: response?.applicantDetail?.mobileNumber || t("CS_NA")},
           { title: "WT_ALT_MOBILE_NUMBER", value: response?.applicantDetail?.alternateNumber || t("CS_NA")}, 
           { title: "WT_GENDER", value: response?.applicantDetail?.gender || t("CS_NA")} ,
-          { title: "WT_EMAIL_ID", value: response?.applicantDetail?.emailId || t("CS_NA")} ,
+          { title: "WT_EMAIL_ID", value: response?.applicantDetail?.emailId || t("CS_NA")}
         ],
       },
       {
@@ -49,7 +49,7 @@ export const WTSearch = {
           { title: "WT_HOUSE_NO", value: response?.address?.houseNo  || t("CS_NA")},
           { title: "WT_LANDMARK", value: response?.address?.landmark  || t("CS_NA")},
           { title: "WT_ADDRESS_LINE1", value: response?.address?.addressLine1  || t("CS_NA")},
-          { title: "WT_ADDRESS_LINE2", value: response?.address?.addressLine2  || t("CS_NA")},
+          { title: "WT_ADDRESS_LINE2", value: response?.address?.addressLine2  || t("CS_NA")}
         ],
       },
     ];
@@ -62,8 +62,7 @@ export const WTSearch = {
       tenantId: response.tenantId,
       applicationDetails: WTSearch.BookingDetails({ waterTankerBookingDetail: response, t }),
       applicationData: response,
-      transformToAppDetailsForEmployee: WTSearch.BookingDetails,
-      
+      transformToAppDetailsForEmployee: WTSearch.BookingDetails
     };
   },
 };
