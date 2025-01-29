@@ -86,7 +86,7 @@ export const WTMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("WT_MY_APPLICATION")} (${filteredApplications.length})`}</Header>
+      <Header>{`${t("WT_MY_BOOKINGS")} (${filteredApplications.length})`}</Header>
       <Card>
         <div style={{ marginLeft: "16px" }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
