@@ -6,11 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
@@ -20,10 +16,11 @@ import org.upyog.sv.web.models.StreetVendingListResponse;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingResponse;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
+import org.upyog.sv.web.models.billing.Demand;
 import org.upyog.sv.web.models.common.RequestInfoWrapper;
 import org.upyog.sv.web.models.common.ResponseInfo;
 import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
-
+import org.upyog.sv.web.models.StreetVendingDemandResponse;
 import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-16T13:19:19.125+05:30")
@@ -90,7 +87,8 @@ public class StreetVendingController {
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
-			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+			@ApiParam(value = "Updated Street vending details and RequestInfo meta data.", required = true)
+			@RequestBody StreetVendingRequest vendingRequest) {
 		validationService.validateRequest(vendingRequest); /// To validate the Update application request
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
@@ -103,7 +101,7 @@ public class StreetVendingController {
 
 	@RequestMapping(value = "/_deletedraft", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingDeleteDraft(
-			@ApiParam(value = "Details for draft deletion + RequestInfo meta data.", required = true) 
+			@ApiParam(value = "Details for draft deletion and RequestInfo meta data.", required = true)
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
 			@RequestParam(value = "draftId", required = true) String draftId) {
 		String draftDiscardResponse = streetVendingService.deleteStreetVendingDraft(draftId);
@@ -112,5 +110,19 @@ public class StreetVendingController {
 		StreetVendingResponse response = StreetVendingResponse.builder().responseInfo(responseInfo).build();
 		return new ResponseEntity<StreetVendingResponse>(response, HttpStatus.OK);
 	}
+
+	@PostMapping("/_createdemand")
+	public ResponseEntity<StreetVendingDemandResponse> createDemandForRenewal(
+			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true)
+			@RequestBody StreetVendingRequest vendingRequest) {
+		List<Demand> demands = streetVendingService.demandCreation(vendingRequest);
+		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(
+				vendingRequest.getRequestInfo(), StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);
+		StreetVendingDemandResponse response = StreetVendingDemandResponse.builder().
+				responseInfo(responseInfo).demands(demands).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+
 
 }

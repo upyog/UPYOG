@@ -55,7 +55,16 @@ public class PetConfiguration {
 
 	@Value("${egov.user.search.path}")
 	private String userSearchEndpoint;
+	
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
 
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+	
 	// IDGEN config
 
 	@Value("${egov.idgen.host}")

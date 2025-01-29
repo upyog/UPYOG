@@ -1,8 +1,9 @@
 package org.egov.ptr.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.Demand;
@@ -10,15 +11,13 @@ import org.egov.ptr.models.DemandDetail;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.repository.DemandRepository;
-import org.egov.ptr.repository.ServiceRequestRepository;
+import org.egov.ptr.util.CommonUtils;
 import org.egov.ptr.util.PTRConstants;
-import org.egov.ptr.util.PetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.*;
-import static org.egov.ptr.util.PTRConstants.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @Service
 public class DemandService {
@@ -27,47 +26,47 @@ public class DemandService {
 	private PetConfiguration config;
 
 	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
 	private DemandRepository demandRepository;
-
-	@Autowired
-	private PetUtil petUtil;
 
 	@Autowired
 	private CalculationService calculationService;
 
-	public List<Demand> createDemand(PetRegistrationRequest petReq) {
-		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
-		String consumerCode = petReq.getPetRegistrationApplications().get(0).getApplicationNumber();
-
-		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
-		User owner = User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
-				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
-//		List<DemandDetail> demandDetails = calculationService.calculateDemand(petReq);
-		BigDecimal amountPayable = new BigDecimal(0);
-		String applicationType = petReq.getPetRegistrationApplications().get(0).getApplicationType();
-		if (applicationType.equals(PTRConstants.RENEW_PET_APPLICATION)) {
-			amountPayable = config.getRenewApplicationFee();
-		} else {
-			amountPayable = config.getNewApplicationFee();
+	public List<Demand> createDemand(PetRegistrationRequest petReq)
+			throws JsonMappingException, JsonProcessingException {
+		if (petReq == null || petReq.getPetRegistrationApplications().isEmpty()) {
+			throw new IllegalArgumentException("Pet registration request is Empty");
 		}
+		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
+		String tenantId = petApplication.getTenantId().split("\\.")[0];
+		String consumerCode = petApplication.getApplicationNumber();
+		BigDecimal amountPayable = calculationService.calculateFee(petApplication.getApplicationType(),
+				petReq.getRequestInfo(), tenantId);
 
-		List<DemandDetail> demandDetails = new LinkedList<>();
-		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(amountPayable)
-				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
-		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
-				.minimumAmountPayable(amountPayable).tenantId(tenantId).taxPeriodFrom(Long.valueOf("1680307199000"))
-				.taxPeriodTo(Long.valueOf("1711929599000")).consumerType(PET_BUSINESSSERVICE)
-				.businessService(config.getBusinessService()).additionalDetails(null).build();
-		List<Demand> demands = new ArrayList<>();
-		demands.add(demand);
+		User owner = buildUser(petApplication);
+		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId);
+		Demand demand = buildDemand(tenantId, consumerCode, owner, demandDetails, amountPayable);
 
-		return demandRepository.saveDemand(petReq.getRequestInfo(), demands);
+		return demandRepository.saveDemand(petReq.getRequestInfo(), Collections.singletonList(demand));
+	}
+
+	private User buildUser(PetRegistrationApplication petApplication) {
+		return User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
+				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
+	}
+
+	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId) {
+		return Collections
+				.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(amountPayable)
+						.taxHeadMasterCode(PTRConstants.PET_TAX_MASTER_CODE).tenantId(tenantId).build());
+	}
+
+	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
+			BigDecimal amountPayable) {
+		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
+				.minimumAmountPayable(amountPayable).tenantId(tenantId)
+				.taxPeriodFrom(CommonUtils.getFinancialYearStart()).taxPeriodTo(CommonUtils.getFinancialYearEnd())
+				.consumerType(PTRConstants.PET_BUSINESS_SERVICE).businessService(config.getBusinessService())
+				.additionalDetails(null).build();
 	}
 
 }

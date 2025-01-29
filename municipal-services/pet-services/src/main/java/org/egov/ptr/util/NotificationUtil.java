@@ -49,6 +49,9 @@ public class NotificationUtil {
 	private String mdmsUrl;
 
 	@Autowired
+	private CommonUtils commonUtils;
+	
+	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, PetConfiguration config,
 			Producer producer, RestTemplate restTemplate) {
 		this.serviceRequestRepository = serviceRequestRepository;
@@ -56,14 +59,6 @@ public class NotificationUtil {
 		this.producer = producer;
 		this.restTemplate = restTemplate;
 	}
-
-	public static final String ACTION_STATUS_APPLY = "APPLY";
-
-	public static final String ACTION_STATUS_VERIFY = "VERIFY";
-
-	public static final String ACTION_STATUS_APPROVE = "APPROVE";
-
-	public static final String ACTION_STATUS_REJECT = "REJECT";
 
 	/**
 	 * Extracts message for the specific code
@@ -112,7 +107,7 @@ public class NotificationUtil {
 		if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
 			responseMap = (LinkedHashMap) serviceRequestRepository
-					.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
+					.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo).get();
 			jsonString = new JSONObject(responseMap).toString();
 			if (StringUtils.isEmpty(jsonString))
 				throw new CustomException("EG_PTR_LOCALE_ERROR", "Localisation values not found for Pet notifications");
@@ -365,26 +360,35 @@ public class NotificationUtil {
 		String ACTION_STATUS = petApplication.getWorkflow().getAction();
 		switch (ACTION_STATUS) {
 
-		case ACTION_STATUS_APPLY:
+		case ACTION_APPLY:
 			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_APPLY, localizationMessage);
 			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
 			break;
 
-		case ACTION_STATUS_VERIFY:
+		case ACTION_VERIFY:
 			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_VERIFY, localizationMessage);
 			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
 			break;
 
-		case ACTION_STATUS_APPROVE:
+		case ACTION_APPROVE:
 			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_APPROVE, localizationMessage);
 			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
 			break;
 
-		case ACTION_STATUS_REJECT:
+		case ACTION_REJECT:
 			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_REJECT, localizationMessage);
 			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
 			break;
 
+		case ACTION_EXPIRE:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_EXPIRE, localizationMessage);
+			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
+			break;
+			
+		case ACTION_ABOUT_TO_EXPIRE:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_ABOUT_TO_EXPIRE, localizationMessage);
+			message = getMessageWithNumberAndPetDetailsAndExpiryDate(petApplication, messageTemplate);
+			break;
 		}
 
 		return message;
@@ -397,4 +401,11 @@ public class NotificationUtil {
 		return message;
 	}
 
+	private String getMessageWithNumberAndPetDetailsAndExpiryDate(PetRegistrationApplication petApplication, String message) {
+		message = message.replace("{1}", petApplication.getApplicantName());
+		message = message.replace("{2}", petApplication.getPetDetails().getPetName());
+		message = message.replace("{3}", petApplication.getApplicationNumber());
+		message = message.replace("{4}", commonUtils.getFinancialYearEndDate());;
+		return message;
+	}
 }
