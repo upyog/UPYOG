@@ -1,8 +1,14 @@
 package org.upyog.request.service.impl;
 
+
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -13,12 +19,10 @@ import org.upyog.request.service.constant.RequestServiceConstants;
 import org.upyog.request.service.repository.RequestServiceRepository;
 import org.upyog.request.service.web.models.WaterTankerBookingDetail;
 import org.upyog.request.service.web.models.WaterTankerBookingRequest;
+import org.upyog.request.service.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.request.service.web.models.workflow.State;
 
 import lombok.extern.slf4j.Slf4j;
-import org.upyog.request.service.web.models.WaterTankerBookingSearchCriteria;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Service
@@ -111,8 +115,29 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		}
 		return criteria;
 	}
+	
+	@Override
+	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest) {
+		String bookingNo = waterTankerRequest.getWaterTankerBookingDetail().getBookingNo();
+		log.info("Updating booking for booking no : " + bookingNo);
+		if (bookingNo == null) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Booking no not valid. Failed to update booking status for : " + bookingNo);
+		}
 
+		State state = workflowService.createWorkflowStatus(waterTankerRequest);
+		enrichmentService.enrichWaterTankerBookingUponUpdate(state.getApplicationStatus(), waterTankerRequest);
 
+		if (RequestServiceConstants.ACTION_APPROVE
+				.equals(waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction())) {
+			// TODO create demand
 
+		}
+		requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
+
+		return waterTankerRequest.getWaterTankerBookingDetail();
+	}
+	
+	
 
 }
