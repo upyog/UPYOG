@@ -46,6 +46,9 @@ public class RequestServiceConfiguration {
 	// Kafka topics for saving street vending data
 	@Value("${persister.create.water-tanker.topic}")
 	private String waterTankerApplicationSaveTopic;
+	
+	@Value("${persister.update.water-tanker.topic}")
+	private String waterTankerApplicationUpdateTopic;
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")

@@ -34,14 +34,7 @@ public class WaterTankerBookingResponse {
 
 	@JsonProperty("waterTankerBookingDetail")
 	@Valid
-	private List<WaterTankerBookingDetail> waterTankerBookingApplication;
+	private WaterTankerBookingDetail waterTankerBookingApplication;
 
-	public void addNewWaterTankerBookingApplication(WaterTankerBookingDetail waterTankerbookingDetail) {
-		if (this.waterTankerBookingApplication == null) {
-			this.waterTankerBookingApplication = new ArrayList<WaterTankerBookingDetail>();
-		}
-		this.waterTankerBookingApplication.add(waterTankerbookingDetail);
-
-	}
 }
 

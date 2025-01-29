@@ -13,5 +13,11 @@ public class RequestServiceConstants {
 	public static final String RS_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "RSApplicantDetailDecrypDisabled";
 
 	public static final String RS_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "RSApplicantDetailDecryptionDisabled";
+	
+	public static final String APPLICATION_UPDATED = "Application Updated";
+	
+	public static final String ACTION_APPROVE = "APPROVE";
+	
+	public static final String INVALID_APPLICATION = "INVALID APPLICATION";
 
 }

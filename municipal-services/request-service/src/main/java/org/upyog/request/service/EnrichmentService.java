@@ -98,6 +98,17 @@ public class EnrichmentService {
 
 		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
+	
+	public void enrichWaterTankerBookingUponUpdate(String bookingStatus, WaterTankerBookingRequest waterTankerRequest) {
+		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
+		waterTankerDetail.setVendorId(waterTankerRequest.getWaterTankerBookingDetail().getVendorId());
+		waterTankerDetail.setDriverId(waterTankerRequest.getWaterTankerBookingDetail().getDriverId());
+		waterTankerDetail.setVehicleId(waterTankerRequest.getWaterTankerBookingDetail().getVehicleId());
+		waterTankerDetail.getAuditDetails().setLastModifiedBy(waterTankerRequest.getRequestInfo().getUserInfo().getUuid());
+		waterTankerDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+		waterTankerDetail.setBookingStatus(bookingStatus);
+		
+	}
 
 	
 
