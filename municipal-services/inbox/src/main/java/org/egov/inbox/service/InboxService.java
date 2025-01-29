@@ -25,6 +25,8 @@ import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
+import static org.egov.inbox.util.RequestServiceConstants.BOOKING_NO_PARAM;
+import static org.egov.inbox.util.RequestServiceConstants.RS;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
 import static org.egov.inbox.util.TLConstants.SEARCH_CRITERIA_PARAM;
@@ -124,6 +126,9 @@ public class InboxService {
 
 	@Autowired
 	private BillingAmendmentInboxFilterService billInboxFilterService;
+	
+	@Autowired
+	private RequestServiceInboxFilterService requestServiceInboxFilterService;
 
 	@Autowired
 	private AssetInboxFilterService assetInboxFilterService;
@@ -435,6 +440,20 @@ public class InboxService {
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
 					moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+			
+			// for request service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
+
+				List<String> applicationNumbers = requestServiceInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
