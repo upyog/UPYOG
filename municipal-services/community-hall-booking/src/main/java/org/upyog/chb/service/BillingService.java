@@ -28,7 +28,7 @@ public class BillingService {
 	@Value("${egbs.host}")
 	private String billingHost;
 
-	@Value("${egbs.fetchbill.endpoint}")
+	@Value("${egov.bill.gen.endpoint}")
 	private String fetchBillEndpoint;
 
 	@Autowired

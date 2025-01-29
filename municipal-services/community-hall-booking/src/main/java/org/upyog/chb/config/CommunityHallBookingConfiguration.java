@@ -159,13 +159,6 @@ public class CommunityHallBookingConfiguration {
 	private String permissionLetterLink;
 
 	// Billing-Service
-
-	@Value("${egbs.host}")
-	private String egbsHost;
-
-	@Value("${egbs.fetchbill.endpoint}")
-	private String egbsFetchBill;
-
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
 
@@ -212,7 +205,7 @@ public class CommunityHallBookingConfiguration {
 	@Value("${chb.claculation.tax.applicable}")
 	private String applicableTaxes;
 	
-	@Value(("${egov.chb.bill.expiry.after}"))
+	@Value(("${egov.bill.expiry.after}"))
 	private String chbBillExpiryAfter;
 	
 	@Value("${egov.asset.host}")

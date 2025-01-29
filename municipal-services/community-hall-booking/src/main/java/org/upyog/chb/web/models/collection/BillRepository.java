@@ -31,7 +31,7 @@ public class BillRepository {
 	public BillResponse fetchBill(GenerateBillCriteria billCriteria, RequestInfo requestInfo) {
 		
 
-        String uri = communityHallBookingConfiguration.getBillingHost().concat(communityHallBookingConfiguration.getEgbsFetchBill());
+        String uri = communityHallBookingConfiguration.getBillingHost().concat(communityHallBookingConfiguration.getBillGenerateEndpoint());
         uri = uri.concat("?consumerCode=").concat(billCriteria.getConsumerCode());
         uri = uri.concat("&tenantId=").concat(billCriteria.getTenantId());
         uri = uri.concat("&businessService=").concat(billCriteria.getBusinessService());
