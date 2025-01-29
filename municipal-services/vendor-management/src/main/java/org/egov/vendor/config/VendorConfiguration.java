@@ -89,6 +89,18 @@ public class VendorConfiguration {
     @Value("${egov.idgen.vendor.registration.format}")
     private String applicationNoIdgenFormat;
 
+    @Value("${kafka.config.bootstrap_server_config}")
+    private String bootstrapServers;
+
+    @Value("${spring.kafka.consumer.group-id}")
+    private String groupId;
+
+    @Value("${spring.kafka.consumer.key-deserializer}")
+    private String keyDeserializerClass;
+
+    @Value("${spring.kafka.consumer.value-deserializer}")
+    private String valueDeserializerClass;
+
 
     @PostConstruct
     public void initialize() {
