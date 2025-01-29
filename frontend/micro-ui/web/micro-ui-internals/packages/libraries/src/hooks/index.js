@@ -332,12 +332,13 @@ import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
-import useTankerSearchAPI from "./wt/useTankerSearchApi";
+import useTankerSearchAPI from "./wt/useTankerSearchAPI";
 import useWTApplicationAction from "./wt/useWTApplicationAction";
 import useWTApplicationDetail from "./wt/useWTApplicationDetail";
 import useTenantsVENDOR from "./vendor/useTenants";
 import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
 import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
+import useSelectedMDMS from "./useSelectedMDMS";
 
 const wt={
   useTankerCreateAPI,
@@ -742,6 +743,7 @@ const Hooks = {
   useCustomMDMS,
   useCustomMDMSV2,
   useEnabledMDMS,
+  useSelectedMDMS,
   useCustomAPIHook,
   reports,
   useGetHowItWorksJSON,
