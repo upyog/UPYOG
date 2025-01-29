@@ -80,18 +80,15 @@ public class CommunityHallBookingConfiguration {
 	// MDMS Config
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;
-	
-	@Value("${upyog.mdms.v2.host}")
-	private String mdmsV2Host;
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsPath;
 	
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+	
 	@Value("${upyog.mdms.v2.search.endpoint}")
 	private String mdmsV2Path;
-
-	@Value("${employee.allowed.search.params}")
-	private String allowedEmployeeSearchParameters;
 	
 	@Value("${upyog.mdms.v2.enabled}")
 	private boolean mdmsV2Enabled;
@@ -103,6 +100,9 @@ public class CommunityHallBookingConfiguration {
 			mdmsPath = mdmsV2Path;
 		}
 	}
+	
+	@Value("${employee.allowed.search.params}")
+	private String allowedEmployeeSearchParameters;
 
 	// User Config
 	@Value("${egov.user.host}")
