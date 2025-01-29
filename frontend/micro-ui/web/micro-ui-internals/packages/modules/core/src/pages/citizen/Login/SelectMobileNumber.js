@@ -64,11 +64,11 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
   };
   if (isLoading) return <Loader />
   const register = async (e) => {
-    const data = await Digit.DigiLockerService.register({ module: "REGISTER" });
+    const data = await Digit.DigiLockerService.register({ module: "SSO" });
     e.preventDefault()
     const redirectUrl = data.redirectURL
     console.log("data", data)
-    localStorage.setItem("code_verfier_register", data?.codeverifier)
+    localStorage.setItem("code_verfier_register", data?.dlReqRef)
     window.location.href = redirectUrl
   }
 

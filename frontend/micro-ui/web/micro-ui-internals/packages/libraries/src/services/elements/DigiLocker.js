@@ -18,7 +18,7 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
-      params: {module:"REGISTER" },
+      params: {module:"SSO" },
     }),
     token: ( data ) =>
     Request({
