@@ -18,11 +18,12 @@ import { configWTApproverApplication } from "../config/WTApproverApplication";
   - **Submit Action**: Calls the provided `submitAction` function with the form data when submitted.
 */
 
-
+// Heading component - renders an h1 element with a dynamic label prop.
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
+// Close component - renders an SVG icon representing a "close" button (X icon).
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
     <path d="M0 0h24v24H0V0z" fill="none" />
@@ -75,7 +76,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
           } else {
             try {
-            const response = await Digit.UploadServices.Filestorage("CHB", file, tenantId);
+            const response = await Digit.UploadServices.Filestorage("WT", file, tenantId);
               if (response?.data?.files?.length > 0) {
                 setUploadedFile(response?.data?.files[0]?.fileStoreId);
               } else {
