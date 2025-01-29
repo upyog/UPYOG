@@ -28,6 +28,7 @@ import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 import org.upyog.sv.web.models.VendorDetail;
+import org.upyog.sv.web.models.billing.Demand;
 import org.upyog.sv.web.models.workflow.State;
 
 import lombok.NonNull;
@@ -137,6 +138,14 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		streetVendingDetail.setBankDetail(originalDetail.getBankDetail());
 		return streetVendingDetail;
 	}
+
+
+	@Override
+	public List<Demand> demandCreation(StreetVendingRequest vendingRequest) {
+		log.info("Generating demand for application no {} ", vendingRequest.getStreetVendingDetail().getApplicationNo());
+		return demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+    }
+
 
 	private String extractTenantId(StreetVendingRequest request) {
 		return request.getStreetVendingDetail().getTenantId().split("\\.")[0];
