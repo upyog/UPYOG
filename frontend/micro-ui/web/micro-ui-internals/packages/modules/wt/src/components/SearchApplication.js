@@ -44,7 +44,7 @@
       const columns = useMemo( () => ([
           
           {
-              Header: t("CHB_BOOKING_NO"),
+              Header: t("WT_BOOKING_NO"),
               accessor: "bookingNo",
               disableSortBy: true,
               Cell: ({ row }) => {
@@ -87,8 +87,8 @@
             
         ]), [] )
         const statusOptions = [
-          { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-          { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+          { i18nKey: "Booked", code: "BOOKED", value: t("WT_BOOKED") },
+          { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("WT_BOOKING_IN_PROGRES") },
           { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
           { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
           { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
@@ -146,7 +146,7 @@
                               />
                   </SearchField>
                   <SearchField>
-                  <label>{t("CHB_MOBILE_NUMBER")}</label>
+                  <label>{t("WT_MOBILE_NUMBER")}</label>
                   <MobileNumber
                       name="mobileNumber"
                       inputRef={register({

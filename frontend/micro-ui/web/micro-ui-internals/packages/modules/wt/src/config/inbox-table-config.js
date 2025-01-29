@@ -15,7 +15,7 @@ export const TableConfig = (t) => ({
    WT: {
     inboxColumns: (props) => [
       {
-        Header: t("CHB_BOOKING_NO"),
+        Header: t("WT_BOOKING_NO"),
         Cell: ({ row }) => {
           return (
             <div>
@@ -33,7 +33,7 @@ export const TableConfig = (t) => ({
       },
       
       {
-        Header: t("CHB_APPLICANT_NAME"),
+        Header: t("WT_APPLICANT_NAME"),
         Cell: ( row ) => {
         
           return GetCell(`${row?.cell?.row?.original?.searchData?.applicantDetail?.["name"]}`)
