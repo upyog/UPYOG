@@ -222,8 +222,13 @@ public class UserController {
         JSONObject jsonResponse = new JSONObject(validationApiResponseBody);
         JSONObject userRes = jsonResponse.getJSONObject("UserRes");
         String validationMobileNumber = userRes.getString("mobile");
+        log.info("validationMobileNumber"+validationMobileNumber);
+        log.info("user Mobile Number is"+(createUserRequest.getUser().getMobileNumber()));
+        
+        
 
-        if (validationMobileNumber.equals(createUserRequest.getUser().getMobileNumber())) {
+        if (validationMobileNumber.equalsIgnoreCase(createUserRequest.getUser().getMobileNumber())) {
+            log.info("entering IF condition");
 
             request.setUserName(createUserRequest.getUser().getMobileNumber());
             request.setTenantId(createUserRequest.getUser().getTenantId());
