@@ -75,85 +75,27 @@ const setCitizenDetail = (userObject, token, tenantId) => {
   localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
 };
 
-useEffect(async ()=>{
-  //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
-if(window.location.href.includes("code"))
-{
-  let code =window.location.href.split("=")[1].split("&")[0]
-  let TokenReq = {
-    dlReqRef: localStorage.getItem('code_verfier_register'),
-    code: code, module: "SSO"
-    
-  }
- console.log("token",code,TokenReq,localStorage.getItem("code_verfier_register"))
- debugger
- const { ResponseInfo, UserRequest: info, ...tokens }  = await Digit.DigiLockerService.token({TokenReq })
-  console.log("data_token",data)
-  debugger
-  setUser({ info, ...tokens });
+  useEffect(async () => {
+    //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
+    if (window.location.href.includes("code")) {
+      let code = window.location.href.split("=")[1].split("&")[0]
+      let TokenReq = {
+        dlReqRef: localStorage.getItem('code_verfier_register'),
+        code: code, module: "SSO"
 
-
-   // Function to convert ddmmyyyy to dd/mm/yyyy format
-function formatDate(dateStr) {
-   if (!dateStr || dateStr.length !== 8) return dateStr; 
-
-  const day = dateStr.substring(0, 2);
-  const month = dateStr.substring(2, 4);
-  const year = dateStr.substring(4, 8);
-
-return `${day}/${month}/${year}`;
-}
-
-const user = { 
-access_token:data?.TokenRes?.access_token,
-tenantId: "pg", 
-digilockerid:data?.TokenRes?.digilockerid,
-name:data?.TokenRes?.name,
-dob: formatDate(data?.TokenRes?.dob),
-gender:data?.TokenRes?.gender,
-mobileNumber: data?.TokenRes.mobile, 
-};
-
-const authData = await Digit.DigiLockerService.oauth(user);
-console.log("authData",authData)
-
-const setCitizenDetail = ( authData) => {
-let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
-localStorage.setItem("Citizen.tenant-id", authData?.UserRequest?.tenantId);
-localStorage.setItem("tenant-id", authData?.UserRequest?.tenantId);
-localStorage.setItem("citizen.userRequestObject", JSON.stringify(authData?.UserRequest));
-localStorage.setItem("locale", locale);
-localStorage.setItem("Citizen.locale", locale);
-localStorage.setItem("token", authData?.access_token);
-localStorage.setItem("user-info", JSON.stringify(authData?.UserRequest));
-localStorage.setItem("Citizen.token", authData?.access_token);
-localStorage.setItem("user-info", JSON.stringify(authData?.UserRequest));
-localStorage.setItem("Citizen.user-info", JSON.stringify(authData?.UserRequest));
-};
-
-if(authData){
-    setCitizenDetail(authData)
-    const userInfo={
-      ...authData,
-      info:authData?.UserRequest
+      }
+      const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.DigiLockerService.token({ TokenReq })
+      setUser({ info, ...tokens });
+      setCitizenDetail(info, tokens?.access_token, info?.tenantId)
     }
-    Digit.UserService.setUser(userInfo);
-    window.location.href="https://upyog-test.niua.org/digit-ui/citizen"
-  }
-  
-}
-else if (window.location.href.includes("error="))
-{
-  window.location.href = window.location.href.split("/otp")[0]
-}
-},[])
+  }, [])
 useEffect(() => {
   if (!user) {
     return;
   }
   Digit.SessionStorage.set("citizen.userRequestObject", user);
   Digit.UserService.setUser(user);
-  setCitizenDetail(user?.info, user?.access_token, stateCode);
+  setCitizenDetail(user?.info, user?.access_token, "pg");
   const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
   if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
     history.replace("/digit-ui/citizen/select-location", {
