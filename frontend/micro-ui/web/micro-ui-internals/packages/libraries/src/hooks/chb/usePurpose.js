@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const usePurpose = (tenantId, moduleCode, type, config = {}) => {
   const usepurpose = () => {
-    return useQuery("PURPOSE", () => MdmsService.getChbPurpose(tenantId, moduleCode ,type), config);
+    return useQuery("PURPOSE", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "Purpose", "CHB_PURPOSE_", "i18nKey"), config);
   };
   
 

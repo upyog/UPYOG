@@ -57,7 +57,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
 
 
 
-  const { data: schemes } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Schemes" }],
+  const { data: schemes } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "Schemes" }],
     {
       select: (data) => {
         const formattedData = data?.["StreetVending"]?.["Schemes"]

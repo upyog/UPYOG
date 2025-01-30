@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
+import jdk.internal.org.jline.utils.Log;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -77,6 +78,23 @@ public class BookingConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsPath;
+	
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+	
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Path;
+	
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+	
+	@PostConstruct
+	public void init() {
+		if(mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsPath = mdmsV2Path;
+		}
+	}
 
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;

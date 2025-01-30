@@ -25,6 +25,7 @@ import useCommonMDMS from "./useMDMS";
 import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
 import useCustomMDMSV2 from "./useCustomMDMSV2";
+import useEnabledMDMS from "./useEnabledMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
@@ -331,12 +332,13 @@ import useADSDemandEstimation from "./ads/useADSDemandEstimation"
 import useCMSearch from "./cm/useCMSearch";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
-import useTankerSearchAPI from "./wt/useTankerSearchApi";
+import useTankerSearchAPI from "./wt/useTankerSearchAPI";
 import useWTApplicationAction from "./wt/useWTApplicationAction";
 import useWTApplicationDetail from "./wt/useWTApplicationDetail";
 import useTenantsVENDOR from "./vendor/useTenants";
 import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
 import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
+import useSelectedMDMS from "./useSelectedMDMS";
 
 const wt={
   useTankerCreateAPI,
@@ -740,6 +742,8 @@ const Hooks = {
   ws,
   useCustomMDMS,
   useCustomMDMSV2,
+  useEnabledMDMS,
+  useSelectedMDMS,
   useCustomAPIHook,
   reports,
   useGetHowItWorksJSON,

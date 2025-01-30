@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const useResidentType = (tenantId, moduleCode, type, config = {}) => {
   const useResident = () => {
-    return useQuery("RESIDENT_TYPE", () => MdmsService.getChbResidentType(tenantId, moduleCode ,type), config);
+    return useQuery("RESIDENT_TYPE", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "ResidentType", "CHB_RESIDENT_TYPE_", "i18nKey"), config);
   };
   
 
