@@ -15,7 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class PropertyQueryBuilder {
 
 	@Autowired
@@ -301,18 +304,36 @@ public class PropertyQueryBuilder {
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 
 			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
-		}
-
+			builder.append("(");
+			for(int i=0; i< propertyIds.size(); i++) {
+				builder.append("property.propertyid LIKE ?");
+				if(i<propertyIds.size()-1) {
+					builder.append(" OR ");
+				}
+		    }
+		 	builder.append(")");
+		 	for(String pId : propertyIds) {
+		 		preparedStmtList.add("%" + pId.trim() + "%"); 
+		 	}
+		 }
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
-
-			addClauseIfRequired(preparedStmtList,builder);
-			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
-		}
-
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("(");
+			for(int i=0; i< acknowledgementIds.size(); i++) {
+				builder.append("property.acknowldgementnumber LIKE ?");
+				if(i<acknowledgementIds.size()-1) {
+					builder.append(" OR ");
+				}
+				
+				
+			}
+			builder.append(")");
+			for(String ackId : acknowledgementIds) {
+				preparedStmtList.add("%" + ackId.trim() + "%"); 
+			}
+		}	
+		
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
 

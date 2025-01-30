@@ -50,7 +50,7 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
                         .pan(rs.getString("pan")).aadhaarNumber(rs.getString("aadhaarnumber")).createdBy(rs.getLong("createdby"))
                         .createdDate(rs.getTimestamp("createddate")).guardian(rs.getString("guardian")).signature(rs.getString("signature"))
                         .accountLocked(rs.getBoolean("accountlocked")).photo(rs.getString("photo"))
-                        .identificationMark(rs.getString("identificationmark")).uuid(rs.getString("uuid"))
+                        .identificationMark(rs.getString("identificationmark")).uuid(rs.getString("uuid")).digilockerid(rs.getString("digilockerid"))
                         .accountLockedDate(rs.getLong("accountlockeddate")).alternateMobileNumber(rs.getString("alternatemobilenumber"))
                         .build();
 

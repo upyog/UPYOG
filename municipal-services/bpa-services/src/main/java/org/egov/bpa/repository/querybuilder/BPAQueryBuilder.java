@@ -79,11 +79,18 @@ public class BPAQueryBuilder {
         }
 
         String applicationNo = criteria.getApplicationNo();
-        if (applicationNo != null) {
+        if (applicationNo != null && !applicationNo.trim().isEmpty()) {
             List<String> applicationNos = Arrays.asList(applicationNo.split(","));
             addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" bpa.applicationNo IN (").append(createQuery(applicationNos)).append(")");
-            addToPreparedStatement(preparedStmtList, applicationNos);
+            builder.append("(");
+            for(int i=0; i<applicationNos.size(); i++){ 
+                builder.append("bpa.applicationNo LIKE ?");
+                preparedStmtList.add("%" + applicationNos.get(i).trim() + "%");
+                if(i < applicationNos.size()-1){
+                    builder.append(" OR ");
+                }
+            }
+            builder.append(")");
         }
 
         String approvalNo = criteria.getApprovalNo();

@@ -64,8 +64,9 @@ public class ComparisonRequest {
     private String ocdcrNumber;
 
     private String tenantId;
+    
 
-    public RequestInfo getRequestInfo() {
+	public RequestInfo getRequestInfo() {
         return requestInfo;
     }
 

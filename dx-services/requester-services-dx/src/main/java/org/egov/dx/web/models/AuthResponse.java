@@ -14,6 +14,6 @@ public class AuthResponse {
 
     private String redirectURL;
 
-    private String codeverifier;
+    private String dlReqRef;
 
 }

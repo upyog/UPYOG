@@ -19,8 +19,8 @@ public class TokenReq {
 	 @JsonProperty("code")
      private String code;
 
-     @JsonProperty("code_verifier")
-     private  String codeVerifier;
+     @JsonProperty("dlReqRef")
+     private  String dlReqRef;
 
      @JsonProperty("module")
      private  String module;
