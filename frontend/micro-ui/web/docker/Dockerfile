@@ -8,16 +8,16 @@ RUN yarn add @upyog/digit-ui-module-pt@2.0.0
 RUN yarn add @upyog/digit-ui-module-tl@2.0.0
 RUN yarn add @upyog/digit-ui-module-obps@2.0.2
 RUN yarn add @upyog/digit-ui-module-ws@1.8.16
-RUN yarn add @upyog/digit-ui-module-dss
+RUN yarn add @upyog/digit-ui-module-dss@1.8.11
 RUN yarn add @upyog/digit-ui-module-mcollect@2.0.0
-RUN yarn add @upyog/digit-ui-module-pgr
-RUN yarn add @upyog/digit-ui-module-noc
-RUN yarn add @upyog/digit-ui-module-engagement
-RUN yarn add @upyog/digit-ui-module-hrms
-RUN yarn add @upyog/digit-ui-module-core
+RUN yarn add @upyog/digit-ui-module-pgr@1.8.4
+RUN yarn add @upyog/digit-ui-module-noc@1.8.0
+RUN yarn add @upyog/digit-ui-module-engagement@1.8.0
+RUN yarn add @upyog/digit-ui-module-hrms@1.8.0
+RUN yarn add @upyog/digit-ui-module-core@1.8.2
 RUN yarn add @upyog/digit-ui-module-common@2.0.0
 RUN yarn add @upyog/digit-ui-module-commonpt@2.0.0
-RUN yarn add @upyog/digit-ui-module-bills
+RUN yarn add @upyog/digit-ui-module-bills@1.8.0
 
 ARG WORK_DIR
 WORKDIR /app
