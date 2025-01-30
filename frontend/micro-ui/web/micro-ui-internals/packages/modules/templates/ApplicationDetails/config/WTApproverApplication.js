@@ -50,10 +50,10 @@ export const configWTApproverApplication = ({
                 }}
                 message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
               />
-            ),
-          },
-        ],
-      },
-    ],
+            )
+          }
+        ]
+      }
+    ]
   };
 };

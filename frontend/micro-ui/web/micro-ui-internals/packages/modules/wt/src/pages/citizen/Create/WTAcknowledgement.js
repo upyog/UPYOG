@@ -47,7 +47,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props)}
-      applicationNumber={props.data?.waterTankerBookingDetail[0]?.bookingNo}
+      applicationNumber={props.data?.waterTankerBookingDetail?.bookingNo}
       info={props.isSuccess ? props.t("WT_BOOKING_NO") : ""}
       successful={props.isSuccess}
       style={{width: "100%"}}
