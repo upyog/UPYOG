@@ -91,6 +91,8 @@ public class IngestValidator {
 	
 	public static final String MDMS_PAYMENTCHANNEL_PATH = "$.MdmsRes.common-masters.PaymentChannel";
 
+    public static final String MDMS_NATIONALTENANTUSER_PATH = "$.MdmsRes.tenant.nationalInfoUser";
+
 //    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
 //        String employeeUlb = requestInfo.getUserInfo().getTenantId();
 //        Set<String> roles = new HashSet<>();
@@ -416,7 +418,7 @@ public class IngestValidator {
         int validCounts=0;
         
         Boolean isUsageCategoryInvalid = false;
-        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
+        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("BIRTH") || ingestData.getModule() != null && ingestData.getModule().equals("DEATH") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
         }
@@ -477,7 +479,7 @@ public class IngestValidator {
 	            isPaymentChannelInvalid = true;
 	        }
 	    
-	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")) ) {
+	        if (ingestData.getModule() != null && (ingestData.getModule().equals("PT")|| ingestData.getModule().equals("FIRENOC") || ingestData.getModule().equals("BIRTH") || ingestData.getModule().equals("DEATH") || ingestData.getModule().equals("TL") || ingestData.getModule().equals("FSM") || ingestData.getModule().equals("WS") || ingestData.getModule().equals("OBPS")) ) {
 	            keyToFetch = applicationProperties.getNationalDashboardpaymentChannel();
 	        }
 	        else if (ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT")) {
@@ -679,5 +681,95 @@ public class IngestValidator {
         converted.append(ch);
         }
         return converted.toString();
-	}
+    }
+
+    public Map<String, Map<String, Object>> stateListMDMS(RequestInfo requestInfo) {
+
+
+        StringBuilder mdmsURL = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+
+        MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfoUser")
+                .filter("[?(@.active==true)]")
+                .build();
+
+        MasterDetail mstrDetail1 = MasterDetail.builder().name("nationalInfo")
+                .filter("[?(@.active==true)]")
+                .build();
+
+
+        ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail)).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
+        MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+        Object response = null;
+        List < Map < String, String >> nationalinfouser = null;
+
+        log.info("URI: " + mdmsURL.toString());
+        try {
+            log.info(objectMapper.writeValueAsString(mdmsConfig));
+            response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
+            nationalinfouser = JsonPath.read(response, MDMS_NATIONALTENANTUSER_PATH);
+
+
+        } catch (ResourceAccessException e) {
+
+            Map < String, String > map = new HashMap < > ();
+            map.put(null, e.getMessage());
+            throw new CustomException(map);
+        } catch (HttpClientErrorException e) {
+
+            log.info("the error is : " + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+
+            log.error("Exception while fetching from searcher: ", e);
+        }
+        ModuleDetail moduleDetail1 = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail1)).build();
+        MdmsCriteria mdmsCriteria1 = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail1)).tenantId("pg").build();
+        MdmsCriteriaReq mdmsConfig1 = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria1).build();
+        List<Map<String,String>> nationalinfo = null;
+        try {
+            log.info(objectMapper.writeValueAsString(mdmsConfig1));
+            response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig1, Map.class);
+            nationalinfo=  JsonPath.read(response, MDMS_NATIONALTENANTS_PATH);
+            //migratedTenant= jsonOutput.get(0);
+
+        } catch (ResourceAccessException e) {
+
+            Map<String, String> map = new HashMap<>();
+            map.put(null, e.getMessage());
+            throw new CustomException(map);
+        }  catch (HttpClientErrorException e) {
+
+            log.info("the error is : " + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        }catch (Exception e) {
+
+            log.error("Exception while fetching from searcher: ", e);
+        }
+
+        Map<String, Map<String, Object>> stateEmailMap = new HashMap<>();
+
+        for (Map<String, String> state : nationalinfouser) {
+            String stateCode = state.get("stateCode");
+            String email = state.get("emailId");
+            String nodalOfficer = state.get("NodalOfficerName");
+            if (stateCode != null && email != null) {
+                Map<String, Object> officerInfo = new HashMap<>();
+                officerInfo.put("email", email);
+                officerInfo.put("nodalOfficer", nodalOfficer);
+                officerInfo.put("ULBs", new ArrayList<String>());
+
+                List<String> ulbs = (List<String>) officerInfo.get("ULBs");
+                for (Map<String, String> stateUlb : nationalinfo) {
+                    String stateWithUlb = stateUlb.get("stateCode");
+                    String ulb = stateUlb.get("code");
+                    if (stateCode.equals(stateWithUlb) && ulb != null) {
+                        ulbs.add(ulb);
+                    }
+                }
+                stateEmailMap.put(stateCode, officerInfo);
+            }
+        }
+        return stateEmailMap;
+    }
 }

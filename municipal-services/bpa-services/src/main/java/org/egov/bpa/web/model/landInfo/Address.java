@@ -332,7 +332,7 @@ public class Address   {
   **/
   @ApiModelProperty(value = "Name of the building")
   
-  @Size(min=2,max=64)   public String getBuildingName() {
+  @Size(min=0,max=64)   public String getBuildingName() {
     return buildingName;
   }
 
@@ -351,7 +351,7 @@ public class Address   {
   **/
   @ApiModelProperty(value = "Street Name")
   
-  @Size(min=2,max=64)   public String getStreet() {
+  @Size(min=0,max=64)   public String getStreet() {
     return street;
   }
 
