@@ -29,7 +29,7 @@
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.8",
     "@nudmcdgnpm/upyog-ui-module-cm": "1.2.2",
-    "@nudmcdgnpm/upyog-ui-module-vendor": "1.2.0",
+    "@nudmcdgnpm/upyog-ui-module-vendor": "1.2.1",
 
     "http-proxy-middleware": "1.0.5",
     "react": "17.0.2",
