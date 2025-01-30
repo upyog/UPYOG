@@ -17,7 +17,8 @@
     "packages/modules/sv",
     "packages/modules/ew",
     "packages/modules/ads",
-    "packages/modules/chb"
+    "packages/modules/chb",
+    "packages/modules/vendor"
 
   ],
   "license": "MIT",
@@ -87,7 +88,7 @@
     "build:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
     "build:wt": "cd packages/modules/wt && yarn build",
-    "buildD:vendor": "cd packages/modules/vendor && yarn build",
+    "build:vendor": "cd packages/modules/vendor && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
