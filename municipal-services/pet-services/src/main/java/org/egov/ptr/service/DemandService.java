@@ -16,9 +16,6 @@ import org.egov.ptr.util.PTRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 @Service
 public class DemandService {
 
@@ -31,8 +28,7 @@ public class DemandService {
 	@Autowired
 	private CalculationService calculationService;
 
-	public List<Demand> createDemand(PetRegistrationRequest petReq)
-			throws JsonMappingException, JsonProcessingException {
+	public List<Demand> createDemand(PetRegistrationRequest petReq) {
 		if (petReq == null || petReq.getPetRegistrationApplications().isEmpty()) {
 			throw new IllegalArgumentException("Pet registration request is Empty");
 		}

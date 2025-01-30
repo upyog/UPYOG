@@ -38,7 +38,7 @@ public class EnrichmentService {
 	@Autowired
 	private CommonUtils commonUtils;
 
-	public void enrichPetApplication(String status, PetRegistrationRequest petRegistrationRequest) {
+	public void enrichPetApplication(PetRegistrationRequest petRegistrationRequest) {
 		RequestInfo requestInfo = petRegistrationRequest.getRequestInfo();
 		List<PetRegistrationApplication> applications = petRegistrationRequest.getPetRegistrationApplications();
 		String tenantId = applications.get(0).getTenantId();
@@ -62,7 +62,6 @@ public class EnrichmentService {
 			application.setId(UUID.randomUUID().toString());
 			application.setApplicationNumber(petRegistrationIdList.get(index++));
 			application.setValidityDate(validityDateUnix);
-			application.setStatus(status);
 			application.setExpireFlag(false);
 
 			// Enrich address and pet details
