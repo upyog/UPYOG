@@ -15,6 +15,8 @@ import WTApplicationDetails from "./pages/citizen/WTApplicationDetails";
 import {TableConfig} from "./config/inbox-table-config";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
+import WFApplicationTimeline from "./pageComponents/WFApplicationTimeline";
+import WFCaption from "./pageComponents/WFCaption";
 
 
 
@@ -29,7 +31,8 @@ const componentsToRegister = {
     WTApplicationDetails: WTApplicationDetails,
     WTMyApplications: WTMyApplications,
     ApplicationDetails: ApplicationDetails,
-
+    WFApplicationTimeline: WFApplicationTimeline,
+    WFCaption
   };
   
   // function to register the component as per standard 
