@@ -11,9 +11,9 @@ RUN cd ${WORK_DIR} \
 
 # Create runtime image
 
-FROM egovio/wildfly:1-helm-fin-e6312078
-
+#FROM egovio/wildfly:1-helm-fin-e6312078
+FROM upyogio/wildfly:1-ed
 COPY --from=build /app/egov/egov-ear/target/*.ear /opt/jboss/wildfly/standalone/deployments/
 USER jboss
 
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "-Ddb.migration.enabled=true"]
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "-Ddb.migration.enabled=false"]

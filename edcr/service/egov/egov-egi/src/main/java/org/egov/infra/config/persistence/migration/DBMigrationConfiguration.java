@@ -56,7 +56,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
-import org.springframework.beans.factory.annotation.Autowire;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -107,7 +107,7 @@ public class DBMigrationConfiguration {
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
         if (dbMigrationEnabled) {
 
-            cities.stream().forEach(schema -> {
+            cities.forEach(schema -> {
                 if (devMode)
                     migrateDatabase(dataSource, schema,
                             mainMigrationFilePath, sampleMigrationFilePath, format(tenantMigrationFilePath, schema));
@@ -121,48 +121,53 @@ public class DBMigrationConfiguration {
             } else if (!devMode) {
                 migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath);
             }
-
         }
 
-        return new Flyway();
+        return null;  // The Flyway bean is already handled within the `migrateDatabase` method
     }
 
     private void migrateDatabase(DataSource dataSource, String schema, String... locations) {
-        Flyway flyway = new Flyway();
-        flyway.setBaselineOnMigrate(true);
-        flyway.setValidateOnMigrate(validateOnMigrate);
-        flyway.setOutOfOrder(true);
-        flyway.setLocations(locations);
-        flyway.setDataSource(dataSource);
-        flyway.setSchemas(schema);
-        if (repairMigration)
+        // Use Flyway.configure() to create a Flyway instance
+        FluentConfiguration flywayConfig = Flyway.configure()
+            .dataSource(dataSource)
+            .locations(locations)
+            .schemas(schema)
+            .baselineOnMigrate(true)
+            .validateOnMigrate(validateOnMigrate)
+            .outOfOrder(true);
+
+        Flyway flyway = flywayConfig.load();
+
+        if (repairMigration) {
             flyway.repair();
+        }
+
         flyway.migrate();
     }
 
-    @Bean(name = "tenants", autowire = Autowire.BY_NAME)
-	public List<String> tenants() {
-		List<String> tenants = new ArrayList<>();
-		environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-			if (propertySource instanceof MapPropertySource)
-				((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-					if (key.startsWith("tenant.")) {
-						tenants.add(value.toString());
-					}
-				});
-		});
-		return orderedTenants(tenants);
-	}
-    //This API is to make sure always state schema created first if its available.
-	private List<String> orderedTenants(List<String> tenants) {
-		List<String> orderedTenants = new ArrayList<>();
-		for (String tenant : tenants) {
-			if (tenant.equalsIgnoreCase("state"))
-				orderedTenants.add(0, tenant);
-			else
-				orderedTenants.add(tenant);
-		}
-		return orderedTenants;
-	}
+    @Bean(name = "tenants")
+    public List<String> tenants() {
+        List<String> tenants = new ArrayList<>();
+        environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+            if (propertySource instanceof MapPropertySource)
+                ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+                    if (key.startsWith("tenant.")) {
+                        tenants.add(value.toString());
+                    }
+                });
+        });
+        return orderedTenants(tenants);
+    }
 
+    // Ensures state schema is created first if available
+    private List<String> orderedTenants(List<String> tenants) {
+        List<String> orderedTenants = new ArrayList<>();
+        for (String tenant : tenants) {
+            if (tenant.equalsIgnoreCase("state"))
+                orderedTenants.add(0, tenant);
+            else
+                orderedTenants.add(tenant);
+        }
+        return orderedTenants;
+    }
 }
