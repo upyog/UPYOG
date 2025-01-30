@@ -13,12 +13,12 @@
     "packages/modules/engagement",
     "packages/modules/asset",
     "packages/modules/wt",
-    "packages/modules/vendor",
     "packages/modules/ptr",
     "packages/modules/sv",
     "packages/modules/ew",
     "packages/modules/ads",
-    "packages/modules/chb"
+    "packages/modules/chb",
+    "packages/modules/vendor"
 
   ],
   "license": "MIT",
