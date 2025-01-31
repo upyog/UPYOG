@@ -23,28 +23,24 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class VendorAdditionalDetailsResponse {
+public class VendorPlusAdditionalDetailsResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("VendorAdditionalDetails")
-    @Valid
-    private List<VendorAdditionalDetails> vendorAdditionalDetails = null;
-
     @JsonProperty("VendorDetails")
     @Valid
-    private List<VendorDetailsDTO> vendorDetails = null;
+    private List<VendorDetailsDTO> vendorDetailsDTO = null;
 
-    public VendorAdditionalDetailsResponse addVendorAdditionalDetailItem(VendorAdditionalDetails item) {
-        if (this.vendorAdditionalDetails == null) {
-            this.vendorAdditionalDetails = new ArrayList<>();
+    public VendorPlusAdditionalDetailsResponse addVendorAdditionalDetailItem(VendorDetailsDTO item) {
+        if (this.vendorDetailsDTO == null) {
+            this.vendorDetailsDTO = new ArrayList<>();
         }
-        this.vendorAdditionalDetails.add(item);
+        this.vendorDetailsDTO.add(item);
         return this;
     }
 
-    public VendorAdditionalDetailsResponse VendorAdditionalDetail(List<VendorAdditionalDetails> items) {
-        this.vendorAdditionalDetails = items;
+    public VendorPlusAdditionalDetailsResponse VendorAdditionalDetail(List<VendorDetailsDTO> items) {
+        this.vendorDetailsDTO = items;
         return this;
     }
 
