@@ -26,7 +26,7 @@ public class RequestServiceConstants {
 
 	public static final String MDMS_MODULE_NAME = "Request-Service";
 
-	public static final String MDMS_TANKER_CALCULATION_TYPE = "CalculationType";
+	public static final String MDMS_TANKER_CALCULATION_TYPE = "WaterTankerCalculationType";
 
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
 
