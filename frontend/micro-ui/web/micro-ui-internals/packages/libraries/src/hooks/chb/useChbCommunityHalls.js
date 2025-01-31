@@ -1,14 +1,13 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const useChbCommunityHalls = (tenantId, moduleCode, type, config = {}) => {
   const useCommunityHalls = () => {
-    return useQuery("COMMUNITY_HALLS", () => MdmsService.getChbCommunityHalls(tenantId, moduleCode ,type), config);
+    return useQuery("COMMUNITY_HALLS", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "CommunityHalls", "CHB_COMMUNITY_HALLS_", "i18nKey"), config);
   };
   
 
   switch (type) {
-    case "ChbCommunityHalls":
+    case "CommunityHalls":
       return useCommunityHalls();
     default:
       return null;

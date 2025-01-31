@@ -55,8 +55,8 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     endDate: null,
     key: 'selection'
   }]);
-  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
-  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(tenantId, "CHB", "ChbHallCode");
+  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
+  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(tenantId, "CHB", "HallCode");
   let HallName = [];
   let HallId = [];
 

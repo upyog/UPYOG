@@ -1,5 +1,7 @@
 package org.upyog.sv.config;
 
+import javax.annotation.PostConstruct;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
@@ -93,6 +95,23 @@ public class StreetVendingConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsPath;
+	
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+	
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Path;
+	
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+	
+	@PostConstruct
+	public void init() {
+		if(mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsPath = mdmsV2Path;
+		}
+	}
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")

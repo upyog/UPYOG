@@ -59,8 +59,11 @@ public class PetRegistrationService {
 
 		validator.validatePetApplication(petRegistrationRequest);
 
+		enrichmentService.enrichPetApplication(petRegistrationRequest);
+
 		State state = wfService.updateWorkflowStatus(petRegistrationRequest);
-		enrichmentService.enrichPetApplication(state.getApplicationStatus(), petRegistrationRequest);
+		petRegistrationRequest.getPetRegistrationApplications().get(0).setStatus(state.getApplicationStatus());
+
 		petRegistrationRequest.getPetRegistrationApplications().forEach(application -> {
 			if (application.getApplicationType().equals(RENEW_PET_APPLICATION)) {
 				producer.push(config.getRenewPtrTopic(), petRegistrationRequest);
@@ -84,8 +87,8 @@ public class PetRegistrationService {
 		return applications;
 	}
 
-	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest)
-			throws JsonMappingException, JsonProcessingException {
+	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
+		
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
 		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());

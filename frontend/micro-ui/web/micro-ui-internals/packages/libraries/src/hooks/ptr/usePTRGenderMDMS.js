@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const usePTRGenderMDMS = (tenantId, moduleCode, type, config = {}) => {
   const usePTRGenders = () => {
-    return useQuery("PTR_GENDER_DETAILS", () => MdmsService.PTRGenderType(tenantId, moduleCode ,type), config);
+    return useQuery("PTR_GENDER_DETAILS", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "GenderType", "PTR_GENDER_", "i18nKey"), config);
   };
   
 

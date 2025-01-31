@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const useProductPriceMDMS = (tenantId, moduleCode, type, config = {}) => {
    const useProductPrices = () => {
-    return useQuery("PRODUCT_PRICES", () => MdmsService.EWProductPrice(tenantId, moduleCode), config);
+    return useQuery("PRODUCT_PRICES", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "ProductName"), config);
   };
 
   switch (type) {

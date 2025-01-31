@@ -15,6 +15,7 @@ import {useParams} from "react-router-dom";
 
 import get from "lodash/get";
 import { size } from "lodash";
+import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
 
 /**
  * `WTApplicationDetails` is a React component that fetches and displays detailed information for a specific Water Tanker (WT) service application.
@@ -111,6 +112,7 @@ const WTApplicationDetails = () => {
               <Row className="border-none" label={t("WT_ADDRESS_LINE2")} text={wt_details?.address?.addressLine2 || t("CS_NA")} />
               <Row className="border-none" label={t("WT_LANDMARK")} text={wt_details?.address?.landmark || t("CS_NA")} />
             </StatusTable>
+            <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
           {showToast && (
             <Toast
               error={showToast.key}

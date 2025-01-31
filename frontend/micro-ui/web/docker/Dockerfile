@@ -25,6 +25,8 @@ RUN yarn add @nudmcdgnpm/upyog-ui-module-chb
 RUN yarn add @nudmcdgnpm/upyog-ui-module-sv
 RUN yarn add @nudmcdgnpm/upyog-ui-module-asset
 RUN yarn add @nudmcdgnpm/upyog-ui-module-ew
+RUN yarn add @nudmcdgnpm/upyog-ui-module-vendor
+RUN yarn add @nudmcdgnpm/upyog-ui-module-wt
 
 ARG WORK_DIR
 WORKDIR /app

@@ -110,7 +110,7 @@ useEffect(() => {
                 message={uploadedFiles[index] ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
                 textStyles={{ width: "100%" }}
                 inputStyles={{ width: "280px" }}
-                accept=".pdf, .jpeg, .jpg, .png"
+                accept=".png"
                 buttonType="button"
                 error={!uploadedFiles[index]}
               />

@@ -152,8 +152,25 @@ public class EwasteConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
+	
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+	
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Endpoint;
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
+	
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+	
+	@PostConstruct
+	public void init() {
+		if (mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsEndpoint = mdmsV2Endpoint;
+		}
+	}
 
 }

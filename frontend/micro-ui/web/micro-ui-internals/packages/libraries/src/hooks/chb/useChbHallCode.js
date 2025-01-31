@@ -1,14 +1,12 @@
 import { useQuery } from "react-query";
-import { MdmsService } from "../../services/elements/MDMS";
 
 const useHallCode = (tenantId, moduleCode, type, config = {}) => {
   const usehallCode = () => {
-    return useQuery("HALL_CODE", () => MdmsService.getChbHallCode(tenantId, moduleCode ,type), config);
+    return useQuery("HALL_CODE", () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "HallCode", "CHB_HALL_CODE_", "i18nKey"), config);
   };
   
-
   switch (type) {
-    case "ChbHallCode":
+    case "HallCode":
       return usehallCode();
     default:
       return null;

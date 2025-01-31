@@ -56,6 +56,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [approvers, setApprovers] = useState([]);
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [error, setError] = useState(null);
  
 
   
@@ -92,7 +93,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   
 
   function submit(data) {
-      let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
+      let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
       if (uploadedFile)
         workflow["documents"] = [
           {
@@ -124,7 +125,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       );
       
     }
-    }, [action, approvers, uploadedFile]);
+    },[action, approvers, uploadedFile]);
 
   return action && config.form ? (
     <Modal
