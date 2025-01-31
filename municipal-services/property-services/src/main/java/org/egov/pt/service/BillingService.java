@@ -20,10 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class BillingService {
 	
-	@Value("${egbs.host}")
+	@Value("${egov.bill.context.host}")
 	private String billingHost;
 	
-	@Value("${egbs.fetchbill.endpoint}")
+	@Value("${egov.bill.endpoint.fetch}")
 	private String fetchBillEndpoint;
 	
 	@Autowired

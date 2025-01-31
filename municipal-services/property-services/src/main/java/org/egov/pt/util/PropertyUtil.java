@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -140,6 +141,9 @@ public class PropertyUtil extends CommonUtils {
 
 		wf.setBusinessId(property.getAcknowldgementNumber());
 		wf.setTenantId(property.getTenantId());
+		
+		Set<String> userRoles = request.getRequestInfo().getUserInfo().getRoles().stream().map(Role::getCode)
+				.collect(Collectors.toSet());
 
 		switch (creationReasonForWorkflow) {
 
@@ -151,9 +155,19 @@ public class PropertyUtil extends CommonUtils {
 					wf.setAction(response.get("initialAction").toString());
 				}
 				else{
-					wf.setBusinessService(configs.getCreatePTWfName());
-					wf.setModuleName(configs.getPropertyModuleName());
-					wf.setAction("OPEN");
+//					wf.setBusinessService(configs.getCreatePTWfName());
+//					wf.setModuleName(configs.getPropertyModuleName());
+//					wf.setAction("OPEN");
+					if (userRoles.contains(PTConstants.USER_ROLE_CITIZEN)) {
+						wf.setBusinessService(PTConstants.BUSINESS_SERVICE_PROPERTY_CITIZEN);
+						wf.setModuleName(PTConstants.MODULE_PROPERTY);
+						wf.setAction("INITIATE");
+					} else {
+						wf.setBusinessService(PTConstants.BUSINESS_SERVICE_PROPERTY_EMPLOYEE);
+						wf.setModuleName(PTConstants.MODULE_PROPERTY);
+						wf.setAction("INITIATE");
+					}
+					request.getProperty().setBusinessService(wf.getBusinessService());
 				}
 				break;
 
@@ -230,8 +244,8 @@ public class PropertyUtil extends CommonUtils {
 
 		Object res = null;
 
-		StringBuilder uri = new StringBuilder(configs.getEgbsHost())
-				.append(configs.getEgbsFetchBill())
+		StringBuilder uri = new StringBuilder(configs.getBillHost())
+				.append(configs.getFetchBillEndpoint())
 				.append("?tenantId=").append(tenantId)
 				.append("&consumerCode=").append(propertyId)
 				.append("&businessService=").append(ASMT_MODULENAME);

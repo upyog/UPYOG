@@ -80,5 +80,10 @@ public class PropertyCriteria {
 
 	@Builder.Default
 	private Boolean isRequestForOldDataEncryption = false;
+	
+	private Set<String> createdBy;
+	 
+	@Builder.Default
+	private Boolean isSchedulerCall = false;
 
 }

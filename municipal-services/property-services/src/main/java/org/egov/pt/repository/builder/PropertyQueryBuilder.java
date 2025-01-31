@@ -1,10 +1,12 @@
 package org.egov.pt.repository.builder;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.config.PropertyConfiguration;
@@ -49,7 +51,7 @@ public class PropertyQueryBuilder {
 	// Select query
 
 	private static String propertySelectValues = "property.id as pid, property.propertyid, property.tenantid as ptenantid, surveyid, accountid, oldpropertyid, property.status as propertystatus, acknowldgementnumber, propertytype, ownershipcategory,property.usagecategory as pusagecategory, creationreason, nooffloors, landarea, property.superbuiltuparea as propertysbpa, linkedproperties, source, channel, property.createdby as pcreatedby, property.lastmodifiedby as plastmodifiedby, property.createdtime as pcreatedtime,"
-			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder, ";
+			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails, property.business_service as pbusiness_service, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder, ";
 
 	private static String addressSelectValues = "address.tenantid as adresstenantid, address.id as addressid, address.propertyid as addresspid, latitude, longitude, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, address.createdby as addresscreatedby, address.lastmodifiedby as addresslastmodifiedby, address.createdtime as addresscreatedtime, address.lastmodifiedtime as addresslastmodifiedtime, address.additionaldetails as addressadditionaldetails, ";
 
@@ -61,7 +63,7 @@ public class PropertyQueryBuilder {
 
 	private static String ownerDocSelectValues = " owndoc.id as owndocid, owndoc.tenantid as owndoctenantid, owndoc.entityid as owndocentityId, owndoc.documenttype as owndoctype, owndoc.filestoreid as owndocfilestore, owndoc.documentuid as owndocuid, owndoc.status as owndocstatus, ";
 
-	private static String UnitSelectValues = "unit.id as unitid, unit.tenantid as unittenantid, unit.propertyid as unitpid, floorno, unittype, unit.usagecategory as unitusagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, unit.superbuiltuparea as unitspba, arv, constructiontype, constructiondate, dimensions, unit.active as isunitactive, unit.createdby as unitcreatedby, unit.createdtime as unitcreatedtime, unit.lastmodifiedby as unitlastmodifiedby, unit.lastmodifiedtime as unitlastmodifiedtime ";
+	private static String UnitSelectValues = "unit.id as unitid, unit.tenantid as unittenantid, unit.propertyid as unitpid, floorno, unittype, unit.usagecategory as unitusagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, unit.superbuiltuparea as unitspba, arv, constructiontype, constructiondate, dimensions, unit.active as isunitactive, unit.createdby as unitcreatedby, unit.createdtime as unitcreatedtime, unit.lastmodifiedby as unitlastmodifiedby, unit.lastmodifiedtime as unitlastmodifiedtime, unit.additional_details as unitadditional_details ";
 
 	private static final String TOTAL_APPLICATIONS_COUNT_QUERY = "select count(*) from eg_pt_property where tenantid = ?;";
 	
@@ -251,8 +253,8 @@ public class PropertyQueryBuilder {
 		else
 			preparedStmtList.add("%" + criteria.getPropertyType().toUpperCase() + "%");
 		preparedStmtList.add(criteria.getLocality());
-		preparedStmtList.add(Status.ACTIVE.toString());
-		preparedStmtList.add(Status.ACTIVE.toString());
+//		preparedStmtList.add(Status.ACTIVE.toString());
+//		preparedStmtList.add(Status.ACTIVE.toString());
 		preparedStmtList.add(currYearS);
 
 		return builder.toString();
@@ -297,7 +299,7 @@ public class PropertyQueryBuilder {
 				&& StringUtils.isNotEmpty(criteria.getTenantId());
 		
 		
-		if(isEmpty)
+		if(isEmpty && !criteria.getIsSchedulerCall())
 			throw new CustomException("EG_PT_SEARCH_ERROR"," No criteria given for the property search");
 		
 		StringBuilder builder = new StringBuilder();
@@ -305,18 +307,18 @@ public class PropertyQueryBuilder {
 		//if(!isOnlyTenantId) 
 			 
 		
-		 if (onlyIds)
-			builder.append(ID_QUERY);
-		
-		else if (criteria.getIsRequestForCount()) 
-			builder.append(COUNT_QUERY);
-			
-		else if(isOnlyTenantId) {
-			builder.append(BASE_QUERY);
-		 	log.info("The Base query is :"+builder);
-		}
-			
-		else
+//		 if (onlyIds)
+//			builder.append(ID_QUERY);
+//		
+//		else if (criteria.getIsRequestForCount()) 
+//			builder.append(COUNT_QUERY);
+//			
+//		else if(isOnlyTenantId) {
+//			builder.append(BASE_QUERY);
+//		 	log.info("The Base query is :"+builder);
+//		}
+//			
+//		else
 		 builder.append(QUERY);
 		 
 			  
@@ -415,7 +417,7 @@ public class PropertyQueryBuilder {
 
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
+			addToPreparedStatement(preparedStmtList, propertyIds);
 		}
 		
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
@@ -423,7 +425,7 @@ public class PropertyQueryBuilder {
 
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
-			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
+			addToPreparedStatement(preparedStmtList, acknowledgementIds);
 		}
 		
 		Set<String> uuids = criteria.getUuids();
@@ -442,24 +444,35 @@ public class PropertyQueryBuilder {
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
 		}
 		
+		if (!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+		}
+		
 		/* 
 		 * Condition to evaluate if owner is active.
 		 * Inactive owners should never be shown in results
 		*/
 		
-		addClauseIfRequired(preparedStmtList,builder);
-		if(isOnlyTenantId) {
-		builder.append("property.status = ?");
-		}
-		else
-		builder.append("owner.status = ?");
-		preparedStmtList.add(Status.ACTIVE.toString());
+//		if (!CollectionUtils.isEmpty(criteria.getStatus())) {
+//			Set<String> statuses = criteria.getStatus().stream().map(Status::name).collect(Collectors.toSet());
+//			addClauseIfRequired(preparedStmtList, builder);
+//			builder.append("property.status IN (").append(createQuery(statuses)).append(")");
+//			addToPreparedStatement(preparedStmtList, statuses);
+//		if(isOnlyTenantId) {
+//		builder.append("property.status = ?");
+//		}
+//		else
+//		builder.append("owner.status = ?");
+//		preparedStmtList.add(Status.ACTIVE.toString());
+//		}
 	
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
-		if (onlyIds || criteria.getIsRequestForCount() || StringUtils.isNotEmpty(criteria.getTenantId()))
-			return builder.toString();
-		else 
+//		if (onlyIds || criteria.getIsRequestForCount() || StringUtils.isNotEmpty(criteria.getTenantId()))
+//			return builder.toString();
+//		else 
 			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
 	}
 

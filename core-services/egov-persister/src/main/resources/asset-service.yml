@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-asset-assetdetails
    isTransaction: true
    queryMaps:
-     - query: INSERT INTO eg_asset_assetdetails (id, bookrefno, name, description, classification, parentcategory, category, subcategory, department, applicationno, approvalno, tenantid, status, action, businessservice, additionaldetails, assetDetails, createdtime, lastmodifiedtime, approvaldate, applicationdate, accountid, createdby, lastmodifiedby, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+     - query: INSERT INTO eg_asset_assetdetails (id, bookrefno, name, description, classification, parentcategory, category, subcategory, department, applicationno, approvalno, tenantid, status, action, businessservice, additionaldetails, assetDetails, createdtime, lastmodifiedtime, approvaldate, applicationdate, accountid, createdby, lastmodifiedby, remarks,financialyear, sourceoffinance,bookingstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?);
 
        basePath: Asset
        jsonMaps:
@@ -65,6 +65,12 @@ serviceMaps:
         - jsonPath: $.Asset.auditDetails.lastModifiedBy
 
         - jsonPath: $.Asset.remarks
+
+        - jsonPath: $.Asset.sourceOfFinance
+
+        - jsonPath: $.Asset.financialYear
+        
+        - jsonPath: $.Asset.bookingStatus
 
 
      - query: INSERT INTO eg_asset_addressdetails (tenantid, doorno, latitude, longitude, addressid, addressnumber, type, addressline1, addressline2, landmark, city, pincode, detail, buildingname, street, locality_code, locality_name, locality_label, locality_latitude, locality_longitude, locality_materializedpath, asset_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -185,7 +191,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-    - query: UPDATE eg_asset_assetdetails SET bookrefno=?, name=?, description=?, classification=?, parentcategory=?, category=?, subcategory=?, department=?,  status=?, action=?, additionaldetails=?::JSONB, assetdetails=?::JSONB,lastmodifiedtime=?, approvaldate=?, accountid=?, lastmodifiedby=?, remarks=? WHERE id=?;
+    - query: UPDATE eg_asset_assetdetails SET bookrefno=?, name=?, description=?, classification=?, parentcategory=?, category=?, subcategory=?, department=?,  status=?, action=?, additionaldetails=?::JSONB, assetdetails=?::JSONB,lastmodifiedtime=?, approvaldate=?, accountid=?, lastmodifiedby=?, remarks=? , financialyear=?, sourceoffinance=?, bookingstatus=? WHERE id=?;
 
       basePath: Asset.*
       jsonMaps:
@@ -228,6 +234,12 @@ serviceMaps:
 
        - jsonPath: $.Asset.*.remarks
 
+       - jsonPath: $.Asset.*.financialYear
+
+       - jsonPath: $.Asset.*.sourceOfFinance
+       
+       - jsonPath: $.Asset.*.bookingStatus
+    
        - jsonPath: $.Asset.*.id
 
 

@@ -31,6 +31,7 @@ import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionDetailsCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.egov.pg.web.models.TransactionRequestV2;
+import org.egov.pg.service.gateways.paytm.PaymentStatusResponse;
 import org.egov.pg.web.models.TransactionResponseV2;
 import org.egov.pg.web.models.User;
 import org.egov.tracer.model.CustomException;
@@ -328,5 +329,6 @@ public class TransactionServiceV2 {
 				.totalPayableAmount(totalPayableAmount).callbackUrl(callbackUrl).orderIdArray(orderIdArray)
 				.consumerCodeArray(consumerCodeArray).user(user).build();
 	}
+
 
 }

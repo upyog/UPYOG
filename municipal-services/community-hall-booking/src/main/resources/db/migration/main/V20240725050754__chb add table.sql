@@ -13,7 +13,7 @@ create table  IF NOT EXISTS eg_chb_booking_detail_init(
 );
 
 
-create table eg_chb_booking_detail(
+create table IF NOT EXISTS eg_chb_booking_detail(
   booking_id character varying(64) NOT NULL,
   booking_no character varying(64) UNIQUE,
   payment_date bigint,
@@ -41,7 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_createdBy ON eg_chb_booking
 CREATE INDEX IF NOT EXISTS idx_eg_chb_booking_detail_tenant_id ON eg_chb_booking_detail(tenant_id);
 
 
-create table eg_chb_booking_detail_audit(
+create table IF NOT EXISTS eg_chb_booking_detail_audit(
   booking_id character varying(64) NOT NULL,
   booking_no character varying(64),
   payment_date bigint,
@@ -61,7 +61,7 @@ create table eg_chb_booking_detail_audit(
   payment_receipt_filestore_id character varying(64)
 );
 
-create table eg_chb_slot_detail(
+create table  IF NOT EXISTS eg_chb_slot_detail(
    slot_id character varying(64) NOT NULL,
    booking_id character varying(64) NOT NULL,
    hall_code character varying(64) NOT NULL,
@@ -81,7 +81,7 @@ create table eg_chb_slot_detail(
      ON DELETE NO ACTION
 );
 
-create table eg_chb_slot_detail_audit(
+create table IF NOT EXISTS eg_chb_slot_detail_audit(
    slot_id character varying(64) NOT NULL,
    booking_id character varying(64) NOT NULL,
    hall_code character varying(64) NOT NULL,
@@ -102,7 +102,7 @@ CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_hall_code ON eg_chb_slot_detai
 CREATE INDEX IF NOT EXISTS idx_eg_chb_slot_detail_booking_id ON eg_chb_slot_detail(booking_id);
 
 
-create table eg_chb_applicant_detail(
+create table IF NOT EXISTS eg_chb_applicant_detail(
    applicant_detail_id character varying(64) NOT NULL,
    booking_id character varying(64) NOT NULL,
    applicant_name  character varying(300) NOT NULL,
@@ -130,7 +130,7 @@ create table eg_chb_applicant_detail(
 CREATE INDEX IF NOT EXISTS idx_eg_chb_applicant_detail_booking_id ON eg_chb_applicant_detail(booking_id);
 CREATE INDEX IF NOT EXISTS idx_eg_chb_applicant_detail_applicant_mobile_no ON eg_chb_applicant_detail(applicant_mobile_no);
 
-create table  eg_chb_document_detail(
+create table IF NOT EXISTS eg_chb_document_detail(
     document_detail_id character varying(64)  NOT NULL,
     booking_id character varying(64)  NOT NULL,
     document_type character varying(64),
@@ -148,7 +148,7 @@ create table  eg_chb_document_detail(
 
 CREATE INDEX IF NOT EXISTS idx_eg_chb_document_detail_booking_id ON eg_chb_document_detail(booking_id);
 
-create table eg_chb_address_detail (
+create table IF NOT EXISTS eg_chb_address_detail (
     address_id character varying(64)  NOT NULL,
     applicant_detail_id character varying(64)  NOT NULL,  -- Foreign Key
     door_no character varying(100),

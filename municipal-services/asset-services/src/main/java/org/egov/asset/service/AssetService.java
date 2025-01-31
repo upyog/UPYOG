@@ -128,28 +128,34 @@ public class AssetService {
 
 	public List<AssetDTO> search(AssetSearchCriteria criteria, RequestInfo requestInfo) {
 		List<Asset> assets = new LinkedList<>();
-		assetValidator.validateSearch(requestInfo, criteria);
+		//assetValidator.validateSearch(requestInfo, criteria);
 		List<String> roles = new ArrayList<>();
 		for (Role role : requestInfo.getUserInfo().getRoles()) {
 			roles.add(role.getCode());
 		}
-		List<String> listOfStatus = getAccountStatusListByRoles(criteria.getTenantId(),
-				requestInfo.getUserInfo().getRoles());
-		if (CollectionUtils.isEmpty(listOfStatus)) {
-			throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
-					"Search can't be performed by this Employee due to lack of roles.");
-		}
+		
 		// if ((criteria.tenantIdOnly() || criteria.isEmpty()) &&
 		// roles.contains(AssetConstants.ASSET_INITIATOR)) {
-		criteria.setListOfstatus(listOfStatus);
-
-		if ((/* criteria.tenantIdOnly() || */ criteria.isEmpty())) {
-			log.debug("loading data of created and by me");
-			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
-			log.debug("no of assets retuning by the search query" + assets.size());
-		} else if (roles.contains(AssetConstants.EMPLOYEE)) {
-
-			criteria.setCreatedBy(null);
+		
+//		if ((criteria.tenantIdOnly() ||  criteria.isEmpty())) {
+//			log.debug("loading data of created and by me");
+//			assets = this.getAssetCreatedForByMe(criteria, requestInfo);
+//			log.debug("no of assets retuning by the search query" + assets.size());
+//		} else 
+		if (roles.contains(AssetConstants.EMPLOYEE)) {
+			List<String> listOfStatus = getAccountStatusListByRoles(criteria.getTenantId(),
+					requestInfo.getUserInfo().getRoles());
+			 if (CollectionUtils.isEmpty(listOfStatus)) {
+			 	throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
+			 			"Search can't be performed by this Employee due to lack of roles.");
+			 }
+			 criteria.setListOfstatus(listOfStatus);
+			 criteria.setCreatedBy(null);
+			 assets = getAssetsFromCriteria(criteria);
+		} else if (roles.contains(AssetConstants.CITIZEN)) {
+			criteria.setStatus("APPROVED");
+//			criteria.setBookingStatus("AVAILABLE");
+			
 			assets = getAssetsFromCriteria(criteria);
 		} else {
 			assets = getAssetsFromCriteria(criteria);
@@ -486,11 +492,13 @@ public class AssetService {
 			validateAssetUpdateRequest(assetRequest);
 			appNoToSiteBookingMap = searchAssetFromRequest(assetRequest);
 			assetRequest = validateAndEnrichUpdateAsset(assetRequest, appNoToSiteBookingMap);
-			workflowService.updateWorkflowForAssetUpdate(assetRequest, CreationReason.UPDATE);
+			if (!AssetConstants.BOOKING_BOOKED_STATUS.equals(assetRequest.getAssetUpdate().get(0).getBookingStatus())) {
+				workflowService.updateWorkflowForAssetUpdate(assetRequest, CreationReason.UPDATE);
+			}
 			assetRepository.updateAsset(assetRequest);
 
 		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 		return assetRequest.getAssetUpdate();
 	}

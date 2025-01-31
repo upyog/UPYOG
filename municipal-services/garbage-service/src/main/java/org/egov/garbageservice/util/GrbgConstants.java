@@ -2,13 +2,11 @@ package org.egov.garbageservice.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import lombok.Data;
 
 @Data
 @Component

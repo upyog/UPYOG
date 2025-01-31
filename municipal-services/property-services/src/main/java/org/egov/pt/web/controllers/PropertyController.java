@@ -28,6 +28,7 @@ import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
+import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,13 +153,15 @@ public class PropertyController {
 		} else {
 			properties = propertyService.searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo());
 		}
-
+		
 		log.info("Property count after search" + properties.size());
 
 		PropertyResponse response = PropertyResponse
 				.builder().responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-				.properties(properties).count(count).build();
+				.properties(properties).count(properties.size()).build();
+		
+		propertyService.setAllCount(properties, response);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -259,6 +262,17 @@ public class PropertyController {
 		} else {
 			return new ResponseEntity("Provide parameter to be fetched in URL.", HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@PostMapping(value = "/_updateStatus")
+	public ResponseEntity<PropertyResponse> updateStatus(@Valid @RequestBody PropertyStatusUpdateRequest request) {
+
+		Property property = propertyService.updateStatus(request);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+		PropertyResponse response = PropertyResponse.builder().properties(Arrays.asList(property)).responseInfo(resInfo)
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
 	}
 
 }

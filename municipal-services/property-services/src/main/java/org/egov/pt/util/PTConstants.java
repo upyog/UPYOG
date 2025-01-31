@@ -457,6 +457,32 @@ public class PTConstants {
     public static final String CREATIONREASON_REPLACE = "$creationReason";
 
     public static final String TRANSACTIONID_REPLACE = "{TRANSACTION_ID}";
+    
+    public static final String BUSINESS_SERVICE_PROPERTY_CITIZEN = "PROPERTY_CITIZEN";
+    public static final String BUSINESS_SERVICE_PROPERTY_EMPLOYEE = "PROPERTY_EMPLOYEE";
+    
+    public static final String MODULE_PROPERTY= "PROPERTY";
+    
+    public static final String USER_ROLE_CITIZEN= "CITIZEN";
+    public static final String USER_ROLE_EMPLOYEE= "EMPLOYEE";
+    
+    public static final String USER_TYPE_CITIZEN = "CITIZEN";
+	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
+	
+	public static final String USER_ROLE_PROPERTY_VERIFIER = "PROPERTY_VERIFIER";
+	public static final String USER_ROLE_PROPERTY_APPROVER = "PROPERTY_APPROVER";
+	
+	public static final String MDMS_MODULE_ULBS = "ULBS";
 
+	public static final String MDMS_MASTER_DETAILS_ZONES = "Zones";
+	public static final String MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE = "BuildingStructure";
+	public static final String MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR = "BuildingEstablishmentYear";
+	public static final String MDMS_MASTER_DETAILS_BUILDINGPURPOSE = "BuildingPurpose";
+	public static final String MDMS_MASTER_DETAILS_BUILDINGUSE = "BuildingUse";
+
+	public static final String MDMS_MODULE_ACTIVE_FILTER = "[?(@.active == true)]";
+	
+	public static final String PROPERTY_TAX_HEAD_MASTER_CODE = "LCF.Property_Tax_Collection_Fee";
+	
 }
 

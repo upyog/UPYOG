@@ -47,4 +47,7 @@ public class BookingSlotDetail {
 	
 	private AuditDetails auditDetails;
 	
+	@NotBlank
+	private String bookingToDate = null;
+	
 }

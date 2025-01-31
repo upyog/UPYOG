@@ -6,15 +6,18 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.UpdateRequest;
 import org.egov.user.domain.model.UpdateResponse;
 import org.egov.user.domain.model.User;
+import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.LoginService;
@@ -36,6 +39,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -252,6 +256,24 @@ public class UserController {
 
 		Object response = loginService.employeeUserLogin(loginRequest);
 		return response;
+	}
+	
+	
+	@GetMapping("/login/_uuid")
+	public ResponseEntity<?>  getTokenAfterOtp(@RequestParam(value = "uuid") String uuid) {
+		if (StringUtils.isEmpty(uuid)) {
+			throw new RuntimeException("LoginFaild login failed.");
+		}
+		
+	    List<String> users = new ArrayList<>();
+	    users.add(uuid);
+	    UserSearchCriteria searchCriteria = new UserSearchCriteria();
+	    searchCriteria.setUuid(users);
+	    searchCriteria.setTenantId("hp");
+	    searchCriteria.setType(UserType.CITIZEN);
+        List<User> userModels = userService.searchUsers(searchCriteria, true, new RequestInfo());
+		Object loginResponse = userService.getLoginAccess(userModels.get(0), userModels.get(0).getPassword());
+		return new ResponseEntity<Object>(loginResponse, HttpStatus.OK);
 	}
 
 }

@@ -3,7 +3,6 @@ package org.egov.demand.model;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BillSearchCriteria {
 
-	@NotNull
 	@Size(max = 256)
 	private String tenantId;
 

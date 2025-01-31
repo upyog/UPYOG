@@ -6,6 +6,9 @@ import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +71,12 @@ public class ApplicantDetail   {
     private String refundStatus;
     
     private AuditDetails auditDetails;
+    
+    
+    @JsonProperty("additionalDetails")
+	private Object additionalDetails;
+    
+
     
 }
 
