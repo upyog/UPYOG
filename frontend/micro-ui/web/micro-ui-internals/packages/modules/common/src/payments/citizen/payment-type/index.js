@@ -57,6 +57,7 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
+  sessionStorage.setItem("payerName", billDetails?.payerName)
 
   const onSubmit = async (d) => {
     const filterData = {
