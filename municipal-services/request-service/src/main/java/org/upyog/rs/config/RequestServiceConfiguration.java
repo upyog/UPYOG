@@ -1,5 +1,7 @@
 package org.upyog.rs.config;
 
+import javax.annotation.PostConstruct;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
@@ -46,7 +48,7 @@ public class RequestServiceConfiguration {
 	// Kafka topics for saving street vending data
 	@Value("${persister.create.water-tanker.topic}")
 	private String waterTankerApplicationSaveTopic;
-	
+
 	@Value("${persister.update.water-tanker.topic}")
 	private String waterTankerApplicationUpdateTopic;
 
@@ -56,21 +58,21 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
-	
+
 	@Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
+	private String urlShortnerHost;
 
-    @Value("${egov.url.shortner.endpoint}")
-    private String urShortnerPath;
-    
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
+	@Value("${egov.url.shortner.endpoint}")
+	private String urShortnerPath;
 
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
 
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
+	@Value("${egov.user.search.path}")
+	private String userSearchEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
 
 	// Pagination config for search results
 	@Value("${upyog.request.service.default.limit}")
@@ -82,5 +84,39 @@ public class RequestServiceConfiguration {
 	@Value("${upyog.request.service.max.limit}")
 	private Integer maxSearchLimit;
 
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
 
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndpoint;
+
+	@Value("${upyog.mdms.v2.host}")
+	private String mdmsV2Host;
+
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Endpoint;
+
+	@Value("${upyog.mdms.v2.enabled}")
+	private boolean mdmsV2Enabled;
+
+	@PostConstruct
+	public void init() {
+		if (mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsEndpoint = mdmsV2Endpoint;
+		}
+	}
+
+	// Billing Service configs
+	@Value("${egov.billingservice.host}")
+	private String billingHost;
+
+	@Value("${egov.demand.create.endpoint}")
+	private String demandCreateEndpoint;
+
+	@Value("${egov.demand.update.endpoint}")
+	private String demandUpdateEndpoint;
+
+	@Value("${egov.demand.search.endpoint}")
+	private String demandSearchEndpoint;
 }

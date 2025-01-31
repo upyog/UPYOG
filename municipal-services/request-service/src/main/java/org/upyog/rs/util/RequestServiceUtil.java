@@ -4,11 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.springframework.stereotype.Component;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.ResponseInfo;
 import org.upyog.rs.web.models.ResponseInfo.StatusEnum;
@@ -18,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
+@Component
 public class RequestServiceUtil {
 	
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
@@ -134,4 +139,19 @@ public class RequestServiceUtil {
         return monthsAgo;
 	}
 
+	public static long getFinancialYearEnd() {
+
+		YearMonth currentYearMonth = YearMonth.now();
+		int year = currentYearMonth.getYear();
+		int month = currentYearMonth.getMonthValue();
+
+		// If current month is Jan-March, end year should be current year
+		if (month < Month.APRIL.getValue()) {
+			year -= 1;
+		}
+
+		LocalDateTime endOfYear = LocalDateTime.of(year + 1, Month.MARCH, 31, 23, 59, 59, 999000000);
+		return endOfYear.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+	}
 }
