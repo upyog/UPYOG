@@ -720,10 +720,10 @@ public class GarbageAccountService {
 		grbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 		// generate QR code from attributes
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
-		uri.append("payments");
-		String qr = GarbageAccount.getPropertyId().concat(":").concat(GarbageAccount.getGarbageId().toString())
-				.concat(":").concat(GarbageAccount.getCreated_by());
-		uri.append("?id=").append(Base64.getEncoder().encodeToString(qr.getBytes()));
+		uri.append("citizen-payment");
+		String qr = requestInfo.getUserInfo().getUuid().concat("/").concat(GarbageAccount.getUuid())
+				.concat("/").concat(GarbageAccount.getPropertyId());
+		uri.append("?id=").append(qr);
 		grbObject.put("qrCodeText", uri);
 		return grbObject;
 	}
