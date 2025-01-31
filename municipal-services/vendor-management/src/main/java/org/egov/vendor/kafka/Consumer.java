@@ -1,7 +1,7 @@
 package org.egov.vendor.kafka;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.vendor.repository.VendorRepository;
+import org.egov.vendor.repository.VendorAdditionalDetailsRepository;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.vendor.web.models.VendorAdditionalDetails;
@@ -14,9 +14,9 @@ import org.springframework.messaging.handler.annotation.Header;
 @Component
 public class Consumer {
 
-    private final VendorRepository vendorRepository;
+    private final VendorAdditionalDetailsRepository vendorRepository;
 
-    public Consumer(VendorRepository contractorRepository, ObjectMapper objectMapper) {
+    public Consumer(VendorAdditionalDetailsRepository contractorRepository, ObjectMapper objectMapper) {
         this.vendorRepository = contractorRepository;
     }
 

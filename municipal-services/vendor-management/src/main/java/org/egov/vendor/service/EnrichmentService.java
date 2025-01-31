@@ -55,6 +55,7 @@ public class EnrichmentService {
                 if (document.getDocumentId() == null) {
                     document.setDocumentId(UUID.randomUUID().toString());
                     document.setDocumentUid(UUID.randomUUID().toString());
+                    document.setVendorAdditionalDetailsId(request.getVendorAdditionalDetails().getVendorAdditionalDetailsId());
                 }
             });
         }

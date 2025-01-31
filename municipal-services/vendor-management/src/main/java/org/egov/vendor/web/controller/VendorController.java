@@ -2,12 +2,10 @@
 package org.egov.vendor.web.controller;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.vendor.repository.dto.VendorDetailsDTO;
 import org.egov.vendor.utils.ResponseInfoFactory;
-import org.egov.vendor.web.models.SearchCriteria;
-import org.egov.vendor.web.models.VendorAdditionalDetails;
+import org.egov.vendor.web.models.*;
 import org.egov.vendor.service.VendorService;
-import org.egov.vendor.web.models.VendorAdditionalDetailsRequest;
-import org.egov.vendor.web.models.VendorAdditionalDetailsResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -81,4 +79,24 @@ public class VendorController {
         // Return the response with HTTP status OK
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/vendorPlusAdditional/_search")
+    public ResponseEntity<VendorPlusAdditionalDetailsResponse> searchVendorsAndDetails(
+            @RequestBody RequestInfoWrapper request,
+            @Valid @ModelAttribute SearchCriteria searchCriteria) {
+
+        // Perform the search using the search criteria and request info
+        List<VendorDetailsDTO> vendorDetails = contractorService.searchVendorsAndDetails(searchCriteria, request.getRequestInfo());
+
+        // Build the response
+        VendorPlusAdditionalDetailsResponse response = VendorPlusAdditionalDetailsResponse.builder()
+                .vendorDetailsDTO(vendorDetails)
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
+                .build();
+
+         //Return the response with HTTP status OK
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 }
