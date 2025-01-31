@@ -721,9 +721,9 @@ public class GarbageAccountService {
 		// generate QR code from attributes
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
 		uri.append("citizen-payment");
-		String qr = requestInfo.getUserInfo().getUuid().concat("/").concat(GarbageAccount.getUuid())
+		String qr = GarbageAccount.getCreated_by().concat("/").concat(GarbageAccount.getUuid())
 				.concat("/").concat(GarbageAccount.getPropertyId());
-		uri.append("?id=").append(qr);
+		uri.append("/").append(qr);
 		grbObject.put("qrCodeText", uri);
 		return grbObject;
 	}
