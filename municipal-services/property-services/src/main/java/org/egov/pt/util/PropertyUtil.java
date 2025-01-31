@@ -167,6 +167,7 @@ public class PropertyUtil extends CommonUtils {
 						wf.setModuleName(PTConstants.MODULE_PROPERTY);
 						wf.setAction("INITIATE");
 					}
+					request.getProperty().setBusinessService(wf.getBusinessService());
 				}
 				break;
 
@@ -243,8 +244,8 @@ public class PropertyUtil extends CommonUtils {
 
 		Object res = null;
 
-		StringBuilder uri = new StringBuilder(configs.getEgbsHost())
-				.append(configs.getEgbsFetchBill())
+		StringBuilder uri = new StringBuilder(configs.getBillHost())
+				.append(configs.getFetchBillEndpoint())
 				.append("?tenantId=").append(tenantId)
 				.append("&consumerCode=").append(propertyId)
 				.append("&businessService=").append(ASMT_MODULENAME);
