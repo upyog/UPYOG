@@ -1,20 +1,17 @@
 package org.egov.vendor.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.vendor.repository.VendorRepository;
+import org.egov.vendor.repository.VendorAdditionalDetailsRepository;
 import org.egov.vendor.web.models.AuditDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
 
 @Component
 @Slf4j
 public class VendorUtil {
 
     @Autowired
-    private VendorRepository assetRepository;
+    private VendorAdditionalDetailsRepository assetRepository;
 
     /**
      * Method to return auditDetails for create/update flows.

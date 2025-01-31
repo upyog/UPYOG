@@ -25,6 +25,4 @@ public class VendorManagementApplication {
         SpringApplication.run(VendorManagementApplication.class, args);
     }
 
-
-
 }
