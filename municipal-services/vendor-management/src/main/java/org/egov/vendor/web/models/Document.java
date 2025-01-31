@@ -45,8 +45,8 @@ public class Document {
     @Column(name = "documentUid")
     private String documentUid = null;
 
-//    @Column(name = "vendor_additional_details_id", nullable = false)
-//    private String vendorAdditionalDetailsId;
+    @Column(name = "vendor_additional_details_id", nullable = false)
+    private String vendorAdditionalDetailsId;
 
 }
 

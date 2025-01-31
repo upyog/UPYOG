@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
@@ -19,15 +20,19 @@ import java.util.Objects;
 public class AuditDetails {
 
 	@JsonProperty("createdBy")
+	@Column(name = "createdby", length = 64)
 	private String createdBy = null;
 
 	@JsonProperty("lastModifiedBy")
+	@Column(name = "lastmodifiedby", length = 64)
 	private String lastModifiedBy = null;
 
 	@JsonProperty("createdTime")
+	@Column(name = "createdtime")
 	private Long createdTime = null;
 
 	@JsonProperty("lastModifiedTime")
+	@Column(name = "lastmodifiedtime")
 	private Long lastModifiedTime = null;
 
 	public AuditDetails createdBy(String createdBy) {
