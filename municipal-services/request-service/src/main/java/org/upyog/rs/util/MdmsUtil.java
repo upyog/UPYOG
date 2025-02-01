@@ -1,79 +1,138 @@
 package org.upyog.rs.util;
 
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
 import org.egov.mdms.model.ModuleDetail;
-
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.upyog.rs.config.RequestServiceConfiguration;
+import org.upyog.rs.constant.RequestServiceConstants;
+import org.upyog.rs.repository.ServiceRequestRepository;
+import org.upyog.rs.web.models.billing.CalculationType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Slf4j
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+	@Autowired
+	private ServiceRequestRepository restRepo;
 
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
+	@Autowired
+	private ObjectMapper mapper;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsUrl;
+	@Autowired
+	private RequestServiceConfiguration config;
 
-    @Value("${egov.mdms.master.name}")
-    private String masterName;
+	public List<CalculationType> getCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
 
-    @Value("${egov.mdms.module.name}")
-    private String moduleName;
+		List<CalculationType> calculationTypes = new ArrayList<CalculationType>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndpoint());
 
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestCalculationType(requestInfo, tenantId, moduleName);
+		MdmsResponse mdmsResponse = mapper.convertValue(restRepo.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
 
-    public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost).append(mdmsUrl);
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
-        Object response = new HashMap<>();
-        Integer rate = 0;
-        try {
-            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
-        }catch(Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ",e);
-        }
-        //log.info(ulbToCategoryListMap.toString());
-        return rate;
-    }
+		if (mdmsResponse.getMdmsRes().get(RequestServiceConstants.MDMS_MODULE_NAME) == null) {
+			throw new CustomException("FEE_NOT_AVAILABLE", "Water Tank fee not available.");
+		}
+		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(RequestServiceConstants.MDMS_MODULE_NAME)
+				.get(RequestServiceConstants.MDMS_TANKER_CALCULATION_TYPE);
 
-    private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(masterName);
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        masterDetailList.add(masterDetail);
+		try {
+			calculationTypes = mapper.readValue(jsonArray.toJSONString(),
+					mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+		} catch (JsonProcessingException e) {
+			log.info("Exception occured while converting calculation type  for tanker request: " + e);
+		}
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+		return calculationTypes;
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+	}
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
+	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
 
-        return mdmsCriteriaReq;
-    }
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(RequestServiceConstants.MDMS_TANKER_CALCULATION_TYPE);
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
+	}
+
+	/*********************** MDMS Utitlity Methods *****************************/
+
+	/**
+	 * Fetches all the values of particular attribute as map of fieldname to list
+	 *
+	 * @param tenantId    tenantId from water tanker request
+	 * @param names       List of String containing the names of all masterdata
+	 *                    whose code has to be extracted
+	 * @param requestInfo RequestInfo of the received water tanker request
+	 * @return Map of MasterData name to the list of code in the MasterData
+	 *
+	 */
+	public Map<String, List<Map<String, Object>>> getAttributeValues(String tenantId, String moduleName,
+			List<String> names, String filter, String jsonpath, RequestInfo requestInfo) {
+
+		StringBuilder uri = new StringBuilder(config.getMdmsHost()).append(config.getMdmsEndpoint());
+		MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId, moduleName, names, filter, requestInfo);
+		Object response = restRepo.fetchResult(uri, criteriaReq);
+
+		try {
+			if (response != null) {
+				return JsonPath.read(response, jsonpath);
+			}
+		} catch (Exception e) {
+			throw new CustomException(RequestServiceConstants.INVALID_TENANT_ID_MDMS_KEY,
+					RequestServiceConstants.INVALID_TENANT_ID_MDMS_MSG);
+		}
+
+		return null;
+	}
+
+	public MdmsCriteriaReq prepareMdMsRequest(String tenantId, String moduleName, List<String> names, String filter,
+			RequestInfo requestInfo) {
+
+		List<MasterDetail> masterDetails = new ArrayList<>();
+
+		names.forEach(name -> {
+			masterDetails.add(MasterDetail.builder().name(name).filter(filter).build());
+		});
+
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName(moduleName).masterDetails(masterDetails).build();
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
+		return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	}
+
 }
