@@ -124,5 +124,14 @@ public class WorkflowController {
         Integer count = workflowService.count(requestInfoWrapper.getRequestInfo(),criteria);
         return new ResponseEntity<>(count,HttpStatus.OK);
     }
+    
+    @RequestMapping(value="/process/_searchWithOutAuth", method = RequestMethod.POST)
+    public ResponseEntity<ProcessInstanceResponse> searchWithOutAuth(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                          @Valid @ModelAttribute ProcessInstanceSearchCriteria criteria) {
+    List<ProcessInstance> processInstances = workflowService.search(requestInfoWrapper.getRequestInfo(),criteria);
+    Integer count = workflowService.getUserBasedProcessInstancesCount(requestInfoWrapper.getRequestInfo(),criteria);
+        ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
+            return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
 }
