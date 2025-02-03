@@ -1,7 +1,7 @@
 package org.egov.pg.repository;
 
-import java.util.List;
-import java.util.Map;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
 import java.util.Optional;
 
 import org.egov.tracer.model.CustomException;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.egov.pg.config.AppProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,10 @@ public class ServiceCallRepository {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+    private AppProperties appProperties;
+
 
 	/**
 	 * Fetches results from a REST service using the uri and object
@@ -48,6 +53,23 @@ public class ServiceCallRepository {
 
 		return Optional.ofNullable(response);
 
+	}
+	
+	public MdmsResponse getMdmsMasterData(MdmsCriteriaReq mdmsCriteriaReq) {
+
+
+		MdmsResponse response = null;
+		try {
+			StringBuilder mdmsv2Endpoint = new StringBuilder().append(appProperties.getMdmsV2host())
+					.append(appProperties.getMdmsV2Endpoint());
+			response = restTemplate.postForObject(mdmsv2Endpoint.toString(), mdmsCriteriaReq, MdmsResponse.class);
+		} catch (HttpClientErrorException e) {
+			log.error("External Service threw an Exception: ", e);
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			log.error("Exception while fetching from searcher: ", e);
+		}
+		return response;
 	}
 
 }
