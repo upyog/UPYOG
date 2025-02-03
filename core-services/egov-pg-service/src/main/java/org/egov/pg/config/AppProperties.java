@@ -99,6 +99,12 @@ public class AppProperties {
     private final String internalMicroserviceUserMobilenumber;
 
     private final String internalMicroserviceUserType;
+    
+    @Value("${egov.mdmsv2.host}")
+    private String mdmsV2host;
+    
+    @Value("${egov.mdmsv2.search.endpoint}")
+    private String mdmsV2Endpoint;
 
     @Autowired
     public AppProperties(Environment environment){
