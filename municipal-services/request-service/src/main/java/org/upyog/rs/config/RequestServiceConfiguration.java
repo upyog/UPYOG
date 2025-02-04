@@ -64,6 +64,9 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.url.shortner.endpoint}")
 	private String urShortnerPath;
+	
+	@Value("${egov.url.shortner.endpoint}")
+	private String shortenerEndpoint;
 
 	@Value("${egov.user.create.path}")
 	private String userCreateEndpoint;
@@ -86,6 +89,9 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;
+
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsPath;
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
@@ -119,4 +125,59 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.demand.search.endpoint}")
 	private String demandSearchEndpoint;
+	
+	@Value("${egov.msg.pay.link}")
+	private String payLinkSMS;
+
+	// NOTIFICATION TOPICS
+	@Value("${kafka.topics.notification.sms}")
+	private String smsNotifTopic;
+
+	@Value("${kafka.topics.notification.email}")
+	private String emailNotifTopic;
+
+	@Value("${kafka.topics.receipt.create}")
+	private String receiptCreateTopic;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isStateLevel;
+
+	@Value("${notif.sms.enabled}")
+	private Boolean isSMSNotificationEnabled;
+
+	@Value("${notif.email.enabled}")
+	private Boolean isEmailNotificationEnabled;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isLocalizationStateLevel;
+
+	// User Config
+	@Value("${egov.user.host}")
+	private String userHost;
+
+	// USER EVENTS
+	@Value("${egov.ui.app.host}")
+	private String uiAppHost;
+
+	@Value("${egov.usr.events.create.topic}")
+	private String saveUserEventsTopic;
+
+	@Value("${egov.user.event.notification.enabled}")
+	private Boolean isUserEventsNotificationEnabled;
+
+	// Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	@Value("${egov.localization.fallback.locale}")
+	private String fallBackLocale;
+	
+	@Value("${egov.application.view.link}")
+	private String viewApplicationLink;
 }
