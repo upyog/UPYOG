@@ -17,10 +17,10 @@ public class SMSProperties {
     @Value("${sms.provider.class}")
     public String gatewayToUse;
 
-    @Value("${sms.provider.requestType}")
+    @Value("${sms.provider.request.type}")
     public String requestType;
 
-    @Value("${sms.provider.contentType:application/x-www-form-urlencoded}")
+    @Value("${sms.provider.content.type:application/x-www-form-urlencoded}")
     public String contentType;
 
     @Value("${sms.mobile.prefix:}")
