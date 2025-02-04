@@ -133,7 +133,7 @@ console.log("appl", applicationDetails)
           }
         },
       };
-      const previousCheckpoint = timeline[index - 1];
+      const previousCheckpoint = timeline?.[index - 1];
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
