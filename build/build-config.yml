@@ -177,7 +177,7 @@ config:
   - name: "builds/upyog/core-services/egov-notification-sms"
     build:
       - work-dir: "core-services/egov-notification-sms"
-        image-name: "egov-notification-sms"
+        image-name: "notification-sms"
         dockerfile: "build/maven/Dockerfile"
 
   - name: "builds/upyog/core-services/egov-otp"
