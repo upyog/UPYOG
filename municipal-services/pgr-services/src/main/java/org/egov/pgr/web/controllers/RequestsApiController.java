@@ -69,6 +69,24 @@ public class RequestsApiController{
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    @RequestMapping(value="/request/_searchwithoutauth", method = RequestMethod.POST)
+    public ResponseEntity<ServiceResponse> requestsSearchPostWithoutToken(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                              @Valid @ModelAttribute RequestSearchCriteria criteria) {
+    	
+    	String tenantId = criteria.getTenantId();
+        List<ServiceWrapper> serviceWrappers = pgrService.search(requestInfoWrapper.getRequestInfo(), criteria);
+        Map<String,Integer> dynamicData = pgrService.getDynamicData(tenantId);
+        
+        int complaintsResolved = dynamicData.get(PGRConstants.COMPLAINTS_RESOLVED);
+	    int averageResolutionTime = dynamicData.get(PGRConstants.AVERAGE_RESOLUTION_TIME);
+	    int complaintTypes = pgrService.getComplaintTypes();
+        
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo).serviceWrappers(serviceWrappers).complaintsResolved(complaintsResolved)
+        		.averageResolutionTime(averageResolutionTime).complaintTypes(complaintTypes).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 
     @RequestMapping(value = "request/_plainsearch", method = RequestMethod.POST)
     public ResponseEntity<ServiceResponse> requestsPlainSearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute RequestSearchCriteria requestSearchCriteria) {
@@ -87,7 +105,21 @@ public class RequestsApiController{
         ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo).serviceWrappers(Collections.singletonList(serviceWrapper)).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    
+    @PostMapping(value = "/request/_updateStatus")
+	public ResponseEntity<ServiceResponse> updateStatus(@Valid @RequestBody ServiceStatusUpdateRequest request)
+			throws IOException {
+ 
+		ServiceRequest enrichedReq = pgrService.updateStatus(request);
+		ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(enrichedReq.getService())
+				.workflow(enrichedReq.getWorkflow()).build();
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+				true);
+		ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo)
+				.serviceWrappers(Collections.singletonList(serviceWrapper)).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+    
     @RequestMapping(value="/request/_count", method = RequestMethod.POST)
     public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                            @Valid @ModelAttribute RequestSearchCriteria criteria) {
@@ -106,18 +138,6 @@ public class RequestsApiController{
     	return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-	@PostMapping(value = "/request/_updateStatus")
-	public ResponseEntity<ServiceResponse> updateStatus(@Valid @RequestBody ServiceStatusUpdateRequest request)
-			throws IOException {
-
-		ServiceRequest enrichedReq = pgrService.updateStatus(request);
-		ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(enrichedReq.getService())
-				.workflow(enrichedReq.getWorkflow()).build();
-		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-				true);
-		ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo)
-				.serviceWrappers(Collections.singletonList(serviceWrapper)).build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
+	
 
 }

@@ -665,10 +665,12 @@ public class PropertyValidator {
 			} else if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_APPROVER)) {
 				statusWithRoles.addAll(Arrays.asList(Status.PENDINGFORMODIFICATION.name(),
 						Status.PENDINGFORAPPROVAL.name(), Status.APPROVED.name(), Status.REJECTED.name()));
-			} else {
-				criteria.setCreatedBy(Collections.singleton(requestInfo.getUserInfo().getUuid()));
 			}
 		});
+		
+		if (CollectionUtils.isEmpty(statusWithRoles)) {
+			criteria.setCreatedBy(Collections.singleton(requestInfo.getUserInfo().getUuid()));
+		}
 
 		return new ArrayList<>(statusWithRoles);
 	}

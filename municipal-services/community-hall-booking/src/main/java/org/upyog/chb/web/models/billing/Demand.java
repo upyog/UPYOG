@@ -62,6 +62,9 @@ public class Demand {
 
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
+	
+	 @JsonProperty("fixedBillExpiryDate")
+	 private Long fixedBillExpiryDate;
 
 	@Builder.Default
 	@JsonProperty("minimumAmountPayable")

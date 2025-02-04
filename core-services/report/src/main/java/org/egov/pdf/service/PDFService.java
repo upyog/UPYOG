@@ -50,6 +50,15 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
@@ -68,6 +77,9 @@ public class PDFService {
 
 	@Value("${hpudd.pdf.services.data.configs.path}")
 	private String mdmsFileDirectory;
+	
+	@Value("${citizen.logo.v2.path}")
+    private String citizenLogoPath;
 
 	@Value("${spring.thymeleaf.prefix}")
 	private String location;
@@ -420,6 +432,29 @@ public class PDFService {
 			renderer.setDocumentFromString(html);
 			renderer.layout();
 			renderer.createPDF(outputStream);
+			
+			ByteArrayOutputStream finalOutputStream = new ByteArrayOutputStream();
+	        PdfReader reader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
+	        PdfWriter writer = new PdfWriter(finalOutputStream);
+	        PdfDocument pdfDoc = new PdfDocument(reader, writer);
+	        Document document = new Document(pdfDoc);
+	        
+	        // Load watermark image
+	        ImageData watermarkImage = ImageDataFactory.create(citizenLogoPath);
+	        // ImageData watermarkImage = ImageDataFactory.create();
+	        Image image = new Image(watermarkImage);
+	        image.setFixedPosition(200, 400); // Adjust position
+	        image.setOpacity(1f); // Adjust transparency
+
+	        // Add watermark to each page
+	        int numberOfPages = pdfDoc.getNumberOfPages();
+	        for (int i = 1; i <= numberOfPages; i++) {
+	            PdfPage page = pdfDoc.getPage(i);
+	            PdfCanvas canvas = new PdfCanvas(page);
+	            canvas.addImageAt(watermarkImage, 200, 400, false);
+	        }
+
+	        pdfDoc.close();
 			return outputStream;
 		} catch (Exception e) {
 			log.error("Error while gernating the pdf " + e.getMessage());

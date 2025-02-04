@@ -263,14 +263,32 @@ public class PropertyConfiguration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndpoint;
     
-    // Billing-Service
+// ##### mdmsv2 
     
-    
-    @Value("${egbs.host}")
-    private String egbsHost;
+    @Value("${egov.mdmsv2.host}")
+    private String mdmsV2Host;
 
-    @Value("${egbs.fetchbill.endpoint}")
-    private String egbsFetchBill;
+    @Value("${egov.mdmsv2.search.endpoint}")
+    private String mdmsV2Endpoint;
+    
+    // Billing-Service
+    @Value("${egov.bill.context.host}")
+	public String billHost;
+
+	@Value("${egov.bill.endpoint.fetch}")
+	public String fetchBillEndpoint;
+
+	@Value("${egov.bill.endpoint.search}")
+	public String searchBillEndpoint;
+
+	@Value("${egov.demand.create.endpoint}")
+	public String demandCreateEndpoint;
+
+	@Value("${egov.demand.search.endpoint}")
+	public String demandSearchEndpoint;
+
+	@Value("${egov.demand.update.endpoint}")
+	public String demandUpdateEndpoint;    
     	
     // Registry 
     

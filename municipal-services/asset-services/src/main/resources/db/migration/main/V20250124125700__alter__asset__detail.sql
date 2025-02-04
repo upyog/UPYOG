@@ -1,0 +1,1 @@
+ALTER TABLE eg_asset_assetdetails ADD COLUMN bookingstatus character varying(20) DEFAULT 'AVAILABLE' NOT NULL;

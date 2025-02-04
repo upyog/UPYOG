@@ -85,6 +85,10 @@ public class CommunityHallBookingConstants {
 	
 	public static final String BILLING_SERVICE = "BillingService";
 	
+	public static final String BILLING_TAX_HEAD_MASTER_CODE = 	"LCF.CommunityHall_Fee";
+	
+
+	
 	// EVENT PAY
 	public static final String EVENT_PAY_TENANTID = "$tenantId";
 
@@ -113,5 +117,9 @@ public class CommunityHallBookingConstants {
 	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "CHBApplicantDetailDecrypDisabled";
 
 	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "CHBApplicantDetailDecryptionDisabled";
+	
+	public static final String BOOKING_AVAILABLE_STATUS = "AVAILABLE";
+	
+	public static final String BOOKING_BOOKED_STATUS = "BOOKED";
 
 }

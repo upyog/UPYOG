@@ -84,7 +84,7 @@ public class NotificationUtil {
         StringBuilder notificationCode = new StringBuilder();
 
         notificationCode.append("PGR_").append(roles.toUpperCase()).append("_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
-
+        log.info("Notification Code: " + notificationCode.toString());
         String path = "$..messages[?(@.code==\"{}\")].message";
         path = path.replace("{}", notificationCode);
         String message = null;

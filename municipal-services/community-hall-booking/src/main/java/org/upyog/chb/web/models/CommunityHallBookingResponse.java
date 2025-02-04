@@ -36,6 +36,27 @@ public class CommunityHallBookingResponse   {
 	@Valid
 	private List<CommunityHallBookingDetail> hallsBookingApplication; 
 	
+	private List<Asset> assets; 
+
+	
+    @JsonProperty("applicationsRenewed")
+    private int applicationsRenewed;
+    
+    @JsonProperty("applicationValidity")
+    private int validity;
+    
+    @JsonProperty("applicationInitiated")
+    private int applicationInitiated;
+    
+    @JsonProperty("applicationApplied")
+    private int applicationApplied;
+    
+    @JsonProperty("applicationPendingForPayment")
+    private int applicationPendingForPayment;
+    
+    @JsonProperty("applicationApproved")
+    private int applicationApproved;
+	
 	public void addNewHallsBookingApplication(CommunityHallBookingDetail bookingDetail) {
 		if(this.hallsBookingApplication == null) {
 			this.hallsBookingApplication = new ArrayList<CommunityHallBookingDetail>();

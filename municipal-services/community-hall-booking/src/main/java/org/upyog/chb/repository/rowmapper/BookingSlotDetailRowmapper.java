@@ -23,6 +23,7 @@ public class BookingSlotDetailRowmapper implements ResultSetExtractor<List<Booki
 			BookingSlotDetail slotDetail = BookingSlotDetail.builder().slotId(rs.getString("slot_id"))
 					.bookingId(rs.getString("booking_id")).hallCode(rs.getString("hall_code"))
 					.bookingDate(rs.getString("booking_date"))
+					.bookingToDate(rs.getString("booking_to_date"))
 					.bookingFromTime(rs.getString("booking_from_time")).bookingToTime(rs.getString("booking_to_time"))
 					.status(rs.getString("status"))
 					.capacity(rs.getString("capacity"))

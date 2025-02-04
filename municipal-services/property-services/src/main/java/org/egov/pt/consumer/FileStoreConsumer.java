@@ -50,48 +50,48 @@ public class FileStoreConsumer {
     @Autowired
     private PropertyConfiguration config;
 
-    @KafkaListener(topics = { "${kafka.topics.filestore}" })
-    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-
-        List<Map<String,Object>> jobMaps = (List<Map<String,Object>>)record.get(KEY_PDF_JOBS);
-
-        for(Map<String,Object> job : jobMaps)  {
-
-            String moduleName = (String) job.get(KEY_PDF_MODULE_NAME);
-
-            if(StringUtils.isEmpty(moduleName) || !moduleName.equalsIgnoreCase(ASMT_MODULENAME))
-                continue;
-
-            String id = (String) job.get(KEY_PDF_ENTITY_ID);
-            String tenantId = (String) job.get(KEY_PDF_TENANT_ID);
-            String documentType = (String) job.get(KEY_PDF_DOCUMENTTYPE);
-
-            if(StringUtils.isEmpty(documentType))
-                throw new CustomException("INVALID_DOCUMENTTYPE","Document Type cannot be null or empty string");
-
-            Property property = searchProperty(id,tenantId);
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(property.getAuditDetails().getLastModifiedBy())
-                    .createdTime(System.currentTimeMillis()).build();
-
-            Document document = new Document();
-            document.setId(UUID.randomUUID().toString());
-            document.setDocumentType(documentType);
-            document.setFileStoreId(StringUtils.join((List<String>)job.get(KEY_PDF_FILESTOREID),','));
-            document.setStatus(Status.ACTIVE);
-            document.setAuditDetails(auditDetails);
-
-            property.setDocuments(Collections.singletonList(document));
-
-            RequestInfo requestInfo = new RequestInfo();
-            PropertyRequest propertyRequest = PropertyRequest.builder().requestInfo(requestInfo).property(property).build();
-
-            producer.push(config.getUpdateDocumentTopic(),propertyRequest);
-
-            log.info("Updating document for: "+id);
-        }
-
-
-    }
+//    @KafkaListener(topics = { "${kafka.topics.filestore}" })
+//    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+//
+//        List<Map<String,Object>> jobMaps = (List<Map<String,Object>>)record.get(KEY_PDF_JOBS);
+//
+//        for(Map<String,Object> job : jobMaps)  {
+//
+//            String moduleName = (String) job.get(KEY_PDF_MODULE_NAME);
+//
+//            if(StringUtils.isEmpty(moduleName) || !moduleName.equalsIgnoreCase(ASMT_MODULENAME))
+//                continue;
+//
+//            String id = (String) job.get(KEY_PDF_ENTITY_ID);
+//            String tenantId = (String) job.get(KEY_PDF_TENANT_ID);
+//            String documentType = (String) job.get(KEY_PDF_DOCUMENTTYPE);
+//
+//            if(StringUtils.isEmpty(documentType))
+//                throw new CustomException("INVALID_DOCUMENTTYPE","Document Type cannot be null or empty string");
+//
+//            Property property = searchProperty(id,tenantId);
+//            AuditDetails auditDetails = AuditDetails.builder().createdBy(property.getAuditDetails().getLastModifiedBy())
+//                    .createdTime(System.currentTimeMillis()).build();
+//
+//            Document document = new Document();
+//            document.setId(UUID.randomUUID().toString());
+//            document.setDocumentType(documentType);
+//            document.setFileStoreId(StringUtils.join((List<String>)job.get(KEY_PDF_FILESTOREID),','));
+//            document.setStatus(Status.ACTIVE);
+//            document.setAuditDetails(auditDetails);
+//
+//            property.setDocuments(Collections.singletonList(document));
+//
+//            RequestInfo requestInfo = new RequestInfo();
+//            PropertyRequest propertyRequest = PropertyRequest.builder().requestInfo(requestInfo).property(property).build();
+//
+//            producer.push(config.getUpdateDocumentTopic(),propertyRequest);
+//
+//            log.info("Updating document for: "+id);
+//        }
+//
+//
+//    }
 
     private Property searchProperty(String id, String tenantId){
 

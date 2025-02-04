@@ -97,6 +97,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.auditDetails(auditdetails)
 						.institution(institute)
 						.landArea(landArea)
+						.businessService(rs.getString("pbusiness_service"))
 						.build();
 
 
@@ -168,7 +169,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		  .occupancyDate(rs.getLong("occupancyDate"))
 		  .active(rs.getBoolean("isunitactive")) .unitType(rs.getString("unitType"))
 		  .constructionDetail(consDetail) .floorNo(rs.getInt("floorno")) //.arv(arv)
-		  .id(unitId) .build();
+		  .id(unitId).additionalDetails(getadditionalDetail(rs, "unitadditional_details")).build();
 		 
 		currentProperty.addUnitsItem(unit);
 	}

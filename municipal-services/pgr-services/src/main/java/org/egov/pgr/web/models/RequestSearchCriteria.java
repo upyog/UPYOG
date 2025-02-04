@@ -37,6 +37,7 @@ public class RequestSearchCriteria {
     @SafeHtml
     @JsonProperty("serviceRequestId")
     private String serviceRequestId;
+    
 
     @JsonProperty("sortBy")
     private SortBy sortBy;
