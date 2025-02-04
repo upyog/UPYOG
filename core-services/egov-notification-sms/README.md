@@ -69,11 +69,11 @@ So if you use `sms.config.map={'u':'$username', 'p':'password'}`. Then the API c
 Message success delivery can be controlled using below properties
 - `sms.verify.response` (default: false)
 - `sms.print.response` (default: false)
-- `sms.verify.responseContains`
+- `sms.verify.response.contains`
 - `sms.success.codes` (default: 200,201,202)
 - `sms.error.codes`
 
-If you want to verify some text in the API call response set `sms.verify.response=true` and `sms.verify.responseContains` to the text that should be contained in the response
+If you want to verify some text in the API call response set `sms.verify.response=true` and `sms.verify.response.contains` to the text that should be contained in the response
 
 
 #### Blacklisting or Whitelisting numbers

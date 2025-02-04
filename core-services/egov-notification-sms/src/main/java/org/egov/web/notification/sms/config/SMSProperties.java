@@ -62,7 +62,7 @@ public class SMSProperties {
     @Value("${sms.verify.response:false}")
     private boolean verifyResponse;
 
-    @Value("${sms.verify.responseContains:}")
+    @Value("${sms.verify.response.contains:}")
     private String verifyResponseContains;
 
 
