@@ -13,5 +13,8 @@ public class RoleQueryBuilder {
 
     public static final String DELETE_USER_ROLES = "delete from eg_userrole_v1 where user_id=:user_id and " +
             "user_tenantid=:user_tenantid";
+	public static final String INSERT_HRMS_EMPLOYEE = "INSERT INTO eg_hrms_employee"
+			+ "(id, uuid, code, dateofappointment, employeestatus, employeetype, active, tenantid, createdby, createddate, lastmodifiedby, lastmodifieddate, reactivateemployee)"
+			+" values (:id, :uuid, :code, :dateofappointment, :employeestatus, :employeetype, :active, :tenantid, :createdby, :createddate, :lastmodifiedby, :lastmodifieddate, :reactivateemployee)";
 }
 

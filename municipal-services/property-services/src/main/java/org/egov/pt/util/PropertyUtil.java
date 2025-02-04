@@ -5,6 +5,7 @@ import static org.egov.pt.util.PTConstants.BILL_AMOUNT_PATH;
 import static org.egov.pt.util.PTConstants.BILL_NO_DEMAND_ERROR_CODE;
 import static org.egov.pt.util.PTConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -362,6 +363,38 @@ public class PropertyUtil extends CommonUtils {
 		}
 		return response;
 	}
+
+	
+	
+	public BigDecimal getActiveBill(String propertyId, String tenantId, RequestInfo request) {
+
+		Object res = null;
+
+		StringBuilder uri = new StringBuilder(configs.getEgbsHost())
+				.append(configs.getEgbsFetchBill())
+				.append("?tenantId=").append(tenantId)
+				.append("&consumerCode=").append(propertyId)
+				.append("&businessService=").append(ASMT_MODULENAME);
+
+		try {
+			res = restRepo.fetchResult(uri, new RequestInfoWrapper(request)).get();
+		} catch (ServiceCallException e) {
+
+			if(!(e.getError().contains(BILL_NO_DEMAND_ERROR_CODE) || e.getError().contains(BILL_NO_PAYABLE_DEMAND_ERROR_CODE)))
+				throw e;
+		}
+
+		if (res != null) {
+			JsonNode node = mapper.convertValue(res, JsonNode.class);
+			String status =  node.at(PTConstants.BILL_STATUS_PATH).asText();
+			if(!status.equalsIgnoreCase("ACTIVE"))
+				return BigDecimal.ZERO;
+			BigDecimal amount = new BigDecimal(node.at(BILL_AMOUNT_PATH).asText());
+			return amount.compareTo(BigDecimal.ZERO)>0?amount:BigDecimal.ZERO;
+		}
+		return BigDecimal.ZERO;
+	}
+
 
 
 }

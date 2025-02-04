@@ -371,7 +371,7 @@ public class BillServicev2 {
 					if(billsToBeReturned.get(0).getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("YR"))
 						return res;
 
-					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment()) {
+					else if(!billToBeReturned.get(0).getBillDetails().get(0).isPreviousYearAssesment() && billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate()!=null) {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd MM yyyy");
 						BigDecimal totalAmount;
 						String date = billToBeReturned.get(0).getBillDetails().get(0).getAdjusmentfromdate();
@@ -914,6 +914,8 @@ public class BillServicev2 {
 		List<String> halfyearly = new ArrayList<String>();
 		InterestAndPenalty inp = null;
 		BigDecimal advancedBillAmount = demand.getAdvanceAmount();// Will Be coming from Demand
+		if(advancedBillAmount==null)
+			advancedBillAmount=BigDecimal.ZERO;
 		mpdList = new ArrayList<>();
 		if (null != bills) {
 			// bills =
@@ -985,6 +987,8 @@ public class BillServicev2 {
 					advancedBillAmount = successBillAmount.subtract(bl.getBillDetails().get(0).getAmount());
 					if (advancedBillAmount.compareTo(BigDecimal.ZERO) == 0)
 						advancedBillAmount = demand.getAdvanceAmount();
+					if(advancedBillAmount==null)
+						advancedBillAmount=BigDecimal.ZERO;
 					paidBillAmount = paidBillAmount.add(zeroAmount);
 
 					if (bl.getBillDetails().get(0).getPaymentPeriod().equalsIgnoreCase("Q1")) {
@@ -1615,7 +1619,7 @@ public class BillServicev2 {
 						// TODO: handle exception
 					}
 				}
-
+				
 				if (!halfyearly.contains("H1")) {
 					if(advancedBillAmount.compareTo(ammountforhalfyearly)>0)
 					{
@@ -1677,6 +1681,8 @@ public class BillServicev2 {
 				totalAmountForDemand = ammountforhalfyearly.add(amountwithpastduehalf).add(totalInterestAmunt);
 				inp = getInterestPenalty( totalInterestAmunt,  firstDayAfterexpiryDateH1, financialYearFromDemand.toString() ,"H2", "H1" , new BigDecimal(InterestPrecentage),noFODays,totalAmountForInterestCal,previousYear);
 
+				System.out.println("advancedBillAmount::"+advancedBillAmount);
+				System.out.println("ammountforhalfyearly::"+ammountforhalfyearly);
 				if (advancedBillAmount.compareTo(totalAmountForDemand) > 0) {
 					advancedBillAmount = advancedBillAmount.subtract(totalAmountForDemand);
 					totalAmountForDemand = new BigDecimal(0);

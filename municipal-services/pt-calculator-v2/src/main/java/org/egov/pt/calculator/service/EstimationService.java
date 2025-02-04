@@ -859,10 +859,12 @@ public class EstimationService {
 
 
 		// usage exemption
-		usageExemption = usageExemption.setScale(2, 2).negate();
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_UNIT_USAGE_EXEMPTION).estimateAmount(
-				usageExemption).build());
-		payableTax = payableTax.add(usageExemption);
+		/*
+		 * usageExemption = usageExemption.setScale(2, 2).negate();
+		 * estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_UNIT_USAGE_EXEMPTION).
+		 * estimateAmount( usageExemption).build()); payableTax =
+		 * payableTax.add(usageExemption);
+		 */
 
 		// owner exemption
 		/*
@@ -946,7 +948,7 @@ public class EstimationService {
 			BigDecimal penalty = rebatePenaltyMap.get(PT_TIME_PENALTY);
 			BigDecimal interest = rebatePenaltyMap.get(PT_TIME_INTEREST);
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_REBATE).estimateAmount(rebate).build());
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).estimateAmount(penalty).build());
+			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).estimateAmount(penalty).build());
 			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_INTEREST).estimateAmount(interest).build());
 			payableTax = payableTax.add(rebate).add(penalty).add(interest);
 		}
@@ -1120,20 +1122,19 @@ public class EstimationService {
 		BigDecimal taxAfterVacExemption=BigDecimal.ZERO;
 		BigDecimal totalAmount=BigDecimal.ZERO;
 
-		if(!commercial.isEmpty() && !vacantland.isEmpty())
-			if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
-			{
-				taxAfterVacExemption=vacantland.get(0).getVacantlandamount().setScale(2, 2);
-				totalAmount=totalAmount.subtract(taxAfterVacExemption);
-				estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption.negate()).build());
-				taxAfterVacExemption=taxAmt.subtract(taxAfterVacExemption);
-			}
-		
-		if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0)
-			taxAfterVacExemption=taxAmt;
-
 		if(detail.getExemption().isEmpty() || detail.getExemption().equalsIgnoreCase(null))
 		{
+			if(!commercial.isEmpty() && !vacantland.isEmpty())
+				if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
+				{
+					taxAfterVacExemption=vacantland.get(0).getVacantlandamount().setScale(2, 2);
+					totalAmount=totalAmount.subtract(taxAfterVacExemption);
+					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption.negate()).build());
+					taxAfterVacExemption=taxAmt.subtract(taxAfterVacExemption);
+				}
+			
+			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0)
+				taxAfterVacExemption=taxAmt;
 
 			switch (criteria.getModeOfPayment()) {
 			case "QUARTERLY":
