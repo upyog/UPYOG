@@ -10,7 +10,7 @@ import ApplicationTable from "../../../components/inbox/ApplicationTable";
 import { SVDocumnetPreview } from "../../../utils";
 import Timeline from "../../../components/Timeline";
 import { formatTime } from "../../../utils";
-import { CONSTANTS_VARIABLE } from "../../../utils";
+import { UPYOG_VARIABLE } from "../../../utils";
 
 
   //function for edit button with edit icon and functioanality of redirecting to differnt URL's
@@ -31,7 +31,7 @@ import { CONSTANTS_VARIABLE } from "../../../utils";
     // Process editdata documents
     if (editdata?.documentDetails?.length) {
       editdata.documentDetails.forEach(data => {
-        improvedDoc.push({ ...data, module: CONSTANTS_VARIABLE.MODULE_NAME });
+        improvedDoc.push({ ...data, module: UPYOG_VARIABLE.MODULE_NAME });
       });
     }
   
@@ -41,16 +41,16 @@ import { CONSTANTS_VARIABLE } from "../../../utils";
       documents?.documents?.forEach(appDoc => {
         const isDuplicate = improvedDoc.some(doc => doc.documentType === appDoc.documentType);
         if (!isDuplicate) {
-          improvedDoc.push({ ...appDoc, module: CONSTANTS_VARIABLE.MODULE_NAME });
+          improvedDoc.push({ ...appDoc, module: UPYOG_VARIABLE.MODULE_NAME });
         }
       });
   
       // Add documents from storedData
-      const parsedStoredData = JSON.parse(sessionStorage.getItem(CONSTANTS_VARIABLE.DOCUMENT)) || [];
+      const parsedStoredData = JSON.parse(sessionStorage.getItem(UPYOG_VARIABLE.DOCUMENT)) || [];
       parsedStoredData.forEach(data => {
         const isDuplicate = improvedDoc.some(doc => doc.documentType === data.documentType);
         if (!isDuplicate) {
-          improvedDoc.push({ ...data, module: CONSTANTS_VARIABLE.MODULE_NAME });
+          improvedDoc.push({ ...data, module: UPYOG_VARIABLE.MODULE_NAME });
         }
       });
     }
@@ -95,7 +95,7 @@ import { CONSTANTS_VARIABLE } from "../../../utils";
 
       // Process documents
     const improvedDoc = useMemo(() => 
-      prepareDocuments(editdata, documents, JSON.parse(sessionStorage.getItem(CONSTANTS_VARIABLE.DOCUMENT))),
+      prepareDocuments(editdata, documents, JSON.parse(sessionStorage.getItem(UPYOG_VARIABLE.DOCUMENT))),
       [editdata, documents]
     );
 
@@ -105,7 +105,7 @@ import { CONSTANTS_VARIABLE } from "../../../utils";
     );
 
     const applicationDocs = useMemo(() => 
-      pdfDetails?.pdfFiles?.filter(doc => doc?.module === CONSTANTS_VARIABLE.MODULE_NAME) || [],
+      pdfDetails?.pdfFiles?.filter(doc => doc?.module === UPYOG_VARIABLE.MODULE_NAME) || [],
       [pdfDetails]
     );
 
