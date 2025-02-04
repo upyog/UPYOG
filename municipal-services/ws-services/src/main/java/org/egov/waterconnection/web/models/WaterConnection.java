@@ -93,7 +93,7 @@ public class WaterConnection extends Connection {
 	 **/
 	@ApiModelProperty(value = "Unique id of the meter.")
 
-	@Size(min = 2, max = 64)
+//	@Size(min = 2, max = 64)
 	public String getMeterId() {
 		return meterId;
 	}
