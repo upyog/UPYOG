@@ -143,9 +143,9 @@ export const convertEpochToDate = (dateEpoch) => {
   const amount = reciept_data?.paymentDetails?.[0]?.totalAmountPaid;
   const transactionDate = paymentData?.transactionDate;
   const printCertificate = async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tlTenantId = data?.payments?.Payments[0]?.tenantId;
     const state = tenantId;
-    const applicationDetails = await Digit.TLService.search({ applicationNumber: consumerCode, tenantId });
+    const applicationDetails = await Digit.TLService.search({ applicationNumber: consumerCode, tenantId:tlTenantId });
     const generatePdfKeyForTL = "tlcertificate";
 
     if (applicationDetails) {
@@ -213,7 +213,7 @@ export const convertEpochToDate = (dateEpoch) => {
           payments.Payments[0].additionalDetails=details;
           paymentArray[0]=payments.Payments[0]
           console.log("generatedpdfkey",generatePdfKey)
-          if(business_service=="WS" || business_service=="SW"){
+          if(business_service.includes("WS") || business_service.includes("SW")){  
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKeyForWs);
           }
           else if(businessServ.includes("BPA")){
