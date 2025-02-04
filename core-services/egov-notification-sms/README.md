@@ -38,9 +38,9 @@ This is the default implementation, which can work with most of the SMS Provider
 - Supports query params, form data, JSON Body
 
 To configure the url of the SMS provider use `sms.provider.url` property
-To configure the http method used configure the `sms.provider.requestType` property to either `GET` or `POST`.
+To configure the http method used configure the `sms.provider.request.type` property to either `GET` or `POST`.
 
-To configure form data or json api set `sms.provider.contentType=application/x-www-form-urlencoded` or `sms.provider.contentType=application/json` respectively
+To configure form data or json api set `sms.provider.content.type=application/x-www-form-urlencoded` or `sms.provider.content.type=application/json` respectively
 
 To configure which data needs to be sent to the API below property can be configured:
 
@@ -69,11 +69,11 @@ So if you use `sms.config.map={'u':'$username', 'p':'password'}`. Then the API c
 Message success delivery can be controlled using below properties
 - `sms.verify.response` (default: false)
 - `sms.print.response` (default: false)
-- `sms.verify.responseContains`
+- `sms.verify.response.contains`
 - `sms.success.codes` (default: 200,201,202)
 - `sms.error.codes`
 
-If you want to verify some text in the API call response set `sms.verify.response=true` and `sms.verify.responseContains` to the text that should be contained in the response
+If you want to verify some text in the API call response set `sms.verify.response=true` and `sms.verify.response.contains` to the text that should be contained in the response
 
 
 #### Blacklisting or Whitelisting numbers
