@@ -221,7 +221,8 @@ public class PaytmPosGateway implements Gateway {
            // Format the current date and time
            String formattedDateTime = now.format(formatter);
            TreeMap<String, String> Body = new TreeMap<>();
-   		
+   		    log.info(MID+,"mid"+TID+"tid"+MERCHANT_KEY+"key");
+
            Body.put("paytmMid", MID);//put  mid  here Testin39635949826983//Gaurav09015494045385//s-Prachi65794223240821  , p-Prachi57804451957605
            Body.put("paytmTid", TID);//put  tid  here 70000398//10714205  //10955450
            Body.put("transactionDateTime", formattedDateTime);// ("2022-03-15 9:42:00")); //
@@ -254,7 +255,8 @@ public class PaytmPosGateway implements Gateway {
             ResponseEntity<PaymentStatusResponse> responseEntity =restTemplate.postForEntity(MERCHANT_URL_DEBIT, 
             		requestEntity,
             		PaymentStatusResponse.class);
-//            System.out.println(responseEntity.getBody().getBody().getResultInfo().getResultStatus());
+            log.info("Paytm Transaction generation message "+responseEntity.getBody().getBody().getResultInfo().getResultMsg());
+            System.out.println(responseEntity.getBody().getBody().getResultInfo().getResultStatus());
 //              return Body.get("merchantTransactionId");
          }
          catch (Exception e) {
