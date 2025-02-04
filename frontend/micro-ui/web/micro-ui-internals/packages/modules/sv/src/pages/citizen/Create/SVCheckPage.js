@@ -73,7 +73,7 @@ import { CONSTANTS_VARIABLE } from "../../../utils";
       { Header: t("SV_WEEK_DAYS"), accessor: "name" },
       { Header: t("SV_START_TIME"), accessor: "startTime" },
       { Header: t("SV_END_TIME"), accessor: "endTime" }
-    ]), [t]);
+    ]), []);
   
     const operationRows = useMemo(() => {
       if (isRenew) {
