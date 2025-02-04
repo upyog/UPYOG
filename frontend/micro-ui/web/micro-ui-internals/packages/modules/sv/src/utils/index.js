@@ -1,11 +1,22 @@
 /**
  * @author - Shivank - NIUA
- * This componet is developed for all the utility functions which  are used in the whole 
- * application.
+ * This component is developed for all the utility functions which are used in the whole application
  * I have already added the comments for each function.
  */
 
 
+
+/**
+ * constants variable used across module so that i can change across the moduel from this place only
+ * TODO: Use this logic across the module
+ */
+export const CONSTANTS_VARIABLE = {
+  MODULE_NAME :"StreetVending",
+  AM: "AM",
+  PM: "PM",
+  DOCUMENT:"CategoryDocument",
+  NOT_APPLICABLE:"NA"
+};
 
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     if (searcher == "") return str;
@@ -19,7 +30,13 @@ export const checkForNotNull = (value = "") => {
 };
 
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "NA";
+  return checkForNotNull(value) ? value : CONSTANTS_VARIABLE.NOT_APPLICABLE;
+};
+
+// Utility functions to convert string into integer and append AM and PM
+export const formatTime = (time) => {
+  const hour = parseInt(time);
+  return `${time} ${hour >= 12 ? CONSTANTS_VARIABLE.PM : CONSTANTS_VARIABLE.AM}`;
 };
 
 
@@ -83,7 +100,7 @@ export const transformDocuments = (documents) => {
   if (!Array.isArray(documents)) return [];
 
   // Retrieve and parse CategoryDocument from sessionStorage
-  const categoryDocument = sessionStorage.getItem("CategoryDocument");
+  const categoryDocument = sessionStorage.getItem(CONSTANTS_VARIABLE.DOCUMENT);
   const parsedCategoryDocument = categoryDocument ? JSON.parse(categoryDocument) : null;
   // Transform existing documents
   const transformedDocs = documents.map(doc => ({

@@ -2,13 +2,15 @@
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
 */
 import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,SubmitBar, EditIcon} from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useState,useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA, getOrderDocuments } from "../../../utils";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
 import { SVDocumnetPreview } from "../../../utils";
 import Timeline from "../../../components/Timeline";
+import { formatTime } from "../../../utils";
+import { CONSTANTS_VARIABLE } from "../../../utils";
 
 
   //function for edit button with edit icon and functioanality of redirecting to differnt URL's
@@ -23,82 +25,90 @@ import Timeline from "../../../components/Timeline";
     className="check-page-link-button" onClick={routeTo} />;
   };
 
+  const prepareDocuments = (editdata, documents, storedData) => {
+    const improvedDoc = [];
+    
+    // Process editdata documents
+    if (editdata?.documentDetails?.length) {
+      editdata.documentDetails.forEach(data => {
+        improvedDoc.push({ ...data, module: CONSTANTS_VARIABLE.MODULE_NAME });
+      });
+    }
+  
+    // Process documents if editdata is empty
+    if (_.isEmpty(editdata)) {
+      // Add documents from documents?.documents
+      documents?.documents?.forEach(appDoc => {
+        const isDuplicate = improvedDoc.some(doc => doc.documentType === appDoc.documentType);
+        if (!isDuplicate) {
+          improvedDoc.push({ ...appDoc, module: CONSTANTS_VARIABLE.MODULE_NAME });
+        }
+      });
+  
+      // Add documents from storedData
+      const parsedStoredData = JSON.parse(sessionStorage.getItem(CONSTANTS_VARIABLE.DOCUMENT)) || [];
+      parsedStoredData.forEach(data => {
+        const isDuplicate = improvedDoc.some(doc => doc.documentType === data.documentType);
+        if (!isDuplicate) {
+          improvedDoc.push({ ...data, module: CONSTANTS_VARIABLE.MODULE_NAME });
+        }
+      });
+    }
+  
+    return improvedDoc;
+  };
+
 
   const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData}) => {
     const { t } = useTranslation();
     const {owner,businessDetails,address,bankdetails,documents,specialCategoryData} = value;
     const [agree, setAgree] = useState(false);
-
-
+    const isRenew = window.location.href.includes("renew")?true:false; // creating common variable so that i dont have to write this much long condition every where
 
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
-    
 
-    const columnName = [
-        { Header: t("SV_WEEK_DAYS"), accessor: "name" },
-        { Header: t("SV_START_TIME"), accessor: "startTime" },
-        { Header: t("SV_END_TIME"), accessor: "endTime" }
-      ];
-      
-      /*filtering the daysOfOperation array to show and then mapping those filetered data to to get only those whose "isSelected" is true,
-      once get , i am formatting the data in accessor like name, Start time and End time, used ParseInt to convert the string in number so that 
-      i can check whether the number is greater or less than 12
-      */
-      const coloumnRows = businessDetails?.daysOfOperation?.filter((day_time) => day_time.isSelected).map((day_time, index) => ({
-        name: day_time?.name,
-        startTime: parseInt(day_time?.startTime)>=12?day_time?.startTime+" "+"PM":day_time?.startTime+" "+"AM",
-        endTime: parseInt(day_time?.endTime)>=12?day_time?.endTime+" "+"PM":day_time?.endTime+" "+"AM"
-      })) || [];
-
-     /* Initialize an empty array improvedDoc to hold modified documents.
-        Iterate over existing documents, adding a "module" property with the value "StreetVending" to each document.
-        Use the modified documents to fetch PDF details only if there are documents present.
-        If the fetched PDF details contain files, filter them to include only those related to the "StreetVending" module and store them in applicationDocs array.*/
-        
-    
-    let improvedDoc = [];
-    if (editdata?.documentDetails && Array.isArray(editdata?.documentDetails)) {
-      editdata?.documentDetails.map(data => {
-          improvedDoc.push({...data, module: "StreetVending"});
-      });
-    }
-
-    // Add documents from documents?.documents if editdata is empty
-    if (_.isEmpty(editdata)) {
-      if (documents?.documents) {
-        documents.documents.forEach(appDoc => {
-          const isDuplicate=improvedDoc.some(
-            doc => doc.documentType === appDoc.documentType
-          )
-          if(!isDuplicate){
-          improvedDoc.push({ ...appDoc, module: "StreetVending" });
-      }});
+    const columnName = useMemo(() => ([
+      { Header: t("SV_WEEK_DAYS"), accessor: "name" },
+      { Header: t("SV_START_TIME"), accessor: "startTime" },
+      { Header: t("SV_END_TIME"), accessor: "endTime" }
+    ]), [t]);
+  
+    const operationRows = useMemo(() => {
+      if (isRenew) {
+        return renewalData?.vendingOperationTimeDetails?.map(renew_data => ({
+          name: renew_data?.dayOfWeek,
+          startTime: formatTime(renew_data?.fromTime),
+          endTime: formatTime(renew_data?.toTime)
+        })) || [];
       }
-    }
+  
+      return businessDetails?.daysOfOperation
+        ?.filter(day_time => day_time.isSelected)
+        ?.map(day_time => ({
+          name: day_time?.name,
+          startTime: formatTime(day_time?.startTime),
+          endTime: formatTime(day_time?.endTime)
+        })) || [];
+    }, [isRenew, renewalData, businessDetails]);
 
-    // Add documents from storedData if editdata is empty
-    if (_.isEmpty(editdata)) {
-      const storedData = JSON.parse(sessionStorage.getItem("CategoryDocument"));
-      if (storedData && Array.isArray(storedData)) {
-        storedData.forEach(data => {
-          const isDuplicate = improvedDoc.some(
-            doc => doc.documentType === data.documentType
-          );
-        if(!isDuplicate){
-          improvedDoc.push({ ...data, module: "StreetVending" });
-      }});
-      }
-    }
+      // Process documents
+    const improvedDoc = useMemo(() => 
+      prepareDocuments(editdata, documents, JSON.parse(sessionStorage.getItem(CONSTANTS_VARIABLE.DOCUMENT))),
+      [editdata, documents]
+    );
 
-    const { data: pdfDetails, isLoading:pdfLoading, error } = Digit.Hooks.useDocumentSearch( improvedDoc, { enabled: improvedDoc?.length > 0 ? true : false});
-    let applicationDocs = []
-    if (pdfDetails?.pdfFiles?.length > 0) {  
-      pdfDetails?.pdfFiles?.map(pdfAppDoc => {
-        if (pdfAppDoc?.module == "StreetVending") applicationDocs.push(pdfAppDoc);
-      });
-    }
+    const { data: pdfDetails, isLoading: pdfLoading } = Digit.Hooks.useDocumentSearch(
+      improvedDoc, 
+      { enabled: improvedDoc?.length > 0 }
+    );
+
+    const applicationDocs = useMemo(() => 
+      pdfDetails?.pdfFiles?.filter(doc => doc?.module === CONSTANTS_VARIABLE.MODULE_NAME) || [],
+      [pdfDetails]
+    );
+
   
     /**
      *  This React component renders the Street Vendor Application Summary Page. 
@@ -112,187 +122,43 @@ import Timeline from "../../../components/Timeline";
      * The page also features radio buttons for selecting disability status and beneficiary schemes, along with a checkbox for the final declaration.
      */
 
-    if (renewalData?.applicationNo.length > 0){
-      return (
-        <React.Fragment>
-        <Card>
-        <CardHeader>{t("SV_SUMMARY_PAGE")}</CardHeader>
-        <div>
-          <StatusTable>
-          <Row
-              label={t("SV_PREV_APPNO")}
-              text={`${t(checkForNA(renewalData?.applicationNo))}`}
-          />
-  
-          <Row
-              label={t("SV_PREV_CERTNO")}
-              text={`${t(checkForNA(renewalData?.certificateNo))}`}
-          />
-          </StatusTable>
-        
-        <CardSubHeader>{t("SV_VENDOR_PERSONAL_DETAILS")}</CardSubHeader>
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
-          <Row
-              label={t("SV_VENDOR_NAME")}
-              text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.name))}`}
-          />
-  
-          <Row
-              label={t("SV_REGISTERED_MOB_NUMBER")}
-              text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.mobileNo))}`}
-          />
-  
-          <Row
-              label={t("SV_DATE_OF_BIRTH")}
-              text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.dob))}`}
-          />
-  
-          <Row
-              label={t("SV_GENDER")}
-              text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.gender))}`}
-          />
-          <Row
-              label={t("SV_FATHER_NAME")}
-              text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.fatherName))}`}
-          />
-          {
-            renewalData?.vendorDetail?.[0]?.emailId?
-            <Row
-              label={t("SV_EMAIL")}
-              text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.emailId))}`}
-          />:null
-          }
-        
-          </StatusTable>
-          <CardSubHeader>{t("SV_VENDOR_BUSINESS_DETAILS")}</CardSubHeader>
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
-          <Row
-              label={t("SV_VENDING_TYPE")}
-              text={`${t(checkForNA(renewalData?.vendingActivity))}`}
-          />
-          <Row
-              label={t("SV_VENDING_ZONES")}
-              text={`${t(checkForNA(renewalData?.vendingZone))}`}
-          />
-          <Row
-              label={t("SV_AREA_REQUIRED")}
-              text={`${t(checkForNA(renewalData?.vendingArea))}`}
-          />
-          <Row
-              label={t("SV_LOCAL_AUTHORITY_NAME")}
-              text={`${t(checkForNA(renewalData?.localAuthorityName))}`}
-          />
-          {
-            renewalData?.vendingLicenseId?
-            <Row
-              label={t("SV_VENDING_LISCENCE")}
-              text={`${t(checkForNA(renewalData?.vendingLicenseId))}`}
-          />:null
-          }
-          
-          </StatusTable>
-          {renewalData?.bankDetail?.accountNumber&&
-          renewalData?.bankDetail?.ifscCode&&
-          renewalData?.bankDetail?.bankName&&
-          renewalData?.bankDetail?.bankBranchName&&
-          renewalData?.bankDetail?.accountHolderName&&(
-            <React.Fragment>
-              <CardSubHeader>{t("SV_BANK_DETAILS")}</CardSubHeader>
-              <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
-              <Row
-              label={t("SV_ACCOUNT_NUMBER")}
-              text={`${t(checkForNA(renewalData?.bankDetail?.accountNumber))}`}
-              />
-              <Row
-              label={t("SV_IFSC_CODE")}
-              text={`${t(checkForNA(renewalData?.bankDetail?.ifscCode))}`}
-              />
-              <Row
-              label={t("SV_BANK_NAME")}
-              text={`${t(checkForNA(renewalData?.bankDetail?.bankName))}`}
-              />
-              <Row
-              label={t("SV_BANK_BRANCH_NAME")}
-              text={`${t(checkForNA(renewalData?.bankDetail?.bankBranchName))}`}
-              />
-              <Row
-              label={t("SV_ACCOUNT_HOLDER_NAME")}
-              text={`${t(checkForNA(renewalData?.bankDetail?.accountHolderName))}`}
-              />
-              </StatusTable>
-            </React.Fragment>
-          )}
-           <CardSubHeader>{t("SV_ADDITIONAL_DETAILS")}</CardSubHeader>
-          <StatusTable style={{marginBottom:"30px"}}>
-          <Row
-            label={t("SV_CATEGORY")}
-            text={`${t(checkForNA(renewalData?.vendorDetail?.[0]?.specialCategory))}`}
-            />
-          <Row
-            label={t("SV_BENEFICIARY_SCHEMES")}
-            text={`${t(checkForNA(renewalData?.benificiaryOfSocialSchemes))}`}
-            />
-          {renewalData?.enrollmentId!==null?
-          <Row
-            label={t("SV_ENROLLMENT_APPLICATION_NUMBER")}
-            text={`${t(checkForNA(renewalData?.enrollmentId))}`}
-            />:null}
-          </StatusTable>
-        <CardSubHeader>{t("SV_DOCUMENT_DETAILS_LABEL")}</CardSubHeader>
-          {<SVDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles = {{}} isSendBackFlow = {false} titleStyles ={{fontSize: "18px", "fontWeight": 700, marginBottom: "10px"}}/>}
-          <br></br>
-
-          <CheckBox
-            label={t("SV_I_AM_SURE_DETAILS_CORRECT")}
-            onChange={setdeclarationhandler}
-            styles={{ height: "auto", marginBottom:"30px", marginTop:"10px" }}
-          />
-        </div>
-        <SubmitBar label={t("SV_PROCEED_TO_PAY")} onSubmit={onSubmit} disabled={!agree} />
-
-        </Card>
-        </React.Fragment>
-      )
-    }
-
     
     return (
       <React.Fragment>
-       {<Timeline currentStep={7}/>}
+       {!isRenew?<Timeline currentStep={7}/>:null}
       <Card>
-        <CardHeader>{t("SV_SUMMARY_PAGE")}</CardHeader>
+        <CardHeader>{(isRenew)?t("SV_RENEWAL_DETAILS"):t("SV_SUMMARY_PAGE")}</CardHeader>
         <div>
           <CardSubHeader>{t("SV_VENDOR_PERSONAL_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("SV_VENDOR_NAME")}
-              text={`${t(checkForNA(owner?.units?.[0]?.vendorName))}`}
-              actionButton={(renewalData?.applicationNo.length>0)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/applicant-details`} />}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendorDetail?.[0]?.name:owner?.units?.[0]?.vendorName))}`}
+              actionButton={(isRenew)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/applicant-details`} />}
           />
-  
           <Row
               label={t("SV_REGISTERED_MOB_NUMBER")}
-              text={`${t(checkForNA(owner?.units?.[0]?.mobileNumber))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendorDetail?.[0]?.mobileNo:owner?.units?.[0]?.mobileNumber))}`}
           />
   
           <Row
               label={t("SV_DATE_OF_BIRTH")}
-              text={`${t(checkForNA(owner?.units?.[0]?.vendorDateOfBirth))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendorDetail?.[0]?.dob:owner?.units?.[0]?.vendorDateOfBirth))}`}
           />
   
           <Row
               label={t("SV_GENDER")}
-              text={`${t(checkForNA(owner?.units?.[0]?.gender?.code))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendorDetail?.[0]?.gender:owner?.units?.[0]?.gender?.code))}`}
           />
           <Row
               label={t("SV_FATHER_NAME")}
-              text={`${t(checkForNA(owner?.units?.[0]?.fatherName))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendorDetail?.[0]?.fatherName:owner?.units?.[0]?.fatherName))}`}
           />
           {
-            owner?.units?.[0]?.email?
+            (renewalData?.vendorDetail?.[0]?.emailId || owner?.units?.[0]?.email)?
             <Row
               label={t("SV_EMAIL")}
-              text={`${t(checkForNA(owner?.units?.[0]?.email))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendorDetail?.[0]?.emailId:owner?.units?.[0]?.email))}`}
           />:null
           }
           {owner?.units?.[0]?.spouseName && (
@@ -356,33 +222,33 @@ import Timeline from "../../../components/Timeline";
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("SV_VENDING_TYPE")}
-              text={`${t(checkForNA(businessDetails?.vendingType?.code))}`}
-              actionButton={(renewalData?.applicationNo.length>0)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/business-details`} />}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendingActivity:businessDetails?.vendingType?.code))}`}
+              actionButton={(isRenew)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/business-details`} />}
           />
           <Row
               label={t("SV_VENDING_ZONES")}
-              text={`${t(checkForNA(businessDetails?.vendingZones?.value))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendingZone:businessDetails?.vendingZones?.value))}`}
           />
           <Row
               label={t("SV_AREA_REQUIRED")}
-              text={`${t(checkForNA(businessDetails?.areaRequired))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendingArea:businessDetails?.areaRequired))}`}
           />
           <Row
               label={t("SV_LOCAL_AUTHORITY_NAME")}
-              text={`${t(checkForNA(businessDetails?.nameOfAuthority))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.localAuthorityName:businessDetails?.nameOfAuthority))}`}
           />
           {
-            businessDetails?.vendingLiscence?
+            (renewalData?.vendingLicenseId||businessDetails?.vendingLiscence)?
             <Row
               label={t("SV_VENDING_LISCENCE")}
-              text={`${t(checkForNA(businessDetails?.vendingLiscence))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.vendingLicenseId:businessDetails?.vendingLiscence))}`}
           />:null
           }
           
           <span style={{marginTop:"5px", fontSize:"18px", fontWeight:"bold" }}>{t("SV_DAY_HOUR_OPERATION")}</span>
           <ApplicationTable
               t={t}
-              data={coloumnRows}
+              data={operationRows}
               columns={columnName}
               getCellProps={(cellInfo) => ({
                 style: {
@@ -393,7 +259,7 @@ import Timeline from "../../../components/Timeline";
                 },
               })}
               isPaginationRequired={false}
-              totalRecords={coloumnRows.length}
+              totalRecords={operationRows.length}
             />
           </StatusTable>
           {bankdetails?.accountNumber&&
@@ -407,7 +273,7 @@ import Timeline from "../../../components/Timeline";
               <Row
               label={t("SV_ACCOUNT_NUMBER")}
               text={`${t(checkForNA(bankdetails?.accountNumber))}`}
-              actionButton={(renewalData?.applicationNo.length>0)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/bank-details`} />}
+              actionButton={(isRenew)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/bank-details`} />}
               />
               <Row
               label={t("SV_IFSC_CODE")}
@@ -432,31 +298,29 @@ import Timeline from "../../../components/Timeline";
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("SV_ADDRESS_LINE1")}
-              text={`${t(checkForNA(address?.addressline1))}`}
-              actionButton={(renewalData?.applicationNo.length>0)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/address-details`} />}
+              text={`${t(checkForNA((isRenew)?renewalData?.addressDetails?.[0]?.addressLine1:address?.addressline1))}`}
+              actionButton={(isRenew)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/address-details`} />}
               />
               <Row
               label={t("SV_ADDRESS_LINE2")}
-              text={`${t(checkForNA(address?.addressline2))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.addressDetails?.[0]?.addressLine2:address?.addressline2))}`}
               />
               <Row
               label={t("SV_CITY")}
-              text={`${t(checkForNA(address?.city?.city?.name))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.addressDetails?.[0]?.city:address?.city?.city?.name))}`}
               />
               <Row
               label={t("SV_LOCALITY")}
-              text={`${t(checkForNA(address?.locality?.i18nKey))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.addressDetails?.[0]?.locality:address?.locality?.i18nKey))}`}
               />
-              {address?.pincode?
               <Row
               label={t("SV_ADDRESS_PINCODE")}
-              text={`${t(checkForNA(address?.pincode))}`}
-              />:null
-              }
-              {address?.landmark?
+              text={`${t(checkForNA((isRenew)?renewalData?.addressDetails?.[0]?.pincode:address?.pincode))}`}
+              />
+              {(renewalData?.addressDetails?.[0]?.landmark||address?.landmark)?
               <Row
               label={t("SV_LANDMARK")}
-              text={`${t(checkForNA(address?.landmark))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.addressDetails?.[0]?.landmark:address?.landmark))}`}
               />:null
               }
           </StatusTable>
@@ -465,18 +329,18 @@ import Timeline from "../../../components/Timeline";
           <StatusTable style={{marginBottom:"30px"}}>
           <Row
             label={t("SV_CATEGORY")}
-            text={`${t(checkForNA(specialCategoryData?.ownerCategory?.value))}`}
-            actionButton={(renewalData?.applicationNo.length>0)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/special-category`} />}
+            text={`${t(checkForNA((isRenew)?renewalData?.disabilityStatus:specialCategoryData?.ownerCategory?.value))}`}
+            actionButton={(isRenew)?null:<ActionButton jumpTo={`/digit-ui/citizen/sv/apply/special-category`} />}
             />
           {specialCategoryData?.beneficiary!==null?
           <Row
             label={t("SV_BENEFICIARY_SCHEMES")}
-            text={`${t(checkForNA(specialCategoryData?.beneficiary?.value))}`}
+            text={`${t(checkForNA((isRenew)?renewalData?.benificiaryOfSocialSchemes:specialCategoryData?.beneficiary?.value))}`}
             />:null}
             {specialCategoryData?.enrollmentId!==null?
             <Row
               label={t("SV_ENROLLMENT_APPLICATION_NUMBER")}
-              text={`${t(checkForNA(specialCategoryData?.enrollmentId))}`}
+              text={`${t(checkForNA((isRenew)?renewalData?.enrollmentId:specialCategoryData?.enrollmentId))}`}
               />:null}
           </StatusTable>
           
@@ -496,4 +360,4 @@ import Timeline from "../../../components/Timeline";
     );
   };
   
-  export default SVCheckPage;
+export default React.memo(SVCheckPage);

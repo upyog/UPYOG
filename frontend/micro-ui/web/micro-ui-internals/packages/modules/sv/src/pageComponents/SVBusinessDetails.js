@@ -577,6 +577,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
             <CardLabel>{t("SV_DAY_HOUR_OPERATION")} <span className="astericColor">*</span></CardLabel>
             <ApplicationTable
               t={t}
+              styles={{width:"500px"}}
               data={daysOfOperation}
               columns={columns}
               getCellProps={(cellInfo) => ({
