@@ -656,7 +656,7 @@ config:
         image-name: "scheduler"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/scheduler-service/src/main/resources/db"
-        image-name: "scheduler-db"
+        image-name: "scheduler-services"
         
   - name: "builds/municipal-services/feedback-service"
     build:
