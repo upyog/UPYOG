@@ -221,7 +221,7 @@ public class PaytmPosGateway implements Gateway {
            // Format the current date and time
            String formattedDateTime = now.format(formatter);
            TreeMap<String, String> Body = new TreeMap<>();
-   		    log.info(MID+,"mid"+TID+"tid"+MERCHANT_KEY+"key");
+   		    log.info(MID.toString()+"mid"+TID+"tid"+MERCHANT_KEY+"key");
 
            Body.put("paytmMid", MID);//put  mid  here Testin39635949826983//Gaurav09015494045385//s-Prachi65794223240821  , p-Prachi57804451957605
            Body.put("paytmTid", TID);//put  tid  here 70000398//10714205  //10955450
