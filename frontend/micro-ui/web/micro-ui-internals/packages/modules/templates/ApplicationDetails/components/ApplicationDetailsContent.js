@@ -133,15 +133,15 @@ console.log("appl", applicationDetails)
           }
         },
       };
-      const previousCheckpoint = timeline?.[index - 1];
+      const previousCheckpoint = timeline && timeline[index - 1] &&timeline?.[index - 1];
       const caption = {
         date: checkpoint?.auditDetails?.lastModified,
         name: checkpoint?.assignes?.[0]?.name,
         mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
                      ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber 
                      : checkpoint?.assignes?.[0]?.mobileNumber,
-        comment: t(checkpoint?.comment),
-        wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [],
+        comment: t(checkpoint && checkpoint?.comment),
+        wfComment: previousCheckpoint ? previousCheckpoint && previousCheckpoint.wfComment : [],
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       
