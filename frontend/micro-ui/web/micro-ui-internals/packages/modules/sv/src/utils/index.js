@@ -10,7 +10,7 @@
  * constants variable used across module so that i can change across the moduel from this place only
  * TODO: Use this logic across the module
  */
-export const UPYOG_VARIABLE = {
+export const UPYOG_CONSTANTS = {
   MODULE_NAME :"StreetVending",
   AM: "AM",
   PM: "PM",
@@ -30,13 +30,13 @@ export const checkForNotNull = (value = "") => {
 };
 
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : UPYOG_VARIABLE.NOT_APPLICABLE;
+  return checkForNotNull(value) ? value : UPYOG_CONSTANTS.NOT_APPLICABLE;
 };
 
 // Utility functions to convert string into integer and append AM and PM
 export const formatTime = (time) => {
   const hour = parseInt(time);
-  return `${time} ${hour >= 12 ? UPYOG_VARIABLE.PM : UPYOG_VARIABLE.AM}`;
+  return `${time} ${hour >= 12 ? UPYOG_CONSTANTS.PM : UPYOG_CONSTANTS.AM}`;
 };
 
 
@@ -100,7 +100,7 @@ export const transformDocuments = (documents) => {
   if (!Array.isArray(documents)) return [];
 
   // Retrieve and parse CategoryDocument from sessionStorage
-  const categoryDocument = sessionStorage.getItem(UPYOG_VARIABLE.DOCUMENT);
+  const categoryDocument = sessionStorage.getItem(UPYOG_CONSTANTS.DOCUMENT);
   const parsedCategoryDocument = categoryDocument ? JSON.parse(categoryDocument) : null;
   // Transform existing documents
   const transformedDocs = documents.map(doc => ({
