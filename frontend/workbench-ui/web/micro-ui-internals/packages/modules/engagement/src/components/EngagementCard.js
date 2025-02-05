@@ -18,7 +18,7 @@ const EngagementCard = () => {
     Digit.SessionStorage.set("CITIZENSURVEY.INBOX", null);
   }, []);
 
-  if (!isEmployee) return null;
+  if (true) return null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: documentsCount, isLoading: isLoadingDocs } = Digit.Hooks.engagement.useDocSearch(
     { tenantIds: tenantId },
