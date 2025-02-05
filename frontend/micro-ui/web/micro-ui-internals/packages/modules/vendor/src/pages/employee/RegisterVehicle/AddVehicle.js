@@ -132,10 +132,10 @@ const AddVehicle = ({ parentUrl, heading }) => {
         setShowToast({ key: "success", action: "ADD_VEHICLE" });
         setTimeout(closeToast, 5000);
         queryClient.invalidateQueries("FSM_VEICLES_SEARCH");
-        setTimeout(() => {
-          closeToast();
-          history.push(`/digit-ui/employee/fsm/registry?selectedTabs=VEHICLE`);
-        }, 5000);
+        // setTimeout(() => {
+        //   closeToast();
+        //   history.push(`/digit-ui/employee/fsm/registry?selectedTabs=VEHICLE`);
+        // }, 5000);
       },
     });
   };

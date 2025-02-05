@@ -21,7 +21,7 @@ const VENDORCard = () => {
     // },
     {
       label: t("ADDITIONAL_VENDOR_DETAILS"),
-      link: `/digit-ui/employee/vendor/new-application`
+      link: `/digit-ui/employee/vendor/registry/additionaldetails`
     },
     {
       label: t("VENDOR_NEW_REGISTERATION"),

@@ -21,4 +21,14 @@ export const VendorService = {
       params: { tenantId },
       auth: true,
     }),
+    createVendorAdditionaldetails: (details, tenantId) => 
+      Request({
+        url: Urls.vendor.additionaldetailsCreate,
+        data: details,
+        useCache: true,
+        userService: true,
+        method: "POST",
+        params: { tenantId },
+        auth: true,
+      }),
 };
