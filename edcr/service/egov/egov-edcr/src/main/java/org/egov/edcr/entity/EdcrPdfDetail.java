@@ -18,7 +18,6 @@ import javax.persistence.Transient;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
-
 @Entity
 @Table(name = "EDCR_PDF_DETAIL")
 @SequenceGenerator(name = EdcrPdfDetail.SEQ_EDCR_PDF_DETAIL, sequenceName = EdcrPdfDetail.SEQ_EDCR_PDF_DETAIL, allocationSize = 1)
@@ -48,7 +47,7 @@ public class EdcrPdfDetail extends AbstractAuditable {
 
     @Transient
     private List<String> violations;
-
+	
     @Override
     public Long getId() {
         return id;

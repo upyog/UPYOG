@@ -285,7 +285,7 @@ public class OwnerInfo {
 	 * @return gender
 	 **/
 	@ApiModelProperty(required = true, value = "Gender of the owner.")
-	@NotNull
+	
 
 	@Size(max = 256)
 	public String getGender() {
@@ -307,7 +307,7 @@ public class OwnerInfo {
 	 * @return fatherOrHusbandName
 	 **/
 	@ApiModelProperty(required = true, value = "Father or Husband name of the owner.")
-	@NotNull
+	
 
 	@Size(max = 256)
 	public String getFatherOrHusbandName() {
