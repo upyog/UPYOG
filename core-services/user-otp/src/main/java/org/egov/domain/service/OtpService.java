@@ -61,7 +61,9 @@ public class OtpService {
             throw new UserAlreadyExistInSystemException();
         else if (otpRequest.isLoginRequestType() && null == matchingUser)
             throw new UserNotExistingInSystemException();
-
+        
+        otpRepository.checkOtpTime(otpRequest);
+        
         final String otpNumber = otpRepository.fetchOtp(otpRequest);
         System.out.println("otpNumber----------->"+otpNumber);
         otpSMSSender.sendNew(otpRequest, otpNumber);
