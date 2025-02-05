@@ -77,7 +77,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         String tenantId = details.get("tenantId");
         String userType = details.get("userType");
-
+        String captcha=details.get("captcha");
+        String uuid=details.get("uuid");
+        
         if (isEmpty(tenantId)) {
             throw new OAuth2Exception("TenantId is mandatory");
         }
@@ -135,9 +137,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 //for automation allow fixing otp validation to a fixed otp
                 isPasswordMatched = true;
             } else {
+            	userService.validateCaptcha(uuid, captcha);
                 isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
             }
         } else {
+        	userService.validateCaptcha(uuid, captcha);
             isPasswordMatched = isPasswordMatch(employeeLoginPasswordOtpEnabled, password, user, authentication);
         }
 

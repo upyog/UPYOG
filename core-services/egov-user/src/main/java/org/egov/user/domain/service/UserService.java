@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
@@ -23,6 +24,8 @@ import org.egov.user.persistence.dto.FailedLoginAttempt;
 import org.egov.user.persistence.repository.FileStoreRepository;
 import org.egov.user.persistence.repository.OtpRepository;
 import org.egov.user.persistence.repository.UserRepository;
+import org.egov.user.web.contract.Captcha;
+import org.egov.user.web.contract.CaptchaResponse;
 import org.egov.user.web.contract.Otp;
 import org.egov.user.web.contract.OtpValidateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +44,20 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -66,6 +77,7 @@ public class UserService {
     private FileStoreRepository fileRepository;
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
     private TokenStore tokenStore;
+    private Map<String, String> capMap=new HashMap<String, String>();
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -97,6 +109,8 @@ public class UserService {
 
     @Autowired
     private NotificationUtil notificationUtil;
+    
+    
 
     public UserService(UserRepository userRepository, OtpRepository otpRepository, FileStoreRepository fileRepository,
                        PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil, TokenStore tokenStore,
@@ -669,6 +683,72 @@ public class UserService {
         if (!CollectionUtils.isEmpty(errorMap.keySet())) {
             throw new CustomException(errorMap);
         }
+    }
+    
+    public CaptchaResponse createCaptcha(ResponseInfo responseInfo)
+    {
+        CaptchaResponse captchaResponse=new CaptchaResponse();
+        Captcha captcha=new Captcha();
+    	final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        final int CAPTCHA_LENGTH = 6;
+        String uuid=UUID.randomUUID().toString();
+        
+        StringBuilder captchaText = new StringBuilder(CAPTCHA_LENGTH);
+        Random random = new Random();
+        for (int i = 0; i < CAPTCHA_LENGTH; i++) {
+            captchaText.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+		/*
+		 * ByteArrayOutputStream baos = new ByteArrayOutputStream(); try {
+		 * ImageIO.write(generateCaptchaImage(captchaText.toString()), "jpeg", baos); }
+		 * catch (IOException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } byte[] imageBytes = baos.toByteArray(); String
+		 * encodedfile = Base64.getEncoder().encodeToString(imageBytes);
+		 */
+        
+        capMap.put(uuid, captchaText.toString());
+        captchaResponse.setResponseInfo(responseInfo);
+        captcha.setUuid(uuid);
+        captcha.setCaptcha(captchaText.toString());
+        captchaResponse.setCaptcha(captcha);
+        return captchaResponse;
+    }
+    
+    public static BufferedImage generateCaptchaImage(String captchaText) {
+        int width = 160;
+        int height = 40;
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = bufferedImage.createGraphics();
+
+        // Background
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, width, height);
+
+        // Text
+        g2d.setFont(new Font("Arial", Font.BOLD, 24));
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(captchaText, 20, 30);
+
+        g2d.dispose();
+        return bufferedImage;
+    }
+    
+    public boolean validateCaptcha(String uuid, String captcha)
+    {
+    	if(capMap.containsKey(uuid))
+    	{
+    		String mapCaptcha=capMap.get(uuid);
+    		if(captcha.contentEquals(mapCaptcha))
+    		{
+    			capMap.remove(uuid);
+    			System.out.println("capMap::"+capMap);
+    			return true;
+    		}
+    		else
+    			throw new CustomException("INVALID_CAPTCHA","Invalid Captcha Entered");
+    	}
+    	
+    	return false;
     }
 
 
