@@ -44,6 +44,7 @@ public class OtpService {
     public void sendOtp(OtpRequest otpRequest) {
     	
         otpRequest.validate();
+        //check for timeer
         if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType() || otpRequest.isOwnerValidate()) {
         	otpRequest.setTemplateId(registrationSmsTemplateId);
             sendOtpForUserRegistration(otpRequest);

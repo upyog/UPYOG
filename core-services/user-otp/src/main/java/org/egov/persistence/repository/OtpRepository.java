@@ -14,15 +14,36 @@ public class OtpRepository {
 
     private final String otpCreateUrl;
     private RestTemplate restTemplate;
+    private final String otpExistChekUrl;
+    
 
     public OtpRepository(RestTemplate restTemplate,
                          @Value("${otp.host}") String otpHost,
-                         @Value("${otp.create.url}") String otpCreateUrl) {
+                         @Value("${otp.create.url}") String otpCreateUrl,
+                         @Value("${otp.check.url}") String otpExistUrl) {
         this.restTemplate = restTemplate;
         this.otpCreateUrl = otpHost + otpCreateUrl;
+        this.otpExistChekUrl=otpHost+otpExistUrl;
     }
 
     public String fetchOtp(OtpRequest otpRequest) {
+        final org.egov.persistence.contract.OtpRequest request =
+                new org.egov.persistence.contract.OtpRequest(otpRequest);
+        try {
+            final OtpResponse otpResponse =
+                    restTemplate.postForObject(otpCreateUrl, request, OtpResponse.class);
+            if (isOtpNumberAbsent(otpResponse)) {
+                throw new OtpNumberNotPresentException();
+            }
+            return otpResponse.getOtpNumber();
+        } catch (Exception e) {
+            log.error("Exception while fetching OTP: ", e);
+            throw new OtpNumberNotPresentException();
+        }
+    }
+    
+    
+    public String checkOtpTime(OtpRequest otpRequest) {
         final org.egov.persistence.contract.OtpRequest request =
                 new org.egov.persistence.contract.OtpRequest(otpRequest);
         try {

@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.egov.domain.exception.TokenUpdateException;
 import org.egov.domain.model.Token;
+import org.egov.domain.model.TokenRequest;
 import org.egov.domain.model.TokenSearchCriteria;
 import org.egov.domain.model.Tokens;
 import org.egov.domain.model.ValidateRequest;
 import org.egov.persistence.repository.rowmapper.TokenRowMapper;
 import org.egov.web.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +28,8 @@ public class TokenRepository {
     private static final String UPDATE_TOKEN = "update eg_token set validated = 'Y' where id = :id";
     private static final String GETTOKEN_BYID = "select * from eg_token where id=:id";
     private static final String UPDATETOKEN_TLL_BYID = "update eg_token set ttlsecs = (extract (epoch from now()) - createddatenew / 1000)::int + :ttl where id = :id";
+    
+    private static final String GET_TOKEN_RESEND_VALIDITY = "select * from eg_token where tokenidentity=:tokenIdentity and tenantid=:tenantId and ((extract(epoch from now()) * 1000 - createddatenew)/1000)::int <= :maxtime and validated = 'N' ORDER BY  createddatenew";
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -36,6 +40,9 @@ public class TokenRepository {
     public TokenRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
+    
+    @Value("${egov.resend.otp.ttl}")
+    private Integer resendOtpttl;
 
     public Token save(Token token) {
 
@@ -89,6 +96,20 @@ public class TokenRepository {
         final Map<String, Object> tokenInputs = new HashMap<String, Object>();
         tokenInputs.put("id", searchCriteria.getUuid());
         List<Token> domainTokens = namedParameterJdbcTemplate.query(GETTOKEN_BYID, tokenInputs, new TokenRowMapper());
+        if (domainTokens != null && !domainTokens.isEmpty()) {
+            token = domainTokens.get(0);
+        }
+        return token;
+    }
+    
+    public Token findByIdentity(TokenRequest tokenRequest) {
+
+        Token token = null;
+        final Map<String, Object> tokenInputs = new HashMap<String, Object>();
+        tokenInputs.put("tokenIdentity", tokenRequest.getIdentity());
+        tokenInputs.put("tenantId", tokenRequest.getTenantId());
+        tokenInputs.put("maxtime", resendOtpttl);
+        List<Token> domainTokens = namedParameterJdbcTemplate.query(GET_TOKEN_RESEND_VALIDITY, tokenInputs, new TokenRowMapper());
         if (domainTokens != null && !domainTokens.isEmpty()) {
             token = domainTokens.get(0);
         }
