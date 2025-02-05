@@ -46,17 +46,18 @@ public class DemandService {
 		if (waterTankerRequest == null) {
 			throw new IllegalArgumentException("WaterTanker Booking Request is Empty");
 		}
+		log.info("Creating demand upon approve action ....");
 		WaterTankerBookingDetail waterTankerBookingDetail = waterTankerRequest.getWaterTankerBookingDetail();
 		String consumerCode = waterTankerBookingDetail.getBookingNo();
 		String tankerCapacityType = waterTankerBookingDetail.getTankerType() + "_"
 				+ waterTankerBookingDetail.getWaterQuantity();
-		BigDecimal amountPayable = calculationService.calculateFee(tankerCapacityType,
-				waterTankerRequest.getRequestInfo(), tenantId);
-
+		BigDecimal amountPayable = calculationService.calculateFee(waterTankerBookingDetail.getTankerQuantity(),
+				tankerCapacityType, waterTankerRequest.getRequestInfo(), tenantId);
+		log.info("Final amount payable after calculation..." + amountPayable);
 		User owner = buildUser(waterTankerBookingDetail.getApplicantDetail(), tenantId);
 		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId);
 		Demand demand = buildDemand(tenantId, consumerCode, owner, demandDetails, amountPayable);
-
+		log.info("Final demand generation object" + demand.toString());
 		return demandRepository.saveDemand(waterTankerRequest.getRequestInfo(), Collections.singletonList(demand));
 	}
 
