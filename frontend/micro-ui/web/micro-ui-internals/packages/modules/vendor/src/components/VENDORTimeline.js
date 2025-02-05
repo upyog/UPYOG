@@ -10,7 +10,7 @@ const getAction = (flow) => {
       actions = [];
       break;
     default:
-      actions = ["VENDOR_DETAILS", "VENDOR_DOCUMENT_DETAILS","VENDOR_ADDRESS_DETAILS","VENDOR_SUMMARY"];
+      actions = ["VENDOR_ADDITIONAL_DETAILS", "VENDOR_DOCUMENT_DETAILS","VENDOR_SUMMARY"];
   }
 };
 const Timeline = ({ currentStep = 1, flow = "" }) => {

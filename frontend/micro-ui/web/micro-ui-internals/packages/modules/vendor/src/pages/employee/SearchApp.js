@@ -3,7 +3,6 @@ import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";
-//import EWSearchApplication from "../../components/SearchApplication";
 import VendorSearchApplication from "../../components/SearchApplication";
 
 const SearchApp = ({path}) => {
@@ -18,11 +17,11 @@ const SearchApp = ({path}) => {
         fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
         var toDate = new Date(_data?.toDate)
         toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800)
-        const data = {
-            ..._data,
-            ...(_data.toDate ? {toDate: toDate?.getTime()} : {}),
-            ...(_data.fromDate ? {fromDate: fromDate?.getTime()} : {})
-        }
+        // const data = {
+        //     ..._data,
+        //     ...(_data.toDate ? {toDate: toDate?.getTime()} : {}),
+        //     ...(_data.fromDate ? {fromDate: fromDate?.getTime()} : {})
+        // }
 
         let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
         if(Object.entries(payload).length>0 && !payload.requestId && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.requestId && !payload.status && !payload.toDate)
@@ -61,4 +60,4 @@ const SearchApp = ({path}) => {
 
 }
 
-export default SearchApp
+export default SearchApp;

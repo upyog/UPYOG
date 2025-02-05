@@ -20,39 +20,39 @@ const SearchVendor = () => {
 
   let paginationParms = { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
 
-  //   const { data: dsoData, isLoading: isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } =
-  //     tab === "VEHICLE"
-  //       ? Digit.Hooks.fsm.useVehiclesSearch({    //hook me jake data fetch kr rha hai -- useVehiclesSearch ke naam se hook banaya hua hai
-  //           tenantId,
-  //           filters: {
-  //             ...paginationParms,
-  //             registrationNumber: searchParams?.registrationNumber,
-  //             status: "ACTIVE,DISABLED",
-  //           },
-  //           config: { enabled: false },
-  //         })
-  //       : tab === "DRIVER"
-  //       ? Digit.Hooks.fsm.useDriverSearch({
-  //           tenantId,
-  //           filters: {
-  //             ...paginationParms,
-  //             name: searchParams?.name,
-  //             status: "ACTIVE,DISABLED",
-  //           },
-  //           config: { enabled: false },
-  //         })
-  //       : Digit.Hooks.fsm.useVendorSearch({
-  //           tenantId,
-  //           filters: {
-  //             ...paginationParms,
-  //             name: searchParams?.name,
-  //             status: "ACTIVE,DISABLED",
-  //           },
-  //           config: { enabled: false },
-  //         });
+    const { data: dsoData, isLoading: isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } =
+      tab === "VEHICLE"
+        ? Digit.Hooks.fsm.useVehiclesSearch({    //
+            tenantId,
+            filters: {
+              ...paginationParms,
+              registrationNumber: searchParams?.registrationNumber,
+              status: "ACTIVE,DISABLED",
+            },
+            config: { enabled: false },
+          })
+        : tab === "DRIVER"
+        ? Digit.Hooks.fsm.useDriverSearch({
+            tenantId,
+            filters: {
+              ...paginationParms,
+              name: searchParams?.name,
+              status: "ACTIVE,DISABLED",
+            },
+            config: { enabled: false },
+          })
+        : Digit.Hooks.fsm.useVendorSearch({
+            tenantId,
+            filters: {
+              ...paginationParms,
+              name: searchParams?.name,
+              status: "ACTIVE,DISABLED",
+            },
+            config: { enabled: false },
+          });
 
   //this is for specially vendor search
-  const { data: dsoData, isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } =
+  //const { data: dsoData, isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } =
     // console.log("ddaaddaatttaaaa", data);
     // console.log("issucceesssss", isSuccess);
 
@@ -138,36 +138,36 @@ const SearchVendor = () => {
     }
   }, [dsoData]);
 
-  // useEffect(() => {
-  //   if (vehicleIds !== "" || driverIds !== "") refetchVendor();
-  // }, [vehicleIds, driverIds]);
+  useEffect(() => {
+    if (vehicleIds !== "" || driverIds !== "") refetchVendor();
+  }, [vehicleIds, driverIds]);
 
-  // useEffect(() => {
-  //   if (vendorData) {
-  //     if (tab === "VEHICLE") {
-  //       const vehicles = dsoData?.vehicle.map((data) => {
-  //         let vendor = vendorData.find((ele) => ele.dsoDetails?.vehicles?.find((vehicle) => vehicle.id === data.id));
-  //         if (vendor) {
-  //           data.vendor = vendor.dsoDetails;
-  //         }
-  //         return data;
-  //       });
-  //       setTableData(vehicles);
-  //       setVehicleIds("");
-  //     }
-  //     if (tab === "DRIVER") {
-  //       const drivers = dsoData?.driver.map((data) => {
-  //         let vendor = vendorData.find((ele) => ele.dsoDetails?.drivers?.find((driver) => driver.id === data.id));
-  //         if (vendor) {
-  //           data.vendor = vendor.dsoDetails;
-  //         }
-  //         return data;
-  //       });
-  //       setTableData(drivers);
-  //       setDriverIds("");
-  //     }
-  //   }
-  // }, [vendorData, dsoData]);
+  useEffect(() => {
+    if (vendorData) {
+      if (tab === "VEHICLE") {
+        const vehicles = dsoData?.vehicle.map((data) => {
+          let vendor = vendorData.find((ele) => ele.dsoDetails?.vehicles?.find((vehicle) => vehicle.id === data.id));
+          if (vendor) {
+            data.vendor = vendor.dsoDetails;
+          }
+          return data;
+        });
+        setTableData(vehicles);
+        setVehicleIds("");
+      }
+      if (tab === "DRIVER") {
+        const drivers = dsoData?.driver.map((data) => {
+          let vendor = vendorData.find((ele) => ele.dsoDetails?.drivers?.find((driver) => driver.id === data.id));
+          if (vendor) {
+            data.vendor = vendor.dsoDetails;
+          }
+          return data;
+        });
+        setTableData(drivers);
+        setDriverIds("");
+      }
+    }
+  }, [vendorData, dsoData]);
 
   //functions to handle search, pagination, sorting and filter
   const onSearch = (params = {}) => {
@@ -188,36 +188,36 @@ const SearchVendor = () => {
 
   const handleFilterChange = () => {};
 
-  //   const searchFields =
-  //     tab === "VEHICLE"
-  //       ? [
-  //           {
-  //             label: t("ES_FSM_REGISTRY_SEARCH_VEHICLE_NUMBER"),
-  //             name: "registrationNumber",
-  //             pattern: `[A-Z]{2}\\s{1}[0-9]{2}\\s{0,1}[A-Z]{1,2}\\s{1}[0-9]{4}`,
-  //             title: t("ES_FSM_VEHICLE_FORMAT_TIP"),
-  //           },
-  //         ]
-  //       : tab === "DRIVER"
-  //       ? [
-  //           {
-  //             label: t("ES_FSM_REGISTRY_SEARCH_DRIVER_NAME"),
-  //             name: "name",
-  //           },
-  //         ]
-  //       : [
-  //           {
-  //             label: t("ES_FSM_REGISTRY_SEARCH_VENDOR_NAME"),
-  //             name: "name",
-  //           },
-  //         ];
+    const searchFields =
+      tab === "VEHICLE"
+        ? [
+            {
+              label: t("ES_VEHICLE_SEARCH_VEHICLE_NUMBER"),
+              name: "registrationNumber",
+              pattern: `[A-Z]{2}\\s{1}[0-9]{2}\\s{0,1}[A-Z]{1,2}\\s{1}[0-9]{4}`,
+              title: t("ES_FSM_VEHICLE_FORMAT_TIP"),
+            },
+          ]
+        : tab === "DRIVER"
+        ? [
+            {
+              label: t("ES_DRIVER_SEARCH_DRIVER_NAME"),
+              name: "name",
+            },
+          ]
+        : [
+            {
+              label: t("ES_VENDOR_SEARCH_VENDOR_NAME"),
+              name: "name",
+            },
+          ];
 
-  const searchFields = [
-    {
-      label: t("VENDOR_SEARCH_VENDOR_NAME"),
-      name: "name",
-    },
-  ];
+  // const searchFields = [
+  //   {
+  //     label: t("VENDOR_SEARCH_VENDOR_NAME"),
+  //     name: "name",
+  //   },
+  // ];
 
   const handleSort = useCallback((args) => {
     if (args?.length === 0) return;

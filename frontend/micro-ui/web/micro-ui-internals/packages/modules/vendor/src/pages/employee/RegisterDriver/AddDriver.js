@@ -91,10 +91,10 @@ const AddDriver = ({ parentUrl, heading }) => {
         setShowToast({ key: "success", action: "ADD_DRIVER" });
         setTimeout(closeToast, 5000);
         queryClient.invalidateQueries("FSM_DRIVER_SEARCH");
-        setTimeout(() => {
-          closeToast();
-          history.push(`/digit-ui/employee/vendor/search-vendor`);
-        }, 5000);
+        // setTimeout(() => {
+        //   closeToast();
+        //   history.push(`/digit-ui/employee/vendor/search-vendor`);
+        // }, 5000);
       },
     });
   };

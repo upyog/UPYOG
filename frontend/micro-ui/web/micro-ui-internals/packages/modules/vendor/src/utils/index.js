@@ -80,8 +80,9 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
 /* methid to get date from epoch */
 export const convertEpochToDate = (dateEpoch,businessService) => {
   // Returning null in else case because new Date(null) returns initial date from calender
+  const dateFromApi = new Date(dateEpoch);
   if (dateEpoch) {
-    const dateFromApi = new Date(dateEpoch);
+    
     let month = dateFromApi.getMonth() + 1;
     let day = dateFromApi.getDate();
     let year = dateFromApi.getFullYear();
@@ -100,64 +101,55 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
 
 
 
-// this add extra for the asset module 
 
-export const Assetdata = (data) => {
 
+
+
+
+export const VendorData = (data) => {
   const formdata = {
-    Asset: {
-      accountId: "",
-      tenantId: data?.address?.city?.code,
-      assetBookRefNo: data?.asset?.BookPagereference,
-      assetName: data?.asset?.AssetName,
-      description: data?.asset?.Assetdescription,
-      assetClassification:data?.asset?.assetclassification?.code,
-      assetParentCategory: data?.asset?.assettype?.code,
-      assetCategory:data?.asset?.assetsubtype?.code,
-      assetSubCategory:data?.asset?.assetparentsubCategory?.code,
-      department: data?.asset?.Department?.code,
-      financialYear: data?.asset?.financialYear?.code,
-      sourceOfFinance: data?.asset?.sourceOfFinance?.code,
-      applicationNo: "",
-      approvalDate: "",
-      applicationDate: "",
-      status: "",
-      action: "",
-      businessService: "asset-create",
-
-      addressDetails: {
-        addressLine1:data?.address?.addressLine1,
-        addressLine2:data?.address?.addressLine2,
-        buildingName:data?.address?.buildingName,
-        doorNo:data?.address?.doorNo,
-        street:data?.address?.street,
-        pincode:data?.address?.pincode,
-        city:data?.address?.city?.name,
-        locality: { code: data?.address?.locality?.code,
-                    area: data?.address?.locality?.area,
-                    latitude: data?.address?.latitude,
-                    longitude: data?.address?.longitude },
-
-      },
+  
+    VendorAdditionalDetails: {
+      //vendorAdditionalDetailsId: crypto.randomUUID(), // Generate unique ID
+      tenantId: "pg.citya",
+      code: "VENDOR12345454",
+      name: "kunal",
+      vendorCompany: data?.vendordet?.Company,
+      //vendorCategory: "Category 1",
+      vendorPhone: data?.vendordet?.PhoneNo,
+      vendorEmail: "vendor@example.com",
+      contactPerson: data?.vendordet?.ContactPerson,
+      vendorMobileNumber: "9876543210",
+      bankAccountNumber:data?.vendordet?.AccountNo,
+      bank:data?.vendordet?.Bank,
+      bankBranchName:data?.vendordet?.BankbranchName,
+      micrNo:data?.vendordet?.micrNo,
+      epfNo:data?.vendordet?.EpfNo,
+      esiNo:data?.vendordet?.EsiNo,
+      gstRegisteredState:data?.vendordet?.GstState,
+      ifscCode:data?.vendordet?.IFSC,
+      panNo:data?.vendordet?.PanNo,
+      registrationNo:data?.vendordet?.RegistrationNo,
+      status:data?.vendordet?.Status?.code,
+      vendorCategory:data?.vendordet?.VendorCategory?.code,
+      vendorId: data?.vendordet?.VendorId, 
+      gstTinNo:data?.vendordet?.GstNo, 
+      serviceType: data?.vendordet?.VendorType?.code,
       documents: data?.documents?.documents,
-      workflow : {
-        action: "INITIATE",
-        businessService: "asset-create",
-        moduleName: "asset-services"
-      },
+      active: null,
+      vendorAdditionalDetailsId: null,
 
-      additionalDetails: {
-        ...data?.assetDetails,
 
-        acquisitionProcessionDetails: {
-        },
-      }, 
-    },
+    }
   };
 
- 
   return formdata;
 };
+
+
+
+
+
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
   while (str.includes(searcher)) {
@@ -179,10 +171,10 @@ export const checkArrayLength = (obj = [], length = 0) => {
 };
 
 export const getWorkflow = (data = {}) => {
-  return {
+  // return {
 
-    businessService: `asset-create`,
-    moduleName: "asset-services",
-  };
+  //   businessService: `asset-create`,
+  //   moduleName: "asset-services",
+  // };
 };
 

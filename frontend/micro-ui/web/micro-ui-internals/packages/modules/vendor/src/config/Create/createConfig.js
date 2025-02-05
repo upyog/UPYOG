@@ -18,6 +18,7 @@ export const createConfig = [
           hideInEmployee: true,
           isMandatory: true,
           texts: {
+            header: "VENDOR_ADDITIONAL_DETAILS",
             submitBarLabel: "VENDOR_COMMON_NEXT",
           },
         },
@@ -32,41 +33,13 @@ export const createConfig = [
           withoutLabel: true,
           key: "documents",
           type: "component",
-          nextStep: "pincode",
-          texts: {
-            submitBarLabel: "VENDOR_COMMON_NEXT",
-          },
-        },
-      ],
-    },
-    {
-      head: "VENDOR_ADDRESS_DETAILS",
-      body: [
-        {
-          route: "pincode",
-          component: "VendorPincode",
-          texts: {
-            submitBarLabel: "VENDOR_COMMON_NEXT",
-            skipText: "CORE_COMMON_SKIP_CONTINUE",
-          },
-          withoutLabel: true,
-          key: "address",
-          nextStep: "address",
-          type: "component",
-        },
-        {
-          route: "address",
-          component: "VendorAddress",
-          withoutLabel: true,
-          texts: {
-            submitBarLabel: "EWASTE_COMMON_NEXT",
-          },
-          key: "address",
           nextStep: null,
-          isMandatory: true,
-          type: "component",
+          texts: {
+            header: "VENDOR_DOCUMENTS_DETAILS",
+            submitBarLabel: "VENDOR_COMMON_NEXT",
+          },
         },
       ],
-    },
+    }
   ];
   

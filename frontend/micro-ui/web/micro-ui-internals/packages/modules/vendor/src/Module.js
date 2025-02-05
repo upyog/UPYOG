@@ -8,9 +8,9 @@ import VENDORCard from "./components/VENDORCard";
 import AddVendor from "./pages/employee/RegisterVendor/AddVendor";
 
 import VendorDetails from "./pageComponents/VendorDetails";
-import VENDOREMPCreate from "./pages/employee/NewApplication";
-import VendorAddress from "./pageComponents/VendorAddress";
-import VendorPincode from "./pageComponents/VendorPincode";
+//import VENDOREMPCreate from "./pages/employee/NewApplication";
+// import VendorAddress from "./pageComponents/VendorAddress";
+// import VendorPincode from "./pageComponents/VendorPincode";
 import VendorDocuments from "./pageComponents/VendorDocuments";
 import ServiceDoc from "./pageComponents/ServiceDoc";
 import VendorSelectAddress from "./pageComponents/VendorSelectAddress";
@@ -21,6 +21,11 @@ import SelectServiceType from "./pageComponents/SelectServiceType";
 import AddDriver from "./pages/employee/RegisterDriver/AddDriver";
 import EditVendorDetails from "./pages/employee/RegisterVendor/EditVendorDetails";
 import AddVehicle from "./pages/employee/RegisterVehicle/AddVehicle";
+import VENDORCreate from "./pages/employee/Create";
+import CheckPage from "./pages/employee/Create/CheckPage";
+import NewResponse from "./pages/employee/Create/NewResponse";
+import DriverDetails from "./pages/employee/RegisterDriver/DriverDetails";
+import VehicleDetails from "./pages/employee/RegisterVehicle/VehicleDetails";
 
 
 
@@ -30,9 +35,9 @@ import AddVehicle from "./pages/employee/RegisterVehicle/AddVehicle";
 
 const componentsToRegister = {
   VendorDetails,
-  VENDOREMPCreate,
-  VendorAddress,
-  VendorPincode,
+  //VENDOREMPCreate,
+  // VendorAddress,
+  // VendorPincode,
   VendorDocuments,
   ServiceDoc,
   AddVendor,
@@ -44,6 +49,11 @@ const componentsToRegister = {
   AddDriver,
   EditVendorDetails,
   AddVehicle,
+  VENDORCreate,
+  VENDORCheckPage : CheckPage,
+  NewResponse,
+  DriverDetails,
+  VehicleDetails,
 };
 
 
