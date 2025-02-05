@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -217,7 +218,7 @@ public class UserService {
      */
     public User createUser(User user, RequestInfo requestInfo) {
         user.setUuid(UUID.randomUUID().toString());
-        user.validateNewUser(createUserValidateName);
+       user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         /* encrypt here */
         user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
@@ -469,6 +470,7 @@ public class UserService {
      */
     public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request, RequestInfo requestInfo) {
         request.validate();
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
         // validateOtp(request.getOtpValidationRequest());
         User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType());
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased) {
@@ -485,6 +487,11 @@ public class UserService {
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
         validatePassword(request.getNewPassword());
+        
+        if(bcrypt.matches(request.getNewPassword(), user.getPassword())) {
+        	 log.info("Password Already Used Previously");
+             throw new CustomException("INVALID_PASSWORD","Password Already Used Previously");
+        }
         user.updatePassword(encryptPwd(request.getNewPassword()));
         /* encrypt here */
         /* encrypted value is stored in DB*/

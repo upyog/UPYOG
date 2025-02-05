@@ -65,7 +65,7 @@ public class OtpService {
         otpRepository.checkOtpTime(otpRequest);
         
         final String otpNumber = otpRepository.fetchOtp(otpRequest);
-        System.out.println("otpNumber----------->"+otpNumber);
+        System.out.println("Phone::::"+otpRequest.getMobileNumber()+"-------------otpNumber::::"+otpNumber);
         otpSMSSender.sendNew(otpRequest, otpNumber);
     }
 
@@ -78,10 +78,12 @@ public class OtpService {
         if (null == matchingUser.getMobileNumber() || matchingUser.getMobileNumber().isEmpty())
             throw new UserMobileNumberNotFoundException();
         try {
+        	 otpRepository.checkOtpTime(otpRequest);
             final String otpNumber = otpRepository.fetchOtp(otpRequest);
             otpRequest.setMobileNumber(matchingUser.getMobileNumber());
             otpRequest.setTemplateId(registrationSmsTemplateId);
             otpSMSSender.send(otpRequest, otpNumber);
+            System.out.println("Phone::::"+otpRequest.getMobileNumber()+"-------------otpNumber::::"+otpNumber);
             otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
         } catch (Exception e) {
             log.error("Exception while fetching otp: ", e);

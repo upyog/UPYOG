@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CaptchaFilter implements Filter{
-	@Override
+public class CaptchaFilter {
+	//@Override
     public void doFilter(
       ServletRequest request, 
       ServletResponse response, 
@@ -28,13 +28,13 @@ public class CaptchaFilter implements Filter{
         System.out.println("Committing a transaction for req : {}"+ req.getRequestURI());
     }
 
-	@Override
+	//@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+//	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 		
