@@ -55,6 +55,9 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
   const [VendorType, setVendorType] = useState("");
   const [Status, setStatus] = useState("");
   const [micrNo, setmicrNo] = useState("");
+  const [PhoneNo, setPhoneNo] = useState("");
+  const [ContactPerson, setContactPerson] = useState("");
+  const [Company,setCompany] = useState("");
 
   const [showToast, setShowToast] = useState(null);
 
@@ -81,7 +84,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
       if (IFSC.length === 11 && Bank && BankbranchName) {
         setBank(Bank);
         setBankbranchName(BankbranchName);
-        setmicrNo(micrNo)
+        setmicrNo(micrNo);
       } else {
         setBank("");
         setBankbranchName("");
@@ -166,6 +169,18 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
     setmicrNo(e.target.value);
   }
 
+  function setphoneno(e) {
+    setPhoneNo(e.target.value);
+  }
+
+  function setcontactperson(e) {
+    setContactPerson(e.target.value);
+  }
+
+  function setcompanyname(e){
+    setCompany(e.target.value);
+  }
+
   // mdms call
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -200,6 +215,9 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
         VendorType,
         Status,
         micrNo,
+        PhoneNo,
+        ContactPerson,
+        Company
       };
       onSelect(config.key, ownerStep, false, index);
     }
@@ -237,6 +255,9 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
     VendorType,
     Status,
     micrNo,
+    PhoneNo,
+    ContactPerson,
+    Company
   ]);
 
   return (
@@ -252,26 +273,24 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
         // isDisabled={!applicantName || !mobileNumber || !emailId}
       >
         <div>
-
-
-        <CardLabel>{`${t("VENDOR_ID")}`}</CardLabel>
+          <CardLabel>{`${t("VENDOR_ID")}`}</CardLabel>
           <TextInput
             t={t}
             type={"text"}
             isMandatory={false}
             optionKey="i18nKey"
             name="VendorId"
-            value={IFSC}
+            value={VendorId}
             //placeholder={"Enter IFSC Code"}
             onChange={setvendorid}
             style={{ width: "50%" }}
             maxLength={11}
-            ValidationRequired={true}
+            ValidationRequired={false}
             {...(validation = {
               isRequired: true,
-              pattern: "^[A-Z]{4}0[A-Z0-9]{6}$", // validation for IFSC code
+              pattern: "^[a-zA-Z0-9/-]{1,20}$", // validation for IFSC code
               type: "text",
-              title: t("INVALID_IFSC_CODE_ERROR_MESSAGE"),
+              title: t("INVALID_VENDOR_ID"),
             })}
           />
 
@@ -363,6 +382,63 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             })}
           />
 
+          <CardLabel>{`${t("PHONE_NO")}`}</CardLabel>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="PhoneNo"
+            value={PhoneNo}
+            onChange={setphoneno}
+            style={{ width: "50%" }}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: true,
+              pattern: "[0-9]{9,18}", // validation for account number
+              type: "text",
+              title: t("INVALID_ACCOUNT_NO_ERROR_MESSAGE"),
+            })}
+          />
+
+          <CardLabel>{`${t("CONTACT_PERSON")}`}</CardLabel>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="ContactPerson"
+            value={ContactPerson}
+            onChange={setcontactperson}
+            style={{ width: "50%" }}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]{1,20}$", // validation for account number
+              type: "text",
+              title: t("INVALID_ACCOUNT_NO_ERROR_MESSAGE"),
+            })}
+          />
+
+          <CardLabel>{`${t("COMPANY_NAME")}`}</CardLabel>
+          <TextInput
+            t={t}
+            type={"text"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="Company"
+            value={Company}
+            onChange={setcompanyname}
+            style={{ width: "50%" }}
+            ValidationRequired={true}
+            {...(validation = {
+              isRequired: true,
+              pattern: "^[a-zA-Z0-9/-]{1,20}$", // validation for account number
+              type: "text",
+              title: t("INVALID_ACCOUNT_NO_ERROR_MESSAGE"),
+            })}
+          />
+
           <CardLabel>{`${t("PAN_NO")}`}</CardLabel>
           <TextInput
             t={t}
@@ -414,7 +490,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^(0[1-9]|1[0-9]|2[0-9]|3[0-7])$", // validation for GST state
+              pattern: "^[a-zA-Z0-9/-]{1,20}$", // validation for GST state
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
@@ -471,7 +547,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[0-9]{2}-[0-9]{2}-[0-9]{6}-[0-9]{4}$", // validation for ESI number
+              pattern: "^[a-zA-Z0-9/-]{1,20}$", // validation for ESI number
               type: "text",
               title: t("INVALID_ESI_NO_ERROR_MESSAGE"),
             })}

@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 //import FSMLink from "./inbox/FSMLink";
+import VENDORLink from "./inbox/VENDORLink";
 import ApplicationTable from "./inbox/ApplicationTable";
-//import Filter from "./inbox/Filter";
+import Filter from "./inbox/Filter";
 import { ToggleSwitch } from "@nudmcdgnpm/digit-ui-react-components";
 //import RegistrySearch from "./RegistrySearch";
 import RegistredVendorSearch from "./RegisteredVendorSearch";
@@ -21,6 +22,7 @@ const VendorInbox = (props) => {
   const [showToast, setShowToast] = useState(null);
   const [vendors, setVendors] = useState([]);
   const queryClient = useQueryClient();
+  const [address, setAddress] = useState();
 
   const {
     data: vendorData,
@@ -159,6 +161,8 @@ const VendorInbox = (props) => {
     });
   };
 
+
+  //vendor dropdown in driver
   const onVendorSelect = (row, selectedOption) => {
     let driverData = row.original;
     let formDetails = row.original.dsoDetails;
@@ -200,6 +204,9 @@ const VendorInbox = (props) => {
       },
     });
   };
+
+
+
 
   const onCellClick = (row, column, length) => {
     setTableData((old) =>
@@ -286,27 +293,61 @@ const VendorInbox = (props) => {
 
 
 
+          // {
+          //   Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
+          //   disableSortBy: true,
+          //   Cell: ({ row }) => {
+          //     //let description =
+          //     //const description = JSON.parse(payload.dsoDetails.address.additionalDetails).description;
+          //     //console.log("description", description); // Debugging
+          //     console.log("before addressssss",row.original.dsoDetails )
+          //     console.log("service type", row.original.dsoDetails?.additionalDetails?.description);
+          //     //let address = row.original.dsoDetails.address;
+          //     //console.log("vendor", address.additionalDetails); // Debugging
+          //     console.log("");
+          //     const additionalDetails = JSON.parse(row.original.dsoDetails?.additionalDetails?.description);
+          //     //const description = additionalDetails.description;
+
+          //     return (
+          //       <div>
+          //         {/* <span className="link">
+          //           <Link to={`/digit-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
+          //             <div>
+          //               {description}
+          //               <br />
+          //             </div>
+          //           </Link>
+          //         </span> */}
+          //         {additionalDetails}
+          //       </div>
+          //     );
+          //   },
+          // },
+
+
           {
             Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
             disableSortBy: true,
             Cell: ({ row }) => {
-              //let description =
-              //const description = JSON.parse(payload.dsoDetails.address.additionalDetails).description;
-              //console.log("description", description); // Debugging
-              console.log("vendor", row.original.dsoDetails.address.additionalDetails); // Debugging
-              const additionalDetails = JSON.parse(row.original.dsoDetails.address.additionalDetails);
-              const description = additionalDetails.description;
-
+              console.log("before addressssss", row.original.dsoDetails);
+              
+              let additionalDetails = row.original.dsoDetails?.additionalDetails;
+              
+              
+              if (typeof additionalDetails === "string") {
+                try {
+                  additionalDetails = JSON.parse(additionalDetails);
+                } catch (error) {
+                  console.error("Error parsing additionalDetails:", error);
+                  additionalDetails = {}; // Fallback to an empty object if parsing fails
+                }
+              }
+          
+              const description = additionalDetails?.description || "N/A"; // Safe access to description
+              console.log("Service Type (Description):", description);
+          
               return (
                 <div>
-                  {/* <span className="link">
-                    <Link to={`/digit-ui/employee/vendor/registry/new-vendor${row.original["id"] || ""}`}>
-                      <div>
-                        {description}
-                        <br />
-                      </div>
-                    </Link>
-                  </span> */}
                   {description}
                 </div>
               );
@@ -335,6 +376,23 @@ const VendorInbox = (props) => {
           //     );
 
           //   }
+          // },
+
+
+          // {
+          //   Header: t("ES_FSM_REGISTRY_INBOX_VENDOR_NAME"),
+          //   Cell: ({ row }) => {
+          //     return (
+          //       <Dropdown
+          //         className="fsm-registry-dropdown"
+          //         selected={row.original.vendor}
+          //         option={vendors}
+          //         select={(value) => onVendorSelect(row, value)}
+          //         optionKey="name"
+          //         t={t}
+          //       />
+          //     );
+          //   },
           // },
 
 
@@ -506,7 +564,7 @@ const VendorInbox = (props) => {
               return (
                 <div>
                   <span className="link">
-                    <Link to={"/digit-ui/employee/fsm/registry/vehicle-details/" + row.original["registrationNumber"]}>
+                    <Link to={"/digit-ui/employee/vendor/registry/vehicle-details/" + row.original["registrationNumber"]}>
                       <div>
                         {row.original.registrationNumber}
                         <br />
@@ -531,7 +589,7 @@ const VendorInbox = (props) => {
             Header: t("ES_FSM_REGISTRY_INBOX_VENDOR_NAME"),
             disableSortBy: true,
             Cell: ({ row }) => GetCell(row.original?.vendor?.name || "NA"),
-          },
+          },          
 
           //enabled
           {
@@ -562,7 +620,7 @@ const VendorInbox = (props) => {
               return (
                 <div>
                   <span className="link">
-                    <Link to={"/digit-ui/employee/fsm/registry/driver-details/" + row.original["id"]}>
+                    <Link to={"/digit-ui/employee/vendor/registry/driver-details/" + row.original["id"]}>
                       <div>
                         {row.original.name}
                         <br />
@@ -682,15 +740,16 @@ const VendorInbox = (props) => {
     <div className="inbox-container">
       {props.userRole !== "FSM_EMP_FSTPO" && props.userRole !== "FSM_ADMIN" && !props.isSearch && (
         <div className="filters-container">
-          <FSMLink parentRoute={props.parentRoute} />
+          {/* <FSMLink parentRoute={props.parentRoute} /> */}
+          <VENDORLink parentRoute={props.parentRoute} />
           <div style={{ marginTop: "24px" }}>
-            {/* <Filter
+            <Filter
               searchParams={props.searchParams}
               paginationParms={props.paginationParms}
               applications={props.data}
               onFilterChange={props.onFilterChange}
               type="desktop"
-            /> */}
+            />
           </div>
         </div>
       )}

@@ -20,16 +20,15 @@ public class CalculationService {
 	@Autowired
 	private MdmsUtil mdmsUtil;
 
-	public BigDecimal calculateFee(String tankerType, RequestInfo requestInfo, String tenantId) {
+	public BigDecimal calculateFee(int tankerQuantity, String tankerType, RequestInfo requestInfo, String tenantId) {
 		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, tenantId,
 				RequestServiceConstants.MDMS_MODULE_NAME);
 
 		for (CalculationType calculation : calculationTypes) {
 			if (calculation.getCode().equalsIgnoreCase(tankerType)) {
-				return calculation.getAmount();
+				return calculation.getAmount().multiply(BigDecimal.valueOf(tankerQuantity));
 			}
 		}
-
 		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + tankerType);
 	}
 

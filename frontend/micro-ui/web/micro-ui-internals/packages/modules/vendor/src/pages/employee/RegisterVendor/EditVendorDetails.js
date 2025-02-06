@@ -64,6 +64,11 @@ const EditVendorDetails = (props) => {
     { staleTime: Infinity }
   );
 
+  console.log("id in dso :: ", dsoId);
+  console.log("dsoData", dsoData);
+
+  //const filteredDsoApplication = dsoData?.filter(item => item.id === dsoId);
+
   const {
     data: vehicleData,
     isLoading: isVehicleDataLoading,

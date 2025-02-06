@@ -1,12 +1,11 @@
-
-import React ,{Children, Fragment}from "react";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-import { Config } from "../../../config/config";
+import { createConfig } from "../../../config/Create/createConfig";
 
-const SVCreate = ({ parentRoute }) => {
-
+const VENDORCreate = ({ parentRoute }) => {
   const queryClient = useQueryClient();
   const match = useRouteMatch();
   const { t } = useTranslation();
@@ -14,32 +13,14 @@ const SVCreate = ({ parentRoute }) => {
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("SV_CREATES", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("VENDOR_Test", {});
 
-  const vendingApplicationNo=sessionStorage.getItem("vendingApplicationID")?sessionStorage.getItem("vendingApplicationID"):null;
-  const { data: vendingApplicationData } = Digit.Hooks.sv.useSvSearchApplication(
-    {
-      tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
-      filters: { applicationNumber: vendingApplicationNo,isDraftApplication:false },
-        enabled: vendingApplicationNo?true:false
-    },
-  );
-  const vendingData=vendingApplicationData?.SVDetail?.[0]
-
-  const { data: vendingDraftData } = Digit.Hooks.sv.useSvSearchApplication(
-    {
-      tenantId:Digit.ULBService.getCitizenCurrentTenant(true),
-      filters: {isDraftApplication:true} ,
-    },
-  );
-
-  const vending_draft_data=vendingDraftData?.SVDetail?.[0]
-  // function used for traversing through form screens 
-  const goNext = (skipStep, index, isAddMultiple, key) => {  
+  const goNext = (skipStep, index, isAddMultiple, key) => {    
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+      
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
@@ -56,7 +37,8 @@ const SVCreate = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+    // let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+    let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
 
 
     let redirectWithHistory = history.push;
@@ -67,6 +49,7 @@ const SVCreate = ({ parentRoute }) => {
       nextStep = key;
     }
     if (nextStep === null) {
+      console.log("matchhhhh pathhhh", match.path);
       return redirectWithHistory(`${match.path}/check`);
     }
     if (!isNaN(nextStep.split("/").pop())) {
@@ -79,15 +62,15 @@ const SVCreate = ({ parentRoute }) => {
     redirectWithHistory(nextPage);
   };
 
-  // to clear formdata if the data is present before coming to first page of form
+
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
-      queryClient.invalidateQueries("SV_CREATES");
+      queryClient.invalidateQueries("VENDOR_CREATE");
     }
 
-  const svcreate = async () => {
-    history.replace(`${match.path}/acknowledgement`);
+  const vendorcreate = async () => {
+    history.push(`${match.path}/acknowledgement`);
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
@@ -110,36 +93,30 @@ const SVCreate = ({ parentRoute }) => {
   const handleSkip = () => {};
   const handleMultiple = () => {};
 
-
-  /**
-   * this onSuccess dunction will execute once the application submitted successfully 
-   * it will clear all the params from the session storage  and also invalidate the query client
-   * as well as remove the beneficiary & disabilityStatus from the session storage
-   */
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("SV_CREATES");
-    sessionStorage.removeItem("CategoryDocument");
-    sessionStorage.removeItem("vendingApplicationID");
-    sessionStorage.removeItem("ApplicationId");
-    sessionStorage.removeItem("applicationStatus");
-    sessionStorage.removeItem("Response");
-    sessionStorage.removeItem("addressIdOne");
-    sessionStorage.removeItem("addressIdTwo");
-    sessionStorage.removeItem("vendorIds");
-    sessionStorage.removeItem("bankIds");
-    sessionStorage.removeItem("venId");
+    queryClient.invalidateQueries("VENDOR_CREATE");
   };
+
   
-  let commonFields = Config;
+
+  let isLoading
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  // commonFields=newConfig;
+  /* use newConfig instead of commonFields for local development in case needed */
+ let commonFields = createConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
   
   config.indexRoute = "info";
 
-  const SVCheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");
-  const SVAcknowledgement = Digit?.ComponentRegistryService?.getComponent("SVAcknowledgement");
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("VENDORCheckPage");
+  const NewResponse = Digit?.ComponentRegistryService?.getComponent("NewResponse");
 
   
   
@@ -148,25 +125,19 @@ const SVCreate = ({ parentRoute }) => {
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
-        const user = Digit.UserService.getUser().info.type;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} userType={user} editdata={pathname.includes("apply") ? {} : vendingData} previousData={vending_draft_data} />
+            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
           </Route>
         );
       })}
 
       
       <Route path={`${match.path}/check`}>
-        <SVCheckPage onSubmit={svcreate} value={params} editdata={pathname.includes("apply") ? {} : vendingData} renewalData={vendingData} /> 
-        {/**
-         * in above line , i am sending same vendingData in both editData and renewalData 
-         * because we can clarify which type of data is in check page either it is data of Renewal case or edit case
-         * as well as sending vendingData because it is fetching on the behalf of same application number
-         */}
+        <CheckPage onSubmit={vendorcreate} value={params} />
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
-        <SVAcknowledgement data={params} onSuccess={onSuccess}/>
+        <NewResponse data={params} onSuccess={onSuccess} />
       </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
@@ -175,4 +146,4 @@ const SVCreate = ({ parentRoute }) => {
   );
 };
 
-export default SVCreate;
+export default VENDORCreate;

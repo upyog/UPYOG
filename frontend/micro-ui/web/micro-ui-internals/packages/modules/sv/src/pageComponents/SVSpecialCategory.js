@@ -89,7 +89,8 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,pr
                     },
                   ];
               setUploadedFile(response.data.files[0].fileStoreId);
-              sessionStorage.setItem("CategoryDocument", JSON.stringify(documentData))}
+              ownerCategory?.code!=="NONE"?sessionStorage.setItem("CategoryDocument", JSON.stringify(documentData)):null;
+            }
                else {
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
