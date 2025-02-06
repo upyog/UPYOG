@@ -1450,7 +1450,7 @@ const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, mast
     case "i18nKey":
       return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
     case "i18nkey&code":
-      return getDataWithi18nkeyandCode(MdmsRes, masterName, i18nKeyString);
+      return getDataWithi18nkeyandCode(MdmsRes, moduleName, masterName, i18nKeyString);
     default:
       return MdmsRes;
   }

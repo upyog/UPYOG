@@ -129,7 +129,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		if (RequestServiceConstants.ACTION_APPROVE
 				.equals(waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction())) {
-			demandService.createDemand(waterTankerRequest, extractTenantId(waterTankerRequest));
+			demandService.createDemand(waterTankerRequest);
 
 		}
 		requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
@@ -137,8 +137,5 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		return waterTankerRequest.getWaterTankerBookingDetail();
 	}
 
-	private String extractTenantId(WaterTankerBookingRequest request) {
-		return request.getWaterTankerBookingDetail().getTenantId().split("\\.")[0];
-	}
 
 }
