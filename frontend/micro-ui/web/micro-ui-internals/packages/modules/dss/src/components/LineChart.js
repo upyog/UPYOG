@@ -157,7 +157,7 @@ const LineChartWithData = () => {
           />
 
           <Tooltip
-            labelFormatter={(label) => `Date: ${label}`}
+            labelFormatter={(label) => `Month: ${label}`}
             formatter={(value, name, props) => [
               `${value}`, // Display the value (transaction count)
               'noOfTransactions' // Set the label to "No of Transactions" instead of "value"
