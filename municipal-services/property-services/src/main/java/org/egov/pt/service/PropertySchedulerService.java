@@ -50,27 +50,39 @@ public class PropertySchedulerService {
 
 	public Object calculateTax(RequestInfoWrapper requestInfoWrapper) {
 
-		JsonNode ulbs = null;
+		JsonNode ulbModules = null;
+		JsonNode propertyTaxRateModules = null;
 		JsonNode zones = null;
 		JsonNode buildingStructures = null;
 		JsonNode buildingEstablishmentYears = null;
 		JsonNode buildingPurposes = null;
 		JsonNode buildingUses = null;
+		JsonNode overAllRebatePercentages = null;
+		JsonNode propertyTaxRates = null;
 
 		Map<String, Set<String>> errorMap = new HashMap<>();
 
-		MdmsResponse mdmsResponse = mdmsService.getULBSMdmsData(requestInfoWrapper.getRequestInfo(), null);
+		MdmsResponse mdmsResponse = mdmsService.getMdmsData(requestInfoWrapper.getRequestInfo(), null);
 
 		if (null != mdmsResponse && null != mdmsResponse.getMdmsRes()
 				&& null != mdmsResponse.getMdmsRes().get(PTConstants.MDMS_MODULE_ULBS)) {
-			ulbs = objectMapper.valueToTree(mdmsResponse.getMdmsRes().get(PTConstants.MDMS_MODULE_ULBS));
+			ulbModules = objectMapper.valueToTree(mdmsResponse.getMdmsRes().get(PTConstants.MDMS_MODULE_ULBS));
+			propertyTaxRateModules = objectMapper
+					.valueToTree(mdmsResponse.getMdmsRes().get(PTConstants.MDMS_MODULE_PROPERTYTAXRATE));
 
-			zones = objectMapper.valueToTree(ulbs.get(PTConstants.MDMS_MASTER_DETAILS_ZONES));
-			buildingStructures = objectMapper.valueToTree(ulbs.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE));
+			zones = objectMapper.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_ZONES));
+			buildingStructures = objectMapper
+					.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE));
 			buildingEstablishmentYears = objectMapper
-					.valueToTree(ulbs.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR));
-			buildingPurposes = objectMapper.valueToTree(ulbs.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE));
-			buildingUses = objectMapper.valueToTree(ulbs.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE));
+					.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR));
+			buildingPurposes = objectMapper
+					.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE));
+			buildingUses = objectMapper.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE));
+			overAllRebatePercentages = objectMapper
+					.valueToTree(ulbModules.get(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE));
+
+			propertyTaxRates = objectMapper
+					.valueToTree(propertyTaxRateModules.get(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE));
 		}
 
 		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
@@ -81,32 +93,32 @@ public class PropertySchedulerService {
 
 		for (Property property : properties) {
 
+			BigDecimal totalPropertyTax = BigDecimal.ZERO;
 			String ulbName = property.getTenantId().split("\\.")[1];
-//			System.err.println("ulbName " + ulbName);
-			BigDecimal totalRateableValue = BigDecimal.ZERO;
-			BigDecimal netRateableValue = BigDecimal.ZERO;
-			BigDecimal locationFactor = null;
+
+			JsonNode addressAdditionalDetails = objectMapper.valueToTree(property.getAddress().getAdditionalDetails());
 
 			for (Unit unit : property.getUnits()) {
-				BigDecimal unitRateableValue = BigDecimal.ZERO;
+				BigDecimal totalRateableValue = BigDecimal.ZERO;
+				BigDecimal netRateableValue = BigDecimal.ZERO;
 				BigDecimal structuralFactor = null;
 				BigDecimal ageFactor = null;
 				BigDecimal occupancyFactor = null;
 				BigDecimal useFactor = null;
+				BigDecimal locationFactor = null;
+				BigDecimal oAndMRebateAmount = BigDecimal.ZERO;
+				BigDecimal oAndMRebatePercentage = null;
+				BigDecimal propertyTaxRatePercentage = null;
+				BigDecimal propertyTax = BigDecimal.ZERO;
 
 				Set<String> errorSet = new HashSet<>();
 
-//				System.err.println(unit.getAdditionalDetails());
 				JsonNode unitAdditionalDetails = objectMapper.valueToTree(unit.getAdditionalDetails());
-//				System.err.println("F2" + unitAdditionalDetails.get("propBuildingType").asText()); // F2
-//				System.err.println("F3" + unitAdditionalDetails.get("propYearOfCons").asText()); // F3
-//				System.err.println("F4" + unitAdditionalDetails.get("propType").asText()); // F4
-//				System.err.println("F5" + unitAdditionalDetails.get("uses").asText()); // F5
+
 				for (JsonNode buildingStructure : objectMapper.valueToTree(buildingStructures)) {
 					if (ulbName.equalsIgnoreCase(buildingStructure.get("ulbName").asText())
 							&& buildingStructure.get("structureType").asText()
 									.equalsIgnoreCase(unitAdditionalDetails.get("propBuildingType").asText())) {
-//						System.err.println(buildingStructure.get("rate").asDouble()); // F2
 						structuralFactor = new BigDecimal(buildingStructure.get("rate").asText());
 					}
 				}
@@ -114,7 +126,6 @@ public class PropertySchedulerService {
 					if (ulbName.equalsIgnoreCase(buildingEstablishmentYear.get("ulbName").asText())
 							&& buildingEstablishmentYear.get("yearRange").asText()
 									.equalsIgnoreCase(unitAdditionalDetails.get("propYearOfCons").asText())) {
-//						System.err.println(buildingEstablishmentYear.get("rate").asDouble()); // F3
 						ageFactor = new BigDecimal(buildingEstablishmentYear.get("rate").asText());
 					}
 				}
@@ -122,7 +133,6 @@ public class PropertySchedulerService {
 					if (ulbName.equalsIgnoreCase(buildingPurpose.get("ulbName").asText())
 							&& buildingPurpose.get("purposeName").asText()
 									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText())) {
-//						System.err.println(buildingPurpose.get("rate").asDouble()); // F4
 						occupancyFactor = new BigDecimal(buildingPurpose.get("rate").asText());
 					}
 				}
@@ -130,8 +140,18 @@ public class PropertySchedulerService {
 					if (ulbName.equalsIgnoreCase(buildingUse.get("ulbName").asText())
 							&& buildingUse.get("useOfBuilding").asText()
 									.equalsIgnoreCase(unitAdditionalDetails.get("uses").asText())) {
-//						System.err.println(buildingUse.get("rate").asDouble()); // F5
 						useFactor = new BigDecimal(buildingUse.get("rate").asText());
+					}
+				}
+
+				for (JsonNode zone : objectMapper.valueToTree(zones)) {
+					if (addressAdditionalDetails.get("zone").asText().equalsIgnoreCase(zone.get("zoneName").asText())) {
+						locationFactor = new BigDecimal(zone.get("propertyRate").asText());
+					}
+				}
+				for (JsonNode overAllRebatePercentage : objectMapper.valueToTree(overAllRebatePercentages)) {
+					if (ulbName.equalsIgnoreCase(overAllRebatePercentage.get("ulbName").asText())) {
+						oAndMRebatePercentage = new BigDecimal(overAllRebatePercentage.get("rate").asText());
 					}
 				}
 
@@ -147,59 +167,65 @@ public class PropertySchedulerService {
 				if (null == useFactor) {
 					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE + " is missing in mdms");
 				}
-
-//				System.err.println("propArea " + unitAdditionalDetails.get("propArea").asDouble() + " structuralFactor "
-//						+ structuralFactor + " ageFactor " + ageFactor + " occupancyFactor " + occupancyFactor
-//						+ " useFactor " + useFactor);
-
-				if (null != structuralFactor && null != ageFactor && null != occupancyFactor && null != useFactor) {
-					unitRateableValue = new BigDecimal(unitAdditionalDetails.get("propArea").asText())
-							.multiply(structuralFactor).multiply(ageFactor).multiply(occupancyFactor)
-							.multiply(useFactor);
+				if (null == locationFactor) {
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_ZONES + " is missing in mdms");
 				}
-//				System.err.println("unitRateableValue " + unitRateableValue);
-				totalRateableValue = totalRateableValue.add(unitRateableValue);
+				if (null == oAndMRebatePercentage) {
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE + " is missing in mdms");
+				}
+
+				if (null != structuralFactor && null != ageFactor && null != occupancyFactor && null != useFactor
+						&& null != locationFactor) {
+					totalRateableValue = new BigDecimal(unitAdditionalDetails.get("propArea").asText())
+							.multiply(structuralFactor).multiply(ageFactor).multiply(occupancyFactor)
+							.multiply(useFactor).multiply(locationFactor);
+				}
+
+				if (!BigDecimal.ZERO.equals(totalRateableValue)) {
+					oAndMRebateAmount = totalRateableValue.multiply(oAndMRebatePercentage.divide(new BigDecimal(100)));
+					netRateableValue = totalRateableValue.subtract(oAndMRebateAmount);
+				}
+
+				for (JsonNode propertyTaxRate : propertyTaxRates) {
+					// Check if the relevant details match
+					if (ulbName.equalsIgnoreCase(propertyTaxRate.get("ulbName").asText())
+							&& addressAdditionalDetails.get("zone").asText().equalsIgnoreCase(
+									propertyTaxRate.get("zoneName").asText().replaceFirst(ulbName + ".", ""))
+							&& propertyTaxRate.get("purposeName").asText()
+									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText())
+							&& propertyTaxRate.get("useOfBuilding").asText()
+									.equalsIgnoreCase(unitAdditionalDetails.get("uses").asText())) {
+
+						String propertyAreaString = propertyTaxRate.get("propertyArea").asText();
+						BigDecimal unitPropertyArea = new BigDecimal(unitAdditionalDetails.get("propArea").asText());
+
+						if (isAreaWithinRange(propertyAreaString, unitPropertyArea)) {
+							propertyTaxRatePercentage = new BigDecimal(propertyTaxRate.get("rate").asText());
+						}
+					}
+				}
+
+				if (!BigDecimal.ZERO.equals(netRateableValue) && null != propertyTaxRatePercentage) {
+					propertyTax = netRateableValue.multiply(propertyTaxRatePercentage.divide(new BigDecimal(100)));
+				} else {
+					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE + " is missing in mdms");
+				}
+
+				if (!BigDecimal.ZERO.equals(propertyTax)) {
+					totalPropertyTax = totalPropertyTax.add(propertyTax);
+				}
 
 				if (!CollectionUtils.isEmpty(errorSet)) {
 					errorMap.put(property.getPropertyId(), errorSet);
 				}
 			}
 
-			JsonNode addressAdditionalDetails = objectMapper.valueToTree(property.getAddress().getAdditionalDetails());
-//			System.err.println("F1" + addressAdditionalDetails.get("zone").asText()); // F1
-
-			for (JsonNode zone : objectMapper.valueToTree(zones)) {
-//				System.err.println(zone.get("zoneName").asText());
-				if (addressAdditionalDetails.get("zone").asText().equalsIgnoreCase(zone.get("zoneName").asText())) {
-//					System.err.println(zone.get("propertyTaxCalculation").asDouble()); // F1
-					locationFactor = new BigDecimal(zone.get("propertyRate").asText());
-				}
-			}
-			if (null != locationFactor) {
-				totalRateableValue = totalRateableValue.multiply(locationFactor);
-			} else {
-				if (errorMap.containsKey(property.getPropertyId())) {
-					errorMap.get(property.getPropertyId())
-							.add(PTConstants.MDMS_MASTER_DETAILS_ZONES + " is missing in mdms");
-				} else {
-					errorMap.put(property.getPropertyId(),
-							Collections.singleton(PTConstants.MDMS_MASTER_DETAILS_ZONES + " is missing in mdms"));
-				}
-			}
-
-//			System.err.println("ptid " + property.getPropertyId());
-//			System.err.println("totalRateableValue " + totalRateableValue);
-			// TODO calculation
-			if (!BigDecimal.ZERO.equals(totalRateableValue)) {
-				netRateableValue = totalRateableValue.multiply(new BigDecimal(0.1)); // TODO
-			}
-
-			if (!errorMap.containsKey(property.getPropertyId())) {
+			if (!errorMap.containsKey(property.getPropertyId()) && !BigDecimal.ZERO.equals(totalPropertyTax)) {
 //				System.out.println("Calculate bill " + property.getPropertyId());
 				List<Demand> savedDemands = new ArrayList<>();
 				// generate demand
 				savedDemands = demandService.generateDemand(requestInfoWrapper.getRequestInfo(), property,
-						property.getBusinessService(), netRateableValue);
+						property.getBusinessService(), totalPropertyTax);
 
 				if (CollectionUtils.isEmpty(savedDemands)) {
 					throw new CustomException("INVALID_CONSUMERCODE",
@@ -215,9 +241,29 @@ public class PropertySchedulerService {
 
 		}
 
-//		System.err.println("errorMap " + errorMap);
-
 		return properties;
+	}
+
+	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {
+		if (propertyAreaString.contains("-")) {
+			String[] range = propertyAreaString.split("-");
+			BigDecimal min = new BigDecimal(range[0]);
+			BigDecimal max = new BigDecimal(range[1]);
+			return propertyArea.compareTo(min) >= 0 && propertyArea.compareTo(max) <= 0;
+		} else if (propertyAreaString.contains(">")) {
+			BigDecimal threshold = new BigDecimal(propertyAreaString.split(">")[1]);
+			return propertyArea.compareTo(threshold) > 0;
+		} else if (propertyAreaString.contains("<")) {
+			BigDecimal threshold = new BigDecimal(propertyAreaString.split("<")[1]);
+			return propertyArea.compareTo(threshold) < 0;
+		} else if (propertyAreaString.contains(">=")) {
+			BigDecimal threshold = new BigDecimal(propertyAreaString.split(">=")[1]);
+			return propertyArea.compareTo(threshold) >= 0;
+		} else if (propertyAreaString.contains("<=")) {
+			BigDecimal threshold = new BigDecimal(propertyAreaString.split("<=")[1]);
+			return propertyArea.compareTo(threshold) <= 0;
+		}
+		return false;
 	}
 
 }
