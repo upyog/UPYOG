@@ -16,15 +16,15 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
         {indexValuesWithStar?.includes(code) ? (
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
-          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true,data)} ${
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
              code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
         data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION")
-       ? Digit.Utils.dss.formatter(data.headerValue, data.headerSymbol, "UnitGDP", true, t,data):
+       ? Digit.Utils.dss.formatter(data.headerValue, data.headerSymbol, "UnitGDP", true, t):
         
         (
-          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t,data)} ${
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
             code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
           }`
         )}

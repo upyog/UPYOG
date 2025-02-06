@@ -18,7 +18,7 @@ export const DigiLockerService = {
       method: "POST",
       auth: true,
       userService: true,
-      params: {module:"REGISTER" },
+      params: {module:"SSO" },
     }),
     token: ( data ) =>
     Request({
@@ -28,6 +28,16 @@ export const DigiLockerService = {
       auth: true,
       userService: true,
       data:data,
+    }),
+    oauth: ( data ) =>
+    Request({
+      url: Urls.digiLocker.oauth,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      //params:{tenantId:"pg"},
+      data:{User:data},
     }),
     issueDoc: ( data ) =>
     Request({

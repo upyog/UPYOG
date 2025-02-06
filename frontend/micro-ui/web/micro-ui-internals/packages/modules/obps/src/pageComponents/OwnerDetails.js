@@ -244,17 +244,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             return;
         }
 
-        if (ownerNo === ownersCopy?.[indexValue]?.userName && (ownerRoleCheck?.code !== "BPA_ARCHITECT" && ownerRoleCheck?.code !== "BPA_SUPERVISOR")) {
+        if (ownerNo === ownersCopy?.[indexValue]?.userName) {
             setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED_TOGGLE_MSG" });
             return;
         }
 
         const matchingOwnerIndex = ownersCopy.findIndex(item => item.userName === ownerNo);
 
-        if (matchingOwnerIndex > -1 && (ownerRoleCheck?.code !== "BPA_ARCHITECT" && ownerRoleCheck?.code !== "BPA_SUPERVISOR")) {
-            setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED" });
-            return;
-        } else {
+       
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
             let found = usersResponse?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
             if (usersResponse?.user?.length === 0) {
@@ -276,14 +273,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if(values[indexValue]?.mobileNumber && values[indexValue]?.name && values[indexValue]?.gender?.code) setCanmovenext(true);
                 else setCanmovenext(false);
 
-                if(found){
-                    setCanmovenext(false);
-                    setownerRoleCheck(found);
-                    setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
-                    return;
-                }
-            }
-        }
+                // if(found){
+                //     setCanmovenext(false);
+                //     setownerRoleCheck(found);
+                //     setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
+                //     return;
+                // }
+             }
+        
     }
 
     const getUserData = async (data,tenant) => {
@@ -300,13 +297,13 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           found = ob?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
             if(fields.find((fi) => !(fi?.uuid && !(found)) && ((fi?.name === ob?.user?.[0]?.name && fi?.mobileNumber === ob?.user?.[0]?.mobileNumber) || (fi?.mobileNumber === ob?.user?.[0]?.mobileNumber && found))))
             {
-                flag = true;
+                //flag = true;
                 foundMobileNo.push(ob?.user?.[0]?.mobileNumber);
             }
         })
 
-        if(foundMobileNo?.length > 0)
-        setShowToast({ key: "true", error: true, message: `${t("BPA_OWNER_VALIDATION_1")} ${foundMobileNo?.join(", ")} ${t("BPA_OWNER_VALIDATION_2")}` });
+        // if(foundMobileNo?.length > 0)
+        // setShowToast({ key: "true", error: true, message: `${t("BPA_OWNER_VALIDATION_1")} ${foundMobileNo?.join(", ")} ${t("BPA_OWNER_VALIDATION_2")}` });
         if(flag == true)
         return false;
         else 
@@ -321,11 +318,33 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             window.scrollTo(0,0);
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
-        else {
+        else {      
+            for (const field of fields){
+              const userPresent = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
+              if (userPresent?.user?.length==0){
+              await Digit.UserService.userCreate(Digit.ULBService.getStateId(), { userName: field?.mobileNumber,mobileNumber: field?.mobileNumber, name: field?.name, gender:field?.gender?.code,emailId:field?.emailId, active: true, type:"citizen", roles: [             {
+                     "name": "Citizen",
+                     "code": "CITIZEN",
+                     "tenantId": "pg"
+                 }
+             ], }, {})
+            }
+            }  
+            let userData=[];
+            for (const field of fields){
+            const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
+            if(usersResponse?.user?.[0]?.dob){ 
+                usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
+            if (usersResponse?.user?.[0]?.createdDate) {
+                    usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
+                    usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
+                    usersResponse.user[0].pwdExpiryDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.pwdExpiryDate);
+            }
+            userData.push(usersResponse?.user?.[0]);             
+            }
             let owner = formData.owners;
             let ownerStep;
-            ownerStep = { ...owner, owners: fields, ownershipCategory: ownershipCategory };
-
+            ownerStep = { ...owner, owners: userData, ownershipCategory: ownershipCategory };
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -337,7 +356,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
-                        gender: owner.gender.code,
+                        gender: owner.gender.code || owner.gender,
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
@@ -361,10 +380,17 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                    Property.ownershipCategory= ownershipCategory.code,
                    Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
                    Property.owners= conversionOwners?.map((owner, index)=>({
-                        ...owner,
-                     ownerType:"NONE",
-                      permanentaddress:"",
-                      additionalDetails:{
+                        name:owner.name,
+                        mobileNumber:owner.mobileNumber,
+                        correspondenceAddress:owner.correspondenceAddress,
+                        relationship:owner.relationship,
+                        fatherOrHusbandName:owner.fatherOrHusbandName,
+                        gender: owner.gender,
+                        emailId:owner.emailId,
+                        documents:owner.documents,                        
+                        ownerType:"NONE",
+                        permanentaddress:"",
+                        additionalDetails:{
                         ownerSequence: index,
                         ownerName: owner.name
                       }
