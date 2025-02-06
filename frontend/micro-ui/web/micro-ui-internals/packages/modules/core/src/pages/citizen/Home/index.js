@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import {
   StandaloneSearchBar,
   Loader,
@@ -14,7 +14,6 @@ import {
   WhatsNewCard,
   OBPSIcon,
   WSICon,
-  CHBIcon
 } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -25,6 +24,8 @@ const Home = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+  const [user, setUser] = useState(null);
+  const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
   const { data: { stateInfo, uiHomePage } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
   let isMobile = window.Digit.Utils.browser.isMobile();
   if(window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE",{})
@@ -60,7 +61,51 @@ const Home = () => {
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
+  /* set citizen details to enable backward compatiable */
+const setCitizenDetail = (userObject, token, tenantId) => {
+  let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
+  localStorage.setItem("Citizen.tenant-id", tenantId);
+  localStorage.setItem("tenant-id", tenantId);
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  localStorage.setItem("locale", locale);
+  localStorage.setItem("Citizen.locale", locale);
+  localStorage.setItem("token", token);
+  localStorage.setItem("Citizen.token", token);
+  localStorage.setItem("user-info", JSON.stringify(userObject));
+  localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
+};
 
+  useEffect(async () => {
+    //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
+    if (window.location.href.includes("code")) {
+      let code = window.location.href.split("=")[1].split("&")[0]
+      let TokenReq = {
+        dlReqRef: localStorage.getItem('code_verfier_register'),
+        code: code, module: "SSO"
+
+      }
+      const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.DigiLockerService.token({ TokenReq })
+      setUser({ info, ...tokens });
+      setCitizenDetail(info, tokens?.access_token, info?.tenantId)
+    }
+  }, [])
+useEffect(() => {
+  if (!user) {
+    return;
+  }
+  Digit.SessionStorage.set("citizen.userRequestObject", user);
+  Digit.UserService.setUser(user);
+  setCitizenDetail(user?.info, user?.access_token, "pg");
+  const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+  if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
+    history.replace("/digit-ui/citizen/select-location", {
+      redirectBackTo: redirectPath,
+    });
+  } else {
+    history.replace(redirectPath);
+  }
+}, [user]);
+console.log("citizenServicesObjcitizenServicesObj",citizenServicesObj)
   const allCitizenServicesProps = {
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
@@ -90,7 +135,7 @@ const Home = () => {
       // },
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
-        Icon: <CHBIcon />,
+        Icon: <WSICon />,
         onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
       },
     ],

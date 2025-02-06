@@ -1,4 +1,5 @@
-import { DownwardArrow, Rating, UpwardArrow } from "@upyog/digit-ui-react-components";
+import { DownwardArrow, UpwardArrow } from "@upyog/digit-ui-react-components";
+import Rating from "../../../../react-components/src/atoms/Rating"
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FilterContext from "./FilterContext";
@@ -15,17 +16,17 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
         {indexValuesWithStar?.includes(code) ? (
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
-          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true,code)} ${
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
              code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
 
         data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION") ||  data?.headerName.includes("DSS_STATE_GDP_PT_REVENUE_COLLECTION") ?(`${Number(data?.headerValue*100).toFixed(4)}`):
-        data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true,code)}`):
+        data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)}`):
 
         
         (
-          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t,data)} ${
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
             code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
           }`
         )}
@@ -41,7 +42,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
           {data?.insight?.indicator === "upper_green" ? ArrowUpwardElement("10px") : ArrowDownwardElement("10px")}
           <p className={`${data?.insight.colorCode}`} style={{ whiteSpace: "pre" }}>
             {insight?.[0] &&
-              `${Digit.Utils.dss.formatter(insight[0], "number", value?.denomination, true, t,data)}% ${t(
+              `${Digit.Utils.dss.formatter(insight[0], "number", value?.denomination, true, t)}% ${t(
                 Digit.Utils.locale.getTransformedLocale("DSS" + insight?.[1] || "")
               )}`}
           </p>
