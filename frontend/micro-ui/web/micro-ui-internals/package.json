@@ -53,7 +53,7 @@
     "build:components": "cd packages/react-components && yarn build",
     "buildD:common": "cd packages/modules/common && yarn build",
     "buildD:pt": "cd packages/modules/pt && yarn build",
-    "buildD:ptr": "cd packages/modules/ptr && yarn build",
+    "build:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "buildD:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
