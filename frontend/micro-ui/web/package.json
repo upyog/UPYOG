@@ -13,7 +13,8 @@
     "micro-ui-internals/packages/modules/noc",
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/ws",
-    "micro-ui-internals/packages/modules/commonPt"
+    "micro-ui-internals/packages/modules/commonPt",
+    "micro-ui-internals/packages/modules/common"
   ],
   "engines": {
     "node": ">=14"
