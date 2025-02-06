@@ -1933,7 +1933,7 @@ const GetDocumentsTypes = (MdmsRes) => MdmsRes["BPA"].DocTypeMapping;
 
 const GetChecklist = (MdmsRes) => MdmsRes["BPA"].CheckList;
 
-const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
+const transformResponse = (type, MdmsRes, moduleCode, moduleName, tenantId, masterName, i18nKeyString) => {
   switch (type) {
     case "citymodule":
       return GetCitiesWithi18nKeys(MdmsRes, moduleCode);
@@ -2102,9 +2102,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return getChbDocuments(MdmsRes);
 
     case "i18nKey":
-      return getDataWithi18nkey(MdmsRes, moduleCode, masterName, i18nKeyString);
+      return getDataWithi18nkey(MdmsRes, moduleName, masterName, i18nKeyString);
     case "i18nkey&code":
-      return getDataWithi18nkeyandCode(MdmsRes, moduleCode, masterName, i18nKeyString);
+      return getDataWithi18nkeyandCode(MdmsRes, moduleName, masterName, i18nKeyString);
     default:
       return MdmsRes;
   }
@@ -2200,13 +2200,14 @@ export const MdmsService = {
     );
   },
   getDataByCriteria: async (tenantId, mdmsDetails, moduleCode, masterName, i18nKeyString) => {
+    const moduleName = moduleCode; // moduleName is used here to pass unchanged modulecode
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
     }
     const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
-    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId, masterName, i18nKeyString);
+    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), moduleName, tenantId, masterName, i18nKeyString);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
@@ -2535,7 +2536,7 @@ export const MdmsService = {
    * It constructs the criteria for fetching the data using the `getMasterDataCategory` function,
    * which is passed the tenantId, moduleCode, masterName, and type as parameters.
    */
-  getMasterData: (tenantId, moduleCode, masterName, i18nKeyString, type) => {
+  getMasterData: (tenantId, moduleCode, masterName, i18nKeyString = "", type) => {
     return MdmsService.getDataByCriteria(tenantId, getMasterDataCategory(tenantId, moduleCode, masterName, type), moduleCode, masterName, i18nKeyString);
   },
 };
