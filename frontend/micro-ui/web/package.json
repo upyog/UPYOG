@@ -12,7 +12,6 @@
     "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/asset",
     "micro-ui-internals/packages/modules/vendor"
-
   ],
   "engines": {
     "node": ">=14"
@@ -37,7 +36,7 @@
     "@upyog/digit-ui-module-receipts": "1.8.0",
     "@upyog/digit-ui-module-tl": "1.8.10",
     "@upyog/digit-ui-module-ws": "1.8.16",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.7",
     "@nudmcdgnpm/upyog-ui-module-ptr": "1.2.9",
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.6",
