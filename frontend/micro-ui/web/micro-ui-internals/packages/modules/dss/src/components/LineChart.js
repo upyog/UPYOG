@@ -139,12 +139,50 @@ const LineChartWithData = () => {
           <XAxis dataKey="date"  />
           <YAxis
             scale="linear"
-            domain={["auto", "auto"]} // Automatically calculate the Y-axis domain
-            tickFormatter={(value) => value} // Display as integer (transaction count)
-            //label={{ value: "No of Transactions", angle: -90, position: "insideLeft" }}
+            domain={["auto", "auto"]}
+            tickFormatter={(value) => {
+              // if (value >= 1000) {
+              //   return `${(value / 1000).toFixed(1)}K`; // Convert to thousands and show one decimal point
+              // }
+              return value; // For values less than 1000, just display the value
+            }}
+            // label={{
+            //   value: "No of Transactions",
+            //   angle: -90, // Keep the label vertical, but you can change it to a smaller angle (e.g., -45 or -30)
+            //   position: "insideLeft",
+            //   offset: 30, // Increased offset to move the label further away from the axis
+            // }}
+            tick={{ fontSize: 12 }} 
+            tickMargin={10} 
           />
-          <Tooltip formatter={(value) => `${value}`} />
-          <Legend verticalAlign="top" />
+
+          <Tooltip
+            labelFormatter={(label) => `Month: ${label}`}
+            formatter={(value, name, props) => [
+              `${value}`, // Display the value (transaction count)
+              'noOfTransactions' // Set the label to "No of Transactions" instead of "value"
+            ]}
+          />
+
+          <Legend
+            verticalAlign="top"
+            content={() => (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ marginRight: 20, display: 'flex', alignItems: 'center' }}>
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: '50%', 
+                      backgroundColor: '#36a100', 
+                      marginRight: 5,
+                    }}
+                  ></div>
+                  <span>Total No of Transactions</span>
+                </div>
+              </div>
+            )}
+          />
           <Line
             type="monotone"
             dataKey="value"
