@@ -15,7 +15,8 @@
     "packages/modules/obps",
     "packages/modules/tl",
     "packages/modules/ws",
-    "packages/modules/commonPt"
+    "packages/modules/commonPt",
+    "packages/modules/common"
   ],
   "license": "MIT",
   "private": true,
