@@ -155,4 +155,9 @@ public class RequestServiceUtil {
 		return endOfYear.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
 	}
+	
+	public static String extractTenantId(String tenantId) {
+		return tenantId.split("\\.")[0];
+	}
+
 }
