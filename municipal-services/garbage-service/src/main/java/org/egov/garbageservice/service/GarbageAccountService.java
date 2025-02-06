@@ -715,7 +715,7 @@ public class GarbageAccountService {
 
 		grbObject.put("createdTime", "sjgjkhd");
 
-//		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
+		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 
 		grbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 		// generate QR code from attributes
