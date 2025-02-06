@@ -48,7 +48,7 @@ public class PropertySchedulerService {
 	@Autowired
 	private BillService billService;
 
-	public Object calculateTax(RequestInfoWrapper requestInfoWrapper) {
+	public void calculateTax(RequestInfoWrapper requestInfoWrapper) {
 
 		JsonNode ulbModules = null;
 		JsonNode propertyTaxRateModules = null;
@@ -241,7 +241,6 @@ public class PropertySchedulerService {
 
 		}
 
-		return properties;
 	}
 
 	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {
