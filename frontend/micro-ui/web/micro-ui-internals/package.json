@@ -12,7 +12,8 @@
     "packages/modules/dss",
     "packages/modules/common",
     "packages/modules/noc",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/tl"
   ],
   "license": "MIT",
   "private": true,
@@ -66,7 +67,7 @@
     "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
