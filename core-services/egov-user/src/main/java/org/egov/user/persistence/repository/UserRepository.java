@@ -281,17 +281,17 @@ public class UserRepository {
         updateuserInputs.put("Title", user.getTitle());
         updateuserInputs.put("DigilockerID",user.getDigilockerid());
 
-        List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
-        if (user.getType() != null) {
-            if (userTypeEnumValues.contains(user.getType()))
-                updateuserInputs.put("Type", user.getType().toString());
-            else {
-                updateuserInputs.put("Type", "");
+            List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
+            if (user.getType() != null) {
+                if (userTypeEnumValues.contains(user.getType()))
+                    updateuserInputs.put("Type", user.getType().toString());
+                else {
+                    updateuserInputs.put("Type", "");
+                }
+            } else {
+                updateuserInputs.put("Type", oldUser.getType().toString());
             }
-        }
-        else {
-            updateuserInputs.put("Type", oldUser.getType().toString());
-        }
+
 
         updateuserInputs.put("alternatemobilenumber", user.getAlternateMobileNumber());
 
