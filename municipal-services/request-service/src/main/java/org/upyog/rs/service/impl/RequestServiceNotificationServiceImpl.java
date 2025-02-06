@@ -60,7 +60,7 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String message = null;
+		Map<String, String> message = null;
 		message = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
 				localizationMessages);
 		log.info("Message for event in RequestService:" + message);

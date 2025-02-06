@@ -180,4 +180,8 @@ public class RequestServiceConfiguration {
 	
 	@Value("${egov.application.view.link}")
 	private String viewApplicationLink;
+	
+	@Value("${rs.business.service.name}")
+	private String businessServiceName;
+	
 }

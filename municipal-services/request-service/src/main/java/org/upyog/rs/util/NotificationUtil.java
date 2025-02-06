@@ -81,6 +81,10 @@ public class NotificationUtil {
 
 	public static final String ACTION_STATUS_PAY = "PAY";
 	
+	public static final String ACTION_LINK = "ACTION_LINK";
+	
+	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
+	
 	private final String URL = "url";
 
 	/**
@@ -380,50 +384,65 @@ public class NotificationUtil {
 		return mdmsCriteriaReq;
 	}
 
-	public String getCustomizedMsg(RequestInfo requestInfo, WaterTankerBookingDetail waterTankerDetail,
+	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, WaterTankerBookingDetail waterTankerDetail,
 			String localizationMessage) {
 		String message = null, messageTemplate;
+		String link = null;
 		String ACTION_STATUS = waterTankerDetail.getWorkflow().getAction();
 		switch (ACTION_STATUS) {
 
 		case ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPLY, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;
 			
 		case ACTION_STATUS_APPROVE:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPROVED, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;	
 			
 		case ACTION_STATUS_ASSIGN_VENDOR:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VENDOR, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;
 		
 		case ACTION_STATUS_ASSIGN_VEHICLE_DRIVER:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VEHICLE_DRIVER, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;
 			
 		case ACTION_STATUS_COMPLETE_REQUEST:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_COMPLETE_REQUEST, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;		
 	
 		case ACTION_STATUS_REJECT:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_REJECT, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;
 
 		case ACTION_STATUS_PAY:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_TANKERBOOKED,
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+			link = getPayUrl(waterTankerDetail);
 			break;
 		}
+		
+		Map<String, String> messageMap = new HashMap<String, String>();
+		messageMap.put(ACTION_LINK, link);
+		messageMap.put(MESSAGE_TEXT, message);
+		
+		log.info("getCustomizedMsg messageTemplate : " + message);
+		return messageMap;
 
-		return message;
+		//return message;
 	}
 
 /*	private String getMessageWithNumber(WaterTankerBookingDetail waterTankerDetail, String message) {
@@ -438,6 +457,26 @@ public class NotificationUtil {
 		return message;
 	}
 	
+	  /**
+     * Prepares and return url for view screen
+     *
+     * @param waterTankerDetail
+     * @return
+     */
+	public String getPayUrl(WaterTankerBookingDetail waterTankerDetail) {
+	    String payLinkUrl= config.getUiAppHost() + config.getPayLinkSMS();
+
+	    String payLink = String.format(
+	        payLinkUrl, 
+	        waterTankerDetail.getBookingNo(),
+	        waterTankerDetail.getApplicantDetail().getMobileNumber(),
+	        waterTankerDetail.getTenantId(),
+	        config.getBusinessServiceName()
+	    );
+
+	    return getShortnerURL(payLink);
+	}
+
 	private String getShortnerURL(String actualURL) {
 		net.minidev.json.JSONObject obj = new net.minidev.json.JSONObject();
 		obj.put(URL, actualURL);

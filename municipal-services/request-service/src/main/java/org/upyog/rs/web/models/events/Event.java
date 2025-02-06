@@ -3,6 +3,8 @@ package org.upyog.rs.web.models.events;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -29,7 +31,7 @@ public class Event {
 	private String name;
 
 	@NotNull
-	private String description;
+	private Map<String, String> description;
 
 	private Status status;
 
