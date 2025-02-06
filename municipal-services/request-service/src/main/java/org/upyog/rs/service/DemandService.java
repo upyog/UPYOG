@@ -7,7 +7,6 @@ import java.util.List;
 import org.egov.common.contract.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.DemandRepository;
 import org.upyog.rs.util.RequestServiceUtil;
