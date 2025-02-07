@@ -614,6 +614,39 @@ export const svUpdatePayload = (data) =>{
   return formdata;
 }
 
+export const demandPayloadData = (data) => {
+  const formdata = {
+    streetVendingDetail: {
+      ...data,
+
+      workflow: {
+        action: "APPLY",
+        comments: "",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        businessService: "street-vending",
+        moduleName: "sv-services",
+        varificationDocuments: [
+          {
+            additionalDetails: {},
+            auditDetails: {
+              createdBy: "",
+              createdTime: 0,
+              lastModifiedBy: "",
+              lastModifiedTime: 0
+            },
+            documentType: "",
+            documentUid: "",
+            fileStoreId: "",
+            id: ""
+          }
+        ]
+      }
+    },
+  };
+  return formdata;
+}
+
 import { useTranslation } from "react-i18next";
 import React from "react";
 

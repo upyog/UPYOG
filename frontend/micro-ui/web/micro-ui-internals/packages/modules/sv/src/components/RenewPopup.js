@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from "react";
 import { Modal, Card,SubmitBar, CheckBox} from "@nudmcdgnpm/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
+import { demandPayloadData } from "../utils";
 
 const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -19,6 +20,7 @@ const CloseBtn = (props) => {
 
 /**
  * @author - Shivank - NIUA
+ * @modified - Khalid Rashid - NIUA
  *  Developed for renew feature , when click on renew button this pop-up will render and 
  * show two buttons, Proceed with payment and Proceed with editing application 
  * and then the user can redirected accordingly
@@ -27,19 +29,33 @@ const CloseBtn = (props) => {
  * 
  */
 
-const RenewPopup = ({ t, closeModal,onSubmit,application }) => {
-   console.log("applicationinside popup",application);
-   const history=useHistory();
-    
+const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
+    const mutation = Digit.Hooks.sv.useCreateDemand();
+    const history = useHistory();
+
     const Heading = (props) => {
         return <h1 className="heading-m">{props.label}</h1>;
     };
 
-    const proceedWithApplication=()=>{
+    const proceedWithApplication = () => {
         history.push(`renew-application/info`)
     }
 
-    const onRedirectedToCheckPage=()=>{
+    const onSuccess = () => {
+        console.log("Onsuccess function running")
+    }
+
+    const onRedirectedToCheckPage = () => {
+        try {
+            let formdata = demandPayloadData(application)
+            mutation.mutate(formdata, { onSuccess });
+        } catch (err) {
+            console.error("Error in Mutation:", {
+                message: err.message,
+                stack: err.stack,
+                name: err.name
+            });
+        }
         history.push("renew-application/check");
     }
 

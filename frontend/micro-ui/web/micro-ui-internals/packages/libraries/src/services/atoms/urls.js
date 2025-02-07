@@ -214,7 +214,7 @@ const Urls = {
   ew: {
     create: "/ewaste-services/ewaste-request/_create",
     search: "/ewaste-services/ewaste-request/_search",
-    update: "/ewaste-services/ewaste-request/_update",
+    update: "/ewaste-services/ewaste-request/_update"
   },
 
   sv:{
@@ -222,6 +222,7 @@ const Urls = {
     search: "/sv-services/street-vending/_search",
     update: "/sv-services/street-vending/_update",
     deleteDraft:"/sv-services/street-vending/_deletedraft",
+    demandCreate: "/sv-services/street-vending/_createdemand"
   },
 
   chb: {

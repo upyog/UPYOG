@@ -4,7 +4,7 @@ In Parent Component,  we are passing the data as a props coming through params (
 import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,SubmitBar, EditIcon} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState,useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { checkForNA, getOrderDocuments } from "../../../utils";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
 import { SVDocumnetPreview } from "../../../utils";
@@ -354,7 +354,16 @@ import { UPYOG_CONSTANTS } from "../../../utils";
             styles={{ height: "auto", marginBottom:"30px", marginTop:"10px" }}
           />
         </div>
-        <SubmitBar label={t("SV_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+
+        {/* If renew application, renders Make payment button otherwise renders the submit button */}
+        {
+          !isRenew ?
+            <SubmitBar label={t("SV_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+            :
+            <Link to={{ pathname: `/digit-ui/citizen/payment/my-bills/sv-services/${renewalData?.applicationNo}`, state: { tenantId: renewalData?.tenantId, applicationNumber: renewalData?.applicationNo } }}>
+              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} disabled={!agree} />
+            </Link>
+        }
       </Card>
      </React.Fragment>
     );
