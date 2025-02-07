@@ -10,6 +10,7 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.repository.ServiceRequestRepository;
+import org.upyog.rs.service.impl.WaterTankerServiceImpl;
 import org.upyog.rs.util.IdgenUtil;
 import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.WaterTankerBookingDetail;
@@ -42,6 +43,11 @@ public class PaymentService {
 	@Autowired
 	private RequestServiceRepository repo;
 
+	@Autowired
+	private WorkflowService workflowService;
+	
+	private WaterTankerServiceImpl waterTankerService;
+
 	/**
 	 *
 	 * @param record
@@ -60,9 +66,9 @@ public class PaymentService {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
 				log.info("Updating payment status for water tanker booking : " + applicationNo);
-				State state = updateWorkflowStatus(paymentRequest);
+				State state = workflowService.updateWorkflowStatus(paymentRequest, null);
 				String applicationStatus = state.getApplicationStatus();
-				updateApplicationStatus(applicationStatus, paymentRequest);
+				waterTankerService.updateWaterTankerBooking(null, paymentRequest, applicationStatus);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error(
@@ -73,7 +79,7 @@ public class PaymentService {
 
 	}
 
-	public State updateWorkflowStatus(PaymentRequest paymentRequest) {
+	/*public State updateWorkflowStatus(PaymentRequest paymentRequest) {
 
 		ProcessInstance processInstance = getProcessInstanceForRS(paymentRequest);
 		log.info(" Process instance of Request Service application " + processInstance.toString());
@@ -110,9 +116,9 @@ public class PaymentService {
 		Object workflow = serviceRequestRepository.fetchResult(url, workflowReq);
 		response = mapper.convertValue(workflow, ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
-	}
+	} */
 
-	private WaterTankerBookingDetail updateApplicationStatus(String applicationStatus, PaymentRequest paymentRequest) {
+/*	private WaterTankerBookingDetail updateApplicationStatus(String applicationStatus, PaymentRequest paymentRequest) {
 		WaterTankerBookingDetail waterTankerDetail = repo
 				.getWaterTankerBookingDetails(WaterTankerBookingSearchCriteria.builder()
 						.bookingNo(
@@ -139,6 +145,6 @@ public class PaymentService {
 
 		return waterTankerDetail;
 
-	}
+	} */
 
 }
