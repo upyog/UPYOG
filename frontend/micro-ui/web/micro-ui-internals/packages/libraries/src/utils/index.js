@@ -245,7 +245,7 @@ const adsAccess = () => {
 const wtAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const wtRoles = ["WT_CEMP"];
+  const wtRoles = ["WT_CEMP","WT_VENDOR"];
   const WT_ACCESS = userRoles?.filter((role) => wtRoles?.includes(role));
   return WT_ACCESS?.length > 0;
 };
