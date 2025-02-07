@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.util.MdmsUtil;
+import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.billing.CalculationType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,10 @@ public class CalculationService {
 	private MdmsUtil mdmsUtil;
 
 	public BigDecimal calculateFee(int tankerQuantity, String tankerType, RequestInfo requestInfo, String tenantId) {
-		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, tenantId,
+		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo,RequestServiceUtil.extractTenantId(tenantId),
 				RequestServiceConstants.MDMS_MODULE_NAME);
+		
+		log.info("calculationTypes for tanker booking : {}", calculationTypes);
 
 		for (CalculationType calculation : calculationTypes) {
 			if (calculation.getCode().equalsIgnoreCase(tankerType)) {

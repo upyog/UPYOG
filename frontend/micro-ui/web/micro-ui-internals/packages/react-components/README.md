@@ -49,10 +49,6 @@ class Example extends Component {
 1.7.1 UPYOG base version
 ```
 
-### Contributors
-
-[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
-
 ## Documentation
 
 Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
@@ -63,7 +59,4 @@ Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-g
 
 
 ### Published from UPYOG Frontend 
-DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
-
-
-![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+UPYOG Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
