@@ -30,6 +30,7 @@ import org.egov.user.web.contract.Otp;
 import org.egov.user.web.contract.OtpValidateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -109,6 +110,9 @@ public class UserService {
 
     @Autowired
     private NotificationUtil notificationUtil;
+    
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
     
     
 
@@ -706,7 +710,8 @@ public class UserService {
 		 * encodedfile = Base64.getEncoder().encodeToString(imageBytes);
 		 */
         
-        capMap.put(uuid, captchaText.toString());
+        //capMap.put(uuid, captchaText.toString());
+        redisTemplate.opsForValue().set(uuid, captchaText.toString(), 5, TimeUnit.MINUTES);
         captchaResponse.setResponseInfo(responseInfo);
         captcha.setUuid(uuid);
         captcha.setCaptcha(captchaText.toString());
@@ -735,15 +740,12 @@ public class UserService {
     
     public boolean validateCaptcha(String uuid, String captcha)
     {
-    	if(capMap.containsKey(uuid))
+    	String storedCaptcha = redisTemplate.opsForValue().get(uuid);
+    	System.out.println("storedCaptcha::"+storedCaptcha);
+    	if(storedCaptcha!=null)
     	{
-    		String mapCaptcha=capMap.get(uuid);
-    		if(captcha.contentEquals(mapCaptcha))
-    		{
-    			capMap.remove(uuid);
-    			System.out.println("capMap::"+capMap);
+    		if(captcha.contentEquals(storedCaptcha))
     			return true;
-    		}
     		else
     			throw new CustomException("INVALID_CAPTCHA","Invalid Captcha Entered");
     	}
