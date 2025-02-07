@@ -51,6 +51,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
   const isDraft = !application?.applicationNo?.length;
 
   const handleRenewPopup = () =>{
+    sessionStorage.setItem("vendingApplicationID", application?.applicationNo);
     setRnewButton(true);
   }
 

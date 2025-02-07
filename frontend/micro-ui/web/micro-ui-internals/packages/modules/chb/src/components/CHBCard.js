@@ -38,7 +38,7 @@ const CHBCard = () => {
       select: (data) => {
         return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
       },
-      enabled: Digit.Utils.ptAccess(),
+      enabled: Digit.Utils.chbAccess(),
     },
   });
 

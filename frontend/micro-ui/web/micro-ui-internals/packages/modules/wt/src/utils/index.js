@@ -21,7 +21,7 @@ export const waterTankerPayload = (data) =>{
         tenantId: data?.tenantId,
         tankerType: data?.requestDetails?.tankerType?.code,
         tankerQuantity: data?.requestDetails?.tankerQuantity,
-        waterQuantity: data?.requestDetails?.waterQuantity,
+        waterQuantity: data?.requestDetails?.waterQuantity?.code,
         description: data?.requestDetails?.description,
         deliveryDate: data?.requestDetails?.deliveryDate,
         deliveryTime: data?.requestDetails?.deliveryTime,

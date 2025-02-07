@@ -18,13 +18,13 @@ const WTCard = () => {
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
     ModuleCode: "WT",
-    filters: { limit: 10, offset: 0, services: ["request-service"] },
+    filters: { limit: 10, offset: 0, services: ["watertanker"] },
 
     config: {
       select: (data) => {
         return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
       },
-      enabled: !Digit.Utils.wtAccess(),
+      enabled: Digit.Utils.wtAccess(),
     },
   });
 
