@@ -26,6 +26,23 @@ import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
  * 
  */
 
+
+
+
+const formatIndianCurrency = (amount) => {
+  if (amount === null || amount === undefined) return '';
+  
+  // Convert to string and ensure it's treated as a number first to remove any unexpected formatting
+  const numStr = Number(amount).toString();
+  
+  // Add commas according to Indian numbering system
+  const lastThree = numStr.substring(numStr.length - 3);
+  const otherNums = numStr.substring(0, numStr.length - 3);
+  const formatted = otherNums.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+  
+  return `₹${otherNums ? formatted + ',' + lastThree : lastThree}`;
+};
+
 const EmployeeDashboard = ({modules}) => {
   const { t } = useTranslation();
   const [cardData, setCardData] = useState([
@@ -47,7 +64,7 @@ const EmployeeDashboard = ({modules}) => {
         if (response && response.employeeDashboard) {
           setCardData([
             { title: t("ES_APPLICATION_RECEIVED"), count: response.employeeDashboard.applicationReceived || 0, color: "blue" },
-            { title: t("ES_TOTAL_AMOUNT"), count: response.employeeDashboard.totalAmount || 0, color: "teal" },
+            { title: t("ES_TOTAL_AMOUNT"), count: response.employeeDashboard.totalAmount || 0, color: "teal", isAmount: true },
             { title: t("ES_APPLICATION_PENDING"), count: response.employeeDashboard.applicationPending || 0, color: "purple" },
             { title: t("ES_APPLICATION_APPROVED"), count: response.employeeDashboard.applicationApproved || 0, color: "green" },
           ]);
@@ -65,17 +82,19 @@ const EmployeeDashboard = ({modules}) => {
         {t("COMMON_ULB_DASHBOARD")}
       </div>
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
-        {cardData.map(({ title, count, color }, index) => (
+        {cardData.map(({ title, count, color, isAmount }, index) => (
           <div key={index} className={`status-card ${color}`}>
             <div className="card-content">
-            {count===null?(
+            {count === null ? (
                 <div>
-                <Loader />
+                  <Loader />
                 </div>
-            ):(
+            ) : (
               <React.Fragment>    
-              <span className="count">{count}</span>
-              <span className="title">{title}</span>
+                <span className="count">
+                  {isAmount ? formatIndianCurrency(count) : count}
+                </span>
+                <span className="title">{title}</span>
               </React.Fragment>  
             )}
             </div>
