@@ -134,7 +134,7 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   } 
 
   /* key from application ie being used as consumer code in bill */
-  const { searchFn, key, label } = refObj(tenantId, filters)[_key];
+  const { searchFn, key, label } = filters!==undefined ? refObj(tenantId, filters)[_key]:"";
   const applications = useQuery(["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], searchFn, {
     ...config,
   });
