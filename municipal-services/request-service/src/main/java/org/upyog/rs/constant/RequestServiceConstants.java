@@ -17,6 +17,8 @@ public class RequestServiceConstants {
 	public static final String APPLICATION_UPDATED = "Application Updated";
 
 	public static final String ACTION_APPROVE = "APPROVE";
+	
+	public static final String ACTION_PAY = "PAY";
 
 	public static final String INVALID_APPLICATION = "INVALID APPLICATION";
 

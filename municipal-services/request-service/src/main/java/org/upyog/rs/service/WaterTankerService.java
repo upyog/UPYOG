@@ -5,6 +5,8 @@ import org.upyog.rs.web.models.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
 
+import digit.models.coremodels.PaymentRequest;
+
 import java.util.List;
 
 public interface WaterTankerService {
@@ -15,6 +17,7 @@ public interface WaterTankerService {
 
 	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria, RequestInfo requestInfo);
 
-	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest);
+	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest, PaymentRequest paymentRequest, String applicationStatus);
+
 
 }

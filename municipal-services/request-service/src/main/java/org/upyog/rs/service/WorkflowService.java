@@ -1,8 +1,8 @@
 package org.upyog.rs.service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
+import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.web.models.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.WaterTankerBookingRequest;
@@ -24,6 +25,7 @@ import org.upyog.rs.web.models.workflow.State;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import digit.models.coremodels.PaymentRequest;
 import digit.models.coremodels.RequestInfoWrapper;
 
 @Service
@@ -41,7 +43,7 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
-	public State createWorkflowStatus(WaterTankerBookingRequest waterTankerRequest) {
+/*	public State createWorkflowStatus(WaterTankerBookingRequest waterTankerRequest) {
 		
 			ProcessInstance processInstance = getProcessInstanceForRS(waterTankerRequest.getWaterTankerBookingDetail(),
 					waterTankerRequest.getRequestInfo());
@@ -51,9 +53,29 @@ public class WorkflowService {
 			
 			return state; 
 		
+	}*/
+	
+	public State updateWorkflowStatus(PaymentRequest paymentRequest, WaterTankerBookingRequest waterTankerRequest) {
+	    ProcessInstance processInstance;
+	    RequestInfo requestInfo;
+
+	    if (paymentRequest != null) {
+	        processInstance = getProcessInstanceForRS(paymentRequest, null, null);
+	        requestInfo = paymentRequest.getRequestInfo();
+	    } else if (waterTankerRequest != null) {
+	        processInstance = getProcessInstanceForRS(null, waterTankerRequest.getWaterTankerBookingDetail(), waterTankerRequest.getRequestInfo());
+	        requestInfo = waterTankerRequest.getRequestInfo();
+	    } else {
+	        throw new IllegalArgumentException("Both PaymentRequest and WaterTankerBookingRequest cannot be null");
+	    }
+	    ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
+
+	    return callWorkFlow(workflowRequest);
 	}
 
-	private ProcessInstance getProcessInstanceForRS(WaterTankerBookingDetail application, RequestInfo requestInfo) {
+
+
+	/*private ProcessInstance getProcessInstanceForRS(WaterTankerBookingDetail application, RequestInfo requestInfo) {
 		Workflow workflow = application.getWorkflow();
 
 		ProcessInstance processInstance = new ProcessInstance();
@@ -79,7 +101,46 @@ public class WorkflowService {
 
 		return processInstance;
 
+	} */
+	
+	private ProcessInstance getProcessInstanceForRS(PaymentRequest paymentRequest, WaterTankerBookingDetail application, RequestInfo requestInfo) {
+	    ProcessInstance processInstance = new ProcessInstance();
+
+	    if (paymentRequest != null) {
+	        processInstance.setBusinessId(paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode());
+	        processInstance.setAction(RequestServiceConstants.ACTION_PAY);
+	        processInstance.setModuleName(configs.getModuleName());
+	        processInstance.setTenantId(paymentRequest.getPayment().getTenantId());
+	        processInstance.setBusinessService(configs.getBusinessServiceName());
+	        processInstance.setDocuments(null);
+	        processInstance.setComment(null);
+	        processInstance.setAssignes(null);
+	    } else if (application != null) {
+	        Workflow workflow = application.getWorkflow();
+	        processInstance.setBusinessId(application.getBookingNo());
+	        processInstance.setAction(workflow.getAction());
+	        processInstance.setModuleName(workflow.getModuleName());
+	        processInstance.setTenantId(application.getTenantId());
+	        processInstance.setBusinessService(workflow.getBusinessService());
+	        processInstance.setDocuments(workflow.getDocuments());
+	        processInstance.setComment(workflow.getComments());
+
+	        if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+	            List<User> users = workflow.getAssignes().stream().map(uuid -> {
+	                User user = new User();
+	                user.setUuid(uuid);
+	                return user;
+	            }).collect(Collectors.toList());
+
+	            processInstance.setAssignes(users);
+	        }
+	    } else {
+	        throw new IllegalArgumentException("Both PaymentRequest and WaterTankerBookingDetail cannot be null");
+	    }
+
+	    return processInstance;
 	}
+
 
 	/**
 	 * Method to integrate with workflow
