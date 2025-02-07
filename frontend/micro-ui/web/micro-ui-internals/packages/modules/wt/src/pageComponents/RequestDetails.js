@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * Major Page which is developed for Request/Booking detail page
@@ -18,11 +18,35 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const [deliveryDate, setdeliveryDate] = useState(formData?.requestDetails?.deliveryDate || "");
   const [description, setdescription] = useState(formData?.requestDetails?.description || "");
   const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime || "");
-  const [extraCharge, setextraCharge] = useState(formData?.requestDetails?.extraCharge || false)
- 
-
-
+  const [extraCharge, setextraCharge] = useState(formData?.requestDetails?.extraCharge || false);
+  const tenantId=Digit.ULBService.getStateId();
   
+  // Fetch VehicleType data from MDMS
+  const { data: VehicleType } = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "VehicleType" }], {
+    select: (data) => {
+      const formattedData = data?.["request-service"]?.["VehicleType"];
+      return formattedData;
+    },
+  });
+  let Vehicle = [];
+
+  // Iterate over the VehicleType array and push data to the Vehicle array
+  VehicleType && VehicleType.map((data) => {
+    Vehicle.push({ i18nKey: `${data.capacity}`, code: `${data.capacity}`, value: `${data.capacity}`, vehicleType: data.vehicleType});
+  });
+
+// Iterate over the Vehicle array, check if tankerType.code matches vehicleType, and return data
+  const VehicleDetails = Vehicle.map((data) => {
+    if (tankerType.code === data.vehicleType) {
+      return {
+        i18nKey: data.code,
+        code: data.code ,
+        value: data.code,
+      };
+    }
+  }).filter(item => item !== undefined); // Remove undefined values from the array
+
+
   // Custom time input component
   const TimeInput = () => {
     return (
@@ -117,11 +141,6 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   function setDescription(e) {
     setdescription(e.target.value);
   }
-
-  function setWaterQuantity(e) {
-    setwaterQuantity(e.target.value);
-  }
-
   function setDeliveryDate(e) {
     setdeliveryDate(e.target.value);
   }
@@ -174,7 +193,16 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             labelKey="i18nKey"
             isPTFlow={true}
           />
-          
+           <CardLabel>{`${t("WT_WATER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
+            <Dropdown
+              className="form-field"
+              selected={waterQuantity}
+              placeholder={"Select Water Quantity"}
+              select={setwaterQuantity}
+              option={VehicleDetails}
+              optionKey="i18nKey"
+              t={t}
+            />
           <CardLabel>{`${t("WT_TANKER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
           <CustomQuantityInput
             t={t}
@@ -185,25 +213,6 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             {...(validation = {
               isRequired: true,
               pattern: "^[0-9]+$",
-              type: "tel",
-              title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-          />
-
-          <CardLabel>{`${t("WT_WATER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
-          <TextInput
-            t={t}
-            type={"text"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name="waterQuantity"
-            style={inputStyles}
-            value={waterQuantity}
-            onChange={setWaterQuantity}
-            ValidationRequired={true}
-            {...(validation = {
-              isRequired: true,
-              pattern: "^[0-9 ]+$",
               type: "tel",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}

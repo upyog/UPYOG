@@ -23,6 +23,7 @@
       const [appDetailsToShow, setAppDetailsToShow] = useState({});
       const [showOptions, setShowOptions] = useState(false);
       const [businessService, setBusinessService] = useState("watertanker");
+      const user = Digit.UserService.getUser().info;
     
       sessionStorage.setItem("wt", bookingNo);
       const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.wt.useWTApplicationDetail(t, tenantId, bookingNo);
@@ -71,8 +72,8 @@
 
       let dowloadOptions = [];
       return (
-        <div>
-        <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <div style={{ padding: user?.type === "CITIZEN" ? "0 15px" : ""}}>
+        <div className={"employee-application-details"} style={{ marginBottom: "15px"  }}>
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WT_BOOKING_DETAILS")}</Header>
           <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
             {dowloadOptions && dowloadOptions.length > 0 && (
