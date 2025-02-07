@@ -64,6 +64,7 @@ import { UPYOG_CONSTANTS } from "../../../utils";
     const {owner,businessDetails,address,bankdetails,documents,specialCategoryData} = value;
     const [agree, setAgree] = useState(false);
     const isRenew = window.location.href.includes("renew")?true:false; // creating common variable so that i dont have to write this much long condition every where
+    const isMakePayment = window.location.href.includes("makePayment") ? true:false; 
 
     const setdeclarationhandler = () => {
       setAgree(!agree);
@@ -355,9 +356,9 @@ import { UPYOG_CONSTANTS } from "../../../utils";
           />
         </div>
 
-        {/* If renew application, renders Make payment button otherwise renders the submit button */}
+        {/* If Make Payment application, renders Make payment button otherwise renders the submit button */}
         {
-          !isRenew ?
+          !isMakePayment ?
             <SubmitBar label={t("SV_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
             :
             <Link to={{ pathname: `/digit-ui/citizen/payment/my-bills/sv-services/${renewalData?.applicationNo}`, state: { tenantId: renewalData?.tenantId, applicationNumber: renewalData?.applicationNo } }}>

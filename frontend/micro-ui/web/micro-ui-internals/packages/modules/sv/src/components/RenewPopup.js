@@ -41,14 +41,11 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
         history.push(`renew-application/info`)
     }
 
-    const onSuccess = () => {
-        console.log("Onsuccess function running")
-    }
 
     const onRedirectedToCheckPage = () => {
         try {
             let formdata = demandPayloadData(application)
-            mutation.mutate(formdata, { onSuccess });
+            mutation.mutate(formdata);
         } catch (err) {
             console.error("Error in Mutation:", {
                 message: err.message,
@@ -56,7 +53,7 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
                 name: err.name
             });
         }
-        history.push("renew-application/check");
+        history.push("renew-application/check/makePayment");
     }
 
     return (
