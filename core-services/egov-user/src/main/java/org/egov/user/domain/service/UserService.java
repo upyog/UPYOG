@@ -78,7 +78,6 @@ public class UserService {
     private FileStoreRepository fileRepository;
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
     private TokenStore tokenStore;
-    private Map<String, String> capMap=new HashMap<String, String>();
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -747,7 +746,7 @@ public class UserService {
     		if(captcha.contentEquals(storedCaptcha))
     			return true;
     		else
-    			throw new CustomException("INVALID_CAPTCHA","Invalid Captcha Entered");
+    			throw new CustomException("WRONG_CAPTCHA","Wrong Captcha Entered");
     	}
     	
     	return false;
