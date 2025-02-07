@@ -344,7 +344,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             }
             let owner = formData.owners;
             let ownerStep;
+            
             ownerStep = { ...owner, owners: userData, ownershipCategory: ownershipCategory };
+            
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -356,7 +358,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
-                        gender: owner.gender.code || owner.gender,
+                        gender: owner.gender?.code || owner.gender,
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
