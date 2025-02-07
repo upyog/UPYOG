@@ -445,12 +445,11 @@ public class NotificationUtil {
 		return message;
 	} */
 
-	private String getMessageWithNumberAndFinalDetails(WaterTankerBookingDetail waterTankerDetail, String message) {
-		message = message.replace("{1}", waterTankerDetail.getApplicantDetail().getName());
-		message = message.replace("{2}", waterTankerDetail.getBookingNo());
-		return message;
-	}
 	
+	private String getMessageWithNumberAndFinalDetails(WaterTankerBookingDetail waterTankerDetail, String message) {
+	    return String.format(message, waterTankerDetail.getApplicantDetail().getName(), waterTankerDetail.getBookingNo());
+	}
+
 	  /**
      * Prepares and return url for view screen
      *
