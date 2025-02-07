@@ -24,6 +24,7 @@ RUN yarn add @upyog/upyog-ui-module-chb@3.0.1
 RUN yarn add @upyog/upyog-ui-module-sv@3.0.0
 RUN yarn add @upyog/upyog-ui-module-asset@3.0.0
 RUN yarn add @upyog/upyog-ui-module-ew@3.0.0
+RUN yarn add @nudmcdgnpm/digit-ui-react-components@1.2.6
 
 ARG WORK_DIR
 WORKDIR /app
