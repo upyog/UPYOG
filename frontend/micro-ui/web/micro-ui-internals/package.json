@@ -75,7 +75,7 @@
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "build:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
-    "buildD:ws": "cd packages/modules/ws && yarn build",
+    "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildD:chb": "cd packages/modules/chb && yarn build",
     "buildD:ads": "cd packages/modules/ads && yarn build",
