@@ -394,37 +394,31 @@ public class NotificationUtil {
 		case ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPLY, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;
 			
 		case ACTION_STATUS_APPROVE:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPROVED, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;	
 			
 		case ACTION_STATUS_ASSIGN_VENDOR:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VENDOR, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;
 		
 		case ACTION_STATUS_ASSIGN_VEHICLE_DRIVER:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VEHICLE_DRIVER, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;
 			
 		case ACTION_STATUS_COMPLETE_REQUEST:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_COMPLETE_REQUEST, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;		
 	
 		case ACTION_STATUS_REJECT:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_REJECT, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;
 
 		case ACTION_STATUS_PAY:
