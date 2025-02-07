@@ -17,6 +17,8 @@ import InboxFilter from "./components/inbox/NewInboxFilter";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import WFApplicationTimeline from "./pageComponents/WFApplicationTimeline";
 import WFCaption from "./pageComponents/WFCaption";
+import Inbox from "./pages/employee/Inbox";
+import WTCitizenCard from "./components/WTCitizenCard";
 
 
 
@@ -32,7 +34,9 @@ const componentsToRegister = {
     WTMyApplications: WTMyApplications,
     ApplicationDetails: ApplicationDetails,
     WFApplicationTimeline: WFApplicationTimeline,
-    WFCaption
+    WFCaption,
+    WTEmpInbox: Inbox,
+    WTCitizenCard: WTCitizenCard,
   };
   
   // function to register the component as per standard 

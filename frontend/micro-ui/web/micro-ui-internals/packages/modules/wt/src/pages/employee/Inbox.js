@@ -34,6 +34,7 @@ const Inbox = ({
   EmptyResultInboxComp,
 }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const user = Digit.UserService.getUser().info;
 
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
@@ -126,10 +127,8 @@ const Inbox = ({
       );
     } else {
       return (
-        <div>
+        <div style={{ padding: user?.type === "CITIZEN" ? "0 24px" : "" }}>
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
-         
-          
           <WtDesktopInbox
             moduleCode={moduleCode}
             data={data}

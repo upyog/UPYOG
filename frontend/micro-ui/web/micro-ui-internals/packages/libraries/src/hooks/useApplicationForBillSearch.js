@@ -141,7 +141,7 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("adv-services")) {
     _key = "ads"
   } 
-  if (window.location.href.includes("watertanker")) {
+  if (window.location.href.includes("request-service")) {
     _key = "wt"
   } 
 
