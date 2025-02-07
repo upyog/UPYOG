@@ -1,8 +1,12 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.mdms.model.MdmsResponse;
+import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.Unit;
@@ -18,7 +23,6 @@ import org.egov.pt.models.bill.GenerateBillCriteria;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.util.PTConstants;
-import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +52,7 @@ public class PropertySchedulerService {
 	@Autowired
 	private BillService billService;
 
-	public void calculateTax(RequestInfoWrapper requestInfoWrapper) {
+	public void calculateTax(CalculateTaxRequest calculateTaxRequest) {
 
 		JsonNode ulbModules = null;
 		JsonNode propertyTaxRateModules = null;
@@ -62,7 +66,9 @@ public class PropertySchedulerService {
 
 		Map<String, Set<String>> errorMap = new HashMap<>();
 
-		MdmsResponse mdmsResponse = mdmsService.getMdmsData(requestInfoWrapper.getRequestInfo(), null);
+		BigDecimal days = calculateDays(calculateTaxRequest.getFromDate(), calculateTaxRequest.getToDate());
+
+		MdmsResponse mdmsResponse = mdmsService.getMdmsData(calculateTaxRequest.getRequestInfo(), null);
 
 		if (null != mdmsResponse && null != mdmsResponse.getMdmsRes()
 				&& null != mdmsResponse.getMdmsRes().get(PTConstants.MDMS_MODULE_ULBS)) {
@@ -89,11 +95,13 @@ public class PropertySchedulerService {
 				.status(Collections.singleton(Status.APPROVED)).build();
 
 		List<Property> properties = propertyService.searchProperty(propertyCriteria,
-				requestInfoWrapper.getRequestInfo());
+				calculateTaxRequest.getRequestInfo());
 
 		for (Property property : properties) {
 
 			BigDecimal totalPropertyTax = BigDecimal.ZERO;
+			BigDecimal oneDayPropertyTax = BigDecimal.ZERO;
+			BigDecimal finalPropertyTax = BigDecimal.ZERO;
 			String ulbName = property.getTenantId().split("\\.")[1];
 
 			JsonNode addressAdditionalDetails = objectMapper.valueToTree(property.getAddress().getAdditionalDetails());
@@ -182,7 +190,8 @@ public class PropertySchedulerService {
 				}
 
 				if (!BigDecimal.ZERO.equals(totalRateableValue)) {
-					oAndMRebateAmount = totalRateableValue.multiply(oAndMRebatePercentage.divide(new BigDecimal(100)));
+					oAndMRebateAmount = totalRateableValue
+							.multiply(oAndMRebatePercentage.divide(BigDecimal.valueOf(100)));
 					netRateableValue = totalRateableValue.subtract(oAndMRebateAmount);
 				}
 
@@ -206,7 +215,7 @@ public class PropertySchedulerService {
 				}
 
 				if (!BigDecimal.ZERO.equals(netRateableValue) && null != propertyTaxRatePercentage) {
-					propertyTax = netRateableValue.multiply(propertyTaxRatePercentage.divide(new BigDecimal(100)));
+					propertyTax = netRateableValue.multiply(propertyTaxRatePercentage.divide(BigDecimal.valueOf(100)));
 				} else {
 					errorSet.add(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE + " is missing in mdms");
 				}
@@ -221,11 +230,17 @@ public class PropertySchedulerService {
 			}
 
 			if (!errorMap.containsKey(property.getPropertyId()) && !BigDecimal.ZERO.equals(totalPropertyTax)) {
-//				System.out.println("Calculate bill " + property.getPropertyId());
+
+				oneDayPropertyTax = totalPropertyTax.divide(BigDecimal.valueOf(365), 0);
+
+				finalPropertyTax = oneDayPropertyTax.multiply(days);
+
+				System.err.println(property.getPropertyId() + " " + finalPropertyTax);
+
 				List<Demand> savedDemands = new ArrayList<>();
 				// generate demand
-				savedDemands = demandService.generateDemand(requestInfoWrapper.getRequestInfo(), property,
-						property.getBusinessService(), totalPropertyTax);
+				savedDemands = demandService.generateDemand(calculateTaxRequest.getRequestInfo(), property,
+						property.getBusinessService(), finalPropertyTax);
 
 				if (CollectionUtils.isEmpty(savedDemands)) {
 					throw new CustomException("INVALID_CONSUMERCODE",
@@ -236,11 +251,25 @@ public class PropertySchedulerService {
 				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(property.getTenantId())
 						.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
 
-				BillResponse billResponse = billService.generateBill(requestInfoWrapper.getRequestInfo(), billCriteria);
+				BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(),
+						billCriteria);
 			}
 
 		}
 
+	}
+
+	private BigDecimal calculateDays(Date fromDate, Date toDate) {
+		BigDecimal days = new BigDecimal(365);
+		if (null != fromDate && null != toDate) {
+			LocalDate fromLocalDate = fromDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate toLocalDate = toDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+			// Calculate the number of days between fromDate and toDate
+			days = BigDecimal.valueOf(ChronoUnit.DAYS.between(fromLocalDate, toLocalDate));
+		}
+
+		return days;
 	}
 
 	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {
