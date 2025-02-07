@@ -42,7 +42,7 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		WaterTankerBookingDetail waterTankerBookingDetail = waterTankerRequest.getWaterTankerBookingDetail();
 		PersisterWrapper<WaterTankerBookingDetail> persisterWrapper = new PersisterWrapper<WaterTankerBookingDetail>(
 				waterTankerBookingDetail);
-		producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), persisterWrapper);
+		producer.push(requestServiceConfiguration.getWaterTankerApplicationSaveTopic(), waterTankerRequest);
 	}
 
 
