@@ -662,8 +662,8 @@ public class GarbageAccountService {
 		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
 				.objectId(GarbageAccount.getUuid()).description(GrbgConstants.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION)
 				.id(GrbgConstants.ALFRESCO_COMMON_CERTIFICATE_ID).type(GrbgConstants.ALFRESCO_COMMON_CERTIFICATE_TYPE)
-				.objectName(GrbgConstants.BUSINESS_SERVICE).comments(GrbgConstants.ALFRESCO_TL_CERTIFICATE_COMMENT)
-				.status(GrbgConstants.STATUS_APPROVED).file(resource).servicetype(GrbgConstants.BUSINESS_SERVICE)
+				.objectName(GarbageAccount.getBusinessService()).comments(GrbgConstants.ALFRESCO_TL_CERTIFICATE_COMMENT)
+				.status(GrbgConstants.STATUS_APPROVED).file(resource).servicetype(GarbageAccount.getBusinessService())
 				.documentType(GrbgConstants.ALFRESCO_DOCUMENT_TYPE)
 				.documentId(GrbgConstants.ALFRESCO_COMMON_DOCUMENT_ID).build();
 
@@ -759,7 +759,7 @@ public class GarbageAccountService {
 				// generate demand
 				BigDecimal taxAmount = new BigDecimal("100.00");
 				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account,
-						GrbgConstants.BUSINESS_SERVICE, taxAmount);
+						account.getBusinessService(), taxAmount);
 
 				if (CollectionUtils.isEmpty(savedDemands)) {
 					throw new CustomException("INVALID_CONSUMERCODE",
@@ -768,7 +768,7 @@ public class GarbageAccountService {
 
 				// fetch/create bill
 				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(account.getTenantId())
-						.businessService(applicationPropertiesAndConstant.BUSINESS_SERVICE)
+						.businessService(account.getBusinessService())
 						.consumerCode(account.getGrbgApplicationNumber()).build();
 				BillResponse billResponse = billService.generateBill(updateGarbageRequest.getRequestInfo(),
 						billCriteria);
@@ -873,13 +873,29 @@ public class GarbageAccountService {
 
 			ProcessInstanceRequest processInstanceRequest = null;
 			List<ProcessInstance> processInstances = new ArrayList<>();
-
-			updateGarbageRequest.getGarbageAccounts().forEach(newGarbageAccount -> {
+			String businessService = null;
+			
+			Set<String> userRoles = updateGarbageRequest.getRequestInfo().getUserInfo().getRoles().stream().map(Role::getCode)
+					.collect(Collectors.toSet());
+			
+			for(GarbageAccount newGarbageAccount :	updateGarbageRequest.getGarbageAccounts()) {
+				
+				if (!StringUtils.isEmpty(newGarbageAccount.getBusinessService())) {
+					businessService = newGarbageAccount.getBusinessService();
+				} else {
+					if (userRoles.contains(GrbgConstants.USER_TYPE_CITIZEN)) {
+						businessService = GrbgConstants.BUSINESS_SERVICE_GB_CITIZEN;
+					} else {
+						businessService = GrbgConstants.BUSINESS_SERVICE_GB_EMPLOYEE;
+					}
+				}
+				
+				newGarbageAccount.setBusinessService(businessService);
 
 				ProcessInstance parentProcessInstance = ProcessInstance.builder()
 						.tenantId(newGarbageAccount.getTenantId())
-						.businessService(applicationPropertiesAndConstant.WORKFLOW_BUSINESS_SERVICE)
-						.moduleName(applicationPropertiesAndConstant.WORKFLOW_MODULE_NAME)
+						.businessService(businessService)
+						.moduleName(GrbgConstants.WORKFLOW_MODULE_NAME)
 						.businessId(newGarbageAccount.getGrbgApplication().getApplicationNo())
 						.action(null != newGarbageAccount.getWorkflowAction() ? newGarbageAccount.getWorkflowAction()
 								: getStatusOrAction(newGarbageAccount.getStatus(), false))
@@ -890,18 +906,18 @@ public class GarbageAccountService {
 						|| StringUtils.equals(newGarbageAccount.getWorkflowAction(),
 								GrbgConstants.WORKFLOW_ACTION_VERIFY))) {
 					if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
-						newGarbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+						for(GarbageAccount subAccount :	newGarbageAccount.getChildGarbageAccounts()) {
 							ProcessInstance subProcessInstance = ProcessInstance.builder()
 									.tenantId(subAccount.getTenantId())
-									.businessService(applicationPropertiesAndConstant.WORKFLOW_BUSINESS_SERVICE)
-									.moduleName(applicationPropertiesAndConstant.WORKFLOW_MODULE_NAME)
+									.businessService(businessService)
+									.moduleName(GrbgConstants.WORKFLOW_MODULE_NAME)
 									.businessId(subAccount.getGrbgApplication().getApplicationNo())
 									.action(null != subAccount.getWorkflowAction() ? subAccount.getWorkflowAction()
 											: getStatusOrAction(subAccount.getStatus(), false))
 									.comment(subAccount.getWorkflowComment()).build();
 
 							processInstances.add(subProcessInstance);
-						});
+						}
 					}
 				}
 
@@ -924,7 +940,7 @@ public class GarbageAccountService {
 //							.comment(newGarbageAccount.getWorkflowComment()).build());
 //				}
 
-			});
+			}
 
 			processInstanceRequest = ProcessInstanceRequest.builder().requestInfo(updateGarbageRequest.getRequestInfo())
 					.processInstances(processInstances).build();
@@ -1189,11 +1205,13 @@ public class GarbageAccountService {
 						List<String> listOfStatus = getAccountStatusListByRoles(
 								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(),
 								requestInfo.getUserInfo().getRoles());
-						if (CollectionUtils.isEmpty(listOfStatus)) {
-							throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
-									"Search can't be performed by this Employee due to lack of roles.");
+						if (!CollectionUtils.isEmpty(listOfStatus)) {
+							searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
+							.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
+						} else {
+							searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
+									.setStatus(listOfStatus);
 						}
-						searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().setStatus(listOfStatus);
 					} else {
 						throw new CustomException("MISSING_SEARCH_PARAMETER",
 								"Provide the parameters to search garbage accounts.");
@@ -1428,7 +1446,15 @@ public class GarbageAccountService {
 				.collect(Collectors.toMap(acc -> acc.getGrbgApplication().getApplicationNo(), acc -> acc));
 
 		String applicationTenantId = accounts.get(0).getTenantId();
-		String applicationBusinessId = GrbgConstants.WORKFLOW_BUSINESS_SERVICE;
+		String applicationBusinessId = null;
+		Set<String> userRoles = garbageAccountActionRequest.getRequestInfo().getUserInfo().getRoles().stream().map(Role::getCode)
+				.collect(Collectors.toSet());
+		
+		if (userRoles.contains(GrbgConstants.USER_TYPE_CITIZEN)) {
+			applicationBusinessId = GrbgConstants.BUSINESS_SERVICE_GB_CITIZEN;
+		} else {
+			applicationBusinessId = GrbgConstants.BUSINESS_SERVICE_GB_EMPLOYEE;
+		}
 
 		// fetch business service search
 		BusinessServiceResponse businessServiceResponse = workflowService

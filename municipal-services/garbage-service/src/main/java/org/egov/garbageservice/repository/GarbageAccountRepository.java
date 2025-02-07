@@ -88,9 +88,9 @@ public class GarbageAccountRepository {
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
-    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, last_modified_by, last_modified_date, tenant_id, parent_account) "
+    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, last_modified_by, last_modified_date, tenant_id, parent_account, business_service) "
     		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, :status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
-    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount)";
+    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount, :businessService)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE eg_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
     		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
@@ -132,6 +132,7 @@ public class GarbageAccountRepository {
         accountInputs.put("lastModifiedDate", account.getAuditDetails().getLastModifiedDate());
         accountInputs.put("tenantId", account.getTenantId());
         accountInputs.put("parentAccount", account.getParentAccount());
+        accountInputs.put("businessService", account.getBusinessService());
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, accountInputs);
         return account;

@@ -53,10 +53,9 @@ public class GrbgConstants {
 	public static final String WORKFLOW_ACTION_RETURN_TO_VERIFIER = "RETURN_TO_VERIFIER";
 
 	public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
-
-	public static final String WORKFLOW_BUSINESS_SERVICE = "GB";
-
-	public static final String BUSINESS_SERVICE = "GB";
+	
+	public static final String BUSINESS_SERVICE_GB_CITIZEN = "GB_CITIZEN";
+	public static final String BUSINESS_SERVICE_GB_EMPLOYEE = "GB_EMPLOYEE";
 
 	public static final String WORKFLOW_MODULE_NAME = "GB";
 

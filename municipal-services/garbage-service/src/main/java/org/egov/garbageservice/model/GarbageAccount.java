@@ -83,4 +83,6 @@ public class GarbageAccount {
 	
 	private Long subAccountCount;
 	
+	private String businessService;
+	
 }

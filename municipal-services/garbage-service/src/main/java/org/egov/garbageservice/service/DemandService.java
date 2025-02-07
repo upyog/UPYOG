@@ -48,7 +48,7 @@ public class DemandService {
 						.getTime())
 //                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
 				.fixedBillExpiryDate(cal.getTimeInMillis())
-				.consumerType(garbageAccount.getGrbgApplicationNumber()).businessService(GrbgConstants.BUSINESS_SERVICE)
+				.consumerType(garbageAccount.getGrbgApplicationNumber()).businessService(garbageAccount.getBusinessService())
 				.build();
 
 		List<Demand> demands = Arrays.asList(demandOne);
