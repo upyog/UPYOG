@@ -235,8 +235,6 @@ public class PropertySchedulerService {
 
 				finalPropertyTax = oneDayPropertyTax.multiply(days);
 
-				System.err.println(property.getPropertyId() + " " + finalPropertyTax);
-
 				List<Demand> savedDemands = new ArrayList<>();
 				// generate demand
 				savedDemands = demandService.generateDemand(calculateTaxRequest.getRequestInfo(), property,
