@@ -12,7 +12,6 @@
     "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/noc",
     "micro-ui-internals/packages/modules/tl",
-    "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/common"
   ],
@@ -46,6 +45,7 @@
     "@upyog/upyog-ui-module-ew":"3.0.0",
     "@upyog/upyog-ui-module-chb":"3.0.1",
     "@upyog/upyog-ui-module-ads":"3.0.1",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.6",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
