@@ -44,5 +44,11 @@ public class OtpController {
         final Token token = tokenService.search(request.toSearchCriteria());
         return new OtpResponse(token);
     }
+    
+    @PostMapping("v1/_checkResend")
+    public OtpResponse checkResend(@RequestBody OtpRequest request) {
+        final Token token = tokenService.checkResend(request.getTokenRequest());
+        return new OtpResponse(token);
+    }
 }
 

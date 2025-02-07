@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
@@ -77,7 +78,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         String tenantId = details.get("tenantId");
         String userType = details.get("userType");
-
+        String captcha=details.get("captcha");
+        String uuid=details.get("uuid");
+        
         if (isEmpty(tenantId)) {
             throw new OAuth2Exception("TenantId is mandatory");
         }
@@ -135,9 +138,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 //for automation allow fixing otp validation to a fixed otp
                 isPasswordMatched = true;
             } else {
+            	if(!userService.validateCaptcha(uuid, captcha))
+            		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
                 isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
             }
         } else {
+        	if(!userService.validateCaptcha(uuid, captcha))
+        		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
             isPasswordMatched = isPasswordMatch(employeeLoginPasswordOtpEnabled, password, user, authentication);
         }
 
