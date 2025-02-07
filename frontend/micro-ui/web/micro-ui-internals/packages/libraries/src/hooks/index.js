@@ -340,6 +340,7 @@ import useEmpvendorCreate from "./vendor/useEmpvendorCreate";
 import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
 import useSelectedMDMS from "./useSelectedMDMS";
 import useVendorAdditionaldetailsAPI from "./vendor/useVendorAdditionaldetailsAPI";
+import useCreateDemand from "./sv/useCreateDemand";
 
 const wt={
   useTankerCreateAPI,
@@ -642,7 +643,8 @@ const sv = {
   useSvSearchApplication,
   useSVApplicationDetail,
   useSVApplicationAction,
-  useSvSearchApplication
+  useSvSearchApplication,
+  useCreateDemand
 }
 
 const ew = {

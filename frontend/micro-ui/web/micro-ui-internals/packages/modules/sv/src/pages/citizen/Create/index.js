@@ -156,8 +156,14 @@ const SVCreate = ({ parentRoute }) => {
         );
       })}
 
-      
-      <Route path={`${match.path}/check`}>
+      {/***
+       * @description -  Using an optional parameter to work in both cases:
+       *                 if value of ispayment is present, it will take the value
+       *                 if value is not present, will run without any errors.
+       * 
+       * @author - Khalid Rashid - NIUA
+       */}
+      <Route path={`${match.path}/check/:isPayment?`}>
         <SVCheckPage onSubmit={svcreate} value={params} editdata={pathname.includes("apply") ? {} : vendingData} renewalData={vendingData} /> 
         {/**
          * in above line , i am sending same vendingData in both editData and renewalData 
