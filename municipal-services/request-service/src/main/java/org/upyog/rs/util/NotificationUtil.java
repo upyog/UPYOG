@@ -137,7 +137,7 @@ public class NotificationUtil {
 					getUri(tenantId, requestInfo, RequestServiceConstants.NOTIFICATION_LOCALE), requestInfo);
 			jsonString = new JSONObject(responseMap).toString();
 			if (StringUtils.isEmpty(jsonString))
-				throw new CustomException("EG_EW_LOCALE_ERROR",
+				throw new CustomException("UG_RS_LOCALE_ERROR",
 						"Localisation values not found for Request Service notifications");
 		}
 		return jsonString;
