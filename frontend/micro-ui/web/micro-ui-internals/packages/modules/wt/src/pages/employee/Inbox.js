@@ -33,7 +33,7 @@ const Inbox = ({
   middlewareSearch,
   EmptyResultInboxComp,
 }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
 
   const { t } = useTranslation();

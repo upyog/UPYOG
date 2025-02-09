@@ -49,7 +49,51 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     },
     { enabled: !action?.isTerminateState }
   );
+  
+ /*hook for vendor search */
+  const { data: dsoData, isLoading: isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } = Digit.Hooks.fsm.useVendorSearch({
+    tenantId,
+    config: { enabled: action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" },
+  });
 
+  let vendorDescription = [];
+  dsoData?.vendor?.map((item) => {
+    if (item?.additionalDetails?.description === "WT") {
+      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name });
+    }
+  });
+
+/*hook for vehicle search */
+  const { data:vehicleData,isSuccess } = Digit.Hooks.fsm.useVehiclesSearch({
+    tenantId,
+    config: { enabled: action?.state === "DELIVERY_PENDING" },
+  });
+  
+  let vehicleDescription = [];
+  vehicleData?.vehicle?.map((item) => {
+    vehicleDescription.push({ code: item?.registrationNumber, name: item?.registrationNumber, i18nKey: item?.registrationNumber,tankerCapacity:item?.tankCapacity });
+  });
+
+  /*
+for driver search for future use , if needed
+  const { data: driverData, isLoading: isDriverDataLoading, isSuccess: isDriverSuccess, error: driverError, refetch: refetchDriver } = Digit.Hooks.fsm.useDriverSearch({
+    tenantId, 
+    filters: {
+      sortBy: "name",
+      sortOrder: "ASC",
+      status: "ACTIVE",
+      driverWithNoVendor: action?.state === "DELIVERY_PENDING" ? true : false,
+      config:{enabled: action?.state === "DELIVERY_PENDING" ? true : false},
+    },
+  });
+
+  let driverDescription = [];
+  driverData?.driver?.map((item) => {
+    driverDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name });
+  });
+
+  console.log("driverDescription", driverDescription);
+*/
 
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
@@ -57,10 +101,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
- 
+  const [selectedApprover, setSelectedApprover] = useState(null); 
+  const [selectVehicle, setSelectVehicle] = useState(null); 
 
-  
- 
+
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
@@ -70,49 +114,49 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }
 
   useEffect(() => {
-      (async () => {
-        setError(null);
-        if (file) {
-          if (file.size >= 5242880) {
-            setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-          } else {
-            try {
+    (async () => {
+      setError(null);
+      if (file) {
+        if (file.size >= 5242880) {
+          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+        } else {
+          try {
             const response = await Digit.UploadServices.Filestorage("WT", file, tenantId);
-              if (response?.data?.files?.length > 0) {
-                setUploadedFile(response?.data?.files[0]?.fileStoreId);
-              } else {
-                setError(t("CS_FILE_UPLOAD_ERROR"));
-              }
-            } catch (err) {
+            if (response?.data?.files?.length > 0) {
+              setUploadedFile(response?.data?.files[0]?.fileStoreId);
+            } else {
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
+          } catch (err) {
+            setError(t("CS_FILE_UPLOAD_ERROR"));
           }
         }
-      })();
-    }, [file]);
+      }
+    })();
+  }, [file]);
   
 
   function submit(data) {
       let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
-      if (uploadedFile)
-        workflow["documents"] = [
-          {
-            documentType: action?.action + " DOC",
-            fileName: file?.name,
-            fileStoreId: uploadedFile,
-          },
-        ];
-      submitAction({
+    if (uploadedFile)
+      workflow["documents"] = [
+        {
+          documentType: action?.action + " DOC",
+          fileName: file?.name,
+          fileStoreId: uploadedFile,
+        },
+      ];
+    submitAction({
         waterTankerBookingDetail: 
           {
-            ...applicationData,
-            workflow,
-          },
-      });
+        ...applicationData,
+        workflow,
+      },
+    });
    
   }
 
-   useEffect(() => {
+  useEffect(() => {
     if (action) {
       setConfig(
         configWTApproverApplication({
@@ -121,11 +165,17 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           selectFile,
           uploadedFile,
           setUploadedFile,
+          selectedApprover,
+          setSelectedApprover,
+          vendorDescription: dsoData ? vendorDescription : undefined,
+          vehicleDescription: vehicleData ? vehicleDescription : undefined, 
+          selectVehicle,
+          setSelectVehicle,
         })
       );
       
     }
-    },[action, approvers, uploadedFile]);
+  },[action, approvers, uploadedFile, dsoData,selectVehicle]);
 
   return action && config.form ? (
     <Modal
@@ -138,15 +188,15 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       formId="modal-action"
     >
        
-        <FormComposer
-          config={config.form}
-          noBoxShadow
-          inline
-          childrenAtTheBottom
-          onSubmit={submit}
-          defaultValues={defaultValues}
-          formId="modal-action"
-        />
+      <FormComposer
+        config={config.form}
+        noBoxShadow
+        inline
+        childrenAtTheBottom
+        onSubmit={submit}
+        defaultValues={defaultValues}
+        formId="modal-action"
+      />
       
     </Modal>
   ) : (
