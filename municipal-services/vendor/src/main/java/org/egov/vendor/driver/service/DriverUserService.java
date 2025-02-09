@@ -23,12 +23,10 @@ import org.egov.vendor.driver.web.model.DriverRequest;
 import org.egov.vendor.driver.web.model.DriverResponse;
 import org.egov.vendor.driver.web.model.DriverSearchCriteria;
 import org.egov.vendor.repository.ServiceRequestRepository;
+import org.egov.vendor.service.ModuleRoleService;
 import org.egov.vendor.util.VendorConstants;
 import org.egov.vendor.util.VendorErrorConstants;
-import org.egov.vendor.web.model.user.User;
-import org.egov.vendor.web.model.user.UserDetailResponse;
-import org.egov.vendor.web.model.user.UserRequest;
-import org.egov.vendor.web.model.user.UserSearchRequest;
+import org.egov.vendor.web.model.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -54,6 +52,9 @@ public class DriverUserService {
 	@Autowired
 	private DriverRepository driverRepository;
 
+	@Autowired
+	ModuleRoleService moduleRoleService;
+
 	/**
 	 * 
 	 * @param driverRequest
@@ -69,7 +70,8 @@ public class DriverUserService {
 		UserDetailResponse userDetailResponse = null;
 
 		if (driverInfo != null && driverInfo.getMobileNumber() != null) {
-			driverInfoMobileNumber(driverInfo, requestInfo, errorMap, driver, driverRequest, isCreateOrUpdate);
+			ModuleRoleMapping roleMapping = moduleRoleService.getModuleRoleMapping(driverRequest, ModuleRoleMapping.MappingType.DRIVER);
+			driverInfoMobileNumber(driverInfo, requestInfo, errorMap, driver, driverRequest, isCreateOrUpdate, roleMapping);
 
 		} else {
 			log.debug("MobileNo is not provided in Application.");
@@ -101,7 +103,7 @@ public class DriverUserService {
 	}
 
 	private void driverInfoMobileNumber(User driverInfo, RequestInfo requestInfo, HashMap<String, String> errorMap,
-			Driver driver, DriverRequest driverRequest, boolean isCreateOrUpdate) {
+										Driver driver, DriverRequest driverRequest, boolean isCreateOrUpdate, ModuleRoleMapping roleMapping) {
 		UserDetailResponse userDetailResponse = userExists(driverInfo);// 1 user
 
 		User foundDriver = null;
@@ -127,21 +129,21 @@ public class DriverUserService {
 
 				}
 
-				if (isRoleAvailale(userDetailResponse.getUser().get(i), config.getDsoDriver(),
+				if (isRoleAvailale(userDetailResponse.getUser().get(i), roleMapping.getRoleCode(),
 						driver.getTenantId()) == Boolean.TRUE) {
 					foundDriver = userDetailResponse.getUser().get(i);
 				}
 			}
 
 			if (foundDriver == null) {
-				foundDriver = findDriver(userDetailResponse, requestInfo, errorMap);
+				foundDriver = findDriver(userDetailResponse, requestInfo, errorMap, roleMapping);
 
 			} else {
 				updateUserDetails(driverInfo, requestInfo, errorMap);
 			}
 
 		} else if (isCreateOrUpdate) {
-			foundDriver = createDriver(driverInfo, requestInfo);
+			foundDriver = createDriver(driverInfo, requestInfo, roleMapping);
 			driverRequest.getDriver().setOwner(foundDriver);
 		} else {
 			updateUserDetails(driverInfo, requestInfo, errorMap);
@@ -166,9 +168,9 @@ public class DriverUserService {
 	}
 
 	private User findDriver(UserDetailResponse userDetailResponse, RequestInfo requestInfo,
-			HashMap<String, String> errorMap) {
+							HashMap<String, String> errorMap, ModuleRoleMapping roleMapping) {
 		User foundDriver = userDetailResponse.getUser().get(0);
-		foundDriver.getRoles().add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
+		foundDriver.getRoles().add(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName()));
 		UserRequest userRequest = UserRequest.builder().user(foundDriver).requestInfo(requestInfo).build();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
@@ -238,21 +240,22 @@ public class DriverUserService {
 
 	/**
 	 * create Employee in HRMS for Vendor owner
-	 * 
+	 *
 	 * @param driver
 	 * @param requestInfo
+	 * @param roleMapping
 	 * @return
 	 */
-	private User createDriver(User driver, RequestInfo requestInfo) {
+	private User createDriver(User driver, RequestInfo requestInfo, ModuleRoleMapping roleMapping) {
 
 		if (!isUserValid(driver)) {
 			throw new CustomException(VendorErrorConstants.INVALID_DRIVER_ERROR,
 					"Dob, relationShip, relation ship name and gender are mandaotry !");
 		}
 		if (driver.getRoles() != null) {
-			driver.getRoles().add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
+			driver.getRoles().add(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName()));
 		} else {
-			driver.setRoles(Arrays.asList(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName())));
+			driver.setRoles(Arrays.asList(getRolObj(roleMapping.getRoleCode(), roleMapping.getRoleName())));
 		}
 		addUserDefaultFields(driver.getTenantId(), null, driver);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())

@@ -3,6 +3,8 @@ package org.egov.vendor.driver.web.model;
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.vendor.service.RequestType;
+import org.egov.vendor.util.VendorUtil;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class DriverRequest {
+public class DriverRequest implements RequestType {
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo = null;
@@ -28,7 +30,20 @@ public class DriverRequest {
 	@Valid
 	@JsonProperty("driver")
 	private Driver driver = null;
-	
-	 
+
+	@Override
+	public RequestInfo getRequestInfo() {
+		return requestInfo;
+	}
+
+	@Override
+	public String getTenantId() {
+		return VendorUtil.extractTenantId(this);
+	}
+
+	@Override
+	public String getModuleNameOrDefault(VendorUtil vendorUtil) {
+		return vendorUtil.getModuleNameOrDefault(this);
+	}
 
 }
