@@ -45,7 +45,7 @@ public class RequestServiceConfiguration {
 	@Value("${egov.idgen.water.tanker.booking.id.format}")
 	private String waterTankerApplicationFormat;
 
-	// Kafka topics for saving street vending data
+	// Kafka topics for saving water tanker data
 	@Value("${persister.create.water-tanker.topic}")
 	private String waterTankerApplicationSaveTopic;
 
@@ -183,5 +183,8 @@ public class RequestServiceConfiguration {
 	
 	@Value("${rs.business.service.name}")
 	private String businessServiceName;
+	
+	@Value("${rs.module.name}")
+	private String moduleName;
 	
 }
