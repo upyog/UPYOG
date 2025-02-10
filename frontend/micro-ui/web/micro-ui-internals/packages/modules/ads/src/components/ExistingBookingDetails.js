@@ -46,7 +46,7 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
         houseNo: application?.address?.houseNo,
         streetName: application?.address?.streetName,
         landmark: application?.address?.landmark,
-        city: {code:application?.address?.city, value:application?.address?.city, i18nKey:application?.address?.city, 
+        cityValue: {code:application?.address?.city, value:application?.address?.city, i18nKey:application?.address?.city, 
           city:{name:application?.address?.city,code:application?.address?.cityCode}},
         locality: {code:application?.address?.localityCode, value:application?.address?.locality, i18nKey:application?.address?.locality},
         addressline1 : application?.address?.addressLine1,
