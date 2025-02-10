@@ -177,8 +177,10 @@ config:
   - name: "builds/upyog/core-services/egov-notification-sms"
     build:
       - work-dir: "core-services/egov-notification-sms"
-        image-name: "egov-notification-sms"
+        image-name: "notification-sms"
         dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/egov-notification-sms/src/main/resources/db"
+        image-name: "notification-sms-db"
 
   - name: "builds/upyog/core-services/egov-otp"
     build:
@@ -651,10 +653,10 @@ config:
   - name: "builds/municipal-services/scheduler-service"
     build:
       - work-dir: "municipal-services/scheduler-service"
-        image-name: "scheduler"
+        image-name: "scheduler-services"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/scheduler-service/src/main/resources/db"
-        image-name: "scheduler-db"
+        image-name: "scheduler-services-db"
         
   - name: "builds/municipal-services/feedback-service"
     build:

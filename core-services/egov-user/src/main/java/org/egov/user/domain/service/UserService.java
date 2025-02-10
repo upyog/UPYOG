@@ -467,15 +467,15 @@ public class UserService {
             log.info("CITIZEN forgot password flow is disabled");
             throw new InvalidUpdatePasswordRequestException();
         }
-        if (user.getType().toString().equals(UserType.EMPLOYEE.toString()) && isEmployeeLoginOtpBased) {
-            log.info("EMPLOYEE forgot password flow is disabled");
-            throw new InvalidUpdatePasswordRequestException();
-        }
+//        if (user.getType().toString().equals(UserType.EMPLOYEE.toString())) {
+//            log.info("EMPLOYEE forgot password flow is disabled");
+//            throw new InvalidUpdatePasswordRequestException();
+//        }
         /* decrypt here */
         /* the reason for decryption here is the otp service requires decrypted username */
         user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
         user.setOtpReference(request.getOtpReference());
-        validateOtp(user);
+       // validateOtp(user);
         validatePassword(request.getNewPassword());
         user.updatePassword(encryptPwd(request.getNewPassword()));
         /* encrypt here */
