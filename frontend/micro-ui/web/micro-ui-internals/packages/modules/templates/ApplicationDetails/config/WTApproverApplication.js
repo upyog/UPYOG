@@ -1,4 +1,4 @@
-import {UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
+import {UploadFile,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
 /*
@@ -14,12 +14,18 @@ import React from "react";
     depending on whether the action requires a file upload.
 */
 export const configWTApproverApplication = ({
-  t,
-  action,
-  selectFile,
-  uploadedFile,
-  setUploadedFile,
-}) => {
+   t,
+   action, 
+   selectFile, 
+   uploadedFile,
+    setUploadedFile,
+    selectedApprover, 
+    setSelectedApprover, 
+    vendorDescription, 
+    vehicleDescription,
+    selectVehicle,
+    setSelectVehicle 
+  }) => {
   return {
     label: {
       heading: `WT_${action?.action}`,
@@ -28,7 +34,7 @@ export const configWTApproverApplication = ({
     },
     form: [
       {
-        body: [  
+        body: [
           {
             label: t("ES_WT_ACTION_COMMENTS") + " *",
             type: "textarea",
@@ -39,6 +45,38 @@ export const configWTApproverApplication = ({
               },
             },
           },
+
+          action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" ? (
+          {
+            label: t("WT_ASSIGN"),
+            type: "dropdown",
+            populators:( 
+            <Dropdown 
+            option={vendorDescription} // Pass the array of objects
+            t={t}
+            optionKey="i18nKey"
+            select={setSelectedApprover} 
+            selected={selectedApprover}
+            />
+          ),
+          }
+        ) : "null",
+
+          action?.state === "DELIVERY_PENDING" ? (
+          {
+            label: t("WT_REGISTRATION_NUMBER"),
+            type: "dropdown",
+            populators:( 
+            <Dropdown 
+            option={vehicleDescription} // Pass the array of objects
+            t={t}
+            optionKey="i18nKey"
+            select={setSelectVehicle} 
+            selected={selectVehicle}
+            />
+          ),
+          }  ) : "null",
+          
           {
             label: `${t("ES_WT_ATTACH_FILE")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
@@ -50,10 +88,10 @@ export const configWTApproverApplication = ({
                 }}
                 message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
               />
-            )
-          }
-        ]
-      }
-    ]
+            ),
+          },
+        ],
+      },
+    ],
   };
 };

@@ -12,8 +12,9 @@ const WTCitizenCard = () => {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState("-");
+    const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
-      tenantId: Digit.ULBService.getCurrentTenantId(),
+      tenantId: tenantId,
       ModuleCode: "WT",
       filters: { limit: 10, offset: 0, services: ["watertanker"] },
   

@@ -43,7 +43,7 @@
     "@nudmcdgnpm/upyog-ui-module-sv":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-ew":"1.2.6",
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.7",
-    "@nudmcdgnpm/upyog-ui-module-ads":"1.2.10",
+    "@nudmcdgnpm/upyog-ui-module-ads":"1.2.11",
     "@nudmcdgnpm/upyog-ui-module-wt":"1.0.0",
     "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.1",
     "babel-loader": "8.1.0",
