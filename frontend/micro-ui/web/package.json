@@ -11,9 +11,7 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/noc",
-    "micro-ui-internals/packages/modules/tl",
-    "micro-ui-internals/packages/modules/commonPt",
-    "micro-ui-internals/packages/modules/common"
+    "micro-ui-internals/packages/modules/commonPt"
   ],
   "engines": {
     "node": ">=14"
@@ -23,7 +21,7 @@
     "@upyog/digit-ui-libraries": "3.0.0",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@upyog/digit-ui-module-bills": "3.0.0",
-    "@upyog/digit-ui-module-common": "3.0.3",
+    "@upyog/digit-ui-module-common": "3.0.4",
     "@upyog/digit-ui-module-core": "3.0.2",
     "@upyog/digit-ui-module-engagement": "3.0.1",
     "@upyog/digit-ui-module-dss": "3.0.1",
@@ -37,7 +35,7 @@
     "@upyog/digit-ui-module-pgr": "3.0.0",
     "@upyog/digit-ui-module-pt": "3.0.1",
     "@upyog/digit-ui-module-receipts": "3.0.0",
-    "@upyog/digit-ui-module-tl": "3.0.2",
+    "@upyog/digit-ui-module-tl": "3.0.3",
     "@upyog/digit-ui-module-ws": "3.0.2",
     "@upyog/digit-ui-react-components": "3.0.0",
     "@upyog/upyog-ui-module-ptr": "3.0.0",
