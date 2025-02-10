@@ -118,7 +118,7 @@ public class OCService {
 			List<String> riskTypes = JsonPath.read(OcData.get(0), filterExp);
 			riskType.add(riskTypes.get(0));
 
-			khathaNos.add(JsonPath.read(edcrDetail, BPAConstants.OC_KHATHANO));
+			//khathaNos.add(JsonPath.read(edcrDetail, BPAConstants.OC_KHATHANO));
 
 			plotNos.add(JsonPath.read(edcrDetail, BPAConstants.OC_PLOTNO));
 

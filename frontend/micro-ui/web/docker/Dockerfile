@@ -5,7 +5,7 @@ RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries@3.0.0
 RUN yarn add @upyog/digit-ui-module-fsm@3.0.1
 RUN yarn add @upyog/digit-ui-module-pt@3.0.1
-RUN yarn add @upyog/digit-ui-module-tl@3.0.2
+RUN yarn add @upyog/digit-ui-module-tl@3.0.3
 RUN yarn add @upyog/digit-ui-module-obps@3.0.2
 RUN yarn add @upyog/digit-ui-module-ws@3.0.2
 RUN yarn add @upyog/digit-ui-module-dss@3.0.1
@@ -15,7 +15,7 @@ RUN yarn add @upyog/digit-ui-module-noc@3.0.0
 RUN yarn add @upyog/digit-ui-module-engagement@3.0.1
 RUN yarn add @upyog/digit-ui-module-hrms@3.0.0
 RUN yarn add @upyog/digit-ui-module-core@3.0.2
-RUN yarn add @upyog/digit-ui-module-common@3.0.3
+RUN yarn add @upyog/digit-ui-module-common@3.0.4
 RUN yarn add @upyog/digit-ui-module-commonpt@3.0.2
 RUN yarn add @upyog/digit-ui-module-bills@3.0.0
 RUN yarn add @upyog/upyog-ui-module-ptr@3.0.0
@@ -24,10 +24,11 @@ RUN yarn add @upyog/upyog-ui-module-chb@3.0.1
 RUN yarn add @upyog/upyog-ui-module-sv@3.0.0
 RUN yarn add @upyog/upyog-ui-module-asset@3.0.0
 RUN yarn add @upyog/upyog-ui-module-ew@3.0.0
+RUN yarn add @nudmcdgnpm/digit-ui-react-components@1.2.6
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=8192"
+ENV NODE_OPTIONS "--max-old-space-size=12288"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
@@ -36,7 +37,7 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(8192*8192))' \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(12288*12288))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
