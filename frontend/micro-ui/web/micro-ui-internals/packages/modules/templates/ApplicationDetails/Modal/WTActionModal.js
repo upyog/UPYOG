@@ -49,13 +49,20 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     },
     { enabled: !action?.isTerminateState }
   );
+  /* 
+   We have used this hook as it is already defined in FSM, 
+   and we have used it here to fetch vendor data when the state is "PENDING_FOR_VEHICLE_DRIVER_ASSIGN". */
   
- /*hook for vendor search */
   const { data: dsoData, isLoading: isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } = Digit.Hooks.fsm.useVendorSearch({
     tenantId,
     config: { enabled: action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" },
   });
-
+  
+  /*  
+   This is used to filter vendors from `dsoData` that have an additional 
+   description field with the value "WT".The filtered vendors are then stored in the `vendorDescription` array with their names 
+   as code, name, and i18nKey */
+  
   let vendorDescription = [];
   dsoData?.vendor?.map((item) => {
     if (item?.additionalDetails?.description === "WT") {
@@ -63,11 +70,18 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     }
   });
 
-/*hook for vehicle search */
+/* 
+   We have used this hook as it is already defined in FSM,
+   and we have used it here to fetch vehicle data when the system state is "DELIVERY_PENDING". */
+  
   const { data:vehicleData,isSuccess } = Digit.Hooks.fsm.useVehiclesSearch({
     tenantId,
     config: { enabled: action?.state === "DELIVERY_PENDING" },
   });
+
+/*  
+   This is used to extract vehicle details from `vehicleData` and store them in the `vehicleDescription` array. 
+   Each entry contains the vehicle's registration number and tanker capacity.  */
   
   let vehicleDescription = [];
   vehicleData?.vehicle?.map((item) => {
