@@ -38,7 +38,7 @@ public class ModuleRoleService {
      * Retrieves the ModuleRoleMapping based on request type.
      */
     private ModuleRoleMapping getModuleRoleMapping(RequestInfo requestInfo, String tenantId,
-                                                   ModuleNameEnum moduleName, ModuleRoleMapping.MappingType mappingType) {
+                                                   String moduleName, ModuleRoleMapping.MappingType mappingType) {
         ModuleRoleMapping roleMappingKey = ModuleRoleMapping.builder()
                 .moduleName(moduleName)
                 .type(mappingType)
@@ -57,12 +57,12 @@ public class ModuleRoleService {
 class ModuleRoleRequestWrapper {
     private final RequestInfo requestInfo;
     private final String tenantId;
-    private final ModuleNameEnum moduleName;
+    private final String moduleName;
 
     public ModuleRoleRequestWrapper(RequestType request, VendorUtil vendorUtil) {
         this.requestInfo = request.getRequestInfo();
         this.tenantId = request.getTenantId();
-        this.moduleName = getSafeModuleNameEnum(request.getModuleNameOrDefault(vendorUtil));
+        this.moduleName = request.getModuleNameOrDefault(vendorUtil);
     }
 
     private static ModuleNameEnum getSafeModuleNameEnum(String moduleName) {

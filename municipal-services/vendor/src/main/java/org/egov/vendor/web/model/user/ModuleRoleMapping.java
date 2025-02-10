@@ -15,7 +15,7 @@ public class ModuleRoleMapping {
     }
     private MappingType type;
 
-    private ModuleNameEnum moduleName;
+    private String moduleName;
 
     private String roleCode ;
 
