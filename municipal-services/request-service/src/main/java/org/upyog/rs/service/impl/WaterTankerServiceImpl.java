@@ -6,10 +6,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.service.DemandService;
@@ -39,6 +41,9 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Autowired
 	DemandService demandService;
+	
+	@Autowired
+	RequestServiceConfiguration config;
 
 	@Override
 	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest) {
@@ -194,9 +199,36 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 	    // If no payment request, just update the water tanker booking request
 	    requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
+	    
+	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
+			handleRSSubmitFeeback(waterTankerRequest);
+		}
+
+
+
 
 	    return waterTankerRequest.getWaterTankerBookingDetail();
 	}
+	
+	private void handleRSSubmitFeeback(WaterTankerBookingRequest waterTankerRequest) {
+		User citizen = waterTankerRequest.getRequestInfo().getUserInfo();
+		if (!citizen.getUuid().equalsIgnoreCase(waterTankerRequest.getRequestInfo().getUserInfo().getUuid())) {
+			throw new CustomException("Rating Error",
+					" Only owner of the application can submit the feedback !.");
+		}
+		if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating() == null) {
+			throw new CustomException("Rating Error", " Rating has to be provided!");
+		} else if (config.getAverageRatingCommentMandatory() != null
+				&& Integer.parseInt(config.getAverageRatingCommentMandatory()) > waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating()
+				) {
 
+			throw new CustomException("Rating Error",
+					" Comment mandatory for rating " + waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating());
+		}
+		
+
+	}
+	
+	
 
 }

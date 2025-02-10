@@ -61,5 +61,9 @@ public class Workflow {
 		this.documents.add(documentsItem);
 		return this;
 	}
+	
+	@JsonProperty("rating")
+	private Integer rating = null;
+
 
 }

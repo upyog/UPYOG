@@ -187,4 +187,7 @@ public class RequestServiceConfiguration {
 	@Value("${rs.module.name}")
 	private String moduleName;
 	
+	@Value("${egov.rs.avg.rating.comment.mandatory}")
+	private String averageRatingCommentMandatory;
+	
 }
