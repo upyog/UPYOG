@@ -42,6 +42,7 @@ public class ModuleRoleConfig {
      * @throws CustomException If role mapping is not found
      */
     public ModuleRoleMapping getRoleMappingForModule(RequestInfo requestInfo, String tenantId, ModuleRoleMapping moduleRoleMappingKey) {
+        log.info("moduleRoleMappingKey : {}", moduleRoleMappingKey);
         if (moduleRoleMap == null) {
             loadVendorRoleMappingMasterData(requestInfo, tenantId);
         }
@@ -86,6 +87,7 @@ public class ModuleRoleConfig {
                         mapping -> mapping,
                         (existing, replacement) -> existing // Handle duplicate keys by keeping the first one
                 ));
+        log.info("Module role mapping map after loading from mdms : {}", moduleRoleMap);
     }
 
     /**
