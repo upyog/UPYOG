@@ -18,7 +18,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<lombok.version>1.18.8</lombok.version>
+		<lombok.version>1.18.28</lombok.version>
 	</properties>
 
 	<dependencies>
@@ -141,7 +141,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.2.jre7</version>
+			<version>42.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>

@@ -100,10 +100,10 @@ public class PlantationGreenStrip extends FeatureProcess {
                  */
                 // List<BigDecimal> minimumDistances = new ArrayList<>();
 
-                if (widths.isEmpty()) {
-                    pl.addError("RULE_37_6", getLocaleMessage(DcrConstants.OBJECTNOTDEFINED,
-                            "Block " + block.getNumber() + " " + "Continuous Green Planting Strip"));
-                }
+//                if (widths.isEmpty()) {
+//                    pl.addError("RULE_37_6", getLocaleMessage(DcrConstants.OBJECTNOTDEFINED,
+//                            "Block " + block.getNumber() + " " + "Continuous Green Planting Strip"));
+//                }
                 /*
                  * for (SetBack setBack : block.getSetBacks()) { if (setBack.getRearYard() != null)
                  * minimumDistances.add(setBack.getRearYard().getHeight()); if (setBack.getSideYard1() != null)

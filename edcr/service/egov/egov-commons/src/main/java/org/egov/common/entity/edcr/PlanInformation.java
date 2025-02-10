@@ -146,9 +146,37 @@ public class PlanInformation implements Serializable {
     private transient String nocCollectorGvtLand = NA;
     //YES/NO/NA.Extracted from Plan info. Permitted with irrigation report NOC
     private transient String nocIrrigationDept = NA;
+    
     //YES/NO/NA.Extracted from Plan info. Permitted with fire department NOC
     private transient String nocFireDept = NA;
-    //YES/NO/NA.Extracted from Plan info. Building near the river flag
+    private transient String nocNeighbour = NA;
+    private transient String nocFromNHAI = NA;
+    private transient String indemnityBasement = NA;
+    public String getIndemnityBasement() {
+		return indemnityBasement;
+	}
+
+	public void setIndemnityBasement(String indemnityBasement) {
+		this.indemnityBasement = indemnityBasement;
+	}
+
+	public String getNocNeighbour() {
+		return nocNeighbour;
+	}
+
+	public void setNocNeighbour(String nocNeighbour) {
+		this.nocNeighbour = nocNeighbour;
+	}
+
+	public String getNocFromNHAI() {
+		return nocFromNHAI;
+	}
+
+	public void setNocFromNHAI(String nocFromNHAI) {
+		this.nocFromNHAI = nocFromNHAI;
+	}
+
+	//YES/NO/NA.Extracted from Plan info. Building near the river flag
     private transient String buildingNearToRiver = NA;
     //YES/NO/NA.Extracted from Plan info. Barrier free access for physically handicapped person provided.
     private transient String barrierFreeAccessForPhyChlngdPpl = NA;
@@ -159,12 +187,48 @@ public class PlanInformation implements Serializable {
     //Extracted from Plan info.Plot number.
     private String plotNo;
     //Extracted from Plan info.Khata number.
-    private String khataNo;
-    //Extracted from Plan info.Mauza number.
-    private String mauza;
+    //private String khataNo;
+    
+  //Extracted from Plan info.Khasra number.
+    private String khasraNo;
+    public String getKhasraNo() {
+		return khasraNo;
+	}
+
+	public void setKhasraNo(String khasraNo) {
+		this.khasraNo = khasraNo;
+	}
+	
+	//Extracted from Plan info.Khatuni number.
+	 private String khatuniNo;
+	 
+	
+	    public String getKhatuniNo() {
+			return khatuniNo;
+		}
+
+		public void setKhatuniNo(String khatuniNo) {
+			this.khatuniNo = khatuniNo;
+		}
+
+
+	//Extracted from Plan info.Mauza number.
+   // private String mauza;
+    
     //Extracted from Plan info.District name.
     private String district;
-    //YES/NO/NA.Extracted from Plan info. Rain water declared in plan.
+    
+  //Extracted from Plan info.City name.
+    private String city;
+    public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	//YES/NO/NA.Extracted from Plan info. Rain water declared in plan.
     private transient String rwhDeclared = NA;
 
 
@@ -576,21 +640,21 @@ public class PlanInformation implements Serializable {
         this.plotNo = plotNo;
     }
 
-    public String getKhataNo() {
-        return khataNo;
-    }
+//    public String getKhataNo() {
+//        return khataNo;
+//    }
+//
+//    public void setKhataNo(String khataNo) {
+//        this.khataNo = khataNo;
+//    }
 
-    public void setKhataNo(String khataNo) {
-        this.khataNo = khataNo;
-    }
-
-    public String getMauza() {
-        return mauza;
-    }
-
-    public void setMauza(String mauza) {
-        this.mauza = mauza;
-    }
+//    public String getMauza() {
+//        return mauza;
+//    }
+//
+//    public void setMauza(String mauza) {
+//        this.mauza = mauza;
+//    }
 
     public String getDistrict() {
         return district;

@@ -81,7 +81,9 @@ public class ElasticSearchRepository {
     public Integer findIfRecordAlreadyExists(StringBuilder uri) {
         Integer recordsFound = 0;
         try {
-            Object response = restTemplate.getForEntity(uri.toString(), Map.class);
+             HttpHeaders headers = getHttpHeaders();
+            HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
+            Object response = restTemplate.postForEntity(uri.toString(),httpEntity, Map.class);
             String res = objectMapper.writeValueAsString(response);
             JsonNode responseNode = objectMapper.readValue(res, JsonNode.class);
             log.info(responseNode.get(IngestConstants.BODY).toString());

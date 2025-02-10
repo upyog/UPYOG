@@ -1,13 +1,16 @@
 import React from "react";
 
-import { initPGRComponents, PGRReducers } from "@upyog/digit-ui-module-pgr";
-import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
-import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
 import {
-  MCollectModule,
-  MCollectLinks,
-  initMCollectComponents,
-} from "@upyog/digit-ui-module-mcollect";
+  initPGRComponents,
+  PGRReducers,
+} from "@upyog/digit-ui-module-pgr";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
+import {
+  PTModule,
+  PTLinks,
+  PTComponents,
+} from "@upyog/digit-ui-module-pt";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
 import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import {
   PaymentModule,
@@ -16,12 +19,16 @@ import {
 } from "@upyog/digit-ui-module-common";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
-import { HRMSModule, initHRMSComponents } from "@upyog/digit-ui-module-hrms";
-import { TLModule, TLLinks, initTLComponents } from "@upyog/digit-ui-module-tl";
 import {
-  initReceiptsComponents,
-  ReceiptsModule,
-} from "@upyog/digit-ui-module-receipts";
+  HRMSModule,
+  initHRMSComponents,
+} from "@upyog/digit-ui-module-hrms";
+import {
+  TLModule,
+  TLLinks,
+  initTLComponents,
+} from "@upyog/digit-ui-module-tl";
+import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@upyog/digit-ui-module-noc";
 import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
@@ -33,7 +40,18 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@upyog-niua/upyog-ui-module-ptr";
+} from "@upyog/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
+
+import { 
+  EWModule, 
+  EWLinks, 
+  EWComponents }
+  from "@upyog/upyog-ui-module-ew";
+
+import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
+import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
 
 // import { initReportsComponents } from "@upyog/digit-ui-module-reports";
 
@@ -64,6 +82,12 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
+  "PTR",
+  "ASSET",
+  "ADS",
+  "SV",
+  "EW",
+  "CHB"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -78,6 +102,24 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLModule,
   TLLinks,
   ReceiptsModule,
+  PTRModule,
+  PTRLinks,
+  ...PTRComponents,
+  ASSETModule,
+  ASSETLinks,
+  ...ASSETComponents,
+  ADSLinks,
+  ADSModule,
+  ...ADSComponents,
+  SVModule,
+  SVLinks,
+  ...SVComponents,
+  EWModule,
+  EWLinks,
+  ...EWComponents,
+  CHBModule,
+  CHBLinks,
+  ...CHBComponents,
 });
 
 initPGRComponents();

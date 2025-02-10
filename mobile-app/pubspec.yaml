@@ -1,0 +1,164 @@
+name: mobile_app
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 2.4.0+131
+
+environment:
+  sdk: ">=3.3.2 <4.0.0"
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  get: ^4.6.6
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  http: ^1.2.1
+  http_parser: ^4.0.2
+  path_provider: ^2.1.3
+  sms_autofill: ^2.4.0
+  flutter_svg: ^2.0.10+1
+  flutter_inappwebview: ^5.8.0 #^5.8.0
+  url_launcher: ^6.3.0
+  smooth_page_indicator: ^1.1.0
+  timelines_plus: ^1.0.2
+  flutter_rating_bar: ^4.0.1
+  photo_view: ^0.15.0
+  image_picker: ^1.1.2
+  json_annotation: ^4.9.0
+  dio: ^5.4.3+1
+  mime: ^1.0.5
+  syncfusion_flutter_pdfviewer: ^26.1.35
+  flutter_launcher_icons: ^0.13.1
+  flutter_localizations:
+    sdk: flutter
+  flutter_image_slideshow: ^0.1.6
+  otp_text_field: ^1.1.3
+  share_plus: ^10.0.2
+  flutter_screenutil: ^5.9.3
+
+  #Firebase
+  firebase_messaging: ^15.0.1
+  flutter_local_notifications: ^17.1.2
+  firebase_core: ^3.1.0
+  firebase_auth: ^5.1.0
+  cloud_firestore: ^5.0.1
+
+  #NttDataPayment
+  encrypt: ^5.0.3
+  crypto: ^3.0.3
+  intl: ^0.19.0
+  flutter_native_splash: ^2.4.0
+  syncfusion_flutter_datagrid: ^26.1.39
+  google_fonts: ^6.2.1
+  dropdown_search: ^5.0.6
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+  file_picker: 8.1.4
+  material_symbols_icons: ^4.2799.0
+  nuts_activity_indicator: ^1.0.0
+  rxdart: ^0.28.0
+  table_calendar: ^3.1.2
+  # uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.12
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/
+    - assets/images/
+    - assets/aipay/
+    - assets/icons/
+    - assets/v2_images/
+
+flutter_launcher_icons:
+  android: "launcher_icon1"
+  ios: true
+  image_path: "assets/images/launcherIcon1.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/launcherIcon1.png"
+  remove_alpha_ios: true
+
+# flutter_native_splash-development.yaml
+flutter_native_splash:
+  color: "#F6FCFF"
+  image: "assets/images/launcherIcon1.png"
+  branding: "assets/images/niuaWithName.png"
+
+  android_12:
+    color: "#F6FCFF"
+    image: "assets/images/launcherIcon1.png"
+    branding: "assets/images/niuaWithName.png"
+
+  android: true
+  ios: true
+
+  web: false
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/Inter-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Inter-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Inter-Bold.ttf
+  #         weight: 700
+
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages

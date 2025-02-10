@@ -28,10 +28,20 @@ import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 
 // import { PGRModule, PGRLinks } from "@upyog/digit-ui-module-pgr";
 // import { Body, TopBar } from "@upyog/digit-ui-react-components";
-// import "@upyog-niua/upyog-css/example/index.css";
+import "@nudmcdgnpm/upyog-css";
 
-import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
+import { PTRModule, PTRLinks, PTRComponents } from "@upyog/upyog-ui-module-ptr";
+import { ASSETComponents, ASSETLinks, ASSETModule } from "@upyog/upyog-ui-module-asset";
 
+import { 
+  EWModule, 
+  EWLinks, 
+  EWComponents }
+  from "@upyog/upyog-ui-module-ew";
+
+import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
+import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
+import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
 // import * as comps from "@upyog/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
@@ -114,6 +124,21 @@ const initDigitUI = () => {
     ...PTRComponents,
     // TLModule,
     // TLLinks,
+    ASSETModule,
+    ASSETLinks,
+    ...ASSETComponents,
+    ADSLinks,
+  ADSModule,
+  ...ADSComponents,
+  SVModule,
+  SVLinks,
+  ...SVComponents,
+  EWModule,
+  EWLinks,
+  ...EWComponents,
+  CHBModule,
+  CHBLinks,
+  ...CHBComponents
   });
 
   initFSMComponents();

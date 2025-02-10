@@ -133,7 +133,7 @@
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.purpose" />:</strong></td>
 					<td class="bluebox"><s:select list="dropdownData.purposeList"
-							listKey="id" listValue="name" name="accountcodePurpose.id"
+							listKey="id" listValue="name" name="purposeId"
 							headerKey="0" headerValue="%{getText('lbl.choose.options')}"
 							value="accountcodePurpose.id"></s:select></td>
 					<td width="10%" class="bluebox"><strong><s:text
