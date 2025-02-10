@@ -3,6 +3,8 @@ package org.egov.vendor.web.model;
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.vendor.service.RequestType;
+import org.egov.vendor.util.VendorUtil;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class VendorRequest {
+public class VendorRequest implements RequestType {
 
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo = null;
@@ -28,7 +30,21 @@ public class VendorRequest {
 	@Valid
 	@JsonProperty("vendor")
 	private Vendor vendor = null;
-	
+
+	@Override
+	public RequestInfo getRequestInfo() {
+		return requestInfo;
+	}
+
+	@Override
+	public String getTenantId() {
+		return VendorUtil.extractTenantId(this);
+	}
+
+	@Override
+	public String getModuleNameOrDefault(VendorUtil vendorUtil) {
+		return vendorUtil.getModuleNameOrDefault(this);
+	}
 	 
 
 }
