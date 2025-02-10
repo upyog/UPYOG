@@ -124,7 +124,6 @@ const ADSAddress = ({ t, config, onSelect, userType, formData, value=formData.ad
     let applicantStep = { ...applicantData, pincode, city, locality, streetName, houseNo, landmark, houseName, addressline1, addressline2 };
     onSelect(config.key, { ...formData[config.key], ...applicantStep }, false, index);
   };
-console.log("City--->",city);
   const { control } = useForm();
   const onSkip = () => onSelect();
 
