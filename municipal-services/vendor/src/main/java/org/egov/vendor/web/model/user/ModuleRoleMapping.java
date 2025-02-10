@@ -1,7 +1,6 @@
 package org.egov.vendor.web.model.user;
 
 import lombok.*;
-import org.egov.vendor.util.ModuleNameEnum;
 
 @Getter
 @Setter
@@ -9,6 +8,7 @@ import org.egov.vendor.util.ModuleNameEnum;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = {"moduleName", "type"})
+@ToString
 public class ModuleRoleMapping {
     public enum MappingType{
         VENDOR, VEHICLE, DRIVER
