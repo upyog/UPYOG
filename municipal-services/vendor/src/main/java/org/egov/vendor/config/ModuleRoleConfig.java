@@ -75,10 +75,10 @@ public class ModuleRoleConfig {
         List<ModuleRoleMapping> moduleRoleMappings = new ArrayList<>();
 
         // Load Vendor Role Mappings
-        loadRoleMappings(mdmsResponse, VendorConstants.MODULE_VENDOR_ROLE_MAPPING, moduleRoleMappings, "MODULE_VENDOR_ROLE_MAPPING");
+        loadRoleMappings(mdmsResponse, VendorConstants.MODULE_VENDOR_ROLE_MAPPING, moduleRoleMappings,  "MODULE_VENDOR_ROLE_MAPPING", ModuleRoleMapping.MappingType.VENDOR);
 
         // Load Driver Role Mappings
-        loadRoleMappings(mdmsResponse, VendorConstants.MODULE_DRIVER_ROLE_MAPPING, moduleRoleMappings, "MODULE_DRIVER_ROLE_MAPPING");
+        loadRoleMappings(mdmsResponse, VendorConstants.MODULE_DRIVER_ROLE_MAPPING, moduleRoleMappings, "MODULE_DRIVER_ROLE_MAPPING", ModuleRoleMapping.MappingType.DRIVER);
 
         // Handle potential duplicate keys using a merge function
         moduleRoleMap = moduleRoleMappings.stream()
@@ -97,8 +97,9 @@ public class ModuleRoleConfig {
      * @param mappingKey         Key for retrieving mappings
      * @param moduleRoleMappings List to store the retrieved mappings
      * @param logIdentifier      Identifier for logging
+     * @param mappingType        type of mapping vendor, driver
      */
-    private void loadRoleMappings(MdmsResponse mdmsResponse, String mappingKey, List<ModuleRoleMapping> moduleRoleMappings, String logIdentifier) {
+    private void loadRoleMappings(MdmsResponse mdmsResponse, String mappingKey, List<ModuleRoleMapping> moduleRoleMappings, String logIdentifier, ModuleRoleMapping.MappingType mappingType) {
         JSONArray jsonArray = mdmsResponse.getMdmsRes().get(VendorConstants.VENDOR_MODULE).get(mappingKey);
 
         if (jsonArray == null) {
@@ -109,7 +110,8 @@ public class ModuleRoleConfig {
         try {
             List<ModuleRoleMapping> roleMappings = mapper.readValue(jsonArray.toJSONString(),
                     mapper.getTypeFactory().constructCollectionType(List.class, ModuleRoleMapping.class));
-            log.info("Loaded {}: {}", logIdentifier, roleMappings);
+            roleMappings.forEach(moduleRoleMapping ->  moduleRoleMapping.setType(mappingType));
+            log.info("Loaded roleMappings added mapping type {}: ",  roleMappings);
             moduleRoleMappings.addAll(roleMappings);
         } catch (JsonProcessingException e) {
             log.error("Error while parsing {}: {}", logIdentifier, e.getMessage(), e);
