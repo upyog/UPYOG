@@ -74,27 +74,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     vehicleDescription.push({ code: item?.registrationNumber, name: item?.registrationNumber, i18nKey: item?.registrationNumber,tankerCapacity:item?.tankCapacity });
   });
 
-  /*
-for driver search for future use , if needed
-  const { data: driverData, isLoading: isDriverDataLoading, isSuccess: isDriverSuccess, error: driverError, refetch: refetchDriver } = Digit.Hooks.fsm.useDriverSearch({
-    tenantId, 
-    filters: {
-      sortBy: "name",
-      sortOrder: "ASC",
-      status: "ACTIVE",
-      driverWithNoVendor: action?.state === "DELIVERY_PENDING" ? true : false,
-      config:{enabled: action?.state === "DELIVERY_PENDING" ? true : false},
-    },
-  });
-
-  let driverDescription = [];
-  driverData?.driver?.map((item) => {
-    driverDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name });
-  });
-
-  console.log("driverDescription", driverDescription);
-*/
-
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
