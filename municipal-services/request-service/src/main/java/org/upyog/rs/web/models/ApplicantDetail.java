@@ -51,6 +51,6 @@ public class ApplicantDetail   {
 	private String gender;
 
 	private AuditDetails auditDetails;
-
+	
 }
 
