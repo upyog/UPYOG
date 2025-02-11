@@ -465,6 +465,7 @@ public class UserService {
      * @param updatePasswordRequest
      */
     public void updatePasswordForLoggedInUser(LoggedInUserUpdatePasswordRequest updatePasswordRequest) {
+    	  BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
         updatePasswordRequest.validate();
         final User user = getUniqueUser(updatePasswordRequest.getUserName(), updatePasswordRequest.getTenantId(),
                 updatePasswordRequest.getType());
@@ -476,6 +477,11 @@ public class UserService {
 
         validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
         validatePassword(updatePasswordRequest.getNewPassword());
+        if(bcrypt.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
+       	 log.info("Password Already Used Previously");
+            throw new CustomException("INVALID_PASSWORD","Password Already Used Previously");
+       }
+        
         user.updatePassword(encryptPwd(updatePasswordRequest.getNewPassword()));
         userRepository.update(user, user, user.getId() , user.getUuid());
     }

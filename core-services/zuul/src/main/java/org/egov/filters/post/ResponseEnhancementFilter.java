@@ -14,7 +14,16 @@ import static org.egov.constants.RequestContextConstants.CORRELATION_ID_KEY;
 @Component
 public class ResponseEnhancementFilter extends ZuulFilter {
 
-    private static final String CORRELATION_HEADER_NAME = "x-correlation-id";
+    private static final String CONTENT_SECURITY_POLICY = "Content-Security-Policy";
+	private static final String X_XSS_PROTECTION = "x-xss-protection";
+	private static final String X_FRAME_OPTIONS = "x-frame-options";
+	private static final String X_CONTENT_TYPE_OPTIONS = "x-content-type-options";
+	private static final String EXPIRES = "expires";
+	private static final String STRICT_TRANSPORT_SECURITY = "strict-transport-security";
+	private static final String REFERRER_POLICY = "Referrer-Policy";
+	private static final String PRAGMA = "pragma";
+	private static final String CACHE_CONTROL = "Cache-Control";
+	private static final String CORRELATION_HEADER_NAME = "x-correlation-id";
     private static final String RECEIVED_RESPONSE_MESSAGE = "Received response code: {} from upstream URI {}";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -37,7 +46,15 @@ public class ResponseEnhancementFilter extends ZuulFilter {
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         ctx.addZuulResponseHeader(CORRELATION_HEADER_NAME, getCorrelationId());
-        ctx.addZuulResponseHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
+        ctx.addZuulResponseHeader(CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate");
+        ctx.addZuulResponseHeader(PRAGMA,"no-cache");
+        ctx.addZuulResponseHeader(REFERRER_POLICY,"strict-origin-when-cross-origin");
+        ctx.addZuulResponseHeader(STRICT_TRANSPORT_SECURITY,"max-age=15724800; includeSubDomains");
+        ctx.addZuulResponseHeader(EXPIRES,"0");
+        ctx.addZuulResponseHeader(X_CONTENT_TYPE_OPTIONS,"nosniff");
+        ctx.addZuulResponseHeader(X_FRAME_OPTIONS,"DENY");
+        ctx.addZuulResponseHeader(X_XSS_PROTECTION,"1; mode=block");
+        ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'");
 
         return null;
     }
