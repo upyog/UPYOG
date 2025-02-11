@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -15,7 +14,6 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
@@ -75,20 +73,17 @@ public class CalculationTypeCache {
 			}
 
 			if (rootNode != null) {
-				try {
-					calculationTypes = mapper.readValue(rootNode.toString(),
-							mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
-					log.info("calculationTypes : {}", calculationTypes);
-					if (!CollectionUtils.isEmpty(calculationTypes)) {
-						feeTypeCache = calculationTypes.stream()
-								.collect(Collectors.groupingBy(CalculationType::getCommunityHallCode, // Key: Community Hall code
-										Collectors.toList() // Value: List of CalculationType objects
-								));
+				for (JsonNode hallNode : rootNode) {
+					JsonNode faceAreaNode = hallNode.get(hallCode);
+					if (faceAreaNode != null) {
+						try {
+							calculationTypes = mapper.readValue(faceAreaNode.toString(),
+									mapper.getTypeFactory().constructCollectionType(List.class, CalculationType.class));
+							feeTypeCache.put(hallCode, calculationTypes);
+						} catch (JsonProcessingException e) {
+							log.error("Error converting calculation types: ", e);
+						}
 					}
-
-				} catch (JsonProcessingException e) {
-					log.error("Error converting calculation types: ", e);
-				
 				}
 			}
 			log.info("Loaded calculation type data for all hall codes : " + feeTypeCache);

@@ -119,5 +119,16 @@ public class CommunityHallBookingConstants {
 	public static final String CHB_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "CHBApplicantDetailDecryptionDisabled";
 	
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
+	// Workflow related constants
+
+	public static final String CHB_STATUS_BOOKED = "BOOKED";
+
+	public static final String CHB_ACTION_MOVETOEMPLOYEE = "MOVETOEMPLOYEE";
+
+	public static final String CHB_REFUND_BUSINESSSERVICE = "booking-refund";
+
+	public static final String CHB_REFUND_MODULENAME = "chb-services";
+
+	public static final String CHB_TENANTID = "pg.mohali";
 
 }

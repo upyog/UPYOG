@@ -41,7 +41,7 @@ public class CalculationService {
 	 */
 	public List<DemandDetail> calculateDemand(CommunityHallBookingRequest bookingRequest) {
 
-		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
+		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId().split("\\.")[0];
 		
 		List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId , CommunityHallBookingConstants.BILLING_SERVICE);
 		

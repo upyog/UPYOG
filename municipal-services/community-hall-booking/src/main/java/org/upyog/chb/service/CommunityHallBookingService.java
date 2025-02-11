@@ -36,5 +36,5 @@ public interface CommunityHallBookingService {
 	 */
 	void updateBookingSynchronously(CommunityHallBookingRequest communityHallsBookingRequest,
 			PaymentDetail paymentDetail, BookingStatusEnum status, boolean deleteBookingTimer);
-
+	
 }

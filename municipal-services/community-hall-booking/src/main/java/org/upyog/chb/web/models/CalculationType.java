@@ -22,5 +22,4 @@ public class CalculationType {
 	String feeType;
 	BigDecimal amount;
 	boolean taxApplicable;
-	String communityHallCode;
 }

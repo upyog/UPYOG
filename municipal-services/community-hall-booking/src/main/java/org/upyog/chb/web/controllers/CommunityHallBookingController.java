@@ -16,6 +16,7 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
+import org.upyog.chb.service.SchedulerService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
@@ -44,6 +45,9 @@ public class CommunityHallBookingController {
 	
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired
+	private SchedulerService schedulerService;
 	
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST) 
 	public ResponseEntity<CommunityHallBookingResponse> createBooking(
@@ -80,7 +84,7 @@ public class CommunityHallBookingController {
 		 * This update booking method will be called for below two tasks : 
 		 * 1.Update filestoreid for payment link and permission letter link
 		 * 2. Update status when cancelled
-		 * 
+		 * 3. Update workflow when the application has reached employee login
 		 */
 		
 		CommunityHallBookingDetail bookingDetail = bookingService.updateBooking(communityHallsBookingRequest, null, 
@@ -132,4 +136,16 @@ public class CommunityHallBookingController {
 				.responseInfo(info).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@RequestMapping("/trigger-workflow-update")
+    public ResponseEntity<String> triggerWorkflowUpdate() {
+        try {
+            schedulerService.updateWorkflowForBookedApplications(); 
+            return ResponseEntity.ok("Scheduler triggered successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to trigger scheduler: " + e.getMessage());
+        }
+    }
+	
 }

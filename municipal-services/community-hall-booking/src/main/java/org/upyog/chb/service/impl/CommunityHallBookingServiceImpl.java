@@ -26,6 +26,7 @@ import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.service.EnrichmentService;
+import org.upyog.chb.service.WorkflowService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.validator.CommunityHallBookingValidator;
@@ -37,6 +38,7 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityResponse;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.workflow.State;
 
 import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
@@ -51,9 +53,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	@Autowired
 	private CommunityHallBookingValidator hallBookingValidator;
 
-	/*
-	 * @Autowired private WorkflowService workflowService;
-	 */
+	@Autowired
+	private WorkflowService workflowService;
 
 	@Autowired
 	private EnrichmentService enrichmentService;
@@ -212,12 +213,17 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
-		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
+		
 		//Update payment date and receipt no on successful payment when payment detail object is received
 		if (paymentDetail != null) {
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
 		}
+		if (communityHallsBookingRequest.getHallsBookingApplication().getWorkflow()!=null) {
+			State state = workflowService.updateWorkflow(communityHallsBookingRequest);
+			status = BookingStatusEnum.valueOf(state.getApplicationStatus());
+		}
+		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
 		bookingRepository.updateBooking(communityHallsBookingRequest);
 		log.info("fetched booking detail and updated status "
 				+ communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus());
@@ -261,12 +267,16 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				&& bookingDetailRequest.getPermissionLetterFilestoreId() != null) {
 			bookingDetailDB.setPermissionLetterFilestoreId(bookingDetailRequest.getPermissionLetterFilestoreId());
 		}
-
+ 
 		if (bookingDetailDB.getPaymentReceiptFilestoreId() == null
 				&& bookingDetailRequest.getPaymentReceiptFilestoreId() != null) {
 			bookingDetailDB.setPaymentReceiptFilestoreId(bookingDetailRequest.getPaymentReceiptFilestoreId());
 		}
+		if(bookingDetailRequest.getWorkflow()!=null) {
+			bookingDetailDB.setWorkflow(bookingDetailRequest.getWorkflow());
+		}
 		communityHallsBookingRequest.setHallsBookingApplication(bookingDetailDB);
+		
 	}
 
 	@Override
