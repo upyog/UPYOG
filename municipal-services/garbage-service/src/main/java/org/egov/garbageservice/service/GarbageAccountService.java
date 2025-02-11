@@ -1209,7 +1209,7 @@ public class GarbageAccountService {
 						List<String> listOfStatus = getAccountStatusListByRoles(
 								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(),
 								requestInfo.getUserInfo().getRoles());
-						if (!CollectionUtils.isEmpty(listOfStatus)) {
+						if (CollectionUtils.isEmpty(listOfStatus)) {
 							searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
 							.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
 						} else {
