@@ -89,8 +89,8 @@ public class CommunityHallInboxFilterService {
 			if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
 				searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
 			}
-			if (moduleSearchCriteria.containsKey(BOOKING_NO_PARAM)) {
-				searchCriteria.put(BOOKING_NO_PARAM, moduleSearchCriteria.get(BOOKING_NO_PARAM));
+			if (moduleSearchCriteria.containsKey(CHB_BOOKING_NO_PARAM)) {
+				searchCriteria.put(CHB_BOOKING_NO_PARAM, moduleSearchCriteria.get(CHB_BOOKING_NO_PARAM));
 			}
 			if (moduleSearchCriteria.containsKey(CHB_HALL_NAME)) {
 				searchCriteria.put(CHB_HALL_NAME, moduleSearchCriteria.get(CHB_HALL_NAME));
