@@ -27,6 +27,8 @@ import org.egov.pgr.web.models.ServiceWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @org.springframework.stereotype.Service
 public class PGRService {
@@ -94,7 +96,7 @@ public class PGRService {
 
         enrichmentService.enrichSearchRequest(requestInfo, criteria);
 
-        if(criteria.isEmpty())
+        if(criteria.isEmpty() && !criteria.getIsAllRecord())
             return new ArrayList<>();
 
         if(criteria.getMobileNumber()!=null && CollectionUtils.isEmpty(criteria.getUserIds()))
@@ -237,8 +239,19 @@ public class PGRService {
 		}
 
 		Service service = serviceWrappers.get(0).getService();
-
 		service.setApplicationStatus(request.getApplicationStatus());
+//		if(request.getApplicationStatus().equals("RESOLVE")) {
+		    ObjectNode additionalDetailNode;
+		    ObjectMapper objectMapper = new ObjectMapper();
+			if (service.getAdditionalDetail() == null) {
+		        additionalDetailNode = objectMapper.createObjectNode();
+		    } else {
+		        additionalDetailNode = objectMapper.convertValue(service.getAdditionalDetail(), ObjectNode.class);
+		    }	
+		    additionalDetailNode.put("resolutionDate", request.getResolutionDate());
+		    service.setAdditionalDetail(additionalDetailNode);
+//		}
+
 
 		ServiceRequest serviceRequest = ServiceRequest.builder().service(service).requestInfo(request.getRequestInfo())
 				.workflow(request.getWorkflow()).build();

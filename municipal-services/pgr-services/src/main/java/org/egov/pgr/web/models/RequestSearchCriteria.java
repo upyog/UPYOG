@@ -74,7 +74,8 @@ public class RequestSearchCriteria {
 
     @JsonIgnore
     private Boolean isPlainSearch;
-
+    @Builder.Default
+    private Boolean isAllRecord = false;
 
     public enum SortOrder {
         ASC,
