@@ -3,6 +3,7 @@ package org.egov.schedulerservice.call;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.schedulerservice.service.BillService;
 import org.egov.schedulerservice.service.GarbageService;
+import org.egov.schedulerservice.service.PropertyService;
 import org.egov.schedulerservice.util.RequestInfoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +24,9 @@ public class Scheduler {
 	@Autowired
 	private BillService billService;
 
+	@Autowired
+	private PropertyService propertyService;
+
 	@Scheduled(cron = "${cron.job.default.garbage.bill.generator}", zone = "IST")
 	public void generateGarbageBills() {
 		log.info("generateGarbageBills CRON JOB Starts");
@@ -37,6 +41,14 @@ public class Scheduler {
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
 		billService.expireEligibleBill(requestInfo);
 		log.info("expireEligibleBill CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.property.tax.generator}", zone = "IST")
+	public void generatePropertyTax() {
+		log.info("generatePropertyTax CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		propertyService.generatePropertyTax(requestInfo);
+		log.info("generatePropertyTax CRON JOB Ends");
 	}
 
 }

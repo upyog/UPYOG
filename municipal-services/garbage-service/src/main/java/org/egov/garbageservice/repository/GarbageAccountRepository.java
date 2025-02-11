@@ -88,14 +88,17 @@ public class GarbageAccountRepository {
 
     
     private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
-    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, last_modified_by, last_modified_date, tenant_id, parent_account) "
-    		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, :status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
-    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount)";
+    		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, "
+    		+ "last_modified_by, last_modified_date, tenant_id, parent_account, business_service, approval_date) "
+    		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, "
+    		+ ":status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
+    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount, :businessService, :approvalDate)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE eg_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
     		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
     		+ ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, status = :status"
-    		+ ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate, tenant_id = :tenantId WHERE id = :id";
+    		+ ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate,"
+    		+ " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate WHERE id = :id";
 
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
     
@@ -132,6 +135,8 @@ public class GarbageAccountRepository {
         accountInputs.put("lastModifiedDate", account.getAuditDetails().getLastModifiedDate());
         accountInputs.put("tenantId", account.getTenantId());
         accountInputs.put("parentAccount", account.getParentAccount());
+        accountInputs.put("businessService", account.getBusinessService());
+        accountInputs.put("approvalDate", account.getApprovalDate());
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, accountInputs);
         return account;
@@ -164,6 +169,8 @@ public class GarbageAccountRepository {
         accountInputs.put("lastModifiedBy", newGarbageAccount.getAuditDetails().getLastModifiedBy());
         accountInputs.put("lastModifiedDate", newGarbageAccount.getAuditDetails().getLastModifiedDate());
         accountInputs.put("tenantId", newGarbageAccount.getTenantId());
+        accountInputs.put("businessService", newGarbageAccount.getBusinessService());
+        accountInputs.put("approvalDate", newGarbageAccount.getApprovalDate());
 
         namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
     }

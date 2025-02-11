@@ -82,6 +82,8 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .addresses(new ArrayList<>())
                         .created_by(rs.getString("created_by"))
                         .auditDetails(audit)
+                        .businessService(rs.getString("business_service"))
+                        .approvalDate(rs.getLong("approval_date"))
                         .build();
 
                 accountsMap.put(accountId, garbageAccount);

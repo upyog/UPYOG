@@ -27,4 +27,10 @@ public class SchedulerConfiguration {
 	@Value("${egov.bill.endpoint.bill-expiry}")
 	private String billExpityEndpoint;
 
+	@Value("${egov.property.context.host}")
+	private String propertyServiceHostUrl;
+
+	@Value("${egov.property.endpoint.tax-calculator}")
+	private String propertyTaxCalculatorEndpoint;
+
 }

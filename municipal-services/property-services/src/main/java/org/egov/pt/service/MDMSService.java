@@ -59,9 +59,11 @@ public class MDMSService {
 				.append(propertyConfiguration.getMdmsV2Endpoint());
 	}
 
-	public MdmsResponse getULBSMdmsData(RequestInfo requestInfo, String filter) {
+	public MdmsResponse getMdmsData(RequestInfo requestInfo, String filter) {
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
 
-		List<ModuleDetail> moduleDetails = getModuleDetails(getULBSMdmsModuleDetails(), filter);
+		moduleDetails.addAll(getModuleDetails(getULBSMdmsModuleDetails(), filter));
+		moduleDetails.addAll(getModuleDetails(getPTTaxRateMdmsModuleDetails(), filter));
 		MdmsResponse mdmsResponse = getMdmsMasterData(requestInfo, moduleDetails);
 		return mdmsResponse;
 	}
@@ -95,7 +97,20 @@ public class MDMSService {
 	private List<String> getULBSMdmsMasterDetails() {
 		return Arrays.asList(PTConstants.MDMS_MASTER_DETAILS_ZONES, PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE,
 				PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR,
-				PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE);
+				PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE,
+				PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE);
+	}
+
+	private Map<String, List<String>> getPTTaxRateMdmsModuleDetails() {
+		Map<String, List<String>> mapOfModulesAndMasters = new HashMap<>();
+
+		mapOfModulesAndMasters.put(PTConstants.MDMS_MODULE_PROPERTYTAXRATE, getPTTaxRateMdmsMasterDetails());
+
+		return mapOfModulesAndMasters;
+	}
+
+	private List<String> getPTTaxRateMdmsMasterDetails() {
+		return Arrays.asList(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE);
 	}
 
 }

@@ -473,12 +473,16 @@ public class PTConstants {
 	public static final String USER_ROLE_PROPERTY_APPROVER = "PROPERTY_APPROVER";
 	
 	public static final String MDMS_MODULE_ULBS = "ULBS";
+	public static final String MDMS_MODULE_PROPERTYTAXRATE = "PropertyTaxRate";
 
 	public static final String MDMS_MASTER_DETAILS_ZONES = "Zones";
 	public static final String MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE = "BuildingStructure";
 	public static final String MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR = "BuildingEstablishmentYear";
 	public static final String MDMS_MASTER_DETAILS_BUILDINGPURPOSE = "BuildingPurpose";
 	public static final String MDMS_MASTER_DETAILS_BUILDINGUSE = "BuildingUse";
+	public static final String MDMS_MASTER_DETAILS_OVERALLREBATE = "OverAllRebate";
+	
+	public static final String MDMS_MASTER_DETAILS_PROPERTYTAXRATE = "PropertyTaxRate";
 
 	public static final String MDMS_MODULE_ACTIVE_FILTER = "[?(@.active == true)]";
 	
