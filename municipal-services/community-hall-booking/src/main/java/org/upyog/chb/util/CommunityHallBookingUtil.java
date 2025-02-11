@@ -20,9 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
-@Component
 public class CommunityHallBookingUtil {
-	
+
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
@@ -43,7 +42,7 @@ public class CommunityHallBookingUtil {
 	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
 	}
-	
+
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
 	}
@@ -57,10 +56,10 @@ public class CommunityHallBookingUtil {
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
-	
-	/*Commented and used Instant
-	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
-	 * }
+
+	/*
+	 * Commented and used Instant public static Long getCurrentTimestamp() { return
+	 * System.currentTimeMillis(); }
 	 */
 
 	public static String getRandonUUID() {
@@ -78,7 +77,7 @@ public class CommunityHallBookingUtil {
 	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
-		if(dateFormat == null) {
+		if (dateFormat == null) {
 			dateFormat = DATE_FORMAT;
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
@@ -86,9 +85,9 @@ public class CommunityHallBookingUtil {
 		String formattedDate = date.format(formatter);
 		return formattedDate;
 	}
-	
+
 	public static String convertDateFormat(String date, String dateFormat) {
-		if(dateFormat == null) {
+		if (dateFormat == null) {
 			dateFormat = DATE_FORMAT;
 		}
 		LocalDate localDate = parseStringToLocalDate(date);
@@ -97,8 +96,6 @@ public class CommunityHallBookingUtil {
 		String formattedDate = localDate.format(formatter);
 		return formattedDate;
 	}
-	
-	
 
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
 		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
@@ -119,54 +116,54 @@ public class CommunityHallBookingUtil {
 		return data;
 	}
 
-	public String getTenantId(String tenantId) {
+	public static String getTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
 	}
-	
+
 	public static LocalDate getMonthsAgo(int month) {
 		LocalDate currentDate = LocalDate.now();
 		// Calculate the date given months ago
 		LocalDate monthsAgo = currentDate.minusMonths(month);
-		
-        return monthsAgo;
+
+		return monthsAgo;
 	}
-	
+
 	/**
-     * Converts the given minutes to seconds.
-     * 
-     * @param minutes The number of minutes to convert to seconds.
-     * @return The equivalent seconds for the given minutes.
-     */
-    public static int getSeconds(int minutes) {
-        if (minutes < 0) {
-            throw new IllegalArgumentException("Minutes cannot be negative");
-        }
-        return minutes * 60;
-    }
-    
-    public static long calculateDifferenceInSeconds(long time1, long time2) {
-        long differenceInMillis = time1 - time2; // Subtract the values
-        return differenceInMillis / 1000 ; // Convert milliseconds to minutes
-    }
-    
-	 /**
-     * Converts date string to long using LocalDateTime
-     *
-     * @param date   Date string to be parsed
-     * @param format Format of the date string
-     * @return Long value of date in milliseconds
-     */
-    public Long dateTolong(String date, String format) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-        
-        // If format includes time, use LocalDateTime; otherwise, use LocalDate
-        if (format.contains("H") || format.contains("m") || format.contains("s")) {
-            LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-            return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        } else {
-            LocalDate localDate = LocalDate.parse(date, formatter);
-            return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        }
-    }
+	 * Converts the given minutes to seconds.
+	 * 
+	 * @param minutes The number of minutes to convert to seconds.
+	 * @return The equivalent seconds for the given minutes.
+	 */
+	public static int getSeconds(int minutes) {
+		if (minutes < 0) {
+			throw new IllegalArgumentException("Minutes cannot be negative");
+		}
+		return minutes * 60;
+	}
+
+	public static long calculateDifferenceInSeconds(long time1, long time2) {
+		long differenceInMillis = time1 - time2; // Subtract the values
+		return differenceInMillis / 1000; // Convert milliseconds to minutes
+	}
+
+	/**
+	 * Converts date string to long using LocalDateTime
+	 *
+	 * @param date   Date string to be parsed
+	 * @param format Format of the date string
+	 * @return Long value of date in milliseconds
+	 */
+	public static Long dateTolong(String date, String format) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+		// If format includes time, use LocalDateTime; otherwise, use LocalDate
+		if (format.contains("H") || format.contains("m") || format.contains("s")) {
+			LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+			return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		} else {
+			LocalDate localDate = LocalDate.parse(date, formatter);
+			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
+	}
 
 }

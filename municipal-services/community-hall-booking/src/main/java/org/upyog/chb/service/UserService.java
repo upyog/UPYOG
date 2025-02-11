@@ -34,9 +34,6 @@ public class UserService {
 	@Autowired
 	private CommunityHallBookingConfiguration config;
 
-	@Autowired
-	private CommunityHallBookingUtil bookingUtil;
-
 	/**
 	 * Fetches UUIDs of CITIZEN based on the phone number.
 	 *
@@ -148,13 +145,13 @@ public class UserService {
 
 			users.forEach(map -> {
 
-				map.put("createdDate", bookingUtil.dateTolong((String) map.get("createdDate"), format1));
+				map.put("createdDate", CommunityHallBookingUtil.dateTolong((String) map.get("createdDate"), format1));
 				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", bookingUtil.dateTolong((String) map.get("lastModifiedDate"), format1));
+					map.put("lastModifiedDate", CommunityHallBookingUtil.dateTolong((String) map.get("lastModifiedDate"), format1));
 				if ((String) map.get("dob") != null)
-					map.put("dob", bookingUtil.dateTolong((String) map.get("dob"), dobFormat));
+					map.put("dob", CommunityHallBookingUtil.dateTolong((String) map.get("dob"), dobFormat));
 				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", bookingUtil.dateTolong((String) map.get("pwdExpiryDate"), format1));
+					map.put("pwdExpiryDate", CommunityHallBookingUtil.dateTolong((String) map.get("pwdExpiryDate"), format1));
 			});
 		}
 	}
