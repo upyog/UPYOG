@@ -33,7 +33,7 @@ public class UserService {
 
 	@Autowired
 	private CommunityHallBookingConfiguration config;
-	
+
 	@Autowired
 	private CommunityHallBookingUtil bookingUtil;
 
@@ -74,7 +74,7 @@ public class UserService {
 	}
 
 	/**
-	 * Returns user using user search based on ewaste ApplicationCriteria(user
+	 * Returns user using user search based on ApplicationCriteria(user
 	 * name,mobileNumber,userName)
 	 * 
 	 * @param userSearchRequest
@@ -158,12 +158,6 @@ public class UserService {
 			});
 		}
 	}
-
-	/**
-	 * Updates user if present else creates new user
-	 * 
-	 * @param request Ewaste Request received from update
-	 */
 
 	/**
 	 * provides a user search request with basic mandatory parameters

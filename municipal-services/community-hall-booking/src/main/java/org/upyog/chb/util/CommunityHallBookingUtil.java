@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.springframework.stereotype.Component;
 import org.upyog.chb.web.models.AuditDetails;
 import org.upyog.chb.web.models.ResponseInfo;
 import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
+@Component
 public class CommunityHallBookingUtil {
 	
 	public final static String DATE_FORMAT = "yyyy-MM-dd";

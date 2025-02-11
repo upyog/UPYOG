@@ -57,7 +57,7 @@ public class WorkflowService {
 
 		return state;
 	}
-
+// Create process instance request for workflow call
 	private ProcessInstanceRequest getProcessInstanceForHallBooking(CommunityHallBookingDetail bookingDetail,
 			RequestInfo requestInfo) {
 
