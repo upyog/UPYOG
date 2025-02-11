@@ -8,7 +8,7 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.fsm.config.FSMConfiguration;
-import org.egov.fsm.producer.Producer;
+import org.egov.fsm.fsmProducer.FSMProducer;
 import org.egov.fsm.repository.querybuilder.FSMAuditQueryBuilder;
 import org.egov.fsm.repository.querybuilder.FSMQueryBuilder;
 import org.egov.fsm.repository.rowmapper.FSMAuditRowMapper;
@@ -40,7 +40,7 @@ public class FSMRepository {
 	private FSMConfiguration config;
 
 	@Autowired
-	private Producer producer;
+	private FSMProducer producer;
 
 	@Autowired
 	private FSMQueryBuilder fsmQueryBuilder;
@@ -60,9 +60,10 @@ public class FSMRepository {
 	@Autowired
 	private TripDetailRowMapper detailMapper;
 
-	public void save(FSMRequest fsmRequest) {
-		producer.push(config.getSaveTopic(), fsmRequest);
-	}
+		public void save(FSMRequest fsmRequest) {
+			producer.push(config.getSaveTopic(), fsmRequest);
+			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+		}
 
 	public void update(FSMRequest fsmRequest, boolean isStateUpdatable) {
 		RequestInfo requestInfo = fsmRequest.getRequestInfo();
@@ -77,12 +78,17 @@ public class FSMRepository {
 		} else {
 			fsmForStatusUpdate = fsm;
 		}
-		if (fsmForUpdate != null)
+		if (fsmForUpdate != null) {
 			producer.push(config.getUpdateTopic(), new FSMRequest(requestInfo, fsmForUpdate, fsmRequest.getWorkflow()));
+			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+		}
 
-		if (fsmForStatusUpdate != null)
+		if (fsmForStatusUpdate != null) {
 			producer.push(config.getUpdateWorkflowTopic(),
 					new FSMRequest(requestInfo, fsmForStatusUpdate, fsmRequest.getWorkflow()));
+			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+		}
+			
 
 	}
 
@@ -162,16 +168,20 @@ public class FSMRepository {
 		return jdbcTemplate.queryForList(baseQuery.toString(), String.class, preparedStmtList.toArray());
 	}
 
-	public List<VehicleTripDetail> getTrpiDetails(String tripId, int numOfRecords) {
+	public List<VehicleTripDetail> getTrpiDetails(String tripId, int numOfRecords, Boolean waitingForDisposal) {
 		List<VehicleTripDetail> tripDetails = null;
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = fsmQueryBuilder.getTripDetailSarchQuery(tripId, numOfRecords, preparedStmtList);
-		log.info("query for decreseTrip:: "+numOfRecords+":: query :: "+query);
+		String query = null;
+		if (waitingForDisposal)
+			query = fsmQueryBuilder.getTripDetailSarchQuery(tripId, numOfRecords, preparedStmtList, waitingForDisposal);
+		else
+			query = fsmQueryBuilder.getTripDetailSarchQuery(tripId, numOfRecords, preparedStmtList);
+		log.info("query for decreseTrip:: " + numOfRecords + ":: query :: " + query);
 		try {
 			tripDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), detailMapper);
-			
+
 		} catch (Exception e) {
-			log.info("INVALID_VEHICLE_TRIP_DETAILS "+e.getMessage());
+			log.info("INVALID_VEHICLE_TRIP_DETAILS " + e.getMessage());
 			throw new CustomException("INVALID_VEHICLE_TRIP_DETAILS", "INVALID_VEHICLE_TRIP_DETAILS");
 		}
 

@@ -42,7 +42,6 @@ import {
 import { SVComponents, SVLinks, SVModule } from "@upyog/upyog-ui-module-sv";
 import {CHBModule,CHBLinks,CHBComponents} from "@upyog/upyog-ui-module-chb";
 import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
-
 // import * as comps from "@upyog/digit-ui-react-components";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
@@ -52,6 +51,7 @@ import { pgrCustomizations, pgrComponents } from "./pgr";
 var Digit = window.Digit || {};
 
 const enabledModules = [
+  "Tqm",
   "PGR",
   "FSM",
   "Payment",
@@ -76,20 +76,15 @@ const enabledModules = [
   "Birth",
   "Death",
   "PTR",
-  "ASSET",
-  "ADS",
-  "SV",
-  "EW",
-  "CHB"
 ];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
 
-  const token = window.localStorage.getItem("token")|| process.env[`REACT_APP_${userType}_TOKEN`];
- 
-  const citizenInfo = window.localStorage.getItem("Citizen.user-info")
- 
+  const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
+
+  const citizenInfo = window.localStorage.getItem("Citizen.user-info");
+
   const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
@@ -124,8 +119,8 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
-    PTRModule, 
-    PTRLinks, 
+    PTRModule,
+    PTRLinks,
     ...PTRComponents,
     // TLModule,
     // TLLinks,

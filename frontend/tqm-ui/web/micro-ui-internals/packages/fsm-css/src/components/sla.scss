@@ -1,0 +1,30 @@
+.sla-cell-success {
+  color: #00703c !important;
+  width: fit-content !important;
+  background-color: unset !important;
+  padding-left: 0;
+  border-radius: 11px;
+  font-weight: 700;
+  &.bg {
+    padding: 0 24px;
+    display: block !important;
+    background-color: #00703c !important;
+    color: #fff !important;
+  }
+}
+
+.sla-cell-error {
+  color: #d4351c !important;
+  width: fit-content !important;
+  background-color: unset !important;
+  padding: 0 24px;
+  border-radius: 11px;
+  font-weight: 700;
+  padding-left: 0;
+  &.bg {
+    padding: 0 24px;
+    display: block !important;
+    background-color: #d4351c !important;
+    color: #fff !important;
+  }
+}

@@ -7,6 +7,7 @@
     "packages/css",
     "example",
     "packages/react-components",
+    "packages/modules/*"
     "packages/modules/ptr",
     "packages/modules/core",
     "packages/modules/dss",
@@ -25,7 +26,7 @@
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
-    "dev:css": "cd packages/css && yarn start",
+    "devD:css": "cd packages/css && yarn start",
     "publish:css": "cd packages/css && yarn publish --access public",
     "dev:libraries": "cd packages/libraries && yarn start",
     "dev:components": "cd packages/react-components && yarn start",
