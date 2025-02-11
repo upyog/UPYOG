@@ -35,9 +35,6 @@ public class CalculationService {
 	
 	@Autowired
 	private CommunityHallBookingConfiguration config;
-	
-	@Autowired
-	private CommunityHallBookingUtil bookingUtil;
 
 	/**
 	 * @param bookingRequest
@@ -45,7 +42,7 @@ public class CalculationService {
 	 */
 	public List<DemandDetail> calculateDemand(CommunityHallBookingRequest bookingRequest) {
 
-		String tenantId = bookingUtil.getTenantId(bookingRequest.getHallsBookingApplication().getTenantId());
+		String tenantId = CommunityHallBookingUtil.getTenantId(bookingRequest.getHallsBookingApplication().getTenantId());
 		
 		List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId , CommunityHallBookingConstants.BILLING_SERVICE);
 		
