@@ -45,9 +45,9 @@ public class VendorConstants {
 
 	public static final String VENDOR_PAYMENT_PREFERENCE = "PaymentPreference";
 
-	public static final String MODULE_VENDOR_ROLE_MAPPING = "ModuleDriverRoleMapping";
+	public static final String MODULE_DRIVER_ROLE_MAPPING = "ModuleDriverRoleMapping";
 
-	public static final String MODULE_DRIVER_ROLE_MAPPING = "ModuleVendorRoleMapping";
+	public static final String MODULE_VENDOR_ROLE_MAPPING = "ModuleVendorRoleMapping";
 
 	public static final String VENDOR_MODULE = "Vendor";
 
