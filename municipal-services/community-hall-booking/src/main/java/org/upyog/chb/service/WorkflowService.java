@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
-import org.upyog.chb.constants.WorkflowStatus;
 import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
@@ -38,15 +37,6 @@ public class WorkflowService {
 	@Autowired
 	private ObjectMapper mapper;
 
-
-	/**
-	 * Method to integrate with workflow
-	 *
-	 * takes the Pet request as parameter constructs the work-flow request
-	 *
-	 * and sets the resultant status from wf-response back to trade-license object
-	 *
-	 */
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
 		ProcessInstanceResponse response = null;
@@ -55,46 +45,30 @@ public class WorkflowService {
 		response = mapper.convertValue(responseObject, ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();
 	}
-	
-	/**
-	 * method to prepare process instance request 
-	 * and assign status back to property
-	 * 
-	 * @param request
-	 */
-	public State updateWorkflow(CommunityHallBookingRequest bookingRequest, WorkflowStatus workflowStatus) {
+
+	public State updateWorkflow(CommunityHallBookingRequest bookingRequest) {
 
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
-		
-		ProcessInstanceRequest workflowReq = getProcessInstanceForHallBooking(bookingDetail, bookingRequest.getRequestInfo());
+
+		ProcessInstanceRequest workflowReq = getProcessInstanceForHallBooking(bookingDetail,
+				bookingRequest.getRequestInfo());
+
 		State state = callWorkFlow(workflowReq);
-		
-//		if (state.getApplicationStatus().equalsIgnoreCase(configs.getWfStatusActive()) && property.getPropertyId() == null) {
-//			
-//			String pId = utils.getIdList(request.getRequestInfo(), property.getTenantId(), configs.getPropertyIdGenName(), configs.getPropertyIdGenFormat(), 1).get(0);
-//			request.getProperty().setPropertyId(pId);
-//		}
-//		
-//		if(request.getProperty().getCreationReason().equals(CreationReason.STATUS) && request.getProperty().getWorkflow().getAction().equalsIgnoreCase("APPROVE"))
-//		{	
-//			request.getProperty().setStatus(Status.INACTIVE);
-//		}
-//		else
-//		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
-//		request.getProperty().getWorkflow().setState(state);
+
 		return state;
 	}
 
-	private ProcessInstanceRequest getProcessInstanceForHallBooking(CommunityHallBookingDetail bookingDetail, RequestInfo requestInfo) {
-//		Workflow workflow = application.getWorkflow();	
-//		Asset asset = request.getProperty();
-		ProcessInstance workflow = null != bookingDetail.getWorkflow() ? bookingDetail.getWorkflow() : new ProcessInstance();
+	private ProcessInstanceRequest getProcessInstanceForHallBooking(CommunityHallBookingDetail bookingDetail,
+			RequestInfo requestInfo) {
+
+		ProcessInstance workflow = null != bookingDetail.getWorkflow() ? bookingDetail.getWorkflow()
+				: new ProcessInstance();
 
 		ProcessInstance processInstance = new ProcessInstance();
 		processInstance.setBusinessId(bookingDetail.getBookingNo());
 		processInstance.setAction(workflow.getAction());
 		processInstance.setModuleName(workflow.getModuleName());
-		processInstance.setTenantId("pg");//bookingDetail.getTenantId()
+		processInstance.setTenantId(bookingDetail.getTenantId());
 		processInstance.setBusinessService(workflow.getBusinessService());
 		processInstance.setDocuments(workflow.getDocuments());
 		processInstance.setComment(workflow.getComment());
@@ -111,13 +85,12 @@ public class WorkflowService {
 			processInstance.setAssignes(users);
 		}
 
-		//return processInstance;
-		return ProcessInstanceRequest.builder()
-				.requestInfo(requestInfo)
-				.processInstances(Arrays.asList(processInstance))
-				.build();
+		// return processInstance;
+		return ProcessInstanceRequest.builder().requestInfo(requestInfo)
+				.processInstances(Arrays.asList(processInstance)).build();
 
 	}
+
 	/**
 	 * Get the workflow config for the given tenant
 	 * 
@@ -184,7 +157,7 @@ public class WorkflowService {
 	private StringBuilder getWorkflowSearchURLWithParams(String tenantId, String businessId) {
 
 		StringBuilder url = new StringBuilder(configs.getWfHost());
-		//url.append(configs.getWfProcessInstanceSearchPath());
+		// url.append(configs.getWfProcessInstanceSearchPath());
 		url.append("?tenantId=");
 		url.append(tenantId);
 		url.append("&businessIds=");
