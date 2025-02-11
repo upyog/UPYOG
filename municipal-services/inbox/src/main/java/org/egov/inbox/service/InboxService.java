@@ -25,8 +25,6 @@ import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
-import static org.egov.inbox.util.RequestServiceConstants.BOOKING_NO_PARAM;
-import static org.egov.inbox.util.RequestServiceConstants.RS;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
 import static org.egov.inbox.util.TLConstants.SEARCH_CRITERIA_PARAM;
@@ -38,6 +36,10 @@ import static org.egov.inbox.util.WSConstants.WS;
 import static org.egov.inbox.util.PTRConstants.PTR;
 import static org.egov.inbox.util.AssetConstants.ASSET;
 import static org.egov.inbox.util.EwasteConstants.EWASTE;
+import static org.egov.inbox.util.CommunityHallConstants.CHB;
+import static org.egov.inbox.util.CommunityHallConstants.CHB_BOOKING_NO_PARAM;
+import static org.egov.inbox.util.RequestServiceConstants.BOOKING_NO_PARAM;
+import static org.egov.inbox.util.RequestServiceConstants.RS;
 
 import java.util.*;
 import java.util.function.Function;
@@ -126,9 +128,6 @@ public class InboxService {
 
 	@Autowired
 	private BillingAmendmentInboxFilterService billInboxFilterService;
-	
-	@Autowired
-	private RequestServiceInboxFilterService requestServiceInboxFilterService;
 
 	@Autowired
 	private AssetInboxFilterService assetInboxFilterService;
@@ -136,6 +135,12 @@ public class InboxService {
 	@Autowired
 	private EwasteInboxFilterService ewasteInboxFilterService;
 
+	@Autowired
+	private CommunityHallInboxFilterService communityHallInboxFilterService;
+	
+	@Autowired
+	private RequestServiceInboxFilterService requestServiceInboxFilterService;
+	
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -429,6 +434,35 @@ public class InboxService {
 				}
 			} // for ewaste service
 
+			
+			
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(CHB)) {
+
+				List<String> applicationNumbers = communityHallInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(CHB_BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			// for request service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
+
+				List<String> applicationNumbers = requestServiceInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& (processCriteria.getModuleName().equals(TL) || processCriteria.getModuleName().equals(BPAREG))) {
 				totalCount = tlInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap,
@@ -440,20 +474,6 @@ public class InboxService {
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
 					moduleSearchCriteria.remove(LOCALITY_PARAM);
-					moduleSearchCriteria.remove(OFFSET_PARAM);
-				} else {
-					isSearchResultEmpty = true;
-				}
-			}
-			
-			// for request service
-			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
-
-				List<String> applicationNumbers = requestServiceInboxFilterService
-						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
-				if (!CollectionUtils.isEmpty(applicationNumbers)) {
-					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
-					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
@@ -1185,7 +1205,7 @@ public class InboxService {
 			}
 		} // for pet-service
 
-		if (moduleSearchCriteria.containsKey("requestStatus")) { // for pet-service
+		if (moduleSearchCriteria.containsKey("requestStatus")) { // for ewaste service
 			if (businessServiceName.contains("ewst")) {
 				moduleSearchCriteria.remove("requestStatus");
 			}
@@ -1201,7 +1221,6 @@ public class InboxService {
 		}
 
 		Set<String> searchParams = moduleSearchCriteria.keySet();
-
 		searchParams.forEach((param) -> {
 
 			if (!param.equalsIgnoreCase("tenantId")) {
@@ -1216,7 +1235,7 @@ public class InboxService {
 				} else if (param.equalsIgnoreCase("consumerNo")) {
 					url.append("&").append("connectionNumber").append("=")
 							.append(moduleSearchCriteria.get(param).toString());
-				} else if (null != moduleSearchCriteria.get(param)) {
+				}else if (null != moduleSearchCriteria.get(param)) {
 					url.append("&").append(param).append("=").append(moduleSearchCriteria.get(param).toString());
 				}
 			}
