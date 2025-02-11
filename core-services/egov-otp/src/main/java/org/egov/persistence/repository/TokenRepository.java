@@ -88,6 +88,16 @@ public class TokenRepository {
                 new TokenRowMapper());
         return new Tokens(domainTokens);
     }
+    
+    public List<Token> findByIdentityAndTenantIdForLimitCount(TokenRequest request) {
+
+        final Map<String, Object> tokenInputs = new HashMap<String, Object>();
+        tokenInputs.put("tokenIdentity", request.getIdentity());
+        tokenInputs.put("tenantId", request.getTenantId());
+        List<Token> domainTokens = namedParameterJdbcTemplate.query(GETTOKENS_BY_NUMBER_IDENTITY_TENANT, tokenInputs,
+                new TokenRowMapper());
+        return domainTokens;
+    }
 
 
     public Token findBy(TokenSearchCriteria searchCriteria) {
