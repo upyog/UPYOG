@@ -125,10 +125,12 @@ public class CommunityHallBookingConstants {
 
 	public static final String CHB_ACTION_MOVETOEMPLOYEE = "MOVETOEMPLOYEE";
 
-	public static final String CHB_REFUND_BUSINESSSERVICE = "booking-refund";
+	public static final String CHB_REFUND_WORKFLOW_BUSINESSSERVICE = "booking-refund";
 
-	public static final String CHB_REFUND_MODULENAME = "chb-services";
+	public static final String CHB_REFUND_WORKFLOW_MODULENAME = "chb-services";
 
 	public static final String CHB_TENANTID = "pg.mohali";
+	
+	public static final String SYSTEM_CITIZEN_USERNAME= "8888888888";
 
 }

@@ -219,6 +219,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			communityHallsBookingRequest.getHallsBookingApplication().setReceiptNo(paymentDetail.getReceiptNumber());
 			communityHallsBookingRequest.getHallsBookingApplication().setPaymentDate(paymentDetail.getReceiptDate());
 		}
+		//Update workflow of booking application for refund when the workflow object is not null in payload
 		if (communityHallsBookingRequest.getHallsBookingApplication().getWorkflow()!=null) {
 			State state = workflowService.updateWorkflow(communityHallsBookingRequest);
 			status = BookingStatusEnum.valueOf(state.getApplicationStatus());

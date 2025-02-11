@@ -1,8 +1,5 @@
 package org.upyog.chb.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.repository.ServiceRequestRepository;
+import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.UserSearchRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +33,9 @@ public class UserService {
 
 	@Autowired
 	private CommunityHallBookingConfiguration config;
+	
+	@Autowired
+	private CommunityHallBookingUtil bookingUtil;
 
 	/**
 	 * Fetches UUIDs of CITIZEN based on the phone number.
@@ -147,33 +148,15 @@ public class UserService {
 
 			users.forEach(map -> {
 
-				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
+				map.put("createdDate", bookingUtil.dateTolong((String) map.get("createdDate"), format1));
 				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+					map.put("lastModifiedDate", bookingUtil.dateTolong((String) map.get("lastModifiedDate"), format1));
 				if ((String) map.get("dob") != null)
-					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
+					map.put("dob", bookingUtil.dateTolong((String) map.get("dob"), dobFormat));
 				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+					map.put("pwdExpiryDate", bookingUtil.dateTolong((String) map.get("pwdExpiryDate"), format1));
 			});
 		}
-	}
-
-	/**
-	 * Converts date to long
-	 * 
-	 * @param date   date to be parsed
-	 * @param format Format of the date
-	 * @return Long value of date
-	 */
-	private Long dateTolong(String date, String format) {
-		SimpleDateFormat f = new SimpleDateFormat(format);
-		Date d = null;
-		try {
-			d = f.parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return d.getTime();
 	}
 
 	/**
