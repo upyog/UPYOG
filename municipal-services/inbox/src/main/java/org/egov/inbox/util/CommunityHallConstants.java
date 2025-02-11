@@ -11,7 +11,7 @@ public class CommunityHallConstants {
     public static final String OFFSET_PARAM = "offset";
     public static final String NO_OF_RECORDS_PARAM = "noOfRecords";
     public static final String LIMIT_PARAM = "limit";
-    public static final String BOOKING_NO_PARAM = "bookingNo";
+    public static final String CHB_BOOKING_NO_PARAM = "bookingNo";
     public static final String CHB_HALL_NAME ="communityHallCode";
     public static final String REQUESTINFO_PARAM = "RequestInfo";
     public static final String SEARCH_CRITERIA_PARAM = "searchCriteria";

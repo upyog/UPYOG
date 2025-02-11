@@ -37,7 +37,9 @@ import static org.egov.inbox.util.PTRConstants.PTR;
 import static org.egov.inbox.util.AssetConstants.ASSET;
 import static org.egov.inbox.util.EwasteConstants.EWASTE;
 import static org.egov.inbox.util.CommunityHallConstants.CHB;
-import static org.egov.inbox.util.CommunityHallConstants.BOOKING_NO_PARAM;
+import static org.egov.inbox.util.CommunityHallConstants.CHB_BOOKING_NO_PARAM;
+import static org.egov.inbox.util.RequestServiceConstants.BOOKING_NO_PARAM;
+import static org.egov.inbox.util.RequestServiceConstants.RS;
 
 import java.util.*;
 import java.util.function.Function;
@@ -135,6 +137,9 @@ public class InboxService {
 
 	@Autowired
 	private CommunityHallInboxFilterService communityHallInboxFilterService;
+	
+	@Autowired
+	private RequestServiceInboxFilterService requestServiceInboxFilterService;
 	
 	@Autowired
 	private RestTemplate restTemplate;
@@ -436,6 +441,20 @@ public class InboxService {
 				List<String> applicationNumbers = communityHallInboxFilterService
 						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(CHB_BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			// for request service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
+
+				List<String> applicationNumbers = requestServiceInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
@@ -443,9 +462,7 @@ public class InboxService {
 					isSearchResultEmpty = true;
 				}
 			}
-			 
-			 
-			
+
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& (processCriteria.getModuleName().equals(TL) || processCriteria.getModuleName().equals(BPAREG))) {
 				totalCount = tlInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap,
