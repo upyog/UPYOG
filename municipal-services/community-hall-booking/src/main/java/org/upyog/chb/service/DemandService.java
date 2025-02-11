@@ -96,7 +96,7 @@ public class DemandService {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_TENANT, "Please provide valid tenant id for booking creation");
 		}
 		
-		String tenantId = estimationCriteria.getTenantId();
+		String tenantId = estimationCriteria.getTenantId().split("\\.")[0];
 		
 		CommunityHallBookingDetail bookingDetail = CommunityHallBookingDetail.builder().tenantId(tenantId)
 				.bookingSlotDetails(estimationCriteria.getBookingSlotDetails())

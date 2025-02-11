@@ -1,15 +1,30 @@
 package org.upyog.chb.service;
 
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_ACTION_MOVETOEMPLOYEE;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_REFUND_WORKFLOW_BUSINESSSERVICE;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_REFUND_WORKFLOW_MODULENAME;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_STATUS_BOOKED;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_TENANTID;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.SYSTEM_CITIZEN_USERNAME;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
+import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingPaymentTimerDetails;
+import org.upyog.chb.web.models.CommunityHallBookingDetail;
+import org.upyog.chb.web.models.CommunityHallBookingRequest;
+import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
+import org.upyog.chb.web.models.workflow.ProcessInstance;
+import org.upyog.chb.web.models.workflow.State;
 
+import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,7 +34,13 @@ public class SchedulerService {
 	@Autowired
 	private CommunityHallBookingRepository bookingRepository;
 
-	/*
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private WorkflowService workflowService;
+
+	/**
 	 * This scheduler runs every 5 mins to delete the bookingId from the
 	 * paymentTimer table when the timer is expired or payment is failed
 	 */
@@ -41,6 +62,82 @@ public class SchedulerService {
 
 		bookingRepository.deleteBookingTimer(bookingIds, true);
 
+	}
+
+	/**
+	 * This scheduler runs everyday midnight(1 am) to call workflow for booking
+	 * applications of which booking date has crossed to initiate booking refund
+	 * process
+	 */
+	@Scheduled(cron = "0 0 1 * * *")
+	public void updateWorkflowForBookedApplications() {
+		log.info("Scheduler - Updating Workflow of Booked applications...");
+
+		String formattedDate = CommunityHallBookingUtil.parseLocalDateToString(LocalDate.now().minusDays(1),
+				"yyyy-MM-dd");
+
+		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(
+				CommunityHallBookingSearchCriteria.builder().toDate(formattedDate).status(CHB_STATUS_BOOKED).build());
+
+		// Exit if no booking details are found
+		if (bookingDetails == null || bookingDetails.isEmpty()) {
+			log.info("No booked applications found for update.");
+			return;
+		} else {
+			String bookingNos = bookingDetails.stream().map(CommunityHallBookingDetail::getBookingNo)
+					.collect(Collectors.joining(", "));
+			log.info("Booking Nos: " + bookingNos);
+		}
+		UserDetailResponse userDetailResponse = userService.searchByUserName(SYSTEM_CITIZEN_USERNAME, CHB_TENANTID);
+		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
+			throw new IllegalStateException("SYSTEM user not found for tenant '" + CHB_TENANTID + "'.");
+		}
+
+		RequestInfo requestInfo = RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();
+
+		ProcessInstance workflow = ProcessInstance.builder().action(CHB_ACTION_MOVETOEMPLOYEE)
+				.moduleName(CHB_REFUND_WORKFLOW_MODULENAME).tenantId(CHB_TENANTID)
+				.businessService(CHB_REFUND_WORKFLOW_BUSINESSSERVICE).build();
+
+		// Process each booking detail
+		bookingDetails.forEach(bookingDetail -> {
+			try {
+				processBookingDetail(bookingDetail, workflow, requestInfo);
+			} catch (Exception e) {
+				log.error("Failed to process booking number: {}. Error: {}", bookingDetail.getBookingNo(),
+						e.getMessage(), e);
+			}
+		});
+	}
+
+	/**
+	 * Processes the booking details by updating the workflow and booking status.
+	 * 
+	 * This method performs the following steps: 1. Updates the workflow state and
+	 * retrieves the latest booking status. 2. Updates the booking status in the
+	 * booking detail. 3. Persists the updated booking information in the
+	 * repository.
+	 * 
+	 * @param bookingDetail The details of the community hall booking.
+	 * @param workflow      The workflow instance associated with the booking.
+	 * @param requestInfo   The request information containing user and transaction
+	 *                      details.
+	 */
+	private void processBookingDetail(CommunityHallBookingDetail bookingDetail, ProcessInstance workflow,
+			RequestInfo requestInfo) {
+		log.info("Updating Workflow and status for booking number: {}", bookingDetail.getBookingNo());
+
+		// Set workflow and build booking request
+		bookingDetail.setWorkflow(workflow);
+		CommunityHallBookingRequest bookingRequest = CommunityHallBookingRequest.builder()
+				.hallsBookingApplication(bookingDetail).requestInfo(requestInfo).build();
+
+		// Update workflow and booking status
+		State state = workflowService.updateWorkflow(bookingRequest);
+		bookingDetail.setBookingStatus(state.getApplicationStatus());
+
+		// Persist updated booking
+		bookingRepository.updateBooking(bookingRequest);
 	}
 
 }

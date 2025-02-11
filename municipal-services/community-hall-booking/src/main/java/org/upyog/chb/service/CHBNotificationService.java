@@ -49,6 +49,9 @@ public class CHBNotificationService {
 	@Autowired
 	private CHBEncryptionService chbEncryptionService;
 
+	@Autowired
+	private UserService userService;
+	
 	public void process(CommunityHallBookingRequest bookingRequest, String status) {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		// Decrypt applicant detail it will be used in notification
@@ -173,7 +176,7 @@ public class CHBNotificationService {
 		// Mobile no will be used to filter out user to send notification
 		String mobileNumber = request.getRequestInfo().getUserInfo().getMobileNumber();
 
-		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+		Map<String, String> mapOfPhoneNoAndUUIDs = userService.fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.error("UUID search failed in event  processing for CHB!");
@@ -206,42 +209,6 @@ public class CHBNotificationService {
 			return null;
 		}
 
-	}
-
-	/**
-	 * Fetches UUIDs of CITIZEN based on the phone number.
-	 *
-	 * @param mobileNumber - Mobile Numbers
-	 * @param requestInfo  - Request Information
-	 * @param tenantId     - Tenant Id
-	 * @return Returns List of MobileNumbers and UUIDs
-	 */
-	private Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
-		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
-		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", CommunityHallBookingConstants.CITIZEN);
-		userSearchRequest.put("userName", mobileNumber);
-		try {
-
-			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of CHB notfication consumer" + user.toString());
-//			if (null != user) {
-//				String uuid = JsonPath.read(user, "$.user[0].uuid");
-			if (user  != null) {
-					String uuid = JsonPath.read(user, "$.user[0].uuid");
-					mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-					log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
-			} 
-		} catch (Exception e) {
-			log.error("Exception while fetching user for username - " + mobileNumber);
-			log.error("Exception trace: ", e);
-		}
-
-		return mapOfPhoneNoAndUUIDs;
 	}
 	
 	/**
