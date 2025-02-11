@@ -207,13 +207,17 @@ public class ServiceRequestValidator {
         /*
         * Checks if tenatId is provided with the search params
         * */
-        if( (criteria.getMobileNumber()!=null 
-                || criteria.getServiceRequestId()!=null || criteria.getIds()!=null
-                || criteria.getServiceCode()!=null )
-                && criteria.getTenantId()==null)
-            throw new CustomException("INVALID_SEARCH","TenantId is mandatory search param");
+    	if(!criteria.getIsAllRecord()) {
+    		if( (criteria.getMobileNumber()!=null 
+                    || criteria.getServiceRequestId()!=null || criteria.getIds()!=null
+                    || criteria.getServiceCode()!=null )
+                    && criteria.getTenantId()==null)
+                throw new CustomException("INVALID_SEARCH","TenantId is mandatory search param");	
+            validateSearchParam(requestInfo, criteria);
 
-        validateSearchParam(requestInfo, criteria);
+    	}
+        
+
 
     }
 

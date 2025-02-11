@@ -48,6 +48,8 @@ public class ServiceStatusUpdateRequest {
 	@SafeHtml
 	@JsonProperty("applicationStatus")
 	private String applicationStatus;
+	
+	private String resolutionDate;
 
 	@NotNull
 	@Valid
