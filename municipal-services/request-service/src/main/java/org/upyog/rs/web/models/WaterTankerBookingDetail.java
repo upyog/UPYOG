@@ -62,10 +62,6 @@ public class WaterTankerBookingDetail {
 
 	private String driverId;
 
-	private String vehicleType;
-
-	private String vehicleCapacity;
-
 	private Long paymentDate;
 
 	private Long applicationDate;
