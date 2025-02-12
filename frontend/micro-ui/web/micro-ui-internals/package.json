@@ -7,7 +7,6 @@
     "packages/css",
     "example",
     "packages/react-components",
-    "packages/modules/*"
     "packages/modules/ptr",
     "packages/modules/core",
     "packages/modules/dss",
@@ -73,7 +72,7 @@
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "build:noc": "cd packages/modules/noc && yarn build",
-    "build:ws": "cd packages/modules/ws && yarn build",
+    "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildD:chb": "cd packages/modules/chb && yarn build",
     "buildD:ads": "cd packages/modules/ads && yarn build",

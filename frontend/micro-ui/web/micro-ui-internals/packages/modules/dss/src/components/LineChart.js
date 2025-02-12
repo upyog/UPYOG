@@ -141,9 +141,9 @@ const LineChartWithData = () => {
             scale="linear"
             domain={["auto", "auto"]}
             tickFormatter={(value) => {
-              // if (value >= 1000) {
-              //   return `${(value / 1000).toFixed(1)}K`; // Convert to thousands and show one decimal point
-              // }
+              if (value >= 10000000) {
+                return `${(value / 10000000).toFixed(1)} Cr`; // Convert to thousands and show one decimal point
+              }
               return value; // For values less than 1000, just display the value
             }}
             // label={{
@@ -158,10 +158,15 @@ const LineChartWithData = () => {
 
           <Tooltip
             labelFormatter={(label) => `Month: ${label}`}
-            formatter={(value, name, props) => [
-              `${value}`, // Display the value (transaction count)
-              'noOfTransactions' // Set the label to "No of Transactions" instead of "value"
-            ]}
+            formatter={(value) => {
+              let formattedValue;
+              if (value >= 10000000) {
+                formattedValue = `${(value / 10000000).toFixed(2)} Cr`; // Convert to crores and format to 2 decimal places
+              } else {
+                formattedValue = `${value}`; // Keep the original value
+              }
+              return [formattedValue, 'No of Transactions'];
+            }}
           />
 
           <Legend
