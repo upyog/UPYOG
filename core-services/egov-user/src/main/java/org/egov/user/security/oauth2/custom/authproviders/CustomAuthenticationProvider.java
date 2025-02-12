@@ -60,6 +60,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Value("${citizen.login.password.otp.fixed.enabled}")
     private boolean fixedOTPEnabled;
+    
+    
+    @Value("${validate.captcha.test.enviro}")
+    private boolean  captchaForDev;
 
     @Autowired
     private HttpServletRequest request;
@@ -127,7 +131,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 throw new OAuth2Exception("Account locked");
         }
 
-
+        userService.removeTokensByUser(user);
         boolean isCitizen = false;
         if (user.getType() != null && user.getType().equals(UserType.CITIZEN))
             isCitizen = true;
@@ -138,13 +142,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 //for automation allow fixing otp validation to a fixed otp
                 isPasswordMatched = true;
             } else {
-            	if(!userService.validateCaptcha(uuid, captcha))
-            		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
+            	if(captchaForDev) {
+            		if(!userService.validateCaptcha(uuid, captcha))
+                		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
+            	}
                 isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
             }
         } else {
-        	if(!userService.validateCaptcha(uuid, captcha))
-        		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
+        	if(captchaForDev) {
+        		if(!userService.validateCaptcha(uuid, captcha))
+            		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
+        	}
+        	
             isPasswordMatched = isPasswordMatch(employeeLoginPasswordOtpEnabled, password, user, authentication);
         }
 
