@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
-import WtDesktopInbox from "../../components/WtDesktopInbox";
+import WTDesktopInbox from "../../components/WTDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
 /**
@@ -129,10 +129,9 @@ const Inbox = ({
       return (
         <div style={{ padding: user?.type === "CITIZEN" ? "0 24px" : "" }}>
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
-          <WtDesktopInbox
+          <WTDesktopInbox
             moduleCode={moduleCode}
             data={data}
-            
             tableConfig={TableConfig(t)["WT"]}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
