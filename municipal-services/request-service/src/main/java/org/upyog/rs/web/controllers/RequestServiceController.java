@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RequestServiceController {
 	
 	@Autowired
-	WaterTankerService waterTankerService;
+	private WaterTankerService waterTankerService;
 
 	@PostMapping("/water-tanker/v1/_create")
 	public ResponseEntity<WaterTankerBookingResponse> createWaterTankerBooking(

@@ -14,6 +14,7 @@ import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.service.DemandService;
 import org.upyog.rs.service.EnrichmentService;
+import org.upyog.rs.service.UserService;
 import org.upyog.rs.service.WaterTankerService;
 import org.upyog.rs.service.WorkflowService;
 import org.upyog.rs.web.models.WaterTankerBookingDetail;
@@ -29,23 +30,32 @@ import lombok.extern.slf4j.Slf4j;
 public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Autowired
-	EnrichmentService enrichmentService;
+	private EnrichmentService enrichmentService;
 
 	@Autowired
-	RequestServiceRepository requestServiceRepository;
+	private RequestServiceRepository requestServiceRepository;
 
 	@Autowired
-	WorkflowService workflowService;
+	private WorkflowService workflowService;
 
 	@Autowired
-	DemandService demandService;
+	private DemandService demandService;
 
+	@Autowired
+	private UserService userService;
+	
 	@Override
 	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest) {
 
 		log.info("Create water tanker booking for user : " + waterTankerRequest.getRequestInfo().getUserInfo().getUuid()
 				+ " for the request : " + waterTankerRequest.getWaterTankerBookingDetail());
-
+// Get the uuid of User from user registry
+		try {
+	        String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
+	        log.info("Applicant or User Uuid: " + uuid);
+	    } catch (Exception e) {
+	        log.error("Error while creating user: " + e.getMessage(), e);
+	    }
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
 
 		workflowService.updateWorkflowStatus(null, waterTankerRequest);
