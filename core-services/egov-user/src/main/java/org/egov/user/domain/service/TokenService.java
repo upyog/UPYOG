@@ -1,12 +1,18 @@
 package org.egov.user.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.user.domain.exception.InvalidAccessTokenException;
 import org.egov.user.domain.model.SecureUser;
 import org.egov.user.domain.model.UserDetail;
 import org.egov.user.persistence.repository.ActionRestRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -37,11 +43,22 @@ public class TokenService {
         if (StringUtils.isEmpty(accessToken)) {
             throw new InvalidAccessTokenException();
         }
-
+        
         OAuth2Authentication authentication = tokenStore.readAuthentication(accessToken);
-
+       
         if (authentication == null) {
             throw new InvalidAccessTokenException();
+        }
+        else
+        {
+        	OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
+            DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
+            System.out.println("Before token expiration::"+token.getExpiration());
+            System.out.println("Before token expiration in::"+token.getExpiresIn());
+            token.setExpiration(new Date(System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(20)));
+            System.out.println("After token expiration::"+token.getExpiration());
+            System.out.println("After token expiration in::"+token.getExpiresIn());
+            tokenStore.storeAccessToken(token, authentication);
         }
 
         SecureUser secureUser = ((SecureUser) authentication.getPrincipal());
