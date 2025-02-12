@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.domain.exception.InvalidOtpRequestException;
 import org.egov.domain.exception.OtpNumberNotPresentException;
 import org.egov.domain.exception.OtpNumberTimeOutException;
+import org.egov.domain.exception.TooManyOtpCountException;
 import org.egov.domain.model.OtpRequest;
+import org.egov.persistence.contract.OtpListResponse;
 import org.egov.persistence.contract.OtpResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,15 +21,18 @@ public class OtpRepository {
     private final String otpCreateUrl;
     private RestTemplate restTemplate;
     private final String otpExistChekUrl;
+    private final String otpCountUrl;
     
 
     public OtpRepository(RestTemplate restTemplate,
                          @Value("${otp.host}") String otpHost,
                          @Value("${otp.create.url}") String otpCreateUrl,
-                         @Value("${otp.check.url}") String otpExistUrl) {
+                         @Value("${otp.check.url}") String otpExistUrl,
+                         @Value("${otp.count.url}") String otpCountUrl) {
         this.restTemplate = restTemplate;
         this.otpCreateUrl = otpHost + otpCreateUrl;
         this.otpExistChekUrl=otpHost+otpExistUrl;
+        this.otpCountUrl=otpHost+otpCountUrl;
     }
 
     public String fetchOtp(OtpRequest otpRequest) {
@@ -58,6 +63,19 @@ public class OtpRepository {
             }
             //return otpResponse.getOtpNumber();
         
+    }
+    
+    
+    public void checkOtpCount(OtpRequest otpRequest) {
+        final org.egov.persistence.contract.OtpRequest request =
+                new org.egov.persistence.contract.OtpRequest(otpRequest);
+       
+            final OtpListResponse otpResponse =
+                    restTemplate.postForObject(otpCountUrl, request, OtpListResponse.class);
+            if (null!=otpResponse && otpResponse.getOtp().size()>=3) {
+                throw new TooManyOtpCountException();
+            }
+            //return otpResponse.getOtpNumber();
     }
 
     private boolean isOtpNumberAbsent(OtpResponse otpResponse) {

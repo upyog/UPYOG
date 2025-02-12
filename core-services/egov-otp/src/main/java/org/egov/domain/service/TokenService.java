@@ -2,6 +2,7 @@ package org.egov.domain.service;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.egov.domain.exception.TokenValidationFailureException;
@@ -83,5 +84,10 @@ public class TokenService {
     
     public Token checkResend(TokenRequest tokenRequest) {
         return tokenRepository.findByIdentity(tokenRequest);
+    }
+    
+    
+    public List<Token> checkResendCount(TokenRequest tokenRequest) {
+        return tokenRepository.findByIdentityAndTenantIdForLimitCount(tokenRequest);
     }
 }

@@ -2,6 +2,7 @@ package org.egov.web.controller;
 
 import org.egov.domain.exception.InvalidOtpRequestException;
 import org.egov.domain.exception.OtpNumberTimeOutException;
+import org.egov.domain.exception.TooManyOtpCountException;
 import org.egov.domain.exception.UserAlreadyExistInSystemException;
 import org.egov.domain.exception.UserMobileNumberNotFoundException;
 import org.egov.domain.exception.UserNotExistingInSystemException;
@@ -9,6 +10,7 @@ import org.egov.domain.exception.UserNotFoundException;
 import org.egov.web.contract.ErrorResponse;
 import org.egov.web.error.OtpNumberTimeOutErrorAdapter;
 import org.egov.web.error.OtpRequestErrorAdapter;
+import org.egov.web.error.TooManyOtpRequestErrorAdapter;
 import org.egov.web.error.UserAlreadyExistErrorAdapter;
 import org.egov.web.error.UserMobileNumberNotFoundErrorAdapter;
 import org.egov.web.error.UserNotExistErrorAdapter;
@@ -62,6 +64,14 @@ public class CustomControllerAdvice {
 	public ErrorResponse handleOtpNumberTimeOutException() {
 		return new OtpNumberTimeOutErrorAdapter().adapt(null);
 	}
+	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(TooManyOtpCountException.class)
+	public ErrorResponse handleOtpNumberCountException() {
+		return new TooManyOtpRequestErrorAdapter().adapt(null);
+	}
+	
+	
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
