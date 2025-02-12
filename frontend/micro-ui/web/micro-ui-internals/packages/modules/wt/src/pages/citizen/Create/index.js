@@ -110,11 +110,11 @@ const WTCreate = () => {
   return (
     <Switch>
       {config.map((routeObj, index) => {
-        const { component, texts, inputs, key } = routeObj;
+        const { component, texts, inputs, key,additionaFields } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} t={t} formData={params}/>
+            <Component config={{ texts, inputs, key,additionaFields }} onSelect={handleSelect} t={t} formData={params}/>
           </Route>
         );
       })}
