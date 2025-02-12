@@ -21,52 +21,50 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TokenService {
 
-    private TokenStore tokenStore;
+	private TokenStore tokenStore;
 
-    private ActionRestRepository actionRestRepository;
+	private ActionRestRepository actionRestRepository;
 
-    @Value("${roles.state.level.enabled}")
-    private boolean isRoleStateLevel;
+	@Value("${roles.state.level.enabled}")
+	private boolean isRoleStateLevel;
 
-    private TokenService(TokenStore tokenStore, ActionRestRepository actionRestRepository) {
-        this.tokenStore = tokenStore;
-        this.actionRestRepository = actionRestRepository;
-    }
+	private TokenService(TokenStore tokenStore, ActionRestRepository actionRestRepository) {
+		this.tokenStore = tokenStore;
+		this.actionRestRepository = actionRestRepository;
+	}
 
-    /**
-     * Get UserDetails By AccessToken
-     *
-     * @param accessToken
-     * @return
-     */
-    public UserDetail getUser(String accessToken) {
-        if (StringUtils.isEmpty(accessToken)) {
-            throw new InvalidAccessTokenException();
-        }
-        
-        OAuth2Authentication authentication = tokenStore.readAuthentication(accessToken);
-       
-        if (authentication == null) {
-            throw new InvalidAccessTokenException();
-        }
-        else
-        {
-        	OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
-            DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
-            token.setExpiration(new Date(System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(20)));
-            tokenStore.storeAccessToken(redisToken, authentication);
-        }
+	/**
+	 * Get UserDetails By AccessToken
+	 *
+	 * @param accessToken
+	 * @return
+	 */
+	public UserDetail getUser(String accessToken) {
+		if (StringUtils.isEmpty(accessToken)) {
+			throw new InvalidAccessTokenException();
+		}
 
-        SecureUser secureUser = ((SecureUser) authentication.getPrincipal());
-        return new UserDetail(secureUser, null);
-//		String tenantId = null;
-//		if (isRoleStateLevel && (secureUser.getTenantId() != null && secureUser.getTenantId().contains(".")))
-//			tenantId = secureUser.getTenantId().split("\\.")[0];
-//		else
-//			tenantId = secureUser.getTenantId();
-//
-//		List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId);
-//		log.info("returning STATE-LEVEL roleactions for tenant: "+tenantId);
-//		return new UserDetail(secureUser, actions);
-    }
+		OAuth2Authentication authentication = tokenStore.readAuthentication(accessToken);
+
+		if (authentication == null) {
+			throw new InvalidAccessTokenException();
+		}
+
+		OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
+		DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
+		token.setExpiration(new Date(System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(20)));
+		tokenStore.storeAccessToken(redisToken, authentication);
+
+		SecureUser secureUser = ((SecureUser) authentication.getPrincipal());
+		return new UserDetail(secureUser, null);
+		//		String tenantId = null;
+		//		if (isRoleStateLevel && (secureUser.getTenantId() != null && secureUser.getTenantId().contains(".")))
+		//			tenantId = secureUser.getTenantId().split("\\.")[0];
+		//		else
+		//			tenantId = secureUser.getTenantId();
+		//
+		//		List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId);
+		//		log.info("returning STATE-LEVEL roleactions for tenant: "+tenantId);
+		//		return new UserDetail(secureUser, actions);
+	}
 }
