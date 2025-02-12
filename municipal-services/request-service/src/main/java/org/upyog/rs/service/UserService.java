@@ -3,7 +3,6 @@ package org.upyog.rs.service;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
+import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.ApplicantDetail;
@@ -25,6 +25,9 @@ import org.upyog.rs.web.models.user.UserSearchRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UserService {
 
@@ -42,36 +45,54 @@ public class UserService {
 		WaterTankerBookingDetail bookingDetail = bookingRequest.getWaterTankerBookingDetail();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		ApplicantDetail applicantDetail = bookingDetail.getApplicantDetail();
+		String tenantId = bookingDetail.getTenantId();
 
-		if (applicantDetail.getMobileNumber().equals(requestInfo.getUserInfo().getMobileNumber())) {
-			return requestInfo.getUserInfo().getUuid();// return uuid which is present in user info under requestinfo
+		// Return existing UUID if applicant is the requester
+		if (isUserSameAsRequester(applicantDetail, requestInfo)) {
+			return requestInfo.getUserInfo().getUuid();
 		}
 
-		UserDetailResponse userDetailResponse = userExists(applicantDetail, requestInfo, bookingDetail.getTenantId());
-		List<User> existingUsersFromService = userDetailResponse.getUser();
-		if (CollectionUtils.isEmpty(existingUsersFromService)) {
+		// Fetch existing user details
+		UserDetailResponse userDetailResponse = userExists(applicantDetail, requestInfo, tenantId);
+		List<User> existingUsers = userDetailResponse.getUser();
 
-			userDetailResponse = createUser(requestInfo, applicantDetail, bookingDetail.getTenantId());
-			return userDetailResponse.getUser().get(0).getUuid();// return user uuid which is newly created
+		// Create a new user if no existing user found
+		if (CollectionUtils.isEmpty(existingUsers)) {
+			return createAndReturnUuid(requestInfo, applicantDetail, tenantId);
 		}
-		return userDetailResponse.getUser().get(0).getUuid();// return uuid of which user already exists
+
+		return existingUsers.get(0).getUuid();
 	}
 
-	private UserDetailResponse createUser(RequestInfo requestInfo, ApplicantDetail applicant, String tenantId) {
-		UserDetailResponse userDetailResponse;
+	/**
+	 * Checks if the applicant is the same as the requester.
+	 */
+	private boolean isUserSameAsRequester(ApplicantDetail applicantDetail, RequestInfo requestInfo) {
+		return applicantDetail.getMobileNumber().equals(requestInfo.getUserInfo().getMobileNumber());
+	}
+
+	/**
+	 * Creates a new user and returns the generated UUID.
+	 */
+	private String createAndReturnUuid(RequestInfo requestInfo, ApplicantDetail applicantDetail, String tenantId) {
+		Role role = getCitizenRole();
+		User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
+		UserDetailResponse userDetailResponse = createUser(requestInfo, user, tenantId);
+		String newUuid = userDetailResponse.getUser().get(0).getUuid();
+		log.info("New user uuid returned from user service: {}", newUuid);
+		return newUuid;
+	}
+
+	private UserDetailResponse createUser(RequestInfo requestInfo, User user, String tenantId) {
+
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost()).append(requestConfig.getUserContextPath())
 				.append(requestConfig.getUserCreateEndpoint());
-		Role role = getCitizenRole();
-		User user = convertApplicantToUserRequest(applicant, role, tenantId);
 		CreateUserRequest userRequest = CreateUserRequest.builder().requestInfo(requestInfo).user(user).build();
-
-		userDetailResponse = userCall(userRequest, uri);
+		UserDetailResponse userDetailResponse = userServiceCall(userRequest, uri);
 
 		if (ObjectUtils.isEmpty(userDetailResponse)) {
-
 			throw new CustomException("INVALID USER RESPONSE",
-					"The user create has failed for the mobileNumber : " + applicant.getMobileNumber());
-
+					"The user create has failed for the mobileNumber : " + user.getUserName());
 		}
 		return userDetailResponse;
 	}
@@ -87,11 +108,10 @@ public class UserService {
 		userRequest.setMobileNumber(applicant.getMobileNumber());
 		userRequest.setAlternatemobilenumber(applicant.getAlternateNumber());
 		userRequest.setEmailId(applicant.getEmailId());
-		userRequest.setUuid(UUID.randomUUID().toString()); // System-generated UUID
 		userRequest.setActive(true);
 		userRequest.setTenantId(tenantId);
 		userRequest.setRoles(Collections.singletonList(role));
-		userRequest.setType("CITIZEN");
+		userRequest.setType(RequestServiceConstants.CITIZEN);
 		userRequest.setCreatedDate(null);
 		userRequest.setCreatedBy(null);
 		userRequest.setLastModifiedDate(null);
@@ -101,7 +121,7 @@ public class UserService {
 
 	private Role getCitizenRole() {
 
-		return Role.builder().code("CITIZEN").name("Citizen").build();
+		return Role.builder().code(RequestServiceConstants.CITIZEN).name(RequestServiceConstants.CITIZEN_NAME).build();
 	}
 
 	/**
@@ -117,12 +137,12 @@ public class UserService {
 
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(tenantId, requestInfo);
 		userSearchRequest.setMobileNumber(applicant.getMobileNumber());
-		userSearchRequest.setUserType("CITIZEN");
+		userSearchRequest.setUserType(RequestServiceConstants.CITIZEN);
 		userSearchRequest.setUserName(applicant.getMobileNumber());
 
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
 				.append(requestConfig.getUserSearchEndpoint());
-		return userCall(userSearchRequest, uri);
+		return userServiceCall(userSearchRequest, uri);
 	}
 
 	/**
@@ -136,7 +156,7 @@ public class UserService {
 
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
 				.append(requestConfig.getUserSearchEndpoint());
-		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
+		UserDetailResponse userDetailResponse = userServiceCall(userSearchRequest, uri);
 		return userDetailResponse;
 	}
 
@@ -148,7 +168,7 @@ public class UserService {
 	 * @return Response from user service as parsed as userDetailResponse
 	 */
 	@SuppressWarnings("unchecked")
-	private UserDetailResponse userCall(Object userRequest, StringBuilder url) {
+	private UserDetailResponse userServiceCall(Object userRequest, StringBuilder url) {
 
 		String dobFormat = null;
 		if (url.indexOf(requestConfig.getUserSearchEndpoint()) != -1
@@ -212,8 +232,8 @@ public class UserService {
 	 */
 	public UserSearchRequest getBaseUserSearchRequest(String tenantId, RequestInfo requestInfo) {
 
-		return UserSearchRequest.builder().requestInfo(requestInfo).userType("CITIZEN").tenantId(tenantId).active(true)
-				.build();
+		return UserSearchRequest.builder().requestInfo(requestInfo).userType(RequestServiceConstants.CITIZEN)
+				.tenantId(tenantId).active(true).build();
 	}
 
 }
