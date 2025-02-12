@@ -40,7 +40,7 @@ public class UserService {
 	@Autowired
 	private RequestServiceConfiguration requestConfig;
 
-	public String createUser(WaterTankerBookingRequest bookingRequest) {
+	public String getUuidExistingOrNewUser(WaterTankerBookingRequest bookingRequest) {
 
 		WaterTankerBookingDetail bookingDetail = bookingRequest.getWaterTankerBookingDetail();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();

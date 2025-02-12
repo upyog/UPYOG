@@ -51,7 +51,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 				+ " for the request : " + waterTankerRequest.getWaterTankerBookingDetail());
 // Get the uuid of User from user registry
 		try {
-	        String uuid = userService.createUser(waterTankerRequest);
+	        String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
 	        log.info("Applicant or User Uuid: " + uuid);
 	    } catch (Exception e) {
 	        log.error("Error while creating user: " + e.getMessage(), e);
