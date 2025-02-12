@@ -144,14 +144,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             } else {
             	if(captchaForDev) {
             		if(!userService.validateCaptcha(uuid, captcha))
-                		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
+                		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found, Please Refresh");
             	}
                 isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
             }
         } else {
         	if(captchaForDev) {
         		if(!userService.validateCaptcha(uuid, captcha))
-            		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found Please Generate New Captcha");
+            		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found, Please Refresh");
         	}
         	
             isPasswordMatched = isPasswordMatch(employeeLoginPasswordOtpEnabled, password, user, authentication);
