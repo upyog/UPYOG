@@ -5803,7 +5803,7 @@ video::-webkit-media-controls-panel {
     z-index: 999;
     background-color: rgba(255, 255, 255, 0.92157); }
   .banner .bannerCard, .loginFormStyleEmployee .employeeCard {
-    min-width: 270px !important;
+    min-width: 350px !important;
     background-color: rgb(0 139 201 / 56%) !important; }
   .employeeChangePassword .employeeCard, .employeeForgotPassword .employeeCard {
     max-width: 270px !important;
@@ -5892,7 +5892,7 @@ video::-webkit-media-controls-panel {
   padding-top: 0 !important; }
 
 .banner {
-  height: 100vh !important; }
+  height: 112vh !important; }
 
 .employeeChangePassword .employeeCard .field .field-container {
   margin-bottom: 24px; }
@@ -5912,7 +5912,7 @@ video::-webkit-media-controls-panel {
     margin-bottom: 0 !important;
     z-index: 10 !important; }
   .banner .bannerCard, .loginFormStyleEmployee .employeeCard {
-    min-width: 270px !important;
+    min-width: 350px !important;
     z-index: 10 !important;
     background-color: rgba(255, 255, 255, 0.83922) !important;
     margin-top: 0 !important; }
@@ -5949,7 +5949,7 @@ video::-webkit-media-controls-panel {
     left: 20px; }
   .banner {
     padding-bottom: 40px;
-    height: 100vh !important;
+    height: 112vh !important;
     z-index: 1; }
   .topbar {
     background: #fff; }
@@ -9754,4 +9754,18 @@ a:focus, a:hover {
 }
 button[disabled], html input[disabled] {
   cursor: not-allowed !important;
+}
+.emp-login-text {
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+}
+.emp-login-text {
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
 }

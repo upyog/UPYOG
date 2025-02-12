@@ -26,13 +26,45 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [user, setUser] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
+  const [captcha, setCaptcha] = useState([]);
+  // const [config, setConfig] = useState([]);
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
   let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
-  useEffect(() => {
+  const [userId, password, city, captchaTxt,captchaField] = propsConfig.inputs;
+
+  useEffect(async ()=>{
+    let isMounted = true;
+    
+    fetchCaptcha();
+    
+    return()=>{
+      isMounted = false;
+    }
+  },[])
+  const fetchCaptcha = async()=>{
+    try {
+      const res = await Digit.UserService.generateCaptcha({});
+      if(res && res?.captcha?.captcha && res?.captcha?.uuid) {
+        let tt = [];
+        tt.push(res?.captcha)
+        // if(isMounted) {
+          setCaptcha(tt)
+        // }
+        // loadForm()
+
+      }
+      // return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  }
+  useEffect(()=>{
+    console.log("captcha----",captcha)
+  },[captcha])
+  useEffect(async () => {
     if (!user) {
       return;
     }
@@ -40,6 +72,8 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     const filteredRoles = user?.info?.roles?.filter((role) => role.tenantId === Digit.SessionStorage.get("Employee.tenantId"));
     if (user?.info?.roles?.length > 0) user.info.roles = filteredRoles;
     Digit.UserService.setUser(user);
+    // Digit.UserService.generateCaptcha({})
+    
     setEmployeeDetail(user?.info, user?.access_token);
     let redirectPath = "/digit-ui/employee";
 
@@ -63,6 +97,10 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const onLogin = async (data) => {
     if (!data.city) {
       alert("Please Select City!");
+      return;
+    }
+    if (!data.captcha) {
+      alert("Please write captcha");
       return;
     }
     setDisable(true);
@@ -92,51 +130,76 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     sessionStorage.getItem("User") && sessionStorage.removeItem("User")
     history.push("/digit-ui/employee/user/forgot-password");
   };
+  // const loadForm = () => {
+  //   console.log("loadForm==",captcha)
+    const config = [
+      {
+        body: [
+          {
+            label: t(userId.label),
+            type: userId.type,
+            populators: {
+              name: userId.name,
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(password.label),
+            type: password.type,
+            populators: {
+              name: password.name,
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(city.label),
+            type: city.type,
+            populators: {
+              name: city.name,
+              customProps: {},
+              component: (props, customProps) => (
+                <Dropdown
+                  option={cities}
+                  className="login-city-dd"
+                  optionKey="i18nKey"
+                  select={(d) => {
+                    props.onChange(d);
+                  }}
+                  t={t}
+                  {...customProps}
+                />
+              ),
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(captchaTxt.label),
+            type: captchaTxt.type,
+            populators: {
+              name: captchaTxt.name,
+            },
+            captchaTxt: captcha,
+            isMandatory: true,
+          },
+          {
+            label: t(captchaField?.label),
+            type: captchaField.type,
+            populators: {
+              name: captchaField.name,
+            },
+            isMandatory: true,
+          },
+          
+        ],
+      },
+    ];
+  //   setConfig(config)
+  // }
 
-  const [userId, password, city] = propsConfig.inputs;
-  const config = [
-    {
-      body: [
-        {
-          label: t(userId.label),
-          type: userId.type,
-          populators: {
-            name: userId.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(password.label),
-          type: password.type,
-          populators: {
-            name: password.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                className="login-city-dd"
-                optionKey="i18nKey"
-                select={(d) => {
-                  props.onChange(d);
-                }}
-                t={t}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
-      ],
-    },
-  ];
+  const onCaptchaRefresh = ()=> {
+    fetchCaptcha()
+  }
+  
 
   return isLoading || isStoreLoading ? (
     <Loader />
@@ -152,16 +215,18 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         noBoxShadow
         inline
         submitInForm
-        config={config}
+        config={[...config]}
+        captchaDetails={[...captcha]}
+        onCaptchaRefresh={onCaptchaRefresh}
         label={propsConfig.texts.submitButtonLabel}
         secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
-        headingStyle={{ textAlign: "center" }}
+        headingStyle={{ display: "flex", justifyContent: 'center' }}
         headingLogo={'true'}
         cardStyle={{ margin: "auto", minWidth: "408px" }}
         className="loginFormStyleEmployee"
-        formStyle={{position: "absolute",right: "0", top: "40px"}}
+        formStyle={{position: "absolute",right: "0", top: "-10px"}}
         buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
       >
         {/* <Header /> */}

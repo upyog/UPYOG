@@ -25,7 +25,7 @@ const Urls = {
   UserProfileUpdate: "/user/profile/_update",
   EmployeeSearch: "/egov-hrms/employees/_search",
   ValidateOTP: "/otp/v1/_validate",
-
+  GenerateCaptcha: "/user/users/_generateCaptcha",
 
   InboxSearch: "/inbox/v1/_search",
 

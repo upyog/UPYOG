@@ -45,6 +45,39 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [canSubmitName, setCanSubmitName] = useState(false);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
+  const [captcha, setCaptcha] = useState([]);
+  const [showToast, setShowToast] = useState(null);
+  const [disable, setDisable] = useState(false);
+
+  useEffect(async ()=>{
+    let isMounted = true;
+    
+    fetchCaptcha();
+    
+    return()=>{
+      isMounted = false;
+    }
+  },[])
+  const fetchCaptcha = async()=>{
+    try {
+      const res = await Digit.UserService.generateCaptcha({});
+      if(res && res?.captcha?.captcha && res?.captcha?.uuid) {
+        let tt = [];
+        tt.push(res?.captcha)
+        // if(isMounted) {
+          setCaptcha(tt)
+        // }
+        // loadForm()
+
+      }
+      // return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  }
+  useEffect(()=>{
+    console.log("captcha----",captcha)
+  },[captcha])
 
   useEffect(() => {
     let errorTimeout;
@@ -98,6 +131,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const handleOtpChange = (otp) => {
     setParmas({ ...params, otp });
   };
+  const onCaptchaChange = (captchaText) => {
+    setParmas({ ...params, captcha: captchaText,  uuid: captcha[0]?.uuid});
+  }
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
@@ -161,10 +197,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp, name } = params;
+      const { mobileNumber, otp, name, captcha, uuid } = params;
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber,
+          captcha: captcha,
+          uuid: uuid,
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
@@ -188,6 +226,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         const requestData = {
           name,
           username: mobileNumber,
+          captcha: captcha,
+          uuid: uuid,
           otpReference: otp,
           tenantId: stateCode,
         };
@@ -201,8 +241,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setUser({ info, ...tokens });
       }
     } catch (err) {
-      setCanSubmitOtp(true);
-      setIsOtpValid(false);
+      setShowToast(err?.response?.data?.error_description || "Invalid OTP or Captcha");
+      setTimeout(closeToast, 5000);
+      setCanSubmitOtp(false);
+      setIsOtpValid(true);
     }
   };
 
@@ -227,6 +269,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     } catch (err) {
       return [null, err];
     }
+  };
+  const onCaptchaRefresh = () =>{
+    fetchCaptcha()
+  }
+  const closeToast = () => {
+    setShowToast(null);
   };
 
   return (
@@ -269,6 +317,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               otp={params.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
+              captchaDetails={[...captcha]}
+              onCaptchaRefresh={onCaptchaRefresh}
+              onCaptchaChange={onCaptchaChange}
               t={t}
             />
           </Route>
@@ -276,6 +327,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
           </Route>
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
+          {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
+
         </AppContainer>
       </Switch>
     </div>

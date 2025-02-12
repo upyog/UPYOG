@@ -53,6 +53,9 @@ export const FormComposer = (props) => {
   }, []);
 
   function onSubmit(data) {
+    if(data && data?.captcha) {
+      data.uuid = props?.captchaDetails[0]?.uuid
+    }
     props.onSubmit(data);
   }
 
@@ -64,8 +67,7 @@ export const FormComposer = (props) => {
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState);
   }, [formData]);
 
-  const fieldSelector = (type, populators, isMandatory, disable = false, component, config) => {
-    
+  const fieldSelector = (type, populators, isMandatory, disable = false, component, config, captchaText) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
 
     switch (type) {
@@ -90,6 +92,10 @@ export const FormComposer = (props) => {
               watch={watch}
             />
           </div>
+        );
+      case "captchaText": 
+        return (
+          <div style={{background: 'white', fontStyle: 'italic', padding: '5px', display: 'flex',justifyContent:'space-between', borderRadius: '4px', marginBottom: '15px'}}><span style={{fontSize: '20px',background: '#529ec029'}}>{captchaText[0]?.captcha}</span> <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={props?.onCaptchaRefresh}>Refresh</span> </div>
         );
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
@@ -199,7 +205,7 @@ export const FormComposer = (props) => {
           marginTop: "-30px",
           borderColor: "#f3f3f3",
           background: "#FAFAFA",
-          marginBottom: "20px",
+          marginBottom: "10px",
           borderTop: "0px",
         };
     }
@@ -257,7 +263,7 @@ export const FormComposer = (props) => {
                         <CardLabelError>{t(field.populators.error || errors[field.populators?.name]?.message)}</CardLabelError>
                       ) : null}
                       <div style={field.withoutLabel ? { width: "100%" } : {}} className="field">
-                        {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                        {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, props?.captchaDetails)}
                         {field?.description && (
                           <CardLabel
                             style={{
@@ -286,7 +292,7 @@ export const FormComposer = (props) => {
                       </CardLabel>
                     )}
                     <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {}} className="field">
-                      {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                      {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field,props?.captchaDetails)}
                       {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                     </div>
                   </LabelFieldPair>
@@ -325,6 +331,7 @@ export const FormComposer = (props) => {
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}
+        {/* {props.captchaDetails && props.captchaDetails[0] && <CardText>{props?.captchaDetails[0].captcha}</CardText>} */}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
           <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />

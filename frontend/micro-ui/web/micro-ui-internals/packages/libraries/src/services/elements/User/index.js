@@ -72,6 +72,14 @@ export const UserService = {
       auth: true,
       params: {  }
     }),
+  generateCaptcha: (details) => 
+    ServiceRequest({
+      serviceName: "generateCaptcha",
+      url: Urls.GenerateCaptcha,
+      data: details,
+      auth: true,
+      params: {  }
+    }),
   setUser: (data) => {
     return Digit.SessionStorage.set("User", data);
   },
