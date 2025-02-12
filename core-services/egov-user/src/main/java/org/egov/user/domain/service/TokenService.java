@@ -53,11 +53,7 @@ public class TokenService {
         {
         	OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
             DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
-            System.out.println("Before token expiration::"+token.getExpiration());
-            System.out.println("Before token expiration in::"+token.getExpiresIn());
             token.setExpiration(new Date(System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(20)));
-            System.out.println("After token expiration::"+token.getExpiration());
-            System.out.println("After token expiration in::"+token.getExpiresIn());
             tokenStore.storeAccessToken(redisToken, authentication);
         }
 
