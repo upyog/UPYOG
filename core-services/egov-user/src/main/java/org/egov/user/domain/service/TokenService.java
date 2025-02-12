@@ -58,7 +58,7 @@ public class TokenService {
             token.setExpiration(new Date(System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(20)));
             System.out.println("After token expiration::"+token.getExpiration());
             System.out.println("After token expiration in::"+token.getExpiresIn());
-            tokenStore.storeAccessToken(token, authentication);
+            tokenStore.storeAccessToken(redisToken, authentication);
         }
 
         SecureUser secureUser = ((SecureUser) authentication.getPrincipal());
