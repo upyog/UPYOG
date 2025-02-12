@@ -19,8 +19,6 @@ CREATE TABLE IF NOT EXISTS upyog_rs_tanker_booking_details (
     createdtime bigint NOT NULL,
     lastmodifiedtime bigint,
     CONSTRAINT upyog_rs_tanker_booking_details_pkey PRIMARY KEY (booking_id),
-    CONSTRAINT upyog_rs_tanker_booking_details_vehicle_id_uk UNIQUE (vehicle_id),
-    CONSTRAINT upyog_rs_tanker_booking_details_driver_id_uk UNIQUE (driver_id),
     CONSTRAINT upyog_rs_tanker_booking_details_booking_no_uk UNIQUE (booking_no)
 );
 
