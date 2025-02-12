@@ -24,9 +24,6 @@ const EmployeeApp = ({ path, url, userType }) => {
     },
   };
 
-  
- 
-
   const AssetBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
     const search = useLocation().search;

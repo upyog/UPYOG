@@ -208,7 +208,8 @@ const Urls = {
     assets_Reciept_Search: "/asset-services/v1/assets/_search",    
     assetDisposedCreate: "/asset-services/v1/disposal/_create",
     depriciationList:"/asset-services/v1/assets/depreciation/list",   
-    maintenanceList:"/asset-services/maintenance/v1/_search",   
+    maintenanceList:"/asset-services/maintenance/v1/_search", 
+    return_asset: "/asset-services/v1/assets/assignment/_update",  
     disposalList:"/asset-services/v1/disposal/_search"   
   },
   ew: {
