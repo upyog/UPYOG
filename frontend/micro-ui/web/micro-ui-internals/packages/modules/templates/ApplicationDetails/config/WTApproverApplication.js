@@ -19,8 +19,8 @@ export const configWTApproverApplication = ({
    selectFile, 
    uploadedFile,
     setUploadedFile,
-    selectedApprover, 
-    setSelectedApprover, 
+    selectedVendor, 
+    setSelectedVendor, 
     vendorDescription, 
     vehicleDescription,
     selectVehicle,
@@ -55,8 +55,8 @@ export const configWTApproverApplication = ({
             option={vendorDescription} // Pass the array of objects
             t={t}
             optionKey="i18nKey"
-            select={setSelectedApprover} 
-            selected={selectedApprover}
+            select={setSelectedVendor} 
+            selected={selectedVendor}
             />
           ),
           }
