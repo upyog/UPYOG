@@ -61,15 +61,7 @@ In Parent Component,  we are passing the data as a props coming through params (
               label={t("COMMON_EMAIL_ID")}
               text={`${t(checkForNA(owner?.emailId))}`}
           />
-          <Row
-              label={t("COMMON_GUARDIAN")}
-              text={`${t(checkForNA(owner?.guardianName))}`}
-          />
-          <Row
-              label={t("COMMON_RELATIONTYPE")}
-              text={`${t(checkForNA(owner?.relationShipType?.name))}`}
-          />
-        </StatusTable>
+          </StatusTable>
          
           <CardSubHeader>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
@@ -122,7 +114,7 @@ In Parent Component,  we are passing the data as a props coming through params (
               />
               <Row
               label={t("WT_WATER_QUANTITY")}
-              text={`${t(checkForNA(requestDetails?.waterQuantity))}`}
+              text={`${t(checkForNA(requestDetails?.waterQuantity?.code))}`}
               />
               <Row
               label={t("WT_DELIVERY_DATE")}
