@@ -76,5 +76,13 @@ public class Unit {
 	@Digits(integer = 8, fraction = 2)
 	@JsonProperty("arv")
 	private BigDecimal arv;
+	
+	@SafeHtml
+	@JsonProperty("structureType")
+	private String structureType;
+	
+	@SafeHtml
+	@JsonProperty("ageOfProperty")
+	private String ageOfProperty;
 
 }

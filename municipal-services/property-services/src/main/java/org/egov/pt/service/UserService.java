@@ -77,7 +77,7 @@ public class UserService {
 			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
 
 			if (CollectionUtils.isEmpty(existingUsersFromService)) {
-
+				
 				ownerFromRequest.setUserName(UUID.randomUUID().toString());
 				userDetailResponse = createUser(requestInfo, ownerFromRequest);
 				

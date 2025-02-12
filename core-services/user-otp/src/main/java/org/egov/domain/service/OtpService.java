@@ -1,5 +1,7 @@
 package org.egov.domain.service;
 
+import lombok.Getter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.domain.exception.UserAlreadyExistInSystemException;
 import org.egov.domain.exception.UserMobileNumberNotFoundException;
@@ -16,12 +18,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@Getter
+
 public class OtpService {
+	
+	  @org.springframework.beans.factory.annotation.Value("${registration.otp.sms.template}")
+	    private String registrationSmsTemplateId;
 
     private OtpRepository otpRepository;
     private OtpSMSRepository otpSMSSender;
     private OtpEmailRepository otpEmailRepository;
     private UserRepository userRepository;
+    
+  
 
     @Autowired
     public OtpService(OtpRepository otpRepository, OtpSMSRepository otpSMSSender, OtpEmailRepository otpEmailRepository,
@@ -33,8 +42,11 @@ public class OtpService {
     }
 
     public void sendOtp(OtpRequest otpRequest) {
+    	
         otpRequest.validate();
-        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType()) {
+        otpRepository.checkOtpCount(otpRequest);
+        if (otpRequest.isRegistrationRequestType() || otpRequest.isLoginRequestType() || otpRequest.isOwnerValidate()) {
+        	otpRequest.setTemplateId(registrationSmsTemplateId);
             sendOtpForUserRegistration(otpRequest);
         } else {
             sendOtpForPasswordReset(otpRequest);
@@ -49,9 +61,12 @@ public class OtpService {
             throw new UserAlreadyExistInSystemException();
         else if (otpRequest.isLoginRequestType() && null == matchingUser)
             throw new UserNotExistingInSystemException();
-
+        
+        otpRepository.checkOtpTime(otpRequest);
+        
         final String otpNumber = otpRepository.fetchOtp(otpRequest);
-        otpSMSSender.send(otpRequest, otpNumber);
+        System.out.println("Phone::::"+otpRequest.getMobileNumber()+"-------------otpNumber::::"+otpNumber);
+        otpSMSSender.sendNew(otpRequest, otpNumber);
     }
 
     private void sendOtpForPasswordReset(OtpRequest otpRequest) {
@@ -63,9 +78,12 @@ public class OtpService {
         if (null == matchingUser.getMobileNumber() || matchingUser.getMobileNumber().isEmpty())
             throw new UserMobileNumberNotFoundException();
         try {
+        	 otpRepository.checkOtpTime(otpRequest);
             final String otpNumber = otpRepository.fetchOtp(otpRequest);
             otpRequest.setMobileNumber(matchingUser.getMobileNumber());
+            otpRequest.setTemplateId(registrationSmsTemplateId);
             otpSMSSender.send(otpRequest, otpNumber);
+            System.out.println("Phone::::"+otpRequest.getMobileNumber()+"-------------otpNumber::::"+otpNumber);
             otpEmailRepository.send(matchingUser.getEmail(), otpNumber);
         } catch (Exception e) {
             log.error("Exception while fetching otp: ", e);

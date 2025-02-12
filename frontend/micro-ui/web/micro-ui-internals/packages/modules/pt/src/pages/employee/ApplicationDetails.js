@@ -1,4 +1,4 @@
-import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, MultiLink } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import TransfererDetails from "../../pageComponents/Mutate/TransfererDetails";
 import MutationApplicationDetails from "./MutationApplicatinDetails";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
+import { data } from "jquery";
 
 
 const ApplicationDetails = () => {
@@ -47,6 +48,8 @@ const ApplicationDetails = () => {
     },
     { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
   );
+  console.log("Application Details==", auditData)
+
 
   const showTransfererDetails = React.useCallback(() => {
     if (
@@ -201,7 +204,7 @@ const ApplicationDetails = () => {
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PT_APPLICATION_TITLE")}</Header>
+      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "16px" }}>{applicationDetails?.applicationData?.creationReason === "AMALGAMATION" ? "Property Amalgamation" : t("PT_APPLICATION_TITLE")}</Header>
       {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"
@@ -229,6 +232,7 @@ const ApplicationDetails = () => {
         timelineStatusPrefix={"ES_PT_COMMON_STATUS_"}
         forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"}
         statusAttribute={"state"}
+        ActionBarStyle={{float: "right"}}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />
     
