@@ -22,7 +22,6 @@ import { configWTApproverApplication } from "../config/WTApproverApplication";
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
-// console.log("what is selectedVendor",selectedVendor);
 // Close component - renders an SVG icon representing a "close" button (X icon).
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -147,7 +146,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       ];
     if (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN") {
       applicationData.vendorId = selectedVendor?.vendorId;
-      console.log("selectedVendor",selectedVendor);
     };
 
     if (action?.state === "DELIVERY_PENDING") {
