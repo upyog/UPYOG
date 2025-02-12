@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Value("${citizen.login.password.otp.fixed.enabled}")
     private boolean fixedOTPEnabled;
+    
+    
+    @Value("${validate.captcha.test.enviro}")
+    private boolean  captchaForDev;
 
     @Autowired
     private HttpServletRequest request;
@@ -77,7 +82,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         String tenantId = details.get("tenantId");
         String userType = details.get("userType");
-
+        String captcha=details.get("captcha");
+        String uuid=details.get("uuid");
+        
         if (isEmpty(tenantId)) {
             throw new OAuth2Exception("TenantId is mandatory");
         }
@@ -124,7 +131,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 throw new OAuth2Exception("Account locked");
         }
 
-
+        userService.removeTokensByUser(user);
         boolean isCitizen = false;
         if (user.getType() != null && user.getType().equals(UserType.CITIZEN))
             isCitizen = true;
@@ -135,9 +142,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 //for automation allow fixing otp validation to a fixed otp
                 isPasswordMatched = true;
             } else {
+            	if(captchaForDev) {
+            		if(!userService.validateCaptcha(uuid, captcha))
+                		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found, Please Refresh");
+            	}
                 isPasswordMatched = isPasswordMatch(citizenLoginPasswordOtpEnabled, password, user, authentication);
             }
         } else {
+        	if(captchaForDev) {
+        		if(!userService.validateCaptcha(uuid, captcha))
+            		throw new CustomException("NO_CAPTCHA_FOUND","No Captha Found, Please Refresh");
+        	}
+        	
             isPasswordMatched = isPasswordMatch(employeeLoginPasswordOtpEnabled, password, user, authentication);
         }
 
