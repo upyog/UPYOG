@@ -40,7 +40,7 @@ const MaintenanceAssetApplication = () => {
   };
 
   const onSubmit = (data) => {
-    console.log('data :-', data)
+    
     const formData = {
         maintenanceId: "",
         assetId: data?.maintenanceDetails?.[0]?.assetId,
