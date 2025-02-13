@@ -69,6 +69,12 @@ public class RequestServiceQueryBuilder {
             preparedStmtList.add(criteria.getMobileNumber());
         }
 
+        if (!ObjectUtils.isEmpty(criteria.getStatus())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ursbd.booking_status = ? ");
+            preparedStmtList.add(criteria.getStatus());
+        }
+
         // Return count query directly without applying pagination
         if (criteria.isCountCall()) {
             return query.toString();
