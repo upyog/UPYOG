@@ -22,6 +22,7 @@ import org.upyog.rs.service.WorkflowService;
 import org.upyog.rs.web.models.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.workflow.State;
 
 import digit.models.coremodels.PaymentRequest;
@@ -211,13 +212,15 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	    // If no payment request, just update the water tanker booking request
 	    requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
 	    
-	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null && 
+	    Workflow workflow = waterTankerRequest.getWaterTankerBookingDetail().getWorkflow();
+	    
+	    if (workflow != null && 
 	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
 	    	log.info("Processing feedback submission for booking no: {}", bookingNo);
 			handleRSSubmitFeeback(waterTankerRequest);
 		}
 	    
-	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null && 
+	    if (workflow != null && 
 	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_REJECTED_BY_VENDOR)) {
 	    	log.info("Processing rejection by vendor for booking no: {}", bookingNo);
 			handleRejectedByVendor(waterTankerRequest);
