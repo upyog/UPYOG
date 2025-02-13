@@ -200,11 +200,15 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	    // If no payment request, just update the water tanker booking request
 	    requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
 	    
-	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
+	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null && 
+	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
+	    	log.info("Processing feedback submission for booking no: {}", bookingNo);
 			handleRSSubmitFeeback(waterTankerRequest);
 		}
 	    
-	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_REJECTED_BY_VENDOR)) {
+	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null && 
+	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_REJECTED_BY_VENDOR)) {
+	    	log.info("Processing rejection by vendor for booking no: {}", bookingNo);
 			handleRejectedByVendor(waterTankerRequest);
 		}
 	    
@@ -212,6 +216,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	}
 	
 	private void handleRSSubmitFeeback(WaterTankerBookingRequest waterTankerRequest) {
+		 log.info("Handling water tanker Submit Feedback for request: {}", waterTankerRequest);
 		User citizen = waterTankerRequest.getRequestInfo().getUserInfo();
 		if (!citizen.getUuid().equalsIgnoreCase(waterTankerRequest.getRequestInfo().getUserInfo().getUuid())) {
 			throw new CustomException("Rating Error",
@@ -231,6 +236,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	}
 	
 	private void handleRejectedByVendor(WaterTankerBookingRequest waterTankerRequest) {
+		 log.info("Handling rejected by vendor for request: {}", waterTankerRequest);
 		WaterTankerBookingDetail tankerRequest = waterTankerRequest.getWaterTankerBookingDetail();
 		tankerRequest.setVendorId(null);
 		
