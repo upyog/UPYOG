@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.util.CalculationTypeCache;
+import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.util.MdmsUtil;
 import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CalculationType;
@@ -41,7 +42,7 @@ public class CalculationService {
 	 */
 	public List<DemandDetail> calculateDemand(CommunityHallBookingRequest bookingRequest) {
 
-		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
+		String tenantId = CommunityHallBookingUtil.getTenantId(bookingRequest.getHallsBookingApplication().getTenantId());
 		
 		List<TaxHeadMaster> headMasters = mdmsUtil.getTaxHeadMasterList(bookingRequest.getRequestInfo(), tenantId , CommunityHallBookingConstants.BILLING_SERVICE);
 		

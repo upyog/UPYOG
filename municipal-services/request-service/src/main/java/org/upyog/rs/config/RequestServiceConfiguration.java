@@ -68,6 +68,13 @@ public class RequestServiceConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 
+	// User config
+	@Value("${egov.user.host}")
+	private String userHost;
+
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
+
 	@Value("${egov.user.create.path}")
 	private String userCreateEndpoint;
 
@@ -150,10 +157,6 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
-
-	// User Config
-	@Value("${egov.user.host}")
-	private String userHost;
 
 	// USER EVENTS
 	@Value("${egov.ui.app.host}")

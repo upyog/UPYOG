@@ -177,10 +177,7 @@ const OwnerForm = (_props) => {
 
 
     const handleSelect = (value) => {
-        console.log('value :-', value)
-        console.log('value.code :-', value.code);
-        console.log('Setting isWarrantyExpired to:', value.code === 'IN_WARRANTY');
-        console.log('Setting isAMCExpired to:', value.code === 'IN_AMC');
+       
         switch (value.code) {
 
             case 'IN_WARRANTY':

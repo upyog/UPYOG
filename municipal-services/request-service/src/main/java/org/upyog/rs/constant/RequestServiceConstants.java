@@ -7,6 +7,8 @@ public class RequestServiceConstants {
 	public static final String BOOKING_DETAIL_FOUND = "Your Water Tanker booking searched successfully";
 
 	public static final String CITIZEN = "CITIZEN";
+	
+	public static final String CITIZEN_NAME = "Citizen";
 
 	public static final String RS_APPLICANT_DETAIL_ENCRYPTION_KEY = "RSApplicantDetail";
 

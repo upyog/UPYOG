@@ -22,7 +22,6 @@ import { configWTApproverApplication } from "../config/WTApproverApplication";
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
-
 // Close component - renders an SVG icon representing a "close" button (X icon).
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -66,7 +65,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   let vendorDescription = [];
   dsoData?.vendor?.map((item) => {
     if (item?.additionalDetails?.description === "WT") {
-      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name });
+      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name, vendorId: item?.id});
     }
   });
 
@@ -85,7 +84,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   
   let vehicleDescription = [];
   vehicleData?.vehicle?.map((item) => {
-    vehicleDescription.push({ code: item?.registrationNumber, name: item?.registrationNumber, i18nKey: item?.registrationNumber,tankerCapacity:item?.tankCapacity });
+    vehicleDescription.push({
+      code: item?.registrationNumber,
+      name: item?.registrationNumber,
+      i18nKey: item?.registrationNumber,
+      tankerCapacity: item?.tankCapacity,
+      vehicleId: item?.id,
+    });
   });
 
   const [config, setConfig] = useState({});
@@ -94,8 +99,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
-  const [selectedApprover, setSelectedApprover] = useState(null); 
-  const [selectVehicle, setSelectVehicle] = useState(null); 
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [selectVehicle, setSelectVehicle] = useState(null);
 
 
   useEffect(() => {
@@ -139,6 +144,14 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           fileStoreId: uploadedFile,
         },
       ];
+    if (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN") {
+      applicationData.vendorId = selectedVendor?.vendorId;
+    };
+
+    if (action?.state === "DELIVERY_PENDING") {
+      applicationData.vehicleId = selectVehicle?.vehicleId;
+    };
+
     submitAction({
         waterTankerBookingDetail: 
           {
@@ -158,8 +171,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           selectFile,
           uploadedFile,
           setUploadedFile,
-          selectedApprover,
-          setSelectedApprover,
+          selectedVendor,
+          setSelectedVendor,
           vendorDescription: dsoData ? vendorDescription : undefined,
           vehicleDescription: vehicleData ? vehicleDescription : undefined, 
           selectVehicle,
