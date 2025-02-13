@@ -9,7 +9,8 @@ import {
     TextArea,
     Dropdown,
     CheckBox,
-    UploadFile
+    UploadFile,
+    InfoBannerIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -270,7 +271,52 @@ const OwnerForm = (_props) => {
 
         return `${years} years, ${months} months, ${days} days`;
     };
-
+    const Tooltip = ({ message, children }) => {
+        return (
+            <div
+                style={{
+                    position: "relative",
+                    display: "inline-block",
+                }}
+                onMouseEnter={(e) => {
+                    const tooltip = e.currentTarget.querySelector(".tooltiptext");
+                    tooltip.style.visibility = "visible";
+                    tooltip.style.opacity = 1;
+                }}
+                onMouseLeave={(e) => {
+                    const tooltip = e.currentTarget.querySelector(".tooltiptext");
+                    tooltip.style.visibility = "hidden";
+                    tooltip.style.opacity = 0;
+                }}
+            >
+                {children}
+                <span
+                    style={{
+                        visibility: "hidden",
+                        position: "absolute",
+                        backgroundColor: "#555",
+                        color: "#fff",
+                        textAlign: "center",
+                        borderRadius: "4px",
+                        padding: "5px",
+                        fontSize: "small",
+                        wordWrap: "break-word",
+                        width: "300px",
+                        top: "100%",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        marginTop: "5px",
+                        zIndex: "1",
+                        opacity: 0,
+                        transition: "opacity 0.3s ease-in-out",
+                    }}
+                    className="tooltiptext"
+                >
+                    {message}
+                </span>
+            </div>
+        );
+    };
     return (
         <React.Fragment>
             <div style={{ marginBottom: "16px" }}>
@@ -336,7 +382,13 @@ const OwnerForm = (_props) => {
 
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_REASON_DISPOSAL")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_REASON_DISPOSAL")}
+                        <Tooltip message={t("TOOLTIP_AST_REASON_DISPOSAL")}>
+                            <div style={{ marginLeft: "8px"}}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer"}} />
+                            </div>
+                            </Tooltip>
+                            </CardLabel>
                         <Controller
                             control={control}
                             name={"reasonForDisposal"}
@@ -420,7 +472,13 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_DISPOSAL_CODE")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_DISPOSAL_CODE")}
+                        <Tooltip message={t("TOOLTIP_AST_DISPOSAL_CODE")}>
+                            <div style={{ marginLeft: "8px"}}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer"}} />
+                            </div>
+                            </Tooltip>
+                        </CardLabel>
                         <div className="field" style={{ marginTop: "20px", marginBottom: "20px" }}>
                             <Controller
                                 control={control}
@@ -448,7 +506,13 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller">{t("AST_DISPOSE_RECIPT")}</CardLabel>
+                        <CardLabel className="card-label-smaller">{t("AST_DISPOSE_RECIPT")}
+                        <Tooltip message={t("TOOLTIP_AST_DISPOSE_RECIPT")}>
+                            <div style={{ marginLeft: "8px"}}>
+                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer"}} />
+                            </div>
+                            </Tooltip>
+                        </CardLabel>
                         <div className="field">
                             <Controller
                                 control={control}
