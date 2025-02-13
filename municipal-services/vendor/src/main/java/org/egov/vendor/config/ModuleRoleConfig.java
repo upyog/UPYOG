@@ -13,6 +13,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.vendor.util.VendorConstants;
 import org.egov.vendor.util.VendorUtil;
 import org.egov.vendor.web.model.user.ModuleRoleMapping;
+import org.egov.vendor.web.model.user.ModuleRoleMapping.MappingType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -49,8 +50,7 @@ public class ModuleRoleConfig {
 
         ModuleRoleMapping roleMapping = moduleRoleMap.get(moduleRoleMappingKey);
         if (roleMapping == null) {
-            throw new CustomException("INVALID_MODULE_ROLE_MAPPING",
-                    "Module Role Mapping not found for: " + moduleRoleMappingKey);
+        	roleMapping = moduleRoleMap.get(ModuleRoleMapping.builder().type(MappingType.VENDOR).moduleName("COMMON").build());
         }
         return roleMapping;
     }
