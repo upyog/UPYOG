@@ -111,6 +111,14 @@
                       "action": "ASSIGN_VENDOR",
                       "active": true,
                       "nextState": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN"
+                    },
+                    {
+                      "roles": [
+                        "WT_CEMP"
+                      ],
+                      "action": "REASSIGN_VENDOR",
+                      "active": true,
+                      "nextState": "PENDING_FOR_VEHICLE_DRIVER_ASSIGN"
                     }
                   ],
                   "isStartState": false,
@@ -130,8 +138,17 @@
                       "action": "ASSIGN_VEHICLE_DRIVER",
                       "active": true,
                       "nextState": "DELIVERY_PENDING"
+                    },
+                    {
+                      "roles": [
+                        "WT_VENDOR"
+                      ],
+                      "action": "REJECT",
+                      "active": true,
+                      "nextState": "ASSIGN_VENDOR"
                     }
                   ],
+                  
                   "isStartState": false,
                   "isStateUpdatable": true,
                   "isTerminateState": false,
@@ -148,13 +165,33 @@
                       ],
                       "action": "COMPLETE_REQUEST",
                       "active": true,
-                      "nextState": "DELIVERED"
+                      "nextState": "CITIZEN_FEEDBACK_PENDING"
                     }
                   ],
                   "isStartState": false,
                   "isStateUpdatable": true,
                   "isTerminateState": false,
                   "applicationStatus": "IN_TRANSIT",
+                  "docUploadRequired": false
+                },
+
+                {
+                  "sla": "",
+                  "state": "CITIZEN_FEEDBACK_PENDING",
+                  "actions": [
+                    {
+                      "roles": [
+                        "CITIZEN"
+                      ],
+                      "action": "RATE",
+                      "active": true,
+                      "nextState": "DELIVERED"
+                    }
+                  ],
+                  "isStartState": false,
+                  "isStateUpdatable": true,
+                  "isTerminateState": false,
+                  "applicationStatus": "CITIZEN_FEEDBACK_PENDING",
                   "docUploadRequired": false
                 },
                 {
