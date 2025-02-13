@@ -88,19 +88,19 @@ public class PGRQueryBuilder {
 			}
 		} else {
 			if (criteria.getTenantId() != null) {
-//				String tenantId = criteria.getTenantId();
-//
-//				String[] tenantIdChunks = tenantId.split("\\.");
-//
-//				if (tenantIdChunks.length == 1) {
-//					addClauseIfRequired(preparedStmtList, builder);
-//					builder.append(" ser.tenantid LIKE ? ");
-//					preparedStmtList.add(criteria.getTenantId() + '%');
-//				} else {
+				String tenantId = criteria.getTenantId();
+
+				String[] tenantIdChunks = tenantId.split("\\.");
+
+				if (tenantIdChunks.length == 1) {
+					addClauseIfRequired(preparedStmtList, builder);
+					builder.append(" ser.tenantid LIKE ? ");
+					preparedStmtList.add(criteria.getTenantId() + '%');
+				} else {
 					addClauseIfRequired(preparedStmtList, builder);
 					builder.append(" ser.tenantid=? ");
 					preparedStmtList.add(criteria.getTenantId());
-//				}
+				}
 			}
 		}
 		Set<String> serviceCodes = criteria.getServiceCode();
