@@ -158,7 +158,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
                   onTabChange("VENDOR");
                 }}
               >
-                {t("ES_VENDOR_REGISTRY_INBOX_TAB_VENDOR")}
+                {t("ES_FSM_REGISTRY_INBOX_TAB_VENDOR")}
               </button>
               <button
                 className={selectedTab === "VEHICLE" ? "search-tab-head-selected" : "search-tab-head"}

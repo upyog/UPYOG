@@ -10,6 +10,7 @@ import { ToggleSwitch } from "@nudmcdgnpm/digit-ui-react-components";
 //import RegistrySearch from "./RegistrySearch";
 import RegistredVendorSearch from "./RegisteredVendorSearch";
 import { useQueryClient } from "react-query";
+import { add } from "lodash";
 
 const VendorInbox = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -329,11 +330,7 @@ const VendorInbox = (props) => {
             Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
             disableSortBy: true,
             Cell: ({ row }) => {
-              console.log("before addressssss", row.original.dsoDetails);
-              
-              let additionalDetails = row.original.dsoDetails?.additionalDetails;
-              
-              
+              let additionalDetails = row.original.dsoDetails?.additionalDetails;      
               if (typeof additionalDetails === "string") {
                 try {
                   additionalDetails = JSON.parse(additionalDetails);
@@ -343,12 +340,10 @@ const VendorInbox = (props) => {
                 }
               }
           
-              const description = additionalDetails?.description || "N/A"; // Safe access to description
-              console.log("Service Type (Description):", description);
-          
+              const serviceType = additionalDetails?.serviceType || "N/A"; // Safe access to description
               return (
                 <div>
-                  {description}
+                  {serviceType}
                 </div>
               );
             },
@@ -394,13 +389,6 @@ const VendorInbox = (props) => {
           //     );
           //   },
           // },
-
-
-
-
-
-
-
 
           // {
           //   Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
@@ -589,7 +577,24 @@ const VendorInbox = (props) => {
             Header: t("ES_FSM_REGISTRY_INBOX_VENDOR_NAME"),
             disableSortBy: true,
             Cell: ({ row }) => GetCell(row.original?.vendor?.name || "NA"),
-          },          
+          },  
+          
+          {
+            Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
+            disableSortBy: true,
+            Cell: ({ row }) => {
+              let additionalDetails = row.original?.additionalDetails;
+              console.log("service typeeeeee", additionalDetails?.serviceType)
+
+              const servicetype = additionalDetails?.serviceType || "N/A"; // Safe access to description
+          
+              return (
+                <div>
+                  {servicetype}
+                </div>
+              );
+            },
+          },
 
           //enabled
           {
