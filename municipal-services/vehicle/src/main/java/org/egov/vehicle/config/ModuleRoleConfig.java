@@ -53,7 +53,7 @@ public class ModuleRoleConfig {
         if (roleMapping == null) {
         	
         	roleMapping = moduleRoleMap.get(ModuleRoleMapping.builder().type(MappingType.DRIVER).moduleName("COMMON").build());
-                log.info("Module Role Mapping not found for: " + moduleRoleMappingKey);
+                
         }
         return roleMapping;
     }
