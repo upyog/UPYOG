@@ -96,7 +96,7 @@ public class PGRService {
 
         enrichmentService.enrichSearchRequest(requestInfo, criteria);
 
-        if(criteria.isEmpty() && !criteria.getIsAllRecord())
+        if(criteria.isEmpty())
             return new ArrayList<>();
 
         if(criteria.getMobileNumber()!=null && CollectionUtils.isEmpty(criteria.getUserIds()))
