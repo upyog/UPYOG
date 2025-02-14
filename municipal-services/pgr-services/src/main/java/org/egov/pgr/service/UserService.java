@@ -96,7 +96,7 @@ public class UserService {
         	log.info("in update user");
         	log.info("User response in search"+userDetailResponse.getUser().get(0));
             User userFromSearch = userDetailResponse.getUser().get(0);
-            if(!user.getName().equalsIgnoreCase(userFromSearch.getName()) || !user.getEmailId().equalsIgnoreCase(userFromSearch.getEmailId())){
+            if(!user.getName().equalsIgnoreCase(userFromSearch.getName())){
             	log.info("Update user");
 
                 userServiceResponse = updateUser(request.getRequestInfo(),user,userFromSearch);
