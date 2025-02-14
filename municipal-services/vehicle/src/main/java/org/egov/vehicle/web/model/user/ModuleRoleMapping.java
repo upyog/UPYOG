@@ -11,7 +11,7 @@ import lombok.*;
 @ToString
 public class ModuleRoleMapping {
     public enum MappingType{
-        VENDOR, VEHICLE, DRIVER
+        DRIVER
     }
     private MappingType type;
 

@@ -45,7 +45,7 @@ public class ModuleRoleConfig {
     public ModuleRoleMapping getRoleMappingForModule(RequestInfo requestInfo, String tenantId, ModuleRoleMapping moduleRoleMappingKey) {
         log.info("moduleRoleMappingKey : {}", moduleRoleMappingKey);
         if (moduleRoleMap == null) {
-            loadVendorRoleMappingMasterData(requestInfo, VehicleUtil.getTenantId(tenantId));
+            loadVendorRoleMappingMasterData(requestInfo, VehicleUtil.extractTenantId(tenantId));
         }
 
         ModuleRoleMapping roleMapping = moduleRoleMap.get(moduleRoleMappingKey);
@@ -71,8 +71,8 @@ public class ModuleRoleConfig {
         MdmsResponse mdmsResponse = mapper.convertValue(mdmsData, MdmsResponse.class);
 
         if (mdmsResponse.getMdmsRes().get(Constants.VENDOR_MODULE) == null) {
-            throw new CustomException("VEHICLE_MASTER_DATA_NOT_AVAILABLE",
-                    "Vehicle master data is missing in the response.");
+            throw new CustomException("DRIVER_MASTER_DATA_NOT_AVAILABLE",
+                    "Driver master data is missing in the response.");
         }
 
         List<ModuleRoleMapping> moduleRoleMappings = new ArrayList<>();

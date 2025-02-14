@@ -213,7 +213,7 @@ public class VehicleUtil {
 	 * @return Extracted primary tenant ID
 	 * @throws CustomException If tenant ID is invalid
 	 */
-	private static String extractTenantId(String tenantId) {
+	public static String extractTenantId(String tenantId) {
 		String[] tenantParts = tenantId.split("\\.");
 		if (tenantParts.length == 1) {
 			throw new CustomException("INVALID_TENANT_ID", "Application cannot be created at the State Level.");
@@ -223,20 +223,15 @@ public class VehicleUtil {
 
 	
 	/**
-	 * Validates if the driver request and its driver details are not null.
+	 * Validates if the vehicle request and its vehicle details are not null.
 	 *
-	 * @param driverRequest Driver request object
-	 * @throws CustomException if driver request or driver details are missing
+	 * @param vehicleRequest vehicle request object
+	 * @throws CustomException if vehicle request or driver details are missing
 	 */
 	private static void validateVehicleRequest(VehicleRequest vehicleRequest) {
 		if (vehicleRequest == null || vehicleRequest.getVehicle() == null) {
-			//TODO: change message
-			throw new CustomException("INVALID_DRIVER_REQUEST", "Driver request or driver details are missing.");
+			throw new CustomException("INVALID_VEHICLE_REQUEST", "vehicle request or driver details are missing.");
 		}
 	}
-	public static String getTenantId(String tenantId) {
-        return tenantId.split("\\.")[0];
-    }
-
 
 }
