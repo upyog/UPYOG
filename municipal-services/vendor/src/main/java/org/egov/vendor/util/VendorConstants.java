@@ -63,6 +63,6 @@ public class VendorConstants {
 	public static final String DISABLED = "DISABLED";
 	public static final String FSM_DRIVER = "FSM_DRIVER";
 
-	public static final String ADDITIONAL_DETAILS_DESCRIPTION = "description";
+	public static final String ADDITIONAL_DETAILS_DESCRIPTION = "serviceType";
 
 }
