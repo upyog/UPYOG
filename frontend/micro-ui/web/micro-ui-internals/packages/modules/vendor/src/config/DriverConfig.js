@@ -40,6 +40,23 @@ const DriverConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
           },
         },
+        {
+          label: "ES_VENDOR_REGISTRY_SERVICE_TYPE",
+          isMandatory: true,
+          type: "component",
+          route: "select-service",
+          hideInEmployee: false,
+          key: "additionalDetails",
+          component: "SelectServiceType",
+          disable: disabled,
+          texts: {
+            headerCaption: "",
+            header: "CS_COMMON_CHOOSE_GENDER",
+            cardText: "CS_COMMON_SELECT_GENDER",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
+          },
+        },
       ],
     },
     {

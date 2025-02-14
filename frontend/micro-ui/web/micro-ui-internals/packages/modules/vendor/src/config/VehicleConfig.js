@@ -24,9 +24,28 @@ const VehicleConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
           },
         },
+
+        {
+          label: "ES_VENDOR_REGISTRY_SERVICE_TYPE",
+          isMandatory: true,
+          type: "component",
+          route: "select-service",
+          hideInEmployee: false,
+          key: "additionalDetails",
+          component: "SelectServiceType",
+          disable: disabled,
+          texts: {
+            headerCaption: "",
+            header: "CS_COMMON_CHOOSE_SERVICE",
+            cardText: "CS_COMMON_SELECT_SERVICE",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
+          },
+        },
+        
         {
           route: "vehicle",
-          component: "SelectVehicle",
+          component: "SelectVehicleType",
           withoutLabel: true,
           key: "vehicle",
           isMandatory: true,
@@ -163,17 +182,7 @@ const VehicleConfig = (t, disabled = false) => {
             defaultValue: "",
             className: "payment-form-text-input-correction",
           },
-        },
-        {
-          label: "ES_FSM_REGISTRY_NEW_VENDOR_ADDITIONAL_DETAILS",
-          isMandatory: false,
-          type: "textarea",
-          key: "additionalDetails",
-          populators: {
-            name: "additionalDetails",
-            className: "payment-form-text-input-correction",
-          },
-        },
+        }
       ],
     },
   ];

@@ -26,6 +26,7 @@ import CheckPage from "./pages/employee/Create/CheckPage";
 import NewResponse from "./pages/employee/Create/NewResponse";
 import DriverDetails from "./pages/employee/RegisterDriver/DriverDetails";
 import VehicleDetails from "./pages/employee/RegisterVehicle/VehicleDetails";
+import SelectVehicleType from "./pageComponents/SelectVehicleType";
 
 
 
@@ -46,6 +47,7 @@ const componentsToRegister = {
   SearchApp,
   SearchVendor,
   SelectServiceType,
+  SelectVehicleType,
   AddDriver,
   EditVendorDetails,
   AddVehicle,

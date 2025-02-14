@@ -84,7 +84,7 @@ const AddVehicle = ({ parentUrl, heading }) => {
     const fitnessValidity = new Date(`${data?.fitnessValidity}`).getTime();
     const ownerName = data?.ownerName;
     const phone = data?.phone;
-    const additionalDetails = data?.additionalDetails;
+    const additionalDetails = data?.additionalDetails?.code;
     const gender = data?.selectGender?.code;
     const emailId = data?.emailId;
     const dob = new Date(`${data.dob}`).getTime() || new Date(`1/1/1970`).getTime();
@@ -118,7 +118,7 @@ const AddVehicle = ({ parentUrl, heading }) => {
           emailId: emailId || "abc@egov.com",
         },
         additionalDetails: {
-          description: additionalDetails,
+          serviceType: additionalDetails,
         },
       },
     };
