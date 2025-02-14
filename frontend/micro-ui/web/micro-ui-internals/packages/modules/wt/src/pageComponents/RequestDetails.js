@@ -176,7 +176,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
         config={config}
         onSelect={goNext}
         t={t}
-        isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description || !extraCharge}
+        isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description }
       >
         <div>
           <CardLabel>{`${t("WT_TANKER_TYPE")}`} <span className="astericColor">*</span></CardLabel>

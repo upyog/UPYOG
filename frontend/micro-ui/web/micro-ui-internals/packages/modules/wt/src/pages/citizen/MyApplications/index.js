@@ -48,8 +48,8 @@ export const WTMyApplications = () => {
   }
 
   let initialFilters = !isNaN(parseInt(filter))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId };
+    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId, MobileNumber:user?.mobileNumber }
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId ,MobileNumber:user?.mobileNumber };
 
   useEffect(() => {
     setFilters(initialFilters);
@@ -75,11 +75,11 @@ export const WTMyApplications = () => {
   }
 
   const statusOptions = [
-    { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-    { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
-    { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
-    { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
-    { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
+    { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
+    { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
+    { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
+    { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
+    { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
   ];
 
   const filteredApplications = data?.waterTankerBookingDetail || [];
