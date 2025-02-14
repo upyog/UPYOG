@@ -15,6 +15,8 @@ import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.service.RequestServiceNotificationService;
 import org.upyog.rs.util.NotificationUtil;
 import org.upyog.rs.web.models.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.events.Action;
+import org.upyog.rs.web.models.events.ActionItem;
 import org.upyog.rs.web.models.events.Event;
 import org.upyog.rs.web.models.events.EventRequest;
 import org.upyog.rs.web.models.events.Recepient;
@@ -38,14 +40,18 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 	private ServiceRequestRepository serviceRequestRepository;
 
 	public void process(WaterTankerBookingRequest request) {
-		EventRequest eventRequest = getEventsForRS(request);
+		Map<String, String> messageMap = null;
+		String localizationMessages = util.getLocalizationMessages(request.getWaterTankerBookingDetail().getTenantId(), request.getRequestInfo());
+		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
+				localizationMessages);
+		EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK));
 		log.info("Event Request in RequestService process method" + eventRequest.toString());
 		if (null != eventRequest)
 			util.sendEventNotification(eventRequest);
 
 	}
 
-	private EventRequest getEventsForRS(WaterTankerBookingRequest request) {
+	private EventRequest getEventsForRS(WaterTankerBookingRequest request, String actionLink) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getWaterTankerBookingDetail().getTenantId();
@@ -60,16 +66,27 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		Map<String, String> message = null;
-		message = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
+		Map<String, String> messageMap = new HashMap<String, String>();
+		String  message = null;
+		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
 				localizationMessages);
+		message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
 		log.info("Message for event in RequestService:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in RequestService:" + recepient.toString());
+		
+		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
+		List<ActionItem> actionItems = new ArrayList<>();
+		actionItems.add(actionItem);
+		
+		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
+				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT ).build();
+		
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
 				.name(RequestServiceConstants.USREVENTS_EVENT_NAME)
 				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+				.actions(action)
 				.eventDetails(null).actions(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
