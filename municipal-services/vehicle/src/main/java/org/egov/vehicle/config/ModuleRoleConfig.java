@@ -1,4 +1,4 @@
-package org.egov.vendor.config;
+package org.egov.vehicle.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,10 +10,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
-import org.egov.vendor.util.VendorConstants;
-import org.egov.vendor.util.VendorUtil;
-import org.egov.vendor.web.model.user.ModuleRoleMapping;
-import org.egov.vendor.web.model.user.ModuleRoleMapping.MappingType;
+import org.egov.vehicle.util.Constants;
+import org.egov.vehicle.util.VehicleUtil;
+import org.egov.vehicle.web.model.user.ModuleRoleMapping;
+import org.egov.vehicle.web.model.user.ModuleRoleMapping.MappingType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class ModuleRoleConfig {
 
     @Autowired
-    private VendorUtil util;
+    private VehicleUtil util;
 
     @Autowired
     private ObjectMapper mapper;
@@ -45,12 +45,15 @@ public class ModuleRoleConfig {
     public ModuleRoleMapping getRoleMappingForModule(RequestInfo requestInfo, String tenantId, ModuleRoleMapping moduleRoleMappingKey) {
         log.info("moduleRoleMappingKey : {}", moduleRoleMappingKey);
         if (moduleRoleMap == null) {
-            loadVendorRoleMappingMasterData(requestInfo, tenantId);
+            loadVendorRoleMappingMasterData(requestInfo, VehicleUtil.extractTenantId(tenantId));
         }
 
         ModuleRoleMapping roleMapping = moduleRoleMap.get(moduleRoleMappingKey);
+        
         if (roleMapping == null) {
-        	roleMapping = moduleRoleMap.get(ModuleRoleMapping.builder().type(MappingType.VENDOR).moduleName("COMMON").build());
+        	
+        	roleMapping = moduleRoleMap.get(ModuleRoleMapping.builder().type(MappingType.DRIVER).moduleName("COMMON").build());
+                
         }
         return roleMapping;
     }
@@ -67,18 +70,15 @@ public class ModuleRoleConfig {
         Object mdmsData = util.mDMSCall(requestInfo, tenantId, moduleDetailList);
         MdmsResponse mdmsResponse = mapper.convertValue(mdmsData, MdmsResponse.class);
 
-        if (mdmsResponse.getMdmsRes().get(VendorConstants.VENDOR_MODULE) == null) {
-            throw new CustomException("VENDOR_MASTER_DATA_NOT_AVAILABLE",
-                    "Vendor master data is missing in the response.");
+        if (mdmsResponse.getMdmsRes().get(Constants.VENDOR_MODULE) == null) {
+            throw new CustomException("DRIVER_MASTER_DATA_NOT_AVAILABLE",
+                    "Driver master data is missing in the response.");
         }
 
         List<ModuleRoleMapping> moduleRoleMappings = new ArrayList<>();
 
-        // Load Vendor Role Mappings
-        loadRoleMappings(mdmsResponse, VendorConstants.MODULE_VENDOR_ROLE_MAPPING, moduleRoleMappings,  "MODULE_VENDOR_ROLE_MAPPING", ModuleRoleMapping.MappingType.VENDOR);
-
         // Load Driver Role Mappings
-        loadRoleMappings(mdmsResponse, VendorConstants.MODULE_DRIVER_ROLE_MAPPING, moduleRoleMappings, "MODULE_DRIVER_ROLE_MAPPING", ModuleRoleMapping.MappingType.DRIVER);
+        loadRoleMappings(mdmsResponse, Constants.MODULE_DRIVER_ROLE_MAPPING, moduleRoleMappings, "MODULE_DRIVER_ROLE_MAPPING", ModuleRoleMapping.MappingType.DRIVER);
 
         // Handle potential duplicate keys using a merge function
         moduleRoleMap = moduleRoleMappings.stream()
@@ -100,7 +100,7 @@ public class ModuleRoleConfig {
      * @param mappingType        type of mapping vendor, driver
      */
     private void loadRoleMappings(MdmsResponse mdmsResponse, String mappingKey, List<ModuleRoleMapping> moduleRoleMappings, String logIdentifier, ModuleRoleMapping.MappingType mappingType) {
-        JSONArray jsonArray = mdmsResponse.getMdmsRes().get(VendorConstants.VENDOR_MODULE).get(mappingKey);
+        JSONArray jsonArray = mdmsResponse.getMdmsRes().get(Constants.VENDOR_MODULE).get(mappingKey);
 
         if (jsonArray == null) {
             throw new CustomException(mappingKey + "_ERROR",

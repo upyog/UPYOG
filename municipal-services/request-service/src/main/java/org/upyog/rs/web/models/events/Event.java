@@ -31,7 +31,7 @@ public class Event {
 	private String name;
 
 	@NotNull
-	private Map<String, String> description;
+	private String description;
 
 	private Status status;
 
