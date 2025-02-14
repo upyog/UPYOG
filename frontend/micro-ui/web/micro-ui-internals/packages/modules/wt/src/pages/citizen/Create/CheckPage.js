@@ -50,10 +50,6 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(owner?.mobileNumber))}`}
           />
           <Row
-              label={t("COMMON_BIRTH_DATE")}
-              text={`${t(checkForNA(owner?.dateOfBirth))}`}
-          />
-          <Row
               label={t("SV_GENDER")}
               text={`${t(checkForNA(owner?.gender?.code))}`}
           />
