@@ -22,6 +22,7 @@ import org.upyog.rs.service.WorkflowService;
 import org.upyog.rs.web.models.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.workflow.State;
 
 import digit.models.coremodels.PaymentRequest;
@@ -32,43 +33,44 @@ import lombok.extern.slf4j.Slf4j;
 public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Autowired
-	private EnrichmentService enrichmentService;
+	EnrichmentService enrichmentService;
 
 	@Autowired
-	private RequestServiceRepository requestServiceRepository;
+	RequestServiceRepository requestServiceRepository;
 
 	@Autowired
-	private WorkflowService workflowService;
+	WorkflowService workflowService;
 
 	@Autowired
 	DemandService demandService;
 	
 	@Autowired
 	RequestServiceConfiguration config;
-  
-	private DemandService demandService;
-
+	
 	@Autowired
 	private UserService userService;
-	
+
 	@Override
 	public WaterTankerBookingDetail createNewWaterTankerBookingRequest(WaterTankerBookingRequest waterTankerRequest) {
 
 		log.info("Create water tanker booking for user : " + waterTankerRequest.getRequestInfo().getUserInfo().getUuid()
 				+ " for the request : " + waterTankerRequest.getWaterTankerBookingDetail());
-// Get the uuid of User from user registry
+
+		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
+
+		workflowService.updateWorkflowStatus(null, waterTankerRequest);
+		
+		// Get the uuid of User from user registry
 		try {
 	        String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
+	        waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(uuid);
 	        log.info("Applicant or User Uuid: " + uuid);
 	    } catch (Exception e) {
 	        log.error("Error while creating user: " + e.getMessage(), e);
 	    }
-		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
-
-		workflowService.updateWorkflowStatus(null, waterTankerRequest);
-
+		
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
-
+		
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
 
 		return waterTankerDetail;
@@ -212,17 +214,25 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 	    // If no payment request, just update the water tanker booking request
 	    requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
 	    
-	    if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
+	    Workflow workflow = waterTankerRequest.getWaterTankerBookingDetail().getWorkflow();
+	    
+	    if (workflow != null && 
+	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
+	    	log.info("Processing feedback submission for booking no: {}", bookingNo);
 			handleRSSubmitFeeback(waterTankerRequest);
 		}
-
-
-
-
+	    
+	    if (workflow != null && 
+	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_REJECTED_BY_VENDOR)) {
+	    	log.info("Processing rejection by vendor for booking no: {}", bookingNo);
+			handleRejectedByVendor(waterTankerRequest);
+		}
+	    
 	    return waterTankerRequest.getWaterTankerBookingDetail();
 	}
 	
 	private void handleRSSubmitFeeback(WaterTankerBookingRequest waterTankerRequest) {
+		 log.info("Handling water tanker Submit Feedback for request: {}", waterTankerRequest);
 		User citizen = waterTankerRequest.getRequestInfo().getUserInfo();
 		if (!citizen.getUuid().equalsIgnoreCase(waterTankerRequest.getRequestInfo().getUserInfo().getUuid())) {
 			throw new CustomException("Rating Error",
@@ -239,6 +249,18 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		}
 		
 
+	}
+	
+	private void handleRejectedByVendor(WaterTankerBookingRequest waterTankerRequest) {
+		 log.info("Handling rejected by vendor for request: {}", waterTankerRequest);
+		WaterTankerBookingDetail tankerRequest = waterTankerRequest.getWaterTankerBookingDetail();
+		tankerRequest.setVendorId(null);
+		
+		org.upyog.rs.web.models.Workflow workflow = tankerRequest.getWorkflow();
+		if ((StringUtils.isBlank(workflow.getComments()))){
+			throw new CustomException("",
+					" Comment is mandatory to reject the request for vendor.");
+		}
 	}
 	
 	

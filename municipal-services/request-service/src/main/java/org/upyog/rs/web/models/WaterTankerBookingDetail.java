@@ -47,6 +47,8 @@ public class WaterTankerBookingDetail {
 	private int waterQuantity;
 
 	private String description;
+	
+	private String applicantUuid;
 
 	@JsonFormat(pattern = RequestServiceUtil.DATE_FORMAT)
 	private LocalDate deliveryDate;
