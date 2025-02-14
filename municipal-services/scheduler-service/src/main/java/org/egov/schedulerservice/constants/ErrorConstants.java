@@ -14,6 +14,9 @@ public class ErrorConstants {
 	public static final String ERR_HTTP_CLIENT = "ERR_HTTP_CLIENT";
 	public static final String ERR_HTTP_CLIENT_MSG = "HTTP Client error occured.";
 
+	public static final String ERR_USER_SERVICE_ERROR = "ERR_USER_SERVICE_ERROR";
+	public static final String ERR_USER_SERVICE_ERROR_MSG = "Error occured in user service.";
+
 	public static final String ERR_GARBAGE_SERVICE_ERROR = "ERR_GARBAGE_SERVICE_ERROR";
 	public static final String ERR_GARBAGE_SERVICE_ERROR_MSG = "Error occured in garbage service.";
 
@@ -22,5 +25,8 @@ public class ErrorConstants {
 
 	public static final String ERR_PROPERTY_SERVICE_ERROR = "ERR_PROPERTY_SERVICE_ERROR";
 	public static final String ERR_PROPERTY_SERVICE_ERROR_MSG = "Error occured in property service.";
+
+	public static final String ERR_PGR_SERVICE_ERROR = "ERR_PGR_SERVICE_ERROR";
+	public static final String ERR_PGR_SERVICE_ERROR_MSG = "Error occured in PGR service.";
 
 }
