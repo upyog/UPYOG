@@ -31,7 +31,7 @@ const VehicleConfig = (t, disabled = false) => {
           type: "component",
           route: "select-service",
           hideInEmployee: false,
-          key: "serviceType",
+          key: "additionalDetails",
           component: "SelectServiceType",
           disable: disabled,
           texts: {

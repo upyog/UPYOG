@@ -579,22 +579,60 @@ const VendorInbox = (props) => {
             Cell: ({ row }) => GetCell(row.original?.vendor?.name || "NA"),
           },  
           
+          // {
+          //   Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
+          //   disableSortBy: true,
+          //   Cell: ({ row }) => {
+
+          //     let additionalDetails = row.original.additionalDetails;  
+          //     console.log("additonal detailssss", additionalDetails)   
+          //     if (typeof additionalDetails === "string") {
+          //       try {
+          //         additionalDetails = JSON.parse(additionalDetails);
+          //       } catch (error) {
+          //         console.error("Error parsing additionalDetails:", error);
+          //         additionalDetails = {}; // Fallback to an empty object if parsing fails
+          //       }
+          //     }
+
+          //     let servicetyee = additionalDetails.serviceType || "N/A";
+          //     //const serviceType = additionalDetails?.serviceType || "N/A";
+          //     console.log("servicee type", servicetyee)
+          //     return (
+          //       <div>
+          //        {servicetyee}
+          //       </div>
+          //     );
+          //   },
+          // },
+
+
           {
             Header: t("ES_VENDOR_INBOX_SERVICE_TYPE"),
             disableSortBy: true,
             Cell: ({ row }) => {
-              let additionalDetails = row.original?.additionalDetails;
-              console.log("service typeeeeee", additionalDetails?.serviceType)
-
-              const servicetype = additionalDetails?.serviceType || "N/A"; // Safe access to description
           
+              let additionalDetail = row.original.additionalDetails
+              if (typeof additionalDetail === "string") {
+                try {
+                  additionalDetail = JSON.parse(additionalDetail);
+                } catch (error) {
+                  console.error("Error parsing additionalDetails:", error);
+                  additionalDetail = {}; // Fallback to an empty object if parsing fails
+                }
+              }
+          
+              const serviceType = additionalDetail?.serviceType || "N/A"; // Safe access to description
+              console.log("sericvee", serviceType)
               return (
                 <div>
-                  {servicetype}
+                  {serviceType}
                 </div>
               );
             },
           },
+
+          
 
           //enabled
           {

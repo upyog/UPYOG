@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { CardLabel, Dropdown, LabelFieldPair, TextInput, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
@@ -7,14 +7,11 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
 
   // Fetch Vehicle Data
   const { data: vehicleData, isLoading: vehicleLoading } = Digit.Hooks.fsm.useMDMS(stateId, "Vehicle", "VehicleMakeModel");
-  console.log("vehicleData",vehicleData)
 
   // Fetch Service Type Data
   const { data: serviceTypeData, isLoading: serviceLoading } = Digit.Hooks.useCustomMDMS(tenantId, "tenant", [{ name: "citymodule" }], {
     select: (data) => data?.tenant?.citymodule,
   });
-
-  console.log("serviceTypeData",serviceTypeData)
 
   const [serviceTypeFilters, setServiceTypeFilters] = useState({});
   const [modals, setModals] = useState([]);
@@ -24,51 +21,53 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
   const [selectedCapacity, setSelectedCapacity] = useState("");
 
   // Get selected service type from formData
-  const selectedServiceType = formData?.serviceType?.code;
+  const selectedServiceType = formData?.additionalDetails?.code;
 
-  // Dynamically build the Service Type - Vehicle Model mapping
-  useEffect(() => {
-    if (serviceTypeData && vehicleData) {
-      const filters = {};
-
-      // Example logic: You can update this based on actual data relationships
-      serviceTypeData.forEach(service => {
-        if (service.code === "WT") {
-          filters[service.code] = ["TANKER"];
-        } else if (service.code === "FSM") {
-          filters[service.code] = vehicleData
-            .filter(vehicle => ["MAHINDRA", "TATA", "TRACTOR", "TAFE", "SONALIKA"].includes(vehicle.code))
-            .map(vehicle => vehicle.code);
-        }
-      });
-
-      setServiceTypeFilters(filters);
-    }
+  // Memoize the service type filters
+  const memoizedServiceTypeFilters = useMemo(() => {
+    if (!serviceTypeData || !vehicleData) return {};
+    
+    const filters = {};
+    serviceTypeData.forEach(service => {
+      if (service.code === "WT") {
+        filters[service.code] = ["TANKER"];
+      } else if (service.code === "FSM") {
+        filters[service.code] = vehicleData
+          .filter(vehicle => ["MAHINDRA", "TATA", "TRACTOR", "TAFE", "SONALIKA"].includes(vehicle.code))
+          .map(vehicle => vehicle.code);
+      }
+    });
+    return filters;
   }, [serviceTypeData, vehicleData]);
 
-  //  Update the Model dropdown based on selected Service Type
+  // Update service type filters
   useEffect(() => {
-    if (vehicleData) {
-      const allowedModels = serviceTypeFilters[selectedServiceType] || [];
-      const filteredModals = vehicleData.filter(vehicle => allowedModels.includes(vehicle.code));
+    setServiceTypeFilters(memoizedServiceTypeFilters);
+  }, [memoizedServiceTypeFilters]);
 
-      setModals(filteredModals);
-      setSelectedModal({});
-      setTypes([]);
-      setSelectedType({});
-      setSelectedCapacity("");
-    }
+  // Update the Model dropdown based on selected Service Type
+  useEffect(() => {
+    if (!vehicleData) return;
+    
+    const allowedModels = serviceTypeFilters[selectedServiceType] || [];
+    const filteredModals = vehicleData.filter(vehicle => allowedModels.includes(vehicle.code));
+    
+    setModals(filteredModals);
+    setSelectedModal({});
+    setTypes([]);
+    setSelectedType({});
+    setSelectedCapacity("");
   }, [vehicleData, selectedServiceType, serviceTypeFilters]);
 
   // Update the Vehicle Type dropdown based on selected Model
   useEffect(() => {
-    if (vehicleData && selectedModal?.code) {
-      const filteredTypes = vehicleData.filter(vehicle => vehicle.make === selectedModal.code);
-      setTypes(filteredTypes);
-      setSelectedType({});
-      setSelectedCapacity("");
-    }
-  }, [selectedModal]);
+    if (!vehicleData || !selectedModal?.code) return;
+    
+    const filteredTypes = vehicleData.filter(vehicle => vehicle.make === selectedModal.code);
+    setTypes(filteredTypes);
+    setSelectedType({});
+    setSelectedCapacity("");
+  }, [selectedModal, vehicleData]);
 
   // Set the Capacity when a Type is selected
   useEffect(() => {
@@ -80,7 +79,7 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
   // Handler for selecting a Model
   const selectModal = (modal) => {
     setSelectedModal(modal);
-    onSelect(config.key, { ...formData[config.key], modal: modal, type: "" });
+    onSelect(config.key, { ...formData?.[config.key] || {}, modal: modal, type: "" });
   };
 
   // Handler for selecting a Vehicle Type
@@ -94,9 +93,12 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
     return <Loader />;
   }
 
+  if (!vehicleData || !serviceTypeData) {
+    return <div>{t("ERROR_FETCHING_DATA")}</div>;
+  }
+
   return (
     <div>
-      {/* Vehicle Model Dropdown (Filtered based on Service Type) */}
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
           {t("ES_FSM_REGISTRY_VEHICLE_MODEL")}
@@ -110,8 +112,7 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
           t={t}
         />
       </LabelFieldPair>
-
-      {/* Vehicle Type Dropdown (Filtered based on Model) */}
+{/* Vehicle Type Dropdown (Filtered based on Model) */}
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
           {t("ES_FSM_REGISTRY_VEHICLE_TYPE")}
@@ -125,8 +126,7 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
           t={t}
         />
       </LabelFieldPair>
-
-      {/* Vehicle Capacity Input (Set Automatically Based on Type) */}
+{/* Vehicle Capacity Input (Set Automatically Based on Type) */}
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
           {t("ES_FSM_REGISTRY_VEHICLE_CAPACITY")}

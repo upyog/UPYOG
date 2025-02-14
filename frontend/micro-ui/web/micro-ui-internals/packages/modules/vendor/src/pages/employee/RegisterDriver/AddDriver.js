@@ -60,13 +60,12 @@ const AddDriver = ({ parentUrl, heading }) => {
     const emailId = data?.emailId;
     // const phone = data?.phone;
     const dob = new Date(`${data.dob}`).getTime() || new Date(`1/1/1970`).getTime();
-    const additionalDetails = data?.additionalDetails;
+    const additionalDetails = data?.additionalDetails?.code
     const formData = {
       driver: {
         tenantId: tenantId,
         name: name,
         licenseNumber: license,
-        additionalDetails: additionalDetails,
         status: "ACTIVE",
         owner: {
           tenantId: stateId,
@@ -78,6 +77,10 @@ const AddDriver = ({ parentUrl, heading }) => {
           emailId: emailId || "abc@egov.com",
           // mobileNumber: phone,
         },
+        additionalDetails: {
+          serviceType: additionalDetails,
+        },
+
         vendorDriverStatus: "INACTIVE",
       },
     };
