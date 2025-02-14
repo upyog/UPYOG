@@ -59,16 +59,18 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
 
 		workflowService.updateWorkflowStatus(null, waterTankerRequest);
-
-		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
+		
 		// Get the uuid of User from user registry
-				try {
-			        String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
-			        log.info("Applicant or User Uuid: " + uuid);
-			    } catch (Exception e) {
-			        log.error("Error while creating user: " + e.getMessage(), e);
-			    }
-
+		try {
+	        String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
+	        waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(uuid);
+	        log.info("Applicant or User Uuid: " + uuid);
+	    } catch (Exception e) {
+	        log.error("Error while creating user: " + e.getMessage(), e);
+	    }
+		
+		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
+		
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
 
 		return waterTankerDetail;
