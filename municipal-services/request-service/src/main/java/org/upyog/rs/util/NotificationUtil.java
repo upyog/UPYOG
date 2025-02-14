@@ -399,6 +399,7 @@ public class NotificationUtil {
 		case ACTION_STATUS_APPROVE:
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPROVED, localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
+		//	link = getPayUrl(waterTankerDetail, message);
 			break;	
 			
 		case ACTION_STATUS_ASSIGN_VENDOR:
@@ -425,8 +426,14 @@ public class NotificationUtil {
 			messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_TANKERBOOKED,
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(waterTankerDetail, messageTemplate);
-			link = getPayUrl(waterTankerDetail);
 			break;
+		}
+		
+
+		if (message.contains("{PAY_LINK}")) {
+			 link = null;
+			 message = getPayUrl(waterTankerDetail, message);
+			 
 		}
 		
 		Map<String, String> messageMap = new HashMap<String, String>();
@@ -456,27 +463,39 @@ public class NotificationUtil {
      * @param waterTankerDetail
      * @return
      */
-	public String getPayUrl(WaterTankerBookingDetail waterTankerDetail) {
-	    String payLinkUrl= config.getUiAppHost() + config.getPayLinkSMS();
-
-	    String payLink = String.format(
-	        payLinkUrl, 
-	        waterTankerDetail.getBookingNo(),
-	        waterTankerDetail.getApplicantDetail().getMobileNumber(),
-	        waterTankerDetail.getTenantId(),
-	        config.getBusinessServiceName()
-	    );
-
-	    return getShortnerURL(payLink);
+	public String getPayUrl(WaterTankerBookingDetail waterTankerDetail, String message) {
+		String actionLink = config.getPayLink().replace("$mobile",  waterTankerDetail.getApplicantDetail().getMobileNumber())
+				.replace("$applicationNo", waterTankerDetail.getBookingNo()).replace("$tenantId", waterTankerDetail.getTenantId())
+				.replace("$businessService", config.getBusinessServiceName());
+		message = message.replace("{PAY_LINK}", getShortenedUrl(config.getUiAppHost() + actionLink));
+		
+	
+	    return message;
 	}
+	/**
+	 * Method to shortent the url returns the same url if shortening fails
+	 * 
+	 * @param url
+	 */
+	public String getShortenedUrl(String url) {
+		String res = null;
+		HashMap<String, String> body = new HashMap<>();
+		body.put("url", url);
+		StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
+		builder.append(config.getShortenerEndpoint());
+		try {
+			res = restTemplate.postForObject(builder.toString(), body, String.class);
 
-	private String getShortnerURL(String actualURL) {
-		net.minidev.json.JSONObject obj = new net.minidev.json.JSONObject();
-		obj.put(URL, actualURL);
-		String url = config.getUrlShortnerHost() + config.getShortenerEndpoint();
+		} catch (Exception e) {
+			log.error("Error while shortening the url: " + url, e);
 
-		Object response = serviceRequestRepository.getShorteningURL(new StringBuilder(url), obj);
-		return response.toString();
+		}
+		if (StringUtils.isEmpty(res)) {
+			log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
+			return url;
+		} else {
+			return res;
+		}
 	}
 
 }

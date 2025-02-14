@@ -44,14 +44,14 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 		String localizationMessages = util.getLocalizationMessages(request.getWaterTankerBookingDetail().getTenantId(), request.getRequestInfo());
 		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
 				localizationMessages);
-		EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK));
+		EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
 		log.info("Event Request in RequestService process method" + eventRequest.toString());
 		if (null != eventRequest)
 			util.sendEventNotification(eventRequest);
 
 	}
 
-	private EventRequest getEventsForRS(WaterTankerBookingRequest request, String actionLink) {
+	private EventRequest getEventsForRS(WaterTankerBookingRequest request, String actionLink, Map<String, String> messageMap) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getWaterTankerBookingDetail().getTenantId();
@@ -66,10 +66,10 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		Map<String, String> messageMap = new HashMap<String, String>();
+		//Map<String, String> messageMap = new HashMap<String, String>();
 		String  message = null;
-		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
-				localizationMessages);
+//		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
+//				localizationMessages);
 		message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
 		log.info("Message for event in RequestService:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
@@ -86,8 +86,8 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
 				.name(RequestServiceConstants.USREVENTS_EVENT_NAME)
 				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-				.actions(action)
-				.eventDetails(null).actions(null).build());
+				.actions(null)
+				.eventDetails(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();

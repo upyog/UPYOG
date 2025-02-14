@@ -41,6 +41,9 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.idgen.water.tanker.booking.id.name}")
 	private String waterTankerApplicationKey;
+	
+	@Value("${egov.usr.events.pay.link}")
+	private String payLink;
 
 	@Value("${egov.idgen.water.tanker.booking.id.format}")
 	private String waterTankerApplicationFormat;
