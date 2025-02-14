@@ -89,6 +89,8 @@ public class RequestServiceConstants {
 	public static final String NOTIFICATION_TANKERBOOKED = "wt.en.counter.tankerbooked";
 	
 	public static final String WF_ACTION_SUBMIT_FEEDBACK = "RATE";
+	
+	public static final String WF_ACTION_REJECTED_BY_VENDOR= "REJECT";
 
 
 }
