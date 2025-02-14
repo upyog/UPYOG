@@ -15,3 +15,5 @@ core-services/report/src/main/resources/application.properties
 municipal-services/rainmaker-pgr/src/main/resources/application.properties
 core-services/egov-notification-mail/src/main/resources/application.properties
 .vscode/*
+core-services/egov-mdms-service/src/main/resources/application.properties
+core-services/egov-mdms-service/src/main/resources/application.properties

@@ -668,10 +668,6 @@ public class PropertyValidator {
 			}
 		});
 		
-		if (CollectionUtils.isEmpty(statusWithRoles)) {
-			criteria.setCreatedBy(Collections.singleton(requestInfo.getUserInfo().getUuid()));
-		}
-
 		return new ArrayList<>(statusWithRoles);
 	}
 	

@@ -3,10 +3,13 @@ package org.egov.pt.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -24,6 +27,7 @@ import org.egov.pt.service.FuzzySearchService;
 import org.egov.pt.service.MigrationService;
 import org.egov.pt.service.PropertyEncryptionService;
 import org.egov.pt.service.PropertyService;
+import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
@@ -145,6 +149,9 @@ public class PropertyController {
 		}
 
 		List<Property> properties = new ArrayList<Property>();
+		List<Property> propertiesCreatedBy = new ArrayList<Property>();
+		Set<Property> finalProperties = new HashSet<Property>();
+		List<Property> finalPropertiesList = new ArrayList<Property>();
 		Integer count = 0;
 
 		if (propertyCriteria.getIsRequestForCount()) {
@@ -154,14 +161,30 @@ public class PropertyController {
 			properties = propertyService.searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo());
 		}
 		
-		log.info("Property count after search" + properties.size());
+		if (null != requestInfoWrapper.getRequestInfo() && null != requestInfoWrapper.getRequestInfo().getUserInfo()
+				&& requestInfoWrapper.getRequestInfo().getUserInfo().getType()
+						.equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
+			PropertyCriteria propertyCriteriaCreatedBy = PropertyCriteria.builder()
+					.createdBy(Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()))
+					.tenantId(propertyCriteria.getTenantId()).build();
+
+			propertiesCreatedBy = propertyService.searchProperty(propertyCriteriaCreatedBy,
+					requestInfoWrapper.getRequestInfo());
+		}
+
+		finalProperties.addAll(properties);
+		finalProperties.addAll(propertiesCreatedBy);
+
+		finalPropertiesList = finalProperties.stream().collect(Collectors.toList());
+		
+		log.info("Property count after search" + finalPropertiesList.size());
 
 		PropertyResponse response = PropertyResponse
 				.builder().responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-				.properties(properties).count(properties.size()).build();
+				.properties(finalPropertiesList).count(finalPropertiesList.size()).build();
 		
-		propertyService.setAllCount(properties, response);
+		propertyService.setAllCount(finalPropertiesList, response);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
