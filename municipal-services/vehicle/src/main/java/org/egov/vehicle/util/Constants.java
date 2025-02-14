@@ -49,7 +49,7 @@ public class Constants {
 	public static final String VEHICLE_OWNER_TYPE = "VehicleOwner";
 	public static final String WAITING_FOR_DISPOSAL = "WAITING_FOR_DISPOSAL";
 	public static final String ACTIVE = "ACTIVE";
-	public static final String ADDITIONAL_DETAILS_DESCRIPTION = "description";
+	public static final String ADDITIONAL_DETAILS_DESCRIPTION = "serviceType";
 
 	
 	
