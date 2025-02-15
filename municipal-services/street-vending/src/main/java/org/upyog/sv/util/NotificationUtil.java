@@ -67,16 +67,6 @@ public class NotificationUtil {
 		this.restTemplate = restTemplate;
 	}
 
-	public static final String ACTION_STATUS_APPLY = "APPLY";
-
-	public static final String ACTION_STATUS_FORWARD = "FORWARD";
-
-	public static final String ACTION_STATUS_SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
-
-	public static final String ACTION_STATUS_REJECT = "REJECT";
-
-	public static final String ACTION_STATUS_PAY = "PAY";
-
 	/**
 	 * Extracts message for the specific code
 	 *
@@ -380,32 +370,44 @@ public class NotificationUtil {
 		String ACTION_STATUS = streetVendingDetail.getWorkflow().getAction();
 		switch (ACTION_STATUS) {
 
-		case ACTION_STATUS_APPLY:
+		case StreetVendingConstants.ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_SUBMIT, localizationMessage);
 			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
 			break;
 
-		case ACTION_STATUS_FORWARD:
+		case StreetVendingConstants.ACTION_STATUS_FORWARD:
 			if (streetVendingDetail.getApplicationStatus().equals(StreetVendingConstants.INSPECTION_PENDING_STATUS)) {
-				messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION, localizationMessage);
-			}else {
-				messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION_COMPLETE, localizationMessage);
+				messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION,
+						localizationMessage);
+			} else {
+				messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_INSPECTION_COMPLETE,
+						localizationMessage);
 			}
 			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
 			break;
 
-		case ACTION_STATUS_SENDBACKTOCITIZEN:
+		case StreetVendingConstants.ACTION_STATUS_SENDBACKTOCITIZEN:
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_SENTBACK, localizationMessage);
 			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
 			break;
 
-		case ACTION_STATUS_REJECT:
+		case StreetVendingConstants.ACTION_STATUS_REJECT:
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_REJECT, localizationMessage);
 			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
 			break;
 
-		case ACTION_STATUS_PAY:
+		case StreetVendingConstants.ACTION_STATUS_PAY:
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_REGISTRATIONCOMPLETED,
+					localizationMessage);
+			message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
+			break;
+		case StreetVendingConstants.ACTION_STATUS_ELIGIBLE_TO_RENEW:
+			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_ELIGIBLETORENEW,
+					localizationMessage);
+			message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
+			break;
+		case StreetVendingConstants.ACTION_STATUS_APPLICATION_EXPIRED:
+			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_APPLICATIONEXPIRED,
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
 			break;

@@ -87,10 +87,28 @@ public class StreetVendingConstants {
 
 	public static final String NOTIFICATION_REGISTRATIONCOMPLETED = "sv.en.counter.registrationcompleted";
 	
+	public static final String NOTIFICATION_ELIGIBLETORENEW = "sv.en.counter.eligibletorenew";
+	
     public static final String SV_APPLICANT_DETAIL_ENCRYPTION_KEY = "SVApplicantDetail";
 	
 	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "SVApplicantDetailDecrypDisabled";
 
 	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "SVApplicantDetailDecryptionDisabled";
+	
+	public static final String NOTIFICATION_APPLICATIONEXPIRED = "sv.en.counter.applicationexpired";
+	
+	public static final String ACTION_STATUS_APPLY = "APPLY";
+
+	public static final String ACTION_STATUS_FORWARD = "FORWARD";
+
+	public static final String ACTION_STATUS_SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
+
+	public static final String ACTION_STATUS_REJECT = "REJECT";
+
+	public static final String ACTION_STATUS_PAY = "PAY";
+
+	public static final String ACTION_STATUS_ELIGIBLE_TO_RENEW = "ELIGIBLETORENEW";
+
+	public static final String ACTION_STATUS_APPLICATION_EXPIRED = "APPLICATIONEXPIRED";
 
 }

@@ -17,7 +17,7 @@ public class StreetVendingQueryBuilder {
 			+ "sv.local_authority_name as svLocalAuthorityName, " 
 			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
-			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime ";
+			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime, sv.validity_date as svValidityDate ";
 
 	private static final String VENDOR_SELECT_QUERY = " ,vendor.id as vendorId, vendor.application_id as vendorApplicationId, vendor.vendor_id as vendorVendorId, "
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
@@ -116,6 +116,11 @@ public class StreetVendingQueryBuilder {
 		if (!ObjectUtils.isEmpty(criteria.getCreatedBy())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.createdby = ? ");
+			preparedStmtList.add(criteria.getToDate());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.validity_date <= ? ");
 			preparedStmtList.add(criteria.getToDate());
 		}
 		if (!criteria.isCountCall()) {

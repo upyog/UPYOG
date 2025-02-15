@@ -28,6 +28,7 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 public class StreetVendingUtil {
 
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
+	private static final long ONE_YEAR_IN_MILLIS = 365L * 24 * 60 * 60 * 1000;
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -145,5 +146,29 @@ public class StreetVendingUtil {
 		}
 
 		return null; // Return null if both parsing attempts fail
+	}
+
+	public static long getOneYearInMillis() {
+		return ONE_YEAR_IN_MILLIS;
+	}
+	
+	/**
+	 * Converts date string to long using LocalDateTime
+	 *
+	 * @param date   Date string to be parsed
+	 * @param format Format of the date string
+	 * @return Long value of date in milliseconds
+	 */
+	public static Long dateTolong(String date, String format) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+		// If format includes time, use LocalDateTime; otherwise, use LocalDate
+		if (format.contains("H") || format.contains("m") || format.contains("s")) {
+			LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+			return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		} else {
+			LocalDate localDate = LocalDate.parse(date, formatter);
+			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
 	}
 }

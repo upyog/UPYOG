@@ -107,7 +107,12 @@ public class StreetVendingDetail {
 	private Workflow workflow;
 
 	private AuditDetails auditDetails;
+	
+	private Long validityDate;
+	
+	private Boolean eligibleToRenew;
 
+	private Boolean expireFlag;
 }
 
 /**

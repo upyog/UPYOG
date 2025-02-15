@@ -2,7 +2,6 @@ package org.upyog.sv.service;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,6 @@ import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
-import org.upyog.sv.web.models.transaction.Transaction;
-import org.upyog.sv.web.models.transaction.TransactionRequest;
 import org.upyog.sv.web.models.workflow.ProcessInstance;
 import org.upyog.sv.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.sv.web.models.workflow.ProcessInstanceResponse;
@@ -50,13 +47,7 @@ public class PaymentService {
 	private ServiceRequestRepository serviceRequestRepository;
 
 	@Autowired
-	private StreetVendingService svService;
-
-	@Autowired
 	private StreetVendingRepository streetVendingRepository;
-
-	@Autowired
-	private StreetVendingUtil streetVendingUtil;
 
 	@Autowired
 	private IdgenUtil idgenUtil;
@@ -138,6 +129,7 @@ public class PaymentService {
 								paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode())
 						.build())
 				.get(0);
+		long todayDateInMillis = System.currentTimeMillis();
 
 		if (streetVendingDetail == null) {
 			log.info("Application not founnd in consumer class while updating status");
@@ -151,7 +143,8 @@ public class PaymentService {
 				.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
 		streetVendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		streetVendingDetail.setApplicationStatus(applicationStatus);
-		streetVendingDetail.setApprovalDate(System.currentTimeMillis());
+		streetVendingDetail.setApprovalDate(todayDateInMillis);
+		streetVendingDetail.setValidityDate(todayDateInMillis + StreetVendingUtil.getOneYearInMillis());// add validity date for post 1 year of approval date
 		vendingRequest.setStreetVendingDetail(streetVendingDetail);
 		enrichCertificateNumber(streetVendingDetail, vendingRequest.getRequestInfo(),
 				streetVendingDetail.getTenantId()); // enriching certificate number when updating final status
@@ -167,7 +160,6 @@ public class PaymentService {
 		String certificateNo = idgenUtil.getIdList(requestInfo, tenantId, configs.getStreetVendingCertificateNoName(),
 				configs.getStreetVendingCertificateNoFormat(), 1).get(0);
 		streetVendingDetail.setCertificateNo(certificateNo);
-		;
 	}
 
 }

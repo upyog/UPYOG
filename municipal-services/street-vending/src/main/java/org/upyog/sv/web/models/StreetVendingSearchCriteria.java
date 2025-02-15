@@ -76,4 +76,8 @@ public class StreetVendingSearchCriteria {
 				// && this.offset == null && this.limit == null
 				&& this.fromDate == null && this.toDate == null && this.createdBy == null);
 	}
+	
+	@JsonProperty("validityDate")
+	private Long validityDate;
+	
 }
