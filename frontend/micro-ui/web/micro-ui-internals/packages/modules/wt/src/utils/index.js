@@ -36,8 +36,8 @@ export const waterTankerPayload = (data) =>{
         },
         address: {
             pincode: data?.address?.pincode,
-            city: data?.address?.city?.name,
-            cityCode: data?.address?.city?.code,
+            city: data?.address?.city?.city?.name,
+            cityCode: data?.address?.city?.city?.code,
             addressLine1: data?.address?.addressLine1,
             addressLine2: data?.address?.addressLine2,
             locality: data?.address?.locality?.i18nKey,

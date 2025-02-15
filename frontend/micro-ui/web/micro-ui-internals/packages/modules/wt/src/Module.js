@@ -19,6 +19,7 @@ import WFApplicationTimeline from "./pageComponents/WFApplicationTimeline";
 import WFCaption from "./pageComponents/WFCaption";
 import Inbox from "./pages/employee/Inbox";
 import WTCitizenCard from "./components/WTCitizenCard";
+import BookingPopup from "./components/BookingPopup";
 
 
 
@@ -37,6 +38,7 @@ const componentsToRegister = {
     WFCaption,
     WTEmpInbox: Inbox,
     WTCitizenCard: WTCitizenCard,
+    BookingPopup
   };
   
   // function to register the component as per standard 
