@@ -464,14 +464,18 @@ public class NotificationUtil {
      * @return
      */
 	public String getPayUrl(WaterTankerBookingDetail waterTankerDetail, String message) {
-		String actionLink = config.getPayLink().replace("$mobile",  waterTankerDetail.getApplicantDetail().getMobileNumber())
-				.replace("$applicationNo", waterTankerDetail.getBookingNo()).replace("$tenantId", waterTankerDetail.getTenantId())
-				.replace("$businessService", config.getBusinessServiceName());
-		message = message.replace("{PAY_LINK}", getShortenedUrl(config.getUiAppHost() + actionLink));
-		
-	
+	    String actionLink = String.format("%s?mobile=%s&applicationNo=%s&tenantId=%s&businessService=%s",
+	            config.getPayLink(),
+	            waterTankerDetail.getApplicantDetail().getMobileNumber(),
+	            waterTankerDetail.getBookingNo(),
+	            waterTankerDetail.getTenantId(),
+	            config.getBusinessServiceName());
+
+	    message = message.replace("{PAY_LINK}", getShortenedUrl(config.getUiAppHost() + actionLink));
+
 	    return message;
 	}
+
 	/**
 	 * Method to shortent the url returns the same url if shortening fails
 	 * 
