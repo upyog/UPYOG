@@ -1,5 +1,6 @@
 package org.upyog.sv.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -26,71 +27,89 @@ public class SchedulerService {
 	@Autowired
 	private StreetyVendingNotificationService notificationService;
 
-	private static final long ONE_DAY_MILLIS = 24 * 60 * 60 * 1000L;
-	private static final long TWO_MONTHS_MILLIS = 60L * ONE_DAY_MILLIS; // Approx. 2 months
-
-	@Value
-	("${scheduler.sv.expiry.enabled:false}") 
+	@Value("${scheduler.sv.expiry.enabled:false}")
 	private boolean isSchedulerEnabled;
-	// Scheduler runs daily at 1 AM
+
+	/**
+	 * Scheduled job to handle street vending applications. Runs daily at 1 AM if
+	 * enabled via configuration.
+	 */
 	@Scheduled(cron = "0 0 1 * * *")
-	public void handleStreetVendingApplications() {
+	public void processStreetVendingApplications() {
 		if (!isSchedulerEnabled) {
-	        log.info("Scheduler is disabled via configuration.");
-	        return;
-	    }
+			log.info("Scheduler is disabled via configuration.");
+			return;
+		}
 		log.info("Street Vending Applications Scheduler started");
-		processExpiredApplications();
-		processApplicationsNearExpiry();
+
+		markExpiredApplicationsAndNotify();
+		markEligibleForRenewalAndNotify();
 	}
 
 	/**
-	 * Processes applications that have expired (validity date reached)
+	 * Marks applications as expired if their validity date has passed. Sends
+	 * notifications to applicants.
 	 */
-	private void processExpiredApplications() {
-		List<StreetVendingDetail> expiredApplications = fetchApplicationsByValidity(System.currentTimeMillis());
-		updateAndNotifyApplications(expiredApplications, StreetVendingConstants.ACTION_STATUS_APPLICATION_EXPIRED,
+	private void markExpiredApplicationsAndNotify() {
+		List<StreetVendingDetail> expiredApplications = fetchApplicationsByValidity(LocalDate.now());
+		updateApplicationStatusAndNotify(expiredApplications, StreetVendingConstants.ACTION_STATUS_APPLICATION_EXPIRED,
 				true);
 	}
 
 	/**
-	 * Processes applications that are about to expire in 2 months
+	 * Marks applications as eligible for renewal if they are expiring in 2 months.
+	 * Sends renewal reminder notifications.
 	 */
-	private void processApplicationsNearExpiry() {
-		long nearExpiryDate = System.currentTimeMillis() + TWO_MONTHS_MILLIS; // Two months before expiry
-		List<StreetVendingDetail> nearExpiryApplications = fetchApplicationsByValidity(nearExpiryDate);
-		updateAndNotifyApplications(nearExpiryApplications, StreetVendingConstants.ACTION_STATUS_ELIGIBLE_TO_RENEW,
+	private void markEligibleForRenewalAndNotify() {
+		LocalDate expiryThresholdDate = LocalDate.now().plusMonths(2); // Applications expiring in 2 months
+		List<StreetVendingDetail> nearExpiryApplications = fetchApplicationsByValidity(expiryThresholdDate);
+		updateApplicationStatusAndNotify(nearExpiryApplications, StreetVendingConstants.ACTION_STATUS_ELIGIBLE_TO_RENEW,
 				false);
 	}
 
 	/**
-	 * Fetch applications by validity date and status
+	 * Fetches applications that match the given validity date and have completed
+	 * registration.
+	 * 
+	 * @param validityDate The date to filter applications by.
+	 * @return List of StreetVendingDetail that match the criteria.
 	 */
-	private List<StreetVendingDetail> fetchApplicationsByValidity(Long validityDate) {
+	private List<StreetVendingDetail> fetchApplicationsByValidity(LocalDate validityDate) {
 		StreetVendingSearchCriteria searchCriteria = StreetVendingSearchCriteria.builder().validityDate(validityDate)
 				.status(StreetVendingConstants.REGISTRATION_COMPLETED).build();
+
 		return streetVendingRepository.getStreetVendingApplications(searchCriteria);
 	}
 
 	/**
-	 * Updates application details and sends notifications
+	 * Updates application statuses based on expiration or renewal eligibility and
+	 * sends notifications.
+	 * 
+	 * @param applications List of applications to update.
+	 * @param action       The action to set in the workflow.
+	 * @param markExpired  If true, marks the application as expired.
 	 */
-	private void updateAndNotifyApplications(List<StreetVendingDetail> applications, String action,
+	private void updateApplicationStatusAndNotify(List<StreetVendingDetail> applications, String action,
 			boolean markExpired) {
-		if (applications.isEmpty())
+		if (applications.isEmpty()) {
+			log.info("No applications found for action: {}", action);
 			return;
+		}
 
-		UserDetailResponse userDetailResponse = userService.searchByUserName("9999009999", "pg.citya");
+		UserDetailResponse systemUser = userService.searchByUserName(StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
+				StreetVendingConstants.SYSTEM_CITIZEN_TENANTID);
 
 		for (StreetVendingDetail detail : applications) {
 			detail.setEligibleToRenew(true);
 			detail.getWorkflow().setAction(action);
+
 			if (markExpired) {
 				detail.setExpireFlag(true);
+				detail.setApplicationStatus(StreetVendingConstants.STATUS_EXPIRED);
 			}
 
 			StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
-					.requestInfo(RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build())
+					.requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
 					.streetVendingDetail(detail).build();
 
 			streetVendingRepository.save(streetVendingRequest);

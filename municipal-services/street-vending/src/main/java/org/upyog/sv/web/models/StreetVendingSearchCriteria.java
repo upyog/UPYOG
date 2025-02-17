@@ -1,5 +1,6 @@
 package org.upyog.sv.web.models;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -78,6 +79,6 @@ public class StreetVendingSearchCriteria {
 	}
 	
 	@JsonProperty("validityDate")
-	private Long validityDate;
+	private LocalDate validityDate;
 	
 }
