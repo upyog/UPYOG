@@ -364,7 +364,16 @@ public class EstimationService {
 			if (property.getLandArea() != null && property.getLandArea() > 0)
 				return property.getLandArea();
 			return new Double(sewerageConnection.getNoOfToilets());
-		} else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
+		}
+		
+		else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
+				&& calculationAttribute.equalsIgnoreCase(SWCalculationConstant.seatBased)) {
+			if (sewerageConnection.getNoOfToilets()>0)
+				return new Double(sewerageConnection.getNoOfToilets());
+			
+		}
+		
+		else if (sewerageConnection.getConnectionType().equals(SWCalculationConstant.nonMeterdConnection)
 				&& calculationAttribute.equalsIgnoreCase(SWCalculationConstant.noOfWaterClosets)) {
 			if (sewerageConnection.getNoOfWaterClosets() == null)
 				return totalUnite;
