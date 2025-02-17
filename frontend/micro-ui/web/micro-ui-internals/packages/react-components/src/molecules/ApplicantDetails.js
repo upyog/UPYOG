@@ -28,12 +28,12 @@ const ApplicantDetails = ({ t, config, onSelect, formData }) => {
   const user = Digit.UserService.getUser().info;
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   let validation = {};
-  const [applicantName, setName] = useState((user.type === "EMPLOYEE" ?"":user?.name) || formData?.owner?.applicantName || "");
-  const [mobileNumber, setMobileNumber] = useState((user.type === "EMPLOYEE" ?"":user?.mobileNumber) || formData?.owner?.mobileNumber || "");
+  const [applicantName, setName] = useState((user.type === "EMPLOYEE" ?"":user?.name) || formData?.owner?.applicantName || formData?.infodetails?.existingDataSet?.owner?.applicantName || "");
+  const [mobileNumber, setMobileNumber] = useState((user.type === "EMPLOYEE" ?"":user?.mobileNumber) ||formData?.owner?.mobileNumber || formData?.infodetails?.existingDataSet?.owner?.mobileNumber || "");
   const [gender, setGender]=useState(formData?.owner?.gender||"");
-  const [dateOfBirth, setDateofBirth] = useState(formData?.owner?.dateOfBirth||"")
-  const [emailId, setEmail] = useState((user.type === "EMPLOYEE" ?"":user?.emailId)||formData?.owner?.emailId || "");
-  const [alternateNumber, setAltMobileNumber] = useState(formData?.owner?.alternateNumber || "");
+  const [dateOfBirth, setDateofBirth] = useState(formData?.owner?.dateOfBirth|| formData?.owner?.requestDetails?.applicantName || "");
+  const [emailId, setEmail] = useState((user.type === "EMPLOYEE" ?"":user?.emailId)||formData?.owner?.emailId ||  formData?.infodetails?.existingDataSet?.owner?.emailId || "");
+  const [alternateNumber, setAltMobileNumber] = useState(formData?.owner?.alternateNumber ||  formData?.infodetails?.existingDataSet?.owner?.alternateNumber || "");
   const [guardianName, setGuardian] = useState(formData?.owner?.guardianName || "");
   const [relationShipType, setRelationShipType] = useState(formData?.owner?.relationShipType || "");
 

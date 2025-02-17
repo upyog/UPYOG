@@ -8,7 +8,7 @@ export const commonConfig =
                     "route": "info",
                     "component": "InfoPage",
                     "nextStep": "applicant-details",
-                    "key": "Documents"
+                    "key": "infodetails"
                 },
                 {
                     "route": "applicant-details",

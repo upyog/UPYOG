@@ -21,7 +21,6 @@ import Inbox from "./pages/employee/Inbox";
 import WTCitizenCard from "./components/WTCitizenCard";
 
 
-
 const componentsToRegister = {
     ApplicantDetails,
     AddressDetails,
@@ -36,7 +35,7 @@ const componentsToRegister = {
     WFApplicationTimeline: WFApplicationTimeline,
     WFCaption,
     WTEmpInbox: Inbox,
-    WTCitizenCard: WTCitizenCard,
+    WTCitizenCard: WTCitizenCard
   };
   
   // function to register the component as per standard 
