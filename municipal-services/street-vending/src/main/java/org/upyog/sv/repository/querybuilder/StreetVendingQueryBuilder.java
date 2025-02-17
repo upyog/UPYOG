@@ -122,7 +122,7 @@ public class StreetVendingQueryBuilder {
 		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.validity_date <= ? ");
-			preparedStmtList.add(java.sql.Date.valueOf(criteria.getValidityDate()));
+			preparedStmtList.add(criteria.getValidityDate());
 		}
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);

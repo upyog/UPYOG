@@ -28,7 +28,6 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 public class StreetVendingUtil {
 
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
-	private static final long ONE_YEAR_IN_MILLIS = 365L * 24 * 60 * 60 * 1000;
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -51,6 +50,14 @@ public class StreetVendingUtil {
 
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
+	}
+
+	public static LocalDate getCurrentDateFromYear(int years) {
+		return LocalDate.now().plusYears(years);
+	}
+
+	public static LocalDate getCurrentDateFromMonths(int months) {
+		return LocalDate.now().plusMonths(months);
 	}
 
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
@@ -148,10 +155,6 @@ public class StreetVendingUtil {
 		return null; // Return null if both parsing attempts fail
 	}
 
-	public static long getOneYearInMillis() {
-		return ONE_YEAR_IN_MILLIS;
-	}
-	
 	/**
 	 * Converts date string to long using LocalDateTime
 	 *

@@ -13,6 +13,7 @@ import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.ServiceRequestRepository;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.IdgenUtil;
+import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -144,7 +145,7 @@ public class PaymentService {
 		streetVendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		streetVendingDetail.setApplicationStatus(applicationStatus);
 		streetVendingDetail.setApprovalDate(todayDateInMillis);
-		streetVendingDetail.setValidityDate(LocalDate.now().plusYears(1));// add validity date for post 1 year of approval date
+		streetVendingDetail.setValidityDate(StreetVendingUtil.getCurrentDateFromYear(1));// add validity date for post 1 year of approval date
 		vendingRequest.setStreetVendingDetail(streetVendingDetail);
 		enrichCertificateNumber(streetVendingDetail, vendingRequest.getRequestInfo(),
 				streetVendingDetail.getTenantId()); // enriching certificate number when updating final status

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.StreetVendingRepository;
+import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -51,7 +52,7 @@ public class SchedulerService {
 	 * notifications to applicants.
 	 */
 	private void markExpiredApplicationsAndNotify() {
-		List<StreetVendingDetail> expiredApplications = fetchApplicationsByValidity(LocalDate.now());
+		List<StreetVendingDetail> expiredApplications = fetchApplicationsByValidity(StreetVendingUtil.getCurrentDate());
 		updateApplicationStatusAndNotify(expiredApplications, StreetVendingConstants.ACTION_STATUS_APPLICATION_EXPIRED,
 				true);
 	}
@@ -61,7 +62,8 @@ public class SchedulerService {
 	 * Sends renewal reminder notifications.
 	 */
 	private void markEligibleForRenewalAndNotify() {
-		LocalDate expiryThresholdDate = LocalDate.now().plusMonths(2); // Applications expiring in 2 months
+		LocalDate expiryThresholdDate = StreetVendingUtil.getCurrentDateFromMonths(2); // Applications expiring in 2
+																						// months
 		List<StreetVendingDetail> nearExpiryApplications = fetchApplicationsByValidity(expiryThresholdDate);
 		updateApplicationStatusAndNotify(nearExpiryApplications, StreetVendingConstants.ACTION_STATUS_ELIGIBLE_TO_RENEW,
 				false);
