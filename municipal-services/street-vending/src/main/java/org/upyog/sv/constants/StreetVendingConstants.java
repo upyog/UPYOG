@@ -61,20 +61,19 @@ public class StreetVendingConstants {
 	public static final String USREVENTS_EVENT_NAME = "Street-Vending";
 
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-SV";
-	
+
 	public static final String NOTIFICATION_LOCALE = "en_IN";
-	
+
 	public static final String NOTIFICATION_MODULE_NAME = "rainmaker-sv";
-	
+
 	public static final String NOTIFICATION_OWNERNAME = "{OWNER_NAME}";
-	
+
 	public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
 
 	public static final String NOTIFICATION_STATUS = "{STATUS}";
-	
 
 	public static final String NOTIFICATION_INSPECTION = "sv.en.counter.inspection";
-	
+
 	public static final String NOTIFICATION_INSPECTION_COMPLETE = "sv.en.counter.inspection.complete";
 
 	public static final String NOTIFICATION_SUBMIT = "sv.en.counter.submit";
@@ -82,15 +81,39 @@ public class StreetVendingConstants {
 	public static final String NOTIFICATION_SENTBACK = "sv.en.counter.sentback";
 
 	public static final String NOTIFICATION_REJECT = "sv.en.counter.reject";
-	
+
 	public static final String NOTIFICATION_APPROVED = "sv.en.counter.approved";
 
 	public static final String NOTIFICATION_REGISTRATIONCOMPLETED = "sv.en.counter.registrationcompleted";
-	
-    public static final String SV_APPLICANT_DETAIL_ENCRYPTION_KEY = "SVApplicantDetail";
-	
+
+	public static final String NOTIFICATION_ELIGIBLETORENEW = "sv.en.counter.eligibletorenew";
+
+	public static final String SV_APPLICANT_DETAIL_ENCRYPTION_KEY = "SVApplicantDetail";
+
 	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_KEY = "SVApplicantDetailDecrypDisabled";
 
 	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "SVApplicantDetailDecryptionDisabled";
+
+	public static final String NOTIFICATION_APPLICATIONEXPIRED = "sv.en.counter.applicationexpired";
+
+	public static final String ACTION_STATUS_APPLY = "APPLY";
+
+	public static final String ACTION_STATUS_FORWARD = "FORWARD";
+
+	public static final String ACTION_STATUS_SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
+
+	public static final String ACTION_STATUS_REJECT = "REJECT";
+
+	public static final String ACTION_STATUS_PAY = "PAY";
+
+	public static final String ACTION_STATUS_ELIGIBLE_TO_RENEW = "ELIGIBLETORENEW";
+
+	public static final String ACTION_STATUS_APPLICATION_EXPIRED = "APPLICATIONEXPIRED";
+
+	public static final String SYSTEM_CITIZEN_USERNAME = "8888888888";
+
+	public static final String SYSTEM_CITIZEN_TENANTID = "pg";
+
+	public static final String STATUS_EXPIRED = "Expired";
 
 }

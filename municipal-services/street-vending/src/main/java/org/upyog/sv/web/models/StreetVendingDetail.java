@@ -1,6 +1,7 @@
 package org.upyog.sv.web.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -107,7 +108,12 @@ public class StreetVendingDetail {
 	private Workflow workflow;
 
 	private AuditDetails auditDetails;
+	
+	private LocalDate validityDate;
+	
+	private Boolean eligibleToRenew;
 
+	private Boolean expireFlag;
 }
 
 /**

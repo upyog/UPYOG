@@ -64,7 +64,6 @@ public class StreetVendingController {
 			@ModelAttribute StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<StreetVendingDetail> applications = null;
 		Integer count = 0;
-
 		if ("true".equals(streetVendingSearchCriteria.getIsDraftApplication())) {
 			applications = streetVendingService.getStreetVendingDraftApplicationDetails(
 					requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
@@ -87,8 +86,7 @@ public class StreetVendingController {
 
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingUpdate(
-			@ApiParam(value = "Updated Street vending details and RequestInfo meta data.", required = true)
-			@RequestBody StreetVendingRequest vendingRequest) {
+			@ApiParam(value = "Updated Street vending details and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
 		validationService.validateRequest(vendingRequest); /// To validate the Update application request
 		StreetVendingDetail streetVendingDetail = streetVendingService.updateStreetVendingApplication(vendingRequest);
 
@@ -101,8 +99,7 @@ public class StreetVendingController {
 
 	@RequestMapping(value = "/_deletedraft", method = RequestMethod.POST)
 	public ResponseEntity<StreetVendingResponse> streetVendingDeleteDraft(
-			@ApiParam(value = "Details for draft deletion and RequestInfo meta data.", required = true)
-			@RequestBody RequestInfoWrapper requestInfoWrapper,
+			@ApiParam(value = "Details for draft deletion and RequestInfo meta data.", required = true) @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@RequestParam(value = "draftId", required = true) String draftId) {
 		String draftDiscardResponse = streetVendingService.deleteStreetVendingDraft(draftId);
 		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
@@ -113,16 +110,13 @@ public class StreetVendingController {
 
 	@PostMapping("/_createdemand")
 	public ResponseEntity<StreetVendingDemandResponse> createDemandForRenewal(
-			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true)
-			@RequestBody StreetVendingRequest vendingRequest) {
+			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
 		List<Demand> demands = streetVendingService.demandCreation(vendingRequest);
-		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(
-				vendingRequest.getRequestInfo(), StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);
-		StreetVendingDemandResponse response = StreetVendingDemandResponse.builder().
-				responseInfo(responseInfo).demands(demands).build();
+		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
+				StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);
+		StreetVendingDemandResponse response = StreetVendingDemandResponse.builder().responseInfo(responseInfo)
+				.demands(demands).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-
-
 
 }
