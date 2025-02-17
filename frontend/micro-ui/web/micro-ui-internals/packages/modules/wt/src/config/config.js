@@ -5,12 +5,6 @@ export const commonConfig =
             "head": "ES_TITILE_OWNER_DETAILS",
             "body": [
                 {
-                    "route": "Existing-booking",
-                    "component": "BookingPopup",
-                    "nextStep": "info",
-                    "key": "data"
-                },
-                {
                     "route": "info",
                     "component": "InfoPage",
                     "nextStep": "applicant-details",
