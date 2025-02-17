@@ -64,7 +64,6 @@ public class StreetVendingController {
 			@ModelAttribute StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<StreetVendingDetail> applications = null;
 		Integer count = 0;
-		streetVendingSearchCriteria.setValidityDate(StreetVendingUtil.getCurrentDateFromYear(1));
 		if ("true".equals(streetVendingSearchCriteria.getIsDraftApplication())) {
 			applications = streetVendingService.getStreetVendingDraftApplicationDetails(
 					requestInfoWrapper.getRequestInfo(), streetVendingSearchCriteria);
