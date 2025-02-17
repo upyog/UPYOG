@@ -19,12 +19,20 @@ public class Otp {
     private String tenantId;
     private String type;
     private String userType;
-
+    private Boolean isThirdParty = false; 
+    
+    
+    
     @JsonIgnore
     public OtpRequestType getTypeOrDefault() {
         return isEmpty(type) ? OtpRequestType.REGISTER : mapToDomainType();
     }
-
+    public Boolean getIsThirdParty() {
+        return isThirdParty;
+    }
+    private boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
     private OtpRequestType mapToDomainType() {
         if (USER_REGISTRATION.equalsIgnoreCase(type)) {
             return OtpRequestType.REGISTER;
