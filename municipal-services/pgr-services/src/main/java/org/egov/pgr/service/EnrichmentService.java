@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +32,9 @@ public class EnrichmentService {
     private PGRConfiguration config;
 
     private UserService userService;
+    
+    @Autowired
+	private ObjectMapper objectMapper;
 
     @Autowired
     public EnrichmentService(PGRUtils utils, IdGenRepository idGenRepository, PGRConfiguration config, UserService userService) {
@@ -150,6 +156,26 @@ public class EnrichmentService {
         return idResponses.stream()
                 .map(IdResponse::getId).collect(Collectors.toList());
     }
+
+
+	public PGRNotificationRequest enrichNotificationCreateRequest(ServiceRequest serviceRequest) {
+
+		String uuid = UUID.randomUUID().toString();
+		Service service = serviceRequest.getService();
+		JsonNode additionalDetail = objectMapper.valueToTree(service.getAdditionalDetail());
+
+		AuditDetails auditDetails = utils.buildCreateAuditDetails(serviceRequest.getRequestInfo());
+
+		PGRNotification pgrNotification = PGRNotification.builder().uuid(uuid)
+				.serviceRequestId(service.getServiceRequestId()).tenantId(service.getTenantId())
+				.applicationStatus(service.getApplicationStatus())
+				.recipientName(additionalDetail.get("citizenName").asText())
+				.emailId(additionalDetail.get("citizenEmail").asText())
+				.mobileNumber(additionalDetail.get("citizenMobile").asText()).auditDetails(auditDetails).build();
+
+		return PGRNotificationRequest.builder().requestInfo(serviceRequest.getRequestInfo())
+				.pgrNotification(pgrNotification).build();
+	}
 
 
 }
