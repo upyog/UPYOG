@@ -7,8 +7,6 @@ import BookingPopup from "../components/BookingPopup";
 const InfoPage = ({ t, onSelect, formData, config, userType }) => {
   const [existingDataSet, setExistingDataSet] = useState("");
   const [showModal, setShowModal] = useState(false);
-  let index = 0;
-  sessionStorage.removeItem("docReqScreenByBack"); // Remove item from session storage
 
   // Function to open the BookingPopup
   const handleOpenModal = () => {
@@ -16,15 +14,10 @@ const InfoPage = ({ t, onSelect, formData, config, userType }) => {
   };
   // Function to handle the next action
   const goNext = () => {
-    let owner = formData.infodetails && formData.infodetails[index];
+    let owner = formData.infodetails;
     let ownerStep;
-    if (userType === "citizen") {
       ownerStep = { ...owner, existingDataSet };
-      onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
-    } else {
-      ownerStep = { ...owner, existingDataSet };
-      onSelect(config.key, ownerStep, false, index);
-    }
+      onSelect(config.key, { ...formData[config.key], ...ownerStep });
   };
 
   return (

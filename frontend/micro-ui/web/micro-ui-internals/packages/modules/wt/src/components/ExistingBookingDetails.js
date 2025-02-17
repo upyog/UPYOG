@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Loader, Card, KeyNote } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import {useParams} from "react-router-dom";
 
-export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata }) => {
+export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const [filters, setFilters] = useState(null);
   const [isDataSet, setIsDataSet] = useState(false); // State to track if data has been set
-  
+  const { offset } = useParams(); 
+
    // Function to set the data and update the state
   const setwtData = (application) => {
     const newSessionData = {
@@ -42,29 +44,28 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
   };
   // useEffect hook to call onSubmit when data is set
   useEffect(() => {
-    if (isDataSet) { 
-      onSubmit();
-      setIsDataSet(false);  
-    }
+    const submitCallback = () => {
+      if (isDataSet) { 
+        onSubmit(); 
+        setIsDataSet(false);  
+      }
+    };
+
+    submitCallback(); 
   }, [isDataSet, onSubmit]);
-
   
-  let filter = window.location.href.split("/").pop();
-  let t1;
-  let off;
-  if (!isNaN(parseInt(filter))) {
-    off = filter;
-    t1 = parseInt(filter) + 50;
-  } else {
-    t1 = 3;
-  }
-  let initialFilters = !isNaN(parseInt(filter))
-    ? { limit: "3", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "3", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId };
-
+  let paginationOffset = offset && !isNaN(parseInt(offset)) ? offset : "0";
+  let initialFilters = {
+    limit: "3",
+    sortOrder: "ASC",
+    sortBy: "createdTime",
+    offset: paginationOffset,
+    tenantId
+  };
+  
   useEffect(() => {
     setFilters(initialFilters);
-  }, [filter]);
+  }, [offset]); 
 
   // Use the search hook with filters
   const { isLoading, data } = Digit.Hooks.wt.useTankerSearchAPI({ filters });

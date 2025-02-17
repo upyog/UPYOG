@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Modal, Card, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { ExistingBookingDetails } from "./ExistingBookingDetails";
-
+import Heading from "./Heading";
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
     <path d="M0 0h24v24H0V0z" fill="none" />
@@ -19,32 +19,27 @@ const CloseBtn = (props) => {
 // The BookingPopup component renders a modal popup for booking functionality.
 // It provides options to either use existing booking details or fill in new details.
 
-const BookingPopup = ({ t, closeModal, onSubmit, setExistingDataSet, Searchdata }) => {
+const BookingPopup = ({ t, closeModal, onSubmit, setExistingDataSet }) => {
   const [showExistingBookingDetails, setShowExistingBookingDetails] = useState(false);
   const [isDataSet, setIsDataSet] = useState(false); // State to track if data has been set
-  // const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const handleExistingDetailsClick = () => {
     setShowExistingBookingDetails(true); // Show the BookingSearchDetails component
   };
-  const Heading = (props) => {
-    return showExistingBookingDetails && <h1 className="heading-m">{props.t("WT_MY_BOOKINGS_HEADER")}</h1>;
-  };
 
   const setwtData = () => {
-    
-    const newSessionData = {
-      
-    };
-    setExistingDataSet(newSessionData);
-    setIsDataSet(true); // Set the flag to true after data is set
+   setIsDataSet(true);
   };
 
-  useEffect(() => {
+  const handleSubmit = useCallback(() => {
     if (isDataSet) {
       onSubmit();
       setIsDataSet(false); // Reset the flag after data is submitted
     }
   }, [isDataSet, onSubmit]);
+
+  useEffect(() => {
+    handleSubmit();
+  }, [handleSubmit]);
 
   return (
     <React.Fragment>
@@ -57,9 +52,7 @@ const BookingPopup = ({ t, closeModal, onSubmit, setExistingDataSet, Searchdata 
         formId="modal-action"
       >
         <Card style={{ boxShadow: "none" }}>
-          {showExistingBookingDetails && (
-            <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={Searchdata} />
-          )}
+          {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} />}
           <div
             style={{
               display: "flex",
