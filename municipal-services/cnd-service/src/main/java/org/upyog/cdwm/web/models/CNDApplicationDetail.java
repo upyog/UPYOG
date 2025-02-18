@@ -31,6 +31,14 @@ public class CNDApplicationDetail {
     private String typeOfConstruction;
 
     private String depositCentreDetails;
+    
+    private String description;
+    
+    private String location;
+    
+    private String wasteType;
+    
+    private Integer quantity;
 
     private String applicantDetailId;
 

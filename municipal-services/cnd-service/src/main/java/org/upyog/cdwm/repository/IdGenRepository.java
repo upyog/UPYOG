@@ -1,21 +1,22 @@
 package org.upyog.cdwm.repository;
 
 
-import digit.models.coremodels.IdGenerationRequest;
-import digit.models.coremodels.IdGenerationResponse;
-import digit.models.coremodels.IdRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.upyog.rs.config.RequestServiceConfiguration;
+import org.upyog.cdwm.config.CNDConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import digit.models.coremodels.IdGenerationRequest;
+import digit.models.coremodels.IdGenerationResponse;
+import digit.models.coremodels.IdRequest;
 
 @Repository
 public class IdGenRepository {
@@ -24,10 +25,10 @@ public class IdGenRepository {
 
     private RestTemplate restTemplate;
 
-    private RequestServiceConfiguration config;
+    private CNDConfiguration config;
 
    
-    public IdGenRepository(RestTemplate restTemplate, RequestServiceConfiguration config) {
+    public IdGenRepository(RestTemplate restTemplate, CNDConfiguration config) {
         this.restTemplate = restTemplate;
         this.config = config;
     }

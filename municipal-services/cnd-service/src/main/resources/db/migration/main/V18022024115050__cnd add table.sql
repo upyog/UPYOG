@@ -1,4 +1,4 @@
-CREATE TABLE ug_cnd_application_details= (
+CREATE TABLE ug_cnd_application_details (
     application_id VARCHAR(64) PRIMARY KEY,  -- Using application_id as the primary key
     tenant_id VARCHAR(64) NOT NULL,
     application_number VARCHAR(64) UNIQUE NOT NULL,
@@ -36,10 +36,10 @@ CREATE TABLE ug_cnd_waste_detail (
     created_by VARCHAR(64),
     last_modified_by VARCHAR(64),
     created_time BIGINT,
-    last_modified_time BIGINT
+    last_modified_time BIGINT,
 
     PRIMARY KEY (application_id, waste_type_id),
-    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE
+    FOREIGN KEY (application_id) REFERENCES ug_cnd_application_details(application_id) ON DELETE CASCADE
 );
 
 
@@ -55,7 +55,7 @@ CREATE TABLE ug_cnd_document_detail (
     created_time BIGINT,
     last_modified_time BIGINT,
 
-    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE
+    FOREIGN KEY (application_id) REFERENCES ug_cnd_application_details(application_id) ON DELETE CASCADE
 );
 
 
@@ -76,7 +76,9 @@ CREATE TABLE ug_cnd_disposal_deposit_centre_detail (
     created_time BIGINT,
     last_modified_time BIGINT,
 
-    FOREIGN KEY (application_id) REFERENCES applications(application_id) ON DELETE CASCADE
+    FOREIGN KEY (application_id) REFERENCES ug_cnd_application_details(application_id) ON DELETE CASCADE
 );
+
+CREATE SEQUENCE IF NOT EXISTS seq_cnd_application_id;
 
 

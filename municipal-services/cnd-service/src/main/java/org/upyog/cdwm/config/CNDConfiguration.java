@@ -28,18 +28,18 @@ public class CNDConfiguration {
 
     /** Used for application no creation **/
 
-    @Value("${egov.idgen.water.tanker.booking.id.name}")
-    private String waterTankerApplicationKey;
+    @Value("${egov.idgen.cnd.application.id.name}")
+    private String CNDApplicationKey;
 
     @Value("${egov.usr.events.pay.link}")
     private String payLink;
 
-    @Value("${egov.idgen.water.tanker.booking.id.format}")
-    private String waterTankerApplicationFormat;
+    @Value("${egov.idgen.cnd.application.id.format}")
+    private String CNDApplicationFormat;
 
     // Kafka topics for saving water tanker data
     @Value("${persister.create.cnd.service.topic}")
-    private String waterTankerApplicationSaveTopic;
+    private String cndApplicationSaveTopic;
 
     @Value("${persister.update.cnd.service.topic}")
     private String waterTankerApplicationUpdateTopic;
