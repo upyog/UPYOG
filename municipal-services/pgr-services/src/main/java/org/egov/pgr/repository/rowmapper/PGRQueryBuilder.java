@@ -236,6 +236,10 @@ public class PGRQueryBuilder {
 		}
 	}
 
+	private static void andClauseIfRequired(List<Object> values, StringBuilder queryString) {
+		queryString.append(" AND");
+	}
+
 	private String createQuery(Collection<String> ids) {
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
@@ -289,6 +293,8 @@ public class PGRQueryBuilder {
 	public String getPGRNotificationSearchQuery(PgrNotificationSearchCriteria criteria,
 			List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(NOTIFICATION_SEARCH_QUERY);
+		
+		builder.append(" WHERE 1 = 1 ");
 
 		if (!StringUtils.isEmpty(criteria.getTenantId())) {
 			String tenantId = criteria.getTenantId();
@@ -296,55 +302,55 @@ public class PGRQueryBuilder {
 			String[] tenantIdChunks = tenantId.split("\\.");
 
 			if (tenantIdChunks.length == 1) {
-				addClauseIfRequired(preparedStmtList, builder);
+				andClauseIfRequired(preparedStmtList, builder);
 				builder.append(" epn.tenantid LIKE ? ");
 				preparedStmtList.add(criteria.getTenantId() + '%');
 			} else {
-				addClauseIfRequired(preparedStmtList, builder);
+				andClauseIfRequired(preparedStmtList, builder);
 				builder.append(" epn.tenantid=? ");
 				preparedStmtList.add(criteria.getTenantId());
 			}
 		}
 
 		if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.tenantId IN (").append(createQuery(criteria.getTenantIds())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getTenantIds());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getUuids())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.uuid IN (").append(createQuery(criteria.getUuids())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getUuids());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getServiceRequestIds())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.servicerequestid IN (").append(createQuery(criteria.getServiceRequestIds()))
 					.append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getServiceRequestIds());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getApplicationStatus())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.applicationstatus IN (").append(createQuery(criteria.getApplicationStatus()))
 					.append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getApplicationStatus());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getRecipientNames())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.recipientname IN (").append(createQuery(criteria.getRecipientNames())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getRecipientNames());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getEmailIds())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.emailid IN (").append(createQuery(criteria.getEmailIds())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getEmailIds());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getMobileNumbers())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			builder.append(" epn.mobilenumber IN (").append(createQuery(criteria.getMobileNumbers())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getMobileNumbers());
 		}
 		if (!StringUtils.isEmpty(criteria.getIsEmailSent())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			if (criteria.getIsEmailSent()) {
 				builder.append(" epn.isemailsent = true");
 			} else {
@@ -352,7 +358,7 @@ public class PGRQueryBuilder {
 			}
 		}
 		if (!StringUtils.isEmpty(criteria.getIsSmsSent())) {
-			addClauseIfRequired(preparedStmtList, builder);
+			andClauseIfRequired(preparedStmtList, builder);
 			if (criteria.getIsSmsSent()) {
 				builder.append(" epn.issmssent = true");
 			} else {
