@@ -48,4 +48,10 @@ public class SchedulerConfiguration {
 	@Value("${egov.pgr.endpoint.request-escalator}")
 	private String pgrRequestEscalatorEndpoint;
 
+	@Value("${egov.pgr.endpoint.notification-sender}")
+	private String pgrNotificationSenderEndpoint;
+
+	@Value("${egov.pgr.endpoint.delete-notification}")
+	private String pgrDeleteNotificationEndpoint;
+
 }

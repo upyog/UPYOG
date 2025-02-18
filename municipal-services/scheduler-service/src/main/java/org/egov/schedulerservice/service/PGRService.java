@@ -39,7 +39,42 @@ public class PGRService {
 			throw new SchedulerServiceException(ErrorConstants.ERR_PGR_SERVICE_ERROR,
 					"Error occured while escalating PGR request. Message: " + e.getMessage());
 		}
+	}
 
+	public String sendPgrNotification(RequestInfo requestInfo) {
+		try {
+			StringBuilder url = new StringBuilder(applicationConfig.getPgrServiceHostUrl());
+			url.append(applicationConfig.getPgrNotificationSenderEndpoint());
+			// Make the POST request
+
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
+					String.class);
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Error occured while sending PGR notification.", e);
+			throw new SchedulerServiceException(ErrorConstants.ERR_PGR_SERVICE_ERROR,
+					"Error occured while sending PGR notification. Message: " + e.getMessage());
+		}
+	}
+
+	public String deletePgrNotification(RequestInfo requestInfo) {
+		try {
+			StringBuilder url = new StringBuilder(applicationConfig.getPgrServiceHostUrl());
+			url.append(applicationConfig.getPgrDeleteNotificationEndpoint());
+			// Make the POST request
+
+			RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
+					String.class);
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Error occured while deleting PGR notification.", e);
+			throw new SchedulerServiceException(ErrorConstants.ERR_PGR_SERVICE_ERROR,
+					"Error occured while deleting PGR notification. Message: " + e.getMessage());
+		}
 	}
 
 }

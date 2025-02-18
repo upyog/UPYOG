@@ -63,4 +63,20 @@ public class Scheduler {
 		log.info("escalatePGRRequest CRON JOB Ends");
 	}
 
+	@Scheduled(cron = "${cron.job.default.pgr.notification.sender}", zone = "IST")
+	public void pgrNotificationSender() {
+		log.info("pgrNotificationSender CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		pgrService.sendPgrNotification(requestInfo);
+		log.info("pgrNotificationSender CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.pgr.delete.notification}", zone = "IST")
+	public void deletePgrNotification() {
+		log.info("deletePgrNotification CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		pgrService.deletePgrNotification(requestInfo);
+		log.info("deletePgrNotification CRON JOB Ends");
+	}
+
 }
