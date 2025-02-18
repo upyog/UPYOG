@@ -116,6 +116,7 @@ const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // 
 const generateIV = () => CryptoJS.lib.WordArray.random(16);
 
 const encryptPassword = (plainText) => {
+  console.log("secretKey===",secretKey)
   const iv = generateIV();
   const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
     mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
