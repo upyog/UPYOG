@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.producer.Producer;
@@ -104,6 +105,18 @@ public class PGRSchedulerService {
 				.pgrNotification(pgrNotification).requestInfo(requestInfoWrapper.getRequestInfo()).build();
 
 		producer.push(config.getUpdateNotificationTopic(), pgrNotificationRequest);
+	}
+
+	public void deleteNotification(RequestInfoWrapper requestInfoWrapper) {
+
+		PgrNotificationSearchCriteria pgrNotificationSearchCriteria = PgrNotificationSearchCriteria.builder()
+				.isEmailSent(true).isSmsSent(true).build();
+
+		List<PGRNotification> pgrNotifications = pgrService.searchPgrNotification(pgrNotificationSearchCriteria);
+
+		List<String> uuidList = pgrNotifications.stream().map(PGRNotification::getUuid).collect(Collectors.toList());
+
+		pgrService.deletePgrNotification(uuidList);
 	}
 
 }

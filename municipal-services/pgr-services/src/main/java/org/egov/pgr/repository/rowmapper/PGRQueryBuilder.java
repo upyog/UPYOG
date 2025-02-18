@@ -26,6 +26,8 @@ public class PGRQueryBuilder {
 	}
 	
 	private static final String NOTIFICATION_SEARCH_QUERY = "SELECT * FROM eg_pgr_notification epn";
+	
+	private static final String NOTIFICATION_DELETE_QUERY = "DELETE FROM eg_pgr_notification epn where epn.uuid IN (:uuid)";
 
 	private static final String QUERY_ALIAS = "ser.id as ser_id,ads.id as ads_id,"
 			+ "ser.tenantId as ser_tenantId,ads.tenantId as ads_tenantId,"
@@ -366,6 +368,12 @@ public class PGRQueryBuilder {
 			}
 		}
 
+		return builder.toString();
+	}
+
+	public String getPGRNotificationDeleteQuery() {
+		StringBuilder builder = new StringBuilder(NOTIFICATION_DELETE_QUERY);
+		
 		return builder.toString();
 	}
 

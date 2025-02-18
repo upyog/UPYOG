@@ -28,4 +28,10 @@ public class PGRSchedulerController {
 		return ResponseEntity.ok("Notification Send Successfully!!!");
 	}
 
+	@PostMapping("/delete-notification")
+	public ResponseEntity<?> deleteNotification(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+		service.deleteNotification(requestInfoWrapper);
+		return ResponseEntity.ok("Notification Deleted Successfully!!!");
+	}
+
 }

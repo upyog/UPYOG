@@ -272,5 +272,11 @@ public class PGRService {
 
 		return repository.getPgrNotifications(pgrNotificationSearchCriteria);
 	}
+
+
+	public void deletePgrNotification(List<String> uuidList) {
+
+		repository.deletePgrNotifications(uuidList);
+	}
 	
 }

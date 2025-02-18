@@ -19,6 +19,7 @@ import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -50,6 +51,9 @@ public class PGRRepository {
     
     @Autowired
     private PGRNotificationRowMapper pgrNotificationRowMapper;
+    
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     
     
     @Autowired
@@ -197,6 +201,16 @@ public class PGRRepository {
 		List<PGRNotification> pgrNotifications = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				pgrNotificationRowMapper);
 		return pgrNotifications;
+	}
+
+
+	public void deletePgrNotifications(List<String> uuidList) {
+		final Map<String, Object> uuidInputs = new HashMap<String, Object>();
+		uuidInputs.put("uuid", uuidList);
+		String query = queryBuilder.getPGRNotificationDeleteQuery();
+		if (!CollectionUtils.isEmpty(uuidList)) {
+			namedParameterJdbcTemplate.update(query, uuidInputs);
+		}
 	}
 
 
