@@ -208,8 +208,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			try {
 				password=userService.decrypt(password, key);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new CustomException("DECRYPTION_ERROR","Error occurred during decryption::"+e.getLocalizedMessage());
 			}
 			return bcrypt.matches(password, user.getPassword());
 		}
