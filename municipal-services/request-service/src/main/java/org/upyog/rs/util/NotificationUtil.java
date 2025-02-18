@@ -329,61 +329,6 @@ public class NotificationUtil {
 		return mapOfPhnoAndEmailIds;
 	}
 
-	/**
-	 * Method to fetch the list of channels for a particular action from mdms
-	 * configd from mdms configs returns the message minus some lines to match In
-	 * App Templates
-	 * 
-	 * @param requestInfo
-	 * @param tenantId
-	 * @param moduleName
-	 * @param action
-	 */
-	private List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
-		List<String> masterData = new ArrayList<>();
-		StringBuilder uri = new StringBuilder();
-		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
-		if (StringUtils.isEmpty(tenantId))
-			return masterData;
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId);
-
-		Filter masterDataFilter = filter(
-				where(RequestServiceConstants.MODULE).is(moduleName).and(RequestServiceConstants.ACTION).is(action));
-
-		try {
-			Object response = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
-			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]",
-					masterDataFilter);
-		} catch (Exception e) {
-			log.error("Exception while fetching workflow states to ignore: ", e);
-		}
-
-		return masterData;
-	}
-
-	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
-		MasterDetail masterDetail = new MasterDetail();
-		masterDetail.setName(RequestServiceConstants.CHANNEL_LIST);
-		List<MasterDetail> masterDetailList = new ArrayList<>();
-		masterDetailList.add(masterDetail);
-
-		ModuleDetail moduleDetail = new ModuleDetail();
-		moduleDetail.setMasterDetails(masterDetailList);
-		moduleDetail.setModuleName(RequestServiceConstants.CHANNEL);
-		List<ModuleDetail> moduleDetailList = new ArrayList<>();
-		moduleDetailList.add(moduleDetail);
-
-		MdmsCriteria mdmsCriteria = new MdmsCriteria();
-		mdmsCriteria.setTenantId(tenantId);
-		mdmsCriteria.setModuleDetails(moduleDetailList);
-
-		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-		mdmsCriteriaReq.setRequestInfo(requestInfo);
-
-		return mdmsCriteriaReq;
-	}
-
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, WaterTankerBookingDetail waterTankerDetail,
 			String localizationMessage) {
 		String message = null, messageTemplate;
@@ -445,13 +390,6 @@ public class NotificationUtil {
 
 		//return message;
 	}
-
-/*	private String getMessageWithNumber(WaterTankerBookingDetail waterTankerDetail, String message) {
-		message = message.replace("{1}", waterTankerDetail.getApplicantDetail().getName());
-		message = message.replace("{2}", waterTankerDetail.getBookingNo());
-		return message;
-	} */
-
 	
 	private String getMessageWithNumberAndFinalDetails(WaterTankerBookingDetail waterTankerDetail, String message) {
 	    return String.format(message, waterTankerDetail.getApplicantDetail().getName(), waterTankerDetail.getBookingNo());
