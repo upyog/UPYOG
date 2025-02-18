@@ -66,6 +66,8 @@ public class RequestsApiController{
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         ServiceResponse response = ServiceResponse.builder().responseInfo(responseInfo).serviceWrappers(serviceWrappers).complaintsResolved(complaintsResolved)
         		.averageResolutionTime(averageResolutionTime).complaintTypes(complaintTypes).build();
+        pgrService.setAllCount(serviceWrappers, response);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
@@ -137,6 +139,7 @@ public class RequestsApiController{
     	 CountStatusResponse response = CountStatusResponse.builder().responseInfo(responseInfo).countStatusUpdate(request.getCountStatusUpdate()).build();
     	return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
     
 	
 

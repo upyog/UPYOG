@@ -15,6 +15,7 @@ import org.egov.pgr.producer.Producer;
 import org.egov.pgr.repository.PGRRepository;
 import org.egov.pgr.repository.rowmapper.PGRQueryBuilder;
 import org.egov.pgr.util.MDMSUtils;
+import org.egov.pgr.util.PGRConstants;
 import org.egov.pgr.validator.ServiceRequestValidator;
 import org.egov.pgr.web.models.CountStatusRequest;
 import org.egov.pgr.web.models.CountStatusResponse;
@@ -22,6 +23,7 @@ import org.egov.pgr.web.models.CountStatusUpdate;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
+import org.egov.pgr.web.models.ServiceResponse;
 import org.egov.pgr.web.models.ServiceStatusUpdateRequest;
 import org.egov.pgr.web.models.ServiceWrapper;
 import org.egov.tracer.model.CustomException;
@@ -259,5 +261,32 @@ public class PGRService {
 		return update(serviceRequest);
 
 	}
+
+	public void setAllCount(List<ServiceWrapper> services, ServiceResponse response) {
+	    if (!CollectionUtils.isEmpty(services)) {
+	        int totalCount = 0; // Initialize total count
+
+	        for (ServiceWrapper service : services) {
+	            String status = service.getService().getApplicationStatus();
+	            totalCount++; // Increment total count for each service
+
+	            if (PGRConstants.PENDINGATLME.equals(status)) {
+	                response.setApplicationPendingAtLME(response.getApplicationPendingAtLME() + 1);
+	            } else if (PGRConstants.RESOLVED.equals(status)) {
+	                response.setApplicationResolved(response.getApplicationResolved() + 1);
+	            } else if (PGRConstants.PENDINGATLMHE.equals(status)) {
+	                response.setApplicationPendingAtLMHE(response.getApplicationPendingAtLMHE() + 1);
+	            } else if (PGRConstants.CLOSED_AFTER_RESOLUTION.equals(status)) {
+	                response.setApplicationResolvedAfterResolution(response.getApplicationResolvedAfterResolution() + 1);
+	            } else if (PGRConstants.CLOSED_AFTER_REJECTION.equals(status)) {
+	                response.setApplicationRejected(response.getApplicationRejected() + 1);
+	            }
+	        }
+
+	        // Set the total count in the response
+	        response.setTotalCount(totalCount);
+	    }
+	}
+
 	
 }
