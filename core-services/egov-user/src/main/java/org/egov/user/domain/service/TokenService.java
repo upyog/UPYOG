@@ -52,19 +52,22 @@ public class TokenService {
 
 		OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
 		DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
-		token.setExpiration(new Date(System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(20)));
+		token.setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20)));
 		tokenStore.storeAccessToken(redisToken, authentication);
 
 		SecureUser secureUser = ((SecureUser) authentication.getPrincipal());
 		return new UserDetail(secureUser, null);
-		//		String tenantId = null;
-		//		if (isRoleStateLevel && (secureUser.getTenantId() != null && secureUser.getTenantId().contains(".")))
-		//			tenantId = secureUser.getTenantId().split("\\.")[0];
-		//		else
-		//			tenantId = secureUser.getTenantId();
+		// String tenantId = null;
+		// if (isRoleStateLevel && (secureUser.getTenantId() != null &&
+		// secureUser.getTenantId().contains(".")))
+		// tenantId = secureUser.getTenantId().split("\\.")[0];
+		// else
+		// tenantId = secureUser.getTenantId();
 		//
-		//		List<Action> actions = actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(), tenantId);
-		//		log.info("returning STATE-LEVEL roleactions for tenant: "+tenantId);
-		//		return new UserDetail(secureUser, actions);
+		// List<Action> actions =
+		// actionRestRepository.getActionByRoleCodes(secureUser.getRoleCodes(),
+		// tenantId);
+		// log.info("returning STATE-LEVEL roleactions for tenant: "+tenantId);
+		// return new UserDetail(secureUser, actions);
 	}
 }
