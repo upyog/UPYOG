@@ -58,6 +58,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 
 import static java.util.Objects.isNull;
@@ -757,6 +759,16 @@ public class UserService {
     	
     	return false;
     }
+    
+    public String decrypt(String encryptedText, String key) throws Exception {
+		final String ALGORITHM = "AES";
+		final String TRANSFORMATION = "AES";
+		Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+		SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+		cipher.init(Cipher.DECRYPT_MODE, secretKey);
+		byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+		return new String(decryptedBytes);
+	}
 
 
 }
