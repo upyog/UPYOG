@@ -208,7 +208,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			try {
 				password=userService.decrypt(password, key);
 			} catch (Exception e) {
-				throw new CustomException("DECRYPTION_ERROR","Error occurred during decryption::"+e.getLocalizedMessage());
+				throw new CustomException("DECRYPTION_ERROR","Error occurred during decryption");
 			}
 			return bcrypt.matches(password, user.getPassword());
 		}
