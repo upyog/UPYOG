@@ -9,14 +9,14 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.upyog.cdwm.config.RequestServiceConfiguration;
-import org.upyog.cdwm.enums.RequestServiceStatus;
+import org.upyog.cdwm.config.CNDConfiguration;
+import org.upyog.cdwm.enums.CNDStatus;
 import org.upyog.cdwm.repository.IdGenRepository;
 import org.upyog.cdwm.util.CNDServiceUtil;
-import org.upyog.cdwm.web.models.AuditDetails;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 
+import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EnrichmentService {
 
     @Autowired
-    private RequestServiceConfiguration config;
+    private CNDConfiguration config;
 
     @Autowired
     private IdGenRepository idGenRepository;
@@ -39,8 +39,7 @@ public class EnrichmentService {
         AuditDetails auditDetails = CNDServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
         cndApplicationDetails.setApplicationId(applicationId);
-        cndApplicationDetails.setApplicationDate(auditDetails.getCreatedTime());
-        cndApplicationDetails.setApplicationStatus(RequestServiceStatus.valueOf(cndApplicationDetails.getApplicationStatus()).toString());
+        cndApplicationDetails.setApplicationStatus(CNDStatus.valueOf(cndApplicationDetails.getApplicationStatus()).toString());
         cndApplicationDetails.setAuditDetails(auditDetails);
         cndApplicationDetails.setTenantId(cndApplicationRequest.getCndApplication().getTenantId());
 
@@ -49,25 +48,13 @@ public class EnrichmentService {
 
         log.info("Enriched application request application no: " + customIds.get(0));
 
-        cndApplicationDetails.setApplicationNo(customIds.get(0));
+        cndApplicationDetails.setApplicationNumber(customIds.get(0)); 
 
         cndApplicationDetails.setDescription(cndApplicationRequest.getCndApplication().getDescription());
         cndApplicationDetails.setLocation(cndApplicationRequest.getCndApplication().getLocation());
         cndApplicationDetails.setWasteType(cndApplicationRequest.getCndApplication().getWasteType());
         cndApplicationDetails.setQuantity(cndApplicationRequest.getCndApplication().getQuantity());
-        String roles = cndApplicationRequest.getRequestInfo().getUserInfo().getRoles()
-                .stream()
-                .map(Role::getName)
-                .collect(Collectors.joining(", "));
-        cndApplicationDetails.setApplicationCreatedBy(roles);
-
-        cndApplicationDetails.getApplicantDetail().setApplicationId(applicationId);
-        cndApplicationDetails.getApplicantDetail().setApplicantId(CNDServiceUtil.getRandonUUID());
-        cndApplicationDetails.getApplicantDetail().setAuditDetails(auditDetails);
-
-        cndApplicationDetails.getAddress().setAddressId(CNDServiceUtil.getRandonUUID());
-        cndApplicationDetails.getAddress().setApplicantId(cndApplicationDetails.getApplicantDetail().getApplicantId());
-
+        
         log.info("Enriched application request data: " + cndApplicationDetails);
     }
 

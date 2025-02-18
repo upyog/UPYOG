@@ -29,7 +29,7 @@ public class DocumentDetail {
 	private String documentType;
 
 	@NotBlank
-	private String uploadedByuserType;
+	private String uploadedByUserType;
 	
 	@NotBlank
 	private String fileStoreId;
