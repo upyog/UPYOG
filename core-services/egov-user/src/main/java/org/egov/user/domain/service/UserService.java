@@ -52,6 +52,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -59,6 +60,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 
@@ -105,6 +107,14 @@ public class UserService {
 
     @Value("${egov.user.pwd.pattern.max.length}")
     private Integer pwdMaxLength;
+    
+    @Value("${secret.algorithm}")
+    private String algorithm;
+    
+    @Value("${secret.transformation}")
+    private String transformation;
+    
+    
 
     @Autowired
     private RestTemplate restTemplate;
@@ -761,13 +771,32 @@ public class UserService {
     }
     
     public String decrypt(String encryptedText, String key) throws Exception {
-		final String ALGORITHM = "AES";
-		final String TRANSFORMATION = "AES";
-		Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-		SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
-		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
-		return new String(decryptedBytes);
+    	final String ALGORITHM = algorithm;
+    	final String TRANSFORMATION = transformation;
+    	
+    	 try {
+             // Step 1: Split IV and encrypted data
+             String[] parts = encryptedText.split(":");
+             if (parts.length != 2) {
+                 throw new IllegalArgumentException("Invalid encrypted text format");
+             }
+
+             byte[] iv = Base64.getDecoder().decode(parts[0]); // Decode IV
+             byte[] encryptedBytes = Base64.getDecoder().decode(parts[1]); // Decode encrypted text
+
+             // Step 2: Set up AES cipher for CBC mode
+             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+             SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+             IvParameterSpec ivSpec = new IvParameterSpec(iv);
+             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+
+             // Step 3: Decrypt
+             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+             return new String(decryptedBytes, StandardCharsets.UTF_8);
+         } catch (Exception e) {
+             e.printStackTrace();
+             throw new RuntimeException("Decryption failed: " + e.getMessage());
+         }
 	}
 
 
