@@ -11,7 +11,6 @@ import org.egov.garbageservice.contract.bill.GenerateBillCriteria;
 import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
-import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class GarbageAccountSchedulerService {
 	@Autowired
 	private NotificationService notificationService;
 
-	public Object generateBill(RequestInfoWrapper requestInfoWrapper) {
+	public void generateBill(RequestInfoWrapper requestInfoWrapper) {
 
 		SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest = SearchCriteriaGarbageAccountRequest
 				.builder().requestInfo(requestInfoWrapper.getRequestInfo())
@@ -82,7 +81,6 @@ public class GarbageAccountSchedulerService {
 			});
 		}
 
-		return garbageAccountResponse;
 	}
 
 }

@@ -102,6 +102,12 @@ public class PGRConfiguration {
 
     @Value("${pgr.kafka.create.topic}")
     private String createTopic;
+    
+    @Value("${pgr.kafka.create.notification.topic}")
+    private String createNotificationTopic;
+    
+    @Value("${pgr.kafka.update.notification.topic}")
+    private String updateNotificationTopic;
 
     @Value("${pgr.kafka.migration.persister.topic}")
     private String batchCreateTopic;

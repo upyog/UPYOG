@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -20,6 +21,9 @@ import org.egov.pgr.validator.ServiceRequestValidator;
 import org.egov.pgr.web.models.CountStatusRequest;
 import org.egov.pgr.web.models.CountStatusResponse;
 import org.egov.pgr.web.models.CountStatusUpdate;
+import org.egov.pgr.web.models.PGRNotification;
+import org.egov.pgr.web.models.PGRNotificationRequest;
+import org.egov.pgr.web.models.PgrNotificationSearchCriteria;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
@@ -234,7 +238,7 @@ public class PGRService {
 				.serviceRequestId(request.getServiceRequestId()).tenantId(request.getTenantId()).build();
 
 		List<ServiceWrapper> serviceWrappers = search(request.getRequestInfo(), requestSearchCriteria);
-		
+
 		if (null == serviceWrappers || CollectionUtils.isEmpty(serviceWrappers)
 				|| null == serviceWrappers.get(0).getService()) {
 			throw new CustomException("SERVICE NOT FOUND", "No service found with given service request id.");
@@ -243,23 +247,38 @@ public class PGRService {
 		Service service = serviceWrappers.get(0).getService();
 		service.setApplicationStatus(request.getApplicationStatus());
 //		if(request.getApplicationStatus().equals("RESOLVE")) {
-		    ObjectNode additionalDetailNode;
-		    ObjectMapper objectMapper = new ObjectMapper();
-			if (service.getAdditionalDetail() == null) {
-		        additionalDetailNode = objectMapper.createObjectNode();
-		    } else {
-		        additionalDetailNode = objectMapper.convertValue(service.getAdditionalDetail(), ObjectNode.class);
-		    }	
-		    additionalDetailNode.put("resolutionDate", request.getResolutionDate());
-		    service.setAdditionalDetail(additionalDetailNode);
+		ObjectNode additionalDetailNode;
+		ObjectMapper objectMapper = new ObjectMapper();
+		if (service.getAdditionalDetail() == null) {
+			additionalDetailNode = objectMapper.createObjectNode();
+		} else {
+			additionalDetailNode = objectMapper.convertValue(service.getAdditionalDetail(), ObjectNode.class);
+		}
+		additionalDetailNode.put("resolutionDate", request.getResolutionDate());
+		service.setAdditionalDetail(additionalDetailNode);
 //		}
-
 
 		ServiceRequest serviceRequest = ServiceRequest.builder().service(service).requestInfo(request.getRequestInfo())
 				.workflow(request.getWorkflow()).build();
 
-		return update(serviceRequest);
+		PGRNotificationRequest pgrNotificationRequest = enrichmentService
+				.enrichNotificationCreateRequest(serviceRequest);
 
+		producer.push(config.getCreateNotificationTopic(), pgrNotificationRequest);
+
+		return update(serviceRequest);
+	}
+
+
+	public List<PGRNotification> searchPgrNotification(PgrNotificationSearchCriteria pgrNotificationSearchCriteria) {
+
+		return repository.getPgrNotifications(pgrNotificationSearchCriteria);
+	}
+
+
+	public void deletePgrNotification(List<String> uuidList) {
+
+		repository.deletePgrNotifications(uuidList);
 	}
 
 	public void setAllCount(List<ServiceWrapper> services, ServiceResponse response) {
