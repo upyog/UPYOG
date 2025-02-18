@@ -11,6 +11,8 @@ import org.upyog.sv.web.models.common.AuditDetails;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,8 +34,8 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 			if (!validFromString.equals("0")) {
 				validFromString = streetVendingUtil.convertToFormattedDate(validFromString, "dd-MM-YYYY");
 				validToString = streetVendingUtil.addOneYearToEpoch(validFromString);
-			}else {
-				validFromString="NA";
+			} else {
+				validFromString = "NA";
 			}
 
 			StreetVendingDetail streetVendingDetail = streetVendingApplicationMap.get(applicationId);
@@ -64,6 +66,9 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.benificiaryOfSocialSchemes(rs.getString("SVBENEFICIARYOFSOCIALSCHEMES"))
 						.enrollmentId(rs.getString("SVENROLLMENTID"))
 						.termsAndCondition(rs.getString("SVTERMSANDCONDITION")).auditDetails(auditDetails)
+						.validityDate(LocalDate.parse(rs.getString("SVVALIDITYDATE"),
+								DateTimeFormatter.ofPattern(StreetVendingUtil.DATE_FORMAT)))
+						.eligibleToRenew(rs.getBoolean("SVELIGIBLETORENEW")).expireFlag(rs.getBoolean("SVEXPIREFLAG"))
 						.validFrom(validFromString).validTo(validToString).addressDetails(new ArrayList<>())
 						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
 						.vendingOperationTimeDetails(new ArrayList<>()).build();
@@ -119,8 +124,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 					.relationshipType(rs.getString("VENDORRELATIONSHIPTYPE"))
 					.userCategory(rs.getString("VENDORUSERCATEGORY"))
 					.specialCategory(rs.getString("VENDORSPECIALCATEGORY"))
-					.isInvolved(rs.getBoolean("VENDORISINVOLVED"))
-					.build();
+					.isInvolved(rs.getBoolean("VENDORISINVOLVED")).build();
 			streetVendingDetail.getVendorDetail().add(vendorDetail);
 		}
 	}

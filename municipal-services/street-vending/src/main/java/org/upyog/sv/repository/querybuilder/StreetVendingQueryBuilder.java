@@ -14,10 +14,11 @@ public class StreetVendingQueryBuilder {
 			+ "sv.application_status as svApplicationStatus, sv.trade_license_no as svTradeLicenseNo, sv.vending_activity as svVendingActivity, "
 			+ "sv.vending_zone as svVendingZone, sv.cart_latitude as svCartLatitude, sv.cart_longitude as svCartLongitude, sv.vending_area as svVendingArea, "
 			+ "sv.vending_license_certificate_id as svVendingLicenseCertificateId, sv.payment_receipt_id as svPaymentReceiptId , sv.vending_license_id as svVendingLicenseId, "
-			+ "sv.local_authority_name as svLocalAuthorityName, " 
+			+ "sv.local_authority_name as svLocalAuthorityName, "
 			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
-			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime ";
+			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime, "
+			+ "sv.expire_flag as svExpireFlag, sv.eligible_to_renew as svEligibleToRenew, sv.validity_date as svValidityDate ";
 
 	private static final String VENDOR_SELECT_QUERY = " ,vendor.id as vendorId, vendor.application_id as vendorApplicationId, vendor.vendor_id as vendorVendorId, "
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
@@ -117,6 +118,11 @@ public class StreetVendingQueryBuilder {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.createdby = ? ");
 			preparedStmtList.add(criteria.getToDate());
+		}
+		if (!ObjectUtils.isEmpty(criteria.getValidityDate())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.validity_date <= ? ");
+			preparedStmtList.add(criteria.getValidityDate());
 		}
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);

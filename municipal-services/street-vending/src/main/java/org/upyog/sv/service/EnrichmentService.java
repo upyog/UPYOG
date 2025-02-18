@@ -115,6 +115,8 @@ public class EnrichmentService {
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
 		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		vendingDetail.setApplicationStatus(applicationStatus);
+		vendingDetail.setEligibleToRenew(false);
+		vendingDetail.setExpireFlag(false);;
 		
 	}
 

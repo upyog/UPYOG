@@ -12,12 +12,12 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   let validation = {};
 
-  const [tankerType, settankerType] = useState(formData?.requestDetails?.tankerType || "");
-  const [tankerQuantity, settankerQuantity] = useState(formData?.requestDetails?.tankerQuantity || 1);
-  const [waterQuantity, setwaterQuantity] = useState(formData?.requestDetails?.waterQuantity || "");
-  const [deliveryDate, setdeliveryDate] = useState(formData?.requestDetails?.deliveryDate || "");
-  const [description, setdescription] = useState(formData?.requestDetails?.description || "");
-  const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime || "");
+  const [tankerType, settankerType] = useState(formData?.requestDetails?.tankerType ||formData?.infodetails?.existingDataSet?.requestDetails?.tankerType || "");
+  const [tankerQuantity, settankerQuantity] = useState(formData?.requestDetails?.tankerQuantity || formData?.infodetails?.existingDataSet?.requestDetails?.tankerQuantity || 1);
+  const [waterQuantity, setwaterQuantity] = useState(formData?.requestDetails?.waterQuantity ||formData?.infodetails?.existingDataSet?.requestDetails?.waterQuantity || "");
+  const [deliveryDate, setdeliveryDate] = useState(formData?.requestDetails?.deliveryDate || formData?.infodetails?.existingDataSet?.requestDetails?.deliveryDate ||"");
+  const [description, setdescription] = useState(formData?.requestDetails?.description ||formData?.infodetails?.existingDataSet?.requestDetails?.description || "");
+  const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime ||formData?.infodetails?.existingDataSet?.requestDetails?.deliveryTime || "");
   const [extraCharge, setextraCharge] = useState(formData?.requestDetails?.extraCharge || false);
   const tenantId=Digit.ULBService.getStateId();
   
