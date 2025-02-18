@@ -53,34 +53,30 @@ public class RequestServiceController {
 
 	@PostMapping("/water-tanker/v1/_search")
 	public ResponseEntity<WaterTankerBookingSearchResponse> searchWaterTankerBookingDetails(
-			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true)
-			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@ModelAttribute WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria) {
 
 		List<WaterTankerBookingDetail> applications = null;
 		Integer count = 0;
 
-
 		applications = waterTankerService.getWaterTankerBookingDetails(requestInfoWrapper.getRequestInfo(),
 				waterTankerBookingSearchCriteria);
 
 		count = waterTankerService.getApplicationsCount(waterTankerBookingSearchCriteria,
-		requestInfoWrapper.getRequestInfo());
-
+				requestInfoWrapper.getRequestInfo());
 
 		/*
-		* Create Response Info with success status and used utilize method
-		* to generate standardized response
-		* */
+		 * Create Response Info with success status and used utilize method to generate
+		 * standardized response
+		 */
 		ResponseInfo responseInfo = RequestServiceUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
 				RequestServiceConstants.BOOKING_DETAIL_FOUND, StatusEnum.SUCCESSFUL);
 		/*
-		*Build search response using builder and retrieve booking details and response metadata
-		* */
-		WaterTankerBookingSearchResponse response = WaterTankerBookingSearchResponse.builder().waterTankerBookingDetails(applications)
-				.responseInfo(responseInfo)
-				.count(count)
-				.build();
+		 * Build search response using builder and retrieve booking details and response
+		 * metadata
+		 */
+		WaterTankerBookingSearchResponse response = WaterTankerBookingSearchResponse.builder()
+				.waterTankerBookingDetails(applications).responseInfo(responseInfo).count(count).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
