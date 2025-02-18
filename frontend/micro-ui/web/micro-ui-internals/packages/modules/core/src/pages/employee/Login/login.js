@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
+import CryptoJS from "crypto-js";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
@@ -93,8 +94,58 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
     history.replace(redirectPath);
   }, [user]);
+//   const secretKey = '1234567890123456'
+//   //  process.env.REACT_APP_SECRET_KEY; // Store in environment variables
+
+// const encryptPassword = (password) => {
+//   console.log("secretKey==",secretKey)
+//   return CryptoJS.AES.encrypt(password, secretKey).toString();
+// };
+
+// const secretKey = "1234567890123456"
+// // CryptoJS.enc.Utf8.parse("1234567890123456"); // 16-byte key
+
+// const encryptPassword = (password) => {
+//   const iv = CryptoJS.enc.Base64.parse('1234567890abcdef'); 
+//   const encrypted = CryptoJS.AES.encrypt(password, secretKey,  { iv: iv });
+//   console.log("encrypted===",encrypted)
+//   return encrypted.toString(); // Base64 encode before sending
+// };
+
+const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // Ensure 16 bytes key
+const generateIV = () => CryptoJS.lib.WordArray.random(16);
+
+const encryptPassword = (plainText) => {
+  const iv = generateIV();
+  const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+    mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
+    padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
+    iv: iv, 
+  });
+  return iv.toString(CryptoJS.enc.Base64) + ":" + encrypted.toString();
+
+  // return encrypted.toString(); // Returns Base64 encoded encrypted text
+};
+// const decryptPassword = (cipherText) => {
+//   const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+//   console.log("bytes==",bytes.toString())
+//   return bytes.toString(CryptoJS.enc.Utf8);
+// };
+
+const decryptPassword = (encryptedText) => {
+  const decrypted = CryptoJS.AES.decrypt(encryptedText, secretKey, {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+
+  return decrypted.toString(CryptoJS.enc.Utf8);
+};
 
   const onLogin = async (data) => {
+    let encriptedPass = encryptPassword(data?.password)
+    data.password = encriptedPass;
+    let decriptedPass = decryptPassword(encriptedPass)
+
     if (!data.city) {
       alert("Please Select City!");
       return;
