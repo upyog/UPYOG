@@ -29,6 +29,11 @@ export const SVSearch = {
       dgender = response?.vendorDetail[0]?.dependentGender == "M" ? "Male" : "Female";
     }
 
+    function formatDate(validityDate) {
+      const [year, month, day] = validityDate;
+      return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+    }
+
     return [
 
       {
@@ -36,6 +41,10 @@ export const SVSearch = {
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: "SV_APPLICATION_NUMBER", value: response?.applicationNo },
+          ...(response?.applicationStatus==="REGISTRATIONCOMPLETED" ?
+          [{ title: "SV_VALIDITY_DATE", value: formatDate(response?.validityDate), isBold:true }]
+          :[]
+        ),
           { title: "SV_VENDOR_NAME", value: response?.vendorDetail[0]?.name},
           { title: "SV_FATHER_NAME", value: response?.vendorDetail[0]?.fatherName },
           { title: "SV_REGISTERED_MOB_NUMBER", value: response?.vendorDetail[0]?.mobileNo},

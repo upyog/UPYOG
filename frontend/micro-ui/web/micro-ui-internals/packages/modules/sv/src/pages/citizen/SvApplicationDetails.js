@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import ViewTimeline from "../../components/ViewTimeline";
 import get from "lodash/get";
 import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
+import { formatDate } from "../../utils";
 
 
 const SvApplicationDetails = () => {
@@ -143,6 +144,11 @@ const SvApplicationDetails = () => {
               className="border-none"
               label={t("SV_APPLICATION_NUMBER")}
               text={streetVendingDetails?.applicationNo} 
+            />
+            <Row
+              className="border-none"
+              label={t("SV_VALIDITY_DATE")}
+              text={formatDate(streetVendingDetails?.validityDate)} 
             />
           </StatusTable>
            

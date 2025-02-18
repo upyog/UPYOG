@@ -3,6 +3,7 @@ import React,{ useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link,useHistory } from "react-router-dom";
 import RenewPopup from "../../../components/RenewPopup";
+import { formatDate } from "../../../utils";
 
 const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onDiscard }) => {
   const { t } = useTranslation();
@@ -62,11 +63,12 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
       <KeyNote keyValue={t("SV_VENDOR_NAME")} note={application?.vendorDetail?.[0]?.name} />
       <KeyNote keyValue={t("SV_VENDING_TYPE")} note={application?.vendingActivity} />
       <KeyNote keyValue={t("SV_VENDING_ZONES")} note={application?.vendingZone} />
+      <KeyNote keyValue={t("SV_VALIDITY_DATE")} note={formatDate(application?.validityDate)} />
       {application?.vendingActivity==="STATIONARY"&&(
       <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}
       {(application?.applicationStatus == "CITIZENACTIONREQUIRED") && 
       <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_EDIT")} onSubmit={handleEditClick} />}
-      {(application?.applicationStatus==="ELIGIBLEFORRENEW")&&
+      {(application?.eligibleToRenew)&&
       <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_RENEW")} onSubmit={handleRenewPopup} />}
       <div style={{ display: "flex", gap: "5px" }}>
         <Link to={isDraft ? `/digit-ui/citizen/sv/apply/info` : `/digit-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
