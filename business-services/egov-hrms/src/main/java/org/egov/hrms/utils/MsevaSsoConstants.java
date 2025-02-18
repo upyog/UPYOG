@@ -90,6 +90,7 @@ public class MsevaSsoConstants {
     {
     	codesNames = new HashMap<>();
     	codesNames.put("WS_CLERK", "WS Clerk");
+    	codesNames.put("NOC_CEMP", "NoC counter employee");
     	codesNames.put("TL_CEMP", "TL Counter Employee");
 		codesNames.put("SW_CLERK", "SW Clerk");
 		codesNames.put("CEMP", "Counter Employee");

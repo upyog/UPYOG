@@ -78,6 +78,9 @@ public class UserRequest {
    // @Pattern(regexp = UserServiceConstants.PATTERN_CITY)
     @Size(max = 50)
     private String permanentCity;
+    
+    @Size(max = 10)
+    private String clientId;
 
     @SafeHtml
   //  @Pattern(regexp = UserServiceConstants.PATTERN_PINCODE)
@@ -187,6 +190,7 @@ public class UserRequest {
         this.relationship = user.getGuardianRelation();
         this.uuid = user.getUuid();
         this.alternatemobilenumber=user.getAlternateMobileNumber();
+        this.clientId=user.getClientId();
         mapPermanentAddress(user);
         mapCorrespondenceAddress(user);
     }
@@ -248,6 +252,7 @@ public class UserRequest {
                 .createdDate(new Date())
                 .otpReference(this.otpReference)
                 .tenantId(this.tenantId)
+                .clientId(this.clientId)
                 .password(this.password)
                 .roles(toDomainRoles())
                 .loggedInUserId(loggedInUserId)

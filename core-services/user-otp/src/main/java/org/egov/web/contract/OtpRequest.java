@@ -18,6 +18,7 @@ public class OtpRequest {
                 .tenantId(getTenantId())
                 .type(getType())
                 .userType(getUserType())
+                .isThirdParty(getIsThirdParty())
                 .build();
     }
 
@@ -35,6 +36,9 @@ public class OtpRequest {
 
     private String getTenantId() {
         return otp != null ? otp.getTenantId() : null;
+    }
+    private Boolean getIsThirdParty() {
+        return otp != null ? otp.getIsThirdParty() : null;
     }
 }
 

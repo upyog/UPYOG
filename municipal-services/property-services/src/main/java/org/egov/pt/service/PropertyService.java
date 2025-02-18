@@ -170,8 +170,9 @@ public class PropertyService {
 
 		{
 			if (isRequestForStatusChange) {
+				
 				BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
-				if (billResponse != null) {
+				if (billResponse != null ) {
 					BigDecimal dueAmount = new BigDecimal("0");
 					if (billResponse != null && billResponse.getBill() != null && billResponse.getBill().size() >= 1) {
 						dueAmount = billResponse.getBill().get(0).getTotalAmount();
@@ -183,6 +184,8 @@ public class PropertyService {
 					if (dueAmount.compareTo(BigDecimal.ZERO) > 0)
 						throw new CustomException("EG_PT_ERROR_ACTIVE_BILL_PRESENT",
 								"Clear Pending dues before De-Enumerating the property");
+					else
+						processPropertyUpdate(request, propertyFromSearch);
 				} else
 					processPropertyUpdate(request, propertyFromSearch);
 

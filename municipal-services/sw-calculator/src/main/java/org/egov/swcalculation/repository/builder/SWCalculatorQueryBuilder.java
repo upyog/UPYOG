@@ -19,9 +19,13 @@ public class SWCalculatorQueryBuilder {
 	private static final String LocalityListAsPerBatchQuery = "SELECT distinct(localitycode) FROM eg_bndry_mohalla conn";
 	
 	
-	private static final String connectionNoNonCommercialListQuery = "SELECT distinct(conn.connectionno),sw.connectionexecutiondate "
-			+ " FROM eg_sw_connection conn INNER JOIN eg_sw_service sw ON conn.id = sw.connection_id"
-			+ " inner join eg_pt_property pt on conn.property_id= pt.propertyid ";
+	private static final String connectionNoNonCommercialListQuery = "SELECT DISTINCT conn.connectionno, sw.connectionexecutiondate "
+			+ "FROM eg_sw_connection conn "
+			+ "LEFT JOIN eg_ws_connection ws ON conn.property_id = ws.property_id "
+			+ "LEFT JOIN eg_ws_service sws ON ws.id = sws.connection_id "
+			+ "INNER JOIN eg_sw_service sw ON conn.id = sw.connection_id "
+			+ "INNER JOIN eg_pt_property pt ON conn.property_id = pt.propertyid "
+			+ "";
 	
 	private static final String connectionNoCommercialListSewerageQuery = "SELECT distinct(conn.connectionno),sw.connectionexecutiondate "
 			+ " FROM eg_sw_connection conn LEFT JOIN eg_ws_connection ws ON conn.property_id = ws.property_id"
@@ -495,10 +499,10 @@ public class SWCalculatorQueryBuilder {
 		preparedStatement.add(tenantId);
 		
 		
-		// add Not commercial for amritsar
-		addClauseIfRequired(preparedStatement, query);
-		query.append("pt.usagecategory != ? ");
-		preparedStatement.add("NONRESIDENTIAL.COMMERCIAL");
+//		// add Not commercial for amritsar
+//		addClauseIfRequired(preparedStatement, query);
+//		query.append("pt.usagecategory != ? ");
+//		preparedStatement.add("NONRESIDENTIAL.COMMERCIAL");
 		
 		//Added connection number for testing Anonymous User issue
 //		addClauseIfRequired(preparedStatement, query);
@@ -514,11 +518,18 @@ public class SWCalculatorQueryBuilder {
 			query.append(" conn.connectionno = ? ");
 			preparedStatement.add(cone);
 		}
+                
+        		// Handle property_id and subquery conditions
+        addClauseIfRequired(preparedStatement, query);
+        query.append(" ( ws.property_id IS NULL OR (ws.property_id IS NOT NULL AND (sws.connectiontype IS NULL OR sws.connectiontype = 'Non Metered')) ) ");
+
 		
 		query.append(fetchConnectionsToBeGenerate(tenantId, taxPeriodFrom, taxPeriodTo, preparedStatement));
 
 		return query.toString();
-	}
+		
+	}		
+		
 	
 	public String getConnectionNumberListForCommercialOnlySewerage(String tenantId, String connectionType, String status, Long taxPeriodFrom, Long taxPeriodTo, String cone, List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(connectionNoCommercialListSewerageQuery);

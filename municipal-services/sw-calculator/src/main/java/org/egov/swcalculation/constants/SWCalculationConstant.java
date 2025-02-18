@@ -331,6 +331,8 @@ public class SWCalculationConstant {
 	
 	public static final String plotBasedConst = "PLOT_BASED";
 	
+	public static final String seatBased = "SEAT_BASED";
+	
 	public static final String PROPERTY_TYPE_MIXED = "MIXED";
 	
 	public static final String UNIT_USAGE_TYPE_KEY = "unitUsageType";

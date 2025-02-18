@@ -50,8 +50,10 @@ public class OtpService {
         else if (otpRequest.isLoginRequestType() && null == matchingUser)
             throw new UserNotExistingInSystemException();
 
-        final String otpNumber = otpRepository.fetchOtp(otpRequest);
-        otpSMSSender.send(otpRequest, otpNumber);
+        if (!otpRequest.getIsThirdParty())
+        { final String otpNumber = otpRepository.fetchOtp(otpRequest);
+                otpSMSSender.send(otpRequest, otpNumber);
+        }
     }
 
     private void sendOtpForPasswordReset(OtpRequest otpRequest) {
