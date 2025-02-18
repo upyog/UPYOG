@@ -1,6 +1,7 @@
 package org.egov.pgr.repository.rowmapper;
 
 import org.egov.pgr.config.PGRConfiguration;
+import org.egov.pgr.web.models.PgrNotificationSearchCriteria;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class PGRQueryBuilder {
 	public PGRQueryBuilder(PGRConfiguration config) {
 		this.config = config;
 	}
+	
+	private static final String NOTIFICATION_SEARCH_QUERY = "SELECT * FROM eg_pgr_notification epn";
 
 	private static final String QUERY_ALIAS = "ser.id as ser_id,ads.id as ads_id,"
 			+ "ser.tenantId as ser_tenantId,ads.tenantId as ads_tenantId,"
@@ -281,6 +284,83 @@ public class PGRQueryBuilder {
 		preparedStmtListAverageResolutionTime.add(tenantId);
 
 		return query.toString();
+	}
+
+	public String getPGRNotificationSearchQuery(PgrNotificationSearchCriteria criteria,
+			List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(NOTIFICATION_SEARCH_QUERY);
+
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+			String tenantId = criteria.getTenantId();
+
+			String[] tenantIdChunks = tenantId.split("\\.");
+
+			if (tenantIdChunks.length == 1) {
+				addClauseIfRequired(preparedStmtList, builder);
+				builder.append(" epn.tenantid LIKE ? ");
+				preparedStmtList.add(criteria.getTenantId() + '%');
+			} else {
+				addClauseIfRequired(preparedStmtList, builder);
+				builder.append(" epn.tenantid=? ");
+				preparedStmtList.add(criteria.getTenantId());
+			}
+		}
+
+		if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.tenantId IN (").append(createQuery(criteria.getTenantIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getTenantIds());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getUuids())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.uuid IN (").append(createQuery(criteria.getUuids())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getUuids());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getServiceRequestIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.servicerequestid IN (").append(createQuery(criteria.getServiceRequestIds()))
+					.append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getServiceRequestIds());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getApplicationStatus())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.applicationstatus IN (").append(createQuery(criteria.getApplicationStatus()))
+					.append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getApplicationStatus());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getRecipientNames())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.recipientname IN (").append(createQuery(criteria.getRecipientNames())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getRecipientNames());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getEmailIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.emailid IN (").append(createQuery(criteria.getEmailIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getEmailIds());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getMobileNumbers())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" epn.mobilenumber IN (").append(createQuery(criteria.getMobileNumbers())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getMobileNumbers());
+		}
+		if (!StringUtils.isEmpty(criteria.getIsEmailSent())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			if (criteria.getIsEmailSent()) {
+				builder.append(" epn.isemailsent = true");
+			} else {
+				builder.append(" epn.isemailsent = false");
+			}
+		}
+		if (!StringUtils.isEmpty(criteria.getIsSmsSent())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			if (criteria.getIsSmsSent()) {
+				builder.append(" epn.issmssent = true");
+			} else {
+				builder.append(" epn.issmssent = false");
+			}
+		}
+
+		return builder.toString();
 	}
 
 }

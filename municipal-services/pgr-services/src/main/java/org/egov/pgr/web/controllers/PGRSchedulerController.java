@@ -22,4 +22,10 @@ public class PGRSchedulerController {
 		return ResponseEntity.ok("Request Escalated Successfully!!!");
 	}
 
+	@PostMapping("/notification-sender")
+	public ResponseEntity<?> sendNotification(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+		service.sendNotification(requestInfoWrapper);
+		return ResponseEntity.ok("Notification Send Successfully!!!");
+	}
+
 }

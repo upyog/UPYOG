@@ -20,7 +20,9 @@ import org.egov.pgr.validator.ServiceRequestValidator;
 import org.egov.pgr.web.models.CountStatusRequest;
 import org.egov.pgr.web.models.CountStatusResponse;
 import org.egov.pgr.web.models.CountStatusUpdate;
+import org.egov.pgr.web.models.PGRNotification;
 import org.egov.pgr.web.models.PGRNotificationRequest;
+import org.egov.pgr.web.models.PgrNotificationSearchCriteria;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.ServiceRequest;
@@ -263,6 +265,12 @@ public class PGRService {
 		producer.push(config.getCreateNotificationTopic(), pgrNotificationRequest);
 
 		return update(serviceRequest);
+	}
+
+
+	public List<PGRNotification> searchPgrNotification(PgrNotificationSearchCriteria pgrNotificationSearchCriteria) {
+
+		return repository.getPgrNotifications(pgrNotificationSearchCriteria);
 	}
 	
 }

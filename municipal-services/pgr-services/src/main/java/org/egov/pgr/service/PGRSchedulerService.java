@@ -5,7 +5,14 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.pgr.config.PGRConfiguration;
+import org.egov.pgr.producer.Producer;
 import org.egov.pgr.util.PGRConstants;
+import org.egov.pgr.util.PGRUtils;
+import org.egov.pgr.web.models.AuditDetails;
+import org.egov.pgr.web.models.PGRNotification;
+import org.egov.pgr.web.models.PGRNotificationRequest;
+import org.egov.pgr.web.models.PgrNotificationSearchCriteria;
 import org.egov.pgr.web.models.RequestInfoWrapper;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.ServiceStatusUpdateRequest;
@@ -23,6 +30,18 @@ public class PGRSchedulerService {
 	@Autowired
 	private PGRService pgrService;
 
+	@Autowired
+	private NotificationService notificationService;
+
+	@Autowired
+	private Producer producer;
+
+	@Autowired
+	private PGRConfiguration config;
+
+	@Autowired
+	private PGRUtils utils;
+
 	public void escalateRequest(RequestInfoWrapper requestInfoWrapper) {
 
 		RequestSearchCriteria requestSearchCriteria = RequestSearchCriteria.builder()
@@ -36,15 +55,6 @@ public class PGRSchedulerService {
 
 				if (Instant.ofEpochMilli(serviceWrapper.getService().getAuditDetails().getLastModifiedTime())
 						.isBefore(Instant.now().minus(Duration.ofHours(72)))) {
-
-//					ServiceRequest serviceRequest = ServiceRequest.builder()
-//							.requestInfo(requestInfoWrapper.getRequestInfo()).service(serviceWrapper.getService())
-//							.workflow(serviceWrapper.getWorkflow()).build();
-//
-//					serviceRequest.getService().setApplicationStatus(PGRConstants.PENDINGATLMHE);
-//					serviceRequest.getWorkflow().setAction(PGRConstants.ACTION_FORWARD_TO_APPROVER);
-
-//					pgrService.update(serviceRequest);
 
 					ServiceStatusUpdateRequest serviceStatusUpdateRequest = ServiceStatusUpdateRequest.builder()
 							.requestInfo(requestInfoWrapper.getRequestInfo())
@@ -60,6 +70,40 @@ public class PGRSchedulerService {
 			});
 		}
 
+	}
+
+	public void sendNotification(RequestInfoWrapper requestInfoWrapper) {
+
+		PgrNotificationSearchCriteria pgrNotificationSearchCriteria = PgrNotificationSearchCriteria.builder().build();
+
+		List<PGRNotification> pgrNotifications = pgrService.searchPgrNotification(pgrNotificationSearchCriteria);
+
+		if (!CollectionUtils.isEmpty(pgrNotifications)) {
+			pgrNotifications.stream().forEach(pgrNotification -> {
+				try {
+					pgrNotification = notificationService.triggerNotificationsStatusChange(pgrNotification,
+							requestInfoWrapper);
+					updatePgrNotification(pgrNotification, requestInfoWrapper);
+				} catch (Exception e) {
+					log.error("NOTIFICATION_NOT_SENT",
+							"Notification not sent for Grievance with ID No. " + pgrNotification.getServiceRequestId());
+				}
+			});
+		}
+
+	}
+
+	private void updatePgrNotification(PGRNotification pgrNotification, RequestInfoWrapper requestInfoWrapper) {
+
+		AuditDetails auditDetails = utils.buildUpdateAuditDetails(pgrNotification.getAuditDetails(),
+				requestInfoWrapper.getRequestInfo());
+
+		pgrNotification.setAuditDetails(auditDetails);
+
+		PGRNotificationRequest pgrNotificationRequest = PGRNotificationRequest.builder()
+				.pgrNotification(pgrNotification).requestInfo(requestInfoWrapper.getRequestInfo()).build();
+
+		producer.push(config.getUpdateNotificationTopic(), pgrNotificationRequest);
 	}
 
 }
