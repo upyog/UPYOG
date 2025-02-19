@@ -170,7 +170,7 @@ public class EnrichmentService {
 				.serviceRequestId(service.getServiceRequestId()).tenantId(service.getTenantId())
 				.applicationStatus(service.getApplicationStatus())
 				.recipientName(additionalDetail.get("citizenName").asText())
-				.emailId(additionalDetail.get("citizenEmail").asText())
+				.emailId(null != additionalDetail.get("citizenEmail") ? additionalDetail.get("citizenEmail").asText(): null)
 				.mobileNumber(additionalDetail.get("citizenMobile").asText()).auditDetails(auditDetails).build();
 
 		return PGRNotificationRequest.builder().requestInfo(serviceRequest.getRequestInfo())
