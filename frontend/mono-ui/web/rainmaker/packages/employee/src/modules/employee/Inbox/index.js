@@ -32,7 +32,7 @@ class Inbox extends Component {
   constructor(props){
     super(props);
     /* RAIN-7250 Always Navigate to new UI Incase user clicks on Home  */
-    window.location.href="/digit-ui/employee";
+    // window.location.href="/digit-ui/employee";
   }
   componentDidMount = () => {
     const { fetchLocalizationLabel } = this.props

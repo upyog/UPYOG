@@ -13,23 +13,28 @@ class EGFFinance extends Component {
 
   render() {
     let auth_token = getAccessToken(),
-    locale = localStorage.getItem("locale"),
-    menuUrl = this.props.location.pathname,
-    loc = window.location,
-    subdomainurl,
-    domainurl,
-    finEnv,
-    hostname = loc.hostname,
-    winheight = window.innerHeight - 100,
-    erp_url,
-    tenantId = getTenantId();
-    //Reading domain name from the request url
+      locale = localStorage.getItem("locale"),
+      menuUrl = this.props.location.pathname,
+      loc = window.location,
+      subdomainurl,
+      domainurl,
+      finEnv,
+      hostname = loc.hostname,
+      winheight = window.innerHeight - 100,
+      erp_url,
+      tenantId = getTenantId();
+    //Reading domain name from the request url 
     domainurl = hostname.substring(hostname.indexOf(".") + 1);
     // Reading environment name (ex: dev, qa, uat, fin-uat etc) from the globalconfigs if exists else reading from the .env file
     finEnv = this.globalConfigExists() ? window.globalConfigs.getConfig("FIN_ENV") : process.env.REACT_APP_FIN_ENV;
     // Preparing finance subdomain url using the above environment name and the domain url
-    subdomainurl = !!(finEnv) ? "-" + finEnv + "." + domainurl : "." + domainurl;
-    erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + subdomainurl + menuUrl;
+    //subdomainurl = !!(finEnv) ? "-" + finEnv + "." + domainurl : "." + domainurl;
+    //erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + subdomainurl + menuUrl;
+
+    subdomainurl = hostname.substring(hostname.indexOf(".") + 1);
+    console.log(subdomainurl);
+    erp_url = loc.protocol + "//" + getTenantId().split(".")[1] + "." + subdomainurl + ":9090" +
+      menuUrl;
 
     return (
       <div>
@@ -38,7 +43,7 @@ class EGFFinance extends Component {
           <input readOnly hidden="true" name="auth_token" value={auth_token} />
           <input readOnly hidden="true" name="tenantId" value={tenantId} />
           <input readOnly hidden="true" name="locale" value={locale} />
-	  <input readOnly hidden="true" name="formPage" value="true" />
+          <input readOnly hidden="true" name="formPage" value="true" />
         </form>
       </div>
     );
