@@ -5,17 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.repository.rowmapper.CountRowMapper;
+import org.egov.pgr.repository.rowmapper.PGRNotificationRowMapper;
 import org.egov.pgr.repository.rowmapper.PGRQueryBuilder;
 import org.egov.pgr.repository.rowmapper.PGRRowMapper;
 import org.egov.pgr.util.PGRConstants;
 import org.egov.pgr.web.models.ServiceWrapper;
 import org.egov.pgr.web.models.CountStatusRequest;
 import org.egov.pgr.web.models.CountStatusUpdate;
+import org.egov.pgr.web.models.PGRNotification;
+import org.egov.pgr.web.models.PgrNotificationSearchCriteria;
 import org.egov.pgr.web.models.RequestSearchCriteria;
 import org.egov.pgr.web.models.Service;
 import org.egov.pgr.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -42,10 +46,14 @@ public class PGRRepository {
 
     private JdbcTemplate jdbcTemplate;
     
-    private ObjectMapper mapper;
-
     @Autowired
     private CountRowMapper countRowMapper;
+    
+    @Autowired
+    private PGRNotificationRowMapper pgrNotificationRowMapper;
+    
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     
     
     @Autowired
@@ -184,6 +192,25 @@ public class PGRRepository {
 			  searchQuery.append(" AND");
 
 	        return true;
+	}
+
+
+	public List<PGRNotification> getPgrNotifications(PgrNotificationSearchCriteria pgrNotificationSearchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPGRNotificationSearchQuery(pgrNotificationSearchCriteria, preparedStmtList);
+		List<PGRNotification> pgrNotifications = jdbcTemplate.query(query, preparedStmtList.toArray(),
+				pgrNotificationRowMapper);
+		return pgrNotifications;
+	}
+
+
+	public void deletePgrNotifications(List<String> uuidList) {
+		final Map<String, Object> uuidInputs = new HashMap<String, Object>();
+		uuidInputs.put("uuid", uuidList);
+		String query = queryBuilder.getPGRNotificationDeleteQuery();
+		if (!CollectionUtils.isEmpty(uuidList)) {
+			namedParameterJdbcTemplate.update(query, uuidInputs);
+		}
 	}
 
 

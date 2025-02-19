@@ -120,3 +120,61 @@ serviceMaps:
       - jsonPath: $.service.auditDetails.lastModifiedTime
 
       - jsonPath: $.service.id
+
+
+  - version: 1.0
+    description: Persists pgr service request in tables
+    name : pgr-services
+    fromTopic: save-pgr-notification-request
+    isTransaction: true
+    queryMaps:
+
+    - query: INSERT INTO eg_pgr_notification(uuid, servicerequestid, tenantid, applicationstatus, recipientname, emailid, mobilenumber, isemailsent, issmssent, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      basePath: pgrNotification
+      jsonMaps:
+      - jsonPath: $.pgrNotification.uuid
+
+      - jsonPath: $.pgrNotification.serviceRequestId
+
+      - jsonPath: $.pgrNotification.tenantId
+
+      - jsonPath: $.pgrNotification.applicationStatus
+
+      - jsonPath: $.pgrNotification.recipientName
+
+      - jsonPath: $.pgrNotification.emailId
+
+      - jsonPath: $.pgrNotification.mobileNumber
+
+      - jsonPath: $.pgrNotification.isEmailSent
+
+      - jsonPath: $.pgrNotification.isSmsSent
+
+      - jsonPath: $.pgrNotification.auditDetails.createdBy
+
+      - jsonPath: $.pgrNotification.auditDetails.createdTime
+
+      - jsonPath: $.pgrNotification.auditDetails.lastModifiedBy
+
+      - jsonPath: $.pgrNotification.auditDetails.lastModifiedTime
+
+
+  - version: 1.0
+    description: Updates pgr service request in tables
+    fromTopic: update-pgr-notification-request
+    isTransaction: true
+    queryMaps:
+    - query: UPDATE eg_pgr_notification SET isemailsent=?, issmssent = ?, lastmodifiedby=?, lastmodifiedtime=? WHERE uuid=?;
+      basePath: pgrNotification
+      jsonMaps:
+      - jsonPath: $.pgrNotification.isEmailSent
+
+      - jsonPath: $.pgrNotification.isSmsSent
+
+      - jsonPath: $.pgrNotification.auditDetails.lastModifiedBy
+
+      - jsonPath: $.pgrNotification.auditDetails.lastModifiedTime
+
+      - jsonPath: $.pgrNotification.uuid	  
+
+

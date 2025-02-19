@@ -15,6 +15,15 @@ import lombok.NoArgsConstructor;
 @Component
 public class SchedulerConfiguration {
 
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
+
+	@Value("${egov.user.host}")
+	private String userServiceHostUrl;
+
+	@Value("${egov.user.search.endpoint}")
+	private String userSearchEndpoint;
+
 	@Value("${egov.garbage.context.host}")
 	private String garbageServiceHostUrl;
 
@@ -32,5 +41,17 @@ public class SchedulerConfiguration {
 
 	@Value("${egov.property.endpoint.tax-calculator}")
 	private String propertyTaxCalculatorEndpoint;
+
+	@Value("${egov.pgr.context.host}")
+	private String pgrServiceHostUrl;
+
+	@Value("${egov.pgr.endpoint.request-escalator}")
+	private String pgrRequestEscalatorEndpoint;
+
+	@Value("${egov.pgr.endpoint.notification-sender}")
+	private String pgrNotificationSenderEndpoint;
+
+	@Value("${egov.pgr.endpoint.delete-notification}")
+	private String pgrDeleteNotificationEndpoint;
 
 }
