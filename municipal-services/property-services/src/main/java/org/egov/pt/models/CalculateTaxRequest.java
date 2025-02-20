@@ -1,6 +1,7 @@
 package org.egov.pt.models;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 
@@ -26,5 +27,20 @@ public class CalculateTaxRequest {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date toDate;
+
+	@JsonProperty("propertyIds")
+	private Set<String> propertyIds;
+
+	@JsonProperty("ulbNames")
+	private Set<String> ulbNames;
+
+	@JsonProperty("wardNumbers")
+	private Set<String> wardNumbers;
+
+	@JsonProperty("mobileNumbers")
+	private Set<String> mobileNumbers;
+
+	@JsonProperty("finYear")
+	private String finYear;
 
 }

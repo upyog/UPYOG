@@ -12,9 +12,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.pt.models.CalculateTaxRequest;
+import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.Unit;
@@ -52,7 +54,7 @@ public class PropertySchedulerService {
 	@Autowired
 	private BillService billService;
 
-	public void calculateTax(CalculateTaxRequest calculateTaxRequest) {
+	public Object calculateTax(CalculateTaxRequest calculateTaxRequest) {
 
 		JsonNode ulbModules = null;
 		JsonNode propertyTaxRateModules = null;
@@ -91,11 +93,7 @@ public class PropertySchedulerService {
 					.valueToTree(propertyTaxRateModules.get(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE));
 		}
 
-		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
-				.status(Collections.singleton(Status.APPROVED)).build();
-
-		List<Property> properties = propertyService.searchProperty(propertyCriteria,
-				calculateTaxRequest.getRequestInfo());
+		List<Property> properties = getProperties(calculateTaxRequest);
 
 		for (Property property : properties) {
 
@@ -229,32 +227,81 @@ public class PropertySchedulerService {
 				}
 			}
 
+			log.error(errorMap.toString());
+
 			if (!errorMap.containsKey(property.getPropertyId()) && !BigDecimal.ZERO.equals(totalPropertyTax)) {
 
 				oneDayPropertyTax = totalPropertyTax.divide(BigDecimal.valueOf(365), 0);
 
 				finalPropertyTax = oneDayPropertyTax.multiply(days);
 
-				List<Demand> savedDemands = new ArrayList<>();
-				// generate demand
-				savedDemands = demandService.generateDemand(calculateTaxRequest.getRequestInfo(), property,
-						property.getBusinessService(), finalPropertyTax);
-
-				if (CollectionUtils.isEmpty(savedDemands)) {
-					throw new CustomException("INVALID_CONSUMERCODE",
-							"Bill not generated due to no Demand found for the given consumerCode");
-				}
-
-				// fetch/create bill
-				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(property.getTenantId())
-						.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
-
-				BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(),
-						billCriteria);
+				generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
 			}
 
 		}
 
+		return properties;
+	}
+
+	private List<Property> getProperties(CalculateTaxRequest calculateTaxRequest) {
+
+		Set<String> ulbNames = calculateTaxRequest.getUlbNames();
+		Set<String> wardNumbers = calculateTaxRequest.getWardNumbers();
+		Set<String> mobileNumbers = calculateTaxRequest.getMobileNumbers();
+//		List<Property> finalProperties = new ArrayList<>();
+
+		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
+				.status(Collections.singleton(Status.APPROVED)).propertyIds(calculateTaxRequest.getPropertyIds())
+				.build();
+
+		List<Property> properties = propertyService.searchProperty(propertyCriteria,
+				calculateTaxRequest.getRequestInfo());
+
+		if (!CollectionUtils.isEmpty(mobileNumbers)) {
+			properties = properties.stream()
+					.filter(property -> !Collections.disjoint(mobileNumbers,
+							property.getOwners().stream().map(OwnerInfo::getMobileNumber).collect(Collectors.toSet())))
+					.collect(Collectors.toList());
+		}
+		if (!CollectionUtils.isEmpty(ulbNames)) {
+			properties = properties.stream().filter(
+					property -> property.getAddress() != null && property.getAddress().getAdditionalDetails() != null)
+					.filter(property -> {
+						JsonNode addressAdditionalDetails = objectMapper
+								.valueToTree(property.getAddress().getAdditionalDetails());
+						JsonNode ulbNameNode = addressAdditionalDetails.get("ulbName");
+						return ulbNameNode != null && ulbNames.contains(ulbNameNode.asText());
+					}).collect(Collectors.toList());
+		}
+//		if (!CollectionUtils.isEmpty(wardNumbers)) {
+//			properties = properties.stream().filter(property -> null != property.getAddress()
+//					&& null != property.getAddress().getAdditionalDetails()
+//					&& null != objectMapper.valueToTree(property.getAddress().getAdditionalDetails()).get("wardNumber")
+//					&& wardNumbers.contains(objectMapper.valueToTree(property.getAddress().getAdditionalDetails())
+//							.get("wardNumber").asText()))
+//					.collect(Collectors.toList());
+//		}
+
+		return properties;
+	}
+
+	private void generateDemandAndBill(CalculateTaxRequest calculateTaxRequest, Property property,
+			BigDecimal finalPropertyTax) {
+		List<Demand> savedDemands = new ArrayList<>();
+		// generate demand
+		savedDemands = demandService.generateDemand(calculateTaxRequest.getRequestInfo(), property,
+				property.getBusinessService(), finalPropertyTax);
+
+		if (CollectionUtils.isEmpty(savedDemands)) {
+			throw new CustomException("INVALID_CONSUMERCODE",
+					"Bill not generated due to no Demand found for the given consumerCode");
+		}
+
+		// fetch/create bill
+		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(property.getTenantId())
+				.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
+
+		BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(), billCriteria);
 	}
 
 	private BigDecimal calculateDays(Date fromDate, Date toDate) {

@@ -19,9 +19,10 @@ public class PropertySchedulerController {
 	@PostMapping("/tax-calculator")
 	public ResponseEntity<?> taxCalculator(@RequestBody CalculateTaxRequest calculateTaxRequest) {
 
-		service.calculateTax(calculateTaxRequest);
-
-		return ResponseEntity.ok("Tax calculated successfully!!!");
+//		service.calculateTax(calculateTaxRequest);
+//
+//		return ResponseEntity.ok("Tax calculated successfully!!!");
+		return ResponseEntity.ok(service.calculateTax(calculateTaxRequest));
 	}
 
 }
