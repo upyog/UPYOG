@@ -403,21 +403,14 @@ public class TradeLicenseService {
             licenceResponse =  createResponse;
         }
         else{
-            if (businessServicefromPath == null) {
-                businessServicefromPath=licence.getBusinessService();
-                if (businessServicefromPath == null) {
-                    businessServicefromPath = businessService_TL;
-                }
-            }
+            if (businessServicefromPath == null)
+                businessServicefromPath = businessService_TL;
             tlValidator.validateBusinessService(tradeLicenseRequest, businessServicefromPath);
             Object mdmsData = util.mDMSCall(tradeLicenseRequest.getRequestInfo(), tradeLicenseRequest.getLicenses().get(0).getTenantId());
             Object billingSlabs = null;//util.getBillingSlabs(tradeLicenseRequest.getRequestInfo(), tradeLicenseRequest.getLicenses().get(0).getTenantId());
             String businessServiceName = null;
             switch (businessServicefromPath) {
                 case businessService_TL:
-                    businessServiceName = config.getTlBusinessServiceValue();
-                    break;
-                case businessService_NewTL:
                     businessServiceName = config.getTlBusinessServiceValue();
                     break;
 
