@@ -23,6 +23,7 @@ public class TLConstants {
 	public static final String ROLE_CODE_KEY = "rolecode";
 
     public static  final String businessService_TL = "TL";
+    public static  final String businessService_NewTL = "NewTL";
 
     public static  final String businessService_DIRECT_RENEWAL = "DIRECTRENEWAL";
     
