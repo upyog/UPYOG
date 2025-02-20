@@ -104,7 +104,7 @@ public class  TradeLicense   {
 
         @SafeHtml
         @JsonProperty("businessService")
-        private String businessService = "TL";
+        private String businessService = "NewTL";
 
         @JsonProperty("licenseType")
         private LicenseTypeEnum licenseType = null;
