@@ -48,9 +48,6 @@ public class PGRConstants {
 
     public static final String REJECT_REJECTED = "REJECT_REJECTED";
 
-    public static final String PENDINGATLME = "PENDINGATLME";
-    public static final String PENDINGATLMHE = "PENDINGATLMHE";
-
     public static final String REASSIGN = "REASSIGN";
 
     public static final String REJECT = "REJECT";
@@ -59,11 +56,19 @@ public class PGRConstants {
 
     public static final String PENDINGFORASSIGNMENT = "PENDINGFORASSIGNMENT";
 
+    
+    public static final String PENDINGATLME = "PENDINGATLME";
+
     public static final String RESOLVED = "RESOLVED";
 
     public static final String CLOSED_AFTER_RESOLUTION = "CLOSEDAFTERRESOLUTION";
 
     public static final String CLOSED_AFTER_REJECTION = "CLOSEDAFTERREJECTION";
+
+    public static final String PENDING_FOR_MODIFICATION = "PENDINGFORMODIFICATION";
+
+    public static final String PENDINGATLMHE = "PENDINGATLMHE";
+
 
     public static final String RATE = "RATE";
 
@@ -149,6 +154,12 @@ public class PGRConstants {
     public static final String DEPARTMENT = "department";
     
     public static final String ACTION_FORWARD_TO_APPROVER = "FORWARD_TO_APPROVER";
+
+
+
+
+
+
 
 
 }

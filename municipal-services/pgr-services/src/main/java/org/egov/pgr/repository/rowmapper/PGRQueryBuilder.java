@@ -187,7 +187,7 @@ public class PGRQueryBuilder {
 
 		addOrderByClause(builder, criteria);
 
-		addLimitAndOffset(builder, criteria, preparedStmtList);
+//		addLimitAndOffset(builder, criteria, preparedStmtList);
 
 		return builder.toString();
 	}

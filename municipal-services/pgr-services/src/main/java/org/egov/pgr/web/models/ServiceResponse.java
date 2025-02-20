@@ -40,6 +40,31 @@ public class ServiceResponse   {
         @JsonProperty("complaintTypes")
         private int complaintTypes;
 
+        @JsonProperty("totalCount")
+	private Integer totalCount;
+
+	@Builder.Default
+	@JsonProperty("applicationResolved")
+	private Integer applicationResolved = 0;
+
+	@Builder.Default
+	@JsonProperty("applicationResolvedAfterResolution")
+	private Integer applicationResolvedAfterResolution = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationPendingAtLME")
+	private Integer applicationPendingAtLME = 0;
+
+	@Builder.Default
+	@JsonProperty("applicationPendingAtLMHE")
+	private Integer applicationPendingAtLMHE = 0;
+	
+	@Builder.Default
+	@JsonProperty("applicationRejected")
+	private Integer applicationRejected = 0;
+
+
+
 
 }
 
