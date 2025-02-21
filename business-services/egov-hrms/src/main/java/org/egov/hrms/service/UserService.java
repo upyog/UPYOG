@@ -224,6 +224,7 @@ public class UserService {
 		try{
 			LinkedHashMap responseMap = (LinkedHashMap) restCallRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap,dobFormat);
+			objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 			UserResponse userDetailResponse = objectMapper.convertValue(responseMap,UserResponse.class);
 			return userDetailResponse;
 		}
