@@ -43,6 +43,7 @@ import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
+import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -788,6 +789,11 @@ public class PropertyService {
 			}
 		}
 
+	}
+	
+	public void saveToPtTaxCalculatorTracker(PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
+
+		producer.push(config.getSavePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
 	}
 
 }

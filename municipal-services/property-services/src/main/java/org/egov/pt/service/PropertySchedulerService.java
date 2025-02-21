@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.OwnerInfo;
@@ -25,6 +26,7 @@ import org.egov.pt.models.bill.GenerateBillCriteria;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.util.PTConstants;
+import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,9 @@ public class PropertySchedulerService {
 	@Autowired
 	private BillService billService;
 
+	@Autowired
+	private EnrichmentService enrichmentService;
+
 	public Object calculateTax(CalculateTaxRequest calculateTaxRequest) {
 
 		JsonNode ulbModules = null;
@@ -66,9 +71,9 @@ public class PropertySchedulerService {
 		JsonNode overAllRebatePercentages = null;
 		JsonNode propertyTaxRates = null;
 
-		Map<String, Set<String>> errorMap = new HashMap<>();
+		BigDecimal days = calculateDays(calculateTaxRequest);
 
-		BigDecimal days = calculateDays(calculateTaxRequest.getFromDate(), calculateTaxRequest.getToDate());
+		Map<String, Set<String>> errorMap = new HashMap<>();
 
 		MdmsResponse mdmsResponse = mdmsService.getMdmsData(calculateTaxRequest.getRequestInfo(), null);
 
@@ -145,7 +150,7 @@ public class PropertySchedulerService {
 				for (JsonNode buildingUse : objectMapper.valueToTree(buildingUses)) {
 					if (ulbName.equalsIgnoreCase(buildingUse.get("ulbName").asText())
 							&& buildingUse.get("useOfBuilding").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("uses").asText())) {
+									.equalsIgnoreCase(unitAdditionalDetails.get("useOfBuilding").asText())) {
 						useFactor = new BigDecimal(buildingUse.get("rate").asText());
 					}
 				}
@@ -201,7 +206,7 @@ public class PropertySchedulerService {
 							&& propertyTaxRate.get("purposeName").asText()
 									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText())
 							&& propertyTaxRate.get("useOfBuilding").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("uses").asText())) {
+									.equalsIgnoreCase(unitAdditionalDetails.get("useOfBuilding").asText())) {
 
 						String propertyAreaString = propertyTaxRate.get("propertyArea").asText();
 						BigDecimal unitPropertyArea = new BigDecimal(unitAdditionalDetails.get("propArea").asText());
@@ -235,6 +240,11 @@ public class PropertySchedulerService {
 
 				finalPropertyTax = oneDayPropertyTax.multiply(days);
 
+				PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
+						.enrichTaxCalculatorTrackerCreateRequest(property, calculateTaxRequest, finalPropertyTax);
+
+				propertyService.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
+
 				generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
 			}
 
@@ -243,12 +253,45 @@ public class PropertySchedulerService {
 		return properties;
 	}
 
+	private BigDecimal calculateDays(CalculateTaxRequest calculateTaxRequest) {
+		BigDecimal days = new BigDecimal(365);
+
+		if (!StringUtils.isEmpty(calculateTaxRequest.getFinancialYear())) {
+			int financialYearStart = Integer.valueOf(calculateTaxRequest.getFinancialYear().split("-")[0]);
+			LocalDate startDate = LocalDate.of(financialYearStart, 4, 1);
+			LocalDate endDate = LocalDate.of(financialYearStart + 1, 3, 31);
+			calculateTaxRequest.setFromDate(Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			calculateTaxRequest.setToDate(Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		} else if (null != calculateTaxRequest.getFromDate() && null != calculateTaxRequest.getToDate()) {
+			LocalDate fromLocalDate = calculateTaxRequest.getFromDate().toInstant().atZone(ZoneId.systemDefault())
+					.toLocalDate();
+			LocalDate toLocalDate = calculateTaxRequest.getToDate().toInstant().atZone(ZoneId.systemDefault())
+					.toLocalDate();
+
+			days = BigDecimal.valueOf(ChronoUnit.DAYS.between(fromLocalDate, toLocalDate));
+		} else {
+			LocalDate currentDate = LocalDate.now();
+			// Calculate the current financial year
+			int currentYear = currentDate.getYear();
+			int financialYearStart = currentDate.isBefore(LocalDate.of(currentYear, 4, 1)) ? currentYear - 1
+					: currentYear;
+			int financialYearEnd = financialYearStart + 1;
+			LocalDate startDate = LocalDate.of(financialYearStart, 4, 1);
+			LocalDate endDate = LocalDate.of(financialYearStart + 1, 3, 31);
+			calculateTaxRequest.setFromDate(Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			calculateTaxRequest.setToDate(Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+			calculateTaxRequest
+					.setFinancialYear(financialYearStart + "-" + String.valueOf(financialYearEnd).substring(2));
+		}
+
+		return days;
+	}
+
 	private List<Property> getProperties(CalculateTaxRequest calculateTaxRequest) {
 
 		Set<String> ulbNames = calculateTaxRequest.getUlbNames();
 		Set<String> wardNumbers = calculateTaxRequest.getWardNumbers();
 		Set<String> mobileNumbers = calculateTaxRequest.getMobileNumbers();
-//		List<Property> finalProperties = new ArrayList<>();
 
 		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
 				.status(Collections.singleton(Status.APPROVED)).propertyIds(calculateTaxRequest.getPropertyIds())
@@ -270,17 +313,21 @@ public class PropertySchedulerService {
 						JsonNode addressAdditionalDetails = objectMapper
 								.valueToTree(property.getAddress().getAdditionalDetails());
 						JsonNode ulbNameNode = addressAdditionalDetails.get("ulbName");
-						return ulbNameNode != null && ulbNames.contains(ulbNameNode.asText());
+						return null != ulbNameNode && ulbNames.contains(ulbNameNode.asText());
 					}).collect(Collectors.toList());
 		}
-//		if (!CollectionUtils.isEmpty(wardNumbers)) {
-//			properties = properties.stream().filter(property -> null != property.getAddress()
-//					&& null != property.getAddress().getAdditionalDetails()
-//					&& null != objectMapper.valueToTree(property.getAddress().getAdditionalDetails()).get("wardNumber")
-//					&& wardNumbers.contains(objectMapper.valueToTree(property.getAddress().getAdditionalDetails())
-//							.get("wardNumber").asText()))
-//					.collect(Collectors.toList());
-//		}
+		if (!CollectionUtils.isEmpty(ulbNames) && !CollectionUtils.isEmpty(wardNumbers)) {
+			properties = properties.stream().filter(
+					property -> property.getAddress() != null && property.getAddress().getAdditionalDetails() != null)
+					.filter(property -> {
+						JsonNode addressAdditionalDetails = objectMapper
+								.valueToTree(property.getAddress().getAdditionalDetails());
+						JsonNode ulbNameNode = addressAdditionalDetails.get("ulbName");
+						JsonNode wardNumberNode = addressAdditionalDetails.get("wardNumber");
+						return null != ulbNameNode && null != wardNumberNode && ulbNames.contains(ulbNameNode.asText())
+								&& wardNumbers.contains(wardNumberNode.asText());
+					}).collect(Collectors.toList());
+		}
 
 		return properties;
 	}
@@ -302,19 +349,6 @@ public class PropertySchedulerService {
 				.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
 
 		BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(), billCriteria);
-	}
-
-	private BigDecimal calculateDays(Date fromDate, Date toDate) {
-		BigDecimal days = new BigDecimal(365);
-		if (null != fromDate && null != toDate) {
-			LocalDate fromLocalDate = fromDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			LocalDate toLocalDate = toDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-			// Calculate the number of days between fromDate and toDate
-			days = BigDecimal.valueOf(ChronoUnit.DAYS.between(fromLocalDate, toLocalDate));
-		}
-
-		return days;
 	}
 
 	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {

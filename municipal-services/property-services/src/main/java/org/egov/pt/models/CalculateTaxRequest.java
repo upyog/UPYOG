@@ -40,7 +40,7 @@ public class CalculateTaxRequest {
 	@JsonProperty("mobileNumbers")
 	private Set<String> mobileNumbers;
 
-	@JsonProperty("finYear")
-	private String finYear;
+	@JsonProperty("financialYear")
+	private String financialYear;
 
 }
