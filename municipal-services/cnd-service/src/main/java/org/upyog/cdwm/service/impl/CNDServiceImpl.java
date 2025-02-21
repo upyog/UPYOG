@@ -29,7 +29,7 @@ public class CNDServiceImpl implements CNDService {
 
     @Override
     public CNDApplicationDetail createConstructionAndDemolitionRequest(CNDApplicationRequest cndApplicationRequest) {
-        log.info("Create CND application for user: " + cndApplicationRequest.getRequestInfo().getUserInfo().getUuid()
+        log.info("Create CND application for user: " + cndApplicationRequest.getRequestInfo().getUserInfo().getUserName()
                 + " for the request: " + cndApplicationRequest.getCndApplication());
 
         enrichmentService.enrichCreateCNDRequest(cndApplicationRequest);
