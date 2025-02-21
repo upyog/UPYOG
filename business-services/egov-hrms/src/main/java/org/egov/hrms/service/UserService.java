@@ -40,6 +40,7 @@
 
 package org.egov.hrms.service;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -224,6 +225,7 @@ public class UserService {
 		try{
 			LinkedHashMap responseMap = (LinkedHashMap) restCallRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap,dobFormat);
+			objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 			UserResponse userDetailResponse = objectMapper.convertValue(responseMap,UserResponse.class);
 			return userDetailResponse;
 		}
