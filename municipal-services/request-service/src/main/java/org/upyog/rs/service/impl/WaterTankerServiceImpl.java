@@ -43,10 +43,10 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Autowired
 	DemandService demandService;
-	
+
 	@Autowired
 	RequestServiceConfiguration config;
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -59,18 +59,18 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		enrichmentService.enrichCreateWaterTankerRequest(waterTankerRequest);
 
 		workflowService.updateWorkflowStatus(null, waterTankerRequest);
-		
+
 		// Get the uuid of User from user registry
 		try {
-	        String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
-	        waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(uuid);
-	        log.info("Applicant or User Uuid: " + uuid);
-	    } catch (Exception e) {
-	        log.error("Error while creating user: " + e.getMessage(), e);
-	    }
-		
+			String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
+			waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(uuid);
+			log.info("Applicant or User Uuid: " + uuid);
+		} catch (Exception e) {
+			log.error("Error while creating user: " + e.getMessage(), e);
+		}
+
 		requestServiceRepository.saveWaterTankerBooking(waterTankerRequest);
-		
+
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
 
 		return waterTankerDetail;
@@ -134,135 +134,107 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		}
 		return criteria;
 	}
-/*
+
 	@Override
-	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest) {
+	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest,
+			PaymentRequest paymentRequest, String applicationStatus) {
 		String bookingNo = waterTankerRequest.getWaterTankerBookingDetail().getBookingNo();
-		log.info("Updating booking for booking no : " + bookingNo);
+		log.info("Updating booking for booking no: {}", bookingNo);
+
 		if (bookingNo == null) {
 			throw new CustomException("INVALID_BOOKING_CODE",
 					"Booking no not valid. Failed to update booking status for : " + bookingNo);
 		}
 
-		State state = workflowService.updateWorkflowStatus(null, waterTankerRequest);
-		enrichmentService.enrichWaterTankerBookingUponUpdate(state.getApplicationStatus(), waterTankerRequest);
+		// If no payment request, update workflow status and process booking request
+		if (paymentRequest == null) {
+			State state = workflowService.updateWorkflowStatus(null, waterTankerRequest);
+			enrichmentService.enrichWaterTankerBookingUponUpdate(state.getApplicationStatus(), waterTankerRequest);
 
-		if (RequestServiceConstants.ACTION_APPROVE
-				.equals(waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction())) {
-			demandService.createDemand(waterTankerRequest);
-
+			// If action is APPROVE, create demand
+			if (RequestServiceConstants.ACTION_APPROVE
+					.equals(waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction())) {
+				demandService.createDemand(waterTankerRequest);
+			}
 		}
+
+		// Handle the payment request and update the water tanker booking if applicable
+		if (paymentRequest != null) {
+			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
+			WaterTankerBookingDetail waterTankerDetail = requestServiceRepository
+					.getWaterTankerBookingDetails(
+							WaterTankerBookingSearchCriteria.builder().bookingNo(consumerCode).build())
+					.stream().findFirst().orElse(null);
+
+			if (waterTankerDetail == null) {
+				log.info("Application not found in consumer class while updating status");
+				return null;
+			}
+
+			// Update the booking details
+			waterTankerDetail.getAuditDetails()
+					.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+			waterTankerDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+			waterTankerDetail.setBookingStatus(applicationStatus);
+			waterTankerDetail.setPaymentDate(System.currentTimeMillis());
+
+			// Update water tanker booking request
+			WaterTankerBookingRequest updatedWaterTankerRequest = WaterTankerBookingRequest.builder()
+					.requestInfo(paymentRequest.getRequestInfo()).waterTankerBookingDetail(waterTankerDetail).build();
+
+			log.info("Water Tanker Request to update application status in consumer: {}", updatedWaterTankerRequest);
+			requestServiceRepository.updateWaterTankerBooking(updatedWaterTankerRequest);
+
+			return waterTankerDetail;
+		}
+
+		// If no payment request, just update the water tanker booking request
 		requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
 
-		return waterTankerRequest.getWaterTankerBookingDetail();
-	} */
+		Workflow workflow = waterTankerRequest.getWaterTankerBookingDetail().getWorkflow();
 
-	@Override
-	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest, PaymentRequest paymentRequest, String applicationStatus) {
-	    String bookingNo = waterTankerRequest.getWaterTankerBookingDetail().getBookingNo();
-	    log.info("Updating booking for booking no: {}", bookingNo);
-	    
-	    if (bookingNo == null) {
-	        throw new CustomException("INVALID_BOOKING_CODE", "Booking no not valid. Failed to update booking status for : " + bookingNo);
-	    }
-
-	    // If no payment request, update workflow status and process booking request
-	    if (paymentRequest == null) {
-	        State state = workflowService.updateWorkflowStatus(null, waterTankerRequest);
-	        enrichmentService.enrichWaterTankerBookingUponUpdate(state.getApplicationStatus(), waterTankerRequest);
-
-	        // If action is APPROVE, create demand
-	        if (RequestServiceConstants.ACTION_APPROVE.equals(waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction())) {
-	            demandService.createDemand(waterTankerRequest);
-	        }
-	    }
-
-	    // Handle the payment request and update the water tanker booking if applicable
-	    if (paymentRequest != null) {
-	        String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
-	        WaterTankerBookingDetail waterTankerDetail = requestServiceRepository
-	                .getWaterTankerBookingDetails(WaterTankerBookingSearchCriteria.builder()
-	                        .bookingNo(consumerCode)
-	                        .build())
-	                .stream()
-	                .findFirst()
-	                .orElse(null);
-
-	        if (waterTankerDetail == null) {
-	            log.info("Application not found in consumer class while updating status");
-	            return null;
-	        }
-
-	        // Update the booking details
-	        waterTankerDetail.getAuditDetails().setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-	        waterTankerDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-	        waterTankerDetail.setBookingStatus(applicationStatus);
-	        waterTankerDetail.setPaymentDate(System.currentTimeMillis());
-
-	        // Update water tanker booking request
-	        WaterTankerBookingRequest updatedWaterTankerRequest = WaterTankerBookingRequest.builder()
-	                .requestInfo(paymentRequest.getRequestInfo())
-	                .waterTankerBookingDetail(waterTankerDetail)
-	                .build();
-	        
-	        log.info("Water Tanker Request to update application status in consumer: {}", updatedWaterTankerRequest);
-	        requestServiceRepository.updateWaterTankerBooking(updatedWaterTankerRequest);
-
-	        return waterTankerDetail;
-	    }
-
-	    // If no payment request, just update the water tanker booking request
-	    requestServiceRepository.updateWaterTankerBooking(waterTankerRequest);
-	    
-	    Workflow workflow = waterTankerRequest.getWaterTankerBookingDetail().getWorkflow();
-	    
-	    if (workflow != null && 
-	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
-	    	log.info("Processing feedback submission for booking no: {}", bookingNo);
+		if (workflow != null && waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction()
+				.equalsIgnoreCase(RequestServiceConstants.WF_ACTION_SUBMIT_FEEDBACK)) {
+			log.info("Processing feedback submission for booking no: {}", bookingNo);
 			handleRSSubmitFeeback(waterTankerRequest);
 		}
-	    
-	    if (workflow != null && 
-	    	waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction().equalsIgnoreCase(RequestServiceConstants.WF_ACTION_REJECTED_BY_VENDOR)) {
-	    	log.info("Processing rejection by vendor for booking no: {}", bookingNo);
+
+		if (workflow != null && waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction()
+				.equalsIgnoreCase(RequestServiceConstants.WF_ACTION_REJECTED_BY_VENDOR)) {
+			log.info("Processing rejection by vendor for booking no: {}", bookingNo);
 			handleRejectedByVendor(waterTankerRequest);
 		}
-	    
-	    return waterTankerRequest.getWaterTankerBookingDetail();
+
+		return waterTankerRequest.getWaterTankerBookingDetail();
 	}
-	
+
 	private void handleRSSubmitFeeback(WaterTankerBookingRequest waterTankerRequest) {
-		 log.info("Handling water tanker Submit Feedback for request: {}", waterTankerRequest);
+		log.info("Handling water tanker Submit Feedback for request: {}", waterTankerRequest);
 		User citizen = waterTankerRequest.getRequestInfo().getUserInfo();
 		if (!citizen.getUuid().equalsIgnoreCase(waterTankerRequest.getRequestInfo().getUserInfo().getUuid())) {
-			throw new CustomException("Rating Error",
-					" Only owner of the application can submit the feedback !.");
+			throw new CustomException("Rating Error", " Only owner of the application can submit the feedback !.");
 		}
 		if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating() == null) {
 			throw new CustomException("Rating Error", " Rating has to be provided!");
 		} else if (config.getAverageRatingCommentMandatory() != null
-				&& Integer.parseInt(config.getAverageRatingCommentMandatory()) > waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating()
-				) {
+				&& Integer.parseInt(config.getAverageRatingCommentMandatory()) > waterTankerRequest
+						.getWaterTankerBookingDetail().getWorkflow().getRating()) {
 
-			throw new CustomException("Rating Error",
-					" Comment mandatory for rating " + waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating());
+			throw new CustomException("Rating Error", " Comment mandatory for rating "
+					+ waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getRating());
 		}
-		
 
 	}
-	
+
 	private void handleRejectedByVendor(WaterTankerBookingRequest waterTankerRequest) {
-		 log.info("Handling rejected by vendor for request: {}", waterTankerRequest);
+		log.info("Handling rejected by vendor for request: {}", waterTankerRequest);
 		WaterTankerBookingDetail tankerRequest = waterTankerRequest.getWaterTankerBookingDetail();
 		tankerRequest.setVendorId(null);
-		
+
 		org.upyog.rs.web.models.Workflow workflow = tankerRequest.getWorkflow();
-		if ((StringUtils.isBlank(workflow.getComments()))){
-			throw new CustomException("",
-					" Comment is mandatory to reject the request for vendor.");
+		if ((StringUtils.isBlank(workflow.getComments()))) {
+			throw new CustomException("", " Comment is mandatory to reject the request for vendor.");
 		}
 	}
-	
-	
 
 }

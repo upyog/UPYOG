@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Builder
 @Component
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +40,7 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.idgen.water.tanker.booking.id.name}")
 	private String waterTankerApplicationKey;
-	
+
 	@Value("${egov.usr.events.pay.link}")
 	private String payLink;
 
@@ -67,7 +66,7 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.url.shortner.endpoint}")
 	private String urShortnerPath;
-	
+
 	@Value("${egov.url.shortner.endpoint}")
 	private String shortenerEndpoint;
 
@@ -135,7 +134,7 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.demand.search.endpoint}")
 	private String demandSearchEndpoint;
-	
+
 	@Value("${egov.msg.pay.link}")
 	private String payLinkSMS;
 
@@ -183,17 +182,17 @@ public class RequestServiceConfiguration {
 
 	@Value("${egov.localization.fallback.locale}")
 	private String fallBackLocale;
-	
+
 	@Value("${egov.application.view.link}")
 	private String viewApplicationLink;
-	
+
 	@Value("${rs.business.service.name}")
 	private String businessServiceName;
-	
+
 	@Value("${rs.module.name}")
 	private String moduleName;
-	
+
 	@Value("${egov.rs.avg.rating.comment.mandatory}")
 	private String averageRatingCommentMandatory;
-	
+
 }

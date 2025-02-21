@@ -51,7 +51,8 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 
 	}
 
-	private EventRequest getEventsForRS(WaterTankerBookingRequest request, String actionLink, Map<String, String> messageMap) {
+	private EventRequest getEventsForRS(WaterTankerBookingRequest request, String actionLink,
+			Map<String, String> messageMap) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getWaterTankerBookingDetail().getTenantId();
@@ -66,28 +67,27 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		//Map<String, String> messageMap = new HashMap<String, String>();
-		String  message = null;
+		// Map<String, String> messageMap = new HashMap<String, String>();
+		String message = null;
 //		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
 //				localizationMessages);
 		message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
 		log.info("Message for event in RequestService:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in RequestService:" + recepient.toString());
-		
+
 		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
 		List<ActionItem> actionItems = new ArrayList<>();
 		actionItems.add(actionItem);
-		
+
 		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT ).build();
-		
+				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT).build();
+
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
 				.name(RequestServiceConstants.USREVENTS_EVENT_NAME)
 				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-				.actions(null)
-				.eventDetails(null).build());
+				.actions(null).eventDetails(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
