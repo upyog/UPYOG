@@ -23,11 +23,7 @@ export const commonConfig =
                         "submitBarLabel": "COMMON_SAVE_NEXT",
                         "header":"ES_APPLICANT_DETAILS"
                     },
-                    "additionaFields":{
-                    "gender":true,
-                    "dateofBirth":false,
-                    "guardianName":false,
-                    "relationShipType":false,               }
+                   
                 },
             ],
         },
