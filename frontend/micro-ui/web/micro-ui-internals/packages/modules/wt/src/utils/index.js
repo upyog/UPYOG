@@ -32,7 +32,6 @@ export const waterTankerPayload = (data) =>{
             mobileNumber: data?.owner?.mobileNumber,
             alternateNumber: data?.owner?.alternateNumber,
             emailId: data?.owner?.emailId,
-            gender: data?.owner?.gender?.code.charAt(0)
         },
         address: {
             pincode: data?.address?.pincode,
