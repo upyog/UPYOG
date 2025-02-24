@@ -14,6 +14,8 @@ import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.oldProperty.PropertyInfo;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
@@ -25,6 +27,7 @@ import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertySearchRowMapper;
+import org.egov.pt.repository.rowmapper.PtTaxCalculatorTrackerRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
@@ -70,6 +73,9 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
+	
+	@Autowired
+	private PtTaxCalculatorTrackerRowMapper ptTaxCalculatorTrackerRowMapper;
     
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -316,5 +322,14 @@ public class PropertyRepository {
 
 		String query = queryBuilder.getpropertyAuditEncQuery();
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), propertyAuditEncRowMapper);
+	}
+
+	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
+			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getTaxCalculatedPropertiesSearchQuery(ptTaxCalculatorTrackerSearchCriteria, preparedStmtList);
+		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = jdbcTemplate.query(query, preparedStmtList.toArray(),
+				ptTaxCalculatorTrackerRowMapper);
+		return ptTaxCalculatorTrackers;
 	}
 }

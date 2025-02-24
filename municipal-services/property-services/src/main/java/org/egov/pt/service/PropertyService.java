@@ -23,6 +23,8 @@ import org.egov.pt.models.PropertyBookingDetail;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PropertySearchRequest;
 import org.egov.pt.models.PropertySearchResponse;
+import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
@@ -794,6 +796,12 @@ public class PropertyService {
 	public void saveToPtTaxCalculatorTracker(PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
 
 		producer.push(config.getSavePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
+	}
+
+	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
+			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
+
+		return repository.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
 	}
 
 }

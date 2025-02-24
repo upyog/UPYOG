@@ -20,6 +20,8 @@ import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.Unit;
 import org.egov.pt.models.bill.Demand;
 import org.egov.pt.models.bill.GenerateBillCriteria;
@@ -227,6 +229,10 @@ public class PropertySchedulerService {
 					totalPropertyTax = totalPropertyTax.add(propertyTax);
 				}
 
+				if (BigDecimal.ZERO.equals(totalPropertyTax)) {
+					errorSet.add("Calculated tax is " + totalPropertyTax);
+				}
+
 				if (!CollectionUtils.isEmpty(errorSet)) {
 					errorMap.put(property.getPropertyId(), errorSet);
 				}
@@ -328,6 +334,41 @@ public class PropertySchedulerService {
 								&& wardNumbers.contains(wardNumberNode.asText());
 					}).collect(Collectors.toList());
 		}
+
+		properties = removeAlreadyTaxCalculatedProperties(properties, calculateTaxRequest);
+
+		return properties;
+	}
+
+	private List<Property> removeAlreadyTaxCalculatedProperties(List<Property> properties,
+			CalculateTaxRequest calculateTaxRequest) {
+
+		Set<String> propertyIds = properties.stream().map(Property::getPropertyId).collect(Collectors.toSet());
+
+		PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria = PtTaxCalculatorTrackerSearchCriteria
+				.builder().propertyIds(propertyIds).build();
+
+		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = propertyService
+				.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
+
+		Map<String, List<PtTaxCalculatorTracker>> ptTaxCalculatorTrackerMap = ptTaxCalculatorTrackers.stream()
+				.collect(Collectors.groupingBy(PtTaxCalculatorTracker::getPropertyId));
+
+		properties = properties.stream().filter(property -> {
+			List<PtTaxCalculatorTracker> trackers = ptTaxCalculatorTrackerMap.get(property.getPropertyId());
+			if (trackers == null) {
+				// If no trackers found for the property, we add the property.
+				return true;
+			}
+			// Check if the property matches the conditions
+			return trackers.stream()
+					.noneMatch(ptTaxCalculatorTracker -> property.getPropertyId()
+							.equalsIgnoreCase(ptTaxCalculatorTracker.getPropertyId())
+							&& (ptTaxCalculatorTracker.getFromDate().after(calculateTaxRequest.getFromDate())
+									|| ptTaxCalculatorTracker.getFromDate().equals(calculateTaxRequest.getFromDate()))
+							&& ptTaxCalculatorTracker.getToDate().before(calculateTaxRequest.getToDate())
+							|| ptTaxCalculatorTracker.getToDate().equals(calculateTaxRequest.getToDate()));
+		}).collect(Collectors.toList());
 
 		return properties;
 	}
