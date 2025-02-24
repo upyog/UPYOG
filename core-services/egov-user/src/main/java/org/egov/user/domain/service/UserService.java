@@ -34,6 +34,7 @@ import org.egov.user.web.contract.Otp;
 import org.egov.user.web.contract.OtpValidateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationPid;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -611,9 +612,10 @@ public class UserService {
 
 	public void userLoginFaliedAuditReport(User user, HttpServletRequest req, String status) {
 
-		//objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		HttpSession session=req.getSession();
-		SessionDetails sessionDetails=new SessionDetails(session.getId(), session.getLastAccessedTime(), session.getCreationTime(), session.getMaxInactiveInterval());
+		ApplicationPid pid = new ApplicationPid();
+		HttpSession session = req.getSession();
+		SessionDetails sessionDetails = new SessionDetails(session.getId(), session.getLastAccessedTime(),
+				session.getCreationTime(), session.getMaxInactiveInterval());
 		String uuid = UUID.randomUUID().toString();
 		Long attempt_date = System.currentTimeMillis();
 		String ip = req.getRemoteAddr();
@@ -630,10 +632,10 @@ public class UserService {
 		String url = (null != req.getHeader("Referer") && !req.getHeader("Referer").isEmpty() ? req.getHeader("Referer")
 				: null);
 		JsonNode session_details = objectMapper.convertValue(sessionDetails, JsonNode.class);
-		System.out.println("session_details"+session_details.toString());
-		
+		String corelation_id = req.getHeader("x-correlation-id");
+
 		UserLoginAttemptAudit audit = new UserLoginAttemptAudit(uuid, attempt_date, ip, user_name, user_uuid,
-				attempt_status, user_agent, referrer, url, session_details);
+				attempt_status, user_agent, referrer, url, session_details, pid.toString(), corelation_id);
 		userRepository.userLoginAttemptAudit(audit);
 
 	}

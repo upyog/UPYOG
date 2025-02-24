@@ -401,6 +401,7 @@ public class UserRepository {
 			e.printStackTrace();
 		}
 
+		
 		Map<String, Object> inputs = new HashMap<>();
 		inputs.put("uuid", userLoginAttemptAudit.getUuid());
 		inputs.put("attempt_date", userLoginAttemptAudit.getAttempt_date());
@@ -412,6 +413,8 @@ public class UserRepository {
 		inputs.put("referrer", userLoginAttemptAudit.getReferrer());
 		inputs.put("url", userLoginAttemptAudit.getUrl());
 		inputs.put("session_details", sessionDetailsJson);
+		inputs.put("process_id", userLoginAttemptAudit.getProcess_id());
+		inputs.put("corelation_id", userLoginAttemptAudit.getCorelation_id());
 
 		namedParameterJdbcTemplate.update(UserTypeQueryBuilder.INSERT_LOGIN_ATTEMPT_AUDIT, inputs);
 

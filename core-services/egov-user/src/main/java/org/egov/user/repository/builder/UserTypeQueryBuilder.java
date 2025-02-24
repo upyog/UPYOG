@@ -92,8 +92,8 @@ public class UserTypeQueryBuilder {
     
     
     public static final  String INSERT_LOGIN_ATTEMPT_AUDIT = "INSERT INTO public.eg_user_login_attempt_audit " + 
-    "(uuid, attempt_date, ip, username, user_uuid, attempt_status, user_agent, referrer, url, session_details) "+
-    "VALUES(:uuid, :attempt_date, :ip, :user_name,:user_uuid, :attempt_status, :user_agent, :referrer, :url, :session_details::jsonb)";
+    "(uuid, attempt_date, ip, username, user_uuid, attempt_status, user_agent, referrer, url, session_details, process_id, corelation_id) "+
+    "VALUES(:uuid, :attempt_date, :ip, :user_name,:user_uuid, :attempt_status, :user_agent, :referrer, :url, :session_details::jsonb, :process_id, :corelation_id)";
 
     @SuppressWarnings("rawtypes")
     public String getQuery(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
