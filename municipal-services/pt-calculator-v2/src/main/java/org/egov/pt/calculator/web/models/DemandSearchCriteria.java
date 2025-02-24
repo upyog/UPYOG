@@ -13,5 +13,5 @@ public class DemandSearchCriteria {
     private Long fromDate;
 
     private Long toDate;
-
+    
 }

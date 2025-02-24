@@ -1,5 +1,7 @@
 package org.egov.pg.service.gateways.axis;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pg.models.Transaction;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -319,5 +322,12 @@ public class AxisGateway implements Gateway {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public Transaction getTransformedTransaction(String resp, Transaction currentStatus, String secretKey)
+			throws JsonParseException, JsonMappingException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
