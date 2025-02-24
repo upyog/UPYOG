@@ -13,6 +13,7 @@ import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
+import org.egov.user.persistence.dto.UserLoginAttemptAudit;
 import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
@@ -386,6 +387,25 @@ public class UserRepository {
 		namedParameterJdbcTemplate.update(UserTypeQueryBuilder.INSERT_FAILED_ATTEMPTS_SQL, inputs);
 
 		return failedLoginAttempt;
+	}
+	
+	
+	public UserLoginAttemptAudit userLoginAttemptAudit(UserLoginAttemptAudit userLoginAttemptAudit) {
+		Map<String, Object> inputs = new HashMap<>();
+				inputs.put("uuid",userLoginAttemptAudit.getUuid() );
+				inputs.put("attempt_date",userLoginAttemptAudit.getAttempt_date()) ;
+				inputs.put("ip", userLoginAttemptAudit.getIp());
+				inputs.put("user_name",userLoginAttemptAudit.getUser_name()) ;
+				inputs.put("user_uuid",userLoginAttemptAudit.getUser_uuid()) ;
+				inputs.put("attempt_status",userLoginAttemptAudit.getAttempt_status()); 
+				inputs.put("user_agent",userLoginAttemptAudit.getUser_agent()) ;
+				inputs.put("referrer",userLoginAttemptAudit.getReferrer()); 
+				inputs.put("url",userLoginAttemptAudit.getUrl()) ;
+				inputs.put("session_details",userLoginAttemptAudit.getSession_details());
+
+		namedParameterJdbcTemplate.update(UserTypeQueryBuilder.INSERT_LOGIN_ATTEMPT_AUDIT, inputs);
+
+		return userLoginAttemptAudit;
 	}
 
 	public void resetFailedLoginAttemptsForUser(String uuid) {

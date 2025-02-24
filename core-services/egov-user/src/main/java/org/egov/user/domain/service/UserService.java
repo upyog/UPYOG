@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
@@ -21,6 +22,7 @@ import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.domain.service.utils.NotificationUtil;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
+import org.egov.user.persistence.dto.UserLoginAttemptAudit;
 import org.egov.user.persistence.repository.FileStoreRepository;
 import org.egov.user.persistence.repository.OtpRepository;
 import org.egov.user.persistence.repository.UserRepository;
@@ -63,6 +65,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -603,6 +606,25 @@ public class UserService {
             userRepository.insertFailedLoginAttempt(new FailedLoginAttempt(user.getUuid(), ipAddress,
                     System.currentTimeMillis(), true));
         }
+    }
+    
+    
+    public void userLoginFaliedAuditReport(User user, HttpServletRequest req, String status) {
+      
+    	String uuid=UUID.randomUUID().toString();
+    	Long attempt_date= System.currentTimeMillis(); 
+    	 String ip =req.getRemoteAddr();
+    	 String user_name = user.getUsername();
+    	 String user_uuid =user.getUuid();
+    	 String attempt_status=status; 
+    	 String user_agent=(null!=req.getHeader("")&&!req.getHeader("").isEmpty()?req.getHeader(""):null); 
+    	 String referrer=(null!=req.getHeader("")&&!req.getHeader("").isEmpty()?req.getHeader(""):null); ; 
+    	 String url=(null!=req.getHeader("")&&!req.getHeader("").isEmpty()?req.getHeader(""):null);  
+    	 JsonNode session_details=null;
+    	UserLoginAttemptAudit audit =  new UserLoginAttemptAudit(uuid, attempt_date, ip, user_name, user_uuid, 
+    			attempt_status, user_agent, referrer, url, session_details);
+    	userRepository.userLoginAttemptAudit(audit);
+        
     }
 
 
