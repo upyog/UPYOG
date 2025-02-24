@@ -644,12 +644,24 @@ public class PropertyValidator {
 //				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
 //						"Search can't be performed by this Employee due to lack of roles.");
 //			}
-			if (!CollectionUtils.isEmpty(listOfStatus)) {
+			if (!CollectionUtils.isEmpty(listOfStatus) && isCriteriaEmpty) {
 				criteria.setStatus(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
 			}
 		}
         
     }
+    
+	public Boolean isCriteriaEmpty(PropertyCriteria criteria) {
+		Boolean isCriteriaEmpty = CollectionUtils.isEmpty(criteria.getOldpropertyids())
+				&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
+				&& CollectionUtils.isEmpty(criteria.getPropertyIds()) && CollectionUtils.isEmpty(criteria.getOwnerIds())
+				&& CollectionUtils.isEmpty(criteria.getUuids()) && null == criteria.getMobileNumber()
+				&& null == criteria.getName() && null == criteria.getDocumentNumbers()
+				&& null == criteria.getPropertyType() && null == criteria.getDoorNo()
+				&& null == criteria.getOldPropertyId() && null == criteria.getLocality()
+				&& (null == criteria.getFromDate() && null == criteria.getToDate());
+		return isCriteriaEmpty;
+	}
 
 	private List<String> getAccountStatusListByRoles(PropertyCriteria criteria, RequestInfo requestInfo) {
 

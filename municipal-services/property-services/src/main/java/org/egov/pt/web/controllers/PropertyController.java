@@ -161,9 +161,9 @@ public class PropertyController {
 			properties = propertyService.searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo());
 		}
 		
-		if (null != requestInfoWrapper.getRequestInfo() && null != requestInfoWrapper.getRequestInfo().getUserInfo()
-				&& requestInfoWrapper.getRequestInfo().getUserInfo().getType()
-						.equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
+		if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
+				&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
+						.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
 			PropertyCriteria propertyCriteriaCreatedBy = PropertyCriteria.builder()
 					.createdBy(Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()))
 					.tenantId(propertyCriteria.getTenantId()).build();

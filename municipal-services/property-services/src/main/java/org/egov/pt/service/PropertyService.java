@@ -807,4 +807,8 @@ public class PropertyService {
 		return repository.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
 	}
 
+	public boolean isCriteriaEmpty(PropertyCriteria propertyCriteria) {
+		return propertyValidator.isCriteriaEmpty(propertyCriteria);
+	}
+
 }
