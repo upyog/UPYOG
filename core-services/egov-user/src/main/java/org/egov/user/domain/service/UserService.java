@@ -611,7 +611,7 @@ public class UserService {
 
 	public void userLoginFaliedAuditReport(User user, HttpServletRequest req, String status) {
 
-		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		//objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 		HttpSession session=req.getSession();
 		SessionDetails sessionDetails=new SessionDetails(session.getId(), session.getLastAccessedTime(), session.getCreationTime(), session.getMaxInactiveInterval());
 		String uuid = UUID.randomUUID().toString();
@@ -630,6 +630,7 @@ public class UserService {
 		String url = (null != req.getHeader("Referer") && !req.getHeader("Referer").isEmpty() ? req.getHeader("Referer")
 				: null);
 		JsonNode session_details = objectMapper.convertValue(sessionDetails, JsonNode.class);
+		System.out.println("session_details"+session_details.toString());
 		
 		UserLoginAttemptAudit audit = new UserLoginAttemptAudit(uuid, attempt_date, ip, user_name, user_uuid,
 				attempt_status, user_agent, referrer, url, session_details);

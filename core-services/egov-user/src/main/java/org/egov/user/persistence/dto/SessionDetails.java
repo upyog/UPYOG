@@ -2,6 +2,9 @@ package org.egov.user.persistence.dto;
 
 import java.io.Serializable;
 
+import lombok.Data;
+
+@Data
 public class SessionDetails implements Serializable{
 	
 	private static final long serialVersionUID = 7094572260034458543L;
