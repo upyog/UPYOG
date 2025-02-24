@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.upyog.sv.validator.CreateApplicationGroup;
 import org.upyog.sv.web.models.common.AuditDetails;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ import lombok.ToString;
 public class StreetVendingDetail {
 
 	private String applicationId;
-	
+
 	private String draftId;
 
 	@NotBlank(groups = CreateApplicationGroup.class)
@@ -56,7 +57,7 @@ public class StreetVendingDetail {
 	private String vendingZone;
 
 	private BigDecimal cartLatitude;
-	
+
 	private BigDecimal cartLongitude;
 
 	@NotNull(groups = CreateApplicationGroup.class)
@@ -65,11 +66,11 @@ public class StreetVendingDetail {
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String localAuthorityName;
 //Store file id of vending certificate 
-	
+
 	private String vendingLicenseCertificateId;
-	
+
 	private String paymentReceiptId;
-	
+
 	private String vendingLicenseId;
 
 	private String disabilityStatus;
@@ -102,18 +103,25 @@ public class StreetVendingDetail {
 	private List<VendorDetail> vendorDetail;
 
 	private List<VendingOperationTimeDetails> vendingOperationTimeDetails;
-	
+
 	private String enrollmentId;
 
 	private Workflow workflow;
 
 	private AuditDetails auditDetails;
-	
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate validityDate;
-	
-	private Boolean eligibleToRenew;
+
+	private String validityDateForPersisterDate;
+
+//	private Boolean eligibleToRenew;
 
 	private Boolean expireFlag;
+
+	private String oldApplicationNumber;
+
+	private RenewalStatus renewalStatus;
 }
 
 /**

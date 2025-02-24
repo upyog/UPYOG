@@ -12,6 +12,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.sv.constants.StreetVendingConstants;
@@ -24,6 +25,7 @@ import org.upyog.sv.service.WorkflowService;
 import org.upyog.sv.util.MdmsUtil;
 import org.upyog.sv.validator.StreetVendingValidator;
 import org.upyog.sv.web.models.BankDetail;
+import org.upyog.sv.web.models.RenewalStatus;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -67,7 +69,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			throw new CustomException(StreetVendingConstants.INVALID_TENANT,
 					"Application cannot be created at StateLevel");
 		}
-
+		String oldApplicationNumber = vendingRequest.getStreetVendingDetail().getApplicationNo();
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		log.info("MDMS master data : " + mdmsData);
 		// 1
@@ -80,14 +82,20 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
 		// 5
-		streetVendingRepository.save(vendingRequest);
+		if (oldApplicationNumber != null && !oldApplicationNumber.isEmpty()) {
+			vendingRequest.getStreetVendingDetail().setOldApplicationNumber(oldApplicationNumber);
+			vendingRequest.getStreetVendingDetail().setRenewalStatus(RenewalStatus.RENEW_APPLICATION_CREATED);
+			streetVendingRepository.renew(vendingRequest);// To save the renew application
+		} else {
+			streetVendingRepository.save(vendingRequest);
+		}
 		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
 		// 6
 		if (StringUtils.isNotBlank(draftId)) {
 			log.info("Deleting draft entry for draft id: " + draftId);
 			streetVendingRepository.deleteDraftApplication(draftId);
 		}
-		// 7
+		//
 		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
 		streetVendingDetail.setVendorDetail(originalDetail.getVendorDetail());
 		streetVendingDetail.setBankDetail(originalDetail.getBankDetail());
@@ -110,7 +118,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
-		applications = encryptionService.decryptObject(applications, requestInfo);
+//		applications = encryptionService.decryptObject(applications, requestInfo);
 		return applications;
 	}
 
@@ -139,13 +147,12 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		return streetVendingDetail;
 	}
 
-
 	@Override
 	public List<Demand> demandCreation(StreetVendingRequest vendingRequest) {
-		log.info("Generating demand for application no {} ", vendingRequest.getStreetVendingDetail().getApplicationNo());
+		log.info("Generating demand for application no {} ",
+				vendingRequest.getStreetVendingDetail().getApplicationNo());
 		return demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-    }
-
+	}
 
 	private String extractTenantId(StreetVendingRequest request) {
 		return request.getStreetVendingDetail().getTenantId().split("\\.")[0];

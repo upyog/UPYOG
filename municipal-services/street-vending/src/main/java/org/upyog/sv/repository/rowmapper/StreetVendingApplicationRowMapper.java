@@ -8,6 +8,7 @@ import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.*;
 import org.upyog.sv.web.models.common.AuditDetails;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -48,7 +49,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 				AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("SVCREATEDBY"))
 						.createdTime(rs.getLong("SVCREATEDTIME")).lastModifiedBy(rs.getString("SVLASTMODIFIEDBY"))
 						.lastModifiedTime(lastModifiedTime).build();
-
+				Date validityDate = rs.getDate("SVVALIDITYDATE");
 				streetVendingDetail = StreetVendingDetail.builder().applicationId(applicationId)
 						.tenantId(rs.getString("SVTENANTID")).applicationNo(rs.getString("SVAPPLICATIONNO"))
 						.applicationDate(rs.getLong("SVAPPLICATIONDATE")).certificateNo(rs.getString("SVCERTIFICATENO"))
@@ -66,9 +67,10 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.benificiaryOfSocialSchemes(rs.getString("SVBENEFICIARYOFSOCIALSCHEMES"))
 						.enrollmentId(rs.getString("SVENROLLMENTID"))
 						.termsAndCondition(rs.getString("SVTERMSANDCONDITION")).auditDetails(auditDetails)
-						.validityDate(LocalDate.parse(rs.getString("SVVALIDITYDATE"),
-								DateTimeFormatter.ofPattern(StreetVendingUtil.DATE_FORMAT)))
-						.eligibleToRenew(rs.getBoolean("SVELIGIBLETORENEW")).expireFlag(rs.getBoolean("SVEXPIREFLAG"))
+						.validityDate(validityDate != null ? validityDate.toLocalDate() : null)
+//						.eligibleToRenew(rs.getBoolean("SVELIGIBLETORENEW"))
+						.renewalStatus(rs.getString("SVRENEWALSTATUS")!=null?RenewalStatus.valueOf(rs.getString("SVRENEWALSTATUS")):null)
+						.expireFlag(rs.getBoolean("SVEXPIREFLAG"))
 						.validFrom(validFromString).validTo(validToString).addressDetails(new ArrayList<>())
 						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
 						.vendingOperationTimeDetails(new ArrayList<>()).build();

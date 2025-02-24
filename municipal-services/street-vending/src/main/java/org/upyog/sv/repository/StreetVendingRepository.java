@@ -28,4 +28,6 @@ public interface StreetVendingRepository {
 	void updateDraftApplication(StreetVendingRequest vendingRequest);
 
 	void deleteDraftApplication(String draftId);
+
+	void renew(StreetVendingRequest vendingRequest);
 }
