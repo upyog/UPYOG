@@ -377,7 +377,7 @@ public class PropertySchedulerService {
 			BigDecimal finalPropertyTax) {
 		List<Demand> savedDemands = new ArrayList<>();
 		// generate demand
-		savedDemands = demandService.generateDemand(calculateTaxRequest.getRequestInfo(), property,
+		savedDemands = demandService.generateDemand(calculateTaxRequest, property,
 				property.getBusinessService(), finalPropertyTax);
 
 		if (CollectionUtils.isEmpty(savedDemands)) {
