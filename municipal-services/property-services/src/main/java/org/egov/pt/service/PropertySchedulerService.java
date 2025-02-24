@@ -249,9 +249,9 @@ public class PropertySchedulerService {
 				PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
 						.enrichTaxCalculatorTrackerCreateRequest(property, calculateTaxRequest, finalPropertyTax);
 
-				propertyService.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
-
 				generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
+
+				propertyService.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
 			}
 
 		}
@@ -377,8 +377,8 @@ public class PropertySchedulerService {
 			BigDecimal finalPropertyTax) {
 		List<Demand> savedDemands = new ArrayList<>();
 		// generate demand
-		savedDemands = demandService.generateDemand(calculateTaxRequest, property,
-				property.getBusinessService(), finalPropertyTax);
+		savedDemands = demandService.generateDemand(calculateTaxRequest, property, property.getBusinessService(),
+				finalPropertyTax);
 
 		if (CollectionUtils.isEmpty(savedDemands)) {
 			throw new CustomException("INVALID_CONSUMERCODE",
