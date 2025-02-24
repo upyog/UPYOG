@@ -95,7 +95,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			log.info("Deleting draft entry for draft id: " + draftId);
 			streetVendingRepository.deleteDraftApplication(draftId);
 		}
-		//
+		// 7
 		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
 		streetVendingDetail.setVendorDetail(originalDetail.getVendorDetail());
 		streetVendingDetail.setBankDetail(originalDetail.getBankDetail());
@@ -118,7 +118,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
 		}
-//		applications = encryptionService.decryptObject(applications, requestInfo);
+		applications = encryptionService.decryptObject(applications, requestInfo);
 		return applications;
 	}
 
