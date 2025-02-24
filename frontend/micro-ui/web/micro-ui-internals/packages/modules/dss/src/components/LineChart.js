@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { useTranslation } from "react-i18next";
 import FilterContext from "./FilterContext";
+import {  format } from "date-fns";
 
 const LineChartWithData = () => {
   const { t } = useTranslation();
@@ -32,14 +33,29 @@ const LineChartWithData = () => {
     }
   );
 
+  const key = "DSS_FILTERS";
+  const getInitialRange = () => {
+    const data = Digit.SessionStorage.get(key);
+    const startDate = data?.range?.startDate ? new Date(data?.range?.startDate) : Digit.Utils.dss.getDefaultFinacialYear().startDate;
+    const endDate = data?.range?.endDate ? new Date(data?.range?.endDate) : Digit.Utils.dss.getDefaultFinacialYear().endDate;
+    const title = `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`;
+    const interval = Digit.Utils.dss.getDuration(startDate, endDate);
+    const denomination = data?.denomination || "Lac";
+    //const tenantId = data?.filters?.tenantId || [];
+    const moduleLevel = data?.moduleLevel || "";
+    return { startDate, endDate, title, interval, denomination, moduleLevel };
+  };
+  const { startDate, endDate, title, interval, denomination } = getInitialRange();
+
   const { isLoading, data: response } = Digit.Hooks.dss.useGetChart({
     key: "cumulativenooftransaction",
     type: "metric",
     tenantId,
     requestDate: {
-      ...value?.requestDate,
-      startDate: value?.range?.startDate?.getTime(),
-      endDate: value?.range?.endDate?.getTime(),
+      startDate: startDate.getTime(),
+      endDate: endDate.getTime(),
+      interval: interval,
+      title: title,
     },
     filters: value?.filters,
   });
