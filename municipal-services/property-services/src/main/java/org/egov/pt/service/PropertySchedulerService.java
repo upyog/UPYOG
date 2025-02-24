@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.mdms.model.MdmsResponse;
 import org.egov.pt.models.CalculateTaxRequest;
+import org.egov.pt.models.CalculateTaxResponse;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -61,7 +62,9 @@ public class PropertySchedulerService {
 	@Autowired
 	private EnrichmentService enrichmentService;
 
-	public Object calculateTax(CalculateTaxRequest calculateTaxRequest) {
+	public CalculateTaxResponse calculateTax(CalculateTaxRequest calculateTaxRequest) {
+
+		List<PtTaxCalculatorTracker> taxCalculatorTrackers = new ArrayList<>();
 
 		JsonNode ulbModules = null;
 		JsonNode propertyTaxRateModules = null;
@@ -249,14 +252,19 @@ public class PropertySchedulerService {
 				PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
 						.enrichTaxCalculatorTrackerCreateRequest(property, calculateTaxRequest, finalPropertyTax);
 
-				generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
+				BillResponse billResponse = generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
 
-				propertyService.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
+				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
+					PtTaxCalculatorTracker ptTaxCalculatorTracker = propertyService
+							.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
+
+					taxCalculatorTrackers.add(ptTaxCalculatorTracker);
+				}
 			}
 
 		}
 
-		return properties;
+		return CalculateTaxResponse.builder().taxCalculatorTrackers(taxCalculatorTrackers).build();
 	}
 
 	private BigDecimal calculateDays(CalculateTaxRequest calculateTaxRequest) {
@@ -373,23 +381,29 @@ public class PropertySchedulerService {
 		return properties;
 	}
 
-	private void generateDemandAndBill(CalculateTaxRequest calculateTaxRequest, Property property,
+	private BillResponse generateDemandAndBill(CalculateTaxRequest calculateTaxRequest, Property property,
 			BigDecimal finalPropertyTax) {
-		List<Demand> savedDemands = new ArrayList<>();
-		// generate demand
-		savedDemands = demandService.generateDemand(calculateTaxRequest, property, property.getBusinessService(),
-				finalPropertyTax);
+		try {
+			List<Demand> savedDemands = new ArrayList<>();
+			// generate demand
+			savedDemands = demandService.generateDemand(calculateTaxRequest, property, property.getBusinessService(),
+					finalPropertyTax);
 
-		if (CollectionUtils.isEmpty(savedDemands)) {
-			throw new CustomException("INVALID_CONSUMERCODE",
-					"Bill not generated due to no Demand found for the given consumerCode");
+			if (CollectionUtils.isEmpty(savedDemands)) {
+				throw new CustomException("INVALID_CONSUMERCODE",
+						"Bill not generated due to no Demand found for the given consumerCode");
+			}
+
+			// fetch/create bill
+			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(property.getTenantId())
+					.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
+
+			BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(), billCriteria);
+			return billResponse;
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
-
-		// fetch/create bill
-		GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(property.getTenantId())
-				.businessService(property.getBusinessService()).consumerCode(property.getPropertyId()).build();
-
-		BillResponse billResponse = billService.generateBill(calculateTaxRequest.getRequestInfo(), billCriteria);
+		return null;
 	}
 
 	private boolean isAreaWithinRange(String propertyAreaString, BigDecimal propertyArea) {

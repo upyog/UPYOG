@@ -793,9 +793,12 @@ public class PropertyService {
 
 	}
 	
-	public void saveToPtTaxCalculatorTracker(PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
+	public PtTaxCalculatorTracker saveToPtTaxCalculatorTracker(
+			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
 
 		producer.push(config.getSavePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
+
+		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
 	}
 
 	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
