@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import ViewTimeline from "../../components/ViewTimeline";
 import get from "lodash/get";
 import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
-import { formatDate } from "../../utils";
 
 
 const SvApplicationDetails = () => {
@@ -148,7 +147,7 @@ const SvApplicationDetails = () => {
             <Row
               className="border-none"
               label={t("SV_VALIDITY_DATE")}
-              text={formatDate(streetVendingDetails?.validityDate)} 
+              text={streetVendingDetails?.validityDate} 
             />
           </StatusTable>
            

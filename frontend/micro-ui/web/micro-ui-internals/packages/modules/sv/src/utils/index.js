@@ -15,7 +15,8 @@ export const UPYOG_CONSTANTS = {
   AM: "AM",
   PM: "PM",
   DOCUMENT:"CategoryDocument",
-  NOT_APPLICABLE:"NA"
+  NOT_APPLICABLE:"NA",
+  renewalStatus:"EligibleToRenew"
 };
 
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
@@ -38,12 +39,6 @@ export const formatTime = (time) => {
   const hour = parseInt(time);
   return `${time} ${hour >= 12 ? UPYOG_CONSTANTS.PM : UPYOG_CONSTANTS.AM}`;
 };
-
-export function formatDate(validityDate) {
-  const [year, month, day] = validityDate;
-  return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
-}
-
 
 /**
  * This function processes an array of uploaded documents to create a list of unique document types,
