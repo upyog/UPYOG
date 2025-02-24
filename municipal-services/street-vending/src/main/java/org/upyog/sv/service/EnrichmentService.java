@@ -1,5 +1,6 @@
 package org.upyog.sv.service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,7 +85,7 @@ public class EnrichmentService {
 			timedetails.setApplicationId(applicationId);
 			timedetails.setId(StreetVendingUtil.getRandonUUID());
 		});
-
+		
 		log.info("Enriched application request data :" + streetVendingDetail);
 
 	}
@@ -115,7 +116,6 @@ public class EnrichmentService {
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
 		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		vendingDetail.setApplicationStatus(applicationStatus);
-		vendingDetail.setEligibleToRenew(false);
 		vendingDetail.setExpireFlag(false);;
 		
 	}

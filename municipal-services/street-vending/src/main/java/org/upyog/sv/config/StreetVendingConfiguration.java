@@ -79,6 +79,9 @@ public class StreetVendingConfiguration {
 
 	@Value("${persister.delete.draft.street-vending.topic}")
 	private String streetVendingDraftApplicationDeleteTopic;
+	
+	@Value("${persister.renew.street-vending.topic}")
+	private String streetVendingApplicationRenewTopic;
 
 	@Value("${sv.module.name}")
 	private String moduleName;

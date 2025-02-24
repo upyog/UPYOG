@@ -145,7 +145,7 @@ public class PaymentService {
 		streetVendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		streetVendingDetail.setApplicationStatus(applicationStatus);
 		streetVendingDetail.setApprovalDate(todayDateInMillis);
-		streetVendingDetail.setValidityDate(StreetVendingUtil.getCurrentDateFromYear(1));// add validity date for post 1 year of approval date
+		streetVendingDetail.setValidityDateForPersisterDate(StreetVendingUtil.getCurrentDateFromYear(1).toString());// add validity date for post 1 year of approval date
 		vendingRequest.setStreetVendingDetail(streetVendingDetail);
 		enrichCertificateNumber(streetVendingDetail, vendingRequest.getRequestInfo(),
 				streetVendingDetail.getTenantId()); // enriching certificate number when updating final status

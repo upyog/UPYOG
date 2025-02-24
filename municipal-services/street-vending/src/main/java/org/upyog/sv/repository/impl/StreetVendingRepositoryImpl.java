@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -45,10 +44,10 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 
 	@Autowired
 	private StreetVendingApplicationRowMapper rowMapper;
-	
+
 	@Autowired
 	private StreetVendingDraftApplicationRowMapper draftApplicationRowMapper;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -64,7 +63,7 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 			StreetVendingSearchCriteria streetVendingSearchCriteria) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getStreetVendingSearchQuery(streetVendingSearchCriteria, preparedStmtList);
-		log.info("Final query for getStreetVendingApplications {} and paramsList {} : " , preparedStmtList);
+		log.info("Final query for getStreetVendingApplications {} and paramsList {} : ", preparedStmtList);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 
 	}
@@ -77,8 +76,8 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		if (query == null)
 			return 0;
 
-		log.info("Final query for getStreetVendingApplications {} and paramsList {} : " , preparedStatement);
-		
+		log.info("Final query for getStreetVendingApplications {} and paramsList {} : ", preparedStatement);
+
 		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 		return count;
 	}
@@ -93,28 +92,29 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 
 	@Override
 	public void saveDraftApplication(StreetVendingRequest vendingRequest) {
-        /*String sql = "INSERT INTO eg_sv_street_vending_draft_detail(\n"
-        		+ "	draft_id, tenant_id, user_uuid, draft_application_data, createdby, lastmodifiedby, createdtime, lastmodifiedtime)\n"
-        		+ "	VALUES (?, ?, ?, cast(? as jsonb), ?, ?, ?, ?)";
-        try {
-            
-            int result = jdbcTemplate.update(sql, 
-            		vendingRequest.getStreetVendingDetail().getDraftId(),
-            		vendingRequest.getStreetVendingDetail().getTenantId(), 
-            		vendingRequest.getRequestInfo().getUserInfo().getUuid() ,
-            		draftApplicationData,
-            		vendingRequest.getStreetVendingDetail().getAuditDetails().getCreatedBy(),
-            		vendingRequest.getStreetVendingDetail().getAuditDetails().getLastModifiedBy(),
-            		vendingRequest.getStreetVendingDetail().getAuditDetails().getCreatedTime(),
-            		vendingRequest.getStreetVendingDetail().getAuditDetails().getLastModifiedTime());
-            log.info("result : " + result);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to convert application details to JSON", e);
-        }*/
+		/*
+		 * String sql = "INSERT INTO eg_sv_street_vending_draft_detail(\n" +
+		 * "	draft_id, tenant_id, user_uuid, draft_application_data, createdby, lastmodifiedby, createdtime, lastmodifiedtime)\n"
+		 * + "	VALUES (?, ?, ?, cast(? as jsonb), ?, ?, ?, ?)"; try {
+		 * 
+		 * int result = jdbcTemplate.update(sql,
+		 * vendingRequest.getStreetVendingDetail().getDraftId(),
+		 * vendingRequest.getStreetVendingDetail().getTenantId(),
+		 * vendingRequest.getRequestInfo().getUserInfo().getUuid() ,
+		 * draftApplicationData,
+		 * vendingRequest.getStreetVendingDetail().getAuditDetails().getCreatedBy(),
+		 * vendingRequest.getStreetVendingDetail().getAuditDetails().getLastModifiedBy()
+		 * , vendingRequest.getStreetVendingDetail().getAuditDetails().getCreatedTime(),
+		 * vendingRequest.getStreetVendingDetail().getAuditDetails().getLastModifiedTime
+		 * ()); log.info("result : " + result); } catch (JsonProcessingException e) {
+		 * throw new RuntimeException("Failed to convert application details to JSON",
+		 * e); }
+		 */
 		StreetVendingDraftDetail streetVendingDraftDetail = convertToDraftDetailsObject(vendingRequest);
-		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(streetVendingDraftDetail);
+		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(
+				streetVendingDraftDetail);
 		producer.push(vendingConfiguration.getStreetVendingDraftApplicationSaveTopic(), persisterWrapper);
-    }
+	}
 
 	@Override
 	public List<StreetVendingDetail> getStreetVendingDraftApplications(@NonNull RequestInfo requestInfo,
@@ -123,8 +123,8 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		String query = "SELECT draft_id, draft_application_data FROM eg_sv_street_vending_draft_detail where user_uuid = ? and tenant_id = ?";
 		preparedStmtList.add(requestInfo.getUserInfo().getUuid());
 		preparedStmtList.add(streetVendingSearchCriteria.getTenantId());
-		
-		log.info("Final query for getStreetVendingApplications {} and paramsList {} : " , preparedStmtList);
+
+		log.info("Final query for getStreetVendingApplications {} and paramsList {} : ", preparedStmtList);
 		log.info("Final query: " + query);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), draftApplicationRowMapper);
 	}
@@ -132,11 +132,12 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 	@Override
 	public void updateDraftApplication(StreetVendingRequest vendingRequest) {
 		StreetVendingDraftDetail streetVendingDraftDetail = convertToDraftDetailsObject(vendingRequest);
-		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(streetVendingDraftDetail);
+		PersisterWrapper<StreetVendingDraftDetail> persisterWrapper = new PersisterWrapper<StreetVendingDraftDetail>(
+				streetVendingDraftDetail);
 		producer.push(vendingConfiguration.getStreetVendingDraftApplicationUpdateTopic(), persisterWrapper);
-		
+
 	}
-	
+
 	public void deleteDraftApplication(String draftId) {
 		StreetVendingDraftDetail streetVendingDraftDetail = StreetVendingDraftDetail.builder().draftId(draftId).build();
 
@@ -145,7 +146,7 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		producer.push(vendingConfiguration.getStreetVendingDraftApplicationDeleteTopic(), persisterWrapper);
 
 	}
-	
+
 	private StreetVendingDraftDetail convertToDraftDetailsObject(StreetVendingRequest vendingRequest) {
 		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
 		String draftApplicationData = null;
@@ -163,6 +164,13 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 				.draftApplicationData(draftApplicationData).auditDetails(streetVendingDetail.getAuditDetails()).build();
 		return streetVendingDraftDetail;
 	}
-	
+
+	@Override
+	public void renew(StreetVendingRequest vendingRequest) {
+		log.info("Renewing street vending booking application for new and old booking number: "
+				+ vendingRequest.getStreetVendingDetail().getApplicationNo() + "::"
+				+ vendingRequest.getStreetVendingDetail().getOldApplicationNumber());
+		producer.push(vendingConfiguration.getStreetVendingApplicationRenewTopic(), vendingRequest);
+	}
 
 }

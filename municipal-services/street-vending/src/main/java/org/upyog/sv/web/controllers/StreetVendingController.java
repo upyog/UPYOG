@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.service.SchedulerService;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.validator.StreetVendingValidationService;
@@ -31,6 +32,9 @@ public class StreetVendingController {
 
 	@Autowired
 	private StreetVendingService streetVendingService;
+
+	@Autowired
+	private SchedulerService schedulerService;
 
 	private final StreetVendingValidationService validationService;
 
@@ -119,4 +123,14 @@ public class StreetVendingController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	@RequestMapping("/trigger-expire-streetvendingapplications")
+	public ResponseEntity<String> triggerWorkflowUpdate() {
+		try {
+			schedulerService.processStreetVendingApplications();
+			return ResponseEntity.ok("Expire Scheduler triggered successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Failed to trigger scheduler: " + e.getMessage());
+		}
+	}
 }

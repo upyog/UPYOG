@@ -7,9 +7,11 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.web.models.RenewalStatus;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -18,6 +20,7 @@ import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Service
 public class SchedulerService {
 	@Autowired
 	private StreetVendingRepository streetVendingRepository;
@@ -102,7 +105,8 @@ public class SchedulerService {
 				StreetVendingConstants.SYSTEM_CITIZEN_TENANTID);
 
 		for (StreetVendingDetail detail : applications) {
-			detail.setEligibleToRenew(true);
+//			detail.setEligibleToRenew(true);
+			detail.setRenewalStatus(RenewalStatus.ELIGIBLE_TO_RENEW);
 			detail.getWorkflow().setAction(action);
 
 			if (markExpired) {
