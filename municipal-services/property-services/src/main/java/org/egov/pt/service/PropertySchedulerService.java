@@ -105,6 +105,8 @@ public class PropertySchedulerService {
 
 		List<Property> properties = getProperties(calculateTaxRequest);
 
+		properties = removeAlreadyTaxCalculatedProperties(properties, calculateTaxRequest);
+
 		for (Property property : properties) {
 
 			BigDecimal totalPropertyTax = BigDecimal.ZERO;
@@ -342,8 +344,6 @@ public class PropertySchedulerService {
 								&& wardNumbers.contains(wardNumberNode.asText());
 					}).collect(Collectors.toList());
 		}
-
-		properties = removeAlreadyTaxCalculatedProperties(properties, calculateTaxRequest);
 
 		return properties;
 	}
