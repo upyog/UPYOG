@@ -157,8 +157,23 @@
 			min-height: 280px;
 
 		}
-		.tag-line{
+
+		.tag-line {
 			width: 350px;
+		}
+
+		.sign {
+			position: relative;
+			float: right;
+			margin-top: 0px;
+			text-align: right;
+		}
+
+		.signature-details span {
+			display: block;
+			text-align: right;
+			line-height: 1;
+			margin: 0;
 		}
 	</style>
 </head>
@@ -169,8 +184,7 @@
 		<tr>
 			<td>
 				<img class="hp-govt" th:src="${hpLogo}" alt="Government of Himachal Pradesh" />
-				<img class="citizen-logo-text"
-					src="https://citizenseva.hp.gov.in/hp-udd/user_manual/citijanseva.png"
+				<img class="citizen-logo-text" src="https://citizenseva.hp.gov.in/hp-udd/user_manual/citijanseva.png"
 					alt="Citizen Seva Logo" />
 				<h2 class="header-text">Municipal Corporation, Shimla</h2>
 				<h2 class="state-govt">Govt. of Himachal Pradesh</h2>
@@ -206,13 +220,25 @@
 	<table class="details-table">
 		<tr>
 			<th class="text-heading-class"><img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="QR Code" />
-				<span class="text-heading-class">Property ID: </span><span class="property-id" th:text="${propertyId}">NA</span>
+				<span class="text-heading-class">Property ID: </span><span class="property-id"
+					th:text="${propertyId}">NA</span>
 			</th>
 			<th class="text-heading-class text-heading-class-address property-id-td">
-				<img class="tag-line" src="http://localhost:908/formBuilder/web/img/tag-line-blue.png" alt="Citizen Seva Tag Line"/>
+				<img class="tag-line" src="http://localhost:908/formBuilder/web/img/tag-line-blue.png"
+					alt="Citizen Seva Tag Line" />
 			</th>
 		</tr>
 	</table>
+	<div class="sign">
+
+		<img th:src="${signature}" alt="signature..." />
+		<p class="signature-details">Digitally Signed at <span th:text="${approvalTime}">NA</span>
+			<br />
+			<span th:text="${userName}">userName</span><br />
+			<span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
+		</p>
+	</div>
+
 	<div class="footer-logo">
 		&nbsp;
 	</div>
