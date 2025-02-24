@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.web.models.RenewalStatus;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -102,7 +103,8 @@ public class SchedulerService {
 				StreetVendingConstants.SYSTEM_CITIZEN_TENANTID);
 
 		for (StreetVendingDetail detail : applications) {
-			detail.setEligibleToRenew(true);
+//			detail.setEligibleToRenew(true);
+			detail.setRenewalStatus(RenewalStatus.ELIGIBLE_TO_RENEW);
 			detail.getWorkflow().setAction(action);
 
 			if (markExpired) {
