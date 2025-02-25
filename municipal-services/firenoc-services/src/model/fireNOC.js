@@ -685,12 +685,12 @@ const RequestInfo = {
     "RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.",
   properties: {
     apiId: {
-      type: "string",
+      type: ["string", "null"],
       description: "unique API ID",
       maxLength: 128
     },
     ver: {
-      type: "string",
+      type: ["string", "null"],
       description:
         "API version - for HTTP based request this will be same as used in path",
       maxLength: 32
@@ -701,29 +701,29 @@ const RequestInfo = {
     //   description: "time in epoch"
     // },
     action: {
-      type: "string",
+      type: ["string", "null"],
       description:
         "API action to be performed like _create, _update, _search (denoting POST, PUT, GET) or _oauth etc",
       maxLength: 32
     },
     did: {
-      type: "string",
+      type: ["string", "null"],
       description: "Device ID from which the API is called",
       maxLength: 1024
     },
     key: {
-      type: "string",
+      type: ["string", "null"],
       description:
         "API key (API key provided to the caller in case of server to server communication)",
       maxLength: 256
     },
     msgId: {
-      type: "string",
+      type: ["string", "null"],
       description: "Unique request message id from the caller",
       maxLength: 256
     },
     requesterId: {
-      type: "string",
+      type: ["string", "null"],
       description: "UserId of the user calling",
       maxLength: 256
     },
@@ -734,7 +734,7 @@ const RequestInfo = {
     },
     // userInfo: UserInfo,
     correlationId: {
-      type: "string",
+      type: ["string", "null"],
       readOnly: true
     }
   },
