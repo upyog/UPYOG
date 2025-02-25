@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.upyog.cdwm.repository.impl.CNDServiceRepositoryImpl;
 import org.upyog.cdwm.service.CNDService;
 import org.upyog.cdwm.service.EnrichmentService;
+import org.upyog.cdwm.service.WorkflowService;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 
@@ -18,8 +19,8 @@ public class CNDServiceImpl implements CNDService {
     @Autowired
     private EnrichmentService enrichmentService;
 
-//    @Autowired
-//    private WorkflowService workflowService;
+    @Autowired
+    private WorkflowService workflowService;
 //
 //    @Autowired
 //    private UserService userService;
@@ -34,7 +35,7 @@ public class CNDServiceImpl implements CNDService {
 
         enrichmentService.enrichCreateCNDRequest(cndApplicationRequest);
 
-      //  workflowService.updateWorkflowStatus(null, cndApplicationRequest);
+        workflowService.updateWorkflowStatus(null, cndApplicationRequest);
 
         // Get the uuid of User from user registry
 //        try {
