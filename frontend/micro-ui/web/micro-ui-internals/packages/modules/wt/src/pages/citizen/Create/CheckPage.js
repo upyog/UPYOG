@@ -24,7 +24,6 @@ In Parent Component,  we are passing the data as a props coming through params (
   const WTCheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
     const {owner,requestDetails,address} = value;
-    console.log("reqtewdead",requestDetails);
     const [agree, setAgree] = useState(false);
     const immediateRequired = (requestDetails?.extraCharge) ? "YES":"NO"
 
@@ -41,20 +40,20 @@ In Parent Component,  we are passing the data as a props coming through params (
           <CardSubHeader>{t("ES_TITILE_OWNER_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
-              label={t("COMMON_APPLICANT_NAME")}
+              label={t("WT_APPLICANT_NAME")}
               text={`${t(checkForNA(owner?.applicantName))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/applicant-details`} />}
           />
           <Row
-              label={t("COMMON_MOBILE_NUMBER")}
+              label={t("WT_MOBILE_NUMBER")}
               text={`${t(checkForNA(owner?.mobileNumber))}`}
           />
-          <Row
-              label={t("SV_GENDER")}
-              text={`${t(checkForNA(owner?.gender?.code))}`}
+           <Row
+              label={t("WT_ALT_MOBILE_NUMBER")}
+              text={`${t(checkForNA(owner?.alternateNumber))}`}
           />
           <Row
-              label={t("COMMON_EMAIL_ID")}
+              label={t("WT_EMAIL_ID")}
               text={`${t(checkForNA(owner?.emailId))}`}
           />
           </StatusTable>
@@ -62,36 +61,36 @@ In Parent Component,  we are passing the data as a props coming through params (
           <CardSubHeader>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
-              label={t("HOUSE_NO")}
+              label={t("WT_HOUSE_NO")}
               text={`${t(checkForNA(address?.houseNo))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/address-details`} />}
               />
           <Row
-              label={t("ADDRESS_LINE1")}
+              label={t("WT_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressLine1))}`}
               />
               <Row
-              label={t("ADDRESS_LINE2")}
+              label={t("WT_ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressLine2))}`}
               />
               <Row
-              label={t("CITY")}
+              label={t("WT_CITY")}
               text={`${t(checkForNA(address?.city?.city?.name))}`}
               />
               <Row
-              label={t("LOCALITY")}
+              label={t("WT_LOCALITY")}
               text={`${t(checkForNA(address?.locality?.i18nKey))}`}
               />
               <Row
-              label={t("PINCODE")}
+              label={t("WT_PINCODE")}
               text={`${t(checkForNA(address?.pincode))}`}
               />
               <Row
-              label={t("LANDMARK")}
+              label={t("WT_LANDMARK")}
               text={`${t(checkForNA(address?.landmark))}`}
               />
               <Row
-              label={t("STREET_NAME")}
+              label={t("WT_STREET_NAME")}
               text={`${t(checkForNA(address?.streetName))}`}
               />
           </StatusTable>
@@ -115,6 +114,10 @@ In Parent Component,  we are passing the data as a props coming through params (
               <Row
               label={t("WT_DELIVERY_DATE")}
               text={`${t(checkForNA(requestDetails?.deliveryDate))}`}
+              />
+              <Row
+              label={t("WT_DELIVERY_DATE")}
+              text={`${(checkForNA(requestDetails?.deliveryTime))}`}
               />
               <Row
               label={t("WT_DESCRIPTION")}
