@@ -4,7 +4,6 @@ import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 // import "@upyog/cnd-ui-css/dist/index.css";
 import "./index.css";
 import App from './App';
-// import { TLCustomisations } from './Customisations/tl/TLCustomisation';
 
 
 initLibraries();
@@ -15,7 +14,6 @@ initLibraries();
 const user = window.Digit.SessionStorage.get("User");
 
 if (!user || !user.access_token || !user.info) {
-  // login detection
 
   const parseValue = (value) => {
     try {

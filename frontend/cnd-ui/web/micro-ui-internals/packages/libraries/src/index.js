@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import Enums from "./enums/index";
+// import Enums from "./enums/index";
 import mergeConfig from "./config/mergeConfig";
 import { useStore } from "./services/index";
 import { initI18n } from "./translations/index";
@@ -33,7 +33,6 @@ import Utils from "./utils";
 import { subFormRegistry } from "./subFormRegistry";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
-import { SVService } from "./services/elements/SV";
 import {CustomService} from "./services/elements/CustomService";    
 
 
@@ -51,7 +50,7 @@ const initLibraries = () => {
   setupLibraries("ULBService", ULBService);
   setupLibraries("Config", { mergeConfig });
   setupLibraries("Services", { useStore });
-  setupLibraries("Enums", Enums);
+  // setupLibraries("Enums", Enums);
   setupLibraries("LocationService", LocationService);
   setupLibraries("LocalityService", LocalityService);
   setupLibraries("LoginService", LoginService);
@@ -83,7 +82,6 @@ const initLibraries = () => {
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
   setupLibraries("AuditService",AuditService);
-  setupLibraries("SVService", SVService);
 
 
   return new Promise((resolve) => {
@@ -91,4 +89,4 @@ const initLibraries = () => {
   });
 };
 
-export { initLibraries, Enums, Hooks, subFormRegistry };
+export { initLibraries, /*Enums, */Hooks, subFormRegistry };

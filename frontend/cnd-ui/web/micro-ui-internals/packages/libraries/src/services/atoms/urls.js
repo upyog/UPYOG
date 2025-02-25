@@ -56,13 +56,6 @@ const Urls = {
     count: "/egov-user-event/v1/events/notifications/_count",
     create: "/egov-user-event/v1/events/_create",
   },
-  sv:{
-    create: "/sv-services/street-vending/_create",
-    search: "/sv-services/street-vending/_search",
-    update: "/sv-services/street-vending/_update",
-    deleteDraft:"/sv-services/street-vending/_deletedraft",
-    demandCreate: "/sv-services/street-vending/_createdemand"
-  },
 
   digiLocker:{
     authorization:"/requester-services-dx/user/authorization/url",

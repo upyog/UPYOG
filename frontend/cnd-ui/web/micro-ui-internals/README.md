@@ -6,18 +6,9 @@ This repository contains source code for web implementation of the UPYOG UI modu
 
 #### Starting local server
 
-1. In the project run **yarn install** to install node modules and dependencies
-1. Run **yarn start** to start the local server
-
-#### Reference Docs
-
-###### Module wise reference docs
-
-| Module         | Reference Docs                                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------------------------ |
-| PGR            | [PGR: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/pgr-ui-implementation-guidelines-and-faqs) |
-| FSM            | [FSM: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/fsm-ui-implementation-guidelines-and-faqs) |
-| UPYOG Services | [UPYOG Service Stack](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-upyog-service-stack)                            |
+1. In the project run **yarn install** in the directory web and then web/micro-ui-internals to install node modules and dependencies
+2. Come to the directory - web/micro-ui-internals and Run **yarn start:dev** to start the local server 
+                        |
 
 ###### Dependencies and their references
 
@@ -32,3 +23,8 @@ This repository contains source code for web implementation of the UPYOG UI modu
 #### License
 
 UPYOG Source Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)
+
+
+## Maintainer
+
+- [Shivank-NIUA](https://github.com/ShivankShuklaa)

@@ -27,12 +27,7 @@ module.exports = function (app) {
     "/billing-service",
     "/collection-services",
     "/pdf-service",
-    "/pg-service",
-    "/sv-services/street-vending/_create",
-    "/sv-services/street-vending/_search",
-    "/sv-services/street-vending/_update",
-    "/sv-services/street-vending/_deletedraft",
-    "/sv-services/street-vending/_createdemand",
+    "/pg-service"
     
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

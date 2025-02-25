@@ -44,10 +44,10 @@ export const SuccessfulPayment = (props) => {
   // );
   // const FSM_EDITOR = Digit.UserService.hasAccess("FSM_EDITOR_EMP") || false;
 
-  function onActionSelect(action) {
-    setSelectedAction(action);
-    setDisplayMenu(false);
-  }
+  // function onActionSelect(action) {
+  //   setSelectedAction(action);
+  //   setDisplayMenu(false);
+  // }
   useEffect(() => {
     return () => {
       const fetchData = async () => {
@@ -484,31 +484,31 @@ export const SuccessfulPayment = (props) => {
   // const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
   // const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
 
-  const svCertificate = async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
-    const generatePdfKeyForTL = "svcertificate";
+  // const svCertificate = async () => {
+  //   //const tenantId = Digit.ULBService.getCurrentTenantId();
+  //   const state = tenantId;
+  //   const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
+  //   const generatePdfKeyForTL = "svcertificate";
 
-    if (applicationDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
-    }
-  };
+  //   if (applicationDetails) {
+  //     let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+  //     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+  //     window.open(fileStore[response.filestoreIds[0]], "_blank");
+  //   }
+  // };
 
-  const svIdCard= async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = tenantId;
-    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
-    const generatePdfKeyForTL = "svidentitycard";
+  // const svIdCard= async () => {
+  //   //const tenantId = Digit.ULBService.getCurrentTenantId();
+  //   const state = tenantId;
+  //   const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
+  //   const generatePdfKeyForTL = "svidentitycard";
 
-    if (applicationDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
-    }
-  };
+  //   if (applicationDetails) {
+  //     let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+  //     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+  //     window.open(fileStore[response.filestoreIds[0]], "_blank");
+  //   }
+  // };
 
 //   const printPermissionLetter = async () => {
 //     const applicationDetails = await Digit.CHBServices.search({  tenantId,
@@ -609,7 +609,7 @@ export const SuccessfulPayment = (props) => {
         <CardText>{getCardText()}</CardText>
         {generatePdfKey ? (
           <div style={{ display: "flex" }}>
-            { businessService!=="sv-services" &&(
+            {/* { businessService!=="sv-services" &&(
             <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
               <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M0 0h24v24H0z" fill="none" />
@@ -644,7 +644,7 @@ export const SuccessfulPayment = (props) => {
                 </svg>
                 {t("SV_ID_CARD")}
               </div>
-            ) : null}
+            ) : null} */}
             {/* {businessService == "pet-services" ? (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">

@@ -2,17 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
-import { SVService } from "../../services/elements/SV";
+
 
 const inboxConfig = (tenantId, filters) => ({
-  SV: {
-    services: ["street-vending"],
-    searchResponseKey: "SVDetails",
-    businessIdsParamForSearch: "applicationNo",
-    businessIdAliasForSearch: "applicationNo",
-    fetchFilters: filterFunctions.SV,
-    _searchFn: () => SVService.search({ tenantId, filters }),
-  }
+  
 });
 
 const defaultCombineResponse = ({ totalCount, ...d }, wf) => {

@@ -4,10 +4,9 @@ import {
   PaymentLinks,
   paymentConfigs,
 } from "@upyog/digit-ui-module-common";
-import { DigitUI } from "@upyog/digit-ui-module-core";
+import { CndUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
-import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
 import { CNDComponents, CNDLinks, CNDModule } from "@nudmcdgnpm/upyog-ui-module-cnd";
 
 
@@ -17,16 +16,12 @@ const enabledModules = [
   "Payment",
   "QuickPayLinks",
   "BillAmendment",
-  "SV",
   "CND"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
   PaymentModule,
   PaymentLinks,
-  SVModule,
-  SVLinks,
-  ...SVComponents,
   ...CNDComponents, 
   CNDLinks, 
   CNDModule
@@ -44,7 +39,7 @@ function App() {
     return <h1>stateCode is not defined</h1>;
   }
   return (
-    <DigitUI
+    <CndUI
       stateCode={stateCode}
       enabledModules={enabledModules}
       moduleReducers={moduleReducers}

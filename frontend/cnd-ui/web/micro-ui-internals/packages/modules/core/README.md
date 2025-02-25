@@ -10,7 +10,7 @@ npm install --save @upyog/digit-ui-module-core
 ## Limitation
 
 ```bash
-This Package is more specific to DIGIT-UI's can be used across mission's
+This Package is more specific to CND's can be used across mission's
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ This Package is more specific to DIGIT-UI's can be used across mission's
 After adding the dependency make sure you have this dependency in
 
 ```bash
-frontend/micro-ui/web/package.json
+frontend/cnd-ui/web/package.json
 ```
 
 ```json
@@ -28,18 +28,18 @@ frontend/micro-ui/web/package.json
 then navigate to App.js
 
 ```bash
- frontend/micro-ui/web/src/App.js
+ frontend/cnd-ui/web/src/App.js
 ```
 
 ```jsx
 /** add this import **/
 
-import { DigitUI } from "@upyog/digit-ui-module-core";
+import { CndUI } from "@upyog/digit-ui-module-core";
 
 
 /** inside render Function add  the import for the component **/
 
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(<CndUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 
 ```
 

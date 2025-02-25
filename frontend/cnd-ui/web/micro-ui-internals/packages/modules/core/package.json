@@ -27,7 +27,7 @@
     "redux-thunk": "2.4.1",
     "react-google-recaptcha": "^3.1.0"
   },
-  "author": "JaganKumar <jagan.kumar@egov.org.in>",
+  "author": "Shivank Shukla",
   "keywords": [
     "digit",
     "egov",

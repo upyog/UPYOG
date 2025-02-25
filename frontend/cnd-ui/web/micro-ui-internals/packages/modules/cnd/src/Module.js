@@ -7,6 +7,8 @@ import CitizenApp from "./pages/citizen";
 import CndRequirementDetails from "./pageComponents/CndRequirementDetails"; 
 import Pickup from "./pageComponents/pickup";
 import ConstructionType from "./pageComponents/ConstructionType";
+import LocationPopup from "./components/LocationPopup";
+import { LocationDetails } from "./components/LocationDetails";
 
 
 
@@ -15,7 +17,9 @@ const componentsToRegister = {
   CndCreate,
   CndRequirementDetails,
   Pickup,
-  ConstructionType
+  ConstructionType,
+  LocationPopup,
+  LocationDetails
   };
   
   // function to register the component as per standard 

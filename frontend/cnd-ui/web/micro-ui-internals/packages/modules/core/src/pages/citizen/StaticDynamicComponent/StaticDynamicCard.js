@@ -7,15 +7,12 @@ import {
   WhatsappIconGreen, 
   HelpLineIcon, 
   ServiceCenterIcon, 
-  Loader, 
-  PTIcon, 
-  MCollectIcon, 
-  ComplaintIcon,
-  BPAHomeIcon,
-  WSICon
+  Loader
+
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { CNDIcon } from "../../../components/Svg";
 
 const StaticDynamicCard = ({moduleCode}) => {
     const { t } = useTranslation();
@@ -23,104 +20,94 @@ const StaticDynamicCard = ({moduleCode}) => {
     const { isLoading: isMdmsLoading, data: mdmsData } = Digit.Hooks.useStaticData(Digit.ULBService.getStateId());
     const { isLoading: isSearchLoading, error, data: dynamicData, isSuccess } = Digit.Hooks.useDynamicData({ moduleCode, tenantId: tenantId , filters: {} , t});
     const isMobile = window.Digit.Utils.browser.isMobile();
-    const handleClickOnWhatsApp = (obj) => {
-      window.open(obj);
-    };
-    if(window.location.href.includes("tl") && window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE",{})
+    // const handleClickOnWhatsApp = (obj) => {
+    //   window.open(obj);
+    // };
+    // if(window.location.href.includes("tl") && window.Digit.SessionStorage.get("TL_CREATE_TRADE")) window.Digit.SessionStorage.set("TL_CREATE_TRADE",{})
     const IconComponent = ({module, styles}) => {
 
       switch(module){
-        case 'TL':
-          return <CaseIcon className="fill-path-primary-main" styles={styles}/>;
-        case 'PT':
-          return <PTIcon className="fill-path-primary-main" styles={styles}/>;
-        case 'MCOLLECT':
-          return <MCollectIcon className="fill-path-primary-main" styles={styles}/>;
-        case 'PGR':
-          return <PTIcon className="fill-path-primary-main" styles={styles}/>
-        case 'WS':
-          return <WSICon className="fill-path-primary-main" styles={styles}/>
-        case 'OBPS':
-          return <BPAHomeIcon className="fill-path-primary-main" styles={styles}/>
+        case "CND":
+          return <CNDIcon className="fill-path-primary-main" styles={styles} />
         default:
           return <CaseIcon className="fill-path-primary-main" styles={styles}/>;
       }
     }
     const mdmsConfigResult = mdmsData?.MdmsRes["common-masters"]?.StaticData[0]?.[`${moduleCode}`];
 
-    const StaticDataIconComponentOne = ({module}) => {
+    // const StaticDataIconComponentOne = ({module}) => {
 
-      switch(module){
-        case 'PT':
-        case 'WS':
-          return (<span className="timerIcon">
-                    <TimerIcon/>
-                </span>)
-        default:
-          return null
-      }
-    };
-    const StaticDataIconComponentTwo = ({module}) => {
+    //   switch(module){
+    //     case 'PT':
+    //     case 'WS':
+    //       return (<span className="timerIcon">
+    //                 <TimerIcon/>
+    //             </span>)
+    //     default:
+    //       return null
+    //   }
+    // };
+    // const StaticDataIconComponentTwo = ({module}) => {
 
-      switch(module){
-        case 'PT':
-          return (<span className="rupeeSymbol">
-                    <RupeeSymbol/>
-                    </span>)
-        case 'WS':
-          return (<span className="timerIcon">
-                    <TimerIcon/>
-                  </span>)
-        default:
-          return null
-      }
-    }
-    const staticContent = (module) => {
-      switch(module){
-        case 'TL':
-          return {
-            staticCommonContent: t("TL_VALIDITY"),
-          }
-        case 'MCOLLECT':
-          return {
-            staticCommonContent: t("CHALLAN_VALIDITY"),
-          }
-         case 'PGR':
-           return {
-             staticCommonContent: t("CATEGORIES_OF_COMPLAINT_TYPES_CAN_BE_SUBMITTED_ON_GRIEVANCE_PORTAL"),
-          }
-        case 'OBPS':
-          return {
-            staticCommonContent: t("BUILDING_PLAN_PERMIT_VALIDITY"),
-            validity: mdmsConfigResult?.validity  + " " + (mdmsConfigResult?.validity === "1" ? t("COMMON_DAY") : t("COMMON_DAYS"))
-          }
-        default:
-          return {
-            staticCommonContent : "",
-          }
-      }
-    }
+    //   switch(module){
+    //     case 'PT':
+    //       return (<span className="rupeeSymbol">
+    //                 <RupeeSymbol/>
+    //                 </span>)
+    //     case 'WS':
+    //       return (<span className="timerIcon">
+    //                 <TimerIcon/>
+    //               </span>)
+    //     default:
+    //       return null
+    //   }
+    // }
+    // const staticContent = (module) => {
+    //   switch(module){
+    //     case 'TL':
+    //       return {
+    //         staticCommonContent: t("TL_VALIDITY"),
+    //       }
+    //     case 'MCOLLECT':
+    //       return {
+    //         staticCommonContent: t("CHALLAN_VALIDITY"),
+    //       }
+    //      case 'PGR':
+    //        return {
+    //          staticCommonContent: t("CATEGORIES_OF_COMPLAINT_TYPES_CAN_BE_SUBMITTED_ON_GRIEVANCE_PORTAL"),
+    //       }
+    //     case 'OBPS':
+    //       return {
+    //         staticCommonContent: t("BUILDING_PLAN_PERMIT_VALIDITY"),
+    //         validity: mdmsConfigResult?.validity  + " " + (mdmsConfigResult?.validity === "1" ? t("COMMON_DAY") : t("COMMON_DAYS"))
+    //       }
+    //     default:
+    //       return {
+    //         staticCommonContent : "",
+    //       }
+    //   }
+    // }
 
-    const staticData = (module) => {
-      switch(module){
-        case 'PT':
-          return {
-            staticDataOne : mdmsConfigResult?.staticDataOne + " " + t("COMMON_DAYS"),
-            staticDataOneHeader : t("APPLICATION_PROCESSING_TIME"),
-            staticDataTwo : mdmsConfigResult?.staticDataTwo,
-            staticDataTwoHeader : t("APPLICATION_PROCESSING_FEE"),
-          }
-        case 'WS':
-          return {
-            staticDataOne :  "",
-            staticDataOneHeader : t("PAY_WATER_CHARGES_BY") + " "+  mdmsConfigResult?.staticDataOne + " "+ t("COMMON_DAYS") + " "+ t("OF_BILL_GEN_TO_AVOID_LATE_FEE"),
-            staticDataTwo : mdmsConfigResult?.staticDataTwo + " " + t("COMMON_DAYS"),
-            staticDataTwoHeader : t("APPLICATION_PROCESSING_TIME"),
-          }
-        default:
-          return {}
-      }
-    }
+    // const staticData = (module) => {
+    //   switch(module){
+    //     case 'PT':
+    //       return {
+    //         staticDataOne : mdmsConfigResult?.staticDataOne + " " + t("COMMON_DAYS"),
+    //         staticDataOneHeader : t("APPLICATION_PROCESSING_TIME"),
+    //         staticDataTwo : mdmsConfigResult?.staticDataTwo,
+    //         staticDataTwoHeader : t("APPLICATION_PROCESSING_FEE"),
+    //       }
+    //     case 'WS':
+    //       return {
+    //         staticDataOne :  "",
+    //         staticDataOneHeader : t("PAY_WATER_CHARGES_BY") + " "+  mdmsConfigResult?.staticDataOne + " "+ t("COMMON_DAYS") + " "+ t("OF_BILL_GEN_TO_AVOID_LATE_FEE"),
+    //         staticDataTwo : mdmsConfigResult?.staticDataTwo + " " + t("COMMON_DAYS"),
+    //         staticDataTwoHeader : t("APPLICATION_PROCESSING_TIME"),
+    //       }
+    //     default:
+    //       return {}
+    //   }
+    // }
     
     if(isMdmsLoading || isSearchLoading){
       return <Loader/>
@@ -199,7 +186,7 @@ const StaticDynamicCard = ({moduleCode}) => {
       { mdmsConfigResult && mdmsConfigResult?.staticDataOne 
         ? <div className="staticDataCard">
             <div className="staticData">
-              <StaticDataIconComponentOne module={moduleCode}/>
+              {/* <StaticDataIconComponentOne module={moduleCode}/> */}
               <span className="static-data-content">
                 <span className="static-data-content-first" style={
                   {
@@ -218,7 +205,7 @@ const StaticDynamicCard = ({moduleCode}) => {
         ?
         <div className="staticDataCard">
         <div className="staticData">
-        <StaticDataIconComponentTwo module={moduleCode}/>
+        {/* <StaticDataIconComponentTwo module={moduleCode}/> */}
             <span className="static-data-content">
               <span className="static-data-content-first">
             {staticData(moduleCode)?.staticDataTwoHeader}
@@ -237,10 +224,10 @@ const StaticDynamicCard = ({moduleCode}) => {
             </span>
             <span className="static-data-content">
               <span className="static-data-content-first">
-              {staticContent(moduleCode)?.staticCommonContent}
+              {/* {staticContent(moduleCode)?.staticCommonContent} */}
             </span>
           <span className="static-data-content-second">
-            {staticContent(moduleCode)?.validity}
+            {/* {staticContent(moduleCode)?.validity} */}
           </span>
           </span>
         </div>
@@ -258,7 +245,7 @@ const StaticDynamicCard = ({moduleCode}) => {
             </span>}
             <span className="static-data-content">
               <span className="static-data-content-first">
-              {staticContent(moduleCode)?.staticCommonContent}
+              {/* {staticContent(moduleCode)?.staticCommonContent} */}
             </span>
           <span className="static-data-content-second">
             {dynamicData?.staticData}

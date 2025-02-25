@@ -7,7 +7,7 @@ import { useCashPaymentDetails } from "./ManualReciept";
 import { useCardPaymentDetails } from "./card";
 import { useChequeDetails } from "./cheque";
 import isEqual from "lodash/isEqual";
-import { BillDetailsFormConfig } from "./Bill-details/billDetails";
+// import { BillDetailsFormConfig } from "./Bill-details/billDetails";
 // import { timerEnabledForBusinessService } from "../../citizen/bills/routes/bill-details/utils";
 // import TimerServices from "../../citizen/timer-Services/timerServices";
 
@@ -18,10 +18,10 @@ export const CollectPayment = (props) => {
   const history = useHistory();
   const queryClient = useQueryClient();
   const {state,search}=useLocation();
-  const { path: currentPath } = useRouteMatch();
+  // const { path: currentPath } = useRouteMatch();
   let { consumerCode, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [Time, setTime ] = useState(0);
+  // const [Time, setTime ] = useState(0);
   if (window.location.href.includes("ISWSAPP")) consumerCode = new URLSearchParams(search).get("applicationNumber");
   if (window.location.href.includes("ISWSCON") || ModuleWorkflow === "WS") consumerCode = decodeURIComponent(consumerCode);
 
@@ -88,23 +88,23 @@ export const CollectPayment = (props) => {
     bill.totalAmount = Math.round(bill.totalAmount);
     data.paidBy = data.paidBy.code;
 
-    if (
-      BillDetailsFormConfig({ consumerCode, businessService }, t)[
-        ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-      ] &&
-      !data?.amount?.paymentAllowed
-    ) {
-      let action =
-        data?.amount?.error === "CS_CANT_PAY_BELOW_MIN_AMOUNT"
-          ? t(data?.amount?.error) + "- " + data?.amount?.minAmountPayable
-          : t(data?.amount?.error);
+    // if (
+    //   BillDetailsFormConfig({ consumerCode, businessService }, t)[
+    //     ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+    //   ] &&
+    //   !data?.amount?.paymentAllowed
+    // ) {
+    //   let action =
+    //     data?.amount?.error === "CS_CANT_PAY_BELOW_MIN_AMOUNT"
+    //       ? t(data?.amount?.error) + "- " + data?.amount?.minAmountPayable
+    //       : t(data?.amount?.error);
 
-      setToast({
-        key: "error",
-        action,
-      });
-      return;
-    }
+    //   setToast({
+    //     key: "error",
+    //     action,
+    //   });
+    //   return;
+    // }
 
     const { ManualRecieptDetails, paymentModeDetails, ...rest } = data;
     const { errorObj, ...details } = paymentModeDetails || {};
@@ -313,25 +313,27 @@ export const CollectPayment = (props) => {
   });
 
   const getFormConfig = () => {
-    if (
-      BillDetailsFormConfig({ consumerCode, businessService }, t)[
-        ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-      ] ||
-      ModuleWorkflow ||
-      businessService === "TL" ||
-      businessService.includes("ONE_TIME_FEE")
-    ) {
-      config.splice(0, 1);
-    }
+    // if (
+    //   BillDetailsFormConfig({ consumerCode, businessService }, t)[
+    //     ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+    //   ] ||
+    //   ModuleWorkflow ||
+    //   businessService === "TL" ||
+    //   businessService.includes("ONE_TIME_FEE")
+    // ) {
+    //   config.splice(0, 1);
+    // }
     let conf = config.concat(formConfigMap[formState?.paymentMode?.code] || []);
     conf = conf?.concat(cashConfig);
-    return BillDetailsFormConfig({ consumerCode, businessService }, t)[
-      ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-    ]
-      ? BillDetailsFormConfig({ consumerCode, businessService }, t)[
-          ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-        ].concat(conf)
-      : conf;
+    return conf;
+    // BillDetailsFormConfig({ consumerCode, businessService }, t)[
+    //   ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+    // ]
+    //   ? BillDetailsFormConfig({ consumerCode, businessService }, t)[
+    //       ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+    //     ].concat(conf)
+    //   : 
+      // conf;
   };
 
 

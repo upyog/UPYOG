@@ -15,7 +15,7 @@ import {
   useRecieptSearch,
   useRecieptSearchNew,
   useAssetQrCode,
-  usePaymentSearch,
+  // usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
 import { useUserSearch } from "./userSearch";
@@ -41,35 +41,19 @@ import useCancelBill from "./bills/useCancelBill";
 import useTenantsBills from "./bills/useTenants";
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
-import useGetDSSFAQsJSON from "./useGetDSSFAQsJSON";
-import useGetDSSAboutJSON from "./useGetDSSAboutJSON";
+// import useGetDSSFAQsJSON from "./useGetDSSFAQsJSON";
+// import useGetDSSAboutJSON from "./useGetDSSAboutJSON";
 import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
-import useFeedBackSearch from "./useFeedBackSearch";
+// import useFeedBackSearch from "./useFeedBackSearch";
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
-import useSVDoc from "./sv/useSVDoc";
-import useSvCreateApi from "./sv/useSvCreateApi";
-import useTenantsSV from "./sv/useTenants";
-import useSVApplicationDetail from "./sv/useSVApplicationDetail";
-import useSvSearchApplication from "./sv/useSvSearchApplication";
-import useSVApplicationAction from "./sv/useSVApplicationAction";
+
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useSelectedMDMS from "./useSelectedMDMS";
-import useCreateDemand from "./sv/useCreateDemand";
 import useEmployeeSearch from "./useEmployeeSearch";
 import useRouteSubscription from "./useRouteSubscription";
 
-const sv = {
-  useSVDoc,
-  useSvCreateApi,
-  useTenants:useTenantsSV,
-  useSvSearchApplication,
-  useSVApplicationDetail,
-  useSVApplicationAction,
-  useSvSearchApplication,
-  useCreateDemand
-}
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -94,7 +78,7 @@ const Hooks = {
   useModuleTenants,
   useRecieptSearch,
   useRecieptSearchNew,
-  usePaymentSearch,
+  // usePaymentSearch,
   useNewInboxGeneral,
   useEvents,
   useClearNotifications,
@@ -102,7 +86,7 @@ const Hooks = {
   useStore,
   useDocumentSearch,
   useTenants,
-  useFeedBackSearch,
+  // useFeedBackSearch,
   useAccessControl,
   useBillSearch,
   useCancelBill,
@@ -115,15 +99,14 @@ const Hooks = {
   useCustomAPIHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
-  useGetDSSFAQsJSON,
-  useGetDSSAboutJSON,
+  // useGetDSSFAQsJSON,
+  // useGetDSSAboutJSON,
   useStaticData,
   useDynamicData,
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
   createTokenAPI,
-  sv,
   useCustomBackNavigation,
   useRouteSubscription
 };

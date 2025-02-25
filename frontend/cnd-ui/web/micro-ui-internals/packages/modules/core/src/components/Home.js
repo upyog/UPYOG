@@ -67,28 +67,6 @@ export const processLinkData = (newData, code, t) => {
 
 const iconSelector = (code) => {
   switch (code) {
-    case "PT":
-      return <PTIcon className="fill-path-primary-main" />;
-    case "WS":
-      return <WSICon className="fill-path-primary-main" />;
-    case "FSM":
-      return <FSMIcon className="fill-path-primary-main" />;
-    case "MCollect":
-      return <MCollectIcon className="fill-path-primary-main" />;
-    case "PGR":
-      return <PGRIcon className="fill-path-primary-main" />;
-    case "TL":
-      return <TLIcon className="fill-path-primary-main" />;
-    case "OBPS":
-      return <OBPSIcon className="fill-path-primary-main" />;
-    case "Bills":
-      return <BillsIcon className="fill-path-primary-main" />;
-      case "PTR":
-      return <PTRIcon className="fill-path-primary-main" />;
-    case "CHB":
-      return <CHBIcon className="fill-path-primary-main" />;
-    case "ADS":
-      return <CHBIcon className="fill-path-primary-main" />;
     case "CND":
       return <CNDIcon className="fill-path-primary-main" />
     default:

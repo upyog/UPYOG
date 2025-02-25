@@ -1,21 +1,5 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import {
-  PropertyHouse,
-  CaseIcon,
-  CollectionIcon,
-  PTIcon,
-  OBPSIcon,
-  PGRIcon,
-  FSMIcon,
-  WSICon,
-  MCollectIcon,
-  BirthIcon,
-  DeathIcon,
-  FirenocIcon,
-  PTRIcon
-} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { CNDIcon } from "../../Svg";
 
 const CitizenSubMenuSideBar = ({ item }) => {
   const [subnav, setSubnav] = useState(false);
@@ -25,19 +9,7 @@ const CitizenSubMenuSideBar = ({ item }) => {
   const { t } = useTranslation();
 
   const IconsObject = {
-    CommonPTIcon: <PTIcon />,
-    OBPSIcon: <OBPSIcon />,
-    propertyIcon: <PropertyHouse />,
-    TLIcon: <CaseIcon />,
-    PGRIcon: <PGRIcon />,
-    FSMIcon: <FSMIcon />,
-    WSIcon: <WSICon />,
-    BirthIcon: <BirthIcon className="icon" />,
-    DeathIcon: <DeathIcon className="icon" />,
-    FirenocIcon: <FirenocIcon className="icon" />,
-    MCollectIcon: <MCollectIcon />,
-    BillsIcon: <CollectionIcon />,
-    PTRIcon: <PTRIcon />
+    CNDIcon: <CNDIcon />
   };
 
   const leftIconArray = item.icon;

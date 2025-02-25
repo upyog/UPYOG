@@ -1,13 +1,12 @@
 {
-  "name": "micro-ui",
-  "version": "1.7.2",
+  "name": "cnd-ui",
+  "version": "1.0.0",
   "private": true,
   "homepage": "/cnd-ui",
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/sv",
     "micro-ui-internals/packages/modules/cnd"
   ],
   "engines": {
@@ -20,7 +19,6 @@
     "@upyog/digit-ui-module-common": "1.8.12",
     "@upyog/digit-ui-module-core": "1.8.2",
     "@nudmcdgnpm/digit-ui-react-components": "1.2.8",
-    "@nudmcdgnpm/upyog-ui-module-sv":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-cnd":"1.0.0",
     "babel-loader": "8.1.0",
     "react": "17.0.2",

@@ -4,7 +4,7 @@ import { useQueryClient } from "react-query";
 
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
-import ActionModal from "./Modal";
+// import ActionModal from "./Modal";
 
 import { useHistory, useParams } from "react-router-dom";
 import ApplicationDetailsContent from "./components/ApplicationDetailsContent";
@@ -209,7 +209,7 @@ const ApplicationDetails = (props) => {
             oldValue={oldValue}
             isInfoLabel={isInfoLabel}
           />
-          {showModal ? (
+          {/* {showModal ? (
             <ActionModal
               t={t}
               action={selectedAction}
@@ -225,7 +225,7 @@ const ApplicationDetails = (props) => {
               workflowDetails={workflowDetails}
               moduleCode={moduleCode}
             />
-          ) : null}
+          ) : null} */}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
             isAction={isAction} // isAction is added to enable or disable the action bar

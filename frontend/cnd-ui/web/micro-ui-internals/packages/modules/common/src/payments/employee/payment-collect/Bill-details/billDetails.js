@@ -1,221 +1,222 @@
 import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { BillDetailsKeyNoteConfig } from "./billDetailsConfig";
+// import { BillDetailsKeyNoteConfig } from "./billDetailsConfig";
 
-export const BillDetailsFormConfig = (props, t) => ({
-  PT: [
-    {
-      head: t("ES_BILL_DETAILS_PT_DETAILS_HEADING"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "PT", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  mcollect: [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: props.businessService, consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  "PT.MUTATION": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: props.businessService, consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  TL: [
-    {
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "TL", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  WS: [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "WS", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  "WS.ONE_TIME_FEE": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "WS.ONE_TIME_FEE", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  "SW.ONE_TIME_FEE": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "SW.ONE_TIME_FEE", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  "WSReconnection": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "WSReconnection", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  "SWReconnection": [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "SWReconnection", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  SW: [
-    {
-      head: t("COMMON_PAY_SCREEN_HEADER"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: "SW", consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-  FSM: [
-    {
-      head: t("ES_TITLE_PAYMENT_DETAILS"),
-      body: [
-        {
-          withoutLabel: true,
-          type: "custom",
-          populators: {
-            name: "amount",
-            customProps: { businessService: props.businessService, consumerCode: props.consumerCode },
-            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
-          },
-        },
-      ],
-    },
-  ],
-});
+// export const BillDetailsFormConfig = (props, t) => ({
+//   PT: [
+//     {
+//       head: t("ES_BILL_DETAILS_PT_DETAILS_HEADING"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "PT", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   mcollect: [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: props.businessService, consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   "PT.MUTATION": [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: props.businessService, consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   TL: [
+//     {
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "TL", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   WS: [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "WS", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   "WS.ONE_TIME_FEE": [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "WS.ONE_TIME_FEE", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   "SW.ONE_TIME_FEE": [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "SW.ONE_TIME_FEE", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   "WSReconnection": [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "WSReconnection", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   "SWReconnection": [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "SWReconnection", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   SW: [
+//     {
+//       head: t("COMMON_PAY_SCREEN_HEADER"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: "SW", consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+//   FSM: [
+//     {
+//       head: t("ES_TITLE_PAYMENT_DETAILS"),
+//       body: [
+//         {
+//           withoutLabel: true,
+//           type: "custom",
+//           populators: {
+//             name: "amount",
+//             customProps: { businessService: props.businessService, consumerCode: props.consumerCode },
+//             component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// });
 
 const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const { t } = useTranslation();
   const { workflow: ModuleWorkflow, IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data, isLoading } = Digit.Hooks.useFetchPayment({ tenantId, businessService, consumerCode });
-  const checkFSM = window.location.href.includes("FSM");
+  const checkFSM = false;
+  // window.location.href.includes("FSM");
 
-  const { isLoading: isDataLoading, data: applicationData } = Digit.Hooks.fsm.useSearch(
-    tenantId,
-    { applicationNos: consumerCode },
-    { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false }
-  );
+  // const { isLoading: isDataLoading, data: applicationData } = Digit.Hooks.fsm.useSearch(
+  //   tenantId,
+  //   { applicationNos: consumerCode },
+  //   { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false }
+  // );
   const [bill, setBill] = useState();
   const [showDetails, setShowDetails] = useState(true);
-  const { isLoading: isFSMLoading, isError, error, data: application, error: errorApplication } = Digit.Hooks.fsm.useApplicationDetail(
-    t,
-    tenantId,
-    consumerCode,
-    { enabled: checkFSM ? true : false },
-    "EMPLOYEE"
-  );
+  // const { isLoading: isFSMLoading, isError, error, data: application, error: errorApplication } = Digit.Hooks.fsm.useApplicationDetail(
+  //   t,
+  //   tenantId,
+  //   consumerCode,
+  //   { enabled: checkFSM ? true : false },
+  //   "EMPLOYEE"
+  // );
   const yearWiseBills = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod);
   const billDetails = yearWiseBills?.[0] || [];
   // const currentYear = new Date().getFullYear();
   const getTotal = () => (bill?.totalAmount ? bill?.totalAmount : 0);
-  const getTotalFSM = () => (application?.totalAmount ? application?.totalAmount : 0);
-  const getAdvanceAmount = () => (applicationData?.advanceAmount ? applicationData?.advanceAmount : 0);
-  const dueAmountTobePaid = () => {
-    if (bill?.businessService === "FSM.TRIP_CHARGES"){
-      return bill?.totalAmount;
-    }else{
-      return bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0;
-    }
-  } 
-  const getAmountPerTrip = () => (application?.additionalDetails?.tripAmount ? application?.additionalDetails?.tripAmount : 0);
+  // const getTotalFSM = () => (application?.totalAmount ? application?.totalAmount : 0);
+  // const getAdvanceAmount = () => (applicationData?.advanceAmount ? applicationData?.advanceAmount : 0);
+  // const dueAmountTobePaid = () => {
+  //   if (bill?.businessService === "FSM.TRIP_CHARGES"){
+  //     return bill?.totalAmount;
+  //   }else{
+  //     return bill?.totalAmount ? bill?.totalAmount - applicationData?.advanceAmount:0;
+  //   }
+  // } 
+  // const getAmountPerTrip = () => (application?.additionalDetails?.tripAmount ? application?.additionalDetails?.tripAmount : 0);
 
   const arrears =
     bill?.billDetails
@@ -254,21 +255,21 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
     setAmount(value);
   };
 
-  useEffect(() => {
-    ModuleWorkflow === "mcollect" &&
-      billDetails?.billAccountDetails &&
-      billDetails?.billAccountDetails.map((ob) => {
-        if (ob.taxHeadCode.includes("CGST")) ob.order = 3;
-        else if (ob.taxHeadCode.includes("SGST")) ob.order = 4;
-      });
-  }, [billDetails?.billAccountDetails]);
+  // useEffect(() => {
+  //   ModuleWorkflow === "mcollect" &&
+  //     billDetails?.billAccountDetails &&
+  //     billDetails?.billAccountDetails.map((ob) => {
+  //       if (ob.taxHeadCode.includes("CGST")) ob.order = 3;
+  //       else if (ob.taxHeadCode.includes("SGST")) ob.order = 4;
+  //     });
+  // }, [billDetails?.billAccountDetails]);
 
   useEffect(() => {
     let allowPayment = minAmountPayable && amount >= minAmountPayable && amount <= getTotal() && !formError;
 
-    if ((businessService === "WS" || businessService === "SW") && amount > getTotal() && isAdvanceAllowed) {
-      allowPayment = minAmountPayable && amount >= minAmountPayable && !formError;
-    }
+    // if ((businessService === "WS" || businessService === "SW") && amount > getTotal() && isAdvanceAllowed) {
+    //   allowPayment = minAmountPayable && amount >= minAmountPayable && !formError;
+    // }
 
     if (paymentType != t("CS_PAYMENT_FULL_AMOUNT")) setPaymentAllowed(allowPayment);
     else setPaymentAllowed(true);
@@ -326,9 +327,9 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
   const thStyle = { textAlign: "left", borderBottom: "#D6D5D4 1px solid", padding: "16px 12px", whiteSpace: "break-spaces" };
   const tdStyle = { textAlign: "left", borderBottom: "#D6D5D4 1px solid", padding: "8px 10px", breakWord: "no-break" };
 
-  const config = BillDetailsKeyNoteConfig()[ModuleWorkflow ? ModuleWorkflow : businessService];
-  const getAdvanceAmountPaid = applicationData?.applicationStatus === "DSO_INPROGRESS";
-  console.log(bill,"bill")
+  // const config = BillDetailsKeyNoteConfig()[ModuleWorkflow ? ModuleWorkflow : businessService];
+  // const getAdvanceAmountPaid = applicationData?.applicationStatus === "DSO_INPROGRESS";
+  // console.log(bill,"bill")
   const renderArrearDetailsForWNS = () => {
     return (
       <table className="table-fixed-column-common-pay">
@@ -386,7 +387,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
             return <Row key={index + "bill"} label={t(obj.keyValue)} text={value} />;
           })}
       </StatusTable>
-      {checkFSM ? (
+      {/* {checkFSM ? (
         <StatusTable>
           <Row
             label={t("ES_PAYMENT_DETAILS_AMOUNT_PER_TRIP")}
@@ -421,7 +422,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
             />
           ) : null}
         </StatusTable>
-      ) : (
+      ) : ( */}
         <StatusTable style={{ paddingTop: "46px" }}>
           <Row label={t("ES_PAYMENT_TAXHEADS")} textStyle={{ fontWeight: "bold" }} text={t("ES_PAYMENT_AMOUNT")} />
           <hr style={{ width: "40%" }} className="underline" />
@@ -453,7 +454,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
             text={"₹ " + Number(getTotal()).toFixed(2)}
           />
 
-          {!showDetails && !ModuleWorkflow && businessService !== "TL" && yearWiseBills?.length > 1 && (
+          {/* {!showDetails && !ModuleWorkflow && businessService !== "TL" && yearWiseBills?.length > 1 && (
             <Fragment>
               {businessService === "WS" || "SW" ? (
                 <div className="row last">
@@ -470,17 +471,17 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
                 </div>
               )}
             </Fragment>
-          )}
+          )} */}
         </StatusTable>
-      )}
+      {/* )} */}
       {showDetails && yearWiseBills?.length > 1 && !ModuleWorkflow && businessService !== "TL" && (
         <React.Fragment>
           <div style={{ maxWidth: "95%", display: "inline-block", textAlign: "right" }}>
             <div style={{ display: "flex", padding: "10px", paddingLeft: "unset", maxWidth: "95%" }}>
               <div style={{ backgroundColor: "#EEEEEE", overflowX: "auto" }}>
-                {businessService === "WS" || "SW" ? (
+                {/* {businessService === "WS" || "SW" ? (
                   renderArrearDetailsForWNS()
-                ) : (
+                ) : ( */}
                   <table className="table-fixed-column-common-pay">
                     <thead>
                       <tr>
@@ -519,18 +520,18 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
                         })}
                     </tbody>
                   </table>
-                )}
+                 {/* )} */}
               </div>
             </div>
-            {businessService === "WS" || "SW" ? (
+            {/* {businessService === "WS" || "SW" ? (
               <div style={{ float: "left" }} onClick={() => setShowDetails(false)} className="filter-button">
                 {t("ES_COMMON_HIDE_DETAILS")}
               </div>
-            ) : (
+            ) : ( */}
               <div style={{ float: "right" }} onClick={() => setShowDetails(false)} className="filter-button">
                 {t("ES_COMMON_HIDE_DETAILS")}
               </div>
-            )}
+            {/* )} */}
           </div>
         </React.Fragment>
       )}

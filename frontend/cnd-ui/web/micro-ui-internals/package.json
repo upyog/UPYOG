@@ -1,13 +1,12 @@
 {
-  "name": "egovernments",
-  "version": "1.5.4",
+  "name": "nudmcdg",
+  "version": "1.0.0",
   "main": "index.js",
   "workspaces": [
     "packages/libraries",
     "example",
     "packages/modules/core",
     "packages/modules/common",
-    "packages/modules/sv",
     "packages/modules/cnd"
   ],
   "license": "MIT",
@@ -25,12 +24,10 @@
     "dev:core": "cd packages/modules/core && yarn start",
     "dev:cnd": "cd packages/modules/cnd && yarn start",
     "dev:example": "cd example && yarn start",
-    "dev:sv": "cd packages/modules/sv && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
-    "build:sv": "cd packages/modules/sv && yarn build",
     "build:cnd": "cd packages/modules/cnd && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },

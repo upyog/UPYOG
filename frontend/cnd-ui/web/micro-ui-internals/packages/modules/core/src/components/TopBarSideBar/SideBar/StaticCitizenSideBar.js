@@ -4,22 +4,8 @@ import {
   EditPencilIcon,
   LogoutIcon,
   Loader,
-  AddressBookIcon,
-  PropertyHouse,
-  CaseIcon,
-  CollectionIcon,
-  PTIcon,
-  OBPSIcon,
-  PGRIcon,
-  FSMIcon,
-  WSICon,
-  MCollectIcon,
   Phone,
-  BirthIcon,
-  DeathIcon,
-  FirenocIcon,
-  LoginIcon,
-  CHBIcon
+  LoginIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
@@ -27,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
+import { CNDIcon } from "../../Svg";
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -76,19 +63,7 @@ const Profile = ({ info, stateName, t }) => (
   </div>
 );
 const IconsObject = {
-  CommonPTIcon: <PTIcon className="icon" />,
-  OBPSIcon: <OBPSIcon className="icon" />,
-  propertyIcon: <PropertyHouse className="icon" />,
-  TLIcon: <CaseIcon className="icon" />,
-  PGRIcon: <PGRIcon className="icon" />,
-  FSMIcon: <FSMIcon className="icon" />,
-  WSIcon: <WSICon className="icon" />,
-  MCollectIcon: <MCollectIcon className="icon" />,
-  CHBIcon:<CHBIcon className="icon" />,
-  BillsIcon: <CollectionIcon className="icon" />,
-  BirthIcon: <BirthIcon className="icon" />,
-  DeathIcon: <DeathIcon className="icon" />,
-  FirenocIcon: <FirenocIcon className="icon" />,
+  CNDIcon: <CNDIcon className="icon"/>,
   HomeIcon: <HomeIcon className="icon" />,
   EditPencilIcon: <EditPencilIcon className="icon" />,
   LogoutIcon: <LogoutIcon className="icon" />,
@@ -141,6 +116,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
   const MenuItem = ({ item }) => {
+    
     const leftIconArray = item?.icon || item.icon?.type?.name;
     const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
     let itemComponent;

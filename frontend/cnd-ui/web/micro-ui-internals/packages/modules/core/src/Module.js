@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import { getI18n } from "react-i18next";
 import { Body, Loader } from "@nudmcdgnpm/digit-ui-react-components";
-import { DigitApp } from "./App";
+import { CndApp } from "./App";
 import SelectOtp from "./pages/citizen/Login/SelectOtp";
 import AcknowledgementCF from "./components/AcknowledgementCF";
 import CitizenFeedback from "./components/CitizenFeedback";
@@ -25,7 +25,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
     <Provider store={getStore(initData, moduleReducers(initData))}>
       <Router>
         <Body>
-          <DigitApp
+          <CndApp
             initData={initData}
             stateCode={stateCode}
             modules={initData?.modules}
@@ -38,7 +38,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   );
 };
 
-export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers }) => {
+export const CndUI = ({ stateCode, registry, enabledModules, moduleReducers }) => {
   const userType = Digit.UserService.getType();
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -1,10 +1,12 @@
-import { CardLabel, FormStep,RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, FormStep,RadioButtons,CitizenInfoLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
+import LocationPopup from "../components/LocationPopup";
 
 
 const Pickup =({t, config, onSelect, userType, formData}) => {
-  console.log("gfcgfc gfcgfcfcfgcgf",formData);
+  console.log("tefgsvbdfvsgf",formData);
   const [requestType, setRequestType] = useState(formData?.requestType?.requestType || "");
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
 
   const common = [
       {
@@ -26,6 +28,18 @@ const Pickup =({t, config, onSelect, userType, formData}) => {
       onSelect(config.key, { ...formData[config.key], ...typeStep }, false);
     };
 
+    // Handle selection change
+  const handleSelection = (selected) => {
+    setRequestType(selected);
+    if (selected.code === "DEP_DIRECT_CENTRE") {
+      setShowLocationPopup(true);
+    } else {
+      setShowLocationPopup(false);
+    }
+  };
+
+
+
     return(
       <React.Fragment>
           <FormStep
@@ -43,13 +57,21 @@ const Pickup =({t, config, onSelect, userType, formData}) => {
                   name={requestType}
                   value={requestType}
                   selectedOption={requestType}
-                  onSelect={setRequestType}
+                  onSelect={handleSelection}
                   labelKey="i18nKey"
                   isPTFlow={true}
               />
           </div>
-
           </FormStep>
+
+        {showLocationPopup && (
+        <LocationPopup
+          t={t}
+          closeModal={() => setShowLocationPopup(false)}
+          actionCancelOnSubmit={() => setShowLocationPopup(false)}
+        />
+      )}
+      <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t(`CND_INFO`)} className={"info-banner-wrap-citizen-override"}/>
       </React.Fragment>
     )
 

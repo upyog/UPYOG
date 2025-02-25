@@ -3,10 +3,9 @@ import ReactDOM from "react-dom";
 
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
-import { DigitUI } from "@upyog/digit-ui-module-core";
+import { CndUI } from "@upyog/digit-ui-module-core";
 import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 import "@nudmcdgnpm/cnd-css";
-import { SVComponents, SVLinks, SVModule } from "@nudmcdgnpm/upyog-ui-module-sv";
 import { CNDComponents, CNDLinks, CNDModule } from "@nudmcdgnpm/upyog-ui-module-cnd";
 
 var Digit = window.Digit || {};
@@ -15,7 +14,6 @@ const enabledModules = [
   "Payment",
   "QuickPayLinks",
   "BillAmendment",
-  "SV",
   "CND"
 ];
 
@@ -52,9 +50,6 @@ const initDigitUI = () => {
   ...paymentConfigs,
   PaymentLinks,
   BillsModule,
-  SVModule,
-  SVLinks,
-  ...SVComponents,
   ...CNDComponents, 
   CNDLinks, 
   CNDModule
@@ -73,7 +68,7 @@ const initDigitUI = () => {
   initTokens(stateCode);
 
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(<CndUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
 
 initLibraries().then(() => {
