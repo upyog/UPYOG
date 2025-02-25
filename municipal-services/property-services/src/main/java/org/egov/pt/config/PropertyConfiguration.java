@@ -43,6 +43,9 @@ public class PropertyConfiguration {
 
 
     //PERSISTER
+    @Value("${persister.save.property.tax.calculator.tracker.topic}")
+    private String savePropertyTaxCalculatorTrackerTopic;
+    
     @Value("${persister.save.property.topic}")
     private String savePropertyTopic;
 

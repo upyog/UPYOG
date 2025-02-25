@@ -23,6 +23,8 @@ import org.egov.pt.models.PropertyBookingDetail;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PropertySearchRequest;
 import org.egov.pt.models.PropertySearchResponse;
+import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
@@ -43,6 +45,7 @@ import org.egov.pt.validator.PropertyValidator;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
+import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -788,6 +791,24 @@ public class PropertyService {
 			}
 		}
 
+	}
+	
+	public PtTaxCalculatorTracker saveToPtTaxCalculatorTracker(
+			PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest) {
+
+		producer.push(config.getSavePropertyTaxCalculatorTrackerTopic(), ptTaxCalculatorTrackerRequest);
+
+		return ptTaxCalculatorTrackerRequest.getPtTaxCalculatorTracker();
+	}
+
+	public List<PtTaxCalculatorTracker> getTaxCalculatedProperties(
+			PtTaxCalculatorTrackerSearchCriteria ptTaxCalculatorTrackerSearchCriteria) {
+
+		return repository.getTaxCalculatedProperties(ptTaxCalculatorTrackerSearchCriteria);
+	}
+
+	public boolean isCriteriaEmpty(PropertyCriteria propertyCriteria) {
+		return propertyValidator.isCriteriaEmpty(propertyCriteria);
 	}
 
 }

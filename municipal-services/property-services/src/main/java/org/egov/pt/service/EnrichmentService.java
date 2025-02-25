@@ -1,5 +1,6 @@
 package org.egov.pt.service;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,15 +10,18 @@ import java.util.UUID;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AuditDetails;
+import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.Institution;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -345,6 +349,20 @@ public class EnrichmentService {
                     property.getWorkflow().setAssignes(assignes);
             }
     }
+    
+	public PtTaxCalculatorTrackerRequest enrichTaxCalculatorTrackerCreateRequest(Property property,
+			CalculateTaxRequest calculateTaxRequest, BigDecimal finalPropertyTax) {
 
+		AuditDetails createAuditDetails = propertyutil
+				.getAuditDetails(calculateTaxRequest.getRequestInfo().getUserInfo().getUuid().toString(), true);
+		PtTaxCalculatorTracker ptTaxCalculatorTracker = PtTaxCalculatorTracker.builder()
+				.uuid(UUID.randomUUID().toString()).propertyId(property.getPropertyId())
+				.tenantId(property.getTenantId()).financialYear(calculateTaxRequest.getFinancialYear())
+				.fromDate(calculateTaxRequest.getFromDate()).toDate(calculateTaxRequest.getToDate())
+				.propertyTax(finalPropertyTax).auditDetails(createAuditDetails).build();
+
+		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
+				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
+	}
 
 }

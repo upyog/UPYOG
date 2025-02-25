@@ -469,7 +469,6 @@ public class GarbageAccountService {
 	private void enrichCreateGarbageAccount(GarbageAccount garbageAccount, RequestInfo requestInfo) {
 
 		AuditDetails auditDetails = null;
-
 		if (null != requestInfo && null != requestInfo.getUserInfo()) {
 			auditDetails = AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid())
 					.createdDate(new Date().getTime()).lastModifiedBy(requestInfo.getUserInfo().getUuid())
@@ -714,6 +713,12 @@ public class GarbageAccountService {
 		grbObject.put("propertyId", GarbageAccount.getPropertyId());
 
 		grbObject.put("createdTime", "sjgjkhd");
+		
+		grbObject.put("ulbType", GarbageAccount.getAddresses().get(0).getUlbType());
+		
+		grbObject.put("ulbName", GarbageAccount.getAddresses().get(0).getUlbName());
+		
+		grbObject.put("approvalTime", GarbageAccount.getApprovalDate());
 
 		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 
