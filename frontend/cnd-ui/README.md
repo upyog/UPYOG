@@ -11,7 +11,6 @@ This repository contains source code for web implementation of the UPYOG UI modu
 #### Updating modules
 To update the modules run *install-dep.sh* script this will pull all the updates from *micro-ui-internals* subfolder
 
-#### Reference Docs
 
 
 
