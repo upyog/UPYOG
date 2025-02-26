@@ -11,7 +11,6 @@
   "devDependencies": {
     "@upyog/digit-ui-module-bills": "1.8.0",
     "@upyog/digit-ui-module-common": "1.8.12",
-    "@nudmcdgnpm/upyog-ui-module-sv":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-cnd":"1.0.0",
     "http-proxy-middleware": "1.0.5",
     "react": "17.0.2",
