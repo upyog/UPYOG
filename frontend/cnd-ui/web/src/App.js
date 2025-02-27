@@ -1,34 +1,34 @@
 import React from "react";
-import {
-  PaymentModule,
-  PaymentLinks,
-  paymentConfigs,
-} from "@upyog/digit-ui-module-common";
+// import {
+//   PaymentModule,
+//   PaymentLinks,
+//   paymentConfigs,
+// } from "@upyog/digit-ui-module-common";
 import { CndUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
-import { initBillsComponents } from "@upyog/digit-ui-module-bills";
+// import { initBillsComponents } from "@upyog/digit-ui-module-bills";
 import { CNDComponents, CNDLinks, CNDModule } from "@nudmcdgnpm/upyog-ui-module-cnd";
 
 
 initLibraries();
 
 const enabledModules = [
-  "Payment",
-  "QuickPayLinks",
-  "BillAmendment",
+  // "Payment",
+  // "QuickPayLinks",
+  // "BillAmendment",
   "CND"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
-  ...paymentConfigs,
-  PaymentModule,
-  PaymentLinks,
+  // ...paymentConfigs,
+  // PaymentModule,
+  // PaymentLinks,
   ...CNDComponents, 
   CNDLinks, 
   CNDModule
 });
 
 
-initBillsComponents();
+// initBillsComponents();
 
 
 function App() {

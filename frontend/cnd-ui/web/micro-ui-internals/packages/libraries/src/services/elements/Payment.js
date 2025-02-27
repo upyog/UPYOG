@@ -52,9 +52,10 @@ export const PaymentService = {
   getReciept: (tenantId, businessservice, filters = {}) =>
     Request({
       url:
-        businessservice && businessservice !== "BPAREG" || businessservice && businessservice !== "TL"
-          ? `${Urls.payment.print_reciept}/${businessservice}/_search`
-          : `${Urls.payment.print_reciept}/_search`,
+        // businessservice && businessservice !== "BPAREG" || businessservice && businessservice !== "TL"
+          // ? 
+          `${Urls.payment.print_reciept}/${businessservice}/_search`,
+          // : `${Urls.payment.print_reciept}/_search`,
       useCache: false,
       method: "POST",
       auth: true,
@@ -118,13 +119,15 @@ export const PaymentService = {
   recieptSearch: (tenantId, businessService, params) =>
     Request({
       url:
-        businessService === "BPAREG" && !params?.isEmployee /* || businessService.includes("BPA.") && !params?.isEmployee ) */
-          ? Urls.payment.obps_Reciept_Search
-          : Urls.payment.reciept_search,
+        // businessService === "BPAREG" && !params?.isEmployee /* || businessService.includes("BPA.") && !params?.isEmployee ) */
+        //   ? Urls.payment.obps_Reciept_Search
+        //   : 
+          Urls.payment.reciept_search,
       urlParams:
-        businessService === "BPAREG" && !params?.isEmployee /* || businessService.includes("BPA.") && !params?.isEmployee) */
-          ? {}
-          : { buisnessService: businessService },
+        // businessService === "BPAREG" && !params?.isEmployee /* || businessService.includes("BPA.") && !params?.isEmployee) */
+        //   ? {}
+        //   :
+           { buisnessService: businessService },
       method: "POST",
       // do not change this directly add a param if needed
       auth: true,

@@ -2,18 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
-import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
+// import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
 import { CndUI } from "@upyog/digit-ui-module-core";
-import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
+// import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 import "@nudmcdgnpm/cnd-css";
 import { CNDComponents, CNDLinks, CNDModule } from "@nudmcdgnpm/upyog-ui-module-cnd";
+import { CndConstants } from "./CndConstants";
 
 var Digit = window.Digit || {};
 
 const enabledModules = [
-  "Payment",
-  "QuickPayLinks",
-  "BillAmendment",
+  // "Payment",
+  // "QuickPayLinks",
+  // "BillAmendment",
   "CND"
 ];
 
@@ -46,16 +47,16 @@ const initTokens = (stateCode) => {
 
 const initDigitUI = () => {
   window?.Digit.ComponentRegistryService.setupRegistry({
-  PaymentModule,
-  ...paymentConfigs,
-  PaymentLinks,
-  BillsModule,
+  // PaymentModule,
+  // ...paymentConfigs,
+  // PaymentLinks,
+  // BillsModule,
   ...CNDComponents, 
   CNDLinks, 
   CNDModule
   });
 
-  initBillsComponents();
+  // initBillsComponents();
 
   const moduleReducers = (initData) => ({
     // pgr: PGRReducers(initData),
@@ -64,11 +65,17 @@ const initDigitUI = () => {
   window.Digit.Customizations = {
   };
 
-  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || CndConstants.Tenant;
   initTokens(stateCode);
 
-  const registry = window?.Digit.ComponentRegistryService.getRegistry();
-  ReactDOM.render(<CndUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+  // const registry = window?.Digit.ComponentRegistryService.getRegistry();
+  ReactDOM.render(
+  <CndUI 
+  stateCode={stateCode} 
+  enabledModules={enabledModules} 
+  moduleReducers={moduleReducers} 
+  />, 
+  document.getElementById("root"));
 };
 
 initLibraries().then(() => {

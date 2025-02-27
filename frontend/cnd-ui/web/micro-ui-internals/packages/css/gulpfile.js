@@ -1,3 +1,16 @@
+/** 
+ * @author - Shivank - NUDM 
+ * Why we use Gulp in This project - 
+ * We are using SCSS (sass) so this gulp file helps - 
+ * 1. Compiling SCSS --> to CSS, as browser dont understand SCSS so Gulp Convert it
+ * 2. Ensured Compatibility with differnet browsers
+ * 3. Minify the files as well for the faster Loading
+ * 
+ */
+
+
+
+
 const { series, src, dest, watch, task } = require("gulp");
 const clean = require("gulp-clean");
 const postcss = require("gulp-postcss");

@@ -1,13 +1,15 @@
+/**
+ * This imports the createProxyMiddleware function from http-proxy-middleware.
+ * It is used to create a proxy that forwards requests to a target backend server.
+ */
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const createProxy = createProxyMiddleware({
-  //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
-  // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
-  target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
+  target: process.env.REACT_APP_PROXY_API || "https://niuatt.niua.in",
   changeOrigin: true,
 });
 const assetsProxy = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "https://qa.digit.org",
+  target: process.env.REACT_APP_PROXY_ASSETS || "https://niuatt.niua.in",
   changeOrigin: true,
 });
 module.exports = function (app) {
@@ -27,5 +29,10 @@ module.exports = function (app) {
     "/pg-service"
     
   ].forEach((location) => app.use(location, createProxy));
+/**
+ * Above loops through a list of API paths and applies the createProxy middleware to each one.
+ * Any request that matches these paths will be automatically forwarded to https://qa.digit.org
+ */
+
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

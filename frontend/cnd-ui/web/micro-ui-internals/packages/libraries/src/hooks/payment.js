@@ -8,25 +8,25 @@ export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...fi
   const params = { mobileNumber, businessService, ...filters };
   if (!params["mobileNumber"]) delete params["mobileNumber"];
 
-  /* For these business services, the fetchBill API does not require mobileNumber.
-    sriranjan sir has approved these changes
-  */
-  const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services"];
-  // Early return if businessService is in the skip list
-  if (skipBusinessServices.includes(businessService)) {
-    return {
-      isLoading: false,
-      error: null,
-      isError: false,
-      data: null,
-      status: 'skipped',
-      revalidate: () => queryClient.invalidateQueries(["citizenBillsForBuisnessService", businessService]),
-    };
-  }
+  // /* For these business services, the fetchBill API does not require mobileNumber.
+  //   sriranjan sir has approved these changes
+  // */
+  // const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services"];
+  // // Early return if businessService is in the skip list
+  // if (skipBusinessServices.includes(businessService)) {
+  //   return {
+  //     isLoading: false,
+  //     error: null,
+  //     isError: false,
+  //     data: null,
+  //     status: 'skipped',
+  //     revalidate: () => queryClient.invalidateQueries(["citizenBillsForBuisnessService", businessService]),
+  //   };
+  // }
 
   const { isLoading, error, isError, data, status } = useQuery(
     ["citizenBillsForBuisnessService", businessService, { ...params }],
-    () => Digit.PaymentService.fetchBill(window.location.href.includes("mcollect")?tenant:tenantId, { ...params }),
+    () => Digit.PaymentService.fetchBill(tenantId, { ...params }),
     {
       refetchOnMount: true,
       retry: false,
@@ -45,11 +45,11 @@ export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...fi
 
 export const useFetchBillsForBuissnessService = ({ tenantId, businessService, ...filters }, config = {}) => {
   const queryClient = useQueryClient();
-  let isPTAccessDone = sessionStorage.getItem("IsPTAccessDone");
+  // let isPTAccessDone = sessionStorage.getItem("IsPTAccessDone");
   const params = { businessService, ...filters };
   const _tenantId = tenantId || Digit.UserService.getUser()?.info?.tenantId;
   const { isLoading, error, isError, data, status } = useQuery(
-    ["billsForBuisnessService", businessService, { ...filters }, config, isPTAccessDone],
+    ["billsForBuisnessService", businessService, { ...filters }, config, /*isPTAccessDone*/ false],
     () => Digit.PaymentService.fetchBill(_tenantId, params),
     {
       retry: (count, err) => {
@@ -71,35 +71,40 @@ export const useFetchBillsForBuissnessService = ({ tenantId, businessService, ..
 export const useFetchPayment = ({ tenantId, consumerCode, businessService }, config) => {
   const queryClient = useQueryClient();
 
-  const fetchBill = async () => {
-    /*  Currently enabled the logic to get bill no and expiry date for PT Module  */
-    if (businessService?.includes("PT") || businessService?.includes("SW") || businessService?.includes("WS")) {
-      const fetchedBill = await Digit.PaymentService.fetchBill(tenantId, { consumerCode, businessService });
-      const billdetail = fetchedBill?.Bill?.[0]?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || {};
-      fetchedBill.Bill[0].billDetails = fetchedBill?.Bill[0]?.billDetails?.map((ele) => ({
-        ...ele,
-        currentBillNo: fetchedBill?.Bill?.[0]?.billNumber,
-        currentExpiryDate: billdetail?.expiryDate,
-      }));
-      if (fetchedBill && fetchedBill?.Bill?.[0]?.billDetails?.length > 1) {
-        fetchedBill?.Bill?.[0]?.billDetails?.map(async (billdet) => {
-          const searchBill = await Digit.PaymentService.searchBill(tenantId, {
-            consumerCode,
-            fromPeriod: billdet?.fromPeriod,
-            toPeriod: billdet?.toPeriod,
-            service: businessService,
-            retrieveOldest: true,
-          });
-          billdet.expiryDate = searchBill?.Bill?.[0]?.billDetails?.[0]?.expiryDate;
-          billdet.billNumber = searchBill?.Bill?.[0]?.billNumber;
-        });
-      }
-      return fetchedBill;
-    } else {
-      return Digit.PaymentService.fetchBill(tenantId, { consumerCode, businessService });
-    }
-  };
 
+  // const fetchBill = async () => {
+  //   /*  Currently enabled the logic to get bill no and expiry date for PT Module  */
+  //   if (businessService?.includes("PT") || businessService?.includes("SW") || businessService?.includes("WS")) {
+  //     const fetchedBill = await Digit.PaymentService.fetchBill(tenantId, { consumerCode, businessService });
+  //     const billdetail = fetchedBill?.Bill?.[0]?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || {};
+  //     fetchedBill.Bill[0].billDetails = fetchedBill?.Bill[0]?.billDetails?.map((ele) => ({
+  //       ...ele,
+  //       currentBillNo: fetchedBill?.Bill?.[0]?.billNumber,
+  //       currentExpiryDate: billdetail?.expiryDate,
+  //     }));
+  //     if (fetchedBill && fetchedBill?.Bill?.[0]?.billDetails?.length > 1) {
+  //       fetchedBill?.Bill?.[0]?.billDetails?.map(async (billdet) => {
+  //         const searchBill = await Digit.PaymentService.searchBill(tenantId, {
+  //           consumerCode,
+  //           fromPeriod: billdet?.fromPeriod,
+  //           toPeriod: billdet?.toPeriod,
+  //           service: businessService,
+  //           retrieveOldest: true,
+  //         });
+  //         billdet.expiryDate = searchBill?.Bill?.[0]?.billDetails?.[0]?.expiryDate;
+  //         billdet.billNumber = searchBill?.Bill?.[0]?.billNumber;
+  //       });
+  //     }
+  //     return fetchedBill;
+  //   } else {
+  //     return Digit.PaymentService.fetchBill(tenantId, { consumerCode, businessService });
+  //   }
+  // };
+
+  //commented out above code and make it efficient
+  const fetchBill = () =>{
+    return Digit.PaymentService.fetchBill(tenantId, { consumerCode, businessService });
+  }
   const retry = (failureCount, error) => {
     if (error?.response?.data?.Errors?.[0]?.code === "EG_BS_BILL_NO_DEMANDS_FOUND") return false;
     else return failureCount < 3;

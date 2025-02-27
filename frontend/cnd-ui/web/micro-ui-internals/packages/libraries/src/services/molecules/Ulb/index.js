@@ -9,23 +9,11 @@ import { UserService } from "../../elements/User";
  * get citizen selected tenant
  * get all ulbs of employee
  *
- * @author jagankumar-egov
- *
- * @example
- * Digit.ULBService.getCurrentTenantId()
- *
- * @returns {Object} Returns based on the called function
  */
 export const ULBService = {
   /**
    * Custom method to get employee's current selected city
    *
-   * @author jagankumar-egov
-   *
-   * @example
-   * Digit.ULBService.getCurrentTenantId()
-   *
-   * @returns {String}
    */
   getCurrentTenantId: () => {
     // TODO: change when setter is done.
@@ -44,7 +32,6 @@ export const ULBService = {
   /**
    * Custom method to get current environment home / state tenant
    *
-   * @author jagankumar-egov
    *
    * @example
    * Digit.ULBService.getStateId()
@@ -57,7 +44,6 @@ export const ULBService = {
   /**
    * Custom method to get employee's current ulb object
    *
-   * @author jagankumar-egov
    *
    * @example
    * Digit.ULBService.getCurrentUlb()
@@ -72,7 +58,6 @@ export const ULBService = {
   /**
    * Custom method to get citizen's current selected city
    *
-   * @author jagankumar-egov
    *
    * @example
    * Digit.ULBService.getCitizenCurrentTenant() -> will return selected home city if not loggedin users city if not state tenant
@@ -92,7 +77,6 @@ export const ULBService = {
   /**
    * Custom method to get citizen's current selected city
    *
-   * @author jagankumar-egov
    *
    * @example
    * Digit.ULBService.getCitizenCurrentTenant() -> will return selected home city if not loggedin users city if not state tenant

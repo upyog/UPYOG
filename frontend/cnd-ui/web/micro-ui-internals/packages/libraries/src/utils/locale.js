@@ -1,7 +1,6 @@
 /**
  * Custom utils related for all locale related items
  *
- * @author jagankumar-egov
  *
  * @example
  *  Digit.Utils.locale. ** ()
@@ -78,7 +77,6 @@ export const convertToLocaleData = (dropdownValues = [], key = "", t) => {
 /**
  * Custom util to format the code for localisation
  *
- * @author jagankumar-egov
  *
  * @example
  *  Digit.Utils.locale.getTransformedLocale(
@@ -95,7 +93,6 @@ export const getTransformedLocale = (label) => {
 /**
  * Custom util to sort the dropdowns based on Alphabeticaly order by localising the codes
  *
- * @author jagankumar-egov
  *
  * @example
  *  Digit.Utils.locale.sortDropdownNames(

@@ -1,7 +1,6 @@
 /**
  * Contains all utils used for Privacy
  *
- * @author jagankumar-egov
  *
  *  Feature :: Privacy
  */
@@ -9,7 +8,6 @@
 /**
  * Custom util to get the privacy object of current screen
  *
- * @author jagankumar-egov
  *
  * @example
  *  Digit.Utils.getPrivacyObject()
@@ -24,7 +22,6 @@ export const getPrivacyObject = () => {
 /**
  * Custom util to get the complete privacy object.
  *
- * @author jagankumar-egov
  *
  * @example
  *   Digit.Utils.getAllPrivacyObject()
@@ -38,7 +35,6 @@ export const getAllPrivacyObject = () => {
 /**
  * Custom util to update the privacy object.
  *
- * @author jagankumar-egov
  *
  * @example
  *   Digit.Utils.setPrivacyObject({})
@@ -51,7 +47,6 @@ export const setPrivacyObject = (updatedPrivacyValue = {}) => {
 /**
  * Main Util to update the privacy
  *
- * @author jagankumar-egov
  *
  * Feature :: Privacy
  *
@@ -76,7 +71,6 @@ export const updatePrivacy = (uuid, fieldName) => {
  * Core Component Logic for showing the unmask button and for which fields will be controlled by
  *  mdms ->  DataSecurity -> SecurityPolicy.json
  *
- * @author jagankumar-egov
  *
  * Feature :: Privacy
  *

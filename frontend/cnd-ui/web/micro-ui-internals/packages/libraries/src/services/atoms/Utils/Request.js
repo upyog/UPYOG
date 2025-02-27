@@ -1,12 +1,5 @@
 import Axios from "axios";
 
-/**
- * Custom Request to make all api calls
- *
- * @author jagankumar-egov
- *
- */
-
 Axios.interceptors.response.use(
   (res) => res,
   (err) => {
