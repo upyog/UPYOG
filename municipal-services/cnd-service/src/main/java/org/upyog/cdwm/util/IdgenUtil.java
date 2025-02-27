@@ -20,33 +20,46 @@ import java.util.stream.Collectors;
 @Component
 public class IdgenUtil {
 
-    @Value("${egov.idgen.host}")
-    private String idGenHost;
+	@Value("${egov.idgen.host}")
+	private String idGenHost;
 
-    @Value("${egov.idgen.path}")
-    private String idGenPath;
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
 
-    @Autowired
-    private ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
-    @Autowired
-    private ServiceRequestRepository restRepo;
+	@Autowired
+	private ServiceRequestRepository restRepo;
 
-    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
-        List<IdRequest> reqList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
-        }
+	/**
+	 * Generates a list of unique IDs using the ID generation service.
+	 *
+	 * @param requestInfo Request metadata
+	 * @param tenantId    Tenant identifier
+	 * @param idName      Name of the ID to be generated
+	 * @param idformat    Format for the generated ID
+	 * @param count       Number of IDs to generate
+	 * @return List of generated IDs
+	 */
+	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
+			Integer count) {
+		List<IdRequest> reqList = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
+		}
 
-        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder(idGenHost).append(idGenPath);
-        IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request), IdGenerationResponse.class);
+		IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo)
+				.build();
+		StringBuilder uri = new StringBuilder(idGenHost).append(idGenPath);
+		IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request),
+				IdGenerationResponse.class);
 
-        List<IdResponse> idResponses = response.getIdResponses();
+		List<IdResponse> idResponses = response.getIdResponses();
 
-        if (CollectionUtils.isEmpty(idResponses))
-            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+		if (CollectionUtils.isEmpty(idResponses))
+			throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
-        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-    }
+		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+	}
 }

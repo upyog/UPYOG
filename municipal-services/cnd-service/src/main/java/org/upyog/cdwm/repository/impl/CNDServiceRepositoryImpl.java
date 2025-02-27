@@ -17,61 +17,77 @@ import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
 
-
+/**
+ * Implementation of CNDServiceRepository to handle CND application operations.
+ */
 @Service
 @Slf4j
 public class CNDServiceRepositoryImpl implements CNDServiceRepository {
 
-	@Autowired
-	CNDConfiguration config;
-	
-	@Autowired
-	Producer producer;
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
-	@Autowired
-	CNDServiceQueryBuilder queryBuilder;
-	
+    @Autowired
+    private CNDConfiguration config;
+
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private CNDServiceQueryBuilder queryBuilder;
+
+    /**
+     * Saves the CND application request data and pushes it to Kafka.
+     * 
+     * @param cndApplicationRequest The request object containing CND application details.
+     */
     @Override
     public void saveCNDApplicationDetail(CNDApplicationRequest cndApplicationRequest) {
-    	log.info("Saving CND application request data for appliaction no : "
-				+ cndApplicationRequest.getCndApplication().getApplicationNumber());
-		producer.push(config.getCndApplicationSaveTopic(), cndApplicationRequest);
-
+        log.info("Saving CND application request for application no: {}",
+                cndApplicationRequest.getCndApplication().getApplicationNumber());
+        producer.push(config.getCndApplicationSaveTopic(), cndApplicationRequest);
     }
 
+    /**
+     * Retrieves CND application details based on the search criteria.
+     * 
+     * @param cndServiceSearchCriteria The criteria for filtering applications.
+     * @return List of CNDApplicationDetail matching the criteria.
+     */
     @Override
     public List<CNDApplicationDetail> getCNDApplicationDetail(CNDServiceSearchCriteria cndServiceSearchCriteria) {
-    	List<Object> preparedStmtList = new ArrayList<>();
-
-		
-		String query = queryBuilder.getCNDApplicationQuery(cndServiceSearchCriteria, preparedStmtList);
-		log.info("Final query for getCndApplicationDetails {} and paramsList {} : " , preparedStmtList, query);
-		
-		return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(CNDApplicationDetail.class));
-	
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getCNDApplicationQuery(cndServiceSearchCriteria, preparedStmtList);
+        log.info("Final query for getCndApplicationDetails: {} with params: {}", query, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(CNDApplicationDetail.class));
     }
 
+    /**
+     * Retrieves the count of CND applications based on search criteria.
+     * 
+     * @param criteria The criteria to filter applications.
+     * @return The total count of matching CND applications.
+     */
     @Override
     public Integer getCNDApplicationsCount(CNDServiceSearchCriteria criteria) {
-    	List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.getCNDApplicationQuery(criteria, preparedStatement);
+        List<Object> preparedStatement = new ArrayList<>();
+        String query = queryBuilder.getCNDApplicationQuery(criteria, preparedStatement);
+        
+        if (query == null) {
+            return 0;
+        }
 
-		if (query == null)
-			return 0;
-
-		log.info("Final query for getCNDApplicationQuery {} and paramsList {} : " , preparedStatement);
-
-		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
-		return count;
+        log.info("Final query for getCNDApplicationsCount: {} with params: {}", query, preparedStatement);
+        return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
     }
 
-	@Override
-	public void updateCNDApplicationDetail(CNDApplicationRequest cndApplicationRequest) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * Updates CND application details. (Implementation pending)
+     * 
+     * @param cndApplicationRequest The request object containing updated CND application details.
+     */
+    @Override
+    public void updateCNDApplicationDetail(CNDApplicationRequest cndApplicationRequest) {
+        // TODO: Implement update logic when required
     }
-   
+}

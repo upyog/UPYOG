@@ -24,9 +24,13 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 @Component
 public class CNDServiceUtil {
-	
+
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
 
+	/**
+     * Creates a ResponseInfo object from RequestInfo.
+     */
+	
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
 		final String apiId = requestInfo != null ? requestInfo.getApiId() : StringUtils.EMPTY;
@@ -45,7 +49,7 @@ public class CNDServiceUtil {
 	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
 	}
-	
+
 	public static LocalDate getCurrentDate() {
 		return LocalDate.now();
 	}
@@ -59,10 +63,10 @@ public class CNDServiceUtil {
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
-	
-	/*Commented and used Instant
-	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
-	 * }
+
+	/*
+	 * Commented and used Instant public static Long getCurrentTimestamp() { return
+	 * System.currentTimeMillis(); }
 	 */
 
 	public static String getRandonUUID() {
@@ -78,28 +82,27 @@ public class CNDServiceUtil {
 	public static Long minusOneDay(LocalDate date) {
 		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
-	
+
 	public static boolean isDateWithinRange(String startDate, String endDate, String bookingDate) {
-	    LocalDate start = LocalDate.parse(startDate);
-	    LocalDate end = LocalDate.parse(endDate);
-	    LocalDate booking = LocalDate.parse(bookingDate);
+		LocalDate start = LocalDate.parse(startDate);
+		LocalDate end = LocalDate.parse(endDate);
+		LocalDate booking = LocalDate.parse(bookingDate);
 
-	    return (booking.isEqual(start) || booking.isAfter(start)) &&
-	           (booking.isEqual(end) || booking.isBefore(end));
+		return (booking.isEqual(start) || booking.isAfter(start)) && (booking.isEqual(end) || booking.isBefore(end));
 	}
-	
-	
-	public static boolean isDateRangeOverlap(String searchStart, String searchEnd, String bookedStart, String bookedEnd) {
-	    LocalDate searchStartDate = LocalDate.parse(searchStart);
-	    LocalDate searchEndDate = LocalDate.parse(searchEnd);
-	    LocalDate bookedStartDate = LocalDate.parse(bookedStart);
-	    LocalDate bookedEndDate = LocalDate.parse(bookedEnd);
 
-	    return !(searchStartDate.isAfter(bookedEndDate) || searchEndDate.isBefore(bookedStartDate));
+	public static boolean isDateRangeOverlap(String searchStart, String searchEnd, String bookedStart,
+			String bookedEnd) {
+		LocalDate searchStartDate = LocalDate.parse(searchStart);
+		LocalDate searchEndDate = LocalDate.parse(searchEnd);
+		LocalDate bookedStartDate = LocalDate.parse(bookedStart);
+		LocalDate bookedEndDate = LocalDate.parse(bookedEnd);
+
+		return !(searchStartDate.isAfter(bookedEndDate) || searchEndDate.isBefore(bookedStartDate));
 	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
-		if(dateFormat == null) {
+		if (dateFormat == null) {
 			dateFormat = DATE_FORMAT;
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
@@ -130,16 +133,17 @@ public class CNDServiceUtil {
 	public static String getTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
 	}
-	
+
 	public static LocalDate getMonthsAgo(int month) {
 		LocalDate currentDate = LocalDate.now();
 		// Calculate the date given months ago
 		LocalDate monthsAgo = currentDate.minusMonths(month);
-		
-        return monthsAgo;
+
+		return monthsAgo;
 	}
 
-	// To get the current financial year end date in epoch to set in Tax to in demand
+	// To get the current financial year end date in epoch to set in Tax to in
+	// demand
 	public static long getFinancialYearEnd() {
 
 		YearMonth currentYearMonth = YearMonth.now();
@@ -155,29 +159,29 @@ public class CNDServiceUtil {
 		return endOfYear.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
 	}
-	
+
 	public static String extractTenantId(String tenantId) {
 		return tenantId.split("\\.")[0];
 	}
-	
-	 /**
-     * Converts date string to long using LocalDateTime
-     *
-     * @param date   Date string to be parsed
-     * @param format Format of the date string
-     * @return Long value of date in milliseconds
-     */
-    public static Long dateTolong(String date, String format) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-        
-        // If format includes time, use LocalDateTime; otherwise, use LocalDate
-        if (format.contains("H") || format.contains("m") || format.contains("s")) {
-            LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-            return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        } else {
-            LocalDate localDate = LocalDate.parse(date, formatter);
-            return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        }
-    }
-	
+
+	/**
+	 * Converts date string to long using LocalDateTime
+	 *
+	 * @param date   Date string to be parsed
+	 * @param format Format of the date string
+	 * @return Long value of date in milliseconds
+	 */
+	public static Long dateTolong(String date, String format) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+		// If format includes time, use LocalDateTime; otherwise, use LocalDate
+		if (format.contains("H") || format.contains("m") || format.contains("s")) {
+			LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+			return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		} else {
+			LocalDate localDate = LocalDate.parse(date, formatter);
+			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
+	}
+
 }

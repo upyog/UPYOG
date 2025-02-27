@@ -30,64 +30,69 @@ public class CNDServiceImpl implements CNDService {
 
     @Autowired
     private WorkflowService workflowService;
-//
-//    @Autowired
-//    private UserService userService;
 
     @Autowired
     private CNDServiceRepositoryImpl cndApplicationRepository;
 
+    /**
+     * Creates a new Construction and Demolition (CND) application request.
+     *
+     * @param cndApplicationRequest The request containing application details.
+     * @return The created CND application details.
+     */
     @Override
     public CNDApplicationDetail createConstructionAndDemolitionRequest(CNDApplicationRequest cndApplicationRequest) {
-        log.info("Create CND application for user: " + cndApplicationRequest.getRequestInfo().getUserInfo().getUserName()
-                + " for the request: " + cndApplicationRequest.getCndApplication());
+        log.info("Create CND application for user: {} for the request: {}", 
+                 cndApplicationRequest.getRequestInfo().getUserInfo().getUserName(),
+                 cndApplicationRequest.getCndApplication());
 
+        // Enrich the CND application request with necessary details
         enrichmentService.enrichCreateCNDRequest(cndApplicationRequest);
 
+        // Update the workflow status
         workflowService.updateWorkflowStatus(null, cndApplicationRequest);
 
-        // Get the uuid of User from user registry
-//        try {
-//            String uuid = userService.getUuidExistingOrNewUser(cndApplicationRequest);
-//            cndApplicationRequest.getCndApplication().setApplicantUuid(uuid);
-//            log.info("Applicant or User Uuid: " + uuid);
-//        } catch (Exception e) {
-//            log.error("Error while creating user: " + e.getMessage(), e);
-//        }
-
+        // Save the application details in the repository
         cndApplicationRepository.saveCNDApplicationDetail(cndApplicationRequest);
 
-        CNDApplicationDetail cndApplicationDetails = cndApplicationRequest.getCndApplication();
-
-        return cndApplicationDetails;
+        return cndApplicationRequest.getCndApplication();
     }
 
+    /**
+     * Retrieves a list of CND application details based on search criteria.
+     *
+     * @param requestInfo              The request information.
+     * @param cndServiceSearchCriteria The search criteria for fetching applications.
+     * @return List of CND application details.
+     */
     @Override
-	public List<CNDApplicationDetail> getCNDApplicationDetails(RequestInfo requestInfo,
-			CNDServiceSearchCriteria cndServiceSearchCriteria) {
-		
-    	List<CNDApplicationDetail> applications = cndApplicationRepository
-				.getCNDApplicationDetail(cndServiceSearchCriteria);
+    public List<CNDApplicationDetail> getCNDApplicationDetails(RequestInfo requestInfo,
+                                                                CNDServiceSearchCriteria cndServiceSearchCriteria) {
+        List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
+        return CollectionUtils.isEmpty(applications) ? new ArrayList<>() : applications;
+    }
 
-		if (CollectionUtils.isEmpty(applications)) {
-			return new ArrayList<>();
-		}
-
-		return applications;
-	}
-
+    /**
+     * Retrieves the count of applications based on the given search criteria.
+     *
+     * @param cndServiceSearchCriteria The search criteria for counting applications.
+     * @param requestInfo              The request information.
+     * @return The count of applications matching the criteria.
+     */
     @Override
-	public Integer getApplicationsCount(CNDServiceSearchCriteria cndServiceSearchCriteria, RequestInfo requestInfo) {
-		
-    	cndServiceSearchCriteria.setCountCall(true);
-		Integer applicationCount = 0;
+    public Integer getApplicationsCount(CNDServiceSearchCriteria cndServiceSearchCriteria, RequestInfo requestInfo) {
+        cndServiceSearchCriteria.setCountCall(true);
+        cndServiceSearchCriteria = addCreatedByMeToCriteria(cndServiceSearchCriteria, requestInfo);
+        return cndApplicationRepository.getCNDApplicationsCount(cndServiceSearchCriteria);
+    }
 
-		cndServiceSearchCriteria = addCreatedByMeToCriteria(cndServiceSearchCriteria, requestInfo);
-		applicationCount = cndApplicationRepository.getCNDApplicationsCount(cndServiceSearchCriteria);
-
-		return applicationCount;
-	}
-    
+    /**
+     * Adds filtering criteria to restrict results based on the requesting user's role.
+     *
+     * @param criteria    The search criteria.
+     * @param requestInfo The request information.
+     * @return Updated search criteria with filtering applied.
+     */
     private CNDServiceSearchCriteria addCreatedByMeToCriteria(CNDServiceSearchCriteria criteria,
 			RequestInfo requestInfo) {
 		if (requestInfo.getUserInfo() == null) {
