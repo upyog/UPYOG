@@ -6,11 +6,11 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
   const menuRef = useRef();
-  if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
-    const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
-    const userInfo = userInfos ? JSON.parse(userInfos) : {};
-    user = userInfo?.value;
-  }
+  // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
+  //   const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
+  //   const userInfo = userInfos ? JSON.parse(userInfos) : {};
+  //   user = userInfo?.value;
+  // }
   const userRoles = user?.info?.roles?.map((e) => e.code);
   let isSingleButton = false;
   let isMenuBotton = false;
@@ -25,10 +25,11 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
       }
     Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
 
-  if (((window.location.href.includes("/obps") || window.location.href.includes("/noc")) && actions?.length == 1) || (actions?.[0]?.redirectionUrl?.pathname.includes("/pt/property-details/")) && actions?.length == 1) {
-    isMenuBotton = false;
-    isSingleButton = true; 
-  } else if (actions?.length > 0) {
+  // if (((window.location.href.includes("/obps") || window.location.href.includes("/noc")) && actions?.length == 1) || (actions?.[0]?.redirectionUrl?.pathname.includes("/pt/property-details/")) && actions?.length == 1) {
+  //   isMenuBotton = false;
+  //   isSingleButton = true; 
+  // } else 
+  if (actions?.length > 0) {
     isMenuBotton = true; 
     isSingleButton = false;
   }
@@ -50,7 +51,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
               style={MenuStyle}
             />
           ) : null}
-          {businessService === "ewst" ? (
+          {/* {businessService === "ewst" ? (
             modified === uuid || modified == null ? (
               <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
             ) : (
@@ -58,8 +59,8 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
             )
           ) : (
             <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-          )}
-          {/* <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} /> */}
+          )} */}
+          <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
         </ActionBar>
       )}
       {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && !isAction && (

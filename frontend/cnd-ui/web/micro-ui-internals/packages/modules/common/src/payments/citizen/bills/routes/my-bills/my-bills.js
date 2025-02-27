@@ -70,7 +70,7 @@ export const BillList = ({ billsList, currentPath, businessService }) => {
             ))}
           {!applicationList?.length > 0 && <p style={{ paddingLeft: "16px" }}>{t("CS_BILLS_TEXT_NO_BILLS_FOUND")}</p>}
         {/* </div> */}
-        {businessService === "PT" && (
+        {/* {businessService === "PT" && (
           <p
             style={{
               paddingLeft: "16px",
@@ -87,7 +87,7 @@ export const BillList = ({ billsList, currentPath, businessService }) => {
               <Link to="/cnd-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE")}</Link>
             </span>
           </p>
-        )}
+        )} */}
       </div>
     </React.Fragment>
   );
