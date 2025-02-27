@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
 
 import java.util.ArrayList;
@@ -19,18 +20,15 @@ import java.util.stream.Collectors;
 
 @Component
 public class IdgenUtil {
-
-	@Value("${egov.idgen.host}")
-	private String idGenHost;
-
-	@Value("${egov.idgen.path}")
-	private String idGenPath;
-
+	
 	@Autowired
 	private ObjectMapper mapper;
 
 	@Autowired
 	private ServiceRequestRepository restRepo;
+	
+	@Autowired
+	private CNDConfiguration config;
 
 	/**
 	 * Generates a list of unique IDs using the ID generation service.
@@ -51,7 +49,7 @@ public class IdgenUtil {
 
 		IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo)
 				.build();
-		StringBuilder uri = new StringBuilder(idGenHost).append(idGenPath);
+		StringBuilder uri = new StringBuilder(config.getIdGenHost()).append(config.getIdGenPath());
 		IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request),
 				IdGenerationResponse.class);
 

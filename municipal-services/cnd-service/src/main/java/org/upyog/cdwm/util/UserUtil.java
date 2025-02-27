@@ -9,6 +9,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
+import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
 
 import java.text.ParseException;
@@ -21,15 +22,9 @@ public class UserUtil {
 	private final ObjectMapper mapper;
 
 	private final ServiceRequestRepository serviceRequestRepository;
-
-	@Value("${egov.user.create.path}")
-	private String userCreateEndpoint;
-
-	@Value("${egov.user.search.path}")
-	private String userSearchEndpoint;
-
-	@Value("${egov.user.update.path}")
-	private String userUpdateEndpoint;
+	
+	@Autowired
+	private CNDConfiguration config;
 
 	@Autowired
 	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
@@ -47,9 +42,9 @@ public class UserUtil {
 
 	public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
 		String dobFormat = null;
-		if (uri.toString().contains(userSearchEndpoint) || uri.toString().contains(userUpdateEndpoint))
+		if (uri.toString().contains(config.getUserSearchEndpoint()) || uri.toString().contains(config.getUserUpdateEndpoint()))
 			dobFormat = "yyyy-MM-dd";
-		else if (uri.toString().contains(userCreateEndpoint))
+		else if (uri.toString().contains(config.getUserCreateEndpoint()))
 			dobFormat = "dd/MM/yyyy";
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
