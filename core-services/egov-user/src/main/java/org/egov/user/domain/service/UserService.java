@@ -119,6 +119,9 @@ public class UserService {
 
 	@Value("${secret.transformation}")
 	private String transformation;
+	
+	@Value("${secret.key}")
+	private String key;
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -492,7 +495,18 @@ public class UserService {
 			throw new InvalidUpdatePasswordRequestException();
 		if (user.getType().toString().equals(UserType.EMPLOYEE.toString()) && isEmployeeLoginOtpBased)
 			throw new InvalidUpdatePasswordRequestException();
-
+		String existingDecryptedPass =null;
+		String newDecryptedPass=null;
+		try {
+			existingDecryptedPass =decrypt(updatePasswordRequest.getExistingPassword(),key);
+			newDecryptedPass = decrypt(updatePasswordRequest.getNewPassword(),key);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		updatePasswordRequest.setExistingPassword(existingDecryptedPass);
+		updatePasswordRequest.setNewPassword(newDecryptedPass);
 		validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
 		validatePassword(updatePasswordRequest.getNewPassword());
 		if (bcrypt.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
@@ -530,6 +544,15 @@ public class UserService {
 		user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
 		user.setOtpReference(request.getOtpReference());
 		validateOtp(user);
+		String newDecryptedPass=null;
+		try {
+			
+			newDecryptedPass = decrypt(request.getNewPassword(),key);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		request.setNewPassword(newDecryptedPass);
 		validatePassword(request.getNewPassword());
 
 		if (bcrypt.matches(request.getNewPassword(), user.getPassword())) {
@@ -647,6 +670,8 @@ public class UserService {
 	 * @param existingRawPassword
 	 */
 	private void validateExistingPassword(User user, String existingRawPassword) {
+		
+		
 		if (!passwordEncoder.matches(existingRawPassword, user.getPassword())) {
 			throw new PasswordMismatchException("Invalid username or password");
 		}
