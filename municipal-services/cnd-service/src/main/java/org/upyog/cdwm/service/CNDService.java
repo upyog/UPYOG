@@ -7,6 +7,8 @@ import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
 
+import digit.models.coremodels.PaymentRequest;
+
 public interface CNDService {
 
     public CNDApplicationDetail createConstructionAndDemolitionRequest(CNDApplicationRequest cndApplicationRequest);
@@ -15,4 +17,7 @@ public interface CNDService {
 			CNDServiceSearchCriteria cndServiceSearchCriteria);
 
 	Integer getApplicationsCount(CNDServiceSearchCriteria cndServiceSearchCriteria, RequestInfo requestInfo);
+
+	CNDApplicationDetail updateCNDApplicationDetails(CNDApplicationRequest cndApplicationRequest,
+			PaymentRequest paymentRequest, String applicationStatus);
 }

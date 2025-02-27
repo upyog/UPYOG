@@ -22,9 +22,7 @@ import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
 import org.upyog.cdwm.web.models.CNDServiceSearchResponse;
 import org.upyog.cdwm.web.models.ResponseInfo;
 import org.upyog.cdwm.web.models.ResponseInfo.StatusEnum;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +59,7 @@ public class CNDController {
      * @param cndApplicationRequest Request body containing application details
      * @return ResponseEntity with application response details
      */
-    @PostMapping(value = "/_create")
+    @PostMapping(value = "/v1/_create")
     public ResponseEntity<CNDApplicationResponse> createConstructionDemolitionRequest(
         @ApiParam(value = "Details for the CND application, payment, and documents", required = true)
         @Valid @RequestBody CNDApplicationRequest cndApplicationRequest) {
@@ -88,7 +86,7 @@ public class CNDController {
      * @param cndServiceSearchCriteria Criteria for searching CND applications
      * @return ResponseEntity with search results
      */
-    @PostMapping("/_search")
+    @PostMapping("/v1/_search")
     public ResponseEntity<CNDServiceSearchResponse> searchCNDApplicationDetails(
         @ApiParam(value = "Details for the CND application time, payment, and documents", required = true)
         @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
@@ -112,4 +110,18 @@ public class CNDController {
         
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @PostMapping("/v1/_update")
+	public ResponseEntity<CNDApplicationResponse> updateCNDApplicationUpdate(
+			@ApiParam(value = "Updated CND details and RequestInfo meta data.", required = true)
+			@RequestBody CNDApplicationRequest cndApplicationRequest) {
+		
+		CNDApplicationDetail cndApplicationDetail = cndService.updateCNDApplicationDetails(cndApplicationRequest, null, null);
+
+		CNDApplicationResponse response = CNDApplicationResponse.builder().cndApplicationDetails(cndApplicationDetail)
+				.responseInfo(CNDServiceUtil.createReponseInfo(cndApplicationRequest.getRequestInfo(),
+						CNDConstants.APPLICATION_UPDATED, StatusEnum.SUCCESSFUL))
+				.build();
+		return new ResponseEntity<CNDApplicationResponse>(response, HttpStatus.OK);
+	}
 }
