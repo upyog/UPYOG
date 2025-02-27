@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useMemo, useReducer} from "react"
-import { InboxComposer, CaseIcon, SearchField, TextInput, FilterFormField, Loader } from "@egovernments/digit-ui-react-components";
+import { InboxComposer, CaseIcon, SearchField, TextInput, FilterFormField, Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";

@@ -3,6 +3,10 @@ package org.egov.pt.calculator.web.models;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.kafka.common.protocol.types.Field.Bool;
+import org.egov.pt.calculator.web.models.property.Unit;
+import org.egov.pt.calculator.web.models.property.Vacantland;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -54,5 +58,13 @@ public class Calculation   {
 
         @JsonProperty("billingSlabIds")
         private List<String> billingSlabIds;
+        
+        private List<Unit> units;
+        
+        private BigDecimal remainAdvanceamount;
+        
+        private List<Vacantland> vacantland;
+        
+        private List<ModeOfPaymentDetails> modeOfPaymentDetails;
 }
 

@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useCallback, useMemo,useState } from "react";
-import { SearchForm, Table, Card, Loader, Header, DownloadBtnCommon, DownloadIcon } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header, DownloadBtnCommon, DownloadIcon } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
@@ -178,7 +178,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
 
     return (
         <>
-            <Header styles={{ fontSize: "32px" }}>
+            <Header styles={{ fontSize: "16px" }}>
                 {t("ABG_CANCEL_BILL")}
             </Header>
             < Card className={"card-search-heading"}>
@@ -194,7 +194,7 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
             </Card>):
             (isLoading===false && resultOk && 
                 <div style={{ backgroundColor: "white" }}>
-                    <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Roboto"}}>
+                    <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Open Sans"}}>
                     {t("ABG_SEARCH_RESULTS_HEADER")}
                     </div>
                     <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>

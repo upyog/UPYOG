@@ -1,6 +1,6 @@
 import {
   Loader, NavBar
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -85,7 +85,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const { stateInfo } = storeData || {};
   const user = Digit.UserService.getUser();
   const [search, setSearch] = useState("");
-
+console.log("CitizenSideBar--isMobile===",isMobile)
   const { t } = useTranslation();
   const history = useHistory();
   const closeSidebar = () => {
@@ -240,6 +240,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
     profileItem = <span></span>;
     menuItems = menuItems.filter((ele) => ele.element === "LANGUAGE");
   }
+  console.log("isMobile===",isMobile)
   return isMobile ? (
     <NavBar
       open={isOpen}

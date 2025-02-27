@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import org.egov.user.domain.exception.InvalidNonLoggedInUserUpdatePasswordRequestException;
@@ -17,6 +18,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Getter
 @EqualsAndHashCode
 @ToString
+@Setter
 public class NonLoggedInUserUpdatePasswordRequest {
     private String otpReference;
     private String userName;

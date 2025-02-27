@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StatusTable, Row, BreakLine } from "@egovernments/digit-ui-react-components";
+import { StatusTable, Row, BreakLine } from "@upyog/digit-ui-react-components";
 
 function PropertyEstimates({ taxHeadEstimatesCalculation }) {
   const { taxHeadEstimates } = taxHeadEstimatesCalculation;
@@ -29,7 +29,7 @@ function PropertyEstimates({ taxHeadEstimatesCalculation }) {
           label={t("ES_PT_TITLE_TOTAL_DUE_AMOUNT")}
           text={`₹ ${taxHeadEstimatesCalculation?.totalAmount}` || "N/A"}
           className="border-none"
-          textStyle={{ fontSize: "24px", fontWeight: "bold" }}
+          textStyle={{ fontSize: "16px", fontWeight: "bold" }}
         />
       </StatusTable>
     </div>

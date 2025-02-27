@@ -18,7 +18,7 @@ import {
   CardText,
   AddIcon,
   Dropdown,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { useQueryClient } from "react-query";
 
@@ -29,7 +29,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 const Close = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
   </svg>
@@ -322,11 +322,11 @@ const VehicleDetails = (props) => {
                         <>
                           <div className={`${index === detail?.values?.length - 1 ? "row last" : "row"} border-none`}>
                             <h2>{t(value.title)}</h2>
-                            <div className="value" style={{ color: "#a82227", display: "flex" }}>
+                            <div className="value" style={{ color: "#0f4f9e", display: "flex" }}>
                               {t(value.value) || "N/A"}
                               {value.value === "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("ADD_VENDOR")}>
-                                  <AddIcon className="" fill="#a82227" styles={{ cursor: "pointer", marginLeft: "20px", height: "24px" }} />
+                                  <AddIcon className="" fill="#0f4f9e" styles={{ cursor: "pointer", marginLeft: "20px", height: "24px" }} />
                                 </span>
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
@@ -336,7 +336,7 @@ const VehicleDetails = (props) => {
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("DELETE_VENDOR")}>
-                                  <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+                                  <DeleteIcon className="delete" fill="#0f4f9e" style={{ cursor: "pointer", marginLeft: "20px" }} />
                                 </span>
                               )}
                             </div>
