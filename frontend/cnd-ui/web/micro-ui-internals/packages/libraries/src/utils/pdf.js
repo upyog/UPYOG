@@ -489,7 +489,7 @@ const defaultLogo =
 //   downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
 // }
 
-export default { generate: jsPdfGenerator, generateTable: jsPdfGeneratorForTable, generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF };
+export default { generate: jsPdfGenerator, /*generateTable: jsPdfGeneratorForTable,*/ /*generatev1: jsPdfGeneratorv1, generateModifyPdf: jsPdfGeneratorForModifyPDF, generateBillAmendPDF*/ };
 
 // const createBodyContentBillAmend = (table,t) => {
 //   let bodyData = []
