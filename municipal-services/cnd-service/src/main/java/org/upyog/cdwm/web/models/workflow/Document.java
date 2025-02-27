@@ -18,7 +18,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 /**
- * This object holds list of documents attached during the transaciton for a property
+ * This object holds list of documents attached during the transaciton for a
+ * property
  */
 @ApiModel(description = "This object holds list of documents attached during the transaciton for a property")
 @Validated
@@ -26,190 +27,197 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Document   {
-  @SafeHtml
-  @JsonProperty("id")
-  private String id = null;
+public class Document {
+	@SafeHtml
+	@JsonProperty("id")
+	private String id = null;
 
-  @SafeHtml
-  @JsonProperty("documentType")
-  private String documentType = null;
+	@SafeHtml
+	@JsonProperty("documentType")
+	private String documentType = null;
 
-  @SafeHtml
-  @JsonProperty("fileStoreId")
-  private String fileStoreId = null;
+	@SafeHtml
+	@JsonProperty("fileStoreId")
+	private String fileStoreId = null;
 
-  @SafeHtml
-  @JsonProperty("documentUid")
-  private String documentUid = null;
+	@SafeHtml
+	@JsonProperty("documentUid")
+	private String documentUid = null;
 
-  @JsonProperty("additionalDetails")
-  private Object additionalDetails = null;
-  
-  @JsonProperty("auditDetails")
-  private AuditDetails auditDetails = null;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails = null;
 
-  public Document id(String id) {
-    this.id = id;
-    return this;
-  }
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 
-  /**
-   * system id of the Document.
-   * @return id
-  **/
-  @ApiModelProperty(value = "system id of the Document.")
-  
-  @Size(max=64)   public String getId() {
-    return id;
-  }
+	public Document id(String id) {
+		this.id = id;
+		return this;
+	}
 
-  public void setId(String id) {
-    this.id = id;
-  }
+	/**
+	 * system id of the Document.
+	 * 
+	 * @return id
+	 **/
+	@ApiModelProperty(value = "system id of the Document.")
 
-  public Document documentType(String documentType) {
-    this.documentType = documentType;
-    return this;
-  }
+	@Size(max = 64)
+	public String getId() {
+		return id;
+	}
 
-  /**
-   * unique document type code, should be validated with document type master
-   * @return documentType
-  **/
-  @ApiModelProperty(value = "unique document type code, should be validated with document type master")
-  
-    public String getDocumentType() {
-    return documentType;
-  }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-  public void setDocumentType(String documentType) {
-    this.documentType = documentType;
-  }
+	public Document documentType(String documentType) {
+		this.documentType = documentType;
+		return this;
+	}
 
-  public Document fileStoreId(String fileStoreId) {
-    this.fileStoreId = fileStoreId;
-    return this;
-  }
+	/**
+	 * unique document type code, should be validated with document type master
+	 * 
+	 * @return documentType
+	 **/
+	@ApiModelProperty(value = "unique document type code, should be validated with document type master")
 
-  /**
-   * File store reference key.
-   * @return fileStoreId
-  **/
-  @ApiModelProperty(value = "File store reference key.")
-  
-    public String getFileStoreId() {
-    return fileStoreId;
-  }
+	public String getDocumentType() {
+		return documentType;
+	}
 
-  public void setFileStoreId(String fileStoreId) {
-    this.fileStoreId = fileStoreId;
-  }
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
 
-  public Document documentUid(String documentUid) {
-    this.documentUid = documentUid;
-    return this;
-  }
+	public Document fileStoreId(String fileStoreId) {
+		this.fileStoreId = fileStoreId;
+		return this;
+	}
 
-  /**
-   * The unique id(Pancard Number,Adhar etc.) of the given Document.
-   * @return documentUid
-  **/
-  @ApiModelProperty(value = "The unique id(Pancard Number,Adhar etc.) of the given Document.")
-  
-  @Size(max=64)   public String getDocumentUid() {
-    return documentUid;
-  }
+	/**
+	 * File store reference key.
+	 * 
+	 * @return fileStoreId
+	 **/
+	@ApiModelProperty(value = "File store reference key.")
 
-  public void setDocumentUid(String documentUid) {
-    this.documentUid = documentUid;
-  }
+	public String getFileStoreId() {
+		return fileStoreId;
+	}
 
-  public Document additionalDetails(Object additionalDetails) {
-    this.additionalDetails = additionalDetails;
-    return this;
-  }
+	public void setFileStoreId(String fileStoreId) {
+		this.fileStoreId = fileStoreId;
+	}
 
-  /**
-   * Json object to capture any extra information which is not accommodated by model
-   * @return additionalDetails
-  **/
-  @ApiModelProperty(value = "Json object to capture any extra information which is not accommodated by model")
-  
-    public Object getAdditionalDetails() {
-    return additionalDetails;
-  }
+	public Document documentUid(String documentUid) {
+		this.documentUid = documentUid;
+		return this;
+	}
 
-  public void setAdditionalDetails(Object additionalDetails) {
-    this.additionalDetails = additionalDetails;
-  }
+	/**
+	 * The unique id(Pancard Number,Adhar etc.) of the given Document.
+	 * 
+	 * @return documentUid
+	 **/
+	@ApiModelProperty(value = "The unique id(Pancard Number,Adhar etc.) of the given Document.")
 
-  public Document auditDetails(AuditDetails auditDetails) {
-    this.auditDetails = auditDetails;
-    return this;
-  }
+	@Size(max = 64)
+	public String getDocumentUid() {
+		return documentUid;
+	}
 
-  /**
-   * Get geoLocation
-   * @return geoLocation
-  **/
-  @ApiModelProperty(value = "")
-  
-    @Valid
-    public AuditDetails getAuditDetails() {
-    return auditDetails;
-  }
+	public void setDocumentUid(String documentUid) {
+		this.documentUid = documentUid;
+	}
 
-  public void setAuditDetails(AuditDetails auditDetails) {
-    this.auditDetails = auditDetails;
-  }
+	public Document additionalDetails(Object additionalDetails) {
+		this.additionalDetails = additionalDetails;
+		return this;
+	}
 
+	/**
+	 * Json object to capture any extra information which is not accommodated by
+	 * model
+	 * 
+	 * @return additionalDetails
+	 **/
+	@ApiModelProperty(value = "Json object to capture any extra information which is not accommodated by model")
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Document document = (Document) o;
-    return Objects.equals(this.id, document.id) &&
-        Objects.equals(this.documentType, document.documentType) &&
-        Objects.equals(this.fileStoreId, document.fileStoreId) &&
-        Objects.equals(this.documentUid, document.documentUid) &&
-        Objects.equals(this.additionalDetails, document.additionalDetails) &&
-        Objects.equals(this.auditDetails, document.auditDetails);
-  }
+	public Object getAdditionalDetails() {
+		return additionalDetails;
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, documentType, fileStoreId, documentUid, additionalDetails, auditDetails);
-  }
+	public void setAdditionalDetails(Object additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class Document {\n");
-    
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    documentType: ").append(toIndentedString(documentType)).append("\n");
-    sb.append("    fileStoreId: ").append(toIndentedString(fileStoreId)).append("\n");
-    sb.append("    documentUid: ").append(toIndentedString(documentUid)).append("\n");
-    sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
-    sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+	public Document auditDetails(AuditDetails auditDetails) {
+		this.auditDetails = auditDetails;
+		return this;
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Get geoLocation
+	 * 
+	 * @return geoLocation
+	 **/
+	@ApiModelProperty(value = "")
+
+	@Valid
+	public AuditDetails getAuditDetails() {
+		return auditDetails;
+	}
+
+	public void setAuditDetails(AuditDetails auditDetails) {
+		this.auditDetails = auditDetails;
+	}
+
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Document document = (Document) o;
+		return Objects.equals(this.id, document.id) && Objects.equals(this.documentType, document.documentType)
+				&& Objects.equals(this.fileStoreId, document.fileStoreId)
+				&& Objects.equals(this.documentUid, document.documentUid)
+				&& Objects.equals(this.additionalDetails, document.additionalDetails)
+				&& Objects.equals(this.auditDetails, document.auditDetails);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, documentType, fileStoreId, documentUid, additionalDetails, auditDetails);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class Document {\n");
+
+		sb.append("    id: ").append(toIndentedString(id)).append("\n");
+		sb.append("    documentType: ").append(toIndentedString(documentType)).append("\n");
+		sb.append("    fileStoreId: ").append(toIndentedString(fileStoreId)).append("\n");
+		sb.append("    documentUid: ").append(toIndentedString(documentUid)).append("\n");
+		sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+		sb.append("    auditDetails: ").append(toIndentedString(auditDetails)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
+
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
 }

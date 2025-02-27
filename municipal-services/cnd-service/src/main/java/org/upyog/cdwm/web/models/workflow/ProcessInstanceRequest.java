@@ -20,7 +20,7 @@ import lombok.Builder;
 /**
  * Contract class to receive process instance request.
  */
-@ApiModel(description = "Contract class to process instance receive request. Array of water tank items are used in case of create, whereas single booking item is used for update")
+@ApiModel(description = "Contract class to process instance receive request. Array of cnd items are used in case of create, whereas single booking item is used for update")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
 
@@ -31,21 +31,20 @@ import lombok.Builder;
 @Builder
 @ToString
 public class ProcessInstanceRequest {
-        @JsonProperty("RequestInfo")
-        private RequestInfo requestInfo;
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo;
 
-        @JsonProperty("ProcessInstances")
-        @Valid
-        @NotNull
-        private List<ProcessInstance> processInstances;
+	@JsonProperty("ProcessInstances")
+	@Valid
+	@NotNull
+	private List<ProcessInstance> processInstances;
 
-
-        public ProcessInstanceRequest addProcessInstanceItem(ProcessInstance processInstanceItem) {
-            if (this.processInstances == null) {
-            this.processInstances = new ArrayList<>();
-            }
-        this.processInstances.add(processInstanceItem);
-        return this;
-        }
+	public ProcessInstanceRequest addProcessInstanceItem(ProcessInstance processInstanceItem) {
+		if (this.processInstances == null) {
+			this.processInstances = new ArrayList<>();
+		}
+		this.processInstances.add(processInstanceItem);
+		return this;
+	}
 
 }

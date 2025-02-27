@@ -17,7 +17,9 @@ import lombok.Setter;
 import lombok.Builder;
 
 /**
- * Contract class to send response. Array of booking items are used in case of search results or response for create, whereas single booking item is used for update
+ * Contract class to send response. Array of booking items are used in case of
+ * search results or response for create, whereas single booking item is used
+ * for update
  */
 @ApiModel(description = "Contract class to send response. Array of booking items are used in case of search results or response for create, whereas single booking item is used for update")
 @Validated
@@ -29,21 +31,19 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class ProcessInstanceResponse {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo;
+	@JsonProperty("ResponseInfo")
+	private ResponseInfo responseInfo;
 
-        @JsonProperty("ProcessInstances")
-        @Valid
-        private List<ProcessInstance> processInstances;
+	@JsonProperty("ProcessInstances")
+	@Valid
+	private List<ProcessInstance> processInstances;
 
-
-        public ProcessInstanceResponse addProceInstanceItem(ProcessInstance proceInstanceItem) {
-            if (this.processInstances == null) {
-            this.processInstances = new ArrayList<>();
-            }
-        this.processInstances.add(proceInstanceItem);
-        return this;
-        }
+	public ProcessInstanceResponse addProceInstanceItem(ProcessInstance proceInstanceItem) {
+		if (this.processInstances == null) {
+			this.processInstances = new ArrayList<>();
+		}
+		this.processInstances.add(proceInstanceItem);
+		return this;
+	}
 
 }
-

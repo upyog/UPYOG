@@ -53,6 +53,12 @@ public class Workflow {
 	@JsonProperty("moduleName")
 	private String moduleName = null;
 	
+	/**
+	 * Adds a document to the documents list. If the list is null, it initializes a new ArrayList.
+	 * 
+	 * @param documentsItem The document item to be added
+	 * @return The updated Workflow object
+	 */
 	public Workflow addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();
