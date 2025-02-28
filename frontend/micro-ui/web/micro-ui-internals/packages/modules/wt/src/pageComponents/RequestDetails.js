@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox,Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 
 /**
  * Major Page which is developed for Request/Booking detail page
@@ -239,13 +239,13 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
           <TimeInput />
 
           <CardLabel>{`${t("WT_DESCRIPTION")}`} <span className="astericColor">*</span></CardLabel>
-          <TextInput
+          <TextArea
             t={t}
             type={"text"}
             isMandatory={false}
             optionKey="i18nKey"
             name="description"
-            style={inputStyles}
+            style={{ width: "50%" }}
             value={description}
             onChange={setDescription}
             ValidationRequired={true}
@@ -257,7 +257,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             })}
           />
           <div style={{ display: "flex", gap: "22px" }}>
-            <CardLabel>{`${t("WT_IMMEDIATE")}`}<span className="astericColor">*</span></CardLabel>
+            <CardLabel>{`${t("WT_IMMEDIATE")}`}<span className="astericColor"></span></CardLabel>
             <CheckBox
                 label={t("WT_IMMEDIATE")}
                 onChange={setextrachargeHandler}

@@ -3,6 +3,7 @@ package org.upyog.util;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
@@ -147,5 +148,26 @@ public class CommonDetailUtil {
 	    }
 	    // Extract first 3 and last 3 digits, mask the middle
 	    return mobileNumber.substring(0, 3) + "****" + mobileNumber.substring(mobileNumber.length() - 3);
+	}
+	
+	
+	/**
+	 * Converts date string to long using LocalDateTime
+	 *
+	 * @param date   Date string to be parsed
+	 * @param format Format of the date string
+	 * @return Long value of date in milliseconds
+	 */
+	public static Long dateTolong(String date, String format) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+		// If format includes time, use LocalDateTime; otherwise, use LocalDate
+		if (format.contains("H") || format.contains("m") || format.contains("s")) {
+			LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+			return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		} else {
+			LocalDate localDate = LocalDate.parse(date, formatter);
+			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
 	}
 }
