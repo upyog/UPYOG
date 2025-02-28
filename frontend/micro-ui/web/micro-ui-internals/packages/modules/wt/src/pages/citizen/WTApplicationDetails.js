@@ -51,6 +51,7 @@ const WTApplicationDetails = () => {
   const application = wt_details;
 
   sessionStorage.setItem("wt", JSON.stringify(application));
+  let immediateRequired = (wt_details?.extraCharge) ? "YES":"NO"
 
   
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.wt.useTankerSearchAPI(
@@ -97,7 +98,6 @@ const WTApplicationDetails = () => {
             <Row className="border-none" label={t("WT_MOBILE_NUMBER")} text={wt_details?.applicantDetail?.mobileNumber || t("CS_NA")} />
             <Row className="border-none" label={t("WT_ALT_MOBILE_NUMBER")} text={wt_details?.applicantDetail?.alternateNumber || t("CS_NA")} />
             <Row className="border-none" label={t("WT_EMAIL_ID")} text={wt_details?.applicantDetail?.emailId || t("CS_NA")} />
-            <Row className="border-none" label={t("WT_GENDER")} text={wt_details?.applicantDetail?.gender || t("CS_NA")} />
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("WT_ADDRESS_DETAILS")}</CardSubHeader>
@@ -112,6 +112,18 @@ const WTApplicationDetails = () => {
               <Row className="border-none" label={t("WT_ADDRESS_LINE2")} text={wt_details?.address?.addressLine2 || t("CS_NA")} />
               <Row className="border-none" label={t("WT_LANDMARK")} text={wt_details?.address?.landmark || t("CS_NA")} />
             </StatusTable>
+
+            <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
+            <StatusTable>
+              <Row className="border-none" label={t("WT_TANKER_TYPE")} text={wt_details?.tankerType || t("CS_NA")} />
+              <Row className="border-none" label={t("WT_TANKER_QUANTITY")} text={wt_details?.tankerQuantity|| t("CS_NA")}/>
+              <Row className="border-none" label={t("WT_WATER_QUANTITY")} text={wt_details?.waterQuantity|| t("CS_NA")} />
+              <Row className="border-none" label={t("WT_DELIVERY_DATE")} text={wt_details?.deliveryDate|| t("CS_NA")} />
+              <Row className="border-none" label={t("WT_DELIVERY_TIME")} text={wt_details?.deliveryTime|| t("CS_NA")} />
+              <Row className="border-none" label={t("WT_DESCRIPTION")} text={wt_details?.description || t("CS_NA")} />
+              <Row className="border-none" label={t("WT_IMMEDIATE")} text={immediateRequired || t("CS_NA")} />
+            </StatusTable>
+            
             <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
           {showToast && (
             <Toast

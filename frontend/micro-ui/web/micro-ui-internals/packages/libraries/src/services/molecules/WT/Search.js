@@ -1,4 +1,5 @@
 import { WTService } from "../../elements/WT";
+import React from "react";
 
 /**
  * Provides methods for interacting with water tanker (WT) bookings. 
@@ -21,6 +22,8 @@ export const WTSearch = {
     return response.waterTankerBookingDetail[0];
   },
   BookingDetails: ({ waterTankerBookingDetail: response, t }) => {
+
+   let immediateRequired = (response?.extraCharge) ? "YES":"NO"
     return [
       {
         title: "WT_BOOKING_NO", 
@@ -34,7 +37,6 @@ export const WTSearch = {
           { title: "WT_APPLICANT_NAME", value: response?.applicantDetail?.name || t("CS_NA")},
           { title: "WT_MOBILE_NUMBER", value: response?.applicantDetail?.mobileNumber || t("CS_NA")},
           { title: "WT_ALT_MOBILE_NUMBER", value: response?.applicantDetail?.alternateNumber || t("CS_NA")}, 
-          { title: "WT_GENDER", value: response?.applicantDetail?.gender || t("CS_NA")} ,
           { title: "WT_EMAIL_ID", value: response?.applicantDetail?.emailId || t("CS_NA")}
         ],
       },
@@ -50,6 +52,19 @@ export const WTSearch = {
           { title: "WT_LANDMARK", value: response?.address?.landmark  || t("CS_NA")},
           { title: "WT_ADDRESS_LINE1", value: response?.address?.addressLine1  || t("CS_NA")},
           { title: "WT_ADDRESS_LINE2", value: response?.address?.addressLine2  || t("CS_NA")}
+        ],
+      },
+      {
+        title: "WT_REQUEST_DETAILS",
+        asSectionHeader: true,
+        values: [
+          { title: "WT_TANKER_TYPE", value: response?.tankerType || t("CS_NA")},
+          { title: "WT_TANKER_QUANTITY", value: response?.tankerQuantity || t("CS_NA")},
+          { title: "WT_WATER_QUANTITY", value: response?.waterQuantity || t("CS_NA")},
+          { title: "WT_DELIVERY_DATE", value: response?.deliveryDate || t("CS_NA")},
+          { title: "WT_DELIVERY_TIME", value: response?.deliveryTime?.replace(":", "h ") + "m" || t("CS_NA")},
+          { title: "WT_DESCRIPTION", value: response?.description || t("CS_NA")},
+          { title: "WT_IMMEDIATE", value:immediateRequired || t("CS_NA")},
         ],
       },
     ];
