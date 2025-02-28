@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Valid
 public class FacilityCenterDetail {
+	
+	private String disposalId;
+	 
     private String applicationId;
 
     private String vehicleId;

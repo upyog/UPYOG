@@ -18,8 +18,8 @@ public class CNDServiceSearchCriteria {
     @JsonProperty("status")
     private String status;
 
-    @JsonProperty("bookingNo")
-    private String bookingNo;
+    @JsonProperty("applicationNumber")
+    private String applicationNumber;
 
     @JsonProperty("mobileNumber")
     private String mobileNumber;
@@ -45,14 +45,14 @@ public class CNDServiceSearchCriteria {
     private List<String> createdBy;
 
     public boolean isEmpty() {
-        return (this.tenantId == null && this.status == null && this.bookingNo == null
+        return (this.tenantId == null && this.status == null && this.applicationNumber == null
                 && this.mobileNumber == null
                 // && this.offset == null && this.limit == null
                 && this.fromDate == null && this.toDate == null && this.createdBy==null);
     }
 
     public boolean tenantIdOnly() {
-        return (this.tenantId != null && this.status == null && this.bookingNo == null
+        return (this.tenantId != null && this.status == null && this.applicationNumber == null
                 && this.mobileNumber == null
                 // && this.offset == null && this.limit == null
                 && this.fromDate == null && this.toDate == null && this.createdBy==null);
