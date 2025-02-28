@@ -21,11 +21,11 @@ public class ServiceRequestRepository {
     private RestTemplate restTemplate;
 
 
-    @Autowired
-    public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
-        this.mapper = mapper;
-        this.restTemplate = restTemplate;
-    }
+	@Autowired
+	public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
+		this.mapper = mapper;
+		this.restTemplate = restTemplate;
+	}
 
 
     public Object fetchResult(StringBuilder uri, Object request) {

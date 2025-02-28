@@ -76,6 +76,8 @@ public class CNDApplicationDetail {
     private FacilityCenterDetail facilityCenterDetail;
 
     private List<DocumentDetail> documentDetails;
+    
+    private Workflow workflow;
 
 
 

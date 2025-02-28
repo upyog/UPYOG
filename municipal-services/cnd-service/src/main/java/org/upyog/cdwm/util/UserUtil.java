@@ -9,6 +9,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
+import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
 
 import java.text.ParseException;
@@ -18,123 +19,117 @@ import java.util.*;
 @Component
 public class UserUtil {
 
+	private final ObjectMapper mapper;
 
-    private final ObjectMapper mapper;
+	private final ServiceRequestRepository serviceRequestRepository;
+	
+	@Autowired
+	private CNDConfiguration config;
 
-    private final ServiceRequestRepository serviceRequestRepository;
+	@Autowired
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+		this.mapper = mapper;
+		this.serviceRequestRepository = serviceRequestRepository;
+	}
 
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
+	/**
+	 * Returns UserDetailResponse by calling user service with given uri and object
+	 * 
+	 * @param userRequest Request object for user service
+	 * @param uri         The address of the endpoint
+	 * @return Response from user service as parsed as userDetailResponse
+	 */
 
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
+	public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
+		String dobFormat = null;
+		if (uri.toString().contains(config.getUserSearchEndpoint()) || uri.toString().contains(config.getUserUpdateEndpoint()))
+			dobFormat = "yyyy-MM-dd";
+		else if (uri.toString().contains(config.getUserCreateEndpoint()))
+			dobFormat = "dd/MM/yyyy";
+		try {
+			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+			parseResponse(responseMap, dobFormat);
+			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
+			return userDetailResponse;
+		} catch (IllegalArgumentException e) {
+			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
+		}
+	}
 
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
+	/**
+	 * Parses date formats to long for all users in responseMap
+	 * 
+	 * @param responeMap LinkedHashMap got from user api response
+	 */
 
-    @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
-        this.mapper = mapper;
-        this.serviceRequestRepository = serviceRequestRepository;
-    }
+	public void parseResponse(LinkedHashMap responeMap, String dobFormat) {
+		List<LinkedHashMap> users = (List<LinkedHashMap>) responeMap.get("user");
+		String format1 = "dd-MM-yyyy HH:mm:ss";
+		if (users != null) {
+			users.forEach(map -> {
+				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
+				if ((String) map.get("lastModifiedDate") != null)
+					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get("dob") != null)
+					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
+				if ((String) map.get("pwdExpiryDate") != null)
+					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+			});
+		}
+	}
 
-    /**
-     * Returns UserDetailResponse by calling user service with given uri and object
-     * @param userRequest Request object for user service
-     * @param uri The address of the endpoint
-     * @return Response from user service as parsed as userDetailResponse
-     */
+	/**
+	 * Converts date to long
+	 * 
+	 * @param date   date to be parsed
+	 * @param format Format of the date
+	 * @return Long value of date
+	 */
+	private Long dateTolong(String date, String format) {
+		SimpleDateFormat f = new SimpleDateFormat(format);
+		Date d = null;
+		try {
+			d = f.parse(date);
+		} catch (ParseException e) {
+			throw new CustomException("INVALID_DATE_FORMAT", "Failed to parse date format in user");
+		}
+		return d.getTime();
+	}
 
-    public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
-        String dobFormat = null;
-        if(uri.toString().contains(userSearchEndpoint)  || uri.toString().contains(userUpdateEndpoint))
-            dobFormat="yyyy-MM-dd";
-        else if(uri.toString().contains(userCreateEndpoint))
-            dobFormat = "dd/MM/yyyy";
-        try{
-            LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
-            parseResponse(responseMap,dobFormat);
-            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
-            return userDetailResponse;
-        }
-        catch(IllegalArgumentException  e)
-        {
-            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
-        }
-    }
+	/**
+	 * enriches the userInfo with statelevel tenantId and other fields
+	 * 
+	 * @param mobileNumber
+	 * @param tenantId
+	 * @param userInfo
+	 */
+	public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo) {
+		Role role = getCitizenRole(tenantId);
+		Set<Role> roleSet = new HashSet<>();
+		roleSet.add(role);
+		userInfo.setRoles(roleSet);
+		userInfo.setType(UserType.CITIZEN);
+		// userInfo.setUserName(mobileNumber);
+		userInfo.setTenantId(getStateLevelTenant(tenantId));
+		userInfo.setActive(true);
+	}
 
+	/**
+	 * Returns role object for citizen
+	 * 
+	 * @param tenantId
+	 * @return
+	 */
+	private Role getCitizenRole(String tenantId) {
+		Role role = new Role();
+		role.setCode("CITIZEN");
+		role.setName("Citizen");
+		role.setTenantId(getStateLevelTenant(tenantId));
+		return role;
+	}
 
-    /**
-     * Parses date formats to long for all users in responseMap
-     * @param responeMap LinkedHashMap got from user api response
-     */
-
-    public void parseResponse(LinkedHashMap responeMap, String dobFormat){
-        List<LinkedHashMap> users = (List<LinkedHashMap>)responeMap.get("user");
-        String format1 = "dd-MM-yyyy HH:mm:ss";
-        if(users!=null){
-            users.forEach( map -> {
-                        map.put("createdDate",dateTolong((String)map.get("createdDate"),format1));
-                        if((String)map.get("lastModifiedDate")!=null)
-                            map.put("lastModifiedDate",dateTolong((String)map.get("lastModifiedDate"),format1));
-                        if((String)map.get("dob")!=null)
-                            map.put("dob",dateTolong((String)map.get("dob"),dobFormat));
-                        if((String)map.get("pwdExpiryDate")!=null)
-                            map.put("pwdExpiryDate",dateTolong((String)map.get("pwdExpiryDate"),format1));
-                    }
-            );
-        }
-    }
-
-    /**
-     * Converts date to long
-     * @param date date to be parsed
-     * @param format Format of the date
-     * @return Long value of date
-     */
-    private Long dateTolong(String date,String format){
-        SimpleDateFormat f = new SimpleDateFormat(format);
-        Date d = null;
-        try {
-            d = f.parse(date);
-        } catch (ParseException e) {
-            throw new CustomException("INVALID_DATE_FORMAT","Failed to parse date format in user");
-        }
-        return  d.getTime();
-    }
-
-    /**
-     * enriches the userInfo with statelevel tenantId and other fields
-     * @param mobileNumber
-     * @param tenantId
-     * @param userInfo
-     */
-    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo){
-        Role role = getCitizenRole(tenantId);
-        Set<Role> roleSet = new HashSet<>();
-        roleSet.add(role);
-        userInfo.setRoles(roleSet);
-        userInfo.setType(UserType.CITIZEN);
-    //    userInfo.setUserName(mobileNumber);
-        userInfo.setTenantId(getStateLevelTenant(tenantId));
-        userInfo.setActive(true);
-    }
-
-    /**
-     * Returns role object for citizen
-     * @param tenantId
-     * @return
-     */
-    private Role getCitizenRole(String tenantId){
-        Role role = new Role();
-        role.setCode("CITIZEN");
-        role.setName("Citizen");
-        role.setTenantId(getStateLevelTenant(tenantId));
-        return role;
-    }
-
-    public String getStateLevelTenant(String tenantId){
-        return tenantId.split("\\.")[0];
-    }
+	public String getStateLevelTenant(String tenantId) {
+		return tenantId.split("\\.")[0];
+	}
 
 }
