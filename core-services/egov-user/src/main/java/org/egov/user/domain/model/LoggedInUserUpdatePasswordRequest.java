@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
+
 import org.egov.user.domain.exception.InvalidLoggedInUserUpdatePasswordRequestException;
 import org.egov.user.domain.model.enums.UserType;
 
