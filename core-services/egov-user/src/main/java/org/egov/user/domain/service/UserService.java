@@ -505,20 +505,24 @@ public class UserService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		LoggedInUserUpdatePasswordRequest loggedInUserUpdatePasswordRequest = LoggedInUserUpdatePasswordRequest
-				.builder().existingPassword(existingDecryptedPass).newPassword(newDecryptedPass)
-				.tenantId(updatePasswordRequest.getTenantId()).type(updatePasswordRequest.getType())
-				.userName(updatePasswordRequest.getUserName()).build();
+		/*
+		 * LoggedInUserUpdatePasswordRequest loggedInUserUpdatePasswordRequest =
+		 * LoggedInUserUpdatePasswordRequest
+		 * .builder().existingPassword(existingDecryptedPass).newPassword(
+		 * newDecryptedPass)
+		 * .tenantId(updatePasswordRequest.getTenantId()).type(updatePasswordRequest.
+		 * getType()) .userName(updatePasswordRequest.getUserName()).build();
+		 */
 		// updatePasswordRequest.setExistingPassword(existingDecryptedPass);
 		// updatePasswordRequest.setNewPassword(newDecryptedPass);
-		validateExistingPassword(user, loggedInUserUpdatePasswordRequest.getExistingPassword());
-		validatePassword(loggedInUserUpdatePasswordRequest.getNewPassword());
-		if (bcrypt.matches(loggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
+		validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
+		validatePassword(updatePasswordRequest.getNewPassword());
+		if (bcrypt.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
 			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
 		}
 
-		user.updatePassword(encryptPwd(loggedInUserUpdatePasswordRequest.getNewPassword()));
+		user.updatePassword(encryptPwd(updatePasswordRequest.getNewPassword()));
 		userRepository.update(user, user, user.getId(), user.getUuid());
 	}
 
