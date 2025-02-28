@@ -20,14 +20,22 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
-const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast, vendorData }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
+
+  const todaydate = new Date();
+  const today = todaydate.toISOString().split("T")[0];
+  const fromDate = new Date(todaydate);
+  fromDate.setDate(todaydate.getDate() - 7);
+  const fromDateFormatted = fromDate.toISOString().split("T")[0];
   const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
     defaultValues: {
       offset: 0,
       limit: !isMobile && 10,
       sortBy: "commencementDate",
       sortOrder: "DESC",
+      fromDate: fromDateFormatted,
+      toDate: today,
     },
   });
   useEffect(() => {
@@ -35,56 +43,71 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
     register("limit", 10);
     register("sortBy", "commencementDate");
     register("sortOrder", "DESC");
-  }, [register]);
+    setValue("fromDate", fromDateFormatted);
+    setValue("toDate", today);
+  }, [register, handleSubmit, setValue, today, fromDateFormatted],);
 
-  const stateId = Digit.ULBService.getStateId();
+  
+  //Getting Vendor Data from SearchApp through props
+  useEffect(() => {
+    console.log("Fetched Vendor Data:");
+    if (vendorData?.vendor?.length) {
+      const vendorNames = vendorData.vendor.map((vendor) => vendor.name);
+      console.log("Vendor Names:", vendorNames);
+    }
+  }, [vendorData]);
+
+
+ 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  let menu = [];
+ 
 
   const columns = useMemo(
     () => [
       {
-        Header: t("EW_REQUEST_ID"),
+        Header: t("VENDOR_REGISTRATION_NO"),
         accessor: "requestId",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return (
-            <div>
-              <span className="link">
-                <Link to={`applicationsearch/application-details/${row.original["requestId"]}`}>{row.original["requestId"]}</Link>
-              </span>
-            </div>
-          );
+          const registrationNo = row.original.vendorAdditionalDetails?.registrationNo;
+          return <div>{registrationNo || "N/A"}</div>;
         },
       },
 
       {
-        Header: t("EW_APPLICANT_NAME"),
-        Cell: (row) => {
-          return GetCell(`${row?.row?.original?.applicant?.["applicantName"]}`);
-        },
+        Header: t("CONTACT_PERSON_NAME"),
         disableSortBy: true,
-      },
-      {
-        Header: t("EW_MOBILE_NUMBER"),
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.applicant?.["mobileNumber"]}`);
+          const vendorName = row.original.vendorAdditionalDetails?.contactPerson;
+          return <div>{vendorName || "N/A"}</div>;
         },
-        disableSortBy: true,
       },
+
       {
-        Header: t("EW_AMOUNT"),
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.["calculatedAmount"]}`);
-        },
+        Header: t("VENDOR_MOBILE_NUMBER"),
         disableSortBy: true,
+        Cell: ({ row }) => {
+          const vendorMobileNumber = row.original.vendorAdditionalDetails?.vendorMobileNumber;
+          return <div>{vendorMobileNumber || "N/A"}</div>;
+        },
       },
+
       {
-        Header: t("EW_STATUS"),
-        Cell: ({ row }) => {
-          return GetCell(`${row?.original?.["requestStatus"]}`);
-        },
+        Header: t("VENDOR_BANK_NAME"),
         disableSortBy: true,
+        Cell: ({ row }) => {
+          const vendorBank = row.original.vendorAdditionalDetails?.bank;
+          return <div>{vendorBank || "N/A"}</div>;
+        },
+      },
+
+      {
+        Header: t("VENDOR_STATUS"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          const vendorStatus = row.original.vendorAdditionalDetails?.status;
+          return <div>{vendorStatus || "N/A"}</div>;
+        },
       },
     ],
     []
@@ -114,11 +137,32 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
   return (
     <React.Fragment>
       <div>
-        <Header>{t("VENDOR_SEARCH_REQUEST_ID")}</Header>
+        <Header>{t("VENDOR_COMMON_SEARCH_ADDITIONAL_DETAILS")}</Header>
         <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
           <SearchField>
-            <label>{t("VENDOR_REQUEST_ID")}</label>
-            <TextInput name="requestId" inputRef={register({})} />
+            <label>{t("VENDOR_NAME")}</label>
+            <Controller
+              control={control}
+              name="vendorName"
+              render={(field) => (
+
+                  <Dropdown
+                    selected={field.value || ""}
+                    select={field.onChange} 
+                    onBlur={field.onBlur} 
+                    option={
+                      vendorData?.vendor?.map((vendor) => ({
+                        name: vendor.name,
+                        i18nKey: vendor.name,
+                      })) || []
+                    } // Default to an empty array
+                    optionKey="i18nKey"
+                    t={t}
+                    disable={false}
+                  />
+                
+              )}
+            />
           </SearchField>
 
           <SearchField>
@@ -166,11 +210,10 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
               style={{ marginTop: "10px" }}
               onClick={() => {
                 reset({
-                  applicationNumber: "",
-                  fromDate: "",
+                  fromDate: fromDateFormatted,
                   toDate: "",
                   mobileNumber: "",
-                  status: "",
+                  vendorName: "",
                   offset: 0,
                   limit: 10,
                   sortBy: "commencementDate",
