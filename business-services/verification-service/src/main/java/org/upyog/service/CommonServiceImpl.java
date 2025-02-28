@@ -8,15 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.upyog.config.ModuleConfig;
+import org.upyog.constants.VerificationSearchConstants;
 import org.upyog.mapper.CommonDetailsMapper;
 import org.upyog.mapper.CommonDetailsMapperFactory;
 import org.upyog.repository.ServiceRequestRepository;
 import org.upyog.web.models.CommonDetails;
+import org.upyog.service.UserService;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -33,6 +36,9 @@ public class CommonServiceImpl implements CommonService {
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+	
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	public CommonServiceImpl(ModuleConfig moduleConfig, CommonDetailsMapperFactory mapperFactory) {
@@ -42,6 +48,33 @@ public class CommonServiceImpl implements CommonService {
 		this.moduleUniqueIdParams = moduleConfig.getUniqueIdParam();
 		this.mapperFactory = mapperFactory;
 	}
+	
+	
+	/**
+	 * Retrieves the system user’s RequestInfo based on a predefined system username.
+	 * 
+	 * @param userService The UserService instance used to fetch user details.
+	 * @return A RequestInfo object containing the system user’s details.
+	 * @throws IllegalStateException if the system user is not found.
+	 */
+	private RequestInfo getSystemUserDetails(UserService userService) {
+	    UserDetailResponse userDetailResponse = userService.searchByUserName(
+	        VerificationSearchConstants.SYSTEM_CITIZEN_USERNAME, 
+	        VerificationSearchConstants.VS_TENANTID
+	    );
+
+	    if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
+	        throw new IllegalStateException("SYSTEM user not found for tenant '" + VerificationSearchConstants.VS_TENANTID + "'.");
+	    }
+
+	    RequestInfo systemRequestInfo = RequestInfo.builder()
+	        .userInfo(userDetailResponse.getUser().get(0))
+	        .build();
+
+	    log.info("RequestInfo of system User: " + systemRequestInfo);
+	    return systemRequestInfo;
+	}
+
 
 	@Override
 	public CommonDetails getApplicationCommonDetails(RequestInfo requestInfo, String moduleName,
@@ -66,7 +99,9 @@ public class CommonServiceImpl implements CommonService {
 		StringBuilder urlBuilder = new StringBuilder();
 		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber)
 		.append("&tenantId=").append(tenantId);
-		RequestInfoWrapper requestInfoWrapper= RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+		RequestInfoWrapper requestInfoWrapper= RequestInfoWrapper.builder().requestInfo(requestInfo.getUserInfo() != null ? requestInfo : getSystemUserDetails(userService)).build();
+
+		log.info("requestInfoWrapper data : " + requestInfoWrapper);
 		Object result = null;
 		try {
 			log.info("urlBuilder : " + urlBuilder);
