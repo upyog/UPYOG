@@ -82,7 +82,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     }
 
     /**
-     * Updates CND application details. (Implementation pending)
+     * Updates CND application details.
      * 
      * @param cndApplicationRequest The request object containing updated CND application details.
      */
