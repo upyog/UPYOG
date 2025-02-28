@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.upyog.chb.config.CommunityHallBookingConfiguration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,13 +21,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-@Builder
 @Component
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Import({TracerConfiguration.class})
 public class MainConfiguration {
 
