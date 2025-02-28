@@ -44,14 +44,14 @@ function ApplicationDetailsContent({
   const [fetchBillData, updatefetchBillData] = useState({});
 
   const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
-    const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
+    // const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
     let billData = {};
-    if (assessmentData?.Assessments?.length > 0) {
-      billData = await Digit.PaymentService.fetchBill(tenantId, {
-        businessService: "PT",
-        consumerCode: propertyIds,
-      });
-    }
+    // if (assessmentData?.Assessments?.length > 0) {
+    //   billData = await Digit.PaymentService.fetchBill(tenantId, {
+    //     businessService: "PT",
+    //     consumerCode: propertyIds,
+    //   });
+    // }
     updatefetchBillData(billData);
     updateCanFetchBillData({
       loading: false,
@@ -99,40 +99,42 @@ function ApplicationDetailsContent({
         source: applicationData?.channel || "",
       };
       return <TLCaption data={caption} />;
-    } else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
-      const privacy = {
-        uuid: checkpoint?.assignes?.[0]?.uuid,
-        fieldName: "mobileNumber",
-        model: "User",
-        showValue: false,
-        loadData: {
-          serviceName: "/egov-workflow-v2/egov-wf/process/_search",
-          requestBody: {},
-          requestParam: { tenantId: applicationDetails?.tenantId, businessIds: applicationDetails?.applicationNo, history: true },
-          jsonPath: "ProcessInstances[0].assignes[0].mobileNumber",
-          isArray: false,
-          d: (res) => {
-            let resultstring = "";
-            resultstring = `+91 ${_.get(res, `ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
-            return resultstring;
-          }
-        },
-      };
-      const previousCheckpoint = timeline[index - 1];
-      const caption = {
-        date: checkpoint?.auditDetails?.lastModified,
-        name: checkpoint?.assignes?.[0]?.name,
-        mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber
-          ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber
-          : checkpoint?.assignes?.[0]?.mobileNumber,
-        comment: t(checkpoint?.comment),
-        wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [],
-        thumbnailsToShow: checkpoint?.thumbnailsToShow,
-      };
+    } 
+    // else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
+    //   const privacy = {
+    //     uuid: checkpoint?.assignes?.[0]?.uuid,
+    //     fieldName: "mobileNumber",
+    //     model: "User",
+    //     showValue: false,
+    //     loadData: {
+    //       serviceName: "/egov-workflow-v2/egov-wf/process/_search",
+    //       requestBody: {},
+    //       requestParam: { tenantId: applicationDetails?.tenantId, businessIds: applicationDetails?.applicationNo, history: true },
+    //       jsonPath: "ProcessInstances[0].assignes[0].mobileNumber",
+    //       isArray: false,
+    //       d: (res) => {
+    //         let resultstring = "";
+    //         resultstring = `+91 ${_.get(res, `ProcessInstances[${index}].assignes[0].mobileNumber`)}`;
+    //         return resultstring;
+    //       }
+    //     },
+    //   };
+    //   const previousCheckpoint = timeline[index - 1];
+    //   const caption = {
+    //     date: checkpoint?.auditDetails?.lastModified,
+    //     name: checkpoint?.assignes?.[0]?.name,
+    //     mobileNumber: applicationData?.processInstance?.assignes?.[0]?.uuid === checkpoint?.assignes?.[0]?.uuid && applicationData?.processInstance?.assignes?.[0]?.mobileNumber
+    //       ? applicationData?.processInstance?.assignes?.[0]?.mobileNumber
+    //       : checkpoint?.assignes?.[0]?.mobileNumber,
+    //     comment: t(checkpoint?.comment),
+    //     wfComment: previousCheckpoint ? previousCheckpoint.wfComment : [],
+    //     thumbnailsToShow: checkpoint?.thumbnailsToShow,
+    //   };
 
 
-      return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
-    } else {
+    //   return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
+    // } 
+    else {
 
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
