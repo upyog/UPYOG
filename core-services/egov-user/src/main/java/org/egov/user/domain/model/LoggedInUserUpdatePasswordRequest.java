@@ -16,7 +16,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Builder
 @Getter
 @EqualsAndHashCode
-@Setter
 public class LoggedInUserUpdatePasswordRequest {
     private String userName;
     private String tenantId;

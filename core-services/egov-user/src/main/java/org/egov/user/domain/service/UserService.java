@@ -119,7 +119,7 @@ public class UserService {
 
 	@Value("${secret.transformation}")
 	private String transformation;
-	
+
 	@Value("${secret.key}")
 	private String key;
 
@@ -486,6 +486,8 @@ public class UserService {
 	 * @param updatePasswordRequest
 	 */
 	public void updatePasswordForLoggedInUser(LoggedInUserUpdatePasswordRequest updatePasswordRequest) {
+		String existingDecryptedPass = null;
+		String newDecryptedPass = null;
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 		updatePasswordRequest.validate();
 		final User user = getUniqueUser(updatePasswordRequest.getUserName(), updatePasswordRequest.getTenantId(),
@@ -495,26 +497,28 @@ public class UserService {
 			throw new InvalidUpdatePasswordRequestException();
 		if (user.getType().toString().equals(UserType.EMPLOYEE.toString()) && isEmployeeLoginOtpBased)
 			throw new InvalidUpdatePasswordRequestException();
-		String existingDecryptedPass =null;
-		String newDecryptedPass=null;
+
 		try {
-			existingDecryptedPass =decrypt(updatePasswordRequest.getExistingPassword(),key);
-			newDecryptedPass = decrypt(updatePasswordRequest.getNewPassword(),key);
+			existingDecryptedPass = decrypt(updatePasswordRequest.getExistingPassword(), key);
+			newDecryptedPass = decrypt(updatePasswordRequest.getNewPassword(), key);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		updatePasswordRequest.setExistingPassword(existingDecryptedPass);
-		updatePasswordRequest.setNewPassword(newDecryptedPass);
-		validateExistingPassword(user, updatePasswordRequest.getExistingPassword());
-		validatePassword(updatePasswordRequest.getNewPassword());
-		if (bcrypt.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
+		LoggedInUserUpdatePasswordRequest loggedInUserUpdatePasswordRequest = LoggedInUserUpdatePasswordRequest
+				.builder().existingPassword(existingDecryptedPass).newPassword(newDecryptedPass)
+				.tenantId(updatePasswordRequest.getTenantId()).type(updatePasswordRequest.getType())
+				.userName(updatePasswordRequest.getUserName()).build();
+		// updatePasswordRequest.setExistingPassword(existingDecryptedPass);
+		// updatePasswordRequest.setNewPassword(newDecryptedPass);
+		validateExistingPassword(user, loggedInUserUpdatePasswordRequest.getExistingPassword());
+		validatePassword(loggedInUserUpdatePasswordRequest.getNewPassword());
+		if (bcrypt.matches(loggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
 			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
 		}
 
-		user.updatePassword(encryptPwd(updatePasswordRequest.getNewPassword()));
+		user.updatePassword(encryptPwd(loggedInUserUpdatePasswordRequest.getNewPassword()));
 		userRepository.update(user, user, user.getId(), user.getUuid());
 	}
 
@@ -525,6 +529,8 @@ public class UserService {
 	 */
 	public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request,
 			RequestInfo requestInfo) {
+
+		String newDecryptedPass = null;
 		request.validate();
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 		// validateOtp(request.getOtpValidationRequest());
@@ -544,22 +550,26 @@ public class UserService {
 		user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
 		user.setOtpReference(request.getOtpReference());
 		validateOtp(user);
-		String newDecryptedPass=null;
+
 		try {
-			
-			newDecryptedPass = decrypt(request.getNewPassword(),key);
+
+			newDecryptedPass = decrypt(request.getNewPassword(), key);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		request.setNewPassword(newDecryptedPass);
-		validatePassword(request.getNewPassword());
 
-		if (bcrypt.matches(request.getNewPassword(), user.getPassword())) {
+		NonLoggedInUserUpdatePasswordRequest nonLoggedInUserUpdatePasswordRequest = NonLoggedInUserUpdatePasswordRequest
+				.builder().newPassword(newDecryptedPass).otpReference(request.getOtpReference())
+				.tenantId(request.getTenantId()).type(request.getType()).userName(request.getUserName()).build();
+		// request.setNewPassword(newDecryptedPass);
+		validatePassword(nonLoggedInUserUpdatePasswordRequest.getNewPassword());
+
+		if (bcrypt.matches(nonLoggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
 			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
 		}
-		user.updatePassword(encryptPwd(request.getNewPassword()));
+		user.updatePassword(encryptPwd(nonLoggedInUserUpdatePasswordRequest.getNewPassword()));
 		/* encrypt here */
 		/* encrypted value is stored in DB */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
@@ -670,8 +680,7 @@ public class UserService {
 	 * @param existingRawPassword
 	 */
 	private void validateExistingPassword(User user, String existingRawPassword) {
-		
-		
+
 		if (!passwordEncoder.matches(existingRawPassword, user.getPassword())) {
 			throw new PasswordMismatchException("Invalid username or password");
 		}

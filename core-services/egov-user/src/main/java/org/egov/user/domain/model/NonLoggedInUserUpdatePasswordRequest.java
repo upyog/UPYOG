@@ -18,7 +18,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Getter
 @EqualsAndHashCode
 @ToString
-@Setter
 public class NonLoggedInUserUpdatePasswordRequest {
     private String otpReference;
     private String userName;
