@@ -1,10 +1,8 @@
-package org.upyog.rs.web.models;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.upyog.rs.web.models.waterTanker;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,9 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A Object holds the community halls for booking
+ * Details for new booking of community halls
  */
-@ApiModel(description = "A Object holds the water tanker for booking")
+@ApiModel(description = "Request object for creating new booking of water tanker")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 
@@ -28,13 +26,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WaterTankerBookingResponse {
-
-	private ResponseInfo responseInfo;
-
-	@JsonProperty("waterTankerBookingDetail")
+public class WaterTankerBookingRequest {
+	
 	@Valid
-	private WaterTankerBookingDetail waterTankerBookingApplication;
+	@JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
+	@Valid
+	@JsonProperty("waterTankerBookingDetail")
+	private WaterTankerBookingDetail waterTankerBookingDetail;
+	
 }
-

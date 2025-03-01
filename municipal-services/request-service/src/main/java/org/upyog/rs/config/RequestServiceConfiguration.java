@@ -41,18 +41,31 @@ public class RequestServiceConfiguration {
 	@Value("${egov.idgen.water.tanker.booking.id.name}")
 	private String waterTankerApplicationKey;
 
+	@Value("${egov.idgen.mobile.toilet.booking.id.name}")
+	private String mobileToiletApplicationKey;
+
 	@Value("${egov.usr.events.pay.link}")
 	private String payLink;
 
 	@Value("${egov.idgen.water.tanker.booking.id.format}")
 	private String waterTankerApplicationFormat;
 
+	@Value("${egov.idgen.mobile.toilet.booking.id.format}")
+	private String mobileToiletApplicationFormat;
+
 	// Kafka topics for saving water tanker data
 	@Value("${persister.create.water-tanker.topic}")
 	private String waterTankerApplicationSaveTopic;
 
+	// Kafka topics for saving Mobile Toilet data
+	@Value("${persister.create.mobile-toilet.topic}")
+	private String mobileToiletApplicationSaveTopic;
+
 	@Value("${persister.update.water-tanker.topic}")
 	private String waterTankerApplicationUpdateTopic;
+
+	@Value("${persister.update.mobile-toilet.topic}")
+	private String mobileToiletApplicationUpdateTopic;
 
 	// Idgen Config
 	@Value("${egov.idgen.host}")

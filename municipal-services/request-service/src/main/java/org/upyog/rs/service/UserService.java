@@ -16,8 +16,10 @@ import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.ApplicantDetail;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.user.CreateUserRequest;
 import org.upyog.rs.web.models.user.User;
 import org.upyog.rs.web.models.user.UserDetailResponse;
@@ -63,6 +65,31 @@ public class UserService {
 
 		return existingUsers.get(0).getUuid();
 	}
+
+	public String getUuidExistingOrNewUser(MobileToiletBookingRequest bookingRequest) {
+
+		MobileToiletBookingDetail bookingDetail = bookingRequest.getMobileToiletBookingDetail();
+		RequestInfo requestInfo = bookingRequest.getRequestInfo();
+		ApplicantDetail applicantDetail = bookingDetail.getApplicantDetail();
+		String tenantId = bookingDetail.getTenantId();
+
+		// Return existing UUID if applicant is the requester
+		if (isUserSameAsRequester(applicantDetail, requestInfo)) {
+			return requestInfo.getUserInfo().getUuid();
+		}
+
+		// Fetch existing user details
+		UserDetailResponse userDetailResponse = userExists(applicantDetail, requestInfo, tenantId);
+		List<User> existingUsers = userDetailResponse.getUser();
+
+		// Create a new user if no existing user found
+		if (CollectionUtils.isEmpty(existingUsers)) {
+			return createAndReturnUuid(requestInfo, applicantDetail, tenantId);
+		}
+
+		return existingUsers.get(0).getUuid();
+	}
+
 
 	/**
 	 * Checks if the applicant is the same as the requester.
@@ -235,5 +262,6 @@ public class UserService {
 		return UserSearchRequest.builder().requestInfo(requestInfo).userType(RequestServiceConstants.CITIZEN)
 				.tenantId(tenantId).active(true).build();
 	}
+
 
 }

@@ -29,7 +29,7 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.kafka.Producer;
 import org.upyog.rs.repository.ServiceRequestRepository;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.events.EventRequest;
 import org.upyog.rs.web.models.notification.Email;
 import org.upyog.rs.web.models.notification.EmailRequest;

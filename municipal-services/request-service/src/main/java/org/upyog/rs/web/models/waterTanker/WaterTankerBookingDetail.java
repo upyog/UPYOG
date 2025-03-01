@@ -1,4 +1,4 @@
-package org.upyog.rs.web.models;
+package org.upyog.rs.web.models.waterTanker;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +20,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.upyog.rs.web.models.Address;
+import org.upyog.rs.web.models.ApplicantDetail;
+import org.upyog.rs.web.models.AuditDetails;
+import org.upyog.rs.web.models.Workflow;
 
 /**
  * Details for new booking of advertisement

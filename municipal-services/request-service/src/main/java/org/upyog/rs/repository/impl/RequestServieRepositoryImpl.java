@@ -12,9 +12,12 @@ import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.repository.querybuilder.RequestServiceQueryBuilder;
 import org.upyog.rs.repository.rowMapper.GenericRowMapper;
 import org.upyog.rs.web.models.PersisterWrapper;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
-import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingSearchCriteria;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -85,6 +88,57 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 		producer.push(requestServiceConfiguration.getWaterTankerApplicationUpdateTopic(), waterTankerRequest);
 
 	}
+
+	@Override
+	public void saveMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest) {
+		log.info("Saving mobile Toilet booking request data for booking no : "
+				+ mobileToiletRequest.getMobileToiletBookingDetail().getBookingNo());
+		MobileToiletBookingDetail mobileToiletBookingDetail = mobileToiletRequest.getMobileToiletBookingDetail();
+		PersisterWrapper<MobileToiletBookingDetail> persisterWrapper = new PersisterWrapper<MobileToiletBookingDetail>(
+				mobileToiletBookingDetail);
+		producer.push(requestServiceConfiguration.getMobileToiletApplicationSaveTopic(), mobileToiletRequest);
+	}
+	
+	@Override
+	public List<MobileToiletBookingDetail> getMobileToiletBookingDetails(
+			MobileToiletBookingSearchCriteria mobileToiletBookingSearchCriteria) {
+		//create a list to hold the statement parameter and allow addition of parameter based on search criteria
+		List<Object> preparedStmtList = new ArrayList<>();
+
+		/*passed the preparedStmtList and search criteria inside the getWaterTankerQuery method
+		 developed inside query builder to build and get the data as per search criteria*/
+		String query = queryBuilder.getMobileToiletQuery(mobileToiletBookingSearchCriteria, preparedStmtList);
+		log.info("Final query for getMobileToiletBookingDetails {} and paramsList {} : " ,mobileToiletBookingSearchCriteria, preparedStmtList);
+		/*
+		 *  Execute the query using JdbcTemplate with a generic row mapper
+		 *  Converts result set directly to a list of WaterTankerBookingDetail objects
+		 *  Uses custom GenericRowMapper for flexible and recursive object mapping
+		 * */
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(MobileToiletBookingDetail.class));
+	}
+
+	@Override
+	public Integer getApplicationsCount(MobileToiletBookingSearchCriteria criteria) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getMobileToiletQuery(criteria, preparedStatement);
+
+		if (query == null)
+			return 0;
+
+		log.info("Final query for getMobileToiletBookingDetails {} and paramsList {} : " , preparedStatement);
+
+		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
+		return count;
+	}
+
+	@Override
+	public void updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest) {
+		log.info("Updating mobile toilet request data for booking no : "
+				+ mobileToiletRequest.getMobileToiletBookingDetail().getBookingNo());
+		producer.push(requestServiceConfiguration.getMobileToiletApplicationUpdateTopic(),mobileToiletRequest);
+
+	}
+
 
 
 

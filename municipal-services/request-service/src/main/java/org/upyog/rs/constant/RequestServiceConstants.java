@@ -4,7 +4,11 @@ public class RequestServiceConstants {
 
 	public static final String BOOKING_CREATED = "Your Water Tanker booking created successfully";
 
+	public static final String MT_BOOKING_CREATED = "Your Mobile Toilet booking created successfully";
+
 	public static final String BOOKING_DETAIL_FOUND = "Your Water Tanker booking searched successfully";
+
+	public static final String MOBILE_TOILET_BOOKING_DETAIL_FOUND = "Your Mobile Toilet booking searched successfully";
 
 	public static final String CITIZEN = "CITIZEN";
 	
