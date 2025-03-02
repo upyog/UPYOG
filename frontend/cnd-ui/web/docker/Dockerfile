@@ -4,8 +4,8 @@ RUN apk add --no-cache git>2.30.0
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=8192"
-ENV GENERATE_SOURCEMAP "false"
+ENV NODE_OPTIONS "--max-old-space-size=1792"
+ENV GENERATE_SOURCEMAP "true"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
@@ -13,7 +13,7 @@ RUN ls -lah
 #RUN node web/envs.js
 RUN cd web/ \
     && node envs.js \
-    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(8192*8192))' \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1792*1792))' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 

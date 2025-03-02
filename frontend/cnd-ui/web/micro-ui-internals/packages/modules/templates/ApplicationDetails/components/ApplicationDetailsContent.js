@@ -11,26 +11,26 @@ import {
   LinkButton,
   PDFSvg
 } from "@nudmcdgnpm/digit-ui-react-components";
-import { values } from "lodash";
+// import { values } from "lodash";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary"
+// import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary"
 
 function ApplicationDetailsContent({
   applicationDetails,
   workflowDetails,
   isDataLoading,
   applicationData,
-  businessService,
+  // businessService,
   timelineStatusPrefix,
-  id,
+  // id,
   showTimeLine = true,
   statusAttribute = "status",
-  paymentsList,
+  // paymentsList,
   oldValue,
-  isInfoLabel = false
+  // isInfoLabel = false
 }) {
   const { t } = useTranslation();
 
@@ -93,7 +93,7 @@ function ApplicationDetailsContent({
     return `${day}/${month}/${year}`;
   };
   const getTimelineCaptions = (checkpoint, index = 0, timeline) => {
-    if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" && !window.location.href.includes("/obps/"))) {
+    if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" /*&& !window.location.href.includes("/obps/")*/)) {
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
         source: applicationData?.channel || "",
@@ -162,34 +162,35 @@ function ApplicationDetailsContent({
   const isBPALocation = window.location.href.includes("employee/obps");
   const isWS = window.location.href.includes("employee/ws");
 
-  const getRowStyles = () => {
-    if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
-      return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
-    } else if (checkLocation) {
-      return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
-    } else {
-      return {};
-    }
-  };
+  // const getRowStyles = () => {
+  //   if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
+  //     return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
+  //   } else if (checkLocation) {
+  //     return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
+  //   } else {
+  //     return {};
+  //   }
+  // };
 
-  const getTableStyles = () => {
-    if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
-      return { position: "relative", marginTop: "19px" };
-    } else if (checkLocation) {
-      return { position: "relative", marginTop: "19px" };
-    } else {
-      return {};
-    }
-  };
+  // const getTableStyles = () => {
+  //   if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
+  //     return { position: "relative", marginTop: "19px" };
+  //   } else if (checkLocation) {
+  //     return { position: "relative", marginTop: "19px" };
+  //   } else {
+  //     return {};
+  //   }
+  // };
 
   const getMainDivStyles = () => {
-    if (
-      window.location.href.includes("employee/obps") ||
-      window.location.href.includes("employee/noc") ||
-      window.location.href.includes("employee/ws")
-    ) {
-      return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
-    } else if (checkLocation) {
+    // if (
+    //   window.location.href.includes("employee/obps") ||
+    //   window.location.href.includes("employee/noc") ||
+    //   window.location.href.includes("employee/ws")
+    // ) {
+    //   return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
+    // } else if is below
+     if (checkLocation) {
       return { lineHeight: "19px", maxWidth: "600px", minWidth: "280px" };
     } else {
       return {};
@@ -202,22 +203,22 @@ function ApplicationDetailsContent({
     else return value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("N/A");
   };
 
-  const getClickInfoDetails = () => {
-    if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
-      return "WS_DISCONNECTION_CLICK_ON_INFO_LABEL"
-    } else {
-      return "WS_CLICK_ON_INFO_LABEL"
-    }
-  }
+  // const getClickInfoDetails = () => {
+  //   if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
+  //     return "WS_DISCONNECTION_CLICK_ON_INFO_LABEL"
+  //   } else {
+  //     return "WS_CLICK_ON_INFO_LABEL"
+  //   }
+  // }
 
   const [showAllTimeline, setShowAllTimeline] = useState(false);
-  const getClickInfoDetails1 = () => {
-    if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
-      return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL"
-    } else {
-      return ""
-    }
-  }
+  // const getClickInfoDetails1 = () => {
+  //   if (window.location.href.includes("disconnection") || window.location.href.includes("application")) {
+  //     return "WS_DISCONNECTION_CLICK_ON_INFO1_LABEL"
+  //   } else {
+  //     return ""
+  //   }
+  // }
   const toggleTimeline = () => {
     setShowAllTimeline((prev) => !prev);
   }
@@ -253,7 +254,7 @@ function ApplicationDetailsContent({
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}
-      {isInfoLabel ? <InfoDetails t={t} userType={false} infoBannerLabel={"CS_FILE_APPLICATION_INFO_LABEL"} infoClickLable={"WS_CLICK_ON_LABEL"} infoClickInfoLabel={getClickInfoDetails()} infoClickInfoLabel1={getClickInfoDetails1()} /> : null}
+      {/* {isInfoLabel ? <InfoDetails t={t} userType={false} infoBannerLabel={"CS_FILE_APPLICATION_INFO_LABEL"} infoClickLable={"WS_CLICK_ON_LABEL"} infoClickInfoLabel={getClickInfoDetails()} infoClickInfoLabel1={getClickInfoDetails1()} /> : null} */}
 
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <React.Fragment key={index}>
@@ -269,7 +270,7 @@ function ApplicationDetailsContent({
                       : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
                   }
                 >
-                  {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
+                  {/*{isNocLocation ? `${t(detail.title)}` :*/ t(detail.title)}
                   {detail?.Component ? <detail.Component /> : null}
                 </CardSectionHeader>
               </React.Fragment>
@@ -323,9 +324,10 @@ function ApplicationDetailsContent({
                 })}
               </table>
             )}
-            <StatusTable style={getTableStyles()}>
+
+<StatusTable style={getTableStyles()}>
               {detail?.title &&
-                !detail?.title.includes("NOC") &&
+                // !detail?.title.includes("NOC") &&
                 detail?.values?.map((value, index) => {
                   if (value.map === true && value.value !== "N/A") {
                     return <Row labelStyle={{ wordBreak: "break-all" }} textStyle={{ wordBreak: "break-all" }} key={t(value.title)} label={t(value.title)} text={<img src={t(value.value)} alt="" privacy={value?.privacy} />} />;
@@ -335,19 +337,19 @@ function ApplicationDetailsContent({
                       <Row
                         key={t(value.title)}
                         label={
-                          window.location.href.includes("tl") || window.location.href.includes("ws") ? (
-                            <div style={{ width: "200%" }}>
-                              <Link to={value?.to}>
-                                <span className="link" style={{ color: "#a82227" }}>
-                                  {t(value?.title)}
-                                </span>
-                              </Link>
-                            </div>
-                          ) : isNocLocation || isBPALocation ? (
-                            `${t(value.title)}`
-                          ) : (
+                          // window.location.href.includes("tl") || window.location.href.includes("ws") ? (
+                          //   <div style={{ width: "200%" }}>
+                          //     <Link to={value?.to}>
+                          //       <span className="link" style={{ color: "#a82227" }}>
+                          //         {t(value?.title)}
+                          //       </span>
+                          //     </Link>
+                          //   </div>
+                          // ) : isNocLocation || isBPALocation ? (
+                          //   `${t(value.title)}`
+                          // ) : (
                             t(value.title)
-                          )
+                          // )
                         }
                         text={
                           <div>
@@ -361,7 +363,7 @@ function ApplicationDetailsContent({
                         last={index === detail?.values?.length - 1}
                         caption={value.caption}
                         className="border-none"
-                        rowContainerStyle={getRowStyles()}
+                        // rowContainerStyle={getRowStyles()}
                         labelStyle={{ wordBreak: "break-all" }}
                         textStyle={{ wordBreak: "break-all" }}
                       />
@@ -369,7 +371,7 @@ function ApplicationDetailsContent({
                   }
                   return (
                     <div>
-                      {window.location.href.includes("modify") ? (
+                      {/* {window.location.href.includes("modify") ? (
                         <Row
                           className="border-none"
                           key={`${value.title}`}
@@ -378,7 +380,8 @@ function ApplicationDetailsContent({
                           text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""}
                           labelStyle={{ wordBreak: "break-all" }}
                           textStyle={{ wordBreak: "break-all" }}
-                        />) : (<Row
+                        />) :  */}
+                        {(<Row
                           key={t(value.title)}
                           label={t(value.title)}
                           text={getTextValue(value)}
@@ -388,7 +391,7 @@ function ApplicationDetailsContent({
                           /* privacy object set to the Row Component */
                           privacy={value?.privacy}
                           // TODO, Later will move to classes
-                          rowContainerStyle={getRowStyles()}
+                          // rowContainerStyle={getRowStyles()}
                           // labelStyle={{wordBreak: "break-all"}}
                           // textStyle={{wordBreak: "break-all"}}
                           labelStyle={{
@@ -403,19 +406,19 @@ function ApplicationDetailsContent({
                           }}
                         />
                       )}
-                      {value.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : ""}
+                      {/* {value.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : ""} */}
                     </div>
                   )
                 })}
             </StatusTable>
           </div>
           {detail?.belowComponent && <detail.belowComponent />}
-          {detail?.additionalDetails?.inspectionReport && (
+          {/* {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
           )}
           {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
             <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />
-          )}
+          )} */}
           {/* {detail?.additionalDetails?.FIdocuments && detail?.additionalDetails?.values?.map((doc,index) => (
             <div key={index}>
             {doc.isNotDuplicate && <div> 
@@ -427,14 +430,14 @@ function ApplicationDetailsContent({
              </div>}
              </div>
           )) } */}
-          {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
+          {/* {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
           {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
           {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}
-          {detail?.additionalDetails?.accessories && <TLTradeAccessories units={detail?.additionalDetails?.accessories} />}
-          {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
+          {detail?.additionalDetails?.accessories && <TLTradeAccessories units={detail?.additionalDetails?.accessories} />} */}
+          {/* {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
             <PermissionCheck applicationData={applicationDetails?.applicationData} t={t} permissions={detail?.additionalDetails?.permissions} />
-          )}
-          {detail?.additionalDetails?.obpsDocuments && (
+          )} */}
+          {/* {detail?.additionalDetails?.obpsDocuments && (
             <BPADocuments
               t={t}
               applicationData={applicationDetails?.applicationData}
@@ -457,13 +460,13 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.buildingExtractionDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} />}
           {detail?.additionalDetails?.subOccupancyTableDetails && (
             <SubOccupancyTable edcrDetails={detail?.additionalDetails} applicationData={applicationDetails?.applicationData} />
-          )}
+          )} */}
           {/* {detail?.additionalDetails?.documentsWithUrl && <DocumentsPreview documents={detail?.additionalDetails?.documentsWithUrl} />} */}
-          {detail?.additionalDetails?.documents && <PropertyDocuments documents={detail?.additionalDetails?.documents} />}
+          {/* {detail?.additionalDetails?.documents && <PropertyDocuments documents={detail?.additionalDetails?.documents} />}
           {detail?.additionalDetails?.taxHeadEstimatesCalculation && (
             <PropertyEstimates taxHeadEstimatesCalculation={detail?.additionalDetails?.taxHeadEstimatesCalculation} />
           )}
-          {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />}
+          {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />} */}
           {/* {detail?.isLabelShow ? <WSInfoLabel t={t} /> : null} */}
           {detail?.additionalDetails?.redirectUrl && (
             <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
@@ -474,8 +477,8 @@ function ApplicationDetailsContent({
               </Link>
             </div>
           )}
-          {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
-          {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
+          {/* {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />} */}
+          {/* {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />} */}
 
         </React.Fragment>
       ))}
@@ -500,14 +503,14 @@ function ApplicationDetailsContent({
                     {workflowDetails?.data?.timeline &&
                       workflowDetails?.data?.timeline.slice(0, showAllTimeline ? workflowDetails?.data.timeline.length : 2).map((checkpoint, index, arr) => {
                         let timelineStatusPostfix = "";
-                        if (window.location.href.includes("/obps/")) {
-                          if (workflowDetails?.data?.timeline[index - 1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index - 1]?.state?.includes("SEND_TO_CITIZEN"))
-                            timelineStatusPostfix = `_NOT_DONE`
-                          else if (checkpoint?.performedAction === "SEND_TO_ARCHITECT")
-                            timelineStatusPostfix = `_BY_ARCHITECT_DONE`
-                          else
-                            timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                        }
+                        // if (window.location.href.includes("/obps/")) {
+                        //   if (workflowDetails?.data?.timeline[index - 1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index - 1]?.state?.includes("SEND_TO_CITIZEN"))
+                        //     timelineStatusPostfix = `_NOT_DONE`
+                        //   else if (checkpoint?.performedAction === "SEND_TO_ARCHITECT")
+                        //     timelineStatusPostfix = `_BY_ARCHITECT_DONE`
+                        //   else
+                        //     timelineStatusPostfix = index == 0 ? "" : `_DONE`;
+                        // }
 
                         return (
                           <React.Fragment key={index}>
@@ -516,7 +519,7 @@ function ApplicationDetailsContent({
                               isCompleted={index === 0}
                               info={checkpoint.comment}
                               label={t(
-                                `${timelineStatusPrefix}${checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                                `${timelineStatusPrefix}${/*checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : */ checkpoint?.[statusAttribute]
                                 }${timelineStatusPostfix}`
                               )}
                               customChild={getTimelineCaptions(checkpoint, index, workflowDetails?.data?.timeline)}

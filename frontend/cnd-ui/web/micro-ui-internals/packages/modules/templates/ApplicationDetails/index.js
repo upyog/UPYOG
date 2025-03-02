@@ -11,6 +11,9 @@ import ApplicationDetailsContent from "./components/ApplicationDetailsContent";
 import ApplicationDetailsToast from "./components/ApplicationDetailsToast";
 import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBar";
 
+//this page is responsible for showing an action menu for users to select actions (e.g., approve, reject, forward).
+
+
 const ApplicationDetails = (props) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
@@ -102,37 +105,38 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
+    // if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length == 0)
+    // {
+    //  alert("Please fill in the comments before submitting")
+    // }
+    // else
     {
-     alert("Please fill in the comments before submitting")
-    }
-    else{
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
         data?.customFunctionToExecute({ ...data });
       }
-      if (nocData !== false && nocMutation) {
-        const nocPrmomises = nocData?.map((noc) => {
-          return nocMutation?.mutateAsync(noc);
-        });
-        try {
-          setIsEnableLoader(true);
-          const values = await Promise.all(nocPrmomises);
-          values &&
-            values.map((ob) => {
-              Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
-            });
-        } catch (err) {
-          setIsEnableLoader(false);
-          let errorValue = err?.response?.data?.Errors?.[0]?.code
-            ? t(err?.response?.data?.Errors?.[0]?.code)
-            : err?.response?.data?.Errors?.[0]?.message || err;
-          closeModal();
-          setShowToast({ key: "error", error: { message: errorValue } });
-          setTimeout(closeToast, 5000);
-          return;
-        }
-      }
+      // if (nocData !== false && nocMutation) {
+      //   const nocPrmomises = nocData?.map((noc) => {
+      //     return nocMutation?.mutateAsync(noc);
+      //   });
+      //   try {
+      //     setIsEnableLoader(true);
+      //     const values = await Promise.all(nocPrmomises);
+      //     values &&
+      //       values.map((ob) => {
+      //         Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
+      //       });
+      //   } catch (err) {
+      //     setIsEnableLoader(false);
+      //     let errorValue = err?.response?.data?.Errors?.[0]?.code
+      //       ? t(err?.response?.data?.Errors?.[0]?.code)
+      //       : err?.response?.data?.Errors?.[0]?.message || err;
+      //     closeModal();
+      //     setShowToast({ key: "error", error: { message: errorValue } });
+      //     setTimeout(closeToast, 5000);
+      //     return;
+      //   }
+      // }
       if (mutate) {
         setIsEnableLoader(true);
         mutate(data, {
@@ -142,36 +146,36 @@ const ApplicationDetails = (props) => {
             setTimeout(closeToast, 5000);
           },
           onSuccess: (data, variables) => {
-            sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
+            // sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
             setIsEnableLoader(false);
-            if (isOBPS?.bpa) {
-              data.selectedAction = selectedAction;
-              history.replace(`/cnd-ui/employee/obps/response`, { data: data });
-            }
-            if (isOBPS?.isStakeholder) {
-              data.selectedAction = selectedAction;
-              history.push(`/cnd-ui/employee/obps/stakeholder-response`, { data: data });
-            }
-            if (isOBPS?.isNoc) {
-              history.push(`/cnd-ui/employee/noc/response`, { data: data });
-            }
-            if (data?.Amendments?.length > 0) {
-              //RAIN-6981 instead just show a toast here with appropriate message
-              //show toast here and return 
-              //history.push("/cnd-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+            // if (isOBPS?.bpa) {
+            //   data.selectedAction = selectedAction;
+            //   history.replace(`/cnd-ui/employee/obps/response`, { data: data });
+            // }
+            // if (isOBPS?.isStakeholder) {
+            //   data.selectedAction = selectedAction;
+            //   history.push(`/cnd-ui/employee/obps/stakeholder-response`, { data: data });
+            // }
+            // if (isOBPS?.isNoc) {
+            //   history.push(`/cnd-ui/employee/noc/response`, { data: data });
+            // }
+            // if (data?.Amendments?.length > 0) {
+            //   //RAIN-6981 instead just show a toast here with appropriate message
+            //   //show toast here and return 
+            //   //history.push("/cnd-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
   
-              if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
-              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
-              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
-              }
-              else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")) {
-                setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
-              }
-              return
-            }
+            //   if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
+            //     setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
+            //   } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
+            //     setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
+            //   } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")) {
+            //     setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+            //   }
+            //   else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")) {
+            //     setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
+            //   }
+            //   return
+            // }
             setShowToast({ key: "success", action: selectedAction });
             clearDataDetails && setTimeout(clearDataDetails, 3000);
             setTimeout(closeToast, 5000);
