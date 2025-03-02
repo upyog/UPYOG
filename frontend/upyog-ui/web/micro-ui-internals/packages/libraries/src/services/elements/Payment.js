@@ -8,7 +8,7 @@ export const PaymentService = {
       useCache: false,
       method: "POST",
       auth: false,
-      userService: false,
+      userService: true,
       params: { tenantId, ...filters },
     })
       .then((d) => {
@@ -138,6 +138,14 @@ export const PaymentService = {
       auth: true,
       params: { tenantId, ...params },
     }),
+    useAssetQrCodeService: (tenantId, params) =>
+      Request({
+        url:Urls.asset.assets_Reciept_Search,
+        method: "POST",
+        // do not change this directly add a param if needed
+        auth: true,
+        params: { tenantId, ...params },
+      }),
   getBulkPdfRecordsDetails: (filters) =>
     Request({
       url: Urls.payment.getBulkPdfRecordsDetails,

@@ -64,7 +64,7 @@ const EmployeeApp = ({ path }) => {
   const ApplicationDetail = Digit.ComponentRegistryService.getComponent("ObpsEmpApplicationDetail");
   const BpaApplicationDetail = Digit.ComponentRegistryService.getComponent("ObpsEmployeeBpaApplicationDetail");
   const isLocation = window.location.href.includes("bpa") || window.location.href.includes("stakeholder-inbox/stakeholder") || window.location.href.includes("application");
-  const isFromNoc = window.location.href.includes("upyog-ui/employee/obps/bpa/");
+  const isFromNoc = window.location.href.includes("digit-ui/employee/obps/bpa/");
   const isRes = window.location.href.includes("obps/response") || window.location.href.includes("obps/stakeholder-response");
   return (
     <Fragment>

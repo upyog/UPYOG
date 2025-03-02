@@ -45,7 +45,7 @@ const CitizenOtp = (props) => {
             data: location.state?.redirectData
           });
         } else {
-          history.replace('upyog-ui/citizen/');
+          history.replace('digit-ui/citizen/');
         }
     } catch (err) {
       setIsOtpValid(false);

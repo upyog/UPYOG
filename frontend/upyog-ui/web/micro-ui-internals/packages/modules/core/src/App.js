@@ -13,7 +13,7 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
   const { stateInfo } = storeData || {};
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
   let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
-
+console.log("DigitAppDigitAppDigitApp",stateCode, modules, appTenants, logoUrl, initData)
   if (window.location.pathname.split("/").includes("employee")) CITIZEN = false;
 
   useEffect(() => {

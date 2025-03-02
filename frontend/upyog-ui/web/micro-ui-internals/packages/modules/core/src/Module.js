@@ -11,10 +11,12 @@ import CitizenFeedback from "./components/CitizenFeedback";
 
 import getStore from "./redux/store";
 import ErrorBoundary from "./components/ErrorBoundaries";
+import EmployeeDashboard from "./components/EmployeeDashboard";
 import { useState } from "react";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
+  console.log("initDatainitData",initData,enabledModules)
   if (isLoading) {
     return <Loader page={true} />;
   }
@@ -112,6 +114,7 @@ const componentsToRegister = {
   SelectOtp,
   AcknowledgementCF,
   CitizenFeedback,
+  EmployeeDashboard
 };
 
 export const initCoreComponents = () => {

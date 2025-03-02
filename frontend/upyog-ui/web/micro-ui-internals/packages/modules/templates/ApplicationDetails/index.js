@@ -47,7 +47,8 @@ const ApplicationDetails = (props) => {
     showTimeLine = true,
     oldValue,
     isInfoLabel = false,
-    clearDataDetails
+    clearDataDetails,
+    isAction=false
   } = props;
   
   useEffect(() => {
@@ -67,7 +68,7 @@ const ApplicationDetails = (props) => {
         setWarningPopUp(true);
       } else if (action?.redirectionUrll) {
         if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
-          // window.location.assign(`${window.location.origin}upyog-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
+          // window.location.assign(`${window.location.origin}digit-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
 
           history.push(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
         }
@@ -237,6 +238,7 @@ const ApplicationDetails = (props) => {
           ) : null}
           <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
           <ApplicationDetailsActionBar
+            isAction={isAction} // isAction is added to enable or disable the action bar
             workflowDetails={workflowDetails}
             displayMenu={displayMenu}
             onActionSelect={onActionSelect}
@@ -245,6 +247,7 @@ const ApplicationDetails = (props) => {
             forcedActionPrefix={forcedActionPrefix}
             ActionBarStyle={ActionBarStyle}
             MenuStyle={MenuStyle}
+            applicationDetails={applicationDetails}
           />
         </React.Fragment>
       ) : (

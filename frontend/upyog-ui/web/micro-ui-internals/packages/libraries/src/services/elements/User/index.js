@@ -128,4 +128,14 @@ export const UserService = {
       data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
     });
   },
+  userCreate: async (tenantId, user, filters) => {
+    return Request({
+      url: Urls.UserCreate,
+      params: { ...filters },
+      method: "POST",
+      auth: false,
+      userService: false,
+      data: { user: {tenantId, ...user} } ,
+    });
+  },
 };
