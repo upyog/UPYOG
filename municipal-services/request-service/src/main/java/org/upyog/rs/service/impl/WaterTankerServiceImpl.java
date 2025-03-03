@@ -19,9 +19,9 @@ import org.upyog.rs.service.EnrichmentService;
 import org.upyog.rs.service.UserService;
 import org.upyog.rs.service.WaterTankerService;
 import org.upyog.rs.service.WorkflowService;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
-import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.workflow.State;
 

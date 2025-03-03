@@ -10,12 +10,13 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.repository.ServiceRequestRepository;
+import org.upyog.rs.service.impl.MobileToiletServiceImpl;
 import org.upyog.rs.service.impl.WaterTankerServiceImpl;
 import org.upyog.rs.util.IdgenUtil;
 import org.upyog.rs.util.RequestServiceUtil;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
-import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 import org.upyog.rs.web.models.workflow.ProcessInstance;
 import org.upyog.rs.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.rs.web.models.workflow.ProcessInstanceResponse;
@@ -47,6 +48,8 @@ public class PaymentService {
 	private WorkflowService workflowService;
 	
 	private WaterTankerServiceImpl waterTankerService;
+
+	private MobileToiletServiceImpl mobileToiletService;
 
 	/**
 	 *

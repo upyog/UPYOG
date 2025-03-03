@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.upyog.rs.web.models.Address;
 import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 
 import lombok.extern.slf4j.Slf4j;
 

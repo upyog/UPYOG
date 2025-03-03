@@ -1,4 +1,4 @@
-package org.upyog.rs.web.models;
+package org.upyog.rs.web.models.waterTanker;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

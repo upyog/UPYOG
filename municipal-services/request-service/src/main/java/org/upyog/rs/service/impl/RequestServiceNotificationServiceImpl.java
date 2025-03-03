@@ -14,7 +14,7 @@ import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.service.RequestServiceNotificationService;
 import org.upyog.rs.util.NotificationUtil;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.events.Action;
 import org.upyog.rs.web.models.events.ActionItem;
 import org.upyog.rs.web.models.events.Event;

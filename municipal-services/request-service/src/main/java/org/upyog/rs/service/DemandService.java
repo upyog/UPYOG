@@ -13,8 +13,8 @@ import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.Demand;
 import org.upyog.rs.web.models.DemandDetail;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -8,7 +8,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.upyog.rs.service.RequestServiceNotificationService;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

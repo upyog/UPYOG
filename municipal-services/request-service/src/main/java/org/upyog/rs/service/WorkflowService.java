@@ -13,8 +13,10 @@ import org.springframework.util.CollectionUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.ServiceRequestRepository;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.workflow.BusinessService;
 import org.upyog.rs.web.models.workflow.BusinessServiceResponse;
@@ -73,6 +75,23 @@ public class WorkflowService {
 	    return callWorkFlow(workflowRequest);
 	}
 
+	public State updateMTWorkflowStatus(PaymentRequest paymentRequest, MobileToiletBookingRequest mobileToiletRequest) {
+		ProcessInstance processInstance;
+		RequestInfo requestInfo;
+
+		if (paymentRequest != null) {
+			processInstance = getProcessInstanceForMTRS(paymentRequest, null, null);
+			requestInfo = paymentRequest.getRequestInfo();
+		} else if (mobileToiletRequest != null) {
+			processInstance = getProcessInstanceForMTRS(null, mobileToiletRequest.getMobileToiletBookingDetail(), mobileToiletRequest.getRequestInfo());
+			requestInfo = mobileToiletRequest.getRequestInfo();
+		} else {
+			throw new IllegalArgumentException("Both PaymentRequest and WaterTankerBookingRequest cannot be null");
+		}
+		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
+
+		return callWorkFlow(workflowRequest);
+	}
 
 
 	/*private ProcessInstance getProcessInstanceForRS(WaterTankerBookingDetail application, RequestInfo requestInfo) {
@@ -139,6 +158,44 @@ public class WorkflowService {
 	    }
 
 	    return processInstance;
+	}
+
+	private ProcessInstance getProcessInstanceForMTRS(PaymentRequest paymentRequest, MobileToiletBookingDetail application, RequestInfo requestInfo) {
+		ProcessInstance processInstance = new ProcessInstance();
+
+		if (paymentRequest != null) {
+			processInstance.setBusinessId(paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode());
+			processInstance.setAction(RequestServiceConstants.ACTION_PAY);
+			processInstance.setModuleName(configs.getModuleName());
+			processInstance.setTenantId(paymentRequest.getPayment().getTenantId());
+			processInstance.setBusinessService(configs.getBusinessServiceName());
+			processInstance.setDocuments(null);
+			processInstance.setComment(null);
+			processInstance.setAssignes(null);
+		} else if (application != null) {
+			Workflow workflow = application.getWorkflow();
+			processInstance.setBusinessId(application.getBookingNo());
+			processInstance.setAction(workflow.getAction());
+			processInstance.setModuleName(workflow.getModuleName());
+			processInstance.setTenantId(application.getTenantId());
+			processInstance.setBusinessService(workflow.getBusinessService());
+			processInstance.setDocuments(workflow.getDocuments());
+			processInstance.setComment(workflow.getComments());
+
+			if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+				List<User> users = workflow.getAssignes().stream().map(uuid -> {
+					User user = new User();
+					user.setUuid(uuid);
+					return user;
+				}).collect(Collectors.toList());
+
+				processInstance.setAssignes(users);
+			}
+		} else {
+			throw new IllegalArgumentException("Both PaymentRequest and WaterTankerBookingDetail cannot be null");
+		}
+
+		return processInstance;
 	}
 
 

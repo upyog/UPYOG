@@ -1,9 +1,9 @@
 package org.upyog.rs.service;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
-import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 
 import digit.models.coremodels.PaymentRequest;
 

@@ -2,9 +2,12 @@ package org.upyog.rs.repository;
 
 import java.util.List;
 
-import org.upyog.rs.web.models.WaterTankerBookingDetail;
-import org.upyog.rs.web.models.WaterTankerBookingRequest;
-import org.upyog.rs.web.models.WaterTankerBookingSearchCriteria;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingSearchCriteria;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 
 public interface RequestServiceRepository {
 
@@ -15,5 +18,13 @@ public interface RequestServiceRepository {
 	Integer getApplicationsCount(WaterTankerBookingSearchCriteria criteria);
 
 	void updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest);
+
+	void saveMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest);
+
+	List<MobileToiletBookingDetail> getMobileToiletBookingDetails(MobileToiletBookingSearchCriteria mobileToiletBookingSearchCriteria);
+
+	Integer getApplicationsCount(MobileToiletBookingSearchCriteria criteria);
+
+	void updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest);
 
 }
