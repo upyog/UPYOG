@@ -130,14 +130,20 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		if (existingApplication == null) {
 			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION, "Application not found");
 		}
-
-		State state = workflowService.updateWorkflowStatus(vendingRequest);
-		enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
-
-		if (StreetVendingConstants.ACTION_APPROVE
-				.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
-			demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-		}
+        RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
+        // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
+        if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
+            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+        } else {
+            // Call workflow service only if renewal status is NOT RENEW_IN_PROGRESS
+            State state = workflowService.updateWorkflowStatus(vendingRequest);
+            enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
+        }
+        // If action is APPROVE, create demand and update renewal status to RENEWED
+        if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
+            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+            vendingRequest.getStreetVendingDetail().setRenewalStatus(RenewalStatus.RENEWED);
+        }
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.update(vendingRequest);
