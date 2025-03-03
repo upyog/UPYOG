@@ -257,6 +257,7 @@ const Urls = {
     create: "/vendor-services/vendor/_create",
     search: "/vendor-services/vendor/_search",
     additionaldetailsCreate: "/vendor-management/api/v1/_create",
+    vendorcommonSearch: "/vendor-management/api/v1/vendorPlusAdditional/_search"
     
   },
 

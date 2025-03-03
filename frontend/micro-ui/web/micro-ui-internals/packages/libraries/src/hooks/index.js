@@ -341,6 +341,7 @@ import useEmpvendorSearch from "./vendor/useEmpvendorSearch";
 import useSelectedMDMS from "./useSelectedMDMS";
 import useVendorAdditionaldetailsAPI from "./vendor/useVendorAdditionaldetailsAPI";
 import useCreateDemand from "./sv/useCreateDemand";
+import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
 
 const wt={
   useTankerCreateAPI,
@@ -460,6 +461,7 @@ const vendor = {
   useEmpvendorCreate,
   useEmpvendorSearch,
   useVendorAdditionaldetailsAPI,
+  useEmpvendorCommonSearch,
 }
 const mcollect = {
   useCommonMDMS,

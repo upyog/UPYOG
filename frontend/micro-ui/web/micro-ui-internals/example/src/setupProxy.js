@@ -104,6 +104,7 @@ module.exports = function (app) {
     "/request-service/water-tanker/v1/_update",
     "/vendor-management/api/v1/_create",
     "/sv-services/street-vending/_createdemand",
+    "/vendor-management/api/v1/vendorPlusAdditional/_search",
     
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
