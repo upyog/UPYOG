@@ -11,7 +11,7 @@ export const Config =
             },
             {
                 "route": "request-details",
-                "component": "Pickup",
+                "component": "RequestPickup",
                 "withoutLabel": true,
                 "key": "requestType",
                 "type": "component",

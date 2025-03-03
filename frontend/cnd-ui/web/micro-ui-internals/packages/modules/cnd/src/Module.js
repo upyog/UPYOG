@@ -5,7 +5,7 @@ import { useRouteMatch } from "react-router-dom";
 import CndCreate from "./pages/citizen/Create";
 import CitizenApp from "./pages/citizen";
 import CndRequirementDetails from "./pageComponents/CndRequirementDetails"; 
-import Pickup from "./pageComponents/pickup";
+import RequestPickup from "./pageComponents/RequestPickup";
 import ConstructionType from "./pageComponents/ConstructionType";
 import LocationPopup from "./components/LocationPopup";
 import { LocationDetails } from "./components/LocationDetails";
@@ -16,10 +16,10 @@ const componentsToRegister = {
   ApplicantDetails,
   CndCreate,
   CndRequirementDetails,
-  Pickup,
   ConstructionType,
   LocationPopup,
-  LocationDetails
+  LocationDetails,
+  RequestPickup
   };
   
   // function to register the component as per standard 
