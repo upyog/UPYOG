@@ -43,7 +43,7 @@ export const convertEpochToDate = (dateEpoch) => {
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
- 
+  console.log("datatatataty",data)
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -56,6 +56,8 @@ export const convertEpochToDate = (dateEpoch) => {
   //   { tenantId, consumerCode, businessService: business_service },
   //   { enabled: allowFetchBill, retry: false, staleTime: Infinity, refetchOnWindowFocus: false }
   // );
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
+  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
   const newTenantId=business_service.includes("WS.ONE_TIME_FEE" || "SW.ONE_TIME_FEE")?Digit.ULBService.getStateId():tenantId;
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
@@ -125,7 +127,7 @@ export const convertEpochToDate = (dateEpoch) => {
             <Link to={(applicationNo && `/upyog-ui/citizen/payment/my-bills/${business_service}/${applicationNo}`) || "/upyog-ui/citizen"}>
               <SubmitBar label={t("CS_PAYMENT_TRY_AGAIN")} />
             </Link>
-            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"upyog-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
+            {/* {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"digit-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
               <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
             </Link></div>} */}
             <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
@@ -141,9 +143,9 @@ export const convertEpochToDate = (dateEpoch) => {
   const amount = reciept_data?.paymentDetails?.[0]?.totalAmountPaid;
   const transactionDate = paymentData?.transactionDate;
   const printCertificate = async () => {
-    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tlTenantId = data?.payments?.Payments[0]?.tenantId;
     const state = tenantId;
-    const applicationDetails = await Digit.TLService.search({ applicationNumber: consumerCode, tenantId });
+    const applicationDetails = await Digit.TLService.search({ applicationNumber: consumerCode, tenantId:tlTenantId });
     const generatePdfKeyForTL = "tlcertificate";
 
     if (applicationDetails) {
@@ -211,7 +213,7 @@ export const convertEpochToDate = (dateEpoch) => {
           payments.Payments[0].additionalDetails=details;
           paymentArray[0]=payments.Payments[0]
           console.log("generatedpdfkey",generatePdfKey)
-          if(business_service=="WS" || business_service=="SW"){
+          if(business_service.includes("WS") || business_service.includes("SW")){  
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKeyForWs);
           }
           else if(businessServ.includes("BPA")){
@@ -389,6 +391,132 @@ export const convertEpochToDate = (dateEpoch) => {
     padding: "4px 0px",
     justifyContent: "space-between",
   };
+
+  const printPermissionLetter = async () => {
+    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const applicationDetails = await Digit.CHBServices.search({  tenantId,
+      filters: { bookingNo: consumerCode }});
+    let fileStoreId = applicationDetails?.hallsBookingApplication?.[0]?.permissionLetterFilestoreId;
+    const generatePdfKeyForTL = "chbpermissionletter";
+    if (!fileStoreId) {
+      const response = await Digit.PaymentService.generatePdf(tenantId, { hallsBookingApplication: [applicationDetails?.hallsBookingApplication[0]] }, generatePdfKeyForTL);
+      const updatedApplication = {
+        ...applicationDetails?.hallsBookingApplication[0],
+        permissionLetterFilestoreId: response?.filestoreIds[0]
+      };
+      await mutation.mutateAsync({
+        hallsBookingApplication: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+  //for downloading permission letter and receipt
+  const printADSPermissionLetter = async () => {
+    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const applicationDetails = await Digit.ADSServices.search({  tenantId,
+      filters: { bookingNo: consumerCode }});
+    let fileStoreId = applicationDetails?.bookingApplication?.[0]?.permissionLetterFilestoreId;
+    const generatePdfKeyForTL = "advpermissionletter";
+    if (!fileStoreId) {
+      const response = await Digit.PaymentService.generatePdf(tenantId, { bookingApplication: [applicationDetails?.bookingApplication[0]] }, generatePdfKeyForTL);
+      const updatedApplication = {
+        ...applicationDetails?.bookingApplication[0],
+        permissionLetterFilestoreId: response?.filestoreIds[0]
+      };
+      await AdvertisementCreateApi.mutateAsync({
+        bookingApplication: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
+  const svCertificate = async () => {
+    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const state = tenantId;
+    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode, isDraftApplication:false } });
+    const generatePdfKeyForTL = "svcertificate";
+
+    if (applicationDetails) {
+      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+  };
+
+  const petCertificate = async () => {
+    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const state = tenantId;
+    const applicationDetails = await Digit.PTRService.search({tenantId, filters: { applicationNumber: consumerCode } });
+    const generatePdfKeyForTL = "petservicecertificate";
+
+    if (applicationDetails) {
+      let response = await Digit.PaymentService.generatePdf(state, { PetRegistrationApplications: [applicationDetails?.PetRegistrationApplications?.[0]] }, generatePdfKeyForTL);
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+  };
+
+  const svIdCard= async () => {
+    //const tenantId = Digit.ULBService.getCurrentTenantId();
+    const state = tenantId;
+    const applicationDetails = await Digit.SVService.search({tenantId, filters: { applicationNumber: consumerCode,isDraftApplication:false } });
+    const generatePdfKeyForTL = "svidentitycard";
+
+    if (applicationDetails) {
+      let response = await Digit.PaymentService.generatePdf(state, { SVDetail: [applicationDetails?.SVDetail?.[0]] }, generatePdfKeyForTL);
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+      window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+  };
+
+  const printADSReceipt = async () => {
+    const applicationDetails = await Digit.ADSServices.search({  tenantId,filters: { bookingNo: consumerCode }});
+    let fileStoreId = applicationDetails?.bookingApplication?.[0]?.paymentReceiptFilestoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, "advservice-receipt");
+      const updatedApplication = {
+        ...applicationDetails?.bookingApplication[0],
+        paymentReceiptFilestoreId: response?.filestoreIds[0]
+      };
+      await AdvertisementCreateApi.mutateAsync({
+        bookingApplication: updatedApplication
+      });
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+}
+
+
+  const printCHBReceipt = async () => {
+      const applicationDetails = await Digit.CHBServices.search({  tenantId,filters: { bookingNo: consumerCode }});
+      let fileStoreId = applicationDetails?.hallsBookingApplication?.[0]?.paymentReceiptFilestoreId;
+      if (!fileStoreId) {
+        let response = { filestoreIds: [payments?.fileStoreId] };
+        response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, "chbservice-receipt");
+        const updatedApplication = {
+          ...applicationDetails?.hallsBookingApplication[0],
+          paymentReceiptFilestoreId: response?.filestoreIds[0]
+        };
+        await mutation.mutateAsync({
+          hallsBookingApplication: updatedApplication
+        });
+        fileStoreId = response?.filestoreIds[0];
+      }
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+      window.open(fileStore[fileStoreId], "_blank");
+  }
+
+
+
+
+
+
   //New Payment Reciept For PT module with year bifurcations
 
   const printRecieptNew = async (payment) => {
@@ -607,7 +735,7 @@ export const convertEpochToDate = (dateEpoch) => {
     window.open(fileStore[response.filestoreIds[0]], "_blank");
   };
   const ommitRupeeSymbol = ["PT"].includes(business_service);
-console.log("business_service",business_service)
+
   if ((window.location.href.includes("bpa") || window.location.href.includes("BPA")) && isBpaSearchLoading) return <Loader />
 
   return (
@@ -692,15 +820,15 @@ console.log("business_service",business_service)
           {t("PTR_FEE_RECEIPT")}
         </div>
       ) : null}
-      {window.location.href.includes("mcollect") ?
-         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
-         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-           <path d="M0 0h24v24H0z" fill="none" />
-           <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-         </svg>
-         {t("CS_COMMON_PRINT_RECEIPT")}
-       </div>
-      :null}
+      {business_service == "pet-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={petCertificate}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("PTR_CERTIFICATE")}
+        </div>
+      ) : null}
       {bpaData?.[0]?.businessService === "BPA_OC" && (bpaData?.[0]?.status==="APPROVED" || bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT") ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={e => getPermitOccupancyOrderSearch("occupancy-certificate")}>
           <DownloadPrefixIcon />
@@ -748,6 +876,69 @@ console.log("business_service",business_service)
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
       ) : null}
+      {business_service == "chb-services" ? (
+        <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
+        <div className="primary-label-btn d-grid" onClick={printCHBReceipt}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("CHB_FEE_RECEIPT")}
+        </div>
+        <div className="primary-label-btn d-grid" onClick={printPermissionLetter}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+            </svg>
+            {t("CHB_PERMISSION_LETTER")}
+          </div>
+        </div>
+      ) : null}
+       {business_service == "adv-services" ? (
+        <div  style={{ display: 'flex', justifyContent: 'flex-end', gap: '20px', marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
+        <div className="primary-label-btn d-grid" onClick={printADSReceipt}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("ADS_FEE_RECEIPT")}
+        </div>
+        <div className="primary-label-btn d-grid" onClick={printADSPermissionLetter}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+            </svg>
+            {t("ADS_PERMISSION_LETTER")}
+          </div>
+        </div>
+      ) : null}
+      {business_service == "sv-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("SV_FEE_RECIEPT")}
+        </div>
+      ) : null}
+      {business_service == "sv-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svCertificate}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("SV_CERTIFICATE")}
+        </div>
+      ) : null}
+      {business_service == "sv-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={svIdCard}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("SV_ID_CARD")}
+        </div>
+      ) : null}
       {!(business_service == "TL") || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
       {!(business_service == "TL") || !(business_service?.includes("PT")) && (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
@@ -762,6 +953,21 @@ console.log("business_service",business_service)
       {business_service == "pet-services" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service == "chb-services" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service == "adv-services" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service == "sv-services" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
         </Link>
       )}
     </Card>

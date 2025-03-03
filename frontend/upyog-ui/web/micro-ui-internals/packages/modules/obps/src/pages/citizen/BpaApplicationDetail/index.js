@@ -227,12 +227,13 @@ const BpaApplicationDetail = () => {
     const userInfo = Digit.UserService.getUser();
     const rolearray = userInfo?.info?.roles;
     if (data?.applicationData?.status == "CITIZEN_APPROVAL_INPROCESS") {
-      if(rolearray?.length == 1 && rolearray?.[0]?.code == "CITIZEN") {
+      if (rolearray?.some(role => role?.code === "CITIZEN")) {
         workflowDetails.data.nextActions = workflowDetails?.data?.nextActions;
       } else {
         workflowDetails.data.nextActions = [];
       }
-    } else if (data?.applicationData?.status == "INPROGRESS") {
+    }
+     else if (data?.applicationData?.status == "INPROGRESS") {
       let isArchitect = false;
       stakeHolderDetails?.StakeholderRegistraition?.TradeTypetoRoleMapping?.map(type => {
         type?.role?.map(role => { roles.push(role); });
@@ -259,20 +260,10 @@ const BpaApplicationDetail = () => {
       isFromSendBack = true;
       const userInfo = Digit.UserService.getUser();
       const rolearray = userInfo?.info?.roles;
-      if(rolearray?.length !== 1) {
-        workflowDetails = {
-          ...workflowDetails,
-          data: {
-            ...workflowDetails?.data,
-            actionState: {
-              nextActions: [],
-            },
-          },
-          data: {
-            ...workflowDetails?.data,
-            nextActions: []
-          }
-        };
+      if (rolearray?.some(role => role?.code === "CITIZEN")) {
+        workflowDetails.data.nextActions = workflowDetails?.data?.nextActions;
+      } else {
+        workflowDetails.data.nextActions = [];
       }
   }
 

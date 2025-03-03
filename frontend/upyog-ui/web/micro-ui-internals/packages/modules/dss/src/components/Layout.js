@@ -29,7 +29,6 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
   const [chip, updateChip] = useState({});
   const moduleCode = services?.filter((e) => configName?.includes(e.name))?.[0]?.code;
   const renderChart = (chart, title, moduleCode) => {
-    console.log("renderChart",chart,chart.chartType)
     switch (chart.chartType) {
       case "table":
         return <CustomTable data={chart} onSearch={searchQuery} chip={chip} title={title} moduleCode={moduleCode} />;

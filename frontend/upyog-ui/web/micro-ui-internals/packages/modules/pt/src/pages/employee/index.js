@@ -63,7 +63,7 @@ const EmployeeApp = ({ path, url, userType }) => {
     else if (location.pathname.includes("/upyog-ui/employee/pt/property-details/")) return t("PT_PROPERTY_INFORMATION");
     else if (location.pathname.includes("/upyog-ui/employee/pt/payment-details/")) return t("PT_PAYMENT_HISTORY");
     else if (location.pathname.includes("/upyog-ui/employee/pt/assessment-details/")) return t("PT_ASSESS_PROPERTY");
-    else if (location.pathname.includes("upyog-ui/employee/pt/property-mutate-docs-required")) return t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP");
+    else if (location.pathname.includes("digit-ui/employee/pt/property-mutate-docs-required")) return t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP");
     else if (location.pathname.includes("/upyog-ui/employee/pt/property-mutate/")) return t("ES_TITLE_MUTATE_PROPERTY");
     else if (location.pathname.includes("/upyog-ui/employee/pt/modify-application/")) return t("PT_UPDATE_PROPERTY");
   };
@@ -90,7 +90,7 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: location.pathname.includes("/pt/search") || location.pathname.includes("/pt/ptsearch") ? true : false,
       },
       {
-        path: "upyog-ui/employee/pt/property-mutate-docs-required",
+        path: "digit-ui/employee/pt/property-mutate-docs-required",
         content: t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP"),
         show: location.pathname.includes("pt/property-mutate-docs-required") ? true : false,
       },

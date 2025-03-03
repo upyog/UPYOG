@@ -1,4 +1,4 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute,AdvertisementModuleCard } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
@@ -19,6 +19,8 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode";
+import VSearchCertificate from "./CMSearchCertificate";
+import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
 const sidebarHiddenFor = [
   "upyog-ui/citizen/register/name",
@@ -26,6 +28,7 @@ const sidebarHiddenFor = [
   "/upyog-ui/citizen/select-location",
   "/upyog-ui/citizen/login",
   "/upyog-ui/citizen/register/otp",
+  "/upyog-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
 
 const getTenants = (codes, tenants) => {
@@ -65,16 +68,6 @@ const Home = ({
             a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
             return a;
           }, {});
-          Object.keys(formattedData).forEach(key => {
-            const value = formattedData[key];
-            value.map((item) => {
-              if (!item["state"]) {
-                item["navigationURL"] = item["navigationURL"].replace("digit-ui", "upyog-ui");
-                item["url"] = item["url"].replace("digit-ui", "upyog-ui");
-                return item
-              }
-            });
-          });
         return formattedData;
       },
     }
@@ -89,9 +82,10 @@ const Home = ({
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
   };
-
+  console.log("modulesmodules",modules)
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
+
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
       <Route key={index} path={`${path}/${code.toLowerCase()}`}>
@@ -99,6 +93,16 @@ const Home = ({
       </Route>
     ) : null;
   });
+  // for showing advertisement image and its detail in first page
+  const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
+    select: (data) => {
+      const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
+        return { imageSrc: `${details.imageSrc}`, light: `${details.light}`, title: `${details.title}`, location: `${details.location}`, poleNo:`${details.poleNo}`,price:`${details.price}`,adtype:`${details.adtype}`,faceArea:`${details.faceArea}` };
+      });
+      return formattedData;
+    },
+  });
+  const Advertisement=advertisement||[];
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
@@ -138,6 +142,23 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/upyog-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
+            {code?.toUpperCase()==="ADS" && (
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
+              {Advertisement.map((ad) => (
+                <AdvertisementModuleCard
+                  imageSrc={ad.imageSrc} 
+                  poleNo={ad.poleNo} 
+                  light={ad.light} 
+                  title={ad.title} 
+                  location={ad.location} 
+                  price={ad.price} 
+                  path={`${path}/${code.toLowerCase()}/`}
+                  adType={ad.adtype}
+                  faceArea={ad.faceArea}
+                />
+              ))}
+            </div>
+            )}
             <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
           </div>
         </Route>
@@ -223,7 +244,13 @@ const Home = ({
             <Search/>
           </Route>
           <Route path={`${path}/payment/verification`}>
-         <QRCode></QRCode>
+            <QRCode></QRCode>
+          </Route>
+          <Route path={`${path}/assets/services`}>
+            <AssetsQRCode></AssetsQRCode>
+          </Route>
+          <Route path={`${path}/verificationsearch-home`}>
+            <VSearchCertificate/>
           </Route>
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>

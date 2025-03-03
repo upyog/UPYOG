@@ -13,10 +13,10 @@ import ApplicationDetails from "../../../../templates/ApplicationDetails";
  *
  * @example
  *   for employee
- *   upyog-ui/employee/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
+ *   digit-ui/employee/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
  *
  *   for citizen
- *   upyog-ui/citizen/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
+ *   digit-ui/citizen/commonpt/view-property?propertyId={propertyId}&tenantId={tenantId}
  *
  * @returns {Screen}  Property Details screen
  */

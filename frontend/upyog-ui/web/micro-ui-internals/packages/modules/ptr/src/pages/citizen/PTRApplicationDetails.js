@@ -4,17 +4,13 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getPetAcknowledgementData from "../../getPetAcknowledgementData";
 import PTRWFApplicationTimeline from "../../pageComponents/PTRWFApplicationTimeline";
-import { pdfDownloadLink } from "../../utils";
-
+import { convertEpochToDate } from "../../utils";
 
 import get from "lodash/get";
-import { size } from "lodash";
 
 const PTRApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const { acknowledgementIds, tenantId } = useParams();
-  const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
   const [showToast, setShowToast] = useState(null);
@@ -126,25 +122,11 @@ fetchBillData();
     //setAcknowldgementData(acknowldgementDataAPI);
   };
 
-  let documentDate = t("CS_NA");
-  if ( pet_details?.additionalDetails?.documentDate) {
-    const date = new Date( pet_details?.additionalDetails?.documentDate);
-    const month = Digit.Utils.date.monthNames[date.getMonth()];
-    documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
-  }
-
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  };
-
-  const handleDownload = async (document, tenantid) => {
-    let tenantId = tenantid ? tenantid : tenantId;
-    const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
-    let documentLink = pdfDownloadLink(res.data, document?.fileStoreId);
-    window.open(documentLink, "_blank");
   };
 
   const printCertificate = async () => {
@@ -159,19 +141,28 @@ fetchBillData();
     label: t("PTR_PET_DOWNLOAD_ACK_FORM"),
     onClick: () => getAcknowledgementData(),
   });
-
-  //commented out, need later for download receipt and certificate 
+ 
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
       label: t("PTR_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
-    if (reciept_data?.Payments[0]?.paymentStatus === "DEPOSITED")
-      dowloadOptions.push({
-        label: t("PTR_CERTIFICATE"),
-        onClick: () => printCertificate(),
-      });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("PTR_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
 
+
+    const getDate = (epochdate) => {
+      return epochdate
+        ? new Date(epochdate * 1000).getDate() + 
+          "/" + 
+          (new Date(epochdate * 1000).getMonth() + 1) + 
+          "/" + 
+          new Date(epochdate * 1000).getFullYear().toString()
+        : "NA";
+    };
   
   return (
     <React.Fragment>
@@ -195,6 +186,21 @@ fetchBillData();
               text={pet_details?.applicationNumber} 
             />
           </StatusTable>
+          <StatusTable>
+            <Row
+              className="border-none"
+              label={t("PTR_VALIDITY_DATE")}
+              text={getDate(pet_details?.validityDate)} 
+            />
+          </StatusTable>
+          {pet_details?.petToken&&pet_details?.petToken.length>0&&(
+          <StatusTable>
+            <Row
+              className="border-none"
+              label={t("PTR_TOKEN")}
+              text={pet_details?.petToken} 
+            />
+          </StatusTable>)}
            
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_ADDRESS_HEADER")}</CardSubHeader>
           <StatusTable>
@@ -220,19 +226,14 @@ fetchBillData();
             <Row className="border-none" label={t("PTR_CLINIC_NAME")} text={pet_details?.petDetails?.clinicName || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATED_DATE")} text={pet_details?.petDetails?.lastVaccineDate || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_PET_NAME")} text={pet_details?.petDetails?.petName || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_PET_AGE")} text={pet_details?.petDetails?.petAge || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_PET_SEX")} text={pet_details?.petDetails?.petGender || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_IDENTIFICATION_MARK")} text={pet_details?.petDetails?.identificationMark || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_VACCINATION_NUMBER")} text={pet_details?.petDetails?.vaccinationNumber || t("CS_NA")} />
+            {pet_details?.petDetails?.birthDate ? pet_details?.petDetails?.birthDate && <Row className="border-none" label={t("PTR_BIRTH")} text={convertEpochToDate(pet_details?.petDetails?.birthDate) || t("CS_NA")} /> : pet_details?.petDetails?.adoptionDate && <Row className="border-none" label={t("PTR_ADOPTION")} text={convertEpochToDate(pet_details?.petDetails?.adoptionDate) || t("CS_NA")} />}
           </StatusTable>
 
-
-          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
-          <div>
-            {Array.isArray(docs) ? (
-              docs.length > 0 && <PTRDocument pet_details={pet_details}></PTRDocument>
-            ) : (
-              <StatusTable>
-                <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
-              </StatusTable>
-            )}
-          </div> */}
           <PTRWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast

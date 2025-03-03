@@ -175,7 +175,6 @@ const Inbox = ({
       {
         label: t("UC_CHALLAN_NUMBER"),
         name: "challanNo",
-        pattern: "PG-CH-\\d{4}-\\d{2}-\\d{2}-\\d{6}"
       },
       {
         label: t("UC_MOBILE_NUMBER_LABEL"),
@@ -188,7 +187,6 @@ const Inbox = ({
       {
         label: t("UC_RECIEPT_NUMBER_LABEL"),
         name: "receiptNumber",
-        pattern : "^MP/\\d{4}/\\d{4}-\\d{2}/\\d{6}$"
       },
     ];
   };

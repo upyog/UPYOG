@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-libraries
+npm install --save @nudmcdgnpm/digit-ui-libraries
 ```
 
 ## Limitation
@@ -66,7 +66,7 @@ DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
 
 ## License
 
-MIT © [jagankumar-egov](https://github.com/jagankumar-egov)
+MIT © [Shivank-NIUA](https://github.com/ShivankShuklaa)
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
