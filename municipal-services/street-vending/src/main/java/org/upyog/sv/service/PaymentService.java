@@ -158,7 +158,7 @@ public class PaymentService {
 
 	private void enrichCertificateNumber(StreetVendingDetail streetVendingDetail, RequestInfo requestInfo,
 			String tenantId) {
-		if(streetVendingDetail.getCertificateNo() != null) {
+		if (streetVendingDetail.getCertificateNo() == null || streetVendingDetail.getCertificateNo().isEmpty()) {
 			String certificateNo = idgenUtil.getIdList(requestInfo, tenantId, configs.getStreetVendingCertificateNoName(),
 					configs.getStreetVendingCertificateNoFormat(), 1).get(0);
 			streetVendingDetail.setCertificateNo(certificateNo);
