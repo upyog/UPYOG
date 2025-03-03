@@ -29,11 +29,11 @@ public class RequestServiceQueryBuilder {
                     + "join public.upyog_rs_address_details addr on appl.applicant_id = addr.applicant_id ");
 
     private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY = (
-            "SELECT ursbd.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, description, " +
+            "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, description, " +
                     "delivery_from_date, delivery_to_date, delivery_from_time, delivery_to_time, vendor_id, " +
-                    "vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_status, ursbd.createdby, " +
-                    "ursbd.lastModifiedby, ursbd.createdtime, ursbd.lastmodifiedtime, ursbd.tenant_id " +
-                    "FROM public.upyog_rs_mobile_toilet_booking_details ursbd"
+                    "vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_status, urmt.createdby, " +
+                    "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id " +
+                    "FROM public.upyog_rs_mobile_toilet_booking_details urmt"
     );
 
     private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM " + "({})"
@@ -43,9 +43,9 @@ public class RequestServiceQueryBuilder {
             + " FROM upyog_rs_tanker_booking_details ursbd "
             + " join upyog_rs_applicant_details appl on ursbd.booking_id = appl.booking_id  \n";
 
-    private static final String applicationsMtCount = "SELECT count(ursbd.booking_id) "
-            + " FROM upyog_rs_mobile_toilet_booking_details ursbd "
-            + " join upyog_rs_applicant_details appl on ursbd.booking_id = appl.booking_id  \n";
+    private static final String applicationsMtCount = "SELECT count(urmt.booking_id) "
+            + " FROM upyog_rs_mobile_toilet_booking_details urmt "
+            + " join upyog_rs_applicant_details appl on urmt.booking_id = appl.booking_id  \n";
 
     public String getWaterTankerQuery(WaterTankerBookingSearchCriteria criteria, List<Object> preparedStmtList) {
 
@@ -109,7 +109,7 @@ public class RequestServiceQueryBuilder {
 
         if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" ursbd.tenant_id LIKE ? ");
+            query.append(" urmt.tenant_id LIKE ? ");
             preparedStmtList.add("%" + criteria.getTenantId() + "%");
         }
 
@@ -121,7 +121,7 @@ public class RequestServiceQueryBuilder {
                     Collections.nCopies(criteria.getBookingNo().split(",").length, "?")
             );
 
-            query.append(" ursbd.booking_no IN (").append(bookingNosPlaceholders).append(")");
+            query.append(" urmt.booking_no IN (").append(bookingNosPlaceholders).append(")");
 
             // Add the booking numbers to the preparedStmtList
             String[] bookingNumbers = criteria.getBookingNo().split(",");
@@ -130,7 +130,7 @@ public class RequestServiceQueryBuilder {
 
         if (!ObjectUtils.isEmpty(criteria.getStatus())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" ursbd.booking_status = ? ");
+            query.append(" urmt.booking_status = ? ");
             preparedStmtList.add(criteria.getStatus());
         }
 
