@@ -52,12 +52,12 @@ public class MobileToiletServiceImpl implements MobileToiletService{
     @Override
     public MobileToiletBookingDetail createNewMobileToiletBookingRequest(MobileToiletBookingRequest mobileToiletRequest) {
 
-        log.info("Create water tanker booking for user : " + mobileToiletRequest.getRequestInfo().getUserInfo().getUuid()
+        log.info("Create Mobile Toilet booking for user : " + mobileToiletRequest.getRequestInfo().getUserInfo().getUuid()
                 + " for the request : " + mobileToiletRequest.getMobileToiletBookingDetail());
 
         enrichmentService.enrichCreateMobileToiletRequest(mobileToiletRequest);
 
-//        workflowService.updateWorkflowStatus(null, mobileToiletRequest);
+        workflowService.updateMTWorkflowStatus(null, mobileToiletRequest);
 
         // Get the uuid of User from user registry
         try {
@@ -169,7 +169,7 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         }
         return criteria;
     }
-//
+
     @Override
     public MobileToiletBookingDetail updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest,
                                                              PaymentRequest paymentRequest, String applicationStatus) {
@@ -186,14 +186,14 @@ public class MobileToiletServiceImpl implements MobileToiletService{
             State state = workflowService.updateMTWorkflowStatus(null, mobileToiletRequest);
             enrichmentService.enrichMobileToiletBookingUponUpdate(state.getApplicationStatus(), mobileToiletRequest);
 
-//            // If action is APPROVE, create demand
+            // If action is APPROVE, create demand
 //            if (RequestServiceConstants.ACTION_APPROVE
 //                    .equals(mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow().getAction())) {
 //                demandService.createDemand(mobileToiletRequest);
 //            }
         }
 
-        // Handle the payment request and update the water tanker booking if applicable
+        // Handle the payment request and update the mobile Toilet booking if applicable
         if (paymentRequest != null) {
             String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
             MobileToiletBookingDetail mobileToiletDetail = requestServiceRepository
@@ -213,18 +213,17 @@ public class MobileToiletServiceImpl implements MobileToiletService{
             mobileToiletDetail.setBookingStatus(applicationStatus);
             mobileToiletDetail.setPaymentDate(System.currentTimeMillis());
 
-            // Update water tanker booking request
+            // Update mobile toilet booking request
             MobileToiletBookingRequest updatedMobileToiletRequest = MobileToiletBookingRequest.builder()
                     .requestInfo(paymentRequest.getRequestInfo()).mobileToiletBookingDetail(mobileToiletDetail).build();
 
-            log.info("Water Tanker Request to update application status in consumer: {}", updatedMobileToiletRequest);
-//            requestServiceRepository.updateMobileToiletBooking(updatedMobileToiletRequest);
+            log.info("Mobile Toilet Request to update application status in consumer: {}", updatedMobileToiletRequest);
+            requestServiceRepository.updateMobileToiletBooking(updatedMobileToiletRequest);
 
             return mobileToiletDetail;
         }
-
-//        log.info("Mobile Toilet Request to update application status in consumer: {}", updatedMobileToletRequest);
-//        requestServiceRepository.updateMobileToiletBooking(mobileToiletRequest);
+        
+        requestServiceRepository.updateMobileToiletBooking(mobileToiletRequest);
 
         Workflow workflow = mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow();
 

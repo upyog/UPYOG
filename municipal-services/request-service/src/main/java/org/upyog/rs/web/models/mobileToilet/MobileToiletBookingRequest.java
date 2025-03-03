@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Details for new booking of community halls
+ * Details for new booking of Mobile Toilet
  */
 @ApiModel(description = "Request object for creating new booking of mobile Toilet")
 @Validated

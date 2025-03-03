@@ -42,7 +42,7 @@
             {
               "roles": [
                 "CITIZEN",
-                "WT_CEMP"
+                "MT_CEMP"
               ],
               "action": "APPLY",
               "active": true,
@@ -60,7 +60,7 @@
           "actions": [
             {
               "roles": [
-                "WT_CEMP"
+                "MT_CEMP"
               ],
               "action": "APPROVE",
               "active": true,
@@ -68,7 +68,7 @@
             },
             {
               "roles": [
-                "WT_CEMP"
+                "MT_CEMP"
               ],
               "action": "REJECT",
               "active": true,
@@ -106,7 +106,7 @@
           "actions": [
             {
               "roles": [
-                "WT_CEMP"
+                "MT_CEMP"
               ],
               "action": "ASSIGN_VENDOR",
               "active": true,
@@ -114,7 +114,7 @@
             },
             {
               "roles": [
-                "WT_CEMP"
+                "MT_CEMP"
               ],
               "action": "REASSIGN_VENDOR",
               "active": true,
@@ -133,7 +133,7 @@
           "actions": [
             {
               "roles": [
-                "WT_VENDOR"
+                "MT_VENDOR"
               ],
               "action": "ASSIGN_VEHICLE_DRIVER",
               "active": true,
@@ -141,7 +141,7 @@
             },
             {
               "roles": [
-                "WT_VENDOR"
+                "MT_VENDOR"
               ],
               "action": "REJECT",
               "active": true,
@@ -161,7 +161,7 @@
           "actions": [
             {
               "roles": [
-                "WT_VENDOR"
+                "MT_VENDOR"
               ],
               "action": "COMPLETE_REQUEST",
               "active": true,
