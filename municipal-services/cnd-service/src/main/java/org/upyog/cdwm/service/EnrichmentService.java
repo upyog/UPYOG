@@ -87,6 +87,10 @@ public class EnrichmentService {
         CNDApplicationDetail cndApplicationDetails = cndApplicationRequest.getCndApplication();
         cndApplicationDetails.setAuditDetails(CNDServiceUtil.getAuditDetails(
                 cndApplicationRequest.getRequestInfo().getUserInfo().getUuid(), false));
+        cndApplicationDetails.setVendorId(cndApplicationRequest.getCndApplication().getVendorId());
+		cndApplicationDetails.setVehicleId(cndApplicationRequest.getCndApplication().getVehicleId());
+		cndApplicationDetails.getAuditDetails().setLastModifiedBy(cndApplicationRequest.getRequestInfo().getUserInfo().getUuid());
+		cndApplicationDetails.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
         cndApplicationDetails.setApplicationStatus(applicationStatus);
     }
 }

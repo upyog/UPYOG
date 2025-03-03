@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.tracer.model.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.upyog.cdwm.service.WorkflowService;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
+import org.upyog.cdwm.web.models.workflow.State;
+import digit.models.coremodels.PaymentRequest;
 
 @Service
 public class CNDServiceImpl implements CNDService {
@@ -115,5 +118,64 @@ public class CNDServiceImpl implements CNDService {
 			log.debug("loading data of created and by me" + uuids.toString());
 		}
 		return criteria;
+	}
+
+	@Override
+	public CNDApplicationDetail updateCNDApplicationDetails(CNDApplicationRequest cndApplicationRequest,
+			PaymentRequest paymentRequest, String applicationStatus) {
+		String applicationNumber = cndApplicationRequest.getCndApplication().getApplicationNumber();
+		log.info("Updating Application for Application no: {}", applicationNumber);
+
+		if (applicationNumber == null) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Application no not valid. Failed to update application status for : " + applicationNumber);
+		}
+
+		// If no payment request, update workflow status and process booking request
+		if (paymentRequest == null) {
+			State state = workflowService.updateWorkflowStatus(null, cndApplicationRequest);
+			enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
+
+			// If action is APPROVE, create demand
+			if (CNDConstants.ACTION_APPROVE
+					.equals(cndApplicationRequest.getCndApplication().getWorkflow().getAction())) {
+//				demandService.createDemand(cndApplicationRequest);
+			}
+		}
+
+		// Handle the payment request and update the water tanker booking if applicable
+		if (paymentRequest != null) {
+			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
+			CNDApplicationDetail cndApplicationDetail = cndApplicationRepository
+					.getCNDApplicationDetail(
+							CNDServiceSearchCriteria.builder().applicationNumber(consumerCode).build())
+					.stream().findFirst().orElse(null);
+
+			if (cndApplicationDetail == null) {
+				log.info("Application not found in consumer class while updating status");
+				return null;
+			}
+
+			// Update the booking details
+			cndApplicationDetail.getAuditDetails()
+					.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+			cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+			cndApplicationDetail.setApplicationStatus(applicationStatus);
+			//cndApplicationDetail.setPaymentDate(System.currentTimeMillis());
+
+			// Update CND request
+			CNDApplicationRequest updatedCNDApplicationRequest = CNDApplicationRequest.builder()
+					.requestInfo(paymentRequest.getRequestInfo()).cndApplication(cndApplicationDetail).build();
+
+			log.info("Cnd Application to update application status in consumer: {}", updatedCNDApplicationRequest);
+			cndApplicationRepository.updateCNDApplicationDetail(cndApplicationRequest);
+
+			return cndApplicationDetail;
+		}
+
+		// If no payment request, just update the CND request
+		cndApplicationRepository.updateCNDApplicationDetail(cndApplicationRequest);
+		
+     	return cndApplicationRequest.getCndApplication();
 	}
 }

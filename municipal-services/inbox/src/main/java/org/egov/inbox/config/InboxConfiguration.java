@@ -139,4 +139,10 @@ public class InboxConfiguration {
 
 	@Value("${es.search.default.sort.order}")
 	private String defaultSortOrder;
+	
+	@Value("${egov.searcher.cnd.search.path}")
+	private String cndInboxSearcherEndpoint;
+
+	@Value("${egov.searcher.cnd.search.desc.path}")
+	private String cndInboxSearcherDescEndpoint;
 }

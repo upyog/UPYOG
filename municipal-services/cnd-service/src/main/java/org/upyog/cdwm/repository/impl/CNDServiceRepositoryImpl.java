@@ -35,7 +35,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
 
     @Autowired
     private CNDServiceQueryBuilder queryBuilder;
-
+    
     /**
      * Saves the CND application request data and pushes it to Kafka.
      * 
@@ -82,12 +82,15 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     }
 
     /**
-     * Updates CND application details. (Implementation pending)
+     * Updates CND application details.
      * 
      * @param cndApplicationRequest The request object containing updated CND application details.
      */
     @Override
     public void updateCNDApplicationDetail(CNDApplicationRequest cndApplicationRequest) {
-        // TODO: Implement update logic when required
-    }
+    		log.info("Updating CND  request data for booking no : "
+    				+ cndApplicationRequest.getCndApplication().getApplicationNumber());
+    		producer.push(config.getCndApplicationUpdateTopic(), cndApplicationRequest);
+
+    	}
 }

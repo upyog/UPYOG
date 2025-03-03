@@ -41,7 +41,7 @@ public class CNDConfiguration {
     private String cndApplicationSaveTopic;
 
     @Value("${persister.update.cnd.service.topic}")
-    private String waterTankerApplicationUpdateTopic;
+    private String cndApplicationUpdateTopic;
 
     // Idgen Config
     @Value("${egov.idgen.host}")
