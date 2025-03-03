@@ -1,0 +1,58 @@
+.CitizenHomeCard{
+
+  @apply bg-white mx-md p-md mb-lg;
+
+  .header{
+      @apply flex font-bold text-heading-l text-text-primary justify-between pb-sm;
+
+      svg{
+          width: 33px;
+          height: 33px;
+      }
+  }
+
+  .links{
+        
+      @apply text-heading-s text-primary-main;
+
+      a{
+          @apply block pb-sm;
+      }
+  }
+}
+
+@screen dt{
+
+  .citizenAllServiceGrid{
+    display: flex-root !important;
+      @apply grid grid-cols-2 gap-4;
+    }
+    .links{
+        display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-gap: 1px;
+            gap: 1px;
+    }
+
+  .CitizenHomeCard{
+     padding: 16px !important;
+     margin-right:16px !important;
+     display:block !important;
+      box-shadow: rgb(50 50 93 / 18%) 0px 50px 100px -20px, rgb(0 0 0 / 16%) 0px 30px 60px -30px, rgb(10 37 64 / 17%) 0px -2px 6px 0px inset;
+      @apply inline-block mr-lg p-lg align-top;
+      .header{
+          @apply pb-lg text-heading-l-dt;
+          svg{
+              @apply w-12 h-12;
+          }
+      }
+  
+      .links{
+        
+          a{
+            
+              @apply pb-md
+          }
+      }
+  }
+}
