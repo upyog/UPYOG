@@ -13,6 +13,7 @@ import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.GuardianRelation;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
+import org.egov.user.persistence.dto.UserLoginAttemptAudit;
 import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
@@ -23,6 +24,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,8 +51,8 @@ public class UserRepository {
 	@Autowired
 	UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
 			AddressRepository addressRepository, UserResultSetExtractor userResultSetExtractor,
-			JdbcTemplate jdbcTemplate,
-			NamedParameterJdbcTemplate namedParameterJdbcTemplate, AuditRepository auditRepository) {
+			JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+			AuditRepository auditRepository) {
 		this.addressRepository = addressRepository;
 		this.roleRepository = roleRepository;
 		this.userTypeQueryBuilder = userTypeQueryBuilder;
@@ -58,9 +62,12 @@ public class UserRepository {
 		this.auditRepository = auditRepository;
 	}
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	/**
-	 * api will get the all users by userSearchCriteria.After that roles and
-	 * address are set in to the user object.
+	 * api will get the all users by userSearchCriteria.After that roles and address
+	 * are set in to the user object.
 	 *
 	 * @param userSearch
 	 * @return
@@ -79,7 +86,8 @@ public class UserRepository {
 				if (CollectionUtils.isEmpty(userSearch.getId()))
 					userSearch.setId(userIds);
 				else {
-					userSearch.setId(userSearch.getId().stream().filter(userIds::contains).collect(Collectors.toList()));
+					userSearch
+							.setId(userSearch.getId().stream().filter(userIds::contains).collect(Collectors.toList()));
 					if (CollectionUtils.isEmpty(userSearch.getId()))
 						return users;
 				}
@@ -98,7 +106,6 @@ public class UserRepository {
 		return users;
 	}
 
-
 	/**
 	 * get list of all userids with role in given tenant
 	 *
@@ -116,7 +123,6 @@ public class UserRepository {
 		return usersIds;
 	}
 
-
 	/**
 	 * Api will check user is present or not with userName And tenantId
 	 *
@@ -124,18 +130,18 @@ public class UserRepository {
 	 * @param tenantId
 	 * @return
 	 */
-	public boolean isUserPresent(String userName, String tenantId, UserType userType,String checkfor ) {
+	public boolean isUserPresent(String userName, String tenantId, UserType userType, String checkfor) {
 
 		String query = null;
 
 		final Map<String, Object> parametersMap = new HashMap<String, Object>();
-		if(checkfor.equalsIgnoreCase("username")) {
-			query=  userTypeQueryBuilder.getUserPresentByUserNameAndTenant();
+		if (checkfor.equalsIgnoreCase("username")) {
+			query = userTypeQueryBuilder.getUserPresentByUserNameAndTenant();
 			parametersMap.put("userName", userName);
 		}
 
-		else if(checkfor.equalsIgnoreCase("mobilenumber")) {
-			query=  userTypeQueryBuilder.getUserPresentByMobileAndTenant();
+		else if (checkfor.equalsIgnoreCase("mobilenumber")) {
+			query = userTypeQueryBuilder.getUserPresentByMobileAndTenant();
 			parametersMap.put("mobileNumber", userName);
 		}
 		parametersMap.put("tenantId", tenantId);
@@ -164,9 +170,8 @@ public class UserRepository {
 		final User savedUser = save(user);
 		if (user.getRoles().size() > 0) {
 			saveUserRoles(user);
-			if(user.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("EMPLOYEE"))
-			{
-				//saveHrmsEmployee(savedUser);
+			if (user.getRoles().stream().map(Role::getCode).collect(Collectors.toSet()).contains("EMPLOYEE")) {
+				// saveHrmsEmployee(savedUser);
 			}
 		}
 		final Address savedCorrespondenceAddress = saveAddress(user.getCorrespondenceAddress(), savedUser.getId(),
@@ -180,23 +185,26 @@ public class UserRepository {
 
 	private void saveHrmsEmployee(User savedUser) {
 		// INSERT INTO public.eg_hrms_employee
-		//(id, uuid, code, dateofappointment, employeestatus, employeetype, active, tenantid, createdby, createddate, lastmodifiedby, lastmodifieddate, reactivateemployee)
-		//VALUES(255, '734c267b-72d0-4fcc-91ad-5e9a00f44abb', 'PT_DOC_VERIFIER', NULL, NULL, NULL, true, 'mn.imphal', 'test', 123123, '12321', 123123, NULL);
-		Map<String, Object> employeeInputs = new HashMap<String, Object>();	
-		//rolecodes.remove("EMPLOYEE");
-		String code="EMPLOYEE";
+		// (id, uuid, code, dateofappointment, employeestatus, employeetype, active,
+		// tenantid, createdby, createddate, lastmodifiedby, lastmodifieddate,
+		// reactivateemployee)
+		// VALUES(255, '734c267b-72d0-4fcc-91ad-5e9a00f44abb', 'PT_DOC_VERIFIER', NULL,
+		// NULL, NULL, true, 'mn.imphal', 'test', 123123, '12321', 123123, NULL);
+		Map<String, Object> employeeInputs = new HashMap<String, Object>();
+		// rolecodes.remove("EMPLOYEE");
+		String code = "EMPLOYEE";
 		/*
 		 * Optional<String> optional=rolecodes.stream().findFirst();
 		 * if(optional.isPresent()) code=optional.get();
 		 */
-		String createdby=null;
-		System.out.println("Createdby::"+savedUser.getCreatedBy());
-		if(savedUser.getCreatedBy()!=null)
-			createdby=Long.toString(savedUser.getCreatedBy());
-		String lastmodifiedby=null;
-		if(savedUser.getLastModifiedBy()!=null)
-			lastmodifiedby=Long.toString(savedUser.getLastModifiedBy());	 
-		System.out.println("createdby::"+savedUser);
+		String createdby = null;
+		System.out.println("Createdby::" + savedUser.getCreatedBy());
+		if (savedUser.getCreatedBy() != null)
+			createdby = Long.toString(savedUser.getCreatedBy());
+		String lastmodifiedby = null;
+		if (savedUser.getLastModifiedBy() != null)
+			lastmodifiedby = Long.toString(savedUser.getLastModifiedBy());
+		System.out.println("createdby::" + savedUser);
 		employeeInputs.put("id", savedUser.getId());
 		employeeInputs.put("uuid", savedUser.getUuid());
 		employeeInputs.put("code", code);
@@ -206,11 +214,11 @@ public class UserRepository {
 		employeeInputs.put("active", true);
 		employeeInputs.put("tenantid", savedUser.getTenantId());
 		employeeInputs.put("createdby", createdby);
-		employeeInputs.put("createddate", (int)savedUser.getCreatedDate().getTime());
+		employeeInputs.put("createddate", (int) savedUser.getCreatedDate().getTime());
 		employeeInputs.put("lastmodifiedby", lastmodifiedby);
-		employeeInputs.put("lastmodifieddate", (int)savedUser.getLastModifiedDate().getTime());
-		employeeInputs.put("reactivateemployee", null);        
-		namedParameterJdbcTemplate.update(RoleQueryBuilder.INSERT_HRMS_EMPLOYEE,employeeInputs);
+		employeeInputs.put("lastmodifieddate", (int) savedUser.getLastModifiedDate().getTime());
+		employeeInputs.put("reactivateemployee", null);
+		namedParameterJdbcTemplate.update(RoleQueryBuilder.INSERT_HRMS_EMPLOYEE, employeeInputs);
 
 	}
 
@@ -218,12 +226,11 @@ public class UserRepository {
 	 * api will update the user details.
 	 *
 	 * @param user
-	 * @param uuid 
-	 * @param  
+	 * @param uuid
+	 * @param
 	 * @return
 	 */
 	public void update(final User user, User oldUser, long userId, String uuid) {
-
 
 		Map<String, Object> updateuserInputs = new HashMap<>();
 
@@ -251,14 +258,12 @@ public class UserRepository {
 				updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
 			else
 				updateuserInputs.put("BloodGroup", "");
-		}
-		else if (oldUser != null && oldUser.getBloodGroup() != null) {
+		} else if (oldUser != null && oldUser.getBloodGroup() != null) {
 			if (bloodGroupEnumValues.contains(oldUser.getBloodGroup()))
 				updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
 			else
 				updateuserInputs.put("BloodGroup", "");
-		}
-		else {
+		} else {
 			updateuserInputs.put("BloodGroup", "");
 		}
 
@@ -277,7 +282,7 @@ public class UserRepository {
 			} else if (Gender.OTHERS.toString().equals(user.getGender().toString())) {
 				updateuserInputs.put("Gender", 3);
 			} else if (Gender.TRANSGENDER.toString().equals(user.getGender().toString())) {
-				updateuserInputs.put("Gender", 4); 
+				updateuserInputs.put("Gender", 4);
 			} else {
 				updateuserInputs.put("Gender", 0);
 			}
@@ -288,7 +293,7 @@ public class UserRepository {
 
 		List<Enum> enumValues = Arrays.asList(GuardianRelation.values());
 		if (user.getGuardianRelation() != null) {
-			if(enumValues.contains(user.getGuardianRelation()))
+			if (enumValues.contains(user.getGuardianRelation()))
 				updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
 			else {
 				updateuserInputs.put("GuardianRelation", "");
@@ -324,7 +329,6 @@ public class UserRepository {
 		updateuserInputs.put("Signature", user.getSignature());
 		updateuserInputs.put("Title", user.getTitle());
 
-
 		List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
 		if (user.getType() != null) {
 			if (userTypeEnumValues.contains(user.getType()))
@@ -332,20 +336,20 @@ public class UserRepository {
 			else {
 				updateuserInputs.put("Type", "");
 			}
-		}
-		else {
+		} else {
 			updateuserInputs.put("Type", oldUser.getType().toString());
 		}
 
 		updateuserInputs.put("alternatemobilenumber", user.getAlternateMobileNumber());
 
 		updateuserInputs.put("LastModifiedDate", new Date());
-		updateuserInputs.put("LastModifiedBy", userId );
+		updateuserInputs.put("LastModifiedBy", userId);
 
 		updateAuditDetails(oldUser, userId, uuid);
 
 		namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
-		if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
+		if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles())
+				&& !oldUser.getRoles().equals(user.getRoles())) {
 			validateAndEnrichRoles(Collections.singletonList(user));
 			updateRoles(user);
 		}
@@ -363,13 +367,13 @@ public class UserRepository {
 		params.put("user_uuid", uuid);
 		params.put("attempt_date", attemptStartDate);
 
-		//		RowMapper<FailedLoginAttempt> rowMapper = (rs, rowNum) -> {
-		//			FailedLoginAttempt failedLoginAttempt = new FailedLoginAttempt();
-		//			failedLoginAttempt.setUserUuid(rs.getString("user_uuid"));
-		//			failedLoginAttempt.setIp(rs.getString("ip"));
-		//			failedLoginAttempt.setAttemptDate(rs.getLong("attempt_date"));
-		//			return failedLoginAttempt;
-		//		};
+		// RowMapper<FailedLoginAttempt> rowMapper = (rs, rowNum) -> {
+		// FailedLoginAttempt failedLoginAttempt = new FailedLoginAttempt();
+		// failedLoginAttempt.setUserUuid(rs.getString("user_uuid"));
+		// failedLoginAttempt.setIp(rs.getString("ip"));
+		// failedLoginAttempt.setAttemptDate(rs.getLong("attempt_date"));
+		// return failedLoginAttempt;
+		// };
 
 		return namedParameterJdbcTemplate.query(SELECT_FAILED_ATTEMPTS_BY_USER_SQL, params,
 				new BeanPropertyRowMapper<>(FailedLoginAttempt.class));
@@ -388,12 +392,40 @@ public class UserRepository {
 		return failedLoginAttempt;
 	}
 
+	public UserLoginAttemptAudit userLoginAttemptAudit(UserLoginAttemptAudit userLoginAttemptAudit) {
+
+		String sessionDetailsJson = null;
+		try {
+			sessionDetailsJson = objectMapper.writeValueAsString(userLoginAttemptAudit.getSession_details());
+		} catch (JsonProcessingException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		Map<String, Object> inputs = new HashMap<>();
+		inputs.put("uuid", userLoginAttemptAudit.getUuid());
+		inputs.put("attempt_date", userLoginAttemptAudit.getAttempt_date());
+		inputs.put("ip", userLoginAttemptAudit.getIp());
+		inputs.put("user_name", userLoginAttemptAudit.getUser_name());
+		inputs.put("user_uuid", userLoginAttemptAudit.getUser_uuid());
+		inputs.put("attempt_status", userLoginAttemptAudit.getAttempt_status());
+		inputs.put("user_agent", userLoginAttemptAudit.getUser_agent());
+		inputs.put("referrer", userLoginAttemptAudit.getReferrer());
+		inputs.put("url", userLoginAttemptAudit.getUrl());
+		inputs.put("session_details", sessionDetailsJson);
+		inputs.put("process_id", userLoginAttemptAudit.getProcess_id());
+		inputs.put("corelation_id", userLoginAttemptAudit.getCorelation_id());
+
+		namedParameterJdbcTemplate.update(UserTypeQueryBuilder.INSERT_LOGIN_ATTEMPT_AUDIT, inputs);
+
+		return userLoginAttemptAudit;
+	}
+
 	public void resetFailedLoginAttemptsForUser(String uuid) {
 
 		namedParameterJdbcTemplate.update(UserTypeQueryBuilder.UPDATE_FAILED_ATTEMPTS_SQL,
 				Collections.singletonMap("user_uuid", uuid));
 	}
-
 
 	/**
 	 * Fetch roles by role codes
@@ -403,7 +435,6 @@ public class UserRepository {
 	 * @return enriched roles
 	 */
 	private Set<Role> fetchRolesByCode(Set<String> roleCodes, String tenantId) {
-
 
 		Set<Role> validatedRoles = roleRepository.findRolesByCode(roleCodes, tenantId);
 
@@ -477,7 +508,6 @@ public class UserRepository {
 		return roleCodeMap;
 	}
 
-
 	/**
 	 * api will do the mapping between user and role.
 	 *
@@ -488,12 +518,9 @@ public class UserRepository {
 
 		for (Role role : entityUser.getRoles()) {
 			batchValues.add(
-					new MapSqlParameterSource("role_code", role.getCode())
-					.addValue("role_tenantid", role.getTenantId())
-					.addValue("user_id", entityUser.getId())
-					.addValue("user_tenantid", entityUser.getTenantId())
-					.addValue("lastmodifieddate", new Date())
-					.getValues());
+					new MapSqlParameterSource("role_code", role.getCode()).addValue("role_tenantid", role.getTenantId())
+							.addValue("user_id", entityUser.getId()).addValue("user_tenantid", entityUser.getTenantId())
+							.addValue("lastmodifieddate", new Date()).getValues());
 		}
 		namedParameterJdbcTemplate.batchUpdate(RoleQueryBuilder.INSERT_USER_ROLES,
 				batchValues.toArray(new Map[entityUser.getRoles().size()]));
@@ -546,8 +573,7 @@ public class UserRepository {
 			else {
 				userInputs.put("type", "");
 			}
-		}
-		else {
+		} else {
 			userInputs.put("type", "");
 		}
 
@@ -559,23 +585,20 @@ public class UserRepository {
 			else {
 				userInputs.put("guardianrelation", "");
 			}
-		}
-		else {
+		} else {
 			userInputs.put("guardianrelation", "");
 		}
 		userInputs.put("signature", entityUser.getSignature());
 		userInputs.put("accountlocked", entityUser.getAccountLocked());
 
-
 		List<Enum> bloodGroupEnumValues = Arrays.asList(BloodGroup.values());
-		if(entityUser.getBloodGroup() != null){
+		if (entityUser.getBloodGroup() != null) {
 			if (bloodGroupEnumValues.contains(entityUser.getBloodGroup()))
 				userInputs.put("bloodgroup", entityUser.getBloodGroup().toString());
 			else {
 				userInputs.put("bloodgroup", "");
 			}
-		}
-		else {
+		} else {
 			userInputs.put("bloodgroup", "");
 		}
 
@@ -616,7 +639,6 @@ public class UserRepository {
 		return null;
 	}
 
-
 	/**
 	 * api will update the user Roles.
 	 *
@@ -634,9 +656,8 @@ public class UserRepository {
 		return tenantId.split("\\.")[0];
 	}
 
-
 	private void updateAuditDetails(User oldUser, long userId, String uuid) {
-		auditRepository.auditUser(oldUser,userId,uuid);
+		auditRepository.auditUser(oldUser, userId, uuid);
 
 	}
 

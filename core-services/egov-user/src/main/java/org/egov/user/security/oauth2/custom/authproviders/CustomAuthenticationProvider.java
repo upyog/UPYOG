@@ -172,12 +172,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
 			final SecureUser secureUser = new SecureUser(getUser(user));
+			userService.userLoginFaliedAuditReport(user,request,"SUCCESS");
+
 			userService.resetFailedLoginAttempts(user);
 			return new UsernamePasswordAuthenticationToken(secureUser, password, grantedAuths);
 		} else {
 			// Handle failed login attempt
 			// Fetch Real IP after being forwarded by reverse proxy
+			
 			userService.handleFailedLogin(user, request.getHeader(IP_HEADER_NAME), requestInfo);
+			userService.userLoginFaliedAuditReport(user,request,"FAILED");
 
 			throw new OAuth2Exception("Invalid login credentials");
 		}
@@ -206,9 +210,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				return true;
 			}
 			try {
+				//For Local Testing
+				if (captchaForDev)
 				password=userService.decrypt(password, key);
 			} catch (Exception e) {
-				throw new CustomException("DECRYPTION_ERROR","Error occurred during decryption::"+e.getLocalizedMessage());
+				throw new CustomException("DECRYPTION_ERROR","Error occurred during decryption");
 			}
 			return bcrypt.matches(password, user.getPassword());
 		}

@@ -25,6 +25,7 @@ public class ResponseEnhancementFilter extends ZuulFilter {
 	private static final String CACHE_CONTROL = "Cache-Control";
 	private static final String CORRELATION_HEADER_NAME = "x-correlation-id";
     private static final String RECEIVED_RESPONSE_MESSAGE = "Received response code: {} from upstream URI {}";
+    private static final String PERMISSIONS_POLICY="Permissions-Policy";
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -55,7 +56,7 @@ public class ResponseEnhancementFilter extends ZuulFilter {
         ctx.addZuulResponseHeader(X_FRAME_OPTIONS,"DENY");
         ctx.addZuulResponseHeader(X_XSS_PROTECTION,"1; mode=block");
         ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'");
-
+        ctx.addZuulResponseHeader(PERMISSIONS_POLICY, "geolocation=(self)");
         return null;
     }
 
