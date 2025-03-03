@@ -8,6 +8,7 @@ import InboxFilter from "./components/inbox/NewInboxFilter";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
 import Maintenance from "./pages/Maintenance";
+import EditMaintenance from "./pages/EditMaintenance";
 import DisposeResponse from "./pages/AssetDisposeResponse";
 import ProcessDepreciationResponse from "./pages/ProcessDepreciationResponse";
 import ReturnResponse from "./pages/ReturnResponse";
@@ -29,6 +30,7 @@ import NewResponse from "./pages/employee/TestApplication/Create/NewResponse";
 import AssetAssign from "./pageComponents/AssetAssign";
 import AssetDispose from "./pageComponents/AssetDispose";
 import AssetMaintenance from "./pageComponents/AssetMaintenance";
+import EditAssetMaintenancePage from "./pageComponents/EditAssetMaintenancePage";
 import ReturnAsset from "./pages/employee/ReturnAsset";
 import ReturnAssignedAsset from "./pageComponents/ReturnAssignedAsset";
 // import EditAsset from "./pages/employee/EditAsset";
@@ -36,6 +38,7 @@ import EditAsset from "./pages/employee/EditAsset/EditAsset";
 import EditGeneralDetails from "./pageComponents/EditGeneralDetails";
 import EditAssetDetails from "./pageComponents/EditAssetDetails";
 import EditResponse from "./pages/employee/EditResponse";
+import EditAssetMaintenance from "./pages/employee/EditAssetMaintenance";
 
 
 
@@ -55,15 +58,18 @@ const componentsToRegister = {
   NewDocument,
   ASTCheckPage,
   NewResponse,
+  EditAssetMaintenancePage,
   ApplicationDetails,
   AssetResponse: Response, 
   Maintenance, 
+  EditMaintenance,
   DisposeResponse, 
   ProcessDepreciationResponse,
   returnResponse:ReturnResponse,
   AssetAssign,
   AssetDispose,
   AssetMaintenance,
+  EditAssetMaintenance,
   returnAssets:ReturnAsset,
   ReturnAssignedAsset,
   editAsset:EditAsset,
