@@ -592,7 +592,8 @@ public class PropertyValidator {
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
 				&& null == criteria.getLocality()
-				&& (null == criteria.getFromDate() && null == criteria.getToDate());
+				&& (null == criteria.getFromDate() && null == criteria.getToDate())
+				&& CollectionUtils.isEmpty(criteria.getStatus());
 		
 		if (isUserCitizen) {
 			criteria.setIsCitizen(true);
@@ -659,7 +660,8 @@ public class PropertyValidator {
 				&& null == criteria.getName() && null == criteria.getDocumentNumbers()
 				&& null == criteria.getPropertyType() && null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId() && null == criteria.getLocality()
-				&& (null == criteria.getFromDate() && null == criteria.getToDate());
+				&& (null == criteria.getFromDate() && null == criteria.getToDate())
+				&& CollectionUtils.isEmpty(criteria.getStatus());
 		return isCriteriaEmpty;
 	}
 

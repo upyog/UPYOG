@@ -1140,16 +1140,40 @@ public class GarbageAccountService {
 		// validate search criteria
 		validateAndEnrichSearchGarbageAccount(searchCriteriaGarbageAccountRequest);
 
+		List<GarbageAccount> grbgAccs = new ArrayList<>();
+		List<GarbageAccount> grbgAccsCreatedBy = new ArrayList<>();
+		Set<GarbageAccount> finalgrbgAccs = new HashSet<>();
+		List<GarbageAccount> finalgrbgAccsList = new ArrayList<>();
+
 		// search garbage account
-		List<GarbageAccount> grbgAccs = garbageAccountRepository
+		grbgAccs = garbageAccountRepository
 				.searchGarbageAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
+
+		if (isCriteriaEmpty(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount())
+				&& null != searchCriteriaGarbageAccountRequest.getRequestInfo()
+				&& null != searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo()
+				&& searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getType()
+						.equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)) {
+			SearchCriteriaGarbageAccount searchCriteriaGarbageAccountCreatedBy = SearchCriteriaGarbageAccount.builder()
+					.createdBy(Collections.singletonList(
+							searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()))
+					.tenantId(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId())
+					.build();
+
+			grbgAccsCreatedBy = garbageAccountRepository.searchGarbageAccount(searchCriteriaGarbageAccountCreatedBy);
+		}
+
+		finalgrbgAccs.addAll(grbgAccs);
+		finalgrbgAccs.addAll(grbgAccsCreatedBy);
+
+		finalgrbgAccsList = finalgrbgAccs.stream().collect(Collectors.toList());
 
 //		//search child garbage accounts
 //		grbgAccs.stream().forEach(grbgAccTemp -> {
 //			searchChildGarbageAccounts(grbgAccTemp);
 //		});
 
-		GarbageAccountResponse garbageAccountResponse = getSearchResponseFromAccounts(grbgAccs);
+		GarbageAccountResponse garbageAccountResponse = getSearchResponseFromAccounts(finalgrbgAccsList);
 
 		if (CollectionUtils.isEmpty(garbageAccountResponse.getGarbageAccounts())) {
 			garbageAccountResponse.setResponseInfo(responseInfoFactory
@@ -1214,10 +1238,8 @@ public class GarbageAccountService {
 						List<String> listOfStatus = getAccountStatusListByRoles(
 								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId(),
 								requestInfo.getUserInfo().getRoles());
-						if (CollectionUtils.isEmpty(listOfStatus)) {
-							searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
-							.setCreatedBy(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
-						} else {
+						if (!CollectionUtils.isEmpty(listOfStatus) && isCriteriaEmpty(
+								searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount())) {
 							searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount()
 									.setStatus(listOfStatus);
 						}
@@ -1233,6 +1255,16 @@ public class GarbageAccountService {
 			}
 		}
 
+	}
+	
+	public Boolean isCriteriaEmpty(SearchCriteriaGarbageAccount criteria) {
+		Boolean isCriteriaEmpty = CollectionUtils.isEmpty(criteria.getId())
+				&& CollectionUtils.isEmpty(criteria.getGarbageId()) && CollectionUtils.isEmpty(criteria.getPropertyId())
+				&& CollectionUtils.isEmpty(criteria.getUuid()) && CollectionUtils.isEmpty(criteria.getType())
+				&& CollectionUtils.isEmpty(criteria.getName()) && CollectionUtils.isEmpty(criteria.getMobileNumber())
+				&& CollectionUtils.isEmpty(criteria.getApplicationNumber())
+				&& CollectionUtils.isEmpty(criteria.getStatus());
+		return isCriteriaEmpty;
 	}
 
 	private List<String> getAccountStatusListByRoles(String tenantId, List<Role> roles) {
