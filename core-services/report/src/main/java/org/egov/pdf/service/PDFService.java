@@ -310,7 +310,7 @@ public class PDFService {
 		String apiUrl = mdmsHost + searchEndPoint;
 //		Object payload = getSearchPayload();
 //		Object object = mdmsCall(apiUrl, payload);
-		List<String> signatures = getSignatureFromMdms(pdfRequest.getRequestInfo(), userName);
+		List<String> signatures = getSignatureFromMdms(pdfRequest.getRequestInfo(), userName, pdfRequest.getTenantId());
 		
 		if (CollectionUtils.isEmpty(signatures)) {
 		    throw new CustomException("FETCH_SIGNATURE_FAILED", "Failed to fetch signature from mdms.");
@@ -319,7 +319,7 @@ public class PDFService {
 		}
 		
 	}
-	private List<String> getSignatureFromMdms(RequestInfo requestInfo, String userName) {
+	private List<String> getSignatureFromMdms(RequestInfo requestInfo, String userName, String tenantId) {
 		log.info("Inside method getSignatureFromMdms");
 		String apiUrl = mdmsHost + searchEndPoint;
 		HttpHeaders headers = new HttpHeaders();
@@ -328,7 +328,7 @@ public class PDFService {
 		String authToken = "0648993a-dfd7-4259-90c8-57243fc84061";
 
 		String requestBody = "{\n" + "    \"RequestInfo\": {\n" + "        \"authToken\": \"" + authToken + "\"\n"
-				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \"hp\",\n"
+				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \""+tenantId+"\",\n"
 				+ "        \"moduleDetails\": [\n" + "            {\n"
 				+ "                \"moduleName\": \"Signature\",\n" + "                \"masterDetails\": [\n"
 				+ "                    {\n" + "                        \"name\": \"Signature\"\n"
