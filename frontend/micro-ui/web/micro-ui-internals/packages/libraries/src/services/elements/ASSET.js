@@ -100,6 +100,17 @@ export const ASSETService = {
       params: {},
       auth: true,
     }),
+    edit_maintenance: (details, tenantId) =>
+      Request({
+        url: Urls.asset.edit_maintenance,
+        data: details,
+        useCache: false,
+        setTimeParam: false,
+        userService: true,
+        method: "POST",
+        params: {},
+        auth: true,
+      }),
     disposalList: (details, tenantId) =>
       Request({
         url: Urls.asset.disposalList,

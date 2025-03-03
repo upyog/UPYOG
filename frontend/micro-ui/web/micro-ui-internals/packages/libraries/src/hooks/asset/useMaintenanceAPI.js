@@ -13,7 +13,7 @@ export const useMaintenanceAPI = (tenantId, type = true) => {
   else {
     return useMutation((data)  => {
       console.log('false -->' , data)
-      return ASSETService.update(data, tenantId)
+      return ASSETService.edit_maintenance(data, tenantId)
     });
   }
 };
