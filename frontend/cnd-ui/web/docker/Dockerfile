@@ -1,6 +1,10 @@
 FROM upyogio/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
+RUN yarn add @nudmcdgnpm/digit-ui-libraries
+RUN yarn add @upyog/digit-ui-module-core
+RUN yarn add @upyog/digit-ui-module-common
+RUN yarn add @nudmcdgnpm/upyog-ui-module-cnd
 
 ARG WORK_DIR
 WORKDIR /app
