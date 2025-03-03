@@ -116,7 +116,7 @@ const AddVendor = ({ parentUrl, heading }) => {
           mobileNumber: phone,
         },
         additionalDetails: {
-          description:additionalDetails,
+          serviceType:additionalDetails, //as fetch serviceType
         },
         vehicle: [],
         drivers: [],

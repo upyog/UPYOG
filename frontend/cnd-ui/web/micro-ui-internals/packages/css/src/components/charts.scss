@@ -1,0 +1,333 @@
+.chartHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .sideContent {
+    @apply flex justify-around items-center ;
+
+  }
+}
+
+.searchInput {
+  @apply mr-lg;
+  input{
+    margin-bottom: 0;
+    @apply pr-xl;
+  }
+}
+
+.signature-img{
+  top: 8px;
+  right: 8px;
+  fill: #505A5F;
+  @apply absolute;
+}
+
+.column-direction {
+  flex-direction: column;
+}
+
+.chart-wrapper {
+  padding: 0 10px;
+  margin-top: 60px;
+}
+
+.chart-row {
+  @apply flex justify-between flex-wrap;
+  .chart-item {
+    flex-grow: 1;
+    margin-bottom: 15px;
+    width: 100%;
+
+    &:last-child {
+      margin-right: 0px;
+    }
+  }
+}
+
+.cursorPointer {
+  @apply cursor-pointer;
+}
+
+.options {
+  @apply flex justify-between items-center;
+  div {
+    display: none;
+  }
+}
+
+.options-m {
+  width: 95%;
+  margin: 0 auto 15px;
+  @apply flex justify-between;
+
+  svg {
+    margin-right: 10px;
+  }
+}
+
+.options-m {
+  div {
+    @apply flex;
+  }
+}
+.no-data {
+  @apply flex justify-center items-center;
+  height: 90%;
+  margin-bottom: 40px;
+  white-space:pre;
+}
+
+@screen dt {
+  .chart-wrapper {
+    padding-left: 15px;
+    margin-top: 10px;
+
+    .chart-item {
+      margin-right: 25px !important;
+      margin-bottom: 25px !important;
+      margin-left: 0 !important;
+      width: 31%;
+    }
+  }
+  .column-direction {
+    flex-direction: row;
+  }
+  .options-m {
+    display: none;
+  }
+
+  .options {
+    div {
+      @apply flex cursor-pointer;
+    }
+  }
+}
+
+.showMore {
+  @apply text-right cursor-pointer;
+  color: #a82227;
+}
+
+@media (max-width: 420px) { 
+  .recharts-default-tooltip {
+    width: 85%;
+    ul {
+      width: 100% !important;
+    }
+    ul li {
+      width: 100%;
+      display: flex !important;
+      flex-wrap: wrap;
+    }
+  }  
+}
+
+
+@media print{
+  .page-break {
+    margin-top: 1rem;
+    display: block;
+    page-break-before: auto;
+  }
+  .chart-wrapper {
+   @media print{
+    .chart-row {
+      @media print{
+      @apply flex justify-between flex-wrap;
+        .chart-item {
+          @media print{
+            flex-grow: 1;
+            margin-right: 25px;
+            margin-bottom: 25px;
+            width: 31%;
+        
+            &:last-child {
+              margin-right: 0px;
+            }
+            .chartHeader {
+              display: flex;
+              justify-content: space-between;
+            
+              .sideContent {
+                @apply flex justify-around items-center ;
+            
+                .searchInput {
+                  @apply mr-lg;
+                  input{
+                    margin-bottom: 0;
+                    @apply pr-xl;
+                  }
+                }
+            
+                .signature-img{
+                  top: 8px;
+                  right: 8px;
+                  fill: #505A5F;
+                  @apply absolute;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+        
+    .options {
+      @apply flex justify-end;
+    }
+
+    .options-m {
+      display: none;
+    }
+  }
+}
+}
+
+.astericColor {
+  color: #a82227 !important;
+}
+
+.SVTableHeader {
+  display: flex;
+  padding-left: 26px;
+  width: 150px;
+}
+
+.SVTableCells {
+  padding-left: 80px;
+  width: 10px;
+}
+
+.SVCheckbox {
+  width: 14px;
+}
+
+.svsearchbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.svsearchfield {
+  display: flex;
+  flex-direction: column;
+}
+
+.svclearall {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px !important;
+  border: 3px solid #e5e5e5;
+  border-top: 3px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 4px;
+  transform-origin: center center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+.status-card {
+  width: 24%;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-card .count {
+  font-size: 36px;
+  font-weight: bold;
+  display: block;
+}
+
+.status-card .title {
+  font-size: 18px;
+  margin-top: 10px;
+  display: block;
+}
+
+.status-card .more-info {
+  font-size: 12px;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.status-card.blue {
+  background-color: rgba(239, 124, 91, 0.60);
+}
+
+.status-card.teal {
+  background-color: #20c997;
+}
+
+.status-card.purple {
+  background-color: rgba(4, 139, 208, 0.85);
+}
+
+.status-card.green {
+  background-color: rgba(75, 31, 165, 0.60);
+}
+
+.typing_indicator {
+  display: flex;
+  gap: 4px;
+}
+
+.typing_indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: #90949c;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.typing_indicator span:nth-child(1) { 
+  animation-delay: -0.32s; 
+}
+
+.typing_indicator span:nth-child(2) { 
+  animation-delay: -0.16s; 
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { 
+    transform: translateY(0); 
+  }
+  40% { 
+    transform: translateY(-6px); 
+  }
+}
+
+.card-container {
+  width: 100%;  /* Set the width to 100% */
+  padding: 20px;  /* Padding inside the card */
+  border-radius: 8px;  /* Rounded corners */
+  background-color: #f9f9f9;  /* Light background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Shadow effect */
+  margin: 20px 0;  /* Space from the top and bottom */
+  box-sizing: border-box;  /* Ensures padding is included in the element's total width */
+}
+
+.card-container .field {
+  margin-bottom: 10px;  /* Spacing between form fields inside the card */
+}

@@ -95,7 +95,8 @@ export const ASSETSearch = {
         row.warrantyStatus,
         row.costOfMaintenance,
         row.maintenanceCycle,
-        row.documents
+        row.documents,
+        {editButton: true, data: row}
       ]
     )) || [];
 
@@ -214,7 +215,8 @@ export const ASSETSearch = {
             `${t("AST_WARRANTY_STATUS")}`,
             `${t("AST_COST_OF_MAINTENANCE")}`,
             `${t("AST_MAINTENANCE_CYCLE")}`,
-            `${t("AST_MAINTENANCE_DOCUMENT")}`
+            `${t("AST_MAINTENANCE_DOCUMENT")}`,
+            `${t("AST_MAINTENANCE_ACTION")}`
           ]
           : [`${t("AST_NO_MAINTENANCE_DATA")}`],
         tableRows: maintenanceListRows,
@@ -257,7 +259,7 @@ export const ASSETSearch = {
       }
     });
 
-    console.log('maintenanceList :- ',maintenanceList?.AssetMaintenance[0]?. documents)
+    // console.log('maintenanceList :- ',maintenanceList?.AssetMaintenance[0]?. documents)
 
     const disposalList = await Digit.ASSETService.disposalList({
       searchCriteria: {

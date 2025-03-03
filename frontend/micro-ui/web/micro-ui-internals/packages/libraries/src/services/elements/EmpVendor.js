@@ -21,6 +21,15 @@ export const VendorService = {
       params: { tenantId },
       auth: true,
     }),
+    vendorcommonSearch: ({ tenantId, filters, auth }) =>
+      Request({
+        url:Urls.vendor.vendorcommonSearch,
+        useCache: false,
+        method: "POST",
+        auth: auth === false ? auth : true,
+        userService: auth === false ? auth : true,
+        params: { tenantId, ...filters },
+      }),
     createVendorAdditionaldetails: (details, tenantId) => 
       Request({
         url: Urls.vendor.additionaldetailsCreate,
@@ -30,5 +39,5 @@ export const VendorService = {
         method: "POST",
         params: { tenantId },
         auth: true,
-      }),
+      })
 };

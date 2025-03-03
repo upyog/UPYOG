@@ -97,12 +97,14 @@ module.exports = function (app) {
     "/asset-services/v1/disposal/_create",
     "/request-service/water-tanker/v1/_create",
     "/asset-services/maintenance/v1/_create",
+    "/asset-services/maintenance/v1/_update",
     "/asset-services/maintenance/v1/_search",
     "/asset-services/v1/disposal/_search",
     "/request-service/water-tanker/v1/_search",
     "/request-service/water-tanker/v1/_update",
     "/vendor-management/api/v1/_create",
     "/sv-services/street-vending/_createdemand",
+    "/vendor-management/api/v1/vendorPlusAdditional/_search",
     
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

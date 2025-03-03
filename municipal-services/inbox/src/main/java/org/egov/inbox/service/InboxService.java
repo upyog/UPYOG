@@ -40,6 +40,8 @@ import static org.egov.inbox.util.CommunityHallConstants.CHB;
 import static org.egov.inbox.util.CommunityHallConstants.CHB_BOOKING_NO_PARAM;
 import static org.egov.inbox.util.RequestServiceConstants.BOOKING_NO_PARAM;
 import static org.egov.inbox.util.RequestServiceConstants.RS;
+import static org.egov.inbox.util.CNDServiceConstants.CND;
+import static org.egov.inbox.util.CNDServiceConstants.APPLICATION_NO_PARAM;
 
 import java.util.*;
 import java.util.function.Function;
@@ -140,6 +142,9 @@ public class InboxService {
 	
 	@Autowired
 	private RequestServiceInboxFilterService requestServiceInboxFilterService;
+	
+	@Autowired
+	private CNDInboxFilterService cndServiceInboxFilterService;
 	
 	@Autowired
 	private RestTemplate restTemplate;
@@ -412,8 +417,8 @@ public class InboxService {
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
-					//moduleSearchCriteria.remove(LOCALITY_PARAM);
-					//moduleSearchCriteria.remove(OFFSET_PARAM);
+					// moduleSearchCriteria.remove(LOCALITY_PARAM);
+					// moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
@@ -434,8 +439,6 @@ public class InboxService {
 				}
 			} // for ewaste service
 
-			
-			
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(CHB)) {
 
 				List<String> applicationNumbers = communityHallInboxFilterService
@@ -456,6 +459,20 @@ public class InboxService {
 						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			// for CND service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(CND)) {
+
+				List<String> applicationNumbers = cndServiceInboxFilterService
+						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(APPLICATION_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
@@ -801,7 +818,7 @@ public class InboxService {
 							Inbox inbox = new Inbox();
 							inbox.setProcessInstance(processInstanceMap.get(businessKey));
 							inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
-							if(inbox.getProcessInstance() != null)
+							if (inbox.getProcessInstance() != null)
 								inboxes.add(inbox);
 						});
 					} else {
@@ -813,7 +830,7 @@ public class InboxService {
 							inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
 							inbox.setServiceObject(toMap(
 									(JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
-							if(inbox.getProcessInstance() != null)
+							if (inbox.getProcessInstance() != null)
 								inboxes.add(inbox);
 						}
 					}
