@@ -515,7 +515,7 @@ public class UserService {
 		// updatePasswordRequest.setNewPassword(newDecryptedPass);
 		validateExistingPassword(user, loggedInUserUpdatePasswordRequest.getExistingPassword());
 		validatePassword(loggedInUserUpdatePasswordRequest.getNewPassword());
-		if (bcrypt.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
+		if (bcrypt.matches(loggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
 			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
 		}
