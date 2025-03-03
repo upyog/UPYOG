@@ -30,6 +30,10 @@ window.Digit.ComponentRegistryService.setupRegistry({
 
 // initBillsComponents();
 
+const moduleReducers = (initData) => ({
+  // pgr: PGRReducers(initData),
+});
+
 
 function App() {
   const stateCode =
