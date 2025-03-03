@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import LocationPopup from "../components/LocationPopup";
 
 
-const Pickup =({t, config, onSelect, userType, formData}) => {
-  console.log("tefgsvbdfvsgf",formData);
+
+const RequestPickup = ({t, config, onSelect, userType, formData}) => {
   const [requestType, setRequestType] = useState(formData?.requestType?.requestType || "");
   const [showLocationPopup, setShowLocationPopup] = useState(false);
 
@@ -12,7 +12,7 @@ const Pickup =({t, config, onSelect, userType, formData}) => {
       {
         code: "REQ_PICK_UP",
         i18nKey: "REQ_PICK_UP",
-        value: "Request For Pickup"
+        value: "Request For Pickup Waste"
       },
       {
         code: "DEP_DIRECT_CENTRE",
@@ -79,4 +79,4 @@ const Pickup =({t, config, onSelect, userType, formData}) => {
 
 }
 
-export default Pickup;
+export default RequestPickup;
