@@ -15,6 +15,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import UploadDrawer from "./ImageUpload/UploadDrawer";
+import CryptoJS from "crypto-js";
+
 
 const defaultImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAADUCAMAAACs0e/bAAAAM1BMVEXK0eL" +
@@ -176,6 +178,21 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     }, duration);
   };
 
+   const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // Ensure 16 bytes key
+    const generateIV = () => CryptoJS.lib.WordArray.random(16);
+    
+    const encryptPassword = (plainText) => {
+      const iv = generateIV();
+      const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+        mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
+        padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
+        iv: iv, 
+      });
+      return iv.toString(CryptoJS.enc.Base64) + ":" + encrypted.toString();
+    
+      // return encrypted.toString(); // Returns Base64 encoded encrypted text
+    };
+
   const updateProfile = async () => {
     setLoading(true);
     try {
@@ -233,6 +250,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       }
 
       if (currentPassword.length && newPassword.length && confirmPassword.length) {
+        
         const requestData = {
           existingPassword: currentPassword,
           newPassword: newPassword,
@@ -244,6 +262,13 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
         if (newPassword === confirmPassword) {
           try {
+            const existingPass = encryptPassword(currentPassword);
+            const newPass = encryptPassword(newPassword);
+            const confPass = encryptPassword(confirmPassword);
+            requestData.newPassword = newPass;
+            requestData.confirmPassword = confPass;
+            requestData.existingPassword = existingPass;
+            
             const res = await Digit.UserService.changePassword(requestData, tenant);
 
             const { responseInfo: changePasswordResponseInfo } = res;
