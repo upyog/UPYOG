@@ -1,3 +1,5 @@
+// PostCSS is a Node.js tool that transforms your styles using JavaScript plugins.
+
 const postcssPresetEnv = require("postcss-preset-env");
 
 module.exports = {
