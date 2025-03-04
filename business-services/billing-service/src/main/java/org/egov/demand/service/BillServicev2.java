@@ -1455,9 +1455,9 @@ public class BillServicev2 {
 						advancedBillAmount=BigDecimal.ZERO;
 					}
 
-					calculationFinalDateForInterest = currentDateWithAssesmentYear(currentyear.toString());
+					calculationFinalDateForInterest = currentDateWithAssesmentYear(nextYear.toString());
 					//"01-03-2025"
-					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(currentyear.toString()));
+					noFODays = 	getDateDifference(firstDayAfterexpiryDateQ3,currentDateWithAssesmentYear(nextYear.toString()));
 					if(previousYear) {
 						noFODays=new BigDecimal(Q3FlatDays);
 						totalAMountForInterest = totalAMountForInterest.add(adjustedQ3Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));

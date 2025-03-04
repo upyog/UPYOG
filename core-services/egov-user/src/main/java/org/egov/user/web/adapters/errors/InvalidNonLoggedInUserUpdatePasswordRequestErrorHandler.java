@@ -3,6 +3,7 @@ package org.egov.user.web.adapters.errors;
 import org.egov.common.contract.response.Error;
 import org.egov.common.contract.response.ErrorField;
 import org.egov.common.contract.response.ErrorResponse;
+import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
 import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
 import org.springframework.http.HttpStatus;
 
@@ -29,6 +30,10 @@ public class InvalidNonLoggedInUserUpdatePasswordRequestErrorHandler
     private static final String NEW_PASSWORD_MANDATORY_MESSAGE = "New password is mandatory";
 
     private static final String PASSWORD_UPDATE_FAILED_MESSAGE = "Password update failed.";
+    
+    private static final String PASSWORD_USED_PREVIOUSLY_CODE="PASSWORD_USED_PREVIOUSLY";
+    private static final String PASSWORD_USED_PREVIOUSLY_MESSAGE="Password Already Used Previously";
+    private static final String PASSWORD_USED_PREVIOUSLY_FIELD="newPassword";
 
     @Override
     public ErrorResponse adapt(NonLoggedInUserUpdatePasswordRequest model) {
@@ -45,10 +50,11 @@ public class InvalidNonLoggedInUserUpdatePasswordRequestErrorHandler
 
     private List<ErrorField> getErrorFields(NonLoggedInUserUpdatePasswordRequest model) {
         final ArrayList<ErrorField> errorFields = new ArrayList<>();
-        addMobileNumberMandatoryError(model, errorFields);
-        addOtpReferenceMandatoryError(model, errorFields);
-        addTenantIdMandatoryError(model, errorFields);
-        addNewPasswordMandatoryError(model, errorFields);
+       // addMobileNumberMandatoryError(model, errorFields);
+       // addOtpReferenceMandatoryError(model, errorFields);
+      //  addTenantIdMandatoryError(model, errorFields);
+     //   addNewPasswordMandatoryError(model, errorFields);
+        passwordUsedPreviously(model, errorFields);
         return errorFields;
     }
 
@@ -100,6 +106,18 @@ public class InvalidNonLoggedInUserUpdatePasswordRequestErrorHandler
                 .code(MOBILE_NUMBER_MANDATORY_CODE)
                 .field(MOBILE_NUMBER_MANDATORY_FIELD)
                 .message(MOBILE_NUMBER_MANDATORY_MESSAGE)
+                .build();
+        errorFields.add(errorField);
+    }
+    
+    private void passwordUsedPreviously(NonLoggedInUserUpdatePasswordRequest model, ArrayList<ErrorField> errorFields) {
+        if (model.getNewPassword()==null) {
+            return;
+        }
+        final ErrorField errorField = ErrorField.builder()
+                .code(PASSWORD_USED_PREVIOUSLY_CODE)
+                .field(PASSWORD_USED_PREVIOUSLY_FIELD)
+                .message(PASSWORD_USED_PREVIOUSLY_MESSAGE)
                 .build();
         errorFields.add(errorField);
     }
