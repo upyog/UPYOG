@@ -8,6 +8,7 @@ import CustomTable from "./CustomTable";
 import FilterContext from "./FilterContext";
 import GenericChart from "./GenericChart";
 import MetricChart from "./MetricChart";
+import MetricChartNew from "./MetricChartNew";
 import Summary from "./Summary";
 
 let index = 1;
@@ -26,7 +27,7 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
   const { value } = useContext(FilterContext);
   const [searchQuery, onSearch] = useState("");
   const [chip, updateChip] = useState({});
-  const moduleCode = services.filter((e) => configName?.includes(e.name))?.[0]?.code;
+  const moduleCode = services?.filter((e) => configName?.includes(e.name))?.[0]?.code;
   const renderChart = (chart, title, moduleCode) => {
     switch (chart.chartType) {
       case "table":
@@ -61,7 +62,9 @@ const Layout = ({ rowData, forHome = false, services, configName }) => {
       case "metric-collection":
         return (
           <GenericChart header={visualizer.name} className="metricsTable" key={key} value={value}>
-            <MetricChart data={visualizer} moduleCode={moduleCode} />
+            {window.location.href.includes("main-dashboard-landing")?
+            <MetricChartNew  data={visualizer} moduleCode={moduleCode} />:
+            <MetricChart data={visualizer} moduleCode={moduleCode} />}
           </GenericChart>
         );
       case "chart":

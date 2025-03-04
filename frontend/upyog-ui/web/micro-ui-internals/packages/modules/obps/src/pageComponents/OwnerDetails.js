@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll, getPattern, convertDateTimeToEpoch, convertDateToEpoch } from "../utils";
 import Timeline from "../components/Timeline";
 import cloneDeep from "lodash/cloneDeep";
+import { PTService } from "../../../../libraries/src/services/elements/PT";
 
 const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     let validation = {};
@@ -19,6 +20,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
     const [gender, setGender] = useState(formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
+    const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [showToast, setShowToast] = useState(null);
     const [isDisable, setIsDisable] = useState(false);
     const [ownerRoleCheck, setownerRoleCheck] = useState({});
@@ -27,22 +29,23 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
-    const [fields, setFeilds] = useState(
+    let [fields, setFeilds] = useState(
         (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
 
     useEffect(() => {
         var flag=0;
-        fields.map((ob) => {
-            if(ob.isPrimaryOwner)
+        fields?.map((ob) => {
+            if(ob?.isPrimaryOwner)
             flag=1;
-            if (ob.name && ob.mobileNumber && ob.gender) {
+            if (ob?.name && ob?.mobileNumber && ob?.gender) {
                 setCanmovenext(false);
             }
             else {
                 setCanmovenext(true);
             }
         })
+        console.log("fields",fields,canmovenext,ownershipCategory)
         if(!canmovenext && ownershipCategory && !(ownershipCategory?.code.includes("SINGLEOWNER")))
         {
             if(flag==1)
@@ -51,6 +54,18 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setCanmovenext(true);
         }
     }, [fields])
+    const validateEmail=(value)=>{
+        const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+        if(value===""){
+          setError("");
+        }
+        else if(emailPattern.test(value)){
+          setError("");
+        }
+        else{
+          setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));
+        }
+      }
 
     useEffect(() => {
         const values = cloneDeep(fields);
@@ -123,7 +138,31 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             setCanmovenext(false);
         }
     }
-
+    function setOwnerEmail(i, e) {
+        let units = [...fields];
+        units[i].emailId = e.target.value;
+        setEmail(e.target.value);
+        setFeilds(units);
+        if (units[i].gender && units[i].mobileNumber && units[i].name) {
+            setCanmovenext(false);
+        }
+    }   
+    const handleEmailChange=(i, e)=>{
+        const value=e.target.value;
+        let units = [...fields];
+        units[i].emailId = value;
+        setEmail(value);
+        setFeilds(units);
+        validateEmail(value);
+        if (units[i].gender && units[i].mobileNumber && units[i].name ) {
+            setCanmovenext(false);
+        }
+    }
+    useEffect(() => {
+        if(emailId){
+          validateEmail(emailId);
+        }
+    }, [emailId])
     function setGenderName(i, value) {
         let units = [...fields];
         units[i].gender = value;
@@ -150,6 +189,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         units[i].isPrimaryOwner = ismultiple ? e.target.checked : true;
         setisPrimaryOwner(e.target.checked);
         setFeilds(units);
+        console.log("units",units)
     }
     const [error, setError] = useState(null);
 
@@ -204,17 +244,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             return;
         }
 
-        if (ownerNo === ownersCopy?.[indexValue]?.userName && (ownerRoleCheck?.code !== "BPA_ARCHITECT" && ownerRoleCheck?.code !== "BPA_SUPERVISOR")) {
+        if (ownerNo === ownersCopy?.[indexValue]?.userName) {
             setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED_TOGGLE_MSG" });
             return;
         }
 
         const matchingOwnerIndex = ownersCopy.findIndex(item => item.userName === ownerNo);
 
-        if (matchingOwnerIndex > -1 && (ownerRoleCheck?.code !== "BPA_ARCHITECT" && ownerRoleCheck?.code !== "BPA_SUPERVISOR")) {
-            setShowToast({ key: "true", error: true, message: "ERR_OWNER_ALREADY_ADDED" });
-            return;
-        } else {
+       
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: fields?.[indexValue]?.mobileNumber }, {});
             let found = usersResponse?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
             if (usersResponse?.user?.length === 0) {
@@ -236,14 +273,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if(values[indexValue]?.mobileNumber && values[indexValue]?.name && values[indexValue]?.gender?.code) setCanmovenext(true);
                 else setCanmovenext(false);
 
-                if(found){
-                    setCanmovenext(false);
-                    setownerRoleCheck(found);
-                    setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
-                    return;
-                }
-            }
-        }
+                // if(found){
+                //     setCanmovenext(false);
+                //     setownerRoleCheck(found);
+                //     setShowToast({ key: "true", error: true, message: `BPA_OWNER_VALIDATION_${found?.code}` });
+                //     return;
+                // }
+             }
+        
     }
 
     const getUserData = async (data,tenant) => {
@@ -260,13 +297,13 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           found = ob?.user?.[0]?.roles?.filter(el => el.code === "BPA_ARCHITECT" || el.code === "BPA_SUPERVISOR")?.[0];
             if(fields.find((fi) => !(fi?.uuid && !(found)) && ((fi?.name === ob?.user?.[0]?.name && fi?.mobileNumber === ob?.user?.[0]?.mobileNumber) || (fi?.mobileNumber === ob?.user?.[0]?.mobileNumber && found))))
             {
-                flag = true;
+                //flag = true;
                 foundMobileNo.push(ob?.user?.[0]?.mobileNumber);
             }
         })
 
-        if(foundMobileNo?.length > 0)
-        setShowToast({ key: "true", error: true, message: `${t("BPA_OWNER_VALIDATION_1")} ${foundMobileNo?.join(", ")} ${t("BPA_OWNER_VALIDATION_2")}` });
+        // if(foundMobileNo?.length > 0)
+        // setShowToast({ key: "true", error: true, message: `${t("BPA_OWNER_VALIDATION_1")} ${foundMobileNo?.join(", ")} ${t("BPA_OWNER_VALIDATION_2")}` });
         if(flag == true)
         return false;
         else 
@@ -274,18 +311,40 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     }
 
     const goNext = async () => {
-        setError(null);
+    if(!error){
         const moveforward = await getUserData();
        if(moveforward){
         if (ismultiple == true && fields.length == 1) {
             window.scrollTo(0,0);
             setError("BPA_ERROR_MULTIPLE_OWNER");
         }
-        else {
+        else {      
+            for (const field of fields){
+              const userPresent = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
+              if (userPresent?.user?.length==0){
+              await Digit.UserService.userCreate(Digit.ULBService.getStateId(), { userName: field?.mobileNumber,mobileNumber: field?.mobileNumber, name: field?.name, gender:field?.gender?.code,emailId:field?.emailId, active: true, type:"citizen", roles: [             {
+                     "name": "Citizen",
+                     "code": "CITIZEN",
+                     "tenantId": "pg"
+                 }
+             ], }, {})
+            }
+            }  
+            let userData=[];
+            for (const field of fields){
+            const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
+            if(usersResponse?.user?.[0]?.dob){ 
+                usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
+            if (usersResponse?.user?.[0]?.createdDate) {
+                    usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
+                    usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
+                    usersResponse.user[0].pwdExpiryDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.pwdExpiryDate);
+            }
+            userData.push(usersResponse?.user?.[0]);             
+            }
             let owner = formData.owners;
             let ownerStep;
-            ownerStep = { ...owner, owners: fields, ownershipCategory: ownershipCategory };
-
+            ownerStep = { ...owner, owners: userData, ownershipCategory: ownershipCategory };
             if (!formData?.id) {
                 setIsDisable(true);
                 //for owners conversion
@@ -297,10 +356,66 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
-                        gender: owner.gender.code,
+                        gender: owner.gender?.code || owner.gender,
+                        emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
                     })
                 });
+                let Property= {}
+                let createdProp={}
+                if(!formData?.cptId){
+                
+                    Property.tenantId= formData?.address?.city?.code,
+                    Property.landInfo = {};
+                    //For Address
+                    Property.address = {};
+                    if (formData?.address?.city?.code) Property.address.city = formData?.address?.city?.code;
+                    if (formData?.address?.locality?.code) Property.address.locality = { code: formData?.address?.locality?.code };
+                    if (formData?.address?.pincode) Property.address.pincode = formData?.address?.pincode;
+                    if (formData?.address?.landmark) Property.address.landmark = formData?.address?.landmark;
+                    if (formData?.address?.street) Property.address.street = formData?.address?.street;
+                    if (formData?.address?.geoLocation) Property.address.geoLocation = formData?.address?.geoLocation;
+                    Property.propertyType= "VACANT",
+                   // ...data.propertyDetails,
+                   Property.ownershipCategory= ownershipCategory.code,
+                   Property.usageCategory= formData?.data?.occupancyType.toUpperCase();
+                   Property.owners= conversionOwners?.map((owner, index)=>({
+                        name:owner.name,
+                        mobileNumber:owner.mobileNumber,
+                        correspondenceAddress:owner.correspondenceAddress,
+                        relationship:owner.relationship,
+                        fatherOrHusbandName:owner.fatherOrHusbandName,
+                        gender: owner.gender,
+                        emailId:owner.emailId,
+                        documents:owner.documents,                        
+                        ownerType:"NONE",
+                        permanentaddress:"",
+                        additionalDetails:{
+                        ownerSequence: index,
+                        ownerName: owner.name
+                      }
+                    })) || [],
+                    //Property.additionalDetails.owners=Property.owners;
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+                    Property.additionalDetails= {
+                      isRainwaterHarvesting:false,
+                      owners:conversionOwners?.map((owner, index)=>({
+                        ...owner,
+                     ownerType:"NONE",
+                      permanentaddress:"",
+                      additionalDetails:{
+                        ownerSequence: index,
+                        ownerName: owner.name
+                      }
+                    })) || [],
+                    },
+                    Property.creationReason= "CREATE";
+                    Property.source= "MUNICIPAL_RECORDS";
+                    Property.channel= "SYSTEM";
+                 
+                     createdProp = await PTService.create({Property, tenantId})
+              }
                 let payload = {};
                 payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber;
                 payload.riskType = formData?.data?.riskType;
@@ -355,6 +470,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                             result.BPA[0].address.locality = formData.address.locality;
                             result.BPA[0].placeName = formData?.address?.placeName;
                             result.BPA[0].data = formData.data;
+                            result.BPA[0].additionalDetails.propertyID=formData?.cptId ?formData?.cptId?.id: createdProp?.Properties[0]?.propertyId ;
+                            if(createdProp?.Properties){
+                                result.BPA[0].additionalDetails.propertyAcknowldgementNumber=createdProp?.Properties[0]?.acknowldgementNumber;
+                            }
                             result.BPA[0].BlockIds = getBlockIds(result.BPA[0].landInfo.unit);
                             result.BPA[0].subOccupancy= formData?.subOccupancy;
                             result.BPA[0].uiFlow = formData?.uiFlow;
@@ -372,6 +491,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         }
     }
     };
+}
 
     const onSkip = () => onSelect();
 
@@ -386,11 +506,61 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             if(flag !== 1 && (!ob?.name || !ob?.mobileNumber || !ob?.gender?.code) )
             flag = 1;
         })
+        console.log("flag",flag)
         if(flag == 0)
         return false;
         else
         return true;
     }
+let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
+if(propertyData?.owners)
+{
+    console.log("propertyData",propertyData)
+fields =propertyData?.owners.map((owner) =>{
+    let gender
+    if (owner.gender =="FEMALE")
+    {
+        gender={
+            "code": "FEMALE",
+            "active": true,
+            "i18nKey": "COMMON_GENDER_FEMALE"
+        }
+        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner, "emailId":owner.emailId}
+    }
+    else if (owner.gender =="MALE")
+    {
+        gender={
+            "code": "MALE",
+            "active": true,
+            "i18nKey": "COMMON_GENDER_MALE"
+        }
+        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner, "emailId":owner.emailId}
+    }
+
+})
+}
+
+useEffect(()=>{
+    let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
+    if(propertyData?.owners?.length == 1)
+    {let value ={
+        "code": "INDIVIDUAL.SINGLEOWNER",
+        "active": true,
+        "i18nKey": "COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_SINGLEOWNER"
+    }
+    selectedValue(value);
+    }
+    else if(propertyData?.owners?.length > 1)
+    {
+        let value={
+            "code": "INDIVIDUAL.MULTIPLEOWNERS",
+            "active": true,
+            "i18nKey": "COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_MULTIPLEOWNERS"
+        }
+        selectedValue(value);
+    }
+},[])
+
 
     return (
         <div>
@@ -409,9 +579,10 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                             value={ownershipCategory}
                             labelKey="PT_OWNERSHIP"
                             isDependent={true}
+                           disabled = {propertyData?.owners ?true:false}
                         />
                     </div>
-                    {fields.map((field, index) => {
+                    {fields?.map((field, index) => {
                         return (
                             <div key={`${field}-${index}`}>
                                 <div style={{ border: "solid", borderRadius: "5px", padding: "10px", paddingTop: "20px", marginTop: "10px", borderColor: "#f3f3f3", background: "#FAFAFA" }}>
@@ -431,7 +602,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                                 isMandatory={false}
                                                 optionKey="i18nKey"
                                                 name="mobileNumber"
-                                                value={field.mobileNumber}
+                                                value={field?.mobileNumber}
                                                 onChange={(e) => setMobileNo(index, e)}
                                                 {...(validation = {
                                                     isRequired: true,
@@ -439,6 +610,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                                     type: "tel",
                                                     title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
                                                 })}
+                                                disabled={propertyData?.owners ?true:false}
                                             />
                                             <div style={{ position: "relative", zIndex: "100", right: "35px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
                                         </div>
@@ -451,30 +623,53 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                         isMandatory={false}
                                         optionKey="i18nKey"
                                         name="name"
-                                        value={field.name}
+                                        value={field?.name}
                                         onChange={(e) => setOwnerName(index, e)}
                                         {...(validation = {
                                             isRequired: true,
-                                            pattern: "^[a-zA-Z-.`' ]*$",
+                                            pattern: "^[a-zA-Z ]*$",
                                             type: "text",
                                             title: t("TL_NAME_ERROR_MESSAGE"),
                                         })}
+                                        disabled={propertyData?.owners ?true:false}
                                     />
                                     <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")} *`}</CardLabel>
                                     <RadioOrSelect
                                     name="gender"
                                     options={genderList}
-                                    selectedOption={field.gender}
+                                    selectedOption={field?.gender}
                                     optionKey="i18nKey"
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
+                                    disabled={propertyData?.owners ? true:false}
                                     />
+                                    <div>
+                                     <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
+                                    <TextInput
+                                        style={{ background: "#FAFAFA" }}
+                                        t={t}
+                                        type={"emailId"}
+                                        isMandatory={false}
+                                        optionKey="i18nKey"
+                                        name="emailId"
+                                        value={field?.emailId}
+                                        onChange={(e)=>handleEmailChange(index,e)}
+                                        {...(validation = {
+                                            //isRequired: true,
+                                            pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+                                            type: "emailId",
+                                            title: t("TL_EMAIL_ID_ERROR_MESSAGE"),
+                                        })}
+                                        //disabled={propertyData?.address ?true:false}
+                                    />
+                                    {error && <span style={{color:"red"}}>{error}</span>}
+                                    </div>
                                     {ismultiple && (
                                         <CheckBox
                                             label={t("BPA_IS_PRIMARY_OWNER_LABEL")}
                                             onChange={(e) => setPrimaryOwner(index, e)}
-                                            value={field.isPrimaryOwner}
-                                            checked={field.isPrimaryOwner}
+                                            value={field?.isPrimaryOwner}
+                                            checked={field?.isPrimaryOwner}
                                             style={{ paddingTop: "10px" }}
                                         />
                                     )}

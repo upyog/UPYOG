@@ -1,4 +1,4 @@
-import { CitizenHomeCard, CitizenTruck, Loader } from "@egovernments/digit-ui-react-components";
+import { CitizenHomeCard, CitizenTruck, Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -17,14 +17,17 @@ import SelectName from "./pageComponents/SelectName";
 // import SelectPincode from "./pageComponents/SelectPincode";
 import FSMSelectPincode from "./pageComponents/FSMSelectPincode";
 import SelectPitType from "./pageComponents/SelectPitType";
+import SelectRoadDetails from "./pageComponents/SelectRoadDetails";
 import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
 import SelectPropertyType from "./pageComponents/SelectPropertyType";
+import SelectPropertyID from "./pageComponents/SelectPropertyID";
+import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectSlumName from "./pageComponents/SelectSlumName";
 // import SelectStreet from "./pageComponents/SelectStreet";
 import FSMSelectStreet from "./pageComponents/FSMSelectStreet";
 import SelectTankSize from "./pageComponents/SelectTankSize";
 import SelectTripData from "./pageComponents/SelectTripData";
-import SelectTripNo from "./pageComponents/SelectTripNo";
+// import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectPaymentPreference from "./pageComponents/SelectPaymentPreference";
 import SelectVehicle from "./pageComponents/SelectVehicleType";
 import CitizenApp from "./pages/citizen";
@@ -58,6 +61,11 @@ import AdvanceCollection from "./pageComponents/AdvanceCollection";
 import SelectTrips from "./pageComponents/SelectTrips";
 import PlusMinusInput from "./pageComponents/PlusMinusInput";
 import ConfirmationBox from "./components/Confirmation";
+import SelectLocalityOrGramPanchayat from "./pageComponents/SelectLocalityOrGramPanchayat";
+import AddWorker from "./pages/employee/FSMRegistry/Worker/AddWorker"
+import EditWorker from "./pages/employee/FSMRegistry/Worker/EditWorker";
+import WorkerDetails from "./pages/employee/FSMRegistry/Worker/WorkerDetails";
+import TqmCard from "./components/TqmCard";
 
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";
@@ -158,6 +166,7 @@ const FSMLinks = ({ matchPath, userType }) => {
 const componentsToRegister = {
   SelectPropertySubtype,
   SelectPropertyType,
+  SelectPropertyID,
   // SelectAddress,
   FSMSelectAddress,
   // SelectStreet,
@@ -168,6 +177,7 @@ const componentsToRegister = {
   FSMSelectPincode,
   SelectTankSize,
   SelectPitType,
+  SelectRoadDetails,
   SelectTripNo,
   // SelectGeolocation,
   FSMSelectGeolocation,
@@ -212,6 +222,11 @@ const componentsToRegister = {
   SelectTrips,
   PlusMinusInput,
   ConfirmationBox,
+  SelectLocalityOrGramPanchayat,
+  AddWorker,
+  EditWorker,
+  WorkerDetails,
+  TqmCard,
 };
 
 export const initFSMComponents = () => {
