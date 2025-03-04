@@ -333,6 +333,7 @@ import useCMSearch from "./cm/useCMSearch";
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
 import useTankerSearchAPI from "./wt/useTankerSearchAPI";
+import useMobileToiletCreateAPI from "./wt/useMobileToiletCreateAPI";
 import useWTApplicationAction from "./wt/useWTApplicationAction";
 import useWTApplicationDetail from "./wt/useWTApplicationDetail";
 import useTenantsVENDOR from "./vendor/useTenants";
@@ -347,7 +348,8 @@ const wt={
   useTankerCreateAPI,
   useTankerSearchAPI,
   useWTApplicationAction,
-  useWTApplicationDetail
+  useWTApplicationDetail,
+  useMobileToiletCreateAPI,
 };
 
 const pgr = {

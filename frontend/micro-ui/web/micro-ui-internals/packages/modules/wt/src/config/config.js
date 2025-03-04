@@ -7,8 +7,22 @@ export const commonConfig =
                 {
                     "route": "info",
                     "component": "InfoPage",
-                    "nextStep": "applicant-details",
+                    "nextStep": "service-type",
                     "key": "infodetails"
+                },
+                {
+                    "route": "service-type",
+                    "component": "ServiceTypes",
+                    "withoutLabel": true,
+                    "key": "serviceType",
+                    "type": "component",
+                    "nextStep": "applicant-details",
+                    "hideInEmployee": true,
+                    "isMandatory": true,
+                    "texts": {
+                        "submitBarLabel": "COMMON_SAVE_NEXT",
+                        "header":"ES_SERVICE_TYPE"
+                    }
                 },
                 {
                     "route": "applicant-details",
@@ -64,5 +78,24 @@ export const commonConfig =
                     }
                 },
             ],
-        }
+        },
+        {
+            "head": "ES_REQUEST_DETAILS",
+            "body": [
+                {
+                    "route": "toiletRequest-details",
+                    "component": "ToiletRequestDetails",
+                    "withoutLabel": true,
+                    "key": "toiletRequestDetails",
+                    "type": "component",
+                    "isMandatory": true,
+                    "hideInEmployee": true,
+                    "nextStep":null,
+                    "texts": {
+                        "submitBarLabel": "COMMON_SAVE_NEXT",
+                        "header":"ES_REQUEST_DETAILS"
+                    }
+                },
+            ],
+        },
     ];

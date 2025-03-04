@@ -104,6 +104,10 @@ module.exports = function (app) {
     "/request-service/water-tanker/v1/_update",
     "/vendor-management/api/v1/_create",
     "/sv-services/street-vending/_createdemand",
+    "/request-service/mobile-toilet/v1/_create",
+    "/request-service/mobile-toilet/v1/_update",
+    "/request-service/mobile-toilet/v1/_search",
+
     "/vendor-management/api/v1/vendorPlusAdditional/_search",
     
   ].forEach((location) => app.use(location, createProxy));

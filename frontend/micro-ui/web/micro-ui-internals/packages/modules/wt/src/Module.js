@@ -19,7 +19,9 @@ import WFApplicationTimeline from "./pageComponents/WFApplicationTimeline";
 import WFCaption from "./pageComponents/WFCaption";
 import Inbox from "./pages/employee/Inbox";
 import WTCitizenCard from "./components/WTCitizenCard";
-
+import ServiceTypes from "./pageComponents/ServiceTypes";
+import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
+import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
 
 const componentsToRegister = {
     ApplicantDetails,
@@ -35,7 +37,10 @@ const componentsToRegister = {
     WFApplicationTimeline: WFApplicationTimeline,
     WFCaption,
     WTEmpInbox: Inbox,
-    WTCitizenCard: WTCitizenCard
+    WTCitizenCard: WTCitizenCard,
+    ServiceTypes,
+    ToiletRequestDetails,
+    MTAcknowledgement
   };
   
   // function to register the component as per standard 
