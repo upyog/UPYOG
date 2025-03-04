@@ -5,26 +5,25 @@ export const commonConfig =
             "head": "ES_TITILE_OWNER_DETAILS",
             "body": [
                 {
-                    "route": "info",
-                    "component": "InfoPage",
-                    "nextStep": "service-type",
-                    "key": "infodetails"
-                },
-                {
                     "route": "service-type",
                     "component": "ServiceTypes",
                     "withoutLabel": true,
                     "key": "serviceType",
                     "type": "component",
-                    "nextStep": "applicant-details",
+                    "nextStep": "info",
                     "hideInEmployee": true,
                     "isMandatory": true,
                     "texts": {
                         "submitBarLabel": "COMMON_SAVE_NEXT",
-                        "header":"ES_SERVICE_TYPE"
-                    }
+             }
                 },
                 {
+                    "route": "info",
+                    "component": "InfoPage",
+                    "nextStep": "applicant-details",
+                    "key": "infodetails"
+                },
+              {
                     "route": "applicant-details",
                     "component": "ApplicantDetails",
                     "withoutLabel": true,

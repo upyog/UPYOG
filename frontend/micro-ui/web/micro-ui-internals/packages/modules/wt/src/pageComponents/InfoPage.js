@@ -23,7 +23,12 @@ const InfoPage = ({ t, onSelect, formData, config, userType }) => {
   return (
     <React.Fragment>
       <Card>
-        <CardHeader>{t("MODULE_WT")}</CardHeader>
+        {formData?.serviceType?.serviceType.code=== "MobileToilet" ? (
+          <CardHeader>{t("MODULE_MT")}</CardHeader>
+        ) : formData?.serviceType?.serviceType.code=== "WT" ? (
+          <CardHeader>{t("MODULE_WT")}</CardHeader>
+        ) : null}
+        
         <div>
           <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
           <CardText className={"primaryColor"}>{t("SV_DOC_REQ_SCREEN_TEXT")}</CardText>

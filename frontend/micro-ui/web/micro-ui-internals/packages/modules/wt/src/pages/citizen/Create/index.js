@@ -64,7 +64,7 @@ const WTCreate = () => {
 
  
 
-  if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
+  if(params && Object.keys(params).length>0 && window.location.href.includes("/service-type") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
       queryClient.invalidateQueries("WT_Create");
@@ -108,7 +108,7 @@ const WTCreate = () => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  config.indexRoute = "info";
+  config.indexRoute = "service-type";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("WTCheckPage");
   const WTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WTAcknowledgement");
