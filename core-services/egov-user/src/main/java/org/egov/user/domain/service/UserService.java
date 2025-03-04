@@ -517,7 +517,7 @@ public class UserService {
 		validatePassword(loggedInUserUpdatePasswordRequest.getNewPassword());
 		if (bcrypt.matches(loggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
-			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
+			throw new InvalidLoggedInUserUpdatePasswordRequestException(loggedInUserUpdatePasswordRequest);
 		}
 
 		user.updatePassword(encryptPwd(loggedInUserUpdatePasswordRequest.getNewPassword()));
@@ -569,7 +569,7 @@ public class UserService {
 
 		if (bcrypt.matches(nonLoggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
-			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
+			throw new InvalidNonLoggedInUserUpdatePasswordRequestException(nonLoggedInUserUpdatePasswordRequest);
 		}
 		user.updatePassword(encryptPwd(nonLoggedInUserUpdatePasswordRequest.getNewPassword()));
 		/* encrypt here */

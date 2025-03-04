@@ -43,9 +43,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-//@ControllerAdvice
-//@RestController
-//public class CustomControllerAdvice {
+@ControllerAdvice
+@RestController
+public class CustomControllerAdvice {
 //
 //	@ResponseStatus(HttpStatus.BAD_REQUEST)
 //	@ExceptionHandler(UserIdMandatoryException.class)
@@ -119,19 +119,20 @@ import org.springframework.web.bind.annotation.RestController;
 //		return new PasswordMissMatchErrorHandler().adapt(null);
 //	}
 //
-//	@ResponseStatus(HttpStatus.BAD_REQUEST)
-//	@ExceptionHandler(InvalidLoggedInUserUpdatePasswordRequestException.class)
-//	public ErrorResponse handleInvalidUpdatePasswordRequestException(
-//			InvalidLoggedInUserUpdatePasswordRequestException ex) {
-//		return new InvalidLoggedInUserUpdatePasswordRequestErrorHandler().adapt(ex.getRequest());
-//	}
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidLoggedInUserUpdatePasswordRequestException.class)
+	public ErrorResponse handleInvalidUpdatePasswordRequestException(
+			InvalidLoggedInUserUpdatePasswordRequestException ex) {
+		return new InvalidLoggedInUserUpdatePasswordRequestErrorHandler().adapt(ex.getRequest());
+	}
+
 //
-//	@ResponseStatus(HttpStatus.BAD_REQUEST)
-//	@ExceptionHandler(InvalidNonLoggedInUserUpdatePasswordRequestException.class)
-//	public ErrorResponse handleInvalidNonLoggedInUserUpdatePasswordRequestException(
-//			InvalidNonLoggedInUserUpdatePasswordRequestException ex) {
-//		return new InvalidNonLoggedInUserUpdatePasswordRequestErrorHandler().adapt(ex.getModel());
-//	}
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidNonLoggedInUserUpdatePasswordRequestException.class)
+	public ErrorResponse handleInvalidNonLoggedInUserUpdatePasswordRequestException(
+			InvalidNonLoggedInUserUpdatePasswordRequestException ex) {
+		return new InvalidNonLoggedInUserUpdatePasswordRequestErrorHandler().adapt(ex.getModel());
+	}
 //
 //	@ResponseStatus(HttpStatus.BAD_REQUEST)
 //	@ExceptionHandler(InvalidUserSearchCriteriaException.class)
@@ -157,4 +158,4 @@ import org.springframework.web.bind.annotation.RestController;
 //	public ErrorResponse handleInvalidUpdatePasswordRequest() {
 //		return new UserInvalidUpdatePasswordRequest().adapt(null);
 //	}
-//}
+}
