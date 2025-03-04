@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, ActionBar, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

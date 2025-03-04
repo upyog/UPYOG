@@ -147,7 +147,9 @@ const Dropdown = (props) => {
   function selectOption(ind) {
     onSelect(filteredOption[ind]);
   }
-
+  // if (props?.option?.[0]?.label == "PropertyType") {
+  //   filteredOption = props.option
+  // }
   if(props.isBPAREG && selectedOption)
   {
     let isSelectedSameAsOptions = props.option?.filter((ob) => ob?.code === selectedOption?.code)?.length > 0;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, CardLabelError } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
@@ -217,7 +217,7 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
           />
         </div>
       </LabelFieldPair>
-      <CardLabelError style={isMobile ? {...errorStyle,marginLeft:"0px"} : {...errorStyle}}>{touched?.constructionArea ? errors?.constructionArea?.message : ""}</CardLabelError>
+      <CardLabelError style={isMobile ? {...errorStyle,marginLeft:"0px"} : {...errorStyle}}>{touched?.constructionArea ? errors?.constructionArea?.message ? t("BUILTUP_AREA_MORE_THAN_TOTAL_AREA_ERROR"): "": ""}</CardLabelError>
 
       <LabelFieldPair>
         <CardLabel>{`${t("PT_ASSESMENT_INFO_USAGE_TYPE")}*`}</CardLabel>

@@ -466,4 +466,5 @@ export {
   LoginIcon,
   CitizenConsentForm,
   PTRIcon,
+  CHBIcon
 };

@@ -4,7 +4,7 @@ import OBPSSearchApplication from "../../components/SearchApplication";
 import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { Switch, useLocation, Route } from "react-router-dom";
-import { PrivateRoute, BackButton } from "@egovernments/digit-ui-react-components";
+import { PrivateRoute, BackButton } from "@upyog/digit-ui-react-components";
 // import NewBuildingPermit from "./NewBuildingPermit";
 // import CreateEDCR from "./EDCR";
 // import CreateOCEDCR from "./OCEDCR";
@@ -26,7 +26,8 @@ import Inbox from "../employee/Inbox";
 const App = ({ path }) => {
   const location = useLocation();
   const { t } = useTranslation();
-
+  let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
+  let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const BPACitizenHomeScreen = Digit?.ComponentRegistryService?.getComponent("BPACitizenHomeScreen");
   const CreateEDCR = Digit?.ComponentRegistryService?.getComponent("ObpsCreateEDCR");
   const CreateOCEDCR = Digit?.ComponentRegistryService?.getComponent("ObpsCreateOCEDCR");
@@ -40,7 +41,6 @@ const App = ({ path }) => {
   const BPASendBackToCitizen = Digit?.ComponentRegistryService?.getComponent("ObpsBPASendBackToCitizen");
   const OCSendBackToCitizen = Digit?.ComponentRegistryService?.getComponent("ObpsOCSendBackToCitizen");
   const isDocScreenAfterEdcr = sessionStorage.getItem("clickOnBPAApplyAfterEDCR") === "true" ? true : false
-
   return (
     <React.Fragment>
       <div className="ws-citizen-wrapper">
