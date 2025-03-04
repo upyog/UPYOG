@@ -70,11 +70,15 @@ export const createApiResponse = async ({ body }, res, next) => {
   //calculate call
   let { FireNOCs, RequestInfo } = body;
   //console.log("test body"+ JSON.stringify(body))
-  for (var i = 0; i < FireNOCs.length; i++) {
-    let firenocResponse = await calculate(FireNOCs[i], RequestInfo);
-  }
+
+  //Comment the Calculate API as per Palam Sir Direction 
+
+  //for (var i = 0; i < FireNOCs.length; i++) {
+    //let firenocResponse = await calculate(FireNOCs[i], RequestInfo);
+  //}
+
   body.FireNOCs = updateStatus(FireNOCs, workflowResponse);
-  console.log("Final Requested Body for Create"+JSON.stringify(body));
+  //console.log("Final Requested Body for Create"+JSON.stringify(body));
   payloads.push({
     topic: envVariables.KAFKA_TOPICS_FIRENOC_CREATE,
     messages: JSON.stringify(body)
