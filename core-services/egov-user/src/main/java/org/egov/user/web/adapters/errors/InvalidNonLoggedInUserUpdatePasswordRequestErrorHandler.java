@@ -50,10 +50,10 @@ public class InvalidNonLoggedInUserUpdatePasswordRequestErrorHandler
 
     private List<ErrorField> getErrorFields(NonLoggedInUserUpdatePasswordRequest model) {
         final ArrayList<ErrorField> errorFields = new ArrayList<>();
-        addMobileNumberMandatoryError(model, errorFields);
-        addOtpReferenceMandatoryError(model, errorFields);
-        addTenantIdMandatoryError(model, errorFields);
-        addNewPasswordMandatoryError(model, errorFields);
+       // addMobileNumberMandatoryError(model, errorFields);
+       // addOtpReferenceMandatoryError(model, errorFields);
+      //  addTenantIdMandatoryError(model, errorFields);
+     //   addNewPasswordMandatoryError(model, errorFields);
         passwordUsedPreviously(model, errorFields);
         return errorFields;
     }

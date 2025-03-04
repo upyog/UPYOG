@@ -53,11 +53,11 @@ public class InvalidLoggedInUserUpdatePasswordRequestErrorHandler implements
 
     private List<ErrorField> getErrorFields(LoggedInUserUpdatePasswordRequest model) {
         final ArrayList<ErrorField> errorFields = new ArrayList<>();
-        addUserIdMandatoryError(model, errorFields);
-        addExistingPasswordMandatoryError(model, errorFields);
-        addNewPasswordMandatoryError(model, errorFields);
-        addTenantIdMandatoryError(model, errorFields);
-        addUserTypeMandatoryError(model, errorFields);
+      //  addUserIdMandatoryError(model, errorFields);
+      //  addExistingPasswordMandatoryError(model, errorFields);
+      //  addNewPasswordMandatoryError(model, errorFields);
+       // addTenantIdMandatoryError(model, errorFields);
+       // addUserTypeMandatoryError(model, errorFields);
         passwordUsedPreviously(model, errorFields);
         return errorFields;
     }
