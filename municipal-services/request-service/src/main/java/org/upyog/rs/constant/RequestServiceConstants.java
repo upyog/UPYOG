@@ -40,8 +40,6 @@ public class RequestServiceConstants {
 
 	public static final String MDMS_MOBILE_TOILET_CALCULATION_TYPE = "MobileToiletCalculationType";
 
-	public static final String REQUEST_SERVICE_MT_TAX_MASTER_CODE = "MOBILE_TOILET_BOOKING_FEE";
-
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
 
 	public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";
