@@ -35,4 +35,17 @@ public class CalculationService {
 		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + tankerType);
 	}
 
+	public BigDecimal mtCalculateFee(int noOfMobileToilet, RequestInfo requestInfo, String tenantId) {
+		List<CalculationType> calculationTypes = mdmsUtil.getMTCalculationType(requestInfo,RequestServiceUtil.extractTenantId(tenantId),
+				RequestServiceConstants.MDMS_MODULE_NAME);
+
+		log.info("calculationTypes for mobile Toilet booking : {}", calculationTypes);
+
+		if (!calculationTypes.isEmpty()) {
+			return calculationTypes.get(0).getAmount().multiply(BigDecimal.valueOf(noOfMobileToilet));
+		}
+		log.info("calculationTypes for mobile Toilet booking demand : {}", calculationTypes);
+		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + noOfMobileToilet);
+	}
+
 }

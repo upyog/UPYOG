@@ -13,6 +13,8 @@ import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.Demand;
 import org.upyog.rs.web.models.DemandDetail;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
@@ -59,6 +61,24 @@ public class DemandService {
 		return demandRepository.saveDemand(waterTankerRequest.getRequestInfo(), Collections.singletonList(demand));
 	}
 
+	public List<Demand> createMTDemand(MobileToiletBookingRequest mobileToiletRequest) {
+		if (mobileToiletRequest == null) {
+			throw new IllegalArgumentException("Mobile Toilet Booking Request is Empty");
+		}
+
+		String tenantId = mobileToiletRequest.getMobileToiletBookingDetail().getTenantId();
+		log.info("Creating demand upon approve action for booking no : {}", mobileToiletRequest.getMobileToiletBookingDetail().getBookingNo());
+		MobileToiletBookingDetail mobileToiletBookingDetail = mobileToiletRequest.getMobileToiletBookingDetail();
+		String consumerCode = mobileToiletBookingDetail.getBookingNo();
+		BigDecimal amountPayable = calculationService.mtCalculateFee(mobileToiletBookingDetail.getNoOfMobileToilet(),mobileToiletRequest.getRequestInfo(), tenantId);
+		log.info("Final amount payable after calculation : " + amountPayable);
+		User owner = buildUser(mobileToiletBookingDetail.getApplicantDetail(), tenantId);
+		List<DemandDetail> demandDetails = buildMTDemandDetails(amountPayable, tenantId);
+		Demand demand = buildMTDemand(tenantId, consumerCode, owner, demandDetails, amountPayable);
+		log.info("Final demand generation object" + demand.toString());
+		return demandRepository.saveDemand(mobileToiletRequest.getRequestInfo(), Collections.singletonList(demand));
+	}
+
 	private User buildUser(ApplicantDetail applicantDetail, String tenantId) {
 		return User.builder().name(applicantDetail.getName()).emailId(applicantDetail.getEmailId())
 				.mobileNumber(applicantDetail.getMobileNumber()).tenantId(tenantId).build();
@@ -68,6 +88,20 @@ public class DemandService {
 		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
+	}
+
+	private List<DemandDetail> buildMTDemandDetails(BigDecimal amountPayable, String tenantId) {
+		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
+				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_MT_TAX_MASTER_CODE)
+				.tenantId(tenantId).build());
+	}
+
+	private Demand buildMTDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
+							   BigDecimal amountPayable) {
+		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
+				.taxPeriodFrom(RequestServiceUtil.getCurrentTimestamp()).taxPeriodTo(RequestServiceUtil.getFinancialYearEnd())
+				.consumerType(RequestServiceConstants.MOBILE_TOILET_SERVICE_NAME)
+				.businessService(RequestServiceConstants.REQUEST_SERVICE_MODULE_NAME).additionalDetails(null).build();
 	}
 
 	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
