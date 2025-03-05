@@ -653,10 +653,21 @@ public class UserService {
 				session.getCreationTime(), session.getMaxInactiveInterval());
 		String uuid = UUID.randomUUID().toString();
 		Long attempt_date = System.currentTimeMillis();
-		String ip = req.getRemoteAddr();
+		String ip = null;
 		String user_name = user.getUsername();
 		String user_uuid = user.getUuid();
 		String attempt_status = status;
+		
+		String x_forwarded_for = (null != req.getHeader("X-Forwarded-For") && !req.getHeader("X-Forwarded-For").isEmpty()
+				? req.getHeader("X-Forwarded-For")
+				: null);
+		if(null!=x_forwarded_for) {
+			ip=x_forwarded_for;
+		}else {
+			ip=req.getRemoteAddr();
+		}
+		System.out.println("X-Forwarded-For========================>>>>>>>>>>>"+x_forwarded_for);
+		
 		String user_agent = (null != req.getHeader("User-Agent") && !req.getHeader("User-Agent").isEmpty()
 				? req.getHeader("User-Agent")
 				: null);
