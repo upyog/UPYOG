@@ -3,7 +3,6 @@ package org.upyog.web.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +27,8 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/validity")
 public class VerificationServiceController {
 
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
-
 	@Autowired
 	private CommonService commonService;
-
-	@Autowired
-	public VerificationServiceController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
 
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<CommonModuleResponse> v1RegistrationSearchPost(
