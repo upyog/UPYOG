@@ -7,6 +7,7 @@ import java.util.List;
 import org.egov.common.contract.request.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.DemandRepository;
 import org.upyog.rs.util.RequestServiceUtil;
@@ -31,6 +32,9 @@ public class DemandService {
 
 	@Autowired
 	private DemandRepository demandRepository;
+
+	@Autowired
+	private RequestServiceConfiguration config;
 
 
 
@@ -101,8 +105,8 @@ public class DemandService {
 	private Demand buildMTDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails) {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(RequestServiceUtil.getCurrentTimestamp()).taxPeriodTo(RequestServiceUtil.getFinancialYearEnd())
-				.consumerType(RequestServiceConstants.MOBILE_TOILET_SERVICE_NAME)
-				.businessService(RequestServiceConstants.REQUEST_SERVICE_MODULE_NAME).additionalDetails(null).build();
+				.consumerType(config.getMobileToiletBusinessService())
+				.businessService(config.getModuleName()).additionalDetails(null).build();
 	}
 
 	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
