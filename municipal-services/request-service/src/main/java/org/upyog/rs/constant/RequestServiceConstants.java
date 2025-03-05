@@ -36,8 +36,6 @@ public class RequestServiceConstants {
 
 	public static final String MDMS_TANKER_CALCULATION_TYPE = "WaterTankerCalculationType";
 
-	public static final String MOBILE_TOILET_SERVICE_NAME = "mobileToilet";
-
 	public static final String MDMS_MOBILE_TOILET_CALCULATION_TYPE = "MobileToiletCalculationType";
 
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
