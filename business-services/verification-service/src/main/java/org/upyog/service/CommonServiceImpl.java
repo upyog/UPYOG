@@ -31,7 +31,6 @@ public class CommonServiceImpl implements CommonService {
 	private final CommonDetailsMapperFactory mapperFactory;
 
 	@Autowired
-	@Lazy
 	private ObjectMapper objectMapper;
 
 	@Autowired
