@@ -776,7 +776,7 @@ public class GarbageAccountService {
 				// generate demand
 				BigDecimal taxAmount = new BigDecimal("100.00");
 				savedDemands = demandService.generateDemand(updateGarbageRequest.getRequestInfo(), account,
-						account.getBusinessService(), taxAmount);
+						account.getBusinessService(), taxAmount, null);
 
 				if (CollectionUtils.isEmpty(savedDemands)) {
 					throw new CustomException("INVALID_CONSUMERCODE",

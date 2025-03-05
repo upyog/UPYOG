@@ -187,7 +187,7 @@ public class GarbageAccountSchedulerService {
 			List<Demand> savedDemands = new ArrayList<>();
 			// generate demand
 			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount,
-					garbageAccount.getBusinessService(), billAmount);
+					garbageAccount.getBusinessService(), billAmount, generateBillRequest);
 
 			if (CollectionUtils.isEmpty(savedDemands)) {
 				throw new CustomException("INVALID_CONSUMERCODE",
