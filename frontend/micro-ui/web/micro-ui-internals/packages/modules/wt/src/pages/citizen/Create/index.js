@@ -45,6 +45,10 @@ const WTCreate = () => {
     if (isAddMultiple) {
       nextStep = key;
     }
+    // Change next step to "toiletRequest-details" if the current step is "request-details" and the service type code is not "WT".
+    if(nextStep === "request-details" && params?.serviceType?.serviceType?.code !== "WT"){
+      nextStep= "toiletRequest-details";
+    }
     if (nextStep === null) {
       return redirectWithHistory(`${match.path}/check`);
     }
@@ -60,14 +64,19 @@ const WTCreate = () => {
 
  
 
-  if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
+  if(params && Object.keys(params).length>0 && window.location.href.includes("/service-type") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
       queryClient.invalidateQueries("WT_Create");
     }
 
   const wt_create = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    if(params?.serviceType?.serviceType?.code === "WT"){
+      history.push(`${match.path}/wt-acknowledgement`);
+    }
+    if(params?.serviceType?.serviceType?.code === "MobileToilet"){
+      history.push(`${match.path}/mt-acknowledgement`);
+    }
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
@@ -99,10 +108,12 @@ const WTCreate = () => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  config.indexRoute = "info";
+  config.indexRoute = "service-type";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("WTCheckPage");
   const WTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("WTAcknowledgement");
+  const MTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("MTAcknowledgement");
+
 
 
 
@@ -123,8 +134,11 @@ const WTCreate = () => {
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={wt_create} value={params} />
       </Route>
-      <Route path={`${match.path}/acknowledgement`}>
+      <Route path={`${match.path}/wt-acknowledgement`}>
         <WTAcknowledgement data={params} onSuccess={onSuccess} />
+      </Route>
+      <Route path={`${match.path}/mt-acknowledgement`}>
+        <MTAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />

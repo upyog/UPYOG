@@ -252,6 +252,11 @@ const Urls = {
     update: "/request-service/water-tanker/v1/_update",
     search: "/request-service/water-tanker/v1/_search",
   },
+  mt:{
+    create: "/request-service/mobile-toilet/v1/_create",
+    update: "/request-service/mobile-toilet/v1/_update",
+    search: "/request-service/mobile-toilet/v1/_search",
+  },
 
   vendor: {
     create: "/vendor-services/vendor/_create",

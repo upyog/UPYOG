@@ -1,6 +1,6 @@
 
 import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,SubmitBar, EditIcon} from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA } from "../../../utils";
@@ -23,7 +23,7 @@ In Parent Component,  we are passing the data as a props coming through params (
 
   const WTCheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
-    const {owner,requestDetails,address} = value;
+    const {owner,requestDetails,address,serviceType,toiletRequestDetails} = value;
     const [agree, setAgree] = useState(false);
     const immediateRequired = (requestDetails?.extraCharge) ? "YES":"NO"
 
@@ -40,12 +40,12 @@ In Parent Component,  we are passing the data as a props coming through params (
           <CardSubHeader>{t("ES_TITILE_OWNER_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
-              label={t("WT_APPLICANT_NAME")}
+              label={t("COMMON_APPLICANT_NAME")}
               text={`${t(checkForNA(owner?.applicantName))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/applicant-details`} />}
           />
           <Row
-              label={t("WT_MOBILE_NUMBER")}
+              label={t("COMMON_MOBILE_NUMBER")}
               text={`${t(checkForNA(owner?.mobileNumber))}`}
           />
            <Row
@@ -53,7 +53,7 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(owner?.alternateNumber))}`}
           />
           <Row
-              label={t("WT_EMAIL_ID")}
+              label={t("COMMON_EMAIL_ID")}
               text={`${t(checkForNA(owner?.emailId))}`}
           />
           </StatusTable>
@@ -61,42 +61,42 @@ In Parent Component,  we are passing the data as a props coming through params (
           <CardSubHeader>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
-              label={t("WT_HOUSE_NO")}
+              label={t("HOUSE_NO")}
               text={`${t(checkForNA(address?.houseNo))}`}
               actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/address-details`} />}
               />
           <Row
-              label={t("WT_ADDRESS_LINE1")}
+              label={t("ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressLine1))}`}
               />
               <Row
-              label={t("WT_ADDRESS_LINE2")}
+              label={t("ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressLine2))}`}
               />
               <Row
-              label={t("WT_CITY")}
+              label={t("CITY")}
               text={`${t(checkForNA(address?.city?.city?.name))}`}
               />
               <Row
-              label={t("WT_LOCALITY")}
+              label={t("LOCALITY")}
               text={`${t(checkForNA(address?.locality?.i18nKey))}`}
               />
               <Row
-              label={t("WT_PINCODE")}
+              label={t("PINCODE")}
               text={`${t(checkForNA(address?.pincode))}`}
               />
               <Row
-              label={t("WT_LANDMARK")}
+              label={t("LANDMARK")}
               text={`${t(checkForNA(address?.landmark))}`}
               />
               <Row
-              label={t("WT_STREET_NAME")}
+              label={t("STREET_NAME")}
               text={`${t(checkForNA(address?.streetName))}`}
               />
           </StatusTable>
-
-
-          <CardSubHeader>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
+          {serviceType?.serviceType?.code === "WT" && (
+           <>  
+          <CardSubHeader>{t("WT_REQUEST_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("WT_TANKER_TYPE")}
@@ -115,9 +115,9 @@ In Parent Component,  we are passing the data as a props coming through params (
               label={t("WT_DELIVERY_DATE")}
               text={`${t(checkForNA(requestDetails?.deliveryDate))}`}
               />
-              <Row
-              label={t("WT_DELIVERY_DATE")}
-              text={`${(checkForNA(requestDetails?.deliveryTime))}`}
+               <Row
+              label={t("WT_DELIVERY_TIME")}
+              text={`${checkForNA(requestDetails?.deliveryTime)}`}
               />
               <Row
               label={t("WT_DESCRIPTION")}
@@ -128,8 +128,40 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(immediateRequired))}`}
               />
           </StatusTable>
-    
-
+          </>
+            )}
+            {serviceType?.serviceType?.code === "MobileToilet" && (
+              <>
+                <CardSubHeader>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
+                <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
+                  <Row
+                    label={t("NUMBER_OF_MOBILE_TOILETS")}
+                    text={`${t(checkForNA(toiletRequestDetails?.mobileToilet))}`}
+                  />
+                  <Row
+                    label={t("WT_DELIVERY_FROM_DATE")}
+                    text={`${t(checkForNA(toiletRequestDetails?.deliveryfromDate))}`}
+                  />
+                  <Row
+                    label={t("WT_DELIVERY_TO_DATE")}
+                    text={`${t(checkForNA(toiletRequestDetails?.deliverytoDate))}`}
+                  />
+                  <Row
+                    label={t("WT_REQUIREMNENT_FROM_TIME")}
+                    text={checkForNA(toiletRequestDetails?.deliveryfromTime)}
+                  />
+                  <Row
+                    label={t("WT_REQUIREMNENT_TO_TIME")}
+                    text={checkForNA(toiletRequestDetails?.deliverytoTime)}
+                  />
+                  <Row
+                    label={t("WT_SPECIAL_REQUEST")}
+                    text={`${t(checkForNA(toiletRequestDetails?.specialRequest))}`}
+                  />
+                </StatusTable>
+              </>
+            )}
+            
           <CheckBox
             label={t("WT_FINAL_DECLARATION_MESSAGE")}
             onChange={setdeclarationhandler}
