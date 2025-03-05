@@ -5,15 +5,14 @@ import java.util.Map;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.upyog.config.ModuleConfig;
 import org.upyog.constants.VerificationSearchConstants;
 import org.upyog.mapper.CommonDetailsMapper;
 import org.upyog.mapper.CommonDetailsMapperFactory;
 import org.upyog.repository.ServiceRequestRepository;
 import org.upyog.web.models.CommonDetails;
-import org.upyog.service.UserService;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,11 +31,12 @@ public class CommonServiceImpl implements CommonService {
 	private final CommonDetailsMapperFactory mapperFactory;
 
 	@Autowired
+	@Lazy
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -48,33 +48,6 @@ public class CommonServiceImpl implements CommonService {
 		this.moduleUniqueIdParams = moduleConfig.getUniqueIdParam();
 		this.mapperFactory = mapperFactory;
 	}
-	
-	
-	/**
-	 * Retrieves the system user’s RequestInfo based on a predefined system username.
-	 * 
-	 * @param userService The UserService instance used to fetch user details.
-	 * @return A RequestInfo object containing the system user’s details.
-	 * @throws IllegalStateException if the system user is not found.
-	 */
-	private RequestInfo getSystemUserDetails(UserService userService) {
-	    UserDetailResponse userDetailResponse = userService.searchByUserName(
-	        VerificationSearchConstants.SYSTEM_CITIZEN_USERNAME, 
-	        VerificationSearchConstants.VS_TENANTID
-	    );
-
-	    if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
-	        throw new IllegalStateException("SYSTEM user not found for tenant '" + VerificationSearchConstants.VS_TENANTID + "'.");
-	    }
-
-	    RequestInfo systemRequestInfo = RequestInfo.builder()
-	        .userInfo(userDetailResponse.getUser().get(0))
-	        .build();
-
-	    log.info("RequestInfo of system User: " + systemRequestInfo);
-	    return systemRequestInfo;
-	}
-
 
 	@Override
 	public CommonDetails getApplicationCommonDetails(RequestInfo requestInfo, String moduleName,
@@ -98,8 +71,9 @@ public class CommonServiceImpl implements CommonService {
 		// Construct the full URL dynamically
 		StringBuilder urlBuilder = new StringBuilder();
 		urlBuilder.append(host).append(endpoint).append("?").append(uniqueIdParam).append("=").append(applicationNumber)
-		.append("&tenantId=").append(tenantId);
-		RequestInfoWrapper requestInfoWrapper= RequestInfoWrapper.builder().requestInfo(requestInfo.getUserInfo() != null ? requestInfo : getSystemUserDetails(userService)).build();
+				.append("&tenantId=").append(tenantId);
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+				.requestInfo(requestInfo.getUserInfo() != null ? requestInfo : getSystemUserDetails()).build();
 
 		log.info("requestInfoWrapper data : " + requestInfoWrapper);
 		Object result = null;
@@ -112,5 +86,28 @@ public class CommonServiceImpl implements CommonService {
 		} catch (Exception e) {
 			throw new CustomException("Error fetching details for module: " + moduleName, "MODULE_API_ERROR");
 		}
+	}
+
+	/**
+	 * Retrieves the system user’s RequestInfo based on a predefined system
+	 * username.
+	 * 
+	 * @param userService The UserService instance used to fetch user details.
+	 * @return A RequestInfo object containing the system user’s details.
+	 * @throws IllegalStateException if the system user is not found.
+	 */
+	private RequestInfo getSystemUserDetails() {
+		UserDetailResponse userDetailResponse = userService.searchByUserName(
+				VerificationSearchConstants.SYSTEM_CITIZEN_USERNAME, VerificationSearchConstants.VS_TENANTID);
+
+		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
+			throw new IllegalStateException(
+					"SYSTEM user not found for tenant '" + VerificationSearchConstants.VS_TENANTID + "'.");
+		}
+
+		RequestInfo systemRequestInfo = RequestInfo.builder().userInfo(userDetailResponse.getUser().get(0)).build();
+
+		log.info("RequestInfo of system User: " + systemRequestInfo);
+		return systemRequestInfo;
 	}
 }
