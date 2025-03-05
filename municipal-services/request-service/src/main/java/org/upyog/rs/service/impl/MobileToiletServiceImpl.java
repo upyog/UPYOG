@@ -187,10 +187,10 @@ public class MobileToiletServiceImpl implements MobileToiletService{
             enrichmentService.enrichMobileToiletBookingUponUpdate(state.getApplicationStatus(), mobileToiletRequest);
 
             // If action is APPROVE, create demand
-//            if (RequestServiceConstants.ACTION_APPROVE
-//                    .equals(mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow().getAction())) {
-//                demandService.createDemand(mobileToiletRequest);
-//            }
+            if (RequestServiceConstants.ACTION_APPROVE
+                    .equals(mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow().getAction())) {
+                demandService.createMTDemand(mobileToiletRequest);
+            }
         }
 
         // Handle the payment request and update the mobile Toilet booking if applicable

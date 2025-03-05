@@ -1,6 +1,7 @@
 package org.upyog.rs.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -33,6 +34,25 @@ public class CalculationService {
 			}
 		}
 		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + tankerType);
+	}
+
+	public CalculationType mtCalculateFee(int noOfMobileToilet, LocalDate deliveryFromDate, LocalDate deliveryToDate, RequestInfo requestInfo, String tenantId) {
+		List<CalculationType> calculationTypes = mdmsUtil.getMTCalculationType(requestInfo,RequestServiceUtil.extractTenantId(tenantId),
+				RequestServiceConstants.MDMS_MODULE_NAME);
+
+		if (calculationTypes.isEmpty()) {
+			log.info("No calculationTypes found for mobile toilet booking.");
+			throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + noOfMobileToilet);
+		}
+
+		log.info("calculationTypes for mobile Toilet booking : {}", calculationTypes);
+		long numberOfDays = deliveryFromDate.until(deliveryToDate).getDays() + 1; // Including both start and end date
+		log.info("Number of days for mobile Toilet booking : {}", numberOfDays);
+		log.info("Number of mobile toilets : {}", noOfMobileToilet);
+		BigDecimal feePerToilet = calculationTypes.get(0).getAmount();
+		calculationTypes.get(0).setAmount(feePerToilet.multiply(BigDecimal.valueOf(noOfMobileToilet)).multiply(BigDecimal.valueOf(numberOfDays)));
+
+		return calculationTypes.get(0);
 	}
 
 }

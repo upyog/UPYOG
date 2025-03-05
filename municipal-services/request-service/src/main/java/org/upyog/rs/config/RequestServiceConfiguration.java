@@ -202,6 +202,9 @@ public class RequestServiceConfiguration {
 	@Value("${rs.business.service.name}")
 	private String businessServiceName;
 
+	@Value("${rs.mt.business.service.name}")
+	private String mobileToiletBusinessService;
+
 	@Value("${rs.module.name}")
 	private String moduleName;
 
