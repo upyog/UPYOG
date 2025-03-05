@@ -70,7 +70,7 @@ public class DemandService {
 		log.info("Creating demand upon approve action for booking no : {}", mobileToiletRequest.getMobileToiletBookingDetail().getBookingNo());
 		MobileToiletBookingDetail mobileToiletBookingDetail = mobileToiletRequest.getMobileToiletBookingDetail();
 		String consumerCode = mobileToiletBookingDetail.getBookingNo();
-		BigDecimal amountPayable = calculationService.mtCalculateFee(mobileToiletBookingDetail.getNoOfMobileToilet(),mobileToiletRequest.getRequestInfo(), tenantId);
+		BigDecimal amountPayable = calculationService.mtCalculateFee(mobileToiletBookingDetail.getNoOfMobileToilet(),mobileToiletBookingDetail.getDeliveryFromDate(),mobileToiletBookingDetail.getDeliveryToDate(),mobileToiletRequest.getRequestInfo(), tenantId);
 		log.info("Final amount payable after calculation : " + amountPayable);
 		User owner = buildUser(mobileToiletBookingDetail.getApplicantDetail(), tenantId);
 		List<DemandDetail> demandDetails = buildMTDemandDetails(amountPayable, tenantId);
