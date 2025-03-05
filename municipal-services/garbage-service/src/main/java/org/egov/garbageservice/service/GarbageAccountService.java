@@ -697,7 +697,7 @@ public class GarbageAccountService {
 		map.put("gb", map2);
 
 		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("GarbageRegistrationCertificate")
-				.tenantId("hp").data(map).build();
+				.tenantId(GarbageAccount.getTenantId()).data(map).build();
 
 		return pdfRequest;
 	}
