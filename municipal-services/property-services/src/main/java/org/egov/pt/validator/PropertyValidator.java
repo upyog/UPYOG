@@ -593,6 +593,7 @@ public class PropertyValidator {
 				&& null == criteria.getOldPropertyId()
 				&& null == criteria.getLocality()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate())
+				&& CollectionUtils.isEmpty(criteria.getCreatedBy()) 
 				&& CollectionUtils.isEmpty(criteria.getStatus());
 		
 		if (isUserCitizen) {
@@ -646,7 +647,7 @@ public class PropertyValidator {
 //						"Search can't be performed by this Employee due to lack of roles.");
 //			}
 			if (!CollectionUtils.isEmpty(listOfStatus) && isCriteriaEmpty) {
-				criteria.setStatus(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
+				criteria.setStatusList(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
 			}
 		}
         
@@ -661,7 +662,7 @@ public class PropertyValidator {
 				&& null == criteria.getPropertyType() && null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId() && null == criteria.getLocality()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate())
-				&& CollectionUtils.isEmpty(criteria.getStatus());
+				&& CollectionUtils.isEmpty(criteria.getCreatedBy()) && CollectionUtils.isEmpty(criteria.getStatus());
 		return isCriteriaEmpty;
 	}
 

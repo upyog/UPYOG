@@ -13,6 +13,7 @@ import org.egov.garbageservice.contract.bill.DemandDetail;
 import org.egov.garbageservice.contract.bill.DemandRepository;
 import org.egov.garbageservice.contract.bill.DemandResponse;
 import org.egov.garbageservice.model.GarbageAccount;
+import org.egov.garbageservice.model.GenerateBillRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,34 +23,31 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class DemandService {
 
-    @Autowired
-    private GrbgConstants grbgConfig;
+	@Autowired
+	private GrbgConstants grbgConfig;
 
 	@Autowired
 	private DemandRepository demandRepository;
 
 	public List<Demand> generateDemand(RequestInfo requestInfo, GarbageAccount garbageAccount, String businessService,
-			BigDecimal taxAmount) {
+			BigDecimal taxAmount, GenerateBillRequest generateBillRequest) {
 
-		// get total Tax
-//    	ApplicationDetail applicationDetail = tradeLicenseService.getApplicationBillUserDetail(garbageAccount, requestInfo);
-//    	BigDecimal taxAmount = new BigDecimal("100.00");
+		Long taxPeriodFrom = null != generateBillRequest ? generateBillRequest.getFromDate().getTime()
+				: new Date().getTime();
+		Long taxPeriodTo = null != generateBillRequest ? generateBillRequest.getToDate().getTime()
+				: new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
 
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
 				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(grbgConfig.getGrbgBillExpiryAfter()));
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
-		// create demand of 1 month
+
 		Demand demandOne = Demand.builder().consumerCode(garbageAccount.getGrbgApplicationNumber())
 				.demandDetails(Arrays.asList(demandDetail)).minimumAmountPayable(taxAmount)
-				.tenantId(garbageAccount.getTenantId()).taxPeriodFrom(new Date().getTime())
-				.taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000))
-						.getTime())
-//                .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 365 * 24 * 60 * 60 * 1000)).getTime())
-				.fixedBillExpiryDate(cal.getTimeInMillis())
-				.consumerType(garbageAccount.getGrbgApplicationNumber()).businessService(garbageAccount.getBusinessService())
-				.build();
+				.tenantId(garbageAccount.getTenantId()).taxPeriodFrom(taxPeriodFrom).taxPeriodTo(taxPeriodTo)
+				.fixedBillExpiryDate(cal.getTimeInMillis()).consumerType(GrbgConstants.WORKFLOW_MODULE_NAME)
+				.businessService(businessService).build();
 
 		List<Demand> demands = Arrays.asList(demandOne);
 

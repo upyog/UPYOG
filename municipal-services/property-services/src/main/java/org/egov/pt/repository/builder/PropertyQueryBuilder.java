@@ -385,6 +385,18 @@ public class PropertyQueryBuilder {
 				.append(" )");
 			addToPreparedStatement(preparedStmtList, statusStringList);
 		}
+		
+		Set<String> statusStringList2 = new HashSet<>();
+		if (!CollectionUtils.isEmpty(criteria.getStatusList())) {
+			criteria.getStatusList().forEach(status -> {
+				statusStringList2.add(status.toString());
+			});
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append(" property.status IN ( ")
+			.append(createQuery(statusStringList2))
+			.append(" )");
+			addToPreparedStatement(preparedStmtList, statusStringList2);
+		}
 
 		Set<String> creationReasonsList = criteria.getCreationReason();
 		if(!CollectionUtils.isEmpty(creationReasonsList)){
