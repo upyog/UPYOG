@@ -291,6 +291,13 @@ public class GarbageAccountRepository {
                     preparedStatementValues)).append(" )");
         }
         
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatusList())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
+			searchQuery.append(" acc.status IN ( ").append(
+					getQueryForCollection(searchCriteriaGarbageAccount.getStatusList(), preparedStatementValues))
+					.append(" )");
+		}
+        
         if (null != searchCriteriaGarbageAccount.getTenantId()) {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.tenant_id = ").append("'"+searchCriteriaGarbageAccount.getTenantId()+"'");

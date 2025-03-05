@@ -1,7 +1,7 @@
 package org.egov.garbageservice.controller;
 
+import org.egov.garbageservice.model.GenerateBillRequest;
 import org.egov.garbageservice.service.GarbageAccountSchedulerService;
-import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +17,10 @@ public class GarbageAccountSchedulerController {
 	private GarbageAccountSchedulerService service;
 
 	@PostMapping("/bill-generator")
-	public ResponseEntity<?> billGenerator(@RequestBody RequestInfoWrapper requestInfoWrapper) {
-		service.generateBill(requestInfoWrapper);
-		return ResponseEntity.ok("Bill generated successfully!!!");
+	public ResponseEntity<?> billGenerator(@RequestBody GenerateBillRequest generateBillRequest) {
+//		service.generateBill(requestInfoWrapper);
+//		return ResponseEntity.ok("Bill generated successfully!!!");
+		return ResponseEntity.ok(service.generateBill(generateBillRequest));
 	}
 
 }
