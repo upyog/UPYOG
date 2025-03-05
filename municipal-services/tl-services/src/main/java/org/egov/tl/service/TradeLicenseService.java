@@ -1240,7 +1240,7 @@ public class TradeLicenseService {
 
 		map.put("tl", map2);
 
-		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("TradeLicense2").tenantId("hp")
+		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("TradeLicense2").tenantId(tradeLicense.getTenantId())
 				.data(map).build();
 
 		return pdfRequest;

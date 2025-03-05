@@ -500,7 +500,7 @@ public class SiteBookingService {
 
 		map.put("advt", map2);
 
-		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("SiteBookingCertificate").tenantId("hp")
+		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(requestInfo).key("SiteBookingCertificate").tenantId(siteBooking.getTenantId())
 				.data(map).build();
 
 		return pdfRequest;
