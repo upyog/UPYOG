@@ -216,5 +216,8 @@ public class CommunityHallBookingConfiguration {
 	
 	@Value("${egov.asset.update.endpoint}")
 	private String assetUpdateEndpoint;
+	
+	@Value("${state.level.tenant.id}")
+	private String stateLevelTenantId;
 
 }
