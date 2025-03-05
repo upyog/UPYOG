@@ -36,6 +36,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Slf4j
 public class IdGenerationService {
 
+	private static final String STATE_LEVEL_TENANT_ID = "hp";
+	
     @Autowired
     DataSource dataSource;
 
@@ -78,7 +80,11 @@ public class IdGenerationService {
         RequestInfo requestInfo = idGenerationRequest.getRequestInfo();
         List<IdRequest> idRequests = idGenerationRequest.getIdRequests();
         List<IdResponse> idResponses = new LinkedList<>();
-
+        
+        idRequests.stream().forEach(idRequest -> {
+			idRequest.setTenantId(STATE_LEVEL_TENANT_ID);
+		});
+        
         IdGenerationResponse idGenerationResponse = new IdGenerationResponse();
 
         for (IdRequest idRequest : idRequests) {
