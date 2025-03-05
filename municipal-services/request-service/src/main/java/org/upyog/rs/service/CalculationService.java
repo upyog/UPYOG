@@ -47,6 +47,8 @@ public class CalculationService {
 
 		log.info("calculationTypes for mobile Toilet booking : {}", calculationTypes);
 		long numberOfDays = deliveryFromDate.until(deliveryToDate).getDays() + 1; // Including both start and end date
+		log.info("Number of days for mobile Toilet booking : {}", numberOfDays);
+		log.info("Number of mobile toilets : {}", noOfMobileToilet);
 		BigDecimal feePerToilet = calculationTypes.get(0).getAmount();
 		calculationTypes.get(0).setAmount(feePerToilet.multiply(BigDecimal.valueOf(noOfMobileToilet)).multiply(BigDecimal.valueOf(numberOfDays)));
 
