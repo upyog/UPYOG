@@ -94,6 +94,9 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
             		&& null == garbageAccount.getGrbgApplication()) {
                 	GrbgApplication garbageApplication = populateGarbageApplication(rs, "app_");
                     garbageAccount.setGrbgApplication(garbageApplication);
+					garbageAccount.setGrbgApplicationNumber(
+							null != garbageApplication.getApplicationNo() ? garbageApplication.getApplicationNo()
+									: null);
             }
 
             if (null != rs.getString("comm_uuid")
