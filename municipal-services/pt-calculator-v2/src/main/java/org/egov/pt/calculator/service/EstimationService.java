@@ -1377,7 +1377,7 @@ public class EstimationService {
 		if(datemonth.equalsIgnoreCase("1") || datemonth.equalsIgnoreCase("2") || datemonth.equalsIgnoreCase("3"))
 		{
 			nextyear=dateyear;
-			currentyear=currentyear-1;
+			currentyear=Integer.parseInt(dateyear)-1;
 			dateyear=String.valueOf(currentyear);
 		}
 
