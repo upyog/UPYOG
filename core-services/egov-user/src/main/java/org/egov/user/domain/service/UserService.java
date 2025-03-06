@@ -254,9 +254,37 @@ public class UserService {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
-		if(!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
+		if(user.isOtpValidationMandatory()&&!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
 			throw new CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered");
 		}
+		
+		/* encrypt here */
+		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+		validateUserUniqueness(user);
+		// validateUserMobileNumberUniqueness(user);
+		if (isEmpty(user.getPassword())) {
+			user.setPassword(UUID.randomUUID().toString());
+		} else {
+			validatePassword(user.getPassword());
+		}
+		user.setPassword(encryptPwd(user.getPassword()));
+		user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
+		user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+		User persistedNewUser = persistNewUser(user);
+		return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+
+		/* decrypt here because encrypted data coming from DB */
+
+	}
+	
+	public User createUserNoValidate(User user, RequestInfo requestInfo) {
+		user.setUuid(UUID.randomUUID().toString());
+		user.validateNewUser(createUserValidateName);
+		conditionallyValidateOtp(user);
+		
+		  if(user.isOtpValidationMandatory()&&!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) { throw new
+		  CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered"); }
+		 
 		
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
