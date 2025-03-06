@@ -254,6 +254,10 @@ public class UserService {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
+		if(!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
+			throw new CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered");
+		}
+		
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 		validateUserUniqueness(user);
