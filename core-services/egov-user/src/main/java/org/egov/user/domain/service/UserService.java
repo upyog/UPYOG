@@ -815,7 +815,7 @@ public class UserService {
 		// capMap.put(uuid, captchaText.toString());
 		redisTemplate.opsForValue().set(uuid, captchaText.toString(), 5, TimeUnit.MINUTES);
 		captchaResponse.setResponseInfo(responseInfo);
-		captcha.setUuid(uuid);
+		captcha.setCaptchaUuid(uuid);
 		captcha.setCaptcha(captchaText.toString());
 		captchaResponse.setCaptcha(captcha);
 		return captchaResponse;
