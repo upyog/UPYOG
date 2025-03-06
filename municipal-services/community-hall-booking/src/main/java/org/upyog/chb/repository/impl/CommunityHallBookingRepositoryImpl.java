@@ -170,4 +170,12 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		return availabiltityDetails;
 	}
 
+	public List<CommunityHallSlotAvailabilityDetail> getBookingCodeSlots(String code) {
+		StringBuilder query = queryBuilder.getBookingCodeSlotsQuery(code);
+		List<Object> paramsList = new ArrayList<>();
+		paramsList.add(code);
+		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(), paramsList.toArray(),
+				availabilityRowMapper);
+		return availabiltityDetails;
+	}
 }

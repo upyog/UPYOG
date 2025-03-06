@@ -1,6 +1,9 @@
 package org.upyog.chb.web.controllers;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -13,12 +16,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.upyog.chb.constants.CommunityHallBookingConstants;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.Asset;
 import org.upyog.chb.web.models.AssetSearchCriteria;
+import org.upyog.chb.web.models.CommmunityHallSlotDetailsRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -36,12 +42,14 @@ import org.upyog.chb.web.models.ResponseInfo;
 import org.upyog.chb.web.models.ResponseInfo.StatusEnum;
 import org.upyog.chb.web.models.billing.Demand;
 import org.springframework.web.bind.annotation.PathVariable;
+import java.time.format.DateTimeFormatter;
+
 
 import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
 
-@Controller
+@RestController
 @RequestMapping("/booking")
 public class CommunityHallBookingController {
 
@@ -159,5 +167,14 @@ public class CommunityHallBookingController {
 		communityHallResponse.addNewHallsBookingApplication(bookingDetail);
 		return new ResponseEntity<CommunityHallBookingResponse>(communityHallResponse, HttpStatus.OK);
 	}
-
+	
+	@RequestMapping(value = "/v1/_slot-details", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> v1GetCommmunityHallSlotDetails(
+            @Valid @RequestBody CommmunityHallSlotDetailsRequest commmunityHallSlotDetails) {
+		List<String> bookedDates = bookingService.fetchSlotDetails(commmunityHallSlotDetails);
+        Map<String, Object> jsonObjectBookedDates = new HashMap<>();
+        jsonObjectBookedDates.put("bookedDates", bookedDates);
+        jsonObjectBookedDates.put("communityHallCode", commmunityHallSlotDetails.getCommunityHallCode());
+		return new ResponseEntity<Map<String, Object>>(jsonObjectBookedDates, HttpStatus.OK);
+	}
 }

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+        }
+
+        .top-header {
+            width: 100%;
+            border-collapse: collapse;
+            border-bottom: solid 4px #49627e;
+        }
+
+        .top-header td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .hp-govt {
+            width: 180px;
+        }
+
+        .udd-logo {
+            width: 140px;
+            float: right;
+        }
+
+        .header-text {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #49627e;
+        }
+
+        .service-name {
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .asset1-details, .asset-details {
+            width: 100%;
+            border: 1px solid #000;
+            border-collapse: collapse;
+            font-size: 14px;
+            background-color: #f9f9f9;
+        }
+
+        .asset1-details td, .asset-details td {
+            padding: 8px;
+            border: 1px solid #000;
+        }
+
+        .newHeader, .newHeader1 {
+            text-align: center;
+            background-color: black;
+            color: white;
+            padding: 8px;
+        }
+
+        .newHeader1 {
+            background-color: rgb(143, 154, 232);
+        }
+
+        .qr-code {
+            width: 220px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .terms-condition {
+            font-size: 20px;
+            color: #49627e;
+            margin-top: 10px;
+            border-bottom: dashed 1px #49627e;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <table width="100%">
+        <tr>
+            <td><img class="hp-govt" th:src="${hpLogo}" alt="Government of Himachal Pradesh" /></td>
+            <td>
+                <h2 class="header-text"><span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span></h2>
+                <h3 class="service-name">Booking Confirmation</h3>
+                <span>Dates: <span th:text="${fromDate}">NA</span> to <span th:text="${toDate}">NA</span></span><br />
+                <span>Asset Name: <span th:text="${siteName}">NA</span></span>
+            </td>
+            <td><img class="udd-logo" th:src="${UDDLogo}" alt="Directorate of Urban Development" /></td>
+        </tr>
+    </table>
+
+    <table class="asset1-details">
+        <tr>
+            <td>Address: <span th:text="${address}">NA</span></td>
+            <td>Site Contact No.: <span th:text="${contactNumber}">NA</span></td>
+        </tr>
+        <tr>
+            <td>Pin location: <span th:text="${pinLocation}">NA</span></td>
+            <td>Site Contact location: <span th:text="${contactLocation}">NA</span></td>
+        </tr>
+    </table>
+
+    <table class="asset-details">
+        <tr><th class="newHeader" colspan="2">Booking Details</th></tr>
+        <tr><td>Booking Reference:</td><td><span th:text="${bookingReference}">NA</span></td></tr>
+        <tr><td>Booked By:</td><td><span th:text="${bookedBy}">NA</span></td></tr>
+        <tr><td>Mobile No:</td><td><span th:text="${mobileNumber}">NA</span></td></tr>
+        <tr><td>Booking Date:</td><td><span th:text="${bookingDate}">NA</span></td></tr>
+        <tr><td>Booking Status:</td><td><span th:text="${bookingStatus}">NA</span></td></tr>
+    </table>
+
+    <br/>
+    <table class="asset-details">
+        <tr><th class="newHeader1">Description</th><th class="newHeader1">Amount</th></tr>
+        <tr><td>Per Day Cost</td><td><span th:text="${perDayCost}">NA</span></td></tr>
+        <tr><td>Number of Days</td><td><span th:text="${numberOfDays}">NA</span></td></tr>
+        <tr><td>Security Amount</td><td><span th:text="${securityAmount}">NA</span></td></tr>
+        <tr>
+            <td colspan="2" style="text-align: right; background-color: rgb(143, 154, 232); font-weight: bold;">
+                Total Amount: <span th:text="${totalAmount}">NA</span>
+            </td>
+        </tr>
+    </table>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="QR Code" />
+    </div>
+
+    <hr/>
+    <h2 class="terms-condition">Additional Details</h2>
+    <div class="terms-condition-details">
+        <ul>
+            <li>Check-in: 1 PM, Check-Out: 11:00 AM</li>
+            <li>Security Amount will be refunded xxxxxxxxxxx</li>
+        </ul>
+    </div>
+    <hr/>
+</body>
+</html>
