@@ -9756,15 +9756,8 @@ button[disabled], html input[disabled] {
   cursor: not-allowed !important;
 }
 .emp-login-text {
-  display: flex;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 24px;
-}
-.emp-login-text {
-  display: flex;
-  justify-content: center;
+  /* display: flex;
+  justify-content: center; */
   font-weight: 600;
   font-size: 20px;
   line-height: 24px;

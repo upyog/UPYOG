@@ -54,7 +54,7 @@ export const FormComposer = (props) => {
 
   function onSubmit(data) {
     if(data && data?.captcha) {
-      data.uuid = props?.captchaDetails[0]?.uuid
+      data.captchaUuid = props?.captchaDetails[0]?.captchaUuid
     }
     props.onSubmit(data);
   }

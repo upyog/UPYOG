@@ -61,7 +61,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const fetchCaptcha = async()=>{
     try {
       const res = await Digit.UserService.generateCaptcha({});
-      if(res && res?.captcha?.captcha && res?.captcha?.uuid) {
+      if(res && res?.captcha?.captcha && res?.captcha?.captchaUuid) {
         let tt = [];
         tt.push(res?.captcha)
         // if(isMounted) {
@@ -132,7 +132,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setParmas({ ...params, otp });
   };
   const onCaptchaChange = (captchaText) => {
-    setParmas({ ...params, captcha: captchaText,  uuid: captcha[0]?.uuid});
+    setParmas({ ...params, captcha: captchaText,  captchaUuid: captcha[0]?.captchaUuid});
   }
 
   const handleMobileChange = (event) => {
@@ -197,12 +197,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp, name, captcha, uuid } = params;
+      const { mobileNumber, otp, name, captcha, captchaUuid } = params;
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber,
           captcha: captcha,
-          uuid: uuid,
+          captchaUuid: captchaUuid,
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
@@ -227,7 +227,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           name,
           username: mobileNumber,
           captcha: captcha,
-          uuid: uuid,
+          captchaUuid: captchaUuid,
           otpReference: otp,
           tenantId: stateCode,
         };

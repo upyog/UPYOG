@@ -48,7 +48,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const fetchCaptcha = async()=>{
     try {
       const res = await Digit.UserService.generateCaptcha({});
-      if(res && res?.captcha?.captcha && res?.captcha?.uuid) {
+      if(res && res?.captcha?.captcha && res?.captcha?.captchaUuid) {
         let tt = [];
         tt.push(res?.captcha)
         // if(isMounted) {
