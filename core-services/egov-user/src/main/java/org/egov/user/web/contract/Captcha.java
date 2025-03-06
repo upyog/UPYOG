@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class Captcha {
 	
-	private String uuid;	
+	private String captchaUuid;
 	private String captcha;
 }

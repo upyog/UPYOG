@@ -254,6 +254,10 @@ public class UserService {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
+		if(!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
+			throw new CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered");
+		}
+		
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 		validateUserUniqueness(user);
@@ -346,6 +350,13 @@ public class UserService {
 			map.add("tenantId", user.getTenantId());
 			map.add("isInternal", "true");
 			map.add("userType", UserType.CITIZEN.name());
+			//String captcha = createCaptcha(new ResponseInfo()).getCaptcha().getCaptcha();
+			//String uuid = createCaptcha(new ResponseInfo()).getCaptcha().getUuid();
+			map.add("captcha", user.getCaptcha());
+			map.add("captchaUuid", user.getCaptchaUuid());
+					
+			//System.out.println(captcha);
+			//System.out.println(uuid);
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
 					headers);
@@ -517,7 +528,7 @@ public class UserService {
 		validatePassword(loggedInUserUpdatePasswordRequest.getNewPassword());
 		if (bcrypt.matches(loggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
-			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
+			throw new InvalidLoggedInUserUpdatePasswordRequestException(loggedInUserUpdatePasswordRequest);
 		}
 
 		user.updatePassword(encryptPwd(loggedInUserUpdatePasswordRequest.getNewPassword()));
@@ -569,7 +580,7 @@ public class UserService {
 
 		if (bcrypt.matches(nonLoggedInUserUpdatePasswordRequest.getNewPassword(), user.getPassword())) {
 			log.info("Password Already Used Previously");
-			throw new CustomException("INVALID_PASSWORD", "Password Already Used Previously");
+			throw new InvalidNonLoggedInUserUpdatePasswordRequestException(nonLoggedInUserUpdatePasswordRequest);
 		}
 		user.updatePassword(encryptPwd(nonLoggedInUserUpdatePasswordRequest.getNewPassword()));
 		/* encrypt here */
@@ -653,10 +664,21 @@ public class UserService {
 				session.getCreationTime(), session.getMaxInactiveInterval());
 		String uuid = UUID.randomUUID().toString();
 		Long attempt_date = System.currentTimeMillis();
-		String ip = req.getRemoteAddr();
+		String ip = null;
 		String user_name = user.getUsername();
 		String user_uuid = user.getUuid();
 		String attempt_status = status;
+		
+		String x_forwarded_for = (null != req.getHeader("X-Forwarded-For") && !req.getHeader("X-Forwarded-For").isEmpty()
+				? req.getHeader("X-Forwarded-For")
+				: null);
+		if(null!=x_forwarded_for) {
+			ip=x_forwarded_for;
+		}else {
+			ip=req.getRemoteAddr();
+		}
+		System.out.println("X-Forwarded-For========================>>>>>>>>>>>"+x_forwarded_for);
+		
 		String user_agent = (null != req.getHeader("User-Agent") && !req.getHeader("User-Agent").isEmpty()
 				? req.getHeader("User-Agent")
 				: null);
@@ -797,7 +819,7 @@ public class UserService {
 		// capMap.put(uuid, captchaText.toString());
 		redisTemplate.opsForValue().set(uuid, captchaText.toString(), 5, TimeUnit.MINUTES);
 		captchaResponse.setResponseInfo(responseInfo);
-		captcha.setUuid(uuid);
+		captcha.setCaptchaUuid(uuid);
 		captcha.setCaptcha(captchaText.toString());
 		captchaResponse.setCaptcha(captcha);
 		return captchaResponse;
