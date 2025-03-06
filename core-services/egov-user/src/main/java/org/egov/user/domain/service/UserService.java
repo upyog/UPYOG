@@ -346,6 +346,13 @@ public class UserService {
 			map.add("tenantId", user.getTenantId());
 			map.add("isInternal", "true");
 			map.add("userType", UserType.CITIZEN.name());
+			//String captcha = createCaptcha(new ResponseInfo()).getCaptcha().getCaptcha();
+			//String uuid = createCaptcha(new ResponseInfo()).getCaptcha().getUuid();
+			map.add("captcha", user.getCaptcha());
+			map.add("captchaUuid", user.getCaptchaUuid());
+					
+			//System.out.println(captcha);
+			//System.out.println(uuid);
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
 					headers);
@@ -808,7 +815,7 @@ public class UserService {
 		// capMap.put(uuid, captchaText.toString());
 		redisTemplate.opsForValue().set(uuid, captchaText.toString(), 5, TimeUnit.MINUTES);
 		captchaResponse.setResponseInfo(responseInfo);
-		captcha.setUuid(uuid);
+		captcha.setCaptchaUuid(uuid);
 		captcha.setCaptcha(captchaText.toString());
 		captchaResponse.setCaptcha(captcha);
 		return captchaResponse;

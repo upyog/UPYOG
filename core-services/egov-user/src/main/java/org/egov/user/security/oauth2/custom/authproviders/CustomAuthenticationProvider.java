@@ -87,7 +87,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String tenantId = details.get("tenantId");
 		String userType = details.get("userType");
 		String captcha = details.get("captcha");
-		String uuid = details.get("uuid");
+		String uuid = details.get("captchaUuid");
 
 		if (isEmpty(tenantId)) {
 			throw new OAuth2Exception("TenantId is mandatory");
