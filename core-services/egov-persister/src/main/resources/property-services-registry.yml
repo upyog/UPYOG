@@ -582,3 +582,35 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.createdTime
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
+
+
+  - version: 1.0
+    description: Persists Property Tax Calculator Tracker in eg_pt_tax_calculator_tracker table
+    fromTopic: save-property-tax-calculator-tracker
+    isTransaction: true
+    queryMaps:
+    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      basePath: ptTaxCalculatorTracker
+      jsonMaps:
+      - jsonPath: $.ptTaxCalculatorTracker.uuid
+      
+      - jsonPath: $.ptTaxCalculatorTracker.propertyId
+      
+      - jsonPath: $.ptTaxCalculatorTracker.tenantId
+      
+      - jsonPath: $.ptTaxCalculatorTracker.financialYear
+      
+      - jsonPath: $.ptTaxCalculatorTracker.fromDate
+      
+      - jsonPath: $.ptTaxCalculatorTracker.toDate
+      
+      - jsonPath: $.ptTaxCalculatorTracker.propertyTax
+
+      - jsonPath: $.ptTaxCalculatorTracker.auditDetails.createdBy
+      
+      - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedBy
+      
+      - jsonPath: $.ptTaxCalculatorTracker.auditDetails.createdTime
+      
+      - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedTime
+

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.jsoup.helper.StringUtil;
@@ -26,6 +27,8 @@ public class PropertyQueryBuilder {
 
 	@Autowired
 	private PropertyConfiguration config;
+	
+	private static final String PT_TAX_CALCULATOR_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_pt_tax_calculator_tracker eptct";
 
 	private static final String SELECT = "SELECT ";
 	private static final String INNER_JOIN = "INNER JOIN";
@@ -382,6 +385,18 @@ public class PropertyQueryBuilder {
 				.append(" )");
 			addToPreparedStatement(preparedStmtList, statusStringList);
 		}
+		
+		Set<String> statusStringList2 = new HashSet<>();
+		if (!CollectionUtils.isEmpty(criteria.getStatusList())) {
+			criteria.getStatusList().forEach(status -> {
+				statusStringList2.add(status.toString());
+			});
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append(" property.status IN ( ")
+			.append(createQuery(statusStringList2))
+			.append(" )");
+			addToPreparedStatement(preparedStmtList, statusStringList2);
+		}
 
 		Set<String> creationReasonsList = criteria.getCreationReason();
 		if(!CollectionUtils.isEmpty(creationReasonsList)){
@@ -610,6 +625,56 @@ public class PropertyQueryBuilder {
 
 	public String getpropertyAuditEncQuery() {
 		return PROPERTY_AUDIT_ENC_QUERY;
+	}
+
+	public String getTaxCalculatedPropertiesSearchQuery(
+			PtTaxCalculatorTrackerSearchCriteria criteria, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(PT_TAX_CALCULATOR_TRACKER_SEARCH_QUERY);
+
+		builder.append(" WHERE 1 = 1 ");
+
+		if (!StringUtils.isEmpty(criteria.getTenantId())) {
+			String tenantId = criteria.getTenantId();
+
+			String[] tenantIdChunks = tenantId.split("\\.");
+
+			if (tenantIdChunks.length == 1) {
+				andClauseIfRequired(preparedStmtList, builder);
+				builder.append(" eptct.tenantid LIKE ? ");
+				preparedStmtList.add(criteria.getTenantId() + '%');
+			} else {
+				andClauseIfRequired(preparedStmtList, builder);
+				builder.append(" eptct.tenantid=? ");
+				preparedStmtList.add(criteria.getTenantId());
+			}
+		}
+
+		if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" eptct.tenantid IN (").append(createQuery(criteria.getTenantIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getTenantIds());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getUuids())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" eptct.uuid IN (").append(createQuery(criteria.getUuids())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getUuids());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getPropertyIds())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" eptct.propertyid IN (").append(createQuery(criteria.getPropertyIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getPropertyIds());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getFinancialYears())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" eptct.financialyear IN (").append(createQuery(criteria.getFinancialYears())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getFinancialYears());
+		}
+
+		return builder.toString();
+	}
+	
+	private static void andClauseIfRequired(List<Object> values, StringBuilder queryString) {
+		queryString.append(" AND");
 	}
 
 }

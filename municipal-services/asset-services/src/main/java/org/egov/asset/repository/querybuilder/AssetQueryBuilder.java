@@ -196,17 +196,17 @@ public class AssetQueryBuilder {
 		//String query = "SELECT * FROM public.eg_asset_assetdetails ORDER BY createdtime DESC;";
 		
 		if (criteria.getTenantId() != null) {
-            if (criteria.getTenantId().split("\\.").length == 1) {
-
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" asset.tenantid like ?");
-                preparedStmtList.add('%' + criteria.getTenantId() + '%');
-            } else {
-                // addClauseIfRequired(preparedStmtList, builder);
-                // builder.append(" asset.tenantid=? ");
-                // preparedStmtList.add(criteria.getTenantId());
-            }
-        }
+			if (criteria.getTenantId().split("\\.").length == 1) {
+ 
+				addClauseIfRequired(preparedStmtList, builder);
+				builder.append(" asset.tenantid like ?");
+				preparedStmtList.add('%' + criteria.getTenantId() + '%');
+			} else {
+				addClauseIfRequired(preparedStmtList, builder);
+				builder.append(" asset.tenantid=? ");
+				preparedStmtList.add(criteria.getTenantId());
+			}
+		}
 		
 		List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {

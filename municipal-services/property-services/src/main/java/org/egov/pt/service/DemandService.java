@@ -3,11 +3,11 @@ package org.egov.pt.service;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.bill.Demand;
 import org.egov.pt.models.bill.DemandDetail;
@@ -28,8 +28,8 @@ public class DemandService {
 	@Autowired
 	private DemandRepository demandRepository;
 
-	public List<Demand> generateDemand(RequestInfo requestInfo, Property property, String businessService,
-			BigDecimal taxAmount) {
+	public List<Demand> generateDemand(CalculateTaxRequest calculateTaxRequest, Property property,
+			String businessService, BigDecimal taxAmount) {
 
 		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(PTConstants.PROPERTY_TAX_HEAD_MASTER_CODE)
 				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
@@ -39,16 +39,13 @@ public class DemandService {
 
 		Demand demandOne = Demand.builder().consumerCode(property.getPropertyId())
 				.demandDetails(Arrays.asList(demandDetail)).minimumAmountPayable(taxAmount)
-				.tenantId(property.getTenantId()).taxPeriodFrom(new Date().getTime())
-				.taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)) // TODO
-																													// 30days
-						.getTime())
-				.fixedBillExpiryDate(cal.getTimeInMillis()).consumerType(PTConstants.MODULE_PROPERTY)
-				.businessService(businessService).build();
+				.tenantId(property.getTenantId()).taxPeriodFrom(calculateTaxRequest.getFromDate().getTime())
+				.taxPeriodTo(calculateTaxRequest.getToDate().getTime()).fixedBillExpiryDate(cal.getTimeInMillis())
+				.consumerType(PTConstants.MODULE_PROPERTY).businessService(businessService).build();
 
 		List<Demand> demands = Arrays.asList(demandOne);
 
-		List<Demand> savedDemands = demandRepository.saveDemand(requestInfo, demands);
+		List<Demand> savedDemands = demandRepository.saveDemand(calculateTaxRequest.getRequestInfo(), demands);
 
 		return savedDemands;
 	}

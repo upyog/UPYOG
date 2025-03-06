@@ -47,7 +47,7 @@ public class IdGenRepository {
 
         List<IdRequest> reqList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            reqList.add(IdRequest.builder().idName(name).format(format).tenantId(tenantId).build());
+            reqList.add(IdRequest.builder().idName(name).format(format).tenantId(config.getStateLevelTenantId()).build());
         }
         IdGenerationRequest req = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
         IdGenerationResponse response = null;

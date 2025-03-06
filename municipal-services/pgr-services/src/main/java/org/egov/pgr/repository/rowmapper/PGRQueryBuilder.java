@@ -316,7 +316,7 @@ public class PGRQueryBuilder {
 
 		if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
 			andClauseIfRequired(preparedStmtList, builder);
-			builder.append(" epn.tenantId IN (").append(createQuery(criteria.getTenantIds())).append(")");
+			builder.append(" epn.tenantid IN (").append(createQuery(criteria.getTenantIds())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getTenantIds());
 		}
 		if (!CollectionUtils.isEmpty(criteria.getUuids())) {

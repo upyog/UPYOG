@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.model.AuditDetails;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +43,24 @@ public class GrbgUtils {
 //			e.printStackTrace();
 		}
 		return htmlContent;
+	}
+	
+	public AuditDetails buildCreateAuditDetails(RequestInfo requestInfo) {
+		String uuid = requestInfo.getUserInfo().getUuid();
+		return AuditDetails.builder().createdBy(uuid).createdDate(System.currentTimeMillis()).lastModifiedBy(uuid)
+				.lastModifiedDate(System.currentTimeMillis()).build();
+	}
+
+	public AuditDetails buildUpdateAuditDetails(AuditDetails auditDetails, RequestInfo requestInfo) {
+		String uuid = requestInfo.getUserInfo().getUuid();
+
+		if (null == auditDetails) {
+			auditDetails = AuditDetails.builder().build();
+		}
+		auditDetails.setLastModifiedBy(uuid);
+		auditDetails.setLastModifiedDate(System.currentTimeMillis());
+
+		return auditDetails;
 	}
 
 }

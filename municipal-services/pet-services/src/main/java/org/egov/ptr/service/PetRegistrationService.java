@@ -296,7 +296,7 @@ public class PetRegistrationService {
 		PDFRequest pdfRequest = PDFRequest.builder()
 				.RequestInfo(requestInfo)
 				.key("PetCertificate")
-				.tenantId("hp")
+				.tenantId(petRegistrationApplication.getTenantId())
 				.data(map)
 				.build();
 		

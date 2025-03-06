@@ -18,7 +18,6 @@ import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.SMSSentRequest;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.GrbgUtils;
-import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -95,8 +94,7 @@ public class NotificationService {
 		kafkaTemplate.send(emailTopic, emailRequest);
 	}
 
-	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill,
-			RequestInfoWrapper requestInfoWrapper) {
+	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill, RequestInfo requestInfo) {
 		ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
 		String emailBody = grbgUtils.getContentAsString(resource);
 		String smsBody = SMS_BODY_GENERATE_BILL;
@@ -107,8 +105,8 @@ public class NotificationService {
 		emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill);
 
 		if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
-			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()),
-					requestInfoWrapper.getRequestInfo(), null, emailSubject);
+			sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
+					emailSubject);
 		}
 		if (!StringUtils.isEmpty(garbageAccount.getMobileNumber())) {
 			sendSms(smsBody, garbageAccount.getMobileNumber());

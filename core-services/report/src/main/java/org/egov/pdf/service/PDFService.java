@@ -310,7 +310,7 @@ public class PDFService {
 		String apiUrl = mdmsHost + searchEndPoint;
 //		Object payload = getSearchPayload();
 //		Object object = mdmsCall(apiUrl, payload);
-		List<String> signatures = getSignatureFromMdms(pdfRequest.getRequestInfo(), userName);
+		List<String> signatures = getSignatureFromMdms(pdfRequest.getRequestInfo(), userName, pdfRequest.getTenantId());
 		
 		if (CollectionUtils.isEmpty(signatures)) {
 		    throw new CustomException("FETCH_SIGNATURE_FAILED", "Failed to fetch signature from mdms.");
@@ -319,7 +319,7 @@ public class PDFService {
 		}
 		
 	}
-	private List<String> getSignatureFromMdms(RequestInfo requestInfo, String userName) {
+	private List<String> getSignatureFromMdms(RequestInfo requestInfo, String userName, String tenantId) {
 		log.info("Inside method getSignatureFromMdms");
 		String apiUrl = mdmsHost + searchEndPoint;
 		HttpHeaders headers = new HttpHeaders();
@@ -328,7 +328,7 @@ public class PDFService {
 		String authToken = "0648993a-dfd7-4259-90c8-57243fc84061";
 
 		String requestBody = "{\n" + "    \"RequestInfo\": {\n" + "        \"authToken\": \"" + authToken + "\"\n"
-				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \"hp\",\n"
+				+ "    },\n" + "    \"MdmsCriteria\": {\n" + "        \"tenantId\": \""+tenantId+"\",\n"
 				+ "        \"moduleDetails\": [\n" + "            {\n"
 				+ "                \"moduleName\": \"Signature\",\n" + "                \"masterDetails\": [\n"
 				+ "                    {\n" + "                        \"name\": \"Signature\"\n"
@@ -426,7 +426,7 @@ public class PDFService {
 
 	private ByteArrayOutputStream generateHtmlToPdf(String key, String html) {
 		try {
-			String fileName = key + "-" + UUID.randomUUID().toString() + ".pdf";
+//			String fileName = key + "-" + UUID.randomUUID().toString() + ".pdf";
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			ITextRenderer renderer = new ITextRenderer();
 			renderer.setDocumentFromString(html);
@@ -437,23 +437,22 @@ public class PDFService {
 	        PdfReader reader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
 	        PdfWriter writer = new PdfWriter(finalOutputStream);
 	        PdfDocument pdfDoc = new PdfDocument(reader, writer);
-	        Document document = new Document(pdfDoc);
+//	        Document document = new Document(pdfDoc);
 	        
 	        // Load watermark image
-	        ImageData watermarkImage = ImageDataFactory.create(citizenLogoPath);
-	        // ImageData watermarkImage = ImageDataFactory.create();
-	        Image image = new Image(watermarkImage);
-	        image.setFixedPosition(200, 400); // Adjust position
-	        image.setOpacity(1f); // Adjust transparency
-
-	        // Add watermark to each page
-	        int numberOfPages = pdfDoc.getNumberOfPages();
-	        for (int i = 1; i <= numberOfPages; i++) {
-	            PdfPage page = pdfDoc.getPage(i);
-	            PdfCanvas canvas = new PdfCanvas(page);
-	            canvas.addImageAt(watermarkImage, 200, 400, false);
-	        }
-
+//	        ImageData watermarkImage = ImageDataFactory.create(citizenLogoPath);
+//	        // ImageData watermarkImage = ImageDataFactory.create();
+//	        Image image = new Image(watermarkImage);
+//	        image.setFixedPosition(200, 400); // Adjust position
+//	        image.setOpacity(1f); // Adjust transparency
+//
+//	         Add watermark to each page
+//	        int numberOfPages = pdfDoc.getNumberOfPages();
+//	        for (int i = 1; i <= numberOfPages; i++) {
+//	            PdfPage page = pdfDoc.getPage(i);
+//	            PdfCanvas canvas = new PdfCanvas(page);
+//	            canvas.addImageAt(watermarkImage, 200, 400, false);
+//	        }
 	        pdfDoc.close();
 			return outputStream;
 		} catch (Exception e) {

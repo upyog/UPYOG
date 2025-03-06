@@ -592,7 +592,9 @@ public class PropertyValidator {
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
 				&& null == criteria.getLocality()
-				&& (null == criteria.getFromDate() && null == criteria.getToDate());
+				&& (null == criteria.getFromDate() && null == criteria.getToDate())
+				&& CollectionUtils.isEmpty(criteria.getCreatedBy()) 
+				&& CollectionUtils.isEmpty(criteria.getStatus());
 		
 		if (isUserCitizen) {
 			criteria.setIsCitizen(true);
@@ -644,12 +646,25 @@ public class PropertyValidator {
 //				throw new CustomException("SEARCH_ACCOUNT_BY_ROLES",
 //						"Search can't be performed by this Employee due to lack of roles.");
 //			}
-			if (!CollectionUtils.isEmpty(listOfStatus)) {
-				criteria.setStatus(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
+			if (!CollectionUtils.isEmpty(listOfStatus) && isCriteriaEmpty) {
+				criteria.setStatusList(listOfStatus.stream().map(Status::fromValue).collect(Collectors.toSet()));
 			}
 		}
         
     }
+    
+	public Boolean isCriteriaEmpty(PropertyCriteria criteria) {
+		Boolean isCriteriaEmpty = CollectionUtils.isEmpty(criteria.getOldpropertyids())
+				&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
+				&& CollectionUtils.isEmpty(criteria.getPropertyIds()) && CollectionUtils.isEmpty(criteria.getOwnerIds())
+				&& CollectionUtils.isEmpty(criteria.getUuids()) && null == criteria.getMobileNumber()
+				&& null == criteria.getName() && null == criteria.getDocumentNumbers()
+				&& null == criteria.getPropertyType() && null == criteria.getDoorNo()
+				&& null == criteria.getOldPropertyId() && null == criteria.getLocality()
+				&& (null == criteria.getFromDate() && null == criteria.getToDate())
+				&& CollectionUtils.isEmpty(criteria.getCreatedBy()) && CollectionUtils.isEmpty(criteria.getStatus());
+		return isCriteriaEmpty;
+	}
 
 	private List<String> getAccountStatusListByRoles(PropertyCriteria criteria, RequestInfo requestInfo) {
 
