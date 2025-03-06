@@ -67,28 +67,19 @@ public class IdGenRepository {
 
     private String getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
 
-		log.info("requestInfo " + requestInfo);
-		log.info("tenantId " + tenantId);
-		log.info("name " + name);
-		log.info("format " + format);
-		log.info("count " + count);
         List<IdRequest> reqList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             reqList.add(new IdRequest(name, tenantId, format));
         }
         IdGenerationRequest req = new IdGenerationRequest(requestInfo, reqList);
-		log.info("req " + req);
         String uri = UriComponentsBuilder
                 .fromHttpUrl(applicationProperties.getIdGenServiceHost())
                 .path(applicationProperties.getIdGeneration())
                 .build()
                 .toUriString();
-        
-		log.info("uri " + uri);
         try {
             IdGenerationResponse idGenerationResponse = restTemplate.postForObject(uri, req,
                     IdGenerationResponse.class);
-			log.info("idGenerationResponse " + idGenerationResponse);
             return idGenerationResponse.getIdResponses().get(0).getId();
         } catch (HttpClientErrorException e) {
             log.error("ID Gen Service failure ", e);
