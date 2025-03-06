@@ -15,7 +15,9 @@ public class AddressRowMapper implements RowMapper<Address> {
     public Address mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 
         final Address address = Address.builder().id(rs.getLong("id")).addressType(rs.getString("type")).address(rs.getString("address"))
-                .city(rs.getString("city")).pinCode(rs.getString("pincode")).userId(rs.getLong("userid")).tenantId(rs.getString("tenantid")).build();
+                .city(rs.getString("city")).pinCode(rs.getString("pincode")).userId(rs.getLong("userid")).tenantId(rs.getString("tenantid"))
+                .address2(rs.getString("address2")).houseNumber(rs.getString("houseNumber")).houseName(rs.getString("houseName"))
+                .streetName(rs.getString("streetName")).landmark(rs.getString("landmark")).locality(rs.getString("locality")).build();
 
         for (AddressType addressType : AddressType.values()) {
             if (addressType.toString().equals(rs.getString("type"))) {

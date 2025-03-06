@@ -1,6 +1,7 @@
 package org.egov.user.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
@@ -11,13 +12,16 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.isNull;
 import static org.egov.user.domain.model.enums.AddressType.CORRESPONDENCE;
 import static org.egov.user.domain.model.enums.AddressType.PERMANENT;
 
+@Slf4j
 @Service
 public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
 
@@ -32,7 +36,15 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
     public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
 
         Map<Long, User> usersMap = new LinkedHashMap<>();
-
+        ResultSetMetaData rsMeta = rs.getMetaData();
+        boolean hasAddress = IntStream.rangeClosed(1, rsMeta.getColumnCount())
+                .anyMatch(i -> {
+                    try {
+                        return "addr_id".equalsIgnoreCase(rsMeta.getColumnLabel(i));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         while (rs.next()) {
 
             Long userId = rs.getLong("id");
@@ -89,13 +101,16 @@ public class UserResultSetExtractor implements ResultSetExtractor<List<User>> {
             }
 
             Role role = populateRole(rs);
-            Address address = populateAddress(rs, user);
-
             if (!isNull(role))
                 user.addRolesItem(role);
 
-            if (!isNull(address))
-                user.addAddressItem(address);
+            // Conditionally add address if the column exists and is not null
+            if (hasAddress) {
+                Address address = populateAddress(rs, user);
+                if (!isNull(address)) {
+                    user.addAddressItem(address);
+                }
+            }
 
         }
 

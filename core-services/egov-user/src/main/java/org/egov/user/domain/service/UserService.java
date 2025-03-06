@@ -12,14 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
-import org.egov.user.domain.model.LoggedInUserUpdatePasswordRequest;
-import org.egov.user.domain.model.NonLoggedInUserUpdatePasswordRequest;
-import org.egov.user.domain.model.User;
-import org.egov.user.domain.model.UserSearchCriteria;
+import org.egov.user.domain.model.*;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.domain.service.utils.NotificationUtil;
 import org.egov.user.persistence.dto.FailedLoginAttempt;
+import org.egov.user.persistence.repository.AddressRepository;
 import org.egov.user.persistence.repository.FileStoreRepository;
 import org.egov.user.persistence.repository.OtpRepository;
 import org.egov.user.persistence.repository.UserRepository;
@@ -65,6 +63,7 @@ public class UserService {
     private FileStoreRepository fileRepository;
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
     private TokenStore tokenStore;
+    private AddressRepository addressRepository;
 
     @Value("${egov.user.host}")
     private String userHost;
@@ -101,7 +100,7 @@ public class UserService {
                        PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil, TokenStore tokenStore,
                        @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
                        @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
-                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
+                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased, AddressRepository addressRepository,
                        @Value("${egov.user.pwd.pattern}") String pwdRegex,
                        @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
                        @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
@@ -114,6 +113,7 @@ public class UserService {
         this.fileRepository = fileRepository;
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.tokenStore = tokenStore;
+        this.addressRepository = addressRepository;
         this.pwdRegex = pwdRegex;
         this.pwdMaxLength = pwdMaxLength;
         this.pwdMinLength = pwdMinLength;
@@ -656,4 +656,48 @@ public class UserService {
     }
 
 
+    public List<Address> getAddress(String uuid, String tenantId) {
+
+        List<Address> address;
+        address = addressRepository.getAddressByUserUuid(uuid, tenantId);
+        return address;
+
+    }
+    /**
+     * api will create the user based on some validations with address
+     *
+     * @param user
+     * @return
+     */
+    public User createUserWithAddress(User user, RequestInfo requestInfo) {
+        user.setUuid(UUID.randomUUID().toString());
+        user.validateNewUser(createUserValidateName);
+        conditionallyValidateOtp(user);
+        /* encrypt here */
+        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        validateUserUniqueness(user);
+        if (isEmpty(user.getPassword())) {
+            user.setPassword(UUID.randomUUID().toString());
+        } else {
+            validatePassword(user.getPassword());
+        }
+        user.setPassword(encryptPwd(user.getPassword()));
+        user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
+        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+        User persistedNewUser = persistNewUserWithWholeAddress(user);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+
+        /* decrypt here  because encrypted data coming from DB*/
+
+    }
+    /**
+     * This api will persist the user with address
+     *
+     * @param user
+     * @return
+     */
+    private User persistNewUserWithWholeAddress(User user) {
+
+        return userRepository.createWithAddress(user);
+    }
 }

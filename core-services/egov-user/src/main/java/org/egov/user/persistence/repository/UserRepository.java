@@ -592,4 +592,47 @@ public class UserRepository {
 		
 	}
 
+    /**
+     * this api will create the user with address.
+     *
+     * @param user
+     * @return
+     */
+    public User createWithAddress(User user) {
+        validateAndEnrichRoles(Collections.singletonList(user));
+        final Long newId = getNextSequence();
+        user.setId(newId);
+        user.setUuid(UUID.randomUUID().toString());
+        user.setCreatedDate(new Date());
+        user.setLastModifiedDate(new Date());
+        user.setCreatedBy(user.getLoggedInUserId());
+        user.setLastModifiedBy(user.getLoggedInUserId());
+        final User savedUser = save(user); // this will remain same as create
+        if (!user.getRoles().isEmpty()) {
+            saveUserRoles(user);
+        }
+        final Address savedCorrespondenceAddress = saveWholeAddress(user.getCorrespondenceAddress(), savedUser.getId(),
+                savedUser.getTenantId());
+        final Address savedPermanentAddress = saveWholeAddress(user.getPermanentAddress(), savedUser.getId(),
+                savedUser.getTenantId());
+        savedUser.setPermanentAddress(savedPermanentAddress);
+        savedUser.setCorrespondenceAddress(savedCorrespondenceAddress);
+        return savedUser;
+    }
+
+    /**
+     * This api will save addresses for particular user.
+     *
+     * @param address
+     * @param userId
+     * @param tenantId
+     * @return
+     */
+    private Address saveWholeAddress(Address address, Long userId, String tenantId) {
+        if (address != null) {
+            addressRepository.createWholeAddress(address, userId, tenantId);
+            return address;
+        }
+        return null;
+    }
 }

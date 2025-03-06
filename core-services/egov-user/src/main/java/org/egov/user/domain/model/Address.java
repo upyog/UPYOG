@@ -22,6 +22,14 @@ public class Address {
     private String addressType;
     private Long LastModifiedBy;
     private Date LastModifiedDate;
+//    Adding new fields in Address model: address2, houseNumber, houseName, streetName, landmark, locality
+    private String address2;
+    private String houseNumber;
+    private String houseName;
+    private String streetName;
+    private String landmark;
+    private String locality;
+
 
     boolean isInvalid() {
         return isPinCodeInvalid()
