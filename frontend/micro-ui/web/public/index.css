@@ -5806,7 +5806,7 @@ video::-webkit-media-controls-panel {
     min-width: 350px !important;
     background-color: rgb(0 139 201 / 56%) !important; }
   .employeeChangePassword .employeeCard, .employeeForgotPassword .employeeCard {
-    max-width: 270px !important;
+    max-width: 300px !important;
     min-width: 270px !important;
     background-color: rgba(255, 255, 255, 0.92157); } }
 

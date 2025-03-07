@@ -12,7 +12,7 @@ const CardSubHeader = (props) => {
 : ''}
 
     </header>
-    <div className="emp-login-text">{props.children}</div>
+    <div className="emp-login-text" style={props.style}>{props.children}</div>
     </div>
     
   );

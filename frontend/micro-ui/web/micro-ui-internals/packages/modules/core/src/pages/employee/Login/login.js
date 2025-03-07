@@ -28,6 +28,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
   const [captcha, setCaptcha] = useState([]);
+  const [secretKey, setSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
   // const [config, setConfig] = useState([]);
 
   const history = useHistory();
@@ -53,6 +54,8 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         tt.push(res?.captcha)
         // if(isMounted) {
           setCaptcha(tt)
+        // res?.captcha?.captcha+process.env.REACT_APP_SECRET_KEY.subString(6)
+          setSecretKey((prev)=>res?.captcha?.captcha+prev.slice(6))
         // }
         // loadForm()
 
@@ -111,14 +114,19 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 //   console.log("encrypted===",encrypted)
 //   return encrypted.toString(); // Base64 encode before sending
 // };
-
-const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // Ensure 16 bytes key
+// console.log("captcha[0].captcha+process.env.REACT_APP_SECRET_KEY.subString(6)=",captcha[0]?.captcha+process.env.REACT_APP_SECRET_KEY.subString(6))
+// const secretKey = CryptoJS.enc.Utf8.parse(captcha[0].captcha+process.env.REACT_APP_SECRET_KEY.subString(6)); // Ensure 16 bytes key
 const generateIV = () => CryptoJS.lib.WordArray.random(16);
 
 const encryptPassword = (plainText) => {
-  console.log("secretKey===",secretKey)
+  console.log("secretKey==",secretKey)
+  // let secretKeyN = secretKey.subString(6);
+  // secretKeyN = captcha[0].captcha+secretKeyN;
+  // console.log("secretKeyN==",secretKeyN)
+  let ss = CryptoJS.enc.Utf8.parse(secretKey); // Ensure 16 bytes key
+
   const iv = generateIV();
-  const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+  const encrypted = CryptoJS.AES.encrypt(plainText, ss, {
     mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
     padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
     iv: iv, 
