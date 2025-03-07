@@ -24,11 +24,11 @@ public class PGRConstants {
 
     public static final String MDMS_SERVICEDEF = "SwachBharatCategory";
 
-    public static final String MDMS_MODULE_NAME = "RAINMAKER-PGR";
+    public static final String MDMS_MODULE_NAME = "SwachReform";
 
-    public static final String MDMS_SERVICEDEF_SEARCH = "$.MdmsRes.RAINMAKER-PGR.SwachBharatCategory[?(@.serviceCode=='{SwachBharatCategory}')]";
+    public static final String MDMS_SERVICEDEF_SEARCH = "$.MdmsRes.SwachReform.SwachBharatCategory[?(@.serviceCode=='{SwachBharatCategory}')]";
 
-    public static final String MDMS_DEPARTMENT_SEARCH = "$.MdmsRes.RAINMAKER-PGR.SwachBharatCategory[?(@.serviceCode=='{SwachBharatCategory}')].department";
+    public static final String MDMS_DEPARTMENT_SEARCH = "$.MdmsRes.SwachReform.SwachBharatCategory[?(@.serviceCode=='{SwachBharatCategory}')].department";
 
     public static final String HRMS_DEPARTMENT_JSONPATH = "$.Employees.*.assignments.*.department";
 
@@ -133,7 +133,7 @@ public class PGRConstants {
 
     public static final String IMAGE_DOCUMENT_TYPE = "PHOTO";
 
-    public static final String MDMS_DATA_JSONPATH = "$.MdmsRes.RAINMAKER-PGR.SwachBharatCategory";
+    public static final String MDMS_DATA_JSONPATH = "$.MdmsRes.SwachReform.SwachBharatCategory";
 
     public static final String MDMS_DATA_SERVICE_CODE_KEYWORD = "serviceCode";
 
