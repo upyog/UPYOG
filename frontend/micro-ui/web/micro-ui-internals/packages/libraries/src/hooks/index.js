@@ -334,6 +334,7 @@ import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useTankerCreateAPI from "./wt/useTankerCreateAPI";
 import useTankerSearchAPI from "./wt/useTankerSearchAPI";
 import useMobileToiletCreateAPI from "./wt/useMobileToiletCreateAPI";
+import useMobileToiletSearchAPI from "./wt/useMobileToiletSearchAPI";
 import useWTApplicationAction from "./wt/useWTApplicationAction";
 import useWTApplicationDetail from "./wt/useWTApplicationDetail";
 import useTenantsVENDOR from "./vendor/useTenants";
@@ -350,6 +351,7 @@ const wt={
   useWTApplicationAction,
   useWTApplicationDetail,
   useMobileToiletCreateAPI,
+  useMobileToiletSearchAPI
 };
 
 const pgr = {

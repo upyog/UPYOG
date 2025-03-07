@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const WTApplication = ({ application, tenantId, buttonLabel }) => {
+ let bookingCode=application?.bookingNo.split("-")[0]; // for selecting the Module code from booking number
   const { t } = useTranslation();
   return (
     <Card>
@@ -13,9 +14,16 @@ const WTApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("WT_MOBILE_NUMBER")} note={t(`${application?.applicantDetail?.mobileNumber}`)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
       <div>
-        <Link to={`/digit-ui/citizen/wt/booking/${application?.bookingNo}/${tenantId}`}>
+      {bookingCode==="WT" &&(
+        <Link to={`/digit-ui/citizen/wt/booking/waterTanker/${application?.bookingNo}/${tenantId}`}>
           <SubmitBar label={buttonLabel} />
         </Link> 
+      )}
+      {bookingCode==="MT" &&(
+        <Link to={`/digit-ui/citizen/wt/booking/mobileToilet/${application?.bookingNo}/${tenantId}`}>
+          <SubmitBar label={buttonLabel} />
+        </Link> 
+      )}
       </div>
     </Card>
   );
