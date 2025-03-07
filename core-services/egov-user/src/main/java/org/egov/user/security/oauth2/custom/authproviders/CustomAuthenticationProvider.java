@@ -192,6 +192,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 		final LinkedHashMap<String, String> details = (LinkedHashMap<String, String>) authentication.getDetails();
 		String isCallInternal = details.get("isInternal");
+		String uuid = details.get("captchaUuid");
 		if (isOtpBased) {
 			if (null != isCallInternal && isCallInternal.equals("true")) {
 				log.debug("Skipping otp validation during login.........");
@@ -212,7 +213,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			try {
 				//For Local Testing
 				if (captchaForDev)
-				password=userService.decrypt(password, key);
+				password=userService.decrypt(password, uuid);
 			} catch (Exception e) {
 				throw new CustomException("DECRYPTION_ERROR","Error occurred during decryption");
 			}

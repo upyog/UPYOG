@@ -254,9 +254,37 @@ public class UserService {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
-		if(!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
+		if(user.isOtpValidationMandatory()&&!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
 			throw new CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered");
 		}
+		
+		/* encrypt here */
+		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+		validateUserUniqueness(user);
+		// validateUserMobileNumberUniqueness(user);
+		if (isEmpty(user.getPassword())) {
+			user.setPassword(UUID.randomUUID().toString());
+		} else {
+			validatePassword(user.getPassword());
+		}
+		user.setPassword(encryptPwd(user.getPassword()));
+		user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
+		user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+		User persistedNewUser = persistNewUser(user);
+		return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+
+		/* decrypt here because encrypted data coming from DB */
+
+	}
+	
+	public User createUserNoValidate(User user, RequestInfo requestInfo) {
+		user.setUuid(UUID.randomUUID().toString());
+		user.validateNewUser(createUserValidateName);
+		conditionallyValidateOtp(user);
+		
+		  if(user.isOtpValidationMandatory()&&!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) { throw new
+		  CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered"); }
+		 
 		
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
@@ -817,7 +845,8 @@ public class UserService {
 		 */
 
 		// capMap.put(uuid, captchaText.toString());
-		redisTemplate.opsForValue().set(uuid, captchaText.toString(), 5, TimeUnit.MINUTES);
+		String CaptchaKey=captchaText.toString()+key.substring(6);
+		redisTemplate.opsForValue().set(uuid, CaptchaKey, 5, TimeUnit.MINUTES);
 		captchaResponse.setResponseInfo(responseInfo);
 		captcha.setCaptchaUuid(uuid);
 		captcha.setCaptcha(captchaText.toString());
@@ -846,6 +875,8 @@ public class UserService {
 
 	public boolean validateCaptcha(String uuid, String captcha) {
 		String storedCaptcha = redisTemplate.opsForValue().get(uuid);
+		System.out.println("storedCaptchaKey::" + storedCaptcha);
+		storedCaptcha=storedCaptcha.substring(0,6);
 		System.out.println("storedCaptcha::" + storedCaptcha);
 		if (storedCaptcha != null) {
 			if (captcha.contentEquals(storedCaptcha))
@@ -857,9 +888,20 @@ public class UserService {
 		return false;
 	}
 
-	public String decrypt(String encryptedText, String key) throws Exception {
+	public String decrypt(String encryptedText, String uuid) throws Exception {
 		final String ALGORITHM = algorithm;
 		final String TRANSFORMATION = transformation;
+		String decryptionKey=null;
+		if(uuid!=null)
+		{
+			decryptionKey=redisTemplate.opsForValue().get(uuid);
+			if(decryptionKey==null)
+				throw new CustomException("INVALID_LOGIN","Login Failed Please Try Again");
+			else
+				redisTemplate.delete(uuid);
+		}
+		else
+			decryptionKey=key;
 
 		try {
 			// Step 1: Split IV and encrypted data
@@ -873,7 +915,7 @@ public class UserService {
 
 			// Step 2: Set up AES cipher for CBC mode
 			Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-			SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), ALGORITHM);
+			SecretKeySpec keySpec = new SecretKeySpec(decryptionKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
 			IvParameterSpec ivSpec = new IvParameterSpec(iv);
 			cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 
