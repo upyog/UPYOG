@@ -26,7 +26,7 @@ export const getKeyNotesConfig = (businessService, t) => {
               },
             ],
             fallback: "N/A",
-            noteStyle: { fontWeight: "bold", fontSize: "24px", paddingTop: "5px" },
+            noteStyle: { fontWeight: "bold", fontSize: "16px", paddingTop: "5px" },
           },
           {
             keyValue: "PT_PROPERTY_ID",
@@ -95,7 +95,7 @@ export const getKeyNotesConfig = (businessService, t) => {
             keyValue: "CS_COMMON_AMOUNT_DUE",
             keyPath: ["totalAmount", (d) => d.toFixed(2), (d) => "₹" + d],
             fallback: "N/A",
-            noteStyle: { fontWeight: "bold", fontSize: "24px", paddingTop: "5px" },
+            noteStyle: { fontWeight: "bold", fontSize: "16px", paddingTop: "5px" },
           },
         ],
         response: [],

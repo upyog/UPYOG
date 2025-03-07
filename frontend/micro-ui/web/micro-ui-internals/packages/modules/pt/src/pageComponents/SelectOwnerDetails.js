@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -85,9 +85,12 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   ];
 
   const GuardianOptions = [
-    { name: "HUSBAND", code: "HUSBAND", i18nKey: "PT_RELATION_HUSBAND" },
+    // { name: "HUSBAND", code: "HUSBAND", i18nKey: "PT_RELATION_HUSBAND" },
+    { name: "Husband/Wife", code: "HUSBANDWIFE", i18nKey: "PT_RELATION_HUSBANDWIFE" },
     { name: "Father", code: "FATHER", i18nKey: "PT_RELATION_FATHER" },
-    // { name: "Husband/Wife", code: "HUSBANDWIFE", i18nKey: "PT_RELATION_HUSBANDWIFE" },
+    { name: "Mother", code: "MOTHER", i18nKey: "PT_RELATION_MOTHER" },
+    { name: "Other", code: "OTHER", i18nKey: "PT_RELATION_OTHER" },
+    
     // { name: "Other", code: "OTHER", i18nKey: "PT_RELATION_OTHER" },
   ];
 

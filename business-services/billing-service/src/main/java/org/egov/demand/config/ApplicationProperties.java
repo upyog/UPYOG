@@ -45,6 +45,7 @@ import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -195,4 +196,40 @@ public class ApplicationProperties {
 
 	@Value("${statelevel.rolecode.excluded.list}")
 	private List<String> statelevelRolecodeExclusionList;
+	
+	//assessment service
+	@Value("${egov.assessmentservice.host}")
+	private String assessmentServiceHost;
+
+	@Value("${egov.assessmentservice.search.endpoint}")
+	private String	assessmentSearchEndpoint;
+	
+	@Value("${egov.pgservice.search.endpoint}")
+	private String pgSeriviceEndpoint;
+	
+	@Value("${egov.pgservice.host}")
+	private String pgSeriviceHost;
+	
+	
+	@Value("${egov.collection.service.host}")
+	private String collectionSeriviceHost;
+	
+	@Value("${egov.collection.service.search.endpoint}")
+	private String collectionSeriviceSearch;
+	
+	@Value("${current.finyear.start}")
+	private Integer finYearStart;
+	
+	@Value("${current.finyear.end}")
+	private Integer finYearEnd;
+	
+	
+	@Value("${egov.pgservice.create.endpoint}")
+	private String pgCreateEndpoint;
+	
+	@Value("${interest.perecent}")
+	private BigDecimal interestPercent;
+	
+	
+	
 }

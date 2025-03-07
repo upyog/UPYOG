@@ -162,6 +162,8 @@ public class Constants {
 
 	public static final String URL_PARAM_SEPERATOR = "&";
 	
+	public static final String URL_PARAMS_SEPARATER = "?";
+	
 	public static final String RESPONSEINFO_STRING = "ResponseInfo";
 	
 	public static final String MESSAGE_STRING = "Message";
@@ -187,4 +189,27 @@ public class Constants {
 	public static final String CANCELL_REASON_CODE_NOT_FOUND = "EG_BS_CANCELL_REASON_CODE_NOT";
 	public static final String CANCELL_REASON_CODE_NOT_FOUND_MSG = "Cancellation Reason with key " + "'" + CANCELLATION_REASON_CODE + "'" + " is a madnatory Text field in additionalDetails of Bill cancell Request";
 	public static final String CANCELL_REASON_CODE_EMPTY_MSG = "Cancell Reason code cannot be empty";
+	
+	//QUARTERLY and HALFYEARLY and YEARLY
+	public static final String QUARTERLY="QUARTERLY";
+	public static final String Q1="Q1";
+	public static final String Q2="Q2";
+	public static final String Q3="Q3";
+	public static final String Q4="Q4";
+	
+	public static final String HALFYEARLY="HALFYEARLY";
+	public static final String H1="H1";
+	public static final String H2="H2";
+	
+	public static final String YEARLY="YEARLY";
+	public static final String YR="YR";
+	
+	//For interest calculation
+	public static final String Q1FlatDays="91";
+	public static final String Q2FlatDays="92";
+	public static final String Q3FlatDays="91";
+	public static final String H1FlatDays="182";
+	public static final String InterestPrecentage="0.014";
+	
+	
 }

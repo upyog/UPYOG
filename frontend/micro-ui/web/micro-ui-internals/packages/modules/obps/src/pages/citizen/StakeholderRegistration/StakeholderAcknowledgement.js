@@ -1,4 +1,4 @@
-import { BackButton, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { BackButton, Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -28,7 +28,7 @@ const BannerPicker = (props) => {
       info={props.isSuccess ? props.t("BPA_NEW_STAKEHOLDER_REGISTRATION_APP_LABEL") : ""}
       successful={props.isSuccess}
       style={{ padding: "10px" }}
-      headerStyles={{ fontSize: "32px" }}
+      headerStyles={{ fontSize: "16px" }}
     />
   );
 };
