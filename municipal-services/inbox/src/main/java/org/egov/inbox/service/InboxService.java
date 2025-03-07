@@ -455,29 +455,34 @@ public class InboxService {
 			}
 
 			// for request service
-			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
-				 if (processCriteria.getBusinessService().contains(MT_BUSINESS_SERVICE)){
-					 List<String> applicationNumbers = mtInboxFilterService
-							 .fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
-					 if (!CollectionUtils.isEmpty(applicationNumbers)) {
-						 moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
-						 businessKeys.addAll(applicationNumbers);
-						 moduleSearchCriteria.remove(OFFSET_PARAM);
-					 } else {
-						 isSearchResultEmpty = true;
-					 }
-				 }
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && RS.equals(processCriteria.getModuleName())) {
+				List<String> applicationNumbers;
+
+				// Determine which service to use based on business service type
+				if (processCriteria.getBusinessService().contains(MT_BUSINESS_SERVICE)) {
+					applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(
+							criteria, StatusIdNameMap, requestInfo);
+				}
+//				Below line is commented just for example that if in future if you want to add for new module under request-service
+//				then just add the business service in line 468 and its inboxfilterservice in line 469
+//				else if (processCriteria.getBusinessService().contains(WT_BUSINESS_SERVICE)) {
+//					applicationNumbers = requestServiceInboxFilterService.fetchApplicationNumbersFromSearcher(
+//							criteria, StatusIdNameMap, requestInfo);
+//				}
 				else {
-					 List<String> applicationNumbers = requestServiceInboxFilterService
-							 .fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
-					 if (!CollectionUtils.isEmpty(applicationNumbers)) {
-						 moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
-						 businessKeys.addAll(applicationNumbers);
-						 moduleSearchCriteria.remove(OFFSET_PARAM);
-					 } else {
-						 isSearchResultEmpty = true;
-					 }
-				 }
+					// Default case - use request service
+					applicationNumbers = requestServiceInboxFilterService.fetchApplicationNumbersFromSearcher(
+							criteria, StatusIdNameMap, requestInfo);
+				}
+
+				// Update search criteria if application numbers exist
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
 			}
 
 			// for CND service

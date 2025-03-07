@@ -19,4 +19,5 @@ public class RequestServiceConstants {
 	public static final String SORT_ORDER_PARAM = "sortOrder";
 	public static final String DESC_PARAM = "DESC";
 	public static final String MT_BUSINESS_SERVICE = "mobileToilet";
+	public static final String WT_BUSINESS_SERVICE = "watertanker";
 }
