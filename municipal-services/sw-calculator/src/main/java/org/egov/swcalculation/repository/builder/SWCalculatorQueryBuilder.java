@@ -489,8 +489,10 @@ public class SWCalculatorQueryBuilder {
 		
 		//Get the activated connections status	
 		addClauseIfRequired(preparedStatement, query);
-		query.append(" conn.applicationstatus = ? ");
+//		query.append(" conn.applicationstatus = ? ");
+		query.append(" (conn.applicationstatus = ?  or conn.applicationstatus = ?)");
 		preparedStatement.add(SWCalculationConstant.CONNECTION_ACTIVATED);
+		preparedStatement.add(SWCalculationConstant.MODIFIED_FINAL_STATE); 
 		
 
 		// add tenantid
