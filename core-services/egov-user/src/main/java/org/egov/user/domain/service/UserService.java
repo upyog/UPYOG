@@ -876,6 +876,7 @@ public class UserService {
 	public boolean validateCaptcha(String uuid, String captcha) {
 		String storedCaptcha = redisTemplate.opsForValue().get(uuid);
 		System.out.println("storedCaptchaKey::" + storedCaptcha);
+		if(storedCaptcha!=null)
 		storedCaptcha=storedCaptcha.substring(0,6);
 		System.out.println("storedCaptcha::" + storedCaptcha);
 		if (storedCaptcha != null) {
