@@ -538,8 +538,8 @@ public class UserService {
 			throw new InvalidUpdatePasswordRequestException();
 
 		try {
-			existingDecryptedPass = decrypt(updatePasswordRequest.getExistingPassword(), key);
-			newDecryptedPass = decrypt(updatePasswordRequest.getNewPassword(), key);
+			existingDecryptedPass = decrypt(updatePasswordRequest.getExistingPassword(), null);
+			newDecryptedPass = decrypt(updatePasswordRequest.getNewPassword(), null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -594,7 +594,7 @@ public class UserService {
 
 		try {
 
-			newDecryptedPass = decrypt(request.getNewPassword(), key);
+			newDecryptedPass = decrypt(request.getNewPassword(), null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -874,12 +874,12 @@ public class UserService {
 
 	public boolean validateCaptcha(String uuid, String captcha) {
 		String storedCaptcha = redisTemplate.opsForValue().get(uuid);
-		System.out.println("storedCaptchaKey::" + storedCaptcha);
+		//System.out.println("storedCaptchaKey::" + storedCaptcha);
 		if (storedCaptcha != null)
 			storedCaptcha = storedCaptcha.substring(0, 6);
 		else
 			throw new CustomException("INVALID_LOGIN", "Login Failed Please Try Again");
-		System.out.println("storedCaptcha::" + storedCaptcha);
+		//System.out.println("storedCaptcha::" + storedCaptcha);
 		if (storedCaptcha != null) {
 			if (captcha.contentEquals(storedCaptcha))
 				return true;
