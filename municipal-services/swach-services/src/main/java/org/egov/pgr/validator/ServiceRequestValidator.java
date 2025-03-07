@@ -112,7 +112,7 @@ public class ServiceRequestValidator {
     private void validateMDMS(ServiceRequest request, Object mdmsData){
 
         String serviceCode = request.getService().getServiceCode();
-        String jsonPath = MDMS_SERVICEDEF_SEARCH.replace("{SERVICEDEF}",serviceCode);
+        String jsonPath = MDMS_SERVICEDEF_SEARCH.replace("{SwachBharatCategory}",serviceCode);
 
         List<Object> res = null;
 
