@@ -254,10 +254,10 @@ public class UserService {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
-		if(user.isOtpValidationMandatory()&&!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) {
+		if (user.isOtpValidationMandatory() && !validateCaptcha(user.getCaptchaUuid(), user.getCaptcha())) {
 			throw new CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered");
 		}
-		
+
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 		validateUserUniqueness(user);
@@ -276,16 +276,16 @@ public class UserService {
 		/* decrypt here because encrypted data coming from DB */
 
 	}
-	
+
 	public User createUserNoValidate(User user, RequestInfo requestInfo) {
 		user.setUuid(UUID.randomUUID().toString());
 		user.validateNewUser(createUserValidateName);
 		conditionallyValidateOtp(user);
-		
-		  if(user.isOtpValidationMandatory()&&!validateCaptcha(user.getCaptchaUuid(),user.getCaptcha())) { throw new
-		  CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered"); }
-		 
-		
+
+		if (user.isOtpValidationMandatory() && !validateCaptcha(user.getCaptchaUuid(), user.getCaptcha())) {
+			throw new CustomException("WRONG_CAPTCHA", "Wrong Captcha Entered");
+		}
+
 		/* encrypt here */
 		user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
 		validateUserUniqueness(user);
@@ -378,13 +378,13 @@ public class UserService {
 			map.add("tenantId", user.getTenantId());
 			map.add("isInternal", "true");
 			map.add("userType", UserType.CITIZEN.name());
-			//String captcha = createCaptcha(new ResponseInfo()).getCaptcha().getCaptcha();
-			//String uuid = createCaptcha(new ResponseInfo()).getCaptcha().getUuid();
+			// String captcha = createCaptcha(new ResponseInfo()).getCaptcha().getCaptcha();
+			// String uuid = createCaptcha(new ResponseInfo()).getCaptcha().getUuid();
 			map.add("captcha", user.getCaptcha());
 			map.add("captchaUuid", user.getCaptchaUuid());
-					
-			//System.out.println(captcha);
-			//System.out.println(uuid);
+
+			// System.out.println(captcha);
+			// System.out.println(uuid);
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
 					headers);
@@ -696,17 +696,16 @@ public class UserService {
 		String user_name = user.getUsername();
 		String user_uuid = user.getUuid();
 		String attempt_status = status;
-		
-		String x_forwarded_for = (null != req.getHeader("X-Forwarded-For") && !req.getHeader("X-Forwarded-For").isEmpty()
-				? req.getHeader("X-Forwarded-For")
-				: null);
-		if(null!=x_forwarded_for) {
-			ip=x_forwarded_for;
-		}else {
-			ip=req.getRemoteAddr();
+
+		String x_forwarded_for = (null != req.getHeader("X-Forwarded-For")
+				&& !req.getHeader("X-Forwarded-For").isEmpty() ? req.getHeader("X-Forwarded-For") : null);
+		if (null != x_forwarded_for) {
+			ip = x_forwarded_for;
+		} else {
+			ip = req.getRemoteAddr();
 		}
-		System.out.println("X-Forwarded-For========================>>>>>>>>>>>"+x_forwarded_for);
-		
+		System.out.println("X-Forwarded-For========================>>>>>>>>>>>" + x_forwarded_for);
+
 		String user_agent = (null != req.getHeader("User-Agent") && !req.getHeader("User-Agent").isEmpty()
 				? req.getHeader("User-Agent")
 				: null);
@@ -845,7 +844,7 @@ public class UserService {
 		 */
 
 		// capMap.put(uuid, captchaText.toString());
-		String CaptchaKey=captchaText.toString()+key.substring(6);
+		String CaptchaKey = captchaText.toString() + key.substring(6);
 		redisTemplate.opsForValue().set(uuid, CaptchaKey, 5, TimeUnit.MINUTES);
 		captchaResponse.setResponseInfo(responseInfo);
 		captcha.setCaptchaUuid(uuid);
@@ -876,8 +875,10 @@ public class UserService {
 	public boolean validateCaptcha(String uuid, String captcha) {
 		String storedCaptcha = redisTemplate.opsForValue().get(uuid);
 		System.out.println("storedCaptchaKey::" + storedCaptcha);
-		if(storedCaptcha!=null)
-		storedCaptcha=storedCaptcha.substring(0,6);
+		if (storedCaptcha != null)
+			storedCaptcha = storedCaptcha.substring(0, 6);
+		else
+			throw new CustomException("INVALID_LOGIN", "Login Failed Please Try Again");
 		System.out.println("storedCaptcha::" + storedCaptcha);
 		if (storedCaptcha != null) {
 			if (captcha.contentEquals(storedCaptcha))
@@ -892,17 +893,15 @@ public class UserService {
 	public String decrypt(String encryptedText, String uuid) throws Exception {
 		final String ALGORITHM = algorithm;
 		final String TRANSFORMATION = transformation;
-		String decryptionKey=null;
-		if(uuid!=null)
-		{
-			decryptionKey=redisTemplate.opsForValue().get(uuid);
-			if(decryptionKey==null)
-				throw new CustomException("INVALID_LOGIN","Login Failed Please Try Again");
+		String decryptionKey = null;
+		if (uuid != null) {
+			decryptionKey = redisTemplate.opsForValue().get(uuid);
+			if (decryptionKey == null)
+				throw new CustomException("INVALID_LOGIN", "Login Failed Please Try Again");
 			else
 				redisTemplate.delete(uuid);
-		}
-		else
-			decryptionKey=key;
+		} else
+			decryptionKey = key;
 
 		try {
 			// Step 1: Split IV and encrypted data
