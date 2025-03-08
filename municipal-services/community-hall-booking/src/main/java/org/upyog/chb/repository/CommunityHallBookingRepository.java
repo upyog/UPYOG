@@ -9,6 +9,7 @@ import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
+import org.upyog.chb.web.models.User;
 
 public interface CommunityHallBookingRepository {
 
@@ -22,4 +23,8 @@ public interface CommunityHallBookingRepository {
 
 	List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
 			CommunityHallSlotSearchCriteria criteria);
+	
+	List<CommunityHallSlotAvailabilityDetail> getBookingCodeSlots(String code);
+	
+	String getApproverName(String UlbName);
 }

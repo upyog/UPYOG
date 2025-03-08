@@ -29,6 +29,16 @@ import lombok.Setter;
 @Setter
 @Import({ TracerConfiguration.class })
 public class CommunityHallBookingConfiguration {
+	
+	// Alfresco keys
+	public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
+	public static final String ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION = "chb service certificate";
+	public static final String ALFRESCO_COMMON_CERTIFICATE_ID = "";
+	public static final String ALFRESCO_COMMON_CERTIFICATE_TYPE = "PDF";
+	public static final String ALFRESCO_DOCUMENT_TYPE = "CERT";
+	public static final String ALFRESCO_TL_CERTIFICATE_COMMENT = "Signed Certificate";
+	public static final String ALFRESCO_BUSINESS_SERVICE = "chb-services";
+	public static final String STATUS_APPROVED = "APPROVED";
 
 	@Value("${app.timezone}")
 	private String timeZone;
@@ -217,6 +227,17 @@ public class CommunityHallBookingConfiguration {
 	@Value("${egov.asset.update.endpoint}")
 	private String assetUpdateEndpoint;
 	
+	@Value("${egov.alfresco.host}")
+	public String alfrescoHost;
+
+	@Value("${egov.alfresco.endpoint.upload}")
+	public String alfrescoUploadEndPoint;
+	
+	@Value("${egov.report.host}")
+	public String reportHost;
+
+	@Value("${egov.report.endpoint.create}")
+	public String reportCreateEndPoint;
 	@Value("${state.level.tenant.id}")
 	private String stateLevelTenantId;
 

@@ -215,6 +215,13 @@ public class AssetQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
         
+        List<String> listOfParentCategories = criteria.getAssetParentCategories();
+		if(!CollectionUtils.isEmpty(listOfParentCategories)) {
+			 addClauseIfRequired(preparedStmtList, builder);
+			 builder.append(" asset.parentCategory IN (").append(createQuery(listOfParentCategories)).append(")");
+			 addToPreparedStatement(preparedStmtList, listOfParentCategories);
+		}
+        
         String applicationNo = criteria.getApplicationNo();
         if (applicationNo != null) {
             List<String> applicationNos = Arrays.asList(applicationNo.split(","));

@@ -1,5 +1,6 @@
 package org.upyog.chb.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -10,6 +11,7 @@ import org.upyog.chb.web.models.Asset;
 import org.upyog.chb.web.models.AssetSearchCriteria;
 import org.upyog.chb.web.models.AssetUpdate;
 import org.upyog.chb.web.models.AssetUpdateRequest;
+import org.upyog.chb.web.models.CommmunityHallSlotDetailsRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -37,6 +39,8 @@ public interface CommunityHallBookingService {
 	CommunityHallBookingActionResponse getApplicationDetails( @Valid CommunityHallBookingActionRequest communityHallActionRequest);
 	
 	CommunityHallBookingDetail updateStatus( @Valid CommunityHallBookingUpdateStatusRequest communityHallBookingUpdateStatusRequest);
+	
+	List<String> fetchSlotDetails( @Valid CommmunityHallSlotDetailsRequest commmunityHallSlotDetailsRequest);
 
 	List<Asset> fetchAssets(AssetSearchCriteria assetSearchCriteria, RequestInfo requestInfo);
 

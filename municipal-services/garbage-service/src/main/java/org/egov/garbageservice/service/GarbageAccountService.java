@@ -706,6 +706,7 @@ public class GarbageAccountService {
 			RequestInfo requestInfo) {
 
 		Map<String, Object> grbObject = new HashMap<>();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 		// map variables and values
 		grbObject.put("applicationNumber", GarbageAccount.getGrbgApplicationNumber());// garbage Application No
@@ -730,7 +731,7 @@ public class GarbageAccountService {
 		
 		grbObject.put("ulbName", GarbageAccount.getAddresses().get(0).getUlbName());
 		
-		grbObject.put("approvalTime", GarbageAccount.getApprovalDate());
+		grbObject.put("approvalTime", dateFormat.format(new Date(GarbageAccount.getApprovalDate() * 1000)));
 
 		grbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
 

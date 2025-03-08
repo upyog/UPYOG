@@ -1,11 +1,14 @@
 package org.upyog.chb.service.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +18,11 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.upyog.chb.web.models.PDFRequest;
+import org.upyog.chb.web.models.DmsRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +32,7 @@ import org.upyog.chb.enums.BookingStatusEnum;
 import org.upyog.chb.repository.CommunityHallBookingRepository;
 import org.upyog.chb.repository.ServiceRequestRepository;
 import org.upyog.chb.service.BillingService;
+import org.upyog.chb.service.AlfrescoService;
 import org.upyog.chb.service.CHBEncryptionService;
 import org.upyog.chb.service.CommunityHallBookingService;
 import org.upyog.chb.service.DemandService;
@@ -41,6 +48,7 @@ import org.upyog.chb.web.models.AssetSearchCriteria;
 import org.upyog.chb.web.models.AssetUpdate;
 import org.upyog.chb.web.models.AssetUpdateRequest;
 import org.upyog.chb.web.models.AssetUpdationResponse;
+import org.upyog.chb.web.models.CommmunityHallSlotDetailsRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionRequest;
 import org.upyog.chb.web.models.CommunityHallBookingActionResponse;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
@@ -50,9 +58,13 @@ import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.RequestInfoWrapper;
+import org.upyog.chb.web.models.User;
 import org.upyog.chb.web.models.collection.Bill;
 import org.upyog.chb.web.models.collection.BillSearchCriteria;
 import org.upyog.chb.web.models.collection.GenerateBillCriteria;
+import org.upyog.chb.service.ReportService;
+import java.util.stream.Collectors;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -63,6 +75,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommunityHallBookingServiceImpl implements CommunityHallBookingService {
 
+	@Autowired
+	private ReportService reportService;
 	@Autowired
 	private CommunityHallBookingRepository bookingRepository;
 	@Autowired
@@ -101,6 +115,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
+	
+	@Autowired
+	private AlfrescoService alfrescoService;
 
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -155,7 +172,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 		// Rest Update Asset
 
-		blockAssetBookingStatus(communityHallsBookingRequest);
+//		blockAssetBookingStatus(communityHallsBookingRequest);
 		return communityHallsBookingRequest.getHallsBookingApplication();
 	}
 
@@ -213,6 +230,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		if (bookingNo == null) {
 			return null;
 		}
+		setRelatedAssetData(communityHallsBookingRequest);
 		if (status != BookingStatusEnum.BOOKED) {
 			CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 					.bookingNo(bookingNo).build();
@@ -225,6 +243,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 
 			convertBookingRequest(communityHallsBookingRequest, bookingDetails.get(0));
 
+		}
+		else {
+			createCertificate(communityHallsBookingRequest);
 		}
 
 		enrichmentService.enrichUpdateBookingRequest(communityHallsBookingRequest, status);
@@ -240,6 +261,144 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		log.info("fetched booking detail and updated status "
 				+ communityHallsBookingRequest.getHallsBookingApplication().getBookingStatus());
 		return communityHallsBookingRequest.getHallsBookingApplication();
+	}
+	
+	private void createCertificate(CommunityHallBookingRequest communityHallsBookingRequest) {
+//		validateGrbCertificateGeneration(GarbageAccount);
+
+		// create pdf
+		Resource resource = createResource(communityHallsBookingRequest);
+
+		// upload pdf
+		DmsRequest dmsRequest = generateDmsRequest(resource, communityHallsBookingRequest);
+		try {
+			String documentReferenceId = alfrescoService.uploadAttachment(dmsRequest, communityHallsBookingRequest.getRequestInfo());
+		} catch (IOException e) {
+			throw new CustomException("UPLOAD_ATTACHMENT_FAILED", "Upload Attachment failed." + e.getMessage());
+		}
+
+	}
+	
+	private Resource createResource(CommunityHallBookingRequest communityHallsBookingRequest) {
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> chbObject = new HashMap<>();
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
+		// map variables and values
+		chbObject.put("bookingReference", bookingDetail.getBookingNo());// garbage Application No
+//		grbObject.put("approvalTime", );
+//		chbObject.put("approvalTime", dateFormat.format(new Date(GarbageAccount.getApprovalDate() * 1000)));
+//		String userName =;
+		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
+
+//		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		
+		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
+		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
+		chbObject.put("toDate", bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
+		chbObject.put("siteName", bookingDetail.getRelatedAsset().getAssetName());
+		chbObject.put("siteAddress", String.join(", ",
+			    bookingDetail.getRelatedAsset().getAddressDetails().getAddressLine1(),
+			    bookingDetail.getRelatedAsset().getAddressDetails().getCity(),
+			    bookingDetail.getRelatedAsset().getAddressDetails().getStreet(),
+			    bookingDetail.getRelatedAsset().getAddressDetails().getPincode()
+			));
+		
+//		chbObject.put("address",
+//				bookingDetail.getRelatedAsset().getAddressDetails().getAddressLine1().concat(", ")
+//				.concat(bookingDetail.getRelatedAsset().getAddressDetails().getCity().concat(", ")
+//				.concat(bookingDetail.getRelatedAsset().getAddressDetails().getStreet()))
+//				get(0).getAddress1().concat(", ")
+//						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
+//						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
+//						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
+//						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
+//						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
+//		chbObject.put("siteAddress", null); // Trade Registration No
+		chbObject.put("bookedBy", bookingDetail.getApplicantDetail().getApplicantName()); // Trade Registration No
+		chbObject.put("mobileNumber", bookingDetail.getApplicantDetail().getApplicantMobileNo());
+		chbObject.put("bookingDate", bookingDetail.getApplicantDetail().getApplicantMobileNo());
+		chbObject.put("address",  String.join(", ",
+			    bookingDetail.getAddress().getAddressLine1(),
+			    bookingDetail.getAddress().getCity(),
+			    bookingDetail.getAddress().getPincode()));
+		chbObject.put("contactNumber", bookingDetail.getApplicantDetail().getApplicantAlternateMobileNo());
+		chbObject.put("pinLocation", null);
+		chbObject.put("contactLocation", null);
+		chbObject.put("bookingStatus","BOOKED");
+		chbObject.put("perDayCost", null);
+		chbObject.put("ulbName", bookingDetail.getRelatedAsset().getAddressDetails().getStreet());
+		chbObject.put("ulbType", bookingDetail.getRelatedAsset().getAddressDetails().getType());
+		long days = calculateDaysBetween(bookingDetail.getBookingSlotDetails().get(0).getBookingDate(),
+				bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
+		chbObject.put("numberOfDays", days);
+
+		// Total Payable amount
+		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
+			    .multiply(new BigDecimal(communityHallsBookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("gstAssetCost")
+			            .asText())) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(communityHallsBookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("securityAmount")
+			            .asText()));
+		chbObject.put("TotalAmount", totalPayableAmount);
+		chbObject.put("securityAmount", new BigDecimal(communityHallsBookingRequest.getHallsBookingApplication()
+				.getRelatedAsset()
+	            .getAssetDetails()
+	            .get("securityAmount")
+	            .asText()));
+
+//		chbObject.put("ownerName", GarbageAccount.getName());// owner Name
+//		chbObject.put("address",
+//				GarbageAccount.getAddresses().get(0).getAddress1().concat(", ")
+//						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
+//						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
+//						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
+//						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
+//						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
+		// Applicant
+		// Name
+		// Contact // No
+//		chbObject.put("propertyId", GarbageAccount.getPropertyId());
+
+//		chbObject.put("createdTime", "sjgjkhd");
+
+//		chbObject.put("approverName",null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getUserName() : null);
+
+//		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		// generate QR code from attributes
+//		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
+//		uri.append("citizen-payment");
+//		String qr = GarbageAccount.getCreated_by().concat("/").concat(GarbageAccount.getUuid())
+//				.concat("/").concat(GarbageAccount.getPropertyId());
+//		uri.append("/").append(qr);
+//		chbObject.put("qrCodeText", uri);
+		map.put("chb", chbObject);
+		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(communityHallsBookingRequest.getRequestInfo()).key("chbBookingCertificate")
+				.tenantId("hp").data(map).build();
+		Resource resource = reportService.createNoSavePDF(pdfRequest);
+
+		return resource;
+	}
+
+	private DmsRequest generateDmsRequest(Resource resource, CommunityHallBookingRequest communityHallsBookingRequest) {
+		CommunityHallBookingDetail bookingDetails = communityHallsBookingRequest.getHallsBookingApplication();
+		RequestInfo requestInfo = communityHallsBookingRequest.getRequestInfo();		
+		DmsRequest dmsRequest = DmsRequest.builder().userId(requestInfo.getUserInfo().getId().toString())
+				.objectId(bookingDetails.getBookingId()).description(CommunityHallBookingConfiguration.ALFRESCO_COMMON_CERTIFICATE_DESCRIPTION)
+				.id(CommunityHallBookingConfiguration.ALFRESCO_COMMON_CERTIFICATE_ID).type(CommunityHallBookingConfiguration.ALFRESCO_COMMON_CERTIFICATE_TYPE)
+				.objectName(CommunityHallBookingConfiguration.ALFRESCO_BUSINESS_SERVICE).comments(CommunityHallBookingConfiguration.ALFRESCO_TL_CERTIFICATE_COMMENT)
+				.status(CommunityHallBookingConfiguration.STATUS_APPROVED).file(resource).servicetype(CommunityHallBookingConfiguration.ALFRESCO_BUSINESS_SERVICE)
+				.documentType(CommunityHallBookingConfiguration.ALFRESCO_DOCUMENT_TYPE)
+				.documentId(CommunityHallBookingConfiguration.ALFRESCO_COMMON_DOCUMENT_ID).build();
+
+		return dmsRequest;
 	}
 
 	private void convertBookingRequest(CommunityHallBookingRequest communityHallsBookingRequest,
@@ -454,10 +613,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 				.bookingNo(bookingNo).build();
 		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+		bookingDetails = encryptionService.decryptObject(bookingDetails, communityHallBookingUpdateStatusRequest.getRequestInfo());
 		CommunityHallBookingRequest communityHallBookingRequest = CommunityHallBookingRequest.builder()
 				.hallsBookingApplication(bookingDetails.get(0))
 				.requestInfo(communityHallBookingUpdateStatusRequest.getRequestInfo()).build();
-
 		communityHallBookingRequest.getHallsBookingApplication()
 				.setWorkflow(communityHallBookingUpdateStatusRequest.getWorkflow());
 
@@ -570,6 +729,27 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 					"Error occured while asset search. Message: " + e.getMessage());
 		}
 		return new ArrayList<>();
+	}
+	
+	@Override
+	public List<String> fetchSlotDetails(CommmunityHallSlotDetailsRequest commmunityHallSlotDetailsRequest) {
+		String bookingCode = commmunityHallSlotDetailsRequest.getCommunityHallCode();
+		List<CommunityHallSlotAvailabilityDetail> slots = bookingRepository.getBookingCodeSlots(bookingCode);
+		List<LocalDate> bookedDates = new ArrayList<>();
+		slots.stream().forEach(slot -> {
+			LocalDate startDate = CommunityHallBookingUtil.parseStringToLocalDate1(slot.getBookingDate());
+
+			LocalDate endDate = CommunityHallBookingUtil.parseStringToLocalDate1(slot.getBookingToDate());
+
+			while (!startDate.isAfter(endDate)) {
+				bookedDates.add(startDate);
+				startDate = startDate.plusDays(1);
+			}
+		});
+		List<String> dateStrings = bookedDates.stream()
+	            .map(date -> date.format(DateTimeFormatter.ISO_LOCAL_DATE)) // Format each LocalDate
+	            .collect(Collectors.toList());
+		return dateStrings;
 	}
 
 }

@@ -64,6 +64,9 @@ public class AssetSearchCriteria {
 
 	@JsonProperty("assetParentCategory")
 	private String assetParentCategory;
+	
+	@JsonProperty("assetParentCategories")
+	private List<String> assetParentCategories;
 
 	@JsonProperty("assetBookRefNo")
 	private String assetBookRefNo;
