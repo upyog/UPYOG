@@ -52,7 +52,7 @@ public class CommunityHallBookingQueryBuilder {
 			+ "FROM eg_userrole_v1 r  \n"
 			+ "INNER JOIN eg_hrms_employee e ON r.user_id = e.id  \n"
 //			+ "INNER JOIN eg_user u ON r.user_id = u.id  \n"
-			+"where r.role_tenantid = ? and r.role_code = 'ASSET_CREATOR'";
+			+"where r.role_tenantid = ? and r.role_code = 'ASSET_APPROVER'";
 	/**
 	 * To give the Search query based on the requirements.
 	 * 
