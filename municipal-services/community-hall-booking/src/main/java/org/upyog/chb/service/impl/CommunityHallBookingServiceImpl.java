@@ -290,6 +290,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 //		chbObject.put("approvalTime", dateFormat.format(new Date(GarbageAccount.getApprovalDate() * 1000)));
 //		String userName =;
 		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
+		log.info("approverName " + bookingRepository.getApproverName(bookingDetail.getTenantId()));
 
 //		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 		

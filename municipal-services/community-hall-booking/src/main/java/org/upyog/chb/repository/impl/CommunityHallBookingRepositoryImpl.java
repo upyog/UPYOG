@@ -188,6 +188,7 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		StringBuilder query = queryBuilder.getApproverNameQuery(UlbName);
 		List<Object> paramsList = new ArrayList<>();
 		paramsList.add(UlbName);
+		log.info("query for usename " + UlbName + "  " + query.toString());
 		return  jdbcTemplate.queryForObject(query.toString(), String.class,UlbName);
 
 //		User user = jdbcTemplate.query(query.toString(), paramsList.toArray(),userDetailRowMapper);
