@@ -282,19 +282,13 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	private Resource createResource(CommunityHallBookingRequest communityHallsBookingRequest) {
 		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> chbObject = new HashMap<>();
-//		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
-		// map variables and values
-		chbObject.put("bookingReference", bookingDetail.getBookingNo());// garbage Application No
-//		grbObject.put("approvalTime", );
-//		chbObject.put("approvalTime", dateFormat.format(new Date(GarbageAccount.getApprovalDate() * 1000)));
-//		String userName =;
 		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
 		log.info("approverName " + bookingRepository.getApproverName(bookingDetail.getTenantId()));
 
 //		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
 		
-		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
 		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
 		chbObject.put("toDate", bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
 		chbObject.put("siteName", bookingDetail.getRelatedAsset().getAssetName());
@@ -305,20 +299,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			    bookingDetail.getRelatedAsset().getAddressDetails().getPincode()
 			));
 		
-//		chbObject.put("address",
-//				bookingDetail.getRelatedAsset().getAddressDetails().getAddressLine1().concat(", ")
-//				.concat(bookingDetail.getRelatedAsset().getAddressDetails().getCity().concat(", ")
-//				.concat(bookingDetail.getRelatedAsset().getAddressDetails().getStreet()))
-//				get(0).getAddress1().concat(", ")
-//						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
-//						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
-//						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
-//						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
-//						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
-//		chbObject.put("siteAddress", null); // Trade Registration No
 		chbObject.put("bookedBy", bookingDetail.getApplicantDetail().getApplicantName()); // Trade Registration No
 		chbObject.put("mobileNumber", bookingDetail.getApplicantDetail().getApplicantMobileNo());
-		chbObject.put("bookingDate", bookingDetail.getApplicantDetail().getApplicantMobileNo());
+		chbObject.put("bookingDate", dateFormat.format(new Date(bookingDetail.getPaymentDate() * 1000)));
 		chbObject.put("address",  String.join(", ",
 			    bookingDetail.getAddress().getAddressLine1(),
 			    bookingDetail.getAddress().getCity(),
@@ -327,7 +310,12 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		chbObject.put("pinLocation", null);
 		chbObject.put("contactLocation", null);
 		chbObject.put("bookingStatus","BOOKED");
-		chbObject.put("perDayCost", null);
+		chbObject.put("perDayCost", new BigDecimal(communityHallsBookingRequest
+	            .getHallsBookingApplication()
+	            .getRelatedAsset()
+	            .getAssetDetails()
+	            .get("gstAssetCost")
+	            .asText()));
 		chbObject.put("ulbName", bookingDetail.getRelatedAsset().getAddressDetails().getStreet());
 		chbObject.put("ulbType", bookingDetail.getRelatedAsset().getAddressDetails().getType());
 		long days = calculateDaysBetween(bookingDetail.getBookingSlotDetails().get(0).getBookingDate(),
@@ -348,7 +336,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			            .getAssetDetails()
 			            .get("securityAmount")
 			            .asText()));
-		chbObject.put("TotalAmount", totalPayableAmount);
+		chbObject.put("totalAmount", totalPayableAmount);
 		chbObject.put("securityAmount", new BigDecimal(communityHallsBookingRequest.getHallsBookingApplication()
 				.getRelatedAsset()
 	            .getAssetDetails()

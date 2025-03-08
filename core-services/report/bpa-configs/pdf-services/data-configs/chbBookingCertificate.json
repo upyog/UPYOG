@@ -120,7 +120,13 @@
 			  "value":{
 				"path":"$.securityAmount"
 			  }
-			}
+			},
+			{
+           "variable":"approverName",
+            "value":{
+              "path":"$.approverName"
+            }
+          }
 		  ]
 		},
 		{

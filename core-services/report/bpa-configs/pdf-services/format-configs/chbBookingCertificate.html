@@ -81,6 +81,30 @@
             border-bottom: dashed 1px #49627e;
             padding-bottom: 5px;
         }
+
+        .sign {
+            position: relative;
+            float: right;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .sign img {
+            width: 150px; /* Adjust width as needed */
+            height: auto;  /* Maintain aspect ratio */
+            display: block;
+        }
+
+        .signature-details {
+            margin-top: -2px;
+            text-align: right;
+        }
+
+        .signature-details span {
+            display: block;
+            line-height: 1;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -99,12 +123,8 @@
 
     <table class="asset1-details">
         <tr>
-            <td>Address: <span th:text="${address}">NA</span></td>
-            <td>Site Contact No.: <span th:text="${contactNumber}">NA</span></td>
-        </tr>
-        <tr>
-            <td>Pin location: <span th:text="${pinLocation}">NA</span></td>
-            <td>Site Contact location: <span th:text="${contactLocation}">NA</span></td>
+            <td>Asset Name: <span th:text="${siteName}">NA</span></td>
+            <td>Asset Address: <span th:text="${address}">NA</span></td>
         </tr>
     </table>
 
@@ -120,28 +140,23 @@
     <br/>
     <table class="asset-details">
         <tr><th class="newHeader1">Description</th><th class="newHeader1">Amount</th></tr>
-        <tr><td>Per Day Cost</td><td><span th:text="${perDayCost}">NA</span></td></tr>
         <tr><td>Number of Days</td><td><span th:text="${numberOfDays}">NA</span></td></tr>
-        <tr><td>Security Amount</td><td><span th:text="${securityAmount}">NA</span></td></tr>
+		<tr><td>Per day Cost</td><td><span th:text="${perDayCost}">NA</span></td></tr>
+        <tr><td>Other Charges</td><td><span th:text="${securityAmount}">NA</span></td></tr>
         <tr>
             <td colspan="2" style="text-align: right; background-color: rgb(143, 154, 232); font-weight: bold;">
                 Total Amount: <span th:text="${totalAmount}">NA</span>
             </td>
         </tr>
     </table>
-
-    <div style="text-align: center; margin-top: 20px;">
-        <img class="qr-code" th:src="${qrCode}" src="/qr.png" alt="QR Code" />
-    </div>
-
     <hr/>
-    <h2 class="terms-condition">Additional Details</h2>
-    <div class="terms-condition-details">
-        <ul>
-            <li>Check-in: 1 PM, Check-Out: 11:00 AM</li>
-            <li>Security Amount will be refunded xxxxxxxxxxx</li>
-        </ul>
+    <div class="sign">
+        <img th:src="${signature}" alt="Signature" />
+        <p class="signature-details">
+            Digitally Signed
+            <br />
+            <span th:text="${ulbType}">NA</span>, <span th:text="${ulbName}">NA</span>
+        </p>
     </div>
-    <hr/>
 </body>
 </html>
