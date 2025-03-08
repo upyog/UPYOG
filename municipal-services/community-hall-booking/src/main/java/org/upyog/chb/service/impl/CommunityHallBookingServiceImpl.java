@@ -382,7 +382,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 //		chbObject.put("qrCodeText", uri);
 		map.put("chb", chbObject);
 		PDFRequest pdfRequest = PDFRequest.builder().RequestInfo(communityHallsBookingRequest.getRequestInfo()).key("chbBookingCertificate")
-				.tenantId("hp").data(map).build();
+				.tenantId(bookingDetail.getTenantId()).data(map).build();
 		Resource resource = reportService.createNoSavePDF(pdfRequest);
 
 		return resource;
