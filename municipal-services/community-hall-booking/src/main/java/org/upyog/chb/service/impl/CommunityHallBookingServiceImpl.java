@@ -2,11 +2,13 @@ package org.upyog.chb.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +58,7 @@ import org.upyog.chb.web.models.CommunityHallBookingUpdateStatusRequest;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.RequestInfoWrapper;
+import org.upyog.chb.web.models.User;
 import org.upyog.chb.web.models.collection.Bill;
 import org.upyog.chb.web.models.collection.BillSearchCriteria;
 import org.upyog.chb.web.models.collection.GenerateBillCriteria;
@@ -227,6 +230,7 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		if (bookingNo == null) {
 			return null;
 		}
+		setRelatedAssetData(communityHallsBookingRequest);
 		if (status != BookingStatusEnum.BOOKED) {
 			CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 					.bookingNo(bookingNo).build();
@@ -278,26 +282,77 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	private Resource createResource(CommunityHallBookingRequest communityHallsBookingRequest) {
 		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> chbObject = new HashMap<>();
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
 		// map variables and values
-		chbObject.put("bookingReference", null);// garbage Application No
-		chbObject.put("fromDate", null); // Trade Registration No
-		chbObject.put("toDate", null); // Trade Registration No
-		chbObject.put("siteName", null); // Trade Registration No
-		chbObject.put("siteAddress", null); // Trade Registration No
-		chbObject.put("bookedBy", null); // Trade Registration No
-		chbObject.put("mobileNumber", null);
-		chbObject.put("bookingDate", null);
-		chbObject.put("address", null);
-		chbObject.put("contactNumber", null);
+		chbObject.put("bookingReference", bookingDetail.getBookingNo());// garbage Application No
+//		grbObject.put("approvalTime", );
+//		chbObject.put("approvalTime", dateFormat.format(new Date(GarbageAccount.getApprovalDate() * 1000)));
+//		String userName =;
+		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
+
+//		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		
+		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
+		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
+		chbObject.put("toDate", bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
+		chbObject.put("siteName", bookingDetail.getRelatedAsset().getAssetName());
+		chbObject.put("siteAddress", String.join(", ",
+			    bookingDetail.getRelatedAsset().getAddressDetails().getAddressLine1(),
+			    bookingDetail.getRelatedAsset().getAddressDetails().getCity(),
+			    bookingDetail.getRelatedAsset().getAddressDetails().getStreet(),
+			    bookingDetail.getRelatedAsset().getAddressDetails().getPincode()
+			));
+		
+//		chbObject.put("address",
+//				bookingDetail.getRelatedAsset().getAddressDetails().getAddressLine1().concat(", ")
+//				.concat(bookingDetail.getRelatedAsset().getAddressDetails().getCity().concat(", ")
+//				.concat(bookingDetail.getRelatedAsset().getAddressDetails().getStreet()))
+//				get(0).getAddress1().concat(", ")
+//						.concat(GarbageAccount.getAddresses().get(0).getWardName()).concat(", ")
+//						.concat(GarbageAccount.getAddresses().get(0).getUlbName()).concat(" (")
+//						.concat(GarbageAccount.getAddresses().get(0).getUlbType()).concat(") ")
+//						.concat(GarbageAccount.getAddresses().get(0).getAdditionalDetail().get("district").asText())
+//						.concat(", ").concat(GarbageAccount.getAddresses().get(0).getPincode()));
+//		chbObject.put("siteAddress", null); // Trade Registration No
+		chbObject.put("bookedBy", bookingDetail.getApplicantDetail().getApplicantName()); // Trade Registration No
+		chbObject.put("mobileNumber", bookingDetail.getApplicantDetail().getApplicantMobileNo());
+		chbObject.put("bookingDate", bookingDetail.getApplicantDetail().getApplicantMobileNo());
+		chbObject.put("address",  String.join(", ",
+			    bookingDetail.getAddress().getAddressLine1(),
+			    bookingDetail.getAddress().getCity(),
+			    bookingDetail.getAddress().getPincode()));
+		chbObject.put("contactNumber", bookingDetail.getApplicantDetail().getApplicantAlternateMobileNo());
 		chbObject.put("pinLocation", null);
 		chbObject.put("contactLocation", null);
-		chbObject.put("bookingStatus",null);
+		chbObject.put("bookingStatus","BOOKED");
 		chbObject.put("perDayCost", null);
-		chbObject.put("numberOfDays", null);
-		chbObject.put("ulbName", null);
-		chbObject.put("ulbType", null);
-		chbObject.put("TotalAmount", null);
-		chbObject.put("securityAmount", null);
+		chbObject.put("ulbName", bookingDetail.getRelatedAsset().getAddressDetails().getStreet());
+		chbObject.put("ulbType", bookingDetail.getRelatedAsset().getAddressDetails().getType());
+		long days = calculateDaysBetween(bookingDetail.getBookingSlotDetails().get(0).getBookingDate(),
+				bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
+		chbObject.put("numberOfDays", days);
+
+		// Total Payable amount
+		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
+			    .multiply(new BigDecimal(communityHallsBookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("gstAssetCost")
+			            .asText())) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(communityHallsBookingRequest
+			            .getHallsBookingApplication()
+			            .getRelatedAsset()
+			            .getAssetDetails()
+			            .get("securityAmount")
+			            .asText()));
+		chbObject.put("TotalAmount", totalPayableAmount);
+		chbObject.put("securityAmount", new BigDecimal(communityHallsBookingRequest.getHallsBookingApplication()
+				.getRelatedAsset()
+	            .getAssetDetails()
+	            .get("securityAmount")
+	            .asText()));
 
 //		chbObject.put("ownerName", GarbageAccount.getName());// owner Name
 //		chbObject.put("address",
@@ -558,10 +613,10 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		CommunityHallBookingSearchCriteria bookingSearchCriteria = CommunityHallBookingSearchCriteria.builder()
 				.bookingNo(bookingNo).build();
 		List<CommunityHallBookingDetail> bookingDetails = bookingRepository.getBookingDetails(bookingSearchCriteria);
+		bookingDetails = encryptionService.decryptObject(bookingDetails, communityHallBookingUpdateStatusRequest.getRequestInfo());
 		CommunityHallBookingRequest communityHallBookingRequest = CommunityHallBookingRequest.builder()
 				.hallsBookingApplication(bookingDetails.get(0))
 				.requestInfo(communityHallBookingUpdateStatusRequest.getRequestInfo()).build();
-
 		communityHallBookingRequest.getHallsBookingApplication()
 				.setWorkflow(communityHallBookingUpdateStatusRequest.getWorkflow());
 

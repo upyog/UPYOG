@@ -47,7 +47,12 @@ public class CommunityHallBookingQueryBuilder {
 			+ "	ecsd.booking_date <= ? and ecsd.booking_to_date >=  ? ";
 		//	+ "	AND ecsd.hall_code in (?)";
 	
-
+	//ASSET_CREATOR
+	private static final String  Approver_Name_Query =  "SELECT  e.code \n"
+			+ "FROM eg_userrole_v1 r  \n"
+			+ "INNER JOIN eg_hrms_employee e ON r.user_id = e.id  \n"
+//			+ "INNER JOIN eg_user u ON r.user_id = u.id  \n"
+			+"where r.role_tenantid = ? and r.role_code = 'ASSET_CREATOR'";
 	/**
 	 * To give the Search query based on the requirements.
 	 * 
@@ -257,6 +262,12 @@ public class CommunityHallBookingQueryBuilder {
 	public StringBuilder getBookingCodeSlotsQuery(String code) {
 		StringBuilder builder = new StringBuilder(chb_booked_slots);
 		return builder;
+	}
+	
+	public StringBuilder getApproverNameQuery(String UserName) {
+		StringBuilder builder = new StringBuilder(Approver_Name_Query);
+		return builder;
+
 	}
 
 }
