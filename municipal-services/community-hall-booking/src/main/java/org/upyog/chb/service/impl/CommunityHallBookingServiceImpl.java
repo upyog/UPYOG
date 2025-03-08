@@ -299,7 +299,8 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 			    bookingDetail.getRelatedAsset().getAddressDetails().getPincode()
 			));
 		
-		chbObject.put("bookedBy", bookingDetail.getApplicantDetail().getApplicantName()); // Trade Registration No
+		chbObject.put("bookingReference", bookingDetail.getBookingNo());
+		chbObject.put("bookedBy", bookingDetail.getApplicantDetail().getApplicantName());
 		chbObject.put("mobileNumber", bookingDetail.getApplicantDetail().getApplicantMobileNo());
 		chbObject.put("bookingDate", dateFormat.format(new Date(bookingDetail.getPaymentDate() * 1000)));
 		chbObject.put("address",  String.join(", ",
