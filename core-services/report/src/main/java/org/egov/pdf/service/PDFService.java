@@ -199,7 +199,7 @@ public class PDFService {
 	}
 	
 	private List<String> extractDataFromSignatureResponse(String jsonResponse) {
-		log.info("Inside method extractDataFromResponse");
+		log.info("Inside method extractDataFromResponse" + jsonResponse);
 		List<String> logoList = new ArrayList<>();
 		try {
 			JsonNode jsonNode = objectMapper.readTree(jsonResponse);
@@ -335,6 +335,7 @@ public class PDFService {
 				+ "                        ,\"filter\": \"[?(@.userName == \\\""+userName+"\\\")]\"\n" + ""
 				+ "                    }\n"
 				+ "                ]\n" + "            }\n" + "        ]\n" + "    }\n" + "}";
+		log.info("signature requestBody." + requestBody);
 
 		HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
