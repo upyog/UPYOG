@@ -123,12 +123,8 @@
 
     <table class="asset1-details">
         <tr>
-            <td>Address: <span th:text="${address}">NA</span></td>
-            <td>Site Contact No.: <span th:text="${contactNumber}">NA</span></td>
-        </tr>
-        <tr>
-            <td>Pin location: <span th:text="${pinLocation}">NA</span></td>
-            <td>Site Contact location: <span th:text="${contactLocation}">NA</span></td>
+            <td>Asset Name: <span th:text="${siteName}">NA</span></td>
+            <td>Asset Address: <span th:text="${address}">NA</span></td>
         </tr>
     </table>
 
@@ -145,6 +141,7 @@
     <table class="asset-details">
         <tr><th class="newHeader1">Description</th><th class="newHeader1">Amount</th></tr>
         <tr><td>Number of Days</td><td><span th:text="${numberOfDays}">NA</span></td></tr>
+		<tr><td>Per day Cost</td><td><span th:text="${perDayCost}">NA</span></td></tr>
         <tr><td>Other Charges</td><td><span th:text="${securityAmount}">NA</span></td></tr>
         <tr>
             <td colspan="2" style="text-align: right; background-color: rgb(143, 154, 232); font-weight: bold;">
