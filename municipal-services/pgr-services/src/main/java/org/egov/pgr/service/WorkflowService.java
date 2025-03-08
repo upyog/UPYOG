@@ -138,7 +138,7 @@ public class WorkflowService {
                 throw new CustomException("PARSING ERROR", "Failed to parse response of workflow processInstance search");
             }
 
-            if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()) || processInstanceResponse.getProcessInstances().size() != serviceRequestIds.size())
+            if (CollectionUtils.isEmpty(processInstanceResponse.getProcessInstances()))
                 throw new CustomException("WORKFLOW_NOT_FOUND", "The workflow object is not found");
 
             Map<String, Workflow> businessIdToWorkflow = getWorkflow(processInstanceResponse.getProcessInstances());

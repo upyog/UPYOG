@@ -21,6 +21,7 @@ import org.upyog.chb.repository.rowmapper.BookingSlotDetailRowmapper;
 import org.upyog.chb.repository.rowmapper.CommunityHallBookingRowmapper;
 import org.upyog.chb.repository.rowmapper.CommunityHallSlotAvailabilityRowMapper;
 import org.upyog.chb.repository.rowmapper.DocumentDetailsRowMapper;
+import org.upyog.chb.repository.rowmapper.UserDetailMapper;
 import org.upyog.chb.util.CommunityHallBookingUtil;
 import org.upyog.chb.web.models.BookingSlotDetail;
 import org.upyog.chb.web.models.CommunityHallBookingInitDetail;
@@ -31,6 +32,7 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.DocumentDetail;
+import org.upyog.chb.web.models.User;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,6 +57,8 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private CommunityHallSlotAvailabilityRowMapper availabilityRowMapper;
+	@Autowired
+	private UserDetailMapper userDetailRowMapper;
 	
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_eg_chb_booking')";
 
@@ -177,5 +181,17 @@ public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingR
 		List<CommunityHallSlotAvailabilityDetail> availabiltityDetails = jdbcTemplate.query(query.toString(), paramsList.toArray(),
 				availabilityRowMapper);
 		return availabiltityDetails;
+	}
+	
+	@Override
+	public String getApproverName(String UlbName) {
+		StringBuilder query = queryBuilder.getApproverNameQuery(UlbName);
+		List<Object> paramsList = new ArrayList<>();
+		paramsList.add(UlbName);
+		log.info("query for usename " + UlbName + "  " + query.toString());
+		return  jdbcTemplate.queryForObject(query.toString(), String.class,UlbName);
+
+//		User user = jdbcTemplate.query(query.toString(), paramsList.toArray(),userDetailRowMapper);
+//		return user;
 	}
 }
