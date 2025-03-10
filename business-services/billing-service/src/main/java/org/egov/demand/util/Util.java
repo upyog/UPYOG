@@ -250,8 +250,10 @@ public class Util {
 	 * if the call happens with payment false and the demand is already tallied even then the demands won't be set to paid-completely to allow zero payment
 	 */
 	public void updateDemandPaymentStatus(Demand demand, Boolean isUpdateFromPayment) {
-		BigDecimal totoalTax = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		BigDecimal totoalTax = demand.getDemandDetails().stream()
+			    .filter(detail -> !detail.getTaxHeadMasterCode().contains("ADVANCE")) // Exclude tax heads with "ADVANCE"
+			    .map(DemandDetail::getTaxAmount)
+			    .reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		BigDecimal totalCollection = demand.getDemandDetails().stream().map(DemandDetail::getCollectionAmount)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
