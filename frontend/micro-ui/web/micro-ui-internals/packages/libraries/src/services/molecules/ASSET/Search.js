@@ -128,6 +128,7 @@ export const ASSETSearch = {
           { title: "ASSET_DESCRIPTION", value: response?.description },
           { title: "AST_DEPARTMENT", value: 'COMMON_MASTERS_DEPARTMENT_' + response?.department },
           { title: "AST_USAGE", value: response?.assetUsage },
+          { title: "AST_STATUS_ASSIGNABLE", value: response?.assetAssignable },
           { title: "AST_TYPE", value: response?.assetType },
 
         ],
