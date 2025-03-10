@@ -16,6 +16,7 @@ CREATE TABLE ug_cnd_application_details (
     total_waste_quantity DECIMAL(10,2),
     no_of_trips INTEGER,
     vehicle_id VARCHAR(64),
+    vehicle_type VARCHAR(50),
     vendor_id VARCHAR(64),
     pickup_date DATE,
     completed_on TIMESTAMP,
