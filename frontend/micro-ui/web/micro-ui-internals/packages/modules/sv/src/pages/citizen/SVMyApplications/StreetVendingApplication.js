@@ -3,7 +3,7 @@ import React,{ useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link,useHistory } from "react-router-dom";
 import RenewPopup from "../../../components/RenewPopup";
-import { UPYOG_CONSTANTS } from "../../../utils";
+import { RENEWAL_CONSTANTS } from "../../../utils";
 
 const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onDiscard }) => {
   console.log("applicationapplication",application);
@@ -69,8 +69,9 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
       <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}
       {(application?.applicationStatus == "CITIZENACTIONREQUIRED") && 
       <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_EDIT")} onSubmit={handleEditClick} />}
-      {(application?.renewalStatus===UPYOG_CONSTANTS.renewalStatus)&&
-      <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_RENEW")} onSubmit={handleRenewPopup} />}
+      {(application?.renewalStatus===RENEWAL_CONSTANTS.ELIGIBLE_TO_RENEW)&&
+      <SubmitBar style={{ marginBottom: "5px" }} label={t("SV_RENEW")} onSubmit={handleRenewPopup} />
+      }
       <div style={{ display: "flex", gap: "5px" }}>
         <Link to={isDraft ? `/digit-ui/citizen/sv/apply/info` : `/digit-ui/citizen/sv/application/${application?.applicationNo}/${application?.tenantId}`}>
           <SubmitBar label={isDraft ?t("SV_CONTINUE"):buttonLabel} />
