@@ -26,8 +26,9 @@ import getSVAcknowledgementData from "../../../utils/getSVAcknowledgementData"
 
 const GetActionMessage = (props) => {
     const { t } = useTranslation();
+    const currentUrl = window.location.href;
     if (props.isSuccess) {
-      return window.location.href.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): window.location.href.includes("renew") ? t("SV_RENEW_SUCCESSFULL") : t("SV_SUBMIT_SUCCESSFULL");
+      return currentUrl.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): currentUrl.includes("renew") ? t("SV_RENEW_SUCCESSFULL") : t("SV_SUBMIT_SUCCESSFULL");
     }
     else if (props.isLoading){
       return t("SV_APPLICATION_PENDING");
