@@ -147,13 +147,10 @@ public class MTInboxFilterService {
 				try {
 					jsonString = mapper.writeValueAsString(result);
 				} catch (JsonGenerationException e) {
-					// TODO Auto-generated catch block
 					log.error("JSON Generation error: ", e);
 				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
 					 log.error("JSON Mapping error: ", e);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					 log.error("IO Exception while converting result to JSON: ", e);
 				}
 				
