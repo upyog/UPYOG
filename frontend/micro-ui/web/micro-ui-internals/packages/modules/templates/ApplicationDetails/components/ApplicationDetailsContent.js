@@ -322,10 +322,10 @@ function ApplicationDetailsContent({
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
 
             {detail?.isTable && (
-              <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
+              <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse", borderCollapse: "collapse", border: "2px solid black"}}>
                 <tr style={{ textAlign: "left" }}>
                   {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px", paddingLeft: "0px" }}>{t(header)}</th>
+                    <th style={{ padding: "10px", paddingLeft: "5px", border: "2px solid black", textAlign: "left"}}>{t(header)}</th>
                   ))}
                 </tr>
 
@@ -343,7 +343,7 @@ function ApplicationDetailsContent({
                       
                       {row.map((element, idx) =>
                         Array.isArray(element) && element.length > 1 && detail.isMaintenance === true ? (
-                          <td style={{ paddingTop: "20px", textAlign: "left" }} key={idx}>
+                          <td style={{ paddingTop: "20px", textAlign: "left", border: "2px solid black", verticalAlign: "middle" }} key={idx}>
                             <div style={{ display: "flex", flexWrap: "nowrap", gap: "5px" }}>
                               {element.map((file, fileIndex) => (
                                 <a
@@ -358,7 +358,7 @@ function ApplicationDetailsContent({
                             </div>
                           </td>
                         ) : (
-                          <td key={idx} style={{ paddingTop: "20px", textAlign: "left" }}>
+                          <td key={idx} style={{ paddingTop: "20px", textAlign: "left" , border: "2px solid black", verticalAlign: "middle"}}>
                             {console.log("Comming Maintainaince data row:- ", element.data)}
                             {element && element.editButton === true ? (
                               <span style={{ display: "inline-flex", gap: "10px", alignItems: "center" }}>

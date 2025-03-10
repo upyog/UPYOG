@@ -161,6 +161,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/asset-deatils`} />}
           />
 
+          <Row
+            label={t("AST_STATUS_ISASSIGNED")}
+            text={`${t(checkForNA(asset?.assetIsAssigned?.code))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/employee/asset/assetservice/new-assets/asset-deatils`} />}
+          />
+
           </StatusTable>
           <br></br>
 

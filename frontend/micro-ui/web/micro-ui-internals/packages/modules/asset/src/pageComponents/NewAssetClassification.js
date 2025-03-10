@@ -57,6 +57,10 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   const [assetsUsage, setAssetsUsage] = useState(
     (formData.asset && formData.asset[index] && formData.asset[index].assetsUsage) || formData?.asset?.assetsUsage || ""
   );
+  const [assetIsAssigned, setAssetIsAssigned] = useState(
+    (formData.asset && formData.asset[index] && formData.asset[index].assetIsAssigned) || formData?.asset?.assetIsAssigned || ""
+  );
+
   const [financialYear, setfinancialYear] = useState(
     (formData.asset && formData.asset[index] && formData.asset[index].financialYear) || formData?.asset?.financialYear || initialFinancialYear
   );
@@ -96,9 +100,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
       const activeData = formattedData?.filter((item) => item.active === true);
       return activeData;
     },
-  });  
-  console.log('E data:- ', Asset_Parent_Sub_Type);
-
+  });
 
   const { data: sourceofFinanceMDMS } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "SourceFinance" }], {
     select: (data) => {
@@ -241,6 +243,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
         Department,
         assetsOfType,
         assetsUsage,
+        assetIsAssigned,
         Assetdescription,
       };
       onSelect(config.key, ownerStep, false, index);
@@ -265,6 +268,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     Department,
     assetsOfType,
     assetsUsage,
+    assetIsAssigned,
     Assetdescription,
   ]);
 
@@ -276,9 +280,10 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   });
   let assetType = [];
 
-  assetTypeData && assetTypeData.map((assT) => {
+  assetTypeData &&
+    assetTypeData.map((assT) => {
       assetType.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
-  });
+    });
 
   const { data: assetCurrentUsageData } = Digit.Hooks.useCustomMDMSV2(Digit.ULBService.getStateId(), "ASSET", [{ name: "AssetUsage" }], {
     select: (data) => {
@@ -288,10 +293,18 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   });
   let assetCurrentUsage = [];
 
-  assetCurrentUsageData && assetCurrentUsageData.map((assT) => {
-    assetCurrentUsage.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
-  });
+  assetCurrentUsageData &&
+    assetCurrentUsageData.map((assT) => {
+      assetCurrentUsage.push({ i18nKey: `${assT.code}`, code: `${assT.code}`, value: `${assT.name}` });
+    });
 
+    // This is use for Asset Assigned / Not Assigned menu
+    let assetIsAssign = [
+      {i18nKey: 'TRUE', code: 'TRUE', value: 'TRUE'},
+      {i18nKey: 'FALSE', code: 'FALSE', value: 'FALSE'},
+    ];
+  
+    
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={1} /> : null}
@@ -470,7 +483,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               />
             )}
           />
-     <div>{t("AST_TYPE")}</div>
+          <div>{t("AST_TYPE")}</div>
           <Controller
             control={control}
             name={"assetsOfType"}
@@ -488,7 +501,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               />
             )}
           />
-          
+
           <div>
             {t("AST_BOOK_REF_SERIAL_NUM")}
             <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
@@ -525,7 +538,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />
-          
 
           <CardLabel>{`${t("AST_NAME")}`}</CardLabel>
           <TextInput
@@ -565,24 +577,24 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
               </span>
             </div>
           </div>
-         
+
           <div className="form-field">
-           <TextArea 
-            t={t}
-            type={"textarea"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name="Assetdescription"
-            value={Assetdescription}
-            onChange={setassetDescription}
-            
-            ValidationRequired={false}
-            {...(validation = {
-              isRequired: true,
-              pattern: "^[a-zA-Z0-9/-]*$",
-              type: "text",
-              title: t("PT_NAME_ERROR_MESSAGE"),
-            })}/>
+            <TextArea
+              t={t}
+              type={"textarea"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="Assetdescription"
+              value={Assetdescription}
+              onChange={setassetDescription}
+              ValidationRequired={false}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[a-zA-Z0-9/-]*$",
+                type: "text",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
           </div>
 
           <div>
@@ -622,8 +634,6 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-     
-
           <div>{t("AST_USAGE")}</div>
           <Controller
             control={control}
@@ -636,6 +646,25 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
                 selected={assetsUsage}
                 select={setAssetsUsage}
                 option={assetCurrentUsage}
+                optionKey="i18nKey"
+                placeholder={"Select"}
+                t={t}
+              />
+            )}
+          />
+
+          <div>{t("AST_STATUS_ISASSIGNED")}</div>
+          <Controller
+            control={control}
+            name={"assetIsAssigned"}
+            defaultValue={assetIsAssigned}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={assetIsAssigned}
+                select={setAssetIsAssigned}
+                option={assetIsAssign}
                 optionKey="i18nKey"
                 placeholder={"Select"}
                 t={t}
