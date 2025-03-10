@@ -57,8 +57,8 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
   const [assetsUsage, setAssetsUsage] = useState(
     (formData.asset && formData.asset[index] && formData.asset[index].assetsUsage) || formData?.asset?.assetsUsage || ""
   );
-  const [assetIsAssigned, setAssetIsAssigned] = useState(
-    (formData.asset && formData.asset[index] && formData.asset[index].assetIsAssigned) || formData?.asset?.assetIsAssigned || ""
+  const [assetAssignable, setAssetAssignable] = useState(
+    (formData.asset && formData.asset[index] && formData.asset[index].assetAssignable) || formData?.asset?.assetAssignable || ""
   );
 
   const [financialYear, setfinancialYear] = useState(
@@ -243,7 +243,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
         Department,
         assetsOfType,
         assetsUsage,
-        assetIsAssigned,
+        assetAssignable,
         Assetdescription,
       };
       onSelect(config.key, ownerStep, false, index);
@@ -268,7 +268,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     Department,
     assetsOfType,
     assetsUsage,
-    assetIsAssigned,
+    assetAssignable,
     Assetdescription,
   ]);
 
@@ -299,9 +299,9 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
     });
 
     // This is use for Asset Assigned / Not Assigned menu
-    let assetIsAssign = [
-      {i18nKey: 'TRUE', code: 'TRUE', value: 'TRUE'},
-      {i18nKey: 'FALSE', code: 'FALSE', value: 'FALSE'},
+    let assetAssignableMenu = [
+      {i18nKey: 'TRUE', code: 'true', value: 'true'},
+      {i18nKey: 'FALSE', code: 'false', value: 'false'},
     ];
   
     
@@ -653,18 +653,18 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>{t("AST_STATUS_ISASSIGNED")}</div>
+          <div>{t("AST_STATUS_ASSIGNABLE")}</div>
           <Controller
             control={control}
-            name={"assetIsAssigned"}
-            defaultValue={assetIsAssigned}
+            name={"assetAssignable"}
+            defaultValue={assetAssignable}
             rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
             render={(props) => (
               <Dropdown
                 className="form-field"
-                selected={assetIsAssigned}
-                select={setAssetIsAssigned}
-                option={assetIsAssign}
+                selected={assetAssignable}
+                select={setAssetAssignable}
+                option={assetAssignableMenu}
                 optionKey="i18nKey"
                 placeholder={"Select"}
                 t={t}
