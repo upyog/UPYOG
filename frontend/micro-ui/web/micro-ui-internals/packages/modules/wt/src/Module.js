@@ -22,6 +22,7 @@ import WTCitizenCard from "./components/WTCitizenCard";
 import ServiceTypes from "./pageComponents/ServiceTypes";
 import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
 import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
+import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
 
 const componentsToRegister = {
     ApplicantDetails,
@@ -32,6 +33,7 @@ const componentsToRegister = {
     WTCheckPage,
     WTAcknowledgement,
     WTApplicationDetails: WTApplicationDetails,
+    MTApplicationDetails: MTApplicationDetails,
     WTMyApplications: WTMyApplications,
     ApplicationDetails: ApplicationDetails,
     WFApplicationTimeline: WFApplicationTimeline,

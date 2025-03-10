@@ -24,6 +24,7 @@ import static org.egov.inbox.util.NocConstants.NOC;
 import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
+import static org.egov.inbox.util.RequestServiceConstants.*;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
@@ -38,8 +39,6 @@ import static org.egov.inbox.util.AssetConstants.ASSET;
 import static org.egov.inbox.util.EwasteConstants.EWASTE;
 import static org.egov.inbox.util.CommunityHallConstants.CHB;
 import static org.egov.inbox.util.CommunityHallConstants.CHB_BOOKING_NO_PARAM;
-import static org.egov.inbox.util.RequestServiceConstants.BOOKING_NO_PARAM;
-import static org.egov.inbox.util.RequestServiceConstants.RS;
 import static org.egov.inbox.util.CNDServiceConstants.CND;
 import static org.egov.inbox.util.CNDServiceConstants.APPLICATION_NO_PARAM;
 
@@ -148,6 +147,9 @@ public class InboxService {
 	
 	@Autowired
 	private RestTemplate restTemplate;
+
+	@Autowired
+	private MTInboxFilterService mtInboxFilterService;
 
 	@Autowired
 	ElasticSearchRepository elasticSearchRepository;
@@ -453,10 +455,27 @@ public class InboxService {
 			}
 
 			// for request service
-			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(RS)) {
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && RS.equals(processCriteria.getModuleName())) {
+				List<String> applicationNumbers;
 
-				List<String> applicationNumbers = requestServiceInboxFilterService
-						.fetchApplicationNumbersFromSearcher(criteria, StatusIdNameMap, requestInfo);
+				// Determine which service to use based on business service type
+				if (processCriteria.getBusinessService().contains(MT_BUSINESS_SERVICE)) {
+					applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(
+							criteria, StatusIdNameMap, requestInfo);
+				}
+//				Below line is commented just for example that if in future if you want to add for new module under request-service
+//				then just add the business service in line 468 and its inboxfilterservice in line 469
+//				else if (processCriteria.getBusinessService().contains(WT_BUSINESS_SERVICE)) {
+//					applicationNumbers = requestServiceInboxFilterService.fetchApplicationNumbersFromSearcher(
+//							criteria, StatusIdNameMap, requestInfo);
+//				}
+				else {
+					// Default case - use request service
+					applicationNumbers = requestServiceInboxFilterService.fetchApplicationNumbersFromSearcher(
+							criteria, StatusIdNameMap, requestInfo);
+				}
+
+				// Update search criteria if application numbers exist
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);

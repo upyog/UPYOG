@@ -36,6 +36,9 @@ export const WTMyApplications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
   const [filters, setFilters] = useState(null);
+  const [serviceType, setServiceType] = useState("waterTanker"); // `serviceType` stores the actual service type used in API calls and updates only when the search button is clicked.
+
+  const [tempServiceType, setTempServiceType] = useState("waterTanker"); // Temporary state
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -55,10 +58,18 @@ export const WTMyApplications = () => {
     setFilters(initialFilters);
   }, [filter]);
 
-  // Use the search hook with dynamic filters
-  const { isLoading, data } = Digit.Hooks.wt.useTankerSearchAPI({ filters });
+  // The API call depends on `serviceType`, fetching data accordingly.
+  const { isLoading: isLoadingTanker, data: dataTanker } = serviceType === "waterTanker"? Digit.Hooks.wt.useTankerSearchAPI({ filters }): { isLoading: false, data: null };
 
+  const { isLoading: isLoadingToilet, data: dataToilet } = serviceType === "mobileToilet" ? Digit.Hooks.wt.useMobileToiletSearchAPI({ filters }) : { isLoading: false, data: null };
+
+  const isLoading = isLoadingToilet || isLoadingTanker;
+
+  
+  // When the search button is clicked, `serviceType` is updated to match the selected `tempServiceType`.
   const handleSearch = () => {
+    setServiceType(tempServiceType); // Apply service type selection only on search
+
     const trimmedSearchTerm = searchTerm.trim();
     const searchFilters = {
       ...initialFilters,
@@ -74,6 +85,11 @@ export const WTMyApplications = () => {
     return <Loader />;
   }
 
+  const serviceOptions = [
+    { label: t("MOBILE_TOILET"), code: "mobileToilet" },
+    { label: t("WATER_TANKER"), code: "waterTanker" },
+  ];
+
   const statusOptions = [
     { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
     { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
@@ -82,7 +98,10 @@ export const WTMyApplications = () => {
     { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
   ];
 
-  const filteredApplications = data?.waterTankerBookingDetail || [];
+  const filteredApplications = [
+    ...(dataToilet?.mobileToiletBookingDetails || []),
+    ...(dataTanker?.waterTankerBookingDetail || []),
+  ];
 
   return (
     <React.Fragment>
@@ -91,15 +110,23 @@ export const WTMyApplications = () => {
         <div style={{ marginLeft: "16px" }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
             <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <CardLabel>{t("WT_BOOKING_NO")}</CardLabel>
-                <TextInput
-                  placeholder={t("Enter Booking No.")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ width: "100%", padding: "8px", height: '150%' }}
-                />
-              </div>
+              <CardLabel>{t("WT_SERVICE_TYPE")}</CardLabel>
+              <Dropdown
+                selected={serviceOptions.find((option) => option.code === tempServiceType)}
+                select={(option) => setTempServiceType(option.code)} // Temporary state update
+                option={serviceOptions}
+                placeholder={t("Select Service Type")}
+                optionKey="label"
+                t={t}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <CardLabel>{t("WT_BOOKING_NO")}</CardLabel>
+              <TextInput
+                placeholder={t("Enter Booking No.")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", flexDirection: "column" }}>
@@ -146,8 +173,7 @@ export const WTMyApplications = () => {
             {t("WT_NO_APPLICATION_FOUND_MSG")}
           </p>
         )}
-
-        {filteredApplications.length !== 0 && data?.count>t1 && (
+        {filteredApplications.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0)) > t1 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">

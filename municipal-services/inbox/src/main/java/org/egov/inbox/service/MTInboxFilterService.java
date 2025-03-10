@@ -1,42 +1,28 @@
 package org.egov.inbox.service;
 
-import static org.egov.inbox.util.CNDServiceConstants.ASSIGNEE_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.APPLICATION_NO_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.BUSINESS_SERVICE_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.DESC_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.LOCALITY_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.MOBILE_NUMBER_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.REQUESTINFO_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.SEARCH_CRITERIA_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.SORT_ORDER_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.STATUS_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.TENANT_ID_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.USERID_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.OFFSET_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.NO_OF_RECORDS_PARAM;
-import static org.egov.inbox.util.CNDServiceConstants.LIMIT_PARAM;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.inbox.config.InboxConfiguration;
 import org.egov.inbox.repository.ServiceRequestRepository;
 import org.egov.inbox.web.model.InboxSearchCriteria;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
-import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.inbox.util.RequestServiceConstants.*;
 @Slf4j
 @Service
 
@@ -56,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
  * @return List<String> - A list of application numbers (booking numbers) retrieved from the searcher service.
  */
 
-public class CNDInboxFilterService {
+public class MTInboxFilterService {
 		
 		@Autowired
 		private RestTemplate restTemplate;
@@ -84,7 +70,7 @@ public class CNDInboxFilterService {
 
 		public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
 				HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
-			List<String> applicationNumbers = new ArrayList<>();
+			List<String> bookingNo = new ArrayList<>();
 			HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
 			ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
 			Boolean isSearchResultEmpty = false;
@@ -120,8 +106,8 @@ public class CNDInboxFilterService {
 				if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
 					searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
 				}
-				if (moduleSearchCriteria.containsKey(APPLICATION_NO_PARAM)) {
-					searchCriteria.put(APPLICATION_NO_PARAM, moduleSearchCriteria.get(APPLICATION_NO_PARAM));
+				if (moduleSearchCriteria.containsKey(BOOKING_NO_PARAM)) {
+					searchCriteria.put(BOOKING_NO_PARAM, moduleSearchCriteria.get(BOOKING_NO_PARAM));
 				}
 
 				// Accomodating process search criteria in searcher request
@@ -149,13 +135,13 @@ public class CNDInboxFilterService {
 				StringBuilder uri = new StringBuilder();
 				if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
 						&& moduleSearchCriteria.get(SORT_ORDER_PARAM).equals(DESC_PARAM)) {
-					uri.append(config.getSearcherHost()).append(config.getCndInboxSearcherDescEndpoint());
+					uri.append(config.getSearcherHost()).append(config.getMtInboxSearcherDescEndpoint());
 				} else {
-					uri.append(config.getSearcherHost()).append(config.getCndInboxSearcherEndpoint());
+					uri.append(config.getSearcherHost()).append(config.getMtInboxSearcherEndpoint());
 				}
 				log.info("Checkig ----- ------" + searcherRequest);
 				result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
-//				applicationNumbers = JsonPath.read(result, "$.hallsBookingApplication.*.booking_no");
+//				bookingNo = JsonPath.read(result, "$.hallsBookingApplication.*.booking_no");
 //				ObjectMapper mapper = new ObjectMapper();
 				String jsonString = null;
 				try {
@@ -169,11 +155,11 @@ public class CNDInboxFilterService {
 				}
 				
 				// Use JsonPath to extract booking numbers
-				applicationNumbers = JsonPath.read(jsonString, "$.cndApplicationDetail[*].application_number");
-				log.info("Application Numbers: " + applicationNumbers);
+				bookingNo = JsonPath.read(jsonString, "$.mobileToiletBookingDetails[*].booking_no");
+				log.info("Application Numbers: " + bookingNo);
 
 			}
-			return applicationNumbers;
+			return bookingNo;
 		}
 		
 		/**
