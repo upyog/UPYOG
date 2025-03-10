@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.repository.rowmapper.AddressRowMapper;
+import org.egov.user.repository.rowmapper.AddressRowMapperV2;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -32,9 +33,10 @@ public class AddressRepository {
             "uadd.lastmodifiedby as lastmodifiedby from eg_user_address uadd left join eg_user usr on uadd.userid = usr.id\n" +
             "where usr.uuid=:uuid and uadd.tenantid=:tenantId";
     // Adding new fields in Address insert query: address2, houseNumber, houseName, streetName, landmark, locality
-    public static final String INSERT_WHOLE_ADDRESS_BYUSERID = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality) "
+    public static final String INSERT_ADDRESS_BYUSERID_V2 = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality) "
             + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby, :address2, :houseNumber, :houseName, :streetName, :landmark, :locality)";
-
+    public static final String UPDATE_ADDRESS_BYIDAND_TENANTID_V2 = "UPDATE eg_user_address SET address = :address, city = :city, pincode = :pincode, lastmodifiedby = :lastmodifiedby, lastmodifieddate = :lastmodifieddate, address2 = :address2, houseNumber = :houseNumber, houseName = :houseName, streetName = :streetName, landmark = :landmark, locality = :locality " +
+            "WHERE userid = :userid AND tenantid = :tenantid AND type = :type";
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
 
@@ -217,7 +219,7 @@ public class AddressRepository {
     }
 
     /**
-     * api will fetch the user address by user uuid And tenantId
+     * This method will fetch the user addresses(permanent and correspondence) by user uuid And tenantId
      *
      * @param uuid
      * @param tenantId
@@ -230,19 +232,19 @@ public class AddressRepository {
         Map.put("tenantId", tenantId);
 
         List<Address> addressList = namedParameterJdbcTemplate.query(GET_ADDRESS_BY_USER_UUID, Map,
-                new AddressRowMapper());
+                new AddressRowMapperV2());
         return addressList;
     }
 
     /**
-     * api will create the address for particular userId and tenantId with all new fields.
+     * method will create the address for particular userId and tenantId with all new fields v2.
      *
      * @param address
      * @param userId
      * @param tenantId
      * @return
      */
-    public Address createWholeAddress(Address address, Long userId, String tenantId) {
+    public Address createAddressV2(Address address, Long userId, String tenantId) {
         Map<String, Object> addressInputs = new HashMap<String, Object>();
 
         addressInputs.put("id", getNextSequence());
@@ -256,7 +258,7 @@ public class AddressRepository {
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("createdby", userId);
         addressInputs.put("lastmodifiedby", address.getUserId());
-        //new fields below
+        //new fields below for saving all fields V2
         addressInputs.put("address2", address.getAddress2());
         addressInputs.put("houseNumber", address.getHouseNumber());
         addressInputs.put("houseName", address.getHouseName());
@@ -264,9 +266,80 @@ public class AddressRepository {
         addressInputs.put("landmark", address.getLandmark());
         addressInputs.put("locality", address.getLocality());
 
-        namedParameterJdbcTemplate.update(INSERT_WHOLE_ADDRESS_BYUSERID, addressInputs);
+        namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID_V2, addressInputs);
         return address;
     }
 
+    /**
+     * method will update the address based on userId and tenantId
+     *
+     * @param domainAddresses
+     * @param userId
+     * @param tenantId
+     */
+    public void updateV2(List<Address> domainAddresses, Long userId, String tenantId) {
 
+        final Map<String, Object> Map = new HashMap<String, Object>();
+        Map.put("userId", userId);
+        Map.put("tenantId", tenantId);
+
+        List<Address> entityAddresses = namedParameterJdbcTemplate.query(GET_ADDRESS_BY_USERID, Map,
+                new AddressRowMapperV2());
+
+        if (isEmpty(domainAddresses) && isEmpty(entityAddresses)) {
+            return;
+        }
+
+        conditionallyDeleteAllAddresses(domainAddresses, entityAddresses);
+        deleteRemovedAddresses(domainAddresses, entityAddresses);
+        createNewAddresses(domainAddresses, entityAddresses, userId, tenantId);
+        updateAddressesV2(domainAddresses, entityAddresses, userId);
+    }
+
+    /**
+     * method will update the user addresses with all new fields v2
+     *
+     * @param domainAddresses
+     * @param entityAddresses
+     * @param userId
+     */
+    private void updateAddressesV2(List<Address> domainAddresses, List<Address> entityAddresses, Long userId) {
+        Map<String, Address> typeToEntityAddressMap = toMap(entityAddresses);
+        domainAddresses.forEach(address -> updateAddressV2(typeToEntityAddressMap, address, userId));
+    }
+
+
+    /**
+     * update the address for particular userId v2
+     *
+     * @param typeToEntityAddressMap
+     * @param address
+     * @param userId
+     */
+    private void updateAddressV2(Map<String, Address> typeToEntityAddressMap, Address address, Long userId) {
+        final Address matchingEntityAddress = typeToEntityAddressMap.getOrDefault(address.getType().name(), null);
+
+        if (matchingEntityAddress == null) {
+            return;
+        }
+        Map<String, Object> addressInputs = new HashMap<String, Object>();
+
+        addressInputs.put("address", address.getAddress());
+        addressInputs.put("type", address.getType().toString());
+        addressInputs.put("city", address.getCity());
+        addressInputs.put("pincode", address.getPinCode());
+        addressInputs.put("userid", userId);
+        addressInputs.put("tenantid", matchingEntityAddress.getTenantId());
+        addressInputs.put("lastmodifieddate", new Date());
+        addressInputs.put("lastmodifiedby", userId);
+        //new fields below for v2 update call
+        addressInputs.put("address2", address.getAddress2());
+        addressInputs.put("houseNumber", address.getHouseNumber());
+        addressInputs.put("houseName", address.getHouseName());
+        addressInputs.put("streetName", address.getStreetName());
+        addressInputs.put("landmark", address.getLandmark());
+        addressInputs.put("locality", address.getLocality());
+
+        namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID_V2, addressInputs);
+    }
 }

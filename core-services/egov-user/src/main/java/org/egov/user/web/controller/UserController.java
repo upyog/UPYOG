@@ -235,40 +235,55 @@ public class UserController {
      * @param createUserRequest
      * @return
      */
-    @PostMapping("/users/_createwithaddress")
+    @PostMapping("/users/v2/_create")
     public Object createUserWithAddress(@RequestBody @Valid CreateUserRequestWithAddress createUserRequest,
                                         @RequestHeader HttpHeaders headers) {
         log.info("Received User Registration Request  " + createUserRequest);
         User user = createUserRequest.toDomain(true);
         user.setMobileValidationMandatory(isMobileValidationRequired(headers));
         user.setOtpValidationMandatory(false);
-        final User newUser = userService.createUserWithAddress(user, createUserRequest.getRequestInfo());
+        final User newUser = userService.createUserWithAddressV2(user, createUserRequest.getRequestInfo());
         return createResponse(newUser);
     }
 
-//    /**
-//     * end-point to search the users with address objects by providing userSearchRequest. In Request
-//     * if there is no active filed value, it will fetch all(active & inactive)
-//     * users.
-//     *
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/v2/_search")
-//    public UserSearchResponse getUsersV2(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
-//
-//        UserSearchCriteria searchCriteria = request.toDomain();
-//
-//        if (!isInterServiceCall(headers)) {
-//            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
-//                    || searchCriteria.getLimit() == 0))
-//                searchCriteria.setLimit(defaultSearchSize);
-//        }
-//
-//        List<User> userModels = userService.searchUsers(searchCriteria, isInterServiceCall(headers), request.getRequestInfo());
-//        List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
-//                .collect(Collectors.toList());
-//        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
-//        return new UserSearchResponse(responseInfo, userContracts);
-//    }
+    /**
+     * end-point to update the user details without otp validations.
+     *
+     * @param createUserRequest
+     * @param headers
+     * @return
+     */
+    @PostMapping("/users/v2/_update")
+    public UpdateResponse updateUserWithAddress(@RequestBody final @Valid CreateUserRequestWithAddress createUserRequest,
+                                                      @RequestHeader HttpHeaders headers) {
+        User user = createUserRequest.toDomain(false);
+        user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+        final User updatedUser = userService.updateWithAddressV2(user, createUserRequest.getRequestInfo());
+        return createResponseforUpdate(updatedUser);
+    }
+    /**
+     * end-point to search the users with address objects by providing userSearchRequest. In Request
+     * if there is no active filed value, it will fetch all(active & inactive)
+     * users.
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/users/v2/_search")
+    public UserSearchResponse getUsersV2(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
+
+        UserSearchCriteria searchCriteria = request.toDomain();
+
+        if (!isInterServiceCall(headers)) {
+            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
+                    || searchCriteria.getLimit() == 0))
+                searchCriteria.setLimit(defaultSearchSize);
+        }
+
+        List<User> userModels = userService.searchUsersV2(searchCriteria, isInterServiceCall(headers), request.getRequestInfo());
+        List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
+                .collect(Collectors.toList());
+        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+        return new UserSearchResponse(responseInfo, userContracts);
+    }
 }

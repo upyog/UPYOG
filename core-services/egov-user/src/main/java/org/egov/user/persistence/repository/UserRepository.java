@@ -16,6 +16,7 @@ import org.egov.user.persistence.dto.FailedLoginAttempt;
 import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
+import org.egov.user.repository.rowmapper.UserResultSetExtractorV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +44,8 @@ public class UserRepository {
     private UserTypeQueryBuilder userTypeQueryBuilder;
     private RoleRepository roleRepository;
     private UserResultSetExtractor userResultSetExtractor;
+    @Autowired
+    private UserResultSetExtractorV2 userResultSetExtractorV2;
 
     @Autowired
     UserRepository(RoleRepository roleRepository, UserTypeQueryBuilder userTypeQueryBuilder,
@@ -593,12 +596,12 @@ public class UserRepository {
 	}
 
     /**
-     * this api will create the user with address.
+     * this method will create the user with address part of v2.
      *
      * @param user
      * @return
      */
-    public User createWithAddress(User user) {
+    public User createWithAddressV2(User user) {
         validateAndEnrichRoles(Collections.singletonList(user));
         final Long newId = getNextSequence();
         user.setId(newId);
@@ -611,9 +614,9 @@ public class UserRepository {
         if (!user.getRoles().isEmpty()) {
             saveUserRoles(user);
         }
-        final Address savedCorrespondenceAddress = saveWholeAddress(user.getCorrespondenceAddress(), savedUser.getId(),
+        final Address savedCorrespondenceAddress = saveAddressV2(user.getCorrespondenceAddress(), savedUser.getId(),
                 savedUser.getTenantId());
-        final Address savedPermanentAddress = saveWholeAddress(user.getPermanentAddress(), savedUser.getId(),
+        final Address savedPermanentAddress = saveAddressV2(user.getPermanentAddress(), savedUser.getId(),
                 savedUser.getTenantId());
         savedUser.setPermanentAddress(savedPermanentAddress);
         savedUser.setCorrespondenceAddress(savedCorrespondenceAddress);
@@ -621,18 +624,199 @@ public class UserRepository {
     }
 
     /**
-     * This api will save addresses for particular user.
+     * This method will save addresses for particular user.
      *
      * @param address
      * @param userId
      * @param tenantId
      * @return
      */
-    private Address saveWholeAddress(Address address, Long userId, String tenantId) {
+    private Address saveAddressV2(Address address, Long userId, String tenantId) {
         if (address != null) {
-            addressRepository.createWholeAddress(address, userId, tenantId);
+            addressRepository.createAddressV2(address, userId, tenantId);
             return address;
         }
         return null;
+    }
+
+    /**
+     * method will update the user details with address object with new fields v2.
+     *
+     * @param user
+     * @param uuid
+     * @param
+     * @return
+     */
+    public void updateV2(final User user, User oldUser, long userId, String uuid) {
+
+
+        Map<String, Object> updateuserInputs = new HashMap<>();
+
+        updateuserInputs.put("username", oldUser.getUsername());
+        updateuserInputs.put("type", oldUser.getType().toString());
+        updateuserInputs.put("tenantid", oldUser.getTenantId());
+        updateuserInputs.put("AadhaarNumber", user.getAadhaarNumber());
+
+        if (isNull(user.getAccountLocked()))
+            updateuserInputs.put("AccountLocked", oldUser.getAccountLocked());
+        else
+            updateuserInputs.put("AccountLocked", user.getAccountLocked());
+
+        if (isNull(user.getAccountLockedDate()))
+            updateuserInputs.put("AccountLockedDate", oldUser.getAccountLockedDate());
+        else
+            updateuserInputs.put("AccountLockedDate", user.getAccountLockedDate());
+
+        updateuserInputs.put("Active", user.getActive());
+        updateuserInputs.put("AltContactNumber", user.getAltContactNumber());
+
+        List<Enum> bloodGroupEnumValues = Arrays.asList(BloodGroup.values());
+        if (user.getBloodGroup() != null) {
+            if (bloodGroupEnumValues.contains(user.getBloodGroup()))
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            else
+                updateuserInputs.put("BloodGroup", "");
+        }
+        else if (oldUser != null && oldUser.getBloodGroup() != null) {
+            if (bloodGroupEnumValues.contains(oldUser.getBloodGroup()))
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            else
+                updateuserInputs.put("BloodGroup", "");
+        }
+        else {
+            updateuserInputs.put("BloodGroup", "");
+        }
+
+        if (user.getDob() != null) {
+            updateuserInputs.put("Dob", user.getDob());
+        } else {
+            updateuserInputs.put("Dob", oldUser.getDob());
+        }
+        updateuserInputs.put("EmailId", user.getEmailId());
+
+        if (user.getGender() != null) {
+            if (Gender.FEMALE.toString().equals(user.getGender().toString())) {
+                updateuserInputs.put("Gender", 1);
+            } else if (Gender.MALE.toString().equals(user.getGender().toString())) {
+                updateuserInputs.put("Gender", 2);
+            } else if (Gender.OTHERS.toString().equals(user.getGender().toString())) {
+                updateuserInputs.put("Gender", 3);
+            } else if (Gender.TRANSGENDER.toString().equals(user.getGender().toString())) {
+                updateuserInputs.put("Gender", 4);
+            } else {
+                updateuserInputs.put("Gender", 0);
+            }
+        } else {
+            updateuserInputs.put("Gender", 0);
+        }
+        updateuserInputs.put("Guardian", user.getGuardian());
+
+        List<Enum> enumValues = Arrays.asList(GuardianRelation.values());
+        if (user.getGuardianRelation() != null) {
+            if(enumValues.contains(user.getGuardianRelation()))
+                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
+            else {
+                updateuserInputs.put("GuardianRelation", "");
+            }
+
+        } else {
+            updateuserInputs.put("GuardianRelation", "");
+        }
+        updateuserInputs.put("IdentificationMark", user.getIdentificationMark());
+        updateuserInputs.put("Locale", user.getLocale());
+        if (null != user.getMobileNumber())
+            updateuserInputs.put("MobileNumber", user.getMobileNumber());
+        else
+            updateuserInputs.put("MobileNumber", oldUser.getMobileNumber());
+        updateuserInputs.put("Name", user.getName());
+        updateuserInputs.put("Pan", user.getPan());
+
+        if (!isEmpty(user.getPassword()))
+            updateuserInputs.put("Password", user.getPassword());
+        else
+            updateuserInputs.put("Password", oldUser.getPassword());
+
+        if (oldUser != null && user.getPhoto() != null && user.getPhoto().contains("http"))
+            updateuserInputs.put("Photo", oldUser.getPhoto());
+        else
+            updateuserInputs.put("Photo", user.getPhoto());
+
+        if (null != user.getPasswordExpiryDate())
+            updateuserInputs.put("PasswordExpiryDate", user.getPasswordExpiryDate());
+        else
+            updateuserInputs.put("PasswordExpiryDate", oldUser.getPasswordExpiryDate());
+        updateuserInputs.put("Salutation", user.getSalutation());
+        updateuserInputs.put("Signature", user.getSignature());
+        updateuserInputs.put("Title", user.getTitle());
+
+
+        List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
+        if (user.getType() != null) {
+            if (userTypeEnumValues.contains(user.getType()))
+                updateuserInputs.put("Type", user.getType().toString());
+            else {
+                updateuserInputs.put("Type", "");
+            }
+        }
+        else {
+            updateuserInputs.put("Type", oldUser.getType().toString());
+        }
+
+        updateuserInputs.put("alternatemobilenumber", user.getAlternateMobileNumber());
+
+        updateuserInputs.put("LastModifiedDate", new Date());
+        updateuserInputs.put("LastModifiedBy", userId );
+
+        updateAuditDetails(oldUser, userId, uuid);
+
+        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
+        if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
+            validateAndEnrichRoles(Collections.singletonList(user));
+            updateRoles(user);
+        }
+        if (user.getPermanentAndCorrespondenceAddresses() != null) {
+            addressRepository.updateV2(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+        }
+    }
+
+    /**
+     * Below method will get the all users with addresses by userSearchCriteria.After that roles and
+     * address are set in to the user object.
+     *
+     * @param userSearch
+     * @return
+     */
+    public List<User> findAllV2(UserSearchCriteria userSearch) {
+        final List<Object> preparedStatementValues = new ArrayList<>();
+        boolean RoleSearchHappend = false;
+        List<Long> userIds = new ArrayList<>();
+        if (!isEmpty(userSearch.getRoleCodes()) && userSearch.getTenantId() != null) {
+            userIds = findUsersWithRole(userSearch);
+            RoleSearchHappend = true;
+        }
+        List<User> users = new ArrayList<>();
+        if (RoleSearchHappend) {
+            if (!CollectionUtils.isEmpty(userIds)) {
+                if (CollectionUtils.isEmpty(userSearch.getId()))
+                    userSearch.setId(userIds);
+                else {
+                    userSearch.setId(userSearch.getId().stream().filter(userIds::contains).collect(Collectors.toList()));
+                    if (CollectionUtils.isEmpty(userSearch.getId()))
+                        return users;
+                }
+                userSearch.setTenantId(null);
+                userSearch.setRoleCodes(null);
+            } else {
+                return users;
+            }
+        }
+        // Getting V2 query to bring all new fields of address object in user object
+        String queryStr = userTypeQueryBuilder.getQueryV2(userSearch, preparedStatementValues);
+        log.debug(queryStr);
+        // using new row mapper to get all new fields of address object in user object
+        users = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), userResultSetExtractorV2);
+        enrichRoles(users);
+
+        return users;
     }
 }

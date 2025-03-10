@@ -655,21 +655,26 @@ public class UserService {
         }
     }
 
-
-    public List<Address> getAddress(String uuid, String tenantId) {
+    /**
+     * This method get the address objects based on user_uuid and tenantId
+     *
+     * @param user_uuid
+     * @param tenantId
+     */
+    public List<Address> getAddress(String user_uuid, String tenantId) {
 
         List<Address> address;
-        address = addressRepository.getAddressByUserUuid(uuid, tenantId);
+        address = addressRepository.getAddressByUserUuid(user_uuid, tenantId);
         return address;
 
     }
     /**
-     * api will create the user based on some validations with address
+     * this method will create the user based on some validations with address
      *
      * @param user
      * @return
      */
-    public User createUserWithAddress(User user, RequestInfo requestInfo) {
+    public User createUserWithAddressV2(User user, RequestInfo requestInfo) {
         user.setUuid(UUID.randomUUID().toString());
         user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
@@ -684,20 +689,83 @@ public class UserService {
         user.setPassword(encryptPwd(user.getPassword()));
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
-        User persistedNewUser = persistNewUserWithWholeAddress(user);
+        User persistedNewUser = persistNewUserWithAddressV2(user);
         return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
 
     }
     /**
-     * This api will persist the user with address
+     * This method will persist the user with address V2
      *
      * @param user
      * @return
      */
-    private User persistNewUserWithWholeAddress(User user) {
+    private User persistNewUserWithAddressV2(User user) {
 
-        return userRepository.createWithAddress(user);
+        return userRepository.createWithAddressV2(user);
+    }
+
+    /**
+     * method will update user details without otp
+     *
+     * @param user
+     * @return
+     */
+    public User updateWithAddressV2(User user, RequestInfo requestInfo) {
+        final User existingUser = getUserByUuid(user.getUuid());
+        user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
+        validateUserRoles(user);
+        user.validateUserModification();
+        validatePassword(user.getPassword());
+        user.setPassword(encryptPwd(user.getPassword()));
+        /* encrypt */
+        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        userRepository.updateV2(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
+
+        // If user is being unlocked via update, reset failed login attempts
+        if (user.getAccountLocked() != null && !user.getAccountLocked() && existingUser.getAccountLocked())
+            resetFailedLoginAttempts(user);
+
+        User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        return decryptedupdatedUserfromDB;
+    }
+
+    /**
+     * get the users based on on userSearch criteria
+     *
+     * @param searchCriteria
+     * @return
+     */
+
+    public List<org.egov.user.domain.model.User> searchUsersV2(UserSearchCriteria searchCriteria,
+                                                             boolean isInterServiceCall, RequestInfo requestInfo) {
+
+        searchCriteria.validate(isInterServiceCall);
+
+        searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
+        /* encrypt here / encrypted searchcriteria will be used for search*/
+
+        String altmobnumber=null;
+
+        if(searchCriteria.getMobileNumber()!=null) {
+            altmobnumber = searchCriteria.getMobileNumber();
+        }
+
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+
+        if(altmobnumber!=null) {
+            searchCriteria.setAlternatemobilenumber(altmobnumber);
+        }
+
+        List<org.egov.user.domain.model.User> list = userRepository.findAllV2(searchCriteria);
+
+        /* decrypt here / final reponse decrypted*/
+
+        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+
+        setFileStoreUrlsByFileStoreIds(list);
+        return list;
     }
 }

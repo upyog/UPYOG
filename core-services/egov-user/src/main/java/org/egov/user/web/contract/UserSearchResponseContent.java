@@ -39,7 +39,7 @@ public class UserSearchResponseContent {
     private String correspondencePinCode;
     private String alternatemobilenumber;
 
-    @JsonIgnore
+//    @JsonIgnore
     private Set<Address> addresses;
 
     private Boolean active;

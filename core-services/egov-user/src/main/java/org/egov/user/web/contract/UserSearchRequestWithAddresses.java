@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class UserSearchRequest {
+public class UserSearchRequestWithAddresses {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
@@ -80,6 +80,9 @@ public class UserSearchRequest {
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
 
+    @JsonProperty("excludeAddressDetails")
+    private Boolean excludeAddressDetails = false;
+
 
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
@@ -98,6 +101,7 @@ public class UserSearchRequest {
                 .tenantId(tenantId)
                 .roleCodes(roleCodes)
                 .uuid(uuid)
+                .excludeAddressDetails(excludeAddressDetails)
                 .build();
     }
 }
