@@ -55,7 +55,7 @@ import lombok.extern.slf4j.Slf4j;
  * @return List<String> - A list of application numbers (booking numbers) retrieved from the searcher service.
  */
 
-public class RequestServiceInboxFilterService {
+public class WTInboxFilterService {
 		
 		@Value("${egov.user.host}")
 		private String userHost;
@@ -66,11 +66,11 @@ public class RequestServiceInboxFilterService {
 		@Value("${egov.searcher.host}")
 		private String searcherHost;
 
-		@Value("${egov.searcher.requestService.search.path}")
-		private String requestServiceInboxSearcherEndpoint;
+		@Value("${egov.searcher.wt.search.path}")
+		private String wtInboxSearcherEndpoint;
 
-		@Value("${egov.searcher.requestService.search.desc.path}")
-		private String requestServiceInboxSearcherDescEndpoint;
+		@Value("${egov.searcher.wt.search.desc.path}")
+		private String wtInboxSearcherDescEndpoint;
 
 		@Autowired
 		private RestTemplate restTemplate;
@@ -160,11 +160,11 @@ public class RequestServiceInboxFilterService {
 				StringBuilder uri = new StringBuilder();
 				if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
 						&& moduleSearchCriteria.get(SORT_ORDER_PARAM).equals(DESC_PARAM)) {
-					uri.append(searcherHost).append(requestServiceInboxSearcherDescEndpoint);
+					uri.append(searcherHost).append(wtInboxSearcherDescEndpoint);
 				} else {
-					uri.append(searcherHost).append(requestServiceInboxSearcherEndpoint);
+					uri.append(searcherHost).append(wtInboxSearcherEndpoint);
 				}
-				log.info("Checkig ----- ------" + searcherRequest);
+				log.info("Checking ----- ------" + searcherRequest);
 				result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 //				applicationNumbers = JsonPath.read(result, "$.hallsBookingApplication.*.booking_no");
 //				ObjectMapper mapper = new ObjectMapper();
