@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Import;
 @Import({ TracerConfiguration.class })
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.upyog.cdwm.calculator", "org.upyog.cdwm.calculator.web.controllers" , "org.upyog.cdwm.calculator.config"})
-public class Main {
+public class CNDCalculator {
 
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(CNDCalculator.class, args);
     }
 
 }

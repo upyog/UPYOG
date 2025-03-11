@@ -48,29 +48,4 @@ public class DemandRepository {
         }
         return response.getDemands();
     }
-
-
-    /**
-     * Updates the demand
-     * @param requestInfo The RequestInfo of the calculation Request
-     * @param demands The demands to be updated
-     * @return The list of demand updated
-     */
-    public List<Demand> updateDemand(RequestInfo requestInfo, List<Demand> demands){
-        StringBuilder url = new StringBuilder(config.getBillingHost());
-        url.append(config.getDemandUpdateEndpoint());
-        DemandRequest request = new DemandRequest(requestInfo,demands);
-        Object result = serviceRequestRepository.fetchResult(url,request);
-        DemandResponse response = null;
-        try{
-            response = mapper.convertValue(result,DemandResponse.class);
-        }
-        catch(IllegalArgumentException e){
-            throw new CustomException(CalculatorConstants.PARSING_ERROR,"Failed to parse response of update demand");
-        }
-        return response.getDemands();
-
-    }
-
-
 }

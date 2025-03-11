@@ -30,6 +30,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Controller for handling CND (Collection and Demand) calculations.
+ */
+
 @RestController
 @RequestMapping("/cnd-calculator")
 @Slf4j
@@ -45,6 +49,15 @@ public class CalculatorController {
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
+	
+	  /**
+     * Constructor for CalculatorController.
+     * 
+     * @param objectMapper       ObjectMapper instance for JSON processing.
+     * @param request            HttpServletRequest instance.
+     * @param calculationService Service to handle calculations.
+     * @param demandService      Service to handle demand generation.
+     */
 
 	@Autowired
 	public CalculatorController(ObjectMapper objectMapper, HttpServletRequest request,
@@ -56,11 +69,11 @@ public class CalculatorController {
 	}
 
 	/**
-	 * Calulates the CND fee and creates Demand
-	 * 
-	 * @param calculationReq The calculation Request
-	 * @return Calculation Response
-	 */
+     * Calculates the CND fee and creates demand based on the provided calculation request.
+     * 
+     * @param calculationReq The calculation request containing application and payment details.
+     * @return A ResponseEntity containing a list of DemandResponse objects.
+     */
 	@PostMapping(value = "/v1/_calculate")
 	public ResponseEntity<List<DemandResponse>> calculate(
 			@ApiParam(value = "Details for the CND application, payment", required = true)

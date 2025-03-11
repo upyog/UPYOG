@@ -17,6 +17,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
 
+/**
+ * Service class responsible for handling CND (Collection and Disposal) applications.
+ * This class interacts with external services to fetch CND application details.
+ */
+
 @Service
 public class CNDService {
 
@@ -29,6 +34,15 @@ public class CNDService {
 	@Autowired
 	private CalculatorConfig config;
 
+	/**
+     * Fetches the CND application details for the given application number.
+     *
+     * @param requestInfo  The request information containing metadata and authentication details.
+     * @param tenantId     The tenant ID for which the application is being searched.
+     * @param applicationNo The application number of the CND request.
+     * @return The {@link CNDRequest} object containing the application details.
+     * @throws CustomException If parsing fails or the application is not found.
+     */
 	public CNDRequest getCNDApplication(RequestInfo requestInfo, String tenantId, String applicationNo) {
 		StringBuilder url = getCNDSearchURL();
 		
@@ -55,6 +69,12 @@ public class CNDService {
 		return cndResponse.getCndRequest().get(0);
 	}
 
+	 /**
+     * Constructs the base URL for fetching CND applications.
+     *
+     * @return A {@link StringBuilder} containing the base URL for CND search.
+     */
+	
 	private StringBuilder getCNDSearchURL() {
 		StringBuilder url = new StringBuilder(config.getCndHost());
 		url.append(config.getCndContextPath());

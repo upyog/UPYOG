@@ -65,8 +65,11 @@ public class CalculatorConfig {
 	@Value("${egov.mdms.master.name}")
 	private String masterName;
 
-	@Value("${egov.mdms.module.name}")
+	@Value("${upyog.cnd.calculator.module.name}")
 	private String moduleName;
+	
+	@Value("${upyog.cnd.calculator.businessservice.name}")
+	private String businessserviceName;
 	
 	@Value("${egov.bill.fetch.endpoint}")
 	private String fetchBillEndpoint;

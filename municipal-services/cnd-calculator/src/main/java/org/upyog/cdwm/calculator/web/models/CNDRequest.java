@@ -1,5 +1,7 @@
 package org.upyog.cdwm.calculator.web.models;
 
+import java.math.BigDecimal;
+
 import org.egov.common.contract.request.User;
 import org.springframework.validation.annotation.Validated;
 
@@ -39,29 +41,11 @@ public class CNDRequest   {
   @JsonProperty("applicationNumber")
   private String applicationNumber = null;
 
-  @JsonProperty("description")
-  private String description = null;
-
-  @JsonProperty("accountId")
-  private String accountId = null;
-
-  @JsonProperty("additionalDetails")
-  private Object additionalDetails = null;
-
   @JsonProperty("applicationStatus")
   private String applicationStatus = null;
-
-  @JsonProperty("source")
-  private String source = null;
   
-  @JsonProperty("advanceAmount")
-  private String advanceAmount = null;
-
-  @JsonProperty("sanitationtype")
-  private String sanitationtype = null;
-
-  @JsonProperty("propertyUsage")
-  private String propertyUsage = null;
+  @JsonProperty("totalWasteQuantity")
+  private long totalWasteQuantity;
 
   @JsonProperty("noOfTrips")
   private Integer noOfTrips = null;
@@ -69,8 +53,6 @@ public class CNDRequest   {
   @JsonProperty("vehicleType")
   private String vehicleType = null;
   
-  @JsonProperty("vehicleCapacity")
-  private String vehicleCapacity = null;
 
   /**
    * Gets or Sets status

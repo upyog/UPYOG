@@ -22,6 +22,11 @@ import org.upyog.cdwm.calculator.web.models.demand.DemandDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Service class for handling demand generation.
+ * It calculates the demand based on the CND application and persists it.
+ */
+
 @Service
 @Slf4j
 public class DemandService {
@@ -35,15 +40,18 @@ public class DemandService {
 
 	@Autowired
 	private CNDService cndService;
-
-
+	
+	@Autowired
+	private CalculatorConfig config;
 
 	/**
-	 * Create demand by bringing tanker price from mdms
-	 * 
-	 * @param calculationRequest
-	 * @return
-	 */
+     * Creates demand by fetching the ton price from MDMS.
+     * 
+     * @param requestInfo The request information containing user and transaction details.
+     * @param criterias   List of calculation criteria for demand generation.
+     * @return List of generated demand objects.
+     * @throws IllegalArgumentException if the provided criteria list is null.
+     */
 
 	public List<Demand> createDemand(RequestInfo requestInfo, List<CalulationCriteria> criterias) {
 		if (criterias == null) {
@@ -69,18 +77,39 @@ public class DemandService {
 			return null;}
 
 
+	 /**
+     * Builds demand details based on the calculated payable amount.
+     * 
+     * @param amountPayable The total payable amount for the demand.
+     * @param tenantId      The tenant ID associated with the demand.
+     * @param cndRequest    The CND request for which the demand is being created.
+     * @return A list of demand details.
+     */
+	
 	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, CNDRequest cndRequest) {
 		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(CalculatorConstants.CND_CALCULATOR_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
 	}
 	
+	  /**
+     * Builds the final demand object.
+     * 
+     * @param tenantId      The tenant ID for the demand.
+     * @param consumerCode  The unique consumer code for the demand.
+     * @param owner         The user who is responsible for the demand.
+     * @param demandDetails The list of demand details.
+     * @param amountPayable The total amount payable for the demand.
+     * @param cndRequest    The associated CND request.
+     * @return The constructed Demand object.
+     */
+	
 	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
 			BigDecimal amountPayable, CNDRequest cndRequest) {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(CalculationUtils.getCurrentTimestamp()).taxPeriodTo(CalculationUtils.getFinancialYearEnd())
-				.consumerType(CalculatorConstants.CND_SERVICE_NAME)
-				.businessService(CalculatorConstants.CND_MODULE_NAME).additionalDetails(null).build();
+				.consumerType(config.getModuleName())
+				.businessService(config.getBusinessserviceName()).additionalDetails(null).build();
 	}
 
 }

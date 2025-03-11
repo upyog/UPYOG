@@ -32,6 +32,7 @@ CREATE TABLE ug_cnd_waste_detail (
     application_id VARCHAR(64) NOT NULL,
     waste_type_id VARCHAR(64) NOT NULL,
     entered_by_user_type VARCHAR(50) NOT NULL,
+    waste_type VARCHAR(64) NOT NULL,
     quantity DECIMAL(10,2) NOT NULL,
     metrics VARCHAR(50) NOT NULL,
     created_by VARCHAR(64),

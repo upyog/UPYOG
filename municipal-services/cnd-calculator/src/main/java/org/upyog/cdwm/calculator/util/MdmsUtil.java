@@ -23,6 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
+/**
+ * Utility class for fetching calculation types from MDMS.
+ */
+
 @Slf4j
 @Component
 public class MdmsUtil {
@@ -39,6 +43,14 @@ public class MdmsUtil {
 	@Autowired
 	private ObjectMapper mapper;
 
+	/**
+     * Fetches the list of CalculationType from MDMS based on the givens module name and tenant ID.
+     * 
+     * @param requestInfo The request information containing metadata.
+     * @param tenantId The tenant ID for which the calculation types are required.
+     * @param moduleName The module name under which calculation types are defined.
+     * @return List of CalculationType retrieved from MDMS.
+     */
 
 	public List<CalculationType> getCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
 
@@ -50,10 +62,10 @@ public class MdmsUtil {
 		MdmsResponse mdmsResponse = mapper.convertValue(serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
 
 		if (mdmsResponse.getMdmsRes().get(CalculatorConstants.MDMS_MODULE_NAME) == null) {
-			throw new CustomException("FEE_NOT_AVAILABLE", "Cnd vehicle fee not available.");
+			throw new CustomException("FEE_NOT_AVAILABLE", "Cnd Ton fee not available.");
 		}
 		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(CalculatorConstants.MDMS_MODULE_NAME)
-				.get(CalculatorConstants.MDMS_VEHICLE_TYPE);
+				.get(CalculatorConstants.MDMS_CALCULATION_TYPE);
 
 		try {
 			calculationTypes = mapper.readValue(jsonArray.toJSONString(),
@@ -65,11 +77,20 @@ public class MdmsUtil {
 		return calculationTypes;
 
 	}
+	
+	/**
+     * Constructs an MDMS request payload for fetching calculation types.
+     * 
+     * @param requestInfo The request information.
+     * @param tenantId The tenant ID.
+     * @param moduleName The module name.
+     * @return An instance of MdmsCriteriaReq containing the MDMS request details.
+     */
 
 	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
 
 		MasterDetail masterDetail = new MasterDetail();
-		masterDetail.setName(CalculatorConstants.MDMS_VEHICLE_TYPE);
+		masterDetail.setName(CalculatorConstants.MDMS_CALCULATION_TYPE);
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 

@@ -15,6 +15,11 @@ import org.upyog.cdwm.calculator.web.models.CalculationType;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Service class responsible for calculating the fee for CND (Construction and Demolition) waste applications.
+ * It retrieves the calculation type from MDMS and applies the relevant fee calculation.
+ */
+
 @Slf4j
 @Service
 public class CalculationService {
@@ -22,18 +27,27 @@ public class CalculationService {
 	@Autowired
 	private MdmsUtil mdmsUtil;
 
-	public BigDecimal calculateFee(CNDRequest cndRequest, RequestInfo requestInfo) {
-		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, cndRequest.getTenantId(), CalculatorConstants.MDMS_MODULE_NAME );
-				
+	/**
+     * Calculates the fee for the given CND request based on the waste quantity and predefined fee structure.
+     *
+     * @param cndRequest  The request object containing details like tenant ID and total waste quantity.
+     * @param requestInfo The request information containing metadata.
+     * @return The calculated fee as a BigDecimal.
+     * @throws CustomException If the fee calculation type is not found in MDMS.
+     */
 	
+	public BigDecimal calculateFee(CNDRequest cndRequest, RequestInfo requestInfo) {
+		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, cndRequest.getTenantId(),
+				CalculatorConstants.MDMS_MODULE_NAME);
+
 		log.info("calculationTypes for cnd application : {}", calculationTypes);
 
 		for (CalculationType calculation : calculationTypes) {
-			if (calculation.getCode().equalsIgnoreCase(cndRequest.getVehicleType())) {
-				return calculation.getAmount().multiply(BigDecimal.valueOf(cndRequest.getNoOfTrips()));
-			}
+			return calculation.getAmount().multiply(BigDecimal.valueOf(cndRequest.getTotalWasteQuantity()));
+
 		}
-		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + cndRequest.getVehicleType());
+		throw new CustomException("FEE_NOT_FOUND",
+				"Fee not found for application type: " + cndRequest.getVehicleType());
 	}
 
 
