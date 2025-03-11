@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationService {
 
+	private static final String SMS_TEMPLATE_BILL_NOTIFICATION = "BILL-NOTIFICATION";
 	private static final String GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION = "templates/GrbgBillEmailTemplate.html";
 
 	private static final String RECIPINTS_NAME_PLACEHOLDER = "{recipients_name}";
@@ -44,8 +45,13 @@ public class NotificationService {
 	private static final String GARBAGE_NO_PLACEHOLDER = "{garbage_no}";
 //	private static final String GARBAGE_ACCOUNT_CREATED_BY_PLACEHOLDER = "{garbage_ac_created_by}";
 	private static final String GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER = "{garbage_pay_now_bill_url}";
+	private static final String GARBAGE_PLACEHOLDER = "garbage";
+	private static final String LINK_PLACEHOLDER = "{link}";
 
-	private static final String SMS_BODY_GENERATE_BILL = "Message Sent Successfully";
+	private static final String SMS_BODY_GENERATE_BILL = "The bill for " + GARBAGE_PLACEHOLDER + " for the period "
+			+ MONTH_PLACEHOLDER + "/" + YEAR_PLACEHOLDER + " against your ID " + GARBAGE_NO_PLACEHOLDER
+			+ " has been generated on CitizenSeva Portal.  Kindly visit the website and make the necessary payments or use the following link for payment "
+			+ LINK_PLACEHOLDER + ". CitizenSeva H.P.";
 
 	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Garbage Collection Bill for " + MONTH_PLACEHOLDER
 			+ "/" + YEAR_PLACEHOLDER + " with " + GARBAGE_NO_PLACEHOLDER;
@@ -71,7 +77,7 @@ public class NotificationService {
 	public void sendSms(String message, String mobileNumber) {
 
 		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
-				.category(SMSCategory.NOTIFICATION).templateName("OTP").build(); // TODO
+				.category(SMSCategory.NOTIFICATION).templateName(SMS_TEMPLATE_BILL_NOTIFICATION).build();
 
 		kafkaTemplate.send(smsTopic, smsRequest);
 	}
