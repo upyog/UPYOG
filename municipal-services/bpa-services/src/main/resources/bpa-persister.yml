@@ -227,3 +227,86 @@ serviceMaps:
           - jsonPath: $.BPA.approvalDate
 
           - jsonPath: $.BPA.id
+
+ - version: 1.0
+   description: Persists preapproved plan details in EG_BPA_preapprovedPlan  table
+   fromTopic: save-preapproved-plan
+   isTransaction: true
+   queryMaps:
+
+       - query: INSERT INTO eg_bpa_preapprovedplan(id, drawing_number, tenantid, plot_length, plot_width, road_width, drawing_detail, active, additional_details, createdBy, lastmodifiedBy, createdTime, lastmodifiedTime, plot_length_in_feet, plot_width_in_feet,preapproved_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?); 
+         basePath: preapprovedPlan
+         jsonMaps:
+          - jsonPath: $.preapprovedPlan.id
+
+          - jsonPath: $.preapprovedPlan.drawingNo
+          
+          - jsonPath: $.preapprovedPlan.tenantId
+          
+          - jsonPath: $.preapprovedPlan.plotLength
+
+          - jsonPath: $.preapprovedPlan.plotWidth
+          
+          - jsonPath: $.preapprovedPlan.roadWidth
+          
+          - jsonPath: $.preapprovedPlan.drawingDetail
+            type: JSON
+            dbType: JSONB
+          
+          - jsonPath: $.preapprovedPlan.active
+
+          - jsonPath: $.preapprovedPlan.additionalDetails
+            type: JSON
+            dbType: JSONB
+
+          - jsonPath: $.preapprovedPlan.auditDetails.createdBy
+
+          - jsonPath: $.preapprovedPlan.auditDetails.lastModifiedBy
+
+          - jsonPath: $.preapprovedPlan.auditDetails.createdTime
+
+          - jsonPath: $.preapprovedPlan.auditDetails.lastModifiedTime
+          
+          - jsonPath: $.preapprovedPlan.plotLengthInFeet
+
+          - jsonPath: $.preapprovedPlan.plotWidthInFeet
+          
+          - jsonPath: $.preapprovedPlan.preApprovedCode
+
+       - query: INSERT INTO eg_bpa_preapprovedplan_documents( id, documenttype, fileStoreId, preapprovedplanid, documentuid, additionalDetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         basePath: preapprovedPlan.documents.*
+         jsonMaps:
+          - jsonPath: $.preapprovedPlan.documents.*.id
+
+          - jsonPath: $.preapprovedPlan.documents.*.documentType
+
+          - jsonPath: $.preapprovedPlan.documents.*.fileStoreId
+
+          - jsonPath: $.preapprovedPlan.id
+
+          - jsonPath: $.preapprovedPlan.documents.*.documentUid
+
+          - jsonPath: $.preapprovedPlan.documents.*.additionalDetails
+            type: JSON
+            dbType: JSONB
+
+          - jsonPath: $.preapprovedPlan.auditDetails.createdBy
+
+          - jsonPath: $.preapprovedPlan.auditDetails.lastModifiedBy
+
+          - jsonPath: $.preapprovedPlan.auditDetails.createdTime
+
+          - jsonPath: $.preapprovedPlan.auditDetails.lastModifiedTime
+
+ - version: 1.0
+   description: update preapproved plan details in EG_BPA_PreapprovedPlan  table
+   fromTopic: update-preapproved-plan
+   isTransaction: true
+   queryMaps:
+
+       - query: UPDATE eg_bpa_preapprovedplan SET active=? WHERE id=?;
+         basePath: preapprovedPlan
+         jsonMaps:
+          - jsonPath: $.preapprovedPlan.active
+          
+          - jsonPath: $.preapprovedPlan.id

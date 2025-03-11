@@ -23,7 +23,7 @@ import org.egov.bpa.validator.MDMSValidator;
 import org.egov.bpa.web.model.AuditDetails;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
-
+import org.egov.bpa.web.model.PreapprovedPlanRequest;
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.edcr.RequestInfoWrapper;
 import org.egov.bpa.web.model.idgen.IdResponse;
@@ -106,7 +106,11 @@ public class EnrichmentService {
 		String applicationType = values.get(BPAConstants.APPLICATIONTYPE);
 
 		if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
-			if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
+		
+			if (bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(BPAConstants.BPA_PAP))
+			{				
+			}
+			else if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_MODULE_CODE);
 			} else {
 				bpaRequest.getBPA().setBusinessService(BPAConstants.BPA_LOW_MODULE_CODE);
@@ -410,4 +414,48 @@ public class EnrichmentService {
 			bpa.getWorkflow().setAssignes(new LinkedList<>(assignes));
 		}
 	}
+
+	private void setIdgenIdsForPreapprovedPlan(PreapprovedPlanRequest preapprovedPlanRequest) {
+	    RequestInfo requestInfo = preapprovedPlanRequest.getRequestInfo();
+	    String tenantId = preapprovedPlanRequest.getPreapprovedPlan().getTenantId();
+	    List<String> applicationNumbers = getIdList(requestInfo, tenantId, config.getDrawingNoIdGenName(),
+	        config.getDrawingNoIdGenFormat(), 1);
+	    ListIterator<String> itr = applicationNumbers.listIterator();
+
+	    Map<String, String> errorMap = new HashMap<>();
+	    if (!errorMap.isEmpty())
+	      throw new CustomException(errorMap);
+	    preapprovedPlanRequest.getPreapprovedPlan().setDrawingNo(itr.next());
+	  }
+
+	  public void enrichPreapprovedPlanCreateRequestV2(PreapprovedPlanRequest request) {
+	    log.info(" Inside enrichPreapprovedPlanCreateRequestV2 ");
+	    RequestInfo requestInfo = request.getRequestInfo();
+	    AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+	    request.getPreapprovedPlan().setAuditDetails(auditDetails);
+	    request.getPreapprovedPlan().setId(UUID.randomUUID().toString());
+
+
+
+	    // Documents-
+	    if (!CollectionUtils.isEmpty(request.getPreapprovedPlan().getDocuments()))
+	      request.getPreapprovedPlan().getDocuments().forEach(document -> {
+	        if (document.getId() == null) {
+	          document.setId(UUID.randomUUID().toString());
+	        }
+	      });
+	    setIdgenIdsForPreapprovedPlan(request);
+	  }
+
+
+
+	  public void enrichPreapprovedPlanUpdateRequest(PreapprovedPlanRequest preapprovedPlanRequest) {
+
+	    RequestInfo requestInfo = preapprovedPlanRequest.getRequestInfo();
+	    AuditDetails auditDetails = bpaUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), false);
+	    auditDetails.setCreatedBy(preapprovedPlanRequest.getPreapprovedPlan().getAuditDetails().getCreatedBy());
+	    auditDetails.setCreatedTime(preapprovedPlanRequest.getPreapprovedPlan().getAuditDetails().getCreatedTime());
+	    preapprovedPlanRequest.getPreapprovedPlan().getAuditDetails()
+	        .setLastModifiedTime(auditDetails.getLastModifiedTime());
+	  }
 }

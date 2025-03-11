@@ -352,5 +352,17 @@ public class BPAConfiguration {
 
 	@Value("${egov.bpa.application.details.link}")
 	private String applicationDetailsLink;
+	
+	@Value("${persister.save.preapprovedplan.topic}")
+	private String savePreApprovedPlanTopicName;
+
+	@Value("${persister.update.preapprovedplan.topic}")
+	private String updatePreApprovedPlanTopicName;
+
+	  @Value("${egov.idgen.bpa.drawingNum.name}")
+	  private String drawingNoIdGenName;
+
+	  @Value("${egov.idgen.bpa.drawingNum.format}")
+	  private String drawingNoIdGenFormat;
 
 }
