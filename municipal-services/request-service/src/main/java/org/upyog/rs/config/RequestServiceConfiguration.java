@@ -208,6 +208,13 @@ public class RequestServiceConfiguration {
 	@Value("${rs.module.name}")
 	private String moduleName;
 
+	@Value("${rs.mt.module.name}")
+	private String mtModuleName;
+
+	@Value("${rs.wt.module.name}")
+	private String wtModuleName;
+
+
 	@Value("${egov.rs.avg.rating.comment.mandatory}")
 	private String averageRatingCommentMandatory;
 

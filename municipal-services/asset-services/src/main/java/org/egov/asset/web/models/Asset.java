@@ -167,7 +167,7 @@ public class Asset implements AssetDTO {
     @Transient
     private String accumulatedDepreciartion;
 
-    private String assetAssignable;
+    private boolean assetAssignable;
 
 //      @JsonProperty("parentAssetSpecificDetails")
 //      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;

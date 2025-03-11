@@ -3,6 +3,7 @@ package org.upyog.rs.repository.rowMapper;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.upyog.rs.web.models.Address;
 import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 
 import lombok.extern.slf4j.Slf4j;
@@ -110,11 +112,14 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     bookingDetail.setAddress(address);
 
                     // Audit Details
-                    AuditDetails auditDetails = new AuditDetails();
-                    auditDetails.setCreatedBy(rs.getString("createdby"));
-                    auditDetails.setCreatedTime(rs.getLong("createdtime"));
-                    auditDetails.setLastModifiedBy(rs.getString("lastModifiedby"));
-                    auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+                    AuditDetails auditDetails = extractAuditDetails(rs);
+                    bookingDetail.setAuditDetails(auditDetails);
+                }
+                
+                if (instance instanceof MobileToiletBookingDetail) {
+                    MobileToiletBookingDetail bookingDetail = (MobileToiletBookingDetail) instance;
+                    // Audit Details
+                    AuditDetails auditDetails = extractAuditDetails(rs);
                     bookingDetail.setAuditDetails(auditDetails);
                 }
                 results.add(instance);
@@ -158,6 +163,16 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         // Default case: return original value
         return value;
     }
+
+    private AuditDetails extractAuditDetails(ResultSet rs) throws SQLException {
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(rs.getString("createdby"));
+        auditDetails.setCreatedTime(rs.getLong("createdtime"));
+        auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
+        auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+        return auditDetails;
+    }
+
 
 
 }

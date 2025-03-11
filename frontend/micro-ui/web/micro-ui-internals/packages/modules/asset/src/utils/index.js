@@ -143,6 +143,7 @@ export const Assetdata = (data) => {
       department: data?.asset?.Department?.code,
       assetType: data?.asset?.assetsOfType?.code,
       assetUsage: data?.asset?.assetsUsage?.code,
+      assetAssignable: data?.asset?.assetAssignable?.code,
       financialYear: data?.asset?.financialYear?.code,
       sourceOfFinance: data?.asset?.sourceOfFinance?.code,
       applicationNo: "",
