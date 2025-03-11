@@ -112,13 +112,15 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     bookingDetail.setAddress(address);
 
                     // Audit Details
-                    bookingDetail.setAuditDetails(mapAuditDetails(rs));
+                    AuditDetails auditDetails = extractAuditDetails(rs);
+                    bookingDetail.setAuditDetails(auditDetails);
                 }
                 
                 if (instance instanceof MobileToiletBookingDetail) {
                     MobileToiletBookingDetail bookingDetail = (MobileToiletBookingDetail) instance;
                     // Audit Details
-                    bookingDetail.setAuditDetails(mapAuditDetails(rs));
+                    AuditDetails auditDetails = extractAuditDetails(rs);
+                    bookingDetail.setAuditDetails(auditDetails);
                 }
                 results.add(instance);
             }
@@ -162,7 +164,7 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
         return value;
     }
 
-    private AuditDetails mapAuditDetails(ResultSet rs) throws SQLException {
+    private AuditDetails extractAuditDetails(ResultSet rs) throws SQLException {
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setCreatedBy(rs.getString("createdby"));
         auditDetails.setCreatedTime(rs.getLong("createdtime"));
