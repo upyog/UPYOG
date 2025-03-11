@@ -1,6 +1,7 @@
 package org.egov.bpa.service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +48,12 @@ public class NocService {
 	private ObjectMapper mapper;
 
 	@SuppressWarnings("unchecked")
-	public void createNocRequest(BPARequest bpaRequest, Object mdmsData) {
+	public void createNocRequest(BPARequest bpaRequest, Object mdmsData, List<String> edcrSuggestedNocs,
+			String applicationType, String serviceType) {
 		BPA bpa = bpaRequest.getBPA();
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
-		log.debug("applicationType in NOC is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
-		log.debug("serviceType in NOC is " + edcrResponse.get(BPAConstants.SERVICETYPE));
+//		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+//		log.debug("applicationType in NOC is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
+//		log.debug("serviceType in NOC is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 		
 		String riskType = "ALL";
 		if (StringUtils.isEmpty(bpa.getRiskType()) || bpa.getRiskType().equalsIgnoreCase("LOW")) {
@@ -60,25 +62,59 @@ public class NocService {
 		log.debug("Fetching NocTypeMapping record of riskType : " + riskType);
 
 		String nocPath = BPAConstants.NOCTYPE_REQUIRED_MAP
-				.replace("{1}", edcrResponse.get(BPAConstants.APPLICATIONTYPE))
-				.replace("{2}", edcrResponse.get(BPAConstants.SERVICETYPE)).replace("{3}", riskType);
+				.replace("{1}", applicationType)
+				.replace("{2}", serviceType).replace("{3}", riskType);
 		
 		Map<String,String> nocSourceCnofig = config.getNocSourceConfig();
 
 		List<Object> nocMappingResponse = (List<Object>) JsonPath.read(mdmsData, nocPath);
 		List<String> nocTypes = JsonPath.read(nocMappingResponse, "$..type");
+		Map<String, String> bypassNocs = new HashMap<>();
+		Map<String,Object> additionalDetails = (Map<String, Object>) bpa.getAdditionalDetails();
+		if(!CollectionUtils.isEmpty(additionalDetails)) {
+			bypassNocs = (Map<String, String>) additionalDetails.get(BPAConstants.NOC_BYPASS_DETAILS);
+		}
+		if (!CollectionUtils.isEmpty(bypassNocs)) {
+			for (Map.Entry<String, String> bypassNoc : bypassNocs.entrySet()) {
+				if (bypassNoc.getValue().equalsIgnoreCase("No")) {
+					NocRequest nocRequest = NocRequest.builder()
+							.noc(Noc.builder().tenantId(bpa.getTenantId())
+									.applicationType(ApplicationType.valueOf(BPAConstants.NOC_APPLICATIONTYPE))
+									.sourceRefId(bpa.getApplicationNo()).nocType(bypassNoc.getKey())
+									.edcrNumber(bpa.getEdcrNumber()).source(nocSourceCnofig.get(applicationType))
+									.build())
+							.requestInfo(bpaRequest.getRequestInfo()).build();
+					try {
+						createNoc(nocRequest);
+					} catch (Exception e) {
+						log.error(e.getMessage());
+					}
+				}
+			}
+		}
+		else {
 		if (!CollectionUtils.isEmpty(nocTypes)) {
 			for (String nocType : nocTypes) {
+	if (edcrSuggestedNocs.contains(nocType)) {
 				NocRequest nocRequest = NocRequest.builder()
 						.noc(Noc.builder().tenantId(bpa.getTenantId())
 								.applicationType(ApplicationType.valueOf(BPAConstants.NOC_APPLICATIONTYPE))
-								.sourceRefId(bpa.getApplicationNo()).nocType(nocType).source(nocSourceCnofig.get(edcrResponse.get(BPAConstants.APPLICATIONTYPE)))
+								.sourceRefId(bpa.getApplicationNo()).nocType(nocType)
+								.edcrNumber(bpa.getEdcrNumber()).source(nocSourceCnofig.get(applicationType))
 								.build())
 						.requestInfo(bpaRequest.getRequestInfo()).build();
-				createNoc(nocRequest);
-			}
+	try {
+							createNoc(nocRequest);
+						} catch (Exception e) {
+							log.error(e.getMessage());
+						}
+					}
+				}
+			
 		} else {
 			log.debug("NOC Mapping is not found!!");
+		}
+		
 		}
 
 	}
