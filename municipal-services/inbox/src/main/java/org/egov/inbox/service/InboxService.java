@@ -140,7 +140,7 @@ public class InboxService {
 	private CommunityHallInboxFilterService communityHallInboxFilterService;
 	
 	@Autowired
-	private RequestServiceInboxFilterService requestServiceInboxFilterService;
+	private WTInboxFilterService WTInboxFilterService;
 	
 	@Autowired
 	private CNDInboxFilterService cndServiceInboxFilterService;
@@ -456,22 +456,15 @@ public class InboxService {
 
 			// for request service
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && RS.equals(processCriteria.getModuleName())) {
-				List<String> applicationNumbers;
+				List<String> applicationNumbers = null;
 
 				// Determine which service to use based on business service type
 				if (processCriteria.getBusinessService().contains(MT_BUSINESS_SERVICE)) {
 					applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(
 							criteria, StatusIdNameMap, requestInfo);
 				}
-//				Below line is commented just for example that if in future if you want to add for new module under request-service
-//				then just add the business service in line 468 and its inboxfilterservice in line 469
-//				else if (processCriteria.getBusinessService().contains(WT_BUSINESS_SERVICE)) {
-//					applicationNumbers = requestServiceInboxFilterService.fetchApplicationNumbersFromSearcher(
-//							criteria, StatusIdNameMap, requestInfo);
-//				}
-				else {
-					// Default case - use request service
-					applicationNumbers = requestServiceInboxFilterService.fetchApplicationNumbersFromSearcher(
+				else if (processCriteria.getBusinessService().contains(WT_BUSINESS_SERVICE)){
+					applicationNumbers = WTInboxFilterService.fetchApplicationNumbersFromSearcher(
 							criteria, StatusIdNameMap, requestInfo);
 				}
 
