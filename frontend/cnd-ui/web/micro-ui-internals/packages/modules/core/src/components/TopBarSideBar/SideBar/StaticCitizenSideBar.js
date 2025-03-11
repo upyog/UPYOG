@@ -5,7 +5,8 @@ import {
   LogoutIcon,
   Loader,
   Phone,
-  LoginIcon
+  LoginIcon,
+  CaseIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
@@ -63,7 +64,7 @@ const Profile = ({ info, stateName, t }) => (
   </div>
 );
 const IconsObject = {
-  CNDIcon: <CNDIcon className="icon"/>,
+  // CNDIcon: <CaseIcon className="icon"/>,
   HomeIcon: <HomeIcon className="icon" />,
   EditPencilIcon: <EditPencilIcon className="icon" />,
   LogoutIcon: <LogoutIcon className="icon" />,

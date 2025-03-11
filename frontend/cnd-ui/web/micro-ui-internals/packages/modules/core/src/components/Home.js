@@ -1,18 +1,8 @@
 import {
   BackButton,
-  BillsIcon,
   CitizenHomeCard,
-  CitizenInfoLabel,
-  FSMIcon,
   Loader,
-  MCollectIcon,
-  OBPSIcon,
-  PGRIcon,
   PTIcon,
-  TLIcon,
-  WSICon,
-  PTRIcon,
-  CHBIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";

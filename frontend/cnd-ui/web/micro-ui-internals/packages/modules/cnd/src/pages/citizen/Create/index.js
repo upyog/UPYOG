@@ -67,7 +67,7 @@ const CndCreate = ({ parentRoute }) => {
       queryClient.invalidateQueries("CND_Creates");
     }
 
-  const svcreate = async () => {
+  const cndCreate = async () => {
     history.replace(`${match.path}/acknowledgement`);
   };
 
@@ -88,7 +88,7 @@ const CndCreate = ({ parentRoute }) => {
 
 
   /**
-   * this onSuccess dunction will execute once the application submitted successfully 
+   * this onSuccess function will execute once the application submitted successfully 
    * it will clear all the params from the session storage  and also invalidate the query client
    * as well as remove the beneficiary & disabilityStatus from the session storage
    */
@@ -104,8 +104,8 @@ const CndCreate = ({ parentRoute }) => {
   
   config.indexRoute = "info";
 
-//   const SVCheckPage = Digit?.ComponentRegistryService?.getComponent("CheckPage");
-//   const SVAcknowledgement = Digit?.ComponentRegistryService?.getComponent("SVAcknowledgement");
+  const CndCheckPage = Digit?.ComponentRegistryService?.getComponent("CndCheckPage");
+  const CndAcknowledgement = Digit?.ComponentRegistryService?.getComponent("CndAcknowledgement");
 
   
   
@@ -122,13 +122,12 @@ const CndCreate = ({ parentRoute }) => {
         );
       })}
 
-      {/* <Route path={`${match.path}/check/:isPayment?`}>
-        <SVCheckPage onSubmit={svcreate} value={params} /> 
-        
+      <Route path={`${match.path}/check`}>
+        <CndCheckPage onSubmit={cndCreate} value={params} /> 
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
-        <SVAcknowledgement data={params} onSuccess={onSuccess}/>
-      </Route> */}
+        <CndAcknowledgement data={params} onSuccess={onSuccess}/>
+      </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>

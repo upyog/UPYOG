@@ -64,6 +64,12 @@ const Urls = {
   bills: {
     cancelBill: "/billing-service/bill/v2/_cancelbill",
   },
+
+  cnd: {
+    create:"/cnd-service/v1/_create",
+    search: "/cnd-service/v1/_search",
+  },
+
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",

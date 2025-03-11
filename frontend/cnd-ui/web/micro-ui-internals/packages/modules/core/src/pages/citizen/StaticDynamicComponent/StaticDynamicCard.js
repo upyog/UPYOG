@@ -27,8 +27,8 @@ const StaticDynamicCard = ({moduleCode}) => {
     const IconComponent = ({module, styles}) => {
 
       switch(module){
-        case "CND":
-          return <CNDIcon className="fill-path-primary-main" styles={styles} />
+        // case "CND":
+        //   return <CaseIcon className="fill-path-primary-main" styles={styles} />
         default:
           return <CaseIcon className="fill-path-primary-main" styles={styles}/>;
       }

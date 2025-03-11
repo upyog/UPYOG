@@ -2,7 +2,9 @@ import React,{useEffect,useState} from "react";
 import { Modal, Card, FormComposer} from "@nudmcdgnpm/digit-ui-react-components";
 import { LocationDetails } from "./LocationDetails";
 
-
+/* Modal File / Popup file which will render when click on Deposit direct to centre and inside 
+it will render pincode andf locality fields using this component - LocationDetails
+*/
 const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
         <path d="M0 0h24v24H0V0z" fill="none" />
