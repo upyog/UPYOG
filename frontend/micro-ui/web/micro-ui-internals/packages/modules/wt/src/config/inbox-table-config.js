@@ -76,7 +76,6 @@ export const TableConfig = (t) => ({
       {
         Header: t("MT_BOOKING_NO"),
         Cell: ({ row }) => {
-          console.log("row.origin in mtttttt", row.original);
           return (
             <div>
               <span className="link">

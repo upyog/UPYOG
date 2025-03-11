@@ -4,7 +4,7 @@ import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-component
 
 /**
  * `MTCitizenCard` component is a module card that displays information related to the Mobile Toilet (MT) service.
- * It fetches data for the general inbox, displaying the total count and nearing SLA count for water tanker requests.
+ * It fetches data for the general inbox, displaying the total count and nearing SLA count for Mobile Toilet requests.
  * The component provides links for navigating to various MT-related pages such as the inbox, request tanker, and application search.
  * @returns {JSX.Element} A module card displaying MT-related KPIs and links.
  */

@@ -2,12 +2,13 @@ import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-rea
 import React from "react";
 import { Redirect, Switch, useRouteMatch } from "react-router-dom";
 
+const request_service = "/digit-ui/citizen/login"; 
+
 // Main Routing Page used for routing accorss the Water Tanker Module
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const WTCreate = Digit?.ComponentRegistryService?.getComponent("WTCreate");
   const WTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("WTApplicationDetails");
-  const MTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("MTApplicationDetails");
   const WTMyApplications = Digit?.ComponentRegistryService?.getComponent("WTMyApplications");
   const Inbox = Digit.ComponentRegistryService.getComponent("WTEmpInbox");
   const InboxMT = Digit.ComponentRegistryService.getComponent("InboxMT");
@@ -32,7 +33,7 @@ const App = () => {
       locality: [],
     },
   };
-  
+
   return (
     <span style={{ width: "100%" }}>
       <Switch>
@@ -72,8 +73,7 @@ const App = () => {
 
           <PrivateRoute path={`${path}/request-service`} component={WTCreate} />
           <PrivateRoute path={`${path}/status`} component={WTMyApplications}></PrivateRoute>
-          <PrivateRoute path={`${path}/booking/waterTanker/:acknowledgementIds/:tenantId`} component={WTApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/booking/mobileToilet/:acknowledgementIds/:tenantId`} component={MTApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/booking/:acknowledgementIds/:tenantId`} component={WTApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookingsearch/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute
@@ -84,7 +84,7 @@ const App = () => {
               ) : (
                 <Redirect
                   to={{
-                    pathname: "/digit-ui/citizen/login",
+                    pathname: request_service,
                     state: { from: `${path}/wt-Vendor`, role: "WT_VENDOR" },
                   }}
                 />
@@ -99,7 +99,7 @@ const App = () => {
               ) : (
                 <Redirect
                   to={{
-                    pathname: "/digit-ui/citizen/login",
+                    pathname: request_service,
                     state: { from: `${path}/mt-Vendor`, role: "MT_VENDOR" },
                   }}
                 />
