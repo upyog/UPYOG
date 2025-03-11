@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import javax.validation.Valid;
 
@@ -59,10 +62,12 @@ import org.upyog.chb.web.models.CommunityHallSlotAvailabilityDetail;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 import org.upyog.chb.web.models.RequestInfoWrapper;
 import org.upyog.chb.web.models.User;
+import org.upyog.chb.web.models.UserSearchResponse;
 import org.upyog.chb.web.models.collection.Bill;
 import org.upyog.chb.web.models.collection.BillSearchCriteria;
 import org.upyog.chb.web.models.collection.GenerateBillCriteria;
 import org.upyog.chb.service.ReportService;
+import org.upyog.chb.service.UserService;
 import java.util.stream.Collectors;
 
 
@@ -118,6 +123,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	
 	@Autowired
 	private AlfrescoService alfrescoService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public CommunityHallBookingDetail createBooking(@Valid CommunityHallBookingRequest communityHallsBookingRequest) {
@@ -282,15 +290,17 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 	private Resource createResource(CommunityHallBookingRequest communityHallsBookingRequest) {
 		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> chbObject = new HashMap<>();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		CommunityHallBookingDetail bookingDetail = communityHallsBookingRequest.getHallsBookingApplication();
-		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
 		log.info("approverName " + bookingRepository.getApproverName(bookingDetail.getTenantId()));
-
-//		chbObject.put("userName", null != requestInfo.getUserInfo() ? requestInfo.getUserInfo().getName() : null);
+		UserSearchResponse userInfo = userService.searchUser(bookingRepository.getApproverName(bookingDetail.getTenantId()),communityHallsBookingRequest.getRequestInfo());
+		chbObject.put("approverName", bookingRepository.getApproverName(bookingDetail.getTenantId()));
+		chbObject.put("userName", userInfo.getUserSearchResponseContent().get(0).getName());
 		
-		chbObject.put("fromDate", bookingDetail.getBookingSlotDetails().get(0).getBookingDate());
-		chbObject.put("toDate", bookingDetail.getBookingSlotDetails().get(0).getBookingToDate());
+		
+		
+		chbObject.put("fromDate",convertDate(bookingDetail.getBookingSlotDetails().get(0).getBookingDate()));
+		chbObject.put("toDate",convertDate(bookingDetail.getBookingSlotDetails().get(0).getBookingToDate()));		
 		chbObject.put("siteName", bookingDetail.getRelatedAsset().getAssetName());
 		chbObject.put("siteAddress", String.join(", ",
 			    bookingDetail.getRelatedAsset().getAddressDetails().getAddressLine1(),
@@ -302,7 +312,9 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		chbObject.put("bookingReference", bookingDetail.getBookingNo());
 		chbObject.put("bookedBy", bookingDetail.getApplicantDetail().getApplicantName());
 		chbObject.put("mobileNumber", bookingDetail.getApplicantDetail().getApplicantMobileNo());
-		chbObject.put("bookingDate", dateFormat.format(new Date(bookingDetail.getPaymentDate() * 1000)));
+        Instant instant = Instant.ofEpochMilli(bookingDetail.getPaymentDate());
+        ZonedDateTime dateTime = instant.atZone(ZoneId.of("Asia/Kolkata"));
+		chbObject.put("bookingDate", dateTime.format(outputFormatter));
 		chbObject.put("address",  String.join(", ",
 			    bookingDetail.getAddress().getAddressLine1(),
 			    bookingDetail.getAddress().getCity(),
@@ -405,6 +417,13 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		communityHallsBookingRequest.setHallsBookingApplication(bookingDetailDB);
 	}
+	
+	 public String convertDate(String inputDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(inputDate, inputFormatter);
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return date.format(outputFormatter);
+	 }
 
 	@Override
 	public List<CommunityHallSlotAvailabilityDetail> getCommunityHallSlotAvailability(
