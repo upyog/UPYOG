@@ -150,6 +150,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     };
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+      if(err && err?.response && err?.response?.data?.error?.fields[0]?.code=="OTP.OTP_LIMIT_REACHED" ) {
+        setCanSubmitNo(true);
+        return;
+      }
       if (!err) {
         setCanSubmitNo(true);
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
@@ -267,6 +271,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const res = await Digit.UserService.sendOtp(data, stateCode);
       return [res, null];
     } catch (err) {
+      if(err && err?.response && err?.response?.data?.error?.fields[0]?.code=="OTP.OTP_LIMIT_REACHED" ) {
+        setShowToast(err?.response?.data?.error?.fields[0]?.message || "Maximum limit reached, please wait for 20 minutes.");
+        setTimeout(closeToast, 5000);
+      }
+      
       return [null, err];
     }
   };
