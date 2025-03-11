@@ -106,7 +106,7 @@ public class DemandService {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(RequestServiceUtil.getCurrentTimestamp()).taxPeriodTo(RequestServiceUtil.getFinancialYearEnd())
 				.consumerType(config.getMobileToiletBusinessService())
-				.businessService(config.getModuleName()).additionalDetails(null).build();
+				.businessService(config.getMtModuleName()).additionalDetails(null).build();
 	}
 
 	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
@@ -114,7 +114,7 @@ public class DemandService {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(RequestServiceUtil.getCurrentTimestamp()).taxPeriodTo(RequestServiceUtil.getFinancialYearEnd())
 				.consumerType(RequestServiceConstants.WATER_TANKER_SERVICE_NAME)
-				.businessService(RequestServiceConstants.REQUEST_SERVICE_MODULE_NAME).additionalDetails(null).build();
+				.businessService(config.getWtModuleName()).additionalDetails(null).build();
 	}
 
 }

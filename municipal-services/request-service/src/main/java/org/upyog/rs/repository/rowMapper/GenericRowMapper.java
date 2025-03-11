@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.upyog.rs.web.models.Address;
 import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +110,17 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     address.setPincode(rs.getString("pincode"));
                     bookingDetail.setAddress(address);
 
+                    // Audit Details
+                    AuditDetails auditDetails = new AuditDetails();
+                    auditDetails.setCreatedBy(rs.getString("createdby"));
+                    auditDetails.setCreatedTime(rs.getLong("createdtime"));
+                    auditDetails.setLastModifiedBy(rs.getString("lastModifiedby"));
+                    auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+                    bookingDetail.setAuditDetails(auditDetails);
+                }
+                
+                if (instance instanceof MobileToiletBookingDetail) {
+                    MobileToiletBookingDetail bookingDetail = (MobileToiletBookingDetail) instance;
                     // Audit Details
                     AuditDetails auditDetails = new AuditDetails();
                     auditDetails.setCreatedBy(rs.getString("createdby"));
