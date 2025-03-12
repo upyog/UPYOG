@@ -404,12 +404,18 @@ public class BPAService {
 		String tenantId =  centralInstanceUtil.getStateLevelTenant(bpaRequest.getBPA().getTenantId());
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		BPA bpa = bpaRequest.getBPA();
+		String businessServices = bpaRequest.getBPA().getBusinessService();
+		Map<String, String> edcrResponse = new HashMap<>();
 
 		if (bpa.getId() == null) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
-
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		if (StringUtils.isNotEmpty(businessServices) && "BPA-PAP".equals(businessServices)) {
+			getEdcrDetailsForPreapprovedPlan(edcrResponse, bpaRequest);
+		} 	
+		else {
+			edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		}
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 		log.debug("applicationType is " + applicationType);
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
@@ -856,6 +862,30 @@ public class BPAService {
     			// String edcrString =
     			// "{\"edcrDetail\":[{\"planDetail\":{\"planInformation\":{\"businessService\":\"BPA6\",\"requiredNOCs\":[]}}}]}";
 		  
+    }     
     
-    }      
+	private void getEdcrDetailsForPreapprovedPlan(Map<String, String> edcrResponse, BPARequest bpaRequest) {
+
+		log.info("edcr details for preapproved plan: ");
+		PreapprovedPlanSearchCriteria preapprovedPlanSearchCriteria = new PreapprovedPlanSearchCriteria();
+		preapprovedPlanSearchCriteria.setDrawingNo(bpaRequest.getBPA().getEdcrNumber());
+		List<PreapprovedPlan> preapprovedPlans = preapprovedPlanService
+				.getPreapprovedPlanFromCriteria(preapprovedPlanSearchCriteria);
+		if (CollectionUtils.isEmpty(preapprovedPlans)) {
+			log.error("no preapproved plan found for provided drawingNo:" + bpaRequest.getBPA().getEdcrNumber());
+			throw new CustomException("no preapproved plan found for provided drawingNo",
+					"no preapproved plan found for provided drawingNo");
+		}
+		PreapprovedPlan preapprovedPlanFromDb = preapprovedPlans.get(0);
+		Map<String, Object> drawingDetail = (Map<String, Object>) preapprovedPlanFromDb.getDrawingDetail();
+
+		edcrResponse.put(BPAConstants.SERVICETYPE, drawingDetail.get("serviceType") + "");// NEW_CONSTRUCTION
+		edcrResponse.put(BPAConstants.APPLICATIONTYPE, drawingDetail.get("applicationType") + "");// BUILDING_PLAN_SCRUTINY
+
+		// edcrResponse.put(BPAConstants.SERVICETYPE, "NEW_CONSTRUCTION");//
+		// NEW_CONSTRUCTION
+		// edcrResponse.put(BPAConstants.APPLICATIONTYPE, "BUILDING_PLAN_SCRUTINY");//
+		// BUILDING_PLAN_SCRUTINY
+
+	}
 }
