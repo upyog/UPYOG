@@ -13,7 +13,13 @@
     "packages/modules/noc",
     "packages/modules/obps",
     "packages/modules/commonPt",
-    "packages/modules/common"
+    "packages/modules/common",
+    "packages/modules/pgr",
+    "packages/modules/ws",
+    "packages/modules/tl",
+    "packages/modules/fsm",
+    "packages/modules/pt",
+    "packages/modules/engagement"
   ],
   "license": "MIT",
   "private": true,
