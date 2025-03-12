@@ -23,6 +23,8 @@ import ServiceTypes from "./pageComponents/ServiceTypes";
 import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
 import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
 import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
+import MTCitizenCard from "./components/MTCitizenCard";
+import InboxMT from "./pages/employee/InboxMT";
 
 const componentsToRegister = {
     ApplicantDetails,
@@ -42,7 +44,9 @@ const componentsToRegister = {
     WTCitizenCard: WTCitizenCard,
     ServiceTypes,
     ToiletRequestDetails,
-    MTAcknowledgement
+    MTAcknowledgement,
+    MTCitizenCard: MTCitizenCard,
+    InboxMT: InboxMT,
   };
   
   // function to register the component as per standard 
@@ -104,5 +108,8 @@ const componentsToRegister = {
     WTModule, 
     WTLinks,
     WT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-    WTInboxTableConfig: TableConfig
+    MT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+    WTInboxTableConfig: TableConfig,
+    MTInboxTableConfig: TableConfig,
+
   };
