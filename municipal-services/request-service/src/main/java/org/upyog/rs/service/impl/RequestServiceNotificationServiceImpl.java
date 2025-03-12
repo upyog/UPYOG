@@ -52,6 +52,12 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 
 	}
 
+	/**
+	 * Processes the mobile toilet booking request by fetching localization messages,
+	 * creating an event request, and sending event notifications.
+	 *
+	 * @param request The mobile toilet booking request containing booking details.
+	 */
 	public void process(MobileToiletBookingRequest request) {
 		Map<String, String> messageMap = null;
 		String localizationMessages = util.getLocalizationMessages(request.getMobileToiletBookingDetail().getTenantId(), request.getRequestInfo());
@@ -64,6 +70,14 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 
 	}
 
+	/**
+	 * Generates an EventRequest object for notifying users based on the booking request.
+	 *
+	 * @param request The mobile toilet booking request.
+	 * @param actionLink The action link to be included in the notification.
+	 * @param messageMap The map containing localized messages for the notification.
+	 * @return An EventRequest object containing event details or null if no events are created.
+	 */
 	private EventRequest getEventsForRS(MobileToiletBookingRequest request, String actionLink,
 										Map<String, String> messageMap) {
 
