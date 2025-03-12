@@ -651,6 +651,7 @@ public class PlanReportService {
         final Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         valuesMap.put("applicantName", dcrApplication.getApplicantName());
+
         valuesMap.put("licensee", dcrApplication.getArchitectInformation());
         valuesMap.put("applicationNumber", applicationNumber);
         valuesMap.put("applicationDate", applicationDate);
@@ -672,9 +673,10 @@ public class PlanReportService {
         valuesMap.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         valuesMap.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
-        String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/Upyog-logo.png");
+        String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/mseva.png");
         valuesMap.put("egovLogo", imageURL);
-        valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());
+        String domainurl = ReportUtil.getImageURL("/egi/resources/global/images/logo_dep.png");
+        valuesMap.put("cityLogo", domainurl);
 
         if (clientSpecificSubReport) {
 

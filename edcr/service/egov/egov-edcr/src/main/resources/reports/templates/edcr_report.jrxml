@@ -90,8 +90,8 @@
 				<reportElement mode="Transparent" x="410" y="3" width="138" height="56" uuid="9575ccfe-2f3c-480c-bea6-2bc196c44f6f"/>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
-			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="4" y="0" width="149" height="59" uuid="f778375a-96b7-42de-8819-00bbfd34ae68">
+			<image scaleImage="RetainShape"  isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="10" y="0" width="300" height="80" uuid="f778375a-96b7-42de-8819-00bbfd34ae68">
 					<printWhenExpression><![CDATA[$P{cityLogo}  != null]]></printWhenExpression>
 				</reportElement>
 				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
@@ -1583,7 +1583,7 @@
 				<textFieldExpression><![CDATA["Application No:"+$P{applicationNumber}+", Scrutiny Date:"+$P{reportGeneratedDate}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="9" y="27" width="109" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
+				<reportElement mode="Transparent" x="9" y="27" width="40" height="8" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
 				<imageExpression><![CDATA[$P{egovLogo}]]></imageExpression>
 			</image>
 		</band>
