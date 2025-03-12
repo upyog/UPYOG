@@ -404,12 +404,18 @@ public class BPAService {
 		String tenantId =  centralInstanceUtil.getStateLevelTenant(bpaRequest.getBPA().getTenantId());
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		BPA bpa = bpaRequest.getBPA();
+		String businessServices = bpaRequest.getBPA().getBusinessService();
+		Map<String, String> edcrResponse = new HashMap<>();
 
 		if (bpa.getId() == null) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
-
-		Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		if (StringUtils.isNotEmpty(businessServices) && "BPA-PAP".equals(businessServices)) {
+			bpaValidator.getEdcrDetailsForPreapprovedPlan(edcrResponse, bpaRequest);
+		} 	
+		else {
+			edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(), bpaRequest.getBPA());
+		}
 		String applicationType = edcrResponse.get(BPAConstants.APPLICATIONTYPE);
 		log.debug("applicationType is " + applicationType);
 		BusinessService businessService = workflowService.getBusinessService(bpa, bpaRequest.getRequestInfo(),
@@ -856,6 +862,6 @@ public class BPAService {
     			// String edcrString =
     			// "{\"edcrDetail\":[{\"planDetail\":{\"planInformation\":{\"businessService\":\"BPA6\",\"requiredNOCs\":[]}}}]}";
 		  
-    
-    }      
+    }     
+
 }
