@@ -19,8 +19,8 @@ import lombok.Setter;
 @Builder
 public class CalulationCriteria {
 
-	@JsonProperty("cndRequest")
+	@JsonProperty("cndApplicationDetail")
 	@Valid
-	private CNDRequest cndRequest = null;
+	private CNDApplicationDetail cndRequest = null;
 
 }

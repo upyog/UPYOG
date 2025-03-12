@@ -19,7 +19,7 @@ import org.upyog.cdwm.calculator.service.DemandService;
 import org.upyog.cdwm.calculator.util.CalculationUtils;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
 import org.upyog.cdwm.calculator.util.ResponseInfoFactory;
-import org.upyog.cdwm.calculator.web.models.CNDRequest.StatusEnum;
+import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail.StatusEnum;
 import org.upyog.cdwm.calculator.web.models.CalculationRequest;
 import org.upyog.cdwm.calculator.web.models.ResponseInfo;
 import org.upyog.cdwm.calculator.web.models.demand.Demand;

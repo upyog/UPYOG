@@ -14,7 +14,7 @@ import org.upyog.cdwm.calculator.repository.DemandRepository;
 import org.upyog.cdwm.calculator.util.CalculationUtils;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
 import org.upyog.cdwm.calculator.web.models.AuditDetails;
-import org.upyog.cdwm.calculator.web.models.CNDRequest;
+import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.calculator.web.models.Calculation;
 import org.upyog.cdwm.calculator.web.models.CalulationCriteria;
 import org.upyog.cdwm.calculator.web.models.demand.Demand;
@@ -60,7 +60,7 @@ public class DemandService {
 	
 			List<Calculation> calculations = new LinkedList<>();
 			for (CalulationCriteria criteria : criterias) {
-				CNDRequest cndRequest = null;
+				CNDApplicationDetail cndRequest = null;
 				if (criteria.getCndRequest().getApplicationNumber()!= null) {
 					cndRequest = cndService.getCNDApplication(requestInfo, criteria.getCndRequest().getTenantId(), criteria.getCndRequest().getApplicationNumber());
 					criteria.setCndRequest(cndRequest);
@@ -86,7 +86,7 @@ public class DemandService {
      * @return A list of demand details.
      */
 	
-	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, CNDRequest cndRequest) {
+	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, CNDApplicationDetail cndRequest) {
 		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(CalculatorConstants.CND_CALCULATOR_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
@@ -105,7 +105,7 @@ public class DemandService {
      */
 	
 	private Demand buildDemand(String tenantId, String consumerCode, User owner, List<DemandDetail> demandDetails,
-			BigDecimal amountPayable, CNDRequest cndRequest) {
+			BigDecimal amountPayable, CNDApplicationDetail cndRequest) {
 		return Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner).tenantId(tenantId)
 				.taxPeriodFrom(CalculationUtils.getCurrentTimestamp()).taxPeriodTo(CalculationUtils.getFinancialYearEnd())
 				.consumerType(config.getModuleName())

@@ -31,6 +31,6 @@ public class CNDResponse   {
   private ResponseInfo responseInfo = null;
 
   @JsonProperty("cndApplicationDetail")
-  private List<CNDRequest> cndRequest = null;
+  private List<CNDApplicationDetail> cndRequest = null;
   
 }

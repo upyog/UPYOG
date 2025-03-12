@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
 import org.upyog.cdwm.calculator.util.MdmsUtil;
-import org.upyog.cdwm.calculator.web.models.CNDRequest;
+import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.calculator.web.models.CalculationType;
 
 
@@ -36,7 +36,7 @@ public class CalculationService {
      * @throws CustomException If the fee calculation type is not found in MDMS.
      */
 	
-	public BigDecimal calculateFee(CNDRequest cndRequest, RequestInfo requestInfo) {
+	public BigDecimal calculateFee(CNDApplicationDetail cndRequest, RequestInfo requestInfo) {
 		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, cndRequest.getTenantId(),
 				CalculatorConstants.MDMS_MODULE_NAME);
 

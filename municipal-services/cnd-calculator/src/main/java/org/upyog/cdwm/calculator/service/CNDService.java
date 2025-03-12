@@ -10,7 +10,7 @@ import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.repository.ServiceRequestRepository;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
-import org.upyog.cdwm.calculator.web.models.CNDRequest;
+import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.calculator.web.models.CNDResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,10 +40,10 @@ public class CNDService {
      * @param requestInfo  The request information containing metadata and authentication details.
      * @param tenantId     The tenant ID for which the application is being searched.
      * @param applicationNo The application number of the CND request.
-     * @return The {@link CNDRequest} object containing the application details.
+     * @return The {@link CNDApplicationDetail} object containing the application details.
      * @throws CustomException If parsing fails or the application is not found.
      */
-	public CNDRequest getCNDApplication(RequestInfo requestInfo, String tenantId, String applicationNo) {
+	public CNDApplicationDetail getCNDApplication(RequestInfo requestInfo, String tenantId, String applicationNo) {
 		StringBuilder url = getCNDSearchURL();
 		
 		url.append("applicationNumber=");

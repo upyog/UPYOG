@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.web.models.AuditDetails;
-import org.upyog.cdwm.calculator.web.models.CNDRequest.StatusEnum;
+import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail.StatusEnum;
 import org.upyog.cdwm.calculator.web.models.ResponseInfo;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;

@@ -28,7 +28,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class CNDRequest   {
+public class CNDApplicationDetail   {
   @JsonProperty("citizen")
   private User citizen = null;
 

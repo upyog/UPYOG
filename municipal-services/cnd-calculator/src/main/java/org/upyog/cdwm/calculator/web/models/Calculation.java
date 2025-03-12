@@ -27,8 +27,8 @@ public class Calculation {
 	@JsonProperty("applicationNo")
 	private String applicationNumber = null;
 
-	@JsonProperty("cndRequest")
-	private CNDRequest cndRequest = null;
+	@JsonProperty("cndApplicationDetail")
+	private CNDApplicationDetail cndRequest = null;
 
 	@NotNull
 	@JsonProperty("tenantId")
