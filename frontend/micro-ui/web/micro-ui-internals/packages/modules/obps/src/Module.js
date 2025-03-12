@@ -9,6 +9,7 @@ import stakeholderInbox from "./pages/employee/stakeholderInbox";
 import BPACitizenHomeScreen from "./pages/citizen/home";
 import EDCRForm from "./pageComponents/EDCRForm";
 import BasicDetails from "./pageComponents/BasicDetails";
+import BuildingPlanScrutiny from "./pageComponents/BuildingPlanScrutiny";
 import DocsRequired from "./pageComponents/DocsRequired";
 import PlotDetails from "./pageComponents/PlotDetails";
 import ScrutinyDetails from "./pageComponents/ScrutinyDetails";
@@ -27,6 +28,7 @@ import CreateOCEDCR from "./pages/citizen/OCEDCR";
 import NewBuildingPermit from "./pages/citizen/NewBuildingPermit";
 import OCBuildingPermit from "./pages/citizen/OCBuildingPermit";
 import StakeholderRegistration from "./pages/citizen/StakeholderRegistration";
+import PreApprovedPlan from "./pages/citizen/PreApprovedPlan";
 import CitizenBpaApplicationDetail from "./pages/citizen/BpaApplicationDetail";
 import BPASendToArchitect from "./pages/citizen/BPASendToArchitect";
 import OCSendToArchitect from "./pages/citizen/OCSendToArchitect";
@@ -82,8 +84,8 @@ const OBPSLinks = ({ matchPath, userType }) => {
 
   const links = [
     {
-      link: `${matchPath}/my-applications`,
-      i18nKey: t("BPA_CITIZEN_HOME_VIEW_APP_BY_CITIZEN_LABEL"),
+      link: `${matchPath}/bpastakeholder-citizen/preApprovedPlanDetails`,
+      i18nKey: t("BPA_CITIZEN_HOME_PRE_APPROVED_PLAN_DETAILS"),
     },
     {
       link: `${matchPath}/stakeholder/apply/stakeholder-docs-required`,
@@ -109,6 +111,7 @@ const componentsToRegister = {
   BPACitizenHomeScreen,
   EDCRForm,
   BasicDetails,
+  BuildingPlanScrutiny,
   DocsRequired,
   PlotDetails,
   ScrutinyDetails,
@@ -146,6 +149,7 @@ const componentsToRegister = {
   ObpsNewBuildingPermit : NewBuildingPermit,
   ObpsOCBuildingPermit : OCBuildingPermit,
   ObpsStakeholderRegistration : StakeholderRegistration,
+  ObpsPreApprovedPlan: PreApprovedPlan,
   ObpsCitizenBpaApplicationDetail : CitizenBpaApplicationDetail,
   ObpsBPASendToArchitect : BPASendToArchitect,
   ObpsOCSendToArchitect : OCSendToArchitect,

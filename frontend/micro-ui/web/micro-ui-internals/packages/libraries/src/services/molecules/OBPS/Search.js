@@ -1,4 +1,5 @@
 import { OBPSService } from "../../elements/OBPS"
+import { PreApprovedPlanService } from "../../elements/PREAPPROVEDPLAN";
 
 export const Search = {
   scrutinyDetails: async (tenantId, params, data, all = false) => {
@@ -10,6 +11,13 @@ export const Search = {
     } else {
       return response?.edcrDetail?.[0]
     }
+    // return window.location.href.includes("bpa/inbox") ? response?.edcrDetail : response?.edcrDetail?.[0];
+  },
+  preApproveData: async (filters, all = false) => {
+    const response = await PreApprovedPlanService.search(filters);
+    
+      return response?.preapprovedPlan[0]
+    
     // return window.location.href.includes("bpa/inbox") ? response?.edcrDetail : response?.edcrDetail?.[0];
   },
   NOCDetails: async (tenantId, params) => {

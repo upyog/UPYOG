@@ -11,7 +11,10 @@
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/obps"
+    "micro-ui-internals/packages/modules/obps",
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/common",
+    "micro-ui-internals/packages/modules/commonpt"
   ],
   "engines": {
     "node": ">=14"
