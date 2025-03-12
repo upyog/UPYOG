@@ -1,12 +1,7 @@
 package org.upyog.cdwm.calculator.web.models;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.upyog.cdwm.calculator.web.models.demand.TaxHeadEstimate;
-import org.upyog.cdwm.calculator.web.models.demand.TaxHeadMaster;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -34,10 +29,7 @@ public class Calculation {
 	@JsonProperty("tenantId")
 	@Size(min = 2, max = 256)
 	private String tenantId = null;
-
-	@JsonProperty("taxHeadEstimates")
-	List<TaxHeadEstimate> taxHeadEstimates;
 	
-	@JsonProperty("feeType")
+	@JsonProperty("feeType") 
 	String feeType = null;
 }
