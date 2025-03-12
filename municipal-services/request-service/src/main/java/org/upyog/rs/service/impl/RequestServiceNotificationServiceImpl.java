@@ -14,6 +14,7 @@ import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.service.RequestServiceNotificationService;
 import org.upyog.rs.util.NotificationUtil;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.events.Action;
 import org.upyog.rs.web.models.events.ActionItem;
@@ -48,6 +49,61 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 		log.info("Event Request in RequestService process method" + eventRequest.toString());
 		if (null != eventRequest)
 			util.sendEventNotification(eventRequest);
+
+	}
+
+	public void process(MobileToiletBookingRequest request) {
+		Map<String, String> messageMap = null;
+		String localizationMessages = util.getLocalizationMessages(request.getMobileToiletBookingDetail().getTenantId(), request.getRequestInfo());
+		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getMobileToiletBookingDetail(),
+				localizationMessages);
+		EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
+		log.info("Event Request in RequestService process method" + eventRequest.toString());
+		if (null != eventRequest)
+			util.sendEventNotification(eventRequest);
+
+	}
+
+	private EventRequest getEventsForRS(MobileToiletBookingRequest request, String actionLink,
+										Map<String, String> messageMap) {
+
+		List<Event> events = new ArrayList<>();
+		String tenantId = request.getMobileToiletBookingDetail().getTenantId();
+		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
+		List<String> toUsers = new ArrayList<>();
+		String mobileNumber = request.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
+
+		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+
+		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
+			log.info("UUID search failed!");
+		}
+
+		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
+		String message = null;
+		message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
+		log.info("Message for event in RequestService:" + message);
+		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+		log.info("Recipient object in RequestService:" + recepient.toString());
+
+		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
+		List<ActionItem> actionItems = new ArrayList<>();
+		actionItems.add(actionItem);
+
+		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
+				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT).build();
+
+		events.add(Event.builder().tenantId(tenantId).description(message)
+				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
+				.name(RequestServiceConstants.USREVENTS_EVENT_NAME)
+				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+				.actions(null).eventDetails(null).build());
+
+		if (!CollectionUtils.isEmpty(events)) {
+			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
+		} else {
+			return null;
+		}
 
 	}
 

@@ -8,6 +8,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.upyog.rs.service.RequestServiceNotificationService;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,20 @@ public class NotificationConsumer {
 		}
 
 		notificationService.process(waterTankerRequest);
+	}
+
+	@KafkaListener(topics = { "${persister.update.mobile-Toilet.topic}", "${persister.create.mobile-Toilet.topic}" })
+	public void listens(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+
+		MobileToiletBookingRequest mobileToiletRequest = new MobileToiletBookingRequest();
+		try {
+
+			mobileToiletRequest = mapper.convertValue(record, MobileToiletBookingRequest.class);
+		} catch (final Exception e) {
+			log.error("Error while processing RS notification to value: " + record + " on topic: " + topic + ": " + e);
+		}
+
+		notificationService.process(mobileToiletRequest);
 	}
 
 }
