@@ -33,8 +33,10 @@ public class GeneralStair extends FeatureProcess {
     private static final String RULE = "4.4.4";
     private static final String RULERISER = "5.15.4.1";
     private static final String RULETREAD = "5.15.3";
+    private static final BigDecimal MAXIMUM_HEIGHT_0_19 = BigDecimal.valueOf(0.19);
     private static final String EXPECTED_NO_OF_RISER = "12";
     private static final String NO_OF_RISER_DESCRIPTION = "Maximum no of risers required per flight for general stair %s flight %s";
+    private static final String MAX_RISER_HEIGHT_DESCRIPTION = "Maximum height of riser";
     private static final String WIDTH_DESCRIPTION = "Minimum width for general stair %s flight %s";
     private static final String TREAD_DESCRIPTION = "Minimum tread for general stair %s flight %s";
     private static final String NO_OF_RISERS = "Number of risers ";
@@ -126,9 +128,11 @@ public class GeneralStair extends FeatureProcess {
                  */
 
                 List<Floor> floors = block.getBuilding().getFloors();
+                Floor currentFloor = null;
                 List<String> stairAbsent = new ArrayList<>();
                 // BigDecimal floorSize = block.getBuilding().getFloorsAboveGround();
                 for (Floor floor : floors) {
+                	currentFloor = floor;
                     if (!floor.getTerrace()) {
                     	
 
@@ -218,23 +222,26 @@ public class GeneralStair extends FeatureProcess {
                
                 if(flrHt != null) {
                 BigDecimal riserHeight = flrHt.divide(totalSteps, 2, RoundingMode.HALF_UP);
-                
-
-                
-                System.out.println("riserHt====" + riserHeight);
-                
-                if (riserHeight.compareTo(BigDecimal.valueOf(0.19)) <= 0) {
-                    setReportOutputDetailsFloorStairWise(plan, RULE, "","", "" + 0.19, "" + 
-                            riserHeight,
-                           
-                             Result.Accepted.getResultVal(), scrutinyDetail4);
+            
+                if (currentFloor != null) {
+                    // Use currentFloor.getNumber() if currentFloor is not null
+                    String floorNumber = "floor " + currentFloor.getNumber().toString();
+                    if (riserHeight.compareTo(MAXIMUM_HEIGHT_0_19) <= 0) {
+                        setReportOutputDetailsFloorStairWise(plan, RULE, floorNumber, MAX_RISER_HEIGHT_DESCRIPTION, "" + 0.19, "" + riserHeight, Result.Accepted.getResultVal(), scrutinyDetail4);
+                    } else {
+                        setReportOutputDetailsFloorStairWise(plan, RULE, floorNumber, MAX_RISER_HEIGHT_DESCRIPTION, "" + 0.19, "" + riserHeight, Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+                    }
                 } else {
-                	setReportOutputDetailsFloorStairWise(plan, RULE, "", "", "" + 0.19, "" + 
-                            riserHeight, Result.Not_Accepted.getResultVal(), scrutinyDetail4);
-                }}
-                	
-                
-               
+                	// Use " " if currentFloor is null
+                    if (riserHeight.compareTo(MAXIMUM_HEIGHT_0_19) <= 0) {
+                        setReportOutputDetailsFloorStairWise(plan, RULE, " ", MAX_RISER_HEIGHT_DESCRIPTION, "" + 0.19, "" + riserHeight,
+                                Result.Accepted.getResultVal(), scrutinyDetail4);
+                    } else {
+                        setReportOutputDetailsFloorStairWise(plan, RULE, " ", MAX_RISER_HEIGHT_DESCRIPTION, "" + 0.19, "" + riserHeight,
+                                Result.Not_Accepted.getResultVal(), scrutinyDetail4);
+                    }
+                }
+                }
 
                 if (
                         !stairAbsent.isEmpty()) {

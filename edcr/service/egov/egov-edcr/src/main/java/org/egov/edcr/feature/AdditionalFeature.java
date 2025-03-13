@@ -453,7 +453,7 @@ public class AdditionalFeature extends FeatureProcess {
 				if (errors.isEmpty() && StringUtils.isNotBlank(minRequiredFloorHeight)
 						&& StringUtils.isNotBlank(maxPermissibleFloorHeight)) {
 					Map<String, String> details = new HashMap<>();
-					details.put(FLOOR_NO, String.valueOf(floorNumber));
+					details.put(FLOOR_NO, " floor " + String.valueOf(floorNumber));
 					details.put(RULE_NO, RULE_38);
 					details.put(MIN_REQUIRED, minRequiredFloorHeight);
 					//details.put(MAX_PERMISSIBLE, maxPermissibleFloorHeight);
