@@ -72,7 +72,8 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 //		searchQuery = searchQuery.replace(":tablename", BankAccountEntity.TABLE_NAME);
 
 		searchQuery = searchQuery.replace(":selectfields", " eba.* , ebb.id ebbid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, "
-				+ "ebb.address2 ebbaddress2, ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ef.tenantid eftenantid ");
+				+ "ebb.address2 ebbaddress2, ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.bankid ebbbankid, ebb.active ebbactive, "
+				+ "ef.tenantid eftenantid ");
 
 		// implement jdbc specfic search
 		if (bankAccountSearchEntity.getTenantId() != null) {

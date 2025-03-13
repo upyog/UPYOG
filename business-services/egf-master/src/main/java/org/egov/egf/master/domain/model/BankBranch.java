@@ -79,7 +79,7 @@ public class BankBranch extends Auditable {
 	/**
 	 * bank is the bank of the branch
 	 */
-	@NotNull
+//	@NotNull
 	private Bank bank;
 
 	/**
@@ -93,7 +93,7 @@ public class BankBranch extends Auditable {
      */
 	@NotNull
 	@Length(max = 50, min = 1)
-	@Pattern(regexp = "^[a-zA-Z0-9_]*$")
+//	@Pattern(regexp = "^[a-zA-Z0-9_]*$")
 	private String name;
 
 	/**
