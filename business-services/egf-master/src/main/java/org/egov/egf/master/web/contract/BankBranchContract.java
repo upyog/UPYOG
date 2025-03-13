@@ -65,7 +65,7 @@ public class BankBranchContract extends AuditableContract {
 
 	private String id;
 
-	@NotNull
+//	@NotNull
 	private BankContract bank;
 
 	@NotNull
@@ -74,7 +74,7 @@ public class BankBranchContract extends AuditableContract {
 
 	@NotNull
 	@Length(max = 50, min = 1)
-	@Pattern(regexp = "^[a-zA-Z0-9_]*$")
+//	@Pattern(regexp = "^[a-zA-Z0-9_]*$")
 	private String name;
 
 	@NotNull

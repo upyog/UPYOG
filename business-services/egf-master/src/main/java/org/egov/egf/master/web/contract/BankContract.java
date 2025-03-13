@@ -63,22 +63,22 @@ public class BankContract extends AuditableContract {
 
 	private String id;
 
-	@NotNull
-	@Size(max = 50, min = 1)
+//	@NotNull
+//	@Size(max = 50, min = 1)
 	private String code;
 
-	@NotNull
-	@Size(max = 100, min = 2)
+//	@NotNull
+//	@Size(max = 100, min = 2)
 	private String name;
 
-	@Size(max = 250)
+//	@Size(max = 250)
 	private String description;
 
-	@NotNull
+//	@NotNull
 	private Boolean active;
 
-	@NotNull
-	@Size(max = 50)
+//	@NotNull
+//	@Size(max = 50)
 	private String type;
 
 	public BankContract(final String id) {

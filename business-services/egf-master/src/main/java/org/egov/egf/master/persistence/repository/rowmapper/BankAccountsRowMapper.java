@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.egov.egf.master.domain.enums.BankAccountType;
+import org.egov.egf.master.domain.model.Bank;
 import org.egov.egf.master.domain.model.BankAccount;
 import org.egov.egf.master.domain.model.BankBranch;
 import org.egov.egf.master.domain.model.ChartOfAccount;
@@ -40,9 +41,13 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 	}
 
 	private BankBranch mapBankBranch(ResultSet rs) throws SQLException {
-		return BankBranch.builder().id(rs.getString("ebbid")).code(rs.getString("ebbcode"))
+		return BankBranch.builder().id(rs.getString("ebbid")).bank(mapBank(rs)).code(rs.getString("ebbcode"))
 				.name(rs.getString("ebbname")).address(rs.getString("ebbaddress")).address2(rs.getString("ebbaddress2"))
 				.city(rs.getString("ebbcity")).state(rs.getString("ebbstate")).pincode(rs.getString("ebbpincode"))
-				.build();
+				.active(rs.getBoolean("ebbactive")).build();
+	}
+
+	private Bank mapBank(ResultSet rs) throws SQLException {
+		return Bank.builder().id(rs.getString("ebbbankid")).build();
 	}
 }
