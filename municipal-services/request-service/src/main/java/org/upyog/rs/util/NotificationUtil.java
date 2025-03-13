@@ -29,6 +29,7 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.kafka.Producer;
 import org.upyog.rs.repository.ServiceRequestRepository;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.events.EventRequest;
 import org.upyog.rs.web.models.notification.Email;
@@ -390,9 +391,102 @@ public class NotificationUtil {
 
 		//return message;
 	}
+
+	/**
+	 * Generates a customized message based on the action status of the mobile toilet booking request.
+	 * This method retrieves localized message templates, formats them with booking details,
+	 * and optionally includes a payment link.
+	 *
+	 * @param requestInfo       The request information containing user details.
+	 * @param mobileToiletDetail The details of the mobile toilet booking.
+	 * @param localizationMessage The localization message string for fetching message templates.
+	 * @return A map containing the customized message and an optional action link.
+	 */
+	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, MobileToiletBookingDetail mobileToiletDetail,
+												String localizationMessage) {
+		String message = null, messageTemplate;
+		String link = null;
+		String ACTION_STATUS = mobileToiletDetail.getWorkflow().getAction();
+		switch (ACTION_STATUS) {
+
+			case ACTION_STATUS_APPLY:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPLY, localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				break;
+
+			case ACTION_STATUS_APPROVE:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPROVED, localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				//	link = getPayUrl(waterTankerDetail, message);
+				break;
+
+			case ACTION_STATUS_ASSIGN_VENDOR:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VENDOR, localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				break;
+
+			case ACTION_STATUS_ASSIGN_VEHICLE_DRIVER:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VEHICLE_DRIVER, localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				break;
+
+			case ACTION_STATUS_COMPLETE_REQUEST:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_COMPLETE_REQUEST, localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				break;
+
+			case ACTION_STATUS_REJECT:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_REJECT, localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				break;
+
+			case ACTION_STATUS_PAY:
+				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_TANKERBOOKED,
+						localizationMessage);
+				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
+				break;
+		}
+
+
+		if (message.contains("{PAY_LINK}")) {
+			link = null;
+			message = getPayUrl(mobileToiletDetail, message);
+		}
+
+		Map<String, String> messageMap = new HashMap<String, String>();
+		messageMap.put(ACTION_LINK, link);
+		messageMap.put(MESSAGE_TEXT, message);
+		log.info("getCustomizedMsg messageTemplate : " + message);
+		return messageMap;
+
+		//return message;
+	}
 	
 	private String getMessageWithNumberAndFinalDetails(WaterTankerBookingDetail waterTankerDetail, String message) {
 	    return String.format(message, waterTankerDetail.getApplicantDetail().getName(), waterTankerDetail.getBookingNo());
+	}
+
+	private String getMessageWithNumberAndFinalDetails(MobileToiletBookingDetail mobileToiletDetail, String message) {
+		return String.format(message, mobileToiletDetail.getApplicantDetail().getName(), mobileToiletDetail.getBookingNo());
+	}
+
+	/**
+	 * Prepares and return url for view screen
+	 *
+	 * @param mobileToiletDetail
+	 * @return
+	 */
+	public String getPayUrl(MobileToiletBookingDetail mobileToiletDetail, String message) {
+		String actionLink = String.format("%s?mobile=%s&applicationNo=%s&tenantId=%s&businessService=%s",
+				config.getPayLink(),
+				mobileToiletDetail.getApplicantDetail().getMobileNumber(),
+				mobileToiletDetail.getBookingNo(),
+				mobileToiletDetail.getTenantId(),
+				config.getBusinessServiceName());
+
+		message = message.replace("{PAY_LINK}", getShortenedUrl(config.getUiAppHost() + actionLink));
+
+		return message;
 	}
 
 	  /**

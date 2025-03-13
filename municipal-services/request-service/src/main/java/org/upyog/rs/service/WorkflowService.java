@@ -128,7 +128,7 @@ public class WorkflowService {
 	    if (paymentRequest != null) {
 	        processInstance.setBusinessId(paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode());
 	        processInstance.setAction(RequestServiceConstants.ACTION_PAY);
-	        processInstance.setModuleName(configs.getModuleName());
+	        processInstance.setModuleName(configs.getWtModuleName());
 	        processInstance.setTenantId(paymentRequest.getPayment().getTenantId());
 	        processInstance.setBusinessService(configs.getBusinessServiceName());
 	        processInstance.setDocuments(null);
@@ -166,7 +166,7 @@ public class WorkflowService {
 		if (paymentRequest != null) {
 			processInstance.setBusinessId(paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode());
 			processInstance.setAction(RequestServiceConstants.ACTION_PAY);
-			processInstance.setModuleName(configs.getModuleName());
+			processInstance.setModuleName(configs.getMtModuleName());
 			processInstance.setTenantId(paymentRequest.getPayment().getTenantId());
 			processInstance.setBusinessService(configs.getBusinessServiceName());
 			processInstance.setDocuments(null);
