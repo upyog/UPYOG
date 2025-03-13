@@ -52,7 +52,9 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 		BankAccountSearchEntity bankAccountSearchEntity = new BankAccountSearchEntity();
 		bankAccountSearchEntity.toEntity(domain);
 
-		String searchQuery = "select :selectfields from egf_bankaccount eba join egf_bankbranch ebb on eba.bankbranchid = ebb.id :condition  :orderby   ";
+		String searchQuery = "select :selectfields from egf_bankaccount eba join egf_bankbranch ebb on eba.bankbranchid = ebb.id "
+				+ "join egf_fund ef on eba.fundid = ef.id "
+				+ ":condition  :orderby   ";
 
 		Map<String, Object> paramValues = new HashMap<>();
 		StringBuffer params = new StringBuffer();
@@ -70,7 +72,7 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 //		searchQuery = searchQuery.replace(":tablename", BankAccountEntity.TABLE_NAME);
 
 		searchQuery = searchQuery.replace(":selectfields", " eba.* , ebb.id ebbid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, "
-				+ "ebb.address2 ebbaddress2, ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode ");
+				+ "ebb.address2 ebbaddress2, ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ef.tenantid eftenantid ");
 
 		// implement jdbc specfic search
 		if (bankAccountSearchEntity.getTenantId() != null) {

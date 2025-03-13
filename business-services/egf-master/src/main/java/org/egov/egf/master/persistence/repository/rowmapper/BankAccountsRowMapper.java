@@ -29,7 +29,10 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 	}
 
 	private Fund mapFund(ResultSet rs) throws SQLException {
-		return Fund.builder().id(rs.getString("fundid")).build();
+		Fund fund = Fund.builder().id(rs.getString("fundid")).build();
+
+		fund.setTenantId(rs.getString("eftenantid"));
+		return fund;
 	}
 
 	private ChartOfAccount mapChartOfAccount(ResultSet rs) throws SQLException {
