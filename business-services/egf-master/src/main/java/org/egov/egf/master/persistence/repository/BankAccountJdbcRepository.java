@@ -12,8 +12,10 @@ import org.egov.egf.master.domain.model.BankAccount;
 import org.egov.egf.master.domain.model.BankAccountSearch;
 import org.egov.egf.master.persistence.entity.BankAccountEntity;
 import org.egov.egf.master.persistence.entity.BankAccountSearchEntity;
+import org.egov.egf.master.persistence.repository.rowmapper.BankAccountsRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,9 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 	public BankAccountJdbcRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 	}
+	
+	@Autowired
+	private BankAccountsRowMapper bankAccountsRowMapper;
 
 	public BankAccountEntity create(BankAccountEntity entity) {
 		super.create(entity);
@@ -47,7 +52,7 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 		BankAccountSearchEntity bankAccountSearchEntity = new BankAccountSearchEntity();
 		bankAccountSearchEntity.toEntity(domain);
 
-		String searchQuery = "select :selectfields from :tablename :condition  :orderby   ";
+		String searchQuery = "select :selectfields from egf_bankaccount eba join egf_bankbranch ebb on eba.bankbranchid = ebb.id :condition  :orderby   ";
 
 		Map<String, Object> paramValues = new HashMap<>();
 		StringBuffer params = new StringBuffer();
@@ -62,93 +67,94 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 			orderBy = "order by " + bankAccountSearchEntity.getSortBy();
 		}
 
-		searchQuery = searchQuery.replace(":tablename", BankAccountEntity.TABLE_NAME);
+//		searchQuery = searchQuery.replace(":tablename", BankAccountEntity.TABLE_NAME);
 
-		searchQuery = searchQuery.replace(":selectfields", " * ");
+		searchQuery = searchQuery.replace(":selectfields", " eba.* , ebb.id ebbid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, "
+				+ "ebb.address2 ebbaddress2, ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode ");
 
 		// implement jdbc specfic search
 		if (bankAccountSearchEntity.getTenantId() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("tenantId =:tenantId");
+			params.append("eba.tenantId =:tenantId");
 			paramValues.put("tenantId", bankAccountSearchEntity.getTenantId());
 		}
 		if (bankAccountSearchEntity.getId() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("id =:id");
+			params.append("eba.id =:id");
 			paramValues.put("id", bankAccountSearchEntity.getId());
 		}
 		if (bankAccountSearchEntity.getIds() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("id in(:ids) ");
+			params.append("eba.id in(:ids) ");
 			paramValues.put("ids", new ArrayList<String>(Arrays.asList(bankAccountSearchEntity.getIds().split(","))));
 		}
 		if (bankAccountSearchEntity.getBankBranchId() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("bankBranchId =:bankBranch");
+			params.append("eba.bankBranchId =:bankBranch");
 			paramValues.put("bankBranch", bankAccountSearchEntity.getBankBranchId());
 		}
 		if (bankAccountSearchEntity.getChartOfAccountId() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("chartOfAccountId =:chartOfAccount");
+			params.append("eba.chartOfAccountId =:chartOfAccount");
 			paramValues.put("chartOfAccount", bankAccountSearchEntity.getChartOfAccountId());
 		}
 		if (bankAccountSearchEntity.getFundId() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("fundId =:fund");
+			params.append("eba.fundId =:fund");
 			paramValues.put("fund", bankAccountSearchEntity.getFundId());
 		}
 		if (bankAccountSearchEntity.getAccountNumber() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("accountNumber =:accountNumber");
+			params.append("eba.accountNumber =:accountNumber");
 			paramValues.put("accountNumber", bankAccountSearchEntity.getAccountNumber());
 		}
 		if (bankAccountSearchEntity.getAccountType() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("accountType =:accountType");
+			params.append("eba.accountType =:accountType");
 			paramValues.put("accountType", bankAccountSearchEntity.getAccountType());
 		}
 		if (bankAccountSearchEntity.getDescription() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("description =:description");
+			params.append("eba.description =:description");
 			paramValues.put("description", bankAccountSearchEntity.getDescription());
 		}
 		if (bankAccountSearchEntity.getActive() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("active =:active");
+			params.append("eba.active =:active");
 			paramValues.put("active", bankAccountSearchEntity.getActive());
 		}
 		if (bankAccountSearchEntity.getPayTo() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("payTo =:payTo");
+			params.append("eba.payto =:payTo");
 			paramValues.put("payTo", bankAccountSearchEntity.getPayTo());
 		}
 		if (bankAccountSearchEntity.getType() != null) {
 			if (params.length() > 0) {
 				params.append(" and ");
 			}
-			params.append("type =:type");
+			params.append("eba.type =:type");
 			paramValues.put("type", bankAccountSearchEntity.getType().toString());
 		}
 
@@ -176,19 +182,19 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 		searchQuery = searchQuery.replace(":pagination",
 				"limit " + page.getPageSize() + " offset " + page.getOffset() * page.getPageSize());
 
-		BeanPropertyRowMapper row = new BeanPropertyRowMapper(BankAccountEntity.class);
+//		BeanPropertyRowMapper row = new BeanPropertyRowMapper(BankAccountEntity.class);
 
-		List<BankAccountEntity> bankAccountEntities = namedParameterJdbcTemplate.query(searchQuery.toString(),
-				paramValues, row);
+		List<BankAccount> bankAccountEntities = namedParameterJdbcTemplate.query(searchQuery.toString(),
+				paramValues, bankAccountsRowMapper);
 
 		page.setTotalResults(bankAccountEntities.size());
 
-		List<BankAccount> bankaccounts = new ArrayList<>();
-		for (BankAccountEntity bankAccountEntity : bankAccountEntities) {
-
-			bankaccounts.add(bankAccountEntity.toDomain());
-		}
-		page.setPagedData(bankaccounts);
+//		List<BankAccount> bankaccounts = new ArrayList<>();
+//		for (BankAccountEntity bankAccountEntity : bankAccountEntities) {
+//
+//			bankaccounts.add(bankAccountEntity.toDomain());
+//		}
+		page.setPagedData(bankAccountEntities);
 
 		return page;
 	}
