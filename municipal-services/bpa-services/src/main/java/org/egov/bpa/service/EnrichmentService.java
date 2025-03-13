@@ -107,7 +107,7 @@ public class EnrichmentService {
 
 		if (applicationType.equalsIgnoreCase(BPAConstants.BUILDING_PLAN)) {
 		
-			if (bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(BPAConstants.BPA_PAP))
+			if (bpaRequest.getBPA().getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN))
 			{				
 			}
 			else if (!bpaRequest.getBPA().getRiskType().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {

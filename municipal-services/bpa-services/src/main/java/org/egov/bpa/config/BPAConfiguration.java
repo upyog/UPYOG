@@ -161,6 +161,9 @@ public class BPAConfiguration {
 	@Value("${egov.bpa.calculator.calculate.endpoint}")
 	private String calulatorEndPoint;
 
+	@Value("${egov.bpa.calculator.estimate.endpoint}")
+	private String BpaCalculationEstimateEndpoint;
+	
 	@Value("${egov.billingservice.host}")
 	private String billingHost;
 

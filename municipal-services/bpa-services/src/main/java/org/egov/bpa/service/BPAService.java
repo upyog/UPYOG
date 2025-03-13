@@ -137,7 +137,7 @@ public class BPAService {
 			bpaRequest.getBPA().setApprovalNo(null);
 		}
 		
-	    if (StringUtils.isNotEmpty(businessService) && "BPA-PAP".equals(businessService)) {
+	    if (StringUtils.isNotEmpty(businessService) && BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessService)) {
 	        setEdcrDetailsForPreapprovedPlan(values,edcr, bpaRequest);
 	      }
 	      else{
@@ -154,7 +154,7 @@ public class BPAService {
 		wfIntegrator.callWorkFlow(bpaRequest);
 		nocService.createNocRequest(bpaRequest, mdmsData,edcrService.getEdcrSuggestedRequiredNocs(edcr),
 				applicationType, serviceType);
-		if (BPAConstants.BPA_PAP.equalsIgnoreCase(businessService)) {
+		if (BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessService)) {
 		calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
 		}
 		else {
@@ -410,7 +410,7 @@ public class BPAService {
 		if (bpa.getId() == null) {
 			throw new CustomException(BPAErrorConstants.UPDATE_ERROR, "Application Not found in the System" + bpa);
 		}
-		if (StringUtils.isNotEmpty(businessServices) && "BPA-PAP".equals(businessServices)) {
+		if (StringUtils.isNotEmpty(businessServices) && BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessServices)) {
 			bpaValidator.getEdcrDetailsForPreapprovedPlan(edcrResponse, bpaRequest);
 		} 	
 		else {
@@ -864,4 +864,13 @@ public class BPAService {
 		  
     }     
 
+	/**
+	 * call BPA-calculator and fetch the fee estimate
+	 * 
+	 * @param bpaRequest
+	 * @return
+	 */
+	public Object getFeeEstimateFromBpaCalculator(Object bpaRequest) {
+		return calculationService.callBpaCalculatorEstimate(bpaRequest);
+	}
 }
