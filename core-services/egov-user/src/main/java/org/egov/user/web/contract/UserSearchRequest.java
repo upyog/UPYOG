@@ -80,7 +80,6 @@ public class UserSearchRequest {
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
 
-
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
                 .id(id)

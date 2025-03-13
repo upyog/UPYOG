@@ -1,13 +1,9 @@
 package org.egov.user.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.user.domain.model.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.model.User;
 import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
@@ -20,19 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -215,59 +203,124 @@ public class UserController {
         return true;
     }
 /// Author - Abhijeet
-    /**
-     * end-point to fetch the address details by user uuid
-     *
-     * @param uuid
-     * @return
-     */
-    @PostMapping("/_getAddress")
-    public UserAddressResponse getUserAddress(@RequestParam(value = "uuid") String uuid, @RequestParam(value = "tenantId") String tenantId) {
 
-        List<Address> userAddresses = userService.getAddress(uuid,tenantId);
-        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
-        return new UserAddressResponse(responseInfo, userAddresses);
+    /**
+     * Endpoint to create a new address for a user identified by their UUID.
+     *
+     * @param addressRequest The address details to be saved.
+     * @return AddressResponse containing the created address details and response info.
+     */
+    @PostMapping("/_createAddress")
+    public ResponseEntity<AddressResponse> createAddress(@RequestBody AddressRequest addressRequest) {
+
+        Address userAddress = userService.createAddress(addressRequest.getUserUuid(), addressRequest.getAddress());
+        List<Address> userAddressList = new ArrayList<>();
+        userAddressList.add(userAddress);
+        ResponseInfo responseInfo = ResponseInfo.builder().status(HttpStatus.CREATED.toString()).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AddressResponse(responseInfo, userAddressList));
     }
 
     /**
-     * end-point to create user with whole address details
+     * Endpoint to retrieve address details for a user based on their UUID and tenant ID.
      *
-     * @param createUserRequest
-     * @return
+     * @param uuid     The unique identifier of the user.
+     * @param tenantId The tenant ID associated with the user.
+     * @return AddressResponse containing the user's address details and response info.
+     */
+    @PostMapping("/_getAddress")
+    public AddressResponse getAddress(@RequestParam(value = "uuid") String uuid, @RequestParam(value = "tenantId") String tenantId) {
+
+        List<Address> userAddresses = userService.getAddress(uuid, tenantId);
+        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+        return new AddressResponse(responseInfo, userAddresses);
+    }
+
+    /**
+     * Endpoint to update an existing address for a user identified by their UUID.
+     *
+     * @param addressRequest The address details to be updated.
+     * @return AddressResponse containing the updated address details and response info.
+     */
+    @PostMapping("/_updateAddress")
+    public AddressResponse updateAddress(@RequestBody AddressRequest addressRequest) {
+
+        Address userAddress = userService.updateAddress(addressRequest.getAddressId(), addressRequest.getAddress());
+        List<Address> userAddressList = new ArrayList<>();
+        userAddressList.add(userAddress);
+        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+        return new AddressResponse(responseInfo, userAddressList);
+    }
+
+    /**
+     * API endpoint to create a new user with address details (V2).
+     * <p>
+     * Process:
+     * - Converts the request DTO into a domain object.
+     * - Determines if mobile validation is required based on headers.
+     * - Calls the service layer to create a user.
+     * - Returns a response containing the newly created user.
+     *
+     * @param createUserRequest the request payload containing user details
+     * @param headers           HTTP headers for additional request context
+     * @return the response object containing the created user details
      */
     @PostMapping("/users/v2/_create")
-    public Object createUserWithAddress(@RequestBody @Valid CreateUserRequestWithAddress createUserRequest,
+    public Object createUserWithAddress(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
                                         @RequestHeader HttpHeaders headers) {
-        log.info("Received User Registration Request  " + createUserRequest);
+        log.info("Received User Registration Request " + createUserRequest);
+
         User user = createUserRequest.toDomain(true);
         user.setMobileValidationMandatory(isMobileValidationRequired(headers));
         user.setOtpValidationMandatory(false);
+
         final User newUser = userService.createUserWithAddressV2(user, createUserRequest.getRequestInfo());
+
         return createResponse(newUser);
     }
 
     /**
-     * end-point to update the user details without otp validations.
+     * API endpoint to update user details along with address information (V2).
+     * <p>
+     * Process:
+     * - Converts the request DTO into a domain object.
+     * - Determines if mobile validation is required based on headers.
+     * - Calls the service layer to update user details.
+     * - Returns a response containing the updated user details.
+     * <p>
+     * Note: OTP validation is NOT required for this update process.
      *
-     * @param createUserRequest
-     * @param headers
-     * @return
+     * @param createUserRequest the request payload containing updated user details
+     * @param headers           HTTP headers for additional request context
+     * @return the response object containing updated user details
      */
     @PostMapping("/users/v2/_update")
-    public UpdateResponse updateUserWithAddress(@RequestBody final @Valid CreateUserRequestWithAddress createUserRequest,
-                                                      @RequestHeader HttpHeaders headers) {
+    public UpdateResponse updateUserWithAddress(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
+                                                @RequestHeader HttpHeaders headers) {
+
         User user = createUserRequest.toDomain(false);
         user.setMobileValidationMandatory(isMobileValidationRequired(headers));
+
         final User updatedUser = userService.updateWithAddressV2(user, createUserRequest.getRequestInfo());
+
         return createResponseforUpdate(updatedUser);
     }
+
     /**
-     * end-point to search the users with address objects by providing userSearchRequest. In Request
-     * if there is no active filed value, it will fetch all(active & inactive)
-     * users.
+     * API endpoint to search users along with their address details (V2).
+     * <p>
+     * Process:
+     * - Converts the search request DTO into a domain object.
+     * - If the request is not an inter-service call:
+     * - Limits the search results if no specific user ID or UUID is provided.
+     * - Calls the service layer to fetch matching users based on search criteria.
+     * - Constructs the response with user details.
+     * <p>
+     * Note: If the `active` field is not specified in the request, both active
+     * and inactive users will be fetched.
      *
-     * @param request
-     * @return
+     * @param request the request payload containing search criteria
+     * @param headers HTTP headers for additional request context
+     * @return the response object containing matching user details
      */
     @PostMapping("/users/v2/_search")
     public UserSearchResponse getUsersV2(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
@@ -275,15 +328,19 @@ public class UserController {
         UserSearchCriteria searchCriteria = request.toDomain();
 
         if (!isInterServiceCall(headers)) {
-            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) && (searchCriteria.getLimit() > defaultSearchSize
-                    || searchCriteria.getLimit() == 0))
+            if ((isEmpty(searchCriteria.getId()) && isEmpty(searchCriteria.getUuid())) &&
+                    (searchCriteria.getLimit() > defaultSearchSize || searchCriteria.getLimit() == 0)) {
                 searchCriteria.setLimit(defaultSearchSize);
+            }
         }
 
         List<User> userModels = userService.searchUsersV2(searchCriteria, isInterServiceCall(headers), request.getRequestInfo());
-        List<UserSearchResponseContent> userContracts = userModels.stream().map(UserSearchResponseContent::new)
+        List<UserSearchResponseContent> userContracts = userModels.stream()
+                .map(UserSearchResponseContent::new)
                 .collect(Collectors.toList());
         ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+
         return new UserSearchResponse(responseInfo, userContracts);
     }
+
 }

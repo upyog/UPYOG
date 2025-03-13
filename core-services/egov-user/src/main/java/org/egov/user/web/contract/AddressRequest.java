@@ -3,19 +3,25 @@ package org.egov.user.web.contract;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.user.domain.model.Address;
 
 import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class UserAddressResponse {
+public class AddressRequest {
 
-    @JsonProperty("responseInfo")
-    ResponseInfo responseInfo;
+    @JsonProperty("requestInfo")
+    RequestInfo requestInfo;
 
     @JsonProperty("address")
-    List<Address> address;
+    Address address;
+
+    @JsonProperty("userUuid")
+    String userUuid;
+
+    @JsonProperty("addressId")
+    String addressId;
 
 }

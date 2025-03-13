@@ -104,10 +104,17 @@ public class UserTypeQueryBuilder {
             "\tFROM eg_user userdata LEFT OUTER JOIN eg_user_address addr ON userdata.id = addr.userid AND userdata.tenantid = addr" +
             ".tenantid LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
 
+    // Below is the query to bring the user details along with the addresses and roles part of V2 api endpoints without address
+    private static final String SELECT_USER_QUERY_V2_NO_ADDRESS = "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
+            ".password, userdata.pwdexpirydate,  userdata.mobilenumber, userdata.altcontactnumber, userdata.emailid, userdata.createddate, userdata" +
+            ".lastmodifieddate,  userdata.createdby, userdata.lastmodifiedby, userdata.active, userdata.name, userdata.gender, userdata.pan, userdata.aadhaarnumber, userdata" +
+            ".type,  userdata.version, userdata.guardian, userdata.guardianrelation, userdata.signature, userdata.accountlocked, userdata.accountlockeddate, userdata" +
+            ".bloodgroup, userdata.photo, userdata.identificationmark,  userdata.tenantid, userdata.id, userdata.uuid, userdata.alternatemobilenumber," +
+            " ur.role_code as role_code, ur.role_tenantid as role_tenantid \n" +
+            "\tFROM eg_user userdata LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
     @SuppressWarnings("rawtypes")
     public String getQuery(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
-        final StringBuilder selectQuery;
-            selectQuery = new StringBuilder(SELECT_USER_QUERY);
+        final StringBuilder selectQuery = new StringBuilder(SELECT_USER_QUERY);
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
 
         addOrderByClause(selectQuery, userSearchCriteria);
@@ -317,13 +324,32 @@ public class UserTypeQueryBuilder {
         return "select count(*) from eg_user where username =:userName and tenantId =:tenantId and type = :userType ";
     }
 
+    /**
+     * Constructs a SQL query to fetch user details based on the provided search criteria.
+     *
+     * This method dynamically builds the query by including or excluding address details based on the
+     * search criteria - excludeAddress flag, appends the necessary filtering conditions, and applies ordering and pagination.
+     *
+     * @param userSearchCriteria The criteria used to filter users.
+     * @param preparedStatementValues A list to store prepared statement parameters for query execution.
+     * @return A fully constructed SQL query string based on the given criteria.
+     */
     @SuppressWarnings("rawtypes")
     public String getQueryV2(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
         final StringBuilder selectQuery;
-        selectQuery = new StringBuilder(SELECT_USER_QUERY_V2);
+        if (Boolean.TRUE.equals(userSearchCriteria.getExcludeAddressDetails())) {
+            log.info("Excluding address details from the query");
+            selectQuery = new StringBuilder(SELECT_USER_QUERY_V2_NO_ADDRESS);
+        } else {
+            selectQuery = new StringBuilder(SELECT_USER_QUERY_V2);
+        }
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
 
         addOrderByClause(selectQuery, userSearchCriteria);
         return addPagingClause(selectQuery, preparedStatementValues, userSearchCriteria);
+    }
+
+    public String getUserIdByUuid() {
+        return "select id from eg_user where uuid = :uuid";
     }
 }

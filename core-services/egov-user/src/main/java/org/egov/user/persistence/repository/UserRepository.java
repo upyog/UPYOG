@@ -769,22 +769,25 @@ public class UserRepository {
 
         updateAuditDetails(oldUser, userId, uuid);
 
-        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);
+        namedParameterJdbcTemplate.update(userTypeQueryBuilder.getUpdateUserQuery(), updateuserInputs);// This step will remain same as it is updating the user details only
         if (user.getRoles() != null && !CollectionUtils.isEmpty(user.getRoles()) && !oldUser.getRoles().equals(user.getRoles())) {
             validateAndEnrichRoles(Collections.singletonList(user));
             updateRoles(user);
         }
         if (user.getPermanentAndCorrespondenceAddresses() != null) {
-            addressRepository.updateV2(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId());
+            addressRepository.updateV2(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId()); // This will call new method to update new fields of address object
         }
     }
 
     /**
-     * Below method will get the all users with addresses by userSearchCriteria.After that roles and
-     * address are set in to the user object.
+     * Retrieves a list of users along with their addresses based on the provided search criteria.
      *
-     * @param userSearch
-     * @return
+     * This method filters users by role codes and tenant ID if specified, constructs the appropriate query,
+     * fetches user details including address information using a result set extractor, and then enriches
+     * the user objects with their associated roles before returning the final user list.
+     *
+     * @param userSearch The criteria used to filter users.
+     * @return A list of users matching the search criteria, with addresses and roles populated.
      */
     public List<User> findAllV2(UserSearchCriteria userSearch) {
         final List<Object> preparedStatementValues = new ArrayList<>();
@@ -818,5 +821,11 @@ public class UserRepository {
         enrichRoles(users);
 
         return users;
+    }
+
+    public Long getUserIdByUuid(String userUuid) {
+        String query = userTypeQueryBuilder.getUserIdByUuid();
+        MapSqlParameterSource params = new MapSqlParameterSource("uuid", userUuid);
+        return namedParameterJdbcTemplate.queryForObject(query, params, Long.class);
     }
 }

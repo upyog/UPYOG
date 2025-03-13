@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
-public class CreateUserRequestWithAddress {
+public class CreateUserRequestV2 {
     private RequestInfo requestInfo;
 
     @NotNull

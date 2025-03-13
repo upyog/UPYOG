@@ -40,6 +40,14 @@ public class UserResultSetExtractorV2 implements ResultSetExtractor<List<User>> 
 
         Map<Long, User> usersMap = new LinkedHashMap<>();
         ResultSetMetaData rsMeta = rs.getMetaData();
+        boolean hasAddress = IntStream.rangeClosed(1, rsMeta.getColumnCount())
+                .anyMatch(i -> {
+                    try {
+                        return "addr_id".equalsIgnoreCase(rsMeta.getColumnLabel(i));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
         while (rs.next()) {
 
@@ -54,7 +62,7 @@ public class UserResultSetExtractorV2 implements ResultSetExtractor<List<User>> 
                         .password(rs.getString("password")).passwordExpiryDate(rs.getTimestamp("pwdexpirydate"))
                         .mobileNumber(rs.getString("mobilenumber")).altContactNumber(rs.getString("altcontactnumber"))
                         .emailId(rs.getString("emailid")).active(rs.getBoolean("active")).name(rs.getString("name")).
-                                lastModifiedBy(rs.getLong("lastmodifiedby")).lastModifiedDate(rs.getTimestamp("lastmodifieddate"))
+                        lastModifiedBy(rs.getLong("lastmodifiedby")).lastModifiedDate(rs.getTimestamp("lastmodifieddate"))
                         .pan(rs.getString("pan")).aadhaarNumber(rs.getString("aadhaarnumber")).createdBy(rs.getLong("createdby"))
                         .createdDate(rs.getTimestamp("createddate")).guardian(rs.getString("guardian")).signature(rs.getString("signature"))
                         .accountLocked(rs.getBoolean("accountlocked")).photo(rs.getString("photo"))
@@ -100,13 +108,13 @@ public class UserResultSetExtractorV2 implements ResultSetExtractor<List<User>> 
             if (!isNull(role)) {
                 user.addRolesItem(role);
             }
-
-            Address address = populateAddress(rs, user);
-            if (!isNull(address)) {
-                user.addAddressItem(address);
+            // Conditionally add address if the column exists and is not null
+            if (hasAddress) {
+                Address address = populateAddress(rs, user);
+                if (!isNull(address)) {
+                    user.addAddressItem(address);
+                }
             }
-
-
         }
 
         return new ArrayList<>(usersMap.values());

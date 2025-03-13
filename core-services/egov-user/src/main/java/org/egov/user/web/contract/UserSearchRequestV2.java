@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class UserSearchRequestWithAddresses {
+public class UserSearchRequestV2 {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
