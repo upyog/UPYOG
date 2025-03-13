@@ -23,7 +23,7 @@ export const SVService = {
       params: { tenantId, ...filters },
     }),
 
-  update: (details, tenantId) =>
+  update: (details) =>
     Request({
       url: Urls.sv.update,
       data: details,

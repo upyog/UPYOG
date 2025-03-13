@@ -19,6 +19,13 @@ export const UPYOG_CONSTANTS = {
   renewalStatus:"EligibleToRenew"
 };
 
+export const RENEWAL_CONSTANTS = {
+  ELIGIBLE_TO_RENEW: "ELIGIBLE_TO_RENEW",
+  RENEW_IN_PROGRESS: "RENEW_IN_PROGRESS",
+  RENEW_APPLICATION_CREATED: "RENEW_APPLICATION_CREATED",
+  RENEWED: "RENEWED"
+}
+
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     if (searcher == "") return str;
     while (str.includes(searcher)) {
@@ -618,6 +625,7 @@ export const demandPayloadData = (data) => {
   const formdata = {
     streetVendingDetail: {
       ...data,
+      renewalStatus: RENEWAL_CONSTANTS.RENEW_IN_PROGRESS,
 
       workflow: {
         action: "APPLY",
