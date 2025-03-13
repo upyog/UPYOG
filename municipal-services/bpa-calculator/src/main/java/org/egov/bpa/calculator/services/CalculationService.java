@@ -3,6 +3,7 @@ package org.egov.bpa.calculator.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,6 +86,14 @@ public class CalculationService {
 		demandService.generateDemand(calculationReq.getRequestInfo(),calculations, mdmsData);
 		CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
 		producer.push(config.getSaveTopic(), calculationRes);
+		return calculations;
+	}
+	
+	public List<Calculation> estimate(CalculationReq calculationReq) {
+		String tenantId = calculationReq.getCalulationCriteria().get(0)
+				.getTenantId();
+		Object mdmsData = mdmsService.mDMSCall(calculationReq, tenantId);
+		List<Calculation> calculations = getCalculation(calculationReq.getRequestInfo(),calculationReq.getCalulationCriteria(), mdmsData);
 		return calculations;
 	}
 

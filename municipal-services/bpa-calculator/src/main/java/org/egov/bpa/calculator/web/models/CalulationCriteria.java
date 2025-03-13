@@ -26,7 +26,6 @@ public class CalulationCriteria {
 	private BPA bpa = null;
 
 	@JsonProperty("applicationNo")
-	@Size(min = 2, max = 64)
 	private String applicationNo = null;
 
 	@JsonProperty("tenantId")

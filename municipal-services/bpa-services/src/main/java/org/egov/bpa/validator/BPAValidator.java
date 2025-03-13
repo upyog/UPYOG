@@ -342,7 +342,7 @@ public class BPAValidator {
 		String businessServices = bpaRequest.getBPA().getBusinessService(); 
 	     
 		Map<String, String> edcrResponse = new HashMap<>();
-		if (StringUtils.isNotEmpty(businessServices) && "BPA-PAP".equals(businessServices)) {
+		if (StringUtils.isNotEmpty(businessServices) && BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessServices)) {
 			//System.out.println("inside this");
 			getEdcrDetailsForPreapprovedPlan(edcrResponse,bpaRequest);
 		} else {

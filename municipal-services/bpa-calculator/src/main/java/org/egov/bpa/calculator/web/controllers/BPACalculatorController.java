@@ -57,5 +57,12 @@ public class BPACalculatorController {
 		 return new ResponseEntity<CalculationRes>(calculationRes,HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/_estimate", method = RequestMethod.POST)
+	public ResponseEntity<CalculationRes> estimate(@Valid @RequestBody CalculationReq calculationReq) {
+		log.debug("CalculationReaquest:: " + calculationReq);
+		 List<Calculation> calculations = calculationService.estimate(calculationReq);
+		 CalculationRes calculationRes = CalculationRes.builder().calculations(calculations).build();
+		 return new ResponseEntity<CalculationRes>(calculationRes,HttpStatus.OK);
+	}
 
 }
