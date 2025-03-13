@@ -61,10 +61,13 @@ public class PaymentService {
 		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode().split("-")[0];
 			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in Request Service method for businessService : " + businessService);
-			if (configs.getModuleName()
+			log.info("consumerCode : " + consumerCode);
+			if(consumerCode.equals("WT")){
+			if (configs.getWtModuleName()
 					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
@@ -72,6 +75,18 @@ public class PaymentService {
 				State state = workflowService.updateWorkflowStatus(paymentRequest, null);
 				String applicationStatus = state.getApplicationStatus();
 				waterTankerService.updateWaterTankerBooking(null, paymentRequest, applicationStatus);
+			}
+			}
+			if(consumerCode.equals("MT")){
+				if (configs.getMtModuleName()
+						.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+					String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
+							.getConsumerCode();
+					log.info("Updating payment status for mobile Toilet booking : " + applicationNo);
+					State state = workflowService.updateWorkflowStatus(paymentRequest, null);
+					String applicationStatus = state.getApplicationStatus();
+					waterTankerService.updateWaterTankerBooking(null, paymentRequest, applicationStatus);
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			log.error(
