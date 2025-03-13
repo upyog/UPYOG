@@ -65,6 +65,7 @@ public class PaymentService {
 			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in Request Service method for businessService : " + businessService);
+			log.info("consumerCode : " + consumerCode);
 			if(consumerCode.equals("WT")){
 			if (configs.getWtModuleName()
 					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
