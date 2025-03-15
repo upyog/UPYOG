@@ -37,17 +37,27 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 	}
 
 	private ChartOfAccount mapChartOfAccount(ResultSet rs) throws SQLException {
-		return ChartOfAccount.builder().id(rs.getString("chartofaccountid")).build();
+		ChartOfAccount chartOfAccount = ChartOfAccount.builder().id(rs.getString("chartofaccountid")).build();
+
+		chartOfAccount.setTenantId(rs.getString("ectenantid"));
+
+		return chartOfAccount;
 	}
 
 	private BankBranch mapBankBranch(ResultSet rs) throws SQLException {
-		return BankBranch.builder().id(rs.getString("ebbid")).bank(mapBank(rs)).code(rs.getString("ebbcode"))
-				.name(rs.getString("ebbname")).address(rs.getString("ebbaddress")).address2(rs.getString("ebbaddress2"))
-				.city(rs.getString("ebbcity")).state(rs.getString("ebbstate")).pincode(rs.getString("ebbpincode"))
-				.active(rs.getBoolean("ebbactive")).build();
+		BankBranch bankBranch = BankBranch.builder().id(rs.getString("ebbid")).bank(mapBank(rs))
+				.code(rs.getString("ebbcode")).name(rs.getString("ebbname")).address(rs.getString("ebbaddress"))
+				.address2(rs.getString("ebbaddress2")).city(rs.getString("ebbcity")).state(rs.getString("ebbstate"))
+				.pincode(rs.getString("ebbpincode")).active(rs.getBoolean("ebbactive")).build();
+
+		bankBranch.setTenantId(rs.getString("ebbtenantid"));
+
+		return bankBranch;
 	}
 
 	private Bank mapBank(ResultSet rs) throws SQLException {
-		return Bank.builder().id(rs.getString("ebbbankid")).build();
+		Bank bank = Bank.builder().id(rs.getString("ebbbankid")).build();
+
+		return bank;
 	}
 }
