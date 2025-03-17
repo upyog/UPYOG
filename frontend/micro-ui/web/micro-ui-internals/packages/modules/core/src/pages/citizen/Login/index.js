@@ -137,6 +137,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
+    console.log("handleMobileChange==",value)
     setParmas({ ...params, mobileNumber: value });
   };
 
@@ -249,6 +250,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       setTimeout(closeToast, 5000);
       setCanSubmitOtp(false);
       setIsOtpValid(true);
+      fetchCaptcha();
     }
   };
 
@@ -259,6 +261,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       tenantId: stateCode,
       userType: getUserType(),
     };
+    fetchCaptcha();
     if (!isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     } else if (isUserRegistered) {
@@ -274,6 +277,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       if(err && err?.response && err?.response?.data?.error?.fields[0]?.code=="OTP.OTP_LIMIT_REACHED" ) {
         setShowToast(err?.response?.data?.error?.fields[0]?.message || "Maximum limit reached, please wait for 20 minutes.");
         setTimeout(closeToast, 5000);
+        fetchCaptcha();
       }
       
       return [null, err];
