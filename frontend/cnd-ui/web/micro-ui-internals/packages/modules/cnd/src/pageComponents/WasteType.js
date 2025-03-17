@@ -4,6 +4,13 @@ import MultiSelectDropdown from "./MultiSelectDropdown";
 import { LoadingSpinner } from "../utils";
 import { CND_VARIABLES } from "../utils";
 
+/**
+* WasteType component that collects information about waste collection requests including
+* waste material types, quantity, pickup scheduling, and supporting documentation.
+* Handles file uploads with loading states, form validation, and persistence of
+* previously uploaded files between form navigations.
+*/
+
 const WasteType = ({ t, config, onSelect, userType, formData }) => {
   let validation = {};
   const [wasteMaterialType, setwasteMaterialType] = useState(formData?.wasteType?.wasteMaterialType || []);

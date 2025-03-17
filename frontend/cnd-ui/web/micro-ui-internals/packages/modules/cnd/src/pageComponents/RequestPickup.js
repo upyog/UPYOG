@@ -3,6 +3,13 @@ import React, { useState } from "react";
 import LocationPopup from "../components/LocationPopup";
 import { CND_VARIABLES } from "../utils";
 
+/**
+* RequestPickup component that handles waste collection request types.
+* Allows users to select a pickup type, shows location popup for direct 
+* center deposits, and manages form state within a multi-step form flow.
+* Fetches pickup types from MDMS and conditionally disables navigation.
+*/
+
 const RequestPickup = ({ t, config, onSelect, userType, formData }) => {
   const [requestType, setRequestType] = useState(formData?.requestType?.requestType || "");
   const [showLocationPopup, setShowLocationPopup] = useState(false);

@@ -41,8 +41,11 @@ const componentsToRegister = {
   };
 
   // Parent component of module
-  export const CNDModule = ({ userType, tenants }) => {
+  export const CNDModule = ({stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
+    const moduleCode = "CND";
+    const language = Digit.StoreData.getCurrentLanguage();
+    const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
     addComponentsToRegistry();
     Digit.SessionStorage.set("CND_TENANTS", tenants);
     useEffect(

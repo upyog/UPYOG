@@ -80,7 +80,7 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(wasteType?.wasteQuantity))}`}
           />:null}
           </StatusTable>
-          <CardSubHeader>{t("ES_TITILE_OWNER_DETAILS")}</CardSubHeader>
+          <CardSubHeader>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("COMMON_APPLICANT_NAME")}
@@ -101,7 +101,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           />
           </StatusTable>
          
-          <CardSubHeader>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
+          <CardSubHeader>{t("ADDRESS_DEATILS")}</CardSubHeader>
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("HOUSE_NO")}

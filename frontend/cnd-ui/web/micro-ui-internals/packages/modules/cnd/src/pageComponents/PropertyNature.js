@@ -3,6 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { CND_VARIABLES } from "../utils";
 
+
+/**
+* PropertyNature component for collecting property details including house area,
+* construction period, and property usage type. Part of a multi-step form that
+* handles form validation, data persistence, and API calls to fetch property usage types.
+*/
 const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
   let validation = {};
   const { control } = useForm();
