@@ -48,7 +48,9 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 		BankBranch bankBranch = BankBranch.builder().id(rs.getString("ebbid")).bank(mapBank(rs))
 				.code(rs.getString("ebbcode")).name(rs.getString("ebbname")).address(rs.getString("ebbaddress"))
 				.address2(rs.getString("ebbaddress2")).city(rs.getString("ebbcity")).state(rs.getString("ebbstate"))
-				.pincode(rs.getString("ebbpincode")).active(rs.getBoolean("ebbactive")).build();
+				.pincode(rs.getString("ebbpincode"))
+				.phone(rs.getString("ebbphone"))
+				.active(rs.getBoolean("ebbactive")).build();
 
 		bankBranch.setTenantId(rs.getString("ebbtenantid"));
 
@@ -57,6 +59,8 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 
 	private Bank mapBank(ResultSet rs) throws SQLException {
 		Bank bank = Bank.builder().id(rs.getString("ebbbankid")).build();
+
+		bank.setTenantId(rs.getString("ebtenantid"));
 
 		return bank;
 	}
