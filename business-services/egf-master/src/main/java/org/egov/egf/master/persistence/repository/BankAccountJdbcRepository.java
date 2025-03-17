@@ -54,6 +54,7 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 
 		String searchQuery = "select :selectfields from egf_bankaccount eba join egf_bankbranch ebb on eba.bankbranchid = ebb.id "
 				+ "join egf_fund ef on eba.fundid = ef.id join egf_chartofaccount ec on eba.chartofaccountid = ec.id "
+				+ "join egf_bank eb on ebb.bankid = eb.id"
 				+ ":condition  :orderby   ";
 
 		Map<String, Object> paramValues = new HashMap<>();
@@ -71,10 +72,12 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 
 //		searchQuery = searchQuery.replace(":tablename", BankAccountEntity.TABLE_NAME);
 
-		searchQuery = searchQuery.replace(":selectfields", " eba.* , ebb.id ebbid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, "
-				+ "ebb.address2 ebbaddress2, ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.bankid ebbbankid, ebb.active ebbactive, "
-				+ "ebb.tenantid ebbtenantid, "
+		searchQuery = searchQuery.replace(":selectfields", " eba.*, "
+				+ "ebb.id ebbid, ebb.bankid ebbbankid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, ebb.address2 ebbaddress2, "
+				+ "ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.phone ebbphone"
+				+ "ebb.active ebbactive, ebb.tenantid ebbtenantid, "
 				+ "ef.tenantid eftenantid, "
+				+ "eb.tenantid ebtenantid, "
 				+ "ec.tenantid ectenantid ");
 
 		// implement jdbc specfic search

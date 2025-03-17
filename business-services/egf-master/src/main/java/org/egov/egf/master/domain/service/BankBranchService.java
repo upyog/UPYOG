@@ -114,15 +114,15 @@ public class BankBranchService {
                             if (bankBranch.getId() == null) {
                                 throw new InvalidDataException("id", ErrorCode.MANDATORY_VALUE_MISSING.getCode(), bankBranch.getId());
                             }
-                            validator.validate(bankBranch, errors);
-                            if (!bankBranchRepository.uniqueCheck("name", bankBranch)) {
-                                errors.addError(new FieldError("bankBranch", "name", bankBranch.getName(), false,
-                                        new String[] { ErrorCode.NON_UNIQUE_VALUE.getCode() }, null, null));
-                            }
-                            if (!bankBranchRepository.uniqueCheck("code", bankBranch)) {
-                                errors.addError(new FieldError("bankBranch", "code", bankBranch.getCode(), false,
-                                        new String[] { ErrorCode.NON_UNIQUE_VALUE.getCode() }, null, null));
-                            }
+//                            validator.validate(bankBranch, errors);
+//                            if (!bankBranchRepository.uniqueCheck("name", bankBranch)) {
+//                                errors.addError(new FieldError("bankBranch", "name", bankBranch.getName(), false,
+//                                        new String[] { ErrorCode.NON_UNIQUE_VALUE.getCode() }, null, null));
+//                            }
+//                            if (!bankBranchRepository.uniqueCheck("code", bankBranch)) {
+//                                errors.addError(new FieldError("bankBranch", "code", bankBranch.getCode(), false,
+//                                        new String[] { ErrorCode.NON_UNIQUE_VALUE.getCode() }, null, null));
+//                            }
                         }
                         break;
                     case Constants.ACTION_SEARCH:
