@@ -74,7 +74,7 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 
 		searchQuery = searchQuery.replace(":selectfields", " eba.*, "
 				+ "ebb.id ebbid, ebb.bankid ebbbankid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, ebb.address2 ebbaddress2, "
-				+ "ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.phone ebbphone"
+				+ "ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.phone ebbphone, "
 				+ "ebb.active ebbactive, ebb.tenantid ebbtenantid, "
 				+ "ef.tenantid eftenantid, "
 				+ "eb.tenantid ebtenantid, "
