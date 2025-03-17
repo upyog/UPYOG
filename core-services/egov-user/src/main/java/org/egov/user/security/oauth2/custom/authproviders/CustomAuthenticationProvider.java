@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -72,6 +73,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private HttpServletRequest request;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public CustomAuthenticationProvider(UserService userService) {
 		this.userService = userService;
@@ -179,7 +183,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		} else {
 			// Handle failed login attempt
 			// Fetch Real IP after being forwarded by reverse proxy
-			
+			restTemplate.delete(uuid);
 			userService.handleFailedLogin(user, request.getHeader(IP_HEADER_NAME), requestInfo);
 			userService.userLoginFaliedAuditReport(user,request,"FAILED");
 
