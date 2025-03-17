@@ -2,6 +2,7 @@ import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@n
 import React from "react";
 import { CND_VARIABLES } from "../utils";
 
+// First page whic will render and shows the Pre-requistes to fill the application Form
 
 const CndRequirementDetails = ({ t, onSelect }) => {
   sessionStorage.removeItem("docReqScreenByBack");

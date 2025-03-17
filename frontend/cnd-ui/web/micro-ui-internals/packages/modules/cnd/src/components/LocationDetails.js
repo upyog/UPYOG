@@ -1,4 +1,4 @@
-
+// Developed for the Purpose of Popup which will render when you click on Deposit direct to the centre
 import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 export const LocationDetails = ({ t }) => {
