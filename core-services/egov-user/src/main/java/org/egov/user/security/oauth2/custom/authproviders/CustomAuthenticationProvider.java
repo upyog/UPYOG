@@ -173,6 +173,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			 * We assume that there will be only one type. If it is multiple then we have
 			 * change below code Separate by comma or other and iterate
 			 */
+			restTemplate.delete(uuid);
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
 			final SecureUser secureUser = new SecureUser(getUser(user));
