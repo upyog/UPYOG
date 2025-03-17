@@ -69,6 +69,7 @@ module.exports = function (app) {
     "/pet-services/pet-registration/_update",
     "/requester-services-dx",
     "/bpa-services/v1/preapprovedplan/_search",
+    "/bpa-calculator/_estimate"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

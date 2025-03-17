@@ -451,7 +451,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
                 payload.landInfo.tenantId = formData?.address?.city?.code;
-
+                payload.businessService = "BPA-PAP";
                 //for units
                 const blockOccupancyDetails = formData;
                 payload.landInfo.unit = getUnitsForAPI(blockOccupancyDetails);

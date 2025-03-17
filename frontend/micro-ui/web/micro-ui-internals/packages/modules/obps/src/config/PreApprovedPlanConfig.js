@@ -74,7 +74,7 @@ export const newConfig = [
         {
           route: "document-details",
           component: "DocumentDetails",
-          nextStep: null,
+          nextStep: "noc-details",
           key: "documents",
           texts: {
             headerCaption: "BPA_OWNER_AND_DOCUMENT_DETAILS_LABEL",
@@ -82,6 +82,18 @@ export const newConfig = [
             submitBarLabel: "CS_COMMON_NEXT",
           }
         },
+        {
+          route: "noc-details",
+          component: "NOCDetails",
+          nextStep: null,
+          key: "nocDocuments",
+          texts: {
+            headerCaption: "BPA_NOC_DETAILS_SUMMARY",
+            header: "",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
+          }
+        }
         
         
 

@@ -83,10 +83,7 @@ const OBPSLinks = ({ matchPath, userType }) => {
   const { t } = useTranslation();
 
   const links = [
-    {
-      link: `${matchPath}/bpastakeholder-citizen/preApprovedPlanDetails`,
-      i18nKey: t("BPA_CITIZEN_HOME_PRE_APPROVED_PLAN_DETAILS"),
-    },
+    
     {
       link: `${matchPath}/stakeholder/apply/stakeholder-docs-required`,
       i18nKey: t("BPA_CITIZEN_HOME_STAKEHOLDER_LOGIN_LABEL"),

@@ -1,26 +1,30 @@
-import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon, DisplayPhotos, Row, ImageViewer, StatusTable, Header } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon,  Row, ImageViewer, StatusTable, Header, SubmitBar } from "@upyog/digit-ui-react-components";
+import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos";
 import React, { useEffect, useState } from "react";
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 import  usePreApprovedSearch  from "../../../../libraries/src/hooks/obps/usePreApprovedSearch";
 const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
+    console.log("formdata55", formData)
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [isPlanApproved, setIsPlanApproved] = useState();
-  const [landStatus, setLandStatus] = useState();
-  const [projectComponent, setProjectComponent] = useState();
+  const [isPlanApproved, setIsPlanApproved] = useState(formData?.isPlanApproved || "");
+  const [landStatus, setLandStatus] = useState(formData?.landStatus||"");
+  const [projectComponent, setProjectComponent] = useState(formData?.projectComponent);
   //const [lengthOfPlot, setLengthOfPlot] = useState();
-  const [lengthInFeet, setLengthInFeet] = useState();
+  const [lengthInFeet, setLengthInFeet] = useState(formData?.lengthInFeet||"");
   const [lengthInInches, setLengthInInches] = useState();
   //const [widthOfPlot, setWidthOfPlot] = useState();
-  const [widthInFeet, setWidthInFeet] = useState();
+  const [widthInFeet, setWidthInFeet] = useState(formData?.widthInFeet||"");
   const [widthInInches, setWidthInInches] = useState();
-  const [abuttingRoadWidth, setAbuttingRoadWidth] = useState();
-  //const [preApprovedResponse, setPreApprovedResponse] = useState();
+  const [abuttingRoadWidth, setAbuttingRoadWidth] = useState(formData?.abuttingRoadWidth);
+  const [preApprovedResponse, setPreApprovedResponse] = useState();
   const [error, setError] = useState();
   const [imageZoom, setImageZoom] = useState(null);
   const [mandatoryFieldsError, setMandatoryFiledsError] = useState();
   const [imagesToShowBelowComplaintDetails, setImagesToShowBelowComplaintDetails] = useState();
+
   const [selectedPlot, setSelectedPlot] = useState();
   const [estimate, setEstimate] = useState();
+  console.log("eeeee", estimate)
   let plotImage = "https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/plotImage.png"
   
   const planArrpovedOptione = [
@@ -39,10 +43,35 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     { code: "OTHERS", key: "Others" },
   ];
   const [searchData, setSearchData] = useState(null); 
-  console.log("searchDayta", searchData)
   //const [searchResults, setSearchResults] = useState(null); 
-  const preApprovedResponse = usePreApprovedSearch(searchData, {enabled:true});
-  console.log("prrrrrr", preApprovedResponse)
+  const getPreApprovedPlanDetails = async() => {
+    const data = { 
+      plotLengthInFeet: lengthInInches ? parseInt(lengthInFeet) + parseInt((lengthInInches * (1 / 12))) : parseInt(lengthInFeet), 
+      plotWidthInFeet: widthInInches ? parseInt(widthInFeet) + parseInt((widthInInches * (1 / 12))) : parseInt(widthInFeet), 
+      roadWidth: abuttingRoadWidth 
+    };
+
+    if (!lengthInFeet || !widthInFeet || !abuttingRoadWidth) {
+      setMandatoryFiledsError(t("PLEASE_FILL_MANDATORY_DETAILS"));
+    } else {
+        const preApprovedResponses=await PreApprovedPlanService.search(data);
+        setPreApprovedResponse(preApprovedResponses);
+        setMandatoryFiledsError("");
+    }
+  };
+  useEffect(async () => {
+    if (preApprovedResponse?.preapprovedPlan.length>0) {
+      const fileStoreIds = preApprovedResponse?.preapprovedPlan.flatMap(item =>
+        item.documents
+          .filter(doc => doc?.additionalDetails?.fileName?.includes(".jpg"))
+          .map(doc => doc?.fileStoreId)
+      );
+       const thumbnails = fileStoreIds ? await getThumbnails(fileStoreIds, tenantId) : null;
+       
+      setImagesToShowBelowComplaintDetails(thumbnails);
+    }
+  }, [preApprovedResponse]);
+
   const clearForm = () => {
     setIsPlanApproved(null);
     setLandStatus(null);
@@ -65,37 +94,13 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   }, [isPlanApproved, landStatus, projectComponent]);
 
   const handleInputChange = (setter) => (e) => setter(e.target.value);
-  const getPreApprovedPlanDetails = () => {
-    const data = { 
-      plotLengthInFeet: lengthInInches ? parseInt(lengthInFeet) + parseInt((lengthInInches * (1 / 12))) : parseInt(lengthInFeet), 
-      plotWidthInFeet: widthInInches ? parseInt(widthInFeet) + parseInt((widthInInches * (1 / 12))) : parseInt(widthInFeet), 
-      roadWidth: abuttingRoadWidth 
-    };
-
-    if (!lengthInFeet || !widthInFeet || !abuttingRoadWidth) {
-      setMandatoryFiledsError(t("PLEASE_FILL_MANDATORY_DETAILS"));
-    } else {
-      setSearchData(data); 
-      setMandatoryFiledsError("");
-    }
-  };
-  useEffect(() => {
-    if (preApprovedResponse?.data!==undefined) {
-      const fileStoreIds = preApprovedResponse?.preapprovedPlan.flatMap(item =>
-        item.documents
-          .filter(doc => doc?.additionalDetails?.title?.includes("IMAGE"))
-          .map(doc => doc?.fileStoreId)
-      );
-      const thumbnails = fileStoreIds ? getThumbnails(fileStoreIds, tenantId) : null;
-      setImagesToShowBelowComplaintDetails(thumbnails);
-    }
-  }, [preApprovedResponse]);
+  
 
   const handleNext = () => {
     formData.selectedPlot=selectedPlot;
     formData.estimate=estimate;
-    formData.lengthOfPlot=parseInt(lengthInFeet)+parseInt(lengthInInches*(1/12));
-    formData.widthOfPlot=parseInt(widthInFeet)+parseInt(widthInInches*(1/12));
+    formData.lengthInFeet=lengthInFeet;
+    formData.widthInFeet=widthInFeet;
     formData.isPlanApproved=isPlanApproved;
     formData.landStatus=landStatus;
     formData.projectComponent=projectComponent;
@@ -105,33 +110,17 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   const onSkip = () => {
     clearForm();
 };
-  const getThumbnails =  (ids, tenantId) => {
-    console.log("inside get thumb nails")
-    //const res =  Digit.UploadServices.Filefetch(ids, tenantId);
-    const res = {
-        "5c1d7695-61d4-424e-a04a-6a1f5dd1880f": "https://sujog-dev.odisha.gov.in/filestore/v1/files/id?fileStoreId=5c1d7695-61d4-424e-a04a-6a1f5dd1880f&tenantId=od",
-        "fileStoreIds": [
-            {
-                "id": "5c1d7695-61d4-424e-a04a-6a1f5dd1880f",
-                "url": "https://sujog-dev.odisha.gov.in/filestore/v1/files/id?fileStoreId=5c1d7695-61d4-424e-a04a-6a1f5dd1880f&tenantId=od",
-                "localUrl": "http://egov-filestore:8080/filestore/v1/files/id?fileStoreId=5c1d7695-61d4-424e-a04a-6a1f5dd1880f&tenantId=od"
-            },
-            {
-                "id": "0cdc6c13-a753-4a63-a068-82d4d70d7d61",
-                "url": "https://sujog-dev.odisha.gov.in/filestore/v1/files/id?fileStoreId=0cdc6c13-a753-4a63-a068-82d4d70d7d61&tenantId=od",
-                "localUrl": "http://egov-filestore:8080/filestore/v1/files/id?fileStoreId=0cdc6c13-a753-4a63-a068-82d4d70d7d61&tenantId=od"
-                
-            }
-        ]
-    }
-    if (res.fileStoreIds && res.fileStoreIds.length !== 0) {
+  const getThumbnails =  async(ids, tenantId) => {
+    const res =  await Digit.UploadServices.Filefetch(ids, tenantId);
+    if (res.data.fileStoreIds && res.data.fileStoreIds.length !== 0) {
         return { 
-            thumbs: res.fileStoreIds.map(o => o.url), 
-            fullImage: res.fileStoreIds.map(o => Digit.Utils.getFileUrl(o.url)) 
+            fileStore:res.data.fileStoreIds.map(o=>o.id),
+            thumbs: res.data.fileStoreIds.map(o => o.url), 
+            fullImage: res.data.fileStoreIds.map(o => Digit.Utils.getFileUrl(o.url)) 
         };
-    } else {
-      return null;
-    }
+      } else {
+        return null;
+      }
   };
 const getDetailsRow = (estimateDetails) => {
     return (
@@ -154,10 +143,11 @@ const getDetailsRow = (estimateDetails) => {
     setImageZoom(imageSource);
   }
   function zoomImageWrapper(imageSource, index){
+    
     //if(imageSource.includes("small")){
       zoomImage(imagesToShowBelowComplaintDetails?.fullImage[index]);
       const selectedObject = preApprovedResponse?.preapprovedPlan.find(obj => {
-        return obj.documents.some(doc => doc.additionalDetails?.fileUrl === imagesToShowBelowComplaintDetails?.fullImage[index]);
+        return obj.documents.some(doc => doc?.fileStoreId === imagesToShowBelowComplaintDetails?.fileStore[index]);
     });
     setSelectedPlot(selectedObject)
     estimateData(selectedObject);
@@ -168,25 +158,26 @@ const getDetailsRow = (estimateDetails) => {
     //   setEstimate(estimateResponse);
     // }   
   }
-  function estimateData(selectedObject){
+  const estimateData=async(selectedObject)=>{
     const CalulationCriteria = [
       {
           "BPA": {
               "edcrNumber": selectedObject?.drawingNo,
               "riskType": "LOW",
-              "businessService": "BPA6",
+              "businessService": "BPA-PAP",
               "applicationType": "BUILDING_PLAN_SCRUTINY",
               "serviceType": "NEW_CONSTRUCTION",
-              "tenantId": tenantId
+              "tenantId": "pg.citya"
           },
           "applicationNo": "",
           "feeType": "ApplicationFee",
-          "tenantId": tenantId,
+          "tenantId": "pg.citya",
           "applicationType": "BUILDING_PLAN_SCRUTINY",
           "serviceType": "NEW_CONSTRUCTION"
       }
   ]
-  const estimateResponse = PreApprovedPlanService.estimate({CalulationCriteria:CalulationCriteria})
+  const estimateResponse = await PreApprovedPlanService.estimate({CalulationCriteria:CalulationCriteria})
+  console.log("estimateRes", estimateResponse)
 
 setEstimate(estimateResponse)
   }
@@ -194,39 +185,6 @@ setEstimate(estimateResponse)
   function onCloseImageZoom() {
     setImageZoom(null);
   }
-//   const getPreApprovedPlanDetails =()=> {
-//     console.log("clicked")
-//     const data = { plotLengthInFeet: lengthInInches ? parseInt(lengthInFeet)+parseInt((lengthInInches*(1/12))): parseInt(lengthInFeet), plotWidthInFeet: widthInInches ? parseInt(widthInFeet)+parseInt((widthInInches*(1/12))): parseInt(widthInFeet), roadWidth: abuttingRoadWidth };
-//     if(!lengthInFeet || !widthInFeet || !abuttingRoadWidth){
-//       setMandatoryFiledsError(t("PLEASE_FILL_MANDATORY_DETAILS"));
-//     }else{
-//         setSearchData(data);
-//       setMandatoryFiledsError("")
-    
-//     //setPreApprovedResponse(preApprovedResponses);
-//     //   const filestoreids = preApprovedResponse?.preapprovedPlan.flatMap(item => 
-//     //   item.documents
-//     //     .filter(doc => doc?.additionalDetails?.title?.includes("IMAGE"))
-//     //     .map(doc => doc?.fileStoreId)
-//     //   );
-//     //   console.log("fileStoreids", filestoreids)
-//     //   const thumbnails = filestoreids ?  getThumbnails(filestoreids,tenantId) : null;
-//     //   setImagesToShowBelowComplaintDetails(thumbnails)  
-//     }
-//     useEffect(() => {
-//         if (preApprovedResponse) {
-//           const fileStoreIds = preApprovedResponse?.preapprovedPlan.flatMap(item =>
-//             item.documents
-//               .filter(doc => doc?.additionalDetails?.title?.includes("IMAGE"))
-//               .map(doc => doc?.fileStoreId)
-//           );
-    
-//           const thumbnails = fileStoreIds ? getThumbnails(fileStoreIds, tenantId) : null;
-//           setImagesToShowBelowComplaintDetails(thumbnails);
-//         }
-//       }, [preApprovedResponse]);
-    
-//   };
 
   return (
     <div>
@@ -319,8 +277,8 @@ setEstimate(estimateResponse)
                 value={abuttingRoadWidth || ''}
                 onChange={handleInputChange(setAbuttingRoadWidth)}
               />
-              <div style={{ position: "relative", marginTop: "-40px", marginLeft: "500px" }} onClick={getPreApprovedPlanDetails}>
-                <SearchIcon />
+              <div style={{ marginTop: "10px"}}>
+               <SubmitBar label={t("SEARCH")}  onSubmit={getPreApprovedPlanDetails} disabled={!lengthInFeet || ! widthInFeet || !abuttingRoadWidth}/> 
               </div>
             </React.Fragment>
           )}

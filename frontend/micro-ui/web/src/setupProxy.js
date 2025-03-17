@@ -25,6 +25,7 @@ module.exports = function (app) {
     "/fsm-calculator/v1/billingSlab/_search",
     "/requester-services-dx",
     "/bpa-services/v1/preapprovedplan/_search",
+    "/bpa-calculator/_estimate"
   ].forEach((location) =>
     app.use(location, createProxy)
   );

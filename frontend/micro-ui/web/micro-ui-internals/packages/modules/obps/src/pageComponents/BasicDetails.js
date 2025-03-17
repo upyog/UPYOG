@@ -70,7 +70,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       scrutinyNumber,
       applicantName: basicData?.planDetail?.planInformation?.applicantName || user,
       occupancyType: basicData?.planDetail?.planInformation?.occupancy || basicData?.drawingDetail?.occupancy,
-      applicationType: basicData?.appliactionType | `WF_BPA_${basicData?.appliactionType}`,
+      applicationType: basicData?.drawingDetail?.applicationType||basicData?.appliactionType,
       serviceType: basicData?.applicationSubType || basicData?.drawingDetail?.serviceType,
       applicationDate: basicData?.applicationDate,
       riskType: Digit.Utils.obps.calculateRiskType(

@@ -29,6 +29,13 @@ const PreApprovedPlan=()=>{
     redirectWithHistory(`${path}/${nextStep}`);
 
   }
+  const onSuccess = () => {
+    //clearParams();
+    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+  };
+  const createApplication = async () => {
+    history.push(`${path}/acknowledgement`);
+  };
   const handleSelect = (key, data, skipStep, isFromCreateApi) => {
     console.log("dataaa", data)
     if (isFromCreateApi) setParams(data);
@@ -47,6 +54,8 @@ const PreApprovedPlan=()=>{
 
   config.indexRoute = "preApprovedPlanDetails";
   console.log("configgg", config)
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent('BPACheckPage') ;
+  const OBPSAcknowledgement = Digit?.ComponentRegistryService?.getComponent('BPAAcknowledgement');
   
   // const handleSelect=()=>{
   //   //goNext();
@@ -58,12 +67,20 @@ const PreApprovedPlan=()=>{
             const { component, texts, inputs, key } = routeObj;
             const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
             console.log("componentttt", Component)
+            console.log("routeobj", routeObj.route)
             return (
               <Route path={`${path}/${routeObj.route}`} key={index}>
               <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} isShowToast={isShowToast} isSubmitBtnDisable={isSubmitBtnDisable} setIsShowToast={setIsShowToast}/>
               </Route>
+              
             );
           })}
+          <Route path={`${path}/check`}>
+        <CheckPage onSubmit={createApplication} value={params} />
+      </Route>
+      <Route path={`${path}/acknowledgement`}>
+        <OBPSAcknowledgement data={params} onSuccess={onSuccess} />
+      </Route>
         </Switch>
 
         
