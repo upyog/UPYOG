@@ -33,7 +33,7 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 	public BankAccountJdbcRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 	}
-	
+
 	@Autowired
 	private BankAccountsRowMapper bankAccountsRowMapper;
 
@@ -54,8 +54,7 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 
 		String searchQuery = "select :selectfields from egf_bankaccount eba join egf_bankbranch ebb on eba.bankbranchid = ebb.id "
 				+ "join egf_fund ef on eba.fundid = ef.id join egf_chartofaccount ec on eba.chartofaccountid = ec.id "
-				+ "join egf_bank eb on ebb.bankid = eb.id"
-				+ ":condition  :orderby   ";
+				+ "join egf_bank eb on ebb.bankid = eb.id" + ":condition  :orderby   ";
 
 		Map<String, Object> paramValues = new HashMap<>();
 		StringBuffer params = new StringBuffer();
@@ -74,10 +73,11 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 
 		searchQuery = searchQuery.replace(":selectfields", " eba.*, "
 				+ "ebb.id ebbid, ebb.bankid ebbbankid, ebb.code ebbcode, ebb.name ebbname, ebb.address ebbaddress, ebb.address2 ebbaddress2, "
-				+ "ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.phone ebbphone, "
-				+ "ebb.active ebbactive, ebb.tenantid ebbtenantid, "
+				+ "ebb.city ebbcity, ebb.state ebbstate, ebb.pincode ebbpincode, ebb.phone ebbphone, ebb.fax ebbfax, ebb.contactperson ebbcontactperson, "
+				+ "ebb.active ebbactive, ebb.description ebbdescription, ebb.micr ebbmicr, ebb.tenantid ebbtenantid, "
+				+ "ef.id efid, ef.name efname, ef.code efcode, ef.identifier efidentifier, ef.level eflevel, ef.parentid efparentid, ef.active efactive, "
 				+ "ef.tenantid eftenantid, "
-				+ "eb.tenantid ebtenantid, "
+				+ "eb.id ebid, eb.code ebcode, eb.name ebname, eb.description ebdescription, eb.active ebactive, eb.type ebtype, eb.tenantid ebtenantid, "
 				+ "ec.tenantid ectenantid ");
 
 		// implement jdbc specfic search
@@ -192,8 +192,8 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 
 //		BeanPropertyRowMapper row = new BeanPropertyRowMapper(BankAccountEntity.class);
 
-		List<BankAccount> bankAccountEntities = namedParameterJdbcTemplate.query(searchQuery.toString(),
-				paramValues, bankAccountsRowMapper);
+		List<BankAccount> bankAccountEntities = namedParameterJdbcTemplate.query(searchQuery.toString(), paramValues,
+				bankAccountsRowMapper);
 
 		page.setTotalResults(bankAccountEntities.size());
 
