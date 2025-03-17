@@ -151,7 +151,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (action?.state === "DELIVERY_PENDING") {
       applicationData.vehicleId = selectVehicle?.vehicleId;
     };
-
+   /*  
+ * Constructs the request payload based on the business service type.  
+ * If `businessService` is "watertanker", wraps `applicationData` in `waterTankerBookingDetail`.  
+ * Otherwise, wraps it in `mobileToiletBookingDetail`.  
+ *  
+ * The payload is then passed to `submitAction` for processing.  
+ */
     let requestPayload = businessService === "watertanker"
       ? { waterTankerBookingDetail: { ...applicationData, workflow } }
       : { mobileToiletBookingDetail: { ...applicationData, workflow } };

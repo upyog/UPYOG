@@ -323,7 +323,6 @@ export const filterFunctions = {
       workflowFilters.businessService = services;
     }
 
-    console.log("businessService",services);
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "request-service.mobile_toilet";
