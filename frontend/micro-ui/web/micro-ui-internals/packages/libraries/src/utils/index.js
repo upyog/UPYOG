@@ -250,6 +250,14 @@ const wtAccess = () => {
   return WT_ACCESS?.length > 0;
 };
 
+const mtAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const mtRoles = ["MT_CEMP","MT_VENDOR"];
+  const MT_ACCESS = userRoles?.filter((role) => mtRoles?.includes(role));
+  return MT_ACCESS?.length > 0;
+};
+
 const ptrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   
@@ -380,6 +388,7 @@ export default {
   chbAccess,
   adsAccess,
   wtAccess,
+  mtAccess,
   ewAccess,
   svAccess,
   vendorAccess,

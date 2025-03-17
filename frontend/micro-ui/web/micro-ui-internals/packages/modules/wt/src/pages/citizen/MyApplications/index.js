@@ -36,9 +36,9 @@ export const WTMyApplications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
   const [filters, setFilters] = useState(null);
-  const [serviceType, setServiceType] = useState("waterTanker"); // `serviceType` stores the actual service type used in API calls and updates only when the search button is clicked.
+  const [serviceType, setServiceType] = useState("watertanker"); // `serviceType` stores the actual service type used in API calls and updates only when the search button is clicked.
 
-  const [tempServiceType, setTempServiceType] = useState("waterTanker"); // Temporary state
+  const [tempServiceType, setTempServiceType] = useState("watertanker"); // Temporary state
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -59,7 +59,7 @@ export const WTMyApplications = () => {
   }, [filter]);
 
   // The API call depends on `serviceType`, fetching data accordingly.
-  const { isLoading: isLoadingTanker, data: dataTanker } = serviceType === "waterTanker"? Digit.Hooks.wt.useTankerSearchAPI({ filters }): { isLoading: false, data: null };
+  const { isLoading: isLoadingTanker, data: dataTanker } = serviceType === "watertanker"? Digit.Hooks.wt.useTankerSearchAPI({ filters }): { isLoading: false, data: null };
 
   const { isLoading: isLoadingToilet, data: dataToilet } = serviceType === "mobileToilet" ? Digit.Hooks.wt.useMobileToiletSearchAPI({ filters }) : { isLoading: false, data: null };
 
@@ -87,7 +87,7 @@ export const WTMyApplications = () => {
 
   const serviceOptions = [
     { label: t("MOBILE_TOILET"), code: "mobileToilet" },
-    { label: t("WATER_TANKER"), code: "waterTanker" },
+    { label: t("WATER_TANKER"), code: "watertanker" },
   ];
 
   const statusOptions = [

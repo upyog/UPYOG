@@ -152,15 +152,11 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       applicationData.vehicleId = selectVehicle?.vehicleId;
     };
 
-    submitAction({
-        waterTankerBookingDetail: 
-          {
-        ...applicationData,
-        workflow,
-      },
-    });
-   
-  }
+    let requestPayload = businessService === "watertanker"
+      ? { waterTankerBookingDetail: { ...applicationData, workflow } }
+      : { mobileToiletBookingDetail: { ...applicationData, workflow } };
+     submitAction(requestPayload);
+      }
 
   useEffect(() => {
     if (action) {

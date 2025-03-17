@@ -6,9 +6,10 @@ import WFCaption from "./WFCaption";
 
 // This component WFApplicationTimeline displays the timeline of an application process.
 const WFApplicationTimeline = (props) => {
-  
+  let bookingCode=props?.application?.bookingNo.split("-")[0]; // for selecting the Module code from booking number
   const { t } = useTranslation();
-  const businessService = "watertanker";
+  const businessService = bookingCode=="WT" ? "watertanker" : "mobileToilet"; // for selecting the Module code from booking number
+  const moduleName = bookingCode=="WT" ? "request-service.water_tanker" : "request-service.mobile_toilet"; // for selecting the Module code from booking number
   
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
@@ -64,7 +65,7 @@ const WFApplicationTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/request-service/${props?.application?.bookingNo}`, state: { tenantId: props.application.tenantId, bookingNo : props?.application?.bookingNo } }}
+              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${moduleName}/${props?.application?.bookingNo}`, state: { tenantId: props.application.tenantId, bookingNo : props?.application?.bookingNo } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
