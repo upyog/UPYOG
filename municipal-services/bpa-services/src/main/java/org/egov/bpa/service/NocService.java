@@ -252,7 +252,7 @@ public class NocService {
 		BPA bpa = bpaRequest.getBPA();
 		String businessServices = bpaRequest.getBPA().getBusinessService(); 
 		Map<String, String> edcrResponse = new HashMap<>();
-		if (StringUtils.isNotEmpty(businessServices) && "BPA6-PAP".equals(businessServices)) {
+		if (StringUtils.isNotEmpty(businessServices) &&  BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessServices)) {
 			//System.out.println("inside this");
 			edcrResponse = edcrService.getEdcrDetailsForPreapprovedPlan(edcrResponse,bpaRequest);
 		} else {
