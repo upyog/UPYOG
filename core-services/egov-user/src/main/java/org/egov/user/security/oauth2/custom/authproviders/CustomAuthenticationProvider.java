@@ -173,6 +173,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			 * We assume that there will be only one type. If it is multiple then we have
 			 * change below code Separate by comma or other and iterate
 			 */
+			//System.out.println("uuid password valid::"+uuid);
+			//restTemplate.delete(uuid);
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
 			final SecureUser secureUser = new SecureUser(getUser(user));
@@ -183,7 +185,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		} else {
 			// Handle failed login attempt
 			// Fetch Real IP after being forwarded by reverse proxy
-			restTemplate.delete(uuid);
+			//System.out.println("uuid password invalid::"+uuid);
+			//restTemplate.delete(uuid);
 			userService.handleFailedLogin(user, request.getHeader(IP_HEADER_NAME), requestInfo);
 			userService.userLoginFaliedAuditReport(user,request,"FAILED");
 
