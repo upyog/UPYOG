@@ -1,15 +1,17 @@
 package org.upyog.cdwm.web.models;
 
-import digit.models.coremodels.AuditDetails;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import javax.validation.Valid;
+
+import digit.models.coremodels.AuditDetails;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Valid
 @Getter
@@ -37,6 +39,8 @@ public class CNDApplicationDetail {
     private String location;
     
     private String wasteType;
+    
+    private String vehicleType;
     
     private Integer quantity;
 

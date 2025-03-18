@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.upyog.cdwm.web.models.CNDApplicationDetail;
 
+import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -79,11 +81,11 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 }
 
                 // Special handling for WaterTankerBookingDetail
-            /*    if (instance instanceof CNDApplicationDetail) {
-                    WaterTankerBookingDetail bookingDetail = (WaterTankerBookingDetail) instance;
+                if (instance instanceof CNDApplicationDetail) {
+                    CNDApplicationDetail applicationDetail = (CNDApplicationDetail) instance;
 
                     // Applicant Details
-                    ApplicantDetail applicantDetail = new ApplicantDetail();
+                   /* ApplicantDetail applicantDetail = new ApplicantDetail();
                     applicantDetail.setName(rs.getString("name"));
                     applicantDetail.setMobileNumber(rs.getString("mobile_number"));
                     applicantDetail.setGender(rs.getString("gender"));
@@ -104,15 +106,17 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                     address.setLocalityCode(rs.getString("locality_code"));
                     address.setPincode(rs.getString("pincode"));
                     bookingDetail.setAddress(address);
+                    
+                    */
 
                     // Audit Details
                     AuditDetails auditDetails = new AuditDetails();
-                    auditDetails.setCreatedBy(rs.getString("createdby"));
-                    auditDetails.setCreatedTime(rs.getLong("createdtime"));
-                    auditDetails.setLastModifiedBy(rs.getString("lastModifiedby"));
-                    auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
-                    bookingDetail.setAuditDetails(auditDetails);
-                } */
+                    auditDetails.setCreatedBy(rs.getString("created_by"));
+                    auditDetails.setCreatedTime(rs.getLong("created_time"));
+                    auditDetails.setLastModifiedBy(rs.getString("last_modified_by"));
+                    auditDetails.setLastModifiedTime(rs.getLong("last_modified_time"));
+                    applicationDetail.setAuditDetails(auditDetails);
+                } 
                 results.add(instance);
             }
 

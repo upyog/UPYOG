@@ -20,7 +20,7 @@ public class CNDServiceQueryBuilder {
 
     // Base query for fetching application details
     private static final String APPLICATION_DETAILS_SEARCH_QUERY = 
-        "SELECT ucad.application_id, application_number, application_type, type_of_construction, deposit_centre_details, " +
+        "SELECT ucad.application_id, application_number, application_type, vehicle_type, type_of_construction, deposit_centre_details, " +
         "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
         "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, vehicle_id, " +
         "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
