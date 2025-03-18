@@ -168,7 +168,7 @@ public class WorkflowService {
 			processInstance.setAction(RequestServiceConstants.ACTION_PAY);
 			processInstance.setModuleName(configs.getMtModuleName());
 			processInstance.setTenantId(paymentRequest.getPayment().getTenantId());
-			processInstance.setBusinessService(configs.getBusinessServiceName());
+			processInstance.setBusinessService(configs.getMobileToiletBusinessService());
 			processInstance.setDocuments(null);
 			processInstance.setComment(null);
 			processInstance.setAssignes(null);

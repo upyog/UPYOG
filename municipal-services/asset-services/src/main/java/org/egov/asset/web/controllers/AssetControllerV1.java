@@ -8,14 +8,8 @@ import org.egov.asset.service.AssetCalculationClient;
 import org.egov.asset.service.AssetDisposeService;
 import org.egov.asset.service.AssetService;
 import org.egov.asset.util.ResponseInfoFactory;
-import org.egov.asset.web.models.Asset;
-import org.egov.asset.web.models.AssetRequest;
-import org.egov.asset.web.models.AssetResponse;
-import org.egov.asset.web.models.AssetSearchCriteria;
-import org.egov.asset.web.models.calcontract.CalculationReq;
-import org.egov.asset.web.models.calcontract.CalculationRes;
-import org.egov.asset.web.models.calcontract.DepreciationDetail;
-import org.egov.asset.web.models.calcontract.DepreciationRes;
+import org.egov.asset.web.models.*;
+import org.egov.asset.web.models.calcontract.*;
 import org.egov.asset.web.models.disposal.AssetDisposalRequest;
 import org.egov.asset.web.models.disposal.AssetDisposalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +99,18 @@ public class AssetControllerV1 {
         assets.add(asset);
         AssetResponse response = AssetResponse.builder().assets(assets)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(assetRequest.getRequestInfo(), true))
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "assignment/_search", method = RequestMethod.POST)
+    public ResponseEntity<AssignmentRes> v1AssetsAssignmentSearch(
+            @ApiParam(value = "Details for existing assets + RequestInfo metadata.", required = true) @Valid @RequestBody AssetRequest assetRequest) {
+        List<AssetAssignment> assetAssignmentDetails = assetService.getAssetAssignmentDetails(assetRequest.getRequestInfo().getUserInfo().getTenantId(), assetRequest.getAsset().getId());
+        AssignmentRes response = AssignmentRes.builder()
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(null, true))
+                .assetAssignments(assetAssignmentDetails)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

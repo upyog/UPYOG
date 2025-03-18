@@ -53,6 +53,11 @@ import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useSelectedMDMS from "./useSelectedMDMS";
 import useEmployeeSearch from "./useEmployeeSearch";
 import useRouteSubscription from "./useRouteSubscription";
+import useCndCreateApi from "./cnd/useCndCreateApi";
+
+const cnd ={
+  useCndCreateApi
+}
 
 const Hooks = {
   useSessionStorage,
@@ -108,7 +113,8 @@ const Hooks = {
   useAudit,
   createTokenAPI,
   useCustomBackNavigation,
-  useRouteSubscription
+  useRouteSubscription,
+  cnd
 };
 
 export default Hooks;

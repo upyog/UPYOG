@@ -39,7 +39,7 @@ public class NotificationConsumer {
 		notificationService.process(waterTankerRequest);
 	}
 
-	@KafkaListener(topics = { "${persister.update.mobile-Toilet.topic}", "${persister.create.mobile-Toilet.topic}" })
+	@KafkaListener(topics = { "${persister.update.mobile-toilet.topic}", "${persister.create.mobile-toilet.topic}" })
 	public void listens(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		MobileToiletBookingRequest mobileToiletRequest = new MobileToiletBookingRequest();

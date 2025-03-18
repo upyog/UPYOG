@@ -17,6 +17,8 @@ public class WasteTypeDetail {
     private String wasteTypeId;
 
     private String enteredByUserType;
+    
+    private String wasteType;
 
     private BigDecimal quantity;
 

@@ -33,7 +33,8 @@ import Utils from "./utils";
 import { subFormRegistry } from "./subFormRegistry";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
-import {CustomService} from "./services/elements/CustomService";    
+import {CustomService} from "./services/elements/CustomService";  
+import { CNDService } from "./services/elements/CND";  
 
 
 
@@ -82,6 +83,7 @@ const initLibraries = () => {
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
   setupLibraries("AuditService",AuditService);
+  setupLibraries("CNDService",CNDService);
 
 
   return new Promise((resolve) => {

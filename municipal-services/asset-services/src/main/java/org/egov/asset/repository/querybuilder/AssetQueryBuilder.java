@@ -78,6 +78,32 @@ public class AssetQueryBuilder {
             + "(SELECT *, DENSE_RANK() OVER (ORDER BY result.applicationno DESC) AS offset_ FROM " + "({})"
             + " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
 
+    public final String ASSIGNMENT_DETAILS =   "SELECT \n" +
+            "    details.assignmentid, \n" +
+            "    details.applicationno, \n" +
+            "    details.tenantid, \n" +
+            "    details.assignedusername, \n" +
+            "    details.designation, \n" +
+            "    details.department, \n" +
+            "    details.assigneddate, \n" +
+            "    details.returndate, \n" +
+            "    details.assetid, \n" +
+            "    details.isassigned, \n" +
+            "    details.employeecode, \n" +
+            "    history.assignedusername, \n" +
+            "    history.assigneddate, \n" +
+            "    history.returndate \n" +
+            "FROM \n" +
+            "    public.eg_asset_assignmentdetails details \n" +
+            "LEFT JOIN \n" +
+            "    public.eg_asset_assignment_history history \n" +
+            "ON \n" +
+            "    details.assetid = history.assetid \n" +
+            "WHERE \n" +
+            "    details.assetid = ? \n" +
+            "ORDER BY \n" +
+            "    history.assigneddate DESC\n";
+
     //private final String countWrapper = "SELECT COUNT(DISTINCT(bpa_id)) FROM ({INTERNAL_QUERY}) as asset_count";
 
     /**
