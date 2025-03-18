@@ -1,38 +1,32 @@
 import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Redirect, Switch, useRouteMatch } from "react-router-dom";
-
-const request_service = "/digit-ui/citizen/login"; 
+import { APPLICATION_PATH } from "../../utils";
 
 // Main Routing Page used for routing accorss the Water Tanker Module
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const WTCreate = Digit?.ComponentRegistryService?.getComponent("WTCreate");
   const WTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("WTApplicationDetails");
+  const MTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("MTApplicationDetails");
   const WTMyApplications = Digit?.ComponentRegistryService?.getComponent("WTMyApplications");
   const Inbox = Digit.ComponentRegistryService.getComponent("WTEmpInbox");
-  const InboxMT = Digit.ComponentRegistryService.getComponent("InboxMT");
   const WTCard = Digit.ComponentRegistryService.getComponent("WTCitizenCard");
   const MTCard = Digit.ComponentRegistryService.getComponent("MTCitizenCard");
-  const Mycomponent = Digit.ComponentRegistryService.getComponent("Myconponent");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
-  const inboxInitialState = {
-    searchParams: {
-      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: ["watertanker"],
-      applicationStatus: [],
-      locality: [],
-    },
-  };
 
-  const inboxInitialStateMT = {
+  const getInboxInitialState = (service) => ({
     searchParams: {
       uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: ["mobileToilet"],
+      services: [service],
       applicationStatus: [],
       locality: [],
     },
-  };
+  });
+  // Initial state for waterTanker inbox and mobileToilet inbox
+  const inboxInitialStateWT = getInboxInitialState("watertanker");
+  const inboxInitialStateMT = getInboxInitialState("mobileToilet");
+  
 
   return (
     <span style={{ width: "100%" }}>
@@ -44,25 +38,29 @@ const App = () => {
             component={() => (
               (
                 <Inbox
+                // Inbox component for waterTanker
                   useNewInboxAPI={true}
                   parentRoute={path}
+                  moduleCode="WT"
                   businessService="watertanker"
                   filterComponent="WT_INBOX_FILTER"
-                  initialStates={inboxInitialState}
+                  initialStates={inboxInitialStateWT}
                   isInbox={true}
                 />
               )
             )}
           />
-
+          
           <PrivateRoute
             path={`${path}/mt/inbox`}
             component={() => (
               (
-                <InboxMT
+                <Inbox
+                // Inbox component for mobileToilet
                   useNewInboxAPI={true}
                   parentRoute={path}
                   businessService="mobileToilet"
+                  moduleCode="MT"
                   filterComponent="WT_INBOX_FILTER"
                   initialStates={inboxInitialStateMT}
                   isInbox={true}
@@ -73,39 +71,18 @@ const App = () => {
 
           <PrivateRoute path={`${path}/request-service`} component={WTCreate} />
           <PrivateRoute path={`${path}/status`} component={WTMyApplications}></PrivateRoute>
-          <PrivateRoute path={`${path}/booking/:acknowledgementIds/:tenantId`} component={WTApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/booking/waterTanker/:acknowledgementIds/:tenantId`} component={WTApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/booking/mobileToilet/:acknowledgementIds/:tenantId`} component={MTApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/bookingsearch/booking-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute
-            path={`${path}/wt-Vendor`}
-            component={() =>
-              Digit.UserService.hasAccess(["WT_VENDOR"]) ? (
-                <WTCard parentRoute={path} />
-              ) : (
-                <Redirect
-                  to={{
-                    pathname: request_service,
-                    state: { from: `${path}/wt-Vendor`, role: "WT_VENDOR" },
-                  }}
-                />
-              )
-            }
-          />
-          <PrivateRoute
-            path={`${path}/mt-Vendor`}
-            component={() =>
-              Digit.UserService.hasAccess(["MT_VENDOR"]) ? (
-                <MTCard parentRoute={path} />
-              ) : (
-                <Redirect
-                  to={{
-                    pathname: request_service,
-                    state: { from: `${path}/mt-Vendor`, role: "MT_VENDOR" },
-                  }}
-                />
-              )
-            }
-          />
+          <PrivateRoute path={`${path}/wt-Vendor`} component={() => Digit.UserService.hasAccess(["WT_VENDOR"]) ?  <WTCard parentRoute={path} /> :<Redirect to={{
+            pathname: `${APPLICATION_PATH}/citizen/login`,
+            state: { from: `${path}/wt-Vendor`, role:"WT_VENDOR" }
+          }} />} />
+          <PrivateRoute path={`${path}/mt-Vendor`} component={() => Digit.UserService.hasAccess(["MT_VENDOR"]) ?  <MTCard parentRoute={path} /> :<Redirect to={{
+            pathname: `${APPLICATION_PATH}/citizen/login`,
+            state: { from: `${path}/mt-Vendor`, role:"MT_VENDOR" }
+          }} />} />
         </AppContainer>
       </Switch>
     </span>

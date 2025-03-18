@@ -6,12 +6,13 @@
     import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 
 /*
-    The ApplicationDetails component fetches and displays details of a water Tanker application 
-    based on a booking number from the URL parameter. It includes functionality for displaying 
-    download options like receipt and permission letter, managing workflow details, and handling 
-    PDF generation for receipts/letters. The component integrates with hooks for data fetching 
-    and mutation, and provides a UI for interacting with the application details.
-  */
+    The ApplicationDetails component fetches and displays details of an application 
+    (either Water Tanker or Mobile Toilet) based on a booking number from the URL parameter. 
+    It includes functionality for displaying download options like receipt and permission letter, 
+    managing workflow details, and handling PDF generation for receipts/letters. 
+    The component integrates with hooks for data fetching and mutation, 
+    and provides a UI for interacting with the application details.
+*/
 
     const ApplicationDetails = () => {
       const { t } = useTranslation();
@@ -22,32 +23,38 @@
       const [showToast, setShowToast] = useState(null);
       const [appDetailsToShow, setAppDetailsToShow] = useState({});
       const [showOptions, setShowOptions] = useState(false);
-      const [businessService, setBusinessService] = useState("watertanker");
-      const user = Digit.UserService.getUser().info;
-    
-      sessionStorage.setItem("wt", bookingNo);
-      const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.wt.useWTApplicationDetail(t, tenantId, bookingNo);
-      
+
+  // Determine business service dynamically
+  const isWaterTanker = bookingNo?.startsWith("WT"); // Modify condition as needed
+  const businessService = isWaterTanker ? "watertanker" : "mobileToilet";
+  const user = Digit.UserService.getUser().info;
+
+  sessionStorage.setItem(isWaterTanker ? "wt" : "mt", bookingNo);    // Store the booking number in session storage with key based on whether it's a water tanker or not
+
+      // Fetch application details based on whether it's a water tanker or not
+       const { isLoading, isError, data: applicationDetails, error } = isWaterTanker
+        ? Digit.Hooks.wt.useWTApplicationDetail(t, tenantId, bookingNo)
+        : Digit.Hooks.wt.useMTApplicationDetail(t, tenantId, bookingNo);
+
+       // Fetch application action hooks based on whether it's a water tanker or not
       const {
         isLoading: updatingApplication,
         isError: updateApplicationError,
         data: updateResponse,
         error: updateError,
         mutate,
-      } = Digit.Hooks.wt.useWTApplicationAction(tenantId);
+      } = isWaterTanker
+          ? Digit.Hooks.wt.useWTApplicationAction(tenantId)
+          : Digit.Hooks.wt.useMTApplicationAction(tenantId);
+
+      // Fetch workflow details for the application
       let workflowDetails = Digit.Hooks.useWorkflowDetails({
         tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
         id: applicationDetails?.applicationData?.applicationData?.bookingNo,
         moduleCode: businessService,
-        role: ["WT_CEMP"],
+       role: isWaterTanker ? ["WT_CEMP"] : ["MT_CEMP"],
       });
 
-      const { isLoading: auditDataLoading, isError: isAuditError, data,refetch} = Digit.Hooks.wt.useTankerSearchAPI(
-        {
-          tenantId,
-          filters: { bookingNo: bookingNo, audit: true },
-        },
-      );
 
       const closeToast = () => {
         setShowToast(null);
@@ -63,8 +70,13 @@
 
 
       useEffect(() => {
-
-        if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "watertanker" && businessService === "watertanker")) {
+        if (
+          workflowDetails?.data?.applicationBusinessService &&
+          !(
+            (workflowDetails?.data?.applicationBusinessService === "watertanker" && businessService === "watertanker") ||
+            (workflowDetails?.data?.applicationBusinessService === "mobileToilet" && businessService === "mobileToilet")
+          )
+        ) {
           setBusinessService(workflowDetails?.data?.applicationBusinessService);
         }
       }, [workflowDetails.data]);

@@ -10,6 +10,7 @@ import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
 import {WTService} from "../../services/elements/WT";
+import {MTService} from "../../services/elements/MT";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -76,6 +77,14 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.WT,
     _searchFn: () => WTService.search({ tenantId, filters }),
   },
+  MT: {
+    services: ["mobileToilet"],
+    searchResponseKey: "mobileToilerBookingDetail",
+    businessIdsParamForSearch: "bookingNo",
+    businessIdAliasForSearch: "bookingNo",
+    fetchFilters: filterFunctions.MT,
+    _searchFn: () => MTService.search({ tenantId, filters }),
+  }
 });
 
 

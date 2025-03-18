@@ -249,6 +249,14 @@ const wtAccess = () => {
   const WT_ACCESS = userRoles?.filter((role) => wtRoles?.includes(role));
   return WT_ACCESS?.length > 0;
 };
+// Checks if the user has access to MT services based on their roles, this is adding role for employee side
+const mtAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const mtRoles = ["MT_CEMP","MT_VENDOR"];
+  const MT_ACCESS = userRoles?.filter((role) => mtRoles?.includes(role));
+  return MT_ACCESS?.length > 0;
+};
 
 const ptrAccess = () => {
   const userInfo = Digit.UserService.getUser();
@@ -380,6 +388,7 @@ export default {
   chbAccess,
   adsAccess,
   wtAccess,
+  mtAccess,
   ewAccess,
   svAccess,
   vendorAccess,

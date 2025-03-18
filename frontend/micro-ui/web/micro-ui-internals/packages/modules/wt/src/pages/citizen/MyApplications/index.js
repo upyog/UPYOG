@@ -36,9 +36,9 @@ export const WTMyApplications = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
   const [filters, setFilters] = useState(null);
-  const [serviceType, setServiceType] = useState("waterTanker"); // `serviceType` stores the actual service type used in API calls and updates only when the search button is clicked.
+  const [serviceType, setServiceType] = useState("watertanker"); // `serviceType` stores the actual service type used in API calls and updates only when the search button is clicked.
 
-  const [tempServiceType, setTempServiceType] = useState("waterTanker"); // Temporary state
+  const [tempServiceType, setTempServiceType] = useState("watertanker"); // Temporary state
 
   let filter = window.location.href.split("/").pop();
   let t1;
@@ -58,15 +58,28 @@ export const WTMyApplications = () => {
     setFilters(initialFilters);
   }, [filter]);
 
-  // The API call depends on `serviceType`, fetching data accordingly.
-  const { isLoading: isLoadingTanker, data: dataTanker } = serviceType === "waterTanker"? Digit.Hooks.wt.useTankerSearchAPI({ filters }): { isLoading: false, data: null };
+  // Both hooks unconditionally
+  const { isLoading: isLoadingTanker, data: dataTanker } = Digit.Hooks.wt.useTankerSearchAPI({ filters });
+  const { isLoading: isLoadingToilet, data: dataToilet } = Digit.Hooks.wt.useMobileToiletSearchAPI({ filters });
 
-  const { isLoading: isLoadingToilet, data: dataToilet } = serviceType === "mobileToilet" ? Digit.Hooks.wt.useMobileToiletSearchAPI({ filters }) : { isLoading: false, data: null };
+  // Use the results conditionally based on the `serviceType`
+  let isLoading = false;
+  let filteredData = [];
 
-  const isLoading = isLoadingToilet || isLoadingTanker;
+  if (serviceType === "watertanker") {
+    isLoading = isLoadingTanker;
+    filteredData = dataTanker?.waterTankerBookingDetail || [];
+  } else if (serviceType === "mobileToilet") {
+    isLoading = isLoadingToilet;
+    filteredData = dataToilet?.mobileToiletBookingDetails || [];
+  } else {
+    isLoading = isLoadingTanker || isLoadingToilet;
+    filteredData = [
+      ...(dataToilet?.mobileToiletBookingDetails || []),
+      ...(dataTanker?.waterTankerBookingDetail || []),
+    ];
+  }
 
-  
-  // When the search button is clicked, `serviceType` is updated to match the selected `tempServiceType`.
   const handleSearch = () => {
     setServiceType(tempServiceType); // Apply service type selection only on search
 
@@ -87,7 +100,7 @@ export const WTMyApplications = () => {
 
   const serviceOptions = [
     { label: t("MOBILE_TOILET"), code: "mobileToilet" },
-    { label: t("WATER_TANKER"), code: "waterTanker" },
+    { label: t("WATER_TANKER"), code: "watertanker" },
   ];
 
   const statusOptions = [
@@ -98,14 +111,9 @@ export const WTMyApplications = () => {
     { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
   ];
 
-  const filteredApplications = [
-    ...(dataToilet?.mobileToiletBookingDetails || []),
-    ...(dataTanker?.waterTankerBookingDetail || []),
-  ];
-
   return (
     <React.Fragment>
-      <Header>{`${t("WT_MY_BOOKINGS")} (${filteredApplications.length})`}</Header>
+      <Header>{`${t("WT_MY_BOOKINGS")} (${filteredData.length})`}</Header>
       <Card>
         <div style={{ marginLeft: "16px" }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
@@ -158,8 +166,8 @@ export const WTMyApplications = () => {
         </div>
       </Card>
       <div>
-        {filteredApplications.length > 0 &&
-          filteredApplications.map((application, index) => (
+        {filteredData.length > 0 &&
+          filteredData.map((application, index) => (
             <div key={index}>
               <WTApplication
                 application={application}
@@ -168,12 +176,12 @@ export const WTMyApplications = () => {
               />
             </div>
           ))}
-        {filteredApplications.length === 0 && !isLoading && (
+        {filteredData.length === 0 && !isLoading && (
           <p style={{ marginLeft: "16px", marginTop: "16px" }}>
             {t("WT_NO_APPLICATION_FOUND_MSG")}
           </p>
         )}
-        {filteredApplications.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0)) > t1 && (
+        {filteredData.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0)) > t1 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">

@@ -19,12 +19,12 @@ import WFApplicationTimeline from "./pageComponents/WFApplicationTimeline";
 import WFCaption from "./pageComponents/WFCaption";
 import Inbox from "./pages/employee/Inbox";
 import WTCitizenCard from "./components/WTCitizenCard";
+import MTCard from "./components/MTCard";
 import ServiceTypes from "./pageComponents/ServiceTypes";
 import ToiletRequestDetails from "./pageComponents/ToiletRequestDetails";
 import MTAcknowledgement from "./pages/citizen/Create/MTAcknowledgement";
 import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
 import MTCitizenCard from "./components/MTCitizenCard";
-import InboxMT from "./pages/employee/InboxMT";
 
 const componentsToRegister = {
     ApplicantDetails,
@@ -46,7 +46,6 @@ const componentsToRegister = {
     ToiletRequestDetails,
     MTAcknowledgement,
     MTCitizenCard: MTCitizenCard,
-    InboxMT: InboxMT,
   };
   
   // function to register the component as per standard 
@@ -105,11 +104,9 @@ const componentsToRegister = {
   // export the components outside of module to enable and access of module
   export const WTComponents = {
     WTCard,
-    WTModule, 
+    WTModule,
+    MTCard, 
     WTLinks,
     WT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-    MT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
     WTInboxTableConfig: TableConfig,
-    MTInboxTableConfig: TableConfig,
-
   };

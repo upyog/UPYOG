@@ -12,7 +12,8 @@ export const checkForNotNull = (value = "") => {
 export const checkForNA = (value = "") => {
   return checkForNotNull(value) ? value : "NA";
 };
-
+ // for replacing digit-ui 
+export const APPLICATION_PATH = "/digit-ui";
 
 //Custom function which will return the formdata and inside formdata we are building the Payload.
 export const waterTankerPayload = (data) =>{
@@ -51,7 +52,7 @@ export const waterTankerPayload = (data) =>{
           action:"APPLY",
           comments:"",
           businessService:"watertanker",
-          moduleName:"request-service",
+          moduleName:"request-service.water_tanker",
         }
     },
   };
@@ -92,7 +93,7 @@ export const waterTankerPayload = (data) =>{
           action:"APPLY",
           comments:"",
           businessService:"mobileToilet",
-          moduleName:"request-service",
+          moduleName:"request-service.mobile_toilet",
         }
     },
   };

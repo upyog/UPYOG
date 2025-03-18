@@ -84,7 +84,8 @@ const enabledModules = [
   "EW",
   "CHB",
   "WT",
-  "VENDOR"
+  "VENDOR",
+  "MT"
 ];
 
 const initTokens = (stateCode) => {
