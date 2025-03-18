@@ -66,9 +66,9 @@ serviceMaps:
 
         - jsonPath: $.Asset.remarks
 
-        - jsonPath: $.Asset.sourceOfFinance
-
         - jsonPath: $.Asset.financialYear
+        
+        - jsonPath: $.Asset.sourceOfFinance
         
         - jsonPath: $.Asset.bookingStatus
 
