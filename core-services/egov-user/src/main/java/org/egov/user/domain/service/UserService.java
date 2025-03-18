@@ -927,5 +927,10 @@ public class UserService {
 			throw new RuntimeException("Decryption failed: " + e.getMessage());
 		}
 	}
+	
+	public void deleteCaptcha(String uuid)
+	{
+		redisTemplate.delete(uuid);
+	}
 
 }
