@@ -1395,8 +1395,9 @@ public class GarbageAccountService {
 
 			// search bill Details
 			BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder().tenantId(account.getTenantId())
-					.consumerCode(Collections.singleton(account.getGrbgApplication().getApplicationNo())).service("GB")// business
-																														// service
+					.consumerCode(Collections.singleton(account.getGrbgApplication().getApplicationNo()))
+					.service(null != account.getBusinessService() ? account.getBusinessService() : "GB")// business
+																										// service
 					.build();
 			BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfo);
 			Map<Object, Object> billDetailsMap = new HashMap<>();
