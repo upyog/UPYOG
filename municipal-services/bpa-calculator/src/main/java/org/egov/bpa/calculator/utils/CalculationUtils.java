@@ -87,14 +87,14 @@ public class CalculationUtils {
 		String billingBusinessService;
 		switch (feeType) {
 		case BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE:
-			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA)) {
+			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA) || businessService.equalsIgnoreCase(BPACalculatorConstants.BUSINESSSERVICE_PREAPPROVEDPLAN)) {
 				billingBusinessService = config.getApplFeeBusinessService();
 			} else {
 				billingBusinessService = config.getOCApplBusinessservice();
 			}
 			break;
 		case BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE:
-			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA)) {
+			if (businessService.equalsIgnoreCase(BPACalculatorConstants.MDMS_BPA) || businessService.equalsIgnoreCase(BPACalculatorConstants.BUSINESSSERVICE_PREAPPROVEDPLAN)) {
 				billingBusinessService = config.getSanclFeeBusinessService();
 			} else {
 				billingBusinessService = config.getOCSancBusinessservice();
