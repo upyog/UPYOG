@@ -3,6 +3,7 @@ package org.egov.pt.service;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Property;
@@ -14,6 +15,7 @@ import org.egov.pt.models.workflow.BusinessServiceResponse;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.models.workflow.ProcessInstanceResponse;
 import org.egov.pt.models.workflow.State;
+import org.egov.pt.models.workflow.ValidActionResponce;
 import org.egov.pt.repository.RestCallRepository;
 import org.egov.pt.repository.ServiceRequestRepository;
 import org.egov.pt.util.PropertyUtil;
@@ -21,11 +23,17 @@ import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class WorkflowService {
 
@@ -46,6 +54,9 @@ public class WorkflowService {
 
 	@Autowired
 	private RestCallRepository restCallRepository;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	/**
 	 * Method to integrate with workflow
@@ -207,6 +218,37 @@ public class WorkflowService {
 		BusinessServiceResponse businessServiceResponse = mapper.convertValue(responseObject,
 				BusinessServiceResponse.class);
 		return businessServiceResponse;
+	}
+	
+	public ValidActionResponce getValidAction(RequestInfo requestInfo, String businessId, String tenantId) {
+
+		try {
+			UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(configs.getWfHost())
+					.path(configs.getWfValidActionSearchPath());
+
+			if (StringUtils.isNotEmpty(businessId)) {
+				uriBuilder.queryParam("businessId", businessId);
+			}
+			if (StringUtils.isNotEmpty(tenantId)) {
+				uriBuilder.queryParam("tenantId", tenantId);
+			}
+
+			String url = uriBuilder.toUriString();
+
+			ResponseEntity<ValidActionResponce> response = restTemplate.postForEntity(url.toString(),
+					RequestInfoWrapper.builder().requestInfo(requestInfo).build(), ValidActionResponce.class);
+			// Check the response status and return the body
+			if (response.getStatusCode().is2xxSuccessful()) {
+				return response.getBody();
+			} else {
+//				throw new RuntimeException("Failed to retrieve action");
+			}
+
+		} catch (Exception e) {
+			log.error("Exception while calling wf action: ", e);
+			throw new CustomException("ERR_TECHNICAL", "Invalid response format from external API");
+		}
+		return ValidActionResponce.builder().build();
 	}
 
 }
