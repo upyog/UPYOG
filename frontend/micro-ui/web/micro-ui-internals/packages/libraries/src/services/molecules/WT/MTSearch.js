@@ -67,6 +67,14 @@ export const MTSearch = {
       },
     ];
   },
+  /*  
+      - Creates a filter object combining BookingNo and additional arguments.
+      - Fetches booking details using `MTSearch.application`.
+      - Extracts the tenantId from the response.
+      - Processes and structures the booking details using `MTSearch.BookingDetails`.
+      - Stores the full API response in `applicationData` for reference.
+      - Provides a transformation function (`MTSearch.BookingDetails`) for employee-specific data formatting.
+    */
   applicationDetails: async (t, tenantId, BookingNo, userType, args) => {
     const filter = { BookingNo, ...args };
     const response = await MTSearch.application(tenantId, filter);

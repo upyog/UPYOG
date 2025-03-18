@@ -1,8 +1,10 @@
 import { MTSearch } from "../../services/molecules/WT/MTSearch";
 import { useQuery } from "react-query";
 
-/*hook for fetching Mobile Toilet (MT) application details.  
-Calls `MTSearch.applicationDetails` and structures the response.*/
+/*Custom React hook for fetching Mobile Toilet (MT) application details.
+  - Calls `MTSearch.applicationDetails` to retrieve application details based on provided parameters.
+  - Uses `react-query`'s `useQuery` to manage the fetching, caching, and updating of the data.
+  - Transforms the response structure before returning it..*/
 const useMTApplicationDetail = (t, tenantId, applicationNo, config = {}, userType, args) => {
     
   

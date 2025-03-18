@@ -55,15 +55,6 @@
        role: isWaterTanker ? ["WT_CEMP"] : ["MT_CEMP"],
       });
 
-  const { isLoading: auditDataLoading, isError: isAuditError, data, refetch } = isWaterTanker
-    ? Digit.Hooks.wt.useTankerSearchAPI({
-        tenantId,
-        filters: { bookingNo: bookingNo, audit: true },
-      })
-    : Digit.Hooks.wt.useMobileToiletSearchAPI({
-        tenantId,
-        filters: { bookingNo: bookingNo, audit: true },
-      });
 
       const closeToast = () => {
         setShowToast(null);

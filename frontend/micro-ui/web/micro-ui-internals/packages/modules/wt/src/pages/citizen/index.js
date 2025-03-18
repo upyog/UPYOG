@@ -14,23 +14,19 @@ const App = () => {
   const WTCard = Digit.ComponentRegistryService.getComponent("WTCitizenCard");
   const MTCard = Digit.ComponentRegistryService.getComponent("MTCitizenCard");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
-  const inboxInitialState = {
-    searchParams: {
-      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: ["watertanker"],
-      applicationStatus: [],
-      locality: [],
-    },
-  };
 
-  const inboxInitialStateMT = {
+  const getInboxInitialState = (service) => ({
     searchParams: {
       uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
-      services: ["mobileToilet"],
+      services: [service],
       applicationStatus: [],
       locality: [],
     },
-  };
+  });
+  // Initial state for waterTanker inbox and mobileToilet inbox
+  const inboxInitialStateWT = getInboxInitialState("watertanker");
+  const inboxInitialStateMT = getInboxInitialState("mobileToilet");
+  
 
   return (
     <span style={{ width: "100%" }}>
@@ -42,23 +38,25 @@ const App = () => {
             component={() => (
               (
                 <Inbox
+                // Inbox component for waterTanker
                   useNewInboxAPI={true}
                   parentRoute={path}
                   moduleCode="WT"
                   businessService="watertanker"
                   filterComponent="WT_INBOX_FILTER"
-                  initialStates={inboxInitialState}
+                  initialStates={inboxInitialStateWT}
                   isInbox={true}
                 />
               )
             )}
           />
-
+          
           <PrivateRoute
             path={`${path}/mt/inbox`}
             component={() => (
               (
                 <Inbox
+                // Inbox component for mobileToilet
                   useNewInboxAPI={true}
                   parentRoute={path}
                   businessService="mobileToilet"
