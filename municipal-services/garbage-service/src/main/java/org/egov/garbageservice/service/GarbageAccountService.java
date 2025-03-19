@@ -546,11 +546,11 @@ public class GarbageAccountService {
 			});
 		}
 
-//		if (null != newGarbageAccount.getGrbgApplication()) {
-//			
-////			newGarbageAccount.setStatus(
-////					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
-//		}
+		if (null != newGarbageAccount.getGrbgApplication()) {
+			
+			newGarbageAccount.setStatus(
+					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
+		}
 	}
 
 	public GarbageAccountResponse update(GarbageAccountRequest updateGarbageRequest) {
@@ -839,7 +839,7 @@ public class GarbageAccountService {
 //				accountTemp.setChildGarbageAccounts(null);			// at a time only 1 app no provided for WF
 
 				garbageAccountRequestTemp.getGarbageAccounts().add(accountTemp);
-			} else if (StringUtils.equals(account.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_INITIATE)) {
+			} else if (StringUtils.equals(account.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_INITIATE) || StringUtils.equals(account.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_PENDING_FOR_MODIFICATION)) {
 				// this block will work only when update Account and action is INITIATE
 				GarbageAccount accountTemp = objectMapper.convertValue(
 						existingGarbageApplicationAccountsMap.get(account.getGrbgApplication().getApplicationNo()),
