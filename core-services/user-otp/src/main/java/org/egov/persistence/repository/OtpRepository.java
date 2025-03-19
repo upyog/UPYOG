@@ -86,7 +86,7 @@ public class OtpRepository {
 			}
 
 			if (count == 3) {
-				redisTemplate.opsForValue().set(otpResponse.getOtp().get(0).getIdentity(),System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20), 30, TimeUnit.MINUTES);
+				redisTemplate.opsForValue().set(otpResponse.getOtp().get(0).getIdentity(),System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20), 20, TimeUnit.MINUTES);
 				throw new TooManyOtpCountException();
 			} else 
 				if (otpResponse.getOtp() != null && !otpResponse.getOtp().isEmpty())
