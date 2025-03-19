@@ -2,6 +2,11 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
+const cspConfigPolicy = {
+  'script-src': ["'self'", `'nonce-XkE2cG9lcjNhbXBsZQ=='`],
+  // other directives
+};
 
 module.exports = {
    //mode: 'development',
@@ -31,5 +36,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({ inject: true, template: "public/index.html" }),
+    new CspHtmlWebpackPlugin(cspConfigPolicy)
   ],
 };
