@@ -96,7 +96,6 @@ public class TokenRepository {
         tokenInputs.put("tenantId", request.getTenantId());
         List<Token> domainTokens = namedParameterJdbcTemplate.query(GETTOKENS_BY_NUMBER_IDENTITY_TENANT, tokenInputs,
                 new TokenRowMapper());
-        System.out.println("domainTokens::"+domainTokens);
         return domainTokens;
     }
 
