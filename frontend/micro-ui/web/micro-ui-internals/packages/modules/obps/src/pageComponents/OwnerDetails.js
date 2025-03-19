@@ -398,8 +398,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       }
                     })) || [],
                     //Property.additionalDetails.owners=Property.owners;
-                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2);
-                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors;
+                    Property.landArea=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea.toFixed(2)||formData?.data?.edcrDetails?.drawingDetail?.totalBuitUpArea;
+                    Property.noOfFloors=formData?.data?.edcrDetails?.planDetail?.blocks?.[0]?.building?.totalFloors||formData?.data?.edcrDetails?.drawingDetail?.blocks?.[0]?.building?.totalFloors;
                     Property.additionalDetails= {
                       isRainwaterHarvesting:false,
                       owners:conversionOwners?.map((owner, index)=>({
@@ -419,7 +419,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                      createdProp = await PTService.create({Property, tenantId})
               }
                 let payload = {};
-                payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber;
+                payload.edcrNumber = formData?.edcrNumber?.edcrNumber ? formData?.edcrNumber?.edcrNumber :formData?.data?.scrutinyNumber?.edcrNumber ||formData?.data?.scrutinyNumber;
                 payload.riskType = formData?.data?.riskType;
                 payload.applicationType = formData?.data?.applicationType;
                 payload.serviceType = formData?.data?.serviceType;
@@ -451,7 +451,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.landInfo.owners = conversionOwners;
                 payload.landInfo.ownershipCategory = ownershipCategory.code;
                 payload.landInfo.tenantId = formData?.address?.city?.code;
-
+                payload.businessService = "BPA-PAP";
                 //for units
                 const blockOccupancyDetails = formData;
                 payload.landInfo.unit = getUnitsForAPI(blockOccupancyDetails);

@@ -399,7 +399,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       landInfo: isOCBPA ? data?.landInfo : { ...data?.landInfo, ownershipCategory: getOwnerShipCategory(data, isOCBPA), owners: getBPAOwners(data, isOCBPA), unit: getBPAUnit(data) },
       assignee: isSendBackTOCitizen ? data.assignee : [],
       workflow: {
-        action: "SEND_TO_CITIZEN",
+        action: "APPLY",
         assignes: null,
         comments: null,
         varificationDocuments: null,
@@ -668,7 +668,7 @@ export const getBusinessServices = (businessService, status) => {
   let billBusinessService = "BPA.NC_APP_FEE";
   if (businessService === "BPA_LOW") {
     billBusinessService = "BPA.LOW_RISK_PERMIT_FEE";
-  } else if (businessService === "BPA") {
+  } else if (businessService === "BPA"||businessService==="BPA-PAP") {
     billBusinessService = status == "PENDING_APPL_FEE" ? "BPA.NC_APP_FEE" : "BPA.NC_SAN_FEE";
   } else if (businessService === "BPA_OC") {
     billBusinessService = status == "PENDING_APPL_FEE" ? "BPA.NC_OC_APP_FEE" : "BPA.NC_OC_SAN_FEE";

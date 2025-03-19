@@ -62,7 +62,7 @@ const OBPSResponse = (props) => {
   }
 
   const getApplicationNoLabel = () => {
-    return bpaBusinessService == "BPA" ? t("BPA_PERMIT_APPLICATION_NUMBER_LABEL") : t("BPA_OCCUPANCY_CERTIFICATE_APPLICATION_NUMBER_LABEL")
+    return bpaBusinessService == "BPA"||bpaBusinessService=="BPA-PAP" ? t("BPA_PERMIT_APPLICATION_NUMBER_LABEL") : t("BPA_OCCUPANCY_CERTIFICATE_APPLICATION_NUMBER_LABEL")
   }
 
   const getPaymentURL = (isCitizen) => {

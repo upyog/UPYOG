@@ -96,15 +96,15 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL"), 
-                        value: t(`WF_BPA_${application?.data?.edcrDetails?.appliactionType}`) || "NA"
+                        value: t(`WF_BPA_${application?.data?.edcrDetails?.appliactionType||application?.data?.applicationType}`) || "NA"
                     },
                     { 
                         title: t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL"), 
-                        value:t(`${application?.data?.edcrDetails?.applicationSubType}`) || "NA"
+                        value:t(`${application?.data?.edcrDetails?.applicationSubType||application?.data?.edcrDetails?.drawingDetail?.serviceType}`) || "NA"
                     },
                     { 
                         title: t("BPA_BASIC_DETAILS_OCCUPANCY_LABEL"), 
-                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.occupancy 
+                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.occupancy ||application?.data?.edcrDetails?.drawingDetail?.occupancy
                     },
                     { 
                         title: t("BPA_BASIC_DETAILS_RISK_TYPE_LABEL"), 
@@ -123,7 +123,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                 values: [
                     { 
                         title: t("BPA_BOUNDARY_PLOT_AREA_LABEL"),
-                        value: `${application?.data?.edcrDetails?.planDetail?.planInformation?.plotArea} sq.ft` || "NA"
+                        value: `${application?.data?.edcrDetails?.planDetail?.planInformation?.plotArea|| application?.data?.edcrDetails?.drawingDetail?.plotArea} sq.ft` || "NA"
                     },
                     { 
                         title: t("BPA_PLOT_NUMBER_LABEL"), 
@@ -143,7 +143,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_APPLICATION_DEMOLITION_AREA_LABEL"), 
-                        value: t(`${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq.mtrs`) || "NA"
+                        value: t(`${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea}||"NA" sq.mtrs`)
                     } 
                 ]
              },

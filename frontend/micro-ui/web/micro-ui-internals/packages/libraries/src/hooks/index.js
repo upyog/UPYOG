@@ -157,6 +157,7 @@ import SearchMdmsTypes from "./obps/SearchMdmsTypes";
 import useOBPSMDMS from "./obps/useMDMS";
 import useOBPSSearch from "./obps/useOBPSSearch";
 import useScrutinyDetails from "./obps/useScrutinyDetails";
+import usePreApprovedSearch from "./obps/usePreApprovedSearch";
 import useTenantsOBPS from "./obps/useTenants";
 import useNocDetails from "./obps/useNocDetails";
 import useNOCApplicationActions from "./noc/useNOCApplicationActions";
@@ -432,6 +433,7 @@ const receipts = {
 const obps = {
   useMDMS: useOBPSMDMS,
   useScrutinyDetails,
+  usePreApprovedSearch,
   useTenants: useTenantsOBPS,
   useNocDetails: useNocDetails,
   useOBPSDocumentSearch,

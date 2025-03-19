@@ -19,9 +19,10 @@ import { scrutinyDetailsData } from "../utils";
 
 const BasicDetails = ({ formData, onSelect, config }) => {
   const [showToast, setShowToast] = useState(null);
-  const [basicData, setBasicData] = useState(formData?.data?.edcrDetails || null);
-  const [scrutinyNumber, setScrutinyNumber] = useState(formData?.data?.scrutinyNumber);
-  const [isDisabled, setIsDisabled] = useState(formData?.data?.scrutinyNumber ? true : false);
+  const [basicData, setBasicData] = useState(formData?.selectedPlot);
+  console.log("basicData", basicData)
+  const [scrutinyNumber, setScrutinyNumber] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo);
+  const [isDisabled, setIsDisabled] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo ? true : false);
   const { t } = useTranslation();
   const stateCode = Digit.ULBService.getStateId();
   const isMobile = window.Digit.Utils.browser.isMobile();
@@ -30,7 +31,9 @@ const BasicDetails = ({ formData, onSelect, config }) => {
     mdmsData?.BPA?.RiskTypeComputation,
     basicData?.planDetail?.plot?.area,
     basicData?.planDetail?.blocks
-  );
+  ) || "LOW";
+  let user = Digit.SessionStorage.get("User")?.info?.name;
+  console.log("Userrr", user)
 
   const handleKeyPress = async (event) => {
     if (event.key === "Enter") {
@@ -66,16 +69,16 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   const handleSubmit = (event) => {
     onSelect(config?.key, {
       scrutinyNumber,
-      applicantName: basicData?.planDetail?.planInformation?.applicantName,
-      occupancyType: basicData?.planDetail?.planInformation?.occupancy,
-      applicationType: basicData?.appliactionType,
-      serviceType: basicData?.applicationSubType,
-      applicationDate: basicData?.applicationDate,
+      applicantName: basicData?.planDetail?.planInformation?.applicantName || user,
+      occupancyType: basicData?.planDetail?.planInformation?.occupancy || basicData?.drawingDetail?.occupancy,
+      applicationType: basicData?.drawingDetail?.applicationType||basicData?.appliactionType,
+      serviceType: basicData?.applicationSubType || basicData?.drawingDetail?.serviceType,
+      applicationDate: basicData?.applicationDate||format(new Date(), "dd/MM/yyyy"),
       riskType: Digit.Utils.obps.calculateRiskType(
         mdmsData?.BPA?.RiskTypeComputation,
         basicData?.planDetail?.plot?.area,
         basicData?.planDetail?.blocks
-      ),
+      ) || "LOW",
       edcrDetails: basicData,
     });
   };
@@ -114,9 +117,9 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           className="searchInput"
           onKeyPress={handleKeyPress}
           onChange={event => setScrutinyNumber({ edcrNumber: event.target.value })} 
-          value={scrutinyNumber?.edcrNumber} 
+          value={scrutinyNumber?.edcrNumber || scrutinyNumber} 
           signature={true} 
-          signatureImg={!disableVlaue && <SearchIconSvg className="signature-img" onClick={!disableVlaue && scrutinyNumber?.edcrNumber ? () => handleSearch() : null} />}
+          signatureImg={!disableVlaue && !formData?.selectedPlot && <SearchIconSvg className="signature-img" onClick={!disableVlaue && scrutinyNumber?.edcrNumber ? () => handleSearch() : null} />}
           disable={disableVlaue}
           style={{ marginBottom: "10px" }}
         />
@@ -129,19 +132,19 @@ const BasicDetails = ({ formData, onSelect, config }) => {
             <Row
               className="border-none"
               label={t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)}
-              text={basicData?.applicationDate ? format(new Date(basicData?.applicationDate), "dd/MM/yyyy") : basicData?.applicationDate}
+              text={basicData?.applicationDate ? format(new Date(basicData?.applicationDate), "dd/MM/yyyy") : format(new Date(), "dd/MM/yyyy")}
             />
-            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL`)} text={t(`WF_BPA_${basicData?.appliactionType}`)} />
-            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(basicData?.applicationSubType)} />
-            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={basicData?.planDetail?.planInformation?.occupancy} />
-            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)} text={t(`WF_BPA_${riskType}`)} />
+            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL`)} text={t(basicData?.drawingDetail?.applicationType || `WF_BPA_${basicData?.appliactionType}`)} />
+            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(basicData?.applicationSubType || basicData?.drawingDetail?.serviceType)} />
+            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_OCCUPANCY_LABEL`)} text={basicData?.planDetail?.planInformation?.occupancy || basicData?.drawingDetail?.occupancy} />
+            <Row className="border-none" label={t(`BPA_BASIC_DETAILS_RISK_TYPE_LABEL`)} text={t(`WF_BPA_${riskType}`|| "Low")} />
             <Row
               className="border-none"
               label={t(`BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL`)}
-              text={basicData?.planDetail?.planInformation?.applicantName}
+              text={basicData?.planDetail?.planInformation?.applicantName || user}
             />
           </StatusTable>
-          {riskType ? <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={handleSubmit} disabled={!scrutinyNumber?.edcrNumber?.length} /> : <Loader />}
+          {riskType ? <SubmitBar label={t(`CS_COMMON_NEXT`)} onSubmit={handleSubmit} disabled={!scrutinyNumber} /> : <Loader />}
         </Card>
       )}
     </div>

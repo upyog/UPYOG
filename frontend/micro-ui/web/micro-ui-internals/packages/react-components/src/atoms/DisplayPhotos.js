@@ -12,14 +12,14 @@ const ImageOrPDFIcon = ({source, index, last=false, onClick}) => {
     </a>
   </div>
   :
-  <img key={index} src={source} {...last ? {className:"last"} : {}} alt="issue thumbnail" onClick={() => onClick(source, index)}></img>
+  <img style={{width:"200px", margin:"8px"}} key={index} src={source} {...last ? {className:"last"} : {}} alt="issue thumbnail" onClick={() => onClick(source, index)}></img>
 }
 
 const DisplayPhotos = (props) => {
   return (
-    <div className="photos-wrap">
+    <div className="photos-wrap" style={{display:"grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))"}}>
       {props.srcs.map((source, index) => {
-        return <ImageOrPDFIcon {...{source, index, ...props}} last={++index !== props.srcs.length ? false : true}/>
+        return <ImageOrPDFIcon {...{source, index, ...props}} last={++index !== props.srcs.length ? true : true}/>
       })}
     </div>
   );

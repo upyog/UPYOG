@@ -8,6 +8,7 @@ import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
+import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
 
 const BpaApplicationDetail = () => {
 
@@ -31,7 +32,7 @@ const BpaApplicationDetail = () => {
 
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["RiskTypeComputation"]);
 
-  const { data = {}, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
+  const { data = {}, isLoading } = useBPADetailsPage(tenantId, { applicationNo: id });
 
 
   let businessService = [];
@@ -40,7 +41,7 @@ const BpaApplicationDetail = () => {
   {
     businessService = ["BPA.LOW_RISK_PERMIT_FEE"]
   }
-  else if(data?.applicationData?.businessService === "BPA")
+  else if(data?.applicationData?.businessService === "BPA"||data?.applicationData?.businessService === "BPA-PAP")
   {
     businessService = ["BPA.NC_APP_FEE","BPA.NC_SAN_FEE"];
   }
