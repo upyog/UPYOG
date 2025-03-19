@@ -122,6 +122,17 @@ export const ASSETService = {
         params: {},
         auth: true,
       }),
+      assetAssignable: (details, tenantId) =>
+        Request({
+          url: Urls.asset.assetAssignable,
+          data: details,
+          useCache: false,
+          setTimeParam: false,
+          userService: true,
+          method: "POST",
+          params: {},
+          auth: true,
+        }),
   return_asset: (details, tenantId) =>
     Request({
       url: Urls.asset.return_asset,
