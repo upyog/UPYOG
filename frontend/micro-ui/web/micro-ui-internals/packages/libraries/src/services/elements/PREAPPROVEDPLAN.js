@@ -15,17 +15,29 @@ export const PreApprovedPlanService = {
       useCache: false,
     });
   },
-    estimate: (data, tenantId) =>
-    Request({
-      url: Urls.preApproved.estimate,
-      data: data,
-      //multipartData: data,
-      //useCache: false,
-      //setTimeParam: false,
-      userService: true,
-      method: "POST",
-      //params: { tenantId },
-      auth: true,
-      //multipartFormData: true
-    })
+  estimate: (data, params) => {
+    console.log("dataaEst", data)
+    if (data && data.CalulationCriteria) {
+      
+      return Request({
+        url: Urls.preApproved.estimate,
+        data: data,
+        params: { ...params },
+        method: "POST",
+        userService: true,
+        useCache: false,
+        auth: true,
+      });
+    } else {
+      return Request({
+        url: Urls.preApproved.estimate,
+        data: params,
+        params: { ...params }, 
+        method: "POST",
+        userService: true,
+        useCache: false,
+        auth: true,
+      });
+    }
+  } 
 };

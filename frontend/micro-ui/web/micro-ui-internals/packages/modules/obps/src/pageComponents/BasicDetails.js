@@ -20,6 +20,7 @@ import { scrutinyDetailsData } from "../utils";
 const BasicDetails = ({ formData, onSelect, config }) => {
   const [showToast, setShowToast] = useState(null);
   const [basicData, setBasicData] = useState(formData?.selectedPlot);
+  console.log("basicData", basicData)
   const [scrutinyNumber, setScrutinyNumber] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo);
   const [isDisabled, setIsDisabled] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo ? true : false);
   const { t } = useTranslation();
@@ -72,7 +73,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       occupancyType: basicData?.planDetail?.planInformation?.occupancy || basicData?.drawingDetail?.occupancy,
       applicationType: basicData?.drawingDetail?.applicationType||basicData?.appliactionType,
       serviceType: basicData?.applicationSubType || basicData?.drawingDetail?.serviceType,
-      applicationDate: basicData?.applicationDate,
+      applicationDate: basicData?.applicationDate||format(new Date(), "dd/MM/yyyy"),
       riskType: Digit.Utils.obps.calculateRiskType(
         mdmsData?.BPA?.RiskTypeComputation,
         basicData?.planDetail?.plot?.area,
@@ -131,7 +132,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
             <Row
               className="border-none"
               label={t(`BPA_BASIC_DETAILS_APP_DATE_LABEL`)}
-              text={basicData?.applicationDate ? format(new Date(basicData?.applicationDate), "dd/MM/yyyy") : format(new Date(basicData?.auditDetails?.createdTime), "dd/MM/yyyy")}
+              text={basicData?.applicationDate ? format(new Date(basicData?.applicationDate), "dd/MM/yyyy") : format(new Date(), "dd/MM/yyyy")}
             />
             <Row className="border-none" label={t(`BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL`)} text={t(basicData?.drawingDetail?.applicationType || `WF_BPA_${basicData?.appliactionType}`)} />
             <Row className="border-none" label={t(`BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL`)} text={t(basicData?.applicationSubType || basicData?.drawingDetail?.serviceType)} />

@@ -3,28 +3,26 @@ import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos"
 import React, { useEffect, useState } from "react";
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 import  usePreApprovedSearch  from "../../../../libraries/src/hooks/obps/usePreApprovedSearch";
+import useEstimateDetails from "../../../../libraries/src/hooks/obps/useEstimateDetails";
 const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
-    console.log("formdata55", formData)
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [isPlanApproved, setIsPlanApproved] = useState(formData?.isPlanApproved || "");
   const [landStatus, setLandStatus] = useState(formData?.landStatus||"");
   const [projectComponent, setProjectComponent] = useState(formData?.projectComponent);
-  //const [lengthOfPlot, setLengthOfPlot] = useState();
   const [lengthInFeet, setLengthInFeet] = useState(formData?.lengthInFeet||"");
-  const [lengthInInches, setLengthInInches] = useState();
-  //const [widthOfPlot, setWidthOfPlot] = useState();
+  const [lengthInInches, setLengthInInches] = useState(formData?.lengthInInches||"");
   const [widthInFeet, setWidthInFeet] = useState(formData?.widthInFeet||"");
-  const [widthInInches, setWidthInInches] = useState();
+  const [widthInInches, setWidthInInches] = useState(formData?.widthInInches||"");
   const [abuttingRoadWidth, setAbuttingRoadWidth] = useState(formData?.abuttingRoadWidth);
-  const [preApprovedResponse, setPreApprovedResponse] = useState();
   const [error, setError] = useState();
   const [imageZoom, setImageZoom] = useState(null);
   const [mandatoryFieldsError, setMandatoryFiledsError] = useState();
   const [imagesToShowBelowComplaintDetails, setImagesToShowBelowComplaintDetails] = useState();
 
   const [selectedPlot, setSelectedPlot] = useState();
-  const [estimate, setEstimate] = useState();
-  console.log("eeeee", estimate)
+  const [inchesError, setInchesError] = useState();
+  console.log("incheserror", inchesError)
+  
   let plotImage = "https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/plotImage.png"
   
   const planArrpovedOptione = [
@@ -43,7 +41,10 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     { code: "OTHERS", key: "Others" },
   ];
   const [searchData, setSearchData] = useState(null); 
-  //const [searchResults, setSearchResults] = useState(null); 
+  const [estimatePayload, setEstimatePayload] = useState(null); 
+  const preApprovedResponse = usePreApprovedSearch(searchData, {enabled:searchData!==null});
+  const estimateResponse = useEstimateDetails({CalulationCriteria:estimatePayload},estimatePayload!==null?true:false, null)
+  
   const getPreApprovedPlanDetails = async() => {
     const data = { 
       plotLengthInFeet: lengthInInches ? parseInt(lengthInFeet) + parseInt((lengthInInches * (1 / 12))) : parseInt(lengthInFeet), 
@@ -54,14 +55,13 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     if (!lengthInFeet || !widthInFeet || !abuttingRoadWidth) {
       setMandatoryFiledsError(t("PLEASE_FILL_MANDATORY_DETAILS"));
     } else {
-        const preApprovedResponses=await PreApprovedPlanService.search(data);
-        setPreApprovedResponse(preApprovedResponses);
+        setSearchData(data)
         setMandatoryFiledsError("");
     }
   };
   useEffect(async () => {
-    if (preApprovedResponse?.preapprovedPlan.length>0) {
-      const fileStoreIds = preApprovedResponse?.preapprovedPlan.flatMap(item =>
+    if (preApprovedResponse?.data!==undefined) {
+      const fileStoreIds = preApprovedResponse?.data.flatMap(item =>
         item.documents
           .filter(doc => doc?.additionalDetails?.fileName?.includes(".jpg"))
           .map(doc => doc?.fileStoreId)
@@ -93,16 +93,29 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     }
   }, [isPlanApproved, landStatus, projectComponent]);
 
-  const handleInputChange = (setter) => (e) => setter(e.target.value);
-  
+  const handleInputChange = (setter) => (e) => {
+    console.log("e777",e)
+    setter(e.target.value);
+  }
+  const handleInchesInput=(setter) => (e)=>{
+    if(e.target.value<=12){
+      setter(e.target.value);
+      setInchesError("");
+    }
+    else{
+      setInchesError("Inches should not be more than 12")
+    }
+  }
 
   const handleNext = () => {
     formData.selectedPlot=selectedPlot;
-    formData.estimate=estimate;
+    formData.estimate=estimateResponse?.data;
     formData.lengthInFeet=lengthInFeet;
     formData.widthInFeet=widthInFeet;
     formData.isPlanApproved=isPlanApproved;
     formData.landStatus=landStatus;
+    formData.lengthInInches=lengthInInches;
+    formData.widthInInches=widthInInches;
     formData.projectComponent=projectComponent;
     formData.abuttingRoadWidth=abuttingRoadWidth;
     onSelect("", formData);
@@ -131,7 +144,6 @@ const getDetailsRow = (estimateDetails) => {
       {estimateDetails?.taxHeadEstimates.map((item, index) => (
         <Row key={index} label={t(`${item.taxHeadCode}`)} text={item.estimateAmount} />
       ))}  
-      {/* <Row label={t("BPA_BUILDING_OPERATION_FEE")} text={estimateDetails?.} />  */}
       </StatusTable>
       </div>
     );
@@ -143,22 +155,14 @@ const getDetailsRow = (estimateDetails) => {
     setImageZoom(imageSource);
   }
   function zoomImageWrapper(imageSource, index){
-    
-    //if(imageSource.includes("small")){
       zoomImage(imagesToShowBelowComplaintDetails?.fullImage[index]);
-      const selectedObject = preApprovedResponse?.preapprovedPlan.find(obj => {
+      const selectedObject = preApprovedResponse?.data.find(obj => {
         return obj.documents.some(doc => doc?.fileStoreId === imagesToShowBelowComplaintDetails?.fileStore[index]);
     });
     setSelectedPlot(selectedObject)
-    estimateData(selectedObject);
-      
-   // }
-    // else{
-    //   window.open(imagesToShowBelowComplaintDetails?.fullImage[index]);
-    //   setEstimate(estimateResponse);
-    // }   
+    estimateData(selectedObject); 
   }
-  const estimateData=async(selectedObject)=>{
+  const estimateData=(selectedObject)=>{
     const CalulationCriteria = [
       {
           "BPA": {
@@ -176,10 +180,9 @@ const getDetailsRow = (estimateDetails) => {
           "serviceType": "NEW_CONSTRUCTION"
       }
   ]
-  const estimateResponse = await PreApprovedPlanService.estimate({CalulationCriteria:CalulationCriteria})
-  console.log("estimateRes", estimateResponse)
+  sessionStorage.setItem("CalculationCriteria", JSON.stringify(CalulationCriteria))
+  setEstimatePayload(CalulationCriteria)
 
-setEstimate(estimateResponse)
   }
   
   function onCloseImageZoom() {
@@ -193,7 +196,7 @@ setEstimate(estimateResponse)
       config={config}
       onSelect={handleNext}
       onSkip={onSkip}
-      isDisabled={!isPlanApproved?.code || !landStatus?.code || !projectComponent?.code || error || !estimate?.Calculations}
+      isDisabled={!isPlanApproved?.code || !landStatus?.code || !projectComponent?.code || error || !estimateResponse?.data?.Calculations}
     >
       <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
         <div style={{ flex: 1 }}>
@@ -232,11 +235,14 @@ setEstimate(estimateResponse)
                       type="number"
                       isMandatory={config.isMandatory}
                       value={lengthInInches || ''}
-                      onChange={handleInputChange(setLengthInInches)}
+                      onChange={handleInchesInput(setLengthInInches)}
                       label={t("Length in Inches")}
                       style={{ width: '79%' }}
                     />
                   </CardLabel>
+                  {inchesError && (
+                      <div style={{ color: 'red', fontSize: '12px' }}>{inchesError}</div>
+                  )}
                 </div>
               </div>
   
@@ -262,7 +268,7 @@ setEstimate(estimateResponse)
                       type="number"
                       isMandatory={config.isMandatory}
                       value={widthInInches || ''}
-                      onChange={handleInputChange(setWidthInInches)}
+                      onChange={handleInchesInput(setWidthInInches)}
                       label={t("Width in Inches")}
                       style={{ width: '79%' }}
                     />
@@ -290,8 +296,8 @@ setEstimate(estimateResponse)
             </div>
           ) : <div style={{ marginBottom: "15px", marginTop: "18px" }}>{t("PLOTS_NOT_AVAILABLE")}</div>}
           
-          {estimate?.Calculations ? (
-            getDetailsRow(estimate?.Calculations[0])
+          {estimateResponse?.data?.Calculations ? (
+            getDetailsRow(estimateResponse?.data?.Calculations[0])
           ) : null}
           
           {selectedPlot && selectedPlot?.documents?.length > 0 && (

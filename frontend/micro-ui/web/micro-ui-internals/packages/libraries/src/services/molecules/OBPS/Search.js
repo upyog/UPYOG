@@ -16,9 +16,17 @@ export const Search = {
   preApproveData: async (filters, all = false) => {
     const response = await PreApprovedPlanService.search(filters);
     
-      return response?.preapprovedPlan[0]
+      return response?.preapprovedPlan
     
     // return window.location.href.includes("bpa/inbox") ? response?.edcrDetail : response?.edcrDetail?.[0];
+  },
+  estimateDetails: async (filters, enabled, params, all = false) => {
+    const response = await PreApprovedPlanService.estimate(filters, enabled, params);
+    return response;
+  },
+  estimateDetailsWithParams: async (filters, params, all=false) => {
+    const response = await PreApprovedPlanService.estimate(filters, params); 
+    return response;
   },
   NOCDetails: async (tenantId, params) => {
     const response = await OBPSService.NOCSearch(tenantId, params);
