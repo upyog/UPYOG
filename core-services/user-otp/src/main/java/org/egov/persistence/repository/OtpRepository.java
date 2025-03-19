@@ -2,19 +2,16 @@ package org.egov.persistence.repository;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
+
 import java.util.concurrent.TimeUnit;
 
-import org.egov.domain.exception.InvalidOtpRequestException;
+
 import org.egov.domain.exception.OtpNumberNotPresentException;
 import org.egov.domain.exception.OtpNumberTimeOutException;
 import org.egov.domain.exception.TooManyOtpCountException;
 import org.egov.domain.model.OtpRequest;
 import org.egov.persistence.contract.OtpListResponse;
 import org.egov.persistence.contract.OtpResponse;
-import org.egov.tracer.model.CustomException;
-import org.egov.web.config.RedisConfig;
-import org.egov.web.contract.Otp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,12 +24,11 @@ public class OtpRepository {
 
 	@Autowired
 	private RedisTemplate<String, Long> redisTemplate;
-	
+
 	private final String otpCreateUrl;
 	private RestTemplate restTemplate;
 	private final String otpExistChekUrl;
 	private final String otpCountUrl;
-	private int errorcount;
 
 	public OtpRepository(RestTemplate restTemplate, @Value("${otp.host}") String otpHost,
 			@Value("${otp.create.url}") String otpCreateUrl, @Value("${otp.check.url}") String otpExistUrl,
@@ -77,7 +73,6 @@ public class OtpRepository {
 
 		final OtpListResponse otpResponse = restTemplate.postForObject(otpCountUrl, request, OtpListResponse.class);
 
-
 		if (null != otpResponse) {
 
 			for (org.egov.persistence.contract.Otp o : otpResponse.getOtp()) {
@@ -86,14 +81,17 @@ public class OtpRepository {
 			}
 
 			if (count == 3) {
-				redisTemplate.opsForValue().set(otpResponse.getOtp().get(0).getIdentity(),System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20), 20, TimeUnit.MINUTES);
+
+				redisTemplate.opsForValue().set(otpResponse.getOtp().get(0).getIdentity(),
+						System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20), 20, TimeUnit.MINUTES);
 				throw new TooManyOtpCountException();
-			} else 
+			} else {
 				if (otpResponse.getOtp() != null && !otpResponse.getOtp().isEmpty())
 					if (redisTemplate.opsForValue().get(otpResponse.getOtp().get(0).getIdentity()) != null) {
 						if (redisTemplate.opsForValue().get(otpResponse.getOtp().get(0).getIdentity()) >= System.currentTimeMillis())
 							throw new TooManyOtpCountException();
-				}
+					}
+			}
 
 		}
 		// return otpResponse.getOtpNumber();
