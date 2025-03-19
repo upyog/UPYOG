@@ -335,14 +335,15 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
       </Card>
       <Card style={{paddingRight:"16px"}}>
       <StatusTable>
-      <CardHeader>{t("BPA_NOC_DETAILS_SUMMARY")}</CardHeader>
+      {nocDocuments && nocDocuments?.NocDetails?.map((noc, index) => (
+  <div key={`noc-${index}`} style={nocDocuments?.NocDetails?.length > 1 ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
+    <CardHeader>{t("BPA_NOC_DETAILS_SUMMARY")}</CardHeader>
           <LinkButton
             label={<EditIcon style={{ marginTop: "-10px", float: "right", position: "relative", bottom: "32px" }} />}
             style={{ width: "100px", display: "inline" }}
             onClick={() => routeTo(`${routeLink}/noc-details`)}
           />
-      {nocDocuments && nocDocuments?.NocDetails.map((noc, index) => (
-        <div key={`noc-${index}`} style={nocDocuments?.NocDetails?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
+
         <CardSectionHeader style={{marginBottom: "24px"}}>{`${t(`BPA_${noc?.nocType}_HEADER`)}`}</CardSectionHeader>
         <StatusTable>
           <Row className="border-none" label={t(`BPA_${noc?.nocType}_LABEL`)} text={noc?.applicationNo} />

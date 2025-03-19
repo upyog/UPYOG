@@ -14,7 +14,7 @@ import cloneDeep from "lodash/cloneDeep";
 import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 import ScruntinyDetails from "../../../../../templates/ApplicationDetails/components/ScruntinyDetails";
 import { Link } from "react-router-dom";
-
+import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
 const BpaApplicationDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ const BpaApplicationDetail = () => {
   let isFromSendBack = false;
   const { data: stakeHolderDetails, isLoading: stakeHolderDetailsLoading } = Digit.Hooks.obps.useMDMS(stateCode, "StakeholderRegistraition", "TradeTypetoRoleMapping");
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["DocTypeMapping"]);
-  const { data, isLoading } = Digit.Hooks.obps.useBPADetailsPage(tenantId, { applicationNo: id });
+  const { data, isLoading } = useBPADetailsPage(tenantId, { applicationNo: id });
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
   const mutation = Digit.Hooks.obps.useObpsAPI(data?.applicationData?.tenantId, false);
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
