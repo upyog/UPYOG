@@ -78,7 +78,19 @@
             "value":{
               "path":"$.approverName"
             }
-          }
+          },
+          {
+            "variable":"ulbType",
+             "value":{
+               "path":"$.ulbType"
+            }
+           },			
+           {
+            "variable":"ulbName",
+             "value":{
+               "path":"$.ulbName"
+             }
+           }
         ]
       }
     ]
