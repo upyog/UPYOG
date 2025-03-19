@@ -48,9 +48,11 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
@@ -62,6 +64,9 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.FetchEdcrRulesMdms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -76,6 +81,9 @@ public class BathRoom_Citya extends FeatureProcess {
 
 		return pl;
 	}
+	
+	@Autowired
+	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
 	@Override
 	public Plan process(Plan pl) {
@@ -91,12 +99,54 @@ public class BathRoom_Citya extends FeatureProcess {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_41_IV);
 		details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
-
+		
+        BigDecimal bathroomRequiredArea = BigDecimal.ZERO;
+        BigDecimal bathroomRequiredWidth = BigDecimal.ZERO;
 		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
+				
+                String occupancyName = null;
+				
+					 String feature = "Bathroom";
+						
+						Map<String, Object> params = new HashMap<>();
+						if(DxfFileConstants.A
+								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
+							occupancyName = "Residential";
+						}
+
+						params.put("feature", feature);
+						params.put("occupancy", occupancyName);
+						
+						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+						
+						ArrayList<String> valueFromColumn = new ArrayList<>();
+						valueFromColumn.add("bathroomRequiredArea");
+						valueFromColumn.add("bathroomRequiredWidth");
+
+						List<Map<String, Object>> permissibleValue = new ArrayList<>();
+					
+						
+						try {
+							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+							LOG.info("permissibleValue" + permissibleValue);
+   						
+
+   						} catch (NullPointerException e) {
+
+   							LOG.error("Permissible Value for Bathroom not found--------", e);
+   							return null;
+   						}
+
+						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("bathroom")) {
+							bathroomRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomRequiredArea").toString()));
+							bathroomRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomRequiredWidth").toString()));
+						}
+        		
+        		
 
 				for (Floor f : b.getBuilding().getFloors()) {
 
@@ -129,7 +179,7 @@ public class BathRoom_Citya extends FeatureProcess {
 								totalArea.compareTo(new BigDecimal(1.8)) >= 0
 								&& minWidth.compareTo(new BigDecimal(1.2)) >= 0) {
 
-							details.put(REQUIRED," Total Area >= 1.8, Width >= 1.2");
+							details.put(REQUIRED," Total Area >= " + bathroomRequiredArea + ", Width >= " + bathroomRequiredWidth);
 							details.put(PROVIDED, " Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Accepted.getResultVal());
@@ -137,7 +187,7 @@ public class BathRoom_Citya extends FeatureProcess {
 							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
 						} else {
-							details.put(REQUIRED, ", Total Area >= 1.8, Width >= 1.2");
+							details.put(REQUIRED, ", Total Area >= " + bathroomRequiredArea + ", Width >= " + bathroomRequiredWidth);
 							details.put(PROVIDED,   ", Total Area >= " + totalArea
 									+ ", Width >= " + minWidth);
 							details.put(STATUS, Result.Not_Accepted.getResultVal());

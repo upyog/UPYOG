@@ -117,11 +117,10 @@ public class Basement_Citya extends FeatureProcess {
   								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
   							occupancyName = "Residential";
   						}
-//
+
   						params.put("feature", feature);
   						params.put("occupancy", occupancyName);
-//  						
-//
+  						
   						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
   						
   						ArrayList<String> valueFromColumn = new ArrayList<>();
@@ -140,7 +139,7 @@ public class Basement_Citya extends FeatureProcess {
 
        						} catch (NullPointerException e) {
 
-       							LOG.error("Permissible Value for Kitchen not found--------", e);
+       							LOG.error("Permissible Value for Basement not found--------", e);
        							return null;
        						}
 

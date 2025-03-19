@@ -218,6 +218,10 @@ public class FetchEdcrRulesMdms {
 	                    value.put("permissiblethree", ruleItem.get("permissiblethree"));
 	                    value.put("permissiblefour", ruleItem.get("permissiblefour"));
 	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("bathroom")) {
+	                    value.put("bathroomRequiredArea", ruleItem.get("bathroomRequiredArea"));
+	                    value.put("bathroomRequiredWidth", ruleItem.get("bathroomRequiredWidth"));
+	                }
 	                result.add(value);
 	                break; // Exit after finding the first matching rule
 	            }

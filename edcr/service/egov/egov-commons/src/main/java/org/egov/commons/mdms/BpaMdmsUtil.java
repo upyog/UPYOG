@@ -66,9 +66,9 @@ public class BpaMdmsUtil {
         masterDetailBasement.setName("Basement");
         bpaMasterDtls.add(masterDetailBasement);
 
-        MasterDetail masterDetailBasement = new MasterDetail();
+        MasterDetail masterDetailBathroom = new MasterDetail();
         masterDetailBasement.setName("Bathroom");
-        bpaMasterDtls.add(masterDetailBasement);
+        bpaMasterDtls.add(masterDetailBathroom);
         
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");
