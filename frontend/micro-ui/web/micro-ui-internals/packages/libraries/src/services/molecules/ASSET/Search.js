@@ -65,7 +65,7 @@ export const ASSETSearch = {
     const response = await ASSETService.search({ tenantId, filters });
     return response.Assets[0];
   },
-  RegistrationDetails: ({ Assets: response, combinedData, t, applicationDetails, maintenanceList, disposalList }) => {
+  RegistrationDetails: ({ Assets: response, combinedData, t, applicationDetails, maintenanceList, disposalList, getAssignAsset }) => {
 
     const formatDate = (epochTime) => {
       if (!epochTime) return '';
@@ -107,6 +107,17 @@ export const ASSETSearch = {
         row.glCode,
         row.assetDisposalStatus,
         row.currentAgeOfAsset
+      ]
+    )) || [];
+
+    const assignListRows = getAssignAsset?.assetAssignments?.map((row) => (
+      [
+        row.assignedUserName,
+        `${t(row.department)}`,
+        row.designation,
+        row.employeeCode,
+        convertTimestampToDate(row.returnDate),
+        convertTimestampToDate(row.assignedDate)
       ]
     )) || [];
 
@@ -236,6 +247,22 @@ export const ASSETSearch = {
           ]
           : [`${t("AST_NO_DISPOSAL_DATA")}`],
         tableRows: disposalListListRows,
+      },
+      {
+        title: "AST_ASSIGNABLE",  
+        asSectionHeader: true,
+        isTable: true,
+        headers: assignListRows.length > 0
+          ? [
+            `${t("AST_ASSIGNED_USER")}`,
+            `${t("AST_DEPARTMENT")}`,
+            `${t("AST_DESIGNATION")}`,
+            `${t("AST_EMPLOYEE_CODE")}`,
+            `${t("AST_TRANSFER_DATE")}`,
+            `${t("AST_RETURN_DATE")}`
+          ]
+          : [`${t("AST_NO_DISPOSAL_DATA")}`],
+        tableRows: assignListRows,
       }
     ];
   },
@@ -243,6 +270,7 @@ export const ASSETSearch = {
 
     const filter = { applicationNo, ...args };
     const response = await ASSETSearch.application(tenantId, filter);
+
     // Fetch all data depriciation list
     const applicationDetails = await Digit.ASSETService.depriciationList({
       Asset: {
@@ -270,10 +298,21 @@ export const ASSETSearch = {
         offset: 0
       }
     });
+
+    const getAssignAsset = await Digit.ASSETService.assetAssignable({
+      Asset: {
+        tenantId,
+        id: response?.id,
+        limit: 10,
+        offset: 0
+      }
+    });
+
+    console.log('Get Assign Asset data is comming :- ', getAssignAsset?.assetAssignments);
     
     return {
       tenantId: response.tenantId,
-      applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, combinedData, t, applicationDetails, maintenanceList, disposalList}),
+      applicationDetails: ASSETSearch.RegistrationDetails({ Assets: response, combinedData, t, applicationDetails, maintenanceList, disposalList, getAssignAsset}),
       applicationData: response,
       transformToAppDetailsForEmployee: ASSETSearch.RegistrationDetails,
 

@@ -100,6 +100,7 @@ module.exports = function (app) {
     "/asset-services/maintenance/v1/_update",
     "/asset-services/maintenance/v1/_search",
     "/asset-services/v1/disposal/_search",
+    "/asset-services/v1/assets/assignment/_search",
     "/request-service/water-tanker/v1/_search",
     "/request-service/water-tanker/v1/_update",
     "/vendor-management/api/v1/_create",

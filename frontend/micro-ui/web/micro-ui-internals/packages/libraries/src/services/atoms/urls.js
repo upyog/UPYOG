@@ -211,7 +211,8 @@ const Urls = {
     depriciationList:"/asset-services/v1/assets/depreciation/list",   
     maintenanceList:"/asset-services/maintenance/v1/_search", 
     return_asset: "/asset-services/v1/assets/assignment/_update",  
-    disposalList:"/asset-services/v1/disposal/_search"   
+    disposalList:"/asset-services/v1/disposal/_search",
+    assetAssignable:"/asset-services/v1/assets/assignment/_search",   
   },
   ew: {
     create: "/ewaste-services/ewaste-request/_create",
