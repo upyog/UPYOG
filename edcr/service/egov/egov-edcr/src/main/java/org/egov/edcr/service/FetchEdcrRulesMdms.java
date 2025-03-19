@@ -48,7 +48,7 @@ public class FetchEdcrRulesMdms {
 		        "Far", "Coverage", "Balcony", "Toilet", "Doors", "FrontSetBack", "Kitchen",
 		        "Landing", "Lift", "NonHabitationalDoors", "NoOfRiser", "Parking", "Plantation",
 		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
-		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom"
+		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", "BathroomWaterClosets"
 		    ));
 
 		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
@@ -218,9 +218,14 @@ public class FetchEdcrRulesMdms {
 	                    value.put("permissiblethree", ruleItem.get("permissiblethree"));
 	                    value.put("permissiblefour", ruleItem.get("permissiblefour"));
 	                }
-	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("bathroom")) {
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("bathroomRequiredArea")) {
 	                    value.put("bathroomRequiredArea", ruleItem.get("bathroomRequiredArea"));
 	                    value.put("bathroomRequiredWidth", ruleItem.get("bathroomRequiredWidth"));
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("bathroomWCRequiredArea")) {
+	                    value.put("bathroomWCRequiredArea", ruleItem.get("bathroomWCRequiredArea"));
+	                    value.put("bathroomWCRequiredWidth", ruleItem.get("bathroomWCRequiredWidth"));
+	                    value.put("bathroomWCRequiredHeight", ruleItem.get("bathroomWCRequiredHeight"));
 	                }
 	                result.add(value);
 	                break; // Exit after finding the first matching rule
