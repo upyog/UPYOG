@@ -25,7 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 
 import static org.egov.pt.util.PTConstants.TENANTID_MDC_STRING;
@@ -124,6 +126,26 @@ public class PaymentUpdateService {
 			property.setWorkflow(wfRequest.getProcessInstances().get(0));
 			property.getWorkflow().setState(state);
 			updateRequest.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
+			/* Fix: After Payment application status not reflecting */
+			ObjectNode  objectNodeDetail;
+			JsonNode additionalDetails = updateRequest.getProperty().getAdditionalDetails();
+			if (null == additionalDetails || (null != additionalDetails && additionalDetails.isNull())) {
+				objectNodeDetail = mapper.createObjectNode();
+			} else {
+				objectNodeDetail = (ObjectNode) additionalDetails;
+			}
+			if(!objectNodeDetail.has("applicationStatus"))
+			{
+				objectNodeDetail.put("applicationStatus",state.getState());
+			}
+			else
+			{
+				objectNodeDetail.remove("applicationStatus");
+				objectNodeDetail.put("applicationStatus",state.getState());
+
+			}
+			updateRequest.getProperty().setAdditionalDetails(objectNodeDetail);
+			//
 			producer.push(tenantId, config.getUpdatePropertyTopic(), updateRequest);			
 			notifService.sendNotificationForMtPayment(updateRequest, bill.getTotalAmount());
 		});
