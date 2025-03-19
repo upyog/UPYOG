@@ -14,12 +14,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
+//import org.egov.infra.mdms.controller.MDMSController;
 import org.egov.infra.microservice.models.RequestInfo;
+//import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 
-
+@Slf4j
 @Service
 public class FetchEdcrRulesMdms {
 
@@ -32,7 +35,9 @@ public class FetchEdcrRulesMdms {
 		    LOG.info("Entered getEdcrRules method");
 
 		    // Make the MDMS call
-		    Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
+//		    Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
+		    Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
+		    log.info("----------------mdmsdata------------- :: " + mdmsData);
 		    if (mdmsData == null) {
 		        LOG.warn("MDMS data is null");
 		        return createEmptyResult("MDMS data is null");
@@ -43,7 +48,7 @@ public class FetchEdcrRulesMdms {
 		        "Far", "Coverage", "Balcony", "Toilet", "Doors", "FrontSetBack", "Kitchen",
 		        "Landing", "Lift", "NonHabitationalDoors", "NoOfRiser", "Parking", "Plantation",
 		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
-		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation"
+		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom"
 		    ));
 
 		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
@@ -206,6 +211,12 @@ public class FetchEdcrRulesMdms {
 	                    value.put("roomWidth2", ruleItem.get("roomWidth2"));
 	                    value.put("roomWidth1", ruleItem.get("roomWidth1"));
 	                   
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("permissibleone")) {
+	                    value.put("permissibleone", ruleItem.get("permissibleone"));
+	                    value.put("permissibletwo", ruleItem.get("permissibletwo"));
+	                    value.put("permissiblethree", ruleItem.get("permissiblethree"));
+	                    value.put("permissiblefour", ruleItem.get("permissiblefour"));
 	                }
 	                result.add(value);
 	                break; // Exit after finding the first matching rule

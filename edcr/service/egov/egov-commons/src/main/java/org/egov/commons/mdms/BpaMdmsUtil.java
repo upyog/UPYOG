@@ -62,6 +62,14 @@ public class BpaMdmsUtil {
      //   masterDetailFar.setFilter("$.[?(@.active==true)]");
         bpaMasterDtls.add(masterDetailBalcony);
         
+        MasterDetail masterDetailBasement = new MasterDetail();
+        masterDetailBasement.setName("Basement");
+        bpaMasterDtls.add(masterDetailBasement);
+
+        MasterDetail masterDetailBasement = new MasterDetail();
+        masterDetailBasement.setName("Bathroom");
+        bpaMasterDtls.add(masterDetailBasement);
+        
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");
         bpaMasterDtls.add(masterDetailToilet);
