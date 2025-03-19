@@ -23,6 +23,7 @@ import org.egov.egf.master.web.requests.BankAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -132,7 +133,7 @@ public class BankAccountService {
 					throw new InvalidDataException("bankaccounts", ErrorCode.NOT_NULL.getCode(), null);
 				}
 				for (BankAccount bankaccount : bankaccounts) {
-					if (bankaccount.getTenantId() == null) {
+					if (bankaccount.getTenantId() == null && CollectionUtils.isEmpty(bankaccount.getTenantIds())) {
 						throw new InvalidDataException("tenantId", ErrorCode.MANDATORY_VALUE_MISSING.getCode(),
 								bankaccount.getTenantId());
 					}

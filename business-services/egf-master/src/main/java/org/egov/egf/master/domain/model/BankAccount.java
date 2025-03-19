@@ -39,11 +39,15 @@
  */
 package org.egov.egf.master.domain.model;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.egov.common.domain.model.Auditable;
 import org.egov.egf.master.domain.enums.BankAccountType;
 import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -90,5 +94,8 @@ public class BankAccount extends Auditable {
 
 	@NotNull
 	private BankAccountType type;
+	
+	@JsonIgnore
+	private List<String> tenantIds;
 
 }

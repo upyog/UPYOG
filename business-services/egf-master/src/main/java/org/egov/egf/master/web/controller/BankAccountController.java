@@ -112,7 +112,7 @@ public class BankAccountController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public BankAccountResponse search(@ModelAttribute BankAccountSearchContract bankAccountSearchContract,
-			@RequestBody RequestInfo requestInfo, BindingResult errors,@RequestParam String tenantId) {
+			@RequestBody RequestInfo requestInfo, BindingResult errors) {
 
 		ModelMapper mapper = new ModelMapper();
 		BankAccountSearch domain = new BankAccountSearch();

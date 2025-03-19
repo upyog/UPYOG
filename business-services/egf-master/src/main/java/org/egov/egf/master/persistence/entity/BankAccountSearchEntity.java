@@ -1,4 +1,6 @@
 package org.egov.egf.master.persistence.entity ;
+import java.util.List;
+
 import org.egov.egf.master.domain.model.BankAccount;
 import org.egov.egf.master.domain.model.BankAccountSearch;
 
@@ -15,12 +17,13 @@ public class BankAccountSearchEntity extends BankAccountEntity { private String 
 private String  sortBy; 
 private Integer pageSize; 
 private Integer offset; 
+private List<String> tenantIds;
 public BankAccount toDomain(){ 
 BankAccount bankAccount = new BankAccount (); 
 super.toDomain( bankAccount);return bankAccount ;}
  
 public BankAccountSearchEntity toEntity( BankAccountSearch bankAccountSearch){
 super.toEntity(( BankAccount)bankAccountSearch);
-this.pageSize=bankAccountSearch.getPageSize(); this.offset=bankAccountSearch.getOffset(); this.sortBy=bankAccountSearch.getSortBy(); this.ids=bankAccountSearch.getIds(); return this;} 
+this.pageSize=bankAccountSearch.getPageSize(); this.offset=bankAccountSearch.getOffset(); this.sortBy=bankAccountSearch.getSortBy(); this.ids=bankAccountSearch.getIds(); this.tenantIds=bankAccountSearch.getTenantIds(); return this;} 
  
 } 
