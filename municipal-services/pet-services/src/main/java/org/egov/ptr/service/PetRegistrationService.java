@@ -342,6 +342,8 @@ public class PetRegistrationService {
 		tlObject.put("createdTime", createdTime);// License Issue Date
 		tlObject.put("lastVaccineDate", lastVaccineDate);//License Validity
 		tlObject.put("applicantName", petRegistrationApplication.getApplicantName());
+		tlObject.put("ulbName", petRegistrationApplication.getAdditionalDetail().get("ulbName").asText());
+		tlObject.put("ulbType", petRegistrationApplication.getAdditionalDetail().get("ulbType").asText());
 		tlObject.put("mobileNumber", petRegistrationApplication.getMobileNumber());
 		tlObject.put("userName", requestInfo.getUserInfo().getName());
 		tlObject.put("approverName", requestInfo.getUserInfo().getUserName());

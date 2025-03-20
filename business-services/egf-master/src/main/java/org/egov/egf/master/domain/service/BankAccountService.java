@@ -120,11 +120,11 @@ public class BankAccountService {
 						throw new InvalidDataException("id", ErrorCode.MANDATORY_VALUE_MISSING.getCode(),
 								bankAccount.getId());
 					}
-					validator.validate(bankAccount, errors);
-					if (!bankAccountRepository.uniqueCheck("accountNumber", bankAccount)) {
-						errors.addError(new FieldError("bankAccount", "name", bankAccount.getAccountNumber(), false,
-								new String[] { ErrorCode.NON_UNIQUE_VALUE.getCode() }, null, null));
-					}
+//					validator.validate(bankAccount, errors);
+//					if (!bankAccountRepository.uniqueCheck("accountNumber", bankAccount)) {
+//						errors.addError(new FieldError("bankAccount", "name", bankAccount.getAccountNumber(), false,
+//								new String[] { ErrorCode.NON_UNIQUE_VALUE.getCode() }, null, null));
+//					}
 				}
 				break;
 			case Constants.ACTION_SEARCH:

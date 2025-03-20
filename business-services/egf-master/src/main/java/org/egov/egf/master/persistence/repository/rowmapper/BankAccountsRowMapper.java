@@ -30,7 +30,8 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 	}
 
 	private Fund mapFund(ResultSet rs) throws SQLException {
-		Fund fund = Fund.builder().id(rs.getString("fundid")).build();
+		Fund fund = Fund.builder().id(rs.getString("fundid")).name(rs.getString("efname")).code(rs.getString("efcode"))
+				.level(Long.valueOf(rs.getString("eflevel"))).active(rs.getBoolean("efactive")).build();
 
 		fund.setTenantId(rs.getString("eftenantid"));
 		return fund;
@@ -48,7 +49,9 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 		BankBranch bankBranch = BankBranch.builder().id(rs.getString("ebbid")).bank(mapBank(rs))
 				.code(rs.getString("ebbcode")).name(rs.getString("ebbname")).address(rs.getString("ebbaddress"))
 				.address2(rs.getString("ebbaddress2")).city(rs.getString("ebbcity")).state(rs.getString("ebbstate"))
-				.pincode(rs.getString("ebbpincode")).active(rs.getBoolean("ebbactive")).build();
+				.pincode(rs.getString("ebbpincode")).phone(rs.getString("ebbphone")).fax(rs.getString("ebbfax"))
+				.contactPerson(rs.getString("ebbcontactperson")).active(rs.getBoolean("ebbactive"))
+				.description(rs.getString("ebbdescription")).micr(rs.getString("ebbmicr")).build();
 
 		bankBranch.setTenantId(rs.getString("ebbtenantid"));
 
@@ -56,7 +59,11 @@ public class BankAccountsRowMapper implements RowMapper<BankAccount> {
 	}
 
 	private Bank mapBank(ResultSet rs) throws SQLException {
-		Bank bank = Bank.builder().id(rs.getString("ebbbankid")).build();
+		Bank bank = Bank.builder().id(rs.getString("ebbbankid")).code(rs.getString("ebcode"))
+				.name(rs.getString("ebname")).description(rs.getString("ebdescription"))
+				.active(rs.getBoolean("ebactive")).type(rs.getString("ebtype")).build();
+
+		bank.setTenantId(rs.getString("ebtenantid"));
 
 		return bank;
 	}
