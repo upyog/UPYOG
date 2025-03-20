@@ -69,12 +69,11 @@ public class GarbageAccountSchedulerService {
 				// calculate fees from mdms response
 				BigDecimal billAmount = mdmsService.fetchGarbageAmountFromMDMSResponse(mdmsResponse, garbageAccount);
 
-				GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService
-						.enrichGrbgBillTrackerCreateRequest(garbageAccount, generateBillRequest, billAmount);
-
 				BillResponse billResponse = generateDemandAndBill(generateBillRequest, garbageAccount, billAmount);
 
 				if (null != billResponse && !CollectionUtils.isEmpty(billResponse.getBill())) {
+					GrbgBillTrackerRequest grbgBillTrackerRequest = garbageAccountService
+							.enrichGrbgBillTrackerCreateRequest(garbageAccount, generateBillRequest, billAmount,billResponse.getBill().get(0));
 					// add to garbage bill tracker
 					GrbgBillTracker grbgBillTracker = garbageAccountService
 							.saveToGarbageBillTracker(grbgBillTrackerRequest);
@@ -185,9 +184,11 @@ public class GarbageAccountSchedulerService {
 			BigDecimal billAmount) {
 		try {
 			List<Demand> savedDemands = new ArrayList<>();
+			
 			// generate demand
+			
 			savedDemands = demandService.generateDemand(generateBillRequest.getRequestInfo(), garbageAccount,
-					garbageAccount.getBusinessService(), billAmount, generateBillRequest);
+					"GB", billAmount, generateBillRequest);
 
 			if (CollectionUtils.isEmpty(savedDemands)) {
 				throw new CustomException("INVALID_CONSUMERCODE",
@@ -196,8 +197,11 @@ public class GarbageAccountSchedulerService {
 
 			// fetch/create bill
 			GenerateBillCriteria billCriteria = GenerateBillCriteria.builder().tenantId(garbageAccount.getTenantId())
-					.businessService(garbageAccount.getBusinessService())
-					.consumerCode(garbageAccount.getGrbgApplicationNumber()).build();
+					.businessService("GB")
+					.consumerCode(garbageAccount.getGrbgApplicationNumber())
+					.mobileNumber(garbageAccount.getMobileNumber())
+					.email(garbageAccount.getEmailId())
+					.build();
 			BillResponse billResponse = billService.generateBill(generateBillRequest.getRequestInfo(), billCriteria);
 
 			return billResponse;

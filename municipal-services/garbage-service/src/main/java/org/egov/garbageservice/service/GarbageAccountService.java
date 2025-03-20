@@ -1596,7 +1596,7 @@ public class GarbageAccountService {
 	}
 
 	public GrbgBillTrackerRequest enrichGrbgBillTrackerCreateRequest(GarbageAccount garbageAccount,
-			GenerateBillRequest generateBillRequest, BigDecimal billAmount) {
+			GenerateBillRequest generateBillRequest, BigDecimal billAmount,Bill bill) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		AuditDetails createAuditDetails = grbgUtils.buildCreateAuditDetails(generateBillRequest.getRequestInfo());
 		GrbgBillTracker grbgBillTracker = GrbgBillTracker.builder().uuid(UUID.randomUUID().toString())
@@ -1608,6 +1608,8 @@ public class GarbageAccountService {
 								: null)
 				.toDate(null != generateBillRequest.getToDate() ? dateFormat.format(generateBillRequest.getToDate())
 						: null)
+				.ward(garbageAccount.getAddresses().get(0).getWardName())
+				.billId(bill.getId())
 				.grbgBillAmount(billAmount).auditDetails(createAuditDetails).build();
 
 		return GrbgBillTrackerRequest.builder().requestInfo(generateBillRequest.getRequestInfo())
