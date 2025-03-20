@@ -54,9 +54,11 @@ import useSelectedMDMS from "./useSelectedMDMS";
 import useEmployeeSearch from "./useEmployeeSearch";
 import useRouteSubscription from "./useRouteSubscription";
 import useCndCreateApi from "./cnd/useCndCreateApi";
+import useCndSearchApplication from "./cnd/useCndSearchApplication";
 
 const cnd ={
-  useCndCreateApi
+  useCndCreateApi,
+  useCndSearchApplication
 }
 
 const Hooks = {
