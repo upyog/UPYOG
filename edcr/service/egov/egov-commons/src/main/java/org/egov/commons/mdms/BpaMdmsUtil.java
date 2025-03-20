@@ -74,6 +74,10 @@ public class BpaMdmsUtil {
         masterDetailBathroomWC.setName("BathroomWaterClosets");
         bpaMasterDtls.add(masterDetailBathroomWC);
         
+        MasterDetail masterDetailBlockDistancesService = new MasterDetail();
+        masterDetailBlockDistancesService.setName("BlockDistancesService");
+        bpaMasterDtls.add(masterDetailBlockDistancesService);
+        
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");
         bpaMasterDtls.add(masterDetailToilet);
