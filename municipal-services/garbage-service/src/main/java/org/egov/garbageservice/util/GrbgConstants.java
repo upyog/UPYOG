@@ -54,6 +54,8 @@ public class GrbgConstants {
 
 	public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR_FOR_PAYMENT = "RETURN_TO_INITIATOR_FOR_PAYMENT";
 	
+	public static final String WORKFLOW_ACTION_PENDING_FOR_MODIFICATION = "PENDING_FOR_MODIFICATION";
+	
 	public static final String BUSINESS_SERVICE_GB_CITIZEN = "GB_CITIZEN";
 	public static final String BUSINESS_SERVICE_GB_EMPLOYEE = "GB_EMPLOYEE";
 
