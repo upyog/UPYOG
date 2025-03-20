@@ -6,7 +6,7 @@ RUN yarn add @upyog/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-fsm@2.0.0
 RUN yarn add @upyog/digit-ui-module-pt@2.0.0
 RUN yarn add @upyog/digit-ui-module-tl@2.0.0
-RUN yarn add @upyog/digit-ui-module-obps@2.0.2
+RUN yarn add @upyog/digit-ui-module-obps@2.0.3
 RUN yarn add @upyog/digit-ui-module-ws@1.8.16
 RUN yarn add @upyog/digit-ui-module-dss@1.8.11
 RUN yarn add @upyog/digit-ui-module-mcollect@2.0.0
@@ -21,8 +21,8 @@ RUN yarn add @upyog/digit-ui-module-bills@1.8.0
 
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=8192"
-ENV GENERATE_SOURCEMAP "false"
+ENV NODE_OPTIONS "--max-old-space-size=12288"
+ENV GENERATE_SOURCEMAP "true"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
