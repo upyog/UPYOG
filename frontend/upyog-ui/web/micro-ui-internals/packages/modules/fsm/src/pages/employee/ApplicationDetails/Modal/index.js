@@ -386,7 +386,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setTimeout(closeToast, 5000);
         return
       }
-      const workersList = [selectedDriver,...tempSelectedWorkers]
+      const workersList = [selectedDriver]
       // workerList?.filter(worker => worker?.userDetails?.roles?.some(role=> role?.code === "FSM_DRIVER"))
       const workerPayload = workersList?.map((worker,idx)=> {
         return {
@@ -431,7 +431,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         );
       case "DSO_ACCEPT":
          //TODO: add accept UI
-         setFormValve(vehicleNo && selectedDriver?.optionsKey ? true : false);
+         setFormValve(vehicleNo  ? true : false);
          return setConfig(
            configAcceptDso({
              t,
