@@ -20,7 +20,7 @@ import MobileInbox from "../../components/MobileInbox";
 const Inbox = ({
   useNewInboxAPI,
   parentRoute,
-  moduleCode = "WT",
+  moduleCode,
   initialStates = {},
   filterComponent,
   isInbox,
@@ -119,7 +119,7 @@ const Inbox = ({
           searchParams={searchParams}
           sortParams={sortParams}
           linkPrefix={`${parentRoute}/application-details/`}
-          tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)["WT"]}
+          tableConfig={rest?.tableConfig ? res?.tableConfig:TableConfig(t)[moduleCode]}
           filterComponent={filterComponent}
           EmptyResultInboxComp={EmptyResultInboxComp}
           useNewInboxAPI={useNewInboxAPI}
@@ -132,7 +132,7 @@ const Inbox = ({
           <WTDesktopInbox
             moduleCode={moduleCode}
             data={data}
-            tableConfig={TableConfig(t)["WT"]}
+            tableConfig={TableConfig(t)[moduleCode]}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={!isInbox}

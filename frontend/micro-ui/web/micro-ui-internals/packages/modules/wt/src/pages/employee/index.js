@@ -36,6 +36,16 @@ const EmployeeApp = ({ path,userType }) => {
 
     },
   };
+// Initial state for mobileToilet inbox
+  const inboxInitialStateMt = {
+    searchParams: {
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["mobileToilet"],
+      applicationStatus: [],
+      locality: [],
+
+    },
+  };
 
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
 
@@ -58,8 +68,23 @@ const EmployeeApp = ({ path,userType }) => {
                 useNewInboxAPI={true}
                 parentRoute={path}
                 businessService="watertanker"
+                moduleCode="WT"
                 filterComponent="WT_INBOX_FILTER"
                 initialStates={inboxInitialState}
+                isInbox={true}
+              />
+            )}
+          />
+          <PrivateRoute
+            path={`${path}/mt/inbox`}
+            component={() => (
+              <Inbox
+                useNewInboxAPI={true}
+                parentRoute={path}
+                moduleCode="MT"
+                businessService="mobileToilet"
+                filterComponent="WT_INBOX_FILTER"
+                initialStates={inboxInitialStateMt}
                 isInbox={true}
               />
             )}

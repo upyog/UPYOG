@@ -60,6 +60,9 @@ const ActionModal = (props) => {
   if (props?.businessService.includes("watertanker")) {
     return <WTActionModal {...props} />;
   }
+  if (props?.businessService.includes("mobileToilet")) {
+    return <WTActionModal {...props} />;
+  }
   
   // return <FSMActionModal {...props} />;
 };
