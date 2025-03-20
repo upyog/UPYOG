@@ -106,6 +106,10 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
 		BigDecimal bathroomWCRequiredArea = BigDecimal.ZERO;
 		BigDecimal bathroomWCRequiredWidth = BigDecimal.ZERO;
 		BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
+		BigDecimal bathroomWCRequiredminHeight = BigDecimal.ZERO;
+		BigDecimal bathroomWCRequiredTotalArea = BigDecimal.ZERO;
+		BigDecimal bathroomWCRequiredminWidth = BigDecimal.ZERO;
+
 
 		
         String occupancyName = null;
@@ -127,6 +131,9 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
 				valueFromColumn.add("bathroomWCRequiredArea");
 				valueFromColumn.add("bathroomWCRequiredWidth");
 				valueFromColumn.add("bathroomWCRequiredHeight");
+				valueFromColumn.add("bathroomWCRequiredminHeight");
+				valueFromColumn.add("bathroomWCRequiredTotalArea");
+				valueFromColumn.add("bathroomWCRequiredminWidth");
 
 
 				List<Map<String, Object>> permissibleValue = new ArrayList<>();
@@ -147,6 +154,9 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
 					bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredArea").toString()));
 					bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredWidth").toString()));
 					bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredHeight").toString()));
+					bathroomWCRequiredminHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminHeight").toString()));
+					bathroomWCRequiredTotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredTotalArea").toString()));
+					bathroomWCRequiredminWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminWidth").toString()));
 				}
 		
 		
@@ -183,9 +193,9 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
 							}
 						}
 
-						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
-								&& totalArea.compareTo(new BigDecimal(1.1)) >= 0
-								&& minWidth.compareTo(new BigDecimal(0.9)) >= 0) {
+						if (minHeight.compareTo(bathroomWCRequiredminHeight) >= 0
+								&& totalArea.compareTo(bathroomWCRequiredTotalArea) >= 0
+								&& minWidth.compareTo(bathroomWCRequiredminWidth) >= 0) {
 
 							details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
 							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea

@@ -102,6 +102,8 @@ public class BathRoom_Citya extends FeatureProcess {
 		
         BigDecimal bathroomRequiredArea = BigDecimal.ZERO;
         BigDecimal bathroomRequiredWidth = BigDecimal.ZERO;
+        BigDecimal bathroomMinWidth = BigDecimal.ZERO;
+        BigDecimal bathroomtotalArea = BigDecimal.ZERO;
 		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
@@ -126,6 +128,8 @@ public class BathRoom_Citya extends FeatureProcess {
 						ArrayList<String> valueFromColumn = new ArrayList<>();
 						valueFromColumn.add("bathroomRequiredArea");
 						valueFromColumn.add("bathroomRequiredWidth");
+						valueFromColumn.add("bathroomtotalArea");
+						valueFromColumn.add("bathroomMinWidth");
 
 						List<Map<String, Object>> permissibleValue = new ArrayList<>();
 					
@@ -144,6 +148,9 @@ public class BathRoom_Citya extends FeatureProcess {
 						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("bathroomRequiredArea")) {
 							bathroomRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomRequiredArea").toString()));
 							bathroomRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomRequiredWidth").toString()));
+							bathroomtotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomtotalArea").toString()));
+							bathroomMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomMinWidth").toString()));
+
 						}
         		
         		
@@ -176,8 +183,8 @@ public class BathRoom_Citya extends FeatureProcess {
 						if(
 					//	(minHeight.compareTo(new BigDecimal(2.4)) >= 0
 							//	&& 
-								totalArea.compareTo(new BigDecimal(1.8)) >= 0
-								&& minWidth.compareTo(new BigDecimal(1.2)) >= 0) {
+								totalArea.compareTo(bathroomtotalArea) >= 0
+								&& minWidth.compareTo(bathroomMinWidth) >= 0) {
 
 							details.put(REQUIRED," Total Area >= " + bathroomRequiredArea + ", Width >= " + bathroomRequiredWidth);
 							details.put(PROVIDED, " Total Area >= " + totalArea

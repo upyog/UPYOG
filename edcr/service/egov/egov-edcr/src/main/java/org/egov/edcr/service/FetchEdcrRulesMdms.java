@@ -221,11 +221,16 @@ public class FetchEdcrRulesMdms {
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("bathroomRequiredArea")) {
 	                    value.put("bathroomRequiredArea", ruleItem.get("bathroomRequiredArea"));
 	                    value.put("bathroomRequiredWidth", ruleItem.get("bathroomRequiredWidth"));
+	                    value.put("bathroomtotalArea", ruleItem.get("bathroomtotalArea"));
+	                    value.put("bathroomMinWidth", ruleItem.get("bathroomMinWidth"));
 	                }
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("bathroomWCRequiredArea")) {
 	                    value.put("bathroomWCRequiredArea", ruleItem.get("bathroomWCRequiredArea"));
 	                    value.put("bathroomWCRequiredWidth", ruleItem.get("bathroomWCRequiredWidth"));
 	                    value.put("bathroomWCRequiredHeight", ruleItem.get("bathroomWCRequiredHeight"));
+	                    value.put("bathroomWCRequiredminHeight", ruleItem.get("bathroomWCRequiredminHeight"));
+	                    value.put("bathroomWCRequiredTotalArea", ruleItem.get("bathroomWCRequiredTotalArea"));
+	                    value.put("bathroomWCRequiredminWidth", ruleItem.get("bathroomWCRequiredminWidth"));
 	                }
 	                result.add(value);
 	                break; // Exit after finding the first matching rule
