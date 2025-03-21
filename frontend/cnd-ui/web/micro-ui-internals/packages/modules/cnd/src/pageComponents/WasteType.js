@@ -122,7 +122,7 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
           <MultiSelectDropdown options={common} selectedValues={wasteMaterialType} onChange={setwasteMaterialType} optionKey="i18nKey" t={t} />
           
           <CardLabel>
-            {`${t("CND_WASTE_QUANTITY")}`}
+            {`${t("CND_WASTE_QUANTITY")}`}<span className="astericColor">*</span>
           </CardLabel>
           <TextInput
             t={t}
