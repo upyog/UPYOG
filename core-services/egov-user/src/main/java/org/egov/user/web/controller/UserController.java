@@ -9,6 +9,7 @@ import org.egov.user.domain.model.UserDetail;
 import org.egov.user.domain.model.UserSearchCriteria;
 import org.egov.user.domain.service.TokenService;
 import org.egov.user.domain.service.UserService;
+import org.egov.user.web.contract.UserDetailResponseV2;
 import org.egov.user.web.contract.*;
 import org.egov.user.web.contract.auth.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,7 +276,7 @@ public class UserController {
 
         final User newUser = userService.createUserWithAddressV2(user, createUserRequest.getRequestInfo());
 
-        return createResponse(newUser);
+        return createResponseV2(newUser);
     }
 
     /**
@@ -343,4 +344,9 @@ public class UserController {
         return new UserSearchResponse(responseInfo, userContracts);
     }
 
+    private UserDetailResponseV2 createResponseV2(User newUser) {
+        UserRequestV2 userRequestV2 = new UserRequestV2(newUser);
+        ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
+        return new UserDetailResponseV2(responseInfo, Collections.singletonList(userRequestV2));
+    }
 }

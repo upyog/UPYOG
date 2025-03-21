@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestWithAddress {
+public class UserRequestV2 {
 
     private Long id;
 
@@ -128,7 +128,7 @@ public class UserRequestWithAddress {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date pwdExpiryDate;
 
-    public UserRequestWithAddress(User user) {
+    public UserRequestV2(User user) {
 
         this.id = user.getId();
         this.userName = user.getUsername();

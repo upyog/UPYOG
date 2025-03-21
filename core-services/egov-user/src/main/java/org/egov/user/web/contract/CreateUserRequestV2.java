@@ -17,7 +17,7 @@ public class CreateUserRequestV2 {
 
     @NotNull
     @Valid
-    private UserRequestWithAddress user;
+    private UserRequestV2 user;
 
     public User toDomain(boolean isCreate) {
         return user.toDomain(loggedInUserId(),loggedInUserUuid(), isCreate);
