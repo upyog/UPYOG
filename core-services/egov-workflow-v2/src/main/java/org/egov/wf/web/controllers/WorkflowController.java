@@ -75,6 +75,16 @@ public class WorkflowController {
             ProcessInstanceResponse response  = ProcessInstanceResponse.builder().processInstances(processInstances).totalCount(count).build();
                 return new ResponseEntity<>(response,HttpStatus.OK);
         }
+    
+		@RequestMapping(value = "/process/_search-pgr", method = RequestMethod.POST)
+		public ResponseEntity<ProcessInstanceResponse> search(
+				@Valid @RequestBody ProcessInstanceSearchCriteria criteria) {
+			List<ProcessInstance> processInstances = workflowService.search(criteria.getRequestInfo(), criteria);
+			Integer count = workflowService.getUserBasedProcessInstancesCount(criteria.getRequestInfo(), criteria);
+			ProcessInstanceResponse response = ProcessInstanceResponse.builder().processInstances(processInstances)
+					.totalCount(count).build();
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 
     /**
      * Returns the count of records matching the given criteria

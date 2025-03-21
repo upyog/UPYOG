@@ -1,4 +1,4 @@
-package org.egov.wf.web.models;
+package org.egov.pgr.web.models.workflow;
 
 import java.util.List;
 
@@ -19,9 +19,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcessInstanceSearchCriteria {
-	
+
 	@JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
+	private RequestInfo requestInfo;
 
 	@JsonProperty("tenantId")
 	private String tenantId;
