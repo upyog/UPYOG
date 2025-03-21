@@ -6,7 +6,7 @@ import Caption from "./Caption";
 
 
 /**
- * ViewTimeline Component
+ * ViewTimeLine Component
  * 
  * This component displays the timeline of an application within a workflow. 
  * It shows various checkpoints representing the status and actions taken on 
@@ -31,7 +31,7 @@ import Caption from "./Caption";
  * appealing format with headers and connecting lines.
  */
 
-const ViewTimeline = (props) => {
+const ViewTimeLine = (props) => {
     console.log("propsssssss",props);
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
@@ -157,4 +157,4 @@ const ViewTimeline = (props) => {
   );
 };
 
-export default ViewTimeline;
+export default ViewTimeLine;
