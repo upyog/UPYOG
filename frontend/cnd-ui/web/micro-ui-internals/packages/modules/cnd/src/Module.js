@@ -14,6 +14,8 @@ import WasteType from "./pageComponents/WasteType";
 import MultiSelectDropdown from "./pageComponents/MultiSelectDropdown";
 import CndCheckPage from "./pages/citizen/Create/CndCheckPage";
 import CndAcknowledgement from "./pages/citizen/Create/CndAcknowledgement";
+import { MyRequests } from "./pages/citizen/MyRequests";
+import CndApplicationDetails from "./pages/citizen/CndApplicationDetails";
 
 
 
@@ -30,7 +32,9 @@ const componentsToRegister = {
   MultiSelectDropdown,
   AddressDetails,
   CndCheckPage,
-  CndAcknowledgement
+  CndAcknowledgement,
+  MyRequests,
+  CndApplicationDetails
   };
   
   // function to register the component as per standard 
@@ -67,10 +71,13 @@ const componentsToRegister = {
   export const CNDLinks = ({ matchPath, userType }) => {
     const { t } = useTranslation();
     const links = [ // need to check the links, will be removed later if not needed
-      
       {
         link: `${matchPath}/cnd/apply`,
         i18nKey: t("CND_APPLY"),
+      },
+      {
+        link: `${matchPath}/cnd/my-request`,
+        i18nKey: t("CND_SEARCH_APPLICATION"),
       }
     ];
   

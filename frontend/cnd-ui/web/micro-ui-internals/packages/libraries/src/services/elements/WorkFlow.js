@@ -157,139 +157,37 @@ export const WorkflowService = {
       // }));
 
       if (processInstances.length > 0) {
-        // const TLEnrichedWithWorflowData = await makeCommentsSubsidariesOfPreviousActions(processInstances)
-        // let timeline = TLEnrichedWithWorflowData.map((instance, ind) => {
-        //   let checkPoint = {
-        //     performedAction: instance.action,
-        //     status: moduleCode === "WS.AMENDMENT" ||  moduleCode === "SW.AMENDMENT" ? instance.state.state :instance.state.applicationStatus,
-        //     state: instance.state.state,
-        //     assigner: getAssignerDetails(instance, TLEnrichedWithWorflowData[ind - 1], moduleCode),
-        //     rating: instance?.rating,
-        //     wfComment: instance?.wfComments.map(e => e?.comment),
-        //     wfDocuments: instance?.documents,
-        //     thumbnailsToShow: { thumbs: instance?.thumbnailsToShow?.thumbs, fullImage: instance?.thumbnailsToShow?.images },
-        //     assignes: instance.assignes,
-        //     caption: instance.assignes ? instance.assignes.map((assignee) => ({ name: assignee.name, mobileNumber: assignee.mobileNumber })) : null,
-        //     auditDetails: {
-        //       created: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.createdTime),
-        //       lastModified: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime),
-        //     },
-        //     timeLineActions: instance.nextActions
-        //       ? instance.nextActions.filter((action) => action.roles.includes(role)).map((action) => action?.action)
-        //       : null,
-        //   };
-        //   return checkPoint;
-        // });
-
-        // if (getTripData) {
-        //   try {
-        //     const filters = {
-        //       businessService: 'FSM_VEHICLE_TRIP',
-        //       refernceNos: id
-        //     };
-        //     const tripSearchResp = await Digit.FSMService.vehicleSearch(tenantId, filters)
-        //     if (tripSearchResp && tripSearchResp.vehicleTrip && tripSearchResp.vehicleTrip.length) {
-        //       const numberOfTrips = tripSearchResp.vehicleTrip.length
-        //       let cretaedTime = 0
-        //       let lastModifiedTime = 0
-        //       let waitingForDisposedCount = 0
-        //       let disposedCount = 0
-        //       let waitingForDisposedAction = []
-        //       let disposedAction = []
-        //       for (const data of tripSearchResp.vehicleTrip) {
-        //         const resp = await Digit.WorkflowService.getByBusinessId(tenantId, data.applicationNo)
-        //         resp?.ProcessInstances?.map((instance, ind) => {
-        //           if (instance.state.applicationStatus === "WAITING_FOR_DISPOSAL") {
-        //             waitingForDisposedCount++
-        //             cretaedTime = Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.createdTime)
-        //             lastModifiedTime = Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime)
-        //             waitingForDisposedAction = [{
-        //               performedAction: instance.action,
-        //               status: instance.state.applicationStatus,
-        //               state: instance.state.state,
-        //               assigner: instance?.assigner,
-        //               rating: instance?.rating,
-        //               thumbnailsToShow: { thumbs: instance?.thumbnailsToShow?.thumbs, fullImage: instance?.thumbnailsToShow?.images },
-        //               assignes: instance.assignes,
-        //               caption: instance.assignes ? instance.assignes.map((assignee) => ({ name: assignee.name, mobileNumber: assignee.mobileNumber })) : null,
-        //               auditDetails: {
-        //                 created: cretaedTime,
-        //                 lastModified: lastModifiedTime,
-        //               },
-        //               numberOfTrips: numberOfTrips
-        //             }]
-        //           }
-        //           if (instance.state.applicationStatus === "DISPOSED") {
-        //             disposedCount++
-        //             cretaedTime = instance.auditDetails.createdTime > cretaedTime ? Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.createdTime) : cretaedTime
-        //             lastModifiedTime = instance.auditDetails.lastModifiedTime > lastModifiedTime ? Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime) : lastModifiedTime
-        //             disposedAction = [{
-        //               performedAction: instance.action,
-        //               status: instance.state.applicationStatus,
-        //               state: instance.state.state,
-        //               assigner: instance?.assigner,
-        //               rating: instance?.rating,
-        //               thumbnailsToShow: { thumbs: instance?.thumbnailsToShow?.thumbs, fullImage: instance?.thumbnailsToShow?.images },
-        //               assignes: instance.assignes,
-        //               caption: instance.assignes ? instance.assignes.map((assignee) => ({ name: assignee.name, mobileNumber: assignee.mobileNumber })) : null,
-        //               auditDetails: {
-        //                 created: cretaedTime,
-        //                 lastModified: lastModifiedTime,
-        //               },
-        //               numberOfTrips: disposedCount
-        //             }]
-        //           }
-        //         })
-        //       }
-
-        //       let tripTimeline = []
-        //       const disposalInProgressPosition = timeline.findIndex((data) => data.status === "DISPOSAL_IN_PROGRESS")
-        //       if (disposalInProgressPosition !== -1) {
-        //         timeline[disposalInProgressPosition].numberOfTrips = numberOfTrips
-        //         timeline.splice(disposalInProgressPosition + 1, 0, ...waitingForDisposedAction)
-        //         tripTimeline = disposedAction
-        //       } else {
-        //         tripTimeline = disposedAction.concat(waitingForDisposedAction)
-        //       }
-        //       const feedbackPosition = timeline.findIndex((data) => data.status === "CITIZEN_FEEDBACK_PENDING")
-        //       if (feedbackPosition !== -1) {
-        //         timeline.splice(feedbackPosition + 1, 0, ...tripTimeline)
-        //       } else {
-        //         timeline = tripTimeline.concat(timeline)
-        //       }
-        //     }
-        //   } catch (err) { }
-        // }
+        const TLEnrichedWithWorflowData = await makeCommentsSubsidariesOfPreviousActions(processInstances)
+        let timeline = TLEnrichedWithWorflowData.map((instance, ind) => {
+          let checkPoint = {
+            performedAction: instance.action,
+            status: instance.state.applicationStatus,
+            state: instance.state.state,
+            assigner: getAssignerDetails(instance, TLEnrichedWithWorflowData[ind - 1], moduleCode),
+            rating: instance?.rating,
+            wfComment: instance?.wfComments.map(e => e?.comment),
+            wfDocuments: instance?.documents,
+            thumbnailsToShow: { thumbs: instance?.thumbnailsToShow?.thumbs, fullImage: instance?.thumbnailsToShow?.images },
+            assignes: instance.assignes,
+            caption: instance.assignes ? instance.assignes.map((assignee) => ({ name: assignee.name, mobileNumber: assignee.mobileNumber })) : null,
+            auditDetails: {
+              created: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.createdTime),
+              lastModified: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime),
+            },
+            timeLineActions: instance.nextActions
+              ? instance.nextActions.filter((action) => action.roles.includes(role)).map((action) => action?.action)
+              : null,
+          };
+          return checkPoint;
+        });
 
       //Added the condition so that following filter can happen only for fsm and does not affect other module
       let nextStep = [];
-      // if(window.location.href?.includes("fsm")){
-      //   // TAKING OUT CURRENT APPL STATUS
-      //   const actionRolePair = nextActions?.map((action) => ({
-      //     action: action?.action,
-      //     roles: action.state?.actions?.map((action) => action.roles).join(","),
-      //   }));
-      //   nextStep = location.pathname.includes("new-vehicle-entry") ? action_newVehicle : location.pathname.includes("dso") ? actionRolePair.filter((i)=> i.action !== "PAY") : actionRolePair;
-      // }
-
-        // if (role !== "CITIZEN" && moduleCode === "PGR") {
-        //   const onlyPendingForAssignmentStatusArray = timeline?.filter(e => e?.status === "PENDINGFORASSIGNMENT")
-        //   const duplicateCheckpointOfPendingForAssignment = onlyPendingForAssignmentStatusArray.at(-1)
-        //   // const duplicateCheckpointOfPendingForAssignment = timeline?.find( e => e?.status === "PENDINGFORASSIGNMENT")
-        //   timeline.push({
-        //     ...duplicateCheckpointOfPendingForAssignment,
-        //     status: "COMPLAINT_FILED",
-        //   });
-        // }
-
-        // if (timeline[timeline.length - 1].status !== "CREATED" && (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode==="FSM_ADVANCE_PAY_SERVICE" || moduleCode==="FSM_ADVANCE_PAY_SERVICE_V1"|| moduleCode==="FSM_ZERO_PAY_SERVICE" || moduleCode==="PAY_LATER_SERVICE" ))
-        //   timeline.push({
-        //     status: "CREATED",
-        //   });
+      
 
         const details = {
           timeline,
-          nextActions : /*window.location.href?.includes("fsm") ? nextStep :*/ nextActions,
+          nextActions : nextActions,
           actionState,
           applicationBusinessService: workflow?.ProcessInstances?.[0]?.businessService,
           processInstances: applicationProcessInstance,

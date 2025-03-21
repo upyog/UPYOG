@@ -35,11 +35,12 @@ return checkForNotNull(value) ? value : "NA";
 
 // Create Payload for the CND Application
 export const cndPayload = (data) => {
-  const user = Digit.UserService.getUser();
-   const formData =  {
+    const user = Digit.UserService.getUser();
+    const formData =  
+    {
         cndApplication: {
             tenantId: data?.tenantId,
-            typeOfConstruction: data?.constructionType?.constructionType?.code,
+            additionalDetails: null,
             applicationType: "REQUEST_FOR_PICKUP",
             applicationStatus: "BOOKING_CREATED",
             depositCentreDetails: "",
@@ -53,19 +54,13 @@ export const cndPayload = (data) => {
             houseArea: data?.propertyNature?.houseArea,
             applicantDetailId: user?.info?.uuid,
             totalWasteQuantity: data?.wasteType?.wasteQuantity,
+            typeOfConstruction: data?.constructionType?.constructionType?.code,
             noOfTrips: 0,
             pickupDate:"",
             requestedPickupDate:data?.wasteType?.pickupDate,
             facilityCenterDetail: {
                 disposalId: "",
-                disposalDate:"",
-                disposalType: "",
-                dumpingStationName: "",
-                grossWeight: 0,
-                nameOfDisposalSite: "",
-                netWeight: 0,
-                vehicleDepotNo: "",
-                vehicleId: ""
+                netWeight: data?.wasteType?.wasteQuantity
             },
             wasteTypeDetails: data?.wasteType?.wasteMaterialType?.map(item => ({
                 applicationId: "",
@@ -78,23 +73,23 @@ export const cndPayload = (data) => {
             })) || [],
             documentDetails: [
                 ...(data?.wasteType?.siteMediaPhoto ? [{
-                  documentDetailId: "",
-                  applicationId: "",
-                  documentType: CND_VARIABLES.SITE_MEDIA_PHOTO,
-                  uploadedByUserType: user?.info?.type,
-                  fileStoreId: data.wasteType.siteMediaPhoto,
-                  auditDetails: null
+                    documentDetailId: "",
+                    applicationId: "",
+                    documentType: CND_VARIABLES.SITE_MEDIA_PHOTO,
+                    uploadedByUserType: user?.info?.type,
+                    fileStoreId: data.wasteType.siteMediaPhoto,
+                    auditDetails: null
                 }] : []),
                 ...(data?.wasteType?.siteStack ? [{
-                  documentDetailId: "",
-                  applicationId: "",
-                  documentType: CND_VARIABLES.SITE_STACK_PHOTO,
-                  uploadedByUserType: user?.info?.type,
-                  fileStoreId: data.wasteType.siteStack,
-                  auditDetails: null
+                    documentDetailId: "",
+                    applicationId: "",
+                    documentType: CND_VARIABLES.SITE_STACK_PHOTO,
+                    uploadedByUserType: user?.info?.type,
+                    fileStoreId: data.wasteType.siteStack,
+                    auditDetails: null
                 }] : [])
-              ],
-             workflow: {
+                ],
+                workflow: {
                 action: "APPLY",
                 comments: "",
                 businessService: "cnd",
