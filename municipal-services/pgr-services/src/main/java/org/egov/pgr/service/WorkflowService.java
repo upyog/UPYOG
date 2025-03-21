@@ -127,8 +127,14 @@ public class WorkflowService {
 
             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
-            StringBuilder searchUrl = getprocessInstanceSearchURL(tenantId, StringUtils.join(serviceRequestIds, ','));
-            Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
+//            StringBuilder searchUrl = getprocessInstanceSearchURL(tenantId, StringUtils.join(serviceRequestIds, ','));
+//            Object result = repository.fetchResult(searchUrl, requestInfoWrapper);
+            StringBuilder searchUrl = getprocessInstanceSearchURLV2();
+            
+			ProcessInstanceSearchCriteria processInstanceSearchCriteria = ProcessInstanceSearchCriteria.builder()
+					.requestInfo(requestInfoWrapper.getRequestInfo()).tenantId(tenantId).businessIds(serviceRequestIds).build();
+            
+            Object result = repository.fetchResult(searchUrl, processInstanceSearchCriteria);
 
 
             ProcessInstanceResponse processInstanceResponse = null;
@@ -257,6 +263,17 @@ public class WorkflowService {
         url.append(serviceRequestId);
         return url;
 
+    }
+    public StringBuilder getprocessInstanceSearchURLV2() {
+    	
+    	StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost());
+    	url.append(pgrConfiguration.getWfProcessInstanceSearchPgrPath());
+//    	url.append("?tenantId=");
+//    	url.append(tenantId);
+//    	url.append("&businessIds=");
+//    	url.append(serviceRequestId);
+    	return url;
+    	
     }
 
 

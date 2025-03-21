@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.egov.pt.models.user.CreateUserRequest;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
+import org.egov.pt.models.user.UserSearchResponse;
 import org.egov.pt.repository.ServiceRequestRepository;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
@@ -31,13 +33,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UserService {
 
-    @Autowired
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
     private ObjectMapper mapper;
 
     @Autowired
@@ -539,6 +550,37 @@ public class UserService {
 		
         StringBuilder uri = new StringBuilder(userHost).append(userSearchEndpoint);
         return userCall(userSearchRequest,uri);
+	}
+	
+	public Map<String, org.egov.common.contract.request.User> searchUser(UserSearchRequest userSearchRequest) {
+
+		StringBuilder url = new StringBuilder(userHost);
+		url.append(userSearchEndpoint);
+
+		UserSearchResponse userSearchResponse = null;
+
+		try {
+			userSearchResponse = restTemplate.postForObject(url.toString(), userSearchRequest,
+					UserSearchResponse.class);
+		} catch (HttpServerErrorException e) {
+
+			LinkedHashMap<?, ?> customException = new Gson().fromJson(e.getResponseBodyAsString(), LinkedHashMap.class);
+
+			String errorMessage = String.format("Message: %s", customException.get("errorMessage"));
+			throw new CustomException("ERR_USER_SERVICE_ERROR", errorMessage);
+		} catch (Exception e) {
+			log.error("Error occured while update user role.", e);
+			throw new CustomException("ERR_USER_SERVICE_ERROR",
+					"Error occured while update user role. Message: " + e.getMessage());
+		}
+
+		Map<String, org.egov.common.contract.request.User> uuidToUserMap = new HashMap<>();
+		if (null != userSearchResponse && !CollectionUtils.isEmpty(userSearchResponse.getUser())) {
+			userSearchResponse.getUser().forEach(user -> {
+				uuidToUserMap.put(user.getUuid(), user);
+			});
+		}
+		return uuidToUserMap;
 	}
 
 }

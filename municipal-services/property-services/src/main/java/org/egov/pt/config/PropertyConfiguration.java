@@ -233,6 +233,9 @@ public class PropertyConfiguration {
 
     @Value("${workflow.processinstance.search.path}")
     private String wfProcessInstanceSearchPath;
+    
+    @Value("${workflow.valid.action.search.path}")
+    private String wfValidActionSearchPath;
 
     @Value("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;
