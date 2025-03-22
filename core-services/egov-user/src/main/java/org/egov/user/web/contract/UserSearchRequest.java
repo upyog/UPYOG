@@ -1,7 +1,11 @@
 package org.egov.user.web.contract;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.egov.common.contract.request.RequestInfo;
@@ -17,6 +21,9 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserSearchRequest {
 
     @JsonProperty("RequestInfo")
@@ -79,6 +86,9 @@ public class UserSearchRequest {
 
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
+    
+    @Builder.Default
+    private Boolean skipValidate = false;
 
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
@@ -97,6 +107,7 @@ public class UserSearchRequest {
                 .tenantId(tenantId)
                 .roleCodes(roleCodes)
                 .uuid(uuid)
+                .skipValidate(skipValidate)
                 .build();
     }
 }
