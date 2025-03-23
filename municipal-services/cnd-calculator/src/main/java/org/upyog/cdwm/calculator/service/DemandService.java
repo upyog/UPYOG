@@ -53,24 +53,24 @@ public class DemandService {
      * @throws IllegalArgumentException if the provided criteria list is null.
      */
 
-	public List<Demand> createDemand(RequestInfo requestInfo, List<CalulationCriteria> criterias) {
+	public List<Demand> createDemand(RequestInfo requestInfo, List<CalulationCriteria> criterias) { //remove list of calculation criteria
 		if (criterias == null) {
 			throw new IllegalArgumentException("CND Request is Empty");
 		}
 	
 			List<Calculation> calculations = new LinkedList<>();
 			for (CalulationCriteria criteria : criterias) {
-				CNDApplicationDetail cndRequest = null;
+				CNDApplicationDetail cndApplicationDetail = null;
 				if (criteria.getCndRequest().getApplicationNumber()!= null) {
-					cndRequest = cndService.getCNDApplication(requestInfo, criteria.getCndRequest().getTenantId(), criteria.getCndRequest().getApplicationNumber());
-					criteria.setCndRequest(cndRequest);
+					cndApplicationDetail = cndService.getCNDApplication(requestInfo, criteria.getCndRequest().getTenantId(), criteria.getCndRequest().getApplicationNumber());
+					criteria.setCndRequest(cndApplicationDetail);
 				}		
 				
-		String consumerCode = cndRequest.getApplicationNumber();
-		BigDecimal amountPayable = calculationService.calculateFee(cndRequest, requestInfo);
+		String consumerCode = cndApplicationDetail.getApplicationNumber();
+		BigDecimal amountPayable = calculationService.calculateFee(cndApplicationDetail, requestInfo);
 		log.info("Final amount payable after calculation : " + amountPayable);
-		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, cndRequest.getTenantId(), cndRequest);
-		Demand demand = buildDemand(cndRequest.getTenantId(), consumerCode, null, demandDetails, amountPayable, cndRequest);
+		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, cndApplicationDetail.getTenantId(), cndApplicationDetail);
+		Demand demand = buildDemand(cndApplicationDetail.getTenantId(), consumerCode, null, demandDetails, amountPayable, cndApplicationDetail);
 		log.info("Final demand generation object" + demand.toString());
 		return demandRepository.saveDemand(requestInfo, Collections.singletonList(demand));
 	}
@@ -82,7 +82,7 @@ public class DemandService {
      * 
      * @param amountPayable The total payable amount for the demand.
      * @param tenantId      The tenant ID associated with the demand.
-     * @param cndRequest    The CND request for which the demand is being created.
+     * @param cndApplicationDetail   The cndApplicationDetail for which the demand is being created.
      * @return A list of demand details.
      */
 	

@@ -5,17 +5,11 @@ public class CalculatorConstants {
 	private CalculatorConstants() {
 	}
 	public static final String DEMAND_DETAIL_FOUND = "Demand Detail found Successfully";
-
-	public static final String APPLICATION_FEE = "APPLICATION_FEE";
 	
 	public static final String MDMS_VEHICLE_TYPE = "VehicleType";
 	
 	public static final String MDMS_CALCULATION_TYPE= "CalculationTypeByWeight";
-	
-	public static final String CND_SERVICE_NAME = "cnd-service";
-	
-	public static final String CND_MODULE_NAME = "cnd-service";
-	
+
 	public static final String CND_CALCULATOR_TAX_MASTER_CODE = "CND_TON_FEE";
 	
 	public static final String BILLING_SERVICE = "BillingService";
