@@ -19,7 +19,7 @@ CREATE TABLE ug_cnd_application_details (
     vehicle_type VARCHAR(50),
     vendor_id VARCHAR(64),
     pickup_date date,
-    completed_on TIME WITHOUT TIME ZONE NOT NULL,
+    completed_on TIME WITHOUT TIME ZONE,
 
     created_by VARCHAR(64),
     last_modified_by VARCHAR(64),
