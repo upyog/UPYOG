@@ -3,10 +3,14 @@ package org.upyog.cdwm.web.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.validation.Valid;
+
+import org.upyog.cdwm.util.CNDServiceUtil;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import digit.models.coremodels.AuditDetails;
 import lombok.Getter;
@@ -46,6 +50,7 @@ public class CNDApplicationDetail {
 
     private String applicantDetailId;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate requestedPickupDate;
 
     //TODO: Convert to enum
@@ -57,8 +62,10 @@ public class CNDApplicationDetail {
 
     private Long houseArea;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate constructionFromDate;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate constructionToDate;
 
     private String propertyType;
@@ -71,9 +78,11 @@ public class CNDApplicationDetail {
 
     private String vendorId;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate pickupDate;
 
-    private LocalDateTime completedOn;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime completedOn;
 
     private List<WasteTypeDetail> wasteTypeDetails;
 
