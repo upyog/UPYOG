@@ -410,38 +410,38 @@ public class NotificationUtil {
 		switch (ACTION_STATUS) {
 
 			case ACTION_STATUS_APPLY:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPLY, localizationMessage);
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_APPLY, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
 
 			case ACTION_STATUS_APPROVE:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_APPROVED, localizationMessage);
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_APPROVED, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				//	link = getPayUrl(waterTankerDetail, message);
 				break;
 
 			case ACTION_STATUS_ASSIGN_VENDOR:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VENDOR, localizationMessage);
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_ASSIGN_VENDOR, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
 
 			case ACTION_STATUS_ASSIGN_VEHICLE_DRIVER:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_ASSIGN_VEHICLE_DRIVER, localizationMessage);
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_ASSIGN_VEHICLE_DRIVER, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
 
 			case ACTION_STATUS_COMPLETE_REQUEST:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_COMPLETE_REQUEST, localizationMessage);
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_COMPLETE_REQUEST, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
 
 			case ACTION_STATUS_REJECT:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_REJECT, localizationMessage);
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_REJECT, localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
 
 			case ACTION_STATUS_PAY:
-				messageTemplate = getMessageTemplate(RequestServiceConstants.NOTIFICATION_TANKERBOOKED,
+				messageTemplate = getMessageTemplate(RequestServiceConstants.MT_NOTIFICATION_TOILETBOOKED,
 						localizationMessage);
 				message = getMessageWithNumberAndFinalDetails(mobileToiletDetail, messageTemplate);
 				break;
