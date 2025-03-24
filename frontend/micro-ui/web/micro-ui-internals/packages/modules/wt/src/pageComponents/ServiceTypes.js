@@ -18,7 +18,7 @@ import { FormStep, CardLabel, Dropdown , Modal} from "@nudmcdgnpm/digit-ui-react
       </div>
     );
   const Heading = (props) => {
-    return <h1 className="heading-m">{props.t("ES_SERVICE_TYPE")}</h1>;
+    return <h1 className="heading-m">{props.t("SERVICE_TYPE")}</h1>;
 };
 
 const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
@@ -69,7 +69,7 @@ const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
         isDisabled={!serviceType}
       >
         <div>
-          <CardLabel>{`${t("WT_REQUEST_TYPE")}`} <span className="astericColor">*</span></CardLabel>
+          <CardLabel>{`${t("REQUEST_TYPE")}`} <span className="astericColor">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={serviceType}

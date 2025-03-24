@@ -107,15 +107,15 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet }) => {
                 }}
               >
                 
-                <KeyNote keyValue={t("WT_BOOKING_NO")} note={application?.bookingNo} />
-                <KeyNote keyValue={t("WT_APPLICANT_NAME")} note={application?.applicantDetail?.name} />
+                <KeyNote keyValue={t("BOOKING_NO")} note={application?.bookingNo} />
+                <KeyNote keyValue={t("APPLICANT_NAME")} note={application?.applicantDetail?.name} />
                 <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
               </Card>
             </div>
           ))}
         {filteredApplications.length === 0 && !isLoading && (
           <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-            {t("WT_NO_APPLICATION_FOUND_MSG")}
+            {t("NO_APPLICATION_FOUND_MSG")}
           </p>
         )}
       </div>

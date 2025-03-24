@@ -79,7 +79,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
         isDisabled={!mobileToilet || !deliveryfromTime || !deliverytoTime || !deliveryfromDate || !deliverytoDate}
       >
         <div>
-          <CardLabel>{t("NUMBER_OF_MOBILE_TOILETS")} <span className="check-page-link-button">*</span></CardLabel>
+          <CardLabel>{t("MT_NUMBER_OF_MOBILE_TOILETS")} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
             t={t}
             type="number"
@@ -93,7 +93,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
 
 
 
-          <CardLabel>{`${t("WT_DELIVERY_FROM_DATE")}`} <span className="astericColor">*</span></CardLabel>
+          <CardLabel>{`${t("MT_DELIVERY_FROM_DATE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type={"date"}
@@ -108,7 +108,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
               validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
             }}
           />
-          <CardLabel>{`${t("WT_DELIVERY_TO_DATE")}`} <span className="astericColor">*</span></CardLabel>
+          <CardLabel>{`${t("MT_DELIVERY_TO_DATE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type={"date"}
@@ -124,13 +124,13 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
             }}
           />
 
-          <CardLabel>{`${t("WT_REQUIREMNENT_FROM_TIME")}`} <span className="astericColor">*</span></CardLabel>
+          <CardLabel>{`${t("MT_REQUIREMNENT_FROM_TIME")}`} <span className="astericColor">*</span></CardLabel>
           <TimeInput />
-          <CardLabel>{`${t("WT_REQUIREMNENT_TO_TIME")}`} <span className="astericColor">*</span></CardLabel>
+          <CardLabel>{`${t("MT_REQUIREMNENT_TO_TIME")}`} <span className="astericColor">*</span></CardLabel>
           <TimeInput2 />
 
 
-          <CardLabel>{`${t("WT_SPECIAL_REQUEST")}`} <span className="check-page-link-button"></span></CardLabel>
+          <CardLabel>{`${t("MT_SPECIAL_REQUEST")}`} <span className="check-page-link-button"></span></CardLabel>
           <TextArea
             t={t}
             type="text"

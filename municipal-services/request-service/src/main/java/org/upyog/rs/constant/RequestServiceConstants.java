@@ -93,7 +93,21 @@ public class RequestServiceConstants {
 	public static final String NOTIFICATION_APPROVED = "wt.en.counter.approved";
 	
 	public static final String NOTIFICATION_TANKERBOOKED = "wt.en.counter.tankerbooked";
-	
+
+	public static final String MT_NOTIFICATION_APPLY = "mt.en.counter.submit";
+
+	public static final String MT_NOTIFICATION_ASSIGN_VENDOR = "mt.en.counter.assignvendor";
+
+	public static final String MT_NOTIFICATION_ASSIGN_VEHICLE_DRIVER = "mt.en.counter.assignvehicledriver";
+
+	public static final String MT_NOTIFICATION_COMPLETE_REQUEST = "mt.en.counter.completerequest";
+
+	public static final String MT_NOTIFICATION_REJECT = "mt.en.counter.reject";
+
+	public static final String MT_NOTIFICATION_APPROVED = "mt.en.counter.approved";
+
+	public static final String MT_NOTIFICATION_TOILETBOOKED = "mt.en.counter.toiletbooked";
+
 	public static final String WF_ACTION_SUBMIT_FEEDBACK = "RATE";
 	
 	public static final String WF_ACTION_REJECTED_BY_VENDOR= "REJECT";
