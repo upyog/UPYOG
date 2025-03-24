@@ -27,7 +27,7 @@ import useCustomMDMS from "./useCustomMDMS";
 import useCustomMDMSV2 from "./useCustomMDMSV2";
 import useEnabledMDMS from "./useEnabledMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
-import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
+// import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
 import useModuleTenants from "./useModuleTenants";
 import useStore from "./useStore";
@@ -55,10 +55,14 @@ import useEmployeeSearch from "./useEmployeeSearch";
 import useRouteSubscription from "./useRouteSubscription";
 import useCndCreateApi from "./cnd/useCndCreateApi";
 import useCndSearchApplication from "./cnd/useCndSearchApplication";
+import useCndApplicationDetails from "./cnd/useCndApplicationDetails";
+import useCndApplicationAction from "./cnd/useCndApplicationAction";
 
 const cnd ={
   useCndCreateApi,
-  useCndSearchApplication
+  useCndSearchApplication,
+  useCndApplicationDetails,
+  useCndApplicationAction
 }
 
 const Hooks = {
@@ -76,7 +80,7 @@ const Hooks = {
   useUserSearch,
   useApplicationsForBusinessServiceSearch,
   useDemandSearch,
-  useInboxGeneral,
+  // useInboxGeneral,
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
