@@ -48,9 +48,6 @@ const Inbox = ({
       })
 
 
-
-
-
   useEffect(() => {
     setPageOffset(0);
   }, [searchParams]);

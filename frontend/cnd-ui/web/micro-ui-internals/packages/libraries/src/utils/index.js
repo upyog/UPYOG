@@ -121,7 +121,7 @@ const didEmployeeHasRole = (role) => {
 
 
 
-const cndAccess = () => {
+const cndUserAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const svRoles = ["CND_CEMP"];
@@ -155,6 +155,6 @@ export default {
   didEmployeeHasRole,
   getPattern,
   getUnique,
-  cndAccess,
+  cndUserAccess,
   ...privacy
 };

@@ -1,4 +1,5 @@
 const inboxSearchFields = {
+//Search Fields for the Inbox where employee can search particular application using Mobile Number and Application Number
     CND: [
         {
           label: "CND_APPLICATION_NUMBER",
@@ -19,7 +20,7 @@ const inboxSearchFields = {
             maxLength: "",
           },
         }
-      ],
+      ]
 };
 
 export const getSearchFields = (isInbox) => (isInbox ? inboxSearchFields : null);
