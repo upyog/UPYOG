@@ -19,7 +19,7 @@ import lombok.Setter;
 @Valid
 public class FacilityCenterDetail {
 	
-	private String disposalId = UUID.randomUUID().toString();
+	private String disposalId;
 	 
     private String applicationId;
 

@@ -3,7 +3,7 @@ package org.upyog.cdwm.web.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -81,8 +81,8 @@ public class CNDApplicationDetail {
     @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate pickupDate;
 
-    @JsonFormat(pattern = "HH:mm")
-    private LocalTime completedOn;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime completedOn;
 
     private List<WasteTypeDetail> wasteTypeDetails;
 
