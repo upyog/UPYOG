@@ -6,7 +6,7 @@
   const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
 
 /**
- * TableConfig component renders the table columns in inbox of street Vending employee side
+ * TableConfig component renders the table columns in inbox of construction & demolition employee side
  * @returns Returns columns for the inbox table
  */
   export const TableConfig = (t) => ({
