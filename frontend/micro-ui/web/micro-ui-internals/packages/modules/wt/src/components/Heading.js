@@ -2,7 +2,7 @@
 import React from 'react';
 
 const Heading = React.memo(({ t }) => {
-  return <h1 className="heading-m">{t("WT_MY_BOOKINGS_HEADER")}</h1>;
+  return <h1 className="heading-m">{t("MY_BOOKINGS")}</h1>;
 });
 
 export default Heading;

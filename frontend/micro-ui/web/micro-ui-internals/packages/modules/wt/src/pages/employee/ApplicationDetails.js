@@ -86,7 +86,7 @@
       return (
         <div style={{ padding: user?.type === "CITIZEN" ? "0 15px" : ""}}>
         <div className={"employee-application-details"} style={{ marginBottom: "15px"  }}>
-          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WT_BOOKING_DETAILS")}</Header>
+          <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("BOOKING_DETAILS")}</Header>
           <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
             {dowloadOptions && dowloadOptions.length > 0 && (
               <MultiLink
@@ -114,7 +114,7 @@
             setShowToast={setShowToast}
             closeToast={closeToast}
             timelineStatusPrefix={""}
-            forcedActionPrefix={"WT"}
+            forcedActionPrefix={"RS"}
             statusAttribute={"state"}
             MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
           />
