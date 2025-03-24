@@ -17,10 +17,10 @@ import CndAcknowledgement from "./pages/citizen/Create/CndAcknowledgement";
 import { MyRequests } from "./pages/citizen/MyRequests";
 import CndApplicationDetails from "./pages/citizen/CndApplicationDetails";
 import CNDCard from "./components/CNDCard";
-import ViewTimeLine from "./components/ViewTimeLine";
 import EmployeeApp from "./pages/employee";
 import { TableConfig } from "./config/inbox-table-config";
 import InboxFilter from "./components/inbox/NewInboxFilter";
+import CNDApplicationTimeLine from "./components/CNDApplicationTimeLine";
 
 
 
@@ -40,7 +40,7 @@ const componentsToRegister = {
   CndAcknowledgement,
   MyRequests,
   CndApplicationDetails,
-  ViewTimeLine
+  CNDApplicationTimeLine
   };
   
   // function to register the component as per standard 
