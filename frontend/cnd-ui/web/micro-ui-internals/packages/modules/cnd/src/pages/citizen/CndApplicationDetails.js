@@ -2,9 +2,8 @@ import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, Mult
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-// import ViewTimeline from "../../components/ViewTimeLine";
-import ViewTimeLine from "../../components/ViewTimeLine";
 import get from "lodash/get";
+import CNDApplicationTimeLine from "../../components/CNDApplicationTimeLine";
 // import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
 
 
@@ -170,7 +169,7 @@ const CndApplicationDetails = () => {
 
 
          
-          <ViewTimeLine application={application} id={application?.applicationNumber} userType={"citizen"} />
+          <CNDApplicationTimeLine application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast
             error={showToast.key}
