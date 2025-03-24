@@ -89,7 +89,8 @@ const enabledModules = [
   "EW",
   "CHB",
   "WT",
-  "VENDOR"
+  "VENDOR",
+  "MT"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,

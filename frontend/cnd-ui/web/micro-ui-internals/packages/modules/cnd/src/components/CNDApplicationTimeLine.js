@@ -6,7 +6,7 @@ import Caption from "./Caption";
 
 
 /**
- * ViewTimeLine Component
+ * CNDApplicationTimeLine Component
  * 
  * This component displays the timeline of an application within a workflow. 
  * It shows various checkpoints representing the status and actions taken on 
@@ -31,15 +31,14 @@ import Caption from "./Caption";
  * appealing format with headers and connecting lines.
  */
 
-const ViewTimeLine = (props) => {
-    console.log("propsssssss",props);
+const CNDApplicationTimeLine = (props) => {
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
   
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
-    id: props?.id,
+    id: props.id,
     moduleCode: businessService,
   });
   
@@ -124,7 +123,7 @@ const ViewTimeLine = (props) => {
           {data?.timeline && data?.timeline?.length === 1 ? (
             <CheckPoint
               isCompleted={true}
-              label={t((data?.timeline[0]?.state && `${data.timeline[0].state}`) || "NA")}
+              label={t((data?.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}`) || "NA")}
               customChild={getTimelineCaptions(data?.timeline[0])}
             />
           ) : (
@@ -157,4 +156,4 @@ const ViewTimeLine = (props) => {
   );
 };
 
-export default ViewTimeLine;
+export default CNDApplicationTimeLine;
