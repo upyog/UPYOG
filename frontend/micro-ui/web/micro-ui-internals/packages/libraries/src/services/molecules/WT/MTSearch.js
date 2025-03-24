@@ -54,15 +54,15 @@ export const MTSearch = {
 //         ],
 //       },
       {
-        title: "WT_REQUEST_DETAILS",
+        title: "MT_REQUEST_DETAILS",
         asSectionHeader: true,
         values: [
-          { title: "NUMBER_OF_MOBILE_TOILETS", value: response?.noOfMobileToilet || t("CS_NA")},
-          { title: "WT_DELIVERY_FROM_DATE", value: response?.deliveryFromDate || t("CS_NA")},
-          { title: "WT_DELIVERY_TO_DAT", value: response?.deliveryToDate || t("CS_NA")},
-          { title: "WT_REQUIREMNENT_FROM_TIME", value: response?.deliveryFromTime || t("CS_NA")},
-          { title: "WT_REQUIREMNENT_TO_TIME", value: response?.deliveryToTime || t("CS_NA")},
-          { title: "WT_SPECIAL_REQUEST", value: response?.description || t("CS_NA")},
+          { title: "MT_NUMBER_OF_MOBILE_TOILETS", value: response?.noOfMobileToilet || t("CS_NA")},
+          { title: "MT_DELIVERY_FROM_DATE", value: response?.deliveryFromDate || t("CS_NA")},
+          { title: "MT_DELIVERY_TO_DATE", value: response?.deliveryToDate || t("CS_NA")},
+          { title: "MT_REQUIREMNENT_FROM_TIME", value: response?.deliveryFromTime || t("CS_NA")},
+          { title: "MT_REQUIREMNENT_TO_TIME", value: response?.deliveryToTime || t("CS_NA")},
+          { title: "MT_SPECIAL_REQUEST", value: response?.description || t("CS_NA")},
         ],
       },
     ];

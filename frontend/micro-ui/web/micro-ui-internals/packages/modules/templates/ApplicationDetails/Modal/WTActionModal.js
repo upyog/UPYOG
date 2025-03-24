@@ -183,7 +183,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       );
       
     }
-  },[action, approvers, uploadedFile, dsoData,selectVehicle]);
+  },[action, approvers, uploadedFile, dsoData,selectVehicle,vehicleData]);
 
   return action && config.form ? (
     <Modal

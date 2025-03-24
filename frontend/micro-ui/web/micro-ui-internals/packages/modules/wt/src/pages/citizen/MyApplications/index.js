@@ -113,12 +113,12 @@ export const WTMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("WT_MY_BOOKINGS")} (${filteredData.length})`}</Header>
+      <Header>{`${t("MY_BOOKINGS")} (${filteredData.length})`}</Header>
       <Card>
         <div style={{ marginLeft: "16px" }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
             <div style={{ flex: 1 }}>
-              <CardLabel>{t("WT_SERVICE_TYPE")}</CardLabel>
+              <CardLabel>{t("SERVICE_TYPE")}</CardLabel>
               <Dropdown
                 selected={serviceOptions.find((option) => option.code === tempServiceType)}
                 select={(option) => setTempServiceType(option.code)} // Temporary state update
@@ -129,7 +129,7 @@ export const WTMyApplications = () => {
               />
             </div>
             <div style={{ flex: 1 }}>
-              <CardLabel>{t("WT_BOOKING_NO")}</CardLabel>
+              <CardLabel>{t("BOOKING_NO")}</CardLabel>
               <TextInput
                 placeholder={t("Enter Booking No.")}
                 value={searchTerm}
@@ -161,7 +161,7 @@ export const WTMyApplications = () => {
             </div>
           </div>
             <Link to="/digit-ui/citizen/wt/request-service/info">
-              <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("WT_NEW_REQUEST")+" +"} />
+              <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("NEW_REQUEST")+" +"} />
             </Link>
         </div>
       </Card>
@@ -172,13 +172,13 @@ export const WTMyApplications = () => {
               <WTApplication
                 application={application}
                 tenantId={tenantId}
-                buttonLabel={t("WT_SUMMARY")}
+                buttonLabel={t("SUMMARY")}
               />
             </div>
           ))}
         {filteredData.length === 0 && !isLoading && (
           <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-            {t("WT_NO_APPLICATION_FOUND_MSG")}
+            {t("NO_APPLICATION_FOUND_MSG")}
           </p>
         )}
         {filteredData.length !== 0 && ((dataToilet?.count || 0) + (dataTanker?.count || 0)) > t1 && (
@@ -186,7 +186,7 @@ export const WTMyApplications = () => {
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">
                 <Link to={`/digit-ui/citizen/wt/status/${t1}`}>
-                  {t("WT_LOAD_MORE_MSG")}
+                  {t("LOAD_MORE_MSG")}
                 </Link>
               </span>
             </p>

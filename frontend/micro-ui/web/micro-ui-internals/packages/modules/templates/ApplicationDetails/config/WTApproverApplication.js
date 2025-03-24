@@ -28,15 +28,15 @@ export const configWTApproverApplication = ({
   }) => {
   return {
     label: {
-      heading: `WT_${action?.action}`,
-      submit: `WT_${action?.action}`,
+      heading: `RS_${action?.action}`,
+      submit: `RS_${action?.action}`,
       cancel: "CS_COMMON_BACK",
     },
     form: [
       {
         body: [
           {
-            label: t("ES_WT_ACTION_COMMENTS") + " *",
+            label: t("ES_RS_ACTION_COMMENTS") + " *",
             type: "textarea",
             populators: {
               name: "comments",
@@ -48,7 +48,7 @@ export const configWTApproverApplication = ({
 
           action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" ? (
           {
-            label: t("WT_ASSIGN"),
+            label: t("RS_ASSIGN"),
             type: "dropdown",
             populators:( 
             <Dropdown 
@@ -64,7 +64,7 @@ export const configWTApproverApplication = ({
 
           action?.state === "DELIVERY_PENDING" ? (
           {
-            label: t("WT_REGISTRATION_NUMBER"),
+            label: t("RS_REGISTRATION_NUMBER"),
             type: "dropdown",
             populators:( 
             <Dropdown 
@@ -78,7 +78,7 @@ export const configWTApproverApplication = ({
           }  ) : "null",
           
           {
-            label: `${t("ES_WT_ATTACH_FILE")}${action.docUploadRequired ? " *" : ""}`,
+            label: `${t("ES_RS_ATTACH_FILE")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
               <UploadFile
                 id={"workflow-doc"}
