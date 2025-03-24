@@ -48,7 +48,8 @@ public class FetchEdcrRulesMdms {
 		        "Far", "Coverage", "Balcony", "Toilet", "Doors", "FrontSetBack", "Kitchen",
 		        "Landing", "Lift", "NonHabitationalDoors", "NoOfRiser", "Parking", "Plantation",
 		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
-		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", "BathroomWaterClosets", "BlockDistancesService"
+		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", "BathroomWaterClosets", "BlockDistancesService",
+		        "Chimney", "ExitWidth"
 		    ));
 
 		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
@@ -232,6 +233,42 @@ public class FetchEdcrRulesMdms {
 	                    value.put("bathroomWCRequiredTotalArea", ruleItem.get("bathroomWCRequiredTotalArea"));
 	                    value.put("bathroomWCRequiredminWidth", ruleItem.get("bathroomWCRequiredminWidth"));
 	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("exitWidthOccupancyTypeHandlerVal")) {
+	                	value.put("exitWidthOccupancyTypeHandlerVal", ruleItem.get("exitWidthOccupancyTypeHandlerVal"));
+	                	value.put("exitWidthNotOccupancyTypeHandlerVal", ruleItem.get("exitWidthNotOccupancyTypeHandlerVal"));
+	                	value.put("exitWidth_A_occupantLoadDivisonFactor", ruleItem.get("exitWidth_A_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_A_noOfDoors", ruleItem.get("exitWidth_A_noOfDoors"));
+	                	value.put("exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_A_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_A_SR_occupantLoadDivisonFactor", ruleItem.get("exitWidth_A_SR_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_A_SR_noOfDoors", ruleItem.get("exitWidth_A_SR_noOfDoors"));
+	                	value.put("exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_A_SR_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_B_occupantLoadDivisonFactor", ruleItem.get("exitWidth_B_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_B_noOfDoors", ruleItem.get("exitWidth_B_noOfDoors"));
+	                	value.put("exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_B_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_C_occupantLoadDivisonFactor", ruleItem.get("exitWidth_C_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_C_noOfDoors", ruleItem.get("exitWidth_C_noOfDoors"));
+	                	value.put("exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_C_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_D_occupantLoadDivisonFactor", ruleItem.get("exitWidth_D_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_D_noOfDoors", ruleItem.get("exitWidth_D_noOfDoors"));
+	                	value.put("exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_D_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_E_occupantLoadDivisonFactor", ruleItem.get("exitWidth_E_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_E_noOfDoors", ruleItem.get("exitWidth_E_noOfDoors"));
+	                	value.put("exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_E_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_F_occupantLoadDivisonFactor", ruleItem.get("exitWidth_F_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_F_noOfDoors", ruleItem.get("exitWidth_F_noOfDoors"));
+	                	value.put("exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_F_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_G_occupantLoadDivisonFactor", ruleItem.get("exitWidth_G_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_G_noOfDoors", ruleItem.get("exitWidth_G_noOfDoors"));
+	                	value.put("exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_G_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_H_occupantLoadDivisonFactor", ruleItem.get("exitWidth_H_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_H_noOfDoors", ruleItem.get("exitWidth_H_noOfDoors"));
+	                	value.put("exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_H_noOfOccupantsPerUnitExitWidthOfStairWay"));
+	                	value.put("exitWidth_I_occupantLoadDivisonFactor", ruleItem.get("exitWidth_I_occupantLoadDivisonFactor"));
+	                	value.put("exitWidth_I_noOfDoors", ruleItem.get("exitWidth_I_noOfDoors"));
+	                	value.put("exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay"));
+
+	                }
+	                
 	                result.add(value);
 	                break; // Exit after finding the first matching rule
 	            }

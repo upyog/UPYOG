@@ -78,6 +78,14 @@ public class BpaMdmsUtil {
         masterDetailBlockDistancesService.setName("BlockDistancesService");
         bpaMasterDtls.add(masterDetailBlockDistancesService);
         
+        MasterDetail masterDetailChimney = new MasterDetail();
+        masterDetailChimney.setName("Chimney");
+        bpaMasterDtls.add(masterDetailChimney);
+        
+        MasterDetail masterDetailExitWidth = new MasterDetail();
+        masterDetailExitWidth.setName("ExitWidth");
+        bpaMasterDtls.add(masterDetailExitWidth);
+        
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");
         bpaMasterDtls.add(masterDetailToilet);
