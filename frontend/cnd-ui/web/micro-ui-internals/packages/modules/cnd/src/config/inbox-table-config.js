@@ -1,0 +1,44 @@
+  import React from "react";
+  import { Link } from "react-router-dom";
+
+  // applies a style to the inputs of cells
+  const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const GetMobCell = (value) => <span className="sla-cell">{value}</span>;
+
+/**
+ * TableConfig component renders the table columns in inbox of street Vending employee side
+ * @returns Returns columns for the inbox table
+ */
+  export const TableConfig = (t) => ({
+    CND: {
+      inboxColumns: (props) => [
+        {
+          Header: t("CND_APPLICATION_NUMBER"),
+          Cell: ({ row }) => {
+            return (
+              <div>
+                <span className="link">
+                  <Link to={`${props.parentRoute}/application-details/` + `${row?.original?.searchData?.["applicationNumber"]}`}>
+                    {row.original?.searchData?.["applicationNumber"]}
+                  </Link>
+                </span>
+              </div>
+            );
+          },
+          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
+        },
+        
+        {
+          Header: t("CND_APPLICATION_STATUS"),
+          Cell: ({ row }) => {
+            return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
+          },
+          mobileCell: (original) => GetMobCell(t(`CND_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+        },
+        
+      ],
+      serviceRequestIdKey: (original) => original?.[t("CND_INBOX_UNIQUE_APPLICATION_NUMBER")]?.props?.children,
+
+      
+    },
+  });

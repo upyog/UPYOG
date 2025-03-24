@@ -2,9 +2,18 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
+import {CNDService} from "../../services/elements/CND"
 
 
 const inboxConfig = (tenantId, filters) => ({
+  CND: {
+    services: ["cnd"],
+    searchResponseKey: "cndApplicationDetail",
+    businessIdsParamForSearch: "applicationNumber",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.CND,
+    _searchFn: () => CNDService.search({ tenantId, filters }),
+  },
   
 });
 

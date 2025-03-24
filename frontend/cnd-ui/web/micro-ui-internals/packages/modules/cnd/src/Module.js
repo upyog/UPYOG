@@ -16,6 +16,11 @@ import CndCheckPage from "./pages/citizen/Create/CndCheckPage";
 import CndAcknowledgement from "./pages/citizen/Create/CndAcknowledgement";
 import { MyRequests } from "./pages/citizen/MyRequests";
 import CndApplicationDetails from "./pages/citizen/CndApplicationDetails";
+import CNDCard from "./components/CNDCard";
+import ViewTimeLine from "./components/ViewTimeLine";
+import EmployeeApp from "./pages/employee";
+import { TableConfig } from "./config/inbox-table-config";
+import InboxFilter from "./components/inbox/NewInboxFilter";
 
 
 
@@ -34,7 +39,8 @@ const componentsToRegister = {
   CndCheckPage,
   CndAcknowledgement,
   MyRequests,
-  CndApplicationDetails
+  CndApplicationDetails,
+  ViewTimeLine
   };
   
   // function to register the component as per standard 
@@ -88,4 +94,7 @@ const componentsToRegister = {
   export const CNDComponents = {
     CNDModule, 
     CNDLinks,
+    CNDCard,
+    CND_INBOX_FILTERS: (props) => <InboxFilter {...props} />,
+    CNDInboxConfig:TableConfig
   };

@@ -4,8 +4,17 @@ import { useQuery, useQueryClient } from "react-query";
 import { filterFunctions } from "./newFilterFn";
 import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
+import { CNDService } from "../../services/elements/CND";
 
 const inboxConfig = (tenantId, filters) => ({
+  CND: {
+    services: ["cnd"],
+    searchResponseKey: "cndApplicationDetail",
+    businessIdsParamForSearch: "applicationNumber",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.CND,
+    _searchFn: () => CNDService.search({ tenantId, filters }),
+  },
 
 });
 
