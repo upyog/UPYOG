@@ -50,7 +50,7 @@ public class FetchEdcrRulesMdms {
 		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
 		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", 
 		        "BathroomWaterClosets", "BlockDistancesService", "Chimney", "ExitWidth", "FireStair",
-		        "FireTenderMovement", "GovtBuildingDistance", "GuardRoom"
+		        "FireTenderMovement", "GovtBuildingDistance", "GuardRoom", "HeadRoom" , "InteriorOpenSpaceService"
 		    ));
 
 		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
@@ -291,6 +291,17 @@ public class FetchEdcrRulesMdms {
 	                    value.put("GuardRoomMinArea", ruleItem.get("GuardRoomMinArea"));
 	                    value.put("GuardRoomMinCabinHeightOne", ruleItem.get("GuardRoomMinCabinHeightOne"));
 	                    value.put("GuardRoomMinCabinHeightTwo", ruleItem.get("GuardRoomMinCabinHeightTwo"));
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("minInteriorAreaValueOne")) {
+	                    value.put("minInteriorAreaValueOne", ruleItem.get("minInteriorAreaValueOne"));
+	                    value.put("minInteriorAreaValueTwo", ruleItem.get("minInteriorAreaValueTwo"));
+	                    value.put("minInteriorWidthValueOne", ruleItem.get("minInteriorWidthValueOne"));
+	                    value.put("minInteriorWidthValueTwo", ruleItem.get("minInteriorWidthValueTwo"));
+	                    value.put("minVentilationAreaValueOne", ruleItem.get("minVentilationAreaValueOne"));
+	                    value.put("minVentilationAreaValueTwo", ruleItem.get("minVentilationAreaValueTwo"));
+	                    value.put("minVentilationWidthValueOne", ruleItem.get("minVentilationWidthValueOne"));
+	                    value.put("minVentilationWidthValueTwo", ruleItem.get("minVentilationWidthValueTwo"));
+
 	                }
 	                
 	                
