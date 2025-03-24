@@ -48,8 +48,9 @@ public class FetchEdcrRulesMdms {
 		        "Far", "Coverage", "Balcony", "Toilet", "Doors", "FrontSetBack", "Kitchen",
 		        "Landing", "Lift", "NonHabitationalDoors", "NoOfRiser", "Parking", "Plantation",
 		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
-		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", "BathroomWaterClosets", "BlockDistancesService",
-		        "Chimney", "ExitWidth"
+		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", 
+		        "BathroomWaterClosets", "BlockDistancesService", "Chimney", "ExitWidth", "FireStair",
+		        "FireTenderMovement", "GovtBuildingDistance", "GuardRoom"
 		    ));
 
 		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
@@ -268,6 +269,30 @@ public class FetchEdcrRulesMdms {
 	                	value.put("exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay", ruleItem.get("exitWidth_I_noOfOccupantsPerUnitExitWidthOfStairWay"));
 
 	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("FireStairExpectedNoofRise")) {
+	                    value.put("FireStairExpectedNoofRise", ruleItem.get("FireStairExpectedNoofRise"));
+	                    value.put("FireStairMinimumWidth", ruleItem.get("FireStairMinimumWidth"));
+	                    value.put("FireStairRequiredTread", ruleItem.get("FireStairRequiredTread"));
+	                    value.put("FireStairTypicalRepititiveFloor", ruleItem.get("FireStairTypicalRepititiveFloor"));
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("FireTenderMovementValueOne")) {
+	                    value.put("FireTenderMovementValueOne", ruleItem.get("FireTenderMovementValueOne"));
+	                    value.put("FireTenderMovementValueTwo", ruleItem.get("FireTenderMovementValueTwo"));
+	                } 
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("GovtBuildingDistanceValue")) {
+	                    value.put("GovtBuildingDistanceValue", ruleItem.get("GovtBuildingDistanceValue"));
+	                    value.put("GovtBuildingDistanceMin", ruleItem.get("GovtBuildingDistanceMin"));
+	                    value.put("GovtBuildingDistanceMaxHeight", ruleItem.get("GovtBuildingDistanceMaxHeight"));
+	                    value.put("GovtBuildingDistancePermitted", ruleItem.get("GovtBuildingDistancePermitted"));
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("GuardRoomMinHeight")) {
+	                    value.put("GuardRoomMinHeight", ruleItem.get("GuardRoomMinHeight"));
+	                    value.put("GuardRoomMinWidth", ruleItem.get("GuardRoomMinWidth"));
+	                    value.put("GuardRoomMinArea", ruleItem.get("GuardRoomMinArea"));
+	                    value.put("GuardRoomMinCabinHeightOne", ruleItem.get("GuardRoomMinCabinHeightOne"));
+	                    value.put("GuardRoomMinCabinHeightTwo", ruleItem.get("GuardRoomMinCabinHeightTwo"));
+	                }
+	                
 	                
 	                result.add(value);
 	                break; // Exit after finding the first matching rule

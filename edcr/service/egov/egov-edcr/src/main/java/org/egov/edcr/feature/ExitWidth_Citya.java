@@ -61,6 +61,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
@@ -80,6 +82,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ExitWidth_Citya extends FeatureProcess {
+	
+	private static final Logger LOG = LogManager.getLogger(ExitWidth_Citya.class);
 
     private static final String EXIT_WIDTH_DESC = "Exit Width";
     // private static final String SUB_RULE_DESCRIPTION = "Minimum exit width";
@@ -125,6 +129,7 @@ public class ExitWidth_Citya extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
 
+    	
         String rule = EXIT_WIDTH_DESC;
         String subRule = null;
         validateExitWidth(pl);
@@ -164,7 +169,7 @@ public class ExitWidth_Citya extends FeatureProcess {
         
         String occupancyName = null;
 		
-			 String feature = "Basement";
+			 String feature = "ExitWidth";
 				
 				Map<String, Object> params = new HashMap<>();
 				if(DxfFileConstants.A

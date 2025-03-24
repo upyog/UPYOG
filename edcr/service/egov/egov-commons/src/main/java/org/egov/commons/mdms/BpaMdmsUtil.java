@@ -86,6 +86,22 @@ public class BpaMdmsUtil {
         masterDetailExitWidth.setName("ExitWidth");
         bpaMasterDtls.add(masterDetailExitWidth);
         
+        MasterDetail masterDetailFireStair = new MasterDetail();
+        masterDetailFireStair.setName("FireStair");
+        bpaMasterDtls.add(masterDetailFireStair);
+        
+        MasterDetail masterDetailFireTenderMovement = new MasterDetail();
+        masterDetailFireTenderMovement.setName("FireTenderMovement");
+        bpaMasterDtls.add(masterDetailFireTenderMovement);
+        
+        MasterDetail masterDetailGovtBuildingDistance = new MasterDetail();
+        masterDetailGovtBuildingDistance.setName("GovtBuildingDistance");
+        bpaMasterDtls.add(masterDetailGovtBuildingDistance);
+        
+        MasterDetail masterDetailGuardRoom = new MasterDetail();
+        masterDetailGuardRoom.setName("GuardRoom");
+        bpaMasterDtls.add(masterDetailGuardRoom);
+        
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");
         bpaMasterDtls.add(masterDetailToilet);
