@@ -1,0 +1,190 @@
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+// import ViewTimeline from "../../components/ViewTimeLine";
+import ViewTimeLine from "../../components/ViewTimeLine";
+import get from "lodash/get";
+// import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
+
+
+/**
+ *  Pre-developed componenet will mature it when work on fetch bill as well as payment , reciept, certificate download
+ */
+
+const CndApplicationDetails = () => {
+    
+  const { t } = useTranslation();
+  const { applicationNumber, tenantId } = useParams();
+  const [showOptions, setShowOptions] = useState(false);
+  const [popup, setpopup] = useState(false);
+  const [showToast, setShowToast] = useState(null);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
+ 
+  const { isLoading, data } = Digit.Hooks.cnd.useCndSearchApplication(
+    {
+      tenantId,
+      filters: { applicationNumber: applicationNumber},
+    },
+  ); 
+
+//   const [billData, setBillData]=useState(null);
+   const cndApplicationDetail = get(data, "cndApplicationDetail", []);
+  let  cndData = (cndApplicationDetail && cndApplicationDetail.length > 0 && cndApplicationDetail[0]) || {};
+  const application =  cndData;
+  sessionStorage.setItem("cnd-application", JSON.stringify(application));
+  console.log("cndDatacndData",cndData);
+//   const [loading, setLoading]=useState(false);
+
+//   const fetchBillData=async()=>{
+//     setLoading(true);
+//     const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "sv-services", consumerCode: applicationNo });
+//     setBillData(result);
+//     setLoading(false);
+//     };
+//     useEffect(()=>{
+//     fetchBillData();
+//     }, [tenantId, applicationNo]); 
+
+//   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+//     {
+//       tenantId: tenantId,
+//       businessService: "sv-services",
+//       consumerCodes: applicationNo,
+//       isEmployee: false,
+//     },
+//     { enabled: applicationNo ? true : false }
+//   );
+
+  if (!cndData.workflow) {
+    let workflow = {
+      id: null,
+      tenantId: tenantId,
+      businessService: "cnd",
+      businessId: application?.applicationNo,
+      action: "",
+      moduleName: "cnd-service",
+      state: null,
+      comment: null,
+      documents: null,
+      assignes: null,
+    };
+     cndData.workflow = workflow;
+  }
+
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+//   const getAcknowledgementData = async () => {
+//     const applications = application || {};
+//     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+//     const acknowldgementDataAPI = await getSVAcknowledgementData({ ...applications }, tenantInfo, t);
+//     Digit.Utils.pdf.generate(acknowldgementDataAPI);
+//   };
+
+
+//   async function getRecieptSearch({ tenantId, payments, ...params }) {
+//     let response = { filestoreIds: [payments?.fileStoreId] };
+//     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "svservice-receipt");
+//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+//   };
+
+//   const printCertificate = async () => {
+//     let response = await Digit.PaymentService.generatePdf(tenantId, { cndApplicationDetail: [data?.cndApplicationDetail?.[0]] }, "svcertificate");
+//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+//   };
+//   const printIdCard = async () => {
+//     let response = await Digit.PaymentService.generatePdf(tenantId, { cndApplicationDetail: [data?.cndApplicationDetail?.[0]] }, "svidentitycard");
+//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+//   };
+
+//   let dowloadOptions = [];
+//   dowloadOptions.push({
+//     label: t("SV_ACKNOWLEDGEMENT"),
+//     onClick: () => getAcknowledgementData(),
+//   });
+
+  
+//   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+//     dowloadOptions.push({
+//       label: t("SV_FEE_RECIEPT"),
+//       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+//     });
+//   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+//     dowloadOptions.push({
+//       label: t("SV_CERTIFICATE"),
+//       onClick: () => printCertificate(),
+//     });
+
+//     if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+//       dowloadOptions.push({
+//         label: t("SV_ID_CARD"),
+//         onClick: () => printIdCard(),
+//       });
+
+
+  
+  return (
+    <React.Fragment>
+      <div>
+        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+          <Header styles={{ fontSize: "32px" }}>{t("CND_REQUEST_DETAILS")}</Header>
+          {/* {dowloadOptions && dowloadOptions.length > 0 && (
+            <MultiLink
+              className="multilinkWrapper"
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={dowloadOptions}
+            />
+          )} */}
+        </div>
+        <Card>
+          <StatusTable>
+            <Row
+              className="border-none"
+              label={t("CND_APPLICATION_NUMBER")}
+              text={cndData?.applicationNumber} 
+            />
+            <Row
+              className="border-none"
+              label={t("CND_APPLICATION_TYPE")}
+              text={cndData?.applicationType} 
+            />
+            <Row
+              className="border-none"
+              label={t("CND_WASTE_QUANTITY")}
+              text={cndData?.totalWasteQuantity} 
+            />
+            <Row
+              className="border-none"
+              label={t("CND_TYPE_CONSTRUCTION")}
+              text={cndData?.typeOfConstruction} 
+            />
+          </StatusTable>
+
+
+         
+          <ViewTimeLine application={application} id={application?.applicationNumber} userType={"citizen"} />
+          {showToast && (
+          <Toast
+            error={showToast.key}
+            label={t(showToast.label)}
+            style={{bottom:"0px"}}
+            onClose={() => {
+              setShowToast(null);
+            }}
+          />
+        )}
+        </Card>
+      </div>
+    </React.Fragment>
+  );
+};
+
+export default CndApplicationDetails;
