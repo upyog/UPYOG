@@ -301,7 +301,7 @@ public class EnrichmentService {
 	 */
 	private void generateApprovalNo(BPARequest bpaRequest, String state) {
 		BPA bpa = bpaRequest.getBPA();
-		if ((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
+		if (((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE) || bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN))
 				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
 				|| (!bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& ((!bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
