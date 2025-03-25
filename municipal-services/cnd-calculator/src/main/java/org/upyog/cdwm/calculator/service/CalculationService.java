@@ -30,25 +30,26 @@ public class CalculationService {
 	/**
      * Calculates the fee for the given CND request based on the waste quantity and predefined fee structure.
      *
-     * @param cndRequest  The request object containing details like tenant ID and total waste quantity.
+     * @param cndApplicationDetail  The request object containing details like tenant ID and total waste quantity.
      * @param requestInfo The request information containing metadata.
      * @return The calculated fee as a BigDecimal.
      * @throws CustomException If the fee calculation type is not found in MDMS.
      */
 	
-	public BigDecimal calculateFee(CNDApplicationDetail cndRequest, RequestInfo requestInfo) {
-		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, cndRequest.getTenantId(),
+	public BigDecimal calculateFee(CNDApplicationDetail cndApplicationDetail, RequestInfo requestInfo) {
+		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, cndApplicationDetail.getTenantId(),
 				CalculatorConstants.MDMS_MODULE_NAME);
 
 		log.info("calculationTypes for cnd application : {}", calculationTypes);
 
-		for (CalculationType calculation : calculationTypes) {
-			return calculation.getAmount().multiply(BigDecimal.valueOf(cndRequest.getTotalWasteQuantity()));
+		if (calculationTypes == null || calculationTypes.isEmpty()) {
+            throw new CustomException("FEE_NOT_FOUND",
+                "Fee not found for per metric ton: " + cndApplicationDetail.getTotalWasteQuantity());
+        }
 
-		}
-		throw new CustomException("FEE_NOT_FOUND",
-				"Fee not found for application type: " + cndRequest.getVehicleType());
-	}
+        CalculationType calculation = calculationTypes.get(0);
+        return calculation.getAmount().multiply(BigDecimal.valueOf(cndApplicationDetail.getTotalWasteQuantity()));
+    }
 
 
 }

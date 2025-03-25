@@ -1,14 +1,16 @@
 package org.upyog.cdwm.web.models;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import javax.validation.Valid;
+
 import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

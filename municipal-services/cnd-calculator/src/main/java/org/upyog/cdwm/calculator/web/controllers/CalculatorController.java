@@ -75,7 +75,7 @@ public class CalculatorController {
      * @return A ResponseEntity containing a list of DemandResponse objects.
      */
 	@PostMapping(value = "/v1/_calculate")
-	public ResponseEntity<List<DemandResponse>> calculate(
+	public ResponseEntity<DemandResponse> calculate(
 			@ApiParam(value = "Details for the CND application, payment", required = true)
 	        @Valid @RequestBody CalculationRequest calculationReq)
 	        {
@@ -94,7 +94,8 @@ public class CalculatorController {
 	            .responseInfo(responseInfo)
 	            .build();
 	    
-	    return new ResponseEntity<>(Collections.singletonList(demandResponse), HttpStatus.OK);
+	    return ResponseEntity.ok(demandResponse);
+
 	}
 
 	
