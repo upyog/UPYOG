@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import static org.egov.constants.RequestContextConstants.CORRELATION_ID_KEY;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * Sets the correlation id to the response header.
@@ -55,8 +57,42 @@ public class ResponseEnhancementFilter extends ZuulFilter {
         ctx.addZuulResponseHeader(X_CONTENT_TYPE_OPTIONS,"nosniff");
         ctx.addZuulResponseHeader(X_FRAME_OPTIONS,"DENY");
         ctx.addZuulResponseHeader(X_XSS_PROTECTION,"1; mode=block");
-        ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'");
+        
+      //  ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'");
+       final String fontgoogleApiUrl= "https://fonts.googleapis.com; ";
+       final String fontstaticUrl= " https://fonts.gstatic.com data:; ";
+       final String teraformUrl= "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com; ";
+       final String southUrl= "https://s3.ap-south-1.amazonaws.com;";
+       
         ctx.addZuulResponseHeader(PERMISSIONS_POLICY, "geolocation=(self)");
+        final SecureRandom SECURE_RANDOM = new SecureRandom();
+        byte[] nonceBytes = new byte[16];
+        SECURE_RANDOM.nextBytes(nonceBytes);
+        String nonce = Base64.getEncoder().encodeToString(nonceBytes);
+ 
+        // Set CSP header dynamically with nonce
+       /* ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
+                "default-src 'self'; " +
+                "script-src 'self' ' nonce-" + nonce + "'; " +
+                "style-src 'self' ' nonce-" + nonce + "'"+ fontgoogleApiUrl+
+                "font-src 'self'"+ fontstaticUrl+
+                "img-src 'self' "+ teraformUrl+
+                "frame-ancestors 'none';");*/
+        
+        ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
+                "default-src 'self'; " +
+                "script-src 'self' 'nonce-" + nonce +"' "+southUrl+" "+
+                "style-src 'self' 'nonce-" + nonce + "' "+ fontgoogleApiUrl+
+                "font-src 'self'"+ fontstaticUrl+
+                "img-src 'self' "+ teraformUrl+
+                "frame-ancestors 'none';");
+      
+    	
+      
+        ctx.addZuulRequestHeader ("cspNonce", nonce);
+        ctx.getRequest().setAttribute("cspNonce", nonce);
+        
+        
         return null;
     }
 
