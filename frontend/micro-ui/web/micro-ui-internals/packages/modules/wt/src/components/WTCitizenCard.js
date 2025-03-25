@@ -41,7 +41,7 @@ const WTCitizenCard = () => {
   ]
   const propsForModuleCard = {
     Icon: <CHBIcon/>,
-    moduleName: t("ACTION_TEST_WT"),
+    moduleName: t("WT_MODULE_NAME"),
     kpis: [],
     links,
   };

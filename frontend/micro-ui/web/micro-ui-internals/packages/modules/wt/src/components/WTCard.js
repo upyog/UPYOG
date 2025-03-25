@@ -53,7 +53,7 @@ const WTCard = () => {
   const WT_CEMP = Digit.UserService.hasAccess(["WT_CEMP"]) || false;
   const propsForModuleCard = {
     Icon: <CHBIcon/>,
-    moduleName: t("ACTION_TEST_WT"),
+    moduleName: t("WT_MODULE_NAME"),
     kpis: [
       {
         count: total?.totalCount,
