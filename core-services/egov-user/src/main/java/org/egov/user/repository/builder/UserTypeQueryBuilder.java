@@ -98,7 +98,7 @@ public class UserTypeQueryBuilder {
             ".bloodgroup, userdata.photo, userdata.identificationmark,  userdata.tenantid, userdata.id, userdata.uuid, userdata.alternatemobilenumber, addr.id as addr_id, addr.type as " +
             "addr_type, addr .address as addr_address,  addr.city as addr_city, addr.pincode as addr_pincode, addr" +
             ".tenantid as " +
-            "addr_tenantid, addr.userid as addr_userid, ur.role_code as role_code, ur.role_tenantid as role_tenantid \n" +
+            "addr_tenantid, addr.userid as addr_userid, ur.role_code as role_code, ur.role_tenantid as role_tenantid, \n" +
             // below are the additional columns added for V2 in the address table
             "addr.address2 as addr_address2, addr.houseNumber as addr_houseNumber, addr.houseName as addr_houseName, addr.streetName as addr_streetName, addr.landmark as addr_landmark, addr.locality as addr_locality" +
             "\tFROM eg_user userdata LEFT OUTER JOIN eg_user_address addr ON userdata.id = addr.userid AND userdata.tenantid = addr" +
