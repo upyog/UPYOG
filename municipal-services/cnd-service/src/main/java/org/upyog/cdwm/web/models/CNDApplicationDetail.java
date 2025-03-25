@@ -8,6 +8,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.upyog.cdwm.util.CNDServiceUtil;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import digit.models.coremodels.AuditDetails;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,7 +49,10 @@ public class CNDApplicationDetail {
     private Integer quantity;
 
     private String applicantDetailId;
-
+  
+    private String addressDetailId;
+  
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate requestedPickupDate;
 
     //TODO: Convert to enum
@@ -57,8 +64,10 @@ public class CNDApplicationDetail {
 
     private Long houseArea;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate constructionFromDate;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate constructionToDate;
 
     private String propertyType;
@@ -71,8 +80,10 @@ public class CNDApplicationDetail {
 
     private String vendorId;
 
+    @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate pickupDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime completedOn;
 
     private List<WasteTypeDetail> wasteTypeDetails;
@@ -83,7 +94,10 @@ public class CNDApplicationDetail {
     
     private Workflow workflow;
 
+    private CNDApplicantDetail applicantDetail;
 
+    private CNDAddressDetail addressDetail;
 
+    private String applicantMobileNumber;
 
 }

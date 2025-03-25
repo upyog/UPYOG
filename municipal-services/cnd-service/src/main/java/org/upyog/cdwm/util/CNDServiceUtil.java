@@ -69,7 +69,7 @@ public class CNDServiceUtil {
 	 * System.currentTimeMillis(); }
 	 */
 
-	public static String getRandonUUID() {
+	public static String getRandomUUID() {
 		return UUID.randomUUID().toString();
 	}
 

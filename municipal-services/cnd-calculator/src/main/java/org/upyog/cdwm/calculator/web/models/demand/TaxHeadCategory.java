@@ -10,22 +10,7 @@ public enum TaxHeadCategory {
 
 	TAX("TAX"),
 
-	FEE("FEE"),
-
-	REBATE("REBATE"),
-
-	EXEMPTION("EXEMPTION"),
-
-	ADVANCE_COLLECTION("ADVANCE_COLLECTION"),
-
-	PENALTY("PENALTY"),
-
-	FINES("FINES"),
-
-	CHARGES("CHARGES"),
-	
-	SW_RECONNECTION("SW_RECONNECTION");
-
+	FEE("FEE");
 	private String value;
 
 	TaxHeadCategory(String value) {
