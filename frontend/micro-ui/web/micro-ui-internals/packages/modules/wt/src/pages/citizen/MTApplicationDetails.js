@@ -111,12 +111,12 @@ import {
        */}
                 <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable>
-                  <Row className="border-none" label={t("NUMBER_OF_MOBILE_TOILETS")} text={mt_details?.noOfMobileToilet || t("CS_NA")} />
-                  <Row className="border-none" label={t("WT_DELIVERY_FROM_DATE")} text={mt_details?.deliveryFromDate || t("CS_NA")} />
-                  <Row className="border-none" label={t("WT_DELIVERY_TO_DATE")} text={mt_details?.deliveryToDate || t("CS_NA")} />
-                  <Row className="border-none" label={t("WT_REQUIREMNENT_FROM_TIME")} text={mt_details?.deliveryFromTime || t("CS_NA")} />
-                  <Row className="border-none" label={t("WT_REQUIREMNENT_TO_TIME")} text={mt_details?.deliveryToTime || t("CS_NA")} />
-                  <Row className="border-none" label={t("WT_SPECIAL_REQUEST")} text={mt_details?.description || t("CS_NA")} />
+                  <Row className="border-none" label={t("MT_NUMBER_OF_MOBILE_TOILETS")} text={mt_details?.noOfMobileToilet || t("CS_NA")} />
+                  <Row className="border-none" label={t("MT_DELIVERY_FROM_DATE")} text={mt_details?.deliveryFromDate || t("CS_NA")} />
+                  <Row className="border-none" label={t("MT_DELIVERY_TO_DATE")} text={mt_details?.deliveryToDate || t("CS_NA")} />
+                  <Row className="border-none" label={t("MT_REQUIREMNENT_FROM_TIME")} text={mt_details?.deliveryFromTime || t("CS_NA")} />
+                  <Row className="border-none" label={t("MT_REQUIREMNENT_TO_TIME")} text={mt_details?.deliveryToTime || t("CS_NA")} />
+                  <Row className="border-none" label={t("MT_SPECIAL_REQUEST")} text={mt_details?.description || t("CS_NA")} />
                 </StatusTable>
       
                 <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />

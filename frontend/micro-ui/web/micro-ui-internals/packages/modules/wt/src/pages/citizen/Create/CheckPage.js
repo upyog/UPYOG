@@ -49,7 +49,7 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(owner?.mobileNumber))}`}
           />
            <Row
-              label={t("WT_ALT_MOBILE_NUMBER")}
+              label={t("COMMON_ALT_MOBILE_NUMBER")}
               text={`${t(checkForNA(owner?.alternateNumber))}`}
           />
           <Row
@@ -135,27 +135,27 @@ In Parent Component,  we are passing the data as a props coming through params (
                 <CardSubHeader>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
                   <Row
-                    label={t("NUMBER_OF_MOBILE_TOILETS")}
+                    label={t("MT_NUMBER_OF_MOBILE_TOILETS")}
                     text={`${t(checkForNA(toiletRequestDetails?.mobileToilet))}`}
                   />
                   <Row
-                    label={t("WT_DELIVERY_FROM_DATE")}
+                    label={t("MT_DELIVERY_FROM_DATE")}
                     text={`${t(checkForNA(toiletRequestDetails?.deliveryfromDate))}`}
                   />
                   <Row
-                    label={t("WT_DELIVERY_TO_DATE")}
+                    label={t("MT_DELIVERY_TO_DATE")}
                     text={`${t(checkForNA(toiletRequestDetails?.deliverytoDate))}`}
                   />
                   <Row
-                    label={t("WT_REQUIREMNENT_FROM_TIME")}
+                    label={t("MT_REQUIREMNENT_FROM_TIME")}
                     text={checkForNA(toiletRequestDetails?.deliveryfromTime)}
                   />
                   <Row
-                    label={t("WT_REQUIREMNENT_TO_TIME")}
+                    label={t("MT_REQUIREMNENT_TO_TIME")}
                     text={checkForNA(toiletRequestDetails?.deliverytoTime)}
                   />
                   <Row
-                    label={t("WT_SPECIAL_REQUEST")}
+                    label={t("MT_SPECIAL_REQUEST")}
                     text={`${t(checkForNA(toiletRequestDetails?.specialRequest))}`}
                   />
                 </StatusTable>
@@ -163,7 +163,7 @@ In Parent Component,  we are passing the data as a props coming through params (
             )}
             
           <CheckBox
-            label={t("WT_FINAL_DECLARATION_MESSAGE")}
+            label={t("FINAL_DECLARATION_MESSAGE")}
             onChange={setdeclarationhandler}
             styles={{ height: "auto", marginBottom:"30px", marginTop:"10px" }}
           />

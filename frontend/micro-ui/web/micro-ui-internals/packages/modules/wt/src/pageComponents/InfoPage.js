@@ -24,9 +24,9 @@ const InfoPage = ({ t, onSelect, formData, config, userType }) => {
     <React.Fragment>
       <Card>
         {formData?.serviceType?.serviceType.code=== "MobileToilet" ? (
-          <CardHeader>{t("MODULE_MT")}</CardHeader>
+          <CardHeader>{t("MT_MODULE")}</CardHeader>
         ) : formData?.serviceType?.serviceType.code=== "WT" ? (
-          <CardHeader>{t("MODULE_WT")}</CardHeader>
+          <CardHeader>{t("WT_MODULE")}</CardHeader>
         ) : null}
         
         <div>

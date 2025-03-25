@@ -46,6 +46,8 @@ public class CNDApplicationDetail {
 
     private String applicantDetailId;
 
+    private String addressDetailId;
+
     private LocalDate requestedPickupDate;
 
     //TODO: Convert to enum
@@ -83,7 +85,10 @@ public class CNDApplicationDetail {
     
     private Workflow workflow;
 
+    private CNDApplicantDetail applicantDetail;
 
+    private CNDAddressDetail addressDetail;
 
+    private String applicantMobileNumber;
 
 }
