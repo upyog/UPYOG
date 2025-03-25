@@ -44,6 +44,9 @@ public class CNDServiceSearchCriteria {
     @JsonIgnore
     private List<String> createdBy;
 
+    @JsonProperty("isUserDetailRequired")
+    private Boolean isUserDetailRequired = false; // default value is false
+
     public boolean isEmpty() {
         return (this.tenantId == null && this.status == null && this.applicationNumber == null
                 && this.mobileNumber == null

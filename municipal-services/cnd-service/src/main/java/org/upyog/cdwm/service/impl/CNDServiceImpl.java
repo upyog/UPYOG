@@ -16,10 +16,10 @@ import org.upyog.cdwm.constants.CNDConstants;
 import org.upyog.cdwm.repository.impl.CNDServiceRepositoryImpl;
 import org.upyog.cdwm.service.CNDService;
 import org.upyog.cdwm.service.EnrichmentService;
+import org.upyog.cdwm.service.UserService;
 import org.upyog.cdwm.service.WorkflowService;
-import org.upyog.cdwm.web.models.CNDApplicationDetail;
-import org.upyog.cdwm.web.models.CNDApplicationRequest;
-import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
+import org.upyog.cdwm.web.models.*;
+import org.upyog.cdwm.web.models.user.User;
 import org.upyog.cdwm.web.models.workflow.State;
 import digit.models.coremodels.PaymentRequest;
 
@@ -36,6 +36,9 @@ public class CNDServiceImpl implements CNDService {
 
     @Autowired
     private CNDServiceRepositoryImpl cndApplicationRepository;
+
+	@Autowired
+	private UserService userService;
 
     /**
      * Creates a new Construction and Demolition (CND) application request.
@@ -61,19 +64,34 @@ public class CNDServiceImpl implements CNDService {
         return cndApplicationRequest.getCndApplication();
     }
 
-    /**
-     * Retrieves a list of CND application details based on search criteria.
-     *
-     * @param requestInfo              The request information.
-     * @param cndServiceSearchCriteria The search criteria for fetching applications.
-     * @return List of CND application details.
-     */
-    @Override
-    public List<CNDApplicationDetail> getCNDApplicationDetails(RequestInfo requestInfo,
-                                                                CNDServiceSearchCriteria cndServiceSearchCriteria) {
-        List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
-        return CollectionUtils.isEmpty(applications) ? new ArrayList<>() : applications;
-    }
+	/**
+	 * Fetches a list of CND application details based on the given search criteria.
+	 * If user details are required, it enriches each application with user and address details.
+	 *
+	 * @param requestInfo              The request metadata containing user context.
+	 * @param cndServiceSearchCriteria The criteria used for filtering CND applications.
+	 * @return A list of CND application details, enriched with user and address data if requested.
+	 */
+	@Override
+	public List<CNDApplicationDetail> getCNDApplicationDetails(RequestInfo requestInfo,
+															   CNDServiceSearchCriteria cndServiceSearchCriteria) {
+		List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
+
+		if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired())) {
+			log.info(
+					"Enriching CND applications with user and address details for the following applications: {}",
+					applications);
+
+			applications.forEach(application -> {
+				User user = userService.getUser(application.getApplicantDetailId(), application.getTenantId(), requestInfo);
+				application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
+				application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
+			});
+		}
+
+		return applications;
+	}
+
 
     /**
      * Retrieves the count of applications based on the given search criteria.
