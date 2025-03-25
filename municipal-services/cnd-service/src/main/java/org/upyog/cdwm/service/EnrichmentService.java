@@ -79,7 +79,8 @@ public class EnrichmentService {
     /**
      * Fetches and assigns user details to the CND application.
      * If the user exists, their UUID is assigned as the applicantDetailId.
-     * The permanent address ID is also set in the application details.
+     * The permanent address ID is also set in the application details
+     * if not found correspondence address id is set if not found first address id is set.
      *
      * @param cndApplicationRequest   The request containing applicant details.
      * @param cndApplicationDetails   The application object to be enriched.
