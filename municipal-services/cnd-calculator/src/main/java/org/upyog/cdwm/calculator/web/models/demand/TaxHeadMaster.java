@@ -28,8 +28,6 @@ public class TaxHeadMaster {
 	private String name;
 
 	private String code;
-	
-	private List<GlCodeMaster> glCodes;
 
 	private Boolean isDebit = false;
 

@@ -146,7 +146,14 @@ public class UserResultSetExtractorV2 implements ResultSetExtractor<List<User>> 
                 .pinCode(rs.getString("addr_pincode"))
                 .userId(rs.getLong("addr_userid"))
                 .tenantId(rs.getString("addr_tenantid"))
+                .address2(rs.getString("addr_address2"))
+                .houseNumber(rs.getString("addr_houseNumber"))
+                .houseName(rs.getString("addr_houseName"))
+                .streetName(rs.getString("addr_streetName"))
+                .landmark(rs.getString("addr_landmark"))
+                .locality(rs.getString("addr_locality"))
                 .build();
+
 
         if (address.getType().equals(PERMANENT) && isNull(user.getPermanentAddress()))
             user.setPermanentAddress(address);

@@ -1,7 +1,5 @@
 package org.upyog.cdwm.calculator.web.models;
 
-import java.math.BigDecimal;
-
 import org.egov.common.contract.request.User;
 import org.springframework.validation.annotation.Validated;
 
@@ -91,10 +89,7 @@ public class CNDApplicationDetail   {
 
   @JsonProperty("vehicleId")
   private String vehicleId = null;
-
-  @JsonProperty("address")
-  private Address address = null;
-
+  
   @JsonProperty("auditDetails")
   private AuditDetails auditDetails = null;
 
