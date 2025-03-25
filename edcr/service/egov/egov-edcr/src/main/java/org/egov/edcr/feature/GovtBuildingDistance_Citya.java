@@ -70,140 +70,156 @@ import org.springframework.stereotype.Service;
 @Service
 public class GovtBuildingDistance_Citya extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(GovtBuildingDistance_Citya.class);
-	private static final String RULE_21 = "21";
-	public static final String GOVTBUILDING_DESCRIPTION = "Distance from Government Building";
+    // Logger for logging information and errors
+    private static final Logger LOG = LogManager.getLogger(GovtBuildingDistance_Citya.class);
 
-	@Override
-	public Plan validate(Plan pl) {
+    // Rule identifier and description for government building distance scrutiny
+    private static final String RULE_21 = "21";
+    public static final String GOVTBUILDING_DESCRIPTION = "Distance from Government Building";
 
-		return pl;
-	}
-	
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-	@Override
-	public Plan process(Plan pl) {
+    /**
+     * Validates the given plan object.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Government Building Distance");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, DISTANCE);
-		scrutinyDetail.addColumnHeading(4, PERMITTED);
-		scrutinyDetail.addColumnHeading(5, PROVIDED);
-		scrutinyDetail.addColumnHeading(6, STATUS);
+    /**
+     * Processes the given plan to validate the distance from government buildings.
+     * Fetches permissible values for distances and validates them against the plan details.
+     *
+     * @param pl The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
+    @Override
+    public Plan process(Plan pl) {
+        // Initialize scrutiny detail for government building distance validation
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Government Building Distance");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, DISTANCE);
+        scrutinyDetail.addColumnHeading(4, PERMITTED);
+        scrutinyDetail.addColumnHeading(5, PROVIDED);
+        scrutinyDetail.addColumnHeading(6, STATUS);
 
-		HashMap<String, String> errors = new HashMap<>();
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_21);
-		details.put(DESCRIPTION, GOVTBUILDING_DESCRIPTION);
+        // Map to store validation errors
+        HashMap<String, String> errors = new HashMap<>();
 
-		BigDecimal minDistanceFromGovtBuilding = BigDecimal.ZERO;
-		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-		String GovtBuildingDistanceValue = "0";
-		BigDecimal GovtBuildingDistanceMin = BigDecimal.ZERO;
-		BigDecimal GovtBuildingDistanceMaxHeight = BigDecimal.ZERO;
-		String GovtBuildingDistancePermitted = "0";
-		
-		
-		List<BigDecimal> distancesFromGovtBuilding = pl.getDistanceToExternalEntity().getGovtBuildings();
-		List<Block> blocks = pl.getBlocks();
-		
+        // Map to store rule details
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_21);
+        details.put(DESCRIPTION, GOVTBUILDING_DESCRIPTION);
+
+        // Variables to store permissible and actual values
+        BigDecimal minDistanceFromGovtBuilding = BigDecimal.ZERO;
+        BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
+        String GovtBuildingDistanceValue = "0";
+        BigDecimal GovtBuildingDistanceMin = BigDecimal.ZERO;
+        BigDecimal GovtBuildingDistanceMaxHeight = BigDecimal.ZERO;
+        String GovtBuildingDistancePermitted = "0";
+
+        // Fetch distances from government buildings and blocks in the plan
+        List<BigDecimal> distancesFromGovtBuilding = pl.getDistanceToExternalEntity().getGovtBuildings();
+        List<Block> blocks = pl.getBlocks();
+
+        // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-		
-			 String feature = "GovtBuildingDistance";
-				
-				Map<String, Object> params = new HashMap<>();
-				if(DxfFileConstants.A
-						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-					occupancyName = "Residential";
-				}
+        String feature = "GovtBuildingDistance";
 
-				params.put("feature", feature);
-				params.put("occupancy", occupancyName);
-				
-				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-				
-				ArrayList<String> valueFromColumn = new ArrayList<>();
-				valueFromColumn.add("GovtBuildingDistanceValue");
-				valueFromColumn.add("GovtBuildingDistanceMin");				
-				valueFromColumn.add("GovtBuildingDistanceMaxHeight");
-				valueFromColumn.add("GovtBuildingDistancePermitted");
+        Map<String, Object> params = new HashMap<>();
+        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
 
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
-				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-			
-				
-				try {
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-					LOG.info("permissibleValue" + permissibleValue);
-					
+        // Fetch permissible values for government building distance
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add("GovtBuildingDistanceValue");
+        valueFromColumn.add("GovtBuildingDistanceMin");
+        valueFromColumn.add("GovtBuildingDistanceMaxHeight");
+        valueFromColumn.add("GovtBuildingDistancePermitted");
 
-					} catch (NullPointerException e) {
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+        try {
+            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+            LOG.info("permissibleValue" + permissibleValue);
+        } catch (NullPointerException e) {
+            LOG.error("Permissible Value for GovtBuildingDistance not found--------", e);
+            return null;
+        }
 
-						LOG.error("Permissible Value for GovtBuildingDistance not found--------", e);
-						return null;
-					}
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("GovtBuildingDistanceValue")) {
+            GovtBuildingDistanceValue = permissibleValue.get(0).get("GovtBuildingDistanceValue").toString();
+            GovtBuildingDistanceMin = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("GovtBuildingDistanceMin").toString()));
+            GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("GovtBuildingDistanceMaxHeight").toString()));
+            GovtBuildingDistancePermitted = permissibleValue.get(0).get("GovtBuildingDistancePermitted").toString();
+        }
 
-				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("GovtBuildingDistanceValue")) {
-					GovtBuildingDistanceValue = permissibleValue.get(0).get("GovtBuildingDistanceValue").toString();
-					GovtBuildingDistanceMin = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("GovtBuildingDistanceMin").toString()));
-					GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("GovtBuildingDistanceMaxHeight").toString()));
-					GovtBuildingDistancePermitted = permissibleValue.get(0).get("GovtBuildingDistancePermitted").toString();
-				}
+        // Validate distances from government buildings
+        if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearGovtBuilding())
+                && "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearGovtBuilding())) {
+            if (!distancesFromGovtBuilding.isEmpty()) {
+                minDistanceFromGovtBuilding = distancesFromGovtBuilding.stream().reduce(BigDecimal::min).get();
 
-		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearGovtBuilding())
-				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearGovtBuilding())) {
-			if (!distancesFromGovtBuilding.isEmpty()) {
+                // Get the maximum height of buildings in the plan
+                for (Block b : blocks) {
+                    if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
+                        maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
+                    }
+                }
 
-				minDistanceFromGovtBuilding = distancesFromGovtBuilding.stream().reduce(BigDecimal::min).get();
+                // Validate the minimum distance and building height
+                if (minDistanceFromGovtBuilding.compareTo(GovtBuildingDistanceMin) > 0) {
+                    details.put(DISTANCE, ">" + GovtBuildingDistanceValue);
+                    details.put(PERMITTED, "ALL");
+                    details.put(PROVIDED, minDistanceFromGovtBuilding.toString());
+                    details.put(STATUS, Result.Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                } else {
+                    if (maxHeightOfBuilding.compareTo(GovtBuildingDistanceMaxHeight) <= 0) {
+                        details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
+                        details.put(PERMITTED, "Building Height: " + GovtBuildingDistancePermitted + "mt");
+                        details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
+                        details.put(STATUS, Result.Accepted.getResultVal());
+                        scrutinyDetail.getDetail().add(details);
+                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    } else {
+                        details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
+                        details.put(PERMITTED, "Building Height: " + GovtBuildingDistancePermitted + "mt");
+                        details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
+                        details.put(STATUS, Result.Not_Accepted.getResultVal());
+                        scrutinyDetail.getDetail().add(details);
+                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    }
+                }
+            } else {
+                errors.put("Distance_From_Govt_Building", "No distance is provided from government building");
+                pl.addErrors(errors);
+            }
+        }
+        return pl;
+    }
 
-				for (Block b : blocks) {
-					if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-						maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-					}
-				}
-
-				if (minDistanceFromGovtBuilding.compareTo(GovtBuildingDistanceMin) > 0) {
-					details.put(DISTANCE, ">" + GovtBuildingDistanceValue);
-					details.put(PERMITTED, "ALL");
-					details.put(PROVIDED, minDistanceFromGovtBuilding.toString());
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					if (maxHeightOfBuilding.compareTo(GovtBuildingDistanceMaxHeight) <= 0) {
-
-						details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
-						details.put(PERMITTED, "Building Height: " + GovtBuildingDistancePermitted + "mt");
-						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
-						details.put(STATUS, Result.Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-					} else {
-
-						details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
-						details.put(PERMITTED, "Building Height: " + GovtBuildingDistancePermitted + "mt");
-						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
-						details.put(STATUS, Result.Not_Accepted.getResultVal());
-						scrutinyDetail.getDetail().add(details);
-						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-					}
-				}
-			} else {
-				errors.put("Distance_From_Govt_Building", "No distance is provided from government building");
-				pl.addErrors(errors);
-			}
-		}
-		return pl;
-	}
-
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
-
+    /**
+     * Returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

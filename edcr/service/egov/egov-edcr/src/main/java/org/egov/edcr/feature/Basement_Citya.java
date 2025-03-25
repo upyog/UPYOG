@@ -76,6 +76,13 @@ public class Basement_Citya extends FeatureProcess {
     public static final String BASEMENT_DESCRIPTION_ONE = "Height from the floor to the soffit of the roof slab or ceiling";
     public static final String BASEMENT_DESCRIPTION_TWO = "Minimum height of the ceiling of upper basement above ground level";
     
+    /**
+     * Validates the provided building plan.
+     * Currently, this method does not perform any validation and simply returns the plan.
+     *
+     * @param pl The building plan to be validated.
+     * @return The unchanged building plan.
+     */
     @Override
     public Plan validate(Plan pl) {
 
@@ -85,9 +92,18 @@ public class Basement_Citya extends FeatureProcess {
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
+    /**
+     * Processes the basement-related validation and scrutiny for a given building plan.
+     * It checks if the basement's height conditions comply with the permissible values
+     * retrieved from the MDMS rules and records the scrutiny results.
+     *
+     * @param pl The building plan to be processed.
+     * @return The processed plan with scrutiny details added.
+     */
     @Override
     public Plan process(Plan pl) {
 
+        // Initialize scrutiny details for basement verification
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey("Common_Basement");
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -102,76 +118,77 @@ public class Basement_Citya extends FeatureProcess {
         BigDecimal basementValuetwo = BigDecimal.ZERO;
         BigDecimal basementValuethree = BigDecimal.ZERO;
         BigDecimal basementValuefour = BigDecimal.ZERO;
-	
+
+        // Check if the building plan has blocks
         if (pl.getBlocks() != null) {
             for (Block b : pl.getBlocks()) {
                 if (b.getBuilding() != null && b.getBuilding().getFloors() != null
                         && !b.getBuilding().getFloors().isEmpty()) {
-                	
+
                     String occupancyName = null;
-					
-  					 String feature = "Basement";
-  						
-  						Map<String, Object> params = new HashMap<>();
-  						if(DxfFileConstants.A
-  								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-  							occupancyName = "Residential";
-  						}
+                    String feature = "Basement";
 
-  						params.put("feature", feature);
-  						params.put("occupancy", occupancyName);
-  						
-  						Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-  						
-  						ArrayList<String> valueFromColumn = new ArrayList<>();
-  						valueFromColumn.add("permissibleone");
-  						valueFromColumn.add("permissibletwo");
-  						valueFromColumn.add("permissiblethree");
-  						valueFromColumn.add("permissiblefour");
+                    // Prepare parameters to fetch permissible values
+                    Map<String, Object> params = new HashMap<>();
+                    if (DxfFileConstants.A
+                            .equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+                        occupancyName = "Residential";
+                    }
 
-  						List<Map<String, Object>> permissibleValue = new ArrayList<>();
-  					
-  						
-  						try {
-  							permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-  							LOG.info("permissibleValue" + permissibleValue);
-       						
+                    params.put("feature", feature);
+                    params.put("occupancy", occupancyName);
 
-       						} catch (NullPointerException e) {
+                    Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 
-       							LOG.error("Permissible Value for Basement not found--------", e);
-       							return null;
-       						}
+                    // Define the keys for permissible values to be fetched
+                    ArrayList<String> valueFromColumn = new ArrayList<>();
+                    valueFromColumn.add("permissibleone");
+                    valueFromColumn.add("permissibletwo");
+                    valueFromColumn.add("permissiblethree");
+                    valueFromColumn.add("permissiblefour");
 
-  						if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleone")) {
-  							basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleone").toString()));
-  							basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibletwo").toString()));
-  							basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissiblethree").toString()));
-  							basementValuefour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissiblefour").toString()));
-  						}
-            		
-            		
-  			
+                    List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+                    try {
+                        // Fetch permissible values from MDMS rules
+                        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+                        LOG.info("permissibleValue" + permissibleValue);
+
+                    } catch (NullPointerException e) {
+                        LOG.error("Permissible Value for Basement not found : ", e);
+                        return null;
+                    }
+
+                    // Extract permissible values if available
+                    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleone")) {
+                        basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleone").toString()));
+                        basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibletwo").toString()));
+                        basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissiblethree").toString()));
+                        basementValuefour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissiblefour").toString()));
+                    }
+
+                    // Iterate through each floor to check basement conditions
                     for (Floor f : b.getBuilding().getFloors()) {
 
+                        // Check if it's a basement floor
                         if (f.getNumber() == -1) {
 
+                            // Validate basement height from floor to ceiling
                             if (f.getHeightFromTheFloorToCeiling() != null
                                     && !f.getHeightFromTheFloorToCeiling().isEmpty()) {
 
                                 minLength = f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
-                                
-                      
 
                                 if (minLength.compareTo(basementValuetwo) >= 0) {
+                                    // Acceptable height condition
                                     details.put(RULE_NO, RULE_46_6A);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
                                     details.put(REQUIRED, ">=" + basementValue.toString());
                                     details.put(PROVIDED, minLength.toString());
                                     details.put(STATUS, Result.Accepted.getResultVal());
                                     scrutinyDetail.getDetail().add(details);
-
                                 } else {
+                                    // Non-compliant height condition
                                     details = new HashMap<>();
                                     details.put(RULE_NO, RULE_46_6A);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
@@ -181,7 +198,10 @@ public class Basement_Citya extends FeatureProcess {
                                     scrutinyDetail.getDetail().add(details);
                                 }
                             }
+
                             minLength = BigDecimal.ZERO;
+
+                            // Validate height of the ceiling of upper basement
                             if (f.getHeightOfTheCeilingOfUpperBasement() != null
                                     && !f.getHeightOfTheCeilingOfUpperBasement().isEmpty()) {
 
@@ -189,25 +209,27 @@ public class Basement_Citya extends FeatureProcess {
 
                                 if (minLength.compareTo(basementValuethree) >= 0
                                         && minLength.compareTo(basementValuefour) < 0) {
+                                    // Acceptable ceiling height condition
                                     details = new HashMap<>();
                                     details.put(RULE_NO, RULE_46_6C);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between 1.2 to 1.5");
+                                    details.put(REQUIRED, "Between " + basementValuethree.toString() + " to " + basementValuefour.toString());
                                     details.put(PROVIDED, minLength.toString());
                                     details.put(STATUS, Result.Accepted.getResultVal());
                                     scrutinyDetail.getDetail().add(details);
-
                                 } else {
+                                    // Non-compliant ceiling height condition
                                     details = new HashMap<>();
                                     details.put(RULE_NO, RULE_46_6C);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between 1.2 to 1.5");
+                                    details.put(REQUIRED, "Between " + basementValuethree.toString() + " to " + basementValuefour.toString());
                                     details.put(PROVIDED, minLength.toString());
                                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                                     scrutinyDetail.getDetail().add(details);
                                 }
                             }
 
+                            // Add scrutiny details to the report output
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                         }
                     }
@@ -216,8 +238,14 @@ public class Basement_Citya extends FeatureProcess {
         }
         return pl;
     }
-    
 
+    
+    /**
+     * Retrieves the list of amendments applicable to the basement feature.
+     * Currently, this method returns an empty map.
+     *
+     * @return A map containing amendment details.
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

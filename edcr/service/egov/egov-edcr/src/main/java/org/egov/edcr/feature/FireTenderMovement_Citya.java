@@ -70,64 +70,79 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FireTenderMovement_Citya extends FeatureProcess {
+
+    // Logger for logging information and errors
     private static final Logger LOG = LogManager.getLogger(FireTenderMovement_Citya.class);
+
+    // Rule identifier for fire tender movement
     private static final String RULE_36_3 = "36-3";
 
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
+
+    /**
+     * Validates the given plan object.
+     * Currently, no specific validation logic is implemented.
+     *
+     * @param plan The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
     @Override
     public Plan validate(Plan plan) {
         return plan;
     }
-    
-    @Autowired
-    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
+    /**
+     * Processes the given plan to validate fire tender movement.
+     * Fetches permissible values for fire tender movement and validates them against the plan details.
+     *
+     * @param plan The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
     @Override
     public Plan process(Plan plan) {
+        // Map to store validation errors
         HashMap<String, String> errors = new HashMap<>();
-        
+
+        // Variables to store permissible values for fire tender movement
         BigDecimal FireTenderMovementValueOne = BigDecimal.ZERO;
         BigDecimal FireTenderMovementValueTwo = BigDecimal.ZERO;
-        
+
+        // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-		
-			 String feature = "FireTenderMovement";
-				
-				Map<String, Object> params = new HashMap<>();
-				if(DxfFileConstants.A
-						.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-					occupancyName = "Residential";
-				}
+        String feature = "FireTenderMovement";
 
-				params.put("feature", feature);
-				params.put("occupancy", occupancyName);
-				
-				Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-				
-				ArrayList<String> valueFromColumn = new ArrayList<>();
-				valueFromColumn.add("FireTenderMovementValueOne");
-				valueFromColumn.add("FireTenderMovementValueTwo");
+        Map<String, Object> params = new HashMap<>();
+        if (DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
 
-				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-			
-				
-				try {
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-					LOG.info("permissibleValue" + permissibleValue);
-					
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
-					} catch (NullPointerException e) {
+        // Fetch permissible values for fire tender movement
+        Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add("FireTenderMovementValueOne");
+        valueFromColumn.add("FireTenderMovementValueTwo");
 
-						LOG.error("Permissible Value for FiretenderMovement not found--------", e);
-						return null;
-					}
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+        try {
+            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+            LOG.info("permissibleValue" + permissibleValue);
+        } catch (NullPointerException e) {
+            LOG.error("Permissible Value for FireTenderMovement not found--------", e);
+            return null;
+        }
 
-				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleone")) {
-					FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireTenderMovementValueOne").toString()));
-					FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireTenderMovementValueTwo").toString()));
-				}
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleone")) {
+            FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireTenderMovementValueOne").toString()));
+            FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireTenderMovementValueTwo").toString()));
+        }
 
+        // Iterate through all blocks in the plan
         for (Block block : plan.getBlocks()) {
-
+            // Initialize scrutiny details for fire tender movement validation
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
             scrutinyDetail.addColumnHeading(1, RULE_NO);
             scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -136,11 +151,13 @@ public class FireTenderMovement_Citya extends FeatureProcess {
             scrutinyDetail.addColumnHeading(5, STATUS);
             scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Fire Tender Movement");
 
+            // Validate fire tender movement for the block
             if (block.getBuilding() != null
                     && block.getBuilding().getBuildingHeight().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                             DcrConstants.ROUNDMODE_MEASUREMENTS).compareTo(FireTenderMovementValueOne) > 0) {
                 org.egov.common.entity.edcr.FireTenderMovement fireTenderMovement = block.getFireTenderMovement();
                 if (fireTenderMovement != null) {
+                    // Get the minimum width of fire tender movement
                     List<BigDecimal> widths = fireTenderMovement.getFireTenderMovements().stream()
                             .map(fireTenderMovmnt -> fireTenderMovmnt.getWidth()).collect(Collectors.toList());
                     BigDecimal minWidth = widths.stream().reduce(BigDecimal::min).get();
@@ -148,6 +165,7 @@ public class FireTenderMovement_Citya extends FeatureProcess {
                             DcrConstants.ROUNDMODE_MEASUREMENTS);
                     Boolean isAccepted = providedWidth.compareTo(FireTenderMovementValueTwo) >= 0;
 
+                    // Add scrutiny details for fire tender movement
                     Map<String, String> details = new HashMap<>();
                     details.put(RULE_NO, RULE_36_3);
                     details.put(DESCRIPTION, "Width of fire tender movement");
@@ -157,9 +175,9 @@ public class FireTenderMovement_Citya extends FeatureProcess {
                     scrutinyDetail.getDetail().add(details);
                     plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
+                    // Add errors if fire tender movement is not inside the required setbacks
                     if (!fireTenderMovement.getErrors().isEmpty()) {
                         StringBuffer yardNames = new StringBuffer();
-
                         for (String yardName : fireTenderMovement.getErrors()) {
                             yardNames = yardNames.append(yardName).append(", ");
                         }
@@ -168,6 +186,7 @@ public class FireTenderMovement_Citya extends FeatureProcess {
                         plan.addErrors(errors);
                     }
                 } else {
+                    // Add error if fire tender movement is not defined for the block
                     errors.put("BLK_FTM_" + block.getNumber(), "Fire tender movement not defined for Block " + block.getNumber());
                     plan.addErrors(errors);
                 }
@@ -177,6 +196,11 @@ public class FireTenderMovement_Citya extends FeatureProcess {
         return plan;
     }
 
+    /**
+     * Returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();

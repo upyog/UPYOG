@@ -313,7 +313,7 @@ public class FetchEdcrRulesMdms {
 	                    value.put("monumentDistance_minDistanceOne", ruleItem.get("monumentDistance_minDistanceOne"));
 	                    value.put("monumentDistance_minDistanceTwo", ruleItem.get("monumentDistance_minDistanceTwo"));
 	                    value.put("monumentDistance_maxHeightofbuilding", ruleItem.get("monumentDistance_maxHeightofbuilding"));
-	                    value.put("mezzanineBuiltUpArea", ruleItem.get("mezzanineBuiltUpArea"));
+	                    value.put("monumentDistance_maxbuildingheightblock", ruleItem.get("monumentDistance_maxbuildingheightblock"));
 	                }
 	                
 	                

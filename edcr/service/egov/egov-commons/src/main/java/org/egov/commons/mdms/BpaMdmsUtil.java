@@ -24,6 +24,20 @@ public class BpaMdmsUtil {
         this.serviceRequestRepository = serviceRequestRepository;
         this.mdmsConfiguration = mdmsConfiguration;
     }
+    
+    
+    /**
+     * Adds a new MasterDetail object to the given list with the specified name.
+     *
+     * @param bpaMasterDtls The list where the MasterDetail object will be added.
+     * @param name The name to be assigned to the MasterDetail object.
+     */
+    public void addMasterDetail(List<MasterDetail> bpaMasterDtls, String name) {
+        MasterDetail masterDetail = new MasterDetail();
+        masterDetail.setName(name);
+        bpaMasterDtls.add(masterDetail);
+    }
+
 
     public List<ModuleDetail> getBPAModuleRequest() {
         List<MasterDetail> bpaMasterDtls = new ArrayList<>();
@@ -62,65 +76,25 @@ public class BpaMdmsUtil {
      //   masterDetailFar.setFilter("$.[?(@.active==true)]");
         bpaMasterDtls.add(masterDetailBalcony);
         
-        MasterDetail masterDetailBasement = new MasterDetail();
-        masterDetailBasement.setName("Basement");
-        bpaMasterDtls.add(masterDetailBasement);
+    
+        // Adding different MasterDetail entries
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BASEMENT);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BATHROOM);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.CHIMNEY);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.EXIT_WIDTH);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.FIRE_STAIR);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.FIRE_TENDER_MOVEMENT);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.GOVT_BUILDING_DISTANCE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.GUARD_ROOM);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.HEAD_ROOM);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.LAND_USE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.INTERIOR_OPEN_SPACE_SERVICE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.MEZZANINE_FLOOR_SERVICE);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.MONUMENT_DISTANCE);
 
-        MasterDetail masterDetailBathroom = new MasterDetail();
-        masterDetailBathroom.setName("Bathroom");
-        bpaMasterDtls.add(masterDetailBathroom);
         
-        MasterDetail masterDetailBathroomWC = new MasterDetail();
-        masterDetailBathroomWC.setName("BathroomWaterClosets");
-        bpaMasterDtls.add(masterDetailBathroomWC);
-        
-        MasterDetail masterDetailBlockDistancesService = new MasterDetail();
-        masterDetailBlockDistancesService.setName("BlockDistancesService");
-        bpaMasterDtls.add(masterDetailBlockDistancesService);
-        
-        MasterDetail masterDetailChimney = new MasterDetail();
-        masterDetailChimney.setName("Chimney");
-        bpaMasterDtls.add(masterDetailChimney);
-        
-        MasterDetail masterDetailExitWidth = new MasterDetail();
-        masterDetailExitWidth.setName("ExitWidth");
-        bpaMasterDtls.add(masterDetailExitWidth);
-        
-        MasterDetail masterDetailFireStair = new MasterDetail();
-        masterDetailFireStair.setName("FireStair");
-        bpaMasterDtls.add(masterDetailFireStair);
-        
-        MasterDetail masterDetailFireTenderMovement = new MasterDetail();
-        masterDetailFireTenderMovement.setName("FireTenderMovement");
-        bpaMasterDtls.add(masterDetailFireTenderMovement);
-        
-        MasterDetail masterDetailGovtBuildingDistance = new MasterDetail();
-        masterDetailGovtBuildingDistance.setName("GovtBuildingDistance");
-        bpaMasterDtls.add(masterDetailGovtBuildingDistance);
-        
-        MasterDetail masterDetailGuardRoom = new MasterDetail();
-        masterDetailGuardRoom.setName("GuardRoom");
-        bpaMasterDtls.add(masterDetailGuardRoom);
-        
-        MasterDetail masterDetailHeadRoom = new MasterDetail();
-        masterDetailHeadRoom.setName("HeadRoom");
-        bpaMasterDtls.add(masterDetailHeadRoom);
-        
-        MasterDetail masterDetailLandUse = new MasterDetail();
-        masterDetailLandUse.setName("LandUse");
-        bpaMasterDtls.add(masterDetailLandUse);
-        
-        MasterDetail masterDetailInteriorOpenSpaceService = new MasterDetail();
-        masterDetailInteriorOpenSpaceService.setName("InteriorOpenSpaceService");
-        bpaMasterDtls.add(masterDetailInteriorOpenSpaceService);
-        
-        MasterDetail masterDetailMezzanineFloorService = new MasterDetail();
-        masterDetailMezzanineFloorService.setName("MezzanineFloorService");
-        bpaMasterDtls.add(masterDetailMezzanineFloorService);
-        
-        MasterDetail masterDetailMonumentDistance = new MasterDetail();
-        masterDetailMonumentDistance.setName("MonumentDistance");
-        bpaMasterDtls.add(masterDetailMonumentDistance);
         
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");

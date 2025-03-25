@@ -72,160 +72,175 @@ import org.springframework.stereotype.Service;
 @Service
 public class BathRoomWaterClosets_Citya extends FeatureProcess {
 
-	private static final Logger LOG = LogManager.getLogger(BathRoomWaterClosets_Citya.class);
-	private static final String RULE_41_IV = "41-iv";
-	public static final String BathroomWaterClosets_DESCRIPTION = "Bathroom Water Closets";
+    // Logger for logging information and errors
+    private static final Logger LOG = LogManager.getLogger(BathRoomWaterClosets_Citya.class);
 
-	@Override
-	public Plan validate(Plan pl) {
+    // Rule identifier and description for bathroom water closets scrutiny
+    private static final String RULE_41_IV = "41-iv";
+    public static final String BathroomWaterClosets_DESCRIPTION = "Bathroom Water Closets";
 
-		return pl;
-	}
-	
-	@Autowired
-	FetchEdcrRulesMdms fetchEdcrRulesMdms;
-	
-	
-//Method updated by Neha Sharma
-	@Override
-	public Plan process(Plan pl) {
+    /**
+     * This method is used to validate the plan object.
+     * Currently, no validation logic is implemented.
+     *
+     * @param pl The plan object to validate.
+     * @return The same plan object without any modifications.
+     */
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
+    }
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Bathroom Water Closets");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+    @Autowired
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_41_IV);
-		details.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
+    /**
+     * This method processes the plan to validate bathroom water closets dimensions
+     * against permissible values. It checks the height, width, and total area of
+     * bathroom water closets in the plan and generates scrutiny details.
+     *
+     * @param pl The plan object to process.
+     * @return The processed plan object with scrutiny details added.
+     */
+    @Override
+    public Plan process(Plan pl) {
+        // Initialize scrutiny detail for bathroom water closets validation
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Bathroom Water Closets");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
 
-		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
-		BigDecimal bathroomWCRequiredArea = BigDecimal.ZERO;
-		BigDecimal bathroomWCRequiredWidth = BigDecimal.ZERO;
-		BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
-		BigDecimal bathroomWCRequiredminHeight = BigDecimal.ZERO;
-		BigDecimal bathroomWCRequiredTotalArea = BigDecimal.ZERO;
-		BigDecimal bathroomWCRequiredminWidth = BigDecimal.ZERO;
+        // Map to store rule details
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_41_IV);
+        details.put(DESCRIPTION, BathroomWaterClosets_DESCRIPTION);
 
+        // Variables to store permissible and actual values
+        BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
+        BigDecimal bathroomWCRequiredArea = BigDecimal.ZERO;
+        BigDecimal bathroomWCRequiredWidth = BigDecimal.ZERO;
+        BigDecimal bathroomWCRequiredHeight = BigDecimal.ZERO;
+        BigDecimal bathroomWCRequiredminHeight = BigDecimal.ZERO;
+        BigDecimal bathroomWCRequiredTotalArea = BigDecimal.ZERO;
+        BigDecimal bathroomWCRequiredminWidth = BigDecimal.ZERO;
 
-		
+        // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-		
-			 String feature = "BathroomWaterClosets";
-				
-				Map<String, Object> params = new HashMap<>();
-				if(DxfFileConstants.A
-						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-					occupancyName = "Residential";
-				}
+        String feature = "BathroomWaterClosets";
 
-				params.put("feature", feature);
-				params.put("occupancy", occupancyName);
-				
-				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-				
-				ArrayList<String> valueFromColumn = new ArrayList<>();
-				valueFromColumn.add("bathroomWCRequiredArea");
-				valueFromColumn.add("bathroomWCRequiredWidth");
-				valueFromColumn.add("bathroomWCRequiredHeight");
-				valueFromColumn.add("bathroomWCRequiredminHeight");
-				valueFromColumn.add("bathroomWCRequiredTotalArea");
-				valueFromColumn.add("bathroomWCRequiredminWidth");
+        Map<String, Object> params = new HashMap<>();
+        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
 
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
-				List<Map<String, Object>> permissibleValue = new ArrayList<>();
-			
-				
-				try {
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-					LOG.info("permissibleValue" + permissibleValue);
-					
+        // Fetch permissible values for bathroom water closets dimensions
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add("bathroomWCRequiredArea");
+        valueFromColumn.add("bathroomWCRequiredWidth");
+        valueFromColumn.add("bathroomWCRequiredHeight");
+        valueFromColumn.add("bathroomWCRequiredminHeight");
+        valueFromColumn.add("bathroomWCRequiredTotalArea");
+        valueFromColumn.add("bathroomWCRequiredminWidth");
 
-					} catch (NullPointerException e) {
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
-						LOG.error("Permissible Value for BathroomWaterClosets not found--------", e);
-						return null;
-					}
+        try {
+            permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+            LOG.info("permissibleValue" + permissibleValue);
+        } catch (NullPointerException e) {
+            LOG.error("Permissible Value for BathroomWaterClosets not found--------", e);
+            return null;
+        }
 
-				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("bathroomWCRequiredArea")) {
-					bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredArea").toString()));
-					bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredWidth").toString()));
-					bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredHeight").toString()));
-					bathroomWCRequiredminHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminHeight").toString()));
-					bathroomWCRequiredTotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredTotalArea").toString()));
-					bathroomWCRequiredminWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminWidth").toString()));
-				}
-		
-		
-		
-		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
-					&& !b.getBuilding().getFloors().isEmpty()) {
+        // Extract permissible values if available
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("bathroomWCRequiredArea")) {
+            bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredArea").toString()));
+            bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredWidth").toString()));
+            bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredHeight").toString()));
+            bathroomWCRequiredminHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminHeight").toString()));
+            bathroomWCRequiredTotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredTotalArea").toString()));
+            bathroomWCRequiredminWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminWidth").toString()));
+        }
 
-				for (Floor f : b.getBuilding().getFloors()) {
+        // Iterate through all blocks in the plan
+        for (Block b : pl.getBlocks()) {
+            if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+                    && !b.getBuilding().getFloors().isEmpty()) {
 
-					if (f.getBathRoomWaterClosets() != null && f.getBathRoomWaterClosets().getHeights() != null
-							&& !f.getBathRoomWaterClosets().getHeights().isEmpty()
-							&& f.getBathRoomWaterClosets().getRooms() != null
-							&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
+                // Iterate through all floors in the block
+                for (Floor f : b.getBuilding().getFloors()) {
 
-						if (f.getBathRoomWaterClosets().getHeights() != null
-								&& !f.getBathRoomWaterClosets().getHeights().isEmpty()) {
-							minHeight = f.getBathRoomWaterClosets().getHeights().get(0).getHeight();
-							for (RoomHeight rh : f.getBathRoomWaterClosets().getHeights()) {
-								if (rh.getHeight().compareTo(minHeight) < 0) {
-									minHeight = rh.getHeight();
-								}
-							}
-						}
+                    // Check if bathroom water closets exist on the floor
+                    if (f.getBathRoomWaterClosets() != null && f.getBathRoomWaterClosets().getHeights() != null
+                            && !f.getBathRoomWaterClosets().getHeights().isEmpty()
+                            && f.getBathRoomWaterClosets().getRooms() != null
+                            && !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
 
-						if (f.getBathRoomWaterClosets().getRooms() != null
-								&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
-							minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
-							for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
-								totalArea = totalArea.add(m.getArea());
-								if (m.getWidth().compareTo(minWidth) < 0) {
-									minWidth = m.getWidth();
-								}
-							}
-						}
+                        // Calculate minimum height of bathroom water closets
+                        if (f.getBathRoomWaterClosets().getHeights() != null
+                                && !f.getBathRoomWaterClosets().getHeights().isEmpty()) {
+                            minHeight = f.getBathRoomWaterClosets().getHeights().get(0).getHeight();
+                            for (RoomHeight rh : f.getBathRoomWaterClosets().getHeights()) {
+                                if (rh.getHeight().compareTo(minHeight) < 0) {
+                                    minHeight = rh.getHeight();
+                                }
+                            }
+                        }
 
-						if (minHeight.compareTo(bathroomWCRequiredminHeight) >= 0
-								&& totalArea.compareTo(bathroomWCRequiredTotalArea) >= 0
-								&& minWidth.compareTo(bathroomWCRequiredminWidth) >= 0) {
+                        // Calculate total area and minimum width of bathroom water closets
+                        if (f.getBathRoomWaterClosets().getRooms() != null
+                                && !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
+                            minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
+                            for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
+                                totalArea = totalArea.add(m.getArea());
+                                if (m.getWidth().compareTo(minWidth) < 0) {
+                                    minWidth = m.getWidth();
+                                }
+                            }
+                        }
 
-							details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        // Validate bathroom water closets dimensions against permissible values
+                        if (minHeight.compareTo(bathroomWCRequiredminHeight) >= 0
+                                && totalArea.compareTo(bathroomWCRequiredTotalArea) >= 0
+                                && minWidth.compareTo(bathroomWCRequiredminWidth) >= 0) {
 
-						} else {
-							details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
-							details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
-									+ ", Width >= " + minWidth);
-							details.put(STATUS, Result.Not_Accepted.getResultVal());
-							scrutinyDetail.getDetail().add(details);
-							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-						}
+                            details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
+                            details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+                                    + ", Width >= " + minWidth);
+                            details.put(STATUS, Result.Accepted.getResultVal());
+                            scrutinyDetail.getDetail().add(details);
+                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
-					}
+                        } else {
+                            details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
+                            details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
+                                    + ", Width >= " + minWidth);
+                            details.put(STATUS, Result.Not_Accepted.getResultVal());
+                            scrutinyDetail.getDetail().add(details);
+                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        }
+                    }
+                }
+            }
+        }
 
-				}
-			}
+        return pl;
+    }
 
-		}
-
-		return pl;
-	}
-
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
-
+    /**
+     * This method returns an empty map as no amendments are defined for this feature.
+     *
+     * @return An empty map of amendments.
+     */
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }
