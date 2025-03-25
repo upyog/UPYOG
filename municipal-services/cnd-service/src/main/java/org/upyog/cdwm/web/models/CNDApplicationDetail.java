@@ -49,7 +49,9 @@ public class CNDApplicationDetail {
     private Integer quantity;
 
     private String applicantDetailId;
-
+  
+    private String addressDetailId;
+  
     @JsonFormat(pattern = CNDServiceUtil.DATE_FORMAT)
     private LocalDate requestedPickupDate;
 
@@ -92,7 +94,10 @@ public class CNDApplicationDetail {
     
     private Workflow workflow;
 
+    private CNDApplicantDetail applicantDetail;
 
+    private CNDAddressDetail addressDetail;
 
+    private String applicantMobileNumber;
 
 }

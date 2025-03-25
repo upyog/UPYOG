@@ -85,7 +85,7 @@ public class UserUtil {
 	 * @param format Format of the date
 	 * @return Long value of date
 	 */
-	private Long dateTolong(String date, String format) {
+	public static Long dateTolong(String date, String format) {
 		SimpleDateFormat f = new SimpleDateFormat(format);
 		Date d = null;
 		try {

@@ -24,7 +24,7 @@ public class CNDServiceQueryBuilder {
         "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
         "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, vehicle_id, " +
         "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
-        "ucad.last_modified_time, ucad.tenant_id FROM public.ug_cnd_application_details ucad ";
+        "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id ,ucad.applicant_mobile_number FROM public.ug_cnd_application_details ucad ";
     
     // Pagination wrapper query
     private static final String PAGINATION_WRAPPER = 
@@ -67,7 +67,12 @@ public class CNDServiceQueryBuilder {
             query.append(" ucad.application_status = ? ");
             preparedStmtList.add(criteria.getStatus());
         }
-        
+
+        if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.applicant_mobile_number = ? ");
+            preparedStmtList.add(criteria.getMobileNumber());
+        }
         // If count query, return directly
         if (criteria.isCountCall()) {
             return query.toString();

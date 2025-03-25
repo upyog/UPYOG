@@ -7,6 +7,7 @@ CREATE TABLE ug_cnd_application_details (
     deposit_centre_details TEXT,
     applicant_detail_id VARCHAR(64),
     requested_pickup_date date,
+    address_detail_id VARCHAR(64),
     application_status VARCHAR(50), -- TODO: Convert to ENUM later
     additional_details JSONB,
     house_area BIGINT,
@@ -20,7 +21,7 @@ CREATE TABLE ug_cnd_application_details (
     vendor_id VARCHAR(64),
     pickup_date date,
     completed_on TIMESTAMP,
-
+    applicant_mobile_number VARCHAR(50),
     created_by VARCHAR(64),
     last_modified_by VARCHAR(64),
     created_time BIGINT,
