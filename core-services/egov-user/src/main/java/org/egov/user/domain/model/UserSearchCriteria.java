@@ -31,7 +31,7 @@ public class UserSearchCriteria {
     private String tenantId;
     private List<String> roleCodes;
     private String alternatemobilenumber;
-    private Boolean excludeAddressDetails; // This fields is added to exclude address details from user search response V2
+    private Boolean excludeAddressDetails = false; // This fields is added to exclude address details from user search response V2
 
     public void validate(boolean isInterServiceCall) {
         if (validateIfEmptySearch(isInterServiceCall) || validateIfTenantIdExists(isInterServiceCall)) {

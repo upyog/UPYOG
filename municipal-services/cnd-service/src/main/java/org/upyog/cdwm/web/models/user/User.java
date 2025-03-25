@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
-import org.upyog.cdwm.web.models.user.enums.BloodGroup;
-import org.upyog.cdwm.web.models.user.enums.Gender;
-import org.upyog.cdwm.web.models.user.enums.GuardianRelation;
 import org.upyog.cdwm.web.models.user.enums.UserType;
 
 import javax.validation.constraints.Pattern;
@@ -36,12 +33,9 @@ public class User {
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
     private String guardian;
 
-    private GuardianRelation guardianRelation;
-
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
     @Size(max = 50)
     private String name;
-    private Gender gender;
     private String mobileNumber;
 
     @Email
@@ -57,7 +51,6 @@ public class User {
     private Date dob;
     private String locale = "en_IN";
     private UserType type;
-    private BloodGroup bloodGroup;
     private String identificationMark;
     private String signature;
     private String photo;

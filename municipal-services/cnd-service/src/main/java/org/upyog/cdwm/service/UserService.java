@@ -28,6 +28,10 @@ import org.upyog.cdwm.web.models.user.*;
 import org.upyog.cdwm.web.models.user.enums.AddressType;
 import org.upyog.cdwm.web.models.user.enums.UserType;
 
+/**
+ * Service class for managing user-related operations such as creating,
+ * searching, and retrieving user details.
+ */
 @Slf4j
 @Service
 public class UserService {
@@ -41,6 +45,12 @@ public class UserService {
     @Autowired
     private CNDConfiguration config;
 
+    /**
+     * Retrieves an existing user or creates a new user if not found.
+     *
+     * @param bookingRequest The application request containing user details.
+     * @return The existing or newly created user.
+     */
     public User getExistingOrNewUser(CNDApplicationRequest bookingRequest) {
 
         CNDApplicationDetail bookingDetail = bookingRequest.getCndApplication();
@@ -49,21 +59,26 @@ public class UserService {
         String tenantId = bookingDetail.getTenantId();
 
         // Fetch existing user details
-        UserDetailResponseV2 userDetailResponse = userExists(applicantDetail, requestInfo, tenantId);
+        UserDetailResponseV2 userDetailResponse = fetchUser(applicantDetail, requestInfo, tenantId);
         List<User> existingUsers = userDetailResponse.getUser();
 
         // Create a new user if no existing user found
         if (CollectionUtils.isEmpty(existingUsers)) {
-            return createAndReturnUuid(requestInfo, applicantDetail, tenantId);
+            return createUserHandler(requestInfo, applicantDetail, tenantId);
         }
 
         return existingUsers.get(0);
     }
 
     /**
-     * Creates a new user and returns the generated UUID.
+     * Creates a new user and returns the generated user details.
+     *
+     * @param requestInfo     The request information.
+     * @param applicantDetail The applicant details.
+     * @param tenantId        The tenant ID.
+     * @return The created user.
      */
-    private User createAndReturnUuid(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, String tenantId) {
+    private User createUserHandler(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, String tenantId) {
         Role role = getCitizenRole();
         User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
         UserDetailResponseV2 userDetailResponse = createUser(requestInfo, user, tenantId);
@@ -72,6 +87,14 @@ public class UserService {
         return userDetailResponse.getUser().get(0);
     }
 
+    /**
+     * Creates a user in the system.
+     *
+     * @param requestInfo The request information.
+     * @param user        The user to be created.
+     * @param tenantId    The tenant ID.
+     * @return The response containing the created user.
+     */
     private UserDetailResponseV2 createUser(RequestInfo requestInfo, User user, String tenantId) {
 
         StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserCreateEndpoint());
@@ -85,9 +108,17 @@ public class UserService {
         return userDetailResponse;
     }
 
+    /**
+     * Converts an applicant detail to a User object.
+     *
+     * @param applicant The applicant details.
+     * @param role      The user role.
+     * @param tenantId  The tenant ID.
+     * @return The converted User object.
+     */
     private User convertApplicantToUserRequest(CNDApplicantDetail applicant, Role role, String tenantId) {
         if (applicant == null) {
-            return null;
+            throw new CustomException("INVALID APPLICANT", "The applicant details are empty or null");
         }
 
         User userRequest = new User();
@@ -100,13 +131,14 @@ public class UserService {
         userRequest.setTenantId(tenantId);
         userRequest.setRoles((List<org.upyog.cdwm.web.models.user.Role>) role);
         userRequest.setType(UserType.CITIZEN);
-        userRequest.setCreatedDate(null);
-        userRequest.setCreatedBy(null);
-        userRequest.setLastModifiedDate(null);
-        userRequest.setLastModifiedBy(null);
         return userRequest;
     }
 
+    /**
+     * Retrieves the Citizen role.
+     *
+     * @return The citizen role.
+     */
     private Role getCitizenRole() {
 
         return Role.builder().code(CNDConstants.CITIZEN).name(CNDConstants.CITIZEN_NAME).build();
@@ -121,7 +153,7 @@ public class UserService {
      * @return UserDetailResponseV2 containing the user if present and the
      * responseInfo
      */
-    private UserDetailResponseV2 userExists(CNDApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
+    private UserDetailResponseV2 fetchUser(CNDApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
 
         UserSearchRequestV2 userSearchRequest = getBaseUserSearchRequest(tenantId, requestInfo);
         userSearchRequest.setMobileNumber(applicant.getMobileNumber());
@@ -233,6 +265,12 @@ public class UserService {
         return CollectionUtils.isEmpty(users) ? null : users.get(0);
     }
 
+    /**
+     * Converts a user object to an applicant detail object.
+     *
+     * @param user The user object.
+     * @return The converted applicant detail.
+     */
     public CNDApplicantDetail convertUserToApplicantDetail(User user) {
         if (user == null) {
             return null;
@@ -246,6 +284,12 @@ public class UserService {
                 .build();
     }
 
+    /**
+     * Converts a user address to an address detail object.
+     *
+     * @param addresses The set of addresses.
+     * @return The converted address detail.
+     */
     public CNDAddressDetail convertUserAddressToAddressDetail(Set<Address> addresses) {
         if (CollectionUtils.isEmpty(addresses)) {
             return null;
