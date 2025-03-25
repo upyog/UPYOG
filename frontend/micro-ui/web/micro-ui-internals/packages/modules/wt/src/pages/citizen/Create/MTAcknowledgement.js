@@ -109,7 +109,7 @@ const MTAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("MT_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
+      {mutation.isSuccess && <SubmitBar label={t("MT_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />

@@ -110,7 +110,7 @@ const WTAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {mutation.isSuccess && <SubmitBar label={t("WT_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
+      {mutation.isSuccess && <SubmitBar label={t("WT_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
