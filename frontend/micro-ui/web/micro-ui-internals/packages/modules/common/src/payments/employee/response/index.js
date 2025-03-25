@@ -523,7 +523,7 @@ export const SuccessfulPayment = (props) => {
                 {t("BPA_PERMIT_ORDER")}
               </div>
             ) : null}
-            {data?.[0]?.businessService === "BPA" &&
+            {(data?.[0]?.businessService === "BPA" || data?.[0]?.businessService==="BPA-PAP") &&
             data?.[0]?.businessService !== "BPA_LOW" &&
             data?.[0]?.businessService !== "BPA_OC" &&
             (data?.[0]?.status === "PENDING_SANC_FEE_PAYMENT" || data?.[0]?.status === "APPROVED") ? (
