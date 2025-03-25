@@ -29,4 +29,7 @@ public class ErrorConstants {
 	public static final String ERR_PGR_SERVICE_ERROR = "ERR_PGR_SERVICE_ERROR";
 	public static final String ERR_PGR_SERVICE_ERROR_MSG = "Error occured in PGR service.";
 
+	public static final String ERR_PG_SERVICE_ERROR = "ERR_PG_SERVICE_ERROR";
+	public static final String ERR_PG_SERVICE_ERROR_MSG = "Error occured in pg service.";
+
 }

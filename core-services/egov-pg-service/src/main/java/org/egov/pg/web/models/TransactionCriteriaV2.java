@@ -38,7 +38,7 @@ public class TransactionCriteriaV2 {
 
 	@JsonIgnore
 	@Builder.Default
-	private int limit = 100;
+	private int limit = 500;
 
 	@JsonIgnore
 	@Builder.Default

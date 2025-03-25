@@ -105,6 +105,12 @@ public class AppProperties {
     
     @Value("${egov.mdmsv2.search.endpoint}")
     private String mdmsV2Endpoint;
+    
+    @Value("${egov.egf.master.host}")
+    private String egfMasterHost;
+    
+    @Value("${egov.egf.master.bankaccount.search.endpoint}")
+    private String egfMasterBankaccountSearchEndpoint;
 
     @Autowired
     public AppProperties(Environment environment){
