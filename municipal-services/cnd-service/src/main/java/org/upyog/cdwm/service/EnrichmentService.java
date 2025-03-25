@@ -18,6 +18,7 @@ import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.upyog.cdwm.web.models.user.Address;
 import org.upyog.cdwm.web.models.user.User;
 import org.upyog.cdwm.web.models.user.enums.AddressType;
 
@@ -61,21 +62,18 @@ public class EnrichmentService {
         cndApplicationDetails.setTenantId(cndApplicationDetails.getTenantId());
 
         // Copy mobile number from applicant details to a separate field to save in application table
-        if (cndApplicationDetails.getApplicantDetail() != null) {
-            cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
-        }
+        cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
+
 
         // Generate and assign a unique application number
         List<String> customIds = getIdList(requestInfo, cndApplicationDetails.getTenantId(),
                 config.getCNDApplicationKey(), config.getCNDApplicationFormat(), 1);
 
-        if (!customIds.isEmpty()) {
-            String applicationNumber = customIds.get(0);
-            log.info("Generated Application Number: {}", applicationNumber);
-            cndApplicationDetails.setApplicationNumber(applicationNumber);
-        } else {
-            log.warn("Failed to generate application number for application ID: {}", applicationId);
-        }
+
+        String applicationNumber = customIds.get(0);
+        log.info("Generated Application Number: {}", applicationNumber);
+        cndApplicationDetails.setApplicationNumber(applicationNumber);
+
     }
 
     /**
@@ -92,11 +90,18 @@ public class EnrichmentService {
                 User user = userService.getExistingOrNewUser(cndApplicationRequest);
                 cndApplicationDetails.setApplicantDetailId(user.getUuid());
 
-                user.getAddresses().stream()
+                Address selectedAddress = user.getAddresses().stream()
                         .filter(address -> AddressType.PERMANENT.equals(address.getType()))
                         .findFirst()
-                        .ifPresent(address -> cndApplicationDetails.setAddressDetailId(String.valueOf(address.getId())));
+                        .orElseGet(() -> user.getAddresses().stream()
+                                .filter(address -> AddressType.CORRESPONDENCE.equals(address.getType()))
+                                .findFirst()
+                                .orElse(user.getAddresses().stream().findFirst().orElse(null))
+                        );
 
+                if (selectedAddress != null) {
+                    cndApplicationDetails.setAddressDetailId(String.valueOf(selectedAddress.getId()));
+                }
                 log.info("Applicant/User UUID: {}", user.getUuid());
             }
         } catch (Exception e) {

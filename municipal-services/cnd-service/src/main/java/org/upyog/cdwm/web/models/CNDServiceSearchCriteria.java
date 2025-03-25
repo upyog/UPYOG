@@ -19,7 +19,7 @@ public class CNDServiceSearchCriteria {
     private String status;
 
     @JsonProperty("applicationNumber")
-        private String applicationNumber;
+    private String applicationNumber;
 
     @JsonProperty("mobileNumber")
     private String mobileNumber;
