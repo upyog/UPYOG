@@ -21,7 +21,7 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
 
   const [selectedPlot, setSelectedPlot] = useState();
   const [inchesError, setInchesError] = useState();
-  console.log("incheserror", inchesError)
+
   
   let plotImage = "https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/plotImage.png"
   
@@ -94,7 +94,6 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   }, [isPlanApproved, landStatus, projectComponent]);
 
   const handleInputChange = (setter) => (e) => {
-    console.log("e777",e)
     setter(e.target.value);
   }
   const handleInchesInput=(setter) => (e)=>{
@@ -126,10 +125,20 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   const getThumbnails =  async(ids, tenantId) => {
     const res =  await Digit.UploadServices.Filefetch(ids, tenantId);
     if (res.data.fileStoreIds && res.data.fileStoreIds.length !== 0) {
-        return { 
+      const fetchDrawingNo = preApprovedResponse.data.reduce((acc, plan) => {
+        plan.documents.forEach(doc => {
+          acc[doc.fileStoreId] = plan.drawingNo;
+        });
+        return acc;
+      }, {});
+      const drawingNos = res.data.fileStoreIds.map(file => {
+        return fetchDrawingNo[file.id] || null; 
+      });
+        return {
             fileStore:res.data.fileStoreIds.map(o=>o.id),
             thumbs: res.data.fileStoreIds.map(o => o.url), 
-            fullImage: res.data.fileStoreIds.map(o => Digit.Utils.getFileUrl(o.url)) 
+            fullImage: res.data.fileStoreIds.map(o => Digit.Utils.getFileUrl(o.url)),
+            drawingNo: drawingNos,  
         };
       } else {
         return null;
@@ -292,7 +301,7 @@ const getDetailsRow = (estimateDetails) => {
           {imagesToShowBelowComplaintDetails?.thumbs ? (
             <div>
               <CardLabel style={{ marginTop: '18px', fontWeight: 'bolder', marginBottom: "15px" }}>{t("")}</CardLabel>
-              <DisplayPhotos srcs={imagesToShowBelowComplaintDetails?.thumbs} onClick={(source, index) => zoomImageWrapper(source, index)} />
+              <DisplayPhotos srcs={imagesToShowBelowComplaintDetails} onClick={(source, index) => zoomImageWrapper(source, index)} />
             </div>
           ) : <div style={{ marginBottom: "15px", marginTop: "18px" }}>{t("PLOTS_NOT_AVAILABLE")}</div>}
           
