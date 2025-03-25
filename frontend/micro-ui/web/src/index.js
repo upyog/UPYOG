@@ -6,7 +6,7 @@ import { initLibraries}  from "@upyog/digit-ui-libraries";
 import "./index.css";
 import App from './App';
 import { TLCustomisations } from './Customisations/tl/TLCustomisation';
-window.__webpack_nonce__ = "XkE2cG9lcjNhbXBsZQ=="; // Apply nonce globally
+// window.__webpack_nonce__ = "XkE2cG9lcjNhbXBsZQ=="; // Apply nonce globally
 
 initLibraries();
 
