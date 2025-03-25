@@ -81,8 +81,8 @@ public class ResponseEnhancementFilter extends ZuulFilter {
         
         ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
                 "default-src 'self'; " +
-                "script-src 'self' 'nonce-" + nonce +"'"+southUrl+" "+
-                "style-src 'self' 'nonce-" + nonce + "'"+ fontgoogleApiUrl+
+                "script-src 'self' 'nonce-" + nonce +"' "+southUrl+" "+
+                "style-src 'self' 'nonce-" + nonce + "' "+ fontgoogleApiUrl+
                 "font-src 'self'"+ fontstaticUrl+
                 "img-src 'self' "+ teraformUrl+
                 "frame-ancestors 'none';");
