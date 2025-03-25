@@ -62,6 +62,7 @@ public class ResponseEnhancementFilter extends ZuulFilter {
        final String fontgoogleApiUrl= "https://fonts.googleapis.com; ";
        final String fontstaticUrl= " https://fonts.gstatic.com data:; ";
        final String teraformUrl= "https://mnptapp-terraform.s3.ap-south-1.amazonaws.com; ";
+       final String southUrl= "https://s3.ap-south-1.amazonaws.com;";
        
         ctx.addZuulResponseHeader(PERMISSIONS_POLICY, "geolocation=(self)");
         final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -80,16 +81,14 @@ public class ResponseEnhancementFilter extends ZuulFilter {
         
         ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
                 "default-src 'self'; " +
-                "script-src 'self' 'nonce-" + nonce + "'; " +
-                "style-src 'self' 'nonce-" + nonce + "' "+ fontgoogleApiUrl+
+                "script-src 'self' 'nonce-" + nonce +"'"+southUrl+" "+
+                "style-src 'self' 'nonce-" + nonce + "'"+ fontgoogleApiUrl+
                 "font-src 'self'"+ fontstaticUrl+
                 "img-src 'self' "+ teraformUrl+
                 "frame-ancestors 'none';");
       
     	
-      //  default-src 'self'; script-src 'self' 'nonce-sVaHuG7g5ay+Q1QWsrxmtg=='; style-src 'self' ' nonce-sVaHuG7g5ay+Q1QWsrxmtg=='https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https://mnptapp-terraform.s3.ap-south-1.amazonaws.com; frame-ancestors 'none';
-        
-      //  default-src 'self'; script-src 'self' 'nonce-UauTkwu4Vz9x9Eq0UDKaDw==' https://s3.ap-south-1.amazonaws.com; style-src 'self' 'nonce-UauTkwu4Vz9x9Eq0UDKaDw==' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https://mnptapp-terraform.s3.ap-south-1.amazonaws.com; frame-ancestors 'none';
+      
         ctx.addZuulRequestHeader ("cspNonce", nonce);
         ctx.getRequest().setAttribute("cspNonce", nonce);
         
