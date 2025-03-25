@@ -50,7 +50,8 @@ public class FetchEdcrRulesMdms {
 		        "PlinthHeight", "RearSetBack", "RequiredTread", "RequiredWidth", "RiserHeight",
 		        "RoomArea", "RoomWiseDoorArea", "RoomWiseVentilation", "Basement", "Bathroom", 
 		        "BathroomWaterClosets", "BlockDistancesService", "Chimney", "ExitWidth", "FireStair",
-		        "FireTenderMovement", "GovtBuildingDistance", "GuardRoom", "HeadRoom" , "InteriorOpenSpaceService"
+		        "FireTenderMovement", "GovtBuildingDistance", "GuardRoom", "HeadRoom" , "InteriorOpenSpaceService",
+		        "LandUse", "MezzanineFloorService", "MonumentDistance"
 		    ));
 
 		    Map<String, List<Map<String, Object>>> edcrRulesFeatures = new HashMap<>();
@@ -301,7 +302,18 @@ public class FetchEdcrRulesMdms {
 	                    value.put("minVentilationAreaValueTwo", ruleItem.get("minVentilationAreaValueTwo"));
 	                    value.put("minVentilationWidthValueOne", ruleItem.get("minVentilationWidthValueOne"));
 	                    value.put("minVentilationWidthValueTwo", ruleItem.get("minVentilationWidthValueTwo"));
-
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("mezzanineArea")) {
+	                    value.put("mezzanineArea", ruleItem.get("mezzanineArea"));
+	                    value.put("mezzanineHeight", ruleItem.get("mezzanineHeight"));
+	                    value.put("mezzanineBuiltUpArea", ruleItem.get("mezzanineBuiltUpArea"));
+	                }
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey("monumentDistance_distanceOne")) {
+	                    value.put("monumentDistance_distanceOne", ruleItem.get("monumentDistance_distanceOne"));
+	                    value.put("monumentDistance_minDistanceOne", ruleItem.get("monumentDistance_minDistanceOne"));
+	                    value.put("monumentDistance_minDistanceTwo", ruleItem.get("monumentDistance_minDistanceTwo"));
+	                    value.put("monumentDistance_maxHeightofbuilding", ruleItem.get("monumentDistance_maxHeightofbuilding"));
+	                    value.put("mezzanineBuiltUpArea", ruleItem.get("mezzanineBuiltUpArea"));
 	                }
 	                
 	                

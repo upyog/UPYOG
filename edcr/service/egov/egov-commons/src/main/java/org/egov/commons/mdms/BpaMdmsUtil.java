@@ -106,9 +106,21 @@ public class BpaMdmsUtil {
         masterDetailHeadRoom.setName("HeadRoom");
         bpaMasterDtls.add(masterDetailHeadRoom);
         
+        MasterDetail masterDetailLandUse = new MasterDetail();
+        masterDetailLandUse.setName("LandUse");
+        bpaMasterDtls.add(masterDetailLandUse);
+        
         MasterDetail masterDetailInteriorOpenSpaceService = new MasterDetail();
         masterDetailInteriorOpenSpaceService.setName("InteriorOpenSpaceService");
         bpaMasterDtls.add(masterDetailInteriorOpenSpaceService);
+        
+        MasterDetail masterDetailMezzanineFloorService = new MasterDetail();
+        masterDetailMezzanineFloorService.setName("MezzanineFloorService");
+        bpaMasterDtls.add(masterDetailMezzanineFloorService);
+        
+        MasterDetail masterDetailMonumentDistance = new MasterDetail();
+        masterDetailMonumentDistance.setName("MonumentDistance");
+        bpaMasterDtls.add(masterDetailMonumentDistance);
         
         MasterDetail masterDetailToilet = new MasterDetail();
         masterDetailToilet.setName("Toilet");
