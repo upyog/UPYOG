@@ -63,80 +63,19 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
     );
   };
 
-  // Custom TextInput wrapper for quantity controls
-  const CustomQuantityInput = ({ value, onChange, ...props }) => {
-    const handleQuantityChange = (action) => {
-      if (action === 'increment' && value < 10) {
-        onChange({ target: { value: value + 1 } });
-      } else if (action === 'decrement' && value > 1) {
-        onChange({ target: { value: value - 1 } });
-      }
-    };
-
-    return (
-      <div style={{ position: 'relative', width: inputStyles.width }}>
-        <TextInput
-          {...props}
-          type="number"
-          value={value}
-          onChange={(e) => {
-            const newValue = parseInt(e.target.value);
-            if (!isNaN(newValue) && newValue >= 1 && newValue <= 10) {
-              onChange(e);
-            }
-          }}
-          style={{ ...inputStyles, paddingRight: '30px' }}
-        />
-        <div style={{
-          position: 'absolute',
-          right: '340px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '5px'
-        }}>
-          <button
-            type="button"
-            onClick={() => handleQuantityChange('increment')}
-            disabled={value >= 10}
-            style={{
-              padding: '2px 6px',
-              fontSize: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '2px',
-              cursor: value >= 10 ? 'not-allowed' : 'pointer',
-              backgroundColor: '#a82227',
-              color:'white'
-            }}
-          >
-            ▲
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuantityChange('decrement')}
-            disabled={value <= 1}
-            style={{
-              padding: '2px 6px',
-              fontSize: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '2px',
-              cursor: value <= 1 ? 'not-allowed' : 'pointer',
-              backgroundColor: '#a82227',
-              color:'white'
-            }}
-          >
-            ▼
-          </button>
-        </div>
-      </div>
-    );
-  };
-
 
   const setextrachargeHandler = () => {
     setextraCharge(!extraCharge);
   }
+
+  const TankerQuantity = (e) => {
+    let value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value >= 1 && value <= 50) {
+      settankerQuantity(value);
+    } else if (e.target.value === "") {
+      settankerQuantity(""); // Allow empty input
+    }
+  };
 
   function setDescription(e) {
     setdescription(e.target.value);
@@ -204,20 +143,25 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
               t={t}
             />
           <CardLabel>{`${t("WT_TANKER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
-          <CustomQuantityInput
-            t={t}
-            name="tankerQuantity"
-            value={tankerQuantity}
-            onChange={(e) => settankerQuantity(parseInt(e.target.value))}
-            ValidationRequired={true}
-            {...(validation = {
-              isRequired: true,
-              pattern: "^[0-9]+$",
-              type: "tel",
-              title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-          />
-
+            <TextInput
+              t={t}
+              type="text"
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="tankerQuantity"
+              value={tankerQuantity}
+              onChange={TankerQuantity}
+              min={1}
+              max={50}
+              style={inputStyles}
+              ValidationRequired={true}
+              {...(validation = {
+                isRequired: true,
+                pattern: "^[0-9]+$",
+                type: "number",
+                title: t("PT_NAME_ERROR_MESSAGE"),
+              })}
+            />
           <CardLabel>{`${t("WT_DELIVERY_DATE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
@@ -259,7 +203,6 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
           <div style={{ display: "flex", gap: "22px" }}>
             <CardLabel>{`${t("WT_IMMEDIATE")}`}<span className="astericColor"></span></CardLabel>
             <CheckBox
-                label={t("WT_IMMEDIATE")}
                 onChange={setextrachargeHandler}
                 checked={extraCharge}
             />

@@ -35,13 +35,13 @@ const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
   const serviceTypeData = [
     {
       code: "WT",
-      i18nKey: "WT",
-      value: "WT"
+      i18nKey: "Water Tanker",
+      value: "Water Tanker"
     },
     {
       code: "MobileToilet",
-      i18nKey: "MobileToilet",
-      value: "MobileToilet"
+      i18nKey: "Mobile Toilet",
+      value: "Mobile Toilet"
     }
   ];
 

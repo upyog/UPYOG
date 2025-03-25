@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { mobileToiletPayload } from "../../../utils";
+import getMTAcknowledgementData from "../../../utils/getMTAcknowledgementData";
 
 /* This component, MTAcknowledgement, is responsible for displaying the acknowledgement 
  of a service request submission. 
@@ -58,7 +59,9 @@ const MTAcknowledgement = ({ data, onSuccess }) => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.wt.useMobileToiletCreateAPI(tenantId); 
   const user = Digit.UserService.getUser().info;
-  console.log("data",data);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
+ 
   useEffect(() => {
     try {
       data.tenantId = tenantId;
@@ -76,15 +79,21 @@ const MTAcknowledgement = ({ data, onSuccess }) => {
     redirectPath: '/digit-ui/citizen'
   })
   
-//   const handleDownloadPdf = async () => {
-//     const { SVDetail = [] } = mutation.data;
-//     let SVData = (SVDetail) || {};
-//     const tenantInfo = tenants.find((tenant) => tenant.code === SVData.tenantId);
-//     let tenantId = SVData.tenantId || tenantId;
-   
-//     const data = await getSVAcknowledgementData({ ...SVData }, tenantInfo, t);
-//     Digit.Utils.pdf.generate(data);
-//   };
+    /**
+     * Handles the generation and download of the Mobile Toilet Acknowledgement PDF.
+     * 
+     * - Fetches the mobile toilet booking details from the mutation response.
+     * - Retrieves the tenant information based on the tenant ID from the booking details.
+     * - Prepares the acknowledgement data using the `getMTAcknowledgementData` utility function.
+     * - Generates and downloads the PDF using the prepared data.
+     */
+  const handleDownloadPdf = async () => {
+    let mobileToiletDetail = mutation.data?.mobileToiletBookingDetail;
+    const tenantInfo = tenants.find((tenant) => tenant.code === mobileToiletDetail.tenantId);
+    let tenantId = mobileToiletDetail.tenantId || tenantId;
+    const data = await getMTAcknowledgementData({...mobileToiletDetail }, tenantInfo, t);
+    Digit.Utils.pdf.generate(data);
+  };
 
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
@@ -100,7 +109,7 @@ const MTAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {/* {mutation.isSuccess && <SubmitBar label={t("SV_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />} */}
+      {mutation.isSuccess && <SubmitBar label={t("MT_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
