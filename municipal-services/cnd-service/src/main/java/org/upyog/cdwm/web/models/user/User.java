@@ -1,6 +1,9 @@
 package org.upyog.cdwm.web.models.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +21,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @ToString
 @Builder(toBuilder = true)
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
     private Long id;
@@ -43,11 +47,10 @@ public class User {
     private String altContactNumber;
     private String pan;
     private String aadhaarNumber;
-    private Address permanentAddress;
-    private Address correspondenceAddress;
     private Set<Address> addresses;
     private Boolean active;
     private List<Role> roles;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dob;
     private String locale = "en_IN";
     private UserType type;
@@ -60,7 +63,7 @@ public class User {
     private Date createdDate;
     private Long createdBy;
     private Long lastModifiedBy;
-    private String alternateMobileNumber;
+    private String alternatemobilenumber;
 
     public User addAddressItem(Address addressItem) {
         if (this.addresses == null) {
@@ -85,38 +88,15 @@ public class User {
     }
 
     public void validateNewUser(boolean createUserValidateName) {
-        if (isUsernameAbsent()
-                || (createUserValidateName && isNameAbsent())
+        if (isUsernameAbsent() || (createUserValidateName && isNameAbsent())
 
-                || isActiveIndicatorAbsent()
-                || isTypeAbsent()
-                || isPermanentAddressInvalid()
-                || isCorrespondenceAddressInvalid()
-                || isRolesAbsent()
+                || isActiveIndicatorAbsent() || isTypeAbsent() || isRolesAbsent()
 
                 || isTenantIdAbsent()) {
             throw new IllegalArgumentException("Invalid user creation request: missing required fields.");
         }
     }
 
-    public void validateUserModification() {
-        if (isPermanentAddressInvalid()
-                || isCorrespondenceAddressInvalid()
-                || isTenantIdAbsent()
-        ) {
-            throw new IllegalArgumentException("Invalid user update request: missing required fields.");
-        }
-    }
-
-    @JsonIgnore
-    public boolean isCorrespondenceAddressInvalid() {
-        return correspondenceAddress != null && correspondenceAddress.isInvalid();
-    }
-
-    @JsonIgnore
-    public boolean isPermanentAddressInvalid() {
-        return permanentAddress != null && permanentAddress.isInvalid();
-    }
 
     @JsonIgnore
     public boolean isTypeAbsent() {
