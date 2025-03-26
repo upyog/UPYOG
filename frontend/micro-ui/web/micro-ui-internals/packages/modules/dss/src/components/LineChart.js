@@ -19,7 +19,7 @@ const LineChartWithData = () => {
   const { value } = useContext(FilterContext);
   const [totalCapacity, setTotalCapacity] = useState(0);
   const stateTenant = Digit.ULBService.getStateId();
-  const [selectedQuarter, setSelectedQuarter] = useState("");
+  const [selectedQuarter, setSelectedQuarter] = useState("Whole Financial Year");
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.useCommonMDMS(
     stateTenant,
     "FSM",
@@ -218,7 +218,6 @@ const LineChartWithData = () => {
           onChange={handleFilters}
           style={{ padding: '8px', fontSize: '14px' }}
         >
-          <option value="">Select Option</option> Default option when no value is selected
           <option value="Whole Financial Year">Whole Financial Year</option>
           <option value="Jan-Mar">Jan-Mar</option>
           <option value="Apr-Jun">Apr-Jun</option>
