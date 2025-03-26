@@ -13,6 +13,9 @@ const CndApplicationData = ({ application, tenantId, buttonLabel }) => {
     <Card>
       <KeyNote keyValue={t("CND_APPLICATION_NUMBER")} note={application?.applicationNumber} />
       <KeyNote keyValue={t("CND_APPLICATION_TYPE")} note={application?.applicationType} />
+      <KeyNote keyValue={t("CND_WASTE_QUANTITY")} note={application?.totalWasteQuantity} />
+      <KeyNote keyValue={t("CND_SCHEDULE_PICKUP")} note={application?.requestedPickupDate} />
+      <KeyNote keyValue={t("CND_AREA_HOUSE")} note={application?.houseArea} />
       <KeyNote keyValue={t("CND_APPLICATION_STATUS")} note={application?.applicationStatus} />
 
       <Link to={`/cnd-ui/citizen/cnd/my-requests/${application?.applicationNumber}/${application?.tenantId}`}>

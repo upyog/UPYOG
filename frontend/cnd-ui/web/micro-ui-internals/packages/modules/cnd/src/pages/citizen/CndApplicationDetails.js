@@ -180,6 +180,11 @@ const CndApplicationDetails = () => {
               label={t("CND_SCHEDULE_PICKUP")}
               text={cndData?.requestedPickupDate} 
             />
+            <Row
+              className="border-none"
+              label={t("CND_AREA_HOUSE")}
+              text={cndData?.houseArea} 
+            />
           </StatusTable>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
           <StatusTable>
