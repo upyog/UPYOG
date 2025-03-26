@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 
 /* This page is developed for the Mobile Toilet Request Details page.
    It allows users to enter details such as the number of mobile toilets required, delivery dates, and special requests. */
@@ -12,15 +12,22 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const [deliveryfromDate, setdeliveryfromDate] = useState(formData?.toiletRequestDetails?.deliveryfromDate || "");
   const [deliverytoDate, setdeliverytoDate] = useState(formData?.toiletRequestDetails?.deliverytoDate || "");
   const [specialRequest, setSpecialRequest] = useState(formData?.toiletRequestDetails?.specialRequest || "");
+  const tenantId=Digit.ULBService.getStateId();
+   // Fetch noOfMobileToilet data from MDMS
+   const { data: NoOfMobileToilet} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "NoOfMobileToilet" }], {
+    select: (data) => {
+      const formattedData = data?.["request-service"]?.["NoOfMobileToilet"];
+      return formattedData;
+    },
+  });
 
+  let noOfMobileToilet =[];
 
-  function SetMobileToilet(e) {
-    let value = Number(e.target.value);
+  // Iterate over the noOfMobileToilet array and push data to the Vehicle array
+  NoOfMobileToilet && NoOfMobileToilet.map((data) => {
+    noOfMobileToilet.push({ i18nKey: `${data.code}`, code: `${data.code}`, value: `${data.code}`});
+  });
 
-    if (e.target.value === "" || (value >= 1 && value <= 50)) {
-      setMobileToilet(e.target.value);
-    }
-  }
   function SetdeliveryfromDate(e) {
     setdeliveryfromDate(e.target.value);
   }
@@ -80,18 +87,16 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
       >
         <div>
           <CardLabel>{t("MT_NUMBER_OF_MOBILE_TOILETS")} <span className="check-page-link-button">*</span></CardLabel>
-          <TextInput
-            t={t}
-            type="number"
-            name="mobileToilet"
-            placeholder="Enter Number of Mobile Toilets"
-            value={mobileToilet}
-            onChange={SetMobileToilet}
-            style={{ width: user.type === "EMPLOYEE" ? "51.6%" : null }}
-            ValidationRequired={true}
-          />
-
-
+           <Dropdown
+              className="form-field"
+              selected={mobileToilet}
+              placeholder={"Select Number of Mobile Toilets"}
+              select={setMobileToilet}
+              option={noOfMobileToilet}
+              style={{width:"100%"}}
+              optionKey="i18nKey"
+              t={t}
+            />
 
           <CardLabel>{`${t("MT_DELIVERY_FROM_DATE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
@@ -117,7 +122,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
             name="deliveryDate"
             value={deliverytoDate}
             onChange={SetdeliverytoDate}
-            min={new Date().toISOString().split('T')[0]}
+            min={deliveryfromDate}
             rules={{
               required: t("CORE_COMMON_REQUIRED_ERRMSG"),
               validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),

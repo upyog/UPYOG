@@ -2,6 +2,7 @@
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link} from "react-router-dom";
+  import { APPLICATION_PATH} from "../utils";
 
   /**
  * `WTSearchApplication` component provides a search interface for Water Tanker (WT) bookings. 
@@ -38,7 +39,7 @@
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
       },[register])
-    
+      const user = Digit.UserService.getUser().info;
       const GetCell = (value) => <span className="cell-text">{value}</span>;
     
       const columns = useMemo( () => ([
@@ -51,9 +52,16 @@
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/digit-ui/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                    {user.type === "CITIZEN" && (
+                      <Link to={`${APPLICATION_PATH}/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
                       </Link>
+                    )}
+                     {user.type === "EMPLOYEE" && (
+                      <Link to={`${APPLICATION_PATH}/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                        {row.original["bookingNo"]}
+                      </Link>
+                    )}
                     </span>
                   </div>
                 );
@@ -87,11 +95,11 @@
             
         ]), [] )
         const statusOptions = [
-          { i18nKey: "Booked", code: "BOOKED", value: t("WT_BOOKED") },
-          { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("WT_BOOKING_IN_PROGRES") },
-          { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
-          { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
-          { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
+          { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
+          { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
+          { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
+          { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
+          { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
         ];
       const onSort = useCallback((args) => {
           if (args.length === 0) return
@@ -116,11 +124,17 @@
 
       return <React.Fragment>
                   
-                  <div>
+                  <div style={{ padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : ""}}>
                   <Header>{t("WT_SEARCH_BOOKINGS")}</Header>
-                  < Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
+                  { user?.type === "EMPLOYEE" && (
+                  <Card className={"card-search-heading"}>
+                      <span style={{color:"#505A5F"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
                   </Card>
+                  )}
+                  { user?.type === "CITIZEN" && (
+                      <span style={{color:"#505A5F", marginBottom:"10px"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
+                  )}
+
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
                       <label>{t("WT_BOOKING_NO")}</label>

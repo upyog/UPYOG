@@ -4,6 +4,7 @@ import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA } from "../../../utils";
+import { convertTo12HourFormat, formatDate, APPLICATION_PATH } from "../../../utils";
 
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
@@ -42,7 +43,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           <Row
               label={t("COMMON_APPLICANT_NAME")}
               text={`${t(checkForNA(owner?.applicantName))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/applicant-details`} />}
           />
           <Row
               label={t("COMMON_MOBILE_NUMBER")}
@@ -63,7 +64,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           <Row
               label={t("HOUSE_NO")}
               text={`${t(checkForNA(address?.houseNo))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/address-details`} />}
+              actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/address-details`} />}
               />
           <Row
               label={t("ADDRESS_LINE1")}
@@ -101,23 +102,23 @@ In Parent Component,  we are passing the data as a props coming through params (
           <Row
               label={t("WT_TANKER_TYPE")}
               text={`${t(checkForNA(requestDetails?.tankerType?.value))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/request-details`} />}
+              actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/request-details`} />}
               />
               <Row
               label={t("WT_TANKER_QUANTITY")}
-              text={`${t(checkForNA(requestDetails?.tankerQuantity))}`}
+              text={`${t(checkForNA(requestDetails?.tankerQuantity?.code))}`}
               />
               <Row
               label={t("WT_WATER_QUANTITY")}
-              text={`${t(checkForNA(requestDetails?.waterQuantity?.code))}`}
+              text={`${t(checkForNA(requestDetails?.waterQuantity?.value))}`}
               />
               <Row
               label={t("WT_DELIVERY_DATE")}
-              text={`${t(checkForNA(requestDetails?.deliveryDate))}`}
+              text={`${t(checkForNA(formatDate(requestDetails?.deliveryDate)))}`}
               />
                <Row
               label={t("WT_DELIVERY_TIME")}
-              text={`${checkForNA(requestDetails?.deliveryTime)}`}
+              text={`${checkForNA(convertTo12HourFormat(requestDetails?.deliveryTime))}`}
               />
               <Row
               label={t("WT_DESCRIPTION")}
@@ -136,23 +137,23 @@ In Parent Component,  we are passing the data as a props coming through params (
                 <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
                   <Row
                     label={t("MT_NUMBER_OF_MOBILE_TOILETS")}
-                    text={`${t(checkForNA(toiletRequestDetails?.mobileToilet))}`}
+                    text={`${t(checkForNA(toiletRequestDetails?.mobileToilet?.code))}`}
                   />
                   <Row
                     label={t("MT_DELIVERY_FROM_DATE")}
-                    text={`${t(checkForNA(toiletRequestDetails?.deliveryfromDate))}`}
+                    text={`${t(checkForNA(formatDate(toiletRequestDetails?.deliveryfromDate)))}`}
                   />
                   <Row
                     label={t("MT_DELIVERY_TO_DATE")}
-                    text={`${t(checkForNA(toiletRequestDetails?.deliverytoDate))}`}
+                    text={`${t(formatDate(checkForNA(toiletRequestDetails?.deliverytoDate)))}`}
                   />
                   <Row
                     label={t("MT_REQUIREMNENT_FROM_TIME")}
-                    text={checkForNA(toiletRequestDetails?.deliveryfromTime)}
+                    text={checkForNA(convertTo12HourFormat(toiletRequestDetails?.deliveryfromTime))}
                   />
                   <Row
                     label={t("MT_REQUIREMNENT_TO_TIME")}
-                    text={checkForNA(toiletRequestDetails?.deliverytoTime)}
+                    text={checkForNA(convertTo12HourFormat(toiletRequestDetails?.deliverytoTime))}
                   />
                   <Row
                     label={t("MT_SPECIAL_REQUEST")}

@@ -12,6 +12,24 @@ export const checkForNotNull = (value = "") => {
 export const checkForNA = (value = "") => {
   return checkForNotNull(value) ? value : "NA";
 };
+
+export const convertTo12HourFormat = (time) => {
+  if (!time) return "NA"; // Handle empty or invalid values
+
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+
+  return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
+
+export const formatDate = (dateString) => {
+  if (!dateString) return "NA"; // Handle empty or invalid values
+
+  const [year, month, day] = dateString.split("-");
+  return `${day}-${month}-${year}`;
+};
+
  // for replacing digit-ui 
 export const APPLICATION_PATH = "/digit-ui";
 
@@ -21,7 +39,7 @@ export const waterTankerPayload = (data) =>{
     waterTankerBookingDetail: {
         tenantId: data?.tenantId,
         tankerType: data?.requestDetails?.tankerType?.code,
-        tankerQuantity: data?.requestDetails?.tankerQuantity,
+        tankerQuantity: data?.requestDetails?.tankerQuantity?.code,
         waterQuantity: data?.requestDetails?.waterQuantity?.code,
         description: data?.requestDetails?.description,
         deliveryDate: data?.requestDetails?.deliveryDate,
@@ -63,7 +81,7 @@ export const waterTankerPayload = (data) =>{
     mobileToiletBookingDetail: {
         tenantId:data?.tenantId,
         description: data?.toiletRequestDetails?.specialRequest,
-        noOfMobileToilet : data?.toiletRequestDetails?.mobileToilet,
+        noOfMobileToilet : data?.toiletRequestDetails?.mobileToilet?.code,
         deliveryFromDate: data?.toiletRequestDetails?.deliveryfromDate,
         deliveryToDate: data?.toiletRequestDetails?.deliverytoDate,
         deliveryFromTime: data?.toiletRequestDetails?.deliveryfromTime,
