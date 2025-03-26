@@ -2,6 +2,7 @@
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link} from "react-router-dom";
+  import { APPLICATION_PATH} from "../utils";
 
   /**
  * `WTSearchApplication` component provides a search interface for Water Tanker (WT) bookings. 
@@ -52,12 +53,12 @@
                   <div>
                     <span className="link">
                     {user.type === "CITIZEN" && (
-                      <Link to={`/digit-ui/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                      <Link to={`${APPLICATION_PATH}/citizen/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
                       </Link>
                     )}
                      {user.type === "EMPLOYEE" && (
-                      <Link to={`/digit-ui/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
+                      <Link to={`${APPLICATION_PATH}/employee/wt/bookingsearch/booking-details/${row.original["bookingNo"]}`}>
                         {row.original["bookingNo"]}
                       </Link>
                     )}
@@ -127,11 +128,11 @@
                   <Header>{t("WT_SEARCH_BOOKINGS")}</Header>
                   { user?.type === "EMPLOYEE" && (
                   <Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
+                      <span style={{color:"#505A5F"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
                   </Card>
                   )}
                   { user?.type === "CITIZEN" && (
-                      <span style={{color:"#505A5F", marginBottom:"10px"}}>{t("Provide at least one parameter to search for an application")}</span>
+                      <span style={{color:"#505A5F", marginBottom:"10px"}}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
                   )}
 
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>

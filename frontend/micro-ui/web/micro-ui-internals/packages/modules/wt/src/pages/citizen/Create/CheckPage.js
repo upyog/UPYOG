@@ -4,7 +4,7 @@ import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { checkForNA } from "../../../utils";
-import { convertTo12HourFormat, formatDate } from "../../../utils";
+import { convertTo12HourFormat, formatDate, APPLICATION_PATH } from "../../../utils";
 
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
@@ -43,7 +43,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           <Row
               label={t("COMMON_APPLICANT_NAME")}
               text={`${t(checkForNA(owner?.applicantName))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/applicant-details`} />}
+              actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/applicant-details`} />}
           />
           <Row
               label={t("COMMON_MOBILE_NUMBER")}
@@ -64,7 +64,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           <Row
               label={t("HOUSE_NO")}
               text={`${t(checkForNA(address?.houseNo))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/address-details`} />}
+              actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/address-details`} />}
               />
           <Row
               label={t("ADDRESS_LINE1")}
@@ -102,7 +102,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           <Row
               label={t("WT_TANKER_TYPE")}
               text={`${t(checkForNA(requestDetails?.tankerType?.value))}`}
-              actionButton={<ActionButton jumpTo={`/digit-ui/citizen/wt/request-service/request-details`} />}
+              actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/request-details`} />}
               />
               <Row
               label={t("WT_TANKER_QUANTITY")}

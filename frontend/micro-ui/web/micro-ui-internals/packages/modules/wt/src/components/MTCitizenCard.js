@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { APPLICATION_PATH } from "../utils";
 
 /**
  * `MTCitizenCard` component is a module card that displays information related to the Mobile Toilet (MT) service.
@@ -36,11 +37,11 @@ const MTCitizenCard = () => {
   const links=[
     {
       label: t("ES_COMMON_INBOX"),
-      link: `/digit-ui/citizen/wt/mt/inbox`,
+      link: `${APPLICATION_PATH}/citizen/wt/mt/inbox`,
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/digit-ui/citizen/wt/mt/my-bookings`,
+      link: `${APPLICATION_PATH}/citizen/wt/mt/my-bookings`,
     }
   ]
   const propsForModuleCard = {
@@ -50,7 +51,7 @@ const MTCitizenCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/wt/mt/inbox`,
+        link: `${APPLICATION_PATH}/employee/wt/mt/inbox`,
       }
     ],
     links,

@@ -2,7 +2,7 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { waterTankerPayload } from "../../../utils";
+import { waterTankerPayload, APPLICATION_PATH } from "../../../utils";
 import getWTAcknowledgementData from "../../../utils/getWTAcknowledgementData";
 
 
@@ -77,7 +77,7 @@ const WTAcknowledgement = ({ data, onSuccess }) => {
   * if you click Back then it will redirect you to Home page 
   */
   Digit.Hooks.useCustomBackNavigation({
-    redirectPath: '/digit-ui/citizen'
+    redirectPath: '${APPLICATION_PATH}/citizen'
   })
 
   /**
@@ -112,11 +112,11 @@ const WTAcknowledgement = ({ data, onSuccess }) => {
       </StatusTable>
       {mutation.isSuccess && <SubmitBar label={t("WT_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
-      <Link to={`/digit-ui/citizen`}>
+      <Link to={`${APPLICATION_PATH}/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
       :
-      <Link to={`/digit-ui/employee`}>
+      <Link to={`${APPLICATION_PATH}/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>}
     </Card>

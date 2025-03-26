@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { APPLICATION_PATH } from "../utils";
 
 /**
  * `WTCard` component is a module card that displays information related to the Water Tanker (WT) service.
@@ -39,14 +40,28 @@ const WTCard = () => {
     {
       count: isLoading ? "-" : total?.totalCount,
       label: t("ES_COMMON_INBOX"),
-      link: `/digit-ui/employee/wt/inbox`,
+      link: `${APPLICATION_PATH}/employee/wt/inbox`,
     },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/digit-ui/employee/wt/my-bookings`,
+      link: `${APPLICATION_PATH}/employee/wt/my-bookings`,
     }
   ]
   const WT_CEMP = Digit.UserService.hasAccess(["WT_CEMP"]) || false;
+
+   /**
+ * Configuration object for the Module Card component.
+ * 
+ * - `Icon`: The icon to be displayed on the module card.
+ * - `moduleName`: The name of the module displayed on the card, translated using the `t` function.
+ * - `kpis`: An array of Key Performance Indicators (KPIs) to display on the card.
+ *    - Each KPI includes:
+ *      - `count`: The total count of items (e.g., applications or requests).
+ *      - `label`: The label for the KPI, translated using the `t` function.
+ *      - `link`: The URL to navigate to when the KPI is clicked.
+ * - `links`: An array of links to be displayed on the card, filtered based on roles or conditions.
+ */
+
   const propsForModuleCard = {
     Icon: <CHBIcon/>,
     moduleName: t("WT_MODULE_NAME"),
@@ -54,7 +69,7 @@ const WTCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/wt/inbox`,
+        link: `${APPLICATION_PATH}/employee/wt/inbox`,
       },
     ],
     links:links.filter(link=>!link?.role||WT_CEMP),
