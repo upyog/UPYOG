@@ -140,7 +140,6 @@ const LineChartWithData = () => {
   }
 
   const handleFilters = (event) => {
-    console.log("inside handlefilters")
     const selectedQuarter = event.target.value; 
     setSelectedQuarter(selectedQuarter); 
     
