@@ -226,7 +226,13 @@ public class PropertyRepository {
 				.map(owners -> owners.stream().findFirst().orElse(null)).filter(Objects::nonNull)
 				.collect(Collectors.toList());
 
-		Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+//		Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+		boolean hasNullLastModifiedDate = groupingOwnersByUuid.stream()
+			    .anyMatch(owner -> owner.getLastModifiedDate() == null);
+
+			if (!hasNullLastModifiedDate) {
+			    Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+			}
 
 		latestProperties.forEach(property -> {
 			property.setOwners(groupingOwnersByUuid);
