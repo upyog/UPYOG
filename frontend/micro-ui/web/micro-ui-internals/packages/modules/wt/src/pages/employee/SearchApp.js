@@ -1,6 +1,5 @@
-import React, { useState,useEffect } from "react"
-import {Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { useParams } from "react-router-dom"
+import React, { useState, useEffect } from "react";
+import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import WTSearchApplication from "../../components/SearchApplication";
 
@@ -14,29 +13,33 @@ import WTSearchApplication from "../../components/SearchApplication";
  * @param {string} path - The base path for the routes (not currently used in the component).
  * @returns {JSX.Element} The search interface with the results and error handling.
  */
-const SearchApp = ({path}) => {
+const SearchApp = ({path,moduleCode}) => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const [payload, setPayload] = useState({})
+    const [payload, setPayload] = useState({});
     const [showToast, setShowToast] = useState(null);
 
-    function onSubmit (_data) {
-        var fromDate=_data?.fromDate
-        var toDate=_data?.toDate
+    function onSubmit(_data) {
+        const { fromDate, toDate } = _data;
         const data = {
             ..._data,
-            ...(_data.toDate ? {toDate:toDate} : {}),
-            ...(_data.fromDate ? {fromDate:fromDate} : {})
-        }
+            ...(toDate ? { toDate } : {}),
+            ...(fromDate ? { fromDate } : {})
+        };
 
-        let payload = Object.keys(data).filter( k => data[k] ).reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
-        if(Object.entries(payload).length>0 && (!payload.bookingNo && !payload.fromDate && !payload.status  && !payload.toDate && !payload.mobileNumber))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });
-        else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
-        else
-        setPayload(payload)
+        let payload = Object.keys(data)
+            .filter(k => data[k])
+            .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {});
+
+        if (Object.keys(payload).length > 0 && (!payload.bookingNo && !payload.fromDate && !payload.status && !payload.toDate && !payload.mobileNumber)) {
+            setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });
+        } else if ((payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate)) {
+            setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
+        } else {
+            setPayload(payload);
+        }
     }
+
     useEffect(() => {
       if (showToast) {
         const timer = setTimeout(() => {
@@ -49,26 +52,42 @@ const SearchApp = ({path}) => {
         enabled: !!( payload && Object.keys(payload).length > 0 )
     }
 
-    const { isLoading, isSuccess, isError, error, data: {waterTankerBookingDetail: searchReult, Count: count} = {} } = Digit.Hooks.wt.useTankerSearchAPI(
-        { tenantId,
-          filters: payload
-        },
-       config,
-      );
-    return <React.Fragment>
-        <WTSearchApplication t={t} isLoading={isLoading} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
-        {showToast && (
-        <Toast
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-        />
-      )}
-    </React.Fragment>
+    let searchResult = [];
+    let count = 0;
+    let isLoading = false;
+    let isSuccess = false;
+    let isError = false;
+    let error = null;
 
-}
+    if (moduleCode === "WT") {
+        ({ isLoading, isSuccess, isError, error, data: { waterTankerBookingDetail: searchResult = [], Count: count = 0 } = {} } = 
+            Digit.Hooks.wt.useTankerSearchAPI({ tenantId, filters: payload }, config));
+    } else if (moduleCode === "MT") {
+        ({ isLoading, isSuccess, isError, error, data: { mobileToiletBookingDetails: searchResult = [], Count: count = 0 } = {} } = 
+            Digit.Hooks.wt.useMobileToiletSearchAPI({ tenantId, filters: payload }, config));
+    }
 
-export default SearchApp
+    return (
+        <React.Fragment>
+            <WTSearchApplication 
+                t={t} 
+                isLoading={isLoading} 
+                tenantId={tenantId} 
+                setShowToast={setShowToast} 
+                onSubmit={onSubmit} 
+                data={isSuccess && !isLoading ? (searchResult.length > 0 ? searchResult : { display: "ES_COMMON_NO_DATA" }) : ""} 
+                count={count} 
+            />
+            {showToast && (
+                <Toast
+                    error={showToast.error}
+                    warning={showToast.warning}
+                    label={t(showToast.label)}
+                    onClose={() => setShowToast(null)}
+                />
+            )}
+        </React.Fragment>
+    );
+};
+
+export default SearchApp;
