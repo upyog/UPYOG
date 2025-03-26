@@ -20,25 +20,52 @@ export const CNDSearch = {
   },
 
   RegistrationDetails: ({ cndApplicationDetail: response, t }) => {
-    console.log("responsnenneneee",response);
     // function to filter out the fields which have values
     const filterEmptyValues = (values) => values.filter(item => item.value);
     
 
     return [
       {
-        title: "COMMON_PERSONAL_DETAILS",
+        title: "COMMON_CND_DETAILS",
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: "CND_APPLICATION_NUMBER", value: response?.applicationNumber },
+          { title: "CND_REQUEST_TYPE", value: response?.applicationType },
+          { title: "CND_PROPERTY_USAGE", value: response?.propertyType },
+          { title: "CND_TYPE_CONSTRUCTION", value: response?.typeOfConstruction },
+          { title: "CND_WASTE_QUANTITY", value: response?.totalWasteQuantity },
+          { title: "CND_SCHEDULE_PICKUP", value: response?.requestedPickupDate },
+          { title: "CND_TIME_CONSTRUCTION", value: response?.constructionFromDate + " to " + response?.constructionToDate},
+        ]),
+      },
+      {
+        title: "COMMON_PERSONAL_DETAILS",
+        asSectionHeader: true,
+        values: filterEmptyValues([
+          { title: "COMMON_APPLICANT_NAME", value: response?.applicantDetail?.nameOfApplicant },
+          { title: "COMMON_MOBILE_NUMBER", value: response?.applicantDetail?.mobileNumber },
+          { title: "COMMON_EMAIL_ID", value: response?.applicantDetail?.emailId },
+        ]),
+      },
+      {
+        title: "CND_WASTE_PICKUP_ADDRESS",
+        asSectionHeader: true,
+        values: filterEmptyValues([
+          { title: "HOUSE_NO", value: response?.addressDetail?.houseNumber },
+          { title: "ADDRESS_LINE1", value: response?.addressDetail?.addressLine1 },
+          { title: "ADDRESS_LINE2", value: response?.addressDetail?.addressLine2 },
+          { title: "LANDMARK", value: response?.addressDetail?.landmark },
+          { title: "CITY", value: response?.addressDetail?.city },
+          { title: "LOCALITY", value: response?.addressDetail?.locality },
+          { title: "PINCODE", value: response?.addressDetail?.pinCode },
         ]),
       },
 
     ];
   },
 
-  applicationDetails: async (t, tenantId, applicationNumber,isDraftApplication, userType, args) => {
-    const filter = { applicationNumber, ...args,isDraftApplication };
+  applicationDetails: async (t, tenantId, applicationNumber,isUserDetailRequired, userType, args) => {
+    const filter = { applicationNumber, ...args,isUserDetailRequired };
     const response = await CNDSearch.application(tenantId, filter);
 
     return {

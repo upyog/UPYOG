@@ -24,7 +24,7 @@ const CndApplicationDetails = () => {
   const { isLoading, data } = Digit.Hooks.cnd.useCndSearchApplication(
     {
       tenantId,
-      filters: { applicationNumber: applicationNumber},
+      filters: { applicationNumber: applicationNumber, isUserDetailRequired:true},
     },
   ); 
 
@@ -165,6 +165,38 @@ const CndApplicationDetails = () => {
               label={t("CND_TYPE_CONSTRUCTION")}
               text={cndData?.typeOfConstruction} 
             />
+            <Row
+              className="border-none"
+              label={t("CND_PROPERTY_USAGE")}
+              text={cndData?.propertyType} 
+            />
+            <Row
+              className="border-none"
+              label={t("CND_TIME_CONSTRUCTION")}
+              text={cndData?.constructionFromDate + " to " + cndData?.constructionToDate} 
+            />
+            <Row
+              className="border-none"
+              label={t("CND_SCHEDULE_PICKUP")}
+              text={cndData?.requestedPickupDate} 
+            />
+          </StatusTable>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
+          <StatusTable>
+            <Row className="border-none" label={t("COMMON_APPLICANT_NAME")} text={cndData?.applicantDetail?.nameOfApplicant || t("CS_NA")} />
+            <Row className="border-none" label={t("COMMON_MOBILE_NUMBER")} text={cndData?.applicantDetail?.mobileNumber || t("CS_NA")} />
+            <Row className="border-none" label={t("COMMON_EMAIL_ID")} text={cndData?.applicantDetail?.emailId || t("CS_NA")} />
+            <Row className="border-none" label={t("COMMON_ALT_MOBILE_NUMBER")} text={cndData?.applicantDetail?.alternateMobileNumber|| t("CS_NA")} />
+          </StatusTable>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("CND_WASTE_PICKUP_ADDRESS")}</CardSubHeader>
+          <StatusTable>
+            <Row className="border-none" label={t("HOUSE_NO")} text={cndData?.addressDetail?.houseNumber || t("CS_NA")} />
+            <Row className="border-none" label={t("ADDRESS_LINE1")} text={cndData?.addressDetail?.addressLine1 || t("CS_NA")} />
+            <Row className="border-none" label={t("ADDRESS_LINE2")} text={cndData?.addressDetail?.addressLine2|| t("CS_NA")} />
+            <Row className="border-none" label={t("LANDMARK")} text={cndData?.addressDetail?.landmark || t("CS_NA")} />
+            <Row className="border-none" label={t("CITY")} text={cndData?.addressDetail?.city|| t("CS_NA")} />
+            <Row className="border-none" label={t("LOCALITY")} text={cndData?.addressDetail?.locality|| t("CS_NA")} />
+            <Row className="border-none" label={t("PINCODE")} text={cndData?.addressDetail?.pinCode|| t("CS_NA")} />
           </StatusTable>
 
 

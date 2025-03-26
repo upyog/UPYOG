@@ -14,7 +14,7 @@
  import { useQuery } from "react-query";
  import { CNDSearch } from "../../services/molecules/CND/Search";
  
- const useCndApplicationDetails = (t, tenantId, applicationNumber,config = {}, userType, args) => {
+ const useCndApplicationDetails = (t, tenantId, applicationNumber, isUserDetailRequired,config = {}, userType, args) => {
    
    const defaultSelect = (data) => {
       let applicationDetails = data.applicationDetails.map((obj) => {
@@ -29,8 +29,8 @@
  
     // Query function that fetches the application details
    return useQuery(
-     ["APPLICATION_SEARCH", "CND_SEARCH", applicationNumber, userType, args],
-     () => CNDSearch.applicationDetails(t, tenantId, applicationNumber, userType, args),
+     ["APPLICATION_SEARCH", "CND_SEARCH", applicationNumber, isUserDetailRequired, userType, args],
+     () => CNDSearch.applicationDetails(t, tenantId, applicationNumber, isUserDetailRequired, userType, args),
      { select: defaultSelect, ...config }
   
    );

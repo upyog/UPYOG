@@ -22,6 +22,7 @@ const ApplicationDetails = () => {
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showOptions, setShowOptions] = useState(false);
   const businessService = "cnd"
+  const isUserDetailRequired=true;
 
 
   // isAction is added to enable or disable the actionbar
@@ -30,7 +31,7 @@ const ApplicationDetails = () => {
     isAction = true;
   }
 
-  const { isLoading, data: applicationDetails } = Digit.Hooks.cnd.useCndApplicationDetails(t, tenantId, applicationNumber);
+  const { isLoading, data: applicationDetails } = Digit.Hooks.cnd.useCndApplicationDetails(t, tenantId, applicationNumber, isUserDetailRequired);
 
   // hook used to work with the mutation function
   const {mutate} = Digit.Hooks.cnd.useCndApplicationAction(tenantId);
