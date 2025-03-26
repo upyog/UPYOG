@@ -100,10 +100,10 @@ public class UserService {
                        PasswordEncoder passwordEncoder, EncryptionDecryptionUtil encryptionDecryptionUtil, TokenStore tokenStore,
                        @Value("${default.password.expiry.in.days}") int defaultPasswordExpiryInDays,
                        @Value("${citizen.login.password.otp.enabled}") boolean isCitizenLoginOtpBased,
-                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased, AddressRepository addressRepository,
+                       @Value("${employee.login.password.otp.enabled}") boolean isEmployeeLoginOtpBased,
                        @Value("${egov.user.pwd.pattern}") String pwdRegex,
                        @Value("${egov.user.pwd.pattern.max.length}") Integer pwdMaxLength,
-                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength) {
+                       @Value("${egov.user.pwd.pattern.min.length}") Integer pwdMinLength, AddressRepository addressRepository) {
         this.userRepository = userRepository;
         this.otpRepository = otpRepository;
         this.passwordEncoder = passwordEncoder;
@@ -113,11 +113,10 @@ public class UserService {
         this.fileRepository = fileRepository;
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.tokenStore = tokenStore;
-        this.addressRepository = addressRepository;
         this.pwdRegex = pwdRegex;
         this.pwdMaxLength = pwdMaxLength;
         this.pwdMinLength = pwdMinLength;
-
+        this.addressRepository = addressRepository;
     }
 
     /**
