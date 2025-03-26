@@ -13,7 +13,8 @@
     "packages/modules/commonPt",
     "packages/modules/dss",
     "packages/modules/fsm",
-    "packages/modules/tl"
+    "packages/modules/tl",
+    "packages/modules/obps"
   ],
   "license": "MIT",
   "private": true,
