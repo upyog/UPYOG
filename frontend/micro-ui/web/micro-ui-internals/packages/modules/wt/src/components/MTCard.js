@@ -41,6 +41,10 @@ const MTCard = () => {
       label: t("ES_COMMON_INBOX"),
       link: `/digit-ui/employee/wt/mt/inbox`,
     },
+    {
+      label: t("ES_COMMON_APPLICATION_SEARCH"),
+      link: `/digit-ui/employee/wt/mt/my-bookings`,
+    }
   ]
   const MT_CEMP = Digit.UserService.hasAccess(["MT_CEMP"]) || false;
   const propsForModuleCard = {

@@ -40,15 +40,15 @@ const WTCard = () => {
       count: isLoading ? "-" : total?.totalCount,
       label: t("ES_COMMON_INBOX"),
       link: `/digit-ui/employee/wt/inbox`,
-    }
+    },
     // {
     //   label: t("WT_REAQUEST_TANKER"),
     //   link: `/digit-ui/employee/wt/request-service/info`,
     // },
-    // {
-    //   label: t("ES_COMMON_APPLICATION_SEARCH"),
-    //   link: `/digit-ui/employee/wt/my-bookings`,
-    // },
+    {
+      label: t("ES_COMMON_APPLICATION_SEARCH"),
+      link: `/digit-ui/employee/wt/my-bookings`,
+    }
   ]
   const WT_CEMP = Digit.UserService.hasAccess(["WT_CEMP"]) || false;
   const propsForModuleCard = {

@@ -1,3 +1,4 @@
+import { convertTo12HourFormat,formatDate } from "./index";
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
@@ -52,10 +53,9 @@ const getMTAcknowledgementData = async (booking, tenantInfo, t) => {
         asSectionHeader: true,
         values: [
           { title: t("MT_NUMBER_OF_MOBILE_TOILETS"), value: booking?.noOfMobileToilet },
-          { title: t("MT_DELIVERY_FROM_DATE"), value: booking?.deliveryFromDate },
-          { title: t("MT_DELIVERY_TO_DATE"), value: booking?.deliveryToDate },
-          { title: t("MT_REQUIREMNENT_FROM_TIME"), value: booking?.deliveryFromTime },
-          { title: t("MT_REQUIREMNENT_TO_TIME"), value: booking?.deliveryToTime },
+          { title: t("MT_DELIVERY_FROM_DATE"), value: formatDate(booking?.deliveryFromDate) },
+          { title: t("MT_DELIVERY_TO_DATE"), value: formatDate(booking?.deliveryToDate) },
+          { title: t("MT_REQUIREMENT_TIME"), value: `${convertTo12HourFormat(booking?.deliveryFromTime)} - ${convertTo12HourFormat(booking?.deliveryToTime)}` },
           { title: t("MT_SPECIAL_REQUEST"), value: booking?.description }
         ].filter(item => item.value),
       },

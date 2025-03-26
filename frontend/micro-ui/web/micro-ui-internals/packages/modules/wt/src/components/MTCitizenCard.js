@@ -37,12 +37,22 @@ const MTCitizenCard = () => {
     {
       label: t("ES_COMMON_INBOX"),
       link: `/digit-ui/citizen/wt/mt/inbox`,
+    },
+    {
+      label: t("ES_COMMON_APPLICATION_SEARCH"),
+      link: `/digit-ui/citizen/wt/mt/my-bookings`,
     }
   ]
   const propsForModuleCard = {
     Icon: <CHBIcon/>,
     moduleName: t("ACTION_TEST_MT"),
-    kpis: [],
+    kpis: [
+      {
+        count: total?.totalCount,
+        label: t("ES_TITLE_INBOX"),
+        link: `/digit-ui/employee/wt/mt/inbox`,
+      }
+    ],
     links,
   };
 

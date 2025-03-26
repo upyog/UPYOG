@@ -1,3 +1,4 @@
+import { convertTo12HourFormat,formatDate } from "./index";
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
@@ -55,8 +56,10 @@ const getWTAcknowledgementData = async (booking, tenantInfo, t) => {
           { title: t("WT_TANKER_TYPE"), value: booking?.tankerType },
           { title: t("WT_TANKER_QUANTITY"), value: booking?.tankerQuantity },
           { title: t("WT_WATER_QUANTITY"), value: booking?.waterQuantity },
-          { title: t("WT_DELIVERY_DATE"), value: booking?.deliveryDate },
-          { title: t("WT_DELIVERY_TIME"), value: booking?.deliveryTime },
+          { 
+            title: t("WT_DELIVERY_DATE_TIME"), 
+            value: `${formatDate(booking?.deliveryDate)} (${convertTo12HourFormat(booking?.deliveryTime)})` 
+          },
           { title: t("WT_DESCRIPTION"), value: booking?.description },
           { title: t("WT_IMMEDIATE"), value: booking?.extraCharge === "Y" ? t("YES") : t("NO") },
         ].filter(item => item.value),

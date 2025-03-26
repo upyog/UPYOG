@@ -37,12 +37,22 @@ const WTCitizenCard = () => {
     {
       label: t("ES_COMMON_INBOX"),
       link: `/digit-ui/citizen/wt/inbox`,
+    },
+    {
+      label: t("ES_COMMON_APPLICATION_SEARCH"),
+      link: `/digit-ui/citizen/wt/my-bookings`,
     }
   ]
   const propsForModuleCard = {
     Icon: <CHBIcon/>,
     moduleName: t("WT_MODULE_NAME"),
-    kpis: [],
+    kpis: [
+      {
+        count: total?.totalCount,
+        label: t("ES_TITLE_INBOX"),
+        link: `/digit-ui/employee/wt/inbox`,
+      }
+    ],
     links,
   };
 
