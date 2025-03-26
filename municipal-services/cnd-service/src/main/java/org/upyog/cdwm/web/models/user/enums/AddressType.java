@@ -3,7 +3,7 @@ package org.upyog.cdwm.web.models.user.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum AddressType {
-    // This order should not be interrupted
+    
     PERMANENT("PERMANENT"), CORRESPONDENCE("CORRESPONDENCE"), OTHER("OTHER");
 
     @JsonCreator
