@@ -41,10 +41,6 @@ const WTCard = () => {
       label: t("ES_COMMON_INBOX"),
       link: `/digit-ui/employee/wt/inbox`,
     },
-    // {
-    //   label: t("WT_REAQUEST_TANKER"),
-    //   link: `/digit-ui/employee/wt/request-service/info`,
-    // },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `/digit-ui/employee/wt/my-bookings`,
