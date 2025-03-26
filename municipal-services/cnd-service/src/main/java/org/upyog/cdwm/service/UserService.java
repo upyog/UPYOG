@@ -1,12 +1,8 @@
 package org.upyog.cdwm.service;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,10 +49,10 @@ public class UserService {
      */
     public User getExistingOrNewUser(CNDApplicationRequest bookingRequest) {
 
-        CNDApplicationDetail bookingDetail = bookingRequest.getCndApplication();
+        CNDApplicationDetail applicationDetail = bookingRequest.getCndApplication();
         RequestInfo requestInfo = bookingRequest.getRequestInfo();
-        CNDApplicantDetail applicantDetail = bookingDetail.getApplicantDetail();
-        String tenantId = bookingDetail.getTenantId();
+        CNDApplicantDetail applicantDetail = applicationDetail.getApplicantDetail();
+        String tenantId = applicationDetail.getTenantId();
 
         // Fetch existing user details
         UserDetailResponseV2 userDetailResponse = fetchUser(applicantDetail, requestInfo, tenantId);
@@ -64,7 +60,7 @@ public class UserService {
 
         // Create a new user if no existing user found
         if (CollectionUtils.isEmpty(existingUsers)) {
-            return createUserHandler(requestInfo, applicantDetail, tenantId);
+            return createUserHandler(requestInfo, applicantDetail, applicationDetail.getAddressDetail(), tenantId);
         }
 
         return existingUsers.get(0);
@@ -78,14 +74,17 @@ public class UserService {
      * @param tenantId        The tenant ID.
      * @return The created user.
      */
-    private User createUserHandler(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, String tenantId) {
+    private User createUserHandler(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, CNDAddressDetail cndAddressDetail, String tenantId) {
         Role role = getCitizenRole();
         User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
+        Address address = convertApplicantAddressToUserAddress(cndAddressDetail, tenantId);
+        user.addAddressItem(address);
         UserDetailResponseV2 userDetailResponse = createUser(requestInfo, user, tenantId);
         String newUuid = userDetailResponse.getUser().get(0).getUuid();
         log.info("New user uuid returned from user service: {}", newUuid);
         return userDetailResponse.getUser().get(0);
     }
+
 
     /**
      * Creates a user in the system.
@@ -125,14 +124,42 @@ public class UserService {
         userRequest.setName(applicant.getNameOfApplicant());
         userRequest.setUserName(applicant.getMobileNumber());
         userRequest.setMobileNumber(applicant.getMobileNumber());
-        userRequest.setAlternateMobileNumber(applicant.getAlternateMobileNumber());
+        userRequest.setAlternatemobilenumber(applicant.getAlternateMobileNumber());
         userRequest.setEmailId(applicant.getEmailId());
         userRequest.setActive(true);
         userRequest.setTenantId(tenantId);
-        userRequest.setRoles((List<org.upyog.cdwm.web.models.user.Role>) role);
+        userRequest.setRoles(Collections.singletonList(role));
         userRequest.setType(UserType.CITIZEN);
         return userRequest;
     }
+
+    /**
+     * Converts an applicant address to a User address object to send in user create call with address object.
+     *
+     * @param cndAddressDetail The address details.
+     * @param tenantId         The tenant ID.
+     * @return The converted User address object.
+     */
+    private Address convertApplicantAddressToUserAddress(CNDAddressDetail cndAddressDetail, String tenantId) {
+        if (cndAddressDetail == null) {
+            log.info("The address details are empty or null");
+        }
+        Address address = Address.builder().
+                address(cndAddressDetail.getAddressLine1()).
+                address2(cndAddressDetail.getAddressLine2()).
+                city(cndAddressDetail.getCity()).
+                landmark(cndAddressDetail.getLandmark()).
+                locality(cndAddressDetail.getLocality()).
+                pinCode(cndAddressDetail.getPinCode()).
+                houseNumber(cndAddressDetail.getHouseNumber()).
+                tenantId(tenantId).
+                type(AddressType.PERMANENT).
+                build();
+
+
+        return address;
+    }
+
 
     /**
      * Retrieves the Citizen role.
@@ -201,15 +228,14 @@ public class UserService {
 
             if (response != null) {
                 LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
+                log.info("Response from user service: {}", responseMap);
                 parseResponse(responseMap, dobFormat);
                 UserDetailResponseV2 userDetailResponse = mapper.convertValue(responseMap, UserDetailResponseV2.class);
                 return userDetailResponse;
             } else {
                 return new UserDetailResponseV2();
             }
-        }
-        // Which Exception to throw?
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
         }
     }
@@ -280,7 +306,7 @@ public class UserService {
                 .nameOfApplicant(user.getName())
                 .mobileNumber(user.getMobileNumber())
                 .emailId(user.getEmailId())
-                .alternateMobileNumber(user.getAlternateMobileNumber())
+                .alternateMobileNumber(user.getAlternatemobilenumber())
                 .build();
     }
 

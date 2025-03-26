@@ -67,9 +67,7 @@ public class UserRequestV2 {
 
     private Boolean active;
 
-    private Address permanentAddress;
-
-    private Address correspondenceAddress;
+    private Set<Address> addresses;
 
     @SafeHtml
     @Size(max = 16)
@@ -161,8 +159,7 @@ public class UserRequestV2 {
         this.relationship = user.getGuardianRelation();
         this.uuid = user.getUuid();
         this.alternatemobilenumber=user.getAlternateMobileNumber();
-        this.permanentAddress = user.getAddresses().stream().filter(address -> address.getType().equals(AddressType.PERMANENT)).findFirst().orElse(null);
-        this.correspondenceAddress = user.getAddresses().stream().filter(address -> address.getType().equals(AddressType.CORRESPONDENCE)).findFirst().orElse(null);
+        this.addresses=user.getAddresses();
     }
 
 
@@ -211,8 +208,7 @@ public class UserRequestV2 {
                 .roles(toDomainRoles())
                 .loggedInUserId(loggedInUserId)
                 .loggedInUserUuid(loggedInUserUuid)
-                .permanentAddress(this.permanentAddress)
-                .correspondenceAddress(this.correspondenceAddress)
+                .addresses(addresses)
                 .guardian(fatherOrHusbandName)
                 .guardianRelation(relationship).alternateMobileNumber(this.alternatemobilenumber)
                 .build();

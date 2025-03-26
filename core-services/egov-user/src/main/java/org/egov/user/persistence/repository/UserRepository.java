@@ -614,12 +614,12 @@ public class UserRepository {
         if (!user.getRoles().isEmpty()) {
             saveUserRoles(user);
         }
-        final Address savedCorrespondenceAddress = saveAddressV2(user.getCorrespondenceAddress(), savedUser.getId(),
-                savedUser.getTenantId());
-        final Address savedPermanentAddress = saveAddressV2(user.getPermanentAddress(), savedUser.getId(),
-                savedUser.getTenantId());
-        savedUser.setPermanentAddress(savedPermanentAddress);
-        savedUser.setCorrespondenceAddress(savedCorrespondenceAddress);
+        if (user.getAddresses()!=null) {
+            for (Address address : user.getAddresses()) {
+                Address responseAddress = saveAddressV2(address, savedUser.getId(), savedUser.getTenantId());
+                savedUser.addAddressItem(responseAddress);
+            }
+        }
         return savedUser;
     }
 
