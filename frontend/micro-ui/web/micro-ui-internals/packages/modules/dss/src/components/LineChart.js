@@ -18,32 +18,43 @@ const LineChartWithData = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { value } = useContext(FilterContext);
   const [totalCapacity, setTotalCapacity] = useState(0);
-  const [totalWaste, setTotalWaste] = useState(0);
-  const [keysArr, setKeysArr] = useState([]);
-
-  const [manageChart, setmanageChart] = useState("Area");
   const stateTenant = Digit.ULBService.getStateId();
-
+  const [selectedQuarter, setSelectedQuarter] = useState("");
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.useCommonMDMS(
     stateTenant,
     "FSM",
     "FSTPPlantInfo",
     {
-      enabled: true, // Adjust condition as needed
+      enabled: true, 
     }
   );
-  const key = "DSS_FILTERS";
+  const key = "DSS_FILTERS_CUMILATIVETRANSACTIONS";
+
   const getInitialRange = () => {
     const data = Digit.SessionStorage.get(key);
-    const startDate = data?.range?.startDate ? new Date(data?.range?.startDate) : Digit.Utils.dss.getDefaultFinacialYear().startDate;
-    const endDate = data?.range?.endDate ? new Date(data?.range?.endDate) : Digit.Utils.dss.getDefaultFinacialYear().endDate;
+    const startDate = data?.startDate ? new Date(data?.startDate) : Digit.Utils.dss.getDefaultFinacialYear().startDate;
+    const endDate = data?.endDate ? new Date(data?.endDate) : Digit.Utils.dss.getDefaultFinacialYear().endDate;
     const title = `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`;
     const interval = Digit.Utils.dss.getDuration(startDate, endDate);
     const denomination = data?.denomination || "Lac";
-    //const tenantId = data?.filters?.tenantId || [];
     const moduleLevel = data?.moduleLevel || "";
     return { startDate, endDate, title, interval, denomination, moduleLevel };
   };
+  const [filters, setFilters] = useState(() => {
+    const { startDate, endDate, title, interval, denomination, tenantId } = getInitialRange();
+    return {
+      range: { startDate, endDate, title, interval },
+      requestDate: {
+        startDate: startDate.getTime(),
+        endDate: endDate.getTime(),
+        interval: interval,
+        title: title,
+      },
+      filters: {
+        tenantId: tenantId,
+      },
+    };
+  });
   const { startDate, endDate, title, interval, denomination } = getInitialRange();
   const { isLoading, data: response } = Digit.Hooks.dss.useGetChart({
     key: "cumulativenooftransaction",
@@ -56,51 +67,104 @@ const LineChartWithData = () => {
       title: title,
     },
     filters: value?.filters,
-  });
+  },
+  {
+    enabled: !!selectedQuarter  , //  hook is triggered only when a valid quarter is selected
+  }
+  );
 
-  const chartData = useMemo(() => {
-    if (response?.responseData?.data?.length === 1) {
-      setmanageChart("Area");
-      if (response?.responseData?.data?.[0]?.id !== "fsmCapacityUtilization") {
-        let data = response?.responseData?.data?.[0]?.plots.map((plot, index) => {
-          return index === 0
-            ? { ...plot, difference: 0 }
-            : {
-                ...plot,
-                difference: plot.value - response?.responseData?.data?.[0]?.plots[index - 1].value,
-              };
-        });
-        return data;
-      }
-      return response?.responseData?.data?.[0]?.plots.map((plot) => {
-        const [month, year] = plot?.name.split("-");
-        const totalDays = getDaysInMonth(Date.parse(`${month} 1, ${year}`));
-        const value = Math.round((plot?.value / (totalCapacity * totalDays)) * 100);
-        return { ...plot, value };
-      });
-    } else if (response?.responseData?.data?.length > 1) {
-      setmanageChart("Line");
-      let keys = {};
-      const mergeObj = response?.responseData?.data?.[0]?.plots.map((x, index) => {
-        let newObj = {};
-        response?.responseData?.data.map((ob) => {
-          keys[t(Digit.Utils.locale.getTransformedLocale(ob.headerName))] = t(
-            Digit.Utils.locale.getTransformedLocale(ob.headerName)
-          );
-          newObj[t(Digit.Utils.locale.getTransformedLocale(ob.headerName))] = ob?.plots[index].value;
-        });
-        return {
-          label: null,
-          name: response?.responseData?.data?.[0]?.plots[index].name,
-          strValue: null,
-          symbol: response?.responseData?.data?.[0]?.plots[index].symbol,
-          ...newObj,
-        };
-      });
-      setKeysArr(Object.values(keys));
-      return mergeObj;
+  function getQuarterDates(selectedQuarter) {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); 
+    const currentYear = currentDate.getFullYear();
+    let startMonth, endMonth;
+    
+    // Calculate the financial year based on current month
+    let financialYearStart, financialYearEnd;
+  
+    if (currentMonth >= 0 && currentMonth <= 2) { 
+      financialYearStart = currentYear - 1; 
+      financialYearEnd = currentYear; 
+    } else { 
+      financialYearStart = currentYear; 
+      financialYearEnd = currentYear + 1; 
     }
-  }, [response]);
+  
+    // Define the start and end months for each quarter
+    switch (selectedQuarter) {
+      case "Whole Financial Year":
+        startMonth = 3;  // Start from April (financial year start)
+        endMonth = 2;    // End in March of next year
+        break;
+      case "Jan-Mar":
+        startMonth = 0; // January (0-indexed)
+        endMonth = 2;   // March (0-indexed)
+        break;
+      case "Apr-Jun":
+        startMonth = 3; // April
+        endMonth = 5;   // June
+        break;
+      case "Jul-Sep":
+        startMonth = 6; // July
+        endMonth = 8;   // September
+        break;
+      case "Oct-Dec":
+        startMonth = 9; // October
+        endMonth = 11;  // December
+        break;
+      default:
+        // Default to "Whole Financial Year" if no specific quarter is selected
+        startMonth = 3;  // Start from April (financial year start)
+        endMonth = 2;    // End in March of next year
+        break;
+    }
+  
+    if (!selectedQuarter || selectedQuarter=="Whole Financial Year") {
+      return {
+        startDate: new Date(financialYearStart, 3, 1), 
+        endDate: new Date(financialYearEnd, 2, 31),   
+      };
+    }
+   
+    if(selectedQuarter === "Jan-Mar"){
+      return{
+       startDate : new Date(financialYearEnd, startMonth, 1),
+       endDate : new Date(financialYearEnd, endMonth + 1, 0),
+      };
+    }
+   
+    const startDate = new Date(financialYearStart, startMonth, 1);
+    const endDate = new Date(financialYearStart, endMonth + 1, 0); 
+    
+    return { startDate, endDate };
+  }
+
+  const handleFilters = (event) => {
+    console.log("inside handlefilters")
+    const selectedQuarter = event.target.value; 
+    setSelectedQuarter(selectedQuarter); 
+    
+    const { startDate, endDate } = getQuarterDates(selectedQuarter);
+    
+    const dataWithDates = {
+      startDate, 
+      endDate,
+      interval:"month"   
+    };    
+    Digit.SessionStorage.set(key, dataWithDates);    
+    
+    
+    // Update the filters with the new start and end dates
+    setFilters((prevFilters) => ({
+      range: { startDate, endDate },
+      requestDate: {
+        startDate: startDate.getTime(),
+        endDate: endDate.getTime(),
+        interval: "month",
+        title: `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`,
+      },
+    }));
+  };
 
   // Filter the API response data to include only the last 12 months
   const chartDataNew = useMemo(() => {
@@ -108,13 +172,12 @@ const LineChartWithData = () => {
 
     const currentDate = new Date();
     const twelveMonthsAgo = new Date();
-    twelveMonthsAgo.setMonth(currentDate.getMonth() - 12); // Get the date for 12 months ago
+    twelveMonthsAgo.setMonth(currentDate.getMonth() - 12); 
 
-    // Map the data and filter out data older than 12 months
     const filteredData = response?.responseData?.data?.[0]?.plots.filter((item) => {
       const [month, year] = item.name.split("-");
       const itemDate = new Date(`${month} 1, ${year}`);
-      return itemDate >= twelveMonthsAgo; // Only include data from the last 12 months
+      return itemDate >= twelveMonthsAgo; 
     });
 
     // Map the filtered data to chart data format
@@ -127,7 +190,7 @@ const LineChartWithData = () => {
   return (
     <div
       style={{
-        backgroundColor: "white", // Graph background color is white
+        backgroundColor: "white", 
         padding: "20px",
         borderRadius: "10px",
         width: "100%",
@@ -141,11 +204,29 @@ const LineChartWithData = () => {
           margin: 0,
           fontSize:'24px',
           fontWeight:'500',
-          //fontFamily:'Roboto, sans-serifto',
         }}
       >
         Cumulative No. of Transactions
       </h2>
+      {/* Quarter Filter Dropdown */}
+      <div style={{ marginBottom: '20px' }}>
+        <label htmlFor="quarterSelect" style={{ marginRight: '10px' }}>
+          Select Quarter:
+        </label>
+        <select
+          id="quarterSelect"
+          value={selectedQuarter } // Ensures the value is empty initially
+          onChange={handleFilters}
+          style={{ padding: '8px', fontSize: '14px' }}
+        >
+          <option value="">Select Option</option> Default option when no value is selected
+          <option value="Whole Financial Year">Whole Financial Year</option>
+          <option value="Jan-Mar">Jan-Mar</option>
+          <option value="Apr-Jun">Apr-Jun</option>
+          <option value="Jul-Sep">Jul-Sep</option>
+          <option value="Oct-Dec">Oct-Dec</option>
+        </select>
+      </div>
 
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartDataNew} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
@@ -155,17 +236,8 @@ const LineChartWithData = () => {
             scale="linear"
             domain={["auto", "auto"]}
             tickFormatter={(value) => {
-              // if (value >= 1000) {
-              //   return `${(value / 1000).toFixed(1)}K`; // Convert to thousands and show one decimal point
-              // }
               return value; // For values less than 1000, just display the value
             }}
-            // label={{
-            //   value: "No of Transactions",
-            //   angle: -90, // Keep the label vertical, but you can change it to a smaller angle (e.g., -45 or -30)
-            //   position: "insideLeft",
-            //   offset: 30, // Increased offset to move the label further away from the axis
-            // }}
             tick={{ fontSize: 12 }} 
             tickMargin={10} 
           />
@@ -174,7 +246,7 @@ const LineChartWithData = () => {
             labelFormatter={(label) => `Month: ${label}`}
             formatter={(value, name, props) => [
               `${value}`, // Display the value (transaction count)
-              'noOfTransactions' // Set the label to "No of Transactions" instead of "value"
+              'noOfTransactions' 
             ]}
           />
 

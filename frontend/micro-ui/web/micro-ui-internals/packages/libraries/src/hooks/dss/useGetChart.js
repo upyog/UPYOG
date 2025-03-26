@@ -14,8 +14,12 @@ const getRequest = (type, code, requestDate, filters, moduleLevel = "", addlFilt
     // if (!requestDate.interval){
     //   requestDate.interval = 'month'
     // }
-  
-    requestDate.interval = JSON.parse(sessionStorage.getItem("customDateFilter"))?.filterType || "month";
+    if(window.location.href.includes("landing")){
+      requestDate.interval="month";
+    }
+    else{
+      requestDate.interval = JSON.parse(sessionStorage.getItem("customDateFilter"))?.filterType || "month";
+    }
   return {
     aggregationRequestDto: {
       visualizationType: type.toUpperCase(),
