@@ -21,7 +21,7 @@ import EmployeeApp from "./pages/employee";
 import { TableConfig } from "./config/inbox-table-config";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import CNDApplicationTimeLine from "./components/CNDApplicationTimeLine";
-
+import ApplicationDetails from "./pages/employee/ApplicationDetails";
 
 
 const componentsToRegister = {
@@ -40,7 +40,8 @@ const componentsToRegister = {
   CndAcknowledgement,
   MyRequests,
   CndApplicationDetails,
-  CNDApplicationTimeLine
+  CNDApplicationTimeLine,
+  ApplicationDetails
   };
   
   // function to register the component as per standard 

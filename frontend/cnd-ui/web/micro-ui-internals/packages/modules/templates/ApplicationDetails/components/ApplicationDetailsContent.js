@@ -15,6 +15,7 @@ import {
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import TLCaption from "./TLCaption";
 
 // import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary"
 
@@ -93,13 +94,13 @@ function ApplicationDetailsContent({
     return `${day}/${month}/${year}`;
   };
   const getTimelineCaptions = (checkpoint, index = 0, timeline) => {
-    if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" /*&& !window.location.href.includes("/obps/")*/)) {
-      const caption = {
-        date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
-        source: applicationData?.channel || "",
-      };
-      return <TLCaption data={caption} />;
-    } 
+    // if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" /*&& !window.location.href.includes("/obps/")*/)) {
+    //   const caption = {
+    //     date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
+    //     source: applicationData?.channel || "",
+    //   };
+    //   return <TLCaption data={caption} />;
+    // } 
     // else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
     //   const privacy = {
     //     uuid: checkpoint?.assignes?.[0]?.uuid,
@@ -134,7 +135,7 @@ function ApplicationDetailsContent({
 
     //   return <TLCaption data={caption} OpenImage={OpenImage} privacy={privacy} />;
     // } 
-    else {
+    // else {
 
       const caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
@@ -145,7 +146,7 @@ function ApplicationDetailsContent({
       };
 
       return <TLCaption data={caption} OpenImage={OpenImage} />;
-    }
+    // }
   };
 
   const getTranslatedValues = (dataValue, isNotTranslated) => {
@@ -172,15 +173,13 @@ function ApplicationDetailsContent({
   //   }
   // };
 
-  // const getTableStyles = () => {
-  //   if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
-  //     return { position: "relative", marginTop: "19px" };
-  //   } else if (checkLocation) {
-  //     return { position: "relative", marginTop: "19px" };
-  //   } else {
-  //     return {};
-  //   }
-  // };
+  const getTableStyles = () => {
+    if (checkLocation) {
+      return { position: "relative", marginTop: "19px" };
+    } else {
+      return {};
+    }
+  };
 
   const getMainDivStyles = () => {
     // if (
