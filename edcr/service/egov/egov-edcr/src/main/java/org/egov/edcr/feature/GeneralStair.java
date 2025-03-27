@@ -225,7 +225,7 @@ public class GeneralStair extends FeatureProcess {
             
                 if (currentFloor != null) {
                     // Use currentFloor.getNumber() if currentFloor is not null
-                    String floorNumber = "floor " + currentFloor.getNumber().toString();
+                    String floorNumber = "" + currentFloor.getNumber().toString();
                     if (riserHeight.compareTo(MAXIMUM_HEIGHT_0_19) <= 0) {
                         setReportOutputDetailsFloorStairWise(plan, RULE, floorNumber, MAX_RISER_HEIGHT_DESCRIPTION, "" + 0.19, "" + riserHeight, Result.Accepted.getResultVal(), scrutinyDetail4);
                     } else {

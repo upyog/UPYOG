@@ -276,7 +276,7 @@ public class RearYardService extends GeneralRule {
 			HashMap<String, String> errors) {
 		Boolean valid = false;
 		String subRule = RULE;
-		String rule = FRONT_YARD_DESC;
+		String rule = REAR_YARD_DESC;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		BigDecimal plotArea = pl.getPlanInformation().getPlotArea();
@@ -310,16 +310,18 @@ public class RearYardService extends GeneralRule {
 			// Plot area is less than zero
 			errors.put("Plot Area Error:", "Plot area cannot be less than " + MIN_PLOT_AREA);
 		} else if (plotArea.compareTo(PLOT_AREA_100_SQM) <= 0) {
-			minVal = MIN_VAL_100_SQM;
+			minVal = MIN_VAL_300_PlUS_SQM;
 		} else if (plotArea.compareTo(PLOT_AREA_150_SQM) <= 0) {
-			minVal = MIN_VAL_150_SQM;
+			minVal = MIN_VAL_300_PlUS_SQM;
 		} else if (plotArea.compareTo(PLOT_AREA_200_SQM) <= 0) {
-			minVal = MIN_VAL_200_SQM;
+			minVal = MIN_VAL_300_PlUS_SQM;
 		} else if (plotArea.compareTo(PLOT_AREA_300_SQM) <= 0) {
 			minVal = MIN_VAL_300_PlUS_SQM;
 		} else if (plotArea.compareTo(PLOT_AREA_500_SQM) <= 0) {
 			minVal = MIN_VAL_300_PlUS_SQM;
 		} else if (plotArea.compareTo(PLOT_AREA_1000_SQM) <= 0) {
+			minVal = MIN_VAL_300_PlUS_SQM;
+		} else if (plotArea.compareTo(PLOT_AREA_1000_SQM) > 0) {
 			minVal = MIN_VAL_300_PlUS_SQM;
 		}
 
@@ -335,7 +337,7 @@ public class RearYardService extends GeneralRule {
 		if (!valid) {
 			LOG.info("Rear Yard Service: min value validity False: " + minVal+"/"+min);
 			errors.put("Minimum and Mean Value Validation",
-					"Minimum value is less than the required minimum " + minVal+ "/"+min);
+					"Rear setback values are less than permissible value i.e." + minVal+" /" + " current values are " + min);
 
 		} else {
 			LOG.info("Rear Yard Service: min value validity True: " + minVal+"/"+min);

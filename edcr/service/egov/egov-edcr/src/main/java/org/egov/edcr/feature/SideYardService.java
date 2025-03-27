@@ -367,20 +367,20 @@ public class SideYardService extends GeneralRule {
     		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	} else if (plotArea.compareTo(PLOT_AREA_500_SQM) <= 0) {
     		// Plot area is less than or equal to 500 sqm
-    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), THREE_MTR)); // 1/15th of buildingHeight or 3.0 meters, whichever is highest
+    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	} else if (plotArea.compareTo(PLOT_AREA_1000_SQM) <= 0) {
     		// Plot area is less than or equal to 1000 sqm
-    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), THREE_MTR)); // 1/15th of buildingHeight or 3.0 meters, whichever is highest
+    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	}else if (plotArea.compareTo(PLOT_AREA_1000_SQM) > 0) {
     		// Plot area is greather than 1000 sqm
-    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), THREE_MTR)); // 1/15th of buildingHeight or 3.0 meters, whichever is highest
+    		minVal = BigDecimal.valueOf(Math.max(buildingHeight.divide(BigDecimal.valueOf(FIVE_MTR)).doubleValue(), TWO_MTR)); // 1/5th of buildingHeight or 2.0 meters, whichever is highest
     	}
 
 
     	boolean valid = validateMinimumAndMeanValue(BigDecimal.valueOf(min), minVal, plotArea);
     	if(!valid) {
 	    	LOG.info("Side Yard Service: min value validity False: actual/expected :"+min+"/"+minVal);
-	    	errors.put("Minimum and Mean Value Validation", "Minimum value is less than the required minimum " +min+"/"+minVal);
+	    	errors.put("Minimum and Mean Value Validation", "Side setback values are less than permissible value i.e." + minVal+" /" + " current values are " + min);
 	    	
 	    }
 	    else {
