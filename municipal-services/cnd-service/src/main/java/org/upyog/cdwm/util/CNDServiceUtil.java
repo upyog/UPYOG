@@ -112,9 +112,9 @@ public class CNDServiceUtil {
 	}
 
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
-		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
-				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
-				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
+		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("created_by"))
+				.createdTime(rs.getLong("created_time")).lastModifiedBy(rs.getString("last_modified_by"))
+				.lastModifiedTime(rs.getLong("last_modified_time")).build();
 		return auditdetails;
 	}
 

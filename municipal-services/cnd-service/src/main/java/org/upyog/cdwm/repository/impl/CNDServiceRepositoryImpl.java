@@ -10,6 +10,7 @@ import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
+import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
 import org.upyog.cdwm.repository.rowMapper.GenericRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
@@ -59,7 +60,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCNDApplicationQuery(cndServiceSearchCriteria, preparedStmtList);
         log.info("Final query for getCndApplicationDetails: {} with params: {}", query, preparedStmtList);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), new GenericRowMapper<>(CNDApplicationDetail.class));
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new CNDApplicationDetailRowmapper());
     }
 
     /**
