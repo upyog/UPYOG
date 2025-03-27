@@ -74,8 +74,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private HttpServletRequest request;
 	
-	@Autowired
-	private RestTemplate restTemplate;
 
 	public CustomAuthenticationProvider(UserService userService) {
 		this.userService = userService;
@@ -173,8 +171,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			 * We assume that there will be only one type. If it is multiple then we have
 			 * change below code Separate by comma or other and iterate
 			 */
-			//System.out.println("uuid password valid::"+uuid);
+			System.out.println("uuid password valid::"+uuid);
 			//restTemplate.delete(uuid);
+			userService.deleteCaptcha(uuid);
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
 			final SecureUser secureUser = new SecureUser(getUser(user));
@@ -185,8 +184,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		} else {
 			// Handle failed login attempt
 			// Fetch Real IP after being forwarded by reverse proxy
-			//System.out.println("uuid password invalid::"+uuid);
+			System.out.println("uuid password invalid::"+uuid);
 			//restTemplate.delete(uuid);
+			userService.deleteCaptcha(uuid);
 			userService.handleFailedLogin(user, request.getHeader(IP_HEADER_NAME), requestInfo);
 			userService.userLoginFaliedAuditReport(user,request,"FAILED");
 
