@@ -190,10 +190,10 @@ public class SetBackService extends FeatureProcess {
 
 		}
 		
-//		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
-//		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
-//			sideYardService.processSideYard(pl);
-//		}
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+			sideYardService.processSideYard(pl);
+		}
 
         return pl;
     }
