@@ -34,17 +34,17 @@ public class ApplicantDetail   {
 
 	private String bookingId;
 
-	@NotBlank(groups = CreateApplicationGroup.class ,message = "RS_BLANK_APPLICANT_NAME")
+	@NotBlank
 	@Size(max = 100, message = "COMMON_MAX_VALIDATION")
 	private String name;
 
-	@NotBlank(groups = CreateApplicationGroup.class)
+	@NotBlank
 	@Size(min = 10, max = 10)
 	private String mobileNumber;
 
 	private String alternateNumber;
 
-	@NotBlank(groups = CreateApplicationGroup.class)
+	@NotBlank
 	@Email
 	private String emailId;
 

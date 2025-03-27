@@ -16,6 +16,7 @@ import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.service.MobileToiletService;
 import org.upyog.rs.service.WaterTankerService;
 import org.upyog.rs.util.RequestServiceUtil;
+import org.upyog.rs.validator.ValidatorService;
 import org.upyog.rs.web.models.ResponseInfo;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
@@ -45,12 +46,15 @@ public class RequestServiceController {
 	@Autowired
 	private MobileToiletService mobileToiletService;
 
+	@Autowired
+	private ValidatorService validatorService;
+
 	@PostMapping("/water-tanker/v1/_create")
 	public ResponseEntity<WaterTankerBookingResponse> createWaterTankerBooking(
 			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true)
-			@Valid @RequestBody WaterTankerBookingRequest waterTankerbookingRequest) {
+			@RequestBody WaterTankerBookingRequest waterTankerbookingRequest) {
 		log.info("waterTankerbookingRequest : {}" , waterTankerbookingRequest);
-
+        validatorService.validateRequest(waterTankerbookingRequest);
 		WaterTankerBookingDetail waterTankerDetail = waterTankerService.createNewWaterTankerBookingRequest(waterTankerbookingRequest);
 		ResponseInfo info = RequestServiceUtil.createReponseInfo(waterTankerbookingRequest.getRequestInfo(),
 				RequestServiceConstants.BOOKING_CREATED, StatusEnum.SUCCESSFUL);
@@ -106,9 +110,9 @@ public class RequestServiceController {
 	@PostMapping("/mobile-toilet/v1/_create")
 	public ResponseEntity<MobileToiletBookingResponse> createMobileToiletBooking(
 			@ApiParam(value = "Details for the mobile Toilet booking time, payment and documents", required = true)
-			@Valid @RequestBody MobileToiletBookingRequest mobileToiletbookingRequest) {
+			@RequestBody MobileToiletBookingRequest mobileToiletbookingRequest) {
 		log.info("mobileToiletbookingRequest : {}" , mobileToiletbookingRequest);
-
+		validatorService.validateRequest(mobileToiletbookingRequest);
 		MobileToiletBookingDetail mobileToiletDetail = mobileToiletService.createNewMobileToiletBookingRequest(mobileToiletbookingRequest);
 		ResponseInfo info = RequestServiceUtil.createReponseInfo(mobileToiletbookingRequest.getRequestInfo(),
 				RequestServiceConstants.MT_BOOKING_CREATED, StatusEnum.SUCCESSFUL);
