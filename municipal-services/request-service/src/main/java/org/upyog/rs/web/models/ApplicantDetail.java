@@ -46,6 +46,7 @@ public class ApplicantDetail   {
 
 	@NotBlank
 	@Email
+	@Size(min = 5, max = 200, message = "Email ID must be between 5 and 200 characters")
 	private String emailId;
 
 	private String gender;
