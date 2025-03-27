@@ -139,10 +139,9 @@ public class StreetVendingServiceImpl implements StreetVendingService {
             State state = workflowService.updateWorkflowStatus(vendingRequest);
             enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
         }
-        // If action is APPROVE, create demand and update renewal status to RENEWED
+        // If action is APPROVE, create demand
         if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
             demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-            vendingRequest.getStreetVendingDetail().setRenewalStatus(RenewalStatus.RENEWED);
         }
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
