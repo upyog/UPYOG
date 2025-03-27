@@ -88,12 +88,28 @@ export const cndPayload = (data) => {
                     fileStoreId: data.wasteType.siteStack,
                     auditDetails: null
                 }] : [])
-                ],
-                workflow: {
-                action: "APPLY",
-                comments: "",
-                businessService: "cnd",
-                moduleName: "cnd-service"
+            ],
+            workflow: {
+            action: "APPLY",
+            comments: "",
+            businessService: "cnd",
+            moduleName: "cnd-service"
+            },
+            applicantDetail: {
+                nameOfApplicant: data?.owner?.applicantName,
+                mobileNumber: data?.owner?.mobileNumber,
+                alternateMobileNumber: data?.owner?.alternateNumber,
+                emailId: data?.owner?.emailId
+            },
+            addressDetail: {
+                houseNumber: data?.address?.houseNo,
+                addressLine1: data?.address?.addressLine1,
+                addressLine2: data?.address?.addressLine2,
+                landmark: data?.address?.landmark,
+                floorNumber: null,
+                locality: data?.address?.locality?.i18nKey,
+                city: data?.address?.city?.city?.name,
+                pinCode: data?.address?.pincode
             }
         }
     };

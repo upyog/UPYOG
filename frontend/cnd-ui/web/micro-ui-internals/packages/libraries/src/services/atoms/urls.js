@@ -68,6 +68,7 @@ const Urls = {
   cnd: {
     create:"/cnd-service/v1/_create",
     search: "/cnd-service/v1/_search",
+    update: "/cnd-service/v1/_update"
   },
 
   access_control: "/access/v1/actions/mdms/_get",
