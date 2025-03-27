@@ -167,9 +167,9 @@ public class SetBackService extends FeatureProcess {
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
 		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
 			frontYardService.processFrontYard(pl);
-//			  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
-//			       rearYardService.processRearYard(pl);
-//			  }
+			//  if( pl.getPlot().getArea().compareTo(TWO_HUNDRED) > 0) {
+			       rearYardService.processRearYard(pl);
+			//  }
 			 if (pl.getRoadReserveRear() != BigDecimal.ZERO && pl.getCoreArea().equalsIgnoreCase("No")){
 				 for (Block block : pl.getBlocks()) {
 				 for (SetBack setback : block.getSetBacks()) {
