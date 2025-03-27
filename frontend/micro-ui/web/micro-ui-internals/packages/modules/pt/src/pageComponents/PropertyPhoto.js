@@ -8,7 +8,7 @@ const PropertyPhoto = ({ t, config, onSelect, userType, formData }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
-  console.log("propertyPhoto=",formData)
+  // console.log("propertyPhoto=",formData)
 
   let index = window.location.href.split("/").pop();
   const [uploadedFile, setUploadedFile] = useState(
@@ -42,7 +42,7 @@ const PropertyPhoto = ({ t, config, onSelect, userType, formData }) => {
         propertyPhoto["documents"] = {};
         propertyPhoto.documents["propertyPhoto"] = fileDetails;
     }
-    console.log("propertyPhoto=",propertyPhoto)
+    // console.log("propertyPhoto=",propertyPhoto)
     onSelect("propertyPhoto", propertyPhoto);
   };
   const onSkip = () => onSelect();

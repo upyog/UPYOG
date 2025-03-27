@@ -5,7 +5,7 @@ import { checkArrayLength, stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
 const Proof = ({ t, config, onSelect, userType, formData }) => {
-  console.log("address====",formData)
+  // console.log("address====",formData)
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
@@ -65,7 +65,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
     if (fileDetails) fileDetails.documentType = dropdownValue;
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
     let address = !isMutation ? formData?.address : {};
-    console.log("address====",formData)
+    // console.log("address====",formData)
     if (address && address.documents) {
       address.documents["ProofOfAddress"] = fileDetails;
     } else {

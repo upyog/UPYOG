@@ -118,7 +118,7 @@ const PTSearchAppeal = ({tenantId, isLoading, t, onSubmit, data, count, setShowT
         {
         Header: t("Appeal ID"),
         Cell: ({ row }) => {
-            console.log("===",row)
+            // console.log("===",row)
             return (
             <div>
                 <span className="link">

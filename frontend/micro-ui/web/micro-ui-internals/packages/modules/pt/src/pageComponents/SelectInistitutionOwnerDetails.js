@@ -126,7 +126,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
         tenantId: 'mn'
       };
       const res = await Digit.UserService.validateOtp({otp:{...requestData}});
-      console.log("selectOtp==",res)
+      // console.log("selectOtp==",res)
       if(res && res?.otp?.isValidationSuccessful) {
         setIsOtpValid(true);
         setShowToast({ key: true, label: "OTP validate successfully!" });
@@ -151,7 +151,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
   
   const sendOtp = async (e) => {
     e.preventDefault();
-    console.log("sendOtp==",e)
+    // console.log("sendOtp==",e)
     setIsOtpSent(false);
     setOtp("")
     if(!mobileNumber || mobileNumber.length<10) {

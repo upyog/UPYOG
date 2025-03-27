@@ -37,7 +37,7 @@ let isBifurcation = false;
 let bifurcationDetails=null;
 
 const PTAcknowledgement = ({ data, onSuccess }) => {
-  console.log("PTAcknowledgement===data==",data)
+  // console.log("PTAcknowledgement===data==",data)
   const { t } = useTranslation();
   const isPropertyMutation = window.location.href.includes("property-mutation");
   const tenantId = Digit.ULBService.getCurrentTenantId();

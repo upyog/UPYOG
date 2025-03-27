@@ -579,7 +579,7 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
-  console.log("convertToProperty=", data);
+  // console.log("convertToProperty=", data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -836,7 +836,7 @@ export const setUpdatedDocumentDetails = (data) => {
   return data;
 };
 export const convertToUpdateProperty = (data = {}, t) => {
-  console.log("convertToUpdateProperty==", data);
+  // console.log("convertToUpdateProperty==", data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -1029,7 +1029,7 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 //   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
 // };
 export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey = "consolidatedreceipt") => {
-  console.log("============", consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey);
+  // console.log("============", consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey);
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
   let response = { filestoreIds: [payments?.fileStoreId] };
   // if (!payments?.fileStoreId) {

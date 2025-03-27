@@ -7,7 +7,7 @@ import Timeline from "../components/TLTimeline";
 
 const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onBlur }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
-  console.log("formData11----",formData)
+  // console.log("formData11----",formData)
   let index = window.location.href.split("/").pop();
   let validation = {};
   const onSkip = () => onSelect();
@@ -53,7 +53,7 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
       exemption["documents"] = {};
       exemption.documents["exemptionProof"] = fileDetails;
     }
-    console.log("exemption==",exemption)
+    // console.log("exemption==",exemption)
     // if (!isMutation) onSelect(config.key, exemption, "", index);
     // else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
     onSelect("exemption", exemption, "", index);

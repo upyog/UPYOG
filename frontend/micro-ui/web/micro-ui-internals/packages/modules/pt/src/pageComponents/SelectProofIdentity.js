@@ -90,7 +90,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData, ownerInd
           ownerDetails.documents["proofIdentity"] = { documentType: dropdownValue, fileStoreId };
         }
       }
-      console.log("ownerDetails==",ownerDetails)
+      // console.log("ownerDetails==",ownerDetails)
 
       onSelect(config.key, isMutation ? [ownerDetails] : ownerDetails, "", index);
     }

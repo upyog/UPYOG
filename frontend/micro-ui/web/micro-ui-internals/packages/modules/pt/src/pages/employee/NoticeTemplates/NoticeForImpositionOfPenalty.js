@@ -48,7 +48,7 @@ const NoticeForImpositionOfPenalty = (props) => {
     Obstructanyauthorityappointed: props?.noticeData?.Obstructanyauthorityappointed ? props?.noticeData?.Obstructanyauthorityappointed : false
   }); 
 const onChangeRuleOfPenalty=(e)=>{
-  console.log("====",e)
+  // console.log("====",e)
   const { name, checked } = e.target;
   e.target.classList.toggle('checked')
   setRulesOfPenalty({

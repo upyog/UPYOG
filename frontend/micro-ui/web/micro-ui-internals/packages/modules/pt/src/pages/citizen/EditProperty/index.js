@@ -95,7 +95,7 @@ const getPropertyEditDetails = (data = { }) => {
   }
   
   // data.documents["ProofOfAddress"] = addressDocs && Array.isArray(addressDocs) && addressDocs.length > 0 && addressDocs[0];
-  console.log("data?.documents==",data?.documents)
+  // console.log("data?.documents==",data?.documents)
   if(data?.exemption) {
     let exemptionDoc = data?.documents?.filter((doc) => doc?.documentType?.includes("PROOF_OF_EXEMPTION")).map(doc => ({ ...doc }));;
     if (checkArrayLength(exemptionDoc)) {
@@ -457,7 +457,7 @@ const getPropertyEditDetails = (data = { }) => {
     if(data?.VacantUsagecategory) data.usageCategory = {code: data?.VacantUsagecategory, i18nKey: 'PROPERTYTAX_'+data?.VacantUsagecategory}
     else data.usageCategory = ""
   }
-  console.log("Edit Property DATA==",data)
+  // console.log("Edit Property DATA==",data)
   return data;
 };
 const EditProperty = ({ parentRoute }) => {
@@ -504,7 +504,7 @@ const EditProperty = ({ parentRoute }) => {
   }, [data]);
 
   const goNext = (skipStep, index, isAddMultiple, key) => {
-    console.log("goNext==")
+    // console.log("goNext==")
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,

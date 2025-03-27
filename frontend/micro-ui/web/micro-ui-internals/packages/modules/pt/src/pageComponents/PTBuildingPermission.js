@@ -7,7 +7,7 @@ import Timeline from "../components/TLTimeline";
 
 const PTBuildingPermission = ({ t, config, onSelect, value, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onBlur }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
-  console.log("formData11-PTBuildingPermission----",formData)
+  // console.log("formData11-PTBuildingPermission----",formData)
   let index = window.location.href.split("/").pop();
   let validation = {};
   const onSkip = () => onSelect();

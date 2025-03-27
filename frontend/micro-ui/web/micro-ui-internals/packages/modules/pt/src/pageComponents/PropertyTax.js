@@ -11,13 +11,13 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
 
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
-console.log("Documentsob===",Documentsob)
+// console.log("Documentsob===",Documentsob)
   let docs = Documentsob?.PropertyTax?.[config?.isMutation ? docType[0] : docType];
   if (!config?.isMutation) docs = docs?.filter((doc) => doc["digit-citizen"]);
   function onSave() {}
 
   function goNext() {
-    console.log("config========next===",config)
+    // console.log("config========next===",config)
     if(config && config?.amalgamationState && config?.amalgamationState?.action == "Amalgamation") {
       onSelect('amalgamationDetails', config?.amalgamationState);
     }else if(config && config?.amalgamationState && config?.amalgamationState?.action == "BIFURCATION") {

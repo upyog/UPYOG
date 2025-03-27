@@ -30,7 +30,7 @@ const PTApplicationDetails = () => {
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
 
-console.log("propertySearch===",data)
+// console.log("propertySearch===",data)
   let serviceSearchArgs = {
     tenantId : tenantId,
     code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
@@ -48,7 +48,7 @@ console.log("propertySearch===",data)
 
   const properties = get(data, "Properties", []);
   const propertyId = get(data, "Properties[0].propertyId", []);
-  console.log("properties===",properties)
+  // console.log("properties===",properties)
   let property = (properties && properties.length > 0 && properties[0]) || {};
   const application = property;
   sessionStorage.setItem("pt-property", JSON.stringify(application));
@@ -180,7 +180,7 @@ console.log("propertySearch===",data)
   owners = application?.owners;
   let docs = [];
   docs = application?.documents;
-  console.log("docs===",docs)
+  // console.log("docs===",docs)
 
   if (isLoading || auditDataLoading) {
     return <Loader />;
@@ -196,7 +196,7 @@ console.log("propertySearch===",data)
     const applications = application || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
     const acknowldgementDataAPI = await getPTAcknowledgementData({ ...applications }, tenantInfo, t);
-   console.log("getAcknowledgementData===",acknowldgementDataAPI)
+  //  console.log("getAcknowledgementData===",acknowldgementDataAPI)
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
     //setAcknowldgementData(acknowldgementDataAPI);
   };

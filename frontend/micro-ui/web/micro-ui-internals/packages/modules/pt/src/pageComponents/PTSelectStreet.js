@@ -203,7 +203,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
     }
   }, [formData?.address?.typeOfRoad]);
   function selectTypeOfRoad(value) {
-    console.log("selectTypeOfRoad=",value)
+    // console.log("selectTypeOfRoad=",value)
     setTypeOfRoad(value);
   }
   function onSubmit(data) {

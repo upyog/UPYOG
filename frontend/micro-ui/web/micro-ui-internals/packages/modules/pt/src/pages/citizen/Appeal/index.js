@@ -147,7 +147,7 @@ const CitizenAppeal = (props) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log("---",name, value)
+    // console.log("---",name, value)
     setFormData({
         ...formData,
         [name]: value,
@@ -160,7 +160,7 @@ const CitizenAppeal = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("data==",data)
+    // console.log("data==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {

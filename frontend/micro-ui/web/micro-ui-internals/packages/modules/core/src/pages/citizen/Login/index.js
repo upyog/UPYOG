@@ -76,7 +76,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   }
   useEffect(()=>{
-    console.log("captcha----",captcha)
+    // console.log("captcha----",captcha)
   },[captcha])
 
   useEffect(() => {
@@ -137,7 +137,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
-    console.log("handleMobileChange==",value)
+    // console.log("handleMobileChange==",value)
     setParmas({ ...params, mobileNumber: value });
   };
 
