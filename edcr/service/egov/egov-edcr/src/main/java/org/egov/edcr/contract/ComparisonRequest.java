@@ -64,18 +64,8 @@ public class ComparisonRequest {
     private String ocdcrNumber;
 
     private String tenantId;
-    
-    private String propertyId;
 
-    public String getPropertyId() {
-		return propertyId;
-	}
-
-	public void setPropertyId(String propertyId) {
-		this.propertyId = propertyId;
-	}
-
-	public RequestInfo getRequestInfo() {
+    public RequestInfo getRequestInfo() {
         return requestInfo;
     }
 
