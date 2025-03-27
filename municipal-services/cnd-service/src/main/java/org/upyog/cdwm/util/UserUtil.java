@@ -42,7 +42,7 @@ public class UserUtil {
 
 	public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
 		String dobFormat = null;
-		if (uri.toString().contains(config.getUserSearchEndpoint()) || uri.toString().contains(config.getUserUpdateEndpoint()))
+		if (uri.toString().contains(config.getUserV2SearchEndpoint()) || uri.toString().contains(config.getUserUpdateEndpoint()))
 			dobFormat = "yyyy-MM-dd";
 		else if (uri.toString().contains(config.getUserCreateEndpoint()))
 			dobFormat = "dd/MM/yyyy";

@@ -69,6 +69,9 @@ public class CNDConfiguration {
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
 
+    @Value("${egov.user.v2.search.path}")
+    private String userV2SearchEndpoint;
+    
     @Value("${egov.user.search.path}")
     private String userSearchEndpoint;
 
