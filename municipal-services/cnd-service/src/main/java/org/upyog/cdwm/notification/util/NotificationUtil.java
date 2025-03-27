@@ -211,7 +211,7 @@ public class NotificationUtil {
 
 		Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+		uri.append(config.getUserHost()).append(config.getUserV2SearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
 		userSearchRequest.put("RequestInfo", requestInfo);
 		userSearchRequest.put("tenantId", tenantId);
@@ -247,7 +247,7 @@ public class NotificationUtil {
 	public Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
 		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+		uri.append(config.getUserHost()).append(config.getUserV2SearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
 		userSearchRequest.put("RequestInfo", requestInfo);
 		userSearchRequest.put("tenantId", tenantId);
@@ -342,7 +342,7 @@ public class NotificationUtil {
 	public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
 		Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+		uri.append(config.getUserHost()).append(config.getUserV2SearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
 		userSearchRequest.put("RequestInfo", requestInfo);
 		userSearchRequest.put("tenantId", tenantId);

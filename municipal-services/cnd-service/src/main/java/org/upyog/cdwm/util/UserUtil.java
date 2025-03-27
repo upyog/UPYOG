@@ -42,9 +42,9 @@ public class UserUtil {
 
 	public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
 		String dobFormat = null;
-		if (uri.toString().contains(config.getUserV2SearchEndpoint()) || uri.toString().contains(config.getUserUpdateEndpoint()))
+		if (uri.toString().contains(config.getUserV2SearchEndpoint()) || uri.toString().contains(config.getUserV2UpdateEndpoint()))
 			dobFormat = "yyyy-MM-dd";
-		else if (uri.toString().contains(config.getUserCreateEndpoint()))
+		else if (uri.toString().contains(config.getUserV2CreateEndpoint()))
 			dobFormat = "dd/MM/yyyy";
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
