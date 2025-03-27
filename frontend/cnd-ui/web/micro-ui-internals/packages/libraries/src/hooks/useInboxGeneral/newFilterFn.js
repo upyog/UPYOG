@@ -64,6 +64,6 @@ export const filterFunctions = {
       workflowFilters["moduleName"] = "cnd-service"; // Defining the module for workflow filters
 
       // Returning the final filter objects along with pagination & sorting options
-      return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+      return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder, isUserDetailRequired:true };
   }
 };

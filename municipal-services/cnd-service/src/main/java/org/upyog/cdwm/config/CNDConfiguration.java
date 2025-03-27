@@ -68,12 +68,21 @@ public class CNDConfiguration {
 
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
+    
+    @Value("${egov.user.v2.create.path}")
+    private String userV2CreateEndpoint;
 
+    @Value("${egov.user.v2.search.path}")
+    private String userV2SearchEndpoint;
+    
     @Value("${egov.user.search.path}")
     private String userSearchEndpoint;
 
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
+
+    @Value("${egov.user.v2.update.path}")
+    private String userV2UpdateEndpoint;
 
     // Pagination config for search results
     @Value("${upyog.cnd.service.default.limit}")

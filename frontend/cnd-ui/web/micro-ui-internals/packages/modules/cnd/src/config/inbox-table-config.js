@@ -27,7 +27,20 @@
           },
           mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
         },
-        
+        {
+          Header: t("COMMON_APPLICANT_NAME"),
+          Cell: ({ row }) => {
+            return GetCell(t(`${row?.original?.searchData?.applicantDetail?.["nameOfApplicant"]}`));
+          },
+          mobileCell: (original) => GetMobCell(t(`CND_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+        },
+        {
+          Header: t("COMMON_MOBILE_NUMBER"),
+          Cell: ({ row }) => {
+            return GetCell(t(`${row?.original?.searchData?.["applicantMobileNumber"]}`));
+          },
+          mobileCell: (original) => GetMobCell(t(`CND_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+        },
         {
           Header: t("CND_APPLICATION_STATUS"),
           Cell: ({ row }) => {

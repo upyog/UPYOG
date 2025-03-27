@@ -13,6 +13,8 @@ import org.upyog.cdwm.util.CNDServiceUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import digit.models.coremodels.AuditDetails;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CNDApplicationDetail {
 
     public enum ApplicationType{

@@ -11,9 +11,6 @@ import Inbox from "./Inbox";
  */
 const EmployeeApp = () => {
   const { path, url, ...match } = useRouteMatch();
-  const { t } = useTranslation();
-  const location = useLocation();
-  const isMobile = false
 
   const inboxInitialState = {
     searchParams: {
@@ -23,8 +20,8 @@ const EmployeeApp = () => {
     },
   };
 
- 
-//   const SVApplicationDetails = Digit?.ComponentRegistryService?.getComponent("SVApplicationDetails")
+  const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
+
   return (
     <span className={"cnd-citizen"}style={{width:"100%"}}>
       <Switch>
@@ -43,8 +40,8 @@ const EmployeeApp = () => {
               />
             )}
           />
-          {/* <PrivateRoute path={`${path}/application-details/:id`} component={() => <SVApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <SVApplicationDetails parentRoute={path} />} /> */}
+          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           {/* <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} /> */}
         </AppContainer>
       </Switch>
