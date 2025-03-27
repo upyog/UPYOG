@@ -1,5 +1,6 @@
 package org.egov.advertisementcanopy.repository.rowmapper;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -76,8 +77,8 @@ public class SiteBookingRowMapper implements RowMapper<SiteBooking> {
                 .siteAddress(rs.getString(prefix + "site_address"))
                 .sitePhotograph(rs.getString(prefix + "site_photograph"))
                 .structure(rs.getString(prefix + "structure"))
-                .sizeLength(rs.getLong(prefix + "size_length"))
-                .sizeWidth(rs.getLong(prefix + "size_width"))
+                .sizeLength(new BigDecimal(rs.getString(prefix + "size_length")))
+                .sizeWidth(new BigDecimal(rs.getString(prefix + "size_width")))
                 .ledSelection(rs.getString(prefix + "led_selection"))
                 .securityAmount(rs.getLong(prefix + "security_amount"))
                 .powered(rs.getString(prefix + "powered"))
