@@ -154,12 +154,6 @@ public class UserResultSetExtractorV2 implements ResultSetExtractor<List<User>> 
                 .locality(rs.getString("addr_locality"))
                 .build();
 
-
-        if (address.getType().equals(PERMANENT) && isNull(user.getPermanentAddress()))
-            user.setPermanentAddress(address);
-        if (address.getType().equals(CORRESPONDENCE) && isNull(user.getCorrespondenceAddress()))
-            user.setCorrespondenceAddress(address);
-
         return address;
 
     }

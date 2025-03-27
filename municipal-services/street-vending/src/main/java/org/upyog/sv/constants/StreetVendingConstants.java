@@ -116,4 +116,5 @@ public class StreetVendingConstants {
 
 	public static final String STATUS_EXPIRED = "Expired";
 
+    public static final String APPLICATION_STATUS_RENEWED = "RENEWED";
 }
