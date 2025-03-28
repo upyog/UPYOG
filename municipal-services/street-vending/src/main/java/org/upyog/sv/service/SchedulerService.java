@@ -119,7 +119,7 @@ public class SchedulerService {
 					.streetVendingDetail(detail).build();
 
 			streetVendingRepository.save(streetVendingRequest);
-			notificationService.process(streetVendingRequest);
+			notificationService.process(streetVendingRequest, action);
 		}
 	}
 }

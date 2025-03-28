@@ -2,8 +2,11 @@ package org.upyog.sv.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +15,17 @@ import org.springframework.util.CollectionUtils;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.ServiceRequestRepository;
+import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.service.StreetyVendingNotificationService;
 import org.upyog.sv.util.NotificationUtil;
+import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.events.Event;
 import org.upyog.sv.web.models.events.EventRequest;
 import org.upyog.sv.web.models.events.Recepient;
 import org.upyog.sv.web.models.events.Source;
+import org.upyog.sv.web.models.notification.EmailRequest;
+import org.upyog.sv.web.models.notification.SMSRequest;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -34,16 +41,54 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 	@Autowired
 	private NotificationUtil util;
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	public void process(StreetVendingRequest request) {
+	public void process(StreetVendingRequest request, String status) {
 		EventRequest eventRequest = getEventsForSV(request);
 		log.info("Event Request in StreetVending process method" + eventRequest.toString());
-		if (null != eventRequest)
-			util.sendEventNotification(eventRequest);
+		 String tenantId = request.getStreetVendingDetail().getTenantId();
+	        RequestInfo requestInfo = request.getRequestInfo();
+
+	        String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
+	        String messageMap = util.getCustomizedMsg(requestInfo, request.getStreetVendingDetail(), localizationMessages);
+	        log.info("Event Request in CND service process method: {}", eventRequest);
+
+	        Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
+	        List<String> configuredChannelNames = util.fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(), status);
+
+	        // Send app notification
+	        if (eventRequest != null) {
+	            util.sendEventNotification(eventRequest);
+	        }
+
+	        // Send SMS notification
+	        if (isNotificationEnabled(config.getIsSMSNotificationEnabled(), configuredChannelNames, StreetVendingConstants.CHANNEL_NAME_SMS)) {
+	            List<SMSRequest> smsRequests = new LinkedList<>();
+	            util.enrichSMSRequest(request, smsRequests);
+	            if (!CollectionUtils.isEmpty(smsRequests)) {
+	                util.sendSMS(smsRequests);
+	            }
+	        }
+
+	        // Send Email notification
+	        if (isNotificationEnabled(config.getIsEmailNotificationEnabled(), configuredChannelNames, StreetVendingConstants.CHANNEL_NAME_EMAIL)) {
+	            Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+	            List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap, mapOfPhnoAndEmail);
+	            util.sendEmail(emailRequests);
+	        }
 
 	}
+	
+	/**
+     * Checks if a specific notification type is enabled.
+     *
+     * @param isEnabled        the flag indicating if the notification type is enabled
+     * @param channels         the list of configured channels
+     * @param notificationType the notification type to check
+     * @return true if the notification is enabled, false otherwise
+     */
+    private boolean isNotificationEnabled(Boolean isEnabled, List<String> channels, String notificationType) {
+        return Boolean.TRUE.equals(isEnabled) && channels.contains(notificationType);
+    }
+
 
 	private EventRequest getEventsForSV(StreetVendingRequest request) {
 
@@ -53,7 +98,7 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 		List<String> toUsers = new ArrayList<>();
 		String mobileNumber = request.getStreetVendingDetail().getVendorDetail().get(0).getMobileNo();
 
-		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+		Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId, request.getStreetVendingDetail());
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.info("UUID search failed!");
@@ -80,38 +125,5 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 
 	}
 
-	/**
-	 * Fetches UUIDs of CITIZEN based on the phone number.
-	 *
-	 * @param mobileNumber - Mobile Numbers
-	 * @param requestInfo  - Request Information
-	 * @param tenantId     - Tenant Id
-	 * @return Returns List of MobileNumbers and UUIDs
-	 */
-	public Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
-		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
-		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
-		userSearchRequest.put("userName", mobileNumber);
-		try {
-
-			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of StreetVending notfication consumer" + user.toString());
-			if (user != null) {
-				String uuid = JsonPath.read(user, "$.user[0].uuid");
-				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-				log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
-			}
-		} catch (Exception e) {
-			log.error("Exception while fetching user for username - " + mobileNumber);
-			log.error("Exception trace: ", e);
-		}
-
-		return mapOfPhoneNoAndUUIDs;
-	}
-
+	
 }
