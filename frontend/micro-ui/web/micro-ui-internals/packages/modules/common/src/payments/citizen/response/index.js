@@ -227,7 +227,10 @@ export const convertEpochToDate = (dateEpoch) => {
                       additionalDetails:{
                         ...paymentData.paymentDetails[0].additionalDetails,
                         "propertyID":bpaResponse?.BPA[0]?.additionalDetails?.propertyID,
-                        "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+                        "stakeholderType":formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase(),
+                        "contact":bpaResponse?.BPA[0]?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholder} Contact`,
+                        "idType":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholder} ID`,
+                        "name":bpaResponse?.BPA[0]?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholder} Name`,
                       },
                     },
                   ],  

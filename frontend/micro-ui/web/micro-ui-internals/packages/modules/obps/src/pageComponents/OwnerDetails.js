@@ -459,7 +459,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 let nameOfAchitect = sessionStorage.getItem("BPA_ARCHITECT_NAME");
                 let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
-                // create BPA call
+                payload.additionalDetails.plotNo = formData?.data?.edcrDetails?.planDetail?.planInformation.plotNo||formData?.plotNo;
+                payload.additionalDetails.khataNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.khataNo||formData?.khataNo;
                 Digit.OBPSService.create({ BPA: payload }, tenantId)
                     .then((result, err) => {
                         if (result?.BPA?.length > 0) {

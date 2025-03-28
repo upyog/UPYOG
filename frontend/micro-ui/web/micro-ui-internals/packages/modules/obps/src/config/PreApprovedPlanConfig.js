@@ -5,7 +5,7 @@ export const newConfig = [
         
         {
           type: "component",
-          route: "preApprovedPlanDetails",
+          route: "planDetails",
           key: "BuildingPlanScrutiny",
           isMandatory: true,
           component: "BuildingPlanScrutiny",
@@ -27,28 +27,45 @@ export const newConfig = [
           key: "data",
           isMandatory: true,
           component: "BasicDetails",
-          nextStep: "location",
+          nextStep: "plot-details",
           
           hideInEmployee: true,
         },
         {
-          route: "location",
-          component: "LocationDetails",
+          route: "plot-details",
+          component: "PlotDetails",
+          key: "data",
           nextStep: "scrutiny-details",
-          hideInEmployee: true,
-          key: "address",
           texts: {
-            headerCaption: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
-            header: "BPA_NEW_TRADE_DETAILS_HEADER_DETAILS",
+            headerCaption: "BPA_SCRUTINY_DETAILS",
+            header: "BPA_PLOT_DETAILS_TITLE",
             cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
-            skipAndContinueText: "",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
           },
+          inputs: [
+            {
+              label: "BPA_HOLDING_NUMBER_LABEL",
+              type: "text",
+              validation: {
+                // required: true,
+              },
+              name: "holdingNumber"
+            },
+            {
+              label: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL",
+              type: "textarea",
+              validation: {
+                // required: true
+              },
+              name: "registrationDetails"
+            }
+          ]
         },
         {
           route: "scrutiny-details",
           component: "ScrutinyDetails",
-          nextStep: "owner-details",
+          nextStep: "location",
           hideInEmployee: true,
           key: "subOccupancy",
           texts: {
@@ -59,6 +76,21 @@ export const newConfig = [
             skipText:"CORE_COMMON_SKIP_CONTINUE",
           },
         },
+        {
+          route: "location",
+          component: "LocationDetails",
+          nextStep: "owner-details",
+          hideInEmployee: true,
+          key: "address",
+          texts: {
+            headerCaption: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
+            header: "BPA_NEW_TRADE_DETAILS_HEADER_DETAILS",
+            cardText: "",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipAndContinueText: "",
+          },
+        },
+        
         
         {
           route: "owner-details",

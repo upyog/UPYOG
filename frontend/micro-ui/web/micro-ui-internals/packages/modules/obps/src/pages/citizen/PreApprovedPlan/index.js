@@ -52,7 +52,7 @@ const PreApprovedPlan=()=>{
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  config.indexRoute = "preApprovedPlanDetails";
+  config.indexRoute = "planDetails";
   console.log("configgg", config)
   const CheckPage = Digit?.ComponentRegistryService?.getComponent('BPACheckPage') ;
   const OBPSAcknowledgement = Digit?.ComponentRegistryService?.getComponent('BPAAcknowledgement');
