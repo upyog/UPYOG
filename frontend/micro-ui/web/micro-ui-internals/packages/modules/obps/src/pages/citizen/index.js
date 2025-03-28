@@ -57,7 +57,7 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/bpa/:applicationType/:serviceType`} component={NewBuildingPermit} />
         <PrivateRoute path={`${path}/ocbpa/:applicationType/:serviceType`} component={OCBuildingPermit}/>
         <PrivateRoute path={`${path}/stakeholder/apply`} component={StakeholderRegistration} />
-        <PrivateRoute path={`${path}/bpastakeholder-citizen`} component={PreApprovedPlan} />
+        <PrivateRoute path={`${path}/preApprovedPlan`} component={PreApprovedPlan} />
         <Route path={`${path}/openlink/stakeholder/apply`} component={StakeholderRegistration} />
         <PrivateRoute path={`${path}/my-applications`} component={MyApplication} />
         <PrivateRoute path={`${path}/bpa/inbox`} component={(props) => <Inbox {...props} parentRoute={path} />} />

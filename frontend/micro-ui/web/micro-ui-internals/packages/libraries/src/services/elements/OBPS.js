@@ -290,7 +290,7 @@ export const OBPSService = {
     const preApprovedResponse = await PreApprovedPlanService.search({drawingNo:BPA?.edcrNumber})
     const [edcr] = edcrResponse?.edcrDetail||preApprovedResponse?.preapprovedPlan
     const mdmsRes = await MdmsService.getMultipleTypes(tenantId, "BPA", ["RiskTypeComputation", "CheckList"]);
-    const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, edcr?.planDetail?.plot?.area, edcr?.planDetail?.blocks)||"LOW";
+    const riskType = Digit.Utils.obps.calculateRiskType(mdmsRes?.BPA?.RiskTypeComputation, edcr?.planDetail?.plot?.area, edcr?.planDetail?.blocks)||BPA?.riskType;
     BPA.riskType = riskType;
     const nocResponse = await OBPSService.NOCSearch(BPA?.tenantId, { sourceRefId: BPA?.applicationNo });
     const noc = nocResponse?.Noc;
@@ -532,7 +532,7 @@ export const OBPSService = {
         { title: "BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL", value: `WF_BPA_${edcr?.appliactionType||edcr?.drawingDetail?.applicationType}` },
         { title: "BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL", value: edcr?.applicationSubType||edcr?.drawingDetail?.serviceType },
         { title: "BPA_BASIC_DETAILS_OCCUPANCY_LABEL", value: edcr?.planDetail?.planInformation?.occupancy||edcr?.drawingDetail?.occupancy},
-        { title: "BPA_BASIC_DETAILS_RISK_TYPE_LABEL", value: `WF_BPA_${riskType}`, isInsert: true, },
+        { title: "BPA_BASIC_DETAILS_RISK_TYPE_LABEL", value: `WF_BPA_${riskType}`},
         { title: "BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL", value: edcr?.planDetail?.planInformation?.applicantName },
       ]
     };
@@ -543,8 +543,8 @@ export const OBPSService = {
       isCommon: true,
       values: [
         { title: "BPA_BOUNDARY_PLOT_AREA_LABEL", value: `${edcr?.planDetail?.planInformation?.plotArea||edcr?.drawingDetail?.plotArea}`, isNotTranslated: true, isUnit: "BPA_SQ_FT_LABEL" },
-        { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || "NA", isNotTranslated: true  },
-        { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || "NA", isNotTranslated: true  },
+        { title: "BPA_PLOT_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.plotNo || BPA?.additionalDetails?.plotNo, isNotTranslated: true  },
+        { title: "BPA_KHATHA_NUMBER_LABEL", value: edcr?.planDetail?.planInformation?.khataNo || BPA?.additionalDetails?.khataNo, isNotTranslated: true  },
         { title: "BPA_HOLDING_NUMBER_LABEL", value: BPA?.additionalDetails?.holdingNo || "NA", isNotTranslated: true  },
         { title: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL", value: BPA?.additionalDetails?.registrationDetails || "NA", isNotTranslated: true },
         { title: "BPA_PROPERTY_ID", value: BPA?.additionalDetails?.propertyID || "NA" }
