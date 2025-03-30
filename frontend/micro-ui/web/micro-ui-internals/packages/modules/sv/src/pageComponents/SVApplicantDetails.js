@@ -4,7 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
 import { calculateAge } from "../utils";
 
-
+/**
+ * Component will render Applicant Details both citizen and employee side 
+ */
 
 const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
   let validation = {};

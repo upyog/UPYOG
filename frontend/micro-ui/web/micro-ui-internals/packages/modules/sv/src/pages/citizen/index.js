@@ -2,7 +2,9 @@ import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-rea
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
-
+/**
+ * Citizen side main index page which is handling the Routing of whole citizen side
+ */
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const SVCreate = Digit?.ComponentRegistryService?.getComponent("Create");

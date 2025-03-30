@@ -4,6 +4,12 @@ import { Controller, useForm } from "react-hook-form";
 import Timeline from "../components/Timeline";
 import { transformDocuments } from "../utils";
 
+/**
+ * SVSpecialCategory Component
+ * 
+ * A form step component for collecting special category information for street vendors
+ * Allows selection of disability status, social schemes, and uploading supporting documents
+ */
 const SVSpecialCategory = ({ t, config, onSelect, userType, formData,editdata,previousData }) => {
   let validation = {};
   const user = Digit.UserService.getUser().info;
