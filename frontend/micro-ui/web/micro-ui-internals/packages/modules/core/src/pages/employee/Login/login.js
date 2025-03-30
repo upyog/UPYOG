@@ -66,7 +66,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     }
   }
   useEffect(()=>{
-    console.log("captcha----",captcha)
+    // console.log("captcha----",captcha)
   },[captcha])
   useEffect(async () => {
     if (!user) {
@@ -119,7 +119,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 const generateIV = () => CryptoJS.lib.WordArray.random(16);
 
 const encryptPassword = (plainText) => {
-  console.log("secretKey==",secretKey)
+  // console.log("secretKey==",secretKey)
   // let secretKeyN = secretKey.subString(6);
   // secretKeyN = captcha[0].captcha+secretKeyN;
   // console.log("secretKeyN==",secretKeyN)

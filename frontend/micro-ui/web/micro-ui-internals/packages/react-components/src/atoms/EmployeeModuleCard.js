@@ -57,7 +57,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
           <img src="https://mnptapp-terraform.s3.amazonaws.com/images/property_tax.jpg" loading="lazy" alt="img" class="pt-emp-card-img1" />
           <div class="pt-card-mn2">
             <div class="">
-              <img src="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" alt="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" class="pt-img2" />
+              <img src="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" alt="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" class="pt-img2" />
             </div>
             </div>
               <p style={{fontSize: "16px", fontWeight: "600", textAlign: "center"}}>Property Tax</p>
@@ -76,7 +76,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                             <img src={image} loading="lazy" alt="img" class="pt-emp-card-img1" />
                             <div class="pt-card-mn2">
                               <div class="">
-                                <img src="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" alt="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" class="pt-img2" />
+                                <img src="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" alt="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" class="pt-img2" />
                               </div>
                             </div>
                             <div style={{textAlign: "center", fontSize: "18px"}}>{label}
@@ -102,7 +102,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                             <img src={image} loading="lazy" alt="img" class="pt-emp-card-img1" />
                             <div class="pt-card-mn2">
                               <div class="">
-                                <img src="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" alt="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" class="pt-img2" />
+                                <img src="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" alt="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" class="pt-img2" />
                               </div>
                             </div>
                             <div style={{textAlign: "center", fontSize: "18px"}}>{label}</div>
