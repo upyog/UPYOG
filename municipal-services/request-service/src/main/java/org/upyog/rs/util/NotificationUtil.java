@@ -21,7 +21,6 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -29,12 +28,14 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.kafka.Producer;
 import org.upyog.rs.repository.ServiceRequestRepository;
-import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
-import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.events.EventRequest;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.notification.Email;
 import org.upyog.rs.web.models.notification.EmailRequest;
 import org.upyog.rs.web.models.notification.SMSRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
@@ -52,12 +53,6 @@ public class NotificationUtil {
 	private Producer producer;
 
 	private RestTemplate restTemplate;
-
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
-
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsUrl;
 
 	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, RequestServiceConfiguration config,
@@ -196,6 +191,42 @@ public class NotificationUtil {
 			}
 		}
 	}
+	
+	/**
+	 * Fetches UUIDs of CITIZEN based on the phone number.
+	 *
+	 * @param mobileNumber - Mobile Numbers
+	 * @param requestInfo  - Request Information
+	 * @param tenantId     - Tenant Id
+	 * @return Returns List of MobileNumbers and UUIDs
+	 */
+	
+	public Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
+		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+		Map<String, Object> userSearchRequest = new HashMap<>();
+		userSearchRequest.put("RequestInfo", requestInfo);
+		userSearchRequest.put("tenantId", tenantId);
+		userSearchRequest.put("userType", "CITIZEN");
+		userSearchRequest.put("userName", mobileNumber);
+		try {
+
+			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+			log.info("User fetched in fetUserUUID method of RequestService notfication consumer" + user.toString());
+			if (user != null) {
+				String uuid = JsonPath.read(user, "$.user[0].uuid");
+				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
+				log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
+			}
+		} catch (Exception e) {
+			log.error("Exception while fetching user for username - " + mobileNumber);
+			log.error("Exception trace: ", e);
+		}
+
+		return mapOfPhoneNoAndUUIDs;
+	}
+
 
 	/**
 	 * Fetches UUIDs of CITIZENs based on the phone number.
@@ -291,6 +322,122 @@ public class NotificationUtil {
 
 		}
 	}
+	
+	/**
+	 * Enriches the smsRequest with the customized messages
+	 *
+	 * @param request
+	 *            The request from kafka topic
+	 * @param smsRequests
+	 *            List of SMSRequets
+	 */
+
+	public void enrichSMSRequest(Object request, List<SMSRequest> smsRequests) {
+	    String tenantId;
+	    String localizationMessages;
+	    Map<String, String> messageMap;
+	    String message;
+	    String mobileNumber;
+	    RequestInfo requestInfo;
+
+	    if (request instanceof WaterTankerBookingRequest) {
+	        WaterTankerBookingRequest waterRequest = (WaterTankerBookingRequest) request;
+	        tenantId = waterRequest.getWaterTankerBookingDetail().getTenantId();
+	        requestInfo = waterRequest.getRequestInfo();
+	        localizationMessages = getLocalizationMessages(tenantId, requestInfo);
+	        messageMap = getCustomizedMsg(requestInfo, waterRequest.getWaterTankerBookingDetail(), localizationMessages);
+	        message = messageMap.get(RequestServiceConstants.MESSAGE_TEXT);
+	        mobileNumber = waterRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
+	    } else if (request instanceof MobileToiletBookingRequest) {
+	        MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+	        tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
+	        requestInfo = toiletRequest.getRequestInfo();
+	        localizationMessages = getLocalizationMessages(tenantId, requestInfo);
+	        messageMap = getCustomizedMsg(requestInfo, toiletRequest.getMobileToiletBookingDetail(), localizationMessages);
+	        message = messageMap.get(RequestServiceConstants.MESSAGE_TEXT);
+	        mobileNumber = toiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
+	    } else {
+	        throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
+	    }
+
+	    Map<String, String> mobileNumberToOwner = fetchUserUUIDs(mobileNumber, requestInfo, tenantId);
+	    smsRequests.addAll(createSMSRequest(message, mobileNumberToOwner));
+	}
+	
+	/**
+	 * Method to fetch the list of channels for a particular action from mdms config
+	 * from mdms configs returns the message minus some lines to match In App
+	 * Templates
+	 * 
+	 * @param requestInfo
+	 * @param tenantId
+	 * @param moduleName
+	 * @param action
+	 */
+	public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+		List<String> masterData = new ArrayList<>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
+		if (StringUtils.isEmpty(tenantId))
+			return masterData;
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId, moduleName, action);
+		//Can create filter as string using this
+		Filter masterDataFilter = filter(where(RequestServiceConstants.MODULE).is(moduleName)
+				.and(RequestServiceConstants.ACTION).is(action));
+
+		try {
+			Object response = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
+			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?].channelNames[*]",
+					masterDataFilter);
+		} catch (Exception e) {
+			log.error("Exception while fetching workflow states to ignore: ", e);
+		}
+
+		return masterData;
+	}
+
+	/**
+	 * Constructs an MDMS (Master Data Management System) criteria request for retrieving 
+	 * the channel list based on the specified module and action.
+	 *
+	 * @param requestInfo The request information containing metadata about the request.
+	 * @param tenantId    The tenant ID for which the channel list is to be retrieved.
+	 * @param moduleName  The module name for filtering the data.
+	 * @param action      The specific action used to filter the channel list.
+	 * @return An {@link MdmsCriteriaReq} object containing the criteria for fetching 
+	 *         the channel list from MDMS.
+	 *
+	 * This method:
+	 * - Creates a {@link MasterDetail} object specifying the required master data.
+	 * - Builds a {@link ModuleDetail} object containing the master details.
+	 * - Constructs an {@link MdmsCriteria} with the provided tenant ID and module details.
+	 * - Wraps the criteria in an {@link MdmsCriteriaReq} and returns it.
+	 */
+	
+	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(RequestServiceConstants.CHANNEL_LIST);
+	//	masterDetail.setFilter("[?(@['module'] == 'CND' && @['action'] == '"+ action +"')]");
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(RequestServiceConstants.CHANNEL);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
+	}
 
 	/**
 	 * Fetches email ids of CITIZENs based on the phone number.
@@ -330,6 +477,16 @@ public class NotificationUtil {
 		return mapOfPhnoAndEmailIds;
 	}
 
+	/**
+	 * Generates a customized message based on the action status of the mobile toilet booking request.
+	 * This method retrieves localized message templates, formats them with booking details,
+	 * and optionally includes a payment link.
+	 *
+	 * @param requestInfo       The request information containing user details.
+	 * @param mobileToiletDetail The details of the mobile toilet booking.
+	 * @param localizationMessage The localization message string for fetching message templates.
+	 * @return A map containing the customized message and an optional action link.
+	 */
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, WaterTankerBookingDetail waterTankerDetail,
 			String localizationMessage) {
 		String message = null, messageTemplate;

@@ -29,7 +29,11 @@ import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.kafka.producer.Producer;
 import org.upyog.sv.repository.ServiceRequestRepository;
+import org.upyog.sv.service.StreetVendingEncryptionService;
+import org.upyog.sv.service.impl.StreetyVendingNotificationServiceImpl;
 import org.upyog.sv.web.models.StreetVendingDetail;
+import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.VendorDetail;
 import org.upyog.sv.web.models.events.EventRequest;
 import org.upyog.sv.web.models.notification.Email;
 import org.upyog.sv.web.models.notification.EmailRequest;
@@ -51,12 +55,9 @@ public class NotificationUtil {
 	private Producer producer;
 
 	private RestTemplate restTemplate;
-
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
-
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsUrl;
+	
+	@Autowired
+	private StreetVendingEncryptionService decrypt;
 
 	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, StreetVendingConfiguration config,
@@ -141,6 +142,70 @@ public class NotificationUtil {
 
 		return uri;
 	}
+
+	/**
+	 * Enriches the smsRequest with the customized messages
+	 *
+	 * @param request
+	 *            The request from kafka topic
+	 * @param smsRequests
+	 *            List of SMSRequets
+	 */
+	public void enrichSMSRequest(StreetVendingRequest request, List<SMSRequest> smsRequests) {
+	    String tenantId = request.getStreetVendingDetail().getTenantId();
+	    String localizationMessages = getLocalizationMessages(tenantId, request.getRequestInfo());
+	    String messageMap = getCustomizedMsg(request.getRequestInfo(), request.getStreetVendingDetail(), localizationMessages);
+	    List<VendorDetail> vendorDetails = request.getStreetVendingDetail().getVendorDetail();
+	    String mobileNumber = null;
+	    
+	    if (vendorDetails != null && !vendorDetails.isEmpty()) {
+	        mobileNumber = vendorDetails.get(0).getMobileNo();  
+	    }
+	    
+	    if (mobileNumber != null) {
+	        Map<String, String> mobileNumberToOwner = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId, request.getStreetVendingDetail());
+	        smsRequests.addAll(createSMSRequest(messageMap, mobileNumberToOwner));
+	    }
+	}
+
+	
+	/**
+	 * Fetches UUIDs of CITIZEN based on the phone number.
+	 *
+	 * @param mobileNumber - Mobile Numbers
+	 * @param requestInfo  - Request Information
+	 * @param tenantId     - Tenant Id
+	 * @return Returns List of MobileNumbers and UUIDs
+	 */
+	public Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId, StreetVendingDetail requestDetail) {
+		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+	    StreetVendingDetail	decryptedDetail = decrypt.decryptObject(requestDetail, requestInfo);
+	    mobileNumber =  decryptedDetail.getVendorDetail().get(0).getMobileNo();
+		Map<String, Object> userSearchRequest = new HashMap<>();
+		userSearchRequest.put("RequestInfo", requestInfo);
+		userSearchRequest.put("tenantId", tenantId);
+		userSearchRequest.put("userType", "CITIZEN");
+		userSearchRequest.put("userName", mobileNumber);
+		try {
+
+			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+			log.info("User fetched in fetUserUUID method of StreetVending notfication consumer" + user.toString());
+			if (user != null) {
+				String uuid = JsonPath.read(user, "$.user[0].uuid");
+				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
+				log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
+			}
+		} catch (Exception e) {
+			log.error("Exception while fetching user for username - " + mobileNumber);
+			log.error("Exception trace: ", e);
+		}
+
+		return mapOfPhoneNoAndUUIDs;
+	}
+	
+
 
 	/**
 	 * Creates sms request for the each owners
@@ -319,7 +384,7 @@ public class NotificationUtil {
 	 * @param moduleName
 	 * @param action
 	 */
-	private List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
+	public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
 		List<String> masterData = new ArrayList<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getMdmsHost()).append(config.getMdmsPath());
@@ -341,6 +406,15 @@ public class NotificationUtil {
 		return masterData;
 	}
 
+	
+	/**
+	 * Builds an MDMS request for retrieving the channel list.
+	 *
+	 * @param requestInfo the request information containing metadata
+	 * @param tenantId    the tenant ID for which the data is requested
+	 * @return an {@link MdmsCriteriaReq} object containing the request criteria for fetching the channel list
+	 */
+	
 	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(StreetVendingConstants.CHANNEL_LIST);
@@ -363,6 +437,15 @@ public class NotificationUtil {
 
 		return mdmsCriteriaReq;
 	}
+	
+	/**
+	 * Retrieves a customized notification message based on the application status and workflow action.
+	 *
+	 * @param requestInfo         the request information containing metadata
+	 * @param streetVendingDetail the details of the street vending application
+	 * @param localizationMessage the localized message template
+	 * @return a customized notification message for the user
+	 */
 
 	public String getCustomizedMsg(RequestInfo requestInfo, StreetVendingDetail streetVendingDetail,
 			String localizationMessage) {
@@ -416,12 +499,29 @@ public class NotificationUtil {
 		return message;
 	}
 
+	/**
+	 * Formats a notification message by replacing placeholders with the vendor's name and application number.
+	 *
+	 * @param streetVendingDetail the details of the street vending application
+	 * @param message             the message template with placeholders
+	 * @return a formatted message with the vendor's details
+	 */
+	
 	private String getMessageWithNumber(StreetVendingDetail streetVendingDetail, String message) {
 		message = message.replace("{1}", streetVendingDetail.getVendorDetail().get(0).getName());
 		message = message.replace("{2}", streetVendingDetail.getApplicationNo());
 		return message;
 	}
 
+	/**
+	 * Formats a notification message by replacing placeholders with the vendor's name, application number,
+	 * and certificate number.
+	 *
+	 * @param streetVendingDetail the details of the street vending application
+	 * @param message             the message template with placeholders
+	 * @return a formatted message with the vendor's details and certificate number
+	 */
+	
 	private String getMessageWithNumberAndFinalDetails(StreetVendingDetail streetVendingDetail, String message) {
 		message = message.replace("{1}", streetVendingDetail.getVendorDetail().get(0).getName());
 		message = message.replace("{2}", streetVendingDetail.getApplicationNo());
