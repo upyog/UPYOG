@@ -145,7 +145,7 @@ public class ServiceRequestValidator {
 
         List<String> departments = hrmsUtil.getDepartment(assignes, request.getRequestInfo());
 
-        String jsonPath = MDMS_DEPARTMENT_SEARCH.replace("{SERVICEDEF}",serviceCode);
+        String jsonPath = MDMS_DEPARTMENT_SEARCH.replace("{SwachBharatCategory}",serviceCode);
 
         List<String> res = null;
         String departmentFromMDMS;
