@@ -19,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Valid
 @Builder
-public class FacilityCenterDetail {
+public class  FacilityCenterDetail {
 	
 	private String disposalId;
 	 
