@@ -454,24 +454,32 @@ public class InboxService {
 				}
 			}
 
-			// for request service
-			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && RS.equals(processCriteria.getModuleName())) {
-				List<String> applicationNumbers = null;
+			// for request service water tanker
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_WATER_TANKER)) {
 
-				// Determine which service to use based on business service type
-				if (processCriteria.getBusinessService().contains(MT_BUSINESS_SERVICE)) {
-					applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(
-							criteria, StatusIdNameMap, requestInfo);
-				}
-				else if (processCriteria.getBusinessService().contains(WT_BUSINESS_SERVICE)){
-					applicationNumbers = WTInboxFilterService.fetchApplicationNumbersFromSearcher(
-							criteria, StatusIdNameMap, requestInfo);
-				}
-
-				// Update search criteria if application numbers exist
+				List<String> applicationNumbers = WTInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
+					 moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			// for request service Mobile Toilet
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_MOBILE_TOILET)) {
+
+				List<String> applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
 					isSearchResultEmpty = true;
