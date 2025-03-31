@@ -454,7 +454,18 @@ public class InboxService {
 				}
 			}
 
-			// for request service water tanker
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_WATER_TANKER. If true, it fetches the list of
+			   application numbers using the WTInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_WATER_TANKER)) {
 
@@ -470,7 +481,17 @@ public class InboxService {
 				}
 			}
 
-			// for request service Mobile Toilet
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_MOBILE_TOILET. If true, it fetches the list of
+			   application numbers using the mtInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_MOBILE_TOILET)) {
 
