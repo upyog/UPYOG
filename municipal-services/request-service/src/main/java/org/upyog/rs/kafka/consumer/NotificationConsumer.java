@@ -16,6 +16,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+* Consumer service for processing Kafka messages related to water tanker and mobile toilet bookings.
+* It listens to specific Kafka topics, extracts relevant booking details, and triggers notifications.
+*/
 @Service
 @Slf4j
 public class NotificationConsumer {
@@ -26,6 +30,14 @@ public class NotificationConsumer {
     @Autowired
     private ObjectMapper mapper;
 
+
+    /**
+     * Listens to Kafka topics for updates and creation events of water tanker and mobile toilet bookings.
+     *
+     * @param record the incoming Kafka message containing booking details
+     * @param topic  the name of the Kafka topic from which the message was received
+     */
+    
     @KafkaListener(topics = { 
             "${persister.update.water-tanker.topic}", "${persister.create.water-tanker.topic}",
             "${persister.update.mobile-toilet.topic}", "${persister.create.mobile-toilet.topic}" 

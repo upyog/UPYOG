@@ -406,6 +406,15 @@ public class NotificationUtil {
 		return masterData;
 	}
 
+	
+	/**
+	 * Builds an MDMS request for retrieving the channel list.
+	 *
+	 * @param requestInfo the request information containing metadata
+	 * @param tenantId    the tenant ID for which the data is requested
+	 * @return an {@link MdmsCriteriaReq} object containing the request criteria for fetching the channel list
+	 */
+	
 	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId) {
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName(StreetVendingConstants.CHANNEL_LIST);
@@ -428,6 +437,15 @@ public class NotificationUtil {
 
 		return mdmsCriteriaReq;
 	}
+	
+	/**
+	 * Retrieves a customized notification message based on the application status and workflow action.
+	 *
+	 * @param requestInfo         the request information containing metadata
+	 * @param streetVendingDetail the details of the street vending application
+	 * @param localizationMessage the localized message template
+	 * @return a customized notification message for the user
+	 */
 
 	public String getCustomizedMsg(RequestInfo requestInfo, StreetVendingDetail streetVendingDetail,
 			String localizationMessage) {
@@ -481,12 +499,29 @@ public class NotificationUtil {
 		return message;
 	}
 
+	/**
+	 * Formats a notification message by replacing placeholders with the vendor's name and application number.
+	 *
+	 * @param streetVendingDetail the details of the street vending application
+	 * @param message             the message template with placeholders
+	 * @return a formatted message with the vendor's details
+	 */
+	
 	private String getMessageWithNumber(StreetVendingDetail streetVendingDetail, String message) {
 		message = message.replace("{1}", streetVendingDetail.getVendorDetail().get(0).getName());
 		message = message.replace("{2}", streetVendingDetail.getApplicationNo());
 		return message;
 	}
 
+	/**
+	 * Formats a notification message by replacing placeholders with the vendor's name, application number,
+	 * and certificate number.
+	 *
+	 * @param streetVendingDetail the details of the street vending application
+	 * @param message             the message template with placeholders
+	 * @return a formatted message with the vendor's details and certificate number
+	 */
+	
 	private String getMessageWithNumberAndFinalDetails(StreetVendingDetail streetVendingDetail, String message) {
 		message = message.replace("{1}", streetVendingDetail.getVendorDetail().get(0).getName());
 		message = message.replace("{2}", streetVendingDetail.getApplicationNo());

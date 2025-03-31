@@ -40,7 +40,14 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 
 	@Autowired
 	private NotificationUtil util;
-
+	
+	/**
+	 * Processes the Street Vending request by generating events, sending notifications, 
+	 * and handling SMS and email notifications based on the provided status.
+	 *
+	 * @param request the StreetVendingRequest containing street vending details
+	 * @param status  the status of the street vending request
+	 */
 	public void process(StreetVendingRequest request, String status) {
 		EventRequest eventRequest = getEventsForSV(request);
 		log.info("Event Request in StreetVending process method" + eventRequest.toString());
@@ -90,6 +97,12 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
     }
 
 
+    /**
+     * Generates an EventRequest object for a given Street Vending request.
+     *
+     * @param request the StreetVendingRequest containing details of the street vending application
+     * @return an EventRequest containing event details for notifications, or null if no events are generated
+     */
 	private EventRequest getEventsForSV(StreetVendingRequest request) {
 
 		List<Event> events = new ArrayList<>();

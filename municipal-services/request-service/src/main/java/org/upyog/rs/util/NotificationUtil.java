@@ -477,6 +477,16 @@ public class NotificationUtil {
 		return mapOfPhnoAndEmailIds;
 	}
 
+	/**
+	 * Generates a customized message based on the action status of the mobile toilet booking request.
+	 * This method retrieves localized message templates, formats them with booking details,
+	 * and optionally includes a payment link.
+	 *
+	 * @param requestInfo       The request information containing user details.
+	 * @param mobileToiletDetail The details of the mobile toilet booking.
+	 * @param localizationMessage The localization message string for fetching message templates.
+	 * @return A map containing the customized message and an optional action link.
+	 */
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, WaterTankerBookingDetail waterTankerDetail,
 			String localizationMessage) {
 		String message = null, messageTemplate;

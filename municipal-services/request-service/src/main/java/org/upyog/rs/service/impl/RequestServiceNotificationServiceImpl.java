@@ -38,6 +38,15 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 	@Autowired
 	private NotificationUtil util;
 	
+	/**
+	 * Processes a booking request and sends notifications based on the application status.
+	 * 
+	 * @param request The booking request object, which can be either a {@link WaterTankerBookingRequest} 
+	 *                or a {@link MobileToiletBookingRequest}.
+	 * @param status  The application status associated with the booking request.
+	 * @throws IllegalArgumentException If the request type is not supported.
+	 */
+	
 	public void process(Object request, String status) {
 	    String tenantId;
 	    RequestInfo requestInfo;
@@ -89,56 +98,70 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 	}
 
 	
+
+	/**
+	 * Generates an event request for notification purposes.
+	 * 
+	 * @param request    The booking request object (either
+	 *                   {@link MobileToiletBookingRequest} or
+	 *                   {@link WaterTankerBookingRequest}).
+	 * @param actionLink The action link for the notification.
+	 * @param messageMap The message content map for the notification.
+	 * @return An {@link EventRequest} object containing event details, or null if
+	 *         an error occurs.
+	 */
+
 	private EventRequest getEventsForRS(Object request, String actionLink, Map<String, String> messageMap) {
-	    List<Event> events = new ArrayList<>();
-	    String tenantId;
-	    String mobileNumber;
-	    RequestInfo requestInfo;
+		List<Event> events = new ArrayList<>();
+		String tenantId;
+		String mobileNumber;
+		RequestInfo requestInfo;
 
-	    if (request instanceof MobileToiletBookingRequest) {
-	        MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
-	        tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
-	        mobileNumber = toiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
-	        requestInfo = toiletRequest.getRequestInfo();
-	    } else if (request instanceof WaterTankerBookingRequest) {
-	        WaterTankerBookingRequest tankerRequest = (WaterTankerBookingRequest) request;
-	        tenantId = tankerRequest.getWaterTankerBookingDetail().getTenantId();
-	        mobileNumber = tankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
-	        requestInfo = tankerRequest.getRequestInfo();
-	    } else {
-	        log.error("Unsupported request type: " + request.getClass().getName());
-	        return null;
-	    }
+		if (request instanceof MobileToiletBookingRequest) {
+			MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+			tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
+			mobileNumber = toiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
+			requestInfo = toiletRequest.getRequestInfo();
+		} else if (request instanceof WaterTankerBookingRequest) {
+			WaterTankerBookingRequest tankerRequest = (WaterTankerBookingRequest) request;
+			tenantId = tankerRequest.getWaterTankerBookingDetail().getTenantId();
+			mobileNumber = tankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
+			requestInfo = tankerRequest.getRequestInfo();
+		} else {
+			log.error("Unsupported request type: " + request.getClass().getName());
+			return null;
+		}
 
-	    String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
-	    List<String> toUsers = new ArrayList<>();
-	    Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, requestInfo, tenantId);
+		String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
+		List<String> toUsers = new ArrayList<>();
+		Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, requestInfo, tenantId);
 
-	    if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
-	        log.info("UUID search failed!");
-	    }
+		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
+			log.info("UUID search failed!");
+		}
 
-	    toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-	    String message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
-	    log.info("Message for event in RequestService: " + message);
+		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
+		String message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
+		log.info("Message for event in RequestService: " + message);
 
-	    Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-	    log.info("Recipient object in RequestService: " + recepient);
+		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+		log.info("Recipient object in RequestService: " + recepient);
 
-	    ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-	    List<ActionItem> actionItems = new ArrayList<>();
-	    actionItems.add(actionItem);
+		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
+		List<ActionItem> actionItems = new ArrayList<>();
+		actionItems.add(actionItem);
 
-	    Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-	            .eventId(RequestServiceConstants.CHANNEL_NAME_EVENT).build();
+		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
+				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT).build();
 
-	    events.add(Event.builder().tenantId(tenantId).description(message)
-	            .eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
-	            .name(RequestServiceConstants.USREVENTS_EVENT_NAME)
-	            .postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-	            .actions(null).eventDetails(null).build());
+		events.add(Event.builder().tenantId(tenantId).description(message)
+				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
+				.name(RequestServiceConstants.USREVENTS_EVENT_NAME)
+				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+				.actions(null).eventDetails(null).build());
 
-	    return CollectionUtils.isEmpty(events) ? null : EventRequest.builder().requestInfo(requestInfo).events(events).build();
+		return CollectionUtils.isEmpty(events) ? null
+				: EventRequest.builder().requestInfo(requestInfo).events(events).build();
 	}
 
 

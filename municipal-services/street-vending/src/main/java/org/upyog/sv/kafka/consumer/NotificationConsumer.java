@@ -8,13 +8,17 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.service.StreetyVendingNotificationService;
-import org.upyog.sv.util.NotificationUtil;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Kafka consumer service responsible for listening to street vending events
+ * and processing notifications accordingly.
+ */
 
 @Service
 @Slf4j
@@ -26,9 +30,13 @@ public class NotificationConsumer {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
-	private NotificationUtil util;
-
+    /**
+     * Listens to Kafka topics related to street vending updates and processes
+     * notifications accordingly.
+     *
+     * @param record the message payload received from Kafka
+     * @param topic  the name of the Kafka topic from which the message was received
+     */
 	@KafkaListener(topics = { "${persister.update.street-vending.topic}", "${persister.create.street-vending.topic}"})
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
