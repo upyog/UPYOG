@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.kafka.Producer;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@Repository
 public class CNDServiceRepositoryImpl implements CNDServiceRepository {
 
     @Autowired
