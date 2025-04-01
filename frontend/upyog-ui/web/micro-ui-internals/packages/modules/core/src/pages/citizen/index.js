@@ -243,7 +243,7 @@ const Home = ({
           <Route path={`${path}/Audit`}>
             <Search/>
           </Route>
-          <Route path={`${path}`}>
+          <Route path={`${path}/payment/verification`}>
             <QRCode></QRCode>
           </Route>
           <Route path={`${path}/assets/services`}>
