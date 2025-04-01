@@ -5,6 +5,42 @@ import ApplicationTable from "./inbox/ApplicationTable";
 import InboxLinks from "./inbox/InboxLink";
 import SearchApplication from "./inbox/search";
 
+/**
+ * CHBDesktopInbox Component
+ * 
+ * This component is responsible for rendering the desktop version of the inbox for the CHB (Community Hall Booking) module.
+ * It displays a table of applications or tasks, along with filtering and search functionality.
+ * 
+ * Props:
+ * - `tableConfig`: Configuration object for the inbox table, including columns for search and inbox views.
+ * - `filterComponent`: Name of the filter component to be dynamically loaded.
+ * - `data`: The data to be displayed in the inbox table.
+ * - `useNewInboxAPI`: Boolean indicating whether to use the new inbox API.
+ * - `isSearch`: Boolean indicating whether the component is in search mode.
+ * - `isLoading`: Boolean indicating whether the data is being loaded.
+ * - `EmptyResultInboxComp`: Name of the component to display when the inbox has no results.
+ * 
+ * State Variables:
+ * - `FilterComponent`: Dynamically loaded filter component for the inbox.
+ * - `EmptyInboxComp`: Dynamically loaded component to display when the inbox has no results.
+ * - `clearSearchCalled`: Boolean state to track whether the search has been cleared.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `React.useMemo`: Memoizes the columns for the inbox table based on the mode (search or inbox).
+ * 
+ * Logic:
+ * - Dynamically loads the filter and empty result components using the `Digit.ComponentRegistryService`.
+ * - Determines the columns for the inbox table based on the mode (search or inbox) using the `tableConfig` prop.
+ * - Handles different states of the inbox:
+ *    - Displays a loader when `isLoading` is true.
+ *    - Displays nothing when `clearSearchCalled` is true.
+ *    - Displays the empty result component or a default message when there is no data.
+ * 
+ * Returns:
+ * - A desktop inbox component with a table of applications or tasks, filtering, and search functionality.
+ * - Displays a loader, empty result component, or the inbox table based on the current state.
+ */
 const CHBDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   
   const { data, useNewInboxAPI } = props;

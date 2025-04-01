@@ -31,6 +31,48 @@ const ActionButton = ({ jumpTo }) => {
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
 };
 
+/**
+ * CheckPage Component
+ * 
+ * This component is responsible for rendering the final review page (Check Page) in the CHB module.
+ * It allows users to review their entered details, such as bank details, slots, documents, and address, before submitting the application.
+ * 
+ * Subcomponents:
+ * - `ActionButton`: A reusable button component that navigates the user to a specific page for editing details.
+ *    - Props:
+ *      - `jumpTo`: The route to navigate to when the button is clicked.
+ *    - Functions:
+ *      - `routeTo`: Navigates to the specified route using the `useHistory` hook.
+ * 
+ * Props:
+ * - `onSubmit`: Callback function triggered when the user submits the application.
+ * - `value`: Object containing the application details to be reviewed, including:
+ *    - `bankdetails`: Bank details entered by the user.
+ *    - `slots`: Slot details selected by the user.
+ *    - `slotlist`: List of available slots.
+ *    - `index`: Index of the current step in the application process.
+ *    - `isEditCHB`: Boolean indicating whether the application is being edited.
+ *    - `isUpdateCHB`: Boolean indicating whether the application is being updated.
+ *    - `ownerss`: Owner details entered by the user.
+ *    - `documents`: List of uploaded documents.
+ *    - `address`: Address details entered by the user.
+ * 
+ * Hooks:
+ * - `useTranslation`: Provides the `t` function for internationalization.
+ * - `useHistory`: Provides navigation functionality within the application.
+ * 
+ * Variables:
+ * - `typeOfApplication`: Determines the type of application based on whether it is a new booking, an edit, or an update.
+ *    - `bookHall`: Indicates a new booking.
+ *    - `editbookHall`: Indicates an edit or update to an existing booking.
+ * 
+ * Logic:
+ * - Extracts and organizes the application details from the `value` prop for display on the review page.
+ * - Provides an action button for users to navigate back and edit specific sections of the application.
+ * 
+ * Returns:
+ * - A review page displaying the application details, with an action button for editing and a submit button for final submission.
+ */
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
