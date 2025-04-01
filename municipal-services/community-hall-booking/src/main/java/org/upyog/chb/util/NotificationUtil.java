@@ -27,6 +27,39 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This utility class provides methods for sending notifications in the
+ * Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To send notifications to users based on booking events and status updates.
+ * - To simplify the process of creating and sending notifications through various channels.
+ * 
+ * Dependencies:
+ * - ServiceRequestRepository: Sends HTTP requests to external services for notification delivery.
+ * - Producer: Publishes notification events to Kafka topics.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for notification operations.
+ * 
+ * Features:
+ * - Sends SMS notifications to users based on booking events.
+ * - Publishes event notifications to Kafka topics for further processing.
+ * - Fetches and processes notification templates for dynamic message generation.
+ * - Logs notification operations and errors for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. sendSMS:
+ *    - Sends SMS notifications to users based on the provided SMSRequest objects.
+ * 
+ * 2. sendEventNotification:
+ *    - Publishes event notifications to Kafka topics for further processing.
+ * 
+ * 3. fetchNotificationTemplate:
+ *    - Retrieves and processes notification templates for generating dynamic messages.
+ * 
+ * Usage:
+ * - This class is used throughout the module to send notifications to users.
+ * - It ensures consistent and reusable logic for notification delivery across the application.
+ */
 @Slf4j
 @Component
 public class NotificationUtil {

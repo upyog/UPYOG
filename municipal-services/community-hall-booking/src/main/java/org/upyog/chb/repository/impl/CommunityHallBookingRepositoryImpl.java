@@ -43,6 +43,33 @@ import org.upyog.chb.web.models.DocumentDetail;
 import digit.models.coremodels.PaymentDetail;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class implements the CommunityHallBookingRepository interface and provides
+ * the database interaction logic for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To handle all database operations related to community hall bookings, such as
+ *   creating, updating, retrieving, and deleting booking records.
+ * 
+ * Dependencies:
+ * - Producer: Used for publishing events to Kafka topics.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for the module.
+ * - CommunityHallBookingQueryBuilder: Constructs SQL queries for database operations.
+ * - CommunityHallBookingRowmapper: Maps result sets to CommunityHallBookingDetail objects.
+ * - BookingSlotDetailRowmapper: Maps result sets to slot detail objects.
+ * - DocumentDetailsRowMapper: Maps result sets to document detail objects.
+ * - JdbcTemplate: Executes SQL queries and updates against the database.
+ * - CommunityHallSlotAvailabilityRowMapper: Maps result sets to slot availability objects.
+ * 
+ * Features:
+ * - Uses Spring's @Repository annotation to mark this class as a data access component.
+ * - Uses Lombok's @Slf4j annotation for logging database operations and errors.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever the
+ *   CommunityHallBookingRepository interface is required.
+ */
+
 @Repository
 @Slf4j
 public class CommunityHallBookingRepositoryImpl implements CommunityHallBookingRepository {

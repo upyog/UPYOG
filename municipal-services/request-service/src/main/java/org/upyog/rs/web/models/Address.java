@@ -44,7 +44,6 @@ public class Address {
 
 	private String addressLine2;
 	
-	@NotBlank
 	private String landmark;
 
 	@NotBlank

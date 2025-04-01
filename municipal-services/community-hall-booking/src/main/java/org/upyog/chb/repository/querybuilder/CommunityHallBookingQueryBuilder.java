@@ -10,6 +10,38 @@ import org.upyog.chb.config.CommunityHallBookingConfiguration;
 import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 import org.upyog.chb.web.models.CommunityHallSlotSearchCriteria;
 
+/**
+ * This class is responsible for building SQL queries for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To centralize and manage all SQL query construction logic for the module.
+ * - To dynamically build queries based on search criteria and other parameters.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for query construction.
+ * - CommunityHallBookingSearchCriteria: Contains search parameters for booking-related queries.
+ * - CommunityHallSlotSearchCriteria: Contains search parameters for slot-related queries.
+ * 
+ * Features:
+ * - Provides static query templates for booking details, slot details, and document details.
+ * - Dynamically appends conditions to the base queries based on the provided search criteria.
+ * - Ensures that queries are optimized and secure by using parameterized inputs.
+ * 
+ * Query Templates:
+ * 1. bookingDetailsQuery:
+ *    - Retrieves booking details along with applicant and address information.
+ *    - Joins multiple tables to fetch comprehensive booking data.
+ * 
+ * 2. slotDetailsQuery:
+ *    - Retrieves slot details for the specified booking IDs.
+ * 
+ * 3. documentDetailsQuery:
+ *    - Retrieves document details for the specified booking IDs.
+ * 
+ * Usage:
+ * - This class is used by the repository layer to execute database operations.
+ * - It ensures consistency and reusability of query logic across the application.
+ */
 @Component
 public class CommunityHallBookingQueryBuilder {
 

@@ -21,6 +21,37 @@ import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles user-related operations in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To fetch and manage user details required for booking and notification processes.
+ * - To interact with external user services for retrieving user information.
+ * 
+ * Dependencies:
+ * - ObjectMapper: Used to serialize and deserialize JSON objects for requests and responses.
+ * - ServiceRequestRepository: Sends HTTP requests to external user services.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for user-related operations.
+ * - CommunityHallBookingUtil: Utility class for common operations related to user data.
+ * 
+ * Features:
+ * - Fetches user details based on search criteria such as mobile number or user ID.
+ * - Processes and validates user data for use in booking and notification workflows.
+ * - Logs user-related operations and errors for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. fetchUserDetails:
+ *    - Sends a request to the external user service to fetch user details.
+ *    - Processes the response and returns a UserDetailResponse object.
+ * 
+ * 2. validateUser:
+ *    - Validates the user details to ensure they meet the required criteria for booking.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever user-related
+ *   operations are required.
+ * - It ensures consistent and reusable logic for managing user data in the module.
+ */
 @Slf4j
 @Service
 public class UserService {

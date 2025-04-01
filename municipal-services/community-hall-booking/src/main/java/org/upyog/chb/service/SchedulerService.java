@@ -27,6 +27,36 @@ import org.upyog.chb.web.models.workflow.State;
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles scheduled tasks for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To automate periodic tasks such as cleaning up expired bookings or failed payments.
+ * - To ensure that the system remains consistent and free of stale or invalid data.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingRepository: Handles database operations for bookings.
+ * - UserService: Fetches user details required for certain scheduled tasks.
+ * - WorkflowService: Manages workflow-related operations for bookings.
+ * 
+ * Features:
+ * - Executes scheduled tasks at fixed intervals using the @Scheduled annotation.
+ * - Logs the execution of scheduled tasks for debugging and monitoring purposes.
+ * - Ensures transactional consistency for database operations during scheduled tasks.
+ * 
+ * Methods:
+ * 1. cleanupExpiredEntries:
+ *    - Scheduled to run every 5 minutes.
+ *    - Deletes expired bookings or bookings with failed payments from the paymentTimer table.
+ * 
+ * 2. deleteExpiredBookings:
+ *    - Performs the actual deletion of expired or invalid bookings.
+ *    - Ensures that the database remains free of stale data.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and executes tasks based on the configured schedule.
+ * - It ensures consistent and automated cleanup operations for the module.
+ */
 @Slf4j
 @Component
 public class SchedulerService {
