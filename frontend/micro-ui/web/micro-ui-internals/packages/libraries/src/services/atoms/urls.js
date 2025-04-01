@@ -235,6 +235,7 @@ const Urls = {
     slot_search: "/chb-services/booking/v1/_slot-search",
     estimateCreate: "/chb-services/booking/v1/_estimate"
   },
+  // urls for making api calls for advertisement module
   ads: {
     create: "/adv-services/booking/v1/_create",
     search: "/adv-services/booking/v1/_search",

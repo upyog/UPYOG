@@ -16,8 +16,15 @@ const CloseBtn = (props) => {
         </div>
     );
 };
-// The BookingPopup component renders a modal popup for booking functionality.
-// It provides options to either use existing booking details or fill in new details.
+/**
+ * BookingPopup component renders a modal popup for advertisement booking. It allows users 
+ * to either use existing booking details or enter new details. 
+ * - `showExistingBookingDetails`: Controls whether to display existing booking details.
+ * - `setchbData`: Fetches slot availability data and updates the session state.
+ * - `useEffect`: Calls `onSubmit` automatically after data is set.
+ * - Uses `Digit.Hooks.ads.useADSSlotSearch` for slot search functionality.
+ * - Includes two action buttons: "Use Existing Details" and "Fill New Details".
+ */
 
 const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) => {
    
