@@ -115,7 +115,7 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     @Length(min = 1, max = 128)
     private String comparisonDcrNumber;
 
-    @Override
+	@Override
     public Long getId() {
         return id;
     }
@@ -220,4 +220,5 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     public void setComparisonDcrNumber(String comparisonDcrNumber) {
         this.comparisonDcrNumber = comparisonDcrNumber;
     }
+
 }

@@ -1,0 +1,164 @@
+.employee-app-container {
+  margin: auto;
+}
+
+.multilink-label {
+  color: #f47738 !important;
+}
+
+.vertical-gap {
+  display: flex;
+  row-gap: 1.5rem !important;
+}
+
+.how-it-works-video-play {
+  .close-button {
+    position: fixed;
+    right: 15px;
+    top: 10%;
+    z-index: 1;
+  }
+  video {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    min-width: 100%;
+    min-height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.how-it-works-page {
+  margin-top: -1rem !important;
+  .language-selector {
+    margin-left: 0px !important;
+  }
+  .back-btn2 {
+    margin-left: 0px !important;
+  }
+  .how-it-works-page-header {
+    .h1 {
+      margin-left: 5px !important;
+    }
+  }
+}
+
+.searchAction {
+  display: flex;
+  align-items: center;
+}
+
+.searchText {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.bread-crumb {
+  a {
+    color: #505a5f !important;
+  }
+}
+
+.topbar-custom-tqm-container {
+  display: flex;
+  flex-direction: row;
+  span {
+    justify-content: flex-end;
+    .options-card {
+      margin-left: -2rem;
+    }
+    svg {
+      fill: #ffffff;
+    }
+    label {
+      color: #ffffff;
+    }
+  }
+}
+
+.pqm-table {
+  td {
+    vertical-align: top !important;
+  }
+  thead th{
+    min-width: 150px !important;
+  }
+}
+
+.multi-select-dropdown-wrap .server {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+.popup-module-action-bar {
+  h2 {
+    width: 105% !important;
+  }
+}
+
+.search-field-wrapper.inbox.filter {
+  grid-row-gap: 1.5rem;
+  
+}
+
+.search-wrapper .search-field-wrapper {
+  grid-row-gap: 1rem;
+}
+
+.search-field-wrapper.inbox {
+  row-gap: 0.5rem;
+  
+}
+
+
+
+.multilink-option {
+  display: flex !important;
+}
+
+.multilink-optionWrap {
+  top: 0.8rem !important;
+  right: -40% !important;
+}
+
+.hide-class {
+  .multilink-block-wrapper {
+    display: none;
+  }
+}
+
+.fsm-application-modal-popup {
+  top: 0rem !important;
+}
+
+.fsm-registry-dropdown {
+  margin-bottom: 0px;
+}
+
+.search-tabs-container {
+  .search-tab-head-selected {
+    background-color: #ffffff;
+  }
+}
+
+.action-bar-wrap-registry {
+  width: 10%;
+  .search-add {
+    justify-content: center;
+  }
+  .menu-wrap {
+    right: 2.1rem;
+  }
+}
+
+.page-padding-fix {
+  padding: 1rem 1.5rem;
+}
+
+.language-selector {
+  .language-button-container {
+    .customBtn, .customBtn-selected {
+      width: 100px;
+    }
+  }
+}

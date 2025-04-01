@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.fsm.config.FSMConfiguration;
-import org.egov.fsm.producer.Producer;
+import org.egov.fsm.fsmProducer.FSMProducer;
 import org.egov.fsm.repository.ServiceRequestRepository;
 import org.egov.fsm.service.DSOService;
 import org.egov.fsm.web.model.FSM;
@@ -48,7 +48,7 @@ public class NotificationUtil {
 
 	private ServiceRequestRepository serviceRequestRepository;
 
-	private Producer producer;
+	private FSMProducer producer;
 
 	private DSOService dsoSerevice;
 
@@ -58,7 +58,7 @@ public class NotificationUtil {
 
 	@Autowired
 	public NotificationUtil(FSMConfiguration config, ServiceRequestRepository serviceRequestRepository,
-			Producer producer, DSOService dsoService, RestTemplate restTemplate, WorkflowService workflowService) {
+			FSMProducer producer, DSOService dsoService, RestTemplate restTemplate, WorkflowService workflowService) {
 		this.config = config;
 		this.serviceRequestRepository = serviceRequestRepository;
 		this.producer = producer;

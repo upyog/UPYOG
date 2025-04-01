@@ -1,6 +1,6 @@
 {
   "name": "@upyog/digit-ui-module-common",
-  "version": "3.0.2",
+  "version": "3.0.4",
   "license": "MIT",
   "description": "Digit Common Payment Module",
   "main": "dist/index.js",

@@ -10,7 +10,7 @@ import {
   LinkButton,
   CardHeader,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import Timeline from "../components/TLTimeline";
 
@@ -103,7 +103,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         return state.filter((e, i) => i !== action?.payload?.index);
       case "SET_PRIMARY_OWNER":
         if (action?.payload?.index >= 0) {
-          return state.map((ownerData, i) => {
+          return state?.map((ownerData, i) => {
             if (i === action?.payload?.index) {
               return { ...ownerData, isprimaryowner: true };
             } else {
@@ -114,7 +114,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           return state;
         }
       case "EDIT_CURRENT_OWNER_PROPERTY":
-        return state.map((data, __index) => {
+        return state?.map((data, __index) => {
           if (__index === action.payload.index) {
             return { ...data, [action.payload.key]: action.payload.value };
           } else {
@@ -148,7 +148,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
   let TLmenu = [];
   Menu &&
-    Menu.map((genders) => {
+    Menu?.map((genders) => {
       TLmenu.push({ i18nKey: `TL_GENDER_${genders.code}`, code: `${genders.code}` });
     });
 
@@ -177,21 +177,38 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         return false;
       } else return true;
     } else if (typeOfOwner === "MULTIOWNER") {
-      return ownersData.reduce((acc, ownerData) => {
-        if (ownerData?.name && ownerData?.gender && ownerData?.mobilenumber) {
+      ownersData.forEach((ownerData, index)=>{
+        if (ownerData[index]?.gender===null){
           setError("TL_ERROR_FILL_ALL_MANDATORY_DETAILS");
           return false;
-        }
-      }, true);
+        }else return true;
+      });
     }
   }
 
   const goNext = () => {
-    if (!checkMandatoryFieldsForEachOwner(formState)) {
+    if (!checkMandatoryFieldsForEachOwner(formState) && (typeOfOwner==="SINGLEOWNER" || typeOfOwner==="INSTITUTIONAL")) {
       let owner = formData.owners;
       let ownerStep;
       ownerStep = { ...owner, owners: formState };
       onSelect(config.key, ownerStep);
+    }
+    else if(checkMandatoryFieldsForEachOwner(formState)){
+      setError("please fill mandatory fields")
+    }
+    else if(typeOfOwner==="MULTIOWNER"){
+      if(formState?.length<2){
+        setError(t("TL_ERROR_MULTIPLE_OWNER"))
+      }
+      else if(checkMandatoryFieldsForEachOwner(formState)){
+        setError("please fill mandatory fields")
+      }
+      else{
+        let owner = formData.owners;
+        let ownerStep;
+        ownerStep = { ...owner, owners: formState };
+        onSelect(config.key, ownerStep);
+      }
     }
   };
 
@@ -202,7 +219,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
       <React.Fragment>
         {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(error)}>
-          {formState.map((field, index) => {
+          {formState?.map((field, index) => {
             return (
               <div key={`${field}-${index}`}>
                 <div>
@@ -219,7 +236,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     {...{
                       validation: {
                         isRequired: true,
-                        pattern: "^[a-z0-9]+( [a-z0-9]+)*$",
+                        pattern: "^[a-zA-Z_@./()#&+- ]*$",
                         type: "text",
                         title: t("TL_NAME_ERROR_MESSAGE"),
                       },
@@ -327,7 +344,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     type={"text"}
                     isMandatory={false}
                     name="emailId"
-                    value={field.emailId}
+                    value={field?.emailId}
                     onChange={(e) => handleTextInputField(index, e, "emailId")}
                     ValidationRequired={true}
                     //disable={isUpdateProperty || isEditProperty}
@@ -335,6 +352,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       validation: {
                         // isRequired: true,
                         // pattern: getPattern("Email"),
+                        pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
                         type: "text",
                         title: t("TL_EMAIL_ERROR_MESSAGE"),
                       },
@@ -353,7 +371,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(error)}>
-        {formState.map((field, index) => {
+        {formState?.map((field, index) => {
           return (
             <div key={`${field}-${index}`}>
               <div
@@ -493,12 +511,21 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   labelKey=""
                   isPTFlow={true}
                 />
+                <CardLabel>{`${t("TL_EMAIL_ID_LABEL")}`}</CardLabel>
+                <TextInput
+                  t={t}
+                  isMandatory={false}
+                  name="emailId"
+                  value={field?.emailId}
+                  onChange={(e) => handleTextInputField(index, e, "emailId")}
+                  {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
+                />
                 {typeOfOwner === "MULTIOWNER" && (
                   <CheckBox
                     label={t("TL_PRIMARY_OWNER_LABEL")}
                     onChange={(e) => dispatch({ type: "SET_PRIMARY_OWNER", payload: { index } })}
-                    value={field.isprimaryowner}
-                    checked={field.isprimaryowner}
+                    value={field?.isprimaryowner}
+                    checked={field?.isprimaryowner}
                     style={{ paddingTop: "10px" }}
                     name={`multiowner-checkbox-${index}`}
                     //disable={isUpdateProperty || isEditProperty}
@@ -511,13 +538,22 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         {typeOfOwner === "MULTIOWNER" && (
           <div>
             {/* <hr color="#d6d5d4" className="break-line"></hr> */}
-            <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
+            <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
               <button type="button" style={{ paddingTop: "10px" }} onClick={() => dispatch({ type: "ADD_NEW_OWNER" })}>
                 {t("TL_ADD_OWNER_LABEL")}
               </button>
             </div>
           </div>
         )}
+        {typeOfOwner==="MULTIOWNER" &&
+            formState?.length<2 && (
+              <div>
+                <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", fontSize: "15px",color: "#FF8C00" }}>
+                  {t("TL_ERROR_MULTIPLE_OWNER")}
+                </div>
+              </div>
+            )
+        }
       </FormStep>
     </React.Fragment>
   );

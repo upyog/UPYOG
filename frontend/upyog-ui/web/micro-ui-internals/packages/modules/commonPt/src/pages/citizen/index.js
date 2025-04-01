@@ -1,4 +1,4 @@
-import { AppContainer, BackButton, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import CreateProperty from "./Create";
@@ -11,7 +11,7 @@ import ViewProperty from "../pageComponents/ViewProperty";
 const App = ({ stateCode }) => {
   const { path, url, ...match } = useRouteMatch();
   return (
-    <span className={"pt-citizen"}>
+    <span className={"pt-citizen"} style={{width:"100%"}}>
       <Switch>
         <AppContainer>
           <BackButton>Back</BackButton>

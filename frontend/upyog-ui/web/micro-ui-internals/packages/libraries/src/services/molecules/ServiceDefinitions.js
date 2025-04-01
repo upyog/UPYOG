@@ -1,4 +1,5 @@
 import { MdmsService } from "../elements/MDMS";
+import { MdmsServiceV2 } from "../elements/MDMSV2";
 import { Storage } from "../atoms/Utils/Storage";
 
 export const GetServiceDefinitions = {
@@ -20,7 +21,7 @@ export const GetServiceDefinitions = {
       },
     };
 
-    const serviceDefs = await MdmsService.getDataByCriteria(tenantId, criteria, "PGR");
+    const serviceDefs = await MdmsServiceV2.getDataByCriteria(tenantId, criteria, "PGR");
     Storage.set("serviceDefinitions", serviceDefs);
     return serviceDefs;
   },

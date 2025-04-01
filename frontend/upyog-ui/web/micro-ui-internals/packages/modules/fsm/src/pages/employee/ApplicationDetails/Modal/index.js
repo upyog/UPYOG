@@ -1,7 +1,7 @@
-import { Loader, Modal, FormComposer, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Toast } from "@upyog/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useQueryClient } from "react-query";
-import { UploadPitPhoto } from "@egovernments/digit-ui-react-components";
+import { UploadPitPhoto } from "@upyog/digit-ui-react-components";
 
 import { configAssignDso, configCompleteApplication, configReassignDSO, configAcceptDso, configRejectApplication, configScheduleDso, configUpdateTrips, configRejectFstpo } from "../config";
 
@@ -39,7 +39,7 @@ const popupActionBarStyles = {
   justifyContent: 'space-around'
 }
 
-const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, module }) => {
+const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, module, applicationDetails }) => {
   const mobileView = Digit.Utils.browser.isMobile() ? true : false;
   const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, { limit: '-1', status: 'ACTIVE' });
   const { isLoading, isSuccess, isError, data: applicationData, error } = Digit.Hooks.fsm.useSearch(
@@ -62,8 +62,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   );
   const client = useQueryClient();
   const stateCode = Digit.ULBService.getStateId();
-
-  const { data: ReceivedPaymentTypeData, isLoading: receivedPaymentLoad } = Digit.Hooks.fsm.useMDMS(stateCode, "FSM", "ReceivedPaymentType");
 
   const { data: vehicleList, isLoading: isVehicleData, isSuccess: isVehicleDataLoaded } = Digit.Hooks.fsm.useMDMS(
     stateCode,
@@ -131,7 +129,53 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [pitDetail, setPitDetail] = useState();
   const [fstpoRejectionReason, setFstpoRejectionReason] = useState();
   const [noOfTrips, setNoOfTrips] = useState(null);
-  const [receivedPaymentType, setReceivedPaymentType] = useState(null);
+
+  const [workers,setWorkers] = useState([]);
+  const [drivers,setDrivers] = useState([]);
+  const [selectedDriver,setSelectedDriver] = useState([]);
+  const [selectedWorkers,setSelectedWorkers] = useState([]);
+  const [vehicleDriverList, setVehicleDriverList] = useState([]);
+  const [vehicleDriver, setVehicleDriver] = useState(null);
+
+  const individualIds = applicationDetails?.dsoDetails?.workers?.map(worker => {
+    return worker?.individualId  
+  })?.filter(id => id)
+
+  console.log(applicationDetails,"applicationDetails")
+
+  const {
+    data: workerData,
+    isLoading: isLoadingWorkers,
+    isSuccess: isSuccessWorkers,
+    error: isErrorWorkers,
+    refetch: refetchWorkers,
+  } = Digit.Hooks.fsm.useWorkerSearch({
+    tenantId,
+    details: {
+      Individual: {
+        // roleCodes: ['SANITATION_WORKER'],
+        tenantId,
+        id:individualIds
+      },
+    },
+    params: {
+      // ...paginationParms,
+      // name: searchParams?.name,
+      limit: 100,
+      offset: 0,
+    },
+    config: {
+      enabled: individualIds?.length > 0 ? true : false,
+      select: (data) => {
+        const result = data?.Individual?.map(ind => {return {givenName:ind?.name?.givenName,optionsKey:`${ind?.name?.givenName} / ${ind?.individualId}`,...ind}})?.filter(worker => worker?.userDetails?.roles?.some(role=> role?.code === "SANITATION_WORKER"))
+        const workersOutOfResult = result?.filter(worker => worker?.userDetails?.roles?.some(role=> role?.code === "SANITATION_HELPER"))
+        setWorkers(workersOutOfResult)
+        const drivers = result?.filter(worker => worker?.userDetails?.roles?.some(role=> role?.code === "FSM_DRIVER"))
+        setDrivers(drivers)
+        return result
+      },
+    },
+  });
 
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
@@ -140,13 +184,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     subtype: applicationData?.propertyUsage,
     pitType: applicationData?.sanitationtype,
     pitDetail: applicationData?.pitDetail,
+    propertyID: applicationData?.additionalDetails?.propertyID,
+    roadWidth: applicationData?.additionalDetails?.roadWidth,
+    distancefromroad: applicationData?.additionalDetails?.distancefromroad
   });
-
-  useEffect(() => {
-    if (!receivedPaymentLoad) {
-      setReceivedPaymentType(ReceivedPaymentTypeData)
-    }
-  }, [receivedPaymentLoad, ReceivedPaymentTypeData]);
 
   useEffect(() => {
     if (isSuccess && isVehicleDataLoaded && applicationData) {
@@ -205,7 +246,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   useEffect(() => {
     if (isSuccess && isDsoSuccess && applicationData && applicationData.dsoId) {
       const [dso] = dsoData.filter((dso) => dso.id === applicationData.dsoId);
-      const vehicleNoList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
+      const tempList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
+      const vehicleNoList = tempList?.sort((a,b) => (a?.registrationNumber > b?.registrationNumber ? 1 : -1 ));
+      const tempDriverList = dso?.drivers
+      setVehicleDriverList(tempDriverList)
       setVehicleNoList(vehicleNoList);
     }
   }, [isSuccess, isDsoSuccess]);
@@ -258,6 +302,14 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     workflow.comments = data.comments ? state.code + "~" + data.comments : state.code;
   }
 
+  function selectVehicleNo(vehicleNo) {
+    setVehicleNo(vehicleNo);
+  }
+
+  function selectVehicleDriver(driver) {
+    setVehicleDriver(driver)
+  }
+
   const handleUpload = (ids) => {
     if (!fileStoreId || fileStoreId.length < 4) {
       setFileStoreId(ids);
@@ -272,6 +324,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (dso) applicationData.dsoId = dso.id;
     if (vehicleNo && action === "ACCEPT") applicationData.vehicleId = vehicleNo.id;
     if (vehicleNo && action === "DSO_ACCEPT") applicationData.vehicleId = vehicleNo.id;
+    if (vehicleDriver && action === "DSO_ACCEPT") applicationData.driverId = vehicleDriver.id;
     if (vehicle && action === "ASSIGN") applicationData.vehicleType = vehicle.code;
     if (data.date) applicationData.possibleServiceDate = new Date(`${data.date}`).getTime();
     if (data.desluged) applicationData.completedOn = new Date(data.desluged).getTime();
@@ -285,7 +338,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (data.subtype && typeof (data.subtype) === "object") applicationData.propertyUsage = data.subtype.code;
     if (data.subtype && typeof (data.subtype) === "string") applicationData.propertyUsage = data.subtype;
     if (data.noOfTrips) applicationData.noOfTrips = data.noOfTrips;
-    if (data.paymentMode) applicationData.additionalDetails.receivedPayment = data.paymentMode.code;
 
     if (fileStoreId) {
       if (applicationData.pitDetail.additionalDetails && applicationData.pitDetail.additionalDetails.fileStoreId) {
@@ -295,7 +347,29 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       }
     }
     if (data.noOfTrips) applicationData.noOfTrips = Number(data.noOfTrips);
-    if (action === "REASSING") applicationData.vehicleId = null;
+    if (action === "REASSING") {
+      applicationData.vehicleId = null
+      if(applicationData?.workers?.length > 0) {
+        applicationData.workers = applicationData?.workers?.map(worker => {
+          return {
+            ...worker,
+            status:"INACTIVE"
+          }
+        })
+      }
+    };
+    //if action is send back we'll inactivate the assigned workers
+
+    if (action === "SENDBACK") {
+      if(applicationData?.workers?.length > 0) {
+        applicationData.workers = applicationData?.workers?.map(worker => {
+          return {
+            ...worker,
+            status:"INACTIVE"
+          }
+        })
+      }
+    };
 
     if (reassignReason) addCommentToWorkflow(reassignReason, workflow, data);
     if (rejectionReason) addCommentToWorkflow(rejectionReason, workflow, data);
@@ -304,11 +378,49 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (fstpoRejectionReason && data.comments) workflow.comments = data.comments;
     if (fstpoRejectionReason) workflow.fstpoRejectionReason = fstpoRejectionReason?.code;
 
+    
+    if(action==="DSO_ACCEPT" || action==="ACCEPT"){
+      //if driver selected is there in selectedworkers do early return and show toast
+      if(selectedWorkers?.some?.(worker => worker?.id === selectedDriver?.id)){
+        setShowToast({ label:"FSM_DRIVER_SW_ERR",error:true });
+        setTimeout(closeToast, 5000);
+        return
+      }
+      const workersList = [selectedDriver]
+      // workerList?.filter(worker => worker?.userDetails?.roles?.some(role=> role?.code === "FSM_DRIVER"))
+      const workerPayload = workersList?.map((worker,idx)=> {
+        return {
+          tenantId:worker?.tenantId,
+          applicationId:applicationData?.id,
+          individualId:worker?.id,
+          // workerType:worker?.userDetails?.roles?.some(role=> role?.code === "FSM_DRIVER") ? "DRIVER":"HELPER",
+          workerType:idx===0 ? "DRIVER":"HELPER",
+          
+          status:"ACTIVE"
+        }
+      })
+      //resettting the states
+      setSelectedDriver([])
+      setSelectedWorkers([])
+      setDrivers([])
+      setWorkers([])
+      refetchWorkers()
+      submitAction({ fsm: {...applicationData,workers:workerPayload}, workflow });
+      return
+    }
+    
     submitAction({ fsm: applicationData, workflow });
   }
+
+  const onRemoveWorkers = (index, workerToRemove) => {
+    setSelectedWorkers(()=>selectedWorkers?.filter(worker=> worker.individualId!==workerToRemove.individualId))
+  };
+
   useEffect(() => {
     switch (action) {
       case "UPDATE":
+      case "SCHEDULE":
+      case "ES_FSM_SCHEDULE":
         setFormValve(true);
         return setConfig(
           configUpdateTrips({
@@ -318,6 +430,32 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           })
         );
       case "DSO_ACCEPT":
+         //TODO: add accept UI
+         setFormValve(vehicleNo  ? true : false);
+         return setConfig(
+           configAcceptDso({
+             t,
+             dsoData,
+             dso,
+             vehicle,
+             vehicleCapacity: applicationData?.vehicleCapacity,
+             noOfTrips: applicationData?.noOfTrips,
+             vehicleNo,
+             vehicleNoList,
+             selectVehicleNo,
+             vehicleDriverList,
+             vehicleDriver,
+             selectVehicleDriver,
+             action,
+             workers,
+             selectedDriver,
+             selectedWorkers,
+             setSelectedDriver,
+             setSelectedWorkers,
+             onRemoveWorkers,
+             drivers,
+           })
+         );
       case "ACCEPT":
         //TODO: add accept UI
         setFormValve(vehicleNo ? true : false);
@@ -381,7 +519,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       case "COMPLETE":
       case "COMPLETED":
         setFormValve(true);
-        return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, receivedPaymentType: ReceivedPaymentTypeData, action, module }));
+        return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, action, module }));
       case "SUBMIT":
       case "FSM_SUBMIT":
         return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
@@ -424,22 +562,22 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             action,
           })
         );
-      case "SCHEDULE":
-      case "ES_FSM_SCHEDULE":
-        setFormValve(true);
-        return setConfig(
-          configScheduleDso({
-            t,
-            rejectMenu: Reason?.DeclineReason,
-            setReason: setDeclineReason,
-            reason: declineReason,
-            applicationCreatedTime: applicationData?.auditDetails?.createdTime,
-            vehicle,
-            vehicleCapacity: applicationData?.vehicleCapacity,
-            action,
-            noOfTrips: applicationData?.noOfTrips
-          })
-        );
+      // case "SCHEDULE":
+      // case "ES_FSM_SCHEDULE":
+        // setFormValve(true);
+        // return setConfig(
+          // configScheduleDso({
+            // t,
+            // rejectMenu: Reason?.DeclineReason,
+            // setReason: setDeclineReason,
+            // reason: declineReason,
+            // applicationCreatedTime: applicationData?.auditDetails?.createdTime,
+            // vehicle,
+            // vehicleCapacity: applicationData?.vehicleCapacity,
+            // action,
+            // noOfTrips: applicationData?.noOfTrips
+          // })
+        // );
 
       case "PAY":
       case "ADDITIONAL_PAY_REQUEST":

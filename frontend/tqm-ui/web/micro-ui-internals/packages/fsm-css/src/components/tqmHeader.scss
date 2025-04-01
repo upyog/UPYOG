@@ -1,0 +1,15 @@
+.tqm-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  margin:1rem 0.5rem -0.5rem 0.3rem;
+  .header-icon-container{
+    color:#f47738;
+    display: flex !important;
+    align-items: center;
+    svg {
+      margin:0 0 0.5rem 0.2rem;
+    }
+  }
+
+}

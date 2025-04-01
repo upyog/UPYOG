@@ -5,7 +5,7 @@ import * as locale from "./locale";
 import * as obps from "./obps";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
-import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
+import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl } from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 
 const GetParamFromUrl = (key, fallback, search) => {
@@ -118,6 +118,28 @@ const didEmployeeHasRole = (role) => {
   return rolearray?.length;
 };
 
+const didEmployeeHasAtleastOneRole = (roles = []) => {
+  return roles.some((role) => didEmployeeHasRole(role));
+};
+const isUlbAdminLoggedIn = () => {
+  return Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.ulb);
+};
+
+const isPlantOperatorLoggedIn = () => {
+  return Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.plant);
+};
+const ROLES = {
+  plant: ["PQM_TP_OPERATOR"],
+  ulb: ["PQM_ADMIN"],
+};
+const tqmAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const tqmRoles = ["PQM_TP_OPERATOR", "PQM_ADMIN"];
+  const TQM_ACCESS = userRoles?.filter((role) => tqmRoles?.includes(role));
+  return TQM_ACCESS?.length > 0;
+};
+
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -203,12 +225,63 @@ const BPAAccess = () => {
 
 const ptAccess = () => {
   const userInfo = Digit.UserService.getUser();
+  console.log("userInfo", userInfo);
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const ptRoles = ["PT_APPROVER", "PT_CEMP", "PT_DOC_VERIFIER", "PT_FIELD_INSPECTOR"];
-
   const PT_ACCESS = userRoles?.filter((role) => ptRoles?.includes(role));
-
   return PT_ACCESS?.length > 0;
+};
+
+const ewAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const ewRoles = ["EW_VENDOR"];
+  const EW_ACCESS = userRoles?.filter((role) => ewRoles?.includes(role));
+  return EW_ACCESS?.length > 0;
+};
+
+const svAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const svRoles = ["SVCEMP", "TVCEMPLOYEE", "INSPECTIONOFFICER"];
+  const SV_ACCESS = userRoles?.filter((role) => svRoles?.includes(role));
+  return SV_ACCESS?.length > 0;
+};
+
+const chbAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const chbRoles = ["CHB_APPROVER", "CHB_VERIFIER"];
+  const CHB_ACCESS = userRoles?.filter((role) => chbRoles?.includes(role));
+  return CHB_ACCESS?.length > 0;
+};
+// Checks if the user has access to ADS services based on their roles, this is adding role for employee side
+
+const adsAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const adsRoles = ["ADS_CEMP"];
+  const ADS_ACCESS = userRoles?.filter((role) => adsRoles?.includes(role));
+  return ADS_ACCESS?.length > 0;
+};
+
+const ptrAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const ptrRoles = ["PTR_APPROVER", "PTR_CEMP", "PTR_VERIFIER"];
+
+  const PTR_ACCESS = userRoles?.filter((role) => ptrRoles?.includes(role));
+
+  return PTR_ACCESS?.length > 0;
+};
+
+const assetAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const assetRoles = ["ASSET_INITIATOR","ASSET_VERIFIER", "ASSET_APPROVER"];
+  const ASSET_ACCESS = userRoles?.filter((role) => assetRoles?.includes(role));
+  return ASSET_ACCESS?.length > 0;
 };
 
 const tlAccess = () => {
@@ -246,6 +319,14 @@ const hrmsAccess = () => {
   return HRMS_ACCESS?.length > 0;
 };
 
+const dashboardAccess = () =>{
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const dashboardRoles = ["DASHBOARD_EMPLOYEE"];
+  const DASHBOARD_ACCESS = userRoles?.filter((role) => dashboardRoles?.includes(role));
+  return DASHBOARD_ACCESS?.length > 0;
+};
+
 const wsAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -265,7 +346,6 @@ const swAccess = () => {
 
   return SW_ACCESS?.length > 0;
 };
-
 
 export default {
   pdf: PDFUtil,
@@ -290,6 +370,7 @@ export default {
   obps,
   pt,
   ptAccess,
+  ptrAccess,
   NOCAccess,
   mCollectAccess,
   receiptsAccess,
@@ -301,6 +382,14 @@ export default {
   tlAccess,
   wsAccess,
   swAccess,
-
-  ...privacy
+  tqmAccess,
+  didEmployeeHasAtleastOneRole,
+  isPlantOperatorLoggedIn,
+  assetAccess,
+  chbAccess,
+  adsAccess,
+  ewAccess,
+  svAccess,
+  dashboardAccess,
+  ...privacy,
 };

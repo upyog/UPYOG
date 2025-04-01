@@ -31,6 +31,7 @@ const Urls = {
 
   UserSearch: "/user/_search",
   UserLogout: "/user/_logout",
+  UserCreate:"/user/users/_createnovalidate",
 
   Shortener: "/egov-url-shortening/shortener",
   employeeDashboardSearch: "/employee-dashboard/_search",
@@ -54,6 +55,7 @@ const Urls = {
     updateDriver: "/vendor/driver/v1/_update",
     vehicleTripCreate: "/vehicle/trip/v1/_create",
     advanceBalanceCalculate: "/fsm-calculator/v1/_advancebalancecalculate",
+    workerSearch: "/individual/v1/_search",
   },
 
   payment: {
@@ -100,8 +102,6 @@ const Urls = {
     payment_search: "/collection-services/payments/pet-services/_search",
     
   },
-
-
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",
     getCharts: "/dashboard-analytics/dashboard/getChartV2",
@@ -243,12 +243,17 @@ const Urls = {
   },
 
 digiLocker:{
-  authorization:"/requester-services-dx/user/authorization/url",
-  register :"/requester-services-dx/user/authorization/url/citizen",
-  token:"/requester-services-dx/user/token/citizen",
-  issueDoc:"/requester-services-dx/user/issuedfiles",
-  uri:"/requester-services-dx/user/file"
+  authorization:"/requester-services-dx/digilocker/authorization/url",
+  register :"/requester-services-dx/digilocker/authorization/url/citizen",
+  token:"/requester-services-dx/digilocker/token/citizen",
+  issueDoc:"/requester-services-dx/digilocker/issuedfiles",
+  uri:"/requester-services-dx/digilocker/file",
+  oauth:"/user/digilocker/oauth/token"
 },
+eSign:{
+  pdfUrl:"/requester-services-dx/eSign/process",
+  fileStoreSearch:"/requester-services-dx/eSign/filestoreId/v1/_search"
+  },
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",

@@ -481,7 +481,7 @@ const OwnerForm1 = (_props) => {
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.gstNo ? errors?.gstNo?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touched.gstNo ? errors?.gstNo?.message ? t("GST_PATTERN_ERROR") : "": ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_OPERATIONAL_SQ_FT_AREA_LABEL")} `}</CardLabel>
             <div className="field">

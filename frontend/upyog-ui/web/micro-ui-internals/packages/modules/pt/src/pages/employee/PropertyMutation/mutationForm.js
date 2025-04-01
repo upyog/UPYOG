@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Toast } from "@upyog/digit-ui-react-components";
 import { newConfigMutate } from "../../../config/Mutate/config";
 import { useHistory } from "react-router-dom";
 
@@ -31,8 +31,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
         documentDate,
         documentNumber,
         documentValue,
-        isMutationInCourt,
-        isPropertyUnderGovtPossession,
         marketValue,
         reasonForTransfer,
       } = additionalDetails;
@@ -41,8 +39,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
           !documentDate ||
           !documentNumber ||
           !documentValue ||
-          !isMutationInCourt ||
-          !isPropertyUnderGovtPossession ||
           !marketValue ||
           !reasonForTransfer
         )
@@ -71,11 +67,12 @@ const MutationForm = ({ applicationData, tenantId }) => {
             altContactNumber: data.owners[0].altContactNumber,
             status: "INACTIVE",
           })),
-          ...data.owners.map((owner) => {
+          ...data.owners.map((owner,index) => {
             let obj = {};
             let gender = owner.gender.code;
             let ownerType = owner.ownerType.code;
             let relationship = owner.relationship.code;
+            let additionalDetails= {ownerSequence:index, ownerName:owner?.name}
             obj.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
             if (owner.documents) {
               let { documentUid, documentType } = owner.documents;
@@ -90,6 +87,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
               landlineNumber: owner?.altContactNumber,
               ...obj,
               status: "ACTIVE",
+              additionalDetails
             };
           }),
         ],
@@ -97,9 +95,40 @@ const MutationForm = ({ applicationData, tenantId }) => {
           ...additionalDetails,
           isMutationInCourt: additionalDetails.isMutationInCourt?.code,
           reasonForTransfer: additionalDetails?.reasonForTransfer.code,
-          isPropertyUnderGovtPossession: additionalDetails.isPropertyUnderGovtPossession.code,
+          isPropertyUnderGovtPossession: additionalDetails?.isPropertyUnderGovtPossession?.code,
           documentDate: new Date(additionalDetails?.documentDate).getTime(),
           marketValue: Number(additionalDetails?.marketValue),
+          owners: [
+            ...data.originalData?.owners?.map((e) => ({
+              ...e,
+              landlineNumber: data.owners[0].altContactNumber,
+              altContactNumber: data.owners[0].altContactNumber,
+              status: "INACTIVE",
+            })),
+            ...data.owners.map((owner,index) => {
+              let obj = {};
+              let gender = owner.gender.code;
+              let ownerType = owner.ownerType.code;
+              let relationship = owner.relationship.code;
+              let additionalDetails= {ownerSequence:index, ownerName:owner?.name}
+              obj.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
+              if (owner.documents) {
+                let { documentUid, documentType } = owner.documents;
+                obj.documents = [...obj.documents, { documentUid, documentType: documentType.code, fileStoreId: documentUid }];
+              }
+              return {
+                ...owner,
+                gender,
+                ownerType,
+                relationship,
+                inistitutetype: owner?.institution?.type?.code,
+                landlineNumber: owner?.altContactNumber,
+                ...obj,
+                status: "ACTIVE",
+                additionalDetails
+              };
+            }),
+          ],
         },
         ownershipCategory: data.ownershipCategory.code,
         documents: [
@@ -121,12 +150,14 @@ const MutationForm = ({ applicationData, tenantId }) => {
         type: data.owners[0].institution.type.code,
       };
     }
-
+    else {
+      submitData.Property.institution=null;
+    }
     history.replace("/upyog-ui/employee/pt/response", { Property: submitData.Property, key: "UPDATE", action: "SUBMIT" });
   };
 
   const configs = newConfigMutate;
-
+console.log("config", configs);
   return (
     <FormComposer
       heading={t("ES_TITLE_MUTATE_PROPERTY")}

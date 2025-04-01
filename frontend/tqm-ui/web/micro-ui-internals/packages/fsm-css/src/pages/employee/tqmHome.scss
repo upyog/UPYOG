@@ -1,0 +1,231 @@
+.tqm-home-container {
+  margin:0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap:1rem;
+  
+  .tqm-home-card {
+    margin:0px;
+  }
+
+  .alerts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    color:#0B0C0C;
+    .alerts-container-header {
+      padding: 16px;
+      @apply bg-white shadow-card p-md mb-xl;
+      box-shadow: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.16) ;
+      border-radius: 4px;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      .alerts-container-count {
+        color:#505A5F;
+      }
+    }
+
+    .alerts-container-subheader {
+      font-size:16px;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+
+    .alerts-container-item {
+      display: flex !important;
+      justify-content: space-between;
+      color:#505A5F;
+      font-weight: 700;
+      padding: 0 16px 0px 16px;
+      margin-bottom: 0.81rem;
+      .alerts-container-item-label {
+        
+      }
+
+      .alerts-container-item-count {
+        padding-left: 30px;
+        padding-left: 30px;
+        color:#D4351C ;
+      }
+    }
+  }
+
+  .performance-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+  }
+
+  .performance-container {
+    color:#505A5F;
+    display: grid ;
+    grid-template-columns: 1fr 0fr 1fr;
+
+    gap:0.5rem;
+    padding: 1rem;
+    height: 70%;
+    .performance-item {
+      display: flex !important;
+      flex-direction: column;
+      gap:0.2rem;
+      align-items: center;
+      text-align: center;
+
+      .performance-item-percentage {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .performance-item-label{
+        font-size: 1rem;
+        font-weight: 400;
+        padding-left: 10px;
+      }
+      .performance-item-label-caption{
+        text-align: center;
+        display: flex !important;
+        align-items: center;
+        svg {
+          width: 1rem;
+          height: 1rem;
+        }
+        &__pass {
+          color:#00703C;
+        }
+        &__fail {
+          color:#D4351C;
+        }
+      }
+      .performance-item-sla {
+        padding: 8px 16px;
+        border-radius: 16px;
+        font-weight: 700;
+        &__pass{
+          color:#00703C;
+          background-color: #BAD6C9;
+        }
+        &__fail{
+          color:red;
+          background-color: red;
+        }
+      }
+    }
+
+    .vertical-line {
+      display: block;
+      margin: auto;
+      min-height: 100%;
+      min-width: 1px;
+      width: 1px; /* Adjust the width of your vertical line */
+      background-color: #D6D5D4; /* Adjust the color of your vertical line */
+      /* You can also add other styles like margin, padding, or positioning as needed */
+    }
+  }
+}
+.dashboard-container{
+  @media (min-width: 780px) {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    .performance-container {
+      justify-content: space-around;
+      align-items: center;
+      .performance-item {
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 2rem;
+      }
+    }
+    .alerts-container1{
+      .alerts-container-item-count-2{
+        color: #D4351C;
+        padding-left:30px ;
+      }
+      .alerts-container-item-count-0{
+        color: #D4351C;
+       
+      }
+      .alerts-container-item-count-1{
+        color: #D4351C;
+       
+      }
+      .kk{
+        margin-top:1rem;
+      }
+    }
+  }
+}
+.alert{
+  @media (min-width: 780px) {
+    display: none;
+    padding-left: 0.6rem;
+  }
+}
+.alert-word{
+    padding-left: 3rem;
+    margin-bottom: 3rem;
+}
+@media (min-width: 750px) {
+  .alert-word {
+    padding-left: 0;
+    padding-top: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+}
+.alerts-container-count1{
+  padding-top: 35px;
+  padding-left: 90px;
+}
+.alerts-container1 {
+  display: flex;
+  margin-left: 0;
+  padding-top: 0px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.8rem;
+  color:#0B0C0C;
+  height: 70%;
+  margin-top: 1.5rem;
+  .alerts-container-header {
+    padding: 16px;
+    @apply bg-white shadow-card p-md mb-xl;
+    border-radius: 4px;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    .alerts-container-count {
+      color:#505A5F;
+    }
+  }
+
+  .alerts-container-subheader {
+    font-size:16px;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .alerts-container-item {
+    display: flex !important;
+    padding-top: 1.7rem;
+    justify-content: space-between;
+    color:#505A5F;
+    font-weight: 700;
+    padding: 0 16px 0px 16px;
+    margin-bottom: 0.81rem;
+    height: 100%;
+    .alerts-container-item-label {
+
+    }
+
+    .alerts-container-item-count {
+      padding-left: 30px;
+    }
+  }
+}
+.employeeCard.alerts-container1{
+  .alerts-container-header.alerts-container-item{
+    justify-content: center;
+  }
+}

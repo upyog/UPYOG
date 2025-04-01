@@ -58,6 +58,7 @@ import {ADSModule,ADSLinks,ADSComponents} from "@upyog/upyog-ui-module-ads";
 initLibraries();
 
 const enabledModules = [
+  "Tqm",
   "PGR",
   "FSM",
   "Payment",

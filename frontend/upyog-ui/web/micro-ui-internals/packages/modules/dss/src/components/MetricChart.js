@@ -1,4 +1,5 @@
-import { DownwardArrow, Rating, UpwardArrow } from "@egovernments/digit-ui-react-components";
+import { DownwardArrow, UpwardArrow } from "@upyog/digit-ui-react-components";
+import Rating from "../../../../react-components/src/atoms/Rating"
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FilterContext from "./FilterContext";
@@ -16,13 +17,17 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
-            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
+             code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
+
+        data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION") ||  data?.headerName.includes("DSS_STATE_GDP_PT_REVENUE_COLLECTION") ?(`${Number(data?.headerValue*100).toFixed(4)}`):
+        data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)}`):
+
         
         (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
-            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
+            code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
           }`
         )}
       </p>
@@ -75,7 +80,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
           },
         }));
       index === 0 && setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
-      if (response?.responseData?.visualizationCode === "todaysLastYearCollectionv3") {
+      if (response?.responseData?.visualizationCode.includes("todaysLastYearCollectionv3")) {
 
         const today = new Date();
         const previousYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
@@ -107,7 +112,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
             className="tooltiptext"
             style={{
               fontSize: "medium",
-              width: t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400,
+              width : t(`TIP_${data.name}`).length < 50 ? 200 : 400,
               height: 50,
               whiteSpace: "normal",
             }}
@@ -123,7 +128,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
 
   const getWidth = (data) => {
     if (isMobile) return "auto";
-    else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
+    else return t(`TIP_${data.name}`).length < 50 ? 200 : 400;
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 300;
     // else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
   };
@@ -171,6 +176,7 @@ const MetricChart = ({ data, setChartDenomination, moduleCode }) => {
     "nssPtCitizenFeedbackScore",
     "sdssPtCitizenFeedbackScore",
     "sdssOverviewCitizenFeedbackScore",
+    "AvgCitizenRating"
   ];
   return (
     <>

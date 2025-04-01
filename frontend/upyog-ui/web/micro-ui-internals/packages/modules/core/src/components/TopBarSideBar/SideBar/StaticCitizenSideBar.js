@@ -18,8 +18,9 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-  LoginIcon
-} from "@egovernments/digit-ui-react-components";
+  LoginIcon,
+  CHBIcon
+} from "@upyog/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import { useTranslation } from "react-i18next";
@@ -55,7 +56,7 @@ Feature :: Citizen Webview sidebar
 const Profile = ({ info, stateName, t }) => (
   <div className="profile-section">
     <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={defaultImage} />
+      <img className="img-responsive img-circle img-Profile" src={info?.photo ? info?. photo : defaultImage} />
     </div>
     <div id="profile-name" className="label-container name-Profile">
       <div className="label-text"> {info?.name} </div>
@@ -83,6 +84,7 @@ const IconsObject = {
   FSMIcon: <FSMIcon className="icon" />,
   WSIcon: <WSICon className="icon" />,
   MCollectIcon: <MCollectIcon className="icon" />,
+  CHBIcon:<CHBIcon className="icon" />,
   BillsIcon: <CollectionIcon className="icon" />,
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
@@ -135,7 +137,6 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
-  console.log("menuItems",menuItems)
 
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
@@ -163,7 +164,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link}>
+        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")}>
           <Item />
         </Link>
       );
@@ -221,19 +222,6 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
         });
       }
     });
-     menuItems= menuItems.map((item,index) =>{
-      console.log("item",item)
-      if(item.hasOwnProperty("link"))
-      {
-        console.log("itemee",item,index)
-        item.link = item.link.replace("digit-ui", "upyog-ui");
-      }
-      
-      
-      return item
-      
-    })
-
 
   return (
     <React.Fragment>

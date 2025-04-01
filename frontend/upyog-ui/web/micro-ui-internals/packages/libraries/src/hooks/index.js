@@ -13,6 +13,8 @@ import {
   useGetPaymentRulesForBusinessServices,
   useDemandSearch,
   useRecieptSearch,
+  useRecieptSearchNew,
+  useAssetQrCode,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -20,7 +22,9 @@ import { useUserSearch } from "./userSearch";
 import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBillSearch";
 import useBoundaryLocalities from "./useLocalities";
 import useCommonMDMS from "./useMDMS";
+import useCommonMDMSV2 from "./useMDMSV2";
 import useCustomMDMS from "./useCustomMDMS";
+import useCustomMDMSV2 from "./useCustomMDMSV2";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
@@ -47,6 +51,7 @@ import usePGRTenants from "./pgr/useTenants";
 import usePGRMDMS from "./pgr/useMDMS";
 import useComplaintSubType from "./pgr/useComplaintSubType";
 import useComplaintStatusCount from "./pgr/useComplaintStatusWithCount";
+import useWorkerSearch from "./fsm/useWorkerSearch";
 
 import useTenantsFSM from "./fsm/useTenants";
 import useDesludging from "./fsm/useDesludging";
@@ -98,6 +103,7 @@ import usePtApplicationDetail from "./pt/useApplicationDetail";
 import usePtApplicationActions from "./pt/useApplicationActions";
 import usePtMDMS from "./pt/useMDMS";
 import usePropertyAssessment from "./pt/usePropertyAssessment";
+import UseAssessmentCreateUlb from "./pt/UseAssessmentCreateUlb";
 import usePtCalculationEstimate from "./pt/usePtCalculationEstimate";
 import useGenderMDMS from "./pt/useGenderMDMS";
 import usePTGenderMDMS from "./pt/usePTGenderMDMS";
@@ -193,6 +199,12 @@ import useSurveySearch from "./surveys/useSearch";
 import useSurveyShowResults from "./surveys/useShowResults";
 import useSurveySubmitResponse from "./surveys/useSubmitResponse";
 import useSurveyInbox from "./surveys/useSurveyInbox";
+import useServeyCreateDef from "./surveys/useCreateSurvey";
+import useCfdefinitionsearch from "./surveys/useCfdefinitionsearch";
+import useSubmitSurveyResponse from "./surveys/useSubmitSurveyResponse";
+import useSelectedSurveySearch from "./surveys/useSelectedSurveySearch";
+import useCfdefinitionsearchresult from "./surveys/useCfdefinitionsearchresult";
+import useUpdateSurvey from "./surveys/useSurveyUpdate";
 
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
@@ -211,6 +223,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
+import useBulkSearchWS from "./ws/useBulkSearchWS"
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -236,6 +249,7 @@ import useWaterPropertySearch from "./ws/useWaterPropertySearch";
 import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
+import useBulkMeterReadingCreateAPI from "./ws/useBulkMeterCreate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -247,6 +261,74 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
+
+import usePetMDMS from "./ptr/usePetMDMS";
+import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
+import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
+import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
+import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
+import usePTRSearch from "./ptr/usePTRSearch";
+import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
+import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
+import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
+import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
+import useMyPetPayments from "./ptr/useMyPetPayments";
+import useTenantsPTR from "./ptr/useTenants";
+//adding asset hooks here
+import useAssetClassification from "./asset/useAssetClassification";
+import useAssetType from "./asset/useAssetType";
+import useAssetDocumentsMDMS from "./asset/useAssetDocumentsMDMS";
+import useAssetSubType from "./asset/useAssetSubType";
+import useAssetdetail from "./asset/useAssetdetail";
+import useAssetCreateAPI from "./asset/useAssetCreateAPI";
+import useAssetApplicationDetail from "./asset/useAssetApplicationDetail";
+import useASSETSearch from "./asset/useASSETSearch";
+import useTenantsASSET from "./asset/useTenants"
+import useASSETApplicationAction from "./asset/useASSETApplicationAction";
+import useAssetparentSubType from "./asset/useAssetparentSubType";
+import useAssignCreateAPI from "./asset/useAssignCreateAPI";
+import useReturnAPI from "./asset/useReturnAPI";
+import useEditUpdateAPI from "./asset/useEditUpdateAPI";
+
+import createTokenAPI from "./digiLockerApi/createTokenAPI";
+
+import useSVDoc from "./sv/useSVDoc";
+import useSvCreateApi from "./sv/useSvCreateApi";
+import useTenantsSV from "./sv/useTenants";
+import useADSSlotSearch from "./ads/useADSSlotSearch";
+import useADSSearch from "./ads/useADSSearch";
+import useSVApplicationDetail from "./sv/useSVApplicationDetail";
+import useSvSearchApplication from "./sv/useSvSearchApplication";
+import useSVApplicationAction from "./sv/useSVApplicationAction";
+import useADSApplicationDetail from "./ads/useADSApplicationDetail";
+import useProductPriceMDMS from "./ew/useProductPriceMDMS";
+import useSpecialCategory from "./chb/useSpecialCategory";
+import useResidentType from "./chb/useResidentType";
+import usePurpose from "./chb/usePurpose";
+import useChbCreateAPI from "./chb/useChbCreateAPI";
+import useADSCreateAPI from "./ads/useADSCreateAPI";
+import useChbDocumentsMDMS from "./chb/useChbDocumentsMDMS";
+import useEWCreateAPI from "./ew/useEWCreateAPI";
+import useTenantsEW from "./ew/useTenants";
+import useEWSearch from "./ew/useEWSearch";
+import useEwApplicationDetail from "./ew/useEwApplicationDetail";
+import useEWApplicationAction from "./ew/useEWApplicationAction";
+
+import useChbDocumentSearch from "./chb/useChbDocumentSearch";
+import useChbApplicationDetail from "./chb/useChbApplicationDetail";
+import useChbSearch from "./chb/useChbSearch";
+import useTenantsCHB from "./chb/useTenants";
+import useChbApplicationAction from "./chb/useChbApplicationAction";
+import useServiceSearchCHB from "./chb/useServiceSearchCHB";
+import useChbCommunityHalls from "./chb/useChbCommunityHalls";
+import useChbHallCode from "./chb/useChbHallCode"
+import useChbSlotSearch from "./chb/useChbSlotSearch";
+import useDemandEstimation from "./chb/useDemandEstimation"
+import useTenantsADS from "./ads/useTenants"
+import useADSDocumentsMDMS from "./ads/useADSDocumentsMDMS";
+import useADSDocumentSearch from "./ads/useADSDocumentSearch";
+import useADSDemandEstimation from "./ads/useADSDemandEstimation"
+import useCMSearch from "./cm/useCMSearch";
 
 const pgr = {
   useComplaintDetails,
@@ -266,6 +348,7 @@ const pgr = {
   useTradeLicenseBillingslab,
   useMDMS: usePGRMDMS,
 };
+
 
 const fsm = {
   useTenants: useTenantsFSM,
@@ -306,6 +389,23 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
+  useWorkerSearch
+};
+const ptr = {
+  usePetMDMS,
+  usePTRPetMDMS,
+  useBreedTypeMDMS,
+  usePTRCreateAPI,
+  usePTRApplicationAction,
+  usePTRGenderMDMS,
+  usePTRSearch,
+  usePtrApplicationDetail,
+  // useTenantsPTR,
+  useServiceSearchPTR,
+  usePetDocumentSearch,
+  useMyPetPayments,
+  useTenants: useTenantsPTR
+ 
 };
 
 const pt = {
@@ -322,6 +422,7 @@ const pt = {
   useApplicationActions: usePtApplicationActions,
   useMDMS: usePtMDMS,
   usePropertyAssessment,
+  UseAssessmentCreateUlb,
   usePtCalculationEstimate,
   useGenderMDMS,
   usePTGenderMDMS,
@@ -330,7 +431,6 @@ const pt = {
   useRatingAndFeedbackMDMS,
   useServiceSearchCF,
 };
-
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,
@@ -437,6 +537,12 @@ const survey = {
   useSubmitResponse: useSurveySubmitResponse,
   useShowResults: useSurveyShowResults,
   useSurveyInbox,
+  useServeyCreateDef:useServeyCreateDef,
+  useCfdefinitionsearch:useCfdefinitionsearch,
+  useSubmitSurveyResponse:useSubmitSurveyResponse,
+  useSelectedSurveySearch:useSelectedSurveySearch,
+  useCfdefinitionsearchresult:useCfdefinitionsearchresult,
+  useUpdateSurvey:useUpdateSurvey,
 };
 
 const noc = {
@@ -459,6 +565,7 @@ const ws = {
   WSuseSearch,
   useSewSearch,
   useSearchWS,
+  useBulkSearchWS,
   useWSDetailsPage,
   useWSApplicationActions,
   useApplicationActionsBillAmendUpdate,
@@ -481,17 +588,87 @@ const ws = {
   useDisConnectionDetails,
   useWSModifyDetailsPage,
   useToCheckPrivacyEnablement,
+  useBulkMeterReadingCreateAPI,
   useWSConfigMDMS: useWSConfigMDMS,
 };
 
 const reports = {
   useReportMeta,
 };
+const asset = {
+  useAssetClassification,
+  useAssetType,
+  useAssetDocumentsMDMS,
+  useAssetSubType,
+  useAssetdetail,
+  useAssetCreateAPI,
+  useAssetApplicationDetail,
+  useASSETApplicationAction,
+  useASSETSearch,
+  useAssetparentSubType,
+  useTenants: useTenantsASSET,
+  useAssignCreateAPI,
+  useReturnAPI,
+  useEditUpdateAPI
+};
+
+const sv = {
+  useSVDoc,
+  useSvCreateApi,
+  useTenants:useTenantsSV,
+  useSvSearchApplication,
+  useSVApplicationDetail,
+  useSVApplicationAction,
+  useSvSearchApplication
+}
+
+const ew = {
+  useProductPriceMDMS,
+  useEWCreateAPI,
+  useTenants: useTenantsEW,
+  useEWSearch,
+  useEwApplicationDetail,
+  useEWApplicationAction,
+};
+
+const chb={
+  useSpecialCategory,
+  useResidentType,
+  usePurpose,
+  useChbCreateAPI,
+  useChbDocumentsMDMS,
+  useChbDocumentSearch,
+  useChbApplicationDetail,
+  useChbSearch,
+  useTenants:useTenantsCHB,
+  useChbApplicationAction,
+  useServiceSearchCHB,
+  useChbCommunityHalls,
+  useChbHallCode,
+  useChbSlotSearch,
+  useDemandEstimation
+}
+// for using tenant for city and document and search 
+const ads={
+  useTenants:useTenantsADS,
+  useADSDocumentsMDMS,
+  useADSDocumentSearch,
+  useADSCreateAPI,
+  useADSSlotSearch,
+  useADSSearch,
+  useADSDemandEstimation,
+  useADSApplicationDetail  
+}
+
+const cm = {
+  useCMSearch
+}
 
 const Hooks = {
   useSessionStorage,
   useQueryParams,
   useFetchPayment,
+  useAssetQrCode,
   usePaymentUpdate,
   useFetchCitizenBillsForBuissnessService,
   useFetchBillsForBuissnessService,
@@ -506,9 +683,11 @@ const Hooks = {
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
+  useCommonMDMSV2,
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useNewInboxGeneral,
   useEvents,
@@ -527,6 +706,7 @@ const Hooks = {
   pgr,
   fsm,
   pt,
+  ptr,
   dss,
   mcollect,
   hrms,
@@ -539,6 +719,7 @@ const Hooks = {
   noc,
   ws,
   useCustomMDMS,
+  useCustomMDMSV2,
   useCustomAPIHook,
   reports,
   useGetHowItWorksJSON,
@@ -550,6 +731,13 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  createTokenAPI,
+  asset,
+  sv,
+  chb,
+  ads,
+  ew,
+  cm
 };
 
 export default Hooks;
