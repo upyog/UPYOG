@@ -178,6 +178,7 @@ const decryptPassword = (encryptedText) => {
     } catch (err) {
       setShowToast(err?.response?.data?.error_description || "Invalid login credentials!");
       setTimeout(closeToast, 5000);
+      onCaptchaRefresh();
     }
     setDisable(false);
   };
