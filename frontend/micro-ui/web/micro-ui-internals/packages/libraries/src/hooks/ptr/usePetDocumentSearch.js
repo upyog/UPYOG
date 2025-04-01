@@ -1,3 +1,17 @@
+/*
+  Custom hook to fetch pet-related document data using react-query.
+
+  Parameters:
+  - petdetail: Object containing pet details such as tenant ID, property ID, and document information.
+  - config: Optional configuration for react-query.
+
+  Returns:
+  - isLoading: Boolean indicating if the query is still loading.
+  - error: Error object if the query fails.
+  - data: Object containing fetched PDF file data.
+  - revalidate: Function to re-fetch the document data.
+*/
+
 import { useQuery, useQueryClient } from "react-query";
 
 const usePetDocumentSearch = ({ petdetail }, config = {}) => {
