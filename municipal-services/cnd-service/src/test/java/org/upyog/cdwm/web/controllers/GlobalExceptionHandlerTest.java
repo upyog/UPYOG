@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * thrown by CNDController.
  */
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
+//@SpringBootTest
 public class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;
