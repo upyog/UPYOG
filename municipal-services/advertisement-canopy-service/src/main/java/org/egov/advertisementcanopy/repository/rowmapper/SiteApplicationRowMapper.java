@@ -1,5 +1,6 @@
 package org.egov.advertisementcanopy.repository.rowmapper;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,8 +51,8 @@ public class SiteApplicationRowMapper implements ResultSetExtractor<List<SiteCre
 						    .siteCost(rs.getString("site_cost"))
 						    .sitePhotograph(rs.getString("site_photograph"))
 						    .structure(rs.getString("structure"))
-						    .sizeLength(rs.getLong("size_length"))
-						    .sizeWidth(rs.getLong("size_width"))
+						    .sizeLength(new BigDecimal(rs.getString("size_length")))
+						    .sizeWidth(new BigDecimal(rs.getString("size_width")))
 						    .ledSelection(rs.getString("led_selection"))
 						    .securityAmount(rs.getLong("security_amount"))
 						    .powered(rs.getString("powered"))

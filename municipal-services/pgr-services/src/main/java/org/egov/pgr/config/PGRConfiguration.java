@@ -90,6 +90,9 @@ public class PGRConfiguration {
 
     @Value("${egov.workflow.processinstance.search.path}")
     private String wfProcessInstanceSearchPath;
+    
+    @Value("${egov.workflow.processinstance.search.pgr.path}")
+    private String wfProcessInstanceSearchPgrPath;
 
     @Value("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;

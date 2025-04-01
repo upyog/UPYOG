@@ -1,5 +1,7 @@
 package org.egov.advertisementcanopy.model;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,8 +31,8 @@ public class SiteCreationData {
 	private String sitePhotograph;
 	@JsonProperty("structueType")
 	private String structure;
-	private Long sizeLength;
-	private Long sizeWidth;
+	private BigDecimal sizeLength;
+	private BigDecimal sizeWidth;
 	private String ledSelection;
 	private Long securityAmount;
 	@JsonProperty("powerSelection")

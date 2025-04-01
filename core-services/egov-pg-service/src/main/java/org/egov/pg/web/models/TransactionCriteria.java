@@ -28,11 +28,19 @@ public class TransactionCriteria {
     private Long createdTime;
 
     private Transaction.TxnStatusEnum txnStatus;
+    
+    @JsonIgnore
+    private Long startDateTime;
+    
+    @JsonIgnore
+    private Long endDateTime;
 
     @JsonIgnore
-    private int limit;
+    @Builder.Default
+    private int limit = 500;
 
     @JsonIgnore
-    private int offset;
+    @Builder.Default
+    private int offset = 0;
 
 }

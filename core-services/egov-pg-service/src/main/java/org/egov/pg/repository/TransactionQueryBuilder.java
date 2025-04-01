@@ -25,10 +25,32 @@ class TransactionQueryBuilder {
 
     static String getPaymentSearchQueryByCreatedTimeRange(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
         String query = buildQuery(transactionCriteria, preparedStmtList);
+		if (!Objects.isNull(transactionCriteria.getStartDateTime())
+				&& !Objects.isNull(transactionCriteria.getEndDateTime())) {
+			query = checkLastUpdatedTime(transactionCriteria, query, preparedStmtList);
+		}
         query = addOrderByClause(query);
         query = addPagination(query, transactionCriteria, preparedStmtList);
         return query;
     }
+    
+	private static String checkLastUpdatedTime(TransactionCriteria transactionCriteria, String query,
+			List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(query);
+
+		if (!query.contains("WHERE"))
+			builder.append(" WHERE ");
+		else
+			builder.append(" AND ");
+
+		builder.append(" pg.last_modified_time >= ? ");
+		preparedStmtList.add(transactionCriteria.getStartDateTime());
+		builder.append(" AND ");
+		builder.append(" pg.last_modified_time <= ? ");
+		preparedStmtList.add(transactionCriteria.getEndDateTime());
+
+		return builder.toString();
+	}
     
 	static String getPaymentSearchQueryByCreatedTimeRange(TransactionCriteriaV2 transactionCriteriaV2,
 			List<Object> preparedStmtList) {

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class BankAccountJdbcRepository extends JdbcRepository {
@@ -87,6 +88,13 @@ public class BankAccountJdbcRepository extends JdbcRepository {
 			}
 			params.append("eba.tenantId =:tenantId");
 			paramValues.put("tenantId", bankAccountSearchEntity.getTenantId());
+		}
+		if (!CollectionUtils.isEmpty(bankAccountSearchEntity.getTenantIds())) {
+			if (params.length() > 0) {
+				params.append(" and ");
+			}
+			params.append("eba.tenantId IN (:tenantIds)");
+		    paramValues.put("tenantIds", bankAccountSearchEntity.getTenantIds());
 		}
 		if (bankAccountSearchEntity.getId() != null) {
 			if (params.length() > 0) {

@@ -182,7 +182,9 @@ public class UserService {
     public List<org.egov.user.domain.model.User> searchUsers(UserSearchCriteria searchCriteria,
                                                              boolean isInterServiceCall, RequestInfo requestInfo) {
 
-        searchCriteria.validate(isInterServiceCall);
+		if (!searchCriteria.getSkipValidate()) {
+			searchCriteria.validate(isInterServiceCall);
+		}
 
         searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
         /* encrypt here / encrypted searchcriteria will be used for search*/
