@@ -4,9 +4,17 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { Config } from "../../../config/config";
-
+/**
+ * Main Parent Component which is handling all the sub / Child components 
+ * in this page it is taking config file to render all the componets one by one and also 
+ * with the help of config this parent component knows which file have to render first.
+ * 
+ * It is saving all the filled data in session page by page and extracting it inside params and sending in every component
+ * through formdata.
+ * 
+ * This page also handles the Routing of Check page and Acknowledgement page
+ */
 const SVCreate = ({ parentRoute }) => {
-
   const queryClient = useQueryClient();
   const match = useRouteMatch();
   const { t } = useTranslation();

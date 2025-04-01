@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";
 import ApplicationLinks from "./inbox/ApplicationLinks";
 
+/**
+ * Inbox only Renders when the Inbox will open in Mobile Phones
+ */
 const MobileInbox = ({
   data,
   isLoading,
