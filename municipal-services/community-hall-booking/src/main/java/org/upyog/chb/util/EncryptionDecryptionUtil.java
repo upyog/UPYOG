@@ -19,6 +19,40 @@ import org.upyog.chb.constants.CommunityHallBookingConstants;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This utility class provides encryption and decryption functionality for sensitive data
+ * in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To ensure the security and confidentiality of sensitive data by encrypting and decrypting it.
+ * - To provide reusable methods for performing encryption and decryption operations.
+ * 
+ * Dependencies:
+ * - EncryptionService: Handles the core encryption and decryption logic.
+ * - CommunityHallBookingConstants: Provides constants such as encryption keys.
+ * 
+ * Features:
+ * - Encrypts objects into secure formats using predefined keys and tenant information.
+ * - Decrypts encrypted objects back into their original form for processing or display.
+ * - Handles exceptions gracefully and logs errors for debugging and monitoring purposes.
+ * 
+ * Fields:
+ * - stateLevelTenantId: The tenant ID used for encryption and decryption operations.
+ * - abacEnabled: A flag to enable or disable attribute-based access control for decryption.
+ * 
+ * Methods:
+ * 1. encryptObject:
+ *    - Encrypts the given object using the specified key and tenant ID.
+ *    - Returns the encrypted object in the specified class type.
+ * 
+ * 2. decryptObject:
+ *    - Decrypts the given encrypted object back into its original form.
+ *    - Validates the decryption process and handles errors gracefully.
+ * 
+ * Usage:
+ * - This class is used throughout the module to securely handle sensitive data.
+ * - It ensures consistent and reusable encryption and decryption logic across the application.
+ */
 @Slf4j
 @Component
 public class EncryptionDecryptionUtil {

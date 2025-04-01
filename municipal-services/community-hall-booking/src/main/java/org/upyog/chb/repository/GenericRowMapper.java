@@ -13,6 +13,39 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class is a generic row mapper that maps the result set from the database
+ * to a list of objects of a specified type.
+ * 
+ * Purpose:
+ * - To provide a reusable and flexible mechanism for mapping database rows to objects.
+ * - To dynamically map result set columns to fields in the specified class using reflection.
+ * 
+ * Features:
+ * - Implements the ResultSetExtractor interface to process the ResultSet.
+ * - Uses reflection to map result set columns to fields in the specified class.
+ * - Handles various data types, including primitive types, strings, and dates.
+ * - Logs errors and exceptions for debugging and monitoring purposes.
+ * 
+ * Dependencies:
+ * - Lombok's @Slf4j: Used for logging errors and debugging information.
+ * 
+ * Constructor:
+ * - Accepts a Class<T> parameter to specify the type of objects to map.
+ * 
+ * Methods:
+ * 1. extractData:
+ *    - Processes the ResultSet and maps each row to an object of the specified type.
+ *    - Uses ResultSetMetaData to retrieve column names and dynamically maps them to fields.
+ * 
+ * Usage:
+ * - This class is used in the repository layer to map database query results to objects.
+ * - It ensures consistency and reusability of mapping logic across the application.
+ * 
+ * Limitations:
+ * - Requires that the field names in the class match the column names in the database.
+ * - May require additional handling for complex data types or nested objects.
+ */
 @Slf4j
 public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
 

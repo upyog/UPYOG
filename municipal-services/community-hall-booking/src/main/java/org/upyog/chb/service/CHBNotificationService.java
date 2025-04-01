@@ -37,6 +37,36 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles notification-related operations for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To send notifications to users based on booking events and status updates.
+ * - To ensure that users are informed about the status of their bookings through various channels.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for notifications.
+ * - NotificationUtil: Utility class for sending notifications via different channels.
+ * - ServiceRequestRepository: Handles communication with external services for notification delivery.
+ * - CHBEncryptionService: Decrypts sensitive booking details for use in notifications.
+ * - UserService: Fetches user details required for sending notifications.
+ * 
+ * Features:
+ * - Processes booking requests and sends notifications based on the booking status.
+ * - Decrypts sensitive applicant details before including them in notifications.
+ * - Fetches configured notification channels (e.g., SMS, email) for the tenant.
+ * - Logs notification processing details for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. process:
+ *    - Processes a booking request and sends notifications based on the booking status.
+ *    - Decrypts booking details and determines the appropriate notification channels.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever notification
+ *   operations are required.
+ * - It ensures consistent and reusable logic for sending notifications across the module.
+ */
 @Service
 @Slf4j
 public class CHBNotificationService {

@@ -20,6 +20,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
+/**
+ * This utility class provides common utility methods for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To centralize reusable utility methods that are frequently used across the module.
+ * - To simplify operations such as date formatting, UUID generation, and response creation.
+ * 
+ * Features:
+ * - Provides methods for creating standardized ResponseInfo objects.
+ * - Handles date and time formatting using predefined patterns.
+ * - Generates unique identifiers (UUIDs) for various entities.
+ * - Logs utility operations for debugging and monitoring purposes.
+ * 
+ * Constants:
+ * - DATE_FORMAT: Defines the standard date format ("yyyy-MM-dd") used across the module.
+ * 
+ * Methods:
+ * 1. createReponseInfo:
+ *    - Creates a standardized ResponseInfo object based on the provided RequestInfo.
+ *    - Populates fields such as apiId, version, timestamp, and status.
+ * 
+ * 2. generateUUID:
+ *    - Generates a unique identifier (UUID) for use in booking or other entities.
+ * 
+ * 3. formatDate:
+ *    - Formats a given LocalDate or LocalDateTime into a string using the standard date format.
+ * 
+ * Usage:
+ * - This class is used throughout the module to perform common operations, ensuring consistency and reusability.
+ */
 public class CommunityHallBookingUtil {
 
 	public final static String DATE_FORMAT = "yyyy-MM-dd";
