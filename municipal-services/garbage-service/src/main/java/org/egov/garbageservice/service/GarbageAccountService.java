@@ -455,11 +455,11 @@ public class GarbageAccountService {
 			} else if (existingAccounts1.size() > 1) {
 				throw new CustomException("DUPLICATE_GARBAGE_ACCOUNT_FOUND", "Duplicate Garbage account found.");
 			}
-			if (!StringUtils.isEmpty(existingAccounts1.get(0).getPropertyId())
-					&& !StringUtils.equals(existingAccounts1.get(0).getPropertyId(), garbageAccount.getPropertyId())) {
-				throw new CustomException("NO_DATA_CAN_BE_CHANGE",
-						"Some of the data is not matching and can't be updated.");
-			}
+//			if (!StringUtils.isEmpty(existingAccounts1.get(0).getPropertyId())
+//					&& !StringUtils.equals(existingAccounts1.get(0).getPropertyId(), garbageAccount.getPropertyId())) {
+//				throw new CustomException("NO_DATA_CAN_BE_CHANGE",
+//						"Some of the data is not matching and can't be updated.");
+//			}
 
 			if (CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 				// validate child garbage account

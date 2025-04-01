@@ -389,9 +389,13 @@ public class SiteBookingService {
 	rolesWithinTenant.stream().forEach(role -> {
 		
 		if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_CREATOR)) {
+			statusWithRoles.add(AdvtConstants.STATUS_APPROVED);
+			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORMODIFICATION);
 			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORVERIFICATION);
 		}else if(StringUtils.equalsIgnoreCase(role, AdvtConstants.ROLE_CODE_SITE_APPROVER)) {
 			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORAPPROVAL);
+			statusWithRoles.add(AdvtConstants.STATUS_APPROVED);
+			statusWithRoles.add(AdvtConstants.STATUS_PENDINGFORMODIFICATION);
 		}
 		
 	});
