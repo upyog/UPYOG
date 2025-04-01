@@ -28,6 +28,9 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData }) 
     if (!pathname?.includes("dss")) {
       Digit.SessionStorage.del("DSS_FILTERS");
     }
+    if (!pathname?.includes("landing")) {
+      Digit.SessionStorage.del("DSS_FILTERS_CUMILATIVETRANSACTIONS");
+    }
     if (pathname?.toString() === "/digit-ui/employee") {
       Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
       Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
