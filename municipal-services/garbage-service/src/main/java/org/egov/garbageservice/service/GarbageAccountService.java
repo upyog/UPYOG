@@ -553,6 +553,15 @@ public class GarbageAccountService {
 			
 			newGarbageAccount.setStatus(
 					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
+			Optional.ofNullable(newGarbageAccount.getChildGarbageAccounts())
+					.ifPresent(childGarbageAccounts -> childGarbageAccounts.forEach(childGarbageAccount -> {
+						String status = applicationNumberToCurrentStatus
+								.get(childGarbageAccount.getGrbgApplication().getApplicationNo());
+						childGarbageAccount.setStatus(status);
+
+						Optional.ofNullable(childGarbageAccount.getGrbgApplication())
+								.ifPresent(grbgApplication -> grbgApplication.setStatus(status));
+					}));
 		}
 	}
 
@@ -1046,6 +1055,8 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
 			newGarbageAccount.getChildGarbageAccounts().stream().forEach(child -> {
 				garbageAccountRepository.update(child);
+				// update application
+				grbgApplicationRepository.update(child.getGrbgApplication());
 			});
 		}
 	}
