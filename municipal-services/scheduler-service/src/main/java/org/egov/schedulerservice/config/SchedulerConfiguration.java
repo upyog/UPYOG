@@ -54,4 +54,10 @@ public class SchedulerConfiguration {
 	@Value("${egov.pgr.endpoint.delete-notification}")
 	private String pgrDeleteNotificationEndpoint;
 
+	@Value("${egov.pg.context.host}")
+	private String pgServiceHostUrl;
+
+	@Value("${egov.pg.endpoint.transfer-amount}")
+	private String pgTransferAmountEndpoint;
+
 }

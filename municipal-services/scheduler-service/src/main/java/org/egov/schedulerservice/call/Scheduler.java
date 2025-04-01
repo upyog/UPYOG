@@ -4,6 +4,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.schedulerservice.service.BillService;
 import org.egov.schedulerservice.service.GarbageService;
 import org.egov.schedulerservice.service.PGRService;
+import org.egov.schedulerservice.service.PgService;
 import org.egov.schedulerservice.service.PropertyService;
 import org.egov.schedulerservice.util.RequestInfoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class Scheduler {
 
 	@Autowired
 	private PGRService pgrService;
+
+	@Autowired
+	private PgService pgService;
 
 	@Scheduled(cron = "${cron.job.default.garbage.bill.generator}", zone = "IST")
 	public void generateGarbageBills() {
@@ -77,6 +81,14 @@ public class Scheduler {
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
 		pgrService.deletePgrNotification(requestInfo);
 		log.info("deletePgrNotification CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.pg.transfer.amount}", zone = "IST")
+	public void transferAmount() {
+		log.info("transferAmount CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		pgService.transferAmount(requestInfo);
+		log.info("transferAmount CRON JOB Ends");
 	}
 
 }

@@ -173,6 +173,7 @@ public class GarbageAccountService {
 			createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
 				if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 					garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
+						subAccount.setBusinessService(garbageAccount.getBusinessService());
 						// create garbage sub account
 						garbageAccountRepository.create(subAccount);
 						// create garbage objects
@@ -454,11 +455,11 @@ public class GarbageAccountService {
 			} else if (existingAccounts1.size() > 1) {
 				throw new CustomException("DUPLICATE_GARBAGE_ACCOUNT_FOUND", "Duplicate Garbage account found.");
 			}
-			if (!StringUtils.isEmpty(existingAccounts1.get(0).getPropertyId())
-					&& !StringUtils.equals(existingAccounts1.get(0).getPropertyId(), garbageAccount.getPropertyId())) {
-				throw new CustomException("NO_DATA_CAN_BE_CHANGE",
-						"Some of the data is not matching and can't be updated.");
-			}
+//			if (!StringUtils.isEmpty(existingAccounts1.get(0).getPropertyId())
+//					&& !StringUtils.equals(existingAccounts1.get(0).getPropertyId(), garbageAccount.getPropertyId())) {
+//				throw new CustomException("NO_DATA_CAN_BE_CHANGE",
+//						"Some of the data is not matching and can't be updated.");
+//			}
 
 			if (CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
 				// validate child garbage account
@@ -518,6 +519,7 @@ public class GarbageAccountService {
 		newGarbageAccount.setAuditDetails(auditDetails);
 		newGarbageAccount.setId(existingGarbageAccount.getId());
 		newGarbageAccount.setGarbageId(existingGarbageAccount.getGarbageId());
+		newGarbageAccount.setBusinessService(existingGarbageAccount.getBusinessService());
 
 		// enrich child accounts
 		if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
@@ -543,6 +545,7 @@ public class GarbageAccountService {
 							.createdDate(new Date().getTime()).build());
 				}
 
+				childAccount.setBusinessService(newGarbageAccount.getBusinessService());
 			});
 		}
 
@@ -550,6 +553,15 @@ public class GarbageAccountService {
 			
 			newGarbageAccount.setStatus(
 					applicationNumberToCurrentStatus.get(newGarbageAccount.getGrbgApplication().getApplicationNo()));
+			Optional.ofNullable(newGarbageAccount.getChildGarbageAccounts())
+					.ifPresent(childGarbageAccounts -> childGarbageAccounts.forEach(childGarbageAccount -> {
+						String status = applicationNumberToCurrentStatus
+								.get(childGarbageAccount.getGrbgApplication().getApplicationNo());
+						childGarbageAccount.setStatus(status);
+
+						Optional.ofNullable(childGarbageAccount.getGrbgApplication())
+								.ifPresent(grbgApplication -> grbgApplication.setStatus(status));
+					}));
 		}
 	}
 
@@ -616,12 +628,14 @@ public class GarbageAccountService {
 
 		}
 
-		// generate certificate and upload
+		if (!updateGarbageRequest.getFromMigration()) {
+			// generate certificate and upload
 
-		createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
+			createAndUploadPDF(garbageAccountRequest, updateGarbageRequest.getRequestInfo());
 
-		// generate demand and fetch bill
-		generateDemandAndBill(garbageAccountRequest);
+			// generate demand and fetch bill
+			generateDemandAndBill(garbageAccountRequest);
+		}
 
 		// RESPONSE builder
 		GarbageAccountResponse garbageAccountResponse = GarbageAccountResponse.builder()
@@ -740,7 +754,7 @@ public class GarbageAccountService {
 		StringBuilder uri = new StringBuilder(applicationPropertiesAndConstant.getFrontEndBaseUri());
 		uri.append("citizen-payment");
 		String qr = GarbageAccount.getCreated_by().concat("/").concat(GarbageAccount.getUuid())
-				.concat("/").concat(GarbageAccount.getPropertyId());
+				.concat("/").concat(null != GarbageAccount.getPropertyId() ? GarbageAccount.getPropertyId() : "");
 		uri.append("/").append(qr);
 		grbObject.put("qrCodeText", uri);
 		return grbObject;
@@ -920,19 +934,21 @@ public class GarbageAccountService {
 						.comment(newGarbageAccount.getWorkflowComment()).build();
 
 				processInstances.add(parentProcessInstance);
-				if (!(StringUtils.equals(newGarbageAccount.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_APPROVE)
+				if ((StringUtils.equals(newGarbageAccount.getWorkflowAction(), GrbgConstants.WORKFLOW_ACTION_INITIATE)
 						|| StringUtils.equals(newGarbageAccount.getWorkflowAction(),
-								GrbgConstants.WORKFLOW_ACTION_VERIFY))) {
+								GrbgConstants.WORKFLOW_ACTION_VERIFY)
+						|| StringUtils.equals(newGarbageAccount.getWorkflowAction(),
+								GrbgConstants.WORKFLOW_ACTION_FORWARD_TO_VERIFIER))) {
 					if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
-						for(GarbageAccount subAccount :	newGarbageAccount.getChildGarbageAccounts()) {
+						for (GarbageAccount subAccount : newGarbageAccount.getChildGarbageAccounts()) {
 							ProcessInstance subProcessInstance = ProcessInstance.builder()
-									.tenantId(subAccount.getTenantId())
-									.businessService(businessService)
+									.tenantId(subAccount.getTenantId()).businessService(businessService)
 									.moduleName(GrbgConstants.WORKFLOW_MODULE_NAME)
 									.businessId(subAccount.getGrbgApplication().getApplicationNo())
-									.action(null != subAccount.getWorkflowAction() ? subAccount.getWorkflowAction()
-											: getStatusOrAction(subAccount.getStatus(), false))
-									.comment(subAccount.getWorkflowComment()).build();
+									.action(null != newGarbageAccount.getWorkflowAction()
+											? newGarbageAccount.getWorkflowAction()
+											: getStatusOrAction(newGarbageAccount.getStatus(), false))
+									.comment(newGarbageAccount.getWorkflowComment()).build();
 
 							processInstances.add(subProcessInstance);
 						}
@@ -1039,6 +1055,8 @@ public class GarbageAccountService {
 		if (!CollectionUtils.isEmpty(newGarbageAccount.getChildGarbageAccounts())) {
 			newGarbageAccount.getChildGarbageAccounts().stream().forEach(child -> {
 				garbageAccountRepository.update(child);
+				// update application
+				grbgApplicationRepository.update(child.getGrbgApplication());
 			});
 		}
 	}

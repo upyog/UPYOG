@@ -64,6 +64,8 @@ public class GrbgConstants {
 	public static final String USER_TYPE_CITIZEN = "CITIZEN";
 
 	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
+	
+	public static final String USER_TYPE_SYSTEM = "SYSTEM";
 
 	public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
 
@@ -102,6 +104,9 @@ public class GrbgConstants {
 
 	@Value("${workflow.business.search}")
 	public String workflowBusinessServiceSearchPath;
+	
+	@Value("${workflow.valid.action.search.path}")
+    private String workflowValidActionSearchPath;
 
 	@Value("${egov.bill.context.host}")
 	public String billHost;

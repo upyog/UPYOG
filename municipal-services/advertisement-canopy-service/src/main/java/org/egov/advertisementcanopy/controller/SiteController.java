@@ -1,5 +1,7 @@
 package org.egov.advertisementcanopy.controller;
 
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.advertisementcanopy.model.SiteCountRequest;
 import org.egov.advertisementcanopy.model.SiteCountResponse;
@@ -68,6 +70,11 @@ public class SiteController {
 	public ResponseEntity<?> getAllCounts() {
 	    return ResponseEntity.ok(siteService.getAllcounts());
 	}
+    
+    @PostMapping("/getUuid")
+   	public ResponseEntity<?> getUuid() {
+		return ResponseEntity.ok(UUID.randomUUID().toString());
+   	}
 
 
 }

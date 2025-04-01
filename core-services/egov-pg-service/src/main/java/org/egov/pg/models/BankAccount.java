@@ -51,6 +51,8 @@ import lombok.Setter;
 public class BankAccount {
 
     private Long id;
+    
+    private String tenantId;
 
     private String accountNumber;
 
