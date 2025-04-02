@@ -615,7 +615,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           </div>
         )} 
         <CheckBox
-          label={t("Is this property an apportioned property?")}
+          label={t("(Please tick) If this is an apportioned property.")}
           onChange={onSetIsApportion}
           styles={{ height: "auto",paddingBottom: '10px' }}
           checked={isPartOfProperty || false}
