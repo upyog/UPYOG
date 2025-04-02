@@ -83,10 +83,18 @@ function ApplicationDetailsContent({
   };
   const getTimelineCaptions = (checkpoint,index=0) => {
     if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" && !window.location.href.includes("/obps/"))) {
-      const caption = {
+      let caption = {
         date: convertEpochToDateDMY(applicationData?.auditDetails?.createdTime),
         source: applicationData?.channel || "",
       };
+      if(checkpoint?.performedAction=="SENDBACKTODOCKVERIFIER" || checkpoint?.performedAction=="SENDBACKTODOCVERIFIER")
+      caption = {
+        date: convertEpochToDateDMY(applicationData?.auditDetails?.lastModifiedTime),
+        // name: checkpoint?.assigner?.name,
+        name: checkpoint?.assignes?.[0]?.name,
+        // mobileNumber: checkpoint?.assigner?.mobileNumber,
+        wfComment: checkpoint?.wfComment,
+      }
       return <TLCaption data={caption} />;
     } else if (window.location.href.includes("/obps/") || window.location.href.includes("/noc/") || window.location.href.includes("/ws/")) {
       //From BE side assigneeMobileNumber is masked/unmasked with connectionHoldersMobileNumber and not assigneeMobileNumber
@@ -452,7 +460,8 @@ function ApplicationDetailsContent({
                               info={checkpoint.comment}
                               label={t(
                                 `${timelineStatusPrefix}${
-                                  checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                                  checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : 
+                                  (checkpoint?.performedAction === "SENDBACKTODOCKVERIFIER" || checkpoint?.performedAction === "SENDBACKTODOCVERIFIER") ? "REOPEN" : checkpoint?.[statusAttribute]
                                 }${timelineStatusPostfix}`
                               )}
                               customChild={getTimelineCaptions(checkpoint,index)}

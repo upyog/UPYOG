@@ -50,6 +50,8 @@ const ApplicationDetails = (props) => {
     isInfoLabel = false,
     clearDataDetails
   } = props;
+
+  console.log("workflowDetails===",workflowDetails)
   
   useEffect(() => {
     if (showToast) {
