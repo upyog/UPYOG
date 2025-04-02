@@ -1568,10 +1568,14 @@ public class EstimationService {
 		System.out.println("fsd");
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		log.info("financial Year in Criteria is" + criteria);
+		
+		Date currentDate=new Date();
+		SimpleDateFormat year=new SimpleDateFormat("yyyy");
+		String dateyear=year.format(currentDate);
 
 		String tenantId = property.getTenantId();
 		String validFrom=criteria.getFinancialYear().split("-")[0]+"-04-01";
-		String validTo="20"+criteria.getFinancialYear().split("-")[1]+"-03-31";
+		String validTo=dateyear.substring(0,2)+criteria.getFinancialYear().split("-")[1]+"-03-31";
 		BillingSlabSearchCriteria slabSearchCriteria = BillingSlabSearchCriteria.builder().tenantId(tenantId).validFrom(validFrom).validTo(validTo).build();
 		List<BillingSlab> billingSlabs = billingSlabService.searchBillingSlabs(requestInfo, slabSearchCriteria)
 				.getBillingSlab();
