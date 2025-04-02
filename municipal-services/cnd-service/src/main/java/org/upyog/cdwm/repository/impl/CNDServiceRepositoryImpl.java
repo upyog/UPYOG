@@ -12,10 +12,11 @@ import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
 import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
-import org.upyog.cdwm.repository.rowMapper.GenericRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
+import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.WasteTypeDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -96,4 +97,41 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     		producer.push(config.getCndApplicationUpdateTopic(), cndApplicationRequest);
 
     	}
+
+    /**
+     * Inserts a new waste detail record into the database.
+     *
+     * @param wasteDetail The {@link WasteTypeDetail} object containing the waste details to be inserted.
+     */
+    public void insertWasteDetailsUponUpdate(WasteTypeDetail wasteDetail) {
+        String wasteDetailquery = CNDServiceQueryBuilder.INSERT_WASTE_DETAIL_QUERY; 
+        if(wasteDetailquery != null) {
+        jdbcTemplate.update(wasteDetailquery, 
+            wasteDetail.getApplicationId(),      
+            wasteDetail.getWasteTypeId(),       
+            wasteDetail.getEnteredByUserType(),  
+            wasteDetail.getWasteType(),          
+            wasteDetail.getQuantity(),         
+            wasteDetail.getMetrics()
+        ); 
+    }}
+    
+    /**
+     * Inserts a new document detail record into the database.
+     *
+     * @param documentDetail The {@link DocumentDetail} object containing the document details to be inserted.
+     */
+    public void insertDocumentDetailsUponUpdate(DocumentDetail documentDetail) {
+        String documentDetailquery = CNDServiceQueryBuilder.INSERT_DOCUMENT_DETAIL_QUERY;
+        if(documentDetailquery != null) {
+      
+        jdbcTemplate.update(documentDetailquery, 
+            documentDetail.getDocumentDetailId(),
+            documentDetail.getApplicationId(),     
+            documentDetail.getDocumentType(),      
+            documentDetail.getUploadedByUserType(),
+            documentDetail.getFileStoreId()
+        );
+    }}
+    
 }
