@@ -15,6 +15,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * This class is a configuration component for the Community Hall Booking module.
+ * It is responsible for setting up application-specific configurations such as
+ * the default timezone for the application.
+ * 
+ * Annotations used:
+ * - @Builder: Enables the builder pattern for creating instances of this class.
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @AllArgsConstructor: Generates a constructor with all fields as parameters.
+ * - @NoArgsConstructor: Generates a no-argument constructor.
+ * - @Getter and @Setter: Automatically generates getter and setter methods for fields.
+ * - @Import: Imports additional configuration classes (e.g., TracerConfiguration).
+ */
+
 @Builder
 @Component
 @AllArgsConstructor

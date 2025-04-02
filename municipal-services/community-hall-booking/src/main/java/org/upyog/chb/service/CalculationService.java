@@ -23,6 +23,38 @@ import org.upyog.chb.web.models.billing.TaxHeadMaster;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This service class handles the calculation logic for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To calculate charges, taxes, and other financial details for community hall bookings.
+ * - To ensure accurate and consistent calculations based on predefined rules and configurations.
+ * 
+ * Dependencies:
+ * - MdmsUtil: Fetches and processes master data from MDMS for calculation purposes.
+ * - CalculationTypeCache: Caches calculation types to improve performance and reduce redundant lookups.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for calculation operations.
+ * - CommunityHallBookingUtil: Utility class for common operations related to bookings.
+ * 
+ * Features:
+ * - Calculates demand details for bookings, including tax and charge breakdowns.
+ * - Retrieves and applies calculation types from MDMS or cache.
+ * - Handles rounding and precision for financial calculations.
+ * - Logs important operations and errors for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. calculateDemandDetails:
+ *    - Calculates the demand details for a booking based on the provided request.
+ *    - Generates a list of DemandDetail objects representing the charges and taxes.
+ * 
+ * 2. getCalculationType:
+ *    - Retrieves the calculation type for a booking from MDMS or cache.
+ *    - Ensures that the correct calculation rules are applied for the booking.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever calculation logic is required.
+ * - It ensures consistent and reusable logic for financial calculations in the module.
+ */
 @Slf4j
 @Service
 public class CalculationService {

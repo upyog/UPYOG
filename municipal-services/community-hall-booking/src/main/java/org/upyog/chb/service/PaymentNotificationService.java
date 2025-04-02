@@ -54,7 +54,43 @@ public class PaymentNotificationService {
 	
 	@Autowired
 	private CommunityHallBookingRepository bookingRepository;
-	
+
+	/**
+	 * This service class handles payment-related notifications in the
+	 * Community Hall Booking module.
+	 * 
+	 * Purpose:
+	 * - To send notifications to users based on payment events such as successful payments or failures.
+	 * - To update booking statuses based on payment outcomes.
+	 * 
+	 * Dependencies:
+	 * - CommunityHallBookingRepository: Handles database operations for bookings.
+	 * - ServiceRequestRepository: Sends HTTP requests to external services for payment updates.
+	 * - CommunityHallBookingConfiguration: Provides configuration properties for payment notifications.
+	 * - ObjectMapper: Serializes and deserializes JSON objects for requests and responses.
+	 * 
+	 * Features:
+	 * - Processes payment events and updates booking statuses accordingly.
+	 * - Sends notifications to users about payment success or failure.
+	 * - Fetches booking details and validates payment-related data.
+	 * - Logs payment processing and notification details for debugging and monitoring purposes.
+	 * 
+	 * Methods:
+	 * 1. processPaymentNotification:
+	 *    - Processes payment events and updates the booking status.
+	 *    - Sends notifications to users based on the payment outcome.
+	 * 
+	 * 2. updateBookingStatus:
+	 *    - Updates the booking status in the database based on the payment event.
+	 * 
+	 * 3. sendNotification:
+	 *    - Sends payment-related notifications to users via configured channels.
+	 * 
+	 * Usage:
+	 * - This class is automatically managed by Spring and injected wherever payment notification
+	 *   operations are required.
+	 * - It ensures consistent and reusable logic for handling payment notifications in the module.
+	 */
 	/**
 	 *
 	 * @param record
