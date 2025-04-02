@@ -172,7 +172,6 @@ const ADSSearch = ({ t, onSelect, config, userType, formData }) => {
       ownerStep = { ...owner,Searchdata, cartDetails, adsType,selectNight,selectedLocation,selectedFace,fromDate,toDate,existingDataSet };
       onSelect(config.key, ownerStep, false, index);
     }
-    console.log("ownerStep",ownerStep);
   };
   const ABmenu = [
     {

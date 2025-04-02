@@ -92,7 +92,8 @@ const Home = ({
       </Route>
     ) : null;
   });
-  // for showing advertisement image and its detail in first page
+  // Fetches advertisement details (e.g., image, title, location, pole number, price) 
+  // from the MDMS and formats them for display on the homepage.
   const { data: advertisement } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "Advertisement", [{ name: "Unipole_12_8" }], {
     select: (data) => {
       const formattedData = data?.["Advertisement"]?.["Unipole_12_8"].map((details) => {
