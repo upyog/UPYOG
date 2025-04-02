@@ -476,6 +476,7 @@ public class InboxService {
 					businessKeys.addAll(applicationNumbers);
 					 moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
@@ -502,6 +503,7 @@ public class InboxService {
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
