@@ -6,6 +6,7 @@ import org.egov.schedulerservice.service.GarbageService;
 import org.egov.schedulerservice.service.PGRService;
 import org.egov.schedulerservice.service.PgService;
 import org.egov.schedulerservice.service.PropertyService;
+import org.egov.schedulerservice.service.SiteBookingService;
 import org.egov.schedulerservice.util.RequestInfoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,6 +35,9 @@ public class Scheduler {
 
 	@Autowired
 	private PgService pgService;
+
+	@Autowired
+	private SiteBookingService siteBookingService;
 
 	@Scheduled(cron = "${cron.job.default.garbage.bill.generator}", zone = "IST")
 	public void generateGarbageBills() {
@@ -89,6 +93,14 @@ public class Scheduler {
 		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
 		pgService.transferAmount(requestInfo);
 		log.info("transferAmount CRON JOB Ends");
+	}
+
+	@Scheduled(cron = "${cron.job.default.adrvcanopy.site.booking.change.site.status}", zone = "IST")
+	public void changeSiteStatus() {
+		log.info("changeSiteStatus CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		siteBookingService.changeSiteStatus(requestInfo);
+		log.info("changeSiteStatus CRON JOB Ends");
 	}
 
 }

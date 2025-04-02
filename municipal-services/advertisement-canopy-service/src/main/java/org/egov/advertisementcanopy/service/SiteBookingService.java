@@ -282,11 +282,19 @@ public class SiteBookingService {
 
 	public SiteBookingResponse searchBooking(SiteBookingSearchRequest siteBookingSearchRequest) {
 
-		// enrich search criteria
-		enrichSearchCriteria(siteBookingSearchRequest);
-		
-		// validate search criteria
-		validateSearchCriteria(siteBookingSearchRequest);
+		if (!siteBookingSearchRequest.getSkipValidation()) {
+			// enrich search criteria
+			enrichSearchCriteria(siteBookingSearchRequest);
+
+			// validate search criteria
+			validateSearchCriteria(siteBookingSearchRequest);
+		} else {
+			if (null == siteBookingSearchRequest.getSiteBookingSearchCriteria()) {
+				siteBookingSearchRequest.setSiteBookingSearchCriteria(SiteBookingSearchCriteria.builder().build());
+			}
+			siteBookingSearchRequest.getSiteBookingSearchCriteria()
+					.setSkipValidation(siteBookingSearchRequest.getSkipValidation());
+		}
 		
 		// search bookings
 		List<SiteBooking> siteBookings = repository.search(siteBookingSearchRequest.getSiteBookingSearchCriteria());
