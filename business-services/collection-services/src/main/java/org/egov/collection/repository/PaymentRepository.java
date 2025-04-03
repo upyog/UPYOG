@@ -1118,6 +1118,7 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 
 
 	    try {
+	    	log.info(url.toString());
 	        RestTemplate restTemplate = new RestTemplate();
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setContentType(MediaType.APPLICATION_JSON);
@@ -1182,6 +1183,7 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 			property_url.append("&propertyIds=").append(Property_Id);
 		}
 	    try {
+	    	log.info(property_url.toString());
 	        RestTemplate restTemplate = new RestTemplate();
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setContentType(MediaType.APPLICATION_JSON);
