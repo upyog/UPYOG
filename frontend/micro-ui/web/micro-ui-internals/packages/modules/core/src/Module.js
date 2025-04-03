@@ -13,6 +13,8 @@ import getStore from "./redux/store";
 import ErrorBoundary from "./components/ErrorBoundaries";
 import EmployeeDashboard from "./components/EmployeeDashboard";
 import { useState } from "react";
+import EDCRAcknowledgement1 from "./pages/citizen/Home/EDCR/EDCRAcknowledgement1";
+import CreateEDCR1 from "./pages/citizen/Home/EDCR";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
@@ -113,7 +115,9 @@ const componentsToRegister = {
   SelectOtp,
   AcknowledgementCF,
   CitizenFeedback,
-  EmployeeDashboard
+  EmployeeDashboard,
+  EDCRAcknowledgement1,
+  CreateEDCR1,
 };
 
 export const initCoreComponents = () => {

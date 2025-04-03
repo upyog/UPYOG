@@ -130,13 +130,19 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     // sessionStorage.clear();
     history.push("/digit-ui/citizen/login");
   };
+// Function to redirect the user to the EDCR scrutiny page
+  const redirectToScrutinyPage = () => {
+    // localStorage.clear();
+    // sessionStorage.clear();
+    history.push("/digit-ui/citizen/core/edcr/scrutiny");
+  };
   const showProfilePage = () => {
     history.push("/digit-ui/citizen/user/profile");
   };
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
-  let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
+  let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, redirectToScrutinyPage, isEmployee, storeData, tenantId)];
 
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
