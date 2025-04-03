@@ -1093,12 +1093,14 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 		
 		
 		List<Map<String, Object>> waterConnections = new ArrayList<>();
-		StringBuilder url = new StringBuilder(config.getWsHost());
+		StringBuilder url = null;
 
 		if(businessservice.contains("WS")) {
+			url = new StringBuilder(config.getWsHost());
 		    url.append(config.getWsUrl())
 		       .append("searchType=CONNECTION");
 		} else {
+			url = new StringBuilder(config.getSwHost());
 		    url.append(config.getSwUrl())
 		       .append("searchType=CONNECTION");
 		}
