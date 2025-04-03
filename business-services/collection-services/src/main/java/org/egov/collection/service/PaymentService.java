@@ -245,6 +245,7 @@ public class PaymentService {
 				    List<Map<String, Object>> tempList = (List<Map<String, Object>>) curlDetailProperty;
 				    if (!tempList.isEmpty()) {
 				        Map<String, Object> temporaryList = tempList.get(0);
+
 				        
 				        List<Map<String, Object>> ownersList = (List<Map<String, Object>>) temporaryList.get("owners");
 				        
@@ -283,7 +284,7 @@ public class PaymentService {
 				    // Set values
 				    payments.get(0).setUsageCategory(usageCategory);
 				    payments.get(0).setOwnername(ownerName);
-				    payments.get(0).setMobileNumber(mobileNumber.toString());
+				    payments.get(0).setOwnerNumber(mobileNumber);
 				    payments.get(0).setAddress(address);
 				    payments.get(0).setLandarea(landArea);
 				    payments.get(0).setPropertyId(propertyId);
