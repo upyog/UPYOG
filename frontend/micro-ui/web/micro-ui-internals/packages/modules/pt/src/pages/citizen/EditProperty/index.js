@@ -93,7 +93,7 @@ const getPropertyEditDetails = (data = { }) => {
   {
     data = {...data,documents:[]}
   }
-  
+  // console.log("getPropertyEditDetails--data==",data)
   // data.documents["ProofOfAddress"] = addressDocs && Array.isArray(addressDocs) && addressDocs.length > 0 && addressDocs[0];
   // console.log("data?.documents==",data?.documents)
   if(data?.exemption) {
@@ -124,6 +124,19 @@ const getPropertyEditDetails = (data = { }) => {
       documents:{}
     }
   }
+  let propertyPhotoDoc = data?.documents?.filter((doc) => doc?.documentType?.includes("PROPERTY_PHOTO")).map(doc => ({ ...doc }));;
+  if (checkArrayLength(propertyPhotoDoc)) {
+    data.propertyPhoto = {
+      documents: {}  
+    }
+    if (data?.propertyPhoto?.documents) {
+      data.propertyPhoto.documents["propertyPhoto"] = propertyPhotoDoc[0];
+    } else {
+      data.propertyPhoto.documents = {};
+      data.propertyPhoto.documents["propertyPhoto"] = propertyPhotoDoc && Array.isArray(propertyPhotoDoc) && propertyPhotoDoc.length > 0 && propertyPhotoDoc[0];
+    }
+  }
+
   let buildingpermissionDoc = data?.documents?.filter((doc) => doc?.documentType?.includes("PROOF_OF_BUILDINGPERMISSION")).map(doc => ({ ...doc }));;
   if (checkArrayLength(buildingpermissionDoc)) {
     data.buildingPermission = {

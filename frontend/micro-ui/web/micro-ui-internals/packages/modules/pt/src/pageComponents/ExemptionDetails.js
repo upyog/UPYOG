@@ -44,9 +44,18 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
     // sessionStorage.setItem("exemption", electricity.i18nKey);
     let fileStoreId = uploadedFile;
     let fileDetails = file;
+    
     if (fileDetails) fileDetails.documentType = 'PROOF_OF_EXEMPTION';
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
+    if(formData?.exemption?.documents?.exemptionProof && formData?.exemption?.documents?.exemptionProof?.id) {
+      fileDetails.id = formData?.exemption?.documents?.exemptionProof?.id || "";
+      fileDetails.status = formData?.exemption?.documents?.exemptionProof?.status || "";
+      fileDetails.documentUid = formData?.exemption?.documents?.exemptionProof?.documentUid || null;
+      fileDetails.auditDetails = formData?.exemption?.documents?.exemptionProof?.auditDetails || null;
+
+    }
     let exemption =  { exemptionRequired: exemptionRequired,  exemptionType: exemptionType};
+    
     if (exemption && exemption.documents) {
       exemption.documents["exemptionProof"] = fileDetails;
     } else {
