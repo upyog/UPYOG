@@ -1,7 +1,11 @@
 package org.upyog.cdwm.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +16,8 @@ import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
 import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
+import org.upyog.cdwm.repository.rowMapper.DocumentDetailsRowMapper;
+import org.upyog.cdwm.repository.rowMapper.WasteTypeDetailsRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
@@ -65,7 +71,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         log.info("Final query for getCndApplicationDetails: {} with params: {}", query, preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new CNDApplicationDetailRowmapper());
     }
-
+    
     /**
      * Retrieves the count of CND applications based on search criteria.
      * 
@@ -97,41 +103,40 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     		producer.push(config.getCndApplicationUpdateTopic(), cndApplicationRequest);
 
     	}
-
     /**
-     * Inserts a new waste detail record into the database.
+     * Saves CND waste type details and document details by publishing them to Kafka.
      *
-     * @param wasteDetail The {@link WasteTypeDetail} object containing the waste details to be inserted.
+     * <p>This method checks if both waste type details and document details are empty before proceeding.
+     * If there are valid details, it constructs a message containing the application ID, waste details,
+     * and document details, then pushes it to a Kafka topic for further processing.</p>
+     *
+     * @param wasteTypeDetails The list of waste type details associated with the application.
+     * @param documentDetails The list of document details associated with the application.
+     * @param applicationId The unique identifier of the application.
      */
-    public void insertWasteDetailsUponUpdate(WasteTypeDetail wasteDetail) {
-        String wasteDetailquery = CNDServiceQueryBuilder.INSERT_WASTE_DETAIL_QUERY; 
-        if(wasteDetailquery != null) {
-        jdbcTemplate.update(wasteDetailquery, 
-            wasteDetail.getApplicationId(),      
-            wasteDetail.getWasteTypeId(),       
-            wasteDetail.getEnteredByUserType(),  
-            wasteDetail.getWasteType(),          
-            wasteDetail.getQuantity(),         
-            wasteDetail.getMetrics()
-        ); 
-    }}
     
-    /**
-     * Inserts a new document detail record into the database.
-     *
-     * @param documentDetail The {@link DocumentDetail} object containing the document details to be inserted.
-     */
-    public void insertDocumentDetailsUponUpdate(DocumentDetail documentDetail) {
-        String documentDetailquery = CNDServiceQueryBuilder.INSERT_DOCUMENT_DETAIL_QUERY;
-        if(documentDetailquery != null) {
+    @Override
+    public void saveCNDWasteAndDocumentDetail(List<WasteTypeDetail> wasteTypeDetails, List<DocumentDetail> documentDetails, String applicationId) {
+        log.info("Inserting waste type and document details into Kafka");
+
+        if ((wasteTypeDetails == null || wasteTypeDetails.isEmpty()) &&
+            (documentDetails == null || documentDetails.isEmpty())) {
+            log.warn("No waste or document details provided for insertion.");
+            return;
+        }
+
+        Map<String, Object> cndApplication = new HashMap<>();
+        cndApplication.put("applicationId", applicationId);  
+        cndApplication.put("wasteTypeDetails", wasteTypeDetails);
+        cndApplication.put("documentDetails", documentDetails);
+
+        Map<String, Object> message = new HashMap<>();
+        message.put("cndApplication", cndApplication);
       
-        jdbcTemplate.update(documentDetailquery, 
-            documentDetail.getDocumentDetailId(),
-            documentDetail.getApplicationId(),     
-            documentDetail.getDocumentType(),      
-            documentDetail.getUploadedByUserType(),
-            documentDetail.getFileStoreId()
-        );
-    }}
+        producer.push(config.getSaveWasteDocumentApplicationTopic(), message);
+
+        log.info("Published waste type and document details successfully");
+    }
+
     
 }
