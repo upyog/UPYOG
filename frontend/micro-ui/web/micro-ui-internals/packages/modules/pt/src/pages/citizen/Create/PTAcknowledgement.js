@@ -62,6 +62,9 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
       data.tenantId = tenantId;
       let formdata = !window.location.href.includes("edit-application") ? isPropertyMutation ? data : convertToProperty(data) : convertToUpdateProperty(data,t);
       formdata.Property.tenantId = formdata?.Property?.tenantId || tenantId;
+      console.log("isPropertyMutation==",isPropertyMutation,data)
+      console.log("formdata==========",formdata);
+      return;
       mutation.mutate(formdata, {
         onSuccess,
       });

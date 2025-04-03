@@ -178,63 +178,79 @@ export const setOwnerDetails = (data) => {
 };
 
 export const setDocumentDetails = (data) => {
+  console.log("setDocumentDetails==",setDocumentDetails)
   const { address, owners, exemption, buildingPermission, propertyPhoto } = data;
+  console.log("setDocumentDetails--address==",address)
+  console.log("setDocumentDetails--owners==",owners)
+  console.log("setDocumentDetails--exemption==",exemption)
+
+  console.log("setDocumentDetails--buildingPermission==",buildingPermission)
+  console.log("setDocumentDetails--propertyPhoto==",propertyPhoto)
   let documents = [];
-  if (address?.documents["ProofOfAddress"]?.id) {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-      id: address?.documents["ProofOfAddress"]?.id || "",
-      status: address?.documents["ProofOfAddress"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-    });
+  if(address) {
+    if (address?.documents["ProofOfAddress"]?.id) {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+        id: address?.documents["ProofOfAddress"]?.id || "",
+        status: address?.documents["ProofOfAddress"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || address?.documents["ProofOfAddress"]?.documentType || "",
+      });
+    }
   }
-
-  if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
-    documents.push({
-      fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
-      documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
-      id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
-      status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
-      documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
-    });
+  
+  if(buildingPermission) {
+    if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
+        id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
+        status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
+      });
+    }
   }
-
-  if (exemption?.documents["exemptionProof"]?.id) {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
-      id: exemption?.documents["exemptionProof"]?.id || "",
-      status: exemption?.documents["exemptionProof"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
-    });
+  
+  if(exemption && exemption?.documents["exemptionProof"]?.fileStoreId && exemption?.exemptionRequired?.code=="PT_COMMON_YES") {
+    if (exemption?.documents["exemptionProof"]?.id) {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+        id: exemption?.documents["exemptionProof"]?.id || "",
+        status: exemption?.documents["exemptionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+      });
+    }
   }
-
-  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
-      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
-      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
-    });
+  
+  if(propertyPhoto) {
+    if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+        id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+        status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+      });
+    }
   }
+  
 
   owners &&
     owners.length > 0 &&
@@ -767,63 +783,82 @@ export const setUpdateOwnerDetails = (data = []) => {
   return data;
 };
 export const setUpdatedDocumentDetails = (data) => {
+  console.log("setUpdatedDocumentDetails==",data)
   const { address, owners, exemption, buildingPermission, propertyPhoto } = data;
+
+  console.log("setUpdatedDocumentDetails--address==",address)
+  console.log("setUpdatedDocumentDetails--owners==",owners)
+  console.log("setUpdatedDocumentDetails--exemption==",exemption)
+
+  console.log("setUpdatedDocumentDetails--buildingPermission==",buildingPermission)
+  console.log("setUpdatedDocumentDetails--propertyPhoto==",propertyPhoto)
   let documents = [];
-  if (address?.documents["ProofOfAddress"]?.id) {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-      id: address?.documents["ProofOfAddress"]?.id || "",
-      status: address?.documents["ProofOfAddress"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-    });
+  if(address) {
+    if (address?.documents["ProofOfAddress"]?.id) {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+        id: address?.documents["ProofOfAddress"]?.id || "",
+        status: address?.documents["ProofOfAddress"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+      });
+    }
   }
+ 
 
-  if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
-    documents.push({
-      fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
-      documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || "",
-      id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
-      status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
-      documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || "",
-    });
+  if(buildingPermission) {
+    if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || "",
+        id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
+        status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || "",
+      });
+    }
   }
-
-  if (exemption?.documents["exemptionProof"]?.id) {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
-      id: exemption?.documents["exemptionProof"]?.id || "",
-      status: exemption?.documents["exemptionProof"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
-    });
+  
+  if(exemption && exemption?.documents["exemptionProof"]?.fileStoreId && exemption?.exemptionRequired?.code=="PT_COMMON_YES") {
+    if (exemption?.documents["exemptionProof"]?.id) {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType?.code || exemption?.documents["exemptionProof"]?.documentType || "",
+        id: exemption?.documents["exemptionProof"]?.id || "",
+        status: exemption?.documents["exemptionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType?.code || exemption?.documents["exemptionProof"]?.documentType || "",
+      });
+    }
   }
-
-  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
-      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
-      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
-    });
+  
+  console.log("propertyPhoto?.documents==",propertyPhoto?.documents["propertyPhoto"])
+  if(propertyPhoto) {
+    if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+        id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+        status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+      });
+    }
   }
+  
 
   owners &&
     owners.length > 0 &&
@@ -836,7 +871,7 @@ export const setUpdatedDocumentDetails = (data) => {
   return data;
 };
 export const convertToUpdateProperty = (data = {}, t) => {
-  // console.log("convertToUpdateProperty==", data);
+  console.log("convertToUpdateProperty==", data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
