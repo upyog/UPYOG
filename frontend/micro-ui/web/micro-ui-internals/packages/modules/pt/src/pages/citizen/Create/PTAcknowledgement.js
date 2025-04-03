@@ -64,7 +64,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
       formdata.Property.tenantId = formdata?.Property?.tenantId || tenantId;
       console.log("isPropertyMutation==",isPropertyMutation,data)
       console.log("formdata==========",formdata);
-      return;
+      // return;
       mutation.mutate(formdata, {
         onSuccess,
       });

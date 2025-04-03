@@ -1,6 +1,6 @@
 import { Fonts } from "./fonts";
 global.eval = undefined;
-const pdfMake = require("pdfmake/build/pdfmake.min");
+// const pdfMake = require("pdfmake/build/pdfmake.min");
 // const pdfFonts = require("pdfmake/build/vfs_fonts.js");
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -8,6 +8,12 @@ const pdfMake = require("pdfmake/build/pdfmake.min");
 // const pdfWorker = require("pdfmake/build/pdfmake.worker");
 
 // pdfMake.workerSrc = pdfWorker;
+
+import pdfMake from "pdfmake/build/pdfmake.min";
+
+
+
+pdfMake.workerSrc = pdfMake;
 
 let pdfFonts = {
   //   Roboto: {
