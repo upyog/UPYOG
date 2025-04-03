@@ -203,7 +203,7 @@ export const setDocumentDetails = (data) => {
     }
   }
   
-  if(buildingPermission) {
+  if(buildingPermission && buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId && buildingPermission?.buildingPermissionRequired?.code=="PT_COMMON_YES") {
     if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
       documents.push({
         fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
