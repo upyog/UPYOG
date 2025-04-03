@@ -28,6 +28,12 @@ import org.springframework.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+
+/**
+ * Service class responsible for enriching pet registration applications with necessary data
+ * such as application number, audit details, address, and pet details before processing.
+ */
 @Slf4j
 @Service
 public class EnrichmentService {
@@ -38,6 +44,12 @@ public class EnrichmentService {
 	@Autowired
 	private CommonUtils commonUtils;
 
+	/**
+	 * Enriches the pet registration application by assigning unique IDs, application numbers,
+	 * and setting audit details.
+	 *
+	 * @param petRegistrationRequest The request containing pet registration applications.
+	 */
 	public void enrichPetApplication(PetRegistrationRequest petRegistrationRequest) {
 		RequestInfo requestInfo = petRegistrationRequest.getRequestInfo();
 		List<PetRegistrationApplication> applications = petRegistrationRequest.getPetRegistrationApplications();
@@ -79,33 +91,50 @@ public class EnrichmentService {
 		}
 	}
 
+	/**
+	 * Checks if the application is a new pet registration.
+	 */
 	private boolean isNewPetApplication(PetRegistrationApplication application) {
 		return NEW_PET_APPLICATION.equals(application.getApplicationType())
 				&& (application.getPetToken().isEmpty() || application.getPetToken() == null);
 	}
 
+	/**
+	 * Checks if the application is a renewal request.
+	 */
 	private boolean isRenewPetApplication(PetRegistrationApplication application) {
 		return RENEW_PET_APPLICATION.equals(application.getApplicationType());
 	}
 
+	/**
+	 * Generates a new pet token for a new pet registration application.
+	 */
 	private void enrichNewPetToken(PetRegistrationApplication application, RequestInfo requestInfo, String tenantId) {
 		String petTokenId = commonUtils
 				.getIdList(requestInfo, tenantId, config.getPetTokenName(), config.getPetTokenFormat(), 1).get(0);
 		application.setPetToken(petTokenId);
 	}
 
+	/**
+	 * Enriches the address details in the application.
+	 */
 	private void enrichAddress(PetRegistrationApplication application) {
 		Address address = application.getAddress();
 		address.setRegistrationId(application.getId());
 		address.setId(UUID.randomUUID().toString());
 	}
-
+	/**
+	 * Enriches pet details within the application.
+	 */
 	private void enrichPetDetails(PetRegistrationApplication application) {
 		PetDetails petDetails = application.getPetDetails();
 		petDetails.setPetDetailsId(application.getId());
 		petDetails.setId(UUID.randomUUID().toString());
 	}
 
+	/**
+	 * Enriches document details if documents are attached to the application.
+	 */
 	private void enrichRenewalDetails(PetRegistrationApplication application, long validityDateUnix) {
 		PetRenewalAuditDetails petRenewalAuditDetails = new PetRenewalAuditDetails();
 		petRenewalAuditDetails.setId(application.getPetToken());
@@ -118,6 +147,9 @@ public class EnrichmentService {
 
 	}
 
+	/**
+	 * Updates application status and enriches last modified details upon update.
+	 */
 	private void enrichDocuments(PetRegistrationApplication application) {
 		application.getDocuments().forEach(doc -> {
 			if (doc.getId() == null) {

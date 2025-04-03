@@ -28,6 +28,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.egov.ptr.util.PTRConstants.*;
 
+/**
+ * Service class to handle workflow operations related to Pet Registration.
+ */
 @Service
 public class WorkflowService {
 
@@ -43,6 +46,12 @@ public class WorkflowService {
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
 
+	/**
+	 * Updates the workflow status of a pet registration application.
+	 *
+	 * @param petRegistrationRequest The request containing pet registration details.
+	 * @return The updated workflow state.
+	 */
 	public State updateWorkflowStatus(PetRegistrationRequest petRegistrationRequest) {
 		PetRegistrationApplication application = petRegistrationRequest.getPetRegistrationApplications().get(0);
 			ProcessInstance processInstance = getProcessInstanceForPTR(application,
@@ -53,6 +62,13 @@ public class WorkflowService {
 		return state;
 	}
 
+	/**
+	 * Constructs a ProcessInstance object for workflow processing.
+	 *
+	 * @param application The pet registration application.
+	 * @param requestInfo The request info.
+	 * @return The constructed ProcessInstance.
+	 */
 	private ProcessInstance getProcessInstanceForPTR(PetRegistrationApplication application, RequestInfo requestInfo) {
 		Workflow workflow = application.getWorkflow();
 
@@ -157,9 +173,11 @@ public class WorkflowService {
 	}
 
 	/**
-	 * Creates url for searching processInstance
+	 * Constructs the search URL for fetching workflow process instances.
 	 *
-	 * @return The search url
+	 * @param tenantId The tenant ID.
+	 * @param businessId The business ID.
+	 * @return The constructed URL.
 	 */
 	private StringBuilder getWorkflowSearchURLWithParams(String tenantId, String businessId) {
 
@@ -173,9 +191,12 @@ public class WorkflowService {
 	}
 
 	/**
-	 * Fetches the workflow object for the given assessment
-	 * 
-	 * @return
+	 * Retrieves the current state of a workflow process instance.
+	 *
+	 * @param requestInfo The request info.
+	 * @param tenantId The tenant ID.
+	 * @param businessId The business ID.
+	 * @return The current state of the process instance.
 	 */
 	public State getCurrentState(RequestInfo requestInfo, String tenantId, String businessId) {
 

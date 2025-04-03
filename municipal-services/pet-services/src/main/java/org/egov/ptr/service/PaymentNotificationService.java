@@ -43,9 +43,10 @@ public class PaymentNotificationService {
 	private Producer producer;
 
 	/**
+	 * Processes the received payment record and updates the workflow and application status if applicable.
 	 *
-	 * @param record
-	 * @param topic
+	 * @param record The payment record received from the Kafka topic.
+	 * @param topic The Kafka topic from which the record is consumed.
 	 */
 	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
 		log.info(" Receipt consumer class entry " + record.toString());
@@ -66,6 +67,12 @@ public class PaymentNotificationService {
 
 	}
 
+	/**
+	 * Updates the workflow status based on the payment request.
+	 *
+	 * @param paymentRequest The payment request object.
+	 * @return The updated state of the workflow.
+	 */
 	public State updateWorkflowStatus(PaymentRequest paymentRequest) {
 
 		ProcessInstance processInstance = getProcessInstanceForPTR(paymentRequest);
@@ -96,6 +103,12 @@ public class PaymentNotificationService {
 
 	}
 
+	/**
+	 * Calls the workflow service to update the status of the process instance.
+	 *
+	 * @param workflowReq The ProcessInstanceRequest containing process details.
+	 * @return The updated State object from the workflow service.
+	 */
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 		log.info(" Workflow Request for pet service for final step " + workflowReq.toString());
 		ProcessInstanceResponse response = null;
@@ -106,6 +119,13 @@ public class PaymentNotificationService {
 		return response.getProcessInstances().get(0).getState();
 	}
 
+
+	/**
+	 * Updates the application status in the Pet Registration system based on the payment request.
+	 *
+	 * @param applicationStatus The updated status to be set.
+	 * @param paymentRequest The payment request object containing request details.
+	 */
 	private void updateApplicationStatus(String applicationStatus, PaymentRequest paymentRequest) {
 
 		AuditDetails auditDetails = AuditDetails.builder()

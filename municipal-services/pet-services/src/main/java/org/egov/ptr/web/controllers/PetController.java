@@ -29,6 +29,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import io.swagger.annotations.ApiParam;
 
+
+/**
+ * Controller for handling pet registration-related operations.
+ */
 @Controller
 @RequestMapping("/pet-registration")
 public class PetController {
@@ -42,6 +46,12 @@ public class PetController {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+	/**
+	 * Handles the creation of new pet registration applications.
+	 *
+	 * @param petRegistrationRequest The request containing application details and metadata.
+	 * @return Response containing the created applications and response info.
+	 */
 	@RequestMapping(value = "/_create", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationCreate(
 			@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
@@ -55,6 +65,14 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+
+	/**
+	 * Handles searching for pet registration applications based on criteria.
+	 *
+	 * @param requestInfoWrapper       The request containing metadata.
+	 * @param petApplicationSearchCriteria The search criteria for filtering applications.
+	 * @return Response containing the matching applications.
+	 */
 	@RequestMapping(value = "/_search", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationSearch(
 			@RequestBody RequestInfoWrapper requestInfoWrapper,
@@ -68,6 +86,13 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+
+	/**
+	 * Handles updating an existing pet registration application.
+	 *
+	 * @param petRegistrationRequest The request containing updated application details.
+	 * @return Response containing the updated application.
+	 */
 	@RequestMapping(value = "/_update", method = RequestMethod.POST)
 	public ResponseEntity<PetRegistrationResponse> petRegistrationUpdate(
 			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest)
@@ -81,6 +106,12 @@ public class PetController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+
+	/**
+	 * Triggers the expiration process for pet applications.
+	 *
+	 * @return Response indicating the status of the scheduler trigger.
+	 */
 	@RequestMapping("/trigger-expire-petapplications")
 	public ResponseEntity<String> triggerWorkflowUpdate() {
 		try {
@@ -92,6 +123,12 @@ public class PetController {
 		}
 	}
 
+
+	/**
+	 * Triggers advance notification for upcoming pet application expirations.
+	 *
+	 * @return Response indicating the status of the notification trigger.
+	 */
 	@RequestMapping("/trigger-advance-notification")
 	public ResponseEntity<String> triggerAdvanceNotification() {
 		try {
