@@ -203,9 +203,12 @@ public class CNDServiceImpl implements CNDService {
 	    if (paymentRequest == null) {
 	        State state = workflowService.updateWorkflowStatus(null, cndApplicationRequest);
 	        enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
-	        processWasteAndDocumentDetails(cndApplicationRequest);
+	        updateWasteAndDocumentDetails(cndApplicationRequest);
 	    } else {
 	        // Handle payment request updates
+	    	 State state = workflowService.updateWorkflowStatus(paymentRequest, cndApplicationRequest);
+	         enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
+	         
 	        cndApplicationDetail.getAuditDetails()
 	                .setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
 	        cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
@@ -234,45 +237,19 @@ public class CNDServiceImpl implements CNDService {
 	 * @param cndApplicationRequest The CND application request containing waste and document details.
 	 */
 
-	private void processWasteAndDocumentDetails(CNDApplicationRequest cndApplicationRequest) {
-	    List<WasteTypeDetail> wasteTypeDetails = cndApplicationRequest.getCndApplication().getWasteTypeDetails();
-	    List<DocumentDetail> documentDetails = cndApplicationRequest.getCndApplication().getDocumentDetails();
-
+	private void updateWasteAndDocumentDetails(CNDApplicationRequest cndApplicationRequest) {
 	    List<WasteTypeDetail> newWasteDetails = new ArrayList<>();
 	    List<WasteTypeDetail> existingWasteDetails = new ArrayList<>();
-
+	    processWasteDetails(cndApplicationRequest, newWasteDetails, existingWasteDetails);
+	    
 	    List<DocumentDetail> newDocumentDetails = new ArrayList<>();
 	    List<DocumentDetail> existingDocumentDetails = new ArrayList<>();
-
-	    if (wasteTypeDetails != null) {
-	        for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
-	            if (wasteTypeDetail.getWasteTypeId() == null || wasteTypeDetail.getWasteTypeId().isEmpty()) {
-	                wasteTypeDetail.setWasteTypeId(CNDServiceUtil.getRandomUUID());
-	                wasteTypeDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
-	                newWasteDetails.add(wasteTypeDetail);  
-	            } else {
-	                existingWasteDetails.add(wasteTypeDetail); 
-	            }
-	        }
-	    }
-
-	    if (documentDetails != null) {
-	        for (DocumentDetail documentDetail : documentDetails) {
-	            if (documentDetail.getDocumentDetailId() == null || documentDetail.getDocumentDetailId().isEmpty()) {
-	                documentDetail.setDocumentDetailId(CNDServiceUtil.getRandomUUID());
-	                documentDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
-	                documentDetail.setIsUpdatedDetail(true); 
-	                newDocumentDetails.add(documentDetail);  
-	            } else {
-	            	documentDetail.setIsUpdatedDetail(false); 
-	                existingDocumentDetails.add(documentDetail); 
-	            }
-	        }
-	    }
+	    processDocumentDetails(cndApplicationRequest, newDocumentDetails, existingDocumentDetails);
 	    
 	    if (!newWasteDetails.isEmpty() || !newDocumentDetails.isEmpty()) {
-	       cndApplicationRepository.saveCNDWasteAndDocumentDetail(newWasteDetails, newDocumentDetails, cndApplicationRequest.getCndApplication().getApplicationId());	    }
-
+	        cndApplicationRepository.saveCNDWasteAndDocumentDetail(newWasteDetails, newDocumentDetails, cndApplicationRequest.getCndApplication().getApplicationId());
+	    }
+	    
 	    // Merge new and existing details before sending to Kafka
 	    cndApplicationRequest.getCndApplication().setWasteTypeDetails(
 	        Stream.concat(existingWasteDetails.stream(), newWasteDetails.stream()).collect(Collectors.toList())
@@ -281,6 +258,38 @@ public class CNDServiceImpl implements CNDService {
 	        Stream.concat(existingDocumentDetails.stream(), newDocumentDetails.stream()).collect(Collectors.toList())
 	    );
 	}
+
+	private void processWasteDetails(CNDApplicationRequest cndApplicationRequest, List<WasteTypeDetail> newWasteDetails, List<WasteTypeDetail> existingWasteDetails) {
+	    List<WasteTypeDetail> wasteTypeDetails = cndApplicationRequest.getCndApplication().getWasteTypeDetails();
+	    if (wasteTypeDetails != null) {
+	        for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
+	            if (wasteTypeDetail.getWasteTypeId() == null || wasteTypeDetail.getWasteTypeId().isEmpty()) {
+	                wasteTypeDetail.setWasteTypeId(CNDServiceUtil.getRandomUUID());
+	                wasteTypeDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
+	                newWasteDetails.add(wasteTypeDetail);
+	            } else {
+	                existingWasteDetails.add(wasteTypeDetail);
+	            }
+	        }
+	    }
+	}
+
+	private void processDocumentDetails(CNDApplicationRequest cndApplicationRequest, List<DocumentDetail> newDocumentDetails, List<DocumentDetail> existingDocumentDetails) {
+	    List<DocumentDetail> documentDetails = cndApplicationRequest.getCndApplication().getDocumentDetails();
+	    if (documentDetails != null) {
+	        for (DocumentDetail documentDetail : documentDetails) {
+	            if (documentDetail.getDocumentDetailId() == null || documentDetail.getDocumentDetailId().isEmpty()) {
+	                documentDetail.setDocumentDetailId(CNDServiceUtil.getRandomUUID());
+	                documentDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
+	                newDocumentDetails.add(documentDetail);
+	            } else {
+	                documentDetail.setIsUpdatedDetail(false);
+	                existingDocumentDetails.add(documentDetail);
+	            }
+	        }
+	    }
+	}
+
 
 
 	}

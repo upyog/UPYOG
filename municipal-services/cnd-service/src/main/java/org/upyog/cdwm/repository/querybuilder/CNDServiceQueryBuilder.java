@@ -36,6 +36,8 @@ public class CNDServiceQueryBuilder {
             "LEFT JOIN public.ug_cnd_document_detail udoc ON ucad.application_id = udoc.application_id " +
             "LEFT JOIN public.ug_cnd_disposal_deposit_centre_detail uddc ON ucad.application_id = uddc.application_id";
     
+
+    
     // Pagination wrapper query
     private static final String PAGINATION_WRAPPER = 
         "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY created_time DESC) AS offset_ FROM ({}) result) " +
@@ -44,16 +46,6 @@ public class CNDServiceQueryBuilder {
     // Query for counting applications
     private static final String APPLICATIONS_COUNT_QUERY = 
         "SELECT count(ucad.application_id) FROM ug_cnd_application_details ucad";
-    
-    public static final String INSERT_WASTE_DETAIL_QUERY = 
-    	    "INSERT INTO public.ug_cnd_waste_detail (" +
-    	    "application_id, waste_type_id, entered_by_user_type, waste_type, quantity, metrics) " +
-    	    "VALUES (?, ?, ?, ?, ?, ?)";
-
-    	public static final String INSERT_DOCUMENT_DETAIL_QUERY = 
-    	    "INSERT INTO public.ug_cnd_document_detail (" +
-    	    "document_detail_id, application_id, document_type, uploaded_by_user_type, file_store_id) " + 
-    	    "VALUES (?, ?, ?, ?, ?)";
     
     /**
      * Builds query to fetch CND applications based on search criteria
