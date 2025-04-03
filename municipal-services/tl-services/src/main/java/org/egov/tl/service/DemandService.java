@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tl.config.TLConfiguration;
 import org.egov.tl.repository.DemandRepository;
 import org.egov.tl.util.TLConstants;
 import org.egov.tl.web.models.ApplicationDetail;
@@ -36,6 +37,8 @@ public class DemandService {
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
+    @Autowired
+    private TLConfiguration config;
 
     public List<Demand> generateDemand(RequestInfo requestInfo,TradeLicense license, String businessService){
 
@@ -49,15 +52,20 @@ public class DemandService {
     								.collectionAmount(BigDecimal.ZERO)
     								.build();
     	
+    	Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(config.getBillExpiryAfter()));
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
+    	
     	Demand demandOne = Demand.builder()
                 .consumerCode(license.getApplicationNumber())
                 .demandDetails(Arrays.asList(demandDetail))
                 .minimumAmountPayable(applicationDetail.getTotalPayableAmount())
-                .tenantId(TLConstants.STATE_LEVEL_TENANT_ID)
+                .tenantId(license.getTenantId())
                 .taxPeriodFrom(new Date().getTime())
 //                .taxPeriodTo(license.getValidTo())
                 .taxPeriodTo(new Date((Calendar.getInstance().getTimeInMillis() + (long) 182 * 24 * 60 * 60 * 1000)).getTime())
                 .consumerType(license.getBusinessService())
+                .fixedBillExpiryDate(cal.getTimeInMillis())
                 .businessService(license.getBusinessService())
                 .build();
     	

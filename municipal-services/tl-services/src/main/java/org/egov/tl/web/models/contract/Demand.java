@@ -49,6 +49,13 @@ public class Demand   {
 
     @JsonProperty("taxPeriodTo")
     private Long taxPeriodTo;
+    
+    @JsonProperty("billExpiryTime")
+    private Long billExpiryTime;
+    
+    @JsonProperty("fixedBillExpiryDate")
+    private Long fixedBillExpiryDate;
+
 
     @Builder.Default
     @JsonProperty("demandDetails")
