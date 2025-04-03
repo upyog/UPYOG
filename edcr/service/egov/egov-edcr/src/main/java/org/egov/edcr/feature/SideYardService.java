@@ -172,7 +172,7 @@ public class SideYardService extends GeneralRule {
                 scrutinyDetail.addColumnHeading(2, LEVEL);
                 scrutinyDetail.addColumnHeading(3, OCCUPANCY);
                 scrutinyDetail.addColumnHeading(4, SIDENUMBER);
-                scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
+//                scrutinyDetail.addColumnHeading(5, FIELDVERIFIED);
                 scrutinyDetail.addColumnHeading(6, PERMISSIBLE);
                 scrutinyDetail.addColumnHeading(7, PROVIDED);
                 scrutinyDetail.addColumnHeading(8, STATUS);
@@ -457,7 +457,7 @@ public class SideYardService extends GeneralRule {
                     sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
             details.put(OCCUPANCY, sideYard1Result.occupancy);
 
-            details.put(FIELDVERIFIED, MINIMUMLABEL);
+//            details.put(FIELDVERIFIED, MINIMUMLABEL);
             details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
             details.put(PROVIDED, sideYard1Result.actualDistance.toString());
 
@@ -482,7 +482,7 @@ public class SideYardService extends GeneralRule {
                 detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
                 detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
 
-                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
+//                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
                 detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
                 detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
                 // }

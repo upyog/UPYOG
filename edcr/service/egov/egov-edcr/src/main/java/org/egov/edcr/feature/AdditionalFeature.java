@@ -51,6 +51,7 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -341,7 +342,7 @@ public class AdditionalFeature extends FeatureProcess {
                 details.put(RULE_NO, RULE_38);
                 details.put(DESCRIPTION, NO_OF_FLOORS);
                 details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
-                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
+//                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
                 details.put(PERMISSIBLE, requiredFloorCount);
                 details.put(PROVIDED, String.valueOf(block.getBuilding().getFloorsAboveGround()));
                 details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -366,7 +367,7 @@ public class AdditionalFeature extends FeatureProcess {
 			scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Height of Floor");
 			OccupancyTypeHelper occupancyTypeHelper = block.getBuilding().getMostRestrictiveFarHelper();
 			for (Floor floor : block.getBuilding().getFloors()) {
-				BigDecimal floorHeight = floor.getFloorHeights() != null ? floor.getFloorHeights().get(0)
+				BigDecimal floorHeight = floor.getFloorHeights() != null && !floor.getFloorHeights().isEmpty() ? floor.getFloorHeights().get(0).setScale(2, RoundingMode.HALF_UP)
 						: BigDecimal.ZERO;
 				
 				int floorNumber = floor.getNumber();
@@ -481,6 +482,9 @@ public class AdditionalFeature extends FeatureProcess {
                     "Block_" + block.getNumber() + "_" + "Height of Building");
             String requiredBuildingHeight = StringUtils.EMPTY;
             BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
+            if(buildingHeight != null) {
+                buildingHeight = buildingHeight.setScale(2, RoundingMode.HALF_UP);
+            }
 
             if (typeOfArea.equalsIgnoreCase(OLD)) {
                 if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOUR) < 0) {
@@ -564,7 +568,7 @@ public class AdditionalFeature extends FeatureProcess {
                 details.put(RULE_NO, ruleNo);
                 details.put(DESCRIPTION, HEIGHT_BUILDING);
                 details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
-                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
+//                details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
                 details.put(PERMISSIBLE, requiredBuildingHeight);
                 details.put(PROVIDED, String.valueOf(buildingHeight));
                 details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -597,7 +601,7 @@ public class AdditionalFeature extends FeatureProcess {
             List<BigDecimal> plinthHeights = block.getPlinthHeight();
 
             if (!plinthHeights.isEmpty()) {
-                minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
+                minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get().setScale(2, RoundingMode.HALF_UP);
                 if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0) {
                     isAccepted = true;
                 }
@@ -840,7 +844,7 @@ public class AdditionalFeature extends FeatureProcess {
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, DxfFileConstants.AREA_TYPE);
-        scrutinyDetail.addColumnHeading(4, DxfFileConstants.ROAD_WIDTH);
+//        scrutinyDetail.addColumnHeading(4, DxfFileConstants.ROAD_WIDTH);
         scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
         scrutinyDetail.addColumnHeading(6, PROVIDED);
         scrutinyDetail.addColumnHeading(7, STATUS);

@@ -278,8 +278,7 @@ public class HeightOfRoom extends FeatureProcess {
 								}
 
 								if (!residentialAcRoomHeights.isEmpty()) {
-									BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min)
-											.get();
+									BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
 									// Added by Bimal to check minimum height for residential rooms only
 									if (!A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 										minimumHeight = MINIMUM_HEIGHT_2_75;
@@ -374,7 +373,7 @@ public class HeightOfRoom extends FeatureProcess {
 							    }
 
 							    if (!residentialRoomHeights.isEmpty()) {
-							        BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get();
+							        BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get().setScale(2, BigDecimal.ROUND_HALF_UP);
 							        if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
 							            minimumHeight = MINIMUM_HEIGHT_2_75;
 							            Log.info("Minimum Residential Regular Room Height required is set to-------- : " + MINIMUM_HEIGHT_2_75);

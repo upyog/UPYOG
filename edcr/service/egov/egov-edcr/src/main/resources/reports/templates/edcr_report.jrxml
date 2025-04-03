@@ -260,7 +260,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["PLOT AREA (As per measurement) in m²"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true" pattern="#.##">
 				<reportElement x="418" y="267" width="130" height="21" uuid="e8d25a86-a1fc-42e5-88e1-a141e99c948c"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -899,7 +899,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["PLOT AREA (As per declaration) in m²"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true"  pattern="#.##">
 				<reportElement x="142" y="267" width="146" height="21" uuid="2280df2e-7f1e-480c-a703-d2fb9a872d0b"/>
 				<box>
 					<pen lineWidth="0.5"/>

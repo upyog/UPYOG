@@ -285,7 +285,7 @@ public class GeneralStair extends FeatureProcess {
                 }
                 String value = typicalFloorValues.get("typicalFloors") != null
                         ? (String) typicalFloorValues.get("typicalFloors")
-                        : " floor " + floor.getNumber();
+                        : "" + floor.getNumber();
 
                 if (valid) {
                     setReportOutputDetailsFloorStairWise(plan, RULE, value,
@@ -432,7 +432,7 @@ public class GeneralStair extends FeatureProcess {
             }
             String value = typicalFloorValues.get("typicalFloors") != null
                     ? (String) typicalFloorValues.get("typicalFloors")
-                    : " floor " + floor.getNumber();
+                    : "" + floor.getNumber();
 
             if (valid) {
                 setReportOutputDetailsFloorStairWise(plan, RULE, value,
@@ -520,7 +520,7 @@ public class GeneralStair extends FeatureProcess {
 
                     String value = typicalFloorValues.get("typicalFloors") != null
                             ? (String) typicalFloorValues.get("typicalFloors")
-                            : " floor " + floor.getNumber();
+                            : "" + floor.getNumber();
                     if (valid) {
                         setReportOutputDetailsFloorStairWise(plan, RULETREAD, value,
                                 String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
@@ -571,7 +571,7 @@ public class GeneralStair extends FeatureProcess {
 
             String value = typicalFloorValues.get("typicalFloors") != null
                     ? (String) typicalFloorValues.get("typicalFloors")
-                    : " floor " + floor.getNumber();
+                    : "" + floor.getNumber();
             if (valid) {
                 setReportOutputDetailsFloorStairWise(plan, RULERISER, value,
                         String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
