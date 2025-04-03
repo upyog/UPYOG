@@ -161,7 +161,7 @@ public class Payment {
     @JsonProperty("fileStoreId")
     private String fileStoreId;
     
-    @SafeHtml
+    
     @JsonProperty("ownername")
     private List<String> ownername;
 
