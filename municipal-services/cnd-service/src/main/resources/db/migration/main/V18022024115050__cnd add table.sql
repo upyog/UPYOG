@@ -41,7 +41,7 @@ CREATE TABLE ug_cnd_waste_detail (
     created_time BIGINT,
     last_modified_time BIGINT,
 
-    PRIMARY KEY (application_id, waste_type_id),
+    PRIMARY KEY (waste_type_id),
     FOREIGN KEY (application_id) REFERENCES ug_cnd_application_details(application_id) ON DELETE CASCADE
 );
 

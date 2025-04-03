@@ -40,7 +40,10 @@ public class CNDConfiguration {
     // Kafka topics for saving water tanker data
     @Value("${persister.create.cnd.service.topic}")
     private String cndApplicationSaveTopic;
-
+    
+    @Value("${persister.save.cnd.waste.document.topic}")
+    private String saveWasteDocumentApplicationTopic;
+   
     @Value("${persister.update.cnd.service.topic}")
     private String cndApplicationUpdateTopic;
 
