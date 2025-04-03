@@ -22,5 +22,10 @@ public class SiteBookingSearchCriteria {
 	private List<String> status;
 	
 	private String tenantId;
+	
+	private List<String> siteStatus;
+	
+	@Builder.Default
+	private Boolean skipValidation = false;
 
 }

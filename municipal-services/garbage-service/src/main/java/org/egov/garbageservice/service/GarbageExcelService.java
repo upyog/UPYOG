@@ -64,35 +64,37 @@ public class GarbageExcelService {
 			garbageAccountsCreated.addAll(garbageAccountCreateResponse.getGarbageAccounts());
 		}
 
-		Map<String, GarbageAccount> garbageAccountMap = new HashMap<>();
-		Map<String, GarbageAccount> childGarbageAccountMap = new HashMap<>();
-
-		garbageAccountsCreated.forEach(garbageAccount -> {
-			// Put the parent garbage account into the map
-			garbageAccountMap.put(garbageAccount.getGrbgApplication().getApplicationNo(), garbageAccount);
-
-			// Put all child garbage accounts into the map
-			garbageAccount.getChildGarbageAccounts().forEach(childGarbageAccount -> childGarbageAccountMap
-					.put(childGarbageAccount.getGrbgApplication().getApplicationNo(), childGarbageAccount));
-		});
-
-		// Process and collect all garbage accounts, both parent and child, into their
-		// respective lists
-		List<GarbageAccount> processedGarbageAccounts = processGarbageAccounts(garbageAccountMap, requestInfo);
-		List<GarbageAccount> processedChildGarbageAccounts = processGarbageAccounts(childGarbageAccountMap,
-				requestInfo);
-
-		// Group child garbage accounts by their parent UUID
-		Map<String, List<GarbageAccount>> childGarbageAccountsResMap = processedChildGarbageAccounts.stream()
-				.collect(Collectors.groupingBy(GarbageAccount::getParentAccount));
-
-		// Link child garbage accounts to their respective parent accounts
-		processedGarbageAccounts.forEach(account -> {
-			Optional.ofNullable(childGarbageAccountsResMap.get(account.getUuid()))
-					.ifPresent(account::setChildGarbageAccounts);
-		});
-
-		return processedGarbageAccounts;
+//		Map<String, GarbageAccount> garbageAccountMap = new HashMap<>();
+//		Map<String, GarbageAccount> childGarbageAccountMap = new HashMap<>();
+//
+//		garbageAccountsCreated.forEach(garbageAccount -> {
+//			// Put the parent garbage account into the map
+//			garbageAccountMap.put(garbageAccount.getGrbgApplication().getApplicationNo(), garbageAccount);
+//
+//			// Put all child garbage accounts into the map
+//			garbageAccount.getChildGarbageAccounts().forEach(childGarbageAccount -> childGarbageAccountMap
+//					.put(childGarbageAccount.getGrbgApplication().getApplicationNo(), childGarbageAccount));
+//		});
+//
+//		// Process and collect all garbage accounts, both parent and child, into their
+//		// respective lists
+//		List<GarbageAccount> processedGarbageAccounts = processGarbageAccounts(garbageAccountMap, requestInfo);
+//		List<GarbageAccount> processedChildGarbageAccounts = processGarbageAccounts(childGarbageAccountMap,
+//				requestInfo);
+//
+//		// Group child garbage accounts by their parent UUID
+//		Map<String, List<GarbageAccount>> childGarbageAccountsResMap = processedChildGarbageAccounts.stream()
+//				.collect(Collectors.groupingBy(GarbageAccount::getParentAccount));
+//
+//		// Link child garbage accounts to their respective parent accounts
+//		processedGarbageAccounts.forEach(account -> {
+//			Optional.ofNullable(childGarbageAccountsResMap.get(account.getUuid()))
+//					.ifPresent(account::setChildGarbageAccounts);
+//		});
+//
+//		return processedGarbageAccounts;
+		
+		return garbageAccountsCreated;
 	}
 
 	// Helper method to process and collect garbage accounts

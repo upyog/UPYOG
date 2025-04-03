@@ -57,6 +57,7 @@ public class SiteCreationData {
 	private Long bookingPeriodEndDate;
 	private String workflowAction;
 	private String comments;
+	@Builder.Default
 	private Boolean isOnlyWorkflowCall = false;
 	private String workFlowStatus;
 }

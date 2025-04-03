@@ -85,7 +85,10 @@ public class UserService {
 			addUserDefaultFields(property.getTenantId(), role, ownerFromRequest);
 			UserDetailResponse userDetailResponse = userExists(ownerFromRequest, requestInfo);
 			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
-			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
+//			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
+			
+			Map<String, List<OwnerInfo>> ownerMapFromSearch = existingUsersFromService.stream()
+				    .collect(Collectors.groupingBy(OwnerInfo::getMobileNumber));
 
 			if (CollectionUtils.isEmpty(existingUsersFromService)) {
 
@@ -93,10 +96,14 @@ public class UserService {
 				userDetailResponse = createUser(requestInfo, ownerFromRequest);
 				
 			} else {
+				
+//				String uuid = ownerFromRequest.getUuid();
+//				if (uuid != null && ownerMapFromSearch.containsKey(uuid)) {
+//					userDetailResponse = updateExistingUser(property, requestInfo, role, ownerFromRequest, ownerMapFromSearch.get(uuid));
 
-				String uuid = ownerFromRequest.getUuid();
-				if (uuid != null && ownerMapFromSearch.containsKey(uuid)) {
-					userDetailResponse = updateExistingUser(property, requestInfo, role, ownerFromRequest, ownerMapFromSearch.get(uuid));
+				String mobileNumber = ownerFromRequest.getMobileNumber();
+				if (mobileNumber != null && ownerMapFromSearch.containsKey(mobileNumber)) {
+					userDetailResponse = updateExistingUser(property, requestInfo, role, ownerFromRequest, ownerMapFromSearch.get(mobileNumber).get(0));
 				} else {
 
 					ownerFromRequest.setUserName(UUID.randomUUID().toString());

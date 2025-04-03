@@ -173,12 +173,14 @@ public class SiteService {
 			}
 			if (!CollectionUtils.isEmpty(list1)) {
 				enrichUpdatedSite(updateSiteRequest);
-				State state = workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
-				updateSiteRequest.getSiteUpdationData().setWorkFlowStatus(state.getApplicationStatus());
-				if(StringUtils.equalsIgnoreCase(state.getApplicationStatus(), AdvtConstants.STATUS_APPROVED)) {
-					updateSiteRequest.getSiteUpdationData().setActive(true);
+				if (updateSiteRequest.getSiteUpdationData().getIsOnlyWorkflowCall()) {
+					State state = workflowService.createWorkflowStatusForUpdate(updateSiteRequest);
+					updateSiteRequest.getSiteUpdationData().setWorkFlowStatus(state.getApplicationStatus());
+					if (StringUtils.equalsIgnoreCase(state.getApplicationStatus(), AdvtConstants.STATUS_APPROVED)) {
+						updateSiteRequest.getSiteUpdationData().setActive(true);
+					}
+					updateExistingSiteData(updateSiteRequest, list1);
 				}
-				updateExistingSiteData(updateSiteRequest, list1);
 				updateSiteData(updateSiteRequest);
 			} else {
 				throw new RuntimeException("No Site exists with the Details Provided!!!");
