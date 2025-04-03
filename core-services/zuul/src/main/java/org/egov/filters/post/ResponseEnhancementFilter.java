@@ -79,11 +79,20 @@ public class ResponseEnhancementFilter extends ZuulFilter {
                 "img-src 'self' "+ teraformUrl+
                 "frame-ancestors 'none';");*/
         
+		/*
+		 * ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY, "default-src 'self'; " +
+		 * "script-src 'self' 'nonce-" + nonce +"' "+southUrl+" "+
+		 * "style-src 'self' 'nonce-" + nonce + "' "+ fontgoogleApiUrl+
+		 * "font-src 'self'"+ fontstaticUrl+ "img-src 'self' "+ teraformUrl+
+		 * "frame-ancestors 'none';");
+		 */
+        
+        
         ctx.addZuulResponseHeader(CONTENT_SECURITY_POLICY,
                 "default-src 'self'; " +
-                "script-src 'self' 'nonce-" + nonce +"' "+southUrl+" "+
-                "style-src 'self' 'nonce-" + nonce + "' "+ fontgoogleApiUrl+
-                "font-src 'self'"+ fontstaticUrl+
+                "script-src 'self' "+southUrl+" "+
+                "style-src 'self'; "+
+                "font-src 'self'; "+
                 "img-src 'self' "+ teraformUrl+
                 "frame-ancestors 'none';");
       
