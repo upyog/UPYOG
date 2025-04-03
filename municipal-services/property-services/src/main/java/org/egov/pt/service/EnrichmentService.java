@@ -633,6 +633,7 @@ public class EnrichmentService {
 
 			enrichPropertyForNewWf(requestInfo, property, true);
 		}
+		
 
 		property.getOwners().forEach(owner -> {
 
@@ -779,11 +780,15 @@ public class EnrichmentService {
 
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
+			if (doc.getId() == null && null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty() ) {
 				doc.setId(UUID.randomUUID().toString());
 				if (null == doc.getStatus())
 					doc.setStatus(Status.ACTIVE);
+			}	
 			});
 
+		
+		
 		property.getAddress().setTenantId(property.getTenantId());
 		property.getAddress().setId(UUID.randomUUID().toString());
 
