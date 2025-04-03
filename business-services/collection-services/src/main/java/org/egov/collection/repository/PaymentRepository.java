@@ -7,8 +7,17 @@ import static org.egov.collection.repository.querybuilder.PaymentQueryBuilder.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
+
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.common.config.Config;
 import org.egov.collection.model.Payment;
 import org.egov.collection.model.PaymentDetail;
 import org.egov.collection.model.PaymentSearchCriteria;
@@ -16,9 +25,11 @@ import org.egov.collection.repository.querybuilder.PaymentQueryBuilder;
 import org.egov.collection.repository.rowmapper.BillRowMapper;
 import org.egov.collection.repository.rowmapper.PaymentRowMapper;
 import org.egov.collection.web.contract.Bill;
+import org.egov.collection.web.contract.BillResponse;
 import org.egov.collection.web.contract.PropertyDetail;
 import org.egov.collection.web.contract.RoadCuttingInfo;
 import org.egov.collection.web.contract.UsageCategoryInfo;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -34,6 +45,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.collection.config.ApplicationProperties;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,6 +62,9 @@ public class PaymentRepository {
     private PaymentRowMapper paymentRowMapper;
     
     private BillRowMapper billRowMapper;
+    private  RestTemplate restTemplate;
+    @Autowired
+    private ApplicationProperties config;
 
     @Autowired
     public PaymentRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, PaymentQueryBuilder paymentQueryBuilder, 
@@ -743,6 +759,8 @@ public class PaymentRepository {
 
 	    return res;
 	}
+	
+	
 	public List<String> fetchlandareaByApplicationnos(Set<String> consumerCodes, Set<String> applicationNumbers, String businessService) {
 	    List<String> res = new ArrayList<>();
 	    Map<String, Object> preparedStatementValues = new HashMap<>();
@@ -1069,4 +1087,146 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 				emptyAddtlParameterSource.toArray(new MapSqlParameterSource[0]));
 
 	}
+		
+	public Object Curl_WS(RequestInfo requestInfo, Set<String> consumerCodes,
+		Set<String> applicationNo, String tenantId, String businessservice ){
+		
+		
+		List<Map<String, Object>> waterConnections = new ArrayList<>();
+		StringBuilder url = new StringBuilder(config.getWsHost());
+
+		if(businessservice.contains("WS")) {
+		    url.append(config.getWsUrl())
+		       .append("searchType=CONNECTION");
+		} else {
+		    url.append(config.getSwUrl())
+		       .append("searchType=CONNECTION");
+		}
+
+		// Validate and append tenantId if present
+		if (tenantId != null && !tenantId.isEmpty()) {
+		    url.append("&tenantId=").append(tenantId);
+		}
+
+		// Validate and append consumerCodes if present
+		if (consumerCodes != null && !consumerCodes.isEmpty()) {
+		    url.append("&connectionNumber=").append(consumerCodes);
+		} else {
+		    String applicationNumbersStr = String.join(",", applicationNo); 
+		    url.append("&applicationNumber=").append(applicationNumbersStr);
+		}
+
+
+	    try {
+	        RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+	        // Creating request body as a map
+	        Map<String, Object> requestBody = new HashMap<>();
+	        requestBody.put("RequestInfo", requestInfo);
+	        requestBody.put("tenantId", tenantId);
+	        requestBody.put("isConnectionSearch", true);
+	        requestBody.put("applicationNumber", applicationNo);
+
+	        // Wrapping request body into HttpEntity
+	        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+	        // Making POST request
+	        ResponseEntity<String> response = restTemplate.exchange(url.toString(), HttpMethod.POST, entity, String.class);
+
+	        // Check if response is successful
+	        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+	            ObjectMapper objectMapper = new ObjectMapper();
+	            JsonNode rootNode = objectMapper.readTree(response.getBody());
+	            
+	            JsonNode waterConnectionNode = null;
+	            // Extracting "WaterConnection" array
+	            if(businessservice.contains("WS")) {
+	            	waterConnectionNode = rootNode.path("WaterConnection");
+	            } else {
+	            	waterConnectionNode = rootNode.path("SewerageConnections");
+	            }
+	            if (waterConnectionNode.isArray()) {
+	                for (JsonNode connection : waterConnectionNode) {
+	                    Map<String, Object> connectionMap = objectMapper.convertValue(connection, Map.class);
+	                    waterConnections.add(connectionMap);
+	                }
+	            }
+	        }
+	        
+	    } catch (Exception ex) {
+	        log.error("Exception while calling WS service: ", ex);
+	    }
+	    
+	    //if (!waterConnections.isEmpty()){
+	      //  String propertyId = (String) waterConnections.get(0).get("propertyId");}
+		
+		return waterConnections;
+	
+		}
+	
+
+
+
+	public List<Map<String, Object>> Curl_Property(RequestInfo requestInfo, String tenantId, String Property_Id) {
+		// TODO Auto-generated method stub
+		List<Map<String, Object>> PTConnections = new ArrayList<>();
+		StringBuilder property_url = new StringBuilder(config.getPtHost());
+		property_url.append(config.getPtUrl())
+					.append("tenantId=")
+					.append(tenantId);
+		
+		if(!Property_Id.isEmpty() || Property_Id != null){
+			property_url.append("&propertyIds=").append(Property_Id);
+		}
+	    try {
+	        RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+	        // Creating request body as a map
+	        Map<String, Object> requestBody = new HashMap<>();
+	        requestBody.put("RequestInfo", requestInfo);
+	        requestBody.put("tenantId", tenantId);
+	        requestBody.put("isConnectionSearch", true);
+	        requestBody.put("propertyId", Property_Id);
+	        
+	        // Wrapping request body into HttpEntity
+	        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+	        // Making POST request
+	        ResponseEntity<String> response = restTemplate.exchange( property_url.toString() , HttpMethod.POST, entity, String.class);
+
+	        // Check if response is successful
+	        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+	            ObjectMapper objectMapper = new ObjectMapper();
+	            JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+	            // Extracting "propertyConnection" array
+	            JsonNode ptConnectionNode = rootNode.path("Properties");
+
+//	            JsonNode statusNode = ptConnectionNode.path("status");
+	            
+	            for (JsonNode connection : ptConnectionNode) {
+	                JsonNode statusNode = connection.path("status");
+	            
+	                if (statusNode.asText().equalsIgnoreCase("ACTIVE")) {
+	                	Map<String, Object> connectionMap = objectMapper.convertValue(connection, Map.class);
+	                	PTConnections.add(connectionMap);
+	            }
+	        }
+	        
+	      }
+	        
+	    }catch (Exception ex) {
+	        log.error("Exception while calling PT service: ", ex);
+	    }
+		return PTConnections;
+	}
+
 }
+	
+

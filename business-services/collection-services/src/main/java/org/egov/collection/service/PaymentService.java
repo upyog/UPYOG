@@ -33,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentService {
 
+	private static String propertyId;
+
 	private ApportionerService apportionerService;
 
 	private PaymentEnricher paymentEnricher;
@@ -74,6 +76,8 @@ public class PaymentService {
 	 */
 	public List<Payment> getPayments(RequestInfo requestInfo, PaymentSearchCriteria paymentSearchCriteria,
 			String moduleName) {
+		
+	    
 
 		paymentValidator.validateAndUpdateSearchRequestFromConfig(paymentSearchCriteria, requestInfo, moduleName);
 		if (applicationProperties.isPaymentsSearchPaginationEnabled()) {
@@ -92,7 +96,6 @@ public class PaymentService {
 		 * payerIds.add(requestInfo.getUserInfo().getUuid());
 		 * paymentSearchCriteria.setPayerIds(payerIds); }
 		 */
-
 		List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
 		
 		
@@ -155,107 +158,153 @@ public class PaymentService {
 					paymentSearchCriteria.setConsumerCodes(null);
 				}
 				
-				List<UsageCategoryInfo> usageCategory = paymentRepository.fetchUsageCategoryByApplicationnos(
-					    paymentSearchCriteria.getConsumerCodes(), 
-					    paymentSearchCriteria.getApplicationNo() , 
-					    businessservice
-					);
-				
 			
-				List<String> address = paymentRepository.fetchAddressByApplicationnos(
-					    paymentSearchCriteria.getConsumerCodes(), 
-					    paymentSearchCriteria.getApplicationNo(), 
-					    businessservice
-					);
-
-				List<RoadCuttingInfo> fetchRoadCuttingInfo = paymentRepository.fetchRoadCuttingInfo(
-					    paymentSearchCriteria.getConsumerCodes(), 
-					    paymentSearchCriteria.getApplicationNo(), 
-					    businessservice
-					);
-
+			
 				
-				List<String> additional = paymentRepository.adddetails(
-					    paymentSearchCriteria.getConsumerCodes(), 
-					    paymentSearchCriteria.getApplicationNo(), 
-					    businessservice
-					);
-				List<String> meterdetails  = paymentRepository.meterInstallmentDate(
-					    paymentSearchCriteria.getConsumerCodes(), 
-					    paymentSearchCriteria.getApplicationNo(), 
-					    businessservice
-					);
-
-					List<String> meterid = paymentRepository.meterId(
-					    paymentSearchCriteria.getConsumerCodes(), 
-					    paymentSearchCriteria.getApplicationNo(), 
-					    businessservice
-					);
 				String meterMake = null;
 				String avarageMeterReading = null;
 				String initialMeterReading = null;
-				if (additional != null && !additional.isEmpty()) {
-					ObjectMapper objectMapper = new ObjectMapper();
-
-					for (String jsonString : additional) {
-						try {
-							Map<String, String> map = objectMapper.readValue(jsonString,
-									new TypeReference<Map<String, String>>() {
-									});
-							meterMake = (String) map.get("meterMake");
-							payments.get(0).setMeterMake(meterMake);
-							avarageMeterReading = (String) map.get("avarageMeterReading");
-							payments.get(0).setAvarageMeterReading(avarageMeterReading);
-							initialMeterReading = (String) map.get("initialMeterReading");
-							payments.get(0).setInitialMeterReading(initialMeterReading);
-							
-							String ledgerId = (String) map.get("ledgerId");
-							payments.get(0).setLedgerId(ledgerId);
-							
-							String groups = (String) map.get("groups");
-							payments.get(0).setGroupId(groups);
-
-							String conncat = (String) map.get("connectionCategory");
-							payments.get(0).setConnectionCategory(conncat);
-
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				// setPropertyData(receiptnumber,payments,businessservice);
-				if (usageCategory != null && !usageCategory.isEmpty())
-				{
-					payments.get(0).setUsageCategory(usageCategory.get(0).getUsageCategory());
-					payments.get(0).setLandarea(usageCategory.get(0).getLandArea());
-					payments.get(0).setPropertyId(usageCategory.get(0).getPropertyId());
-					
-				}
-				if (fetchRoadCuttingInfo!=null && !fetchRoadCuttingInfo.isEmpty() )
-					
-				{
-					payments.get(0).setRoadtype(fetchRoadCuttingInfo.get(0).getRoadType());
-					payments.get(0).setRoadlength(fetchRoadCuttingInfo.get(0).getRoadCuttingArea());
-
-				}
-					
+				String ledgerId = null;
+				String conncat = null;
+				String landArea = null;
+				String meterId = null;
+				String meterInstallationDate = null;
+				String roadType = null;
+				String roadLength = null;
+				String groups = null;
+				String usageCategory = null;
+				String address = null;
+				List<String> ownerName = new ArrayList<>(); // for Multiple Owners
+				List<String> mobileNumber = new ArrayList<>(); // for Multiple owners
 				
-				if (address != null && !address.isEmpty())
-					payments.get(0).setAddress(address.get(0));
+			     
+				 // WS Object
+				
+				Object Curl_details = paymentRepository.Curl_WS(
+					    requestInfo,
+					    paymentSearchCriteria.getConsumerCodes(),
+					    paymentSearchCriteria.getApplicationNo(),
+					    paymentSearchCriteria.getTenantId(),
+					    businessservice
+					);
+				
 
-				if (meterdetails != null && !meterdetails.isEmpty())
-					payments.get(0).setMeterinstallationDate(meterdetails.get(0));
-				if (meterid != null && !meterid.isEmpty())
-					payments.get(0).setMeterId(meterid.get(0));
+				if (Curl_details instanceof List) {
+				    List<Map<String, Object>> detailsList = (List<Map<String, Object>>) Curl_details;
+
+				    if (!detailsList.isEmpty()) {
+				        Map<String, Object> firstEntry = detailsList.get(0); // Get the first object
+
+				        // Extract additionalDetails
+				        Map<String, Object> additionalDetails = (Map<String, Object>) firstEntry.get("additionalDetails");
+
+				        if (additionalDetails != null) {
+				            meterMake = String.valueOf(additionalDetails.get("meterMake"));
+				            avarageMeterReading = additionalDetails.get("avarageMeterReading") != null ? (additionalDetails.get("avarageMeterReading")).toString() : "0" ;
+				            initialMeterReading = additionalDetails.get("initialMeterReading") != null ? additionalDetails.get("initialMeterReading").toString() : "0" ; // use ? for null condition
+				            ledgerId = String.valueOf(additionalDetails.get("ledgerId"));
+				            conncat = String.valueOf(additionalDetails.get("connectionCategory"));
+				            groups = String.valueOf(additionalDetails.get("groups"));
+				        }
+
+				        // Extract Road Cutting Info
+				        List<Map<String, Object>> roadCuttingInfo = (List<Map<String, Object>>) firstEntry.get("roadCuttingInfo");
+
+				        // Extract Meter Details
+				        meterId = String.valueOf(firstEntry.get("meterId"));
+				        meterInstallationDate = String.valueOf(firstEntry.get("meterInstallationDate"));
+
+				        if (roadCuttingInfo != null && !roadCuttingInfo.isEmpty()) {
+				            Map<String, Object> firstRoadInfo = roadCuttingInfo.get(0); // Get the first map from the list
+
+				            // Extract Road Type and Length safely
+				            roadType = firstRoadInfo.get("roadType") != null ? firstRoadInfo.get("roadType").toString() : null;
+				            roadLength = firstRoadInfo.get("roadCuttingArea") != null ? firstRoadInfo.get("roadCuttingArea").toString() : null;
+				        }   
+			        }
+				}
+
+				
+				if (Curl_details != null && Curl_details instanceof List) {
+				    List<Map<String, Object>> detailsList = (List<Map<String, Object>>) Curl_details;
+				    for (Map<String, Object> item : detailsList) {
+				    	
+				        if ("Active".equals(item.get("status"))) {
+				        	propertyId = (String) item.get("propertyId"); 
+				        }
+				    }
+				}
+				
+				Object curlDetailProperty = paymentRepository.Curl_Property(
+					    requestInfo,
+					    paymentSearchCriteria.getTenantId(),
+					    propertyId 
+					);
+				
+				if (curlDetailProperty instanceof List) {
+				    List<Map<String, Object>> tempList = (List<Map<String, Object>>) curlDetailProperty;
+				    if (!tempList.isEmpty()) {
+				        Map<String, Object> temporaryList = tempList.get(0);
+				        
+				        List<Map<String, Object>> ownersList = (List<Map<String, Object>>) temporaryList.get("owners");
+				        
+				        
+				        Map<String, Object> addressMap = (Map<String, Object>) temporaryList.get("address");
+				        
+				        String doorNo = addressMap.get("doorNo") != null ? addressMap.get("doorNo").toString() : "";
+				        String buildingName = addressMap.get("buildingName") != null ? addressMap.get("buildingName").toString() : "";
+				        String street = addressMap.get("street") != null ? addressMap.get("street").toString() : "";
+				        String landmark = addressMap.get("landmark") != null ? addressMap.get("landmark").toString() : "" ;
+				        String region = addressMap.get("region") != null ? addressMap.get("region").toString() : "";
+				        String city = addressMap.get("city") != null ? addressMap.get("city").toString() : "";
+				        String district = addressMap.get("district") != null ? addressMap.get("district").toString() : "";
+				        String state = addressMap.get("state") != null ? addressMap.get("state").toString() : "";
+				        String pincode = addressMap.get("pincode") != null ? addressMap.get("pincode").toString() : "";
+				        
+				        address = doorNo + ", " + buildingName + ", " + street + ", " + landmark + ", " + region + ", " 
+		                        + city + ", " + district + ", " + state + ", " + pincode;
+				        
+				        
+			        	usageCategory = String.valueOf(tempList.get(0).get("usageCategory"));
+			        	landArea = String.valueOf(tempList.get(0).get("landArea"));	   
+				        	
+			        	if (ownersList != null && !ownersList.isEmpty()) {
+			        	    for (Map<String, Object> owner : ownersList ) {
+			        	    	String mobileNo = (String) owner.get("mobileNumber");
+			        	        String name = (String) owner.get("name");
+			        	        if (name != null) {
+			        	            ownerName.add(name);
+			        	            mobileNumber.add(mobileNo);
+			        	        }
+			        	    }
+			        	}
+			        }     
+				    	
+				    // Set values
+				    payments.get(0).setUsageCategory(usageCategory);
+				    payments.get(0).setOwnername(ownerName);
+				    payments.get(0).setMobileNumber(mobileNumber.toString());
+				    payments.get(0).setAddress(address);
+				    payments.get(0).setLandarea(landArea);
+				    payments.get(0).setPropertyId(propertyId);
+				    
+				    payments.get(0).setMeterMake(meterMake);
+			        payments.get(0).setAvarageMeterReading(avarageMeterReading);
+			        payments.get(0).setInitialMeterReading(initialMeterReading);
+			        payments.get(0).setLedgerId(ledgerId);
+			        payments.get(0).setGroupId(groups);
+			        payments.get(0).setConnectionCategory(conncat);
+			        payments.get(0).setRoadtype(roadType);
+			        payments.get(0).setRoadlength(roadLength);
+			        
+			        payments.get(0).setMeterinstallationDate(meterInstallationDate);
+			        payments.get(0).setMeterId(meterId);
+				    } 
+				
+							
 			}
-			
-			return payments;
-		
-			}
-			
-		else {
-			return payments;
 		}
+		return payments;
 	}
 
 	public Long getpaymentcountForBusiness(String tenantId, String businessService) {
@@ -501,5 +550,5 @@ public class PaymentService {
 
 		return payment;
 	}
-
+	
 }

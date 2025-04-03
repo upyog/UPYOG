@@ -160,6 +160,10 @@ public class Payment {
     @SafeHtml
     @JsonProperty("fileStoreId")
     private String fileStoreId;
+    
+    @SafeHtml
+    @JsonProperty("ownername")
+    private List<String> ownername;
 
 	@JsonProperty("usageCategory")
 	private String usageCategory;
