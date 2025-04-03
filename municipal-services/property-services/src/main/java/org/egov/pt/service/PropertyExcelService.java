@@ -55,33 +55,76 @@ public class PropertyExcelService {
 			propertiesCreated.add(propertyService.createProperty(propertyRequest));
 		});
 
-		propertiesCreated.stream().forEach(property -> {
-			if (null != requestInfo && null != requestInfo.getUserInfo()) {
-				requestInfo.getUserInfo().setType(PTConstants.USER_TYPE_SYSTEM);
-			}
-			Property finalProperty = property;
+//		propertiesCreated.stream().forEach(property -> {
+//			// Ensure user info is set if valid requestInfo is provided
+//			updateUserTypeToSystemIfNecessary(requestInfo);
+//
+//			// Process property until status is APPROVED
+//			Property finalProperty = getApprovedProperty(property, requestInfo);
+//
+//			// Add the processed property to the result
+//			propertiesRes.add(finalProperty);
+//		});
 
-			while (!finalProperty.getStatus().equals(Status.APPROVED)) {
-				ValidActionResponce validActionResponce = workflowService.getValidAction(requestInfo,
-						property.getPropertyId(), property.getTenantId());
-
-				if (null != validActionResponce && !CollectionUtils.isEmpty(validActionResponce.getNextValidAction())) {
-					ProcessInstance processInstance = ProcessInstance.builder()
-							.action(validActionResponce.getNextValidAction().get(0).getAction())
-							.businessService(validActionResponce.getBusinessService())
-							.moduleName(validActionResponce.getModuleName()).comment("From Migration").build();
-
-					PropertyStatusUpdateRequest propertyStatusUpdateRequest = PropertyStatusUpdateRequest.builder()
-							.requestInfo(requestInfo).propertyId(property.getPropertyId()).workflow(processInstance)
-							.build();
-
-					finalProperty = propertyService.updateStatus(propertyStatusUpdateRequest);
-				}
-			}
-			propertiesRes.add(finalProperty);
-		});
+		propertiesRes.addAll(propertiesCreated);
 
 		return propertiesRes;
+	}
+
+	private void updateUserTypeToSystemIfNecessary(RequestInfo requestInfo) {
+		if (requestInfo != null && requestInfo.getUserInfo() != null) {
+			requestInfo.getUserInfo().setType(PTConstants.USER_TYPE_SYSTEM);
+		}
+	}
+
+	private Property getApprovedProperty(Property property, RequestInfo requestInfo) {
+		Property currentProperty = property;
+
+		while (isNotApproved(currentProperty)) {
+			ValidActionResponce validActionResponse = fetchValidAction(requestInfo, currentProperty);
+
+			if (hasValidAction(validActionResponse)) {
+				currentProperty = executeValidAction(validActionResponse, requestInfo, currentProperty);
+			} else {
+				break;
+			}
+		}
+
+		return currentProperty;
+	}
+
+	private boolean isNotApproved(Property property) {
+		return !property.getStatus().equals(Status.APPROVED);
+	}
+
+	private ValidActionResponce fetchValidAction(RequestInfo requestInfo, Property property) {
+		return workflowService.getValidAction(requestInfo, property.getPropertyId(), property.getTenantId());
+	}
+
+	private boolean hasValidAction(ValidActionResponce validActionResponse) {
+		return validActionResponse != null && !CollectionUtils.isEmpty(validActionResponse.getNextValidAction());
+	}
+
+	private Property executeValidAction(ValidActionResponce validActionResponse, RequestInfo requestInfo,
+			Property property) {
+		ProcessInstance processInstance = buildProcessInstance(validActionResponse);
+
+		PropertyStatusUpdateRequest updateRequest = createPropertyStatusUpdateRequest(requestInfo, property,
+				processInstance);
+
+		return propertyService.updateStatus(updateRequest);
+	}
+
+	private ProcessInstance buildProcessInstance(ValidActionResponce validActionResponse) {
+		return ProcessInstance.builder().action(validActionResponse.getNextValidAction().get(0).getAction())
+				.businessService(validActionResponse.getBusinessService())
+				.moduleName(validActionResponse.getModuleName()).comment("From Migration").build();
+	}
+
+	private PropertyStatusUpdateRequest createPropertyStatusUpdateRequest(RequestInfo requestInfo, Property property,
+			ProcessInstance processInstance) {
+		return PropertyStatusUpdateRequest.builder().requestInfo(requestInfo).propertyId(property.getPropertyId())
+				.workflow(processInstance).build();
 	}
 
 }

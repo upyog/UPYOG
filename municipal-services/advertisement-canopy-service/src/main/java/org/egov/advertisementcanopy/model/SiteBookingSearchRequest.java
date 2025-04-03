@@ -20,4 +20,7 @@ public class SiteBookingSearchRequest {
 
 	@JsonProperty("SiteBookingSearchCriteria")
 	private SiteBookingSearchCriteria siteBookingSearchCriteria;
+	
+	@Builder.Default
+	private Boolean skipValidation = false;
 }

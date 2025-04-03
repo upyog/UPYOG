@@ -90,6 +90,7 @@ public class SiteBookingRowMapper implements RowMapper<SiteBooking> {
                 .pinCode(rs.getString(prefix + "pincode"))
 //                .additionalDetail(rs.getObject(prefix + "additional_detail", JsonNode.class)) // Assuming JsonNode can be fetched like this
                 .siteType(rs.getString(prefix + "site_type"))
+                .accountId(rs.getString(prefix + "account_id"))
                 .isActive(rs.getBoolean(prefix + "is_active"))
                 .status(rs.getString(prefix + "status"))
                 .applicationStartDate(rs.getLong(prefix + "application_start_date"))
@@ -97,6 +98,7 @@ public class SiteBookingRowMapper implements RowMapper<SiteBooking> {
                 .bookingPeriodStartDate(rs.getLong(prefix + "booking_start_date"))
                 .bookingPeriodEndDate(rs.getLong(prefix + "booking_end_date"))
                 .additionalDetail(getAdditionalDetail(rs, prefix + "additional_detail"))
+                .workFlowStatus(rs.getString(prefix + "workflow_status"))
                 .build();
     }
 
