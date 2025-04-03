@@ -85,11 +85,11 @@ module.exports = function (app) {
     "/chb-services/booking/v1/_update",
     "/chb-services/booking/v1/_slot-search",
     "/chb-services/booking/v1/_estimate",
-    "/adv-services/booking/v1/_create",
-    "/adv-services/booking/v1/_search",
-    "/adv-services/booking/v1/_update",
-    "/adv-services/booking/v1/_slot-search",
-    "/adv-services/booking/v1/_estimate",
+    "/adv-services/booking/v1/_create", // API to create advertisement bookings
+    "/adv-services/booking/v1/_search", // API to search advertisement bookings
+    "/adv-services/booking/v1/_update", // API to update advertisement bookings
+    "/adv-services/booking/v1/_slot-search", // API to search available slots for advertisement bookings
+    "/adv-services/booking/v1/_estimate", // API to estimate costs for advertisement bookings
     "/employee-dashboard/_search",
     "/verification-service/validity/_search",
     "/asset-services/v1/assets/depreciation/_process",

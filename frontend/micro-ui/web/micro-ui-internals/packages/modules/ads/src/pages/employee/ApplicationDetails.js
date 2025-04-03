@@ -5,6 +5,11 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 
+/**
+ * ApplicationDetails component fetches and displays detailed information about a specific advertisement booking.
+ * It retrieves data based on the `bookingNo` from the URL parameters and fetches relevant details
+ * such as application information, payment receipts, and permission letters.
+ */
 
 const ApplicationDetails = () => {
   const { t } = useTranslation();
