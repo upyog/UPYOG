@@ -634,6 +634,18 @@ public class EnrichmentService {
 			enrichPropertyForNewWf(requestInfo, property, true);
 		}
 		
+		if (!CollectionUtils.isEmpty(property.getDocuments()))
+			property.getDocuments().forEach(doc -> {
+
+				if (doc.getId() == null && doc.getFileStoreId()!=null && doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty()) {
+					doc.setId(UUID.randomUUID().toString());
+					doc.setStatus(Status.ACTIVE);
+				}
+			});
+
+		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
+		
+		
 
 		property.getOwners().forEach(owner -> {
 
