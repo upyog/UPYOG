@@ -34,7 +34,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
     <div>
       <Timeline flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
       <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t} _defaultValues={formData?.data} onSkip={onSkip}  >
-      {formData?.data?.edcrDetails?.scrutinyNumber?.edcrNumber ? (
+      {formData?.data?.scrutinyNumber?.edcrNumber ? (
         <StatusTable>
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.plotNo||"NA"} />
           <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={data?.planDetail?.planInformation?.khataNo||"NA"}/>
