@@ -7,7 +7,7 @@ public class CommunityHallConstants {
     public static final String TENANT_ID_PARAM = "tenantId";
     public static final String LOCALITY_PARAM = "locality";
     public static final String ASSIGNEE_PARAM = "assignee";
-    public static final String STATUS_PARAM = "bookingStatus";
+    public static final String STATUS_PARAM = "status";
     public static final String OFFSET_PARAM = "offset";
     public static final String NO_OF_RECORDS_PARAM = "noOfRecords";
     public static final String LIMIT_PARAM = "limit";

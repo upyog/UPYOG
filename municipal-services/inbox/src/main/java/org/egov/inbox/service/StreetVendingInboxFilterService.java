@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+
+import static org.egov.inbox.util.RequestServiceConstants.MOBILE_NUMBER_PARAM;
 import static org.egov.inbox.util.StreetVendingConstants.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,26 +48,25 @@ public class StreetVendingInboxFilterService {
 		List<String> applicationNumberList = new ArrayList<>();
 		HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
 		ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-
-		boolean isUserPresentForGivenMobileNumber = false;
-
+		Boolean isSearchResultEmpty = false;
+		Boolean isMobileNumberPresent = false;
 		List<String> userUUIDs = new ArrayList<>();
 
-		// Mobile no is present in search criteria
 		if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM)) {
+			isMobileNumberPresent = true;
+		}
+		if (isMobileNumberPresent) {
 			String tenantId = criteria.getTenantId();
 			String mobileNumber = String.valueOf(moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
 			userUUIDs = userService.fetchUserUUID(mobileNumber, requestInfo, tenantId);
-
-			// If user is not mapped to given mobile no then return empty list
-			isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
-
-			if (!isUserPresentForGivenMobileNumber) {
+			Boolean isUserPresentForGivenMobileNumber = CollectionUtils.isEmpty(userUUIDs) ? false : true;
+			isSearchResultEmpty = !isMobileNumberPresent || !isUserPresentForGivenMobileNumber;
+			if (isSearchResultEmpty) {
 				return new ArrayList<>();
 			}
 		}
 
-		if (isUserPresentForGivenMobileNumber) {
+		if (!isSearchResultEmpty) {
 			Object result = null;
 
 			Map<String, Object> searcherRequest = new HashMap<>();
@@ -90,8 +91,8 @@ public class StreetVendingInboxFilterService {
 			if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
 				searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
 			}
-			if (moduleSearchCriteria.containsKey(APPLICATION_NUMBER_PARAM)) {
-				searchCriteria.put(APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(APPLICATION_NUMBER_PARAM));
+			if (moduleSearchCriteria.containsKey(SV_APPLICATION_NUMBER_PARAM)) {
+				searchCriteria.put(SV_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(SV_APPLICATION_NUMBER_PARAM));
 			}
 
 			// Accomodating process search criteria in searcher request
@@ -126,7 +127,7 @@ public class StreetVendingInboxFilterService {
 
 			result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
-			applicationNumberList = JsonPath.read(result, "$.StreetVending.*.applicationNumber");
+			applicationNumberList = JsonPath.read(result, "$.StreetVending.*.application_no");
 
 			log.info("applicationNumberList fetched from seracher endpoint : " + applicationNumberList);
 
@@ -177,8 +178,8 @@ public class StreetVendingInboxFilterService {
 			if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
 				searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));
 			}
-			if (moduleSearchCriteria.containsKey(APPLICATION_NUMBER_PARAM)) {
-				searchCriteria.put(APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(APPLICATION_NUMBER_PARAM));
+			if (moduleSearchCriteria.containsKey(SV_APPLICATION_NUMBER_PARAM)) {
+				searchCriteria.put(SV_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(SV_APPLICATION_NUMBER_PARAM));
 			}
 
 			// Accomodating process search criteria in searcher request

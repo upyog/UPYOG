@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,8 +14,6 @@ import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
 import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
-import org.upyog.cdwm.repository.rowMapper.DocumentDetailsRowMapper;
-import org.upyog.cdwm.repository.rowMapper.WasteTypeDetailsRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
