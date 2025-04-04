@@ -283,7 +283,6 @@ public class CNDServiceImpl implements CNDService {
 	                documentDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
 	                newDocumentDetails.add(documentDetail);
 	            } else {
-	                documentDetail.setIsUpdatedDetail(false);
 	                existingDocumentDetails.add(documentDetail);
 	            }
 	        }
