@@ -1,10 +1,11 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
 
 const Proof = ({ t, config, onSelect, userType, formData }) => {
+  console.log("address====",formData)
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const { pathname: url } = useLocation();
   const isMutation = url.includes("property-mutation");
@@ -27,7 +28,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
-  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc?.code.includes("ADDRESSPROOF"));
   if (proofOfAddress.length > 0) {
     dropdownData = proofOfAddress[0]?.dropdownData;
     dropdownData.forEach((data) => {
@@ -45,6 +46,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
     if (fileDetails) fileDetails.documentType = dropdownValue;
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
     let address = !isMutation ? formData?.address : {};
+    console.log("address====",formData)
     if (address && address.documents) {
       address.documents["ProofOfAddress"] = fileDetails;
     } else {

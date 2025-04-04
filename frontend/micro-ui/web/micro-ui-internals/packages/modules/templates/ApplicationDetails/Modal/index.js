@@ -8,7 +8,13 @@ import NOCActionModal from "./NOCActionModal";
 import WNSActionModal from "./WNSActionModal";
 
 const ActionModal = (props) => {
+  console.log("propsprops11111==",props)
   if (props?.businessService.includes("PT")) {
+    console.log("propsprops==",props)
+    return <PTActionModal {...props} />;
+  }
+  if (props?.businessService.includes("ASMT")) {
+    console.log("propsprops==",props)
     return <PTActionModal {...props} />;
   }
 

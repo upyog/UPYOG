@@ -1,4 +1,4 @@
-import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@egovernments/digit-ui-react-components";
+import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -61,6 +61,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
         el.style.boxShadow = "none";
         el.style.marginBottom = "16px";
         el.style.textAlign = "left";
+        el.style.background = "none";
       } else {
         setTimeout(() => {
           getActionBar();
@@ -441,7 +442,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
   }
 
   return (
-    <div style={{ marginTop: "16px", marginBottom: "16px" ,backgroundColor:"white", maxWidth:"960px"}}>
+    <div style={{ marginTop: "16px", marginBottom: "16px" ,backgroundColor:"#ffffff9e", maxWidth:"960px", borderRadius: "6px"}}>
       <FormComposer
         onSubmit={onPropertySearch}
         noBoxShadow
@@ -450,11 +451,11 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
         label={propsConfig.texts.submitButtonLabel}
         heading={t(propsConfig.texts.header)}
         text={t(propsConfig.texts.text)}
-        headingStyle={{ fontSize: "32px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
+        headingStyle={{ fontSize: "16px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
         onFormValueChange={onFormValueChange}
         cardStyle={{marginBottom:"0"}}
       ></FormComposer>
-      <span className="link" style={{display:"flex", justifyContent: isMobile ? "center" : "left", paddingBottom:"16px", paddingLeft: "24px", marginTop: "-24px"}}>
+      <span className="link" style={{display:"flex", justifyContent: isMobile ? "center" : "left", marginLeft: "14px", color: "#b77212", marginTop: "-23px"}}>
         <Link to={"/digit-ui/citizen/pt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
       </span>
       {showToast && (
