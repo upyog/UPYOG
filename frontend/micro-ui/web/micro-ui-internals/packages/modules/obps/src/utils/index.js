@@ -399,7 +399,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       landInfo: isOCBPA ? data?.landInfo : { ...data?.landInfo, ownershipCategory: getOwnerShipCategory(data, isOCBPA), owners: getBPAOwners(data, isOCBPA), unit: getBPAUnit(data) },
       assignee: isSendBackTOCitizen ? data.assignee : [],
       workflow: {
-        action: "APPLY",
+        action: data?.businessService==="BPA-PAP"?"APPLY":"SEND_TO_CITIZEN",
         assignes: null,
         comments: null,
         varificationDocuments: null,
