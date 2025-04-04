@@ -208,6 +208,7 @@ public class EnrichmentService {
 					System.out.println(doc.getDocumentUid());
 					if(null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty()) {
 						doc.setId(UUID.randomUUID().toString());
+						if(StringUtils.isEmpty(doc.getStatus()) || doc.getStatus()==null)
 						doc.setStatus(Status.ACTIVE);
 					}
 
@@ -637,14 +638,12 @@ public class EnrichmentService {
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
 
-				if (doc.getId() == null && doc.getFileStoreId()!=null && doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty()) {
+				if (doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty()) {
 					doc.setId(UUID.randomUUID().toString());
+					if(StringUtils.isEmpty(doc.getStatus()) || doc.getStatus()==null)
 					doc.setStatus(Status.ACTIVE);
 				}
 			});
-
-		property.setDocuments(property.getDocuments().stream().filter(x->null!=x.getId() && (!x.getId().isEmpty()) && (!x.getFileStoreId().isEmpty() || !(x.getFileStoreId()==null))).collect(Collectors.toList()));
-		
 		
 
 		property.getOwners().forEach(owner -> {
@@ -659,6 +658,7 @@ public class EnrichmentService {
 				owner.getDocuments().forEach(doc -> {
 					if (doc.getId() == null && null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty() ) {
 						doc.setId(UUID.randomUUID().toString());
+						if(StringUtils.isEmpty(doc.getStatus()) || doc.getStatus()==null)
 						doc.setStatus(Status.ACTIVE);
 					}
 				});
@@ -698,6 +698,7 @@ public class EnrichmentService {
 				owner.getDocuments().forEach(doc -> {
 					if (doc.getId() == null) {
 						doc.setId(UUID.randomUUID().toString());
+						if(StringUtils.isEmpty(doc.getStatus()) || doc.getStatus()==null)
 						doc.setStatus(Status.ACTIVE);
 					}
 				});
@@ -798,6 +799,9 @@ public class EnrichmentService {
 					doc.setStatus(Status.ACTIVE);
 			}	
 			});
+
+		
+		
 
 		
 		
