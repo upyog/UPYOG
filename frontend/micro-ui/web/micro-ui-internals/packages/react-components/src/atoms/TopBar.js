@@ -49,7 +49,7 @@ const TopBar = ({
             </div>
           {/* <span>Property Tax - Manipur</span> */}
           </a>
-          <h3 style={{fontSize: "20px"}}>{cityOfCitizenShownBesideLogo} MC</h3>
+          <h3 style={{fontSize: "20px"}}>{cityOfCitizenShownBesideLogo} {cityOfCitizenShownBesideLogo ? 'MC' : ''}</h3>
         </div>
 
         <div className="RightMostTopBarOptions">
