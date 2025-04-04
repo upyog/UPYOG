@@ -330,8 +330,14 @@ public class EnrichmentService {
 					&& bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)) {
 
 				Object mdmsData = bpaUtil.mDMSCall(bpaRequest.getRequestInfo(), bpaRequest.getBPA().getTenantId());
-				Map<String, String> edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(),
-						bpaRequest.getBPA());
+				Map<String, String> edcrResponse = new HashMap<>();
+				if (StringUtils.isNotEmpty(bpa.getBusinessService()) && BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(bpa.getBusinessService())) {
+					edcrResponse =  edcrService.getEdcrDetailsForPreapprovedPlan(edcrResponse,bpaRequest);
+			      }
+			      else{
+			    	  edcrResponse = edcrService.getEDCRDetails(bpaRequest.getRequestInfo(),
+							bpaRequest.getBPA());
+			      }
 				log.debug("applicationType is " + edcrResponse.get(BPAConstants.APPLICATIONTYPE));
 				log.debug("serviceType is " + edcrResponse.get(BPAConstants.SERVICETYPE));
 
