@@ -43,6 +43,7 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
   });
 };
 const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) => {
+  let validation = {};
   let path = window.location.pathname.split("/");
   let currentFloor = Number(path[path.length - 1]);
   const [builtUpAreaError, setBuilUpAreaError] = useState(false);
@@ -186,7 +187,10 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
   }
   function onChangeArea(i, e) {
     let units = [...fields];
-    units[i].builtUpArea = e.target.value;
+    let value = e.target.value;
+    // Allow only numbers with up to 2 decimals
+    value = value.replace(/^(\d+(\.\d{0,2})?).*$/, "$1");
+    units[i].builtUpArea = value;
     setFields(units);
   }
 
@@ -400,18 +404,20 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               <TextInput
                 style={{ background: "#FAFAFA" }}
                 t={t}
-                type={"text"}
+                type={"number"}
                 isMandatory={false}
                 optionKey="i18nKey"
+                step="0.01"
                 name="builtUpArea"
                 value={field?.builtUpArea || ""}
                 onChange={(e) => onChangeArea(index, e)}
-                {...{
-                  isRequired: true,
-                  pattern: "[0-9]+",
-                  type: "text",
-                  title: t("Only numbers are allowed."),
-                }}
+                {...(validation = { pattern: "^([0-9]){0,8}$", isRequired: true, type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
+                // {...{
+                //   isRequired: true,
+                //   pattern: "^([0-9]){0,8}$",
+                //   type: "number", 
+                //   title: t("PT_PLOT_SIZE_ERROR_MESSAGE")
+                // }}
               />
               {!isFloor && (
                 <>

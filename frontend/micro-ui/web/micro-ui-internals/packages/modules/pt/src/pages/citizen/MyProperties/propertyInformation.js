@@ -40,6 +40,19 @@ const getBillAmount = (fetchBillData = null) => {
   if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
   return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
 };
+const checkBillExpiry = (fetchBillData = null) => {
+  if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
+  if(fetchBillData && fetchBillData?.Bill?.length>0 && fetchBillData?.Bill[0]?.billDetails?.length>0 && fetchBillData?.Bill[0]?.billDetails[0]?.expiryDate) {
+    const expiryTimestamp = fetchBillData?.Bill[0]?.billDetails[0]?.expiryDate; // e.g., milliseconds
+    const expiryDate = new Date(expiryTimestamp);
+    const today = new Date();
+
+    const isExpired = expiryDate < today;
+    // console.log("isExpired==",isExpired)
+    return isExpired
+  }
+  // return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
+};
 
 const PropertyInformation = () => {
   const { t } = useTranslation();
@@ -575,7 +588,7 @@ const onAppeal =()=>{
                 </Link>
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") &&  (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA" || checkBillExpiry(fetchBillData)) && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") &&  (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}

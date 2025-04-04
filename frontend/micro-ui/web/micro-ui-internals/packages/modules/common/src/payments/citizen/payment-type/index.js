@@ -110,7 +110,7 @@ export const SelectPaymentType = (props) => {
             }, {});
             // console.log("gatewayParam==",JSON.stringify(gatewayParam))
           var newForm = $("<form>", {
-            action: gatewayParam.txURL,
+            action: gatewayParam?.txURL,
             method: "POST",
             target: "_top",
           });

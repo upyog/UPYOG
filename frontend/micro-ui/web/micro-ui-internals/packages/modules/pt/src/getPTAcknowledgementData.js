@@ -17,7 +17,7 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
 
 const getOwner = (application, t, customTitle) => {
   let owners = [];
-  if(customTitle && customTitle.includes("TRANSFEROR"))
+  if(customTitle && customTitle?.includes("TRANSFEROR"))
   if (application?.isTransferor && application?.transferorDetails) {
     application.ownershipCategory = application?.transferorDetails?.ownershipCategory;
     owners = [...(application?.transferorDetails?.owners) || []];
@@ -40,7 +40,7 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owners[0]?.permanentAddress || t("CS_NA") },
       ],
     };
-  } else if (application?.ownershipCategory.includes("INDIVIDUAL")) {
+  } else if (application?.ownershipCategory?.includes("INDIVIDUAL")) {
     let values = [];
     owners.map((owner) => {
       let doc = [
@@ -59,7 +59,7 @@ const getOwner = (application, t, customTitle) => {
       title: t(customTitle || "PT_OWNERSHIP_INFO_SUB_HEADER"),
       values: values,
     };
-  } else if (application?.ownershipCategory.includes("INSTITUTIONAL")) {
+  } else if (application?.ownershipCategory?.includes("INSTITUTIONAL")) {
     return {
       title: t("PT_OWNERSHIP_INFO_SUB_HEADER"),
       values: [
