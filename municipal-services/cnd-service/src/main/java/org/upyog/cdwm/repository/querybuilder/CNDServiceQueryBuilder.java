@@ -36,6 +36,8 @@ public class CNDServiceQueryBuilder {
             "LEFT JOIN public.ug_cnd_document_detail udoc ON ucad.application_id = udoc.application_id " +
             "LEFT JOIN public.ug_cnd_disposal_deposit_centre_detail uddc ON ucad.application_id = uddc.application_id";
     
+
+    
     // Pagination wrapper query
     private static final String PAGINATION_WRAPPER = 
         "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY created_time DESC) AS offset_ FROM ({}) result) " +

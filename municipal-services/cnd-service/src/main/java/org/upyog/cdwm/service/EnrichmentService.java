@@ -72,6 +72,7 @@ public class EnrichmentService {
             for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
                 String wasteTypeId = CNDServiceUtil.getRandomUUID(); 
                 wasteTypeDetail.setWasteTypeId(wasteTypeId);
+                wasteTypeDetail.setApplicationId(applicationId);
             }
         }
         
@@ -80,6 +81,7 @@ public class EnrichmentService {
             for (DocumentDetail documentDetail : documentDetails) {
                 String documentId = CNDServiceUtil.getRandomUUID(); 
                 documentDetail.setDocumentDetailId(documentId);
+                documentDetail.setApplicationId(applicationId);
             }
         }
         List<String> customIds = getIdList(requestInfo, cndApplicationDetails.getTenantId(),
