@@ -3,11 +3,15 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { newConfig as newConfigEDCR} from "../../../../config/edcrConfig";
-
 // import { uuidv4 } from "../../../utils";
-import EDCRAcknowledgement1 from "./EDCRAcknowledgement1";
+import EDCRAcknowledgement from "./EDCRAcknowledgement";
+import  { APPLICATION_PATH } from "./utils";
 
-const CreateEDCR1 = ({ parentRoute }) => {
+/*
+  This file sets up the CreateAnonymousEDCR component, which manages the anonymous EDCR creation process.
+  It initializes state variables, fetches configurations, and sets up routing for the EDCR workflow.
+*/
+const CreateAnonymousEDCR = ({ parentRoute }) => {
   const queryClient = useQueryClient();
   const match = useRouteMatch();
   const { t } = useTranslation();
@@ -35,7 +39,8 @@ const CreateEDCR1 = ({ parentRoute }) => {
     const tenantId = data?.tenantId?.code;
     const appliactionType = "BUILDING_PLAN_SCRUTINY";
     const applicationSubType = "NEW_CONSTRUCTION";
-  
+    
+       // Construct EDCR request payload
     const edcrRequest = {
       transactionNumber,
       edcrNumber: "",
@@ -61,7 +66,7 @@ const CreateEDCR1 = ({ parentRoute }) => {
     bodyFormData.append("edcrRequest", JSON.stringify(edcrRequest));
     bodyFormData.append("planFile", file);
    ;
-
+     // API call to create EDCR request
     Digit.EDCRService.anonymousCreate({ data: bodyFormData }, tenantId)
     
       .then((result, err) => {
@@ -70,7 +75,7 @@ const CreateEDCR1 = ({ parentRoute }) => {
         if (result?.data?.edcrDetail) {
           setParams(result?.data?.edcrDetail);
           history.replace(
-            `/digit-ui/citizen/core/edcr/scrutiny/acknowledgement`,
+            `${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`,
             { data: result?.data?.edcrDetail }
           );
         }
@@ -79,8 +84,7 @@ const CreateEDCR1 = ({ parentRoute }) => {
         setParams({ data: e?.response?.data?.errorCode ? e?.response?.data?.errorCode : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR" });
         setIsSubmitBtnDisable(false);
         history.replace(
-          `/digit-ui/citizen/core/edcr/scrutiny/acknowledgement`,
-        
+          `${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`
         );
         setIsShowToast({ key: true, label: e?.response?.data?.errorCode ? e?.response?.data?.errorCode : "BPA_INTERNAL_SERVER_ERROR" });
       });
@@ -112,7 +116,7 @@ const CreateEDCR1 = ({ parentRoute }) => {
         );
       })}
       <Route path={`${match.path}/acknowledgement`}>
-        <EDCRAcknowledgement1 data={params} onSuccess={onSuccess} />   
+        <EDCRAcknowledgement data={params} onSuccess={onSuccess} />   
       </Route>
       <Route>
       <Redirect to={`${match.path}/${config.indexRoute}`} />  
@@ -121,4 +125,4 @@ const CreateEDCR1 = ({ parentRoute }) => {
   );
 };
 
-export default CreateEDCR1;
+export default CreateAnonymousEDCR;

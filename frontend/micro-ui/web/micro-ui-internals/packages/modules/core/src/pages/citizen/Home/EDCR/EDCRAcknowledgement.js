@@ -2,10 +2,11 @@ import { Banner, Card, CardText, LinkButton, SubmitBar, Toast } from "@nudmcdgnp
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { APPLICATION_PATH } from "./utils";
 
-// This file defines the EDCRAcknowledgement1 component, which displays an acknowledgment page for EDCR submissions.
+// This file defines the EDCRAcknowledgement component, which displays an acknowledgment page for EDCR submissions.
 // It handles both success and error scenarios, showing appropriate messages and actions for the user.
-const EDCRAcknowledgement1 = (props) => {
+const EDCRAcknowledgement = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(false);
@@ -27,8 +28,8 @@ const EDCRAcknowledgement1 = (props) => {
           style={{ width: "100%", padding: "10px" }}
         />
         <div style={{ padding: "10px", paddingBottom: "10px" }}>
-          <Link to={`/digit-ui/citizen`}>
-            <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        <Link to={`${APPLICATION_PATH}/citizen`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         </div>
         {showToast ? <Toast error={"error"} label={t(props?.data?.data)} onClose={() => setShowToast(null)} isDleteBtn={true} /> : null}
@@ -68,10 +69,11 @@ const EDCRAcknowledgement1 = (props) => {
 
   const routeToBPAScreen = async () => {
     history.push(
-      `/digit-ui/citizen/obps/bpa/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
+      `${APPLICATION_PATH}/citizen/obps/bpa/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
       { edcrNumber: edcrData?.edcrNumber }
     );
-  };
+};
+
 
   return (
     <div>
@@ -97,10 +99,10 @@ const EDCRAcknowledgement1 = (props) => {
           </div>
           <div style={{ padding: "0px 10px" }}>
             <Link
-              to={{
-                pathname: `/digit-ui/citizen/obps/${bpaLinks?.linkData?.flow?.toLowerCase()}/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
-                state: bpaLinks,
-              }}
+             to={{
+              pathname: `${APPLICATION_PATH}/citizen/obps/${bpaLinks?.linkData?.flow?.toLowerCase()}/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
+              state: bpaLinks,
+            }}            
               replace
             >
               <SubmitBar label={t("BPA_APPLY_FOR_BPA_LABEL")} onSubmit={() => sessionStorage.setItem("clickOnBPAApplyAfterEDCR", true)} />
@@ -120,7 +122,7 @@ const EDCRAcknowledgement1 = (props) => {
               </CardText>
             </Link>
             <div style={{ marginTop: "12px", paddingBottom: "10px" }}>
-              <Link to={`/digit-ui/citizen`}>
+            <Link to={`${APPLICATION_PATH}/citizen`}>
                 <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
               </Link>
             </div>
@@ -148,8 +150,8 @@ const EDCRAcknowledgement1 = (props) => {
             {t("EDCR_DOWNLOAD_SCRUTINY_REPORT_LABEL")}
           </div>
           <div style={{ padding: "10px", paddingBottom: "10px" }}>
-            <Link to={`/digit-ui/citizen`}>
-              <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+          <Link to={`${APPLICATION_PATH}/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
             </Link>
           </div>
         </Card>
@@ -157,4 +159,4 @@ const EDCRAcknowledgement1 = (props) => {
     </div>
   );
 };
-export default EDCRAcknowledgement1;
+export default EDCRAcknowledgement;

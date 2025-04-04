@@ -23,9 +23,9 @@ import VSearchCertificate from "./CMSearchCertificate";
 import AssetsQRCode from "./AssetsQRCode";
 import ChallanQRCode from "./ChallanQRCode";
 import EDCRScrutiny from "./Home/EdcrScrutiny";
-import { newConfig as newConfigEDCR  } from "../../config/edcrConfig";
-import CreateEDCR1 from "./Home/EDCR";
-import EDCRAcknowledgement1 from "./Home/EDCR/EDCRAcknowledgement1";
+import { newConfig as newConfigEDCR } from "../../config/edcrConfig";
+import CreateAnonymousEDCR from "./Home/EDCR";
+import EDCRAcknowledgement from "./Home/EDCR/EDCRAcknowledgement";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -34,7 +34,7 @@ const sidebarHiddenFor = [
   "/digit-ui/citizen/register/otp",
   "/digit-ui/citizen/verificationsearch-home" // route for verificationsearch component
 ];
-
+import { APPLICATION_PATH } from "./Home/EDCR/utils";
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
 };
@@ -264,17 +264,13 @@ const Home = ({
           <Route path={`${path}/challan/details`}>
          <ChallanQRCode></ChallanQRCode>
           </Route>
-          <Route path={`/digit-ui/citizen/core/edcr/scrutiny`}>
-            {/* <EDCRScrutiny config={newConfigEDCR} isSubmitBtnDisable={false}/>
-            
-            */}
-              <CreateEDCR1/>
+          <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`}>
+            {/* <EDCRScrutiny config={newConfigEDCR} isSubmitBtnDisable={false}/> */}
+            <CreateAnonymousEDCR />
           </Route>
-          <Route path={`/digit-ui/citizen/core/edcr/scrutiny/acknowledgement`}>
-           
-              <EDCRAcknowledgement1/>
+          <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`}>
+            <EDCRAcknowledgement />
           </Route>
-
 
           <ErrorBoundary initData={initData}>
             {appRoutes}
