@@ -97,14 +97,14 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const { isLoading, data } = Digit.Hooks.useAccessControl();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const showProfilePage = () => {
-    const redirectUrl = isEmployee ? "/digit-ui/employee/user/profile" : "/digit-ui/citizen/user/profile";
+    const redirectUrl = isEmployee ? `${APPLICATION_PATH}/employee/user/profile` : `${APPLICATION_PATH}/citizen/user/profile`;
     history.push(redirectUrl);
     closeSidebar();
   };
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push("/digit-ui/citizen/login");
+    history.push(`${APPLICATION_PATH}/citizen/login`);
     closeSidebar();
   };
   // Function to redirect the user to the EDCR scrutiny page

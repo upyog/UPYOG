@@ -23,16 +23,18 @@ const CreateAnonymousEDCR = ({ parentRoute }) => {
   const [isSubmitBtnDisable, setIsSubmitBtnDisable] = useState(false);
   Digit.SessionStorage.set("EDCR_BACK", "IS_EDCR_BACK");
   
+    // Fetching state ID and configuration for EDCR forms
   const stateId = Digit.ULBService.getStateId();
   let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
   const generateTransactionNumber = () => {
     return 'TRA' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
   };
+  
   function handleSelect(key, data, skipStep, index) {
     setIsSubmitBtnDisable(true);
   
     const loggedInuserInfo = Digit.UserService.getUser();
-    const userInfo = { uuid: "1c79f77e-e847-4663-98a7-5aee31f185c5", tenantId: "pg.citya" };
+    const userInfo = { uuid: "", tenantId: "pg.citya" };
     const transactionNumber = generateTransactionNumber();
     const applicantName = data?.applicantName;
     const file = data?.file;
@@ -52,7 +54,7 @@ const CreateAnonymousEDCR = ({ parentRoute }) => {
         ts: "",
         action: "",
         did: "",
-        authToken: "4d3ee8fc-03dc-49c7-912a-090bc7a2f699",
+        authToken: "",
         key: "",
         msgId: "",
         correlationId: "",
@@ -99,6 +101,7 @@ const CreateAnonymousEDCR = ({ parentRoute }) => {
     sessionStorage.removeItem("CurrentFinancialYear");
     queryClient.invalidateQueries("TL_CREATE_TRADE");
   };
+    // Configuring form steps based on state-level configuration
   newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
   newConfig.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));

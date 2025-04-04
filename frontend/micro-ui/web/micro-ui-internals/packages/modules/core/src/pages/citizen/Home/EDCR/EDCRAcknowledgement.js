@@ -4,8 +4,10 @@ import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { APPLICATION_PATH } from "./utils";
 
-// This file defines the EDCRAcknowledgement component, which displays an acknowledgment page for EDCR submissions.
-// It handles both success and error scenarios, showing appropriate messages and actions for the user.
+/*
+  This file defines the EDCRAcknowledgement component, which displays an acknowledgment page for EDCR submissions.
+  It handles both success and error scenarios, showing appropriate messages and actions for the user.
+*/
 const EDCRAcknowledgement = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -15,6 +17,12 @@ const EDCRAcknowledgement = (props) => {
     if (props?.data?.type == "ERROR" && !showToast) setShowToast(true);
   }, [props?.data?.data]);
 
+  /*
+    Handling the error case:
+    - Displays an error message to inform the user that the application failed.
+    - Provides a button to navigate back to the home screen.
+    - Shows a toast notification with the error message received.
+  */
   if (props?.data?.type == "ERROR") {
     return (
       <Card style={{ padding: "0px" }}>
@@ -46,6 +54,7 @@ const EDCRAcknowledgement = (props) => {
   const { data: homePageUrlLinks, isLoading: homePageUrlLinksLoading } = Digit.Hooks.obps.useMDMS(state, "BPA", ["homePageUrlLinks"]);
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["RiskTypeComputation"]);
 
+  //  Once the homepage URL links are loaded, update the BPA links based on the application type and subtype.
   useEffect(() => {
     if (!homePageUrlLinksLoading && homePageUrlLinks?.BPA?.homePageUrlLinks?.length > 0) {
       let uniqueLinks = [];

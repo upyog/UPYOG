@@ -129,7 +129,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push("/digit-ui/citizen/login");
+    history.push(`${APPLICATION_PATH}/citizen/login`);
   };
   // Function to redirect the user to the EDCR scrutiny page
   const redirectToScrutinyPage = () => {
@@ -138,7 +138,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     history.push(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
   };
   const showProfilePage = () => {
-    history.push("/digit-ui/citizen/user/profile");
+    history.push(`${APPLICATION_PATH}/citizen/user/profile`);
   };
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
