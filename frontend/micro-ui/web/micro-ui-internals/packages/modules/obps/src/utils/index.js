@@ -352,7 +352,7 @@ export const getBPAOwners = (data, isOCBPA) => {
 
 export const getOwnerShipCategory = (data, isOCBPA) => {
     if(isOCBPA) return data?.landInfo?.ownershipCategory
-    return data.owners.ownershipCategory.code || data?.landInfo?.ownershipCategory
+    return data?.owners?.ownershipCategory.code || data?.landInfo?.ownershipCategory
 }
 
 export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = false) => {
@@ -395,7 +395,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       approvalDate: data?.approvalDate,
       applicationDate: data?.applicationDate,
       status: isSendBackTOCitizen ? data.status : data.status ? data.status : "INITIATED",
-      documents: getDocumentforBPA(data?.documents?.documents, data?.PrevStateDocuments),
+      documents: getDocumentforBPA(data?.documents?.documents||data?.documents, data?.PrevStateDocuments),
       landInfo: isOCBPA ? data?.landInfo : { ...data?.landInfo, ownershipCategory: getOwnerShipCategory(data, isOCBPA), owners: getBPAOwners(data, isOCBPA), unit: getBPAUnit(data) },
       assignee: isSendBackTOCitizen ? data.assignee : [],
       workflow: {

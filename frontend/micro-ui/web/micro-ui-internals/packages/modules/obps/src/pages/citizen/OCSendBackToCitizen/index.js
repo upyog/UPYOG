@@ -52,6 +52,9 @@ const OCSendBackToCitizen = ({ parentRoute }) => {
         setParams({ ...params, ...bpaEditDetails });
       }
     }
+    else {
+        setParams({ ...params, ...bpaData?.[0] });
+      }
   }, [bpaData, edcrDetails, mdmsData, nocdata]);
 
 

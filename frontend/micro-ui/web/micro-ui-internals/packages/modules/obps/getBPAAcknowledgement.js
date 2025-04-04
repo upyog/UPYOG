@@ -127,11 +127,11 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_PLOT_NUMBER_LABEL"), 
-                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.plotNo || "NA"  
+                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.plotNo || application?.additionalDetails?.plotNo||"NA"  
                     },
                     { 
                         title: t("BPA_KHATHA_NUMBER_LABEL"), 
-                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.khataNo || "NA"  
+                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.khataNo || application?.additionalDetails?.khataNo||"NA"  
                     },
                     { 
                         title: t("BPA_HOLDING_NUMBER_LABEL"), 
@@ -143,10 +143,11 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_APPLICATION_DEMOLITION_AREA_LABEL"), 
-                        value: t(`${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea}||"NA" sq.mtrs`)
+                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea ? `${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq mts`:0
                     } 
                 ]
              },
+             application?.nocDocuments?.NocDetails[0] ? 
              {
                 title: t(`BPA_NOC_DETAILS_SUMMARY`) , 
                 values: [
@@ -161,7 +162,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     
                 ],    
-             },
+             }:null,
              {
                 title: t("BPA_APPLICANT_DETAILS_HEADER"),
                 values:  getOwnersForNewApplication()

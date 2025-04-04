@@ -84,7 +84,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   };
 
   let disableVlaue = sessionStorage.getItem("isEDCRDisable");
-  disableVlaue = JSON.parse(disableVlaue);
+  disableVlaue = disableVlaue?JSON.parse(disableVlaue):true;
 
   const getDetails = async () => {
     const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber, stateCode);
