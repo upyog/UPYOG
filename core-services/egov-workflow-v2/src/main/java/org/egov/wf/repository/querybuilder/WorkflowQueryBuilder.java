@@ -21,8 +21,8 @@ public class WorkflowQueryBuilder {
 
     private WorkflowConfig config;
 
-    @Value("${egov.wf.fuzzysearch.isFuzzyEnabled}")
-    private boolean isFuzzyEnabled;
+//    @Value("${egov.wf.fuzzysearch.isFuzzyEnabled}")
+//    private boolean isFuzzyEnabled;
 
     @Autowired
     public WorkflowQueryBuilder(WorkflowConfig config) {
@@ -162,14 +162,14 @@ public class WorkflowQueryBuilder {
 
         List<String> businessIds = criteria.getBusinessIds();
         if (!CollectionUtils.isEmpty(businessIds)) {
-            if(isFuzzyEnabled) {
-                with_query_builder.append(" and pi_outer.businessId LIKE ANY(ARRAY[ ").append(createQuery(businessIds)).append("])");
-                addToPreparedStatementForFuzzySearch(preparedStmtList, businessIds);
-            }
-            else {
+//            if(isFuzzyEnabled) {
+//                with_query_builder.append(" and pi_outer.businessId LIKE ANY(ARRAY[ ").append(createQuery(businessIds)).append("])");
+//                addToPreparedStatementForFuzzySearch(preparedStmtList, businessIds);
+//            }
+//            else {
                 with_query_builder.append(" and pi_outer.businessId IN ( ").append(createQuery(businessIds)).append(")");
                 addToPreparedStatement(preparedStmtList, businessIds);
-            }
+//            }
         }
 
         List<String> status = criteria.getStatus();
@@ -548,14 +548,14 @@ public class WorkflowQueryBuilder {
 
         List<String> businessIds = criteria.getBusinessIds();
         if (!CollectionUtils.isEmpty(businessIds)) {
-            if(isFuzzyEnabled) {
-                query.append(" and businessId LIKE ANY(ARRAY[ ").append(createQuery(businessIds)).append("])");
-                addToPreparedStatementForFuzzySearch(preparedStmtList, businessIds);
-            }
-            else {
+//            if(isFuzzyEnabled) {
+//                query.append(" and businessId LIKE ANY(ARRAY[ ").append(createQuery(businessIds)).append("])");
+//                addToPreparedStatementForFuzzySearch(preparedStmtList, businessIds);
+//            }
+//            else {
                 query.append(" and businessId IN ( ").append(createQuery(businessIds)).append(")");
                 addToPreparedStatement(preparedStmtList, businessIds);
-            }
+//            }
         }
 
 //        List<String> uuidsOfAutoEscalationEmployees = criteria.getMultipleAssignees();
