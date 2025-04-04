@@ -152,8 +152,13 @@ public class BPAService {
 		}
 		enrichmentService.enrichBPACreateRequest(bpaRequest, mdmsData, values);
 		wfIntegrator.callWorkFlow(bpaRequest);
-		nocService.createNocRequest(bpaRequest, mdmsData,edcrService.getEdcrSuggestedRequiredNocs(edcr),
+		if (BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessService)) {
+		nocService.createPreApproveNocRequest(bpaRequest, mdmsData,edcrService.getEdcrSuggestedRequiredNocs(edcr),
 				applicationType, serviceType);
+		}
+		else {
+		nocService.createNocRequest(bpaRequest, mdmsData);
+		}
 		if (BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN.equalsIgnoreCase(businessService)) {
 		calculationService.addCalculation(bpaRequest, BPAConstants.APPLICATION_FEE_KEY);
 		}
