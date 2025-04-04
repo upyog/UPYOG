@@ -635,17 +635,21 @@ public class EnrichmentService {
 			enrichPropertyForNewWf(requestInfo, property, true);
 		}
 		
+		List<Document> uniqueDoc=new ArrayList<>();
+		
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
-
-				if (doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty()) {
+				if (doc.getDocumentType()!=null && !doc.getDocumentType().isEmpty() && doc.getId()==null) {
 					doc.setId(UUID.randomUUID().toString());
 					if(StringUtils.isEmpty(doc.getStatus()) || doc.getStatus()==null)
 					doc.setStatus(Status.ACTIVE);
+					uniqueDoc.add(doc);
 				}
 			});
 		
-
+		if(!CollectionUtils.isEmpty(uniqueDoc))
+		property.setDocuments(uniqueDoc);
+		
 		property.getOwners().forEach(owner -> {
 
 			if (owner.getOwnerInfoUuid() == null) {
@@ -794,6 +798,7 @@ public class EnrichmentService {
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
 			if (doc.getId() == null && null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty() ) {
+				if(property.getCreationReason()!=CreationReason.MUTATION)
 				doc.setId(UUID.randomUUID().toString());
 				if (null == doc.getStatus())
 					doc.setStatus(Status.ACTIVE);
