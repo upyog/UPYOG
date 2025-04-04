@@ -1088,6 +1088,7 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 
 	}
 		
+	@SuppressWarnings("null")
 	public Object Curl_WS(RequestInfo requestInfo, Set<String> consumerCodes,
 		Set<String> applicationNo, String tenantId, String businessservice ){
 		
@@ -1097,27 +1098,47 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 
 		if(businessservice.contains("WS")) {
 			url = new StringBuilder(config.getWsHost());
-		    url.append(config.getWsUrl())
-		       .append("searchType=CONNECTION");
+		    url.append(config.getWsUrl());
+		       
 		} else {
 			url = new StringBuilder(config.getSwHost());
-		    url.append(config.getSwUrl())
-		       .append("searchType=CONNECTION");
+		    url.append(config.getSwUrl());
 		}
+		
+		if (consumerCodes != null && !consumerCodes.isEmpty() 
+			    && (applicationNo == null || applicationNo.isEmpty())) {
+			    
+			    url.append("searchType=CONNECTION")
+			       .append("&connectionNumber=")
+			       .append(consumerCodes);
 
+			} else if ((applicationNo != null && !applicationNo.isEmpty()) 
+			           && (consumerCodes == null || consumerCodes.isEmpty())) {
+			    
+			    url.append("isConnectionSearch=true");
+			    String applicationNumbersStr = String.join(",", applicationNo);
+			    url.append("&applicationNumber=").append(applicationNumbersStr);
+
+			} else if (consumerCodes != null && !consumerCodes.isEmpty()) {
+			    
+			    // Fallback to using consumerCodes if both are present or neither are empty
+			    url.append("isConnectionSearch=true");
+			    url.append("&connectionNumber=").append(consumerCodes);
+
+			} else {
+			    // Optional: handle the case where neither is present/valid
+			    throw new IllegalArgumentException("Either consumerCodes or applicationNo must be provided.");
+			}
+
+		
+
+		
 		// Validate and append tenantId if present
 		if (tenantId != null && !tenantId.isEmpty()) {
 		    url.append("&tenantId=").append(tenantId);
 		}
 
-		// Validate and append consumerCodes if present
-		if (consumerCodes != null && !consumerCodes.isEmpty()) {
-		    url.append("&connectionNumber=").append(consumerCodes);
-		} else {
-		    String applicationNumbersStr = String.join(",", applicationNo); 
-		    url.append("&applicationNumber=").append(applicationNumbersStr);
-		}
-
+		
 
 	    try {
 	    	log.info(url.toString());
@@ -1217,7 +1238,7 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 	            for (JsonNode connection : ptConnectionNode) {
 	                JsonNode statusNode = connection.path("status");
 	            
-	                if (statusNode.asText().equalsIgnoreCase("ACTIVE")) {
+	                if (statusNode.asText().equalsIgnoreCase("ACTIVE") || statusNode.asText().equalsIgnoreCase("PENDINGWS") ) {
 	                	Map<String, Object> connectionMap = objectMapper.convertValue(connection, Map.class);
 	                	PTConnections.add(connectionMap);
 	            }
