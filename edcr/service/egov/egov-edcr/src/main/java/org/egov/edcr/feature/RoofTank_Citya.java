@@ -80,13 +80,13 @@ public class RoofTank_Citya extends FeatureProcess {
 	
 	@Override
 	public Plan validate(Plan pl) {
-
-		return pl;
+		return pl; // No validation logic defined for this feature
 	}
 
 	@Override
 	public Plan process(Plan pl) {
 
+		// Initialize scrutiny detail object and define its headers
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.setKey("Common_Roof Tanks");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -95,72 +95,75 @@ public class RoofTank_Citya extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(4, ACTION);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 
+		// Create a map to hold the result details for this rule
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_44_A);
 
 		BigDecimal minHeight = BigDecimal.ZERO;
-		
-    	BigDecimal roofTankValue = BigDecimal.ZERO;
-    	
-        String occupancyName = null;
-		
-		 String feature = MdmsFeatureConstants.ROOF_TANK;
-			
-			Map<String, Object> params = new HashMap<>();
-			if(DxfFileConstants.A
-					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-				occupancyName = "Residential";
-			}
+		BigDecimal roofTankValue = BigDecimal.ZERO;
+		String occupancyName = null;
 
-			params.put("feature", feature);
-			params.put("occupancy", occupancyName);
-			
+		String feature = MdmsFeatureConstants.ROOF_TANK;
 
-			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-			
-			ArrayList<String> valueFromColumn = new ArrayList<>();
-			valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+		Map<String, Object> params = new HashMap<>();
 
-			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-			
-				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-				LOG.info("permissibleValue" + permissibleValue);
+		// Determine occupancy type based on building type code
+		if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+			occupancyName = "Residential";
+		}
 
+		// Prepare parameters to fetch permissible value from MDMS
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
 
-			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-				roofTankValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-			}
+		Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+		// Fetch permissible value using MDMS service
+		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+		LOG.info("permissibleValue" + permissibleValue);
+
+		// Extract permissible roof tank height from result
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+			roofTankValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+		}
+
+		// Loop through each block to evaluate roof tank height
 		for (Block b : pl.getBlocks()) {
 			minHeight = BigDecimal.ZERO;
+
+			// If block has roof tanks defined, find the minimum height among them
 			if (b.getRoofTanks() != null && !b.getRoofTanks().isEmpty()) {
 				minHeight = b.getRoofTanks().stream().reduce(BigDecimal::min).get();
 
+				// Check if the minimum roof tank height is within permissible limit
 				if (minHeight.compareTo(roofTankValue) <= 0) {
 					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
 					details.put(VERIFIED, "Verified whether roof tank height is <= " + roofTankValue.toString() + " meters");
 					details.put(ACTION, "Not included roof tank height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
+					// If tank height exceeds permissible value, mark for verification
 					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
 					details.put(VERIFIED, "Verified whether roof tank height is <= " + roofTankValue.toString() + " meters");
 					details.put(ACTION, "Included roof tank height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Verify.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				}
-			}
 
+				// Add result to scrutiny detail and report
+				scrutinyDetail.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			}
 		}
-		return pl;
+		return pl; // Return processed plan
 	}
 
 	@Override
 	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
+		return new LinkedHashMap<>(); // No amendments defined
 	}
-
 }

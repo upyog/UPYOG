@@ -81,6 +81,7 @@ public class Verandah_Citya extends FeatureProcess {
 
 	@Override
 	public Plan validate(Plan pl) {
+		// Currently no validation logic required for Verandah feature
 		return pl;
 	}
 	
@@ -90,6 +91,7 @@ public class Verandah_Citya extends FeatureProcess {
 	@Override
 	public Plan process(Plan pl) {
 		for (Block b : pl.getBlocks()) {
+			// Create a scrutiny detail to hold verandah rule checks
 			ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 			scrutinyDetail.setKey("Common_Verandah");
 			scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -102,48 +104,54 @@ public class Verandah_Citya extends FeatureProcess {
 			BigDecimal verandahDepth = BigDecimal.ZERO;
 			
 	        String occupancyName = null;
-			 String feature = MdmsFeatureConstants.VERANDAH;
-				
-				Map<String, Object> params = new HashMap<>();
-				if(DxfFileConstants.A
-						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-					occupancyName = "Residential";
-				}
+			String feature = MdmsFeatureConstants.VERANDAH;
 
-				params.put("feature", feature);
-				params.put("occupancy", occupancyName);
-				
+			// Check occupancy type; only residential is supported for now
+			Map<String, Object> params = new HashMap<>();
+			if(DxfFileConstants.A
+					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
+				occupancyName = "Residential";
+			}
 
-				Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-				
-				ArrayList<String> valueFromColumn = new ArrayList<>();
-				valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_DEPTH);
-				valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_WIDTH);
-
-				List<Map<String, Object>> permissibleValue = new ArrayList<>();
+			params.put("feature", feature);
+			params.put("occupancy", occupancyName);
 			
-					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-					LOG.info("permissibleValue" + permissibleValue);
+			// Fetch permissible verandah dimension rules from MDMS
+			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
+			
+			ArrayList<String> valueFromColumn = new ArrayList<>();
+			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_DEPTH);
+			valueFromColumn.add(EdcrRulesMdmsConstants.VERANDAH_WIDTH);
 
+			List<Map<String, Object>> permissibleValue = new ArrayList<>();
+			permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+			LOG.info("permissibleValue" + permissibleValue);
 
-				if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VERANDAH_WIDTH)) {
-					verandahWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_WIDTH).toString()));
-					verandahDepth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_DEPTH).toString()));
-				}
+			// Parse permissible width and depth if values are found
+			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.VERANDAH_WIDTH)) {
+				verandahWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_WIDTH).toString()));
+				verandahDepth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.VERANDAH_DEPTH).toString()));
+			}
 
+			// Loop through each floor and perform width and depth checks
 			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
 					&& !b.getBuilding().getFloors().isEmpty()) {
 
 				for (Floor f : b.getBuilding().getFloors()) {
 
+					// Check if verandah data exists
 					if (f.getVerandah() != null && f.getVerandah().getMeasurements() != null
 							&& !f.getVerandah().getMeasurements().isEmpty()) {
 
+						// Find minimum verandah width
 						BigDecimal minVerandaWidth = f.getVerandah().getMeasurements().stream()
 								.map(Measurement::getWidth).reduce(BigDecimal::min).get();
+
+						// Find minimum verandah depth (heightOrDepth list)
 						BigDecimal minVerandDepth = f.getVerandah().getHeightOrDepth().stream().reduce(BigDecimal::min)
 								.get();
 
+						// Width check against permissible value
 						if (minVerandaWidth.compareTo(BigDecimal.ZERO) > 0) {
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, RULE_43);
@@ -155,7 +163,6 @@ public class Verandah_Citya extends FeatureProcess {
 								details.put(STATUS, Result.Accepted.getResultVal());
 								scrutinyDetail.getDetail().add(details);
 								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
 							} else {
 								details.put(REQUIRED, "Minimum width " + verandahWidth.toString() + "m   ");
 								details.put(PROVIDED, "Width area " + minVerandaWidth + " at floor " + f.getNumber());
@@ -164,17 +171,19 @@ public class Verandah_Citya extends FeatureProcess {
 								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 							}
 						}
+
+						// Depth check against permissible value
 						if (minVerandDepth.compareTo(BigDecimal.ZERO) > 0) {
 							Map<String, String> details = new HashMap<>();
 							details.put(RULE_NO, RULE_43A);
 							details.put(DESCRIPTION, VERANDAH_DESCRIPTION);
+
 							if (minVerandDepth.compareTo(verandahDepth) <= 0) {
 								details.put(REQUIRED, "Minimum depth not more than " + verandahDepth.toString() + " m ");
 								details.put(PROVIDED, " Depth area  " + minVerandDepth + " at floor " + f.getNumber());
 								details.put(STATUS, Result.Accepted.getResultVal());
 								scrutinyDetail.getDetail().add(details);
 								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
 							} else {
 								details.put(REQUIRED, "Minimum depth not more than " + verandahDepth.toString() + " m ");
 								details.put(PROVIDED, " Depth area  " + minVerandDepth + " at floor " + f.getNumber());
@@ -184,17 +193,17 @@ public class Verandah_Citya extends FeatureProcess {
 							}
 						}
 					}
-
 				}
 			}
-
 		}
 		return pl;
 	}
 
 	@Override
 	public Map<String, Date> getAmendments() {
+		// No amendments for this feature as of now
 		return new LinkedHashMap<>();
 	}
+
 
 }

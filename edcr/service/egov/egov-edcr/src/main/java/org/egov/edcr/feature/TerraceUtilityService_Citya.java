@@ -74,74 +74,104 @@ import org.springframework.stereotype.Service;
 @Service
 public class TerraceUtilityService_Citya extends FeatureProcess {
 
+    // Logger to log important info for debugging or monitoring
     private static final Logger LOG = LogManager.getLogger(TerraceUtilityService_Citya.class);
+
+    // Rule identifier for terrace utility check
     private static final String RULE_34 = "43-1";
+
+    // Feature key used in MDMS and for internal processing
     public static final String TERRACEUTILITIESDISTANCE = "TerraceUtilitiesDistance";
+
+    // Error message key (not used in this version but defined for standardization)
     public static final String ERROR_MSG = "Minimum_distance";
 
+    // Autowired service to fetch rules from MDMS
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+
+    // No amendments defined for this rule
     @Override
     public Map<String, Date> getAmendments() {
         return null;
     }
 
+    // No pre-validation logic implemented
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
 
+    // Main logic for processing terrace utility service validations
     @Override
     public Plan process(Plan pl) {
-    	
-    	BigDecimal terraceUtilityValue = BigDecimal.ZERO;
-    	
+
+        // Default permissible value set to zero initially
+        BigDecimal terraceUtilityValue = BigDecimal.ZERO;
+
         String occupancyName = null;
-		
-		 String feature = MdmsFeatureConstants.TERRACE_UTILITY_SERVICE;
-			
-			Map<String, Object> params = new HashMap<>();
-			if(DxfFileConstants.A
-					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-				occupancyName = "Residential";
-			}
 
-			params.put("feature", feature);
-			params.put("occupancy", occupancyName);
-			
+        // Define the feature name for fetching rules
+        String feature = MdmsFeatureConstants.TERRACE_UTILITY_SERVICE;
 
-			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-			
-			ArrayList<String> valueFromColumn = new ArrayList<>();
-			valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+        // Prepare parameters for fetching MDMS rules
+        Map<String, Object> params = new HashMap<>();
+        
+        // If occupancy is residential, set the corresponding string
+        if (DxfFileConstants.A
+                .equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
 
-			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-			
-				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-				LOG.info("permissibleValue" + permissibleValue);
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
+        // Retrieve all EDCR rules from the plan
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 
-			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-				terraceUtilityValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-			}
+        // Define the list of columns to retrieve from MDMS
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
+        // Fetch permissible value from MDMS using occupancy and feature
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue);
+
+        // If value is found, extract and convert it to BigDecimal
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            terraceUtilityValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+        }
+
+        // Iterate through each block in the plan
         if (pl.getBlocks() != null) {
             for (Block block : pl.getBlocks()) {
+
+                // Create scrutiny detail object to hold validation report per block
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
                 scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Terrace Utility");
+
+                // Define column headers for scrutiny output
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
                 scrutinyDetail.addColumnHeading(3, PERMITTED);
                 scrutinyDetail.addColumnHeading(4, PROVIDED);
                 scrutinyDetail.addColumnHeading(5, STATUS);
 
+                // Iterate through terrace utilities for the block
                 for (TerraceUtility terraceUtility : block.getTerraceUtilities()) {
+
+                    // Prepare the result map for each utility
                     Map<String, String> details = new HashMap<>();
                     details.put(RULE_NO, RULE_34);
+
+                    // Get the minimum distance of the terrace utility from the edge
                     BigDecimal minDistance = terraceUtility.getDistances().stream().reduce(BigDecimal::min).get();
+
+                    // Set utility name in description
                     details.put(DESCRIPTION, terraceUtility.getName());
+
+                    // Compare provided distance with required distance and record results
                     if (Util.roundOffTwoDecimal(minDistance).compareTo(terraceUtilityValue) >= 0) {
                         details.put(PERMITTED, terraceUtilityValue + DcrConstants.IN_METER);
                         details.put(PROVIDED, minDistance + DcrConstants.IN_METER);
@@ -161,6 +191,9 @@ public class TerraceUtilityService_Citya extends FeatureProcess {
             }
 
         }
+
+        // Return the updated plan after processing
         return pl;
     }
 }
+

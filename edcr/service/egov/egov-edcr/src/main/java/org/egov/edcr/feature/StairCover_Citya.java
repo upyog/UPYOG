@@ -72,23 +72,29 @@ import org.springframework.stereotype.Service;
 public class StairCover_Citya extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(StairCover_Citya.class);
+
+    // Rule identifier as per building code
     private static final String RULE_44_C = "44-c";
+
+    // Description used in scrutiny reports
     public static final String STAIRCOVER_DESCRIPTION = "Mumty";
 
+    // Autowired service to fetch MDMS rule values
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
     
+    // Placeholder validate method (not performing any logic here)
     @Override
     public Plan validate(Plan pl) {
-
         return pl;
     }
 
     @Override
     public Plan process(Plan pl) {
 
+        // Initialize scrutiny report object with appropriate columns
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Mumty");
+        scrutinyDetail.setKey("Common_Mumty"); // Key used in report output
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, VERIFIED);
@@ -98,45 +104,56 @@ public class StairCover_Citya extends FeatureProcess {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, RULE_44_C);
 
-        BigDecimal minHeight = BigDecimal.ZERO;
-        BigDecimal stairCoverValue = BigDecimal.ZERO;
+        BigDecimal minHeight = BigDecimal.ZERO;        // Will hold the minimum stair cover height in a block
+        BigDecimal stairCoverValue = BigDecimal.ZERO;  // Permissible stair cover height from MDMS
         
         String occupancyName = null;
-		
-		 String feature = MdmsFeatureConstants.STAIR_COVER;
+
+        // Feature key used to fetch related values from MDMS
+        String feature = MdmsFeatureConstants.STAIR_COVER;
 			
-			Map<String, Object> params = new HashMap<>();
-			if(DxfFileConstants.A
-					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-				occupancyName = "Residential";
-			}
+        // Prepare parameters for MDMS fetch call
+        Map<String, Object> params = new HashMap<>();
 
-			params.put("feature", feature);
-			params.put("occupancy", occupancyName);
-			
+        // Identify occupancy type – currently only checking for Residential
+        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
 
-			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-			
-			ArrayList<String> valueFromColumn = new ArrayList<>();
-			valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
-			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-			
-				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-				LOG.info("permissibleValue" + permissibleValue);
+        // Fetch the rules feature map from plan
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 
+        // Specify the required column(s) from MDMS
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
-			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-				stairCoverValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-			}
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
+        // Fetch permissible values for stair cover from MDMS
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue);
+
+        // Extract stair cover height limit from permissible values
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            stairCoverValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+        }
+
+        // Loop through all blocks of the plan
         for (Block b : pl.getBlocks()) {
             minHeight = BigDecimal.ZERO;
+
+            // Check if the block has stair cover data
             if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
+                
+                // Find the minimum height among all stair covers in the block
                 minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
 
+                // Compare the stair cover height to the permissible value
                 if (minHeight.compareTo(stairCoverValue) <= 0) {
+                    // If height is within permissible limit, it is excluded from total building height
                     details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
                     details.put(VERIFIED, "Verified whether stair cover height is <= " + stairCoverValue.toString() + " meters");
                     details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
@@ -144,6 +161,7 @@ public class StairCover_Citya extends FeatureProcess {
                     scrutinyDetail.getDetail().add(details);
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                 } else {
+                    // If height exceeds permissible limit, it must be included in total building height
                     details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
                     details.put(VERIFIED, "Verified whether stair cover height is <= " + stairCoverValue.toString() + " meters");
                     details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
@@ -152,14 +170,15 @@ public class StairCover_Citya extends FeatureProcess {
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                 }
             }
-
         }
         return pl;
     }
 
+    // No amendments implemented currently
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();
     }
 
 }
+

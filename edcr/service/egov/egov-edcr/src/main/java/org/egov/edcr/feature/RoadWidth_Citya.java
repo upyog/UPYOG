@@ -90,23 +90,25 @@ public class RoadWidth_Citya extends FeatureProcess {
 
     @Override
     public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
+        return new LinkedHashMap<>(); // No amendments defined for this feature
     }
 
     @Override
     public Plan validate(Plan pl) {
-        return pl;
+        return pl; // No validation logic currently implemented
     }
 
     @Override
     public Plan process(Plan pl) {
-       
+        // Check if road width is provided in plan information
         if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
             BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
             String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+
+            // Apply rule only for NEW area types
             if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.setKey("Common_Road Width");
+                scrutinyDetail.setKey("Common_Road Width"); // Setting the scrutiny detail key
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
                 scrutinyDetail.addColumnHeading(3, OCCUPANCY);
@@ -118,8 +120,10 @@ public class RoadWidth_Citya extends FeatureProcess {
                 details.put(RULE_NO, RULE_34);
                 details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
 
+                // Get permissible road width values for the occupancy
                 Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues(pl);
 
+                // Fetch occupancy type from the most restrictive FAR helper
                 if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
                     OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                             .getSubtype() != null
@@ -128,8 +132,11 @@ public class RoadWidth_Citya extends FeatureProcess {
 
                     if (occupancyType != null) {
                         details.put(OCCUPANCY, occupancyType.getName());
+
+                        // Fetch the required road width for this occupancy type
                         BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
                         if (roadWidthRequired != null) {
+                            // Check if provided road width is acceptable
                             if (roadWidth.compareTo(roadWidthRequired) >= 0) {
                                 details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
                                 details.put(PROVIDED, roadWidth.toString() + "m");
@@ -151,40 +158,41 @@ public class RoadWidth_Citya extends FeatureProcess {
         return pl;
     }
 
+    // Method to retrieve permissible road width values from MDMS rules
     public Map<String, BigDecimal> getOccupancyValues(Plan plan) {
     	
-    	BigDecimal roadWidthValue = BigDecimal.ZERO;
+    	BigDecimal roadWidthValue = BigDecimal.ZERO; // Default road width value
     	
         String occupancyName = null;
 		
-		 String feature = MdmsFeatureConstants.ROAD_WIDTH;
-			
-			Map<String, Object> params = new HashMap<>();
-			if(DxfFileConstants.A
-					.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-				occupancyName = "Residential";
-			}
+		String feature = MdmsFeatureConstants.ROAD_WIDTH;
 
-			params.put("feature", feature);
-			params.put("occupancy", occupancyName);
-			
+		// Determine occupancy type from the FAR helper
+		Map<String, Object> params = new HashMap<>();
+		if(DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
+			occupancyName = "Residential";
+		}
 
-			Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
-			
-			ArrayList<String> valueFromColumn = new ArrayList<>();
-			valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
+		params.put("feature", feature);
+		params.put("occupancy", occupancyName);
 
-			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-			
-				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-				LOG.info("permissibleValue" + permissibleValue);
+		Map<String,List<Map<String,Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
 
+		ArrayList<String> valueFromColumn = new ArrayList<>();
+		valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
-			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
-				roadWidthValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
-			}
+		List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
+		// Fetch permissible value using MDMS service
+		permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+		LOG.info("permissibleValue" + permissibleValue);
+
+		// Extract the road width value if present
+		if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+			roadWidthValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
+		}
+
+        // Assign retrieved value to all relevant occupancy codes
         Map<String, BigDecimal> roadWidthValues = new HashMap<>();
         roadWidthValues.put(B, roadWidthValue);
         roadWidthValues.put(D, roadWidthValue);
@@ -196,3 +204,4 @@ public class RoadWidth_Citya extends FeatureProcess {
 
     }
 }
+

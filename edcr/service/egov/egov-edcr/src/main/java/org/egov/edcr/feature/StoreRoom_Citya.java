@@ -83,6 +83,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StoreRoom_Citya extends FeatureProcess {
 
+    // Constants for rule numbers and descriptions
     private static final String SUBRULE_41_II_A = "41-ii-a";
     private static final String SUBRULE_41_II_B = "41-ii-b";
 
@@ -91,76 +92,85 @@ public class StoreRoom_Citya extends FeatureProcess {
     private static final String SUBRULE_41_II_B_AREA_DESC = "Total area of rooms";
     private static final String SUBRULE_41_II_B_TOTAL_WIDTH = "Minimum Width of room";
 
-
+    // Miscellaneous constants
     private static final String FLOOR = "Floor";
     private static final String ROOM_HEIGHT_NOTDEFINED = "Room height is not defined in layer ";
     private static final String LAYER_ROOM_HEIGHT = "BLK_%s_FLR_%s_%s";
+
     private static final Logger LOG = LogManager.getLogger(StoreRoom.class);
 
+    // Autowired service to fetch permissible values from MDMS
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
-    
+
+    // Placeholder validate method
     @Override
     public Plan validate(Plan pl) {
         return pl;
     }
+
     @Override
     public Plan process(Plan pl) {
+
+        // Color codes used to identify features like room height from drawing layers
         Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
-        validate(pl);
-        HashMap<String, String> errors = new HashMap<>();
-        
+        validate(pl); // Call to validate method (currently does nothing)
+        HashMap<String, String> errors = new HashMap<>(); // To store layer-related errors
+
+        // Variables to hold permissible values fetched from MDMS
         BigDecimal storeRoomValueOne = BigDecimal.ZERO;
         BigDecimal storeRoomValueTwo = BigDecimal.ZERO;
         BigDecimal storeRoomValueThree = BigDecimal.ZERO;
 
         String occupancyName = null;
-		
-		 String feature = MdmsFeatureConstants.STORE_ROOM;
-			
-			Map<String, Object> params = new HashMap<>();
-			if(DxfFileConstants.A
-					.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())){
-				occupancyName = "Residential";
-			}
+        String feature = MdmsFeatureConstants.STORE_ROOM;
 
-			params.put("feature", feature);
-			params.put("occupancy", occupancyName);
-			
+        // Determine occupancy type (currently checks only for "Residential")
+        Map<String, Object> params = new HashMap<>();
+        if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
+            occupancyName = "Residential";
+        }
 
-			Map<String,List<Map<String,Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
-			
-			ArrayList<String> valueFromColumn = new ArrayList<>();
-			valueFromColumn.add(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_ONE);
-			valueFromColumn.add(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_TWO);
-			valueFromColumn.add(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_THREE);
+        // Setup parameters to fetch values from MDMS
+        params.put("feature", feature);
+        params.put("occupancy", occupancyName);
 
-			List<Map<String, Object>> permissibleValue = new ArrayList<>();
-		
-			
-				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
-				LOG.info("permissibleValue" + permissibleValue);
+        // Fetch rules related to the store room from plan's MDMS data
+        Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
 
+        // Required columns from MDMS
+        ArrayList<String> valueFromColumn = new ArrayList<>();
+        valueFromColumn.add(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_ONE);
+        valueFromColumn.add(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_TWO);
+        valueFromColumn.add(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_THREE);
 
-			if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_ONE)) {
-				storeRoomValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_ONE).toString()));
-				storeRoomValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_TWO).toString()));
-				storeRoomValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_THREE).toString()));
-			}
-        
-        
+        List<Map<String, Object>> permissibleValue = new ArrayList<>();
+
+        // Get permissible values from MDMS
+        permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
+        LOG.info("permissibleValue" + permissibleValue);
+
+        // Extract values from MDMS result if present
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_ONE)) {
+            storeRoomValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_ONE).toString()));
+            storeRoomValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_TWO).toString()));
+            storeRoomValueThree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.STORE_ROOM_VALUE_THREE).toString()));
+        }
+
+        // Begin block and floor-wise validation
         if (pl != null && pl.getBlocks() != null) {
             OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
                     ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                     : null;
+
+            // Continue only if occupancy is of type A (Residential)
             if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
-                   && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()) 
-                	// ||
-//                            (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
-//                                    || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
-            	)) {
+                    && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
+
                 for (Block block : pl.getBlocks()) {
                     if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+
+                        // Setup scrutiny detail report for room height
                         scrutinyDetail = new ScrutinyDetail();
                         scrutinyDetail.addColumnHeading(1, RULE_NO);
                         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -168,10 +178,11 @@ public class StoreRoom_Citya extends FeatureProcess {
                         scrutinyDetail.addColumnHeading(4, REQUIRED);
                         scrutinyDetail.addColumnHeading(5, PROVIDED);
                         scrutinyDetail.addColumnHeading(6, STATUS);
-
                         scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Room Height");
-                        
-                      for (Floor floor : block.getBuilding().getFloors()) {
+
+                        for (Floor floor : block.getBuilding().getFloors()) {
+
+                            // Data containers
                             List<BigDecimal> roomAreas = new ArrayList<>();
                             List<BigDecimal> roomWidths = new ArrayList<>();
                             BigDecimal minimumHeight = BigDecimal.ZERO;
@@ -184,92 +195,85 @@ public class StoreRoom_Citya extends FeatureProcess {
                             if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
                                 color = DxfFileConstants.COLOR_RESIDENTIAL_ROOM;
 
-                            if (floor.getStoreRooms() != null  && floor.getStoreRooms().size()>0) {
-                            	
-								List<BigDecimal> storeRoomHeights = new ArrayList<>();
+                            // If floor contains store rooms
+                            if (floor.getStoreRooms() != null && floor.getStoreRooms().size() > 0) {
 
-								List<RoomHeight> heights = new ArrayList<>();
-								List<Measurement> rooms = new ArrayList<>();
+                                // Lists for storing height and geometry data
+                                List<BigDecimal> storeRoomHeights = new ArrayList<>();
+                                List<RoomHeight> heights = new ArrayList<>();
+                                List<Measurement> rooms = new ArrayList<>();
 
-								
-								for (Room room : floor.getStoreRooms()) {
-									if (room.getHeights() != null)
-										heights.addAll(room.getHeights());
-									if (room.getRooms() != null)
-										rooms.addAll(room.getRooms());
-								}
-								 
-							
+                                // Collect all heights and room measurements
+                                for (Room room : floor.getStoreRooms()) {
+                                    if (room.getHeights() != null)
+                                        heights.addAll(room.getHeights());
+                                    if (room.getRooms() != null)
+                                        rooms.addAll(room.getRooms());
+                                }
 
-								for (RoomHeight roomHeight : heights) {
-									if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
-										storeRoomHeights.add(roomHeight.getHeight());
-									}
-								}
+                                // Filter height values based on color code
+                                for (RoomHeight roomHeight : heights) {
+                                    if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
+                                        storeRoomHeights.add(roomHeight.getHeight());
+                                    }
+                                }
 
-								for (Measurement room : rooms) {
-									if (heightOfRoomFeaturesColor.get(color) == room.getColorCode()) {
-										roomAreas.add(room.getArea());
-										roomWidths.add(room.getWidth());
-									}
-								}
+                                // Collect areas and widths from rooms with valid color
+                                for (Measurement room : rooms) {
+                                    if (heightOfRoomFeaturesColor.get(color) == room.getColorCode()) {
+                                        roomAreas.add(room.getArea());
+                                        roomWidths.add(room.getWidth());
+                                    }
+                                }
 
+                                // If room height is captured, process it
                                 if (!storeRoomHeights.isEmpty()) {
                                     BigDecimal minHeight = storeRoomHeights.stream().reduce(BigDecimal::min).get();
-                               
+
+                                    // Choose the minimum permissible height based on occupancy
                                     if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
-                                    	 minimumHeight = storeRoomValueOne;
-                                     	Log.info("Minimum  Store Room Height required is set to : "+storeRoomValueThree);
+                                        minimumHeight = storeRoomValueOne;
+                                        Log.info("Minimum Store Room Height required is set to : " + storeRoomValueThree);
+                                    } else {
+                                        minimumHeight = storeRoomValueOne;
                                     }
-                                       
-                                    else
-                                        minimumHeight = storeRoomValueOne; 
-                         
-//                                    if (!G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
-//                                        minimumHeight = MINIMUM_HEIGHT_2_75;
-//                                    else
-//                                        minimumHeight = MINIMUM_HEIGHT_3_6;
 
                                     subRule = SUBRULE_41_II_A;
                                     subRuleDesc = SUBRULE_41_II_A_REGULAR_DESC;
 
-
+                                    // Build scrutiny result for height
                                     boolean valid = false;
                                     boolean isTypicalRepititiveFloor = false;
-                                    Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                            isTypicalRepititiveFloor);
-                                    buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, minHeight, valid,
-                                            typicalFloorValues);
+                                    Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
+                                    buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, minHeight, valid, typicalFloorValues);
+
                                 } else {
-                                    String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(),
-                                            "STORE_ROOM");
+                                    // No height defined, log an error
+                                    String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(), "STORE_ROOM");
                                     errors.put(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
                                     pl.addErrors(errors);
                                 }
-
                             }
 
+                            // If area information is available, calculate total area and minimum width
                             if (!roomAreas.isEmpty()) {
                                 totalArea = roomAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-                                
-                                                                
                                 BigDecimal minRoomWidth = roomWidths.stream().reduce(BigDecimal::min).get();
-                                
-                                
-                                    minimumHeight = storeRoomValueTwo;
-                                   // minWidth = MINIMUM_WIDTH_2_4;
-                                    
-                                    
+
+                                // Assign expected minimum values from MDMS
+                                minimumHeight = storeRoomValueTwo;
 
                                 subRule = SUBRULE_41_II_B;
                                 subRuleDesc = SUBRULE_41_II_B_AREA_DESC;
 
                                 boolean valid = false;
                                 boolean isTypicalRepititiveFloor = false;
-                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                        isTypicalRepititiveFloor);
+                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
+
+                                // Build scrutiny result for total area
                                 buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
 
+                                // Optional: Add width check (currently commented out)
 //                                subRuleDesc = SUBRULE_41_II_B_TOTAL_WIDTH;
 //                                buildResult(pl, floor, minWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
                             }
@@ -278,37 +282,42 @@ public class StoreRoom_Citya extends FeatureProcess {
                 }
             }
         }
-        return pl;
 
+        return pl;
     }
 
+    // Method to add scrutiny result based on expected vs actual value
     private void buildResult(Plan pl, Floor floor, BigDecimal expected, String subRule, String subRuleDesc,
-            BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
+                             BigDecimal actual, boolean valid, Map<String, Object> typicalFloorValues) {
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")
                 && expected.compareTo(BigDecimal.valueOf(0)) > 0 &&
                 subRule != null && subRuleDesc != null) {
+
             if (actual.compareTo(expected) >= 0) {
                 valid = true;
             }
+
             String value = typicalFloorValues.get("typicalFloors") != null
                     ? (String) typicalFloorValues.get("typicalFloors")
                     : " floor " + floor.getNumber();
+
             if (valid) {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
                         expected + DcrConstants.IN_METER,
                         actual + DcrConstants.IN_METER, Result.Accepted.getResultVal());
-                LOG.info("Room Height Validation True: (Expected/Actual) " +expected+"/"+actual);
+                LOG.info("Room Height Validation True: (Expected/Actual) " + expected + "/" + actual);
             } else {
                 setReportOutputDetails(pl, subRule, subRuleDesc, value,
                         expected + DcrConstants.IN_METER,
                         actual + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
-                LOG.info("Room Height Validation False: (Expected/Actual) " +expected+"/"+actual);
+                LOG.info("Room Height Validation False: (Expected/Actual) " + expected + "/" + actual);
             }
         }
     }
 
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
-            String status) {
+    // Helper method to populate scrutiny detail section of the report
+    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor,
+                                        String expected, String actual, String status) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(DESCRIPTION, ruleDesc);
