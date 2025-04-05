@@ -113,7 +113,27 @@ const BpaApplicationDetail = () => {
        response = { filestoreIds: [payments?.fileStoreId] };      
     }
     else{
-      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...payments}] }, "bpa-receipt");
+      const formattedStakeholderType=data?.applicationData?.additionalDetails?.typeOfArchitect
+            const stakeholderType=formattedStakeholderType.charAt(0).toUpperCase()+formattedStakeholderType.slice(1).toLowerCase()
+      const updatedpayments={
+        ...payments,
+       
+            paymentDetails:[
+              {
+                ...payments.paymentDetails?.[0],
+                additionalDetails:{
+                  ...payments.paymentDetails[0].additionalDetails,
+                  "propertyID":data?.applicationData?.additionalDetails?.propertyID,
+                  "stakeholderType":stakeholderType,
+                  "contact":data?.applicationData?.businessService==="BPA-PAP"? t("APPLICANT_CONTACT") : `${stakeholderType} Contact`,
+                  "idType":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICATION_NUMBER"):`${stakeholderType} ID`,
+                  "name":data?.applicationData?.businessService==="BPA-PAP" ? t("APPLICANT_NAME"):`${stakeholderType} Name`,
+                },
+              },
+            ],  
+         
+      }
+      response = await Digit.PaymentService.generatePdf(stateCode, { Payments: [{...updatedpayments}] }, "bpa-receipt");
     }
     const fileStore = await Digit.PaymentService.printReciept(stateCode, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");

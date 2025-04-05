@@ -133,6 +133,7 @@ const ApplicationDetails = (props) => {
           return;
         }
       }
+      sessionStorage.setItem("updateData",JSON.stringify(data))
       if (mutate) {
         setIsEnableLoader(true);
         mutate(data, {
