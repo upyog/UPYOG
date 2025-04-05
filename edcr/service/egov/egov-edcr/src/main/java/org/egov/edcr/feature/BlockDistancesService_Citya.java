@@ -56,6 +56,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.BlockDistances;
 import org.egov.common.entity.edcr.Plan;
@@ -63,6 +66,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
@@ -72,6 +76,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BlockDistancesService_Citya extends FeatureProcess {
+    private static final Logger LOG = LogManager.getLogger(BlockDistancesService_Citya.class);
 
     // Constants for subrules and other configurations
     public static final String SUBRULE_54_3 = "54-3";
@@ -80,7 +85,6 @@ public class BlockDistancesService_Citya extends FeatureProcess {
     public static final String SUBRULE_58_3_A = "58-3-a";
     public static final String SUBRULE_59_3 = "59-3";
     public static final String SUBRULE_117_3 = "117-3";
-    public static final BigDecimal DIS_7_5 = BigDecimal.valueOf(7.5);
     public static final String BLK_NUMBER = "blkNumber";
     public static final String SUBRULE = "subrule";
     public static final String MIN_DISTANCE = "minimumDistance";
@@ -265,11 +269,11 @@ public class BlockDistancesService_Citya extends FeatureProcess {
         List<BigDecimal> blkHeights = Arrays.asList(bHeight, blockHeight);
         BigDecimal maxHeight = blkHeights.stream().reduce(BigDecimal::max).get();
 
-        BigDecimal BlockDistanceServiceValue = BigDecimal.ZERO;
+        BigDecimal blockDistanceServiceValue = BigDecimal.ZERO;
 
         // Fetch permissible values for block distances
         String occupancyName = null;
-        String feature = "BlockDistancesService";
+        String feature = MdmsFeatureConstants.BLOCK_DISTANCES_SERVICE;
         Map<String, Object> params = new HashMap<>();
         if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
             occupancyName = "Residential";
@@ -279,7 +283,7 @@ public class BlockDistancesService_Citya extends FeatureProcess {
 
         Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("permissibleValue");
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
         try {
@@ -289,14 +293,14 @@ public class BlockDistancesService_Citya extends FeatureProcess {
             LOG.error("Permissible Value for BlockDistancesService not found--------", e);
         }
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-            BlockDistanceServiceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            blockDistanceServiceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
         } else {
-            BlockDistanceServiceValue = BigDecimal.ZERO;
+            blockDistanceServiceValue = BigDecimal.ZERO;
         }
 
         ArrayList<BigDecimal> setBacksValues = new ArrayList<>();
-        setBacksValues.add(BlockDistanceServiceValue);
+        setBacksValues.add(blockDistanceServiceValue);
         List<SetBack> setBacks = block.getSetBacks();
         for (SetBack setback : setBacks) {
             if (setback.getRearYard() != null)
@@ -307,7 +311,7 @@ public class BlockDistancesService_Citya extends FeatureProcess {
                 setBacksValues.add(setback.getSideYard2().getHeight());
         }
 
-        BigDecimal dividedHeight = maxHeight.divide(BlockDistanceServiceValue, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+        BigDecimal dividedHeight = maxHeight.divide(blockDistanceServiceValue, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                 DcrConstants.ROUNDMODE_MEASUREMENTS);
 
         List<BigDecimal> heights = Arrays.asList(dividedHeight, BigDecimal.valueOf(18));

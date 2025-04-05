@@ -100,13 +100,13 @@ public class FireStair_Citya extends FeatureProcess {
     private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "Fire stair flight is not defined in block %s floor %s";
 
     // Variables to store permissible values for fire stair dimensions
-    private static String FireStairExpectedNoofRise = "0";
-    private static BigDecimal FireStairMinimumWidth = BigDecimal.ZERO;
-    private static BigDecimal FireStairRequiredTread = BigDecimal.ZERO;
-    private static BigDecimal FireStairTypicalRepititiveFloor = BigDecimal.ZERO;
+    private static BigDecimal fireStairExpectedNoofRise = BigDecimal.ZERO;
+    private static BigDecimal fireStairMinimumWidth = BigDecimal.ZERO;
+    private static BigDecimal fireStairRequiredTread = BigDecimal.ZERO;
+    private static BigDecimal fireStairTypicalRepititiveFloor = BigDecimal.ZERO;
 
     @Autowired
-    FetchEdcrRulesMdms;
+    FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
     /**
      * Validates the given plan object.
@@ -147,10 +147,10 @@ public class FireStair_Citya extends FeatureProcess {
         // Fetch permissible values for fire stair dimensions
         Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("FireStairExpectedNoofRise");
-        valueFromColumn.add("FireStairMinimumWidth");
-        valueFromColumn.add("FireStairRequiredTread");
-        valueFromColumn.add("FireStairTypicalRepititiveFloor");
+        valueFromColumn.add("fireStairExpectedNoofRise");
+        valueFromColumn.add("fireStairMinimumWidth");
+        valueFromColumn.add("fireStairRequiredTread");
+        valueFromColumn.add("fireStairTypicalRepititiveFloor");
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
         try {
@@ -161,11 +161,11 @@ public class FireStair_Citya extends FeatureProcess {
             return null;
         }
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("FireStairExpectedNoofRise")) {
-            FireStairExpectedNoofRise = permissibleValue.get(0).get("FireStairExpectedNoofRise").toString();
-            FireStairMinimumWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireStairMinimumWidth").toString()));
-            FireStairRequiredTread = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireStairRequiredTread").toString()));
-            FireStairTypicalRepititiveFloor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireStairTypicalRepititiveFloor").toString()));
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("fireStairExpectedNoofRise")) {
+            fireStairExpectedNoofRise = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairExpectedNoofRise").toString()));
+            fireStairMinimumWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairMinimumWidth").toString()));
+            fireStairRequiredTread = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairRequiredTread").toString()));
+            fireStairTypicalRepititiveFloor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairTypicalRepititiveFloor").toString()));
         }
 
         // Iterate through all blocks in the plan
@@ -245,12 +245,12 @@ public class FireStair_Citya extends FeatureProcess {
                                         scrutinyDetailAbutBltUp);
 
                                 validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
-                                        scrutinyDetailRise, null, floor, typicalFloorValues, fireStair);
+                                        scrutinyDetailRise, null, floor, typicalFloorValues, fireStair, fireStairRequiredTread, fireStairExpectedNoofRise);
 
                                 List<StairLanding> landings = fireStair.getLandings();
                                 if (!landings.isEmpty()) {
                                     validateLanding(plan, block, scrutinyDetailLanding, floor, typicalFloorValues,
-                                            fireStair, landings, errors);
+                                            fireStair, landings, errors, fireStairMinimumWidth);
                                 } else {
                                     errors.put(
                                             "Fire Stair landing not defined in blk " + block.getNumber() + " floor "
@@ -301,7 +301,7 @@ public class FireStair_Citya extends FeatureProcess {
      */
     private void validateLanding(Plan plan, Block block, ScrutinyDetail scrutinyDetailLanding, Floor floor,
             Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.FireStair fireStair,
-            List<StairLanding> landings, HashMap<String, String> errors) {
+            List<StairLanding> landings, HashMap<String, String> errors, BigDecimal fireStairMinimumWidth) {
         for (StairLanding landing : landings) {
             List<BigDecimal> widths = landing.getWidths();
             if (!widths.isEmpty()) {
@@ -312,7 +312,7 @@ public class FireStair_Citya extends FeatureProcess {
                 if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
                     minWidth = Util.roundOffTwoDecimal(landingWidth);
 
-                    if (minWidth.compareTo(FireStairMinimumWidth) >= 0) {
+                    if (minWidth.compareTo(fireStairMinimumWidth) >= 0) {
                         valid = true;
                     }
                     String value = typicalFloorValues.get("typicalFloors") != null
@@ -322,12 +322,12 @@ public class FireStair_Citya extends FeatureProcess {
                     if (valid) {
                         setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                                 String.format(WIDTH_LANDING_DESCRIPTION, fireStair.getNumber(), landing.getNumber()),
-                                FireStairMinimumWidth.toString(), String.valueOf(minWidth), Result.Accepted.getResultVal(),
+                                fireStairMinimumWidth.toString(), String.valueOf(minWidth), Result.Accepted.getResultVal(),
                                 scrutinyDetailLanding);
                     } else {
                         setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                                 String.format(WIDTH_LANDING_DESCRIPTION, fireStair.getNumber(), landing.getNumber()),
-                                FireStairMinimumWidth.toString(), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
+                                fireStairMinimumWidth.toString(), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
                                 scrutinyDetailLanding);
                     }
                 }
@@ -345,7 +345,7 @@ public class FireStair_Citya extends FeatureProcess {
     private void validateFlight(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail2, ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise,
             OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
-            org.egov.common.entity.edcr.FireStair fireStair) {
+            org.egov.common.entity.edcr.FireStair fireStair, BigDecimal fireStairRequiredTread, BigDecimal fireStairExpectedNoofRise) {
 
         if (!fireStair.getFlights().isEmpty()) {
             for (Flight flight : fireStair.getFlights()) {
@@ -384,7 +384,7 @@ public class FireStair_Citya extends FeatureProcess {
                                 try {
                                     minTread = validateTread(plan, errors, block, scrutinyDetail3, floor,
                                             typicalFloorValues, fireStair, flight, flightLengths, minTread,
-                                            mostRestrictiveOccupancyType);
+                                            mostRestrictiveOccupancyType, fireStairRequiredTread);
                                 } catch (ArithmeticException e) {
                                     LOG.info("Denominator is zero");
                                 }
@@ -398,7 +398,7 @@ public class FireStair_Citya extends FeatureProcess {
                             if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
                                 try {
                                     validateNoOfRises(plan, errors, block, scrutinyDetailRise, floor,
-                                            typicalFloorValues, flight, fireStair, noOfRises);
+                                            typicalFloorValues, flight, fireStair, noOfRises, fireStairExpectedNoofRise, fireStairTypicalRepititiveFloor);
                                 } catch (ArithmeticException e) {
                                     LOG.info("Denominator is zero");
                                 }
@@ -458,7 +458,7 @@ public class FireStair_Citya extends FeatureProcess {
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
             minFlightWidth = Util.roundOffTwoDecimal(flightPolyLine);
 
-            if (minFlightWidth.compareTo(FireStairMinimumWidth) >= 0) {
+            if (minFlightWidth.compareTo(fireStairMinimumWidth) >= 0) {
                 valid = true;
             }
             String value = typicalFloorValues.get("typicalFloors") != null
@@ -468,12 +468,12 @@ public class FireStair_Citya extends FeatureProcess {
             if (valid) {
                 setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(WIDTH_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
-                        FireStairMinimumWidth.toString(), String.valueOf(minFlightWidth), Result.Accepted.getResultVal(),
+                        fireStairMinimumWidth.toString(), String.valueOf(minFlightWidth), Result.Accepted.getResultVal(),
                         scrutinyDetail2);
             } else {
                 setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(WIDTH_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
-                        FireStairMinimumWidth.toString(), String.valueOf(minFlightWidth), Result.Not_Accepted.getResultVal(),
+                        fireStairMinimumWidth.toString(), String.valueOf(minFlightWidth), Result.Not_Accepted.getResultVal(),
                         scrutinyDetail2);
             }
         }
@@ -499,7 +499,7 @@ public class FireStair_Citya extends FeatureProcess {
     private BigDecimal validateTread(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
             org.egov.common.entity.edcr.FireStair fireStair, Flight flight, List<BigDecimal> flightLengths,
-            BigDecimal minTread, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+            BigDecimal minTread, OccupancyTypeHelper mostRestrictiveOccupancyType, BigDecimal fireStairRequiredTread) {
         BigDecimal totalLength = flightLengths.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
         totalLength = Util.roundOffTwoDecimal(totalLength);
@@ -521,7 +521,7 @@ public class FireStair_Citya extends FeatureProcess {
 
                 if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
 
-                    if (Util.roundOffTwoDecimal(minTread).compareTo(Util.roundOffTwoDecimal(FireStairRequiredTread)) >= 0) {
+                    if (Util.roundOffTwoDecimal(minTread).compareTo(Util.roundOffTwoDecimal(fireStairRequiredTread)) >= 0) {
                         valid = true;
                     }
 
@@ -531,12 +531,12 @@ public class FireStair_Citya extends FeatureProcess {
                     if (valid) {
                         setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                                 String.format(TREAD_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
-                                FireStairRequiredTread.toString(), String.valueOf(minTread), Result.Accepted.getResultVal(),
+                                fireStairRequiredTread.toString(), String.valueOf(minTread), Result.Accepted.getResultVal(),
                                 scrutinyDetail3);
                     } else {
                         setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                                 String.format(TREAD_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
-                                FireStairRequiredTread.toString(), String.valueOf(minTread), Result.Not_Accepted.getResultVal(),
+                                fireStairRequiredTread.toString(), String.valueOf(minTread), Result.Not_Accepted.getResultVal(),
                                 scrutinyDetail3);
                     }
                 }
@@ -562,11 +562,11 @@ public class FireStair_Citya extends FeatureProcess {
 
     private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues, Flight flight,
-            org.egov.common.entity.edcr.FireStair fireStair, BigDecimal noOfRises) {
+            org.egov.common.entity.edcr.FireStair fireStair, BigDecimal noOfRises, BigDecimal fireStairExpectedNoofRise, BigDecimal fireStairTypicalRepititiveFloor) {
         boolean valid = false;
 
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(FireStairTypicalRepititiveFloor)) <= 0) {
+            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(fireStairTypicalRepititiveFloor)) <= 0) {
                 valid = true;
             }
 
@@ -576,12 +576,12 @@ public class FireStair_Citya extends FeatureProcess {
             if (valid) {
                 setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(NO_OF_RISER_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
-                        FireStairExpectedNoofRise, String.valueOf(noOfRises), Result.Accepted.getResultVal(),
+                        fireStairExpectedNoofRise.toString(), String.valueOf(noOfRises), Result.Accepted.getResultVal(),
                         scrutinyDetail3);
             } else {
                 setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(NO_OF_RISER_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
-                        FireStairExpectedNoofRise, String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(),
+                        fireStairExpectedNoofRise.toString(), String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(),
                         scrutinyDetail3);
             }
         }

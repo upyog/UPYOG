@@ -57,11 +57,13 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +143,7 @@ public class MonumentDistance_Citya extends FeatureProcess {
 
                 // Fetch permissible values for monument distance
                 String occupancyName = null;
-                String feature = "MezzanineFloorService";
+                String feature = MdmsFeatureConstants.MONUMENT_DISTANCE;
 
                 Map<String, Object> params = new HashMap<>();
                 if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
@@ -153,11 +155,11 @@ public class MonumentDistance_Citya extends FeatureProcess {
 
                 Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
                 ArrayList<String> valueFromColumn = new ArrayList<>();
-                valueFromColumn.add("monumentDistance_distanceOne");
-                valueFromColumn.add("monumentDistance_minDistanceOne");
-                valueFromColumn.add("monumentDistance_minDistanceTwo");
-                valueFromColumn.add("monumentDistance_maxHeightofbuilding");
-                valueFromColumn.add("monumentDistance_maxbuildingheightblock");
+                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE);
+                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_ONE);
+                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO);
+                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT);
+                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT);
 
 	      			List<Map<String, Object>> permissibleValue = new ArrayList<>();
 	      		
@@ -165,12 +167,12 @@ public class MonumentDistance_Citya extends FeatureProcess {
 	      				permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
                 LOG.info("permissibleValue" + permissibleValue);
 
-                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("monumentDistance_distanceOne")) {
-                    monumentDistance_distanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("monumentDistance_distanceOne").toString()));
-                    monumentDistance_minDistanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("monumentDistance_minDistanceOne").toString()));
-                    monumentDistance_minDistanceTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("monumentDistance_minDistanceTwo").toString()));
-                    monumentDistance_maxHeightofbuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("monumentDistance_maxHeightofbuilding").toString()));
-                    monumentDistance_maxbuildingheightblock = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("monumentDistance_maxbuildingheightblock").toString()));
+                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE)) {
+                    monumentDistance_distanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE).toString()));
+                    monumentDistance_minDistanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_ONE).toString()));
+                    monumentDistance_minDistanceTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO).toString()));
+                    monumentDistance_maxHeightofbuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT).toString()));
+                    monumentDistance_maxbuildingheightblock = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT).toString()));
                 }
 
                 // Check if NOC is provided for construction near the monument

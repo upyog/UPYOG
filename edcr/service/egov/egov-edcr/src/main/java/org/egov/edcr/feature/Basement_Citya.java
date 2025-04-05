@@ -57,12 +57,14 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,7 +128,7 @@ public class Basement_Citya extends FeatureProcess {
                         && !b.getBuilding().getFloors().isEmpty()) {
 
                     String occupancyName = null;
-                    String feature = "Basement";
+                    String feature = MdmsFeatureConstants.BASEMENT;
 
                     // Prepare parameters to fetch permissible values
                     Map<String, Object> params = new HashMap<>();
@@ -142,10 +144,11 @@ public class Basement_Citya extends FeatureProcess {
 
                     // Define the keys for permissible values to be fetched
                     ArrayList<String> valueFromColumn = new ArrayList<>();
-                    valueFromColumn.add("permissibleone");
-                    valueFromColumn.add("permissibletwo");
-                    valueFromColumn.add("permissiblethree");
-                    valueFromColumn.add("permissiblefour");
+                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_ONE);
+                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_TWO);
+                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_THREE);
+                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_FOUR);
+
 
                     List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
@@ -160,11 +163,11 @@ public class Basement_Citya extends FeatureProcess {
                     }
 
                     // Extract permissible values if available
-                    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleone")) {
-                        basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleone").toString()));
-                        basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibletwo").toString()));
-                        basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissiblethree").toString()));
-                        basementValuefour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissiblefour").toString()));
+                    if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_ONE)) {
+                        basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_ONE).toString()));
+                        basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_TWO).toString()));
+                        basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_THREE).toString()));
+                        basementValuefour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_FOUR).toString()));
                     }
 
                     // Iterate through each floor to check basement conditions

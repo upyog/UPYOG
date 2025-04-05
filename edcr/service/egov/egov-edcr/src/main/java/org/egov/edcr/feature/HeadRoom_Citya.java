@@ -57,11 +57,13 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +108,7 @@ public class HeadRoom_Citya extends FeatureProcess {
 
         // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-        String feature = "HeadRoom";
+        String feature = MdmsFeatureConstants.HEAD_ROOM;
 
         Map<String, Object> params = new HashMap<>();
         if (DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
@@ -119,14 +121,14 @@ public class HeadRoom_Citya extends FeatureProcess {
         // Fetch permissible values for headroom
         Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("permissibleValue");
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
         permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
         LOG.info("permissibleValue" + permissibleValue);
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-            HeadRoomValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            HeadRoomValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
         } else {
             HeadRoomValue = BigDecimal.ZERO;
         }

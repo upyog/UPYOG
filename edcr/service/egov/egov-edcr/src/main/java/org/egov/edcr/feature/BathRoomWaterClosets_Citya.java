@@ -57,6 +57,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Measurement;
@@ -65,6 +66,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.RoomHeight;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -129,7 +131,7 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
 
         // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-        String feature = "BathroomWaterClosets";
+        String feature = MdmsFeatureConstants.BATHROOM_WATER_CLOSETS;
 
         Map<String, Object> params = new HashMap<>();
         if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
@@ -142,12 +144,12 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
         // Fetch permissible values for bathroom water closets dimensions
         Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("bathroomWCRequiredArea");
-        valueFromColumn.add("bathroomWCRequiredWidth");
-        valueFromColumn.add("bathroomWCRequiredHeight");
-        valueFromColumn.add("bathroomWCRequiredminHeight");
-        valueFromColumn.add("bathroomWCRequiredTotalArea");
-        valueFromColumn.add("bathroomWCRequiredminWidth");
+        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA);
+        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH);
+        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT);
+        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_MIN_HEIGHT);
+        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_TOTAL_AREA);
+        valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_MIN_WIDTH);
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
@@ -160,13 +162,13 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
         }
 
         // Extract permissible values if available
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("bathroomWCRequiredArea")) {
-            bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredArea").toString()));
-            bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredWidth").toString()));
-            bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredHeight").toString()));
-            bathroomWCRequiredminHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminHeight").toString()));
-            bathroomWCRequiredTotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredTotalArea").toString()));
-            bathroomWCRequiredminWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("bathroomWCRequiredminWidth").toString()));
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA)) {
+            bathroomWCRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA).toString()));
+            bathroomWCRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH).toString()));
+            bathroomWCRequiredHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT).toString()));
+            bathroomWCRequiredminHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_MIN_HEIGHT).toString()));
+            bathroomWCRequiredTotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_TOTAL_AREA).toString()));
+            bathroomWCRequiredminWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_MIN_WIDTH).toString()));
         }
 
         // Iterate through all blocks in the plan
@@ -211,7 +213,7 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
                                 && totalArea.compareTo(bathroomWCRequiredTotalArea) >= 0
                                 && minWidth.compareTo(bathroomWCRequiredminWidth) >= 0) {
 
-                            details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
+                            details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight.toString() + ", Total Area >= " + bathroomWCRequiredArea.toString() + ", Width >= " + bathroomWCRequiredWidth.toString());
                             details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
                                     + ", Width >= " + minWidth);
                             details.put(STATUS, Result.Accepted.getResultVal());
@@ -219,7 +221,7 @@ public class BathRoomWaterClosets_Citya extends FeatureProcess {
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
                         } else {
-                            details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight + ", Total Area >= " + bathroomWCRequiredArea + ", Width >= " + bathroomWCRequiredWidth);
+                            details.put(REQUIRED, "Height >= " + bathroomWCRequiredHeight.toString() + ", Total Area >= " + bathroomWCRequiredArea.toString() + ", Width >= " + bathroomWCRequiredWidth.toString());
                             details.put(PROVIDED, "Height >= " + minHeight + ", Total Area >= " + totalArea
                                     + ", Width >= " + minWidth);
                             details.put(STATUS, Result.Not_Accepted.getResultVal());

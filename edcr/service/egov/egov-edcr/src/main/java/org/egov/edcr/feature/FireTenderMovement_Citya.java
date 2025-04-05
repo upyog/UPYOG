@@ -58,11 +58,13 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +112,7 @@ public class FireTenderMovement_Citya extends FeatureProcess {
 
         // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-        String feature = "FireTenderMovement";
+        String feature = MdmsFeatureConstants.FIRE_TENDER_MOVEMENT;
 
         Map<String, Object> params = new HashMap<>();
         if (DxfFileConstants.A.equals(plan.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
@@ -123,8 +125,8 @@ public class FireTenderMovement_Citya extends FeatureProcess {
         // Fetch permissible values for fire tender movement
         Map<String, List<Map<String, Object>>> edcrRuleList = plan.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("FireTenderMovementValueOne");
-        valueFromColumn.add("FireTenderMovementValueTwo");
+        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE);
+        valueFromColumn.add(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO);
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
         try {
@@ -135,9 +137,9 @@ public class FireTenderMovement_Citya extends FeatureProcess {
             return null;
         }
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleone")) {
-            FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireTenderMovementValueOne").toString()));
-            FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("FireTenderMovementValueTwo").toString()));
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE)) {
+            FireTenderMovementValueOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE).toString()));
+            FireTenderMovementValueTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_TWO).toString()));
         }
 
         // Iterate through all blocks in the plan

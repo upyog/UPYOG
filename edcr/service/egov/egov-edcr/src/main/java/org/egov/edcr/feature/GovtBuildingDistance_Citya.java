@@ -57,11 +57,13 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +135,7 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
 
         // Determine the occupancy type and feature for fetching permissible values
         String occupancyName = null;
-        String feature = "GovtBuildingDistance";
+        String feature = MdmsFeatureConstants.GOVT_BUILDING_DISTANCE;
 
         Map<String, Object> params = new HashMap<>();
         if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
@@ -146,10 +148,10 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
         // Fetch permissible values for government building distance
         Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("GovtBuildingDistanceValue");
-        valueFromColumn.add("GovtBuildingDistanceMin");
-        valueFromColumn.add("GovtBuildingDistanceMaxHeight");
-        valueFromColumn.add("GovtBuildingDistancePermitted");
+        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE);
+        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MIN);
+        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT);
+        valueFromColumn.add(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_PERMITTED);
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
         try {
@@ -160,11 +162,11 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
             return null;
         }
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("GovtBuildingDistanceValue")) {
-            GovtBuildingDistanceValue = permissibleValue.get(0).get("GovtBuildingDistanceValue").toString();
-            GovtBuildingDistanceMin = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("GovtBuildingDistanceMin").toString()));
-            GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("GovtBuildingDistanceMaxHeight").toString()));
-            GovtBuildingDistancePermitted = permissibleValue.get(0).get("GovtBuildingDistancePermitted").toString();
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE)) {
+            GovtBuildingDistanceValue = permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE).toString();
+            GovtBuildingDistanceMin = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MIN).toString()));
+            GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT).toString()));
+            GovtBuildingDistancePermitted = permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_PERMITTED).toString();
         }
 
         // Validate distances from government buildings

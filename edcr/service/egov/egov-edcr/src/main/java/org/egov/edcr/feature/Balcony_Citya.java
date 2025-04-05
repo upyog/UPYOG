@@ -76,7 +76,6 @@ public class Balcony_Citya extends FeatureProcess {
     private static final String FLOOR = "Floor";
     private static final String RULE45_IV = "4.4.4 (iii)";
     private static final String WIDTH_BALCONY_DESCRIPTION = "Minimum width for balcony %s";
-    private static final BigDecimal ONE_POINTNINEONE = BigDecimal.valueOf(0.91);
     
     BigDecimal balconyValue;
 

@@ -57,12 +57,14 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.egov.common.constants.MdmsFeatureConstants;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 import org.egov.edcr.service.FetchEdcrRulesMdms;
 import org.egov.edcr.utility.Util;
 import org.egov.infra.utils.StringUtils;
@@ -77,7 +79,6 @@ public class LandUse_Citya extends FeatureProcess {
 
     // Constants for rule identifiers and descriptions
     private static final String RULE_28 = "28";
-    public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
     private static final String ROAD_WIDTH = "Road Width";
 
     // Variable to store permissible road width
@@ -124,7 +125,7 @@ public class LandUse_Citya extends FeatureProcess {
      */
     private void validateCommercialZone(Plan pl, HashMap<String, String> errors) {
         String occupancyName = null;
-        String feature = "LandUse";
+        String feature = MdmsFeatureConstants.LAND_USE;
 
         // Determine the occupancy type for fetching permissible values
         Map<String, Object> params = new HashMap<>();
@@ -138,7 +139,7 @@ public class LandUse_Citya extends FeatureProcess {
         // Fetch permissible values for road width
         Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
         ArrayList<String> valueFromColumn = new ArrayList<>();
-        valueFromColumn.add("permissibleValue");
+        valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE);
 
 				List<Map<String, Object>> permissibleValue = new ArrayList<>();
 			
@@ -146,8 +147,8 @@ public class LandUse_Citya extends FeatureProcess {
 					permissibleValue = fetchEdcrRulesMdms.getPermissibleValue(edcrRuleList, params, valueFromColumn);
         LOG.info("permissibleValue" + permissibleValue);
 
-        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey("permissibleValue")) {
-            RoadWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("permissibleValue").toString()));
+        if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE)) {
+            RoadWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_VALUE).toString()));
         } else {
             RoadWidth = BigDecimal.ZERO;
         }
@@ -159,7 +160,6 @@ public class LandUse_Citya extends FeatureProcess {
             String blkNo = block.getNumber();
 
             // Initialize scrutiny detail for land use validation
-            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
             scrutinyDetail.addColumnHeading(1, RULE_NO);
             scrutinyDetail.addColumnHeading(2, DESCRIPTION);
             scrutinyDetail.addColumnHeading(3, ROAD_WIDTH);
