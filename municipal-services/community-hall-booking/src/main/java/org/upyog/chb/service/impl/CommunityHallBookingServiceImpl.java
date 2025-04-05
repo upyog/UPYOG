@@ -44,6 +44,35 @@ import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class implements the CommunityHallBookingService interface and provides
+ * the business logic for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To handle all service-level operations related to community hall bookings, such as
+ *   creating, updating, validating, and retrieving booking records.
+ * - To coordinate between the repository, validation, workflow, and enrichment layers.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingRepository: Handles database operations for bookings.
+ * - CommunityHallBookingValidator: Validates booking requests and search criteria.
+ * - WorkflowService: Manages workflow-related operations for bookings.
+ * - EnrichmentService: Enriches booking requests with additional data.
+ * - DemandService: Handles demand generation and payment-related operations.
+ * - MdmsUtil: Fetches and processes master data from MDMS.
+ * - CHBEncryptionService: Handles encryption and decryption of sensitive booking data.
+ * 
+ * Features:
+ * - Provides methods to create and update bookings while ensuring data validation and enrichment.
+ * - Integrates with the workflow service to manage booking states.
+ * - Handles slot availability checks and demand generation for bookings.
+ * - Logs important operations and errors for debugging and monitoring purposes.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever the
+ *   CommunityHallBookingService interface is required.
+ * - It ensures consistent and reusable business logic for the Community Hall Booking module.
+ */
 @Service
 @Slf4j
 public class CommunityHallBookingServiceImpl implements CommunityHallBookingService {

@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
 import org.upyog.rs.util.RequestServiceUtil;
@@ -44,20 +45,27 @@ public class WaterTankerBookingDetail {
 
 	private String bookingNo;
 
+	@NotBlank
 	private String tankerType;
 
+	@NotNull
 	private int tankerQuantity;
 
+	@NotNull
 	private int waterQuantity;
 
+	@NotBlank
 	private String description;
+
 	
 	private String applicantUuid;
 
 	@JsonFormat(pattern = RequestServiceUtil.DATE_FORMAT)
+	@NotNull
 	private LocalDate deliveryDate;
 
 	@JsonFormat(pattern = "HH:mm")
+	@NotNull
 	private LocalTime deliveryTime;
 
 	private String extraCharge;
@@ -82,6 +90,7 @@ public class WaterTankerBookingDetail {
 	private String tenantId;
 
 	@JsonProperty("bookingStatus")
+	@NotBlank
 	private String bookingStatus;
 
 	private String receiptNo;
@@ -91,11 +100,15 @@ public class WaterTankerBookingDetail {
 	private String paymentReceiptFilestoreId;
 
 	@Valid
+	@NotNull
 	private ApplicantDetail applicantDetail;
 
 	@Valid
+	@NotNull
 	private Address address;
-	
+
+	@Valid
+	@NotNull
 	private Workflow workflow;
 
 	private AuditDetails auditDetails;

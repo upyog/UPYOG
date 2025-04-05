@@ -8,6 +8,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.upyog.rs.service.RequestServiceNotificationService;
+import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
@@ -15,42 +16,85 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+* Consumer service for processing Kafka messages related to water tanker and mobile toilet bookings.
+* It listens to specific Kafka topics, extracts relevant booking details, and triggers notifications.
+*/
 @Service
 @Slf4j
 public class NotificationConsumer {
 
-	@Autowired
-	private RequestServiceNotificationService notificationService;
+    @Autowired
+    private RequestServiceNotificationService notificationService;
 
-	@Autowired
-	private ObjectMapper mapper;
+    @Autowired
+    private ObjectMapper mapper;
 
-	@KafkaListener(topics = { "${persister.update.water-tanker.topic}", "${persister.create.water-tanker.topic}" })
-	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
-		WaterTankerBookingRequest waterTankerRequest = new WaterTankerBookingRequest();
-		try {
+    /**
+     * Listens to Kafka topics for updates and creation events of water tanker and mobile toilet bookings.
+     *
+     * @param record the incoming Kafka message containing booking details
+     * @param topic  the name of the Kafka topic from which the message was received
+     */
+    
+    @KafkaListener(topics = { 
+            "${persister.update.water-tanker.topic}", "${persister.create.water-tanker.topic}",
+            "${persister.update.mobile-toilet.topic}", "${persister.create.mobile-toilet.topic}" 
+    })
+    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        Object request = null;
+        String applicationStatus = null;
+        String bookingNo = null;
 
-			waterTankerRequest = mapper.convertValue(record, WaterTankerBookingRequest.class);
-		} catch (final Exception e) {
-			log.error("Error while processing RS notification to value: " + record + " on topic: " + topic + ": " + e);
-		}
+        try {
+            if (topic.contains("water-tanker")) {
+                WaterTankerBookingRequest waterTankerRequest = mapper.convertValue(record, WaterTankerBookingRequest.class);
+                request = waterTankerRequest;
+                applicationStatus = waterTankerRequest.getWaterTankerBookingDetail().getBookingStatus();
+                bookingNo = waterTankerRequest.getWaterTankerBookingDetail().getBookingNo();
+            } else if (topic.contains("mobile-toilet")) {
+                MobileToiletBookingRequest mobileToiletRequest = mapper.convertValue(record, MobileToiletBookingRequest.class);
+                request = mobileToiletRequest;
+                applicationStatus = mobileToiletRequest.getMobileToiletBookingDetail().getBookingStatus();
+                bookingNo = mobileToiletRequest.getMobileToiletBookingDetail().getBookingNo();
+            } else {
+                log.error("Unknown topic: " + topic);
+                return;
+            }
+        } catch (final Exception e) {
+            log.error("Error processing RS notification: " + record + " on topic: " + topic, e);
+            return;
+        }
 
-		notificationService.process(waterTankerRequest);
-	}
+        log.info("CND Application Received with booking no: " + bookingNo + " and status: " + applicationStatus);
 
-	@KafkaListener(topics = { "${persister.update.mobile-toilet.topic}", "${persister.create.mobile-toilet.topic}" })
-	public void listens(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        // Send notification except for "PENDING_FOR_PAYMENT"
+        if (!"PENDING_FOR_PAYMENT".equals(applicationStatus) && request != null) {
+            if (request instanceof WaterTankerBookingRequest) {
+                WaterTankerBookingRequest waterTankerRequest = (WaterTankerBookingRequest) request;
+                applicationStatus = extractApplicationStatus(waterTankerRequest.getWaterTankerBookingDetail().getBookingStatus(),
+                        waterTankerRequest.getWaterTankerBookingDetail().getWorkflow());
+            } else if (request instanceof MobileToiletBookingRequest) {
+                MobileToiletBookingRequest mobileToiletRequest = (MobileToiletBookingRequest) request;
+                applicationStatus = extractApplicationStatus(mobileToiletRequest.getMobileToiletBookingDetail().getBookingStatus(),
+                        mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow());
+            }
 
-		MobileToiletBookingRequest mobileToiletRequest = new MobileToiletBookingRequest();
-		try {
+            log.info("Final Application Status: " + applicationStatus);
+            notificationService.process(request, applicationStatus);
+        }
+    }
 
-			mobileToiletRequest = mapper.convertValue(record, MobileToiletBookingRequest.class);
-		} catch (final Exception e) {
-			log.error("Error while processing RS notification to value: " + record + " on topic: " + topic + ": " + e);
-		}
-
-		notificationService.process(mobileToiletRequest);
-	}
-
+    private String extractApplicationStatus(String bookingStatus, Workflow workflow) {
+        if (workflow == null) return bookingStatus;
+        try {
+            String action = workflow.getAction();
+            return action != null ? action.toString() : bookingStatus;
+        } catch (Exception e) {
+            log.error("Error extracting workflow action: ", e);
+            return bookingStatus;
+        }
+    }
 }
+

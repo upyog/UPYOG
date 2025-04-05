@@ -16,6 +16,7 @@ import {useParams} from "react-router-dom";
 import get from "lodash/get";
 import { size } from "lodash";
 import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
+import { convertTo12HourFormat, formatDate } from "../../utils";
 
 /**
  * `WTApplicationDetails` is a React component that fetches and displays detailed information for a specific Water Tanker (WT) service application.
@@ -118,8 +119,8 @@ const WTApplicationDetails = () => {
               <Row className="border-none" label={t("WT_TANKER_TYPE")} text={wt_details?.tankerType || t("CS_NA")} />
               <Row className="border-none" label={t("WT_TANKER_QUANTITY")} text={wt_details?.tankerQuantity|| t("CS_NA")}/>
               <Row className="border-none" label={t("WT_WATER_QUANTITY")} text={wt_details?.waterQuantity|| t("CS_NA")} />
-              <Row className="border-none" label={t("WT_DELIVERY_DATE")} text={wt_details?.deliveryDate|| t("CS_NA")} />
-              <Row className="border-none" label={t("WT_DELIVERY_TIME")} text={wt_details?.deliveryTime|| t("CS_NA")} />
+              <Row className="border-none" label={t("WT_DELIVERY_DATE")} text={formatDate(wt_details?.deliveryDate)|| t("CS_NA")} />
+              <Row className="border-none" label={t("WT_DELIVERY_TIME")} text={convertTo12HourFormat(wt_details?.deliveryTime) || t("CS_NA")} />
               <Row className="border-none" label={t("WT_DESCRIPTION")} text={wt_details?.description || t("CS_NA")} />
               <Row className="border-none" label={t("WT_IMMEDIATE")} text={immediateRequired || t("CS_NA")} />
             </StatusTable>

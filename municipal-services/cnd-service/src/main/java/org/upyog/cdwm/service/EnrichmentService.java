@@ -14,6 +14,8 @@ import org.upyog.cdwm.repository.IdGenRepository;
 import org.upyog.cdwm.util.CNDServiceUtil;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
+import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.WasteTypeDetail;
 
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
@@ -63,9 +65,25 @@ public class EnrichmentService {
 
         // Copy mobile number from applicant details to a separate field to save in application table
         cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
-
-
-        // Generate and assign a unique application number
+       
+        
+        List<WasteTypeDetail> wasteTypeDetails = cndApplicationDetails.getWasteTypeDetails();
+        if (wasteTypeDetails != null) {
+            for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
+                String wasteTypeId = CNDServiceUtil.getRandomUUID(); 
+                wasteTypeDetail.setWasteTypeId(wasteTypeId);
+                wasteTypeDetail.setApplicationId(applicationId);
+            }
+        }
+        
+        List<DocumentDetail> documentDetails = cndApplicationDetails.getDocumentDetails();
+        if (documentDetails != null) {
+            for (DocumentDetail documentDetail : documentDetails) {
+                String documentId = CNDServiceUtil.getRandomUUID(); 
+                documentDetail.setDocumentDetailId(documentId);
+                documentDetail.setApplicationId(applicationId);
+            }
+        }
         List<String> customIds = getIdList(requestInfo, cndApplicationDetails.getTenantId(),
                 config.getCNDApplicationKey(), config.getCNDApplicationFormat(), 1);
 

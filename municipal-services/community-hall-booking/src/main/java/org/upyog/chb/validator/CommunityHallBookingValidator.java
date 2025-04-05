@@ -20,6 +20,43 @@ import org.upyog.chb.web.models.CommunityHallBookingSearchCriteria;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class is responsible for validating requests and data in the
+ * Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To ensure that booking requests, search criteria, and other inputs meet the required
+ *   business rules and validation criteria.
+ * - To validate data against configurations and master data (MDMS).
+ * 
+ * Dependencies:
+ * - MDMSValidator: Validates data against master data from the MDMS service.
+ * - CommunityHallBookingConfiguration: Provides configuration properties for validation.
+ * - CommunityHallBookingUtil: Utility class for common validation-related operations.
+ * 
+ * Features:
+ * - Validates booking requests for required fields, date ranges, and slot availability.
+ * - Ensures that search criteria are valid and meet the required constraints.
+ * - Logs validation errors and throws CustomException for invalid inputs.
+ * 
+ * Methods:
+ * 1. validateCreateRequest:
+ *    - Validates the booking creation request for required fields and business rules.
+ *    - Ensures that the requested slots are available and valid.
+ * 
+ * 2. validateUpdateRequest:
+ *    - Validates the booking update request for consistency and required fields.
+ *    - Ensures that the updated data adheres to business rules.
+ * 
+ * 3. validateSearchCriteria:
+ *    - Validates the search criteria for retrieving bookings.
+ *    - Ensures that the criteria are valid and do not violate constraints.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever validation
+ *   operations are required.
+ * - It ensures consistent and reusable logic for validating inputs across the module.
+ */
 @Component
 @Slf4j
 public class CommunityHallBookingValidator {

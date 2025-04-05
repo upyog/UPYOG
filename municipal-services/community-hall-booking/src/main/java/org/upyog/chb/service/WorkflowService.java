@@ -25,6 +25,42 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.RequestInfoWrapper;
 
+/**
+ * This service class handles workflow-related operations for the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To manage the lifecycle of bookings by interacting with the workflow service.
+ * - To ensure that bookings adhere to the defined workflow states and transitions.
+ * 
+ * Dependencies:
+ * - CommunityHallBookingConfiguration: Provides configuration properties for workflow operations.
+ * - ServiceRequestRepository: Sends HTTP requests to the workflow service.
+ * - ObjectMapper: Serializes and deserializes JSON objects for requests and responses.
+ * 
+ * Features:
+ * - Initiates workflow instances for new bookings.
+ * - Updates workflow instances based on booking status changes.
+ * - Fetches and validates workflow configurations for the booking module.
+ * - Logs workflow operations and errors for debugging and monitoring purposes.
+ * 
+ * Methods:
+ * 1. initiateWorkflow:
+ *    - Sends a request to the workflow service to initiate a new workflow instance.
+ *    - Populates workflow-related fields in the booking request.
+ * 
+ * 2. updateWorkflow:
+ *    - Updates an existing workflow instance based on booking status changes.
+ *    - Ensures that the workflow state is consistent with the booking state.
+ * 
+ * 3. getBusinessService:
+ *    - Fetches the workflow configuration (BusinessService) for the booking module.
+ *    - Validates the workflow states and actions for the module.
+ * 
+ * Usage:
+ * - This class is automatically managed by Spring and injected wherever workflow-related
+ *   operations are required.
+ * - It ensures consistent and reusable logic for managing workflows in the module.
+ */
 @Service
 public class WorkflowService {
 

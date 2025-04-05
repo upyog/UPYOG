@@ -17,14 +17,26 @@ public class CNDServiceQueryBuilder {
 
     @Autowired
     private CNDConfiguration cndServiceConfiguration;
-
-    // Base query for fetching application details
+    
     private static final String APPLICATION_DETAILS_SEARCH_QUERY = 
-        "SELECT ucad.application_id, application_number, application_type, vehicle_type, type_of_construction, deposit_centre_details, " +
-        "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
-        "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, vehicle_id, " +
-        "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
-        "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id ,ucad.applicant_mobile_number FROM public.ug_cnd_application_details ucad ";
+            "SELECT ucad.application_id, application_number, application_type, vehicle_type, type_of_construction, deposit_centre_details, " +
+            "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
+            "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
+            "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
+            "ucad.last_modified_time, ucad.tenant_id, ucad.applicant_detail_id, ucad.address_detail_id, " +
+            "ucad.applicant_mobile_number, " +
+            "ucwd.application_id AS waste_application_id, ucwd.entered_by_user_type, ucwd.waste_type_id, ucwd.waste_type, ucwd.quantity, ucwd.metrics, " + 
+            "udoc.document_detail_id, udoc.document_type, udoc.uploaded_by_user_type, udoc.file_store_id, " +
+            "uddc.disposal_id, uddc.vehicle_id AS disposal_vehicle_id, uddc.vehicle_depot_no, uddc.net_weight, " +
+            "uddc.gross_weight, uddc.dumping_station_name, uddc.disposal_date, uddc.disposal_type, " +
+            "uddc.name_of_disposal_site, uddc.created_by AS disposal_created_by, uddc.last_modified_by AS disposal_last_modified_by, " +
+            "uddc.created_time AS disposal_created_time, uddc.last_modified_time AS disposal_last_modified_time " +
+            "FROM public.ug_cnd_application_details ucad " +
+            "LEFT JOIN public.ug_cnd_waste_detail ucwd ON ucad.application_id = ucwd.application_id " +
+            "LEFT JOIN public.ug_cnd_document_detail udoc ON ucad.application_id = udoc.application_id " +
+            "LEFT JOIN public.ug_cnd_disposal_deposit_centre_detail uddc ON ucad.application_id = uddc.application_id";
+    
+
     
     // Pagination wrapper query
     private static final String PAGINATION_WRAPPER = 

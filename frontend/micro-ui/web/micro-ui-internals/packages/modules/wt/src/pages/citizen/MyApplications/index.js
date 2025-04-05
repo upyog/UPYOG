@@ -3,7 +3,7 @@ import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import WTApplication from "./wt-application";
-
+import { APPLICATION_PATH } from "../../../utils";
 
 /**
  * `WTMyApplications` is a React component that displays a list of water tanker service applications for the current user.
@@ -160,7 +160,7 @@ export const WTMyApplications = () => {
               </div>
             </div>
           </div>
-            <Link to="/digit-ui/citizen/wt/request-service/info">
+            <Link to="${APPLICATION_PATH}/citizen/wt/request-service/info">
               <SubmitBar style={{borderRadius:"30px",width:"20%" }} label={t("NEW_REQUEST")+" +"} />
             </Link>
         </div>
@@ -185,7 +185,7 @@ export const WTMyApplications = () => {
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
               <span className="link">
-                <Link to={`/digit-ui/citizen/wt/status/${t1}`}>
+                <Link to={`${APPLICATION_PATH}/citizen/wt/status/${t1}`}>
                   {t("LOAD_MORE_MSG")}
                 </Link>
               </span>

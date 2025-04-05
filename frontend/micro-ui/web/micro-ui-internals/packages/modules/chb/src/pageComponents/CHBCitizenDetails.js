@@ -5,6 +5,38 @@ import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 // import { TimerValues } from "../components/TimerValues";
 
+
+/**
+ * CHBCitizenDetails Component
+ * 
+ * This component is responsible for rendering the citizen details form for the CHB module.
+ * It allows users to input and manage personal information such as name, email ID, mobile number, and alternate mobile number.
+ * 
+ * Props:
+ * - `t`: Translation function for internationalization.
+ * - `config`: Configuration object for the form step.
+ * - `onSelect`: Callback function triggered when the form step is completed.
+ * - `userType`: Type of the user (e.g., employee or citizen).
+ * - `formData`: Existing form data to prefill the fields.
+ * - `value`: Default value for the form fields.
+ * 
+ * State Variables:
+ * - `applicantName`: State variable to manage the applicant's name.
+ * - `emailId`: State variable to manage the applicant's email ID.
+ * - `mobileNumber`: State variable to manage the applicant's mobile number.
+ * - `alternateNumber`: State variable to manage the applicant's alternate mobile number.
+ * 
+ * Functions:
+ * - `setOwnerName`: Updates the `applicantName` state after removing non-alphabetic characters.
+ * - `setOwnerEmail`: Updates the `emailId` state with the entered email.
+ * - `setMobileNo`: Updates the `mobileNumber` state with the entered mobile number.
+ * 
+ * Other Variables:
+ * - `url`: The current URL path.
+ * - `index`: The last character of the current URL, used to determine the index of the owner in the form data.
+ * - `validation`: An object to store validation rules (currently empty).
+ * - `user`: The current user's information fetched from the Digit User Service.
+ */
 const CHBCitizenDetails
  = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
   const { pathname: url } = useLocation();

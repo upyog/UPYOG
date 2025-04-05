@@ -5,7 +5,8 @@ public class RequestServiceConstants {
 	public static final String BOOKING_NO_PARAM = "bookingNo";
 	public static final String MOBILE_NUMBER_PARAM = "mobileNumber";
 	public static final String USERID_PARAM = "userid";
-	public static final String RS = "request-service";
+	public static final String REQUEST_SERVICE_WATER_TANKER = "request-service.water_tanker";
+	public static final String REQUEST_SERVICE_MOBILE_TOILET = "request-service.mobile_toilet";
 	public static final String BUSINESS_SERVICE_PARAM = "businessservice";
 	public static final String TENANT_ID_PARAM = "tenantId";
 	public static final String LOCALITY_PARAM = "locality";

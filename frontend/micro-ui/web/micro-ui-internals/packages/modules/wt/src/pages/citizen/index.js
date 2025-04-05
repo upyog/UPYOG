@@ -2,6 +2,7 @@ import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-rea
 import React from "react";
 import { Redirect, Switch, useRouteMatch } from "react-router-dom";
 import { APPLICATION_PATH } from "../../utils";
+import SearchApp from "../employee/SearchApp";
 
 // Main Routing Page used for routing accorss the Water Tanker Module
 const App = () => {
@@ -83,6 +84,8 @@ const App = () => {
             pathname: `${APPLICATION_PATH}/citizen/login`,
             state: { from: `${path}/mt-Vendor`, role:"MT_VENDOR" }
           }} />} />
+          <PrivateRoute path={`${path}/my-bookings`} component={(props) => <SearchApp {...props} parentRoute={path} moduleCode={"WT"}/>} />
+          <PrivateRoute path={`${path}/mt/my-bookings`} component={(props) => <SearchApp {...props} parentRoute={path} moduleCode={"MT"}/>} />
         </AppContainer>
       </Switch>
     </span>

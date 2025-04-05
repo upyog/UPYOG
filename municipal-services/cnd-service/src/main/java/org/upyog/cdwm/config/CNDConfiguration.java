@@ -3,9 +3,10 @@ package org.upyog.cdwm.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-
+@Configuration
 @Component
 @Getter
 public class CNDConfiguration {
@@ -39,7 +40,10 @@ public class CNDConfiguration {
     // Kafka topics for saving water tanker data
     @Value("${persister.create.cnd.service.topic}")
     private String cndApplicationSaveTopic;
-
+    
+    @Value("${persister.save.cnd.waste.document.topic}")
+    private String saveWasteDocumentApplicationTopic;
+   
     @Value("${persister.update.cnd.service.topic}")
     private String cndApplicationUpdateTopic;
 
@@ -68,12 +72,21 @@ public class CNDConfiguration {
 
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
+    
+    @Value("${egov.user.v2.create.path}")
+    private String userV2CreateEndpoint;
 
+    @Value("${egov.user.v2.search.path}")
+    private String userV2SearchEndpoint;
+    
     @Value("${egov.user.search.path}")
     private String userSearchEndpoint;
 
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
+
+    @Value("${egov.user.v2.update.path}")
+    private String userV2UpdateEndpoint;
 
     // Pagination config for search results
     @Value("${upyog.cnd.service.default.limit}")

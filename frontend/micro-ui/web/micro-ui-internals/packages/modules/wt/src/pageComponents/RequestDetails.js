@@ -9,7 +9,6 @@ import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox,Dropdown, TextAre
 
 const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
-  const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   let validation = {};
 
   const [tankerType, settankerType] = useState(formData?.requestDetails?.tankerType  || "");
@@ -28,20 +27,36 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
       return formattedData;
     },
   });
+
+  // Fetch TankerQuantity data from MDMS
+  const { data: TankerDetails} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "TankerQuantity" }], {
+    select: (data) => {
+      const formattedData = data?.["request-service"]?.["TankerQuantity"];
+      return formattedData;
+    },
+  });
+
   let Vehicle = [];
 
-  // Iterate over the VehicleType array and push data to the Vehicle array
+  let tankerDetails =[];
+
+  // Iterate over the TankerQuantity array and push data to the Vehicle array
+  TankerDetails && TankerDetails.map((data) => {
+    tankerDetails.push({ i18nKey: `${data.code}`, code: `${data.code}`, value: `${data.code}`});
+  });
+  
+  // Iterate over the VehicleType  array and push data to the Vehicle array
   VehicleType && VehicleType.map((data) => {
-    Vehicle.push({ i18nKey: `${data.capacity}`, code: `${data.capacity}`, value: `${data.capacity}`, vehicleType: data.vehicleType});
+    Vehicle.push({ i18nKey: `${data.capacity}`, code: `${data.capacity}`, value: `${data.capacity}`, vehicleType: data.vehicleType, capacityName: data.capacityName });
   });
 
 // Iterate over the Vehicle array, check if tankerType.code matches vehicleType, and return data
   const VehicleDetails = Vehicle.map((data) => {
     if (tankerType.code === data.vehicleType) {
       return {
-        i18nKey: data.code,
-        code: data.code ,
-        value: data.code,
+        i18nKey: data.capacityName,
+        code: data.code,
+        value: data.capacityName
       };
     }
   }).filter(item => item !== undefined); // Remove undefined values from the array
@@ -55,80 +70,9 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
           type="time"
           value={deliveryTime}
           onChange={(e) => setdeliveryTime(e.target.value)}
-          style={inputStyles}
           min="06:00"
           max="23:59"
         />
-      </div>
-    );
-  };
-
-  // Custom TextInput wrapper for quantity controls
-  const CustomQuantityInput = ({ value, onChange, ...props }) => {
-    const handleQuantityChange = (action) => {
-      if (action === 'increment' && value < 10) {
-        onChange({ target: { value: value + 1 } });
-      } else if (action === 'decrement' && value > 1) {
-        onChange({ target: { value: value - 1 } });
-      }
-    };
-
-    return (
-      <div style={{ position: 'relative', width: inputStyles.width }}>
-        <TextInput
-          {...props}
-          type="number"
-          value={value}
-          onChange={(e) => {
-            const newValue = parseInt(e.target.value);
-            if (!isNaN(newValue) && newValue >= 1 && newValue <= 10) {
-              onChange(e);
-            }
-          }}
-          style={{ ...inputStyles, paddingRight: '30px' }}
-        />
-        <div style={{
-          position: 'absolute',
-          right: '340px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '5px'
-        }}>
-          <button
-            type="button"
-            onClick={() => handleQuantityChange('increment')}
-            disabled={value >= 10}
-            style={{
-              padding: '2px 6px',
-              fontSize: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '2px',
-              cursor: value >= 10 ? 'not-allowed' : 'pointer',
-              backgroundColor: '#a82227',
-              color:'white'
-            }}
-          >
-            ▲
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuantityChange('decrement')}
-            disabled={value <= 1}
-            style={{
-              padding: '2px 6px',
-              fontSize: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '2px',
-              cursor: value <= 1 ? 'not-allowed' : 'pointer',
-              backgroundColor: '#a82227',
-              color:'white'
-            }}
-          >
-            ▼
-          </button>
-        </div>
       </div>
     );
   };
@@ -200,24 +144,21 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
               placeholder={"Select Water Quantity"}
               select={setwaterQuantity}
               option={VehicleDetails}
+              style={{width:"100%"}}
               optionKey="i18nKey"
               t={t}
             />
           <CardLabel>{`${t("WT_TANKER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
-          <CustomQuantityInput
-            t={t}
-            name="tankerQuantity"
-            value={tankerQuantity}
-            onChange={(e) => settankerQuantity(parseInt(e.target.value))}
-            ValidationRequired={true}
-            {...(validation = {
-              isRequired: true,
-              pattern: "^[0-9]+$",
-              type: "tel",
-              title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-          />
-
+            <Dropdown
+                className="form-field"
+                selected={tankerQuantity}
+                placeholder={"Select Tanker Quantity"}
+                select={settankerQuantity}
+                option={tankerDetails}
+                style={{width:"100%"}}
+                optionKey="i18nKey"
+                t={t}
+              />
           <CardLabel>{`${t("WT_DELIVERY_DATE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
@@ -227,7 +168,6 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             name="deliveryDate"
             value={deliveryDate}
             onChange={setDeliveryDate}
-            style={inputStyles}
             min={new Date().toISOString().split('T')[0]}
             rules={{
               required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -245,7 +185,6 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             optionKey="i18nKey"
             name="description"
-            style={{ width: "50%" }}
             value={description}
             onChange={setDescription}
             ValidationRequired={true}
@@ -259,7 +198,6 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
           <div style={{ display: "flex", gap: "22px" }}>
             <CardLabel>{`${t("WT_IMMEDIATE")}`}<span className="astericColor"></span></CardLabel>
             <CheckBox
-                label={t("WT_IMMEDIATE")}
                 onChange={setextrachargeHandler}
                 checked={extraCharge}
             />

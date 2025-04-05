@@ -25,6 +25,8 @@ import static org.egov.inbox.util.NocConstants.NOC_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PTConstants.ACKNOWLEDGEMENT_IDS_PARAM;
 import static org.egov.inbox.util.PTConstants.PT;
 import static org.egov.inbox.util.RequestServiceConstants.*;
+import static org.egov.inbox.util.StreetVendingConstants.SV_APPLICATION_NUMBER_PARAM;
+import static org.egov.inbox.util.StreetVendingConstants.SV_SERVICES;
 import static org.egov.inbox.util.TLConstants.APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.TLConstants.BUSINESS_SERVICE_PARAM;
 import static org.egov.inbox.util.TLConstants.REQUESTINFO_PARAM;
@@ -139,6 +141,9 @@ public class InboxService {
 	@Autowired
 	private CommunityHallInboxFilterService communityHallInboxFilterService;
 	
+	@Autowired
+	private StreetVendingInboxFilterService StreetVendingInboxFilterService;
+
 	@Autowired
 	private WTInboxFilterService WTInboxFilterService;
 	
@@ -434,6 +439,7 @@ public class InboxService {
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(ACKNOWLEDGEMENT_IDS_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(STATUS_PARAM);
 					moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
 				} else {
@@ -449,30 +455,90 @@ public class InboxService {
 					moduleSearchCriteria.put(CHB_BOOKING_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
 			}
 
-			// for request service
-			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && RS.equals(processCriteria.getModuleName())) {
-				List<String> applicationNumbers = null;
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the sv-service. If true, it fetches the list of
+			   application numbers using the StreetVendingInboxFilterService.
 
-				// Determine which service to use based on business service type
-				if (processCriteria.getBusinessService().contains(MT_BUSINESS_SERVICE)) {
-					applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(
-							criteria, StatusIdNameMap, requestInfo);
-				}
-				else if (processCriteria.getBusinessService().contains(WT_BUSINESS_SERVICE)){
-					applicationNumbers = WTInboxFilterService.fetchApplicationNumbersFromSearcher(
-							criteria, StatusIdNameMap, requestInfo);
-				}
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
 
-				// Update search criteria if application numbers exist
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(SV_SERVICES)) {
+
+				List<String> applicationNumbers = StreetVendingInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(SV_APPLICATION_NUMBER_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_WATER_TANKER. If true, it fetches the list of
+			   application numbers using the WTInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_WATER_TANKER)) {
+
+				List<String> applicationNumbers = WTInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
 				if (!CollectionUtils.isEmpty(applicationNumbers)) {
 					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
+					 moduleSearchCriteria.remove(LOCALITY_PARAM);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+				} else {
+					isSearchResultEmpty = true;
+				}
+			}
+
+			/*
+			   This block checks if the module name in processCriteria matches
+			   the REQUEST_SERVICE_MOBILE_TOILET. If true, it fetches the list of
+			   application numbers using the mtInboxFilterService.
+
+			   - If application numbers exist:
+				 - They are added to moduleSearchCriteria and businessKeys.
+				 - LOCALITY_PARAM and OFFSET_PARAM are removed from moduleSearchCriteria.
+
+			   - If no application numbers are found, isSearchResultEmpty is set to true.
+			*/
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+					&& processCriteria.getModuleName().equals(REQUEST_SERVICE_MOBILE_TOILET)) {
+
+				List<String> applicationNumbers = mtInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					moduleSearchCriteria.put(BOOKING_NO_PARAM, applicationNumbers);
+					businessKeys.addAll(applicationNumbers);
+					moduleSearchCriteria.remove(LOCALITY_PARAM);
+					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
 				} else {
 					isSearchResultEmpty = true;
 				}
@@ -1233,13 +1299,6 @@ public class InboxService {
 				moduleSearchCriteria.remove("status");
 			}
 		} // for pet-service
-
-		if (moduleSearchCriteria.containsKey("requestStatus")) { // for ewaste service
-			if (businessServiceName.contains("ewst")) {
-				moduleSearchCriteria.remove("requestStatus");
-			}
-		}
-
 
 
 		if (businessServiceName.contains("asset-create")) {

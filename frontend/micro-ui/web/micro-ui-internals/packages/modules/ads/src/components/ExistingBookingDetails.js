@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Loader, Card, KeyNote } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-// The ExistingBookingDetails component displays a list of existing booking applications.
-// It allows users to view and select an existing booking for further actions.
+/**
+ * ExistingBookingDetails fetches and displays existing booking applications.
+ * useADSSearch to retrieve booking data.
+ * useADSSlotSearch to fetch slot availability.
+ * Populates session state with selected booking details.
+ * Triggers `onSubmit` after session data is updated.
+ */
 
 export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata }) => {
   const { t } = useTranslation();

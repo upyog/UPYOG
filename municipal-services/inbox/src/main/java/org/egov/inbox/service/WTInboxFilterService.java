@@ -126,7 +126,7 @@ public class WTInboxFilterService {
 
 				// Accomodating module search criteria in searcher request
 				if (moduleSearchCriteria.containsKey(MOBILE_NUMBER_PARAM) && !CollectionUtils.isEmpty(userUUIDs)) {
-					searchCriteria.put(USERID_PARAM, userUUIDs);
+					searchCriteria.put(MOBILE_NUMBER_PARAM, moduleSearchCriteria.get(MOBILE_NUMBER_PARAM));
 				}
 				if (moduleSearchCriteria.containsKey(LOCALITY_PARAM)) {
 					searchCriteria.put(LOCALITY_PARAM, moduleSearchCriteria.get(LOCALITY_PARAM));

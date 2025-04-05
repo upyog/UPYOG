@@ -1,9 +1,11 @@
 package org.upyog.rs.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +13,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
-import org.upyog.rs.repository.ServiceRequestRepository;
 import org.upyog.rs.service.RequestServiceNotificationService;
 import org.upyog.rs.util.NotificationUtil;
-import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
-import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.events.Action;
 import org.upyog.rs.web.models.events.ActionItem;
 import org.upyog.rs.web.models.events.Event;
 import org.upyog.rs.web.models.events.EventRequest;
 import org.upyog.rs.web.models.events.Recepient;
 import org.upyog.rs.web.models.events.Source;
-
-import com.jayway.jsonpath.JsonPath;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.notification.EmailRequest;
+import org.upyog.rs.web.models.notification.SMSRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,69 +37,115 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 
 	@Autowired
 	private NotificationUtil util;
+	
+	/**
+	 * Processes a booking request and sends notifications based on the application status.
+	 * 
+	 * @param request The booking request object, which can be either a {@link WaterTankerBookingRequest} 
+	 *                or a {@link MobileToiletBookingRequest}.
+	 * @param status  The application status associated with the booking request.
+	 * @throws IllegalArgumentException If the request type is not supported.
+	 */
+	
+	public void process(Object request, String status) {
+	    String tenantId;
+	    RequestInfo requestInfo;
+	    Map<String, String> messageMap;
+	    String localizationMessages;
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+	    if (request instanceof WaterTankerBookingRequest) {
+	        WaterTankerBookingRequest waterRequest = (WaterTankerBookingRequest) request;
+	        tenantId = waterRequest.getWaterTankerBookingDetail().getTenantId();
+	        requestInfo = waterRequest.getRequestInfo();
+	        localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
+	        messageMap = util.getCustomizedMsg(requestInfo, waterRequest.getWaterTankerBookingDetail(), localizationMessages);
+	    } else if (request instanceof MobileToiletBookingRequest) {
+	        MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+	        tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
+	        requestInfo = toiletRequest.getRequestInfo();
+	        localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
+	        messageMap = util.getCustomizedMsg(requestInfo, toiletRequest.getMobileToiletBookingDetail(), localizationMessages);
+	    } else {
+	        throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
+	    }
 
-	public void process(WaterTankerBookingRequest request) {
-		Map<String, String> messageMap = null;
-		String localizationMessages = util.getLocalizationMessages(request.getWaterTankerBookingDetail().getTenantId(), request.getRequestInfo());
-		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
-				localizationMessages);
-		EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
-		log.info("Event Request in RequestService process method" + eventRequest.toString());
-		if (null != eventRequest)
-			util.sendEventNotification(eventRequest);
+	    EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
+	    log.info("Event Request in RequestService process method: " + eventRequest);
 
+	    Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
+	    List<String> configuredChannelNames = util.fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(), status);
+
+	    // Send app notification
+	    if (eventRequest != null) {
+	        util.sendEventNotification(eventRequest);
+	    }
+
+	    // Send SMS notification
+	    if (isNotificationEnabled(config.getIsSMSNotificationEnabled(), configuredChannelNames, RequestServiceConstants.CHANNEL_NAME_SMS)) {
+	        List<SMSRequest> smsRequests = new LinkedList<>();
+	        util.enrichSMSRequest(request, smsRequests);
+	        if (!CollectionUtils.isEmpty(smsRequests)) {
+	            util.sendSMS(smsRequests);
+	        }
+	    }
+
+	    // Send Email notification
+	    if (isNotificationEnabled(config.getIsEmailNotificationEnabled(), configuredChannelNames, RequestServiceConstants.CHANNEL_NAME_EMAIL)) {
+	        Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+	        List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(RequestServiceConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
+	        util.sendEmail(emailRequests);
+	    }
 	}
 
-	/**
-	 * Processes the mobile toilet booking request by fetching localization messages,
-	 * creating an event request, and sending event notifications.
-	 *
-	 * @param request The mobile toilet booking request containing booking details.
-	 */
-	public void process(MobileToiletBookingRequest request) {
-		Map<String, String> messageMap = null;
-		String localizationMessages = util.getLocalizationMessages(request.getMobileToiletBookingDetail().getTenantId(), request.getRequestInfo());
-		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getMobileToiletBookingDetail(),
-				localizationMessages);
-		EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
-		log.info("Event Request in RequestService process method" + eventRequest.toString());
-		if (null != eventRequest)
-			util.sendEventNotification(eventRequest);
-
-	}
+	
 
 	/**
-	 * Generates an EventRequest object for notifying users based on the booking request.
-	 *
-	 * @param request The mobile toilet booking request.
-	 * @param actionLink The action link to be included in the notification.
-	 * @param messageMap The map containing localized messages for the notification.
-	 * @return An EventRequest object containing event details or null if no events are created.
+	 * Generates an event request for notification purposes.
+	 * 
+	 * @param request    The booking request object (either
+	 *                   {@link MobileToiletBookingRequest} or
+	 *                   {@link WaterTankerBookingRequest}).
+	 * @param actionLink The action link for the notification.
+	 * @param messageMap The message content map for the notification.
+	 * @return An {@link EventRequest} object containing event details, or null if
+	 *         an error occurs.
 	 */
-	private EventRequest getEventsForRS(MobileToiletBookingRequest request, String actionLink,
-										Map<String, String> messageMap) {
 
+	private EventRequest getEventsForRS(Object request, String actionLink, Map<String, String> messageMap) {
 		List<Event> events = new ArrayList<>();
-		String tenantId = request.getMobileToiletBookingDetail().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
-		List<String> toUsers = new ArrayList<>();
-		String mobileNumber = request.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
+		String tenantId;
+		String mobileNumber;
+		RequestInfo requestInfo;
 
-		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
+		if (request instanceof MobileToiletBookingRequest) {
+			MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+			tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
+			mobileNumber = toiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
+			requestInfo = toiletRequest.getRequestInfo();
+		} else if (request instanceof WaterTankerBookingRequest) {
+			WaterTankerBookingRequest tankerRequest = (WaterTankerBookingRequest) request;
+			tenantId = tankerRequest.getWaterTankerBookingDetail().getTenantId();
+			mobileNumber = tankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
+			requestInfo = tankerRequest.getRequestInfo();
+		} else {
+			log.error("Unsupported request type: " + request.getClass().getName());
+			return null;
+		}
+
+		String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
+		List<String> toUsers = new ArrayList<>();
+		Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, requestInfo, tenantId);
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.info("UUID search failed!");
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String message = null;
-		message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
-		log.info("Message for event in RequestService:" + message);
+		String message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
+		log.info("Message for event in RequestService: " + message);
+
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-		log.info("Recipient object in RequestService:" + recepient.toString());
+		log.info("Recipient object in RequestService: " + recepient);
 
 		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
 		List<ActionItem> actionItems = new ArrayList<>();
@@ -113,92 +160,22 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
 				.actions(null).eventDetails(null).build());
 
-		if (!CollectionUtils.isEmpty(events)) {
-			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
-		} else {
-			return null;
-		}
-
+		return CollectionUtils.isEmpty(events) ? null
+				: EventRequest.builder().requestInfo(requestInfo).events(events).build();
 	}
 
-	private EventRequest getEventsForRS(WaterTankerBookingRequest request, String actionLink,
-			Map<String, String> messageMap) {
 
-		List<Event> events = new ArrayList<>();
-		String tenantId = request.getWaterTankerBookingDetail().getTenantId();
-		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
-		List<String> toUsers = new ArrayList<>();
-		String mobileNumber = request.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
-
-		Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId);
-
-		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
-			log.info("UUID search failed!");
-		}
-
-		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		// Map<String, String> messageMap = new HashMap<String, String>();
-		String message = null;
-//		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getWaterTankerBookingDetail(),
-//				localizationMessages);
-		message = messageMap.get(NotificationUtil.MESSAGE_TEXT);
-		log.info("Message for event in RequestService:" + message);
-		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-		log.info("Recipient object in RequestService:" + recepient.toString());
-
-		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-		List<ActionItem> actionItems = new ArrayList<>();
-		actionItems.add(actionItem);
-
-		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT).build();
-
-		events.add(Event.builder().tenantId(tenantId).description(message)
-				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)
-				.name(RequestServiceConstants.USREVENTS_EVENT_NAME)
-				.postedBy(RequestServiceConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-				.actions(null).eventDetails(null).build());
-
-		if (!CollectionUtils.isEmpty(events)) {
-			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
-		} else {
-			return null;
-		}
-
-	}
-
-	/**
-	 * Fetches UUIDs of CITIZEN based on the phone number.
-	 *
-	 * @param mobileNumber - Mobile Numbers
-	 * @param requestInfo  - Request Information
-	 * @param tenantId     - Tenant Id
-	 * @return Returns List of MobileNumbers and UUIDs
-	 */
-	public Map<String, String> fetchUserUUIDs(String mobileNumber, RequestInfo requestInfo, String tenantId) {
-		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
-		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
-		userSearchRequest.put("userName", mobileNumber);
-		try {
-
-			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of RequestService notfication consumer" + user.toString());
-			if (user != null) {
-				String uuid = JsonPath.read(user, "$.user[0].uuid");
-				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-				log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
-			}
-		} catch (Exception e) {
-			log.error("Exception while fetching user for username - " + mobileNumber);
-			log.error("Exception trace: ", e);
-		}
-
-		return mapOfPhoneNoAndUUIDs;
-	}
+	
+	  /**
+     * Checks if a specific notification type is enabled.
+     *
+     * @param isEnabled        the flag indicating if the notification type is enabled
+     * @param channels         the list of configured channels
+     * @param notificationType the notification type to check
+     * @return true if the notification is enabled, false otherwise
+     */
+    private boolean isNotificationEnabled(Boolean isEnabled, List<String> channels, String notificationType) {
+        return Boolean.TRUE.equals(isEnabled) && channels.contains(notificationType);
+    }
 
 }

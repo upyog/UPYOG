@@ -12,6 +12,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a Tax Head Master entity in the Community Hall Booking module.
+ * 
+ * Purpose:
+ * - To define the structure for tax head master data.
+ * - To associate tax heads with services and categories.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

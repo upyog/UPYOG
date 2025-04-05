@@ -14,6 +14,7 @@ import org.upyog.sv.repository.ServiceRequestRepository;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.IdgenUtil;
 import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.web.models.RenewalStatus;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
@@ -71,9 +72,8 @@ public class PaymentService {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
 				log.info("Updating payment status for street vending booking : " + applicationNo);
-				State state = updateWorkflowStatus(paymentRequest);
-				String applicationStatus = state.getApplicationStatus();
-				updateApplicationStatus(applicationStatus, paymentRequest);
+
+				updateApplicationStatusAndWorkflow(paymentRequest);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error(
@@ -123,7 +123,7 @@ public class PaymentService {
 		return response.getProcessInstances().get(0).getState();
 	}
 
-	private StreetVendingDetail updateApplicationStatus(String applicationStatus, PaymentRequest paymentRequest) {
+	private void updateApplicationStatusAndWorkflow(PaymentRequest paymentRequest) {
 		StreetVendingDetail streetVendingDetail = streetVendingRepository
 				.getStreetVendingApplications(StreetVendingSearchCriteria.builder()
 						.applicationNumber(
@@ -133,10 +133,17 @@ public class PaymentService {
 		long todayDateInMillis = System.currentTimeMillis();
 
 		if (streetVendingDetail == null) {
-			log.info("Application not founnd in consumer class while updating status");
-			return null;
+			log.info("Application not found in consumer class while updating status");
 		}
-
+		String applicationStatus = null;
+		if(streetVendingDetail.getRenewalStatus()!= RenewalStatus.RENEW_IN_PROGRESS) {
+			State state = updateWorkflowStatus(paymentRequest);
+			 applicationStatus = state.getApplicationStatus();
+		}
+		else {
+			applicationStatus = StreetVendingConstants.APPLICATION_STATUS_RENEWED;
+			streetVendingDetail.setRenewalStatus(RenewalStatus.RENEWED);
+		}
 		StreetVendingRequest vendingRequest = StreetVendingRequest.builder()
 				.requestInfo(paymentRequest.getRequestInfo()).build();
 
@@ -150,12 +157,18 @@ public class PaymentService {
 		enrichCertificateNumber(streetVendingDetail, vendingRequest.getRequestInfo(),
 				streetVendingDetail.getTenantId()); // enriching certificate number when updating final status
 		log.info("Street Vending Request to update application status in consumer : " + vendingRequest);
-		streetVendingRepository.update(vendingRequest);
 
-		return streetVendingDetail;
+		streetVendingRepository.update(vendingRequest);
 
 	}
 
+	/**
+	 * Method to enrich certificate number
+	 *
+	 * @param streetVendingDetail
+	 * @param requestInfo
+	 * @param tenantId
+	 */
 	private void enrichCertificateNumber(StreetVendingDetail streetVendingDetail, RequestInfo requestInfo,
 			String tenantId) {
 		if (streetVendingDetail.getCertificateNo() == null || streetVendingDetail.getCertificateNo().isEmpty()) {

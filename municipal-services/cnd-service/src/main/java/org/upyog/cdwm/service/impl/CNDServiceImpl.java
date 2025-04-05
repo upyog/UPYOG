@@ -2,6 +2,8 @@ package org.upyog.cdwm.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -12,15 +14,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.constants.CNDConstants;
+import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.impl.CNDServiceRepositoryImpl;
 import org.upyog.cdwm.service.CNDService;
 import org.upyog.cdwm.service.EnrichmentService;
 import org.upyog.cdwm.service.UserService;
 import org.upyog.cdwm.service.WorkflowService;
-import org.upyog.cdwm.web.models.*;
+import org.upyog.cdwm.util.CNDServiceUtil;
+import org.upyog.cdwm.web.models.CNDApplicationDetail;
+import org.upyog.cdwm.web.models.CNDApplicationRequest;
+import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
+import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.WasteTypeDetail;
 import org.upyog.cdwm.web.models.user.User;
 import org.upyog.cdwm.web.models.workflow.State;
+
 import digit.models.coremodels.PaymentRequest;
 
 @Service
@@ -39,7 +49,7 @@ public class CNDServiceImpl implements CNDService {
 
 	@Autowired
 	private UserService userService;
-
+	
     /**
      * Creates a new Construction and Demolition (CND) application request.
      *
@@ -138,62 +148,147 @@ public class CNDServiceImpl implements CNDService {
 		return criteria;
 	}
 
+	/**
+	 * Updates the details of a CND application based on the provided request data.
+	 *
+	 * <p>
+	 * This method processes a CND application update request. It validates the
+	 * application number, updates workflow status, and handles payment requests if
+	 * applicable.
+	 * </p>
+	 *
+	 * <p>
+	 * If no payment request is present, it updates the workflow status and enriches
+	 * application data. If the action is "APPROVE," it triggers the demand creation
+	 * process.
+	 * </p>
+	 *
+	 * <p>
+	 * If a payment request is provided, it updates the application status, modifies
+	 * audit details, and persists the changes to the repository.
+	 * </p>
+	 *
+	 * @param cndApplicationRequest The request containing application details.
+	 * @param paymentRequest        The payment details, if applicable.
+	 * @param applicationStatus     The new status to be set for the application.
+	 * @return The updated CNDApplicationDetail, or null if the update fails.
+	 * @throws CustomException If the application number is invalid.
+	 */
+    
 	@Override
 	public CNDApplicationDetail updateCNDApplicationDetails(CNDApplicationRequest cndApplicationRequest,
-			PaymentRequest paymentRequest, String applicationStatus) {
-		String applicationNumber = cndApplicationRequest.getCndApplication().getApplicationNumber();
-		log.info("Updating Application for Application no: {}", applicationNumber);
+	        PaymentRequest paymentRequest, String applicationStatus) {
 
-		if (applicationNumber == null) {
-			throw new CustomException("INVALID_BOOKING_CODE",
-					"Application no not valid. Failed to update application status for : " + applicationNumber);
-		}
+	    String applicationNumber = cndApplicationRequest.getCndApplication().getApplicationNumber();
+	    log.info("Updating Application for Application no: {}", applicationNumber);
 
-		// If no payment request, update workflow status and process booking request
-		if (paymentRequest == null) {
-			State state = workflowService.updateWorkflowStatus(null, cndApplicationRequest);
-			enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
+	    if (applicationNumber == null) {
+	        throw new CustomException("INVALID_BOOKING_CODE",
+	                "Application no not valid. Failed to update application status for : " + applicationNumber);
+	    }
 
-			// If action is APPROVE, create demand
-			if (CNDConstants.ACTION_APPROVE
-					.equals(cndApplicationRequest.getCndApplication().getWorkflow().getAction())) {
-//				demandService.createDemand(cndApplicationRequest);
-			}
-		}
+	    // Fetch existing application details
+	    CNDApplicationDetail cndApplicationDetail = cndApplicationRepository
+	            .getCNDApplicationDetail(
+	                    CNDServiceSearchCriteria.builder().applicationNumber(applicationNumber).build())
+	            .stream().findFirst().orElse(null);
+	    
 
-		// Handle the payment request and update the water tanker booking if applicable
-		if (paymentRequest != null) {
-			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
-			CNDApplicationDetail cndApplicationDetail = cndApplicationRepository
-					.getCNDApplicationDetail(
-							CNDServiceSearchCriteria.builder().applicationNumber(consumerCode).build())
-					.stream().findFirst().orElse(null);
+	    if (cndApplicationDetail == null) {
+	        log.warn("Application not found for applicationNumber: {}", applicationNumber);
+	        return null;
+	    }
 
-			if (cndApplicationDetail == null) {
-				log.info("Application not found in consumer class while updating status");
-				return null;
-			}
+	    // If no payment request, update workflow status and process booking request
+	    if (paymentRequest == null) {
+	        State state = workflowService.updateWorkflowStatus(null, cndApplicationRequest);
+	        enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
+	        updateWasteAndDocumentDetails(cndApplicationRequest);
+	    } else {
+	        // Handle payment request updates
+	    	 State state = workflowService.updateWorkflowStatus(paymentRequest, cndApplicationRequest);
+	         enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
+	         
+	        cndApplicationDetail.getAuditDetails()
+	                .setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+	        cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+	        cndApplicationDetail.setApplicationStatus(applicationStatus);
+	    }
+	    CNDApplicationRequest updatedCNDApplicationRequest = CNDApplicationRequest.builder()
+	            .requestInfo(cndApplicationRequest.getRequestInfo())
+	            .cndApplication(cndApplicationRequest.getCndApplication())
+	            .build();
 
-			// Update the booking details
-			cndApplicationDetail.getAuditDetails()
-					.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-			cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-			cndApplicationDetail.setApplicationStatus(applicationStatus);
-			//cndApplicationDetail.setPaymentDate(System.currentTimeMillis());
+	    log.info("Updating CND Application in the database: {}", updatedCNDApplicationRequest);
+	    cndApplicationRepository.updateCNDApplicationDetail(updatedCNDApplicationRequest);
 
-			// Update CND request
-			CNDApplicationRequest updatedCNDApplicationRequest = CNDApplicationRequest.builder()
-					.requestInfo(paymentRequest.getRequestInfo()).cndApplication(cndApplicationDetail).build();
+	    return updatedCNDApplicationRequest.getCndApplication();
+	    		}
 
-			log.info("Cnd Application to update application status in consumer: {}", updatedCNDApplicationRequest);
-			cndApplicationRepository.updateCNDApplicationDetail(cndApplicationRequest);
+	
+	/**
+	 * Processes waste type details and document details within a CND application request.
+	 *
+	 * <p>This method separates new and existing waste type details and document details.
+	 * New records are assigned a unique identifier before being stored, while existing records
+	 * are categorized for further processing. After processing, new records are saved in the database,
+	 * and all details (new and existing) are merged and updated in the request object.</p>
+	 *
+	 * @param cndApplicationRequest The CND application request containing waste and document details.
+	 */
 
-			return cndApplicationDetail;
-		}
-
-		// If no payment request, just update the CND request
-		cndApplicationRepository.updateCNDApplicationDetail(cndApplicationRequest);
-		
-     	return cndApplicationRequest.getCndApplication();
+	private void updateWasteAndDocumentDetails(CNDApplicationRequest cndApplicationRequest) {
+	    List<WasteTypeDetail> newWasteDetails = new ArrayList<>();
+	    List<WasteTypeDetail> existingWasteDetails = new ArrayList<>();
+	    processWasteDetails(cndApplicationRequest, newWasteDetails, existingWasteDetails);
+	    
+	    List<DocumentDetail> newDocumentDetails = new ArrayList<>();
+	    List<DocumentDetail> existingDocumentDetails = new ArrayList<>();
+	    processDocumentDetails(cndApplicationRequest, newDocumentDetails, existingDocumentDetails);
+	    
+	    if (!newWasteDetails.isEmpty() || !newDocumentDetails.isEmpty()) {
+	        cndApplicationRepository.saveCNDWasteAndDocumentDetail(newWasteDetails, newDocumentDetails, cndApplicationRequest.getCndApplication().getApplicationId());
+	    }
+	    
+	    // Merge new and existing details before sending to Kafka
+	    cndApplicationRequest.getCndApplication().setWasteTypeDetails(
+	        Stream.concat(existingWasteDetails.stream(), newWasteDetails.stream()).collect(Collectors.toList())
+	    );
+	    cndApplicationRequest.getCndApplication().setDocumentDetails(
+	        Stream.concat(existingDocumentDetails.stream(), newDocumentDetails.stream()).collect(Collectors.toList())
+	    );
 	}
-}
+
+	private void processWasteDetails(CNDApplicationRequest cndApplicationRequest, List<WasteTypeDetail> newWasteDetails, List<WasteTypeDetail> existingWasteDetails) {
+	    List<WasteTypeDetail> wasteTypeDetails = cndApplicationRequest.getCndApplication().getWasteTypeDetails();
+	    if (wasteTypeDetails != null) {
+	        for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
+	            if (wasteTypeDetail.getWasteTypeId() == null || wasteTypeDetail.getWasteTypeId().isEmpty()) {
+	                wasteTypeDetail.setWasteTypeId(CNDServiceUtil.getRandomUUID());
+	                wasteTypeDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
+	                newWasteDetails.add(wasteTypeDetail);
+	            } else {
+	                existingWasteDetails.add(wasteTypeDetail);
+	            }
+	        }
+	    }
+	}
+
+	private void processDocumentDetails(CNDApplicationRequest cndApplicationRequest, List<DocumentDetail> newDocumentDetails, List<DocumentDetail> existingDocumentDetails) {
+	    List<DocumentDetail> documentDetails = cndApplicationRequest.getCndApplication().getDocumentDetails();
+	    if (documentDetails != null) {
+	        for (DocumentDetail documentDetail : documentDetails) {
+	            if (documentDetail.getDocumentDetailId() == null || documentDetail.getDocumentDetailId().isEmpty()) {
+	                documentDetail.setDocumentDetailId(CNDServiceUtil.getRandomUUID());
+	                documentDetail.setApplicationId(cndApplicationRequest.getCndApplication().getApplicationId());
+	                newDocumentDetails.add(documentDetail);
+	            } else {
+	                existingDocumentDetails.add(documentDetail);
+	            }
+	        }
+	    }
+	}
+
+
+
+	}

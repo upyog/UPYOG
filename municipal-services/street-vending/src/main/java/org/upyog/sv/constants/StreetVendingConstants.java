@@ -103,6 +103,7 @@ public class StreetVendingConstants {
 	public static final String ACTION_STATUS_SENDBACKTOCITIZEN = "SENDBACKTOCITIZEN";
 
 	public static final String ACTION_STATUS_REJECT = "REJECT";
+	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
 
 	public static final String ACTION_STATUS_PAY = "PAY";
 
@@ -116,4 +117,5 @@ public class StreetVendingConstants {
 
 	public static final String STATUS_EXPIRED = "Expired";
 
+    public static final String APPLICATION_STATUS_RENEWED = "RENEWED";
 }
