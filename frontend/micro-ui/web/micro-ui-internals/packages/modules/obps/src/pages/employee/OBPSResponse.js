@@ -10,11 +10,12 @@ const OBPSResponse = (props) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let bpaData={}
+  let updateData=JSON.parse(sessionStorage.getItem("updateData"))
   if(state?.data?.response){
     bpaData = state?.data?.response?.BPA?.[0];
   }
   else{
-    bpaData = state?.data?.BPA?.[0];
+    bpaData = state?.data?.BPA?.[0]||updateData?.BPA;
   }
   const [applicationData, setApplicationData] = useState({});
   const [isLoader, setIsLoader] = useState(true);
