@@ -112,7 +112,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL"), 
-                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.applicantName || "NA"
+                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.applicantName || application?.additionalDetails?.applicantName
                     },
                     
                 ]
@@ -143,7 +143,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     },
                     { 
                         title: t("BPA_APPLICATION_DEMOLITION_AREA_LABEL"), 
-                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea ? `${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq mts`:0
+                        value: application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea ? `${application?.data?.edcrDetails?.planDetail?.planInformation?.demolitionArea} sq mts`:"NA"
                     } 
                 ]
              },

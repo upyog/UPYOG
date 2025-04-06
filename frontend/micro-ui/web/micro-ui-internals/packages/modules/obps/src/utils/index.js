@@ -1,5 +1,6 @@
 import cloneDeep from "lodash/cloneDeep";
 import { v4 as uuid_v4 } from 'uuid';
+import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 
 export const getPattern = (type) => {
   switch (type) {
@@ -782,14 +783,20 @@ export const getCheckBoxLabelData = (t, appData) => {
 
 
 export const scrutinyDetailsData = async (edcrNumber, tenantId) => {
-  const scrutinyDetails = await Digit.OBPSService.scrutinyDetails(tenantId, {edcrNumber: edcrNumber});
-  const bpaDetails = await Digit.OBPSService.BPASearch(tenantId, {edcrNumber: edcrNumber});
+  if(edcrNumber.includes("PAP")){
+    const preApprovedResponse = await PreApprovedPlanService.search({drawingNo:edcrNumber})
+    return preApprovedResponse
+  }
+  else{
+  const scrutinyDetails = await Digit.OBPSService.scrutinyDetails(tenantId, {edcrNumber: edcrNumber})
+  const bpaDetails = await Digit.OBPSService.BPASearch(tenantId, {edcrNumber: edcrNumber})
   if (bpaDetails?.BPA?.length == 0) {
     return scrutinyDetails?.edcrDetail?.[0] ? scrutinyDetails?.edcrDetail?.[0] : {type: "ERROR", message: "BPA_NO_RECORD_FOUND"};
   } else if (bpaDetails?.BPA?.length > 0 && (bpaDetails?.BPA?.[0]?.status == "INITIATED" || bpaDetails?.BPA?.[0]?.status == "REJECTED" || bpaDetails?.BPA?.[0]?.status == "PERMIT REVOCATION")) {
     return scrutinyDetails?.edcrDetail?.[0] ? scrutinyDetails?.edcrDetail?.[0] : {type: "ERROR", message: "BPA_NO_RECORD_FOUND"};
   } else {
     return {type: "ERROR", message: "APPLICATION_NUMBER_ALREADY_EXISTS"}
+  }
   }
 }
 
