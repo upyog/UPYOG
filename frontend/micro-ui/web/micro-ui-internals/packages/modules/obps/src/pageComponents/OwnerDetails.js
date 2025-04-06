@@ -357,7 +357,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         active:true,
                         name: owner.name,
                         mobileNumber: owner.mobileNumber,
-                        isPrimaryOwner: owner.isPrimaryOwner,
+                        isPrimaryOwner: ownerStep?.owners.length>1 ?owner.isPrimaryOwner:true,
                         gender: owner.gender?.code || owner.gender,
                         emailId:owner.emailId!==null?owner.emailId:emailId,
                         fatherOrHusbandName: "NAME"
@@ -461,6 +461,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
                 payload.additionalDetails.plotNo = formData?.data?.edcrDetails?.planDetail?.planInformation.plotNo||formData?.plotNo;
                 payload.additionalDetails.khataNo = formData?.data?.edcrDetails?.planDetail?.planInformation?.khataNo||formData?.khataNo;
+                payload.additionalDetails.applicantName = formData?.data?.applicantName
                 Digit.OBPSService.create({ BPA: payload }, tenantId)
                     .then((result, err) => {
                         if (result?.BPA?.length > 0) {

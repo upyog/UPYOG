@@ -37,7 +37,7 @@ export const newConfig = [
           key: "data",
           nextStep: "scrutiny-details",
           texts: {
-            headerCaption: "BPA_SCRUTINY_DETAILS",
+            headerCaption: "",
             header: "BPA_PLOT_DETAILS_TITLE",
             cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
@@ -69,8 +69,8 @@ export const newConfig = [
           hideInEmployee: true,
           key: "subOccupancy",
           texts: {
-            headerCaption: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
-            header: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
+            headerCaption: "",
+            header: "BPA_STEPPER_DRAWING_DETAILS_HEADER",
             cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
             skipText:"CORE_COMMON_SKIP_CONTINUE",

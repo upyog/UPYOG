@@ -551,7 +551,20 @@ export const OBPSService = {
       ]
     };
 
-    const scrutinyDetails = {
+    const scrutinyDetails = BPA?.businessService==="BPA-PAP" ? {
+      title: "BPA_STEPPER_DRAWING_DETAILS_HEADER",
+      isScrutinyDetails: true,
+      isBackGroundColor: true,
+      additionalDetails: {
+        values: [
+          { title:  "BPA_DRAWING_DETAILS", value: " ", isHeader: true },
+          { title:  "BPA_DRAWING_NUMBER" , value: BPA?.edcrNumber || "NA" },
+        ],
+        scruntinyDetails: [
+          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl, text: "Uploaded Plan.pdf" },
+        ]
+      }
+    }:{
       title: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
       isScrutinyDetails: true,
       isBackGroundColor: true,
@@ -589,7 +602,7 @@ export const OBPSService = {
       additionalDetails: {
         values: [
           { title: "BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL", value : " ", isHeader: true},
-          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea||"NA", isUnit: "BPA_SQ_MTRS_LABEL" } 
+          { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr?.planDetail?.planInformation?.demolitionArea||"NA", isUnit: edcr?.planDetail?.planInformation?.demolitionArea?"BPA_SQ_MTRS_LABEL":null } 
         ],
         scruntinyDetails: []
       }

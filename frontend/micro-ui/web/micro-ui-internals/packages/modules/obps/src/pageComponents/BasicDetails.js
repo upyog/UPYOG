@@ -87,13 +87,13 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   disableVlaue = disableVlaue?JSON.parse(disableVlaue):true;
 
   const getDetails = async () => {
-    const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber, stateCode);
+    const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber||scrutinyNumber, stateCode);
     if (details?.type == "ERROR") {
       setShowToast({ message: details?.message });
       setBasicData(null);
     }
     if (details?.edcrNumber) {
-      setBasicData(details);
+      setBasicData(details||formData?.selectedPlot);
       setShowToast(null);
     }
   };
@@ -112,11 +112,11 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       {showToast && <Toast error={true} label={t(`${showToast?.message}`)} onClose={closeToast} isDleteBtn={true} />}
       <Timeline />
       <div className={isMobile ? "obps-search" : ""} style={!isMobile ? { margin: "8px" } : {}}>
-        <Label>{t(`OBPS_SEARCH_EDCR_NUMBER`)}</Label>
+        <Label>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP") ? t(`OBPS_SEARCH_EDCR_NUMBER`) : t("SEARCH_BY_DRAWING_NUMBER")}</Label>
         <TextInput
           className="searchInput"
           onKeyPress={handleKeyPress}
-          onChange={event => setScrutinyNumber({ edcrNumber: event.target.value })} 
+          onChange={event => setScrutinyNumber({ edcrNumber: event.target.value||formData?.selectedPlot?.drawingNo })} 
           value={scrutinyNumber?.edcrNumber || scrutinyNumber} 
           signature={true} 
           signatureImg={!disableVlaue && !formData?.selectedPlot && <SearchIconSvg className="signature-img" onClick={!disableVlaue && scrutinyNumber?.edcrNumber ? () => handleSearch() : null} />}
@@ -126,7 +126,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       </div>
       {basicData && (
         <Card>
-          <CardCaption>{t(`BPA_SCRUTINY_DETAILS`)}</CardCaption>
+          <CardCaption>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP")?t(`BPA_SCRUTINY_DETAILS`):t(`BPA_DRAWING_DETAILS`)}</CardCaption>
           <CardHeader>{t(`BPA_BASIC_DETAILS_TITLE`)}</CardHeader>
           <StatusTable>
             <Row

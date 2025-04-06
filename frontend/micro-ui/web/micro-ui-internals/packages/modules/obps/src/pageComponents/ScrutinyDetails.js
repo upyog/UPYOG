@@ -222,12 +222,12 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     <React.Fragment>
       <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : 1} flow={checkingFlow === "OCBPA" ? "OCBPA" : ""} />
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} /* isDisabled={Object.keys(subOccupancyObject).length === 0} */>
-        <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_EDCR_DETAILS")}</CardSubHeader>
+        <CardSubHeader style={{ fontSize: "20px" }}>{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_DRAWING_DETAILS"):t("BPA_EDCR_DETAILS")}</CardSubHeader>
         <StatusTable style={{ border: "none" }}>
           <Row
             className="border-none"
             style={{ border: "none" }}
-            label={checkingFlow === "OCBPA" ? t("BPA_OC_EDCR_NO_LABEL") : t("BPA_EDCR_NO_LABEL")}
+            label={checkingFlow === "OCBPA" ? t("BPA_OC_EDCR_NO_LABEL") : formData?.data?.edcrDetails?.drawingDetail? t("BPA_DRAWING_NUMBER"):t("BPA_EDCR_NO_LABEL")}
             text={data?.edcrNumber || formData?.data?.scrutinyNumber}
             labelStyle={{wordBreak: "break-all"}} 
             textStyle={{wordBreak: "break-all"}}
@@ -427,7 +427,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             text={
               data?.planDetail?.planInformation?.demolitionArea
                 ? `${data?.planDetail?.planInformation?.demolitionArea} ${t("BPA_SQ_MTRS_LABEL")}`
-                : 0
+                : "NA"
             }
           ></Row>
         </StatusTable>
