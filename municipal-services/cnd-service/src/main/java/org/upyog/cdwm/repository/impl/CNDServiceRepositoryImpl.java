@@ -14,6 +14,8 @@ import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
 import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
+import org.upyog.cdwm.repository.rowMapper.DocumentDetailsRowMapper;
+import org.upyog.cdwm.repository.rowMapper.WasteTypeDetailsRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
@@ -68,6 +70,42 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new CNDApplicationDetailRowmapper());
     }
     
+    
+    /**
+     * Fetches the list of waste type details based on the provided search criteria.
+     * This method dynamically builds the SQL query using filters such as application number, 
+     * tenant ID, application status, and mobile number, and executes it using JdbcTemplate.
+     *
+     * @param cndServiceSearchCriteria the criteria to filter waste type details
+     * @return list of {@link WasteTypeDetail} matching the provided criteria
+     */
+    
+  
+    @Override
+    public List<WasteTypeDetail> getCNDWasteTypeDetail(CNDServiceSearchCriteria cndServiceSearchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getCNDWasteQuery(cndServiceSearchCriteria, preparedStmtList);
+        log.info("Final query for getCndApplicationDetails: {} with params: {}", query, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new WasteTypeDetailsRowMapper());
+    }
+    
+  
+    /**
+     * Fetches the list of document details based on the provided search criteria.
+     * This method dynamically builds the SQL query using filters such as application number, 
+     * tenant ID, application status, and mobile number, and executes it using JdbcTemplate.
+     *
+     * @param cndServiceSearchCriteria the criteria to filter document details
+     * @return list of {@link DocumentDetail} matching the provided criteria
+     */
+    
+    @Override
+    public List<DocumentDetail> getCNDDocumentDetail(CNDServiceSearchCriteria cndServiceSearchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getCNDDocQuery(cndServiceSearchCriteria, preparedStmtList);
+        log.info("Final query for getCndDocumentDetails: {} with params: {}", query, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new DocumentDetailsRowMapper());
+    }
     /**
      * Retrieves the count of CND applications based on search criteria.
      * 
