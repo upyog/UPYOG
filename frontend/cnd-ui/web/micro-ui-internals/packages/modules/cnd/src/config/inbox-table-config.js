@@ -25,28 +25,35 @@
               </div>
             );
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
+          mobileCell: (original) => {GetMobCell(original?.searchData?.["applicationNumber"])},
         },
         {
           Header: t("COMMON_APPLICANT_NAME"),
           Cell: ({ row }) => {
             return GetCell(t(`${row?.original?.searchData?.applicantDetail?.["nameOfApplicant"]}`));
           },
-          mobileCell: (original) => GetMobCell(t(`CND_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+          mobileCell: (original) => GetMobCell(t(`${original?.searchData?.applicantDetail?.["nameOfApplicant"]}`)),
         },
         {
           Header: t("COMMON_MOBILE_NUMBER"),
           Cell: ({ row }) => {
             return GetCell(t(`${row?.original?.searchData?.["applicantMobileNumber"]}`));
           },
-          mobileCell: (original) => GetMobCell(t(`CND_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+          mobileCell: (original) => GetMobCell(t(`${original?.searchData?.applicantDetail?.["mobileNumber"]}`)),
+        },
+        {
+          Header: t("CND_SCHEDULE_PICKUP"),
+          Cell: ({ row }) => {
+            return GetCell(t(`${row?.original?.searchData?.["requestedPickupDate"]}`));
+          },
+          mobileCell: (original) => GetMobCell(t(`${original?.searchData?.["requestedPickupDate"]}`)),
         },
         {
           Header: t("CND_APPLICATION_STATUS"),
           Cell: ({ row }) => {
             return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
           },
-          mobileCell: (original) => GetMobCell(t(`CND_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
+          mobileCell: (original) => GetMobCell(t(`${original?.workflowData?.state?.["applicationStatus"]}`)),
         },
         
       ],

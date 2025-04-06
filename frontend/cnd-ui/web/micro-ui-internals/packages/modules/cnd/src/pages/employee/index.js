@@ -3,7 +3,7 @@ import React from "react";
 import { Route, Switch, useRouteMatch, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Inbox from "./Inbox";
-// import SearchApp from "./SearchApp";
+import SearchApp from "./SearchApp";
 
 /** The Main routes component for the employee side
  * Contains routes for every page there is to redirect in the employee side
@@ -21,6 +21,8 @@ const EmployeeApp = () => {
   };
 
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
+  const EditCreate = Digit?.ComponentRegistryService?.getComponent("EditCreate");
+  const EditResponse = Digit?.ComponentRegistryService?.getComponent("Response");
 
   return (
     <span className={"cnd-citizen"}style={{width:"100%"}}>
@@ -42,7 +44,9 @@ const EmployeeApp = () => {
           />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          {/* <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} /> */}
+          <PrivateRoute path={`${path}/cnd-service/edit/:id`} component={() => <EditCreate parentUrl={url} />} />
+          <PrivateRoute path={`${path}/edit-response`} component={(props) => <EditResponse {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/my-request`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
         </AppContainer>
       </Switch>
     </span>
