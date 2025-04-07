@@ -912,5 +912,5 @@ config:
       - work-dir: 'municipal-services/cnd-calculator'
         image-name: 'cnd-calculator'
         dockerfile: 'build/maven/Dockerfile'
-      - work-dir: "municipal-services/cnd-calculator/src/main/resources/db"
-        image-name: "cnd-calculate-db"
+   #   - work-dir: "municipal-services/cnd-calculator/src/main/resources/db"
+   #     image-name: "cnd-calculate-db"
