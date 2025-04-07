@@ -28,7 +28,7 @@ export const Config =
                 "withoutLabel": true,
                 "key": "owner",
                 "type": "component",
-                "nextStep": "construction-details",
+                "nextStep": "property",
                 "isMandatory": true,
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
@@ -36,20 +36,7 @@ export const Config =
                 }
             },
             {
-                "route": "construction-details",
-                "component": "ConstructionType",
-                "withoutLabel": true,
-                "key": "constructionType",
-                "type": "component",
-                "nextStep": "property-details",
-                "isMandatory": true,
-                "texts": {
-                    "submitBarLabel": "COMMON_SAVE_NEXT",
-                    "header": "CND_TYPE_CONSTRUCTION",
-                }
-            },
-            {
-                "route": "property-details",
+                "route": "property",
                 "component": "PropertyNature",
                 "withoutLabel": true,
                 "key": "propertyNature",
@@ -61,7 +48,6 @@ export const Config =
                     "header": "CND_NATURE_PROPERTY",
                 }
             },
-            
             {
                 "route": "waste-material-details",
                 "component": "WasteType",

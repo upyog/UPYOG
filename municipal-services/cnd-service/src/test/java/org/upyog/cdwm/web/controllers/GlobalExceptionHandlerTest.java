@@ -3,8 +3,6 @@ package org.upyog.cdwm.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.Role;
-import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,12 +22,9 @@ import org.upyog.cdwm.utils.TestRequestObjectBuilder;
 import org.upyog.cdwm.web.models.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,7 +61,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of IllegalArgumentException for /v1/_create endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleIllegalArgumentExceptionCreate() throws Exception {
         when(cndService.createConstructionAndDemolitionRequest(null))
                 .thenThrow(new IllegalArgumentException("Invalid input data"));
@@ -83,7 +78,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of NullPointerException for /v1/_create endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleNullPointerExceptionCreate() throws Exception {
         when(cndService.createConstructionAndDemolitionRequest(null))
                 .thenThrow(new NullPointerException("Unexpected error occurred"));
@@ -100,7 +95,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of custom RuntimeException for /v1/_create endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleCustomApplicationExceptionCreate() throws Exception {
         when(cndService.createConstructionAndDemolitionRequest(any(CNDApplicationRequest.class)))
                 .thenThrow(new RuntimeException("Application processing failed"));
@@ -115,10 +110,11 @@ public class GlobalExceptionHandlerTest {
         assertEquals("An unexpected error occurred. Please contact support.", errorResponse.getError().getMessage());
         System.out.println("testHandleCustomApplicationExceptionCreate Response: " + responseContent);
     }
+
     /**
      * Tests handling of generic RuntimeException for /v1/_create endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleUnknownExceptionCreate() throws Exception {
         when(cndService.createConstructionAndDemolitionRequest(any(CNDApplicationRequest.class)))
                 .thenThrow(new RuntimeException("Unknown system error"));
@@ -131,10 +127,11 @@ public class GlobalExceptionHandlerTest {
                 .andReturn();
         System.out.println("testHandleUnknownExceptionCreate Response: " + result.getResponse().getContentAsString());
     }
+
     /**
      * Tests handling of validation exceptions (empty request body) for /v1/_create endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleValidationExceptionCreate() throws Exception {
         MvcResult result = mockMvc.perform(post("/v1/_create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -148,7 +145,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of IllegalArgumentException for /v1/_search endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleIllegalArgumentExceptionSearch() throws Exception {
         when(cndService.getCNDApplicationDetails(any(RequestInfo.class), any(CNDServiceSearchCriteria.class)))
                 .thenThrow(new IllegalArgumentException("Invalid search criteria"));
@@ -163,10 +160,11 @@ public class GlobalExceptionHandlerTest {
                 .andReturn();
         System.out.println("testHandleIllegalArgumentExceptionSearch Response: " + result.getResponse().getContentAsString());
     }
+
     /**
      * Tests handling of NullPointerException for /v1/_search endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleNullPointerExceptionSearch() throws Exception {
         when(cndService.getCNDApplicationDetails(any(RequestInfo.class), any(CNDServiceSearchCriteria.class)))
                 .thenThrow(new NullPointerException("Unexpected error in search"));
@@ -182,10 +180,11 @@ public class GlobalExceptionHandlerTest {
                 .andReturn();
         System.out.println("testHandleNullPointerExceptionSearch Response: " + result.getResponse().getContentAsString());
     }
+
     /**
      * Tests handling of generic RuntimeException for /v1/_search endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleUnknownExceptionSearch() throws Exception {
         when(cndService.getCNDApplicationDetails(any(RequestInfo.class), any(CNDServiceSearchCriteria.class)))
                 .thenThrow(new RuntimeException("Search operation failed"));
@@ -205,7 +204,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of IllegalArgumentException for /v1/_update endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleIllegalArgumentExceptionUpdate() throws Exception {
         when(cndService.updateCNDApplicationDetails(any(CNDApplicationRequest.class), any(), any()))
                 .thenThrow(new IllegalArgumentException("Invalid update data"));
@@ -224,7 +223,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of NullPointerException for /v1/_update endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleNullPointerExceptionUpdate() throws Exception {
         when(cndService.updateCNDApplicationDetails(any(CNDApplicationRequest.class), any(), any()))
                 .thenThrow(new NullPointerException("Update operation failed"));
@@ -243,7 +242,7 @@ public class GlobalExceptionHandlerTest {
     /**
      * Tests handling of generic RuntimeException for /v1/_update endpoint.
      */
-//    @Test
+    //      @Test
     void testHandleUnknownExceptionUpdate() throws Exception {
         when(cndService.updateCNDApplicationDetails(any(CNDApplicationRequest.class), any(), any()))
                 .thenThrow(new RuntimeException("Update operation failed"));

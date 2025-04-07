@@ -1,23 +1,30 @@
 import { CardLabel, FormStep, TextInput, Dropdown, DatePicker, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import _ from "lodash";
 import { CND_VARIABLES } from "../utils";
-
+import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext";
+import { convertToObject } from "../utils";
 
 /**
 * PropertyNature component for collecting property details including house area,
 * construction period, and property usage type. Part of a multi-step form that
 * handles form validation, data persistence, and API calls to fetch property usage types.
 */
-const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
+const PropertyNature = ({ t, config, onSelect, formData }) => {
   let validation = {};
-  const { control } = useForm();
-  const inputStyles = { width: userType === "EMPLOYEE" ? "50%" : "100%" };
-  const [houseArea, sethouseArea] = useState(formData?.propertyNature?.houseArea || "");
-  const [propertyUsage, setpropertyUsage] = useState(formData?.propertyNature?.propertyUsage || "");
-  const [constructionFrom, setConstructionFrom] = useState(formData?.propertyNature?.constructionFrom || null);
-  const [constructionTo, setConstructionTo] = useState(formData?.propertyNature?.constructionTo || null);
+  const isEmployee =  window.location.href.includes("/employee");
+  const applicationDetails = isEmployee ? useApplicationDetails():null;
+  const userType = Digit.UserService.getUser().info.type;
+  const { control, watch, trigger } = useForm();
+  const inputStyles = { width: userType === "EMPLOYEE" ? "50%" : "85%" };
+  const [houseArea, sethouseArea] = useState(formData?.propertyNature?.houseArea || applicationDetails?.houseArea || "");
+  const [constructionType, setconstructionType] = useState(formData?.propertyNature?.constructionType || convertToObject(applicationDetails?.typeOfConstruction) || "");
+  const [propertyUsage, setpropertyUsage] = useState(formData?.propertyNature?.propertyUsage || convertToObject(applicationDetails?.propertyType) || "");
+  const [constructionFrom, setConstructionFrom] = useState(formData?.propertyNature?.constructionFrom || applicationDetails?.constructionFromDate || null);
+  const [constructionTo, setConstructionTo] = useState(formData?.propertyNature?.constructionTo || applicationDetails?.constructionToDate || null);
   const [showToast, setShowToast] = useState(null);
+
 
   const { data: propertyUsageType } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
@@ -31,12 +38,28 @@ const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
     }
   );
 
-  let common =
-    propertyUsageType?.map((property_usage) => ({ i18nKey: property_usage.code, code: property_usage.code, value: property_usage.code })) || [];
+  let common = propertyUsageType?.map((property_usage) => ({ i18nKey: property_usage.code, code: property_usage.code, value: property_usage.code })) || [];
+  const { data: ConstructionType } = Digit.Hooks.useCustomMDMS(
+      Digit.ULBService.getStateId(),
+      CND_VARIABLES.MDMS_MASTER,
+      [{ name: "ConstructionType" }],
+      {
+        select: (data) => {
+          const formattedData = data?.[CND_VARIABLES.MDMS_MASTER]?.["ConstructionType"];
+          return formattedData?.filter((item) => item.active === true);
+        },
+      }
+    );
+  
+    let constructionDropdownData = ConstructionType?.map((construction) => 
+    ({ i18nKey: construction.code, code: construction.code, value: construction.code })) 
+    || [];
+    
   const goNext = () => {
-    let propertyNatureType = { ...formData.propertyNature, houseArea, propertyUsage, constructionFrom, constructionTo };
+    let propertyNatureType = { ...formData.propertyNature, houseArea, propertyUsage, constructionFrom, constructionTo,constructionType };
     onSelect(config.key, { ...formData[config.key], ...propertyNatureType }, false);
   };
+
 
   function setHouseArea(e) {
     let value = e.target.value;
@@ -56,13 +79,23 @@ const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
     }
   }, [showToast]);
 
+
+  useEffect(() => {
+    if(isEmployee){
+    onSelect(config?.key, {
+      houseArea,
+      constructionType,
+      propertyUsage,
+      constructionFrom,
+      constructionTo,
+    })};
+  }, [houseArea, constructionType, propertyUsage, constructionFrom, constructionTo]);
+
   return (
     <React.Fragment>
-      <FormStep config={config} onSelect={goNext} t={t} isDisabled={!houseArea || !propertyUsage || !constructionFrom || !constructionTo}>
+      <FormStep config={config} onSelect={goNext} t={t} isDisabled={!houseArea || !propertyUsage || !constructionFrom || !constructionTo || !constructionType}>
         <div>
-          <CardLabel>
-            {`${t("CND_AREA_HOUSE")}`} <span className="astericColor">*</span>
-          </CardLabel>
+          <CardLabel>{`${t("CND_AREA_HOUSE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
             type={"text"}
@@ -71,6 +104,7 @@ const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
             name="houseArea"
             value={houseArea}
             onChange={setHouseArea}
+            style={inputStyles}
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
@@ -80,7 +114,7 @@ const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
             })}
           />
           <CardLabel>{t("CND_TIME_CONSTRUCTION")}</CardLabel>
-          <div style={{ display: "flex", gap: "1rem", width: "58%" }}>
+          <div style={{ display: "flex", gap: "1rem", width: "50%" }}>
             <DatePicker
               date={constructionFrom}
               name="constructionFrom"
@@ -90,9 +124,7 @@ const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
             />
             <DatePicker date={constructionTo} name="constructionTo" onChange={setConstructionTo} placeholder={"To (mm/yy)"} inputFormat="MM/yy" />
           </div>
-          <CardLabel>
-            {`${t("CND_PROPERTY_USAGE")}`} <span className="astericColor">*</span>
-          </CardLabel>
+          <CardLabel>{`${t("CND_PROPERTY_USAGE")}`} <span className="astericColor">*</span></CardLabel>
           <Controller
             control={control}
             name={"propertyUsage"}
@@ -103,8 +135,27 @@ const PropertyNature = ({ t, config, onSelect, userType, formData }) => {
                 className="form-field"
                 selected={propertyUsage}
                 select={setpropertyUsage}
-                style={inputStyles}
+                style={{inputStyles}}
                 option={common}
+                optionKey="i18nKey"
+                t={t}
+                placeholder={"Select"}
+              />
+            )}
+          />
+          <CardLabel>{`${t("CND_TYPE_CONSTRUCTION")}`} <span className="astericColor">*</span></CardLabel>
+          <Controller
+            control={control}
+            name={"constructionType"}
+            defaultValue={constructionType}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={constructionType}
+                select={setconstructionType}
+                style={{inputStyles}}
+                option={constructionDropdownData}
                 optionKey="i18nKey"
                 t={t}
                 placeholder={"Select"}

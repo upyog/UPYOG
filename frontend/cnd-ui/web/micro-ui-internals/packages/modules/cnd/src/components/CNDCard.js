@@ -26,7 +26,7 @@ const CNDCard = () => {
     },
     {
       label: t("CND_MY_REQUEST"),
-      link: `/cnd-ui/employee/cnd/my-applications`,
+      link: `/cnd-ui/employee/cnd/my-request`,
     },
   ]
   const CND_CEMP = Digit.UserService.hasAccess(["CND_CEMP"]) || false;

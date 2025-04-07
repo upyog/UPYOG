@@ -1,7 +1,9 @@
 package org.upyog.cdwm.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,9 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.constants.CNDConstants;
-import org.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.repository.impl.CNDServiceRepositoryImpl;
 import org.upyog.cdwm.service.CNDService;
 import org.upyog.cdwm.service.EnrichmentService;
@@ -82,25 +82,42 @@ public class CNDServiceImpl implements CNDService {
 	 * @param cndServiceSearchCriteria The criteria used for filtering CND applications.
 	 * @return A list of CND application details, enriched with user and address data if requested.
 	 */
-	@Override
-	public List<CNDApplicationDetail> getCNDApplicationDetails(RequestInfo requestInfo,
-															   CNDServiceSearchCriteria cndServiceSearchCriteria) {
-		List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
+    
 
-		if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired())) {
-			log.info(
-					"Enriching CND applications with user and address details for the following applications: {}",
-					applications);
+    @Override
+    public List<CNDApplicationDetail> getCNDApplicationDetails(RequestInfo requestInfo,
+                                                               CNDServiceSearchCriteria cndServiceSearchCriteria) {
+        List<CNDApplicationDetail> applications = cndApplicationRepository.getCNDApplicationDetail(cndServiceSearchCriteria);
 
-			applications.forEach(application -> {
-				User user = userService.getUser(application.getApplicantDetailId(), application.getTenantId(), requestInfo);
-				application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
-				application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
-			});
-		}
+        // Enrich only if isUserDetailRequired is true
+        if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired())) {
+            log.info("Enriching CND applications with user, address, waste, and document details for applications: {}", applications);
 
-		return applications;
-	}
+            // Fetch waste and document details
+            List<WasteTypeDetail> wasteDetails = cndApplicationRepository.getCNDWasteTypeDetail(cndServiceSearchCriteria);
+            List<DocumentDetail> documentDetails = cndApplicationRepository.getCNDDocumentDetail(cndServiceSearchCriteria);
+
+            // Group waste and document details by applicationId
+            Map<String, List<WasteTypeDetail>> wasteByAppId = wasteDetails.stream()
+                .collect(Collectors.groupingBy(WasteTypeDetail::getApplicationId));
+
+            Map<String, List<DocumentDetail>> docsByAppId = documentDetails.stream()
+                .collect(Collectors.groupingBy(DocumentDetail::getApplicationId));
+
+            // Enrich each application with waste, document, user, and address details
+            for (CNDApplicationDetail application : applications) {
+                application.setWasteTypeDetails(wasteByAppId.getOrDefault(application.getApplicationId(), Collections.emptyList()));
+                application.setDocumentDetails(docsByAppId.getOrDefault(application.getApplicationId(), Collections.emptyList()));
+
+                User user = userService.getUser(application.getApplicantDetailId(), application.getTenantId(), requestInfo);
+                application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
+                application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
+            }
+        }
+
+        return applications;
+    }
+
 
 
     /**
