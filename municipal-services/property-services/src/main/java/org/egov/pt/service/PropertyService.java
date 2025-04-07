@@ -345,6 +345,8 @@ public class PropertyService {
 
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
+		
+		
 
 		PropertyRequest OldPropertyRequest = PropertyRequest.builder()
 				.requestInfo(request.getRequestInfo())
@@ -364,6 +366,9 @@ public class PropertyService {
 				propertyFromSearch.setStatus(Status.INACTIVE);
 				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), OldPropertyRequest);
 				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				if(request.getProperty().getCreationReason().equals(CreationReason.UPDATE)) {
+					enrichmentService.enrichDocumentForUpdate(request);
+				}
 				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
 
 			} else if (state.getIsTerminateState()
