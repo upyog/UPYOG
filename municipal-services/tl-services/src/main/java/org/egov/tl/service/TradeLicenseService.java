@@ -767,7 +767,7 @@ public class TradeLicenseService {
 
 				// fetch/create bill
 				GenerateBillCriteria billCriteria = GenerateBillCriteria.builder()
-						.tenantId(TLConstants.STATE_LEVEL_TENANT_ID).businessService(license.getBusinessService())
+						.tenantId(license.getTenantId()).businessService(license.getBusinessService())
 						.consumerCode(license.getApplicationNumber()).build();
 				BillResponse billResponse = billService.generateBill(tradeLicenseRequest.getRequestInfo(),
 						billCriteria);

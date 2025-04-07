@@ -686,7 +686,7 @@ public class PropertyValidator {
 		return new ArrayList<>(statusWithRoles);
 	}
 	
-	private List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
+	public List<String> getRolesByTenantId(String tenantId, List<Role> roles) {
 		List<String> roleCodes = roles.stream().filter(role -> role.getTenantId().equalsIgnoreCase(tenantId))
 				.map(role -> role.getCode()).collect(Collectors.toList());
 		return roleCodes;

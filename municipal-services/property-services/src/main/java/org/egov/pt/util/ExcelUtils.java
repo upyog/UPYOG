@@ -81,7 +81,7 @@ public class ExcelUtils {
 								: null)
 						.channel(EnumUtils.isValidEnum(Channel.class, getCellValue(row.getCell(26)).toUpperCase())
 								? Channel.valueOf(getCellValue(row.getCell(26)).toUpperCase())
-								: null)
+								: Channel.MIGRATION)
 						.units(units).address(address).additionalDetails(additionalDetails).build();
 				propertyList.add(property);
 			}
@@ -279,12 +279,12 @@ public class ExcelUtils {
 		boolean validLength = columns.stream().allMatch(col -> col.length == length);
 		boolean validData = columns.stream().flatMap(Arrays::stream).allMatch(this::isValidValue);
 
-		if (validLength && validData) {
+//		if (validLength && validData) {
 			// Process each index and create a list of OwnerInfo
 			return IntStream.range(0, length).mapToObj(i -> createOwnerInfo(columns, i)).collect(Collectors.toList());
-		}
+//		}
 
-		return Collections.emptyList();
+//		return Collections.emptyList();
 	}
 
 	// Helper method to check for valid data (non-null and non-empty)
@@ -302,7 +302,7 @@ public class ExcelUtils {
 
 		// Validate fields (e.g., name, mobile number, owner type could have specific
 		// validation logic)
-		if (!isValidValue(name) || !isValidValue(mobileNumber) || !isValidValue(ownerType)) {
+		if (!isValidValue(name) || !isValidValue(mobileNumber)) {
 			throw new IllegalArgumentException("Invalid data at index " + index);
 		}
 

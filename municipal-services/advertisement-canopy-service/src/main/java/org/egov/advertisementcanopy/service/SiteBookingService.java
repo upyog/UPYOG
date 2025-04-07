@@ -282,11 +282,19 @@ public class SiteBookingService {
 
 	public SiteBookingResponse searchBooking(SiteBookingSearchRequest siteBookingSearchRequest) {
 
-		// enrich search criteria
-		enrichSearchCriteria(siteBookingSearchRequest);
-		
-		// validate search criteria
-		validateSearchCriteria(siteBookingSearchRequest);
+		if (!siteBookingSearchRequest.getSkipValidation()) {
+			// enrich search criteria
+			enrichSearchCriteria(siteBookingSearchRequest);
+
+			// validate search criteria
+			validateSearchCriteria(siteBookingSearchRequest);
+		} else {
+			if (null == siteBookingSearchRequest.getSiteBookingSearchCriteria()) {
+				siteBookingSearchRequest.setSiteBookingSearchCriteria(SiteBookingSearchCriteria.builder().build());
+			}
+			siteBookingSearchRequest.getSiteBookingSearchCriteria()
+					.setSkipValidation(siteBookingSearchRequest.getSkipValidation());
+		}
 		
 		// search bookings
 		List<SiteBooking> siteBookings = repository.search(siteBookingSearchRequest.getSiteBookingSearchCriteria());
@@ -415,7 +423,7 @@ public class SiteBookingService {
 		// enrich update request
 		siteBookingRequest = validateAndEnrichUpdateSiteBooking(siteBookingRequest, appNoToSiteBookingMap);
 		// call workflow
-//		workflowService.updateWorkflowStatus(siteBookingRequest);
+		workflowService.updateWorkflowStatus(siteBookingRequest);
 
 		// update request
 		producer.push(AdvtConstants.SITE_BOOKING_UPDATE_KAFKA_TOPIC, siteBookingRequest);
@@ -515,8 +523,8 @@ public class SiteBookingService {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		String createdDate = dateFormat.format(new Date(siteBooking.getAuditDetails().getCreatedDate()));
-		String fromDate = dateFormat.format(new Date(siteBooking.getFromDate()));
-		String toDate = dateFormat.format(new Date(siteBooking.getToDate()));
+		String fromDate = dateFormat.format(new Date(siteBooking.getFromDate() * 1000));
+		String toDate = dateFormat.format(new Date(siteBooking.getToDate() * 1000));
 		String approvalDate = dateFormat.format(new Date());
 
 // Map variables and values

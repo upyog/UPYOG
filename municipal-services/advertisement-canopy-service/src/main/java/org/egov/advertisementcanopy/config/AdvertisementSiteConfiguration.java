@@ -29,6 +29,10 @@ import lombok.NoArgsConstructor;
 public class AdvertisementSiteConfiguration {
 	@Value("${app.timezone}")
 	private String timeZone;
+	
+	@Value(("${egov.bill.expiry.after}"))
+	private String billExpiryAfter;
+	
 
 	@PostConstruct
 	public void initialize() {

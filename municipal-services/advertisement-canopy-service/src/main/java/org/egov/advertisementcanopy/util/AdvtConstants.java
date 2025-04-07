@@ -132,6 +132,7 @@ public class AdvtConstants {
     public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Advertisement_Canopy_Fee";
 
     public static final String SITE_STATUS_BOOKED = "BOOKED";
+    public static final String SITE_STATUS_AVAILABLE = "Available";
 
     // Alfresco keys
     public static final Long ALFRESCO_COMMON_DOCUMENT_ID = 0L;
