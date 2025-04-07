@@ -129,7 +129,6 @@ public class MonumentDistance_Citya extends FeatureProcess {
         Block maxBuildingHeightBlock = new Block();
 
         BigDecimal monumentDistance_distanceOne = BigDecimal.ZERO;
-        BigDecimal monumentDistance_minDistanceOne = BigDecimal.ZERO;
         BigDecimal monumentDistance_minDistanceTwo = BigDecimal.ZERO;
         BigDecimal monumentDistance_maxHeightofbuilding = BigDecimal.ZERO;
         BigDecimal monumentDistance_maxbuildingheightblock = BigDecimal.ZERO;
@@ -156,7 +155,6 @@ public class MonumentDistance_Citya extends FeatureProcess {
                 Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
                 ArrayList<String> valueFromColumn = new ArrayList<>();
                 valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE);
-                valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_ONE);
                 valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO);
                 valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT);
                 valueFromColumn.add(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT);
@@ -169,7 +167,6 @@ public class MonumentDistance_Citya extends FeatureProcess {
 
                 if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE)) {
                     monumentDistance_distanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE).toString()));
-                    monumentDistance_minDistanceOne = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_ONE).toString()));
                     monumentDistance_minDistanceTwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO).toString()));
                     monumentDistance_maxHeightofbuilding = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT).toString()));
                     monumentDistance_maxbuildingheightblock = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT).toString()));
@@ -193,7 +190,7 @@ public class MonumentDistance_Citya extends FeatureProcess {
                         }
                     }
 
-                    if (minDistanceFromMonument.compareTo(monumentDistance_minDistanceOne) > 0) {
+                    if (minDistanceFromMonument.compareTo(monumentDistance_distanceOne) > 0) {
                         details.put(DISTANCE, ">" + monumentDistance_distanceOne.toString());
                         details.put(PERMITTED, "ALL");
                         details.put(PROVIDED, minDistanceFromMonument.toString());
@@ -211,18 +208,18 @@ public class MonumentDistance_Citya extends FeatureProcess {
                         }
 
                         if (minDistanceFromMonument.compareTo(monumentDistance_minDistanceTwo) > 0
-                                && minDistanceFromMonument.compareTo(monumentDistance_minDistanceOne) <= 0) {
+                                && minDistanceFromMonument.compareTo(monumentDistance_distanceOne) <= 0) {
                             if (maxHeightOfBuilding.compareTo(monumentDistance_maxHeightofbuilding) <= 0
                                     && maxBuildingHeightBlock.getBuilding().getFloorsAboveGround().compareTo(monumentDistance_maxbuildingheightblock) <= 0) {
 
-                                details.put(DISTANCE, "From " + monumentDistance_minDistanceTwo.toString() + " to " + monumentDistance_minDistanceOne.toString());
+                                details.put(DISTANCE, "From " + monumentDistance_minDistanceTwo.toString() + " to " + monumentDistance_distanceOne.toString());
                                 details.put(PERMITTED, "Building Height: " + monumentDistance_maxHeightofbuilding.toString() + "mt, No of floors: " + monumentDistance_maxbuildingheightblock.toString());
                                 details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: " + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
                                 details.put(STATUS, Result.Accepted.getResultVal());
                                 scrutinyDetail.getDetail().add(details);
                                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                             } else {
-                                details.put(DISTANCE, "From " + monumentDistance_minDistanceTwo.toString() + " to " + monumentDistance_minDistanceOne.toString());
+                                details.put(DISTANCE, "From " + monumentDistance_minDistanceTwo.toString() + " to " + monumentDistance_distanceOne.toString());
                                 details.put(PERMITTED, "Building Height: " + monumentDistance_maxHeightofbuilding.toString() + "mt, No of floors: " + monumentDistance_maxbuildingheightblock.toString());
                                 details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: " + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
                                 details.put(STATUS, Result.Not_Accepted.getResultVal());

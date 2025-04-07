@@ -281,11 +281,8 @@ public class FetchEdcrRulesMdms {
 	                    value.put("permissibleone", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE_ONE));
 	                    value.put("permissibletwo", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE_TWO));
 	                    value.put("permissiblethree", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE_THREE));
-	                    value.put("permissiblefour", ruleItem.get(EdcrRulesMdmsConstants.PERMISSIBLE_FOUR));
 	                }
-	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_AREA)) {
-	                    value.put("bathroomRequiredArea", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_AREA));
-	                    value.put("bathroomRequiredWidth", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_WIDTH));
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA)) {
 	                    value.put("bathroomtotalArea", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA));
 	                    value.put("bathroomMinWidth", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_MIN_WIDTH));
 	                }
@@ -293,9 +290,6 @@ public class FetchEdcrRulesMdms {
 	                    value.put("bathroomWCRequiredArea", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_AREA));
 	                    value.put("bathroomWCRequiredWidth", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_WIDTH));
 	                    value.put("bathroomWCRequiredHeight", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_HEIGHT));
-	                    value.put("bathroomWCRequiredminHeight", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_MIN_HEIGHT));
-	                    value.put("bathroomWCRequiredTotalArea", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_TOTAL_AREA));
-	                    value.put("bathroomWCRequiredminWidth", ruleItem.get(EdcrRulesMdmsConstants.BATHROOM_WC_REQUIRED_MIN_WIDTH));
 	                }
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.EXIT_WIDTH_OCCUPANCY_TYPE_HANDLER_VAL)) {
 	                	value.put("exitWidthOccupancyTypeHandlerVal", ruleItem.get(EdcrRulesMdmsConstants.EXIT_WIDTH_OCCUPANCY_TYPE_HANDLER_VAL));
@@ -336,7 +330,6 @@ public class FetchEdcrRulesMdms {
 	                    value.put("fireStairExpectedNoofRise", ruleItem.get(EdcrRulesMdmsConstants.FIRE_STAIR_EXPECTED_NO_OF_RISE));
 	                    value.put("fireStairMinimumWidth", ruleItem.get(EdcrRulesMdmsConstants.FIRE_STAIR_MIN_WIDTH));
 	                    value.put("fireStairRequiredTread", ruleItem.get(EdcrRulesMdmsConstants.FIRE_STAIR_REQUIRED_TREAD));
-	                    value.put("fireStairTypicalRepititiveFloor", ruleItem.get(EdcrRulesMdmsConstants.FIRE_STAIR_TYPICAL_REP_FLOOR));
 	                }
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE)) {
 	                    value.put("fireTenderMovementValueOne", ruleItem.get(EdcrRulesMdmsConstants.FIRE_TENDER_MOVEMENT_VALUE_ONE));
@@ -372,7 +365,6 @@ public class FetchEdcrRulesMdms {
 	                }
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE)) {
 	                    value.put("monumentDistance_distanceOne", ruleItem.get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_ONE));
-	                    value.put("monumentDistance_minDistanceOne", ruleItem.get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_ONE));
 	                    value.put("monumentDistance_minDistanceTwo", ruleItem.get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MIN_TWO));
 	                    value.put("monumentDistance_maxHeightofbuilding", ruleItem.get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT));
 	                    value.put("monumentDistance_maxbuildingheightblock", ruleItem.get(EdcrRulesMdmsConstants.MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT));
@@ -485,38 +477,39 @@ public class FetchEdcrRulesMdms {
 	                    value.put("sanitationFloorMultiplier", ruleItem.get(EdcrRulesMdmsConstants.SANITATION_FLOOR_MULTIPLIER));
 	                }
 	                
-	                // Willbe needed to workon later
-//	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ONE)) {
-//	                	value.put("sideYardValueOne", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ONE));
-//	                	value.put("sideYardValueTwo", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWO));
-//	                	value.put("sideYardValueThree", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_THREE));
-//	                	value.put("sideYardValueFour", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FOUR));
-//	                	value.put("sideYardValueFive", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FIVE));
-//	                	value.put("sideYardValueSix", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SIX));
-//	                	value.put("sideYardValueSeven", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SEVEN));
-//	                	value.put("sideYardValueEight", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_EIGHT));
-//	                	value.put("sideYardValueNine", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_NINE));
-//	                	value.put("sideYardValueTen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TEN));
-//	                	value.put("sideYardValueEleven", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ELEVEN));
-//	                	value.put("sideYardValueTwelve", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWELVE));
-//	                	value.put("sideYardValueThirteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_THIRTEEN));
-//	                	value.put("sideYardValueFourteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FOURTEEN));
-//	                	value.put("sideYardValueFifteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FIFTEEN));
-//	                	value.put("sideYardValueSixteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SIXTEEN));
-//	                	value.put("sideYardValueSeventeen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SEVENTEEN));
-//	                	value.put("sideYardValueEighteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_EIGHTEEN));
-//	                	value.put("sideYardValueNineteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_NINETEEN));
-//	                	value.put("sideYardValueTwenty", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY));
-//	                	value.put("sideYardValueTwentyOne", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_ONE));
-//	                	value.put("sideYardValueTwentyTwo", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_TWO));
-//	                	value.put("sideYardValueTwentyThree", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_THREE));
-//	                	value.put("sideYardValueTwentyFour", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_FOUR));
-//	                	value.put("sideYardValueTwentyFive", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_FIVE));
-//	                	value.put("sideYardValueTwentySix", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_SIX));
-//	                	value.put("sideYardValueTwentySeven", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_SEVEN));
-//	                	value.put("sideYardValueTwentyEight", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_EIGHT));
-//
-//	                }
+	                /*
+	                // Will be needed to work on later
+	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ONE)) {
+	                	value.put("sideYardValueOne", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ONE));
+	                	value.put("sideYardValueTwo", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWO));
+	                	value.put("sideYardValueThree", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_THREE));
+	                	value.put("sideYardValueFour", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FOUR));
+	                	value.put("sideYardValueFive", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FIVE));
+	                	value.put("sideYardValueSix", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SIX));
+	                	value.put("sideYardValueSeven", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SEVEN));
+	                	value.put("sideYardValueEight", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_EIGHT));
+	                	value.put("sideYardValueNine", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_NINE));
+	                	value.put("sideYardValueTen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TEN));
+	                	value.put("sideYardValueEleven", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ELEVEN));
+	                	value.put("sideYardValueTwelve", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWELVE));
+	                	value.put("sideYardValueThirteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_THIRTEEN));
+	                	value.put("sideYardValueFourteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FOURTEEN));
+	                	value.put("sideYardValueFifteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_FIFTEEN));
+	                	value.put("sideYardValueSixteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SIXTEEN));
+	                	value.put("sideYardValueSeventeen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_SEVENTEEN));
+	                	value.put("sideYardValueEighteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_EIGHTEEN));
+	                	value.put("sideYardValueNineteen", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_NINETEEN));
+	                	value.put("sideYardValueTwenty", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY));
+	                	value.put("sideYardValueTwentyOne", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_ONE));
+	                	value.put("sideYardValueTwentyTwo", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_TWO));
+	                	value.put("sideYardValueTwentyThree", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_THREE));
+	                	value.put("sideYardValueTwentyFour", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_FOUR));
+	                	value.put("sideYardValueTwentyFive", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_FIVE));
+	                	value.put("sideYardValueTwentySix", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_SIX));
+	                	value.put("sideYardValueTwentySeven", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_SEVEN));
+	                	value.put("sideYardValueTwentyEight", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWENTY_EIGHT));
+	                }
+	                */
 	                
 	                result.add(value);
 	                break; // Exit after finding the first matching rule

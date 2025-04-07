@@ -74,7 +74,6 @@ public class BpaMdmsUtil {
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.FAR);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BALCONY);
 
-        
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BASEMENT);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BATHROOM);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.BATHROOM_WATER_CLOSETS);

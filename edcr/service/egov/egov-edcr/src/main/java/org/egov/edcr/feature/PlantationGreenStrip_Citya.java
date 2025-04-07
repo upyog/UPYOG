@@ -88,7 +88,6 @@ public class PlantationGreenStrip_Citya extends FeatureProcess {
         // Initialize variables to store permissible values for plantation green strip
         BigDecimal plantationGreenStripPlanValue = BigDecimal.ZERO;
         BigDecimal plantationGreenStripMinWidth = BigDecimal.ZERO;
-        BigDecimal plantationGreenStripbuildResult = BigDecimal.ZERO;
 
         // Determine the occupancy type
         String occupancyName = null;
@@ -109,7 +108,6 @@ public class PlantationGreenStrip_Citya extends FeatureProcess {
         ArrayList<String> valueFromColumn = new ArrayList<>();
         valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE); // Minimum plot area for plantation
         valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH); // Minimum width of plantation strip
-        valueFromColumn.add(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_BUILD_RESULT); // Build result for plantation strip
 
         // Initialize a list to store permissible values
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
@@ -122,7 +120,6 @@ public class PlantationGreenStrip_Citya extends FeatureProcess {
         if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE)) {
             plantationGreenStripPlanValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_PLAN_VALUE).toString()));
             plantationGreenStripMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_MIN_WIDTH).toString()));
-            plantationGreenStripbuildResult = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PLANTATION_GREEN_STRIP_BUILD_RESULT).toString()));
         }
 
         // Check if the plot area exceeds the minimum required area for plantation
@@ -158,7 +155,7 @@ public class PlantationGreenStrip_Citya extends FeatureProcess {
 
                     // Add the result to the scrutiny report
                     buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuous plantation green strip",
-                            ">= " + plantationGreenStripbuildResult.toString(),
+                            ">= " + plantationGreenStripMinWidth.toString(),
                             minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS)
                                     .toString());
                 }

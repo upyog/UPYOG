@@ -40,11 +40,8 @@ public class EdcrRulesMdmsConstants {
 	 public static final String PERMISSIBLE_ONE = "permissibleone";
 	 public static final String PERMISSIBLE_TWO = "permissibletwo";
 	 public static final String PERMISSIBLE_THREE = "permissiblethree";
-	 public static final String PERMISSIBLE_FOUR = "permissiblefour";
 
 	 // Bathroom Constants
-	 public static final String BATHROOM_REQUIRED_AREA = "bathroomRequiredArea";
-	 public static final String BATHROOM_REQUIRED_WIDTH = "bathroomRequiredWidth";
 	 public static final String BATHROOM_TOTAL_AREA = "bathroomtotalArea";
 	 public static final String BATHROOM_MIN_WIDTH = "bathroomMinWidth";
 
@@ -52,9 +49,6 @@ public class EdcrRulesMdmsConstants {
 	 public static final String BATHROOM_WC_REQUIRED_AREA = "bathroomWCRequiredArea";
 	 public static final String BATHROOM_WC_REQUIRED_WIDTH = "bathroomWCRequiredWidth";
 	 public static final String BATHROOM_WC_REQUIRED_HEIGHT = "bathroomWCRequiredHeight";
-	 public static final String BATHROOM_WC_REQUIRED_MIN_HEIGHT = "bathroomWCRequiredminHeight";
-	 public static final String BATHROOM_WC_REQUIRED_TOTAL_AREA = "bathroomWCRequiredTotalArea";
-	 public static final String BATHROOM_WC_REQUIRED_MIN_WIDTH = "bathroomWCRequiredminWidth";
 
 	 // ExitWidth constants
 	 public static final String EXIT_WIDTH_OCCUPANCY_TYPE_HANDLER_VAL = "exitWidthOccupancyTypeHandlerVal";
@@ -94,7 +88,6 @@ public class EdcrRulesMdmsConstants {
 	 public static final String FIRE_STAIR_EXPECTED_NO_OF_RISE = "fireStairExpectedNoofRise";
 	 public static final String FIRE_STAIR_MIN_WIDTH = "fireStairMinimumWidth";
 	 public static final String FIRE_STAIR_REQUIRED_TREAD = "fireStairRequiredTread";
-	 public static final String FIRE_STAIR_TYPICAL_REP_FLOOR = "fireStairTypicalRepititiveFloor";
 
 	 // Fire Tender Movement constants
 	 public static final String FIRE_TENDER_MOVEMENT_VALUE_ONE = "fireTenderMovementValueOne";
@@ -130,7 +123,6 @@ public class EdcrRulesMdmsConstants {
 
 	 // Monument Distance constants
 	 public static final String MONUMENT_DISTANCE_ONE = "monumentDistance_distanceOne";
-	 public static final String MONUMENT_DISTANCE_MIN_ONE = "monumentDistance_minDistanceOne";
 	 public static final String MONUMENT_DISTANCE_MIN_TWO = "monumentDistance_minDistanceTwo";
 	 public static final String MONUMENT_DISTANCE_MAX_BUILDING_HEIGHT = "monumentDistance_maxHeightofbuilding";
 	 public static final String MONUMENT_DISTANCE_MAX_BLOCK_HEIGHT = "monumentDistance_maxbuildingheightblock";
@@ -242,34 +234,37 @@ public class EdcrRulesMdmsConstants {
 	 public static final String SANITATION_MIN_AT_GROUND_FLOOR = "sanitationMinatGroundFloor";
 	 public static final String SANITATION_FLOOR_MULTIPLIER = "sanitationFloorMultiplier";
 	 
+	 /*
 	 // SideYardService
-//	 public static final String SIDE_YARD_VALUE_ONE = "sideYardValueOne";
-//	 public static final String SIDE_YARD_VALUE_TWO = "sideYardValueTwo";
-//	 public static final String SIDE_YARD_VALUE_THREE = "sideYardValueThree";
-//	 public static final String SIDE_YARD_VALUE_FOUR = "sideYardValueFour";
-//	 public static final String SIDE_YARD_VALUE_FIVE = "sideYardValueFive";
-//	 public static final String SIDE_YARD_VALUE_SIX = "sideYardValueSix";
-//	 public static final String SIDE_YARD_VALUE_SEVEN = "sideYardValueSeven";
-//	 public static final String SIDE_YARD_VALUE_EIGHT = "sideYardValueEight";
-//	 public static final String SIDE_YARD_VALUE_NINE = "sideYardValueNine";
-//	 public static final String SIDE_YARD_VALUE_TEN = "sideYardValueTen";
-//	 public static final String SIDE_YARD_VALUE_ELEVEN = "sideYardValueEleven";
-//	 public static final String SIDE_YARD_VALUE_TWELVE = "sideYardValueTwelve";
-//	 public static final String SIDE_YARD_VALUE_THIRTEEN = "sideYardValueThirteen";
-//	 public static final String SIDE_YARD_VALUE_FOURTEEN = "sideYardValueFourteen";
-//	 public static final String SIDE_YARD_VALUE_FIFTEEN = "sideYardValueFifteen";
-//	 public static final String SIDE_YARD_VALUE_SIXTEEN = "sideYardValueSixteen";
-//	 public static final String SIDE_YARD_VALUE_SEVENTEEN = "sideYardValueSeventeen";
-//	 public static final String SIDE_YARD_VALUE_EIGHTEEN = "sideYardValueEighteen";
-//	 public static final String SIDE_YARD_VALUE_NINETEEN = "sideYardValueNineteen";
-//	 public static final String SIDE_YARD_VALUE_TWENTY = "sideYardValueTwenty";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_ONE = "sideYardValueTwentyOne";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_TWO = "sideYardValueTwentyTwo";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_THREE = "sideYardValueTwentyThree";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_FOUR = "sideYardValueTwentyFour";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_FIVE = "sideYardValueTwentyFive";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_SIX = "sideYardValueTwentySix";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_SEVEN = "sideYardValueTwentySeven";
-//	 public static final String SIDE_YARD_VALUE_TWENTY_EIGHT = "sideYardValueTwentyEight";
+	 public static final String SIDE_YARD_VALUE_ONE = "sideYardValueOne";
+	 public static final String SIDE_YARD_VALUE_TWO = "sideYardValueTwo";
+	 public static final String SIDE_YARD_VALUE_THREE = "sideYardValueThree";
+	 public static final String SIDE_YARD_VALUE_FOUR = "sideYardValueFour";
+	 public static final String SIDE_YARD_VALUE_FIVE = "sideYardValueFive";
+	 public static final String SIDE_YARD_VALUE_SIX = "sideYardValueSix";
+	 public static final String SIDE_YARD_VALUE_SEVEN = "sideYardValueSeven";
+	 public static final String SIDE_YARD_VALUE_EIGHT = "sideYardValueEight";
+	 public static final String SIDE_YARD_VALUE_NINE = "sideYardValueNine";
+	 public static final String SIDE_YARD_VALUE_TEN = "sideYardValueTen";
+	 public static final String SIDE_YARD_VALUE_ELEVEN = "sideYardValueEleven";
+	 public static final String SIDE_YARD_VALUE_TWELVE = "sideYardValueTwelve";
+	 public static final String SIDE_YARD_VALUE_THIRTEEN = "sideYardValueThirteen";
+	 public static final String SIDE_YARD_VALUE_FOURTEEN = "sideYardValueFourteen";
+	 public static final String SIDE_YARD_VALUE_FIFTEEN = "sideYardValueFifteen";
+	 public static final String SIDE_YARD_VALUE_SIXTEEN = "sideYardValueSixteen";
+	 public static final String SIDE_YARD_VALUE_SEVENTEEN = "sideYardValueSeventeen";
+	 public static final String SIDE_YARD_VALUE_EIGHTEEN = "sideYardValueEighteen";
+	 public static final String SIDE_YARD_VALUE_NINETEEN = "sideYardValueNineteen";
+	 public static final String SIDE_YARD_VALUE_TWENTY = "sideYardValueTwenty";
+	 public static final String SIDE_YARD_VALUE_TWENTY_ONE = "sideYardValueTwentyOne";
+	 public static final String SIDE_YARD_VALUE_TWENTY_TWO = "sideYardValueTwentyTwo";
+	 public static final String SIDE_YARD_VALUE_TWENTY_THREE = "sideYardValueTwentyThree";
+	 public static final String SIDE_YARD_VALUE_TWENTY_FOUR = "sideYardValueTwentyFour";
+	 public static final String SIDE_YARD_VALUE_TWENTY_FIVE = "sideYardValueTwentyFive";
+	 public static final String SIDE_YARD_VALUE_TWENTY_SIX = "sideYardValueTwentySix";
+	 public static final String SIDE_YARD_VALUE_TWENTY_SEVEN = "sideYardValueTwentySeven";
+	 public static final String SIDE_YARD_VALUE_TWENTY_EIGHT = "sideYardValueTwentyEight";
+	 
+	 */
 
 }

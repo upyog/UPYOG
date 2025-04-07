@@ -78,6 +78,8 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
     // Rule identifier and description for government building distance scrutiny
     private static final String RULE_21 = "21";
     public static final String GOVTBUILDING_DESCRIPTION = "Distance from Government Building";
+    public static final String BUILDING_HEIGHT = "Building Height: ";
+    public static final String MT = "mt";
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -124,10 +126,8 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
         // Variables to store permissible and actual values
         BigDecimal minDistanceFromGovtBuilding = BigDecimal.ZERO;
         BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-        String GovtBuildingDistanceValue = "0";
-        BigDecimal GovtBuildingDistanceMin = BigDecimal.ZERO;
+        BigDecimal GovtBuildingDistanceValue = BigDecimal.ZERO;
         BigDecimal GovtBuildingDistanceMaxHeight = BigDecimal.ZERO;
-        String GovtBuildingDistancePermitted = "0";
 
         // Fetch distances from government buildings and blocks in the plan
         List<BigDecimal> distancesFromGovtBuilding = pl.getDistanceToExternalEntity().getGovtBuildings();
@@ -163,10 +163,8 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
         }
 
         if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE)) {
-            GovtBuildingDistanceValue = permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE).toString();
-            GovtBuildingDistanceMin = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MIN).toString()));
+            GovtBuildingDistanceValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_VALUE).toString()));
             GovtBuildingDistanceMaxHeight = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_MAX_HEIGHT).toString()));
-            GovtBuildingDistancePermitted = permissibleValue.get(0).get(EdcrRulesMdmsConstants.GOVT_BUILDING_DISTANCE_PERMITTED).toString();
         }
 
         // Validate distances from government buildings
@@ -183,8 +181,8 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
                 }
 
                 // Validate the minimum distance and building height
-                if (minDistanceFromGovtBuilding.compareTo(GovtBuildingDistanceMin) > 0) {
-                    details.put(DISTANCE, ">" + GovtBuildingDistanceValue);
+                if (minDistanceFromGovtBuilding.compareTo(GovtBuildingDistanceValue) > 0) {
+                    details.put(DISTANCE, ">" + GovtBuildingDistanceValue.toString());
                     details.put(PERMITTED, "ALL");
                     details.put(PROVIDED, minDistanceFromGovtBuilding.toString());
                     details.put(STATUS, Result.Accepted.getResultVal());
@@ -193,15 +191,15 @@ public class GovtBuildingDistance_Citya extends FeatureProcess {
                 } else {
                     if (maxHeightOfBuilding.compareTo(GovtBuildingDistanceMaxHeight) <= 0) {
                         details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
-                        details.put(PERMITTED, "Building Height: " + GovtBuildingDistancePermitted + "mt");
-                        details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
+                        details.put(PERMITTED, BUILDING_HEIGHT + GovtBuildingDistanceMaxHeight.toString() + MT);
+                        details.put(PROVIDED, BUILDING_HEIGHT + maxHeightOfBuilding + MT);
                         details.put(STATUS, Result.Accepted.getResultVal());
                         scrutinyDetail.getDetail().add(details);
                         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                     } else {
                         details.put(DISTANCE, "<=" + GovtBuildingDistanceValue);
-                        details.put(PERMITTED, "Building Height: " + GovtBuildingDistancePermitted + "mt");
-                        details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
+                        details.put(PERMITTED, BUILDING_HEIGHT + GovtBuildingDistanceMaxHeight.toString() + MT);
+                        details.put(PROVIDED, BUILDING_HEIGHT + maxHeightOfBuilding + MT);
                         details.put(STATUS, Result.Not_Accepted.getResultVal());
                         scrutinyDetail.getDetail().add(details);
                         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

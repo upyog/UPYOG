@@ -103,7 +103,6 @@ public class FireStair_Citya extends FeatureProcess {
     private static BigDecimal fireStairExpectedNoofRise = BigDecimal.ZERO;
     private static BigDecimal fireStairMinimumWidth = BigDecimal.ZERO;
     private static BigDecimal fireStairRequiredTread = BigDecimal.ZERO;
-    private static BigDecimal fireStairTypicalRepititiveFloor = BigDecimal.ZERO;
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -150,7 +149,6 @@ public class FireStair_Citya extends FeatureProcess {
         valueFromColumn.add("fireStairExpectedNoofRise");
         valueFromColumn.add("fireStairMinimumWidth");
         valueFromColumn.add("fireStairRequiredTread");
-        valueFromColumn.add("fireStairTypicalRepititiveFloor");
 
         List<Map<String, Object>> permissibleValue = new ArrayList<>();
         try {
@@ -165,7 +163,6 @@ public class FireStair_Citya extends FeatureProcess {
             fireStairExpectedNoofRise = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairExpectedNoofRise").toString()));
             fireStairMinimumWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairMinimumWidth").toString()));
             fireStairRequiredTread = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairRequiredTread").toString()));
-            fireStairTypicalRepititiveFloor = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get("fireStairTypicalRepititiveFloor").toString()));
         }
 
         // Iterate through all blocks in the plan
@@ -398,7 +395,7 @@ public class FireStair_Citya extends FeatureProcess {
                             if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
                                 try {
                                     validateNoOfRises(plan, errors, block, scrutinyDetailRise, floor,
-                                            typicalFloorValues, flight, fireStair, noOfRises, fireStairExpectedNoofRise, fireStairTypicalRepititiveFloor);
+                                            typicalFloorValues, flight, fireStair, noOfRises, fireStairExpectedNoofRise);
                                 } catch (ArithmeticException e) {
                                     LOG.info("Denominator is zero");
                                 }
@@ -562,11 +559,11 @@ public class FireStair_Citya extends FeatureProcess {
 
     private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues, Flight flight,
-            org.egov.common.entity.edcr.FireStair fireStair, BigDecimal noOfRises, BigDecimal fireStairExpectedNoofRise, BigDecimal fireStairTypicalRepititiveFloor) {
+            org.egov.common.entity.edcr.FireStair fireStair, BigDecimal noOfRises, BigDecimal fireStairExpectedNoofRise) {
         boolean valid = false;
 
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(fireStairTypicalRepititiveFloor)) <= 0) {
+            if (Util.roundOffTwoDecimal(noOfRises).compareTo(Util.roundOffTwoDecimal(fireStairExpectedNoofRise)) <= 0) {
                 valid = true;
             }
 

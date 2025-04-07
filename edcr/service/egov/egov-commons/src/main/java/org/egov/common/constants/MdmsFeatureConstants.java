@@ -30,7 +30,6 @@ public class MdmsFeatureConstants {
 	public static final String FAR = "Far";
 	public static final String BALCONY = "Balcony";
 	
-	
     public static final String BASEMENT = "Basement";
     public static final String BATHROOM = "Bathroom";
     public static final String BATHROOM_WATER_CLOSETS = "BathroomWaterClosets";

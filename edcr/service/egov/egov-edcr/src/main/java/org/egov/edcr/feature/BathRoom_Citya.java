@@ -80,6 +80,8 @@ public class BathRoom_Citya extends FeatureProcess {
     // Rule identifier and description for bathroom scrutiny
     private static final String RULE_41_IV = "41-iv";
     public static final String BATHROOM_DESCRIPTION = "Bathroom";
+    public static final String TOTAL_AREA = "Total Area >= ";
+    public static final String WIDTH = ", Width >= ";
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -107,8 +109,6 @@ public class BathRoom_Citya extends FeatureProcess {
         details.put(DESCRIPTION, BATHROOM_DESCRIPTION);
 
         // Variables to store permissible and actual values
-        BigDecimal bathroomRequiredArea = BigDecimal.ZERO;
-        BigDecimal bathroomRequiredWidth = BigDecimal.ZERO;
         BigDecimal bathroomMinWidth = BigDecimal.ZERO;
         BigDecimal bathroomtotalArea = BigDecimal.ZERO;
         BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
@@ -132,8 +132,6 @@ public class BathRoom_Citya extends FeatureProcess {
                 // Fetch permissible values for bathroom dimensions
                 Map<String, List<Map<String, Object>>> edcrRuleList = pl.getEdcrRulesFeatures();
                 ArrayList<String> valueFromColumn = new ArrayList<>();
-                valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_AREA);
-                valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_WIDTH);
                 valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA);
                 valueFromColumn.add(EdcrRulesMdmsConstants.BATHROOM_MIN_WIDTH);
 
@@ -147,9 +145,7 @@ public class BathRoom_Citya extends FeatureProcess {
                 }
 
                 // Extract permissible values if available
-                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_AREA)) {
-                    bathroomRequiredArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_AREA).toString()));
-                    bathroomRequiredWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_REQUIRED_WIDTH).toString()));
+                if (!permissibleValue.isEmpty() && permissibleValue.get(0).containsKey(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA)) {
                     bathroomtotalArea = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_TOTAL_AREA).toString()));
                     bathroomMinWidth = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.BATHROOM_MIN_WIDTH).toString()));
                 }
@@ -184,14 +180,14 @@ public class BathRoom_Citya extends FeatureProcess {
                         // Validate bathroom dimensions against permissible values
                         if (totalArea.compareTo(bathroomtotalArea) >= 0
                                 && minWidth.compareTo(bathroomMinWidth) >= 0) {
-                            details.put(REQUIRED, " Total Area >= " + bathroomRequiredArea.toString() + ", Width >= " + bathroomRequiredWidth.toString());
-                            details.put(PROVIDED, " Total Area >= " + totalArea + ", Width >= " + minWidth);
+                            details.put(REQUIRED, TOTAL_AREA + bathroomtotalArea.toString() + WIDTH + bathroomMinWidth.toString());
+                            details.put(PROVIDED, TOTAL_AREA + totalArea + WIDTH + minWidth);
                             details.put(STATUS, Result.Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                         } else {
-                            details.put(REQUIRED, ", Total Area >= " + bathroomRequiredArea.toString() + ", Width >= " + bathroomRequiredWidth.toString());
-                            details.put(PROVIDED, ", Total Area >= " + totalArea + ", Width >= " + minWidth);
+                            details.put(REQUIRED, ", " + TOTAL_AREA + bathroomtotalArea.toString() + WIDTH + bathroomMinWidth.toString());
+                            details.put(PROVIDED, ", " + TOTAL_AREA + totalArea + WIDTH + minWidth);
                             details.put(STATUS, Result.Not_Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

@@ -82,6 +82,9 @@ public class GuardRoom_Citya extends FeatureProcess {
     public static final String GUARD_ROOM_DIMENSION_DESCRIPTION = "Guard Room Dimension";
     public static final String GUARD_ROOM_AREA_DESCRIPTION = "Guard Room Area";
     public static final String GUARD_ROOM_HEIGHT_DESCRIPTION = "Guard Room Height";
+    public static final String HEIGHT = "Height";
+    public static final String AREA = "Area";
+    public static final String DIMENSION = "Dimension";
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -190,16 +193,16 @@ public class GuardRoom_Citya extends FeatureProcess {
                 if (minHeight.compareTo(GuardRoomMinHeight) >= 0 && minWidth.compareTo(GuardRoomMinWidth) >= 0) {
                     details.put(RULE_NO, RULE_48_A);
                     details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-                    details.put(REQUIRED, "Dimension > " + GuardRoomMinHeight.toString() + "x" + GuardRoomMinWidth.toString());
-                    details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight);
+                    details.put(REQUIRED, DIMENSION + " > " + GuardRoomMinHeight.toString() + "x" + GuardRoomMinWidth.toString());
+                    details.put(PROVIDED, DIMENSION + ": " + minWidth + "x" + minHeight);
                     details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                 } else {
                     details = new HashMap<>();
                     details.put(RULE_NO, RULE_48_A);
                     details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-                    details.put(REQUIRED, "Dimension > " + GuardRoomMinHeight.toString() + "x" + GuardRoomMinWidth.toString());
-                    details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight);
+                    details.put(REQUIRED, DIMENSION + " > " + GuardRoomMinHeight.toString() + "x" + GuardRoomMinWidth.toString());
+                    details.put(PROVIDED, DIMENSION + ": " + minWidth + "x" + minHeight);
                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                 }
@@ -209,16 +212,16 @@ public class GuardRoom_Citya extends FeatureProcess {
                     details = new HashMap<>();
                     details.put(RULE_NO, RULE_48_A);
                     details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-                    details.put(REQUIRED, "Area <= " + GuardRoomMinArea.toString());
-                    details.put(PROVIDED, "Area: " + minArea);
+                    details.put(REQUIRED, AREA + " <= " + GuardRoomMinArea.toString());
+                    details.put(PROVIDED, AREA + ": " + minArea);
                     details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                 } else {
                     details = new HashMap<>();
                     details.put(RULE_NO, RULE_48_A);
                     details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-                    details.put(REQUIRED, "Area <= " + GuardRoomMinArea.toString());
-                    details.put(PROVIDED, "Area: " + minArea);
+                    details.put(REQUIRED, AREA + " <= " + GuardRoomMinArea.toString());
+                    details.put(PROVIDED, AREA + ": " + minArea);
                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                 }
@@ -228,16 +231,16 @@ public class GuardRoom_Citya extends FeatureProcess {
                     details = new HashMap<>();
                     details.put(RULE_NO, RULE_48_A);
                     details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-                    details.put(REQUIRED, "Height >= " + GuardRoomMinCabinHeightOne.toString() + " and <= " + GuardRoomMinCabinHeightTwo.toString());
-                    details.put(PROVIDED, "Height: " + minCabinHeight + "m");
+                    details.put(REQUIRED, HEIGHT + " >= " + GuardRoomMinCabinHeightOne.toString() + " and <= " + GuardRoomMinCabinHeightTwo.toString());
+                    details.put(PROVIDED, HEIGHT + ": " + minCabinHeight + "m");
                     details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                 } else {
                     details = new HashMap<>();
                     details.put(RULE_NO, RULE_48_A);
                     details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-                    details.put(REQUIRED, "Height >= " + GuardRoomMinCabinHeightOne.toString() + " and <= " + GuardRoomMinCabinHeightTwo.toString());
-                    details.put(PROVIDED, "Height: " + minCabinHeight + "m");
+                    details.put(REQUIRED, HEIGHT + " >= " + GuardRoomMinCabinHeightOne.toString() + " and <= " + GuardRoomMinCabinHeightTwo.toString());
+                    details.put(PROVIDED, HEIGHT + ": " + minCabinHeight + "m");
                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                 }

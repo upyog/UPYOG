@@ -119,7 +119,6 @@ public class Basement_Citya extends FeatureProcess {
         BigDecimal basementValue = BigDecimal.ZERO;
         BigDecimal basementValuetwo = BigDecimal.ZERO;
         BigDecimal basementValuethree = BigDecimal.ZERO;
-        BigDecimal basementValuefour = BigDecimal.ZERO;
 
         // Check if the building plan has blocks
         if (pl.getBlocks() != null) {
@@ -147,8 +146,6 @@ public class Basement_Citya extends FeatureProcess {
                     valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_ONE);
                     valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_TWO);
                     valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_THREE);
-                    valueFromColumn.add(EdcrRulesMdmsConstants.PERMISSIBLE_FOUR);
-
 
                     List<Map<String, Object>> permissibleValue = new ArrayList<>();
 
@@ -167,7 +164,6 @@ public class Basement_Citya extends FeatureProcess {
                         basementValue = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_ONE).toString()));
                         basementValuetwo = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_TWO).toString()));
                         basementValuethree = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_THREE).toString()));
-                        basementValuefour = BigDecimal.valueOf(Double.valueOf(permissibleValue.get(0).get(EdcrRulesMdmsConstants.PERMISSIBLE_FOUR).toString()));
                     }
 
                     // Iterate through each floor to check basement conditions
@@ -182,7 +178,7 @@ public class Basement_Citya extends FeatureProcess {
 
                                 minLength = f.getHeightFromTheFloorToCeiling().stream().reduce(BigDecimal::min).get();
 
-                                if (minLength.compareTo(basementValuetwo) >= 0) {
+                                if (minLength.compareTo(basementValue) >= 0) {
                                     // Acceptable height condition
                                     details.put(RULE_NO, RULE_46_6A);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_ONE);
@@ -210,13 +206,13 @@ public class Basement_Citya extends FeatureProcess {
 
                                 minLength = f.getHeightOfTheCeilingOfUpperBasement().stream().reduce(BigDecimal::min).get();
 
-                                if (minLength.compareTo(basementValuethree) >= 0
-                                        && minLength.compareTo(basementValuefour) < 0) {
+                                if (minLength.compareTo(basementValuetwo) >= 0
+                                        && minLength.compareTo(basementValuethree) < 0) {
                                     // Acceptable ceiling height condition
                                     details = new HashMap<>();
                                     details.put(RULE_NO, RULE_46_6C);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between " + basementValuethree.toString() + " to " + basementValuefour.toString());
+                                    details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to " + basementValuethree.toString());
                                     details.put(PROVIDED, minLength.toString());
                                     details.put(STATUS, Result.Accepted.getResultVal());
                                     scrutinyDetail.getDetail().add(details);
@@ -225,7 +221,7 @@ public class Basement_Citya extends FeatureProcess {
                                     details = new HashMap<>();
                                     details.put(RULE_NO, RULE_46_6C);
                                     details.put(DESCRIPTION, BASEMENT_DESCRIPTION_TWO);
-                                    details.put(REQUIRED, "Between " + basementValuethree.toString() + " to " + basementValuefour.toString());
+                                    details.put(REQUIRED, "Between " + basementValuetwo.toString() + " to " + basementValuethree.toString());
                                     details.put(PROVIDED, minLength.toString());
                                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                                     scrutinyDetail.getDetail().add(details);
