@@ -23,6 +23,7 @@ const EditCreate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
   const { data: applicationDetails } = Digit.Hooks.cnd.useCndApplicationDetails(t, tenantId, applicationNumber,isUserDetailRequired);
+  console.log("applicationDetails",applicationDetails);
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
@@ -68,7 +69,6 @@ const EditCreate = () => {
         constructionToDate:data?.propertyNature?.constructionTo || applicationDetails?.applicationData?.applicationData?.constructionToDate,
         propertyType: data?.propertyNature?.propertyUsage?.code||applicationDetails?.applicationData?.applicationData?.propertyType,
         houseArea: data?.propertyNature?.houseArea || applicationDetails?.applicationData?.applicationData?.houseArea,
-        applicantDetailId: applicationDetails?.applicationData?.applicationData?.applicantDetailId,
         totalWasteQuantity: data?.wasteType?.wasteQuantity || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity,
         typeOfConstruction: data?.propertyNature?.constructionType?.code || applicationDetails?.applicationData?.applicationData?.typeOfConstruction,
         noOfTrips: 0,
@@ -78,15 +78,21 @@ const EditCreate = () => {
             disposalId: "",
             netWeight: data?.wasteType?.wasteQuantity || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity
         },
-        wasteTypeDetails: data?.wasteType?.wasteMaterialType?.map(item => ({
-            applicationId: "",
-            wasteTypeId: "",
+        wasteTypeDetails: data?.wasteType?.wasteMaterialType?.map(item => {
+          const matchedWaste = applicationDetails?.applicationData?.applicationData?.wasteTypeDetails?.find(
+            (w) => w.wasteType === item.code
+          );
+        
+          return {
+            applicationId: matchedWaste?.applicationId || "",
+            wasteTypeId: matchedWaste?.wasteTypeId || "",
             enteredByUserType: user?.info?.type,
-            wasteType: item.code, // Using the code value from wasteMaterialType
-            quantity: data?.wasteType?.wasteDetails?.[item.code]?.quantity || 0, // Get quantity from wasteDetails
-            metrics: data?.wasteType?.wasteDetails?.[item.code]?.unit || "", // Get unit from wasteDetails
-            auditDetails: null
-        })) || [],
+            wasteType: item.code,
+            quantity: data?.wasteType?.wasteDetails?.[item.code]?.quantity || 0,
+            metrics: data?.wasteType?.wasteDetails?.[item.code]?.unit || "",
+            auditDetails: matchedWaste?.auditDetails || null
+          };
+        }) || [],
         documentDetails: [
             ...(data?.wasteType?.siteMediaPhoto ? [{
                 documentDetailId: "",
