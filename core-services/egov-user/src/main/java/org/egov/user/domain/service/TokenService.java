@@ -21,14 +21,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TokenService {
 
-	private static final int TOKEN_INVALIDATE_MININUTES = 15;
-
 	private TokenStore tokenStore;
 
 	private ActionRestRepository actionRestRepository;
 
 	@Value("${roles.state.level.enabled}")
 	private boolean isRoleStateLevel;
+	
+	@Value("${access.token.validity.in.minutes}")
+	private int TOKEN_INVALIDATE_MININUTES;
 
 	private TokenService(TokenStore tokenStore, ActionRestRepository actionRestRepository) {
 		this.tokenStore = tokenStore;

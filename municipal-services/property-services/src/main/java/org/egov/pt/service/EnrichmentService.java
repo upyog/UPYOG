@@ -814,9 +814,9 @@ public class EnrichmentService {
 
 		if (!CollectionUtils.isEmpty(property.getUnits()))
 			property.getUnits().forEach(unit -> {
-
 				unit.setId(UUID.randomUUID().toString());
-				unit.setActive(unit.getActive());
+				if(null==unit.getActive())
+					unit.setActive(true);
 			});
 
 		property.getOwners().forEach(owner -> {

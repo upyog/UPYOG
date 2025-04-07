@@ -7,19 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import javax.swing.Spring;
-
-import org.apache.tomcat.util.digester.ArrayStack;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Address;
 import org.egov.pt.models.Appeal;
 import org.egov.pt.models.AppealCriteria;
-import org.egov.pt.models.Assessment;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.GeoLocation;
 import org.egov.pt.models.Institution;
@@ -164,7 +159,7 @@ public class PropertyValidator {
 			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(prop.getPropertyId(), prop.getTenantId(),
 					request.getRequestInfo());
 			if (isBillUnpaid)
-				throw new CustomException("INVALID_PARENT_FOR_BIFURCATION_PENDING PAYMENT",
+				throw new CustomException("INVALID_PARENT_FOR_BIFURCATION_PENDING_PAYMENT",
 						"Parent Property has to be completely paid for before initiating the Bifurcation process");
 		} else {
 			throw new CustomException("INVALID_PARENT_FOR_BIFURCATION",
