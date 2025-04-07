@@ -47,7 +47,6 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 | Topic | Purpose |
 |-------|---------|
 | save-community-hall-booking | Save initial booking |
-| save-community-hall-booking-init | Initialize booking |
 | update-community-hall-booking | Update booking details |
 | update-community-hall-workflow-booking | Update booking after workflow transition |
 
