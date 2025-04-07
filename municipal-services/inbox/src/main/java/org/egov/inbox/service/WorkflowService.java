@@ -276,7 +276,11 @@ public class WorkflowService {
 			// Check if any allowed role exists in the userRoles list
 			boolean hasVendorRole = vendorRoles.stream().anyMatch(allowedRoles::contains);
 
-			// If a matching role exists, remove "CITIZEN" from the list
+			/*
+			 * When a user has both VENDOR and CITIZEN roles, the inbox was displaying statuses related to both roles.
+			 * To make sure only vendor-related statuses are shown in the vendor inbox, we remove the CITIZEN role
+			 * if the user has a vendor role.
+			 */
 			if (hasVendorRole) {
 				vendorRoles.remove(CITIZEN);
 			}
