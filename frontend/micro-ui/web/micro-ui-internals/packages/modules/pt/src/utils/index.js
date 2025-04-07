@@ -814,14 +814,14 @@ export const setUpdatedDocumentDetails = (data) => {
     if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
       documents.push({
         fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
-        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
         id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
         status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
       });
     } else {
       documents.push({
         fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
-        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
       });
     }
   }
