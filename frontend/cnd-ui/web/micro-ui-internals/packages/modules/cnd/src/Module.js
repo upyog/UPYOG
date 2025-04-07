@@ -22,7 +22,7 @@ import CNDApplicationTimeLine from "./components/CNDApplicationTimeLine";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import EditCreate from "./pages/employee/Edit/EditCreate";
 import { ApplicationProvider } from "./pages/employee/Edit/ApplicationContext";
-import Response from "./pages/employee/Edit/Response";
+import EditSubmissionResponse from "./pages/employee/Edit/EditSubmissionResponse";
 import PropertyNature from "./pageComponents/PropertyNature";
 // import EditApplicantDetails from "./pageComponents/EditApplicantDetails";
 // import CndFieldInspectorInfo from "./pageComponents/CndFieldInspectorInfo";
@@ -46,8 +46,7 @@ const componentsToRegister = {
   ApplicationDetails,
   EditCreate,
   ApplicationProvider,
-  Response,
-  Response,
+  EditSubmissionResponse,
   PropertyNature
   // EditApplicantDetails,
   // CndFieldInspectorInfo

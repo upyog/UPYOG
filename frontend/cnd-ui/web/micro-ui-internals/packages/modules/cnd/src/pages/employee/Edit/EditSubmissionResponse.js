@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
 /**
- * Response.js
+ * EditSubmissionResponse.js
  * 
  * This component handles the response view after submitting a CND (Construction and Demolition) application.
  * It triggers the API call to submit the application data when the page loads, displays a banner based on 
@@ -43,7 +43,7 @@ const BannerPicker = (props) => {
   );
 };
 
-const Response = (props) => {
+const EditSubmissionResponse = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const history = useHistory();
@@ -117,4 +117,4 @@ const Response = (props) => {
   );
 };
 
-export default Response;
+export default EditSubmissionResponse;

@@ -23,7 +23,6 @@ const EditCreate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const history = useHistory();
   const { data: applicationDetails } = Digit.Hooks.cnd.useCndApplicationDetails(t, tenantId, applicationNumber,isUserDetailRequired);
-  console.log("applicationDetails",applicationDetails);
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
@@ -69,6 +68,7 @@ const EditCreate = () => {
         constructionToDate:data?.propertyNature?.constructionTo || applicationDetails?.applicationData?.applicationData?.constructionToDate,
         propertyType: data?.propertyNature?.propertyUsage?.code||applicationDetails?.applicationData?.applicationData?.propertyType,
         houseArea: data?.propertyNature?.houseArea || applicationDetails?.applicationData?.applicationData?.houseArea,
+        applicantDetailId: applicationDetails?.applicationData?.applicationData?.applicantDetailId,
         totalWasteQuantity: data?.wasteType?.wasteQuantity || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity,
         typeOfConstruction: data?.propertyNature?.constructionType?.code || applicationDetails?.applicationData?.applicationData?.typeOfConstruction,
         noOfTrips: 0,

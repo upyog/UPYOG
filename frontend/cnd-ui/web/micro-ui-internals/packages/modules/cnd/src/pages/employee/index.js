@@ -22,7 +22,7 @@ const EmployeeApp = () => {
 
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const EditCreate = Digit?.ComponentRegistryService?.getComponent("EditCreate");
-  const EditResponse = Digit?.ComponentRegistryService?.getComponent("Response");
+  const EditResponse = Digit?.ComponentRegistryService?.getComponent("EditSubmissionResponse");
 
   return (
     <span className={"cnd-citizen"}style={{width:"100%"}}>
