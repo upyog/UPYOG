@@ -20,6 +20,7 @@ export const CND_VARIABLES = {
     HOME_PATH: "/digit-ui/citizen"
 };
 
+export const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
 export  const LoadingSpinner = () => (
     <div className="loading-spinner"/>
 );
@@ -54,7 +55,7 @@ export const cndPayload = (data) => {
             houseArea: data?.propertyNature?.houseArea,
             applicantDetailId: user?.info?.uuid,
             totalWasteQuantity: data?.wasteType?.wasteQuantity,
-            typeOfConstruction: data?.constructionType?.constructionType?.code,
+            typeOfConstruction: data?.propertyNature?.constructionType?.code,
             noOfTrips: 0,
             pickupDate:"",
             requestedPickupDate:data?.wasteType?.pickupDate,

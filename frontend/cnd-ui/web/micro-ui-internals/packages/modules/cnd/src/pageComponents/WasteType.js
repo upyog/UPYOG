@@ -1,8 +1,10 @@
-import { CardLabel, FormStep, TextInput, DatePicker, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, FormStep, TextInput, DatePicker, UploadFile, ApplyFilterBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import MultiSelectDropdown from "./MultiSelectDropdown";
-import { LoadingSpinner } from "../utils";
-import { CND_VARIABLES } from "../utils";
+import { CND_VARIABLES,LoadingSpinner } from "../utils";
+import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext";
+import { convertToObject } from "../utils";
+import WasteTypeTable from "./WasteTypeTable";
 
 /**
 * WasteType component that collects information about waste collection requests including
@@ -11,25 +13,67 @@ import { CND_VARIABLES } from "../utils";
 * previously uploaded files between form navigations.
 */
 
-const WasteType = ({ t, config, onSelect, userType, formData }) => {
+const WasteType = ({ t, config, onSelect, formData }) => {
   let validation = {};
-  const [wasteMaterialType, setwasteMaterialType] = useState(formData?.wasteType?.wasteMaterialType || []);
-  const [wasteQuantity, setwasteQuantity] = useState(formData?.wasteType?.wasteQuantity || "");
-  const [pickupDate, setpickupDate] = useState(formData?.wasteType?.pickupDate || "");
+  const isEmployee = window.location.href.includes("/employee") ?true:false;
+  const applicationDetails = isEmployee ? useApplicationDetails():null;
+  const userType = Digit.UserService.getUser().info.type;
+  const inputStyles = { width: userType === "EMPLOYEE" ? "50%" : "100%" };
+  // Process wasteTypeDetails from applicationDetails to get unique waste types
+  const processWasteTypeDetails = (details) => {
+    if (!details || !Array.isArray(details)) return [];
+    // Extract unique waste types
+    const uniqueWasteTypes = [...new Set(details.map(item => item.wasteType))];
+    // Convert each waste type to required format using the existing utility function
+    return uniqueWasteTypes.map(type => convertToObject(type));
+  };
+  const [wasteMaterialType, setwasteMaterialType] = useState(formData?.wasteType?.wasteMaterialType ||  processWasteTypeDetails(applicationDetails?.wasteTypeDetails)|| []);
+  const [wasteQuantity, setwasteQuantity] = useState(formData?.wasteType?.wasteQuantity || applicationDetails?.totalWasteQuantity|| "");
+  const [pickupDate, setpickupDate] = useState(formData?.wasteType?.pickupDate ||applicationDetails?.requestedPickupDate|| "");
   // Separate loading states for each file type
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [isUploadingStack, setIsUploadingStack] = useState(false);
-  
   const [error, setError] = useState(null);
   const [fileUploads, setFileUploads] = useState({
     siteMediaPhoto: formData?.wasteType?.siteMediaPhoto || null,
     siteStack: formData?.wasteType?.siteStack || null,
   });
+
   // Initially the files state should just be empty, as we don't have the actual File objects
   const [files, setFiles] = useState({ 
     siteMediaPhoto: null, 
     siteStack: null 
   });
+
+   // Initialize state for quantity and units for each waste type
+   const [wasteDetails, setWasteDetails] = useState(() => {
+    // If we have existing form data, use it
+    if (formData?.wasteType?.wasteDetails) {
+      return formData.wasteType.wasteDetails;
+    }
+    
+    // If we have application details, convert to the required format
+    if (applicationDetails?.wasteTypeDetails && Array.isArray(applicationDetails.wasteTypeDetails)) {
+      const detailsByType = {};
+      
+      // Group details by waste type
+      applicationDetails.wasteTypeDetails.forEach(detail => {
+        if (!detailsByType[detail.wasteType]) {
+          detailsByType[detail.wasteType] = {
+            quantity: detail.quantity || 0,
+            unit: detail.unit || "Kilogram"
+          };
+        }
+      });
+      
+      return detailsByType;
+    }
+    
+    return {};
+  });
+
+  
+
 
   // this useEffect to set the proper UI state when component loads
   useEffect(() => {
@@ -98,6 +142,95 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
     setwasteQuantity(e.target.value);
   }
 
+  const handleWasteTypeChange = (selectedTypes) => {
+    setwasteMaterialType(selectedTypes);
+     // Initialize details for newly selected waste types
+     const updatedDetails = { ...wasteDetails };
+     selectedTypes.forEach(type => {
+       if (!updatedDetails[type.code]) {
+         updatedDetails[type.code] = {
+           quantity: 0,
+           unit: "Kilogram"
+         };
+       }
+     });
+     
+     // Remove details for deselected waste types
+     Object.keys(updatedDetails).forEach(key => {
+       if (!selectedTypes.some(type => type.code === key)) {
+         delete updatedDetails[key];
+       }
+     });
+     
+     setWasteDetails(updatedDetails);
+   };
+ 
+   // Handle quantity change for a specific waste type
+   const handleQuantityChange = (wasteType, value) => {
+     setWasteDetails(prev => ({
+       ...prev,
+       [wasteType]: {
+         ...prev[wasteType],
+         quantity: value
+       }
+     }));
+   };
+ 
+   // Handle unit change for a specific waste type
+   const handleUnitChange = (wasteType, unit) => {
+     setWasteDetails(prev => ({
+       ...prev,
+       [wasteType]: {
+         ...prev[wasteType],
+         unit: unit
+       }
+     }));
+   };
+
+   // Available unit options
+  const unitOptions = ["Kilogram", "Ton", "Metric Ton", "No."];
+
+  // Handle adding a new waste type from the WasteTypeTable component
+  const handleAddWasteType = (wasteType, quantity, unit) => {
+    // Add to wasteMaterialType if not already present
+    if (!wasteMaterialType.some(type => type.code === wasteType.code)) {
+      setwasteMaterialType(prev => [...prev, wasteType]);
+    }
+    
+    // Add to wasteDetails
+    setWasteDetails(prev => ({
+      ...prev,
+      [wasteType.code]: {
+        quantity: quantity || "",
+        unit: unit || "Kilogram"
+      }
+    }));
+  };
+
+
+  useEffect(() => {
+    if(isEmployee){
+    onSelect(config?.key, {
+      wasteMaterialType,
+      wasteQuantity,
+      pickupDate,
+      wasteDetails
+    })};
+  }, [wasteMaterialType, wasteQuantity, pickupDate, wasteDetails]);
+  
+  // TODO: For Handling the  removing a waste type will use in future
+  // const handleRemoveWasteType = (wasteTypeCode) => {
+  //   // Remove from wasteMaterialType
+  //   setwasteMaterialType(prev => prev.filter(type => type.code !== wasteTypeCode));
+    
+  //   // Remove from wasteDetails
+  //   setWasteDetails(prev => {
+  //     const updated = { ...prev };
+  //     delete updated[wasteTypeCode];
+  //     return updated;
+  //   });
+  // };
+
   const goNext = () => {
     let wasteTypeStep = {
       ...formData.wasteType,
@@ -119,8 +252,29 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
           <CardLabel>
             {`${t("CND_WASTE_TYPE")}`} <span className="astericColor">*</span>
           </CardLabel>
-          <MultiSelectDropdown options={common} selectedValues={wasteMaterialType} onChange={setwasteMaterialType} optionKey="i18nKey" t={t} />
-          
+          { isEmployee ?
+          (
+            <WasteTypeTable
+              selectedWasteTypes={wasteMaterialType}
+              wasteDetails={wasteDetails}
+              onQuantityChange={handleQuantityChange}
+              onUnitChange={handleUnitChange}
+              t={t}
+              unitOptions={unitOptions}
+              availableWasteTypes={common}
+              onAddWasteType={handleAddWasteType}
+            />)
+          :
+         (<MultiSelectDropdown 
+          options={common} 
+          selectedValues={wasteMaterialType} 
+          onChange={setwasteMaterialType} 
+          optionKey="i18nKey" 
+          t={t} 
+          style={{inputStyles}}
+          />
+          )}
+         
           <CardLabel>
             {`${t("CND_WASTE_QUANTITY")}`}<span className="astericColor">*</span>
           </CardLabel>
@@ -132,6 +286,7 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
             name="wasteQuantity"
             value={wasteQuantity}
             onChange={setWasteQuantity}
+            style={inputStyles}
             ValidationRequired={false}
             {...(validation = {
               isRequired: false,
@@ -148,15 +303,17 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
             onChange={setpickupDate}
             placeholder={"From (mm/yy)"}
             inputFormat="MM/yy"
+            style={inputStyles}
             min={new Date().toISOString().split("T")[0]} // Prevents selecting past dates
             rules={{
               required: t("CORE_COMMON_REQUIRED_ERRMSG"),
               validDate: (val) => (/^\d{4}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), // Validates MM/YY format
             }}
           />
-          
+         { !isEmployee && (
+          <React.Fragment>
           <CardLabel>{`${t("CND_SITE_MEDIA")}`}</CardLabel>
-          <div style={{ marginBottom: "15px" }}>
+          <div style={{ marginBottom: "15px", width:"100%" }}>
             <UploadFile
               onUpload={(e) => handleFileUpload(e, "siteMediaPhoto")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteMediaPhoto: null }))}
@@ -174,11 +331,12 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
                 )
               }
               accept=".pdf, .jpeg, .jpg, .png"
+              style={{inputStyles}}
             />
           </div>
           
           <CardLabel>{`${t("CND_SITE_STACK")}`}</CardLabel>
-          <div style={{ marginBottom: "20px" }}>
+          <div style={{ marginBottom: "20px", width:"100%" }}>
             <UploadFile
               onUpload={(e) => handleFileUpload(e, "siteStack")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteStack: null }))}
@@ -196,8 +354,10 @@ const WasteType = ({ t, config, onSelect, userType, formData }) => {
                 )
               }
               accept=".pdf, .jpeg, .jpg, .png"
+              style={{inputStyles}}
             />
           </div>
+          </React.Fragment>)}
         </div>
       </FormStep>
     </React.Fragment>

@@ -6,10 +6,8 @@ import CndCreate from "./pages/citizen/Create";
 import CitizenApp from "./pages/citizen";
 import CndRequirementDetails from "./pageComponents/CndRequirementDetails"; 
 import RequestPickup from "./pageComponents/RequestPickup";
-import ConstructionType from "./pageComponents/ConstructionType";
 import LocationPopup from "./components/LocationPopup";
 import { LocationDetails } from "./components/LocationDetails";
-import PropertyNature from "./pageComponents/PropertyNature";
 import WasteType from "./pageComponents/WasteType";
 import MultiSelectDropdown from "./pageComponents/MultiSelectDropdown";
 import CndCheckPage from "./pages/citizen/Create/CndCheckPage";
@@ -22,17 +20,21 @@ import { TableConfig } from "./config/inbox-table-config";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import CNDApplicationTimeLine from "./components/CNDApplicationTimeLine";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
+import EditCreate from "./pages/employee/Edit/EditCreate";
+import { ApplicationProvider } from "./pages/employee/Edit/ApplicationContext";
+import EditSubmissionResponse from "./pages/employee/Edit/EditSubmissionResponse";
+import PropertyNature from "./pageComponents/PropertyNature";
+// import EditApplicantDetails from "./pageComponents/EditApplicantDetails";
+// import CndFieldInspectorInfo from "./pageComponents/CndFieldInspectorInfo";
 
 
 const componentsToRegister = {
   ApplicantDetails,
   CndCreate,
   CndRequirementDetails,
-  ConstructionType,
   LocationPopup,
   LocationDetails,
   RequestPickup,
-  PropertyNature,
   WasteType,
   MultiSelectDropdown,
   AddressDetails,
@@ -41,7 +43,13 @@ const componentsToRegister = {
   MyRequests,
   CndApplicationDetails,
   CNDApplicationTimeLine,
-  ApplicationDetails
+  ApplicationDetails,
+  EditCreate,
+  ApplicationProvider,
+  EditSubmissionResponse,
+  PropertyNature
+  // EditApplicantDetails,
+  // CndFieldInspectorInfo
   };
   
   // function to register the component as per standard 

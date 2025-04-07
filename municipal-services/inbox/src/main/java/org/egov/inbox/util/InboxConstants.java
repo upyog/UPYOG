@@ -18,5 +18,6 @@ public class InboxConstants {
 	public static final String LIMIT_PARAM = "limit";
 	public static final String SORT_ORDER_PARAM = "sortOrder";
 	public static final String DESC_PARAM = "DESC";
+	public static final String CITIZEN = "CITIZEN";
 
 }

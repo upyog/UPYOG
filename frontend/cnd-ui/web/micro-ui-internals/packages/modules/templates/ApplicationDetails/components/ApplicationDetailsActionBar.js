@@ -6,11 +6,6 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
   const { t } = useTranslation();
   let user = Digit.UserService.getUser();
   const menuRef = useRef();
-  // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
-  //   const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
-  //   const userInfo = userInfos ? JSON.parse(userInfos) : {};
-  //   user = userInfo?.value;
-  // }
   const userRoles = user?.info?.roles?.map((e) => e.code);
   let isSingleButton = false;
   let isMenuBotton = false;
@@ -28,7 +23,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
   // if (((window.location.href.includes("/obps") || window.location.href.includes("/noc")) && actions?.length == 1) || (actions?.[0]?.redirectionUrl?.pathname.includes("/pt/property-details/")) && actions?.length == 1) {
   //   isMenuBotton = false;
   //   isSingleButton = true; 
-  // } else 
+  // } else
   if (actions?.length > 0) {
     isMenuBotton = true; 
     isSingleButton = false;

@@ -202,7 +202,7 @@ public class UserService {
     public UserDetailResponseV2 getUser(UserSearchRequestV2 userSearchRequest) {
 
         StringBuilder uri = new StringBuilder(config.getUserHost())
-                .append(config.getUserSearchEndpoint());
+                .append(config.getUserV2SearchEndpoint());
         UserDetailResponseV2 userDetailResponse = userServiceCall(userSearchRequest, uri);
         return userDetailResponse;
     }
@@ -218,10 +218,10 @@ public class UserService {
     private UserDetailResponseV2 userServiceCall(Object userRequest, StringBuilder url) {
 
         String dobFormat = null;
-        if (url.indexOf(config.getUserSearchEndpoint()) != -1
-                || url.indexOf(config.getUserUpdateEndpoint()) != -1)
+        if (url.indexOf(config.getUserV2SearchEndpoint()) != -1
+                || url.indexOf(config.getUserV2UpdateEndpoint()) != -1)
             dobFormat = "yyyy-MM-dd";
-        else if (url.indexOf(config.getUserCreateEndpoint()) != -1)
+        else if (url.indexOf(config.getUserV2CreateEndpoint()) != -1)
             dobFormat = "dd/MM/yyyy";
         try {
             Object response = serviceRequestRepository.fetchResult(url, userRequest);

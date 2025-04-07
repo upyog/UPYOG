@@ -21,4 +21,8 @@ public interface CNDServiceRepository {
 	void saveCNDWasteAndDocumentDetail(List<WasteTypeDetail> wasteTypeDetails, List<DocumentDetail> documentDetails,
 			String applicationId);
 
+	List<WasteTypeDetail> getCNDWasteTypeDetail(CNDServiceSearchCriteria cndServiceSearchCriteria);
+	
+	List<DocumentDetail> getCNDDocumentDetail(CNDServiceSearchCriteria cndServiceSearchCriteria);
+
 }
