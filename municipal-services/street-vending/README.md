@@ -23,19 +23,31 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 - egov-enc-service  
 - egov-demand  
 - egov-billing-service
-- egov-notification
+- egov-notification-sms
+- egov-user-event
 
 ---
 
 ## API Documentation
 
 - [Swagger API Contract](http://localhost:8080/sv-services/swagger-ui.html#/street-vending-controller)
-  > ℹ️ You can access this locally after port-forwarding the service. Use the following command:
 
-  ```bash
-  kubectl port-forward svc/<your-service-name> 8080:8080 -n <your-namespace>
+> 🛠️ **Local Access:**
+>
+> If you're running the service locally (e.g., via IntelliJ or Spring Boot), you can directly open the Swagger UI using the link above.
+
+> 🚀 **Access via Kubernetes (using `kubectl`):**
+>
+> To access the API from a Kubernetes pod, use the following port-forward command:
+>
+> ```bash
+> kubectl port-forward sv-services-9c47c6c87 -n egov 8080:8080
+> ```
+>
+> After that, open: [http://localhost:8080/sv-services/swagger-ui.html](http://localhost:8080/sv-services/swagger-ui.html)
 
 ---
+
 
 ## Key Modules / Features
 
