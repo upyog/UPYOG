@@ -8,7 +8,7 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 
 ## API Documentation
 
-- [Swagger UI](http://localhost:8080/chb-services/swagger-ui.html#/)
+- [Swagger UI](http://localhost:8080/chb-services/swagger-ui.html#/community-hall-booking-controller)
 
 > 🛠️ **Use Locally:**  
 > Run the service (e.g., via IntelliJ or Spring Boot), then access Swagger UI from your browser.
@@ -16,9 +16,9 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 > 🚀 **Using Kubernetes:**  
 > Run the following command to access locally:
 > ```bash
-> kubectl port-forward <chb-pod-name> -n egov 8080:8080
+> kubectl port-forward chb-services-674d689448-wxtz7 -n egov 8080:8080
 > ```
-> Then open: [http://localhost:8080/chb-services/swagger-ui.html](http://localhost:8080/chb-services/swagger-ui.html)
+> Then open: [http://localhost:8080/chb-services/swagger-ui.html#/community-hall-booking-controller](http://localhost:8080/chb-services/swagger-ui.html#/community-hall-booking-controller)
 
 ---
 
@@ -70,13 +70,15 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 
 ## API Endpoints
 
-### Base Path: `/chb-services/community-hall-booking`
+### Base Path: `/chb-services/booking/v1`
 
 | Action | Endpoint | Method | Description |
 |--------|----------|--------|-------------|
 | Create Booking | `/_create` | POST | Submit a new booking application |
 | Update Booking | `/_update` | POST | Update existing booking |
 | Search Bookings | `/_search` | POST | Filter bookings by multiple parameters |
+| Estimate Bookings | `/_estimate` | POST | Estimate demand for booking |
+| Slot-search Bookings | `/_slot-search` | POST | Check slot availability for halls |
 
 ---
 
@@ -85,6 +87,8 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 | Key | Format |
 |-----|--------|
 | Booking ID | `CHB-[CITY.CODE]-[seq_chb_booking_id]` |
+| Receipt ID | `CHB/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
+| Permission Letter | `CHB/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
 
 ---
 
@@ -156,10 +160,3 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 | Enable Decryption | `chb.decryption.abac.enabled=false` |
 
 ---
-
-## Redis (Optional)
-
-> Redis configuration is disabled in this setup. Uncomment if needed:
-```properties
-# spring.redis.host=localhost
-# spring.redis.port=6379
