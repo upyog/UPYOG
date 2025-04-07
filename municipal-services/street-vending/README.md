@@ -30,6 +30,10 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 ## API Documentation
 
 - [Swagger API Contract](http://localhost:8080/sv-services/swagger-ui.html#/street-vending-controller)
+  > ℹ️ You can access this locally after port-forwarding the service. Use the following command:
+
+  ```bash
+  kubectl port-forward svc/<your-service-name> 8080:8080 -n <your-namespace>
 
 ---
 
