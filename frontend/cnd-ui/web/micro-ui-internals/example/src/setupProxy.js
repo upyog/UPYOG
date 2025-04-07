@@ -30,6 +30,8 @@ module.exports = function (app) {
     "/cnd-service/v1/_create",
     "/cnd-service/v1/_search",
     "/inbox/v1/_search",
+    "/egov-hrms/employees/_search",
+    "/cnd-service/v1/_update"
     
   ].forEach((location) => app.use(location, createProxy));
 /**

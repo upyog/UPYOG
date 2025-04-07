@@ -42,8 +42,8 @@ In Parent Component,  we are passing the data as a props coming through params (
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("CND_TYPE_CONSTRUCTION")}
-              text={`${t(checkForNA(constructionType?.constructionType?.code))}`}
-              actionButton={<ActionButton jumpTo={`/cnd-ui/citizen/cnd/apply/construction-details`} />}
+              text={`${t(checkForNA(propertyNature?.constructionType?.code))}`}
+              actionButton={<ActionButton jumpTo={`/cnd-ui/citizen/cnd/apply/property`} />}
           />
           <Row
               label={t("CND_AREA_HOUSE")}

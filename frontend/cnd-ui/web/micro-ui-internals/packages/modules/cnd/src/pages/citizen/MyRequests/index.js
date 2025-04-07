@@ -24,17 +24,8 @@ export const MyRequests = () => {
     : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.cnd.useCndSearchApplication({ filters: filter1 }, { filters: filter1 });
-  console.log("daratattatain files",data);
   const {cndApplicationDetail: applicationsList } = data || {};
-//   let combinedApplicationNumber = applicationsList?.length > 0 ? applicationsList?.map((ob) => ob?.applicationNumber) : [];
-//   let serviceSearchArgs = {
-//     tenantId : tenantId,
-//     referenceIds : combinedApplicationNumber,
-//   }
-
-//   const { isLoading:serviceloading, data : servicedata} = Digit.Hooks.useFeedBackSearch({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : combinedApplicationNumber?.length > 0 ?true : false, cacheTime : 0 });
-
-
+  
   if (isLoading) {
     return <Loader />;
   }

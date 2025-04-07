@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextInput,
@@ -22,17 +22,6 @@ import { useTranslation } from "react-i18next";
 const fieldComponents = {
   date: DatePicker,
   mobileNumber: MobileNumber,
-//   Locality: (props) => (
-//     <Localities
-//       tenantId={Digit.ULBService.getCurrentTenantId()}
-//       selectLocality={props.onChange}
-//       keepNull={false}
-//       boundaryType="revenue"
-//       selected={props.value}
-//       disableLoader={true}
-//       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
-//     />
-//   ),
 };
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
@@ -54,28 +43,6 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   };
 
   const mobileView = innerWidth <= 640;
-
-  // useEffect(() => {
-  //   searchFields.forEach(({ pattern, name, maxLength, minLength, errorMessages, ...el }) => {
-  //     const value = form[name];
-  //     const error = formState.errors[name];
-  //     if (pattern) {
-  //       if (!new RegExp(pattern).test(value) && !error)
-  //         setError(name, { type: "pattern", message: t(errorMessages?.pattern) || t(`PATTERN_${name.toUpperCase()}_FAILED`) });
-  //       else if (new RegExp(pattern).test(value) && error?.type === "pattern") clearErrors([name]);
-  //     }
-  //     if (minLength) {
-  //       if (value?.length < minLength && !error)
-  //         setError(name, { type: "minLength", message: t(errorMessages?.minLength || `MINLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length >= minLength && error?.type === "minLength") clearErrors([name]);
-  //     }
-  //     if (maxLength) {
-  //       if (value?.length > maxLength && !error)
-  //         setError(name, { type: "maxLength", message: t(errorMessages?.maxLength || `MAXLENGTH_${name.toUpperCase()}_FAILED`) });
-  //       else if (value?.length <= maxLength && error?.type === "maxLength") clearErrors([name]);
-  //     }
-  //   });
-  // }, [form, formState, setError, clearErrors]);
 
 
   const onSubmitInput = (data) => {
@@ -184,6 +151,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                    style={{width:"60%"}}
                     submit
                   />
                   {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}

@@ -1,10 +1,9 @@
 import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 
 const CndApplicationData = ({ application, tenantId, buttonLabel }) => {
-    console.log("applicationapplication",application);
   const { t } = useTranslation();
   const history = useHistory();
 

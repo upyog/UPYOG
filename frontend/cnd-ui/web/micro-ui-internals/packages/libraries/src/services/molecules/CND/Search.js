@@ -15,7 +15,6 @@ export const CNDSearch = {
 
   application: async (tenantId, filters = {}) => {
     const response = await CNDService.search({ tenantId, filters });
-    console.log("rreeehgvbde sfews",response);
     return response.cndApplicationDetail[0];
   },
 
@@ -59,6 +58,15 @@ export const CNDSearch = {
           { title: "LOCALITY", value: response?.addressDetail?.locality },
           { title: "PINCODE", value: response?.addressDetail?.pinCode },
         ]),
+      },
+      {
+        title: "CND_WASTE_DETAILS",
+        asSectionHeader: true,
+        values: response?.wasteTypeDetails?.map((items,index)=>{
+          return {
+            title: `${t("CND_WASTE_TYPE")} ${index + 1}`, value: items?.wasteType,
+          };
+        })
       },
 
     ];
