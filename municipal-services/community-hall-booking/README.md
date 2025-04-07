@@ -8,7 +8,7 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 
 ## API Documentation
 
-- [Swagger UI](http://localhost:8080/chb-services/swagger-ui.html#/community-hall-booking-controller)
+- [Swagger API Contract](http://localhost:8080/chb-services/swagger-ui.html#/community-hall-booking-controller)
 
 > 🛠️ **Use Locally:**  
 > Run the service (e.g., via IntelliJ or Spring Boot), then access Swagger UI from your browser.
@@ -147,6 +147,7 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 | Description | Template |
 |-------------|----------|
 | Payment Link | `citizen/otpLogin?mobileNo=$mobile&redirectTo=digit-ui/citizen/payment/my-bills/$businessService/$consumerCode` |
+| Download Receipt ID | `citizen/otpLogin?mobileNo=$mobile&redirectTo=egov-common/download-receipt?status=success&consumerCode=$consumerCode&tenantId=$tenantId&receiptNumber=$receiptNumber&businessService=$businessService&smsLink=true&mobileNo=$mobile` |
 | Download Permission Letter | `citizen/otpLogin?mobileNo=$mobile&redirectTo=egov-common/download-receipt?status=success&consumerCode=$consumerCode&tenantId=$tenantId&receiptNumber=$receiptNumber&businessService=$businessService&smsLink=true&mobileNo=$mobile` |
 
 ---
