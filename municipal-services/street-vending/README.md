@@ -14,6 +14,7 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 
 - egov-user  
 - egov-mdms  
+- egov-mdms-v2
 - egov-idgen  
 - egov-workflow-v2  
 - egov-filestore  
@@ -21,6 +22,8 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 - egov-url-shortening  
 - egov-enc-service  
 - egov-demand  
+- egov-billing-service
+- egov-notification
 
 ---
 
@@ -89,16 +92,25 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 | `egov.core.notification.email` | Email |
 | `persist-user-events-async` | User event |
 
+### 🔁 **Consumer Topics**
+
+| **Topic**                                  | **Consumed By**            | **Purpose**                          |
+|--------------------------------------------|-----------------------------|--------------------------------------|
+| `${persister.create.street-vending.topic}` | `NotificationConsumer`      | Process notifications on creation   |
+| `${persister.update.street-vending.topic}` | `NotificationConsumer`      | Process notifications on update     |
+| `${kafka.topics.receipt.create}`           | `PaymentUpdateConsumer`     | Handle payment update events         |
+
+
 ---
 
 ## API Endpoints
 
-### BasePath: `/sv-services/vendors`
+### BasePath: `/sv-services/street-vending`
 
 | Action | Endpoint | Method | Description |
 |--------|----------|--------|-------------|
 | Create Vendor | `/_create` | POST | Creates a new street vending application. If marked as draft, creates a draft instead. |
-| Update Vendor | `/_update` | POST | Updates an existing application. |
+| Update Vendor | `/_update` | POST | Updates an existing application. Handles both draft and submitted applications. |
 | Search Vendors | `/_search` | POST | Searches vendors using various filters. |
 | Delete Draft | `/_deletedraft` | POST | Deletes a saved draft using draft ID. |
 | Create Demand | `/_createdemand` | POST | Creates demand for renewal. |
@@ -112,6 +124,7 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 |--------|--------|
 | Application ID | `SV-[CITY.CODE]-[seq_street_vending_application_id]` |
 | Certificate Number | `SV-CT-[seq_street_vending_certificate_no]` |
+| Receipt ID | `SV/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
 
 ---
 
