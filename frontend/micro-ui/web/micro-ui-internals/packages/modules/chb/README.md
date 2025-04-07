@@ -1,5 +1,5 @@
 
-# digit-ui-module-chb
+# Upyog-ui-module-chb
 
 ## Install
 
