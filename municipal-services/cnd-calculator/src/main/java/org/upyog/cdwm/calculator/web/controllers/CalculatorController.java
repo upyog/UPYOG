@@ -35,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @RestController
-@RequestMapping("/cnd-calculator")
 @Slf4j
 public class CalculatorController {
 
