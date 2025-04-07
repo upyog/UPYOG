@@ -397,6 +397,18 @@ public class PropertyQueryBuilder {
 			.append(" )");
 			addToPreparedStatement(preparedStmtList, statusStringList2);
 		}
+		
+		Set<String> channelStringList = new HashSet<>();
+		if (!CollectionUtils.isEmpty(criteria.getChannels())) {
+			criteria.getChannels().forEach(channel -> {
+				channelStringList.add(channel.toString());
+			});
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append(" property.channel IN ( ")
+				.append(createQuery(channelStringList))
+				.append(" )");
+			addToPreparedStatement(preparedStmtList, channelStringList);
+		}
 
 		Set<String> creationReasonsList = criteria.getCreationReason();
 		if(!CollectionUtils.isEmpty(creationReasonsList)){

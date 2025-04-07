@@ -81,7 +81,7 @@ public class ExcelUtils {
 								: null)
 						.channel(EnumUtils.isValidEnum(Channel.class, getCellValue(row.getCell(26)).toUpperCase())
 								? Channel.valueOf(getCellValue(row.getCell(26)).toUpperCase())
-								: null)
+								: Channel.MIGRATION)
 						.units(units).address(address).additionalDetails(additionalDetails).build();
 				propertyList.add(property);
 			}
