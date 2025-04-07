@@ -186,5 +186,12 @@ public class CNDConfiguration {
 
     @Value("${cnd.module.name}")
     private String moduleName;
+    
+    // Calculator
+ 	@Value("${ug.cnd.calculator.host}")
+ 	private String calculatorHost;
+
+ 	@Value("${ug.cnd.calculator.calculate.endpoint}")
+ 	private String calulatorEndPoint;
 
 }

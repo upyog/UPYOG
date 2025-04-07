@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.upyog.cdwm.constants.CNDConstants;
 import org.upyog.cdwm.repository.impl.CNDServiceRepositoryImpl;
 import org.upyog.cdwm.service.CNDService;
+import org.upyog.cdwm.service.CalculationService;
 import org.upyog.cdwm.service.EnrichmentService;
 import org.upyog.cdwm.service.UserService;
 import org.upyog.cdwm.service.WorkflowService;
@@ -43,6 +44,9 @@ public class CNDServiceImpl implements CNDService {
 
     @Autowired
     private WorkflowService workflowService;
+    
+    @Autowired
+    private CalculationService calculationService;
 
     @Autowired
     private CNDServiceRepositoryImpl cndApplicationRepository;
@@ -191,56 +195,60 @@ public class CNDServiceImpl implements CNDService {
 	 * @return The updated CNDApplicationDetail, or null if the update fails.
 	 * @throws CustomException If the application number is invalid.
 	 */
-    
+
 	@Override
 	public CNDApplicationDetail updateCNDApplicationDetails(CNDApplicationRequest cndApplicationRequest,
-	        PaymentRequest paymentRequest, String applicationStatus) {
+			PaymentRequest paymentRequest, String applicationStatus) {
 
-	    String applicationNumber = cndApplicationRequest.getCndApplication().getApplicationNumber();
-	    log.info("Updating Application for Application no: {}", applicationNumber);
+		String applicationNumber = cndApplicationRequest.getCndApplication().getApplicationNumber();
+		log.info("Updating Application for Application no: {}", applicationNumber);
 
-	    if (applicationNumber == null) {
-	        throw new CustomException("INVALID_BOOKING_CODE",
-	                "Application no not valid. Failed to update application status for : " + applicationNumber);
-	    }
+		if (applicationNumber == null) {
+			throw new CustomException("INVALID_BOOKING_CODE",
+					"Application no not valid. Failed to update application status for : " + applicationNumber);
+		}
 
-	    // Fetch existing application details
-	    CNDApplicationDetail cndApplicationDetail = cndApplicationRepository
-	            .getCNDApplicationDetail(
-	                    CNDServiceSearchCriteria.builder().applicationNumber(applicationNumber).build())
-	            .stream().findFirst().orElse(null);
-	    
+		// Fetch existing application details
+		CNDApplicationDetail cndApplicationDetail = cndApplicationRepository
+				.getCNDApplicationDetail(
+						CNDServiceSearchCriteria.builder().applicationNumber(applicationNumber).build())
+				.stream().findFirst().orElse(null);
 
-	    if (cndApplicationDetail == null) {
-	        log.warn("Application not found for applicationNumber: {}", applicationNumber);
-	        return null;
-	    }
+		if (cndApplicationDetail == null) {
+			log.warn("Application not found for applicationNumber: {}", applicationNumber);
+			return null;
+		}
 
-	    // If no payment request, update workflow status and process booking request
-	    if (paymentRequest == null) {
-	        State state = workflowService.updateWorkflowStatus(null, cndApplicationRequest);
-	        enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
-	        updateWasteAndDocumentDetails(cndApplicationRequest);
-	    } else {
-	        // Handle payment request updates
-	    	 State state = workflowService.updateWorkflowStatus(paymentRequest, cndApplicationRequest);
-	         enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
-	         
-	        cndApplicationDetail.getAuditDetails()
-	                .setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-	        cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-	        cndApplicationDetail.setApplicationStatus(applicationStatus);
-	    }
-	    CNDApplicationRequest updatedCNDApplicationRequest = CNDApplicationRequest.builder()
-	            .requestInfo(cndApplicationRequest.getRequestInfo())
-	            .cndApplication(cndApplicationRequest.getCndApplication())
-	            .build();
+		// If no payment request, update workflow status and process booking request
+		if (paymentRequest == null) {
+			State state = workflowService.updateWorkflowStatus(null, cndApplicationRequest);
+			enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
+			updateWasteAndDocumentDetails(cndApplicationRequest);
 
-	    log.info("Updating CND Application in the database: {}", updatedCNDApplicationRequest);
-	    cndApplicationRepository.updateCNDApplicationDetail(updatedCNDApplicationRequest);
+			// If action is APPROVE, create demand
+			if (CNDConstants.ACTION_APPROVE
+					.equals(cndApplicationRequest.getCndApplication().getWorkflow().getAction())) {
+			calculationService.addCalculation(cndApplicationRequest);
+			}
+		} else {
+			// Handle payment request updates
+			State state = workflowService.updateWorkflowStatus(paymentRequest, cndApplicationRequest);
+			enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
 
-	    return updatedCNDApplicationRequest.getCndApplication();
-	    		}
+			cndApplicationDetail.getAuditDetails()
+					.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+			cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+			cndApplicationDetail.setApplicationStatus(applicationStatus);
+		}
+		CNDApplicationRequest updatedCNDApplicationRequest = CNDApplicationRequest.builder()
+				.requestInfo(cndApplicationRequest.getRequestInfo())
+				.cndApplication(cndApplicationRequest.getCndApplication()).build();
+
+		log.info("Updating CND Application in the database: {}", updatedCNDApplicationRequest);
+		cndApplicationRepository.updateCNDApplicationDetail(updatedCNDApplicationRequest);
+
+		return updatedCNDApplicationRequest.getCndApplication();
+	}
 
 	
 	/**
