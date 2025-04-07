@@ -81,6 +81,10 @@ public class InteriorOpenSpaceService_Citya extends FeatureProcess {
     private static final String RULE_43 = "43";
     public static final String INTERNALCOURTYARD_DESCRIPTION = "Internal Courtyard";
     public static final String VENTILATIONSHAFT_DESCRIPTION = "Ventilation Shaft";
+    public static final String AREA = "Area  ";
+    public static final String MINIMUM_AREA = "Minimum area ";
+    public static final String MINIMUM_WIDTH = "Minimum width ";
+    public static final String AT_FLOOR = " at floor ";
 
     // Variables to store permissible values for interior open spaces
     public static BigDecimal minInteriorAreaValueOne = BigDecimal.ZERO;
@@ -255,12 +259,12 @@ public class InteriorOpenSpaceService_Citya extends FeatureProcess {
                 details.put(DESCRIPTION, VENTILATIONSHAFT_DESCRIPTION);
 
                 if (minVentilationShaftArea.compareTo(minVentilationAreaValueTwo) >= 0) {
-                    details.put(REQUIRED, "Minimum area " + minVentilationAreaValueTwo.toString() + " Sq. M  ");
-                    details.put(PROVIDED, "Area " + minVentilationShaftArea + " at floor " + f.getNumber());
+                    details.put(REQUIRED, MINIMUM_AREA + minVentilationAreaValueTwo.toString() + " Sq. M  ");
+                    details.put(PROVIDED, AREA + minVentilationShaftArea + AT_FLOOR + f.getNumber());
                     details.put(STATUS, Result.Accepted.getResultVal());
                 } else {
-                    details.put(REQUIRED, "Minimum area " + minVentilationAreaValueTwo.toString() + " Sq. M  ");
-                    details.put(PROVIDED, "Area " + minVentilationShaftArea + " at floor " + f.getNumber());
+                    details.put(REQUIRED, MINIMUM_AREA + minVentilationAreaValueTwo.toString() + " Sq. M  ");
+                    details.put(PROVIDED, AREA + minVentilationShaftArea + AT_FLOOR + f.getNumber());
                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                 }
                 scrutinyDetail.getDetail().add(details);
@@ -274,12 +278,12 @@ public class InteriorOpenSpaceService_Citya extends FeatureProcess {
                 details.put(DESCRIPTION, VENTILATIONSHAFT_DESCRIPTION);
 
                 if (minVentilationShaftWidth.compareTo(minVentilationWidthValueTwo) >= 0) {
-                    details.put(REQUIRED, "Minimum width " + minVentilationWidthValueTwo.toString() + " M ");
-					details.put(PROVIDED, "Area  " + minVentilationShaftWidth + " at floor " + f.getNumber());
+                    details.put(REQUIRED, MINIMUM_WIDTH + minVentilationWidthValueTwo.toString() + " M ");
+					details.put(PROVIDED, AREA + minVentilationShaftWidth + AT_FLOOR + f.getNumber());
                     details.put(STATUS, Result.Accepted.getResultVal());
                 } else {
-                    details.put(REQUIRED, "Minimum width " + minVentilationWidthValueTwo.toString() + " M ");
-					details.put(PROVIDED, "Area  " + minVentilationShaftWidth + " at floor " + f.getNumber());
+                    details.put(REQUIRED, MINIMUM_WIDTH + minVentilationWidthValueTwo.toString() + " M ");
+					details.put(PROVIDED, AREA + minVentilationShaftWidth + AT_FLOOR + f.getNumber());
                     details.put(STATUS, Result.Not_Accepted.getResultVal());
                 }
                 scrutinyDetail.getDetail().add(details);

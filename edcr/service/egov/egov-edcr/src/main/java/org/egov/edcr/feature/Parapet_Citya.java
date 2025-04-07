@@ -74,6 +74,8 @@ public class Parapet_Citya extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(Parapet_Citya.class);
 	private static final String RULE_41_V = "41-v";
 	public static final String PARAPET_DESCRIPTION = "Parapet";
+	public static final String HEIGHT = "Height >= ";
+	public static final String AND_HEIGHT = " and height <= ";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -150,15 +152,15 @@ public Plan process(Plan pl) {
             // Validate the minimum height against the permissible values
             if (minHeight.compareTo(parapetValueOne) >= 0 && minHeight.compareTo(parapetValueTwo) <= 0) {
                 // If the height is within the permissible range, mark as Accepted
-                details.put(REQUIRED, "Height >= " + parapetValueOne.toString() + " and height <= " + parapetValueTwo.toString());
-                details.put(PROVIDED, "Height >= " + minHeight + " and height <= " + minHeight);
+                details.put(REQUIRED, HEIGHT + parapetValueOne.toString() + AND_HEIGHT + parapetValueTwo.toString());
+                details.put(PROVIDED, HEIGHT + minHeight + AND_HEIGHT + minHeight);
                 details.put(STATUS, Result.Accepted.getResultVal());
                 scrutinyDetail.getDetail().add(details);
                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
             } else {
                 // If the height is outside the permissible range, mark as Not Accepted
-                details.put(REQUIRED, "Height >= " + parapetValueOne.toString() + " and height <= " + parapetValueTwo.toString());
-                details.put(PROVIDED, "Height >= " + minHeight + " and height <= " + minHeight);
+                details.put(REQUIRED, HEIGHT + parapetValueOne.toString() + AND_HEIGHT + parapetValueTwo.toString());
+                details.put(PROVIDED, HEIGHT + minHeight + AND_HEIGHT + minHeight);
                 details.put(STATUS, Result.Not_Accepted.getResultVal());
                 scrutinyDetail.getDetail().add(details);
                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

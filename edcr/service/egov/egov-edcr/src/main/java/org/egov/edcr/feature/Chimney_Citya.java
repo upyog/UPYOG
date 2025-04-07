@@ -77,6 +77,9 @@ public class Chimney_Citya extends FeatureProcess {
     // Rule identifier and description for chimney scrutiny
     private static final String RULE_44_D = "44-d";
     public static final String CHIMNEY_DESCRIPTION = "Chimney";
+    public static final String CHIMNEY_VERIFY_DESCRIPTION = "Verified whether chimney height is <= ";
+    public static final String METERS = " meters";
+    public static final String TO_BUILDING_HEIGHT = ") to building height";
 
     @Autowired
     FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -158,15 +161,15 @@ public class Chimney_Citya extends FeatureProcess {
                 // Validate chimney height and update scrutiny details
                 if (minHeight.compareTo(chimneyVerifiedHeight) <= 0) {
                     details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-                    details.put(VERIFIED, "Verified whether chimney height is <= " + chimneyVerifiedHeight.toString() + " meters");
-                    details.put(ACTION, "Not included chimney height(" + minHeight + ") to building height");
+                    details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
+                    details.put(ACTION, "Not included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
                     details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                 } else {
                     details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-                    details.put(VERIFIED, "Verified whether chimney height is <= " + chimneyVerifiedHeight.toString() + " meters");
-                    details.put(ACTION, "Included chimney height(" + minHeight + ") to building height");
+                    details.put(VERIFIED, CHIMNEY_VERIFY_DESCRIPTION + chimneyVerifiedHeight.toString() + METERS);
+                    details.put(ACTION, "Included chimney height(" + minHeight + TO_BUILDING_HEIGHT);
                     details.put(STATUS, Result.Verify.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

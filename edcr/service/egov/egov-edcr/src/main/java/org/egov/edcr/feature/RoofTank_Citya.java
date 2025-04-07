@@ -74,6 +74,8 @@ public class RoofTank_Citya extends FeatureProcess {
 	private static final Logger LOG = LogManager.getLogger(RoofTank_Citya.class);
 	private static final String RULE_44_A = "44-A";
 	public static final String ROOFTANK_DESCRIPTION = "Roof Tanks";
+	public static final String ROOFTANK_HEIGHT_DESC = "Verified whether roof tank height is <= ";
+	public static final String MTS = " meters";
 
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
@@ -143,13 +145,13 @@ public class RoofTank_Citya extends FeatureProcess {
 				// Check if the minimum roof tank height is within permissible limit
 				if (minHeight.compareTo(roofTankValue) <= 0) {
 					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether roof tank height is <= " + roofTankValue.toString() + " meters");
+					details.put(VERIFIED, ROOFTANK_HEIGHT_DESC + roofTankValue.toString() + MTS);
 					details.put(ACTION, "Not included roof tank height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Accepted.getResultVal());
 				} else {
 					// If tank height exceeds permissible value, mark for verification
 					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether roof tank height is <= " + roofTankValue.toString() + " meters");
+					details.put(VERIFIED, ROOFTANK_HEIGHT_DESC + roofTankValue.toString() + MTS);
 					details.put(ACTION, "Included roof tank height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Verify.getResultVal());
 				}

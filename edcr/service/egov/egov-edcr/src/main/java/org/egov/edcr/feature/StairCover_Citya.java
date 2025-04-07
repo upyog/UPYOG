@@ -78,6 +78,8 @@ public class StairCover_Citya extends FeatureProcess {
 
     // Description used in scrutiny reports
     public static final String STAIRCOVER_DESCRIPTION = "Mumty";
+	public static final String STAIRCOVER_HEIGHT_DESC = "Verified whether stair cover height is <= ";
+	public static final String MTS = " meters";
 
     // Autowired service to fetch MDMS rule values
     @Autowired
@@ -155,7 +157,7 @@ public class StairCover_Citya extends FeatureProcess {
                 if (minHeight.compareTo(stairCoverValue) <= 0) {
                     // If height is within permissible limit, it is excluded from total building height
                     details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-                    details.put(VERIFIED, "Verified whether stair cover height is <= " + stairCoverValue.toString() + " meters");
+                    details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + stairCoverValue.toString() + MTS);
                     details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
                     details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
@@ -163,7 +165,7 @@ public class StairCover_Citya extends FeatureProcess {
                 } else {
                     // If height exceeds permissible limit, it must be included in total building height
                     details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-                    details.put(VERIFIED, "Verified whether stair cover height is <= " + stairCoverValue.toString() + " meters");
+                    details.put(VERIFIED, STAIRCOVER_HEIGHT_DESC + stairCoverValue.toString() + MTS);
                     details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
                     details.put(STATUS, Result.Verify.getResultVal());
                     scrutinyDetail.getDetail().add(details);
