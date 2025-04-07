@@ -13,7 +13,6 @@ import org.upyog.cdwm.calculator.config.CalculatorConfig;
 import org.upyog.cdwm.calculator.repository.DemandRepository;
 import org.upyog.cdwm.calculator.util.CalculationUtils;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
-import org.upyog.cdwm.calculator.web.models.AuditDetails;
 import org.upyog.cdwm.calculator.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.calculator.web.models.Calculation;
 import org.upyog.cdwm.calculator.web.models.CalulationCriteria;
@@ -53,7 +52,7 @@ public class DemandService {
      * @throws IllegalArgumentException if the provided criteria list is null.
      */
 
-	public List<Demand> createDemand(RequestInfo requestInfo, List<CalulationCriteria> criterias) { //remove list of calculation criteria
+	public List<Demand> createDemand(RequestInfo requestInfo, List<CalulationCriteria> criterias) {
 		if (criterias == null) {
 			throw new IllegalArgumentException("CND Request is Empty");
 		}
