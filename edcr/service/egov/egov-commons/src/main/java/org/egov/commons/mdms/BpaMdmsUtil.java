@@ -44,40 +44,6 @@ public class BpaMdmsUtil {
     public List<ModuleDetail> getBPAModuleRequest() {
         List<MasterDetail> bpaMasterDtls = new ArrayList<>();
         final String filterCode = "$.[?(@.active==true)].code";
-//        MasterDetail masterDetailAppType = new MasterDetail();
-//        masterDetailAppType.setName("ApplicationType");
-//        masterDetailAppType.setFilter(filterCode);
-//        bpaMasterDtls.add(masterDetailAppType);
-//        
-//        MasterDetail masterDetailServicetype = new MasterDetail();
-//        masterDetailServicetype.setName("ServiceType");
-//        masterDetailServicetype.setFilter(filterCode);
-//        bpaMasterDtls.add(masterDetailServicetype);
-//        
-//        MasterDetail masterDetailOccupancyType = new MasterDetail();
-//        masterDetailOccupancyType.setName("OccupancyType");
-//        masterDetailOccupancyType.setFilter("$.[?(@.active==true)]");
-//        bpaMasterDtls.add(masterDetailOccupancyType);
-//        
-//        MasterDetail masterDetailSubOccupancyType = new MasterDetail();
-//        masterDetailSubOccupancyType.setName("SubOccupancyType");
-//        masterDetailSubOccupancyType.setFilter("$.[?(@.active==true)]");
-//        bpaMasterDtls.add(masterDetailSubOccupancyType);
-//
-//        MasterDetail masterDetailEdcrMdmsFeature = new MasterDetail();
-//        masterDetailEdcrMdmsFeature.setName("EdcrRulesFeatures");
-//        bpaMasterDtls.add(masterDetailEdcrMdmsFeature);
-//        
-//        MasterDetail masterDetailFar = new MasterDetail();
-//        masterDetailFar.setName("Far");
-//     //   masterDetailFar.setFilter("$.[?(@.active==true)]");
-//        bpaMasterDtls.add(masterDetailFar);
-//        
-//        MasterDetail masterDetailBalcony = new MasterDetail();
-//        masterDetailBalcony.setName("Balcony");
-//     //   masterDetailFar.setFilter("$.[?(@.active==true)]");
-//        bpaMasterDtls.add(masterDetailBalcony);
-        
     
         // Adding different MasterDetail entries
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.TOILET);
@@ -152,11 +118,6 @@ public class BpaMdmsUtil {
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SANITATION);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SIDE_YARD_SERVICE);
         
-        /*
-         * MasterDetail masterDetailSubfeatureColorCode = new MasterDetail();
-         * masterDetailSubfeatureColorCode.setName("SubFeatureColorCode"); masterDetailSubfeatureColorCode.setFilter("$.*");
-         * bpaMasterDtls.add(masterDetailSubfeatureColorCode);
-         */
         
         ModuleDetail bpaModuleDtls = new ModuleDetail();
         bpaModuleDtls.setMasterDetails(bpaMasterDtls);
