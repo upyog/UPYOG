@@ -148,6 +148,7 @@ public class BpaMdmsUtil {
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.VENTILATION);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.VERANDAH);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.WATER_CLOSETS);
+        addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.WATER_TANK_CAPACITY);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SANITATION);
         addMasterDetail(bpaMasterDtls, MdmsFeatureConstants.SIDE_YARD_SERVICE);
         

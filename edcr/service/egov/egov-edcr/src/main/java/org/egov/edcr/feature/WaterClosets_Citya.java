@@ -124,7 +124,7 @@ public class WaterClosets_Citya extends FeatureProcess {
 
 		// Fetch occupancy and feature type
 		String occupancyName = null;
-		String feature = MdmsFeatureConstants.VERANDAH;
+		String feature = MdmsFeatureConstants.WATER_CLOSETS;
 
 		// Set occupancy to "Residential" if the most restrictive FAR is type "A"
 		Map<String, Object> params = new HashMap<>();

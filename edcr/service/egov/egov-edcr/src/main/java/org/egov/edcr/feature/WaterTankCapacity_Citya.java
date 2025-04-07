@@ -109,7 +109,7 @@ public class WaterTankCapacity_Citya extends FeatureProcess {
 
         // Determine occupancy type
         String occupancyName = null;
-        String feature = MdmsFeatureConstants.VERANDAH;
+        String feature = MdmsFeatureConstants.WATER_TANK_CAPACITY;
 
         Map<String, Object> params = new HashMap<>();
         if (DxfFileConstants.A.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
