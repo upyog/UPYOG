@@ -1122,7 +1122,7 @@ public class EstimationService {
 		BigDecimal taxAfterVacExemption=BigDecimal.ZERO;
 		BigDecimal totalAmount=BigDecimal.ZERO;
 
-		if(detail.getExemption().isEmpty() || detail.getExemption().equalsIgnoreCase(null))
+		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) || detail.getExemption().equalsIgnoreCase(null))
 		{
 			if(!commercial.isEmpty() && !vacantland.isEmpty())
 				if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
@@ -1188,7 +1188,7 @@ public class EstimationService {
 			if(units.get(0).getAgeOfProperty().equalsIgnoreCase("HERITAGE_PROPERTY"))
 				isHeritage=true;
 
-		if(detail.getExemption().isEmpty() && !isHeritage) {
+		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) && !isHeritage) {
 			if(tenantId.equalsIgnoreCase("mn.imphal"))
 			{
 				if(totalAmount.compareTo(new BigDecimal(600)) < 0)
@@ -1924,6 +1924,7 @@ public class EstimationService {
 
 	private void setTaxperiodForCalculation(RequestInfo requestInfo, String tenantId,Calculation calculation){
 		List<TaxPeriod> taxPeriodList = getTaxPeriodList(requestInfo,tenantId);
+		System.out.println("taxPeriodList::"+taxPeriodList);
 		long currentTime = System.currentTimeMillis();
 		for(TaxPeriod taxPeriod : taxPeriodList ){
 			if(currentTime >= taxPeriod.getFromDate() && currentTime <=taxPeriod.getToDate()){
