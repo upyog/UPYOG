@@ -35,6 +35,10 @@ public class GrbgConstants {
 	public static final String STATUS_APPROVED = "APPROVED";
 
 	public static final String STATUS_REJECTED = "REJECTED";
+	
+	public static final String STATUS_CLOSED = "CLOSED";
+	
+	public static final String STATUS_TEMPERORYCLOSED = "TEMPERORYCLOSED";
 
 	public static final String STATUS_CANCELLED = "CANCELLED";
 
@@ -49,6 +53,12 @@ public class GrbgConstants {
 	public static final String WORKFLOW_ACTION_FORWARD_TO_APPROVER = "FORWARD_TO_APPROVER";
 
 	public static final String WORKFLOW_ACTION_RETURN_TO_INITIATOR = "RETURN_TO_INITIATOR";
+	
+	public static final String WORKFLOW_ACTION_REJECT = "REJECT";
+	
+	public static final String WORKFLOW_ACTION_CLOSE = "CLOSE";
+	
+	public static final String WORKFLOW_ACTION_TEMPERORY_CLOSED = "TEMPERORY_CLOSED";
 
 	public static final String WORKFLOW_ACTION_RETURN_TO_VERIFIER = "RETURN_TO_VERIFIER";
 

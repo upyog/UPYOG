@@ -51,7 +51,15 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role {
 	
 	@NotNull
@@ -61,9 +69,6 @@ public class Role {
 
 	private String description ;
 		
-	public Role() { 		
-	}
-	 
 	public Role(final String name) {
 	    this.name = name;
 	}

@@ -8,6 +8,7 @@ import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
 import org.egov.garbageservice.service.GarbageAccountService;
+import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +65,14 @@ public class GarbageAccountController {
 		response = service.payNowGrbgBill(payNowRequest);
 
 		return new ResponseEntity(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_createUserForGarbage")
+	public ResponseEntity<?> createUserForGarbage(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+
+		service.createUserForGarbage(requestInfoWrapper);
+
+		return new ResponseEntity("User created for garbage account", HttpStatus.OK);
 	}
 
 }
