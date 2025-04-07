@@ -25,6 +25,7 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 - egov-billing-service
 - egov-notification-sms
 - egov-user-event
+- pdf-service
 
 ---
 
@@ -138,9 +139,9 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 
 | Purpose | Format |
 |--------|--------|
-| Application ID | `SV-[CITY.CODE]-[seq_street_vending_application_id]` |
+| Application Number | `SV-[CITY.CODE]-[seq_street_vending_application_id]` |
 | Certificate Number | `SV-CT-[seq_street_vending_certificate_no]` |
-| Receipt ID | `SV/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
+| Receipt Number | `SV/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
 
 ---
 

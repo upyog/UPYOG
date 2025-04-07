@@ -36,6 +36,7 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 - egov-billing-service  
 - egov-notification-sms  
 - egov-user-event  
+- pdf-service
 
 ---
 
@@ -86,9 +87,8 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 
 | Key | Format |
 |-----|--------|
-| Booking ID | `CHB-[CITY.CODE]-[seq_chb_booking_id]` |
-| Receipt ID | `CHB/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
-| Permission Letter | `CHB/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
+| Booking No | `CHB-[CITY.CODE]-[seq_chb_booking_id]` |
+| Receipt No | `CHB/[CITY.CODE]/[fy:yyyy-yy]/[SEQ_EGOV_COMMON]` |
 
 ---
 
@@ -148,7 +148,6 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 |-------------|----------|
 | Payment Link | `citizen/otpLogin?mobileNo=$mobile&redirectTo=digit-ui/citizen/payment/my-bills/$businessService/$consumerCode` |
 | Download Receipt ID | `citizen/otpLogin?mobileNo=$mobile&redirectTo=egov-common/download-receipt?status=success&consumerCode=$consumerCode&tenantId=$tenantId&receiptNumber=$receiptNumber&businessService=$businessService&smsLink=true&mobileNo=$mobile` |
-| Download Permission Letter | `citizen/otpLogin?mobileNo=$mobile&redirectTo=egov-common/download-receipt?status=success&consumerCode=$consumerCode&tenantId=$tenantId&receiptNumber=$receiptNumber&businessService=$businessService&smsLink=true&mobileNo=$mobile` |
 
 ---
 
