@@ -199,3 +199,6 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 - Use:
   - `/egov-enc-service/crypto/v1/_encrypt`
   - `/egov-enc-service/crypto/v1/_decrypt`
+
+For further information, [click this link](https://docs.google.com/document/d/1AY0mLcFORtN4bKyJ5zLnMAPsWdB4K4t5ootRYjXcwSU/edit?tab=t.0).
+

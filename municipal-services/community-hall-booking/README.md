@@ -147,7 +147,7 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 | Description | Template |
 |-------------|----------|
 | Payment Link | `citizen/otpLogin?mobileNo=$mobile&redirectTo=digit-ui/citizen/payment/my-bills/$businessService/$consumerCode` |
-| Download Receipt ID | `citizen/otpLogin?mobileNo=$mobile&redirectTo=egov-common/download-receipt?status=success&consumerCode=$consumerCode&tenantId=$tenantId&receiptNumber=$receiptNumber&businessService=$businessService&smsLink=true&mobileNo=$mobile` |
+| Download Receipt No | `citizen/otpLogin?mobileNo=$mobile&redirectTo=egov-common/download-receipt?status=success&consumerCode=$consumerCode&tenantId=$tenantId&receiptNumber=$receiptNumber&businessService=$businessService&smsLink=true&mobileNo=$mobile` |
 
 ---
 
@@ -158,5 +158,9 @@ The **Community Hall Booking (CHB)** module allows citizens to book community ha
 | Encrypt | `/egov-enc-service/crypto/v1/_encrypt` |
 | Decrypt | `/egov-enc-service/crypto/v1/_decrypt` |
 | Enable Decryption | `chb.decryption.abac.enabled=false` |
+
+
+For further information, [click this link](https://docs.google.com/document/d/1J8IvWhz87b91tczWhn-qsetEOcEw0YunP9pAcqfgEkM/edit?tab=t.0).
+
 
 ---
