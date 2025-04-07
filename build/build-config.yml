@@ -662,7 +662,14 @@ config:
         dockerfile: 'build/maven/Dockerfile'
       - work-dir: 'municipal-services/pqm-anomaly-finder/src/main/resources/db'
         image-name: 'pqm-anomaly-finder-db'
- 
+        
+  - name: 'builds/upyog/municipal-services/cnd-calculator'
+    build:
+      - work-dir: 'municipal-services/cnd-calculator'
+        image-name: 'cnd-calculator'
+        dockerfile: 'build/maven/Dockerfile'
+     # - work-dir: 'municipal-services/cnd-calculator/src/main/resources/db'
+      #  image-name: 'cnd-calculator-db'
  # Utilities
  
   - name: "builds/upyog/utilities/egov-weekly-impact-notifier"
