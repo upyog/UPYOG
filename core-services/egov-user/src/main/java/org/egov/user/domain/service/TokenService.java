@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TokenService {
 
+	private static final int TOKEN_INVALIDATE_MININUTES = 15;
+
 	private TokenStore tokenStore;
 
 	private ActionRestRepository actionRestRepository;
@@ -52,7 +54,7 @@ public class TokenService {
 
 		OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
 		DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
-		token.setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20)));
+		token.setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(TOKEN_INVALIDATE_MININUTES)));
 		tokenStore.storeAccessToken(redisToken, authentication);
 
 		SecureUser secureUser = ((SecureUser) authentication.getPrincipal());
