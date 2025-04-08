@@ -95,7 +95,18 @@ export const FormComposer = (props) => {
         );
       case "captchaText": 
         return (
-          <div style={{background: 'white', fontStyle: 'italic', padding: '5px', display: 'flex',justifyContent:'space-between', borderRadius: '4px', marginBottom: '15px'}}><span style={{fontSize: '20px',background: '#529ec029'}}>{captchaText[0]?.captcha}</span> <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={props?.onCaptchaRefresh}>Refresh</span> </div>
+          <div style={
+            {background: 'white',
+            fontStyle: 'italic', 
+            padding: '5px', 
+            display: 'flex',
+            justifyContent:'space-between',
+            borderRadius: '4px', 
+            marginBottom: '15px',
+            userSelect: "none",
+            }} onContextMenu={(e) => e.preventDefault()}>
+            <span style={{fontSize: '20px',background: '#529ec029',pointerEvents: "none"}}>{captchaText[0]?.captcha}</span>
+            <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={props?.onCaptchaRefresh}>Refresh</span> </div>
         );
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));

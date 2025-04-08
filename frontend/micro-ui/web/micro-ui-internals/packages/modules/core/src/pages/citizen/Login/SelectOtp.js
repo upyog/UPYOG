@@ -54,7 +54,8 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
         <label>
           Captcha
         </label>
-        <div style={{background: 'white', fontStyle: 'italic', padding: '5px', display: 'flex',justifyContent:'space-between', borderRadius: '4px', marginBottom: '15px'}}><span style={{fontSize: '20px',background: '#529ec029'}}>{captchaDetails[0]?.captcha}</span> <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={onCaptchaRefresh}>Refresh</span> </div>
+        <div style={{background: 'white', fontStyle: 'italic', padding: '5px', display: 'flex',justifyContent:'space-between', borderRadius: '4px', marginBottom: '15px',userSelect: "none"}} onContextMenu={(e) => e.preventDefault()}>
+          <span style={{fontSize: '20px',background: '#529ec029',pointerEvents: "none"}}>{captchaDetails[0]?.captcha}</span> <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={onCaptchaRefresh}>Refresh</span> </div>
         <div>
           <input type="text" className="employee-card-input" placeholder="Enter the above captcha" onChange={onChangeCaptcha} required/>
         </div>
