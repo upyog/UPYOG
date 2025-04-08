@@ -198,7 +198,9 @@ public class PropertyController {
 		finalProperties.addAll(propertiesCreatedBy);
 		finalProperties.addAll(propertiesFromExcel);
 
-		finalPropertiesList = finalProperties.stream().collect(Collectors.toList());
+		finalPropertiesList = finalProperties.stream().collect(
+				Collectors.toMap(Property::getPropertyId, property -> property, (existing, replacement) -> replacement))
+				.values().stream().collect(Collectors.toList());
 		
 		log.info("Property count after search" + finalPropertiesList.size());
 
