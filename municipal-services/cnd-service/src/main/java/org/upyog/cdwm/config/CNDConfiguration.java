@@ -188,10 +188,10 @@ public class CNDConfiguration {
     private String moduleName;
     
     // Calculator
- 	@Value("${ug.cnd.calculator.host}")
+ 	@Value("${egov.cnd.calculator.host}")
  	private String calculatorHost;
 
- 	@Value("${ug.cnd.calculator.calculate.endpoint}")
+ 	@Value("${egov.cnd.calculator.endpoint}")
  	private String calulatorEndPoint;
 
 }
