@@ -81,19 +81,19 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		// 4
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
-		// 5
-		String oldAppNo = vendingRequest.getStreetVendingDetail().getOldApplicationNo();
 
+		// In case old application number is present, set the renewal status to RENEW_APPLICATION_CREATED
+		String oldAppNo = vendingRequest.getStreetVendingDetail().getOldApplicationNo();
 		if (oldAppNo != null && !oldAppNo.trim().isEmpty()) {
 			log.info("Processing renewal for application: {}, old application: {}",
 					vendingRequest.getStreetVendingDetail().getApplicationNo(),
 					vendingRequest.getStreetVendingDetail().getOldApplicationNo());
 			StreetVendingDetail detail = vendingRequest.getStreetVendingDetail();
 			detail.setRenewalStatus(RenewalStatus.RENEW_APPLICATION_CREATED);
-			streetVendingRepository.renew(vendingRequest); // Save renewal application
-		} else {
-			streetVendingRepository.save(vendingRequest); // Save new application
 		}
+		// 5
+		streetVendingRepository.save(vendingRequest); // Save new application
+
 		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
 		// 6
 		if (StringUtils.isNotBlank(draftId)) {
@@ -135,16 +135,16 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		if (existingApplication == null) {
 			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION, "Application not found");
 		}
-//        RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
-//		log.info("Renewal status: {}", renewalStatus);
-//        // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
-//        if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
-//            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-//        } else {
+        RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
+		log.info("Renewal status: {}", renewalStatus);
+        // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
+        if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
+            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+        } else {
             // Call workflow service only if renewal status is NOT RENEW_IN_PROGRESS
             State state = workflowService.updateWorkflowStatus(vendingRequest);
             enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
-//        }
+        }
         // If action is APPROVE, create demand
         if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
             demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
