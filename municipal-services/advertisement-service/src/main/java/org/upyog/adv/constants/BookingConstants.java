@@ -1,3 +1,9 @@
+/**
+ * This class defines constants used throughout the Advertisement Booking Service.
+ * These constants include success messages, error messages, MDMS JSON paths,
+ * and keys for encryption. Using constants ensures consistency and avoids
+ * hardcoding values directly in the code.
+ */
 package org.upyog.adv.constants;
 
 import java.math.BigDecimal;

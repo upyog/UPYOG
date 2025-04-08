@@ -169,7 +169,7 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 	public void renew(StreetVendingRequest vendingRequest) {
 		log.info("Renewing street vending booking application for new and old booking number: "
 				+ vendingRequest.getStreetVendingDetail().getApplicationNo() + "::"
-				+ vendingRequest.getStreetVendingDetail().getOldApplicationNumber());
+				+ vendingRequest.getStreetVendingDetail().getOldApplicationNo());
 		producer.push(vendingConfiguration.getStreetVendingApplicationRenewTopic(), vendingRequest);
 	}
 

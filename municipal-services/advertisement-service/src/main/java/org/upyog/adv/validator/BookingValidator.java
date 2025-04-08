@@ -19,7 +19,27 @@ import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.CartDetail;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Validator class for validating booking requests in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Validates booking requests for creating and updating advertisement bookings.
+ * - Ensures that the provided data adheres to the defined business rules and constraints.
+ * - Validates master data from MDMS for consistency and correctness.
+ * 
+ * Methods:
+ * - `validateCreate`: Validates booking requests during the creation process.
+ * - `validateUpdate`: Validates booking requests during the update process.
+ * 
+ * Dependencies:
+ * - MDMSValidator: Validates master data from MDMS.
+ * - BookingConfiguration: Provides configuration properties for validation.
+ * - BookingUtil: Provides utility methods for validation-related operations.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @Slf4j: Enables logging for debugging and monitoring validation processes.
+ */
 @Component
 @Slf4j
 public class BookingValidator {

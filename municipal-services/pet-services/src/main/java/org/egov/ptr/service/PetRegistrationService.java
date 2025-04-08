@@ -52,8 +52,11 @@ public class PetRegistrationService {
 	private PetRegistrationRepository petRegistrationRepository;
 
 	/**
-	 * Enriches the Request and pushes to the Queue
+	 * Registers a new pet application request.
+	 * Validates, enriches, updates workflow status, and pushes to the queue based on application type.
 	 *
+	 * @param petRegistrationRequest The request containing pet registration details.
+	 * @return List of registered pet applications.
 	 */
 	public List<PetRegistrationApplication> registerPtrRequest(PetRegistrationRequest petRegistrationRequest) {
 
@@ -75,6 +78,13 @@ public class PetRegistrationService {
 		return petRegistrationRequest.getPetRegistrationApplications();
 	}
 
+	/**
+	 * Searches for pet registration applications based on search criteria.
+	 *
+	 * @param requestInfo The request information.
+	 * @param petApplicationSearchCriteria The search criteria.
+	 * @return List of matching pet registration applications.
+	 */
 	public List<PetRegistrationApplication> searchPtrApplications(RequestInfo requestInfo,
 			PetApplicationSearchCriteria petApplicationSearchCriteria) {
 
@@ -87,6 +97,13 @@ public class PetRegistrationService {
 		return applications;
 	}
 
+	/**
+	 * Updates an existing pet registration application.
+	 * Validates, updates workflow status, enriches, and triggers payment demand if applicable.
+	 *
+	 * @param petRegistrationRequest The request containing updated pet registration details.
+	 * @return The updated pet registration application.
+	 */
 	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
 		
 		PetRegistrationApplication existingApplication = validator

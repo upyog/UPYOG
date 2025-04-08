@@ -18,7 +18,26 @@ import org.upyog.adv.repository.ServiceRequestRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.UserDetailResponse;
-
+/**
+ * Utility class for managing user-related operations in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Handles user creation, search, and update operations by interacting with the user service.
+ * - Provides utility methods for managing user roles and details.
+ * - Parses and processes user-related data for various operations.
+ * 
+ * Dependencies:
+ * - ObjectMapper: Used for JSON serialization and deserialization.
+ * - ServiceRequestRepository: Handles HTTP requests to the user service.
+ * 
+ * Configuration:
+ * - `egov.user.create.path`: API endpoint for creating users.
+ * - `egov.user.search.path`: API endpoint for searching users.
+ * - `egov.user.update.path`: API endpoint for updating users.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ */
 @Component
 public class UserUtil {
 

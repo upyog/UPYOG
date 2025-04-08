@@ -36,7 +36,12 @@ import com.jayway.jsonpath.JsonPath;
 
 import digit.models.coremodels.SMSRequest;
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Service class for handling notifications in the Advertisement Booking Service.
+ * 
+ * This class is responsible for sending notifications (SMS, email, or events) to users
+ * based on booking status updates or other triggers.
+ */
 @Service
 @Slf4j
 public class ADVNotificationService {
