@@ -119,7 +119,7 @@ public class StreetVendingDetail {
 
 	private Boolean expireFlag;
 
-	private String oldApplicationNumber;
+	private String oldApplicationNo;
 
 	private RenewalStatus renewalStatus;
 }
