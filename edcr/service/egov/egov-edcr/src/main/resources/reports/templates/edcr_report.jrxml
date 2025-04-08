@@ -260,7 +260,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["PLOT AREA (As per measurement) in m²"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" pattern="#.##">
+			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
 				<reportElement x="418" y="267" width="130" height="21" uuid="e8d25a86-a1fc-42e5-88e1-a141e99c948c"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -657,7 +657,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{applicationDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{reportGeneratedDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="304" y="123" width="114" height="21" uuid="59cdd5fe-88e2-4452-8400-8baee86639be"/>
@@ -672,7 +672,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["APPLICATION DATE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SCRUTINY DATE & TIME"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="288" y="123" width="16" height="21" uuid="924258b9-ad2f-4a6e-9917-4702b6a35d7e"/>
@@ -747,7 +747,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getOccupancy()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Residential".equals($F{planInformation}.getOccupancy()) ? "Residential Plotted" : $F{planInformation}.getOccupancy()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="165" width="114" height="21" uuid="cf89ccc2-267a-4e0d-8e8c-7cb9cdc4c1a9"/>
@@ -762,7 +762,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["OCCUPANCY TYPE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["BUILDING CATEGORY"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="165" width="16" height="21" uuid="99933eb8-9eb0-46a9-ac0c-5131dc5845d1"/>
@@ -807,7 +807,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["CITY"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ULB NAME"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="246" width="130" height="21" uuid="f1329572-0b6b-4770-b290-d9167fa99096"/>
@@ -899,7 +899,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["PLOT AREA (As per declaration) in m²"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true"  pattern="#.##">
+			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
 				<reportElement x="142" y="267" width="146" height="21" uuid="2280df2e-7f1e-480c-a703-d2fb9a872d0b"/>
 				<box>
 					<pen lineWidth="0.5"/>
