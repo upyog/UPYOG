@@ -232,9 +232,6 @@ public class CNDServiceImpl implements CNDService {
 			}
 		} else {
 			// Handle payment request updates
-			State state = workflowService.updateWorkflowStatus(paymentRequest, cndApplicationRequest);
-			enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
-
 			cndApplicationDetail.getAuditDetails()
 					.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
 			cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
