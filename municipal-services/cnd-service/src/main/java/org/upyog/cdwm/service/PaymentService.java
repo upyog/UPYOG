@@ -52,7 +52,6 @@ public class PaymentService {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
 			log.info("paymentRequest: {}", paymentRequest);
 
-			// Extract common objects
 			PaymentDetail paymentDetail = paymentRequest.getPayment().getPaymentDetails().get(0);
 			String consumerCode = paymentDetail.getBill().getConsumerCode().split("-")[0];
 			String businessService = paymentDetail.getBusinessService();
