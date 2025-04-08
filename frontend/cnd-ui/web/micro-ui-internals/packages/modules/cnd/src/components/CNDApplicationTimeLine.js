@@ -81,13 +81,7 @@ const CNDApplicationTimeLine = (props) => {
   };
 
   const showNextActions = (nextActions) => {
-    let nextAction = nextActions[0];
-    const next = nextActions.map((action) => action.action);
-    if (next.includes("PAY") || next.includes("EDIT")) {
-      let currentIndex = next.indexOf("EDIT") || next.indexOf("PAY");
-      currentIndex = currentIndex != -1 ? currentIndex : next.indexOf("PAY");
-      nextAction = nextActions[currentIndex];
-    }
+    let nextAction = nextActions?.[0];
     switch (nextAction?.action) {
       case "PAY":
         return (
@@ -95,7 +89,7 @@ const CNDApplicationTimeLine = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/cnd-ui/citizen/payment/my-bills/cnd-service/${props?.application?.applicationNo}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
+              to={{ pathname: `/cnd-ui/citizen/payment/my-bills/cnd-service/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNo } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
@@ -139,7 +133,7 @@ const CNDApplicationTimeLine = (props) => {
                         isCompleted={index === 0}
                        //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
                        label={t(
-                        `SV_${data?.processInstances[index].state?.["state"]
+                        `${data?.processInstances[index].state?.["state"]
                         }${timelineStatusPostfix}`
                       )}
                         customChild={getTimelineCaptions(checkpoint)}
