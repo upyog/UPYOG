@@ -112,7 +112,7 @@ public class PetController {
 	 *
 	 * @return Response indicating the status of the scheduler trigger.
 	 */
-	@RequestMapping("/trigger-expire-petapplications")
+	@RequestMapping(value = "/trigger-expire-petapplications", method = RequestMethod.POST)
 	public ResponseEntity<String> triggerWorkflowUpdate() {
 		try {
 			petSchedulerService.expirePetApplications();
@@ -129,7 +129,7 @@ public class PetController {
 	 *
 	 * @return Response indicating the status of the notification trigger.
 	 */
-	@RequestMapping("/trigger-advance-notification")
+	@RequestMapping(value = "/trigger-advance-notification", method = RequestMethod.POST)
 	public ResponseEntity<String> triggerAdvanceNotification() {
 		try {
 			petSchedulerService.sendNotificationBeforeExpiration();
