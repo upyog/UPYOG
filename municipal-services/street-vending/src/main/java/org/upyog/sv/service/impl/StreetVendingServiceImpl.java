@@ -69,7 +69,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			throw new CustomException(StreetVendingConstants.INVALID_TENANT,
 					"Application cannot be created at StateLevel");
 		}
-		String oldApplicationNumber = vendingRequest.getStreetVendingDetail().getApplicationNo();
+
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		log.info("MDMS master data : " + mdmsData);
 		// 1
@@ -82,12 +82,17 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
 		// 5
-		if (oldApplicationNumber != null && !oldApplicationNumber.isEmpty()) {
-			vendingRequest.getStreetVendingDetail().setOldApplicationNumber(oldApplicationNumber);
-			vendingRequest.getStreetVendingDetail().setRenewalStatus(RenewalStatus.RENEW_APPLICATION_CREATED);
-			streetVendingRepository.renew(vendingRequest);// To save the renew application
+		String oldAppNo = vendingRequest.getStreetVendingDetail().getOldApplicationNo();
+
+		if (oldAppNo != null && !oldAppNo.trim().isEmpty()) {
+			log.info("Processing renewal for application: {}, old application: {}",
+					vendingRequest.getStreetVendingDetail().getApplicationNo(),
+					vendingRequest.getStreetVendingDetail().getOldApplicationNo());
+			StreetVendingDetail detail = vendingRequest.getStreetVendingDetail();
+			detail.setRenewalStatus(RenewalStatus.RENEW_APPLICATION_CREATED);
+			streetVendingRepository.renew(vendingRequest); // Save renewal application
 		} else {
-			streetVendingRepository.save(vendingRequest);
+			streetVendingRepository.save(vendingRequest); // Save new application
 		}
 		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
 		// 6
@@ -130,15 +135,16 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		if (existingApplication == null) {
 			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION, "Application not found");
 		}
-        RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
-        // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
-        if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
-            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-        } else {
+//        RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
+//		log.info("Renewal status: {}", renewalStatus);
+//        // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
+//        if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
+//            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+//        } else {
             // Call workflow service only if renewal status is NOT RENEW_IN_PROGRESS
             State state = workflowService.updateWorkflowStatus(vendingRequest);
             enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
-        }
+//        }
         // If action is APPROVE, create demand
         if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
             demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));

@@ -35,8 +35,8 @@ public class DemandService {
 	 * automatically generated when fetch bill api is called for demand created by
 	 * this API
 	 * 
-	 * @param bookingRequest
-	 * @return
+	 * @param streetVendingRequest, mdmsData
+	 * @return List<Demand>
 	 */
 
 	public List<Demand> createDemand(StreetVendingRequest streetVendingRequest, Object mdmsData) {
