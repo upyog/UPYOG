@@ -67,8 +67,7 @@ public class PaymentService {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in Street Vending method for businessService : " + businessService);
-			if (configs.getModuleName()
-					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+			if (configs.getModuleName().equals(businessService)) {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
 				log.info("Updating payment status for street vending booking : " + applicationNo);
@@ -146,7 +145,6 @@ public class PaymentService {
 		}
 
 		RequestInfo requestInfo = paymentRequest.getRequestInfo();
-		long currentTimestamp = StreetVendingUtil.getCurrentTimestamp();
 		String updatedStatus;
 
 		log.info("Processing application: {}, renewal status: {}", appNo, detail.getRenewalStatus());
@@ -159,11 +157,11 @@ public class PaymentService {
 				updatedStatus = updateNewApplicationForRenewal(paymentRequest, detail);
 				break;
 			default:
-				updatedStatus = updateNewApplication(detail, paymentRequest, requestInfo);
+				updatedStatus = updateNewApplication(detail, paymentRequest);
 				break;
 		}
 
-		updateAuditFields(detail, requestInfo, currentTimestamp, updatedStatus);
+		updateAuditFields(detail, requestInfo, StreetVendingUtil.getCurrentTimestamp(), updatedStatus);
 		persistApplicationUpdate(requestInfo, detail);
 	}
 
@@ -225,13 +223,13 @@ public class PaymentService {
 	/**
 	 * Handles new application: triggers workflow, sets validity, and generates certificate.
 	 */
-	private String updateNewApplication(StreetVendingDetail detail, PaymentRequest paymentRequest, RequestInfo requestInfo) {
+	private String updateNewApplication(StreetVendingDetail detail, PaymentRequest paymentRequest) {
 		log.info("Processing new application: {}", detail.getApplicationNo());
 		State state = updateWorkflowStatus(paymentRequest);
 		String applicationStatus = state.getApplicationStatus();
 
 		detail.setValidityDateForPersisterDate(StreetVendingUtil.getCurrentDateFromYear(1).toString());
-		enrichCertificateNumber(detail, requestInfo, detail.getTenantId());
+		enrichCertificateNumber(detail, paymentRequest.getRequestInfo(), detail.getTenantId());
 
 		return applicationStatus;
 	}
