@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
@@ -20,6 +21,7 @@ import org.egov.user.domain.model.UserSso;
 import org.egov.user.domain.model.enums.Gender;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.persistence.repository.UserSsoRepository;
+import org.egov.user.persistence.repository.UserRepository;
 import org.egov.user.web.contract.HpSsoValidateToken;
 import org.egov.user.web.contract.HpSsoValidateTokenResponse;
 import org.egov.user.web.errorhandlers.Error;
@@ -52,6 +54,9 @@ public class SsoService {
 
 	@Autowired
 	private Constants constants;
+	
+	@Autowired
+    private UserRepository userRepository;
 
 	public ResponseEntity<?> getHpSsoValidateTokenResponse(String token) {
 		
@@ -176,12 +181,21 @@ public class SsoService {
 		int count = userSsoRepository.getCountBySsoId(hpSsoValidateTokenResponse.getSsoId());
 		// if ssoid not exist
 		if (count == 0) {
+			UserSearchCriteria searchCriteria = UserSearchCriteria.builder().mobileNumber(user.getMobileNumber()).tenantId("hp").build();
+			List<User> userInDb = userService.searchUsers(searchCriteria, false, null);
+			User newUser;
+			if (CollectionUtils.isEmpty(userInDb)) {
+				newUser = userService.createUser(user, null);
+		    }
+			else
+			{
+				newUser = userInDb.get(0);
+			}
 			// create new user
-			final User newUser = userService.createUser(user, null);
 			// enrich new user_sso
 			UserSso newUserSso = enrichCreateUserSso(hpSsoValidateTokenResponse, newUser);
 			// create new user_sso
-			UserSso userSso = userSsoRepository.create(newUserSso);
+			userSsoRepository.create(newUserSso);
 		}
 	}
 

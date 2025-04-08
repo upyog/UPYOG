@@ -20,6 +20,8 @@ public class GrbgBillTracker {
 	private String year;
 	private String fromDate;
 	private String toDate;
+	private String ward;
+	private String billId;
 	private BigDecimal grbgBillAmount;
 	private AuditDetails auditDetails;
 }

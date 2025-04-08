@@ -197,9 +197,9 @@ public class UserService {
 
         searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
         
-        if(altmobnumber!=null) {
-        	searchCriteria.setAlternatemobilenumber(altmobnumber);
-        }
+//        if(altmobnumber!=null) {
+//        	searchCriteria.setAlternatemobilenumber(altmobnumber);
+//        }
         
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 

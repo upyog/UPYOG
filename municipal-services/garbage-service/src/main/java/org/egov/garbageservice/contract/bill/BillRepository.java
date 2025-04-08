@@ -48,6 +48,8 @@ public class BillRepository {
         uri = uri.concat("?consumerCode=").concat(billCriteria.getConsumerCode());
         uri = uri.concat("&tenantId=").concat(billCriteria.getTenantId());
         uri = uri.concat("&businessService=").concat(billCriteria.getBusinessService());
+        uri = uri.concat("&mobileNumber=").concat(billCriteria.getMobileNumber());
+        uri = uri.concat("&email=").concat(billCriteria.getEmail());
 
         Object result = restCallRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
                                                              .requestInfo(requestInfo).build());

@@ -34,8 +34,8 @@ public class GarbageBillTrackerRepository {
 	private static final String GRBG_BILL_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_grbg_bill_tracker egbt";
 
 	private static final String INSERT_BILL_TRACKER = "INSERT INTO eg_grbg_bill_tracker (uuid, grbg_application_id, tenant_id, month, year, from_date, "
-			+ "to_date, grbg_bill_amount, created_by, created_time, last_modified_by, last_modified_time) VALUES "
-			+ "(:uuid, :grbgApplicationId, :tenantId, :month, :year, :fromDate, :toDate, :grbgBillAmount, :createdBy, :createdDate, :lastModifiedBy, :lastModifiedDate)";
+			+ "to_date, grbg_bill_amount, created_by, created_time, last_modified_by, last_modified_time,ward,bill_id) VALUES "
+			+ "(:uuid, :grbgApplicationId, :tenantId, :month, :year, :fromDate, :toDate, :grbgBillAmount, :createdBy, :createdDate, :lastModifiedBy, :lastModifiedDate,:ward,:billId)";
 
 	public GrbgBillTracker createTracker(GrbgBillTracker grbgBillTracker) {
 
@@ -48,7 +48,8 @@ public class GarbageBillTrackerRepository {
 		billTrackerInputs.put("fromDate", grbgBillTracker.getFromDate());
 		billTrackerInputs.put("toDate", grbgBillTracker.getToDate());
 		billTrackerInputs.put("grbgBillAmount", grbgBillTracker.getGrbgBillAmount());
-
+		billTrackerInputs.put("billId", grbgBillTracker.getBillId());
+		billTrackerInputs.put("ward", grbgBillTracker.getWard());
 		billTrackerInputs.put("createdBy", grbgBillTracker.getAuditDetails().getCreatedBy());
 		billTrackerInputs.put("createdDate", grbgBillTracker.getAuditDetails().getCreatedDate());
 		billTrackerInputs.put("lastModifiedBy", grbgBillTracker.getAuditDetails().getLastModifiedBy());
