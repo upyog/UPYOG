@@ -23,6 +23,11 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+
+/**
+ * Service responsible for handling notifications related to Pet Registration applications.
+ */
 @Service
 @Slf4j
 public class PTRNotificationService {
@@ -33,6 +38,13 @@ public class PTRNotificationService {
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
+
+	/**
+	 * Processes the notification for pet registration applications.
+	 * Constructs event requests and sends notifications to users.
+	 *
+	 * @param request The pet registration request containing application details.
+	 */
 	public void process(PetRegistrationRequest request) {
 		EventRequest eventRequest = getEventsForPTR(request);
 		log.info("Event Request in Pet process method" + eventRequest.toString());
@@ -41,6 +53,12 @@ public class PTRNotificationService {
 
 	}
 
+	/**
+	 * Constructs an EventRequest object containing notifications for pet registration applications.
+	 *
+	 * @param request The pet registration request containing application details.
+	 * @return An EventRequest containing the notification details, or null if no events are created.
+	 */
 	private EventRequest getEventsForPTR(PetRegistrationRequest request) {
 		List<Event> events = new ArrayList<>();
 		String localizationMessages = util.getLocalizationMessages(

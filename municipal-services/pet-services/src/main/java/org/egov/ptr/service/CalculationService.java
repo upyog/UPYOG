@@ -27,6 +27,14 @@ public class CalculationService {
 	private MdmsUtil mdmsUtil;
 
 
+	/**
+	 * Calculates the registration fee based on the application type.
+	 *
+	 * @param applicationType The type of pet registration application.
+	 * @param requestInfo     Request information containing user and request metadata.
+	 * @param tenantId        The tenant ID for which the calculation is performed.
+	 * @return The calculated fee amount for the given application type.
+	 */
 	public BigDecimal calculateFee(String applicationType, RequestInfo requestInfo, String tenantId) {
 		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo, tenantId,
 				PTRConstants.PET_MASTER_MODULE_NAME);
