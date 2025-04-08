@@ -149,16 +149,22 @@ public class PaymentService {
 
 		log.info("Processing application: {}, renewal status: {}", appNo, detail.getRenewalStatus());
 
-		switch (detail.getRenewalStatus()) {
-			case RENEW_IN_PROGRESS:
-				updatedStatus = updateOldApplicationForRenewal(detail);
-				break;
-			case RENEW_APPLICATION_CREATED:
-				updatedStatus = updateNewApplicationForRenewal(paymentRequest, detail);
-				break;
-			default:
-				updatedStatus = updateNewApplication(detail, paymentRequest);
-				break;
+		// Handle null renewal status as a new application
+		RenewalStatus renewalStatus = detail.getRenewalStatus();
+		if (renewalStatus == null) {
+			updatedStatus = updateNewApplication(detail, paymentRequest);
+		} else {
+			switch (renewalStatus) {
+				case RENEW_IN_PROGRESS:
+					updatedStatus = updateOldApplicationForRenewal(detail);
+					break;
+				case RENEW_APPLICATION_CREATED:
+					updatedStatus = updateNewApplicationForRenewal(paymentRequest, detail);
+					break;
+				default:
+					updatedStatus = updateNewApplication(detail, paymentRequest);
+					break;
+			}
 		}
 
 		updateAuditFields(detail, requestInfo, StreetVendingUtil.getCurrentTimestamp(), updatedStatus);
