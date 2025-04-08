@@ -27,6 +27,9 @@ public class TokenService {
 
 	@Value("${roles.state.level.enabled}")
 	private boolean isRoleStateLevel;
+	
+	@Value("${access.token.validity.in.minutes}")
+	private int TOKEN_INVALIDATE_MININUTES;
 
 	private TokenService(TokenStore tokenStore, ActionRestRepository actionRestRepository) {
 		this.tokenStore = tokenStore;
@@ -52,7 +55,7 @@ public class TokenService {
 
 		OAuth2AccessToken redisToken = tokenStore.readAccessToken(accessToken);
 		DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) redisToken;
-		token.setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20)));
+		token.setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(TOKEN_INVALIDATE_MININUTES)));
 		tokenStore.storeAccessToken(redisToken, authentication);
 
 		SecureUser secureUser = ((SecureUser) authentication.getPrincipal());

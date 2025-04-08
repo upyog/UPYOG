@@ -284,7 +284,7 @@ public class EnrichmentService {
 
 			enrichPropertyForNewWf(requestInfo, property, false);
 		}
-
+		//if()
 		if (!CollectionUtils.isEmpty(property.getDocuments()))
 			property.getDocuments().forEach(doc -> {
 
@@ -803,13 +803,7 @@ public class EnrichmentService {
 				if (null == doc.getStatus())
 					doc.setStatus(Status.ACTIVE);
 			}	
-			});
-
-		
-		
-
-		
-		
+			});	
 		property.getAddress().setTenantId(property.getTenantId());
 		property.getAddress().setId(UUID.randomUUID().toString());
 
@@ -820,9 +814,9 @@ public class EnrichmentService {
 
 		if (!CollectionUtils.isEmpty(property.getUnits()))
 			property.getUnits().forEach(unit -> {
-
 				unit.setId(UUID.randomUUID().toString());
-				unit.setActive(unit.getActive());
+				if(null==unit.getActive())
+					unit.setActive(true);
 			});
 
 		property.getOwners().forEach(owner -> {
@@ -837,6 +831,18 @@ public class EnrichmentService {
 			if (null == owner.getStatus())
 				owner.setStatus(Status.ACTIVE);
 		});
+	}
+	
+	//FOR CREATION REASON UPDATE START STATE
+	public void enrichDocumentForUpdate(PropertyRequest propertyRequest) {
+		if (!CollectionUtils.isEmpty(propertyRequest.getProperty().getDocuments()))
+			propertyRequest.getProperty().getDocuments().forEach(doc -> {
+			if (null!=doc.getDocumentType() && !doc.getDocumentType().isEmpty() ) {
+				doc.setId(UUID.randomUUID().toString());
+				if (null == doc.getStatus())
+					doc.setStatus(Status.ACTIVE);
+			}	
+			});	
 	}
 
 	/**
