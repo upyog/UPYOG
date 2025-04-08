@@ -9,7 +9,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
-
+/**
+ * This class implements the ResultSetExtractor interface to map rows from a database ResultSet
+ * to a list of AdvertisementDraftDetail objects. It focuses on extracting only the draft ID
+ * from each row in the ResultSet and populating it into AdvertisementDraftDetail objects.
+ */
 @Component
 public class AdvertisementSlotAvailabilityRowMapper implements ResultSetExtractor<List<AdvertisementSlotAvailabilityDetail>> {
 

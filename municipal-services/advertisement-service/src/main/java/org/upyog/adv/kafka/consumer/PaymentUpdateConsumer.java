@@ -18,7 +18,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.DocumentContext;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * This class acts as a Kafka consumer for payment updates in the Advertisement Booking Service.
+ * 
+ * Key Responsibilities:
+ * - Listens to Kafka topics for payment receipt creation events.
+ * - Processes payment success events and updates the booking workflow accordingly.
+ * - Logs and handles exceptions during message processing.
+ * 
+ * Dependencies:
+ * - PaymentService: Handles the business logic for processing payment updates.
+ * - BookingUtil: Provides utility methods for JSON beautification and other operations.
+ * 
+ * Annotations:
+ * - @Component: Marks this class as a Spring-managed component.
+ * - @Slf4j: Enables logging for debugging and monitoring.
+ * - @KafkaListener: Configures the method to listen to specific Kafka topics.
+ */
 @Component
 @Slf4j
 public class PaymentUpdateConsumer {

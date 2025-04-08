@@ -12,6 +12,13 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+/*
+     * This class is responsible for making HTTP calls to external services.
+     * It uses RestTemplate to send requests and receive responses.
+     * The ObjectMapper is used for serializing and deserializing JSON data.
+     * The repository is annotated with @Repository to indicate that it is a Spring-managed component.
+     */
+
 @Repository
 @Slf4j
 public class ServiceRequestRepository {
