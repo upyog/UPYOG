@@ -52,8 +52,8 @@ public class PaymentUpdateConsumer {
 		try {
 			paymentService.process(record, topic);
 		} catch (JsonProcessingException e) {
-			log.info("Catch block in listenPayments method of CND consumer");
-			e.printStackTrace();
+			log.error("JsonProcessingException occurred while processing payment record in CND consumer: {}", e.getMessage(), e);
+			
 		}
 
 	}
