@@ -14,7 +14,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+/**
+ * This class is a configuration component for the Advertisement Booking module.
+ * It is responsible for setting up application-specific configurations such as
+ * the default timezone for the application
+**/
 @Builder
 @Component
 @AllArgsConstructor
