@@ -232,10 +232,10 @@ public class CNDServiceImpl implements CNDService {
 			}
 		} else {
 			// Handle payment request updates
-			log.info("Inside Payment upadte method");
+			log.info("Inside Payment application status update method For Application no: {}", applicationNumber );
 			cndApplicationDetail.getAuditDetails()
 					.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-			cndApplicationDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+			cndApplicationDetail.getAuditDetails().setLastModifiedTime(CNDServiceUtil.getCurrentTimestamp());
 			cndApplicationDetail.setApplicationStatus(applicationStatus);
 			
 	        CNDApplicationRequest updatedRequestWithStatus = CNDApplicationRequest.builder()
@@ -243,7 +243,7 @@ public class CNDServiceImpl implements CNDService {
 	                .cndApplication(cndApplicationDetail)
 	                .build();
 
-	        log.info("Updating CND Application (payment scenario) in the database: {}", updatedRequestWithStatus);
+	        log.info("Updating CND Application payment scenario in the database: {}", updatedRequestWithStatus);
 	        cndApplicationRepository.updateCNDApplicationDetail(updatedRequestWithStatus);
 	        return updatedRequestWithStatus.getCndApplication();
 		}

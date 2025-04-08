@@ -11,6 +11,7 @@ import org.upyog.cdwm.web.models.workflow.State;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import digit.models.coremodels.PaymentDetail;
 import digit.models.coremodels.PaymentRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,31 +46,35 @@ public class PaymentService {
 	 */
 	
 	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
-		log.info(" Receipt consumer class entry " + record.toString());
+		log.info("Receipt consumer class entry: {}", record);
+
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
-			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode()
-					.split("-")[0];
-			log.info("paymentRequest : " + paymentRequest);
-			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
-			log.info("Payment request processing in CND method for businessService : " + businessService);
-			log.info("consumerCode : " + consumerCode);
-			if (configs.getModuleName()
-					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
-				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
-						.getConsumerCode();
-				log.info("Updating payment status for water tanker booking : " + applicationNo);
+			log.info("paymentRequest: {}", paymentRequest);
+
+			// Extract common objects
+			PaymentDetail paymentDetail = paymentRequest.getPayment().getPaymentDetails().get(0);
+			String consumerCode = paymentDetail.getBill().getConsumerCode().split("-")[0];
+			String businessService = paymentDetail.getBusinessService();
+
+			log.info("Payment request processing in CND method for businessService: {}", businessService);
+			log.info("consumerCode: {}", consumerCode);
+
+			if (configs.getModuleName().equals(businessService)) {
+				String applicationNo = paymentDetail.getBill().getConsumerCode();
+				log.info("Updating payment status for water tanker booking: {}", applicationNo);
+
 				State state = workflowService.updateWorkflowStatus(paymentRequest, null);
 				String applicationStatus = state.getApplicationStatus();
+
 				cndService.updateCNDApplicationDetails(null, paymentRequest, applicationStatus);
 			}
-
 		} catch (IllegalArgumentException e) {
-			log.error("Illegal argument exception occured while sending notification CND Service : " + e.getMessage());
+			log.error("Illegal argument exception occurred while sending notification to CND Service: {}", e.getMessage());
 		} catch (Exception e) {
-			log.error("An unexpected exception occurred while sending notification CND Service : ", e);
+			log.error("An unexpected exception occurred while sending notification to CND Service: ", e);
 		}
-
 	}
+
 
 }
