@@ -17,6 +17,7 @@ import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.edcr.constants.EdcrRulesMdmsConstants;
 //import org.egov.infra.mdms.controller.MDMSController;
 import org.egov.infra.microservice.models.RequestInfo;
+import org.jfree.util.Log;
 //import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class FetchEdcrRulesMdms {
 		    // Make the MDMS call
 		    Object mdmsData = bpaMdmsUtil.mDMSCallv2(new RequestInfo(), "pg");
 //		    Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), "pg");
-//		    log.info("----------------mdmsdata------------- :: " + mdmsData);
+//		    Log.info("----------------mdmsdata------------- :: " + mdmsData);
 		    if (mdmsData == null) {
 		        LOG.warn("MDMS data is null");
 		        return createEmptyResult("MDMS data is null");
@@ -71,7 +72,7 @@ public class FetchEdcrRulesMdms {
 		        MdmsFeatureConstants.EDCR_RULES_FEATURES,
 		        MdmsFeatureConstants.FAR,
 		        MdmsFeatureConstants.BALCONY,
-		        
+
 		        MdmsFeatureConstants.BASEMENT,
 		        MdmsFeatureConstants.BATHROOM,
 		        MdmsFeatureConstants.BATHROOM_WATER_CLOSETS,
@@ -174,7 +175,7 @@ public class FetchEdcrRulesMdms {
 	            Map<String, Object> params,
 	            ArrayList<String> valueFromColumn) {
 
-	        System.out.println("inside getPermissibleValue method" + edcrRuleList);
+	        Log.info("Inside getPermissibleValue method: " + edcrRuleList);
 	        
 	       
 	        String paramsFeature = params.get("feature").toString().toLowerCase(); 
