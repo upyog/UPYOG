@@ -1,19 +1,29 @@
-
+// CND Payment Configuration
 import { useQuery } from "react-query";
+import { CNDService } from "../services/elements/CND";
 
-
+const cndApplications = async (tenantId, filters) => {
+  return (await CNDService.search({ tenantId, filters })).cndApplicationDetail;
+};
 
 
 const refObj = (tenantId, filters) => {
   let consumerCodes = filters?.consumerCodes;
 
   return {
-   
+    cnd: {
+      searchFn: () => cndApplications(null, { ...filters, applicationNumber: consumerCodes }),
+      key: "applicationNumber",
+      label: "CND_APPLICATION_NUMBER",
+    },
   };
 };
 
 export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessService, filters }, config = {}) => {
   let _key = businessService?.toLowerCase().split(".")[0];
+  if (window.location.href.includes("cnd-service")) {
+    _key = "cnd"
+  } 
   
 
 

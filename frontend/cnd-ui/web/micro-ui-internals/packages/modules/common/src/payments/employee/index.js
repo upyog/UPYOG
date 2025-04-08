@@ -16,6 +16,7 @@ const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   const userType = "employee";
   const { path: currentPath } = useRouteMatch();
 
+  console.log("curteqwtrerwgfadqghewdfawd",currentPath);
   const { t } = useTranslation();
 
   const [link, setLink] = useState(null);

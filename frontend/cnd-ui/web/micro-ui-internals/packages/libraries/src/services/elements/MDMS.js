@@ -2372,9 +2372,9 @@ export const MdmsService = {
   // getDssDashboard: (tenantId, moduleCode) => {
   //   return MdmsService.getDataByCriteria(tenantId, getDssDashboardCriteria(tenantId, moduleCode), moduleCode);
   // },
-  // getPaymentGateway: (tenantId, moduleCode, type) => {
-  //   return MdmsService.getDataByCriteria(tenantId, getGeneralCriteria(tenantId, moduleCode, type), moduleCode);
-  // },
+  getPaymentGateway: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getGeneralCriteria(tenantId, moduleCode, type), moduleCode);
+  },
   // getReceiptKey: (tenantId, moduleCode) => {
   //   return MdmsService.getDataByCriteria(tenantId, getReceiptKey(tenantId, moduleCode), moduleCode);
   // },

@@ -27,13 +27,13 @@ export const CollectPayment = (props) => {
 
   const { data: paymentdetails, isLoading } = Digit.Hooks.useFetchPayment({ tenantId: tenantId, consumerCode, businessService });
   const bill = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-  const { data: applicationData } = Digit.Hooks.fsm.useSearch(
-    tenantId,
-    { applicationNos: consumerCode },
-    { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false }
-  );
+  // const { data: applicationData } = Digit.Hooks.fsm.useSearch(
+  //   tenantId,
+  //   { applicationNos: consumerCode },
+  //   { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false }
+  // );
 
-  const advanceBill = applicationData?.advanceAmount;
+  // const advanceBill = applicationData?.advanceAmount;
 
   // const { data: applicationData } = Digit.Hooks.fsm.useSearch(tenantId, { applicationNos: consumerCode }, { staleTime: Infinity });
   // const advanceBill = applicationData?.advanceAmount;
@@ -128,11 +128,11 @@ export const CollectPayment = (props) => {
         paidBy: data.paidBy,
       },
     };
-    if (advanceBill !== null && (applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT" || applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") && !applicationData.paymentPreference) {
-      (recieptRequest.Payment.paymentDetails[0].totalAmountPaid = advanceBill),
-        (recieptRequest.Payment.totalAmountPaid = advanceBill),
-        (recieptRequest.Payment.totalDue = bill.totalAmount);
-    }
+    // if (advanceBill !== null && (applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT" || applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") && !applicationData.paymentPreference) {
+    //   (recieptRequest.Payment.paymentDetails[0].totalAmountPaid = advanceBill),
+    //     (recieptRequest.Payment.totalAmountPaid = advanceBill),
+    //     (recieptRequest.Payment.totalDue = bill.totalAmount);
+    // }
 
     if (data.ManualRecieptDetails.manualReceiptDate) {
       recieptRequest.Payment.paymentDetails[0].manualReceiptDate = new Date(ManualRecieptDetails.manualReceiptDate).getTime();

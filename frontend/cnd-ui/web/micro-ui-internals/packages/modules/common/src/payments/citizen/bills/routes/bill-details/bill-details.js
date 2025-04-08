@@ -201,7 +201,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
         <div className="bill-payment-amount">
           <hr className="underline" />
           <CardSubHeader>{t("CS_COMMON_PAYMENT_AMOUNT")}</CardSubHeader>
-          {businessService === "FSM.TRIP_CHARGES" ? null : (
+          {/* {businessService === "FSM.TRIP_CHARGES" ? null : ( */}
             <RadioButtons
               selectedOption={paymentType}
               onSelect={setPaymentType}
@@ -215,7 +215,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
                   [t("CS_PAYMENT_FULL_AMOUNT")]
               }
             />
-          )}
+          {/* // )} */}
 
           <div style={{ position: "relative" }}>
             <span

@@ -68,7 +68,7 @@ const ApplicationDetails = () => {
         return {
           action: "PAY",
           forcedName: "CND_PAY",
-          redirectionUrl: { pathname: `/cnd-ui/employee/payment/collect/cnd-service/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
+          redirectionUrl: { pathname: `/cnd-ui/employee/payment/collect/cnd-service/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}`},
         };
       }
       return act;
