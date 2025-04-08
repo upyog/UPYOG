@@ -145,7 +145,7 @@ public class PaymentService {
 		}
 
 		RequestInfo requestInfo = paymentRequest.getRequestInfo();
-		String updatedStatus;
+		String updatedStatus = "";
 
 		log.info("Processing application: {}, renewal status: {}", appNo, detail.getRenewalStatus());
 
@@ -160,9 +160,6 @@ public class PaymentService {
 					break;
 				case RENEW_APPLICATION_CREATED:
 					updatedStatus = updateNewApplicationForRenewal(paymentRequest, detail);
-					break;
-				default:
-					updatedStatus = updateNewApplication(detail, paymentRequest);
 					break;
 			}
 		}
