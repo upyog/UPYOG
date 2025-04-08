@@ -80,7 +80,7 @@ public class ToiletDetails extends FeatureProcess {
     public Plan process(Plan pl) {
 
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Toilet");
+//        scrutinyDetail.setKey("Common_Toilet");
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, FLOOR_NO);
@@ -90,6 +90,7 @@ public class ToiletDetails extends FeatureProcess {
 
         for (Block b : pl.getBlocks()) {
             if (b.getBuilding() != null && b.getBuilding().getFloors() != null && !b.getBuilding().getFloors().isEmpty()) {
+            	scrutinyDetail.setKey("Block_" + b.getName() + "_" + "Toilet"); //added toilet in Block section
                 for (Floor f : b.getBuilding().getFloors()) {
                     if (f.getToilet() != null && !f.getToilet().isEmpty()) {
                         for (Toilet toilet : f.getToilet()) {
