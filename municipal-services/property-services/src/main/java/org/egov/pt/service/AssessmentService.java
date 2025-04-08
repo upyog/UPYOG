@@ -2,7 +2,6 @@ package org.egov.pt.service;
 
 import static org.egov.pt.util.PTConstants.ASSESSMENT_BUSINESSSERVICE;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +20,13 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.CurrentYearAssesmentDetails;
 import org.egov.pt.models.Demand;
 import org.egov.pt.models.Demand.StatusEnum;
 import org.egov.pt.models.Notice;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.Assessment.ModeOfPayment;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.NoticeType;
 import org.egov.pt.models.enums.Status;
@@ -44,7 +46,9 @@ import org.egov.pt.web.contracts.AssessmentRequest;
 import org.egov.pt.web.contracts.DemandRequest;
 import org.egov.pt.web.contracts.DemandResponse;
 import org.egov.pt.web.contracts.NoticeRequest;
+import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -86,6 +90,10 @@ public class AssessmentService {
 	
 	@Autowired
 	BillingService billingService;
+	
+	
+	 @Value("${cuurrent.year.asmt.srch.val}")
+	 private String asmtSearchFor;
 
 
 	@Autowired
@@ -346,8 +354,121 @@ public class AssessmentService {
 		UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
 
 		util.enrichAssesmentOwner(userDetailResponse, assessments, isOpenSearch);
-
 		return assessments;
+	}
+	
+	
+	public CurrentYearAssesmentDetails getCurrentYearAssesmentDetails(List<Assessment> assessments,
+			RequestInfoWrapper requestInfoWrapper) {
+		
+		Assessment currentYearAssement = assessments.stream()
+				.filter(x->x.getFinancialYear().equalsIgnoreCase(asmtSearchFor))
+				.findFirst()
+				.orElse(null);
+		CurrentYearAssesmentDetails currentYearAssesmentDetails = null;
+		if(null!=currentYearAssement) {
+			currentYearAssesmentDetails = new CurrentYearAssesmentDetails();
+			currentYearAssesmentDetails.setAsmtFoundForCurrentYear(true);
+			currentYearAssesmentDetails.setModeOfPaymentSelected(ModeOfPayment.fromValue(currentYearAssement.getModeOfPayment().toString()));
+			SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+			Date currentDate=new Date();
+			String formateDate=sdf.format(currentDate);
+			String endDate="";
+			Date start =null;
+			Date end =null;
+			if(currentYearAssement.getModeOfPayment().equals(ModeOfPayment.YEARLY)) {
+				if(currentYearAssement.getStatus().equals(Status.ACTIVE)) {
+					
+					endDate = "01/04/"+formateDate.split("/")[2];
+					currentYearAssesmentDetails.setFinalBillGenerationDate(endDate);
+		            try {
+		            	start = sdf.parse(formateDate);
+						end = sdf.parse(endDate);
+					} catch (ParseException e) {
+						
+						e.printStackTrace();
+					}
+		            
+		            if(start.compareTo(end)>=0) {
+		            	Boolean isBillUnpaid = util.isBillUnpaid(currentYearAssement.getPropertyId() ,currentYearAssement.getTenantId(),
+								requestInfoWrapper.getRequestInfo());
+						if (isBillUnpaid)
+							currentYearAssesmentDetails.setCanBifurcate(false);
+						else
+							currentYearAssesmentDetails.setCanBifurcate(true);
+
+		            }else {
+		            	currentYearAssesmentDetails.setCanBifurcate(false);
+		            }
+		            currentYearAssesmentDetails.setAsmtActiveStatus(true);
+				
+			}
+				else {
+					currentYearAssesmentDetails.setAsmtActiveStatus(false);
+				}
+		}
+			if(currentYearAssement.getModeOfPayment().equals(ModeOfPayment.QUARTERLY)) {
+				
+				if(currentYearAssement.getStatus().equals(Status.ACTIVE)) {
+					String finYearEnd = formateDate.split("/")[2].substring(0,2)+ currentYearAssement.getFinancialYear().split("-")[1].toString();
+					endDate = "01/01/"+finYearEnd;
+					currentYearAssesmentDetails.setFinalBillGenerationDate(endDate);
+		            try {
+		            	start = sdf.parse(formateDate);
+						end = sdf.parse(endDate);
+					} catch (ParseException e) {
+						
+						e.printStackTrace();
+					}
+		            
+		            if(start.compareTo(end)>=0) {
+		            	Boolean isBillUnpaid = util.isBillUnpaid(currentYearAssement.getPropertyId() ,currentYearAssement.getTenantId(),
+								requestInfoWrapper.getRequestInfo());
+						if (isBillUnpaid)
+							currentYearAssesmentDetails.setCanBifurcate(false);
+						else
+							currentYearAssesmentDetails.setCanBifurcate(true);
+
+		            }else {
+		            	currentYearAssesmentDetails.setCanBifurcate(false);
+		            }
+		            currentYearAssesmentDetails.setAsmtActiveStatus(true);
+				}
+				else {
+					currentYearAssesmentDetails.setAsmtActiveStatus(false);
+				}
+			}
+			if(currentYearAssement.getModeOfPayment().equals(ModeOfPayment.HALFYEARLY)) {
+				if(currentYearAssement.getStatus().equals(Status.ACTIVE)) {
+				endDate = "01/10/"+formateDate.split("/")[2];
+				currentYearAssesmentDetails.setFinalBillGenerationDate(endDate);
+	            try {
+	            	start = sdf.parse(formateDate);
+					end = sdf.parse(endDate);
+				} catch (ParseException e) {
+					
+					e.printStackTrace();
+				}
+	            
+	            if(start.compareTo(end)>=0) {
+	            	Boolean isBillUnpaid = util.isBillUnpaid(currentYearAssement.getPropertyId() ,currentYearAssement.getTenantId(),
+							requestInfoWrapper.getRequestInfo());
+					if (isBillUnpaid)
+						currentYearAssesmentDetails.setCanBifurcate(false);
+					else
+						currentYearAssesmentDetails.setCanBifurcate(true);
+
+	            }else {
+	            	currentYearAssesmentDetails.setCanBifurcate(false);
+	            }
+	            currentYearAssesmentDetails.setAsmtActiveStatus(true);
+			}
+				else {
+					currentYearAssesmentDetails.setAsmtActiveStatus(false);
+				}
+			}
+		}
+		return currentYearAssesmentDetails;
 	}
 
 	public List<Assessment> getAssessmenPlainSearch(AssessmentSearchCriteria criteria) {
