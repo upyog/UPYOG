@@ -21,21 +21,21 @@ const PropertyBasementsDetails = ({ t, config, onSelect, userType, formData }) =
       code: 2,
       i18nKey: "PT_TWO_BASEMENT_OPTION",
     },
-    {
-      //i18nKey: "2 Basement",
-      code: 3,
-      i18nKey: "PT_THREE_BASEMENT_OPTION",
-    },
-    {
-      //i18nKey: "2 Basement",
-      code: 4,
-      i18nKey: "PT_FOUR_BASEMENT_OPTION",
-    },
-    {
-      //i18nKey: "2 Basement",
-      code: 5,
-      i18nKey: "PT_FIVE_BASEMENT_OPTION",
-    },
+    // {
+    //   //i18nKey: "3 Basement",
+    //   code: 3,
+    //   i18nKey: "PT_THREE_BASEMENT_OPTION",
+    // },
+    // {
+    //   //i18nKey: "4 Basement",
+    //   code: 4,
+    //   i18nKey: "PT_FOUR_BASEMENT_OPTION",
+    // },
+    // {
+    //   //i18nKey: "5 Basement",
+    //   code: 5,
+    //   i18nKey: "PT_FIVE_BASEMENT_OPTION",
+    // },
   ];
 
   const onSkip = () => onSelect();
