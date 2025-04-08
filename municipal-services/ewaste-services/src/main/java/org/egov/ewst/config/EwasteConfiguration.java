@@ -1,3 +1,19 @@
+/**
+ * Main configuration class for the E-Waste Management Service module.
+ * 
+ * This class sets up essential configurations for the service, including:
+ * 1. Default timezone configuration for consistent date/time handling
+ * 2. HTTP message converter setup for proper API request/response handling
+ * 3. Kafka topic configurations for e-waste related events
+ * 
+ * The class uses Lombok annotations (@Getter, @AllArgsConstructor, etc.) to reduce boilerplate code,
+ * imports TracerConfiguration for request tracing capabilities, and provides beans
+ * that will be used throughout the application.
+ * 
+ * It also contains configuration properties for various services and endpoints
+ * needed by the e-waste management system.
+ */
+
 package org.egov.ewst.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

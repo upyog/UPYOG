@@ -16,7 +16,31 @@ import org.upyog.adv.web.models.BookingRequest;
 
 import digit.models.coremodels.PaymentDetail;
 import lombok.NonNull;
-
+/**
+ * Interface for the Booking Repository in the Advertisement Booking Service.
+ * 
+ * This interface defines methods for interacting with the database to manage
+ * advertisement bookings, draft applications, and slot availability.
+ * 
+ * Key Responsibilities:
+ * - Save and update booking details
+ * - Fetch booking details and counts based on search criteria
+ * - Manage draft applications for advertisement bookings
+ * - Handle slot availability and timer-related operations
+ * 
+ * Methods:
+ * - `saveBooking`: Saves a new booking into the database
+ * - `updateBooking`: Updates an existing booking
+ * - `getBookingDetails`: Fetches booking details based on search criteria
+ * - `getAdvertisementSlotAvailability`: Retrieves slot availability details
+ * - `saveDraftApplication`: Saves a draft application
+ * - `updateDraftApplication`: Updates an existing draft application
+ * - `deleteBookingIdForTimer`: Deletes a booking ID from the timer table
+ * - `insertBookingIdForTimer`: Inserts a booking ID into the timer table
+ * - `getRemainingTimerValues`: Retrieves remaining timer values for a booking
+ * 
+ * This interface is implemented by the `BookingRepositoryImpl` class.
+ */
 public interface BookingRepository {
 
 	void saveBooking(BookingRequest bookingRequest);
