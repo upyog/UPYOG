@@ -61,7 +61,7 @@ public class PaymentService {
 
 			if (configs.getModuleName().equals(businessService)) {
 				String applicationNo = paymentDetail.getBill().getConsumerCode();
-				log.info("Updating payment status for water tanker booking: {}", applicationNo);
+				log.info("Updating payment status for CND application: {}", applicationNo);
 
 				State state = workflowService.updateWorkflowStatus(paymentRequest, null);
 				String applicationStatus = state.getApplicationStatus();
