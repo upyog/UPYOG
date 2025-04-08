@@ -69,7 +69,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			throw new CustomException(StreetVendingConstants.INVALID_TENANT,
 					"Application cannot be created at StateLevel");
 		}
-		String oldApplicationNumber = vendingRequest.getStreetVendingDetail().getApplicationNo();
+
 		Object mdmsData = util.mDMSCall(requestInfo, tenantId);
 		log.info("MDMS master data : " + mdmsData);
 		// 1
@@ -81,14 +81,19 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		// 4
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
-		// 5
-		if (oldApplicationNumber != null && !oldApplicationNumber.isEmpty()) {
-			vendingRequest.getStreetVendingDetail().setOldApplicationNumber(oldApplicationNumber);
-			vendingRequest.getStreetVendingDetail().setRenewalStatus(RenewalStatus.RENEW_APPLICATION_CREATED);
-			streetVendingRepository.renew(vendingRequest);// To save the renew application
-		} else {
-			streetVendingRepository.save(vendingRequest);
+
+		// In case old application number is present, set the renewal status to RENEW_APPLICATION_CREATED
+		String oldAppNo = vendingRequest.getStreetVendingDetail().getOldApplicationNo();
+		if (oldAppNo != null && !oldAppNo.trim().isEmpty()) {
+			log.info("Processing renewal for application: {}, old application: {}",
+					vendingRequest.getStreetVendingDetail().getApplicationNo(),
+					vendingRequest.getStreetVendingDetail().getOldApplicationNo());
+			StreetVendingDetail detail = vendingRequest.getStreetVendingDetail();
+			detail.setRenewalStatus(RenewalStatus.RENEW_APPLICATION_CREATED);
 		}
+		// 5
+		streetVendingRepository.save(vendingRequest); // Save new application
+
 		String draftId = vendingRequest.getStreetVendingDetail().getDraftId();
 		// 6
 		if (StringUtils.isNotBlank(draftId)) {
@@ -131,6 +136,7 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION, "Application not found");
 		}
         RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
+		log.info("Renewal status: {}", renewalStatus);
         // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
         if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
             demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));

@@ -29,6 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.PaymentRequest;
 import lombok.extern.slf4j.Slf4j;
 
+import static org.upyog.sv.web.models.RenewalStatus.RENEWED;
+
 @Slf4j
 @Service
 public class PaymentService {
@@ -61,14 +63,11 @@ public class PaymentService {
 	 */
 
 	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
-		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
-			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in Street Vending method for businessService : " + businessService);
-			if (configs.getModuleName()
-					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+			if (configs.getModuleName().equals(businessService)) {
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
 				log.info("Updating payment status for street vending booking : " + applicationNo);
@@ -76,8 +75,7 @@ public class PaymentService {
 				updateApplicationStatusAndWorkflow(paymentRequest);
 			}
 		} catch (IllegalArgumentException e) {
-			log.error(
-					"Illegal argument exception occured while sending notification Street Vending : " + e.getMessage());
+			log.error("Illegal argument exception occured while sending notification Street Vending : " + e.getMessage());
 		} catch (Exception e) {
 			log.error("An unexpected exception occurred while sending notification Street Vending : ", e);
 		}
@@ -123,43 +121,140 @@ public class PaymentService {
 		return response.getProcessInstances().get(0).getState();
 	}
 
+	/**
+	 * Updates the application status and workflow of a Street Vending application
+	 * based on the payment received. Handles the following cases:
+	 *
+	 * <ul>
+	 *   <li><b>New Application:</b> Updates status via workflow, assigns validity for 1 year,
+	 *       and generates a certificate number.</li>
+	 *   <li><b>Renewal (Direct Payment):</b> Updates validity by 1 year and marks as renewed.</li>
+	 *   <li><b>Renewal (Edited Application):</b> Carries forward old certificate details and updates validity.</li>
+	 * </ul>
+	 *
+	 * @param paymentRequest The payment request containing request info and consumer code
+	 */
 	private void updateApplicationStatusAndWorkflow(PaymentRequest paymentRequest) {
-		StreetVendingDetail streetVendingDetail = streetVendingRepository
-				.getStreetVendingApplications(StreetVendingSearchCriteria.builder()
-						.applicationNumber(
-								paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode())
-						.build())
-				.get(0);
-		long todayDateInMillis = System.currentTimeMillis();
+		log.info("Updating status for payment: {}", paymentRequest);
 
-		if (streetVendingDetail == null) {
-			log.info("Application not found in consumer class while updating status");
+		String appNo = extractApplicationNumber(paymentRequest);
+		StreetVendingDetail detail = fetchApplication(appNo);
+		if (detail == null) {
+			log.warn("Application not found for applicationNumber: {}", appNo);
+			return;
 		}
-		String applicationStatus = null;
-		if(streetVendingDetail.getRenewalStatus()!= RenewalStatus.RENEW_IN_PROGRESS) {
-			State state = updateWorkflowStatus(paymentRequest);
-			 applicationStatus = state.getApplicationStatus();
+
+		RequestInfo requestInfo = paymentRequest.getRequestInfo();
+		String updatedStatus;
+
+		log.info("Processing application: {}, renewal status: {}", appNo, detail.getRenewalStatus());
+
+		switch (detail.getRenewalStatus()) {
+			case RENEW_IN_PROGRESS:
+				updatedStatus = updateOldApplicationForRenewal(detail);
+				break;
+			case RENEW_APPLICATION_CREATED:
+				updatedStatus = updateNewApplicationForRenewal(paymentRequest, detail);
+				break;
+			default:
+				updatedStatus = updateNewApplication(detail, paymentRequest);
+				break;
 		}
-		else {
-			applicationStatus = StreetVendingConstants.APPLICATION_STATUS_RENEWED;
-			streetVendingDetail.setRenewalStatus(RenewalStatus.RENEWED);
+
+		updateAuditFields(detail, requestInfo, StreetVendingUtil.getCurrentTimestamp(), updatedStatus);
+		persistApplicationUpdate(requestInfo, detail);
+	}
+
+	/**
+	 * Extracts application number from payment request.
+	 */
+	private String extractApplicationNumber(PaymentRequest paymentRequest) {
+		return paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
+	}
+
+	/**
+	 * Fetches application by application number.
+	 */
+	private StreetVendingDetail fetchApplication(String appNo) {
+		log.info("Fetching application: {}", appNo);
+		return streetVendingRepository
+				.getStreetVendingApplications(StreetVendingSearchCriteria.builder().applicationNumber(appNo).build())
+				.stream()
+				.findFirst()
+				.orElse(null);
+	}
+
+	/**
+	 * Handles direct renewal by adding one year to validity.
+	 */
+	private String updateOldApplicationForRenewal(StreetVendingDetail detail) {
+		log.info("Processing direct renewal for: {}", detail.getApplicationNo());
+		detail.setRenewalStatus(RENEWED);
+		detail.setValidityDateForPersisterDate(detail.getValidityDate().plusYears(1).toString());
+		return StreetVendingConstants.REGISTRATION_COMPLETED;
+	}
+
+	/**
+	 * Handles renewal where edited application was submitted before payment.
+	 * Copies old certificate, extends validity, marks old app as renewed.
+	 */
+	private String updateNewApplicationForRenewal(PaymentRequest paymentRequest, StreetVendingDetail detail) {
+		log.info("Processing edited renewal for: {}", detail.getApplicationNo());
+		detail.setRenewalStatus(null);
+        State state = updateWorkflowStatus(paymentRequest);
+        String applicationStatus = state.getApplicationStatus();
+		StreetVendingDetail oldDetail = fetchApplication(detail.getOldApplicationNo());
+		if (oldDetail != null) {
+			log.info("Fetched old application: {}. Copying certificate and marking as renewed", oldDetail.getApplicationNo());
+
+			detail.setCertificateNo(oldDetail.getCertificateNo());
+			detail.setValidityDateForPersisterDate(oldDetail.getValidityDate().plusYears(1).toString());
+
+			oldDetail.setRenewalStatus(RENEWED);
+			updateAuditFields(oldDetail, paymentRequest.getRequestInfo(), StreetVendingUtil.getCurrentTimestamp(), oldDetail.getApplicationStatus());
+			persistApplicationUpdate(paymentRequest.getRequestInfo(), oldDetail);
+		} else {
+			log.warn("Old application not found: {}", detail.getOldApplicationNo());
 		}
-		StreetVendingRequest vendingRequest = StreetVendingRequest.builder()
-				.requestInfo(paymentRequest.getRequestInfo()).build();
 
-		streetVendingDetail.getAuditDetails()
-				.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-		streetVendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-		streetVendingDetail.setApplicationStatus(applicationStatus);
-		streetVendingDetail.setApprovalDate(todayDateInMillis);
-		streetVendingDetail.setValidityDateForPersisterDate(StreetVendingUtil.getCurrentDateFromYear(1).toString());// add validity date for post 1 year of approval date
-		vendingRequest.setStreetVendingDetail(streetVendingDetail);
-		enrichCertificateNumber(streetVendingDetail, vendingRequest.getRequestInfo(),
-				streetVendingDetail.getTenantId()); // enriching certificate number when updating final status
-		log.info("Street Vending Request to update application status in consumer : " + vendingRequest);
+		return applicationStatus;
+	}
 
-		streetVendingRepository.update(vendingRequest);
+	/**
+	 * Handles new application: triggers workflow, sets validity, and generates certificate.
+	 */
+	private String updateNewApplication(StreetVendingDetail detail, PaymentRequest paymentRequest) {
+		log.info("Processing new application: {}", detail.getApplicationNo());
+		State state = updateWorkflowStatus(paymentRequest);
+		String applicationStatus = state.getApplicationStatus();
 
+		detail.setValidityDateForPersisterDate(StreetVendingUtil.getCurrentDateFromYear(1).toString());
+		enrichCertificateNumber(detail, paymentRequest.getRequestInfo(), detail.getTenantId());
+
+		return applicationStatus;
+	}
+
+	/**
+	 * Sets audit fields and status.
+	 */
+	private void updateAuditFields(StreetVendingDetail detail, RequestInfo requestInfo, long timestamp, String status) {
+		log.debug("Updating audit and status for: {}", detail.getApplicationNo());
+		detail.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+		detail.getAuditDetails().setLastModifiedTime(timestamp);
+		detail.setApplicationStatus(status);
+		detail.setApprovalDate(timestamp);
+	}
+
+	/**
+	 * Persists application update.
+	 */
+	private void persistApplicationUpdate(RequestInfo requestInfo, StreetVendingDetail detail) {
+		log.info("Persisting update for application: {}", detail.getApplicationNo());
+		StreetVendingRequest request = StreetVendingRequest.builder()
+				.requestInfo(requestInfo)
+				.streetVendingDetail(detail)
+				.build();
+		streetVendingRepository.update(request);
 	}
 
 	/**

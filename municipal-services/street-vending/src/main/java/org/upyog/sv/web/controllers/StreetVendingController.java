@@ -22,6 +22,7 @@ import org.upyog.sv.web.models.common.RequestInfoWrapper;
 import org.upyog.sv.web.models.common.ResponseInfo;
 import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
 import org.upyog.sv.web.models.StreetVendingDemandResponse;
+import org.upyog.sv.validator.CreateApplicationGroup;
 import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-16T13:19:19.125+05:30")
@@ -123,7 +124,7 @@ public class StreetVendingController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping("/trigger-expire-streetvendingapplications")
+	@RequestMapping(value = "/trigger-expire-streetvendingapplications", method = RequestMethod.POST)
 	public ResponseEntity<String> triggerWorkflowUpdate() {
 		try {
 			schedulerService.processStreetVendingApplications();
