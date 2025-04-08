@@ -1,48 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams, useRouteMatch, useLocation } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+// import { useQueryClient } from "react-query";
 import { useCashPaymentDetails } from "./ManualReciept";
 import { useCardPaymentDetails } from "./card";
 import { useChequeDetails } from "./cheque";
 import isEqual from "lodash/isEqual";
-// import { BillDetailsFormConfig } from "./Bill-details/billDetails";
-// import { timerEnabledForBusinessService } from "../../citizen/bills/routes/bill-details/utils";
-// import TimerServices from "../../citizen/timer-Services/timerServices";
+
 
 export const CollectPayment = (props) => {
   // const { formData, addParams } = props;
-  const { workflow: ModuleWorkflow, IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
+  // const { workflow: ModuleWorkflow } = Digit.Hooks.useQueryParams();
   const { t } = useTranslation();
-  const history = useHistory();
-  const queryClient = useQueryClient();
-  const {state,search}=useLocation();
-  // const { path: currentPath } = useRouteMatch();
+  // const history = useHistory();
+  // const queryClient = useQueryClient();
   let { consumerCode, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  // const [Time, setTime ] = useState(0);
-  if (window.location.href.includes("ISWSAPP")) consumerCode = new URLSearchParams(search).get("applicationNumber");
-  if (window.location.href.includes("ISWSCON") || ModuleWorkflow === "WS") consumerCode = decodeURIComponent(consumerCode);
+
 
   const { data: paymentdetails, isLoading } = Digit.Hooks.useFetchPayment({ tenantId: tenantId, consumerCode, businessService });
   const bill = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-  const { data: applicationData } = Digit.Hooks.fsm.useSearch(
-    tenantId,
-    { applicationNos: consumerCode },
-    { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false }
-  );
-
-  const advanceBill = applicationData?.advanceAmount;
-
-  // const { data: applicationData } = Digit.Hooks.fsm.useSearch(tenantId, { applicationNos: consumerCode }, { staleTime: Infinity });
-  // const advanceBill = applicationData?.advanceAmount;
-
-  // const { isLoading: storeLoading, data: store } = Digit.Services.useStore({
-  //   stateCode: props.stateCode,
-  //   moduleCode: businessService.split(".")[0],
-  //   language: Digit.StoreData.getCurrentLanguage(),
-  // });
 
   const { cardConfig } = useCardPaymentDetails(props, t);
   const { chequeConfig } = useChequeDetails(props, t);
@@ -61,10 +39,6 @@ export const CollectPayment = (props) => {
     { code: "CASH", label: t("COMMON_MASTERS_PAYMENTMODE_CASH") },
     { code: "CHEQUE", label: t("COMMON_MASTERS_PAYMENTMODE_CHEQUE") },
     { code: "CARD", label: t("COMMON_MASTERS_PAYMENTMODE_CREDIT/DEBIT CARD") },
-    // { code: "DD", label: "Demand Draft" },
-    // { code: "OFFLINE_NEFT", label: "Offline NEFT" },
-    // { code: "OFFLINE_RTGS", label: "Offline RTGS" },
-    // { code: "POSTAL_ORDER", label: "Postal Order" },
   ];
 
   const formConfigMap = {
@@ -88,24 +62,6 @@ export const CollectPayment = (props) => {
     bill.totalAmount = Math.round(bill.totalAmount);
     data.paidBy = data.paidBy.code;
 
-    // if (
-    //   BillDetailsFormConfig({ consumerCode, businessService }, t)[
-    //     ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-    //   ] &&
-    //   !data?.amount?.paymentAllowed
-    // ) {
-    //   let action =
-    //     data?.amount?.error === "CS_CANT_PAY_BELOW_MIN_AMOUNT"
-    //       ? t(data?.amount?.error) + "- " + data?.amount?.minAmountPayable
-    //       : t(data?.amount?.error);
-
-    //   setToast({
-    //     key: "error",
-    //     action,
-    //   });
-    //   return;
-    // }
-
     const { ManualRecieptDetails, paymentModeDetails, ...rest } = data;
     const { errorObj, ...details } = paymentModeDetails || {};
 
@@ -128,11 +84,6 @@ export const CollectPayment = (props) => {
         paidBy: data.paidBy,
       },
     };
-    if (advanceBill !== null && (applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT" || applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") && !applicationData.paymentPreference) {
-      (recieptRequest.Payment.paymentDetails[0].totalAmountPaid = advanceBill),
-        (recieptRequest.Payment.totalAmountPaid = advanceBill),
-        (recieptRequest.Payment.totalDue = bill.totalAmount);
-    }
 
     if (data.ManualRecieptDetails.manualReceiptDate) {
       recieptRequest.Payment.paymentDetails[0].manualReceiptDate = new Date(ManualRecieptDetails.manualReceiptDate).getTime();
@@ -182,22 +133,6 @@ export const CollectPayment = (props) => {
       return;
     }
 
-    try {
-      const resposne = await Digit.PaymentService.createReciept(tenantId, recieptRequest);
-      queryClient.invalidateQueries();
-      history.push(
-        IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}` : 
-        `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}`
-      );
-    } catch (error) {
-      setToast({ key: "error", action: error?.response?.data?.Errors?.map((e) => t(e.code)) })?.join(" , ");
-      setTimeout(() => setToast(null), 5000);
-      return;
-    }
   };
 
   useEffect(() => {
@@ -207,7 +142,7 @@ export const CollectPayment = (props) => {
 
   let config = [
         {
-      head: !ModuleWorkflow && businessService !== "TL" ? t("COMMON_PAYMENT_HEAD") : "",
+      head:t("COMMON_PAYMENT_HEAD"),
       body: [
         {
           label: t("PAY_TOTAL_AMOUNT"),
@@ -232,8 +167,6 @@ export const CollectPayment = (props) => {
                 select={(d) => {
                   if (d.name == paidByMenu[0].name) {
                     props.setValue("payerName", bill?.payerName);
-                    // SM-1953: commenting to resolve showing mobile number when selecting the owner option
-                    // props.setValue("payerMobile", bill?.mobileNumber);
                   } else {
                     props.setValue("payerName", "");
                     props.setValue("payerMobile", "");
@@ -313,27 +246,9 @@ export const CollectPayment = (props) => {
   });
 
   const getFormConfig = () => {
-    // if (
-    //   BillDetailsFormConfig({ consumerCode, businessService }, t)[
-    //     ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-    //   ] ||
-    //   ModuleWorkflow ||
-    //   businessService === "TL" ||
-    //   businessService.includes("ONE_TIME_FEE")
-    // ) {
-    //   config.splice(0, 1);
-    // }
     let conf = config.concat(formConfigMap[formState?.paymentMode?.code] || []);
     conf = conf?.concat(cashConfig);
     return conf;
-    // BillDetailsFormConfig({ consumerCode, businessService }, t)[
-    //   ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-    // ]
-    //   ? BillDetailsFormConfig({ consumerCode, businessService }, t)[
-    //       ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-    //     ].concat(conf)
-    //   : 
-      // conf;
   };
 
 
@@ -345,11 +260,6 @@ export const CollectPayment = (props) => {
     <React.Fragment>
        <div style={{ display: "flex", justifyContent: "space-between" }}>
       <Header styles={{ marginLeft: "15px" }}>{ t("PAYMENT_COLLECT")}</Header>
-      {/* {timerEnabledForBusinessService(businessService) && (
-            <Header styles={{ marginRight: "15px" }}>
-            <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
-            </Header>
-          )} */}
       </div>
       <FormComposer
         cardStyle={{ paddingBottom: "100px" }}
@@ -358,7 +268,7 @@ export const CollectPayment = (props) => {
         onSubmit={onSubmit}
         formState={formState}
         defaultValues={getDefaultValues()}
-        isDisabled={(IsDisconnectionFlow ? false : businessService === "SW" || "WS" ?false:bill?.totalAmount ? !bill.totalAmount > 0 : true) /*|| (timerEnabledForBusinessService(businessService) && Time === 0)*/}
+        isDisabled={false}
         // isDisabled={BillDetailsFormConfig({ consumerCode }, t)[businessService] ? !}
         onFormValueChange={(setValue, formValue) => {
           if (!isEqual(formValue.paymentMode, selectedPaymentMode)) {

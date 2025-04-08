@@ -28,23 +28,23 @@ const CndApplicationDetails = () => {
     },
   ); 
 
-//   const [billData, setBillData]=useState(null);
+  const [billData, setBillData]=useState(null);
    const cndApplicationDetail = get(data, "cndApplicationDetail", []);
   let  cndData = (cndApplicationDetail && cndApplicationDetail.length > 0 && cndApplicationDetail[0]) || {};
   const application =  cndData;
   sessionStorage.setItem("cnd-application", JSON.stringify(application));
   console.log("cndDatacndData",cndData);
-//   const [loading, setLoading]=useState(false);
+  const [loading, setLoading]=useState(false);
 
-//   const fetchBillData=async()=>{
-//     setLoading(true);
-//     const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "sv-services", consumerCode: applicationNo });
-//     setBillData(result);
-//     setLoading(false);
-//     };
-//     useEffect(()=>{
-//     fetchBillData();
-//     }, [tenantId, applicationNo]); 
+  const fetchBillData=async()=>{
+    setLoading(true);
+    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "cnd-service", consumerCode: applicationNumber });
+    setBillData(result);
+    setLoading(false);
+    };
+    useEffect(()=>{
+    fetchBillData();
+    }, [tenantId, applicationNumber]); 
 
 //   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
 //     {
@@ -61,7 +61,7 @@ const CndApplicationDetails = () => {
       id: null,
       tenantId: tenantId,
       businessService: "cnd",
-      businessId: application?.applicationNo,
+      businessId: application?.applicationNumber,
       action: "",
       moduleName: "cnd-service",
       state: null,
