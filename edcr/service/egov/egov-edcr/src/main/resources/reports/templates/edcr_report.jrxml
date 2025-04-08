@@ -284,7 +284,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
 				<reportElement x="142" y="309" width="146" height="21" uuid="1688cff2-ebdb-4833-8ad4-58856fa1fa1f"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -449,7 +449,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["SURRENDER ROAD WIDTH AREA in  m²"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
 				<reportElement x="418" y="309" width="130" height="21" uuid="a732c1c1-fd0a-4f6b-aa1c-b42c329c4479"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -1454,7 +1454,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{dcrNo} != null  && $P{dcrNo} !=  ""  ?  $P{dcrNo} : "NA"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
 				<reportElement x="418" y="330" width="130" height="21" uuid="28774628-3a1d-47ef-aed7-bbd00e19487e"/>
 				<box>
 					<pen lineWidth="0.5"/>
