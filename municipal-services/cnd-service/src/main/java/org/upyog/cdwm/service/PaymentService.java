@@ -26,23 +26,30 @@ public class PaymentService {
 
 	@Autowired
 	private WorkflowService workflowService;
-	
+
 	@Autowired
 	private CNDServiceImpl cndService;
 
-	
-
 	/**
+	 * Processes a payment notification received from the Kafka topic. This method is triggered 
+	 * by a consumer listening to payment events. It parses the received record into a {@link PaymentRequest},
+	 * extracts the relevant application and business details, and invokes the workflow and update logic 
+	 * for CND (Community Notification/Disposal) applications.
 	 *
-	 * @param record
-	 * @param topic
+	 * <p>If the business service in the payment matches the configured module name, it updates the 
+	 * workflow status and invokes the CND application update logic accordingly.</p>
+	 *
+	 * @param record the payment record received from the Kafka topic, containing the payment information.
+	 * @param topic the Kafka topic name from which the payment event was consumed.
+	 * @throws JsonProcessingException if the record cannot be processed into a valid {@link PaymentRequest} object.
 	 */
-
+	
 	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
 		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
-			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode().split("-")[0];
+			String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode()
+					.split("-")[0];
 			log.info("paymentRequest : " + paymentRequest);
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in CND method for businessService : " + businessService);
@@ -56,15 +63,13 @@ public class PaymentService {
 				String applicationStatus = state.getApplicationStatus();
 				cndService.updateCNDApplicationDetails(null, paymentRequest, applicationStatus);
 			}
-			
+
 		} catch (IllegalArgumentException e) {
-			log.error(
-					"Illegal argument exception occured while sending notification CND Service : " + e.getMessage());
+			log.error("Illegal argument exception occured while sending notification CND Service : " + e.getMessage());
 		} catch (Exception e) {
 			log.error("An unexpected exception occurred while sending notification CND Service : ", e);
 		}
 
 	}
-
 
 }
