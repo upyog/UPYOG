@@ -478,7 +478,7 @@ public class FetchEdcrRulesMdms {
 	                }
 	                
 	                /*
-	                // Will be needed to work on later
+	                // Todo: SideYardService feature is not using the methods currently, in future when the methods are used, this else if condition will be needed
 	                else if (valueFromColumn.size() > 1 && ruleItem.containsKey(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ONE)) {
 	                	value.put("sideYardValueOne", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_ONE));
 	                	value.put("sideYardValueTwo", ruleItem.get(EdcrRulesMdmsConstants.SIDE_YARD_VALUE_TWO));

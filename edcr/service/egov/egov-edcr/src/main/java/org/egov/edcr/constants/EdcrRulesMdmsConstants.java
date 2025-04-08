@@ -235,7 +235,7 @@ public class EdcrRulesMdmsConstants {
 	 public static final String SANITATION_FLOOR_MULTIPLIER = "sanitationFloorMultiplier";
 	 
 	 /*
-	 // SideYardService
+	 // Todo: SideYardService feature is not using the methods currently, in future when the methods are used, these constants will be needed
 	 public static final String SIDE_YARD_VALUE_ONE = "sideYardValueOne";
 	 public static final String SIDE_YARD_VALUE_TWO = "sideYardValueTwo";
 	 public static final String SIDE_YARD_VALUE_THREE = "sideYardValueThree";
