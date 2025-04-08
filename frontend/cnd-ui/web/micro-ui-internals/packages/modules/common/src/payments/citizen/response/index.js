@@ -43,7 +43,6 @@ export const convertEpochToDate = (dateEpoch) => {
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
-  console.log("datatatataty",data)
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -969,11 +968,11 @@ export const convertEpochToDate = (dateEpoch) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )} */}
-      {/* {business_service == "sv-services" && (
+      {business_service == "cnd" && (
         <Link to={`/cnd-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
         </Link>
-      )} */}
+      )} 
     </Card>
   );
 };

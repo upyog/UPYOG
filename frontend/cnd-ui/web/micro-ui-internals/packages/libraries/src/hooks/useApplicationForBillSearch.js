@@ -1,4 +1,9 @@
-// CND Payment Configuration
+/** 
+ * CND Payment Configuration
+ * It uses `react-query` for data fetching and caching, and dynamically sets the search function based on the business service.
+ * The returned object includes the fetched applications and metadata like `key` and `label` for bill generation reference.
+ * 
+*/
 import { useQuery } from "react-query";
 import { CNDService } from "../services/elements/CND";
 
@@ -25,8 +30,6 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
     _key = "cnd"
   } 
   
-
-
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];
   const applications = useQuery(["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], searchFn, {
