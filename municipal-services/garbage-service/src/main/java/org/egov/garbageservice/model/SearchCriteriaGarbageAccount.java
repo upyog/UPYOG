@@ -46,4 +46,8 @@ public class SearchCriteriaGarbageAccount {
     private Long startId;
 
     private Long endId;
+    
+    @Builder.Default
+	private Boolean isSchedulerCall = false;
+    
 }

@@ -22,6 +22,8 @@ import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PropertySearchRequest;
 import org.egov.pt.models.PropertySearchResponse;
+import org.egov.pt.models.enums.Channel;
+import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
 import org.egov.pt.service.FuzzySearchService;
 import org.egov.pt.service.MigrationService;
@@ -150,6 +152,7 @@ public class PropertyController {
 
 		List<Property> properties = new ArrayList<Property>();
 		List<Property> propertiesCreatedBy = new ArrayList<Property>();
+		List<Property> propertiesFromExcel = new ArrayList<Property>();
 		Set<Property> finalProperties = new HashSet<Property>();
 		List<Property> finalPropertiesList = new ArrayList<Property>();
 		Integer count = 0;
@@ -171,9 +174,29 @@ public class PropertyController {
 			propertiesCreatedBy = propertyService.searchProperty(propertyCriteriaCreatedBy,
 					requestInfoWrapper.getRequestInfo());
 		}
+		
+		if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
+				&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
+						.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
+
+			List<String> rolesWithinTenant = propertyValidator.getRolesByTenantId(propertyCriteria.getTenantId(),
+					requestInfoWrapper.getRequestInfo().getUserInfo().getRoles());
+
+			for (String role : rolesWithinTenant) {
+				if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_VERIFIER)) {
+					PropertyCriteria propertyCriteriaFromExcel = PropertyCriteria.builder()
+							.tenantId(propertyCriteria.getTenantId()).status(Collections.singleton(Status.INITIATED))
+							.channels(Collections.singleton(Channel.MIGRATION)).build();
+
+					propertiesFromExcel = propertyService.searchProperty(propertyCriteriaFromExcel,
+							requestInfoWrapper.getRequestInfo());
+				}
+			}
+		}
 
 		finalProperties.addAll(properties);
 		finalProperties.addAll(propertiesCreatedBy);
+		finalProperties.addAll(propertiesFromExcel);
 
 		finalPropertiesList = finalProperties.stream().collect(Collectors.toList());
 		

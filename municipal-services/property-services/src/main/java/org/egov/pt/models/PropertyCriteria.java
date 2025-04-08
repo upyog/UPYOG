@@ -2,6 +2,7 @@ package org.egov.pt.models;
 
 import java.util.Set;
 
+import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.Status;
 
 import lombok.AllArgsConstructor;
@@ -32,6 +33,8 @@ public class PropertyCriteria {
 	private Set<String> oldpropertyids;
 	
 	private Set<Status> status;
+	
+	private Set<Channel> channels;
 	
 	private Set<Status> statusList;
 

@@ -213,22 +213,25 @@ public class GarbageAccountRepository {
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
 
 
-        if (CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId()) 
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())
-        		&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())
-        		&& StringUtils.isEmpty(searchCriteriaGarbageAccount.getTenantId())) {
-        	throw new CustomException("INCORRECT_SEARCH_CRITERIA","Provide criteria to search garbage account.");
-        }
+		if (!searchCriteriaGarbageAccount.getIsSchedulerCall()
+				&& (CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())
+						&& CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())
+						&& StringUtils.isEmpty(searchCriteriaGarbageAccount.getTenantId()))) {
+			throw new CustomException("INCORRECT_SEARCH_CRITERIA", "Provide criteria to search garbage account.");
+		}
 
         searchQuery.append(" WHERE");
-        boolean isAppendAndClause = false;
+        searchQuery.append(" 1=1 ");
+        
+        boolean isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
             isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
