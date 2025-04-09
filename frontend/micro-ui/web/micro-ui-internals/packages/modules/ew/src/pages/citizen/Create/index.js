@@ -6,7 +6,6 @@ import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from 
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 
 const EWCreate = ({ parentRoute }) => {
-
   const queryClient = useQueryClient();
   const match = useRouteMatch();
   const { t } = useTranslation();
@@ -15,12 +14,14 @@ const EWCreate = ({ parentRoute }) => {
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EWASTE_CREATE", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
+  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
+
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
@@ -39,7 +40,6 @@ const EWCreate = ({ parentRoute }) => {
     }
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
 
-
     let redirectWithHistory = history.push;
     if (skipStep) {
       redirectWithHistory = history.replace;
@@ -52,14 +52,12 @@ const EWCreate = ({ parentRoute }) => {
     }
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
-    }
-    else {
+    } else {
       nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
   };
-
 
   if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
     clearParams();
@@ -78,7 +76,6 @@ const EWCreate = ({ parentRoute }) => {
     } else if (key === "units") {
       let units = params.units || [];
       units = data;
-
       setParams({ ...params, units });
     } else {
       setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });
@@ -87,18 +84,18 @@ const EWCreate = ({ parentRoute }) => {
   }
 
   const handleSkip = () => { };
+
   const handleMultiple = () => { };
 
   const onSuccess = () => {
     clearParams();
     queryClient.invalidateQueries("EWASTE_CREATE");
   };
+
   if (isLoading) {
     return <Loader />;
   }
 
-  // commonFields=newConfig;
-  /* use newConfig instead of commonFields for local development in case needed */
   commonFields = citizenConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
@@ -124,9 +121,11 @@ const EWCreate = ({ parentRoute }) => {
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={ewasteCreate} value={params} />
       </Route>
+
       <Route path={`${match.path}/acknowledgement`}>
         <EWASTEAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
+
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>

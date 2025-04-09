@@ -1,9 +1,8 @@
+// Importing necessary components and hooks from external libraries and local files
 import {
   Card,
   CardHeader,
   CardSubHeader,
-  CardSectionHeader,
-  CardText,
   CheckBox,
   LinkButton,
   Row,
@@ -11,33 +10,36 @@ import {
   SubmitBar,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { checkForNA, getFixedFilename } from "../../../utils";
-import Timeline from "../../../components/EWASTETimeline";
-import ApplicationTable from "../../../components/inbox/ApplicationTable";
+import { useTranslation } from "react-i18next"; // Hook for translations
+import { useHistory } from "react-router-dom"; // Hook for navigation
+import { checkForNA } from "../../../utils"; // Utility functions for handling data
+import Timeline from "../../../components/EWASTETimeline"; // Component for displaying the timeline
+import ApplicationTable from "../../../components/inbox/ApplicationTable"; // Component for displaying product details in a table
 
+// Component for rendering a button to navigate to a specific route
 const ActionButton = ({ jumpTo }) => {
-  const { t } = useTranslation();
-  const history = useHistory();
+  const { t } = useTranslation(); // Translation hook
+  const history = useHistory(); // Hook for navigation
   function routeTo() {
-    history.push(jumpTo);
+    history.push(jumpTo); // Navigate to the specified route
   }
 
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
 };
 
+// Main component for the "Check Page" in the E-Waste module
 const CheckPage = ({ onSubmit, value = {} }) => {
-  const { t } = useTranslation();
-  const history = useHistory();
+  const { t } = useTranslation(); // Translation hook
+  const history = useHistory(); // Hook for navigation
 
+  // Destructuring the form data passed as props
   const {
-    address,
-    ownerKey,
-    ewdet,
-    documents, // Maybe need to use in future
+    address, // Address details
+    ownerKey, // Owner details
+    ewdet // E-Waste details
   } = value;
 
+  // Defining columns for the product details table
   const productcolumns = [
     { Header: t("PRODUCT_NAME"), accessor: "name" },
     { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
@@ -45,6 +47,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
+  // Mapping product details to rows for the table
   const productRows =
     ewdet?.prlistName?.map((product, index) => ({
       name: product.code,
@@ -53,126 +56,130 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       total_price: ewdet?.prlistQuantity[index].code * product.price,
     })) || [];
 
+  // State to manage the agreement checkbox
   const [agree, setAgree] = useState(false);
+
+  // Handler for toggling the agreement checkbox
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
+
   return (
     <React.Fragment>
+      {/* Display the timeline if the user is on the citizen portal */}
       {window.location.href.includes("/citizen") ? <Timeline currentStep={5} /> : null}
+
       <Card>
+        {/* Header for the check page */}
         <CardHeader>{t("EWASTE_CHECK_YOUR_DETAILS")}</CardHeader>
         <div>
-        <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
-        <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
-        <ApplicationTable
-          t={t}
-          data={productRows}
-          columns={productcolumns}
-          getCellProps={(cellInfo) => ({
-            style: {
-              minWidth: "150px",
-              padding: "10px",
-              fontSize: "16px",
-              paddingLeft: "20px",
-            },
-          })}
-          isPaginationRequired={false}
-          totalRecords={productRows.length}
-        />
-        <br />
-        <StatusTable style={{ marginLeft: "20px" }}>
-          <Row
-            label={t("EWASTE_NET_PRICE")}
-            text={<div style={{ marginLeft: "295px" }}>{"₹ " + ewdet?.calculatedAmount}</div>}
-            actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
-          />
-        </StatusTable>
-      </div>
+          {/* Section for product details */}
+          <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
+          <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
+            <ApplicationTable
+              t={t}
+              data={productRows}
+              columns={productcolumns}
+              getCellProps={(cellInfo) => ({
+                style: {
+                  minWidth: "150px",
+                  padding: "10px",
+                  fontSize: "16px",
+                  paddingLeft: "20px",
+                },
+              })}
+              isPaginationRequired={false}
+              totalRecords={productRows.length}
+            />
+            <br />
+            {/* Displaying the net price */}
+            <StatusTable style={{ marginLeft: "20px" }}>
+              <Row
+                label={t("EWASTE_NET_PRICE")}
+                text={<div style={{ marginLeft: "295px" }}>{"₹ " + ewdet?.calculatedAmount}</div>}
+                actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/productdetails`}`} />}
+              />
+            </StatusTable>
+          </div>
 
-
+          {/* Section for owner details */}
           <CardSubHeader>{t("EWASTE_TITLE_OWNER_DETAILS")}</CardSubHeader>
-          <br></br>
+          <br />
           <StatusTable>
             <Row
               label={t("EWASTE_APPLICANT_NAME")}
               text={`${t(checkForNA(ownerKey?.applicantName))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
-
             <Row
               label={t("EWASTE_MOBILE_NUMBER")}
               text={`${t(checkForNA(ownerKey?.mobileNumber))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
-
             <Row
               label={t("EWASTE_EMAIL_ID")}
               text={`${t(checkForNA(ownerKey?.emailId))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/owner-details`}`} />}
             />
           </StatusTable>
-          <br></br>
+          <br />
 
+          {/* Section for address details */}
           <CardSubHeader>{t("EWASTE_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
-          <br></br>
+          <br />
           <StatusTable>
             <Row
               label={t("EWASTE_SEARCH_PINCODE")}
               text={`${t(checkForNA(address?.pincode))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/pincode`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_CITY")}
               text={`${t(checkForNA(address?.city?.name))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/address`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_STREET_NAME")}
               text={`${t(checkForNA(address?.street))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_HOUSE_NO")}
               text={`${t(checkForNA(address?.doorNo))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_HOUSE_NAME")}
               text={`${t(checkForNA(address?.buildingName))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE1")}
               text={`${t(checkForNA(address?.addressLine1))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_ADDRESS_LINE2")}
               text={`${t(checkForNA(address?.addressLine2))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
-
             <Row
               label={t("EWASTE_SEARCH_LANDMARK")}
               text={`${t(checkForNA(address?.landmark))}`}
               actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ew/raiseRequest/street`}`} />}
             />
           </StatusTable>
-          <br></br>
+          <br />
 
+          {/* Declaration checkbox */}
           <CheckBox label={t("EWASTE_FINAL_DECLARATION_MESSAGE")} onChange={setdeclarationhandler} styles={{ height: "auto" }} />
         </div>
+
+        {/* Submit button */}
         <SubmitBar label={t("EWASTE_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
       </Card>
     </React.Fragment>
   );
 };
 
-export default CheckPage;
+export default CheckPage; // Exporting the component

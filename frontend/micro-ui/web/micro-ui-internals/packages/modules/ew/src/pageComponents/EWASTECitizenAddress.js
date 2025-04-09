@@ -1,16 +1,19 @@
-import { CardLabel, FormStep, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import Timeline from "../components/EWASTETimeline";
+// Importing necessary components and hooks from external libraries and local files
+import { CardLabel, FormStep, TextInput } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for form steps and input fields
+import _ from "lodash"; // Utility library for deep comparison
+import React, { useEffect, useState } from "react"; // React hooks for state and lifecycle management
+import { Controller, useForm } from "react-hook-form"; // React Hook Form for managing form state
+import Timeline from "../components/EWASTETimeline"; // Component for displaying the timeline
 
+// Main component for capturing the citizen's address details in the E-Waste module
 const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
-  const onSkip = () => onSelect();
-  let validation;
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
-  const formValue = watch();
+  const onSkip = () => onSelect(); // Function to handle skipping the step
+  let validation; // Variable to store validation rules
+  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" }); // State to manage focus on input fields
+  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm(); // React Hook Form methods
+  const formValue = watch(); // Watching form values for changes
 
+  // State variables to manage address fields
   const [street, setStreet] = useState(formData?.address?.street || "");
   const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || "");
   const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || "");
@@ -18,10 +21,12 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
   const [buildingName, setBuildingName] = useState(formData?.address?.buildingName || "");
   const [doorNo, setDoorNo] = useState(formData?.address?.doorNo || "");
 
+  // Trigger validation on component mount
   useEffect(() => {
     trigger();
   }, []);
 
+  // Effect to update form data when form values change
   useEffect(() => {
     const keys = Object.keys(formValue);
     const part = {};
@@ -33,6 +38,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
     }
   }, [formValue]);
 
+  // Handlers for updating state variables when input fields change
   const selectStreet = (e) => setStreet(e.target.value);
   const selectDoorNo = (e) => setDoorNo(e.target.value);
   const selectBuilding = (e) => setBuildingName(e.target.value);
@@ -40,7 +46,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
   const selectAddressLine1 = (e) => setAddressLine1(e.target.value);
   const selectAddressLine2 = (e) => setAddressLine2(e.target.value);
 
-
+  // Function to handle the "Next" button click
   const goNext = () => {
     let owner = formData.address;
     let ownerStep;
@@ -53,6 +59,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
+  // Effect to automatically call goNext when address fields change
   useEffect(() => {
     if (userType === "citizen") {
       goNext();
@@ -61,14 +68,16 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <React.Fragment>
+      {/* Display the timeline if the user is on the citizen portal */}
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
       <FormStep
-        config={{ ...config }}
-        onSelect={goNext}
-        onSkip={onSkip}
-        isDisabled={addressLine1 == "" || doorNo == ""}
-        t={t}
+        config={{ ...config }} // Configuration for the form step
+        onSelect={goNext} // Function to call when the "Next" button is clicked
+        onSkip={onSkip} // Function to call when the "Skip" button is clicked
+        isDisabled={addressLine1 == "" || doorNo == ""} // Disable the "Next" button if required fields are empty
+        t={t} // Translation function
       >
+        {/* Input field for street name */}
         <CardLabel>{`${t("EWASTE_STREET_NAME")}`}</CardLabel>
         <TextInput
           t={t}
@@ -80,6 +89,8 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
         />
+
+        {/* Input field for house number */}
         <CardLabel>{`${t("EWASTE_HOUSE_NO")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
@@ -97,8 +108,9 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
             type: "text",
             title: t("EW_HOUSE_NO_ERROR_MESSAGE"),
           })}
-
         />
+
+        {/* Input field for house name */}
         <CardLabel>{`${t("EWASTE_HOUSE_NAME")}`}</CardLabel>
         <TextInput
           t={t}
@@ -109,8 +121,9 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
           value={buildingName}
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
-
         />
+
+        {/* Input field for address line 1 */}
         <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
         <TextInput
           t={t}
@@ -122,6 +135,8 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
         />
+
+        {/* Input field for address line 2 */}
         <CardLabel>{`${t("EWASTE_ADDRESS_LINE2")}`}</CardLabel>
         <TextInput
           t={t}
@@ -132,8 +147,9 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
           value={addressLine2}
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
-
         />
+
+        {/* Input field for landmark */}
         <CardLabel>{`${t("EWASTE_landmark")}`}</CardLabel>
         <TextInput
           t={t}
@@ -150,4 +166,4 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
   );
 };
 
-export default EWASTECitizenAddress;
+export default EWASTECitizenAddress; // Exporting the component
