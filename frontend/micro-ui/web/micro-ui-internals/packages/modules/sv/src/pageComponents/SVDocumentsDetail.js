@@ -458,6 +458,7 @@ function SVDocuments({
 
   const { dropdownData } = doc;
   let dropDownData = dropdownData;
+  console.log("first",doc?.code.replaceAll(".", "_"));
   const LoadingSpinner = () => (
     <div className="loading-spinner"
     />
@@ -497,8 +498,11 @@ function SVDocuments({
             ) : uploadedFile ? "1 File Uploaded" : "No File Uploaded"}
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
-            accept=".pdf, .jpeg, .jpg, .png"
-            buttonType="button"
+            accept={
+              doc?.code?.replaceAll(".", "_") === "FAMILY_PHOTO"
+                ? ".jpeg, .jpg, .png"
+                : ".pdf, .jpeg, .jpg, .png"
+            }            buttonType="button"
             error={!uploadedFile}
           />
         </div>
