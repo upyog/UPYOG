@@ -165,12 +165,4 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		return streetVendingDraftDetail;
 	}
 
-	@Override
-	public void renew(StreetVendingRequest vendingRequest) {
-		log.info("Renewing street vending booking application for new and old booking number: "
-				+ vendingRequest.getStreetVendingDetail().getApplicationNo() + "::"
-				+ vendingRequest.getStreetVendingDetail().getOldApplicationNo());
-		producer.push(vendingConfiguration.getStreetVendingApplicationRenewTopic(), vendingRequest);
-	}
-
 }

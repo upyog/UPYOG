@@ -29,5 +29,4 @@ public interface StreetVendingRepository {
 
 	void deleteDraftApplication(String draftId);
 
-	void renew(StreetVendingRequest vendingRequest);
 }

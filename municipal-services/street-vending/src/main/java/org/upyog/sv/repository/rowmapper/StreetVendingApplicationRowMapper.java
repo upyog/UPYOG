@@ -71,6 +71,8 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 //						.eligibleToRenew(rs.getBoolean("SVELIGIBLETORENEW"))
 						.renewalStatus(rs.getString("SVRENEWALSTATUS")!=null?RenewalStatus.valueOf(rs.getString("SVRENEWALSTATUS")):null)
 						.expireFlag(rs.getBoolean("SVEXPIREFLAG"))
+						.certificateNo(rs.getString("SVCERTIFICATENO"))
+						.oldApplicationNo(rs.getString("SVOLDAPPLICATIONNO"))
 						.validFrom(validFromString).validTo(validToString).addressDetails(new ArrayList<>())
 						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
 						.vendingOperationTimeDetails(new ArrayList<>()).build();
