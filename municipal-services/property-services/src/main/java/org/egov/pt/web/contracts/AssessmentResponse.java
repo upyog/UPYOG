@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.models.Assessment;
+import org.egov.pt.models.CurrentYearAssesmentDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -30,6 +31,10 @@ public class AssessmentResponse   {
 
   @JsonProperty("Assessments")
   private List<Assessment> assessments;
+  
+  @JsonProperty("currentYearAssement")
+  private CurrentYearAssesmentDetails currentYearAssesmentDetails;
+  
 
  
 }
