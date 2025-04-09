@@ -75,9 +75,10 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		// 1
 		validator.validateCreate(vendingRequest, mdmsData);
 		// 2
-		State state = workflowService.updateWorkflowStatus(vendingRequest);
+		enrichmentService.enrichCreateStreetVendingRequest(vendingRequest);
 		// 3
-		enrichmentService.enrichCreateStreetVendingRequest(state.getApplicationStatus(), vendingRequest);
+		State state = workflowService.updateWorkflowStatus(vendingRequest);
+		vendingRequest.getStreetVendingDetail().setApplicationStatus(state.getApplicationStatus());
 		// 4
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
