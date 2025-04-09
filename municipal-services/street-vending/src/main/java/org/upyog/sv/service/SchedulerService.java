@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.StreetVendingUtil;
-import org.upyog.sv.web.models.RenewalStatus;
-import org.upyog.sv.web.models.StreetVendingDetail;
-import org.upyog.sv.web.models.StreetVendingRequest;
-import org.upyog.sv.web.models.StreetVendingSearchCriteria;
+import org.upyog.sv.web.models.*;
 
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +43,8 @@ public class SchedulerService {
 		}
 		log.info("Street Vending Applications Scheduler started");
 
-		markExpiredApplicationsAndNotify();
 		markEligibleForRenewalAndNotify();
+		markExpiredApplicationsAndNotify();
 	}
 
 	/**
@@ -56,6 +53,10 @@ public class SchedulerService {
 	 */
 	private void markExpiredApplicationsAndNotify() {
 		List<StreetVendingDetail> expiredApplications = fetchApplicationsByValidity(StreetVendingUtil.getCurrentDate());
+		if (expiredApplications.isEmpty()) {
+			log.info("No expired applications found");
+			return;
+		}
 		updateApplicationStatusAndNotify(expiredApplications, StreetVendingConstants.ACTION_STATUS_APPLICATION_EXPIRED,
 				true);
 	}
@@ -68,6 +69,10 @@ public class SchedulerService {
 		LocalDate expiryThresholdDate = StreetVendingUtil.getCurrentDateFromMonths(2); // Applications expiring in 2
 																						// months
 		List<StreetVendingDetail> nearExpiryApplications = fetchApplicationsByValidity(expiryThresholdDate);
+		if (nearExpiryApplications.isEmpty()) {
+			log.info("No applications found for renewal eligibility");
+			return;
+		}
 		updateApplicationStatusAndNotify(nearExpiryApplications, StreetVendingConstants.ACTION_STATUS_ELIGIBLE_TO_RENEW,
 				false);
 	}
@@ -103,22 +108,26 @@ public class SchedulerService {
 
 		UserDetailResponse systemUser = userService.searchByUserName(StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
 				StreetVendingConstants.SYSTEM_CITIZEN_TENANTID);
-
+		if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
+			log.error("System user not found");
+			return;
+		}
+		// create workflow object for the action for notification
+		Workflow workflow = Workflow.builder().action(action).build();
+		// Iterate through each application and update the renewal status or expire flag and application status if markExpired flag is true
 		for (StreetVendingDetail detail : applications) {
-//			detail.setEligibleToRenew(true);
 			detail.setRenewalStatus(RenewalStatus.ELIGIBLE_TO_RENEW);
-			detail.getWorkflow().setAction(action);
+			detail.setWorkflow(workflow);
 
 			if (markExpired) {
 				detail.setExpireFlag(true);
 				detail.setApplicationStatus(StreetVendingConstants.STATUS_EXPIRED);
 			}
-
 			StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
 					.requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
 					.streetVendingDetail(detail).build();
 
-			streetVendingRepository.save(streetVendingRequest);
+			streetVendingRepository.update(streetVendingRequest);
 			notificationService.process(streetVendingRequest, action);
 		}
 	}
