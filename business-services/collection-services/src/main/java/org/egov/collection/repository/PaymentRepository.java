@@ -130,7 +130,7 @@ public class PaymentRepository {
         }
 
         return payments;
-    }
+    }  
     
     public Long getPaymentsCount (String tenantId, String businessService) {
     	
