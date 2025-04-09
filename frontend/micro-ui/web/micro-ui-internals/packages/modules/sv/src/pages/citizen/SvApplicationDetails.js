@@ -149,6 +149,11 @@ const SvApplicationDetails = () => {
               label={t("SV_VALIDITY_DATE")}
               text={streetVendingDetails?.validityDate} 
             />
+             <Row
+              className="border-none"
+              label={t("SV_CERTIFICATE_NUMBER")}
+              text={streetVendingDetails?.certificateNo} 
+            />
           </StatusTable>
            
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_VENDOR_PERSONAL_DETAILS")}</CardSubHeader>

@@ -322,6 +322,7 @@ export const svPayloadData = (data) =>{
     applicationDate: 0,
     applicationId: "",
     applicationNo: "",
+    oldApplicationNo:sessionStorage.getItem("vendingApplicationID"),
     applicationStatus: "",
     approvalDate: 0,
     auditDetails: {
