@@ -65,6 +65,8 @@ public class ExcelUtils {
 				Address address = enrichAddress(row);
 				// populate additional details
 				ObjectNode additionalDetails = enrichAdditionalDetails(row);
+				
+				log.info("Tenant Id: " + row.getRowNum() + " : " + getCellValue(row.getCell(1)));
 
 				Property property = Property.builder().tenantId(getCellValue(row.getCell(1)))
 						.propertyType(getCellValue(row.getCell(2))).ownershipCategory(getCellValue(row.getCell(3)))
