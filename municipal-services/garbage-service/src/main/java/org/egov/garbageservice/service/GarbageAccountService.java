@@ -822,18 +822,22 @@ public class GarbageAccountService {
 
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 
-			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())
-					|| BooleanUtils.isTrue(account.getWorkflowCall())) {
+			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
 
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
-				String tempApplicationNo = account.getGrbgApplication().getApplicationNo();
+				String tempApplicationNo = null != account.getGrbgApplicationNumber()
+						? account.getGrbgApplicationNumber()
+						: account.getGrbgApplication().getApplicationNo();
 				String action = account.getWorkflowAction();
 				String status = getStatusOrAction(action, true);
 				String comment = account.getWorkflowComment();
 
-				GarbageAccount accountTemp = objectMapper.convertValue(
-						existingGarbageApplicationAccountsMap.get(account.getGrbgApplication().getApplicationNo()),
-						GarbageAccount.class);
+				GarbageAccount accountTemp = objectMapper
+						.convertValue(
+								existingGarbageApplicationAccountsMap.get(
+										null != account.getGrbgApplicationNumber() ? account.getGrbgApplicationNumber()
+												: account.getGrbgApplication().getApplicationNo()),
+								GarbageAccount.class);
 				if (null == accountTemp) {
 					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS",
 							"Garbage Account not found to run workflow.");
