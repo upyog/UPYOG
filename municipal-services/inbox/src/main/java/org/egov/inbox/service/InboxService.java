@@ -553,6 +553,8 @@ public class InboxService {
 					moduleSearchCriteria.put(APPLICATION_NO_PARAM, applicationNumbers);
 					businessKeys.addAll(applicationNumbers);
 					moduleSearchCriteria.remove(OFFSET_PARAM);
+					moduleSearchCriteria.remove(STATUS_PARAM);
+					
 				} else {
 					isSearchResultEmpty = true;
 				}
