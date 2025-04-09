@@ -510,7 +510,7 @@ public class PaymentQueryBuilder {
 		if (!CollectionUtils.isEmpty(searchCriteria.getConsumerCodes())) {
 			addClauseIfRequired(preparedStatementValues, selectQuery);
 			selectQuery.append(
-					" id in (select paymentid from egcl_paymentdetail as pyd where pyd.billid in ( select id from egcl_bill as bill where bill.consumercode in (:consumerCodes)) and bill.tenantId = :tenantId)");
+					" id in (select paymentid from egcl_paymentdetail as pyd where pyd.billid in ( select id from egcl_bill as bill where bill.consumercode in (:consumerCodes) and bill.tenantId = :tenantId) )");
 			preparedStatementValues.put("consumerCodes", searchCriteria.getConsumerCodes());
 			preparedStatementValues.put("tenantId", searchCriteria.getTenantId());
 		}
