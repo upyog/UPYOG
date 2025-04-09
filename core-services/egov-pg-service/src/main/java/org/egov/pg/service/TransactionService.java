@@ -107,7 +107,7 @@ public class TransactionService {
 				.build();
 
 		if(validator.skipGateway(transaction)){
-	//	if(true){	
+		//if(true){	
 			transaction.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
 			paymentsService.registerPayment(transactionRequest);
 		}

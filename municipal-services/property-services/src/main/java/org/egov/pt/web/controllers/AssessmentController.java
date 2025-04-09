@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.models.Assessment;
 import org.egov.pt.models.AssessmentSearchCriteria;
+import org.egov.pt.models.CurrentYearAssesmentDetails;
 import org.egov.pt.service.AssessmentService;
 import org.egov.pt.util.ResponseInfoFactory;
 import org.egov.pt.web.contracts.AssessmentRequest;
@@ -66,6 +67,7 @@ public class AssessmentController {
 		AssessmentResponse response = AssessmentResponse.builder()
 				.assessments(assessments)
 				.responseInfo(resInfo)
+				.currentYearAssesmentDetails(null)
 				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -78,6 +80,22 @@ public class AssessmentController {
 		AssessmentResponse response = AssessmentResponse.builder()
 				.assessments(assessments)
 				.responseInfo(resInfo)
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
+	//For BIFURCATION 
+	//@PostMapping("/_searchCuurentYearAsmt")
+	public ResponseEntity<AssessmentResponse> _searchCuurentYearAsmt(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @ModelAttribute AssessmentSearchCriteria assessmentSearchCriteria) {
+		List<Assessment> assessments = assessmentService.searchAssessments(assessmentSearchCriteria,requestInfoWrapper.getRequestInfo());
+		CurrentYearAssesmentDetails currentYearAssesmentDetails  = assessmentService.getCurrentYearAssesmentDetails(assessments,requestInfoWrapper);
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+		AssessmentResponse response = AssessmentResponse.builder()
+				.assessments(null)
+				.responseInfo(resInfo)
+				.currentYearAssesmentDetails(currentYearAssesmentDetails)
 				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
