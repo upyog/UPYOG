@@ -66,6 +66,7 @@ public class ExcelUtils {
 				// populate additional details
 				ObjectNode additionalDetails = enrichAdditionalDetails(row);
 				
+				log.info("1st cell : " + getCellValue(row.getCell(0)));
 				log.info("Tenant Id: " + row.getRowNum() + " : " + getCellValue(row.getCell(1)));
 
 				Property property = Property.builder().tenantId(getCellValue(row.getCell(1)))
