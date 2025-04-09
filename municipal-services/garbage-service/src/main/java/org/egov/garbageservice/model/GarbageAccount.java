@@ -52,6 +52,9 @@ public class GarbageAccount {
 	private String workflowComment;
 	
 	private Boolean isOnlyWorkflowCall = false;
+	
+	@Builder.Default
+	private Boolean workflowCall = false;
 
 	private String status;
 	

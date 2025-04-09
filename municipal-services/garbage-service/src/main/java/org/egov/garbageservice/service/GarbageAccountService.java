@@ -822,16 +822,17 @@ public class GarbageAccountService {
 
 		updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 
-			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
+			if (BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())
+					|| BooleanUtils.isTrue(account.getWorkflowCall())) {
 
 				Boolean tempBol = account.getIsOnlyWorkflowCall();
-				String tempApplicationNo = account.getGrbgApplicationNumber();
+				String tempApplicationNo = account.getGrbgApplication().getApplicationNo();
 				String action = account.getWorkflowAction();
 				String status = getStatusOrAction(action, true);
 				String comment = account.getWorkflowComment();
 
 				GarbageAccount accountTemp = objectMapper.convertValue(
-						existingGarbageApplicationAccountsMap.get(account.getGrbgApplicationNumber()),
+						existingGarbageApplicationAccountsMap.get(account.getGrbgApplication().getApplicationNo()),
 						GarbageAccount.class);
 				if (null == accountTemp) {
 					throw new CustomException("FAILED_SEARCH_GARBAGE_ACCOUNTS",
