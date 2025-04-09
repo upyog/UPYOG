@@ -458,7 +458,6 @@ function SVDocuments({
 
   const { dropdownData } = doc;
   let dropDownData = dropdownData;
-  console.log("first",doc?.code.replaceAll(".", "_"));
   const LoadingSpinner = () => (
     <div className="loading-spinner"
     />
