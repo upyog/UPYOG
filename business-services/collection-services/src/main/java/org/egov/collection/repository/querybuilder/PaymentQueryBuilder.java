@@ -494,7 +494,7 @@ public class PaymentQueryBuilder {
 		}
 		if (searchCriteria.getTenantId() != null && !searchCriteria.getTenantId().isEmpty()) {
 			addClauseIfRequired(paymentDetailPreparedStatementValues, paymentDetailQuery);
-			paymentDetailQuery.append(" and pyd.tenantId IN (:tenantId)  ");
+			paymentDetailQuery.append(" pyd.tenantId IN (:tenantId)  ");
 			preparedStatementValues.put("tenantId", searchCriteria.getTenantId());
 			paymentDetailPreparedStatementValues.put("tenantId", searchCriteria.getTenantId());
 		}
