@@ -58,6 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -848,7 +849,12 @@ public class UserService {
 		redisTemplate.opsForValue().set(uuid, CaptchaKey, 5, TimeUnit.MINUTES);
 		captchaResponse.setResponseInfo(responseInfo);
 		captcha.setCaptchaUuid(uuid);
-		captcha.setCaptcha(captchaText.toString());
+		try {
+			captcha.setCaptcha(encrypt(captchaText.toString(), key));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		captchaResponse.setCaptcha(captcha);
 		return captchaResponse;
 	}
@@ -874,12 +880,12 @@ public class UserService {
 
 	public boolean validateCaptcha(String uuid, String captcha) {
 		String storedCaptcha = redisTemplate.opsForValue().get(uuid);
-		//System.out.println("storedCaptchaKey::" + storedCaptcha);
+		// System.out.println("storedCaptchaKey::" + storedCaptcha);
 		if (storedCaptcha != null)
 			storedCaptcha = storedCaptcha.substring(0, 6);
 		else
 			throw new CustomException("INVALID_LOGIN", "Login Failed Please Try Again");
-		//System.out.println("storedCaptcha::" + storedCaptcha);
+		// System.out.println("storedCaptcha::" + storedCaptcha);
 		if (storedCaptcha != null) {
 			if (captcha.contentEquals(storedCaptcha))
 				return true;
@@ -927,9 +933,26 @@ public class UserService {
 			throw new RuntimeException("Decryption failed: " + e.getMessage());
 		}
 	}
-	
-	public void deleteCaptcha(String uuid)
-	{
+
+	public String encrypt(String plainText, String key) throws Exception {
+		final String ALGORITHM = algorithm;
+		final String TRANSFORMATION = transformation;
+
+		byte[] iv = new byte[16];
+		SecureRandom random = new SecureRandom();
+		random.nextBytes(iv);
+		IvParameterSpec ivSpec = new IvParameterSpec(iv);
+		String encodedIV = Base64.getEncoder().encodeToString(iv);
+
+		Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+		SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
+		byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
+		String encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+		return encodedIV + ":" + encryptedText;
+	}
+
+	public void deleteCaptcha(String uuid) {
 		redisTemplate.delete(uuid);
 	}
 
