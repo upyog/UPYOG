@@ -25,11 +25,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
-
 import java.util.TimeZone;
 
+/**
+ * Configuration class for the Ewaste application.
+ * This class sets up various configurations such as timezone, Kafka topics,
+ * user service, ID generation service, notification topics, localization,
+ * workflow service, and MDMS (Master Data Management System).
+ */
 @Import({ TracerConfiguration.class })
 @Getter
 @AllArgsConstructor
@@ -38,14 +42,17 @@ import java.util.TimeZone;
 @Component
 public class EwasteConfiguration {
 
+	// Application timezone
 	@Value("${app.timezone}")
 	private String timeZone;
 
+	// Initialize method to set the default timezone
 	@PostConstruct
 	public void initialize() {
 		TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
 	}
 
+	// Bean configuration for Jackson message converter
 	@Bean
 	@Autowired
 	public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
@@ -54,22 +61,21 @@ public class EwasteConfiguration {
 		return converter;
 	}
 
-	// PERSISTER
+	// Kafka topics for ewaste creation and update
 	@Value("${ewaste.kafka.create.topic}")
 	private String createEwasteTopic;
 
 	@Value("${ewaste.kafka.update.topic}")
 	private String updateEwasteTopic;
 
-	// USER
+	// User service configuration
 	@Value("${egov.user.host}")
 	private String userHost;
 
 	@Value("${egov.user.search.path}")
 	private String userSearchEndpoint;
 
-	// IDGEN config
-
+	// ID generation service configuration
 	@Value("${egov.idgen.host}")
 	private String idGenHost;
 
@@ -82,7 +88,7 @@ public class EwasteConfiguration {
 	@Value("${egov.idgen.ewid.name}")
 	private String ewasteIdGenName;
 
-	// NOTIFICATION TOPICS
+	// Notification topics
 	@Value("${kafka.topics.notification.sms}")
 	private String smsNotifTopic;
 
@@ -95,24 +101,26 @@ public class EwasteConfiguration {
 	@Value("${kafka.topics.notification.pg.save.txns}")
 	private String pgTopic;
 
+	// Localization configuration
 	@Value("${egov.localization.statelevel}")
 	private Boolean isStateLevel;
 
+	// Notification enablement flags
 	@Value("${notif.sms.enabled}")
 	private Boolean isSMSNotificationEnabled;
 
 	@Value("${notif.email.enabled}")
 	private Boolean isEmailNotificationEnabled;
 
+	// Business service configuration
 	@Value("${egov.ew.businessService}")
 	private String businessService;
 
-	// Notif variables
-
+	// User event notification configuration
 	@Value("${egov.usr.events.download.receipt.link}")
 	private String userEventReceiptDownloadLink;
 
-	// Localization
+	// Localization service configuration
 	@Value("${egov.localization.host}")
 	private String localizationHost;
 
@@ -124,7 +132,8 @@ public class EwasteConfiguration {
 
 	@Value("${egov.localization.fallback.locale}")
 	private String fallBackLocale;
-	// USER EVENTS
+
+	// User events configuration
 	@Value("${egov.ui.app.host}")
 	private String uiAppHost;
 
@@ -143,6 +152,7 @@ public class EwasteConfiguration {
 	@Value("${egov.msg.pay.link}")
 	private String payLinkSMS;
 
+	// Workflow service configuration
 	@Value("${workflow.host}")
 	private String wfHost;
 
@@ -161,26 +171,26 @@ public class EwasteConfiguration {
 	@Value("${workflow.status.active}")
 	private String wfStatusActive;
 
-	// ##### mdms
-
+	// MDMS (Master Data Management System) configuration
 	@Value("${egov.mdms.host}")
 	private String mdmsHost;
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndpoint;
-	
+
 	@Value("${upyog.mdms.v2.host}")
 	private String mdmsV2Host;
-	
+
 	@Value("${upyog.mdms.v2.search.endpoint}")
 	private String mdmsV2Endpoint;
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
-	
+
 	@Value("${upyog.mdms.v2.enabled}")
 	private boolean mdmsV2Enabled;
-	
+
+	// Initialize method to set MDMS host and endpoint based on version
 	@PostConstruct
 	public void init() {
 		if (mdmsV2Enabled) {
@@ -188,5 +198,4 @@ public class EwasteConfiguration {
 			mdmsEndpoint = mdmsV2Endpoint;
 		}
 	}
-
 }

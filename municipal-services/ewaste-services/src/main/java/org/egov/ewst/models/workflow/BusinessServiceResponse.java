@@ -14,6 +14,10 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a response containing business services in the Ewaste application.
+ * This class contains the response information and a list of business services.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,6 +33,12 @@ public class BusinessServiceResponse {
 	@NotNull
 	private List<BusinessService> businessServices;
 
+	/**
+	 * Adds a business service to the list of business services in the response.
+	 *
+	 * @param businessServiceItem the business service to add
+	 * @return the updated BusinessServiceResponse object
+	 */
 	public BusinessServiceResponse addBusinessServiceItem(BusinessService businessServiceItem) {
 		if (this.businessServices == null) {
 			this.businessServices = new ArrayList<>();

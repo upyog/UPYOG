@@ -21,6 +21,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents an action in the workflow of the Ewaste application.
+ * This class contains details about the action such as tenant ID, current state, next state, roles, etc.
+ */
 @SuppressWarnings("deprecation")
 @ApiModel(description = "A Object holds the basic data for a Action in workflow")
 @Validated
@@ -67,6 +71,12 @@ public class Action {
 
 	private AuditDetails auditDetails;
 
+	/**
+	 * Adds a role to the list of roles associated with the action.
+	 *
+	 * @param rolesItem the role to add
+	 * @return the updated Action object
+	 */
 	public Action addRolesItem(String rolesItem) {
 		if (this.roles == null) {
 			this.roles = new ArrayList<>();
