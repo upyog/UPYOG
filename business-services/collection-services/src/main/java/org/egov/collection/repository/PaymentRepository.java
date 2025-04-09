@@ -168,7 +168,7 @@ public class PaymentRepository {
         preparedStatementValues.put("id", ids);
         preparedStatementValues.put("tenantId", tenantId);
         StringBuilder query = new StringBuilder(paymentQueryBuilder.getBillQuery());
-        query.append(" AND	tenantid= :tenantId");
+        query.append(" AND	b.tenantid= :tenantId");
         List<Bill> bills = namedParameterJdbcTemplate.query(query.toString(), preparedStatementValues, billRowMapper);
         bills.forEach(bill -> {
         	mapOfIdAndBills.put(bill.getId(), bill);
