@@ -44,6 +44,7 @@ import static org.egov.demand.util.Constants.ADVANCE_TAXHEAD_JSONPATH_CODE;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -109,27 +110,28 @@ public class DemandService {
 
 	@Autowired
 	private DemandEnrichmentUtil demandEnrichmentUtil;
-	
+
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
-	
+
 	@Autowired
 	private AmendmentRepository amendmentRepository;
-	
+
 	@Autowired
 	private BillRepositoryV2 billRepoV2;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 	@Autowired
 	private Util util;
 
 	@Autowired
 	private DemandValidatorV1 demandValidatorV1;
-	Boolean ispaymentcompleted=false;
+	Boolean ispaymentcompleted = false;
+
 	/**
-	 * Method to create new demand 
+	 * Method to create new demand
 	 * 
 	 * generates ids and saves to the repository
 	 * 
@@ -145,14 +147,14 @@ public class DemandService {
 
 		log.info("the demand request in create async : {}", demandRequest);
 //
-	RequestInfo requestInfo = demandRequest.getRequestInfo();
-	List<Demand> demands = demandRequest.getDemands();
+		RequestInfo requestInfo = demandRequest.getRequestInfo();
+		List<Demand> demands = demandRequest.getDemands();
 		AuditDetails auditDetail = util.getAuditDetail(requestInfo);
 		log.info("requestInfo: {} and AuditDetails: {}", requestInfo, auditDetail);
 		log.info("AuditDetails tostring: {}", auditDetail.toString());
-		
-		List<AmendmentUpdate> amendmentUpdates = consumeAmendmentIfExists(demands,auditDetail);
-		
+
+		List<AmendmentUpdate> amendmentUpdates = consumeAmendmentIfExists(demands, auditDetail);
+
 		generateAndSetIdsForNewDemands(demands, auditDetail);
 
 		List<Demand> demandsToBeCreated = new ArrayList<>();
@@ -161,19 +163,18 @@ public class DemandService {
 		String businessService = demandRequest.getDemands().get(0).getBusinessService();
 		Boolean isAdvanceAllowed = util.getIsAdvanceAllowed(businessService, mdmsData);
 
-		if(isAdvanceAllowed){
-			apportionAdvanceIfExist(demandRequest,mdmsData,demandsToBeCreated,demandToBeUpdated);
-		}
-		else {
+		if (isAdvanceAllowed) {
+			apportionAdvanceIfExist(demandRequest, mdmsData, demandsToBeCreated, demandToBeUpdated);
+		} else {
 			demandsToBeCreated.addAll(demandRequest.getDemands());
 		}
 
-		save(new DemandRequest(requestInfo,demandsToBeCreated));
+		save(new DemandRequest(requestInfo, demandsToBeCreated));
 		if (!CollectionUtils.isEmpty(amendmentUpdates))
 			amendmentRepository.updateAmendment(amendmentUpdates);
 
-		if(!CollectionUtils.isEmpty(demandToBeUpdated))
-			update(new DemandRequest(requestInfo,demandToBeUpdated), null);
+		if (!CollectionUtils.isEmpty(demandToBeUpdated))
+			update(new DemandRequest(requestInfo, demandToBeUpdated), null);
 //		
 //		billRepoV2.updateBillStatus(
 //				UpdateBillCriteria.builder()
@@ -183,15 +184,15 @@ public class DemandService {
 //				.tenantId(demands.get(0).getTenantId())
 //				.build()
 //				);
-		
-		billRepoV2.updateBillStatus( demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
-				businessService,BillStatus.EXPIRED);
+
+		billRepoV2.updateBillStatus(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+				businessService, BillStatus.EXPIRED);
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
 
 	/**
-	 * Method to generate and set ids, Audit details to the demand 
-	 * and demand-detail object
+	 * Method to generate and set ids, Audit details to the demand and demand-detail
+	 * object
 	 * 
 	 */
 	private void generateAndSetIdsForNewDemands(List<Demand> demands, AuditDetails auditDetail) {
@@ -218,9 +219,8 @@ public class DemandService {
 		}
 	}
 
-	
 	/**
-	 * Update method for demand flow 
+	 * Update method for demand flow
 	 * 
 	 * updates the existing demands and inserts in case of new
 	 * 
@@ -276,22 +276,14 @@ public class DemandService {
 		String tenantId = demands.get(0).getTenantId();
 		String businessService = demands.get(0).getBusinessService();
 		if (ObjectUtils.isEmpty(paymentBackUpdateAudit))
-			billRepoV2.updateBillStatus( demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
-					businessService,BillStatus.EXPIRED);
+			billRepoV2.updateBillStatus(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
+					businessService, BillStatus.EXPIRED);
 		else
 			billRepoV2.updateBillStatus(demands.stream().map(Demand::getConsumerCode).collect(Collectors.toList()),
-					businessService,BillStatus.PAID);
+					businessService, BillStatus.PAID);
 		// producer.push(applicationProperties.getDemandIndexTopic(), demandRequest);
 		return new DemandResponse(responseInfoFactory.getResponseInfo(requestInfo, HttpStatus.CREATED), demands);
 	}
-	
-		
-		
-		
-		
-		
-	
-
 
 	/**
 	 * Search method to fetch demands from DB
@@ -307,37 +299,41 @@ public class DemandService {
 		UserSearchRequest userSearchRequest = null;
 		List<User> payers = null;
 		List<Demand> demands = null;
-		
+
 		String userUri = applicationProperties.getUserServiceHostName()
 				.concat(applicationProperties.getUserServiceSearchPath());
-		
+
 		/*
-		 * user type is CITIZEN by default because only citizen can have demand or payer can be null
+		 * user type is CITIZEN by default because only citizen can have demand or payer
+		 * can be null
 		 */
 		String citizenTenantId = demandCriteria.getTenantId().split("\\.")[0];
-		
+
 		/*
-		 * If payer related data is provided first then user search has to be made first followed by demand search
+		 * If payer related data is provided first then user search has to be made first
+		 * followed by demand search
 		 */
 		if (demandCriteria.getEmail() != null || demandCriteria.getMobileNumber() != null) {
-			
-			userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo)
-					.tenantId(citizenTenantId).emailId(demandCriteria.getEmail())
-					.mobileNumber(demandCriteria.getMobileNumber()).build();
-			
-			payers = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
-			
-			if(CollectionUtils.isEmpty(payers))
+
+			userSearchRequest = UserSearchRequest.builder().requestInfo(requestInfo).tenantId(citizenTenantId)
+					.emailId(demandCriteria.getEmail()).mobileNumber(demandCriteria.getMobileNumber()).build();
+
+			payers = mapper
+					.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class)
+					.getUser();
+
+			if (CollectionUtils.isEmpty(payers))
 				return new ArrayList<>();
-			
+
 			Set<String> ownerIds = payers.stream().map(User::getUuid).collect(Collectors.toSet());
 			demandCriteria.setPayer(ownerIds);
 			demands = demandRepository.getDemands(demandCriteria);
-			
+
 		} else {
-			
+
 			/*
-			 * If no payer related data given then search demand first then enrich payer(user) data
+			 * If no payer related data given then search demand first then enrich
+			 * payer(user) data
 			 */
 			demands = demandRepository.getDemands(demandCriteria);
 			if (!demands.isEmpty()) {
@@ -354,17 +350,15 @@ public class DemandService {
 				}
 			}
 		}
-		
+
 		if (!CollectionUtils.isEmpty(demands) && !CollectionUtils.isEmpty(payers))
 			demands = demandEnrichmentUtil.enrichPayer(demands, payers);
 
-		
-		
-		List<Demand> activeDemands=new ArrayList<Demand>();		
+		List<Demand> activeDemands = new ArrayList<Demand>();
 
 		for (Demand d : demands) {
-			if(d.getStatus().toString().equalsIgnoreCase("ACTIVE"))
-				activeDemands.add(d); 
+			if (d.getStatus().toString().equalsIgnoreCase("ACTIVE"))
+				activeDemands.add(d);
 		}
 		return activeDemands;
 	}
@@ -377,195 +371,242 @@ public class DemandService {
 		demandRepository.update(demandRequest, paymentBackUpdateAudit);
 	}
 
-
 	/**
-	 * Calls the demand apportion API if any advance amoount is available for that comsumer code
-	 * @param demandRequest The demand request for create
-	 * @param mdmsData The master data for billing service
-	 * @param demandToBeCreated The list which maintains the demand that has to be created in the system
-	 * @param demandToBeUpdated The list which maintains the demand that has to be updated in the system
+	 * Calls the demand apportion API if any advance amoount is available for that
+	 * comsumer code
+	 * 
+	 * @param demandRequest     The demand request for create
+	 * @param mdmsData          The master data for billing service
+	 * @param demandToBeCreated The list which maintains the demand that has to be
+	 *                          created in the system
+	 * @param demandToBeUpdated The list which maintains the demand that has to be
+	 *                          updated in the system
 	 */
-	private void apportionAdvanceIfExist(DemandRequest demandRequest, DocumentContext mdmsData,List<Demand> demandToBeCreated,List<Demand> demandToBeUpdated){
+	
+	/* Made major changes on demand generation if advance exist 
+	 * 1st if advance is more than demand amount then new row will be inserted in  last demand.
+	 *  --Refrence Advance settlement issue reported 
+	 *  --Author :- Abhishek Rana
+	 *  */
+	private void apportionAdvanceIfExist(DemandRequest demandRequest, DocumentContext mdmsData,
+			List<Demand> demandToBeCreated, List<Demand> demandToBeUpdated) {
+
 		List<Demand> demands = demandRequest.getDemands();
 		RequestInfo requestInfo = demandRequest.getRequestInfo();
-		int taxamnt =0;
-		int count=0;
-		int finalsvar=0;
-		int finalsadvance=0;
 
-		for(Demand demand : demands) {
+		String taxHeadCode = null;
+		BigDecimal totalAdvanceAvailable = BigDecimal.ZERO;
+		BigDecimal finalTaxAmount = BigDecimal.ZERO;
+		BigDecimal previousShortfall = BigDecimal.ZERO;
+		String DemandId=null;
+		
+		boolean isAdvance = false;
+
+		for (Demand demand : demands) {
 			String businessService = demand.getBusinessService();
 			String consumerCode = demand.getConsumerCode();
 			String tenantId = demand.getTenantId();
 
-			// Searching demands based on consumer code of the current demand (demand which has to be created)
-			DemandCriteria searchCriteria = DemandCriteria.builder().tenantId(tenantId).consumerCode(Collections.singleton(consumerCode)).businessService(businessService).build();
+
+			DemandCriteria searchCriteria = DemandCriteria.builder().tenantId(tenantId)
+					.consumerCode(Collections.singleton(consumerCode)).businessService(businessService).build();
 			List<Demand> demandsFromSearch = demandRepository.getDemands(searchCriteria);
 
-			// If no demand is found means there is no advance available. The current demand is added for creation
-			if (CollectionUtils.isEmpty(demandsFromSearch)){
+			if (CollectionUtils.isEmpty(demandsFromSearch)) {
 				demandToBeCreated.add(demand);
 				continue;
 			}
-			List<DemandDetail> newdemandDetail = demand.getDemandDetails();
-			 for (DemandDetail demandDetailnew : newdemandDetail) 
-		        {
-		              if ("WS_CHARGE".equals(demandDetailnew.getTaxHeadMasterCode()) || "SW_CHARGE".equals(demandDetailnew.getTaxHeadMasterCode())) 
-		            {
-		            	taxamnt= demandDetailnew.getTaxAmount().intValue();
 
-		            }
-		        }
-			// Fetch the demands containing advance amount
+
 			List<Demand> demandsToBeApportioned = getDemandsContainingAdvance(demandsFromSearch, mdmsData);
 
-			// If no demand is found with advance amount the code continues to next demand and adds the current demand for creation
-			if(CollectionUtils.isEmpty(demandsToBeApportioned)){
+
+			if (CollectionUtils.isEmpty(demandsToBeApportioned)) {
 				demandToBeCreated.add(demand);
 				continue;
 			}
-			if (businessService.equalsIgnoreCase("WS") || businessService.equalsIgnoreCase("SW")) {
-			if (finalsadvance==0 && count ==0)
-			{
-				for (Demand d1 : demandsToBeApportioned) 
-				{
-			        List<DemandDetail> d12 = d1.getDemandDetails();
-			        for (DemandDetail d123 : d12) 
-			        {
-			            if ("WS_ADVANCE_CARRYFORWARD".equals(d123.getTaxHeadMasterCode()) || "SW_ADVANCE_CARRYFORWARD".equals(d123.getTaxHeadMasterCode())) 
-			            {
-			            	finalsadvance = d123.getTaxAmount().intValue();
-			            		if(taxamnt+finalsadvance>0)
-			            			{
-			            		ispaymentcompleted=false;
-			            		demand.setIsPaymentCompleted(ispaymentcompleted);
-			            		d1.setIsPaymentCompleted(ispaymentcompleted);
-			            	}
-			            	else {
-			            		
-			            		ispaymentcompleted=true;
-			            		demand.setIsPaymentCompleted(ispaymentcompleted);
-			            		d1.setIsPaymentCompleted(ispaymentcompleted);
-			            	}
 
-			            }
-			           
-			        }
-			    }
-				count=1;
-			}
-			
-			else if (finalsadvance<=0 && count ==1)
-			{
-				
-			        	if (finalsvar!=1)
-			        	{
-					     
-					       finalsadvance = taxamnt+finalsadvance;
-					       
-					       if (finalsadvance==0)
-					       {
-					    	   finalsvar=1;
-					    	   ispaymentcompleted=false;
-			
-					       }	
-					       else 
-					       {  ispaymentcompleted=true;
-					    	   finalsvar=0;
-					       }           	
-					
-					            	
-					   }
-		}
+			BigDecimal taxAmount = demand.getDemandDetails().stream().map(DemandDetail::getTaxAmount)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-			
-			
-			for (Demand demand12 : demandsToBeApportioned) {
-			
-			    List<DemandDetail> demandDetails23 = demand12.getDemandDetails();
-			    for (DemandDetail demandDetail45 : demandDetails23) {
-			        if ("WS_ADVANCE_CARRYFORWARD".equals(demandDetail45.getTaxHeadMasterCode()) || "SW_ADVANCE_CARRYFORWARD".equals(demandDetail45.getTaxHeadMasterCode())) {
-			        	BigDecimal tax=new BigDecimal(finalsadvance);
-			            demandDetail45.setTaxAmount(tax);
-			        }
-			    }
+			if (totalAdvanceAvailable.compareTo(BigDecimal.ZERO) == 0 && !isAdvance) {
+				for (Demand oldDemand : demandsToBeApportioned) {
+					for (DemandDetail oldDetail : oldDemand.getDemandDetails()) {
+						if (oldDetail.getTaxHeadMasterCode().toUpperCase().contains("ADVANCE")) {
+							taxHeadCode = oldDetail.getTaxHeadMasterCode();
+							DemandId=oldDemand.getId();
+							totalAdvanceAvailable = totalAdvanceAvailable
+									.add(oldDetail.getTaxAmount().subtract(oldDetail.getCollectionAmount()));
+							finalTaxAmount = totalAdvanceAvailable;
+							isAdvance = true;
+						}
+					}
+				}
 			}
+
+			for (Demand demandToUpdate : demandsToBeApportioned) {
+				for (DemandDetail detail : demandToUpdate.getDemandDetails()) {
+					if (detail.getTaxHeadMasterCode().toUpperCase().contains("ADVANCE")) {
+						if (totalAdvanceAvailable.compareTo(BigDecimal.ZERO) < 0) {
+							BigDecimal shortfall = totalAdvanceAvailable.abs();
+							previousShortfall = previousShortfall.add(shortfall.min(taxAmount));
+						} else {
+							totalAdvanceAvailable = BigDecimal.ZERO;
+						}
+						detail.setTaxAmount(totalAdvanceAvailable);
+					}
+				}
 			}
-			// The current demand is added to get apportioned
 			demandsToBeApportioned.add(demand);
+			DemandApportionRequest apportionRequest = DemandApportionRequest.builder().requestInfo(requestInfo)
+					.demands(demandsToBeApportioned).tenantId(tenantId).build();
 
-			DemandApportionRequest apportionRequest = DemandApportionRequest.builder().requestInfo(requestInfo).demands(demandsToBeApportioned).tenantId(tenantId).build();
 			try {
-				String apportionRequestStr = mapper.writeValueAsString(apportionRequest);
-				log.info("apportionRequest: {} and ApportionURL: {}", apportionRequestStr, util.getApportionURL());
-			}catch (Exception e) {e.printStackTrace();}
+				log.info("apportionRequest: {} and ApportionURL: {}", mapper.writeValueAsString(apportionRequest),
+						util.getApportionURL());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
 			Object response = serviceRequestRepository.fetchResult(util.getApportionURL(), apportionRequest);
-			ApportionDemandResponse apportionDemandResponse = mapper.convertValue(response, ApportionDemandResponse.class);
-			apportionDemandResponse.getDemands().forEach(demandFromResponse -> {
-				
-				demandFromResponse.setIsPaymentCompleted(ispaymentcompleted);
-			});
-			try {
-				String apportionDemandResponseStr = mapper.writeValueAsString(apportionDemandResponse);
-				log.info("apportionDemandResponse: {} and ApportionURL: {}", apportionDemandResponseStr, util.getApportionURL());
-			}catch (Exception e) {e.printStackTrace();}
+			ApportionDemandResponse apportionDemandResponse = mapper.convertValue(response,
+					ApportionDemandResponse.class);
 
-			// Only the current demand is to be created rest all are to be updated
+			try {
+				log.info("apportionDemandResponse: {} and ApportionURL: {}",
+						mapper.writeValueAsString(apportionDemandResponse), util.getApportionURL());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+			if (totalAdvanceAvailable.compareTo(BigDecimal.ZERO) < 0) {
+				totalAdvanceAvailable = taxAmount.add(totalAdvanceAvailable);
+
+				if (totalAdvanceAvailable.compareTo(BigDecimal.ZERO) < 0) {
+					log.info("More advance exists");
+				} else {
+					totalAdvanceAvailable = BigDecimal.ZERO;
+				}
+			}
+
 			apportionDemandResponse.getDemands().forEach(demandFromResponse -> {
-				if(demandFromResponse.getId().equalsIgnoreCase(demand.getId()))
+				util.updateDemandPaymentStatus(demandFromResponse, true);
+				if (demandFromResponse.getId().equalsIgnoreCase(demand.getId())) {
 					demandToBeCreated.add(demandFromResponse);
-				else demandToBeUpdated.add(demandFromResponse);
+				} else {
+					demandToBeUpdated.add(demandFromResponse);
+				}
 			});
 		}
 
-	}
 
-
-	/**
-	 * Returns demands which has advance amount avaialable for apportion
-	 * @param demands List of demands from which demands with advance has to be picked
-	 * @param mdmsData Master Data for billing service
-	 * @return
-	 */
-	private List<Demand> getDemandsContainingAdvance(List<Demand> demands,DocumentContext mdmsData){
-
-		Set<Demand> demandsWithAdvance = new HashSet<>();
-
-		// Create the jsonPath to fetch the advance taxhead for the given businessService
-		String businessService = demands.get(0).getBusinessService();
-		String jsonpath = ADVANCE_TAXHEAD_JSONPATH_CODE;
-		jsonpath = jsonpath.replace("{}",businessService);
-
-		// Apply the jsonPath on the master Data to fetch the value. The output will be an array with single element
-		List<String> taxHeads = mdmsData.read(jsonpath);
-
-		if(CollectionUtils.isEmpty(taxHeads))
-			throw new CustomException("NO TAXHEAD FOUND","No Advance taxHead found for businessService: "+businessService);
-
-		String advanceTaxHeadCode =  taxHeads.get(0);
-
-		/*
-		* Loop through each demand and each demandDetail to find the demandDetail for which advance amount is available
-		* */
-
-		for (Demand demand : demands){
-
-			for(DemandDetail demandDetail : demand.getDemandDetails()){
-
-				if(demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(advanceTaxHeadCode)
-						&& demandDetail.getTaxAmount().compareTo(demandDetail.getCollectionAmount()) != 0){
-					demandsWithAdvance.add(demand);
-					break;
+		for (Demand demandToUpdate : demandToBeUpdated) {
+			for (DemandDetail detail : demandToUpdate.getDemandDetails()) {
+				if (detail.getTaxHeadMasterCode().toUpperCase().contains("ADVANCE")) {
+					detail.setTaxAmount(finalTaxAmount);
+					detail.setCollectionAmount(finalTaxAmount);
+					log.info("Final Update - Advance TaxHead: Updated Tax Amount={}, Updated Collection Amount={}",
+							finalTaxAmount, finalTaxAmount.abs());
 				}
 			}
 		}
 
-		return new ArrayList<>(demandsWithAdvance);
+
+		if (!demandToBeCreated.isEmpty() && totalAdvanceAvailable.compareTo(BigDecimal.ZERO) < 0) {
+			Demand lastDemand = demandToBeCreated.get(demandToBeCreated.size() - 1); // Get the last demand
+			BigDecimal remainingAdvance = totalAdvanceAvailable;
+
+
+			String demandDetailId = UUID.randomUUID().toString();
+
+
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid())
+					.lastModifiedBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis())
+					.lastModifiedTime(System.currentTimeMillis()).build();
+			ObjectMapper objectMapper = new ObjectMapper(); // JSON converter
+
+
+			Map<String, Object> additionalDetailsMap = new HashMap<>();
+			additionalDetailsMap.put("Reference From Demand ID ", DemandId);
+			additionalDetailsMap.put("Previous Settled Amount ", previousShortfall);
+			additionalDetailsMap.put("Total Advance", finalTaxAmount);
+
+			String additionalDetailsJson = "";
+			try {
+			    additionalDetailsJson = objectMapper.writeValueAsString(additionalDetailsMap);
+			} catch (Exception e) {
+			    log.error("Error converting additionalDetails to JSON", e);
+			}
+
+
+			DemandDetail newAdvanceDetail = DemandDetail.builder().id(demandDetailId).demandId(lastDemand.getId())
+					.taxHeadMasterCode(taxHeadCode != null ? taxHeadCode : "ADVANCE_ADJUSTMENT")
+					.taxAmount(remainingAdvance).collectionAmount(BigDecimal.ZERO).auditDetails(auditDetails)
+					.additionalDetails(additionalDetailsJson)
+					.tenantId(lastDemand.getTenantId()).build();
+
+			lastDemand.getDemandDetails().add(newAdvanceDetail);
+
+			log.info("Advance added to last demand in demandToBeCreated: Consumer Code={}, Tax Amount={}",
+					lastDemand.getConsumerCode(), newAdvanceDetail.getTaxAmount());
+		}
 	}
-	
+
+	/**
+	 * Returns demands which has advance amount avaialable for apportion
+	 * 
+	 * @param demands  List of demands from which demands with advance has to be
+	 *                 picked
+	 * @param mdmsData Master Data for billing service
+	 * @return
+	 */
+	private List<Demand> getDemandsContainingAdvance(List<Demand> demands, DocumentContext mdmsData) {
+
+		Set<Demand> demandsWithAdvance = new HashSet<>();
+
+		// Create the jsonPath to fetch the advance taxhead for the given
+		// businessService
+		String businessService = demands.get(0).getBusinessService();
+		String jsonpath = ADVANCE_TAXHEAD_JSONPATH_CODE;
+		jsonpath = jsonpath.replace("{}", businessService);
+
+		// Apply the jsonPath on the master Data to fetch the value. The output will be
+		// an array with single element
+		List<String> taxHeads = mdmsData.read(jsonpath);
+
+		if (CollectionUtils.isEmpty(taxHeads))
+			throw new CustomException("NO TAXHEAD FOUND",
+					"No Advance taxHead found for businessService: " + businessService);
+
+		String advanceTaxHeadCode = taxHeads.get(0);
+
+		/*
+		 * Loop through each demand and each demandDetail to find the demandDetail for
+		 * which advance amount is available
+		 */
+
+		for (Demand demand : demands) {
+			if (!Demand.StatusEnum.ACTIVE.equals(demand.getStatus())) { // Compare enums directly
+	            continue;
+	        }
+
+
+	        for (DemandDetail demandDetail : demand.getDemandDetails()) {
+	            if (demandDetail.getTaxHeadMasterCode().equalsIgnoreCase(advanceTaxHeadCode)
+	                    && demandDetail.getTaxAmount().compareTo(demandDetail.getCollectionAmount()) != 0) {
+	                demandsWithAdvance.add(demand);
+	                break;
+	            }
+	        }
+	    }
+
+	    return new ArrayList<>(demandsWithAdvance);
+	}
+
 	/**
 	 * Method to add demand details from amendment if exists in DB
+	 * 
 	 * @param demandRequest
 	 */
 	private List<AmendmentUpdate> consumeAmendmentIfExists(List<Demand> demands, AuditDetails auditDetails) {
@@ -574,47 +615,41 @@ public class DemandService {
 		Set<String> consumerCodes = demands.stream().map(Demand::getConsumerCode).collect(Collectors.toSet());
 
 		/*
-		 * Search amendments for all consumer-codes and keep in map of list based on consumer-codes
+		 * Search amendments for all consumer-codes and keep in map of list based on
+		 * consumer-codes
 		 */
-		AmendmentCriteria amendmentCriteria = AmendmentCriteria.builder()
-				.tenantId(demands.get(0).getTenantId())
+		AmendmentCriteria amendmentCriteria = AmendmentCriteria.builder().tenantId(demands.get(0).getTenantId())
 				.status(Stream.of(AmendmentStatus.ACTIVE.toString()).collect(Collectors.toSet()))
-				.consumerCode(consumerCodes)
-				.businessService(demands.get(0).getBusinessService())
-				.build();
+				.consumerCode(consumerCodes).businessService(demands.get(0).getBusinessService()).build();
 		List<Amendment> amendmentsFromSearch = amendmentRepository.getAmendments(amendmentCriteria);
 		Map<String, List<Amendment>> mapOfConsumerCodeAndAmendmentsList = amendmentsFromSearch.stream()
-				.collect(Collectors.groupingBy(Amendment::getConsumerCode)); 
-		
+				.collect(Collectors.groupingBy(Amendment::getConsumerCode));
+
 		/*
-		 * Add demand-details in to demand from all amendments existing for that consumer-code
+		 * Add demand-details in to demand from all amendments existing for that
+		 * consumer-code
 		 * 
 		 * Add the amendment to update list for consumed
 		 */
 		for (Demand demand : demands) {
-		
-			
+
 			List<Amendment> amendments = mapOfConsumerCodeAndAmendmentsList.get(demand.getConsumerCode());
 			if (CollectionUtils.isEmpty(amendments))
 				continue;
-			
+
 			for (Amendment amendment : amendments) {
-				
+
 				demand.getDemandDetails().addAll(amendment.getDemandDetails());
-				
+
 				AmendmentUpdate amendmentUpdate = AmendmentUpdate.builder()
-						.additionalDetails(amendment.getAdditionalDetails())
-						.amendedDemandId(demand.getId())
-						.amendmentId(amendment.getAmendmentId())
-						.auditDetails(auditDetails)
-						.status(AmendmentStatus.CONSUMED)
-						.tenantId(demand.getTenantId())
-						.build();
+						.additionalDetails(amendment.getAdditionalDetails()).amendedDemandId(demand.getId())
+						.amendmentId(amendment.getAmendmentId()).auditDetails(auditDetails)
+						.status(AmendmentStatus.CONSUMED).tenantId(demand.getTenantId()).build();
 				updateListForConsumedAmendments.add(amendmentUpdate);
 			}
 		}
 
 		return updateListForConsumedAmendments;
 	}
-	
+
 }

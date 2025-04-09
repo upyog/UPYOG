@@ -81,16 +81,16 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		List<Object> preparedStatementTwo = new ArrayList<>();
 		//String query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
 		String query = "";
-		String queryTwo = "";
+//		String queryTwo = "";
 		List<SewerageDetails> sewerageDetails = null;
-		List<SewerageDetails> sewerageDetailsTwo =  null;
+//		List<SewerageDetails> sewerageDetailsTwo =  null;
 		if((tenantId.equals("pb.amritsar"))) {
 			 query = queryBuilder.getConnectionNumberListForNonCommercial(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatement);
-		         queryTwo = queryBuilder.getConnectionNumberListForCommercialOnlySewerage(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatementTwo);  
-			 // log.info("Demand will not generate for water metered connections in Amritsar: "+query);
+//		         queryTwo = queryBuilder.getConnectionNumberListForCommercialOnlySewerage(tenantId, connectionType,SWCalculationConstant.ACTIVE, fromDate, toDate, Connectionno, preparedStatementTwo);  
+//			 // log.info("Demand will not generate for water metered connections in Amritsar: "+query);
 			 sewerageDetails= jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);
-			 sewerageDetailsTwo=jdbcTemplate.query(queryTwo, preparedStatement.toArray(), demandSchedulerRowMapper);
-			 sewerageDetails.addAll(sewerageDetailsTwo);
+//			 sewerageDetailsTwo=jdbcTemplate.query(queryTwo, preparedStatement.toArray(), demandSchedulerRowMapper);
+//			 sewerageDetails.addAll(sewerageDetailsTwo);
 		}else {
 			query = queryBuilder.getConnectionNumberListsingle(tenantId, connectionType, preparedStatement, fromDate, toDate,Connectionno);
 			sewerageDetails= jdbcTemplate.query(query, preparedStatement.toArray(), demandSchedulerRowMapper);

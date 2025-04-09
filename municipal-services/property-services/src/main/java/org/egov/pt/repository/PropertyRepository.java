@@ -3,12 +3,14 @@ package org.egov.pt.repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import java.util.Map;
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -203,6 +205,11 @@ public class PropertyRepository {
 			            .map(OwnerInfo::getUuid)
 			            .collect(Collectors.toSet());
 
+			    //getTheCurrentandPreviousOwnerDetails
+				if (criteria.isAudit()) {
+					latestProperties = getOwnerHistoryDetails(properties, latestProperties);
+				}
+				
 			    UserSearchRequest userSearchRequest = userService.getBaseUserSearchRequest(criteria.getTenantId(), requestInfo);
 			    userSearchRequest.setUuid(ownerIds);
 
@@ -212,7 +219,27 @@ public class PropertyRepository {
 			    return latestProperties;
 	}
 	
+	private List<Property> getOwnerHistoryDetails(List<Property> properties, List<Property> latestProperties) {
 
+		List<OwnerInfo> groupingOwnersByUuid = properties.stream().flatMap(property -> property.getOwners().stream())
+				.collect(Collectors.groupingBy(OwnerInfo::getUuid)).values().stream()
+				.map(owners -> owners.stream().findFirst().orElse(null)).filter(Objects::nonNull)
+				.collect(Collectors.toList());
+
+//		Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+		boolean hasNullLastModifiedDate = groupingOwnersByUuid.stream()
+			    .anyMatch(owner -> owner.getLastModifiedDate() == null);
+
+			if (!hasNullLastModifiedDate) {
+			    Collections.sort(groupingOwnersByUuid, Comparator.comparing(OwnerInfo::getLastModifiedDate).reversed());
+			}
+
+		latestProperties.forEach(property -> {
+			property.setOwners(groupingOwnersByUuid);
+		});
+
+		return latestProperties;
+	}
 	
 	private List<Property> getPropertyAudit(PropertyCriteria criteria) {
 
