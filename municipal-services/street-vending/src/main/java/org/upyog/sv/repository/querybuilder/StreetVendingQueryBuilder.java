@@ -18,7 +18,8 @@ public class StreetVendingQueryBuilder {
 			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
 			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime, "
-			+ "sv.expire_flag as svExpireFlag, sv.renewal_status as svRenewalStatus, sv.validity_date as svValidityDate ";
+			+ "sv.expire_flag as svExpireFlag, sv.renewal_status as svRenewalStatus, sv.validity_date as svValidityDate, "
+			+ "sv.old_application_no as svOldApplicationNo ";
 
 	private static final String VENDOR_SELECT_QUERY = " ,vendor.id as vendorId, vendor.application_id as vendorApplicationId, vendor.vendor_id as vendorVendorId, "
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
