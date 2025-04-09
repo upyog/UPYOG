@@ -31,7 +31,7 @@ public class EnrichmentService {
 	@Autowired
 	private IdGenRepository idGenRepository;
 
-	public void enrichCreateStreetVendingRequest(StreetVendingRequest vendingRequest) {
+	public void enrichCreateStreetVendingRequest(String applicationStatus, StreetVendingRequest vendingRequest) {
 		String applicationId = StreetVendingUtil.getRandonUUID();
 		log.info("Enriching street vending aplication id :" + applicationId);
 
@@ -42,7 +42,7 @@ public class EnrichmentService {
 		streetVendingDetail.setApplicationId(applicationId);
 		streetVendingDetail.setAuditDetails(auditDetails);
 		streetVendingDetail.setApplicationDate(auditDetails.getCreatedTime());
-		// streetVendingDetail.setApplicationStatus(streetVendingDetail.getApplicationStatus());
+		streetVendingDetail.setApplicationStatus(applicationStatus);
 
 		List<String> customIds = getIdList(requestInfo, streetVendingDetail.getTenantId(),
 				config.getStreetVendingApplicationKey(), config.getStreetVendingApplicationFormat(), 1);
