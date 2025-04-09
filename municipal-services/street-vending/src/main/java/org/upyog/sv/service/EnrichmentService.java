@@ -115,6 +115,7 @@ public class EnrichmentService {
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
 		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		vendingDetail.setApplicationStatus(applicationStatus);
+		vendingDetail.setValidityDateForPersisterDate(vendingDetail.getValidityDate().toString());// mandatory field for persister
 		vendingDetail.setExpireFlag(false);;
 		
 	}
