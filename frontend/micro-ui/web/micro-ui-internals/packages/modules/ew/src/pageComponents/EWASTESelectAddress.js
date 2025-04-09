@@ -1,40 +1,49 @@
-import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
-import Timeline from "../components/EWASTETimeline";
+// Importing necessary components and hooks from external libraries and local files
+import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for form steps, dropdowns, and labels
+import _ from "lodash"; // Utility library for deep comparison
+import React, { useEffect, useState } from "react"; // React hooks for state and lifecycle management
+import { Controller, useForm } from "react-hook-form"; // React Hook Form for managing form state
+import { useLocation } from "react-router-dom"; // Hook to access the current location
+import Timeline from "../components/EWASTETimeline"; // Component for displaying the timeline
 
+// Main component for selecting the address in the E-Waste module
 const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
-  const allCities = Digit.Hooks.ew.useTenants();  
-  let tenantId = Digit.ULBService.getCurrentTenantId();
-  const { pathname } = useLocation();
-  const presentInModifyApplication = pathname.includes("modify");
-  
- 
+  const allCities = Digit.Hooks.ew.useTenants(); // Fetching the list of all cities
+  let tenantId = Digit.ULBService.getCurrentTenantId(); // Fetching the current tenant ID
+  const { pathname } = useLocation(); // Extracting the current URL path
+  const presentInModifyApplication = pathname.includes("modify"); // Check if the user is modifying an application
+
+  // Determine if the address is being edited
   let isEditAddress = formData?.isEditAddress || false;
   if (presentInModifyApplication) isEditAddress = true;
-  
-  const { pincode, city } = formData?.address || "";
-  const cities = userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
 
+  // Extracting pincode and city from the form data
+  const { pincode, city } = formData?.address || "";
+
+  // Filtering cities based on user type and pincode
+  const cities =
+    userType === "employee"
+      ? allCities.filter((city) => city.code === tenantId)
+      : pincode
+      ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
+      : allCities;
+
+  // State variables to manage selected city, localities, and selected locality
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;
   });
-
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
-     "revenue",
+    "revenue",
     {
       enabled: !!selectedCity,
     },
     t
   );
-
   const [localities, setLocalities] = useState();
-
   const [selectedLocality, setSelectedLocality] = useState();
 
+  // Effect to set the locality when modifying an application
   useEffect(() => {
     if (userType === "employee" && presentInModifyApplication && localities?.length) {
       const code = formData?.originalData?.address?.locality?.code;
@@ -43,6 +52,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
     }
   }, [localities]);
 
+  // Effect to automatically select the city if only one city is available
   useEffect(() => {
     if (cities) {
       if (cities.length === 1) {
@@ -51,6 +61,7 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
     }
   }, [cities]);
 
+  // Effect to filter and set localities based on the selected city and pincode
   useEffect(() => {
     if (selectedCity && fetchedLocalities) {
       let __localityList = fetchedLocalities;
@@ -68,21 +79,18 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
 
       if (filteredLocalityList.length === 1) {
         setSelectedLocality(filteredLocalityList[0]);
-        // if (userType === "employee") {
-        //   onSelect(config.key, { ...formData[config.key], locality: filteredLocalityList[0] });
-        // }
       }
     }
   }, [selectedCity, formData?.address?.pincode, fetchedLocalities]);
 
-  
-
+  // Function to handle city selection
   function selectCity(city) {
     setSelectedLocality(null);
     setLocalities(null);
     setSelectedCity(city);
   }
 
+  // Function to handle locality selection
   function selectLocality(locality) {
     if (formData?.address?.locality) {
       formData.address["locality"] = locality;
@@ -93,38 +101,39 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
     }
   }
 
+  // Function to handle form submission
   function onSubmit() {
     onSelect(config.key, { city: selectedCity, locality: selectedLocality });
   }
 
-  const { control, formState: localFormState, watch, setValue } = useForm();
-  const formValue = watch();
-  const { errors } = localFormState;
-  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+  const { control, formState: localFormState, watch, setValue } = useForm(); // React Hook Form methods
+  const formValue = watch(); // Watching form values for changes
+  const { errors } = localFormState; // Extracting errors from the form state
+  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }; // Style for error messages
 
+  // Effect to update form data when form values change
   useEffect(() => {
     if (userType === "employee") {
       let keys = Object.keys(formValue);
       const part = {};
       keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
       if (!_.isEqual(formValue, part)) onSelect(config.key, { ...formData[config.key], ...formValue });
-      for (let key in formValue) {
-        if (!formValue[key] && !localFormState?.errors[key]) {
-        } else if (formValue[key] && localFormState.errors[key]) {
-          // clearLocalErrors([key]);
-        }
-      }
     }
   }, [formValue]);
 
+  // Effect to handle form validation for employees
   useEffect(() => {
     if (userType === "employee") {
-      const errorsPresent = !!Object.keys(localFormState.errors).lengtha;
-      if (errorsPresent && !formState.errors?.[config.key]) /*setError(config.key, { type: "required" })*/;
-      else if (!errorsPresent && formState.errors?.[config.key]) /*clearErrors(config.key)*/;
+      const errorsPresent = !!Object.keys(localFormState.errors).length;
+      if (errorsPresent && !formState.errors?.[config.key]) {
+        // setError(config.key, { type: "required" });
+      } else if (!errorsPresent && formState.errors?.[config.key]) {
+        // clearErrors(config.key);
+      }
     }
   }, [localFormState]);
 
+  // Rendering the component for employees
   if (userType === "employee") {
     return (
       <div>
@@ -173,12 +182,12 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
       </div>
     );
   }
+
+  // Rendering the component for citizens
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
-      <FormStep config={config} onSelect={onSubmit} t={t}
-       isDisabled={selectedLocality ? false : true}
-       >
+      <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
         <div>
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>
           <span className={"form-ptr-dropdown-only"}>
@@ -189,8 +198,6 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
               onSelect={selectCity}
               t={t}
               isPTFlow={true}
-              //isDependent={true}
-              //labelKey="TENANT_TENANTS"
               disabled={isEditAddress}
             />
           </span>
@@ -205,8 +212,6 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
                 optionKey="i18nkey"
                 onSelect={selectLocality}
                 t={t}
-                //isDependent={true}
-                labelKey=""
                 disabled={isEditAddress}
               />
             </span>
@@ -217,4 +222,4 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
   );
 };
 
-export default EWASTESelectAddress;
+export default EWASTESelectAddress; // Exporting the component

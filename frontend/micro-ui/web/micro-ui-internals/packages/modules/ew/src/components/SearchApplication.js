@@ -1,35 +1,33 @@
 import React, { useCallback, useMemo, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form"; // React Hook Form for managing form state
 import {
   TextInput,
   SubmitBar,
-  LinkLabel,
-  ActionBar,
-  CloseSvg,
   DatePicker,
   CardLabelError,
   SearchForm,
   SearchField,
-  Dropdown,
   Table,
   Card,
   MobileNumber,
   Loader,
-  CardText,
-  Header,
-} from "@nudmcdgnpm/digit-ui-react-components";
-import { Link } from "react-router-dom";
+  Header
+} from "@nudmcdgnpm/digit-ui-react-components"; // UI components for forms, tables, and loaders
+import { Link } from "react-router-dom"; // Component for navigation links
 
+// Component to render the search application functionality for the E-Waste module
 const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
-  const isMobile = window.Digit.Utils.browser.isMobile();
+  const isMobile = window.Digit.Utils.browser.isMobile(); // Check if the user is on a mobile device
   const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
     defaultValues: {
-      offset: 0,
-      limit: !isMobile && 10,
-      sortBy: "commencementDate",
-      sortOrder: "DESC",
+      offset: 0, // Default offset for pagination
+      limit: !isMobile && 10, // Default limit for pagination
+      sortBy: "commencementDate", // Default sorting column
+      sortOrder: "DESC", // Default sorting order
     },
   });
+
+  // Registering form fields on component mount
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
@@ -37,14 +35,13 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     register("sortOrder", "DESC");
   }, [register]);
 
-  const stateId = Digit.ULBService.getStateId();
-  const GetCell = (value) => <span className="cell-text">{value}</span>;
-  let menu = [];
+  const GetCell = (value) => <span className="cell-text">{value}</span>; // Utility function to render table cells
 
+  // Columns configuration for the table
   const columns = useMemo(
     () => [
       {
-        Header: t("EW_REQUEST_ID"),
+        Header: t("EW_REQUEST_ID"), // Header for the "Request ID" column
         accessor: "requestId",
         disableSortBy: true,
         Cell: ({ row }) => {
@@ -57,30 +54,29 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
           );
         },
       },
-
       {
-        Header: t("EW_APPLICANT_NAME"),
+        Header: t("EW_APPLICANT_NAME"), // Header for the "Applicant Name" column
         Cell: (row) => {
           return GetCell(`${row?.row?.original?.applicant?.["applicantName"]}`);
         },
         disableSortBy: true,
       },
       {
-        Header: t("EW_MOBILE_NUMBER"),
+        Header: t("EW_MOBILE_NUMBER"), // Header for the "Mobile Number" column
         Cell: ({ row }) => {
           return GetCell(`${row.original?.applicant?.["mobileNumber"]}`);
         },
         disableSortBy: true,
       },
       {
-        Header: t("EW_AMOUNT"),
+        Header: t("EW_AMOUNT"), // Header for the "Amount" column
         Cell: ({ row }) => {
           return GetCell(`${row.original?.["calculatedAmount"]}`);
         },
         disableSortBy: true,
       },
       {
-        Header: t("EW_STATUS"),
+        Header: t("EW_STATUS"), // Header for the "Status" column
         Cell: ({ row }) => {
           return GetCell(`${row?.original?.["requestStatus"]}`);
         },
@@ -90,37 +86,45 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     []
   );
 
+  // Callback function to handle sorting
   const onSort = useCallback((args) => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
     setValue("sortOrder", args.desc ? "DESC" : "ASC");
   }, []);
 
+  // Function to handle page size change
   function onPageSizeChange(e) {
     setValue("limit", Number(e.target.value));
     handleSubmit(onSubmit)();
   }
 
+  // Function to navigate to the next page
   function nextPage() {
     setValue("offset", getValues("offset") + getValues("limit"));
     handleSubmit(onSubmit)();
   }
+
+  // Function to navigate to the previous page
   function previousPage() {
     setValue("offset", getValues("offset") - getValues("limit"));
     handleSubmit(onSubmit)();
   }
-  let validation = {};
+
+  let validation = {}; // Placeholder for validation rules
 
   return (
     <React.Fragment>
       <div>
-        <Header>{t("EW_SEARCH_REQUEST_ID")}</Header>
+        <Header>{t("EW_SEARCH_REQUEST_ID")}</Header> {/* Header for the search form */}
         <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
+          {/* Search field for Request ID */}
           <SearchField>
             <label>{t("EW_REQUEST_ID")}</label>
             <TextInput name="requestId" inputRef={register({})} />
           </SearchField>
 
+          {/* Search field for Mobile Number */}
           <SearchField>
             <label>{t("EW_OWNER_MOBILE_NO")}</label>
             <MobileNumber
@@ -144,6 +148,8 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             />
             <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
           </SearchField>
+
+          {/* Search field for From Date */}
           <SearchField>
             <label>{t("EW_FROM_DATE")}</label>
             <Controller
@@ -152,6 +158,8 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
               control={control}
             />
           </SearchField>
+
+          {/* Search field for To Date */}
           <SearchField>
             <label>{t("EW_TO_DATE")}</label>
             <Controller
@@ -160,6 +168,8 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
               control={control}
             />
           </SearchField>
+
+          {/* Submit and Clear All buttons */}
           <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
             <p
@@ -184,6 +194,8 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             </p>
           </SearchField>
         </SearchForm>
+
+        {/* Render the table or loader based on the data and loading state */}
         {!isLoading && data?.display ? (
           <Card style={{ marginTop: 20 }}>
             {t(data.display)
@@ -226,4 +238,4 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
   );
 };
 
-export default EWSearchApplication;
+export default EWSearchApplication; // Exporting the component
