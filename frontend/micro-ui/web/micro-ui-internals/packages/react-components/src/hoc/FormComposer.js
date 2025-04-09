@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, Fragment } from "react";
+import React, { useEffect, useMemo, useState, Fragment, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import BreakLine from "../atoms/BreakLine";
 import Card from "../atoms/Card";
@@ -19,6 +19,60 @@ import LinkButton from "../atoms/LinkButton";
 import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 import _ from "lodash";
+
+// export const CaptchaCanvas = ({ text }) => {
+//   const canvasRef = useRef(null);
+
+//   useEffect(() => {
+//     const canvas = canvasRef.current;
+//     const ctx = canvas.getContext("2d");
+
+//     // Clear & setup canvas
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     ctx.font = "28px italic Arial";
+//     ctx.fillStyle = "#000";
+
+//     // Draw CAPTCHA text
+//     ctx.fillText(text, 10, 30);
+
+//     // Add random noise (lines)
+//     for (let i = 0; i < 3; i++) {
+//       ctx.strokeStyle = "#888";
+//       ctx.beginPath();
+//       ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+//       ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+//       ctx.stroke();
+//     }
+
+//     // Add random dots
+//     for (let i = 0; i < 30; i++) {
+//       ctx.fillStyle = `rgba(0,0,0,${Math.random()})`;
+//       ctx.beginPath();
+//       ctx.arc(
+//         Math.random() * canvas.width,
+//         Math.random() * canvas.height,
+//         1 + Math.random() * 2,
+//         0,
+//         2 * Math.PI
+//       );
+//       ctx.fill();
+//     }
+//   }, [text]);
+
+//   return (
+//     <canvas
+//       ref={canvasRef}
+//       width={120}
+//       height={40}
+//       style={{
+//         userSelect: "none",
+//         pointerEvents: "none",
+//         background: "#529ec029",
+//         borderRadius: "4px",
+//       }}
+//     />
+//   );
+// };
 
 export const FormComposer = (props) => {
   const {
@@ -105,6 +159,7 @@ export const FormComposer = (props) => {
             marginBottom: '15px',
             userSelect: "none",
             }} onContextMenu={(e) => e.preventDefault()}>
+              {/* <CaptchaCanvas text={captchaText[0]?.captcha || ""} /> */}
             <span style={{fontSize: '20px',background: '#529ec029',pointerEvents: "none"}}>{captchaText[0]?.captcha}</span>
             <span style={{padding: '3px', background: 'gray', float: 'right', color: 'white', borderRadius: '4px', cursor: 'pointer'}} onClick={props?.onCaptchaRefresh}>Refresh</span> </div>
         );

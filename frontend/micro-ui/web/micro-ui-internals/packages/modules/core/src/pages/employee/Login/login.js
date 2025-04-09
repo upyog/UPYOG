@@ -29,6 +29,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [disable, setDisable] = useState(false);
   const [captcha, setCaptcha] = useState([]);
   const [secretKey, setSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
+  const [envsecretKey, setEnvSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
   // const [config, setConfig] = useState([]);
 
   const history = useHistory();
@@ -50,6 +51,12 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     try {
       const res = await Digit.UserService.generateCaptcha({});
       if(res && res?.captcha?.captcha && res?.captcha?.captchaUuid) {
+        let decriptedCaptcha = decryptCaptcha(res?.captcha?.captcha);
+        // console.log("decriptedCaptcha==",decriptedCaptcha)
+        if(decriptedCaptcha) {
+          res.captcha.captcha = decriptedCaptcha
+        }
+        // console.log("captchaRes==",res)
         let tt = [];
         tt.push(res?.captcha)
         // if(isMounted) {
@@ -141,19 +148,27 @@ const encryptPassword = (plainText) => {
 //   return bytes.toString(CryptoJS.enc.Utf8);
 // };
 
-const decryptPassword = (encryptedText) => {
-  const decrypted = CryptoJS.AES.decrypt(encryptedText, secretKey, {
-    mode: CryptoJS.mode.ECB,
+const decryptCaptcha = (encryptedText) => {
+  // Split the IV and ciphertext
+  const [ivBase64, cipherText] = encryptedText.split(":");
+  const iv = CryptoJS.enc.Base64.parse(ivBase64);
+
+  // Use the same key as used in encryption
+  const ss = CryptoJS.enc.Utf8.parse(envsecretKey); // Must match exactly
+
+  const decrypted = CryptoJS.AES.decrypt(cipherText, ss, {
+    mode: CryptoJS.mode.CBC,
     padding: CryptoJS.pad.Pkcs7,
+    iv: iv,
   });
 
-  return decrypted.toString(CryptoJS.enc.Utf8);
+  return decrypted.toString(CryptoJS.enc.Utf8); // Plain text
 };
 
   const onLogin = async (data) => {
     let encriptedPass = encryptPassword(data?.password)
     data.password = encriptedPass;
-    let decriptedPass = decryptPassword(encriptedPass)
+    // let decriptedPass = decryptPassword(encriptedPass)
 
     if (!data.city) {
       alert("Please Select City!");

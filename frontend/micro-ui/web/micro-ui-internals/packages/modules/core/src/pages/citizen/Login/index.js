@@ -6,6 +6,8 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
+import CryptoJS from "crypto-js";
+
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -48,6 +50,25 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [captcha, setCaptcha] = useState([]);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
+  const [envsecretKey, setEnvSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
+  
+
+  const decryptCaptcha = (encryptedText) => {
+    // Split the IV and ciphertext
+    const [ivBase64, cipherText] = encryptedText.split(":");
+    const iv = CryptoJS.enc.Base64.parse(ivBase64);
+  
+    // Use the same key as used in encryption
+    const ss = CryptoJS.enc.Utf8.parse(envsecretKey); // Must match exactly
+  
+    const decrypted = CryptoJS.AES.decrypt(cipherText, ss, {
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+      iv: iv,
+    });
+  
+    return decrypted.toString(CryptoJS.enc.Utf8); // Plain text
+  };
 
   useEffect(async ()=>{
     let isMounted = true;
@@ -61,7 +82,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const fetchCaptcha = async()=>{
     try {
       const res = await Digit.UserService.generateCaptcha({});
+      // console.log("====",res)
       if(res && res?.captcha?.captcha && res?.captcha?.captchaUuid) {
+        let decriptedCaptcha = decryptCaptcha(res?.captcha?.captcha);
+        // console.log("decriptedCaptcha==",decriptedCaptcha)
+        if(decriptedCaptcha) {
+          res.captcha.captcha = decriptedCaptcha
+        }
+        // console.log("captchaRes==",res)
         let tt = [];
         tt.push(res?.captcha)
         // if(isMounted) {
