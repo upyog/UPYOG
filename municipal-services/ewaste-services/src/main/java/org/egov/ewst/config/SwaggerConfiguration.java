@@ -23,7 +23,7 @@ public class SwaggerConfiguration {
 	}
 
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Street Vending API")
-				.description("API details of street vending service").version("1.0").build();
+		return new ApiInfoBuilder().title("E-Waste API")
+				.description("API details of e-waste service").version("1.0").build();
 	}
 }
