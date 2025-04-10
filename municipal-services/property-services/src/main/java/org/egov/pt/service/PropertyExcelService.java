@@ -51,12 +51,13 @@ public class PropertyExcelService {
 				requestInfo.getUserInfo().setType(PTConstants.USER_TYPE_EMPLOYEE);
 			}
 			PropertyRequest propertyRequest = PropertyRequest.builder().property(property).requestInfo(requestInfo)
-					.build();
+					.fromMigration(true).build();
+			log.info("Property Request: " + propertyRequest);
 			propertiesCreated.add(propertyService.createProperty(propertyRequest));
 		});
 
 //		propertiesCreated.stream().forEach(property -> {
-//			// Ensure user info is set if valid requestInfo is provided
+//			// Ensure user info is set if valid requestInfo is provided	
 //			updateUserTypeToSystemIfNecessary(requestInfo);
 //
 //			// Process property until status is APPROVED

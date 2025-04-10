@@ -94,7 +94,9 @@ public class PropertyValidator {
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 
-		validateMasterData(request, errorMap);
+		if (!request.getFromMigration()) {
+			validateMasterData(request, errorMap);
+		}
 		validateMobileNumber(request, errorMap);
 		validateFields(request, errorMap);
 		if (!CollectionUtils.isEmpty(units))
