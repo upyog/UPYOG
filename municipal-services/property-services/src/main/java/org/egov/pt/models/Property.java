@@ -37,7 +37,35 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Property extends PropertyInfo {
+public class Property {
+
+	@JsonProperty("id")
+	private String id;
+
+	@JsonProperty("propertyId")
+	private String propertyId;
+
+	@JsonProperty("surveyId")
+	private String surveyId;
+
+	@JsonProperty("linkedProperties")
+	@Valid
+	private List<String> linkedProperties;
+
+	@JsonProperty("tenantId")
+	private String tenantId;
+
+	@JsonProperty("accountId")
+	private String accountId;
+
+	@JsonProperty("oldPropertyId")
+	private String oldPropertyId;
+
+	@JsonProperty("status")
+	private Status status;
+
+	@JsonProperty("address")
+	private Address address;
 
 	@JsonProperty("acknowldgementNumber")
 	@SafeHtml
@@ -59,9 +87,9 @@ public class Property extends PropertyInfo {
 	private Institution institution;
 
 	@JsonProperty("creationReason")
-	@NotNull(message="The value provided is either Invald or null")
+	@NotNull(message = "The value provided is either Invald or null")
 	private CreationReason creationReason;
-	
+
 	@JsonProperty("usageCategory")
 	@SafeHtml
 	private String usageCategory;
@@ -95,58 +123,58 @@ public class Property extends PropertyInfo {
 
 	@JsonProperty("dueAmount")
 	private String dueAmount;
-	
+
 	@JsonProperty("dueAmountYear")
 	private String dueAmountYear;
-	
+
 	@DiffIgnore
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails;
-	
+
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
 	@JsonProperty("workflow")
 	@DiffIgnore
 	private ProcessInstance workflow;
-	
+
 	@JsonProperty("AlternateUpdated")
 	private boolean AlternateUpdated;
 
 	@Builder.Default
 	@JsonProperty("isOldDataEncryptionRequest")
 	private boolean isOldDataEncryptionRequest = false;
-	
+
 	@JsonProperty("businessService")
 	private String businessService;
 
-	@Builder
-	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
-			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
-			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
-			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
-			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
-			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow, String businessService) {
-		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
-		this.acknowldgementNumber = acknowldgementNumber;
-		this.propertyType = propertyType;
-		this.ownershipCategory = ownershipCategory;
-		this.owners = owners;
-		this.institution = institution;
-		this.creationReason = creationReason;
-		this.usageCategory = usageCategory;
-		this.noOfFloors = noOfFloors;
-		this.landArea = landArea;
-		this.superBuiltUpArea = superBuiltUpArea;
-		this.source = source;
-		this.channel = channel;
-		this.documents = documents;
-		this.units = units;
-		this.additionalDetails = additionalDetails;
-		this.auditDetails = auditDetails;
-		this.workflow = workflow;
-		this.businessService = businessService;
-	}
+//	@Builder
+//	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
+//			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
+//			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
+//			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
+//			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
+//			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow, String businessService) {
+//		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
+//		this.acknowldgementNumber = acknowldgementNumber;
+//		this.propertyType = propertyType;
+//		this.ownershipCategory = ownershipCategory;
+//		this.owners = owners;
+//		this.institution = institution;
+//		this.creationReason = creationReason;
+//		this.usageCategory = usageCategory;
+//		this.noOfFloors = noOfFloors;
+//		this.landArea = landArea;
+//		this.superBuiltUpArea = superBuiltUpArea;
+//		this.source = source;
+//		this.channel = channel;
+//		this.documents = documents;
+//		this.units = units;
+//		this.additionalDetails = additionalDetails;
+//		this.auditDetails = auditDetails;
+//		this.workflow = workflow;
+//		this.businessService = businessService;
+//	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {
 		if (this.owners == null) {
@@ -157,7 +185,7 @@ public class Property extends PropertyInfo {
 			this.owners.add(ownersItem);
 		return this;
 	}
-	
+
 	public Property addUnitsItem(Unit unit) {
 		if (this.units == null) {
 			this.units = new ArrayList<>();

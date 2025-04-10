@@ -52,7 +52,7 @@ public class PropertyExcelService {
 			}
 			PropertyRequest propertyRequest = PropertyRequest.builder().property(property).requestInfo(requestInfo)
 					.fromMigration(true).build();
-			log.info("Property Request: " + propertyRequest);
+			//log.info("Property Request: " + propertyRequest);
 			propertiesCreated.add(propertyService.createProperty(propertyRequest));
 		});
 
