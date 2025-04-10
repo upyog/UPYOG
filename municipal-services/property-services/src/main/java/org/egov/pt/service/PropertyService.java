@@ -201,7 +201,7 @@ public class PropertyService {
 		request.getProperty().setWorkflow(null);
 
 		// Push PLAIN data to fuzzy search index
-		PropertyRequest fuzzyPropertyRequest = new PropertyRequest(request.getRequestInfo(), request.getProperty());
+		PropertyRequest fuzzyPropertyRequest = new PropertyRequest(request.getRequestInfo(), request.getProperty(), false);
 		fuzzyPropertyRequest.setProperty(encryptionDecryptionUtil.decryptObject(request.getProperty(),
 				PTConstants.PROPERTY_DECRYPT_MODEL, Property.class, request.getRequestInfo()));
 

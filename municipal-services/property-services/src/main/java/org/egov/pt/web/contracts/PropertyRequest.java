@@ -32,4 +32,7 @@ public class PropertyRequest   {
   @JsonProperty("Property")
   @Valid
   private Property property;
+  
+  @Builder.Default
+  private Boolean fromMigration = false;
 }
