@@ -118,7 +118,7 @@ public class SchedulerService {
 		for (StreetVendingDetail detail : applications) {
 			detail.setRenewalStatus(RenewalStatus.ELIGIBLE_TO_RENEW);
 			detail.setWorkflow(workflow);
-
+			detail.setValidityDateForPersisterDate(String.valueOf(detail.getValidityDate()));// mandatory field for persister
 			if (markExpired) {
 				detail.setExpireFlag(true);
 				detail.setApplicationStatus(StreetVendingConstants.STATUS_EXPIRED);

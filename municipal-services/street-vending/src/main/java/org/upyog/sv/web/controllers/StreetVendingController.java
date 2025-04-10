@@ -113,16 +113,16 @@ public class StreetVendingController {
 		return new ResponseEntity<StreetVendingResponse>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/_createdemand")
-	public ResponseEntity<StreetVendingDemandResponse> createDemandForRenewal(
-			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
-		List<Demand> demands = streetVendingService.demandCreation(vendingRequest);
-		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
-				StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);
-		StreetVendingDemandResponse response = StreetVendingDemandResponse.builder().responseInfo(responseInfo)
-				.demands(demands).build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
+//	@PostMapping("/_createdemand")
+//	public ResponseEntity<StreetVendingDemandResponse> createDemandForRenewal(
+//			@ApiParam(value = "Details for demand create and RequestInfo meta data.", required = true) @RequestBody StreetVendingRequest vendingRequest) {
+//		List<Demand> demands = streetVendingService.demandCreation(vendingRequest);
+//		ResponseInfo responseInfo = StreetVendingUtil.createReponseInfo(vendingRequest.getRequestInfo(),
+//				StreetVendingConstants.RENEWAL_DEMAND_CREATED, StatusEnum.SUCCESSFUL);
+//		StreetVendingDemandResponse response = StreetVendingDemandResponse.builder().responseInfo(responseInfo)
+//				.demands(demands).build();
+//		return new ResponseEntity<>(response, HttpStatus.OK);
+//	}
 
 	@RequestMapping(value = "/trigger-expire-streetvendingapplications", method = RequestMethod.POST)
 	public ResponseEntity<String> triggerWorkflowUpdate() {
