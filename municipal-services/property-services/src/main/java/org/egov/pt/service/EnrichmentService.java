@@ -14,7 +14,6 @@ import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.pt.models.Institution;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
-import org.egov.pt.models.Address;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTracker;
 import org.egov.pt.models.enums.Status;
@@ -77,7 +76,6 @@ public class EnrichmentService {
 				doc.setStatus(Status.ACTIVE);
 			});
 
-		property.setAddress(Address.builder().build());
 		property.getAddress().setTenantId(property.getTenantId());
 		property.getAddress().setId(UUID.randomUUID().toString());
 
