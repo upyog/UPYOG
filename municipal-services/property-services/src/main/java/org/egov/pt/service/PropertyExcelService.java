@@ -52,6 +52,7 @@ public class PropertyExcelService {
 			}
 			PropertyRequest propertyRequest = PropertyRequest.builder().property(property).requestInfo(requestInfo)
 					.build();
+			log.info("Property Request: " + propertyRequest );
 			propertiesCreated.add(propertyService.createProperty(propertyRequest));
 		});
 
