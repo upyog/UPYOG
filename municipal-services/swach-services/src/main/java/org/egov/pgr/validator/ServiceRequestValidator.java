@@ -49,6 +49,33 @@ public class ServiceRequestValidator {
             throw new CustomException(errorMap);
     }
 
+    
+    public void validateImageData(ImageData data) {
+        if (isNullOrEmpty(data.getTenantId())) {
+            throw new NullPointerException("tenantId must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getUuid())) {
+            throw new NullPointerException("uuid must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getLatitude())) {
+            throw new NullPointerException("latitude must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getLongitude())) {
+            throw new NullPointerException("longitude must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getLocality())) {
+            throw new NullPointerException("locality must not be null or empty");
+        }
+        if (isNullOrEmpty(data.getImagerurl())) {
+            throw new NullPointerException("imagerurl must not be null or empty");
+        }
+    }
+
+    
+    private boolean isNullOrEmpty(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
 
     /**
      * Validates if the update request is valid

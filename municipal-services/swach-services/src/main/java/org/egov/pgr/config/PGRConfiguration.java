@@ -108,6 +108,9 @@ public class PGRConfiguration {
 
     @Value("${pgr.kafka.update.topic}")
     private String updateTopic;
+    
+    @Value("${pgr.kafka.image.topic}")
+    private String imageTopic;
 
     @Value("${pgr.default.offset}")
     private Integer defaultOffset;
