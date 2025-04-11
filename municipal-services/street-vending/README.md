@@ -192,6 +192,16 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 | `scheduler.sv.expiry.enabled` | Enables scheduled expiry job | `true` |
 
 ---
+## Renewal Scenarios
+| Scenario                                       | Application Status      | Renewal Status          | Expire Flag | Description                                                     |
+|------------------------------------------------|-------------------------|-------------------------|-------------|-----------------------------------------------------------------|
+| Initial Application                            | REGISTRATIONCOMPLETED   | null                    | false       | When a new application is created and completed                 |
+| Scheduler Marks for Renewal(2 months before expiry) | REGISTRATIONCOMPLETED   | ELIGIBLE_TO_RENEW       | false       | Scheduler marks applications nearing expiry                     |
+| Direct Renewal (Payment)                       | REGISTRATIONCOMPLETED   | RENEWED                 | false       | When user directly pays for renewal without editing             |
+| Renewal with Edit                              | REGISTRATIONCOMPLETED   | RENEW_APPLICATION_CREATED | false       | When user creates a new application for renewal                 |
+| Expired Application                            | EXPIRED                 | ELIGIBLE_TO_RENEW       | true        | When application validity date has passed                      |
+| Renewal In Progress                            | REGISTRATIONCOMPLETED   | RENEW_IN_PROGRESS       | false       | When user initiates renewal process                               |
+
 
 ## Security & Encryption
 
@@ -199,6 +209,7 @@ The **Street Vending (SV)** module enables urban local bodies (ULBs) to manage a
 - Use:
   - `/egov-enc-service/crypto/v1/_encrypt`
   - `/egov-enc-service/crypto/v1/_decrypt`
+
 
 For further information, [click this link](https://docs.google.com/document/d/1AY0mLcFORtN4bKyJ5zLnMAPsWdB4K4t5ootRYjXcwSU/edit?tab=t.0).
 

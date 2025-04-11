@@ -31,7 +31,8 @@ const SelectVehicleType = ({ t, config, onSelect, formData, setValue }) => {
     serviceTypeData.forEach(service => {
       if (service.code === "WT") {
         filters[service.code] = ["TANKER"];
-      } else if (service.code === "FSM") {
+      }
+      else if (service.code === "FSM" || service.code === "CND") {
         filters[service.code] = vehicleData
           .filter(vehicle => ["MAHINDRA", "TATA", "TRACTOR", "TAFE", "SONALIKA"].includes(vehicle.code))
           .map(vehicle => vehicle.code);

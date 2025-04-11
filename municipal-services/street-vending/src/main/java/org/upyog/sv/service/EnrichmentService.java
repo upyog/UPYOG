@@ -42,7 +42,6 @@ public class EnrichmentService {
 		streetVendingDetail.setApplicationId(applicationId);
 		streetVendingDetail.setAuditDetails(auditDetails);
 		streetVendingDetail.setApplicationDate(auditDetails.getCreatedTime());
-		// streetVendingDetail.setApplicationStatus(streetVendingDetail.getApplicationStatus());
 
 		List<String> customIds = getIdList(requestInfo, streetVendingDetail.getTenantId(),
 				config.getStreetVendingApplicationKey(), config.getStreetVendingApplicationFormat(), 1);
@@ -116,6 +115,7 @@ public class EnrichmentService {
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
 		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 		vendingDetail.setApplicationStatus(applicationStatus);
+		vendingDetail.setValidityDateForPersisterDate(vendingDetail.getValidityDate().toString());// mandatory field for persister
 		vendingDetail.setExpireFlag(false);;
 		
 	}

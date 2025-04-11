@@ -9,7 +9,7 @@ public class StreetVendingConstants {
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String APPLICATIONS_FOUND = "Applications Found";
 	public static final String APPLICATION_UPDATED = "Application Updated";
-	public static final String REGISTRATION_COMPLETED = "Registration Completed";
+	public static final String REGISTRATION_COMPLETED = "REGISTRATIONCOMPLETED";
 	public static final String INSPECTION_PENDING_STATUS = "INPECTIONPENDING";
 	public static final String DUPLICATE_DOCUMENT_UPLOADED = "DUPLICATE_DOCUMENT_UPLOADED";
 	public static final String INVALID_APPLICATION = "INVALID APPLICATION";
@@ -115,7 +115,7 @@ public class StreetVendingConstants {
 
 	public static final String SYSTEM_CITIZEN_TENANTID = "pg";
 
-	public static final String STATUS_EXPIRED = "Expired";
+	public static final String STATUS_EXPIRED = "EXPIRED";
 
     public static final String APPLICATION_STATUS_RENEWED = "RENEWED";
 }
