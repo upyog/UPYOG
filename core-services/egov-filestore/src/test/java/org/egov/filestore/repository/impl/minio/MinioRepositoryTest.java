@@ -28,7 +28,7 @@ class MinioRepositoryTest {
         when(fileLocation.getFileName()).thenReturn("foo.txt");
         MockMultipartFile multipartFile = new MockMultipartFile("Name", "AAAAAAAA".getBytes("UTF-8"));
 
-        FileLocation fileLocation1 = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source");
+        FileLocation fileLocation1 = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null);
 
         org.egov.filestore.domain.model.Artifact artifact = new org.egov.filestore.domain.model.Artifact(
                 "Not all who wander are lost", multipartFile, fileLocation1, new HashMap<>(), "Jan 1, 2020 8:00am GMT+0100",

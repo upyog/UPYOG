@@ -62,7 +62,7 @@ public class ElasticSearchService {
     private String internalMicroserviceRoleUuid = null;
 
 
-    @PostConstruct
+ 
     void initalizeSystemuser(){
         RequestInfo requestInfo = new RequestInfo();
         StringBuilder uri = new StringBuilder();
@@ -74,8 +74,11 @@ public class ElasticSearchService {
         try {
             LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userSearchRequest);
             List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
-            if(users.size()==0)
-                createInternalMicroserviceUser(requestInfo);
+            System.out.println(users);
+            if(users.size()==0) {
+            	createInternalMicroserviceUser(requestInfo);
+            }
+                
             internalMicroserviceRoleUuid = (String) users.get(0).get("uuid");
         }catch (Exception e) {
             throw new CustomException("EG_USER_SEARCH_ERROR", "Service returned null while fetching user");
