@@ -1,25 +1,38 @@
-// Importing the useQuery hook from react-query for handling data fetching
 import { useQuery } from "react-query";
 
-// Custom hook to fetch product price data from MDMS (Master Data Management System)
+/**
+ * Custom hook to fetch product pricing data from the Master Data Management System.
+ * Handles caching and data fetching for E-Waste product prices.
+ *
+ * @param {string} tenantId Tenant/city identifier
+ * @param {string} moduleCode Module identifier (e.g., "EW")
+ * @param {string} type Type of data to fetch (e.g., "ProductName")
+ * @param {Object} config Additional react-query configuration options
+ * @returns {Object|null} Query result containing product price data or null if type is unsupported
+ *
+ * @example
+ * const { data, isLoading } = useProductPriceMDMS(
+ *   "pb.amritsar",
+ *   "EW",
+ *   "ProductName",
+ *   { refetchOnWindowFocus: false }
+ * );
+ */
 const useProductPriceMDMS = (tenantId, moduleCode, type, config = {}) => {
-  
-  // Function to fetch product prices using the MDMS service
   const useProductPrices = () => {
     return useQuery(
-      "PRODUCT_PRICES", // Query key for caching
-      () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "ProductName"), // Function to fetch product price data
-      config // Additional configuration options for the query
+      "PRODUCT_PRICES",
+      () => Digit.Hooks.useSelectedMDMS().getMasterData(tenantId, moduleCode, "ProductName"),
+      config
     );
   };
 
-  // Switch case to handle different types of data fetching
   switch (type) {
     case "ProductName":
-      return useProductPrices(); // Fetch product prices if the type is "ProductName"
+      return useProductPrices();
     default:
-      return null; // Return null for unsupported types
+      return null;
   }
 };
 
-export default useProductPriceMDMS; // Exporting the custom hook for use in other components
+export default useProductPriceMDMS;

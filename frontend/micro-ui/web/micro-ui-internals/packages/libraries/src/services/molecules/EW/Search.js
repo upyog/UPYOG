@@ -1,91 +1,107 @@
-// Importing necessary utilities and services
-import { EwService } from "../../elements/EW"; // E-Waste service for API calls
+import { EwService } from "../../elements/EW";
 
-// Object containing methods for E-Waste search functionality
+/**
+ * Service module for E-Waste application search operations.
+ * Provides methods for searching, transforming, and structuring application data.
+ */
 export const EWSearch = {
-  // Method to fetch all E-Waste applications based on tenant ID and filters
+  /**
+   * Fetches all E-Waste applications matching the given criteria
+   * 
+   * @param {string} tenantId Tenant/city identifier
+   * @param {Object} filters Search criteria and filters
+   * @returns {Promise<Object>} Search results with application data
+   */
   all: async (tenantId, filters = {}) => {
-    console.log("filterrsrs", filters); // Debugging log for filters
-    const response = await EwService.search({ tenantId, filters }); // Call the search API
-    return response; // Return the response
+    const response = await EwService.search({ tenantId, filters });
+    return response;
   },
 
-  // Method to fetch a single E-Waste application based on tenant ID and filters
+  /**
+   * Fetches a single E-Waste application by its identifiers
+   * 
+   * @param {string} tenantId Tenant/city identifier
+   * @param {Object} filters Search criteria including requestId
+   * @returns {Promise<Object>} Single application details
+   */
   application: async (tenantId, filters = {}) => {
-    const response = await EwService.search({ tenantId, filters }); // Call the search API
-    return response.EwasteApplication[0]; // Return the first application from the response
+    const response = await EwService.search({ tenantId, filters });
+    return response.EwasteApplication[0];
   },
 
-  // Method to transform registration details for an E-Waste application
+  /**
+   * Transforms application data into structured format for display
+   * Organizes details into sections: applicant, address, products, and transactions
+   * 
+   * @param {Object} params Transform parameters
+   * @param {Object} params.EwasteApplication Application data to transform
+   * @param {Function} params.t Translation function
+   * @returns {Array<Object>} Structured sections with application details
+   */
   RegistrationDetails: ({ EwasteApplication: response, t }) => {
-    // Map product details into rows for a table
     const productRows = response?.ewasteDetails?.map((product) => [
-      product?.productName, // Product name
-      product?.quantity, // Product quantity
-      product?.price / product?.quantity, // Unit price
-      product?.price, // Total price
+      product?.productName,
+      product?.quantity,
+      product?.price / product?.quantity,
+      product?.price,
     ]) || [];
 
-    // Prepare transaction details
     const transactionDetails = [
       response?.calculatedAmount ? { title: "EWASTE_NET_PRICE", value: "₹ " + response?.calculatedAmount } : null,
       response?.transactionId ? { title: "ES_EW_ACTION_TRANSACTION_ID", value: response?.transactionId } : null,
       response?.finalAmount ? { title: "ES_EW_ACTION_FINALAMOUNT", value: "₹ " + response?.finalAmount } : null,
       response?.pickUpDate ? { title: "EW_PICKUP_DATE", value: response?.pickUpDate } : null,
-    ].filter(detail => detail !== null && detail.value !== null); // Filter out null values
+    ].filter(detail => detail !== null && detail.value !== null);
 
-    // Return structured application details
     return [
       {
-        title: "EW_APPLICANT_DETAILS", // Section title
-        asSectionHeader: true, // Mark as a section header
+        title: "EW_APPLICANT_DETAILS",
+        asSectionHeader: true,
         values: [
-          { title: "EW_APPLICANT_NAME", value: response?.applicant?.applicantName }, // Applicant name
-          { title: "EW_EMAIL", value: response?.applicant?.emailId }, // Email ID
-          { title: "EW_REQUEST_ID", value: response?.requestId }, // Request ID
-          { title: "EW_MOBILE_NUMBER", value: response?.applicant?.mobileNumber }, // Mobile number
-          { title: "EW_ALT_NUMBER", value: response?.applicant?.altMobileNumber }, // Alternate mobile number
+          { title: "EW_APPLICANT_NAME", value: response?.applicant?.applicantName },
+          { title: "EW_EMAIL", value: response?.applicant?.emailId },
+          { title: "EW_REQUEST_ID", value: response?.requestId },
+          { title: "EW_MOBILE_NUMBER", value: response?.applicant?.mobileNumber },
+          { title: "EW_ALT_NUMBER", value: response?.applicant?.altMobileNumber },
         ],
       },
       {
-        title: "EW_ADDRESS_DETAILS", // Section title
-        asSectionHeader: true, // Mark as a section header
+        title: "EW_ADDRESS_DETAILS",
+        asSectionHeader: true,
         values: [
-          { title: "EW_PINCODE", value: response?.address?.pincode }, // Pincode
-          { title: "EW_CITY", value: response?.address?.city }, // City
-          { title: "EW_DOOR_NO", value: response?.address?.doorNo }, // Door number
-          { title: "EW_STREET", value: response?.address?.street }, // Street
-          { title: "EW_ADDRESS_LINE_1", value: response?.address?.addressLine1 }, // Address line 1
-          { title: "EW_ADDRESS_LINE_2", value: response?.address?.addressLine2 }, // Address line 2
-          { title: "EW_BUILDING_NAME", value: response?.address?.buildingName }, // Building name
+          { title: "EW_PINCODE", value: response?.address?.pincode },
+          { title: "EW_CITY", value: response?.address?.city },
+          { title: "EW_DOOR_NO", value: response?.address?.doorNo },
+          { title: "EW_STREET", value: response?.address?.street },
+          { title: "EW_ADDRESS_LINE_1", value: response?.address?.addressLine1 },
+          { title: "EW_ADDRESS_LINE_2", value: response?.address?.addressLine2 },
+          { title: "EW_BUILDING_NAME", value: response?.address?.buildingName },
         ],
       },
       {
-        title: "EW_PRODUCT_DETAILS", // Section title
-        asSectionHeader: true, // Mark as a section header
-        isTable: true, // Mark as a table
-        headers: ["PRODUCT_NAME", "PRODUCT_QUANTITY", "UNIT_PRICE", "TOTAL_PRODUCT_PRICE"], // Table headers
-        tableRows: productRows, // Table rows
+        title: "EW_PRODUCT_DETAILS",
+        asSectionHeader: true,
+        isTable: true,
+        headers: ["PRODUCT_NAME", "PRODUCT_QUANTITY", "UNIT_PRICE", "TOTAL_PRODUCT_PRICE"],
+        tableRows: productRows,
       },
       {
-        title: "EWASTE_TITLE_TRANSACTION_DETAILS", // Section title
-        asSectionHeader: true, // Mark as a section header
-        values: transactionDetails, // Transaction details
+        title: "EWASTE_TITLE_TRANSACTION_DETAILS",
+        asSectionHeader: true,
+        values: transactionDetails,
       },
       {
-        title: "EWASTE_DOCUMENT_DETAILS", // Section title
+        title: "EWASTE_DOCUMENT_DETAILS",
         additionalDetails: {
           documents: [
             {
-              values: response?.documents?.map((document) => {
-                return {
-                  title: `${document?.documentType?.replace(".", "_")}`, // Document type
-                  documentType: document?.documentType, // Document type
-                  documentUid: document?.fileStoreId, // Document UID
-                  fileStoreId: document?.filestoreId, // File store ID
-                  status: document.status, // Document status
-                };
-              }),
+              values: response?.documents?.map((document) => ({
+                title: `${document?.documentType?.replace(".", "_")}`,
+                documentType: document?.documentType,
+                documentUid: document?.fileStoreId,
+                fileStoreId: document?.filestoreId,
+                status: document.status,
+              })),
             },
           ],
         },
@@ -93,15 +109,24 @@ export const EWSearch = {
     ];
   },
 
-  // Method to fetch detailed application data
+  /**
+   * Fetches and transforms complete application details for display
+   * 
+   * @param {Function} t Translation function
+   * @param {string} tenantId Tenant/city identifier
+   * @param {string} requestId Application request ID
+   * @param {string} userType Type of user accessing details
+   * @param {Object} args Additional search parameters
+   * @returns {Promise<Object>} Complete application details with transformed data
+   */
   applicationDetails: async (t, tenantId, requestId, userType, args) => {
-    const filter = { requestId, ...args }; // Prepare filters
-    const response = await EWSearch.application(tenantId, filter); // Fetch application data
+    const filter = { requestId, ...args };
+    const response = await EWSearch.application(tenantId, filter);
     return {
-      tenantId: response.tenantId, // Tenant ID
-      applicationDetails: EWSearch.RegistrationDetails({ EwasteApplication: response, t }), // Transformed application details
-      applicationData: response, // Raw application data
-      transformToAppDetailsForEmployee: EWSearch.RegistrationDetails, // Transformation function
+      tenantId: response.tenantId,
+      applicationDetails: EWSearch.RegistrationDetails({ EwasteApplication: response, t }),
+      applicationData: response,
+      transformToAppDetailsForEmployee: EWSearch.RegistrationDetails,
     };
   },
 };

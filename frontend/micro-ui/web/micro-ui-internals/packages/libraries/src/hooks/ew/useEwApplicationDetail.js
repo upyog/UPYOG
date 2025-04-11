@@ -1,31 +1,49 @@
-// Importing the EWSearch service for fetching application details
 import { EWSearch } from "../../services/molecules/EW/Search";
-// Importing the useQuery hook from react-query for handling data fetching
 import { useQuery } from "react-query";
 
-// Custom hook to fetch and manage E-Waste application details
+/**
+ * Custom hook for fetching and managing E-Waste application details.
+ * Provides data fetching, caching, and transformation capabilities for application information.
+ *
+ * @param {Function} t Translation function for localization
+ * @param {string} tenantId Tenant/city identifier
+ * @param {string} requestId Unique application request identifier
+ * @param {Object} config Additional configuration options for the query
+ * @param {string} userType Type of user accessing the details (citizen/employee)
+ * @param {Object} args Additional arguments for the search
+ * @returns {Object} Query result containing application data, loading state, and error information
+ * 
+ * @example
+ * const { data, isLoading } = useEwApplicationDetail(
+ *   t,
+ *   "pb.amritsar",
+ *   "EW-2023-01-29-000123",
+ *   { refetchOnWindowFocus: false },
+ *   "EMPLOYEE"
+ * );
+ */
 const useEwApplicationDetail = (t, tenantId, requestId, config = {}, userType, args) => {
-  
-  // Function to process and transform the fetched data
+  /**
+   * Processes and transforms the fetched application data
+   * @param {Object} data Raw application data from API
+   * @returns {Object} Transformed application data
+   */
   const defaultSelect = (data) => {
-    // Map through the application details and return them as-is
     let applicationDetails = data.applicationDetails.map((obj) => {
       return obj;
     });
 
-    // Return the transformed data
     return {
-      applicationData: data, // Original application data
-      applicationDetails, // Processed application details
+      applicationData: data,
+      applicationDetails,
     };
   };
 
-  // Using the useQuery hook to fetch application details
   return useQuery(
-    ["APP_SEARCH", "EW_SEARCH", requestId, userType, args], // Query key for caching
-    () => EWSearch.applicationDetails(t, tenantId, requestId, userType, args), // Function to fetch application details
-    { select: defaultSelect, ...config } // Configuration options and data transformation
+    ["APP_SEARCH", "EW_SEARCH", requestId, userType, args],
+    () => EWSearch.applicationDetails(t, tenantId, requestId, userType, args),
+    { select: defaultSelect, ...config }
   );
 };
 
-export default useEwApplicationDetail; // Exporting the custom hook for use in other components
+export default useEwApplicationDetail;

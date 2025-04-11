@@ -1,16 +1,31 @@
-// Importing the EwService for updating E-Waste application data
 import { EwService } from "../../elements/EW";
 
-// Function to handle the update actions for E-Waste applications
+/**
+ * Updates E-Waste application data through the EwService.
+ * Handles API communication and error processing for application updates.
+ *
+ * @param {Object} applicationData Updated application data to be saved
+ * @param {string} tenantId Tenant/city identifier
+ * @returns {Promise<Object>} Response from the update operation
+ * @throws {Error} When update operation fails with service error
+ *
+ * @example
+ * try {
+ *   const response = await ApplicationUpdateActionsEW(
+ *     { requestId: "EW-2023-01", status: "APPROVED" },
+ *     "pb.amritsar"
+ *   );
+ * } catch (error) {
+ *   console.error("Update failed:", error.message);
+ * }
+ */
 const ApplicationUpdateActionsEW = async (applicationData, tenantId) => {
   try {
-    // Call the EwService to update the application data
     const response = await EwService.update(applicationData, tenantId);
-    return response; // Return the response from the service
+    return response;
   } catch (error) {
-    // Throw an error with the message from the response if the update fails
     throw new Error(error?.response?.data?.Errors[0].message);
   }
 };
 
-export default ApplicationUpdateActionsEW; // Exporting the function for use in other components
+export default ApplicationUpdateActionsEW;

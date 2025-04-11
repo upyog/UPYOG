@@ -1,16 +1,22 @@
-// Importing React and its hooks for state and lifecycle management
 import React, { useEffect, useState } from "react";
 
-// Custom hook to fetch and manage tenant information
+/**
+ * Custom hook for managing tenant information in E-Waste module.
+ * Retrieves tenant data from session storage and provides access through state.
+ * Used for maintaining consistent tenant context across the application.
+ *
+ * @returns {Object|null} Current tenant information or null if not available
+ *
+ * @example
+ * const tenants = useTenants();
+ * if (tenants) {
+ *   const currentTenant = tenants.find(tenant => tenant.code === 'pb.amritsar');
+ * }
+ */
 const useTenants = () => {
-  // Retrieve tenant information from session storage
   const tenantInfo = Digit.SessionStorage.get("EW_TENANTS");
-
-  // Initialize state with tenant information if available, otherwise set it to null
   const [tenants, setTenants] = useState(tenantInfo ? tenantInfo : null);
-
-  // Return the tenant information
   return tenants;
 };
 
-export default useTenants; // Exporting the custom hook for use in other components
+export default useTenants;

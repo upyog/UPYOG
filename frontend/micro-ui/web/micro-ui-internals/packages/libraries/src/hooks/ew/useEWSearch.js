@@ -1,37 +1,54 @@
-// Importing the useQuery and useQueryClient hooks from react-query for handling data fetching and cache management
 import { useQuery, useQueryClient } from "react-query";
 
-// Custom hook to perform a search for E-Waste applications
+/**
+ * Custom hook for searching and filtering E-Waste applications.
+ * Provides data fetching, caching, and revalidation capabilities.
+ *
+ * @param {Object} params Search parameters and configuration
+ * @param {string} params.tenantId Tenant/city identifier
+ * @param {Object} params.filters Search filters (status, date range, etc.)
+ * @param {Object} params.auth Authentication details
+ * @param {string} params.searchedFrom Source of search request
+ * @param {Object} config Additional react-query configuration options
+ * @returns {Object} Query result with data, loading state, and revalidation function
+ *
+ * @example
+ * const { data, isLoading, revalidate } = useEWSearch({
+ *   tenantId: "pb.amritsar",
+ *   filters: { status: "PENDING" }
+ * });
+ */
 const useEWSearch = ({ tenantId, filters, auth, searchedFrom = "" }, config = {}) => {
-  const client = useQueryClient(); // Initializing the query client for cache management
+  const client = useQueryClient();
 
-  // Arguments to be passed to the search API
   const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
 
-  // Function to process and transform the fetched data
+  /**
+   * Transforms raw API response data into required format
+   * @param {Object} data Raw response data
+   * @returns {Object} Processed application data
+   */
   const defaultSelect = (data) => {
-    if (data.EwasteApplication.length > 0) data.EwasteApplication[0] = data.EwasteApplication[0] || []; // Ensure the first application exists
-    return data; // Return the processed data
+    if (data.EwasteApplication.length > 0) data.EwasteApplication[0] = data.EwasteApplication[0] || [];
+    return data;
   };
 
-  // Using the useQuery hook to fetch E-Waste application data
   const { isLoading, error, data, isSuccess } = useQuery(
-    ["ewSearchList", tenantId, filters, auth, config], // Query key for caching
-    () => Digit.EwService.search(args), // Function to fetch the search results
+    ["ewSearchList", tenantId, filters, auth, config],
+    () => Digit.EwService.search(args),
     {
-      select: defaultSelect, // Data transformation function
-      ...config, // Additional configuration options
+      select: defaultSelect,
+      ...config,
     }
   );
 
-  // Returning the query state and a function to revalidate the query
   return {
-    isLoading, // Indicates if the query is loading
-    error, // Contains any error encountered during the query
-    data, // The fetched data
-    isSuccess, // Indicates if the query was successful
-    revalidate: () => client.invalidateQueries(["ewSearchList", tenantId, filters, auth]), // Function to invalidate and refetch the query
+    isLoading,
+    error,
+    data,
+    isSuccess,
+    revalidate: () => client.invalidateQueries(["ewSearchList", tenantId, filters, auth]),
   };
 };
 
-export default useEWSearch; // Exporting the custom hook for use in other components
+export default useEWSearch;

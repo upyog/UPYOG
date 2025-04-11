@@ -1,16 +1,30 @@
-// Importing the useQuery and useMutation hooks from react-query for handling API calls
 import { useQuery, useMutation } from "react-query";
-// Importing the EwService for creating or updating E-Waste data
 import { EwService } from "../../services/elements/EW";
 
-// Custom hook to handle the creation or update of E-Waste data
+/**
+ * Custom hook for creating and updating E-Waste applications.
+ * Provides mutation capabilities for submitting new applications
+ * or modifying existing ones.
+ *
+ * @param {string} tenantId Tenant/city identifier
+ * @param {boolean} type If true, creates new application; if false, updates existing one
+ * @returns {Object} Mutation object with create/update capabilities
+ *
+ * @example
+ * // Creating a new application
+ * const { mutate: createEW } = useEwCreateAPI("pb.amritsar");
+ * createEW(applicationData);
+ *
+ * // Updating an existing application
+ * const { mutate: updateEW } = useEwCreateAPI("pb.amritsar", false);
+ * updateEW(modifiedData);
+ */
 export const useEwCreateAPI = (tenantId, type = true) => {
-  // If type is true, use the create API; otherwise, use the update API
   if (type) {
-    return useMutation((data) => EwService.create(data, tenantId)); // Mutation for creating E-Waste data
+    return useMutation((data) => EwService.create(data, tenantId));
   } else {
-    return useMutation((data) => EwService.update(data, tenantId)); // Mutation for updating E-Waste data
+    return useMutation((data) => EwService.update(data, tenantId));
   }
 };
 
-export default useEwCreateAPI; // Exporting the custom hook for use in other components
+export default useEwCreateAPI;
