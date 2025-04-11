@@ -685,6 +685,7 @@ public class PlanReportService {
         valuesMap.put("numberOfFloors", plan.getPlanInformation().getNumberOfFloors());
         valuesMap.put("ulbType", plan.getPlanInformation().getUlbType());
         valuesMap.put("district", plan.getPlanInformation().getDistrict());
+        valuesMap.put("roadType", plan.getPlanInformation().getRoadType());
 
         if (clientSpecificSubReport) {
 
