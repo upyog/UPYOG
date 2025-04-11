@@ -1,59 +1,81 @@
-// Importing necessary components and hooks from external libraries and local files
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for timeline, checkpoints, and buttons
-import React, { Fragment } from "react"; // React library for building UI components
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { Link } from "react-router-dom"; // Component for navigation links
-import EWASTEWFCaption from "../components/EWASTEWFCaption"; // Component for rendering captions in the timeline
+import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { Fragment } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import EWASTEWFCaption from "../components/EWASTEWFCaption";
 
-// Main component for displaying the workflow timeline of an E-Waste application
+/**
+ * Displays a timeline view of an E-Waste application's workflow.
+ * Shows checkpoints, status changes, and available actions based on application state.
+ *
+ * @param {Object} props Component properties
+ * @param {Object} props.application Application details containing workflow information
+ * @param {string} props.application.tenantId Tenant identifier
+ * @param {string} props.application.requestId Unique request identifier
+ * @param {Object} props.application.workflow Workflow configuration
+ * @param {string} props.userType Type of user viewing the timeline (citizen/employee)
+ * @returns {JSX.Element} Application workflow timeline
+ */
 const EWASTEWFApplicationTimeline = (props) => {
-  const { t } = useTranslation(); // Translation hook
-  const businessService = props?.application?.workflow?.businessService; // Extracting the business service from the application data
+  const { t } = useTranslation();
+  const businessService = props?.application?.workflow?.businessService;
 
-  // Fetching workflow details using a custom hook
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
-    tenantId: props.application?.tenantId, // Tenant ID of the application
-    id: props.application?.requestId, // Request ID of the application
-    moduleCode: businessService, // Module code for the workflow
+    tenantId: props.application?.tenantId,
+    id: props.application?.requestId,
+    moduleCode: businessService,
   });
 
-  // Function to open an image in a new tab
+  /**
+   * Opens the full-size image in a new tab
+   * 
+   * @param {string} imageSource Source URL of the image
+   * @param {number} index Index of the image in the collection
+   * @param {Object} thumbnailsToShow Collection of thumbnail and full-size images
+   */
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
-  // Function to generate captions for each checkpoint in the timeline
+  /**
+   * Generates caption content for timeline checkpoints based on state
+   * 
+   * @param {Object} checkpoint Workflow checkpoint data
+   * @returns {JSX.Element} Caption component with checkpoint details
+   */
   const getTimelineCaptions = (checkpoint) => {
     if (checkpoint.state === "OPEN") {
-      // Caption for an open state
       const caption = {
-        date: checkpoint?.auditDetails?.lastModified, // Last modified date
-        source: props.application?.channel || "", // Source of the application
+        date: checkpoint?.auditDetails?.lastModified,
+        source: props.application?.channel || "",
       };
       return <EWASTEWFCaption data={caption} />;
     } else if (checkpoint.state) {
-      // Caption for a completed state
       const caption = {
-        date: checkpoint?.auditDetails?.lastModified, // Last modified date
-        name: checkpoint?.assignes?.[0]?.name, // Name of the assignee
-        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber, // Mobile number of the assignee
-        comment: t(checkpoint?.comment), // Comment from the workflow
-        wfComment: checkpoint.wfComment, // Workflow-specific comment
-        thumbnailsToShow: checkpoint?.thumbnailsToShow, // Thumbnails to display
+        date: checkpoint?.auditDetails?.lastModified,
+        name: checkpoint?.assignes?.[0]?.name,
+        mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
+        comment: t(checkpoint?.comment),
+        wfComment: checkpoint.wfComment,
+        thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       return <EWASTEWFCaption data={caption} OpenImage={OpenImage} />;
     } else {
-      // Caption for other states
       const caption = {
-        date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified), // Last modified date
-        name: checkpoint?.assigner?.name, // Name of the assigner
-        comment: t(checkpoint?.comment), // Comment from the workflow
+        date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
+        name: checkpoint?.assigner?.name,
+        comment: t(checkpoint?.comment),
       };
       return <EWASTEWFCaption data={caption} />;
     }
   };
 
-  // Function to display the next actions available in the workflow
+  /**
+   * Determines and renders the next available actions in the workflow
+   * 
+   * @param {Array} nextActions List of possible next actions
+   * @returns {JSX.Element|null} Action buttons or null if no actions available
+   */
   const showNextActions = (nextActions) => {
     let nextAction = nextActions[0];
     const next = nextActions.map((action) => action.action);
@@ -64,7 +86,6 @@ const EWASTEWFApplicationTimeline = (props) => {
     }
     switch (nextAction?.action) {
       case "PAY":
-        // Render a "Make Payment" button for citizens
         return (
           props?.userType === "citizen" ? (
             <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
@@ -81,7 +102,6 @@ const EWASTEWFApplicationTimeline = (props) => {
         );
 
       case "SUBMIT_FEEDBACK":
-        // Render a "Rate" button for submitting feedback
         return (
           <div style={{ marginTop: "24px" }}>
             <Link to={`/digit-ui/citizen/fsm/rate/${props.id}`}>
@@ -94,7 +114,6 @@ const EWASTEWFApplicationTimeline = (props) => {
     }
   };
 
-  // Display a loader while the workflow details are being fetched
   if (isLoading) {
     return <Loader />;
   }
@@ -103,13 +122,11 @@ const EWASTEWFApplicationTimeline = (props) => {
     <React.Fragment>
       {!isLoading && (
         <Fragment>
-          {/* Render the timeline header if there are timeline entries */}
           {data?.timeline?.length > 0 && (
             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}
-          {/* Render the timeline checkpoints */}
           {data?.timeline && data?.timeline?.length === 1 ? (
             <CheckPoint
               isCompleted={true}
@@ -119,26 +136,23 @@ const EWASTEWFApplicationTimeline = (props) => {
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
-                data?.timeline.map((checkpoint, index) => {
-                  return (
-                    <React.Fragment key={index}>
-                      <CheckPoint
-                        keyValue={index}
-                        isCompleted={index === 0}
-                        label={t(`${data?.processInstances[index].state?.["state"]}`)}
-                        customChild={getTimelineCaptions(checkpoint)}
-                      />
-                    </React.Fragment>
-                  );
-                })}
+                data?.timeline.map((checkpoint, index) => (
+                  <React.Fragment key={index}>
+                    <CheckPoint
+                      keyValue={index}
+                      isCompleted={index === 0}
+                      label={t(`${data?.processInstances[index].state?.["state"]}`)}
+                      customChild={getTimelineCaptions(checkpoint)}
+                    />
+                  </React.Fragment>
+                ))}
             </ConnectingCheckPoints>
           )}
         </Fragment>
       )}
-      {/* Render the next actions available in the workflow */}
       {data && showNextActions(data?.nextActions)}
     </React.Fragment>
   );
 };
 
-export default EWASTEWFApplicationTimeline; // Exporting the component
+export default EWASTEWFApplicationTimeline;

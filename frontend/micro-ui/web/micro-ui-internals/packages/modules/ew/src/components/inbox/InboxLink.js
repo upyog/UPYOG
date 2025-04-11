@@ -4,7 +4,15 @@ import React, { useEffect, useState } from "react"; // React library and hooks f
 import { Link } from "react-router-dom"; // Component for navigation links
 import { useTranslation } from "react-i18next"; // Hook for translations
 
-// Component to render links for the E-Waste inbox
+/**
+ * Renders inbox links for the E-Waste module based on user roles and business service.
+ * Filters and displays links according to user permissions and service context.
+ *
+ * @param {Object} props The component properties
+ * @param {string} props.parentRoute The parent route path for navigation
+ * @param {string} props.businessService The business service identifier
+ * @returns {JSX.Element} A Card component containing filtered inbox links
+ */
 const InboxLinks = ({ parentRoute, businessService }) => {
   const { t } = useTranslation(); // Translation hook
 
@@ -14,7 +22,13 @@ const InboxLinks = ({ parentRoute, businessService }) => {
 
   const { roles: userRoles } = Digit.UserService.getUser().info; // Fetching the roles of the logged-in user
 
-  // Effect to filter and set the links based on the user's roles and the business service
+  /**
+   * Filters links based on business service and user roles.
+   * Updates the links state with filtered results.
+   * Links are filtered by:
+   * 1. Matching business service
+   * 2. User having required role permissions or no role restrictions
+   */
   useEffect(() => {
     let linksToShow = allLinks
       .filter((e) => e.businessService === businessService) // Filter links by business service
@@ -22,7 +36,12 @@ const InboxLinks = ({ parentRoute, businessService }) => {
     setLinks(linksToShow); // Update the state with the filtered links
   }, []);
 
-  // Function to render the logo and header text
+  /**
+   * Renders the E-Waste service header with logo.
+   * Includes the PropertyHouse icon and translated service name.
+   *
+   * @returns {JSX.Element} Header section with logo and service title
+   */
   const GetLogo = () => (
     <div className="header">
       <span className="logo">

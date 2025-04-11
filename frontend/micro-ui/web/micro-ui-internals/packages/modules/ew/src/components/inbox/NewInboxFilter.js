@@ -1,69 +1,103 @@
-// Importing necessary components and hooks from external libraries
 import React, { useState } from "react";
-import { RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for filters, tags, and buttons
-import { useQueryClient } from "react-query"; // React Query client for caching and data fetching
-import { useTranslation } from "react-i18next"; // Hook for translations
+import { RemoveableTag, CloseSvg, CheckBox, Localities, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
+import Status from "./Status";
+import _ from "lodash";
 
-import Status from "./Status"; // Component for rendering status filters
-import _ from "lodash"; // Utility library for data manipulation
-
-// Component to render the filter functionality for the E-Waste inbox
+/**
+ * Filter component for the E-Waste inbox that provides advanced filtering capabilities.
+ * Allows users to filter applications based on locality, service type, and status.
+ * Supports both mobile and desktop views with different layout optimizations.
+ *
+ * @param {Object} props - Component properties
+ * @param {Object} props.searchParams - Current search parameters being applied
+ * @param {Function} props.onFilterChange - Callback function triggered when filters change
+ * @param {Object} props.defaultSearchParams - Default search parameters for reset
+ * @param {Object} props.statusMap - Map of available application statuses
+ * @param {string} props.moduleCode - Current module identifier
+ * @returns {JSX.Element} Filter component with various filtering options
+ */
 const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, moduleCode, ...props }) => {
-  const { t } = useTranslation(); // Translation hook
-  const client = useQueryClient(); // Query client for caching
-
-  // State to manage the current search parameters
+  const { t } = useTranslation();
+  const client = useQueryClient();
   const [_searchParams, setSearchParams] = useState(() => ({ ...searchParams, services: [] }));
 
-  // Menu options for application types
+  /**
+   * Available application types that can be filtered
+   * @type {Array<{label: string, value: string}>}
+   */
   const ApplicationTypeMenu = [
     {
-      label: "EW_NEW_REQUEST", // Label for the application type
-      value: "ewst", // Value for the application type
+      label: "EW_NEW_REQUEST",
+      value: "ewst",
     },
   ];
 
-  // Function to update local search parameters
+  /**
+   * Updates local search parameters while handling parameter deletion
+   * Merges new parameters with existing ones and removes specified keys
+   *
+   * @param {Object} filterParam - New filter parameters to apply
+   * @param {string[]} [filterParam.delete] - Keys to remove from parameters
+   */
   const localParamChange = (filterParam) => {
-    let keys_to_delete = filterParam.delete; // Keys to be deleted from the parameters
-    let _new = { ..._searchParams, ...filterParam }; // Merge new parameters with existing ones
-    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]); // Delete specified keys
-    delete filterParam.delete; // Remove the delete key from the parameters
-    setSearchParams({ ..._new }); // Update the state with the new parameters
+    let keys_to_delete = filterParam.delete;
+    let _new = { ..._searchParams, ...filterParam };
+    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+    delete filterParam.delete;
+    setSearchParams({ ..._new });
   };
 
-  // Function to apply the local filters
+  /**
+   * Applies the current local filters to the main search
+   * If no services are selected, applies all available services by default
+   */
   const applyLocalFilters = () => {
     if (_searchParams.services.length === 0) {
-      onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) }); // Apply all services if none are selected
+      onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
     } else {
-      onFilterChange(_searchParams); // Apply the current search parameters
+      onFilterChange(_searchParams);
     }
   };
 
-  // Function to clear all filters
+  /**
+   * Resets all filters to their default values
+   * Clears both local state and parent component filters
+   */
   const clearAll = () => {
-    setSearchParams({ ...defaultSearchParams, services: [] }); // Reset search parameters to default
-    onFilterChange({ ...defaultSearchParams }); // Notify parent component of the reset
+    setSearchParams({ ...defaultSearchParams, services: [] });
+    onFilterChange({ ...defaultSearchParams });
   };
 
-  const tenantId = Digit.ULBService.getCurrentTenantId(); // Get the current tenant ID
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  // Function to handle service selection
+  /**
+   * Handles service selection/deselection
+   * Updates services list and related application statuses
+   *
+   * @param {Event} e - Change event from checkbox
+   * @param {string} label - Service label being selected/deselected
+   */
   const onServiceSelect = (e, label) => {
     if (e.target.checked) {
-      localParamChange({ services: Array.isArray(_searchParams.services) ? [..._searchParams.services, label] : [label] }); // Add the selected service
+      localParamChange({ services: Array.isArray(_searchParams.services) ? [..._searchParams.services, label] : [label] });
     } else {
       localParamChange({
-        services: _searchParams.services.filter((o) => o !== label), // Remove the unselected service
-        applicationStatus: _searchParams.applicationStatus?.filter((e) => e.stateBusinessService !== label), // Remove related statuses
+        services: _searchParams.services.filter((o) => o !== label),
+        applicationStatus: _searchParams.applicationStatus?.filter((e) => e.stateBusinessService !== label),
       });
     }
   };
 
-  // Function to handle locality selection
+  /**
+   * Handles locality selection
+   * Adds new locality to the existing list of selected localities
+   *
+   * @param {Object} d - Selected locality data
+   */
   const selectLocality = (d) => {
-    localParamChange({ locality: [...(_searchParams?.locality || []), d] }); // Add the selected locality
+    localParamChange({ locality: [...(_searchParams?.locality || []), d] });
   };
 
   return (

@@ -1,98 +1,119 @@
-// Importing necessary components and hooks from external libraries and local files
 import { PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { Switch, useLocation } from "react-router-dom"; // React Router components for navigation
-import Inbox from "./Inbox"; // Component for the inbox page
-import SearchApp from "./SearchApp"; // Component for searching applications
+import { useTranslation } from "react-i18next";
+import { Switch, useLocation } from "react-router-dom";
+import Inbox from "./Inbox";
+import SearchApp from "./SearchApp";
 
-// Main component for the Employee module
+/**
+ * Main employee interface for E-Waste management system.
+ * Provides routing and navigation for various employee functions including
+ * inbox management, application processing, and search capabilities.
+ *
+ * @param {Object} props Component properties
+ * @param {string} props.path Base route path for the employee module
+ * @returns {JSX.Element} Employee interface with navigation and content areas
+ */
 const EmployeeApp = ({ path }) => {
-  const { t } = useTranslation(); // Translation hook
-  const location = useLocation(); // Hook to get the current location
-  sessionStorage.removeItem("revalidateddone"); // Removing a session storage item
-  const isMobile = window.Digit.Utils.browser.isMobile(); // Check if the browser is on a mobile device
+  const { t } = useTranslation();
+  const location = useLocation();
+  sessionStorage.removeItem("revalidateddone");
+  const isMobile = window.Digit.Utils.browser.isMobile();
 
-  // Initial state for the inbox search parameters
+  /**
+   * Default configuration for inbox filters and search parameters
+   */
   const inboxInitialState = {
     searchParams: {
-      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" }, // Default UUID filter
-      services: ["ewst"], // Service type for E-Waste
-      applicationStatus: [], // Empty application status filter
-      locality: [], // Empty locality filter
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["ewst"],
+      applicationStatus: [],
+      locality: [],
     },
   };
 
-  // Component to render breadcrumbs for navigation
+  /**
+   * Renders navigation breadcrumbs based on current route
+   * 
+   * @param {Object} props Component properties
+   * @param {Object} props.location Current route location
+   * @returns {JSX.Element} Breadcrumb navigation component
+   */
   const EWBreadCrumbs = ({ location }) => {
-    const { t } = useTranslation(); // Translation hook
+    const { t } = useTranslation();
+    
     const crumbs = [
       {
         path: "/digit-ui/employee",
-        content: t("ES_COMMON_HOME"), // Home breadcrumb
+        content: t("ES_COMMON_HOME"),
         show: true,
       },
       {
         path: "/digit-ui/employee/ew/inbox",
-        content: t("ES_TITLE_INBOX"), // Inbox breadcrumb
-        show: location.pathname.includes("ew/inbox") ? true : false,
+        content: t("ES_TITLE_INBOX"),
+        show: location.pathname.includes("ew/inbox"),
       },
       {
         path: "/digit-ui/employee/my-applications",
-        content: t("ES_COMMON_APPLICATION_SEARCH"), // Application search breadcrumb
-        show: location.pathname.includes("/ew/my-applications") || location.pathname.includes("/ew/application-details") ? true : false,
+        content: t("ES_COMMON_APPLICATION_SEARCH"),
+        show: location.pathname.includes("/ew/my-applications") || location.pathname.includes("/ew/application-details"),
       },
     ];
 
     return (
       <BreadCrumb
-        style={isMobile ? { display: "flex" } : {}} // Adjusting style for mobile view
+        style={isMobile ? { display: "flex" } : {}}
         spanStyle={{ maxWidth: "min-content" }}
         crumbs={crumbs}
       />
     );
   };
 
-  // Fetching the ApplicationDetails component dynamically from the Digit Component Registry Service
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("EWApplicationDetails");
 
   return (
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          {/* Rendering breadcrumbs */}
-          {<div style={{ marginLeft: "12px" }}><EWBreadCrumbs location={location} /></div>}
+          <div style={{ marginLeft: "12px" }}><EWBreadCrumbs location={location} /></div>
 
-          {/* Route for the inbox page */}
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
               <Inbox
-                useNewInboxAPI={true} // Using the new inbox API
-                parentRoute={path} // Parent route for navigation
-                businessService="ewst" // Business service type
-                filterComponent="EW_INBOX_FILTER" // Filter component for the inbox
-                initialStates={inboxInitialState} // Initial state for the inbox
-                isInbox={true} // Flag to indicate this is an inbox
+                useNewInboxAPI={true}
+                parentRoute={path}
+                businessService="ewst"
+                filterComponent="EW_INBOX_FILTER"
+                initialStates={inboxInitialState}
+                isInbox={true}
               />
             )}
           />
 
-          {/* Route for application details */}
-          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute 
+            path={`${path}/application-details/:id`} 
+            component={() => <ApplicationDetails parentRoute={path} />} 
+          />
 
-          {/* Route for application details from application search */}
-          <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute 
+            path={`${path}/applicationsearch/application-details/:id`} 
+            component={() => <ApplicationDetails parentRoute={path} />} 
+          />
 
-          {/* Route for the search page */}
-          <PrivateRoute path={`${path}/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
+          <PrivateRoute 
+            path={`${path}/search`} 
+            component={(props) => <Search {...props} t={t} parentRoute={path} />} 
+          />
 
-          {/* Route for the "My Applications" page */}
-          <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute 
+            path={`${path}/my-applications`} 
+            component={(props) => <SearchApp {...props} parentRoute={path} />} 
+          />
         </div>
       </React.Fragment>
     </Switch>
   );
 };
 
-export default EmployeeApp; // Exporting the main component
+export default EmployeeApp;

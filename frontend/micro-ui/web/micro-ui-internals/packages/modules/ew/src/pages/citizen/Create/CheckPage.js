@@ -1,4 +1,3 @@
-// Importing necessary components and hooks from external libraries and local files
 import {
   Card,
   CardHeader,
@@ -10,36 +9,49 @@ import {
   SubmitBar,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { useHistory } from "react-router-dom"; // Hook for navigation
-import { checkForNA } from "../../../utils"; // Utility functions for handling data
-import Timeline from "../../../components/EWASTETimeline"; // Component for displaying the timeline
-import ApplicationTable from "../../../components/inbox/ApplicationTable"; // Component for displaying product details in a table
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+import { checkForNA } from "../../../utils";
+import Timeline from "../../../components/EWASTETimeline";
+import ApplicationTable from "../../../components/inbox/ApplicationTable";
 
-// Component for rendering a button to navigate to a specific route
+/**
+ * Navigation button component for editing form sections
+ * 
+ * @param {Object} props Component properties
+ * @param {string} props.jumpTo Target route path
+ * @returns {JSX.Element} Link button for navigation
+ */
 const ActionButton = ({ jumpTo }) => {
-  const { t } = useTranslation(); // Translation hook
-  const history = useHistory(); // Hook for navigation
+  const { t } = useTranslation();
+  const history = useHistory();
+
   function routeTo() {
-    history.push(jumpTo); // Navigate to the specified route
+    history.push(jumpTo);
   }
 
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
 };
 
-// Main component for the "Check Page" in the E-Waste module
+/**
+ * Review page for E-Waste collection request submission.
+ * Displays all entered information for verification before final submission.
+ * Includes product details, owner information, and address details with edit options.
+ *
+ * @param {Object} props Component properties
+ * @param {Function} props.onSubmit Handler for form submission
+ * @param {Object} props.value Form data containing address, owner, and product details
+ * @returns {JSX.Element} Review page with form summary
+ */
 const CheckPage = ({ onSubmit, value = {} }) => {
-  const { t } = useTranslation(); // Translation hook
-  const history = useHistory(); // Hook for navigation
+  const { t } = useTranslation();
+  const history = useHistory();
 
-  // Destructuring the form data passed as props
-  const {
-    address, // Address details
-    ownerKey, // Owner details
-    ewdet // E-Waste details
-  } = value;
+  const { address, ownerKey, ewdet } = value;
 
-  // Defining columns for the product details table
+  /**
+   * Configuration for product details table columns
+   */
   const productcolumns = [
     { Header: t("PRODUCT_NAME"), accessor: "name" },
     { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
@@ -47,7 +59,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
-  // Mapping product details to rows for the table
+  /**
+   * Transforms product data for table display
+   */
   const productRows =
     ewdet?.prlistName?.map((product, index) => ({
       name: product.code,
@@ -56,10 +70,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       total_price: ewdet?.prlistQuantity[index].code * product.price,
     })) || [];
 
-  // State to manage the agreement checkbox
   const [agree, setAgree] = useState(false);
 
-  // Handler for toggling the agreement checkbox
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };

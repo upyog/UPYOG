@@ -1,37 +1,42 @@
-// Importing necessary components and hooks from external libraries and local files
 import { Card, CardSubHeader, Header, Loader, Row, StatusTable, MultiLink, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { useParams } from "react-router-dom"; // Hook to access route parameters
-import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData"; // Utility function to fetch acknowledgment data
-import EWASTEWFApplicationTimeline from "../../pageComponents/EWASTEWFApplicationTimeline"; // Component for displaying application timeline
-import ApplicationTable from "../../components/inbox/ApplicationTable"; // Component for displaying product details in a table
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import getEwAcknowledgementData from "../../utils/getEwAcknowledgementData";
+import EWASTEWFApplicationTimeline from "../../pageComponents/EWASTEWFApplicationTimeline";
+import ApplicationTable from "../../components/inbox/ApplicationTable";
 
-// Component to display the details of a citizen's E-Waste application
+/**
+ * Detailed view of a citizen's E-Waste application.
+ * Displays comprehensive information including application status, address details,
+ * applicant information, product details, and transaction history.
+ * Provides options to download acknowledgment and certificate documents.
+ *
+ * @returns {JSX.Element} Application details page with multiple sections
+ */
 const EWASTECitizenApplicationDetails = () => {
-  const { t } = useTranslation(); // Translation hook
-  const { requestId, tenantId } = useParams(); // Extracting requestId and tenantId from route parameters
-  const [showOptions, setShowOptions] = useState(false); // State to toggle download options
-  const [showToast, setShowToast] = useState(null); // State to manage toast notifications
-  const { data: storeData } = Digit.Hooks.useStore.getInitData(); // Fetching initial store data
-  const { tenants } = storeData || {}; // Extracting tenants from store data
+  const { t } = useTranslation();
+  const { requestId, tenantId } = useParams();
+  const [showOptions, setShowOptions] = useState(false);
+  const [showToast, setShowToast] = useState(null);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
 
-  // Fetching application details using a custom hook
-  const { isLoading, data } = Digit.Hooks.ew.useEWSearch(
-    {
-      tenantId,
-      filters: { requestId: requestId },
-    },
-  );
+  const { isLoading, data } = Digit.Hooks.ew.useEWSearch({
+    tenantId,
+    filters: { requestId: requestId },
+  });
 
-  const EwasteApplication = data?.EwasteApplication[0]; // Extracting the first application from the response
-  
-  // Display a loader while the data is being fetched
+  const EwasteApplication = data?.EwasteApplication[0];
+
   if (isLoading) {
     return <Loader />;
   }
 
-  // Function to fetch and generate acknowledgment data as a PDF
+  /**
+   * Generates and downloads application acknowledgment as PDF
+   * @async
+   */
   const getAcknowledgementData = async () => {
     const applications = EwasteApplication || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
@@ -39,23 +44,24 @@ const EWASTECitizenApplicationDetails = () => {
     Digit.Utils.pdf.generateTable(acknowldgementDataAPI);
   };
 
-  // Function to generate and print the E-Waste service certificate
+  /**
+   * Generates and opens E-Waste service certificate in new window
+   * @async
+   */
   const printCertificate = async () => {
     let response = await Digit.PaymentService.generatePdf(tenantId, { EwasteApplication: [data?.EwasteApplication?.[0]] }, "ewasteservicecertificate");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
 
-  // Array to store download options
-  let dowloadOptions = [];
-
-  // Adding acknowledgment form download option
-  dowloadOptions.push({
+  /**
+   * Available document download options based on application status
+   */
+  let dowloadOptions = [{
     label: t("EWASTE_DOWNLOAD_ACK_FORM"),
     onClick: () => getAcknowledgementData(),
-  });
+  }];
 
-  // Adding certificate download option if the request status is completed
   if (EwasteApplication?.requestStatus === "REQUESTCOMPLETED") {
     dowloadOptions.push({
       label: t("EW_CERTIFICATE"),
@@ -63,7 +69,9 @@ const EWASTECitizenApplicationDetails = () => {
     });
   }
 
-  // Defining columns for the product details table
+  /**
+   * Configuration for product details table display
+   */
   const productcolumns = [
     { Header: t("PRODUCT_NAME"), accessor: "name" },
     { Header: t("PRODUCT_QUANTITY"), accessor: "quantity" },
@@ -71,15 +79,12 @@ const EWASTECitizenApplicationDetails = () => {
     { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
   ];
 
-  // Mapping product details to rows for the table
-  const productRows = EwasteApplication?.ewasteDetails?.map((product) => (
-    {
-      name: t(product.productName),
-      quantity: product.quantity,
-      unit_price: product.price / product.quantity,
-      total_price: product.price,
-    }
-  )) || [];
+  const productRows = EwasteApplication?.ewasteDetails?.map((product) => ({
+    name: t(product.productName),
+    quantity: product.quantity,
+    unit_price: product.price / product.quantity,
+    total_price: product.price,
+  })) || [];
 
   return (
     <React.Fragment>
@@ -179,8 +184,7 @@ const EWASTECitizenApplicationDetails = () => {
   );
 };
 
-export default EWASTECitizenApplicationDetails; // Exporting the component
-
+export default EWASTECitizenApplicationDetails; 
 
 
 

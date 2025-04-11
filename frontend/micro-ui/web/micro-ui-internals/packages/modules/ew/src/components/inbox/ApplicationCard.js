@@ -1,57 +1,84 @@
-// Importing necessary components and hooks from external libraries
 import React, { useEffect, useState } from "react";
-import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for cards, loaders, and popups
-import { FilterAction } from "@nudmcdgnpm/digit-ui-react-components"; // Component for filter actions
-import SearchApplication from "./search"; // Component for searching applications
-import SortBy from "./SortBy"; // Component for sorting functionality
+import { Card, DetailsCard, Loader, PopUp, SearchAction } from "@nudmcdgnpm/digit-ui-react-components";
+import { FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
+import SearchApplication from "./search";
+import SortBy from "./SortBy";
 
-// Component to render application cards for the E-Waste inbox
+/**
+ * Functional component for rendering an application card.
+ * @param {Object} props - The props object containing the following properties:
+ *   - t: Translation function for internationalization
+ *   - data: Data object for the application card
+ *   - onFilterChange: Function to handle filter change
+ *   - onSearch: Function to handle search
+ *   - onSort: Function to handle sorting
+ *   - serviceRequestIdKey: Key for service request ID
+ *   - isFstpOperator: Boolean flag indicating if the user is an FSTP operator
+ *   - isLoading: Boolean flag indicating if data is loading
+ *   - isSearch: Boolean flag indicating if search is active
+ * @returns JSX element
+ */
 export const ApplicationCard = ({
-  t, // Translation function
-  data, // Data to display in the application card
-  onFilterChange, // Handler for filter changes
-  onSearch, // Handler for search actions
-  onSort, // Handler for sorting actions
-  serviceRequestIdKey, // Key for service request IDs
-  isFstpOperator, // Flag to indicate if the user is an FSTP operator
-  isLoading, // Flag to indicate if data is loading
-  isSearch, // Flag to indicate if it is in search mode
-  searchParams, // Current search parameters
-  searchFields, // Fields to display in the search form
-  sortParams, // Current sorting parameters
-  linkPrefix, // Prefix for links
-  filterComponent, // Component to render filters
+  t,
+  data,
+  onFilterChange,
+  onSearch,
+  onSort,
+  serviceRequestIdKey,
+  isFstpOperator,
+  isLoading,
+  isSearch,
+  searchParams,
+  searchFields,
+  sortParams,
+  linkPrefix,
+  filterComponent,
 }) => {
-  const [type, setType] = useState(isSearch ? "SEARCH" : ""); // State to manage the type of popup (SEARCH, FILTER, SORT)
-  const [popup, setPopup] = useState(isSearch ? true : false); // State to manage the visibility of the popup
-  const [_sortparams, setSortParams] = useState(sortParams); // State to manage sorting parameters
-  const [FilterComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent)); // Dynamically load the filter component
+  const [type, setType] = useState(isSearch ? "SEARCH" : "");
+  const [popup, setPopup] = useState(isSearch ? true : false);
+  const [_sortparams, setSortParams] = useState(sortParams);
+  const [FilterComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
 
-  // Function to handle filter changes and close the popup
+  /**
+   * Handles the application of filters and closes the popup.
+   *
+   * @param {Object} params - The filter parameters to be applied.
+   */
   const onSearchFilter = (params) => {
-    onFilterChange(params); // Notify parent component of the filter changes
-    setPopup(false); // Close the popup
+    onFilterChange(params);
+    setPopup(false);
   };
 
-  // Effect to open the popup when the type changes
+  /**
+   * Opens the popup whenever the type of action (SEARCH, FILTER, SORT) changes.
+   */
   useEffect(() => {
     if (type) setPopup(true);
   }, [type]);
 
-  // Function to handle closing the popup
+  /**
+   * Closes the popup and resets the type and sorting parameters.
+   */
   const handlePopupClose = () => {
-    setPopup(false); // Close the popup
-    setType(""); // Reset the type
-    setSortParams(sortParams); // Reset sorting parameters
+    setPopup(false);
+    setType("");
+    setSortParams(sortParams);
   };
 
-  // Render a loader if data is still loading
+  /**
+   * Displays a loader while the data is being fetched.
+   *
+   * @return {JSX.Element} A loader component.
+   */
   if (isLoading) {
     return <Loader />;
   }
 
   let result;
-  // Render a message if no data is available
+
+  /**
+   * Displays a message when no application data is available.
+   */
   if (!data || data?.length === 0) {
     result = (
       <Card style={{ marginTop: 20 }}>
@@ -65,7 +92,9 @@ export const ApplicationCard = ({
       </Card>
     );
   } 
-  // Render the details card if data is available
+  /**
+   * Displays the application details when data is available.
+   */
   else if (data && data?.length > 0) {
     result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={linkPrefix ? linkPrefix : "/digit-ui/employee/ew/"} />;
   }
@@ -73,51 +102,45 @@ export const ApplicationCard = ({
   return (
     <React.Fragment>
       <div className="searchBox">
-        {/* Render the search action button */}
         {onSearch && (
           <SearchAction
             text="SEARCH"
             handleActionClick={() => {
-              setType("SEARCH"); // Set the type to SEARCH
-              setPopup(true); // Open the popup
+              setType("SEARCH");
+              setPopup(true);
             }}
           />
         )}
-        {/* Render the filter action button if not in search mode */}
         {!isSearch && onFilterChange && (
           <FilterAction
             text="FILTER"
             handleActionClick={() => {
-              setType("FILTER"); // Set the type to FILTER
-              setPopup(true); // Open the popup
+              setType("FILTER");
+              setPopup(true);
             }}
           />
         )}
-        {/* Render the sort action button */}
         <FilterAction
           text="SORT"
           handleActionClick={() => {
-            setType("SORT"); // Set the type to SORT
-            setPopup(true); // Open the popup
+            setType("SORT");
+            setPopup(true);
           }}
         />
       </div>
-      {result} {/* Render the result (message or details card) */}
+      {result}
       {popup && (
         <PopUp>
-          {/* Render the filter popup */}
           {type === "FILTER" && (
             <div className="popup-module">
               {<FilterComp onFilterChange={onSearchFilter} Close={handlePopupClose} type="mobile" searchParams={searchParams} />}
             </div>
           )}
-          {/* Render the sort popup */}
           {type === "SORT" && (
             <div className="popup-module">
               {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
             </div>
           )}
-          {/* Render the search popup */}
           {type === "SEARCH" && (
             <div className="popup-module">
               <SearchApplication

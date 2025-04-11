@@ -1,34 +1,57 @@
-// Importing necessary components and hooks from external libraries and local files
 import React from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { ApplicationCard } from "./inbox/ApplicationCard"; // Component for rendering application cards
-import ApplicationLinks from "./inbox/ApplicationLinks"; // Component for rendering application links
+import { useTranslation } from "react-i18next";
+import { ApplicationCard } from "./inbox/ApplicationCard";
+import ApplicationLinks from "./inbox/ApplicationLinks";
 
-// Component to render the mobile inbox for the E-Waste module
+/**
+ * Renders a mobile-optimized inbox interface for the E-Waste module.
+ * Provides application listing, filtering, and search capabilities for mobile devices.
+ *
+ * @param {Object} props - Component properties
+ * @param {Array} props.data - Application data to be displayed in the inbox
+ * @param {boolean} props.isLoading - Flag indicating data loading state
+ * @param {boolean} props.isSearch - Flag indicating search mode
+ * @param {Array} props.searchFields - Configuration for search form fields
+ * @param {Function} props.onFilterChange - Handler for filter changes
+ * @param {Function} props.onSearch - Handler for search operations
+ * @param {Function} props.onSort - Handler for sorting operations
+ * @param {string} props.parentRoute - Base route for navigation
+ * @param {Object} props.searchParams - Current search parameters
+ * @param {Object} props.sortParams - Current sorting parameters
+ * @param {string} props.linkPrefix - Prefix for application links
+ * @param {Object} props.tableConfig - Table display configuration
+ * @param {string} props.filterComponent - Name of filter component to load
+ * @returns {JSX.Element} Mobile inbox interface
+ */
 const MobileInbox = ({
-  data, // Data to display in the inbox
-  isLoading, // Flag to indicate if data is loading
-  isSearch, // Flag to indicate if it is in search mode
-  searchFields, // Fields to display in the search form
-  onFilterChange, // Handler for filter changes
-  onSearch, // Handler for search actions
-  onSort, // Handler for sorting actions
-  parentRoute, // Parent route for navigation
-  searchParams, // Current search parameters
-  sortParams, // Current sorting parameters
-  linkPrefix, // Prefix for links
-  tableConfig, // Configuration for the table
-  filterComponent, // Component to render filters
+  data,
+  isLoading,
+  isSearch,
+  searchFields,
+  onFilterChange,
+  onSearch,
+  onSort,
+  parentRoute,
+  searchParams,
+  sortParams,
+  linkPrefix,
+  tableConfig,
+  filterComponent,
 }) => {
-  const { t } = useTranslation(); // Translation hook
+  const { t } = useTranslation();
 
-  // Function to transform data for mobile view
+  /**
+   * Transforms application data for mobile view rendering.
+   * Maps table columns to their mobile-specific cell representations.
+   *
+   * @returns {Array} Transformed data for mobile display
+   */
   const getData = () => {
     return data?.map((dataObj) => {
       const obj = {};
-      const columns = isSearch ? tableConfig.searchColumns() : tableConfig.inboxColumns(); // Get columns based on search or inbox mode
+      const columns = isSearch ? tableConfig.searchColumns() : tableConfig.inboxColumns();
       columns.forEach((el) => {
-        if (el.mobileCell) obj[el.Header] = el.mobileCell(dataObj); // Map mobile-specific cells
+        if (el.mobileCell) obj[el.Header] = el.mobileCell(dataObj);
       });
       return obj;
     });
@@ -38,23 +61,21 @@ const MobileInbox = ({
     <div style={{ padding: 0 }}>
       <div className="inbox-container">
         <div className="filters-container">
-          {/* Render application links if not in search mode */}
           {!isSearch && <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}
-          {/* Render the application card with the transformed data */}
           <ApplicationCard
-            t={t} // Translation function
-            data={getData()} // Transformed data for mobile view
-            onFilterChange={onFilterChange} // Handler for filter changes
-            isLoading={isLoading} // Flag to indicate if data is loading
-            isSearch={isSearch} // Flag to indicate if it is in search mode
-            onSearch={onSearch} // Handler for search actions
-            onSort={onSort} // Handler for sorting actions
-            searchParams={searchParams} // Current search parameters
-            searchFields={searchFields} // Fields to display in the search form
-            linkPrefix={linkPrefix} // Prefix for links
-            sortParams={sortParams} // Current sorting parameters
-            serviceRequestIdKey={tableConfig?.serviceRequestIdKey} // Key for service request IDs
-            filterComponent={filterComponent} // Component to render filters
+            t={t}
+            data={getData()}
+            onFilterChange={onFilterChange}
+            isLoading={isLoading}
+            isSearch={isSearch}
+            onSearch={onSearch}
+            onSort={onSort}
+            searchParams={searchParams}
+            searchFields={searchFields}
+            linkPrefix={linkPrefix}
+            sortParams={sortParams}
+            serviceRequestIdKey={tableConfig?.serviceRequestIdKey}
+            filterComponent={filterComponent}
           />
         </div>
       </div>
@@ -62,4 +83,4 @@ const MobileInbox = ({
   );
 };
 
-export default MobileInbox; // Exporting the component
+export default MobileInbox;

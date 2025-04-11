@@ -1,43 +1,48 @@
-// Importing necessary components and hooks from external libraries
 import React from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components"; // Components for rendering module cards and icons
+import { useTranslation } from "react-i18next";
+import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
 
-// Component to render the E-Waste module card for employees
+/**
+ * Renders the E-Waste module card for employee dashboard.
+ * Displays navigation links and module information based on user permissions.
+ * The card is only rendered if the user has access to the E-Waste module.
+ * 
+ * @returns {JSX.Element|null} Module card component or null if user lacks access
+ */
 const EWCard = () => {
-  const { t } = useTranslation(); // Translation hook
+  const { t } = useTranslation();
 
-  // Check if the user has access to the E-Waste module
   if (!Digit.Utils.ewAccess()) {
-    return null; // Return null if the user does not have access
+    return null;
   }
 
-  // Links to be displayed in the module card
+  /**
+   * Available navigation links for the module card.
+   * Each link may have role-based access restrictions.
+   * @type {Array<{label: string, link: string, role?: string}>}
+   */
   const links = [
     {
-      label: t("INBOX"), // Label for the "Inbox" link
-      link: `/digit-ui/employee/ew/inbox`, // URL for the "Inbox" page
-      role: "EW_CEMP", // Role required to access this link
+      label: t("INBOX"),
+      link: `/digit-ui/employee/ew/inbox`,
+      role: "EW_CEMP",
     },
     {
-      label: t("ES_COMMON_APPLICATION_SEARCH"), // Label for the "Application Search" link
-      link: `/digit-ui/employee/ew/my-applications`, // URL for the "Application Search" page
+      label: t("ES_COMMON_APPLICATION_SEARCH"),
+      link: `/digit-ui/employee/ew/my-applications`,
     },
   ];
 
-  // Check if the user has the "EW_VENDOR" role
   const EW_CEMP = Digit.UserService.hasAccess(["EW_VENDOR"]) || false;
 
-  // Properties for the EmployeeModuleCard component
   const propsForModuleCard = {
-    Icon: <PropertyHouse />, // Icon to display in the module card
-    moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("TITLE_E_WASTE")}</div>, // Module name with styling
-    kpis: [], // Key Performance Indicators (KPIs) for the module (empty in this case)
-    links: links.filter((link) => !link?.role || EW_CEMP), // Filter links based on the user's role
+    Icon: <PropertyHouse />,
+    moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("TITLE_E_WASTE")}</div>,
+    kpis: [],
+    links: links.filter((link) => !link?.role || EW_CEMP),
   };
 
-  // Render the EmployeeModuleCard component with the specified properties
   return <EmployeeModuleCard {...propsForModuleCard} />;
 };
 
-export default EWCard; // Exporting the component
+export default EWCard;

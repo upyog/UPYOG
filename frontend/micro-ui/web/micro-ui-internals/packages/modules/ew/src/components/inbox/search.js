@@ -1,6 +1,5 @@
-// Importing necessary components and hooks from external libraries
 import React, { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form"; // React Hook Form for managing form state
+import { useForm, Controller } from "react-hook-form";
 import {
   TextInput,
   Label,
@@ -10,93 +9,111 @@ import {
   CloseSvg,
   DatePicker,
   MobileNumber
-} from "@nudmcdgnpm/digit-ui-react-components"; // UI components for forms, inputs, and actions
+} from "@nudmcdgnpm/digit-ui-react-components";
+import { useTranslation } from "react-i18next";
 
-import { useTranslation } from "react-i18next"; // Hook for translations
-
-// Mapping of field types to their corresponding components
+/**
+ * Mapping of field types to their corresponding components
+ * @type {Object.<string, React.Component>}
+ */
 const fieldComponents = {
-  date: DatePicker, // Date picker component for date fields
-  mobileNumber: MobileNumber, // Mobile number input component
+  date: DatePicker,
+  mobileNumber: MobileNumber,
 };
 
-// Component to render the search functionality for E-Waste applications
+/**
+ * SearchApplication component provides search functionality for E-Waste applications
+ * with support for both mobile and desktop views.
+ *
+ * @param {Object} props - Component props
+ * @param {Function} props.onSearch - Handler for search submission
+ * @param {string} props.type - View type ('mobile' or 'desktop')
+ * @param {Function} props.onClose - Handler for closing the search form
+ * @param {Array} props.searchFields - Configuration for search form fields
+ * @param {Object} props.searchParams - Current search parameters
+ * @param {boolean} props.isInboxPage - Flag indicating if component is used in inbox
+ * @param {Object} props.defaultSearchParams - Default search parameters
+ * @param {Function} props.clearSearch - Handler for clearing search
+ * @returns {JSX.Element} Search form component
+ */
 const SearchApplication = ({
-  onSearch, // Function to handle search actions
-  type, // Type of view (mobile or desktop)
-  onClose, // Function to handle closing the search form
-  searchFields, // Fields to display in the search form
-  searchParams, // Current search parameters
-  isInboxPage, // Flag to indicate if it is an inbox page
-  defaultSearchParams, // Default search parameters
-  clearSearch: _clearSearch, // Function to clear the search
+  onSearch,
+  type,
+  onClose,
+  searchFields,
+  searchParams,
+  isInboxPage,
+  defaultSearchParams,
+  clearSearch: _clearSearch,
 }) => {
-  const { t } = useTranslation(); // Translation hook
+  const { t } = useTranslation();
   const { handleSubmit, reset, watch, control, setError, clearErrors, formState, setValue } = useForm({
-    defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams }, // Set default values for the form
+    defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
 
-  const form = watch(); // Watch the form values for changes
+  const form = watch();
 
-  // Function to check if the form values are empty
+  /**
+   * Checks if the form has any non-empty values
+   * @returns {boolean} True if form is empty, false otherwise
+   */
   const formValueEmpty = () => {
     let isEmpty = true;
     Object.keys(form).forEach((key) => {
-      if (!["locality", "city"].includes(key) && form[key]) isEmpty = false; // Check if any field other than locality and city is filled
+      if (!["locality", "city"].includes(key) && form[key]) isEmpty = false;
     });
-
-    if (searchFields?.find((e) => e.name === "locality") && !form?.locality?.code) isEmpty = true; // Check if locality is empty
+    if (searchFields?.find((e) => e.name === "locality") && !form?.locality?.code) isEmpty = true;
     return isEmpty;
   };
 
-  const mobileView = innerWidth <= 640; // Check if the view is mobile based on screen width
-
-  // Function to handle form submission
+  /**
+   * Handles form submission with data processing
+   * @param {Object} data - Form data to be submitted
+   */
   const onSubmitInput = (data) => {
-    if (!data.mobileNumber) {
-      delete data.mobileNumber; // Remove mobile number if it is not provided
-    }
-
-    data.delete = []; // Initialize an array to store fields to be deleted
-
+    if (!data.mobileNumber) delete data.mobileNumber;
+    data.delete = [];
     searchFields.forEach((field) => {
-      if (!data[field.name]) data.delete.push(field.name); // Add fields with empty values to the delete array
+      if (!data[field.name]) data.delete.push(field.name);
     });
-
-    onSearch(data); // Call the search function with the form data
-    if (type === "mobile") {
-      onClose(); // Close the form if the view is mobile
-    }
+    onSearch(data);
+    if (type === "mobile") onClose();
   };
 
-  // Function to clear the search form
+  /**
+   * Clears the search form and resets to default state
+   */
   function clearSearch() {
-    const resetValues = searchFields.reduce((acc, field) => ({ ...acc, [field?.name]: "" }), {}); // Reset all fields to empty
-    reset(resetValues); // Reset the form
+    const resetValues = searchFields.reduce((acc, field) => ({ ...acc, [field?.name]: "" }), {});
+    reset(resetValues);
     if (isInboxPage) {
       const _newParams = { ...searchParams };
       _newParams.delete = [];
       searchFields.forEach((e) => {
-        _newParams.delete.push(e?.name); // Add fields to be deleted
+        _newParams.delete.push(e?.name);
       });
-      onSearch({ ..._newParams }); // Call the search function with the updated parameters
+      onSearch({ ..._newParams });
     } else {
-      _clearSearch(); // Call the clear search function
+      _clearSearch();
     }
   }
 
-  // Function to render the "Clear All" link
+  /**
+   * Renders the clear all link with appropriate styling
+   * @param {boolean} mobileView - Flag indicating if rendering for mobile view
+   * @returns {JSX.Element} Clear all link component
+   */
   const clearAll = (mobileView) => {
-    const mobileViewStyles = mobileView ? { margin: 0 } : {}; // Adjust styles for mobile view
+    const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
       <LinkLabel style={{ display: "inline", margin: "10px", ...mobileViewStyles }} onClick={clearSearch}>
-        {t("ES_COMMON_CLEAR_SEARCH")} {/* Translated text for "Clear Search" */}
+        {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitInput)}> {/* Form submission handler */}
+    <form onSubmit={handleSubmit(onSubmitInput)}> 
       <React.Fragment>
         <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
           <div className="search-complaint-container">

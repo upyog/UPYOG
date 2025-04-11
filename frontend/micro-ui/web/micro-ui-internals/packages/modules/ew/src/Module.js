@@ -1,4 +1,3 @@
-// Importing necessary components, hooks, and services from external libraries and local files
 import { CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,30 +1,34 @@
-// Importing necessary components and hooks from external libraries
 import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { Link } from "react-router-dom"; // Component for navigation
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
-// Component to display details of an individual E-Waste application
+/**
+ * Displays a card view of an individual E-Waste application with key details.
+ * Provides a link to the detailed view of the application.
+ *
+ * @param {Object} props Component properties
+ * @param {Object} props.application E-Waste application data
+ * @param {string} props.application.requestId Unique request identifier
+ * @param {Object} props.application.applicant Applicant information
+ * @param {string} props.application.requestStatus Current status of the request
+ * @param {string} props.tenantId Tenant identifier
+ * @param {string} props.buttonLabel Label for the action button
+ * @returns {JSX.Element} Card containing application details
+ */
 const EwasteApplication = ({ application, tenantId, buttonLabel }) => {
-  const { t } = useTranslation(); // Translation hook
+  const { t } = useTranslation();
 
   return (
     <Card>
-      {/* Displaying the request ID */}
       <KeyNote keyValue={t("EW_REQUEST_ID")} note={application?.requestId} />
-
-      {/* Displaying the applicant's name */}
       <KeyNote keyValue={t("EWASTE_APPLICANT_NAME")} note={application?.applicant?.applicantName} />
-
-      {/* Displaying the current status of the request */}
       <KeyNote keyValue={t("EW_STATUS")} note={application?.requestStatus} />
-
-      {/* Link to navigate to the detailed view of the application */}
       <Link to={`/digit-ui/citizen/ew/application/${application?.requestId}/${application?.tenantId}`}>
-        <SubmitBar label={buttonLabel} /> {/* Button to view or track the application */}
+        <SubmitBar label={buttonLabel} />
       </Link>
     </Card>
   );
 };
 
-export default EwasteApplication; // Exporting the component
+export default EwasteApplication;

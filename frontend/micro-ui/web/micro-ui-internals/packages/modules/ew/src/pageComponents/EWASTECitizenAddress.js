@@ -1,19 +1,32 @@
-// Importing necessary components and hooks from external libraries and local files
-import { CardLabel, FormStep, TextInput } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for form steps and input fields
-import _ from "lodash"; // Utility library for deep comparison
-import React, { useEffect, useState } from "react"; // React hooks for state and lifecycle management
-import { Controller, useForm } from "react-hook-form"; // React Hook Form for managing form state
-import Timeline from "../components/EWASTETimeline"; // Component for displaying the timeline
+import { CardLabel, FormStep, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import Timeline from "../components/EWASTETimeline";
 
-// Main component for capturing the citizen's address details in the E-Waste module
+/**
+ * Form component for capturing citizen address details in the E-Waste module.
+ * Manages a multi-field address form with validation and automatic data saving.
+ *
+ * @param {Object} props Component properties
+ * @param {Function} props.t Translation function
+ * @param {Object} props.config Form configuration settings
+ * @param {Function} props.onSelect Handler for form submission
+ * @param {string} props.userType Type of user (citizen/employee)
+ * @param {Object} props.formData Existing form data
+ * @returns {JSX.Element} Address form component
+ */
 const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
-  const onSkip = () => onSelect(); // Function to handle skipping the step
-  let validation; // Variable to store validation rules
-  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" }); // State to manage focus on input fields
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm(); // React Hook Form methods
-  const formValue = watch(); // Watching form values for changes
+  const onSkip = () => onSelect();
+  let validation;
+  const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
+  const formValue = watch();
 
-  // State variables to manage address fields
+  /**
+   * State management for address form fields
+   * Each field maintains its own state for controlled input behavior
+   */
   const [street, setStreet] = useState(formData?.address?.street || "");
   const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || "");
   const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || "");
@@ -21,12 +34,17 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
   const [buildingName, setBuildingName] = useState(formData?.address?.buildingName || "");
   const [doorNo, setDoorNo] = useState(formData?.address?.doorNo || "");
 
-  // Trigger validation on component mount
+  /**
+   * Triggers form validation on component mount
+   */
   useEffect(() => {
     trigger();
   }, []);
 
-  // Effect to update form data when form values change
+  /**
+   * Syncs form data with parent component when values change
+   * Prevents unnecessary updates using deep comparison
+   */
   useEffect(() => {
     const keys = Object.keys(formValue);
     const part = {};
@@ -38,7 +56,9 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
     }
   }, [formValue]);
 
-  // Handlers for updating state variables when input fields change
+  /**
+   * Event handlers for form field updates
+   */
   const selectStreet = (e) => setStreet(e.target.value);
   const selectDoorNo = (e) => setDoorNo(e.target.value);
   const selectBuilding = (e) => setBuildingName(e.target.value);
@@ -46,20 +66,32 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
   const selectAddressLine1 = (e) => setAddressLine1(e.target.value);
   const selectAddressLine2 = (e) => setAddressLine2(e.target.value);
 
-  // Function to handle the "Next" button click
+  /**
+   * Handles form submission and data updates
+   * Formats address data before passing to parent component
+   */
   const goNext = () => {
     let owner = formData.address;
-    let ownerStep;
+    let ownerStep = {
+      ...owner,
+      street,
+      addressLine1,
+      addressLine2,
+      landmark,
+      buildingName,
+      doorNo
+    };
+    
     if (userType === "citizen") {
-      ownerStep = { ...owner, street, addressLine1, addressLine2, landmark, buildingName, doorNo };
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false);
     } else {
-      ownerStep = { ...owner, street, addressLine1, addressLine2, landmark, buildingName, doorNo };
       onSelect(config.key, ownerStep, false);
     }
   };
 
-  // Effect to automatically call goNext when address fields change
+  /**
+   * Automatically saves form data for citizen users
+   */
   useEffect(() => {
     if (userType === "citizen") {
       goNext();

@@ -1,52 +1,74 @@
-// Importing necessary components and hooks from external libraries and local files
 import React, { useEffect } from "react";
-import ApplicationTable from "./inbox/ApplicationTable"; // Component for rendering a table
-import { DeleteIcon, StatusTable, Row } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for delete icons, status tables, and rows
+import ApplicationTable from "./inbox/ApplicationTable";
+import { DeleteIcon, StatusTable, Row } from "@nudmcdgnpm/digit-ui-react-components";
 
-// Component to display and manage the list of products in the E-Waste module
+/**
+ * Renders and manages a list of E-Waste products with quantity controls and price calculations.
+ * 
+ * @param {Object} props - Component properties
+ * @param {Function} props.t - Translation function for internationalization
+ * @param {Array} props.prlistName - Array of product names and their details
+ * @param {Function} props.setPrlistName - Function to update the product list
+ * @param {Array} props.prlistQuantity - Array of product quantities
+ * @param {Function} props.setPrlistQuantity - Function to update product quantities
+ * @param {Function} props.setCalculatedAmount - Function to update the total calculated amount
+ * @param {number} props.calculatedAmount - Current total calculated amount
+ * @returns {JSX.Element|null} Product list table or null if no products
+ */
 const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQuantity, setCalculatedAmount, calculatedAmount }) => {
   
-  // Function to handle the deletion of a product from the list
-  const handleDelete = (e) => {
+  /**
+   * Removes a product and its quantity from their respective lists
+   * @param {number} index - Index of the product to delete
+   */
+  const handleDelete = (index) => {
     const updatedList1 = [...prlistName];
     if (updatedList1.length != 0) {
-      updatedList1.splice(e, 1); // Remove the product from the name list
+      updatedList1.splice(index, 1);
       setPrlistName(updatedList1);
     }
 
     const updatedList2 = [...prlistQuantity];
     if (updatedList2.length != 0) {
-      updatedList2.splice(e, 1); // Remove the product from the quantity list
+      updatedList2.splice(index, 1);
       setPrlistQuantity(updatedList2);
     }
   };
 
-  // Function to increment the quantity of a product
+  /**
+   * Increases the quantity of a product by 1
+   * @param {number} index - Index of the product to increment
+   */
   const handleIncrement = (index) => {
     const updatedQuantities = [...prlistQuantity];
     const currentQuantity = parseInt(updatedQuantities[index].code, 10);
-    updatedQuantities[index].code = currentQuantity + 1; // Increment the quantity
+    updatedQuantities[index].code = currentQuantity + 1;
     setPrlistQuantity(updatedQuantities);
   };
 
-  // Function to decrement the quantity of a product
+  /**
+   * Decreases the quantity of a product by 1 if greater than 1
+   * @param {number} index - Index of the product to decrement
+   */
   const handleDecrement = (index) => {
     const updatedQuantities = [...prlistQuantity];
     if (updatedQuantities[index].code > 1) {
-      updatedQuantities[index].code -= 1; // Decrement the quantity if greater than 1
+      updatedQuantities[index].code -= 1;
       setPrlistQuantity(updatedQuantities);
     }
   };
 
-  // Configuration for the product table columns
+  /**
+   * Configuration for the product table columns
+   * Defines the structure and behavior of each column
+   */
   const productcolumns = [
-    { Header: t("PRODUCT_NAME"), accessor: "name" }, // Column for product name
+    { Header: t("PRODUCT_NAME"), accessor: "name" },
     {
-      Header: t("PRODUCT_QUANTITY"), // Column for product quantity
+      Header: t("PRODUCT_QUANTITY"),
       accessor: "quantity",
       Cell: ({ row }) => (
         <div style={{ display: "flex", alignItems: "center" }}>
-          {/* Button to decrement the quantity */}
           <button
             style={{
               marginRight: "5px",
@@ -63,7 +85,6 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
             -
           </button>
           {row.original.quantity}
-          {/* Button to increment the quantity */}
           <button
             style={{
               marginLeft: "5px",
@@ -82,10 +103,10 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
         </div>
       ),
     },
-    { Header: t("UNIT_PRICE"), accessor: "unit_price" }, // Column for unit price
-    { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" }, // Column for total price
+    { Header: t("UNIT_PRICE"), accessor: "unit_price" },
+    { Header: t("TOTAL_PRODUCT_PRICE"), accessor: "total_price" },
     {
-      Header: t("DELETE_KEY"), // Column for delete action
+      Header: t("DELETE_KEY"),
       accessor: "delete",
       Cell: ({ row }) => (
         <button onClick={() => handleDelete(row.index)}>
@@ -95,7 +116,6 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
     },
   ];
 
-  // Mapping product data to rows for the table
   const productRows =
     prlistName?.map((product, index) => ({
       name: product.code,
@@ -104,13 +124,14 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       total_price: product.price * prlistQuantity[index].code,
     })) || [];
 
-  // Calculate the total price whenever the product rows change
+  /**
+   * Updates the total price whenever product quantities or prices change
+   */
   useEffect(() => {
     const totalPrice = productRows.reduce((sum, pd) => sum + (pd.total_price || 0), 0);
-    setCalculatedAmount(totalPrice); // Update the calculated amount
+    setCalculatedAmount(totalPrice);
   }, [productRows, setCalculatedAmount]);
 
-  // Render the product list table if there are products
   if (prlistName.length > 0) {
     return (
       <div className="card">
@@ -129,8 +150,6 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
           totalRecords={productRows.length}
         />
         <br />
-
-        {/* Display the total price in a status table */}
         <StatusTable style={{ marginLeft: "20px" }}>
           <Row
             label={t("EWASTE_NET_PRICE")}
@@ -141,7 +160,7 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
     );
   }
 
-  return null; // Return null if there are no products
+  return null;
 };
 
-export default ProductList; // Exporting the component
+export default ProductList;

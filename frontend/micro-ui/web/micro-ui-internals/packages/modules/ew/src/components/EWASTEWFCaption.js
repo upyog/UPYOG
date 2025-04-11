@@ -1,31 +1,41 @@
-// Importing necessary components and hooks from external libraries and local files
 import React from "react";
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components"; // Components for displaying telephone numbers and photos
-import EWASTEWFReason from "./EWASTEWFReason"; // Component for rendering workflow reasons
+import { useTranslation } from "react-i18next";
+import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components";
+import EWASTEWFReason from "./EWASTEWFReason";
 
-// Component to render captions for workflow checkpoints in the E-Waste module
+/**
+ * Renders captions and details for workflow checkpoints in the E-Waste module.
+ * Displays various information including dates, contact details, comments, and attachments.
+ *
+ * @param {Object} props - Component properties
+ * @param {Object} props.data - Workflow data containing checkpoint details
+ * @param {string} props.data.date - Timestamp of the workflow checkpoint
+ * @param {string} props.data.name - Name associated with the checkpoint
+ * @param {string} props.data.mobileNumber - Contact number for the checkpoint
+ * @param {string} props.data.source - Source of the application
+ * @param {string} props.data.comment - Primary comment for the workflow
+ * @param {string} props.data.otherComment - Additional comments
+ * @param {Array} props.data.wfComment - Array of workflow-specific comments
+ * @param {Object} props.data.thumbnailsToShow - Object containing thumbnail images
+ * @param {Array} props.data.thumbnailsToShow.thumbs - Array of thumbnail URLs
+ * @param {Function} props.OpenImage - Handler for opening full-size images
+ * @returns {JSX.Element} Workflow caption component
+ */
 const EWASTEWFCaption = ({ data, OpenImage }) => {
-  const { t } = useTranslation(); // Translation hook
+  const { t } = useTranslation();
 
   return (
     <div>
-      {/* Display the date if available */}
       {data.date && <p>{data.date}</p>}
 
-      {/* Display the name if available */}
       <p>{data.name}</p>
 
-      {/* Display the mobile number as a clickable telephone link if available */}
       {data.mobileNumber && <TelePhone mobile={data.mobileNumber} />}
 
-      {/* Display the application source if available */}
       {data.source && <p>{t("ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_" + data.source.toUpperCase())}</p>}
 
-      {/* Display the workflow comment if available */}
       {data.comment && <EWASTEWFReason otherComment={data?.otherComment} headComment={data?.comment}></EWASTEWFReason>}
 
-      {/* Display additional workflow comments if available */}
       {data?.wfComment ? (
         <div>
           {data?.wfComment?.map((e, index) => (
@@ -37,14 +47,13 @@ const EWASTEWFCaption = ({ data, OpenImage }) => {
         </div>
       ) : null}
 
-      {/* Display thumbnails if available */}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? (
         <div className="TLComments">
           <h3>{t("CS_COMMON_ATTACHMENTS")}</h3>
           <DisplayPhotos
-            srcs={data?.thumbnailsToShow.thumbs} // Array of thumbnail sources
+            srcs={data?.thumbnailsToShow.thumbs}
             onClick={(src, index) => {
-              OpenImage(src, index, data?.thumbnailsToShow); // Open the image in a new tab when clicked
+              OpenImage(src, index, data?.thumbnailsToShow);
             }}
           />
         </div>
@@ -53,4 +62,4 @@ const EWASTEWFCaption = ({ data, OpenImage }) => {
   );
 };
 
-export default EWASTEWFCaption; // Exporting the component
+export default EWASTEWFCaption;

@@ -1,38 +1,46 @@
-// Importing necessary components and hooks from external libraries and local files
 import React, { useState } from "react";
-import { Toast } from "@nudmcdgnpm/digit-ui-react-components"; // Component for displaying toast notifications
-import { useParams } from "react-router-dom"; // Hook to access route parameters
-import { useTranslation } from "react-i18next"; // Hook for translations
-import EWSearchApplication from "../../components/SearchApplication"; // Component for rendering the search application UI
+import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import EWSearchApplication from "../../components/SearchApplication";
 
-// Main component for searching E-Waste applications
+/**
+ * Employee interface for searching E-Waste applications.
+ * Provides advanced search capabilities with date ranges, status filters,
+ * and mobile number search. Includes validation and error handling.
+ *
+ * @param {Object} props Component properties
+ * @param {string} props.path Base route path
+ * @returns {JSX.Element} Search interface with results display
+ */
 const SearchApp = ({ path }) => {
-    const { t } = useTranslation(); // Translation hook
-    const tenantId = Digit.ULBService.getCurrentTenantId(); // Fetching the current tenant ID
-    const [payload, setPayload] = useState({}); // State to store the search payload
-    const [showToast, setShowToast] = useState(null); // State to manage toast notifications
+    const { t } = useTranslation();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const [payload, setPayload] = useState({});
+    const [showToast, setShowToast] = useState(null);
 
-    // Function to handle form submission
+    /**
+     * Processes form submission and validates search criteria
+     * Handles date adjustments for timezone and formats payload
+     * 
+     * @param {Object} _data Raw form data
+     */
     function onSubmit(_data) {
-        // Adjusting the fromDate and toDate to include time offsets
         var fromDate = new Date(_data?.fromDate);
-        fromDate?.setSeconds(fromDate?.getSeconds() - 19800); // Subtracting 5 hours and 30 minutes (IST offset)
+        fromDate?.setSeconds(fromDate?.getSeconds() - 19800);
         var toDate = new Date(_data?.toDate);
-        toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800); // Adding 23 hours, 59 minutes, and 59 seconds
+        toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800);
 
-        // Constructing the search payload
         const data = {
             ..._data,
             ...(_data.toDate ? { toDate: toDate?.getTime() } : {}),
             ...(_data.fromDate ? { fromDate: fromDate?.getTime() } : {}),
         };
 
-        // Filtering and formatting the payload
         let payload = Object.keys(data)
             .filter((k) => data[k])
             .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {});
 
-        // Validating the payload and showing appropriate toast messages
         if (
             Object.entries(payload).length > 0 &&
             !payload.requestId &&
@@ -41,46 +49,45 @@ const SearchApp = ({ path }) => {
             !payload.mobileNumber &&
             !payload.status &&
             !payload.toDate
-        )
+        ) {
             setShowToast({ warning: true, label: "ERR_EW_FILL_VALID_FIELDS" });
-        else if (
+        } else if (
             Object.entries(payload).length > 0 &&
             (payload.creationReason || payload.status) &&
             (!payload.requestId && !payload.fromDate && !payload.mobileNumber && !payload.toDate)
-        )
+        ) {
             setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
-        else if (
+        } else if (
             Object.entries(payload).length > 0 &&
             (payload.fromDate && !payload.toDate) ||
             (!payload.fromDate && payload.toDate)
-        )
+        ) {
             setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
-        else setPayload(payload); // Setting the payload if validation passes
+        } else {
+            setPayload(payload);
+        }
     }
 
-    // Configuration for enabling the search API call
     const config = {
-        enabled: !!(payload && Object.keys(payload).length > 0), // Enable only if the payload is not empty
+        enabled: !!(payload && Object.keys(payload).length > 0),
     };
 
-    // Fetching search results using a custom hook
     const {
-        isLoading, // Loading state
-        isSuccess, // Success state
-        isError, // Error state
-        error, // Error details
-        data: { EwasteApplication: searchResult, Count: count } = {}, // Extracting search results and count
+        isLoading,
+        isSuccess,
+        isError,
+        error,
+        data: { EwasteApplication: searchResult, Count: count } = {},
     } = Digit.Hooks.ew.useEWSearch(
         {
             tenantId,
-            filters: payload, // Passing the search payload as filters
+            filters: payload,
         },
         config
     );
 
     return (
         <React.Fragment>
-            {/* Rendering the search application UI */}
             <EWSearchApplication
                 t={t}
                 isLoading={isLoading}
@@ -91,21 +98,20 @@ const SearchApp = ({ path }) => {
                     isSuccess && !isLoading
                         ? searchResult.length > 0
                             ? searchResult
-                            : { display: "ES_COMMON_NO_DATA" } // Display message if no data is found
+                            : { display: "ES_COMMON_NO_DATA" }
                         : ""
                 }
-                count={count} // Total count of search results
+                count={count}
             />
 
-            {/* Rendering the toast notification */}
             {showToast && (
                 <Toast
                     error={showToast.error}
                     warning={showToast.warning}
-                    label={t(showToast.label)} // Displaying the toast message
+                    label={t(showToast.label)}
                     isDleteBtn={true}
                     onClose={() => {
-                        setShowToast(null); // Closing the toast
+                        setShowToast(null);
                     }}
                 />
             )}
@@ -113,4 +119,4 @@ const SearchApp = ({ path }) => {
     );
 };
 
-export default SearchApp; // Exporting the component
+export default SearchApp;

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form"; // React Hook Form for managing form state
+import { useForm, Controller } from "react-hook-form";
 import {
   TextInput,
   SubmitBar,
@@ -12,22 +12,37 @@ import {
   MobileNumber,
   Loader,
   Header
-} from "@nudmcdgnpm/digit-ui-react-components"; // UI components for forms, tables, and loaders
-import { Link } from "react-router-dom"; // Component for navigation links
+} from "@nudmcdgnpm/digit-ui-react-components";
+import { Link } from "react-router-dom";
 
-// Component to render the search application functionality for the E-Waste module
+/**
+ * Search interface for E-Waste applications with filtering and pagination capabilities.
+ * Provides advanced search functionality including request ID, mobile number, and date range filters.
+ *
+ * @param {Object} props Component properties
+ * @param {string} props.tenantId Current tenant identifier
+ * @param {boolean} props.isLoading Loading state indicator
+ * @param {Function} props.t Translation function
+ * @param {Function} props.onSubmit Form submission handler
+ * @param {Array} props.data Search results data
+ * @param {number} props.count Total number of records
+ * @param {Function} props.setShowToast Toast notification handler
+ * @returns {JSX.Element} Search interface with form and results table
+ */
 const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
-  const isMobile = window.Digit.Utils.browser.isMobile(); // Check if the user is on a mobile device
+  const isMobile = window.Digit.Utils.browser.isMobile();
   const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
     defaultValues: {
-      offset: 0, // Default offset for pagination
-      limit: !isMobile && 10, // Default limit for pagination
-      sortBy: "commencementDate", // Default sorting column
-      sortOrder: "DESC", // Default sorting order
+      offset: 0,
+      limit: !isMobile && 10,
+      sortBy: "commencementDate",
+      sortOrder: "DESC",
     },
   });
 
-  // Registering form fields on component mount
+  /**
+   * Registers default form fields for pagination and sorting
+   */
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
@@ -35,9 +50,11 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     register("sortOrder", "DESC");
   }, [register]);
 
-  const GetCell = (value) => <span className="cell-text">{value}</span>; // Utility function to render table cells
+  const GetCell = (value) => <span className="cell-text">{value}</span>;
 
-  // Columns configuration for the table
+  /**
+   * Table column configuration with cell renderers and sorting options
+   */
   const columns = useMemo(
     () => [
       {
@@ -86,26 +103,36 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     []
   );
 
-  // Callback function to handle sorting
+  /**
+   * Handles table sorting by updating form values
+   * @param {Object} args Sorting parameters
+   */
   const onSort = useCallback((args) => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
     setValue("sortOrder", args.desc ? "DESC" : "ASC");
   }, []);
 
-  // Function to handle page size change
+  /**
+   * Updates page size and triggers search
+   * @param {Event} e Change event
+   */
   function onPageSizeChange(e) {
     setValue("limit", Number(e.target.value));
     handleSubmit(onSubmit)();
   }
 
-  // Function to navigate to the next page
+  /**
+   * Navigates to next page and triggers search
+   */
   function nextPage() {
     setValue("offset", getValues("offset") + getValues("limit"));
     handleSubmit(onSubmit)();
   }
 
-  // Function to navigate to the previous page
+  /**
+   * Navigates to previous page and triggers search
+   */
   function previousPage() {
     setValue("offset", getValues("offset") - getValues("limit"));
     handleSubmit(onSubmit)();

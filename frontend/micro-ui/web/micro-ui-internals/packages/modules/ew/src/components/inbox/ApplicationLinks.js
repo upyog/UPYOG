@@ -1,65 +1,80 @@
-// Importing necessary components and hooks from external libraries
-import { Card, ShippingTruck } from "@nudmcdgnpm/digit-ui-react-components"; // UI components for cards and icons
-import React, { useEffect, useState } from "react"; // React library and hooks for state and lifecycle management
-import { useTranslation } from "react-i18next"; // Hook for translations
-import { Link } from "react-router-dom"; // Component for navigation links
+import { Card, ShippingTruck } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
-// Component to render application links for the E-Waste inbox
+/**
+ * Renders application links for the E-Waste inbox based on user roles and permissions.
+ * 
+ * @param {Object} props The component properties
+ * @param {string} props.linkPrefix The prefix to be added to each link URL
+ * @param {string} [props.classNameForMobileView=""] Additional CSS class name for mobile view styling
+ * @returns {JSX.Element} A Card component containing filtered application links
+ */
 const ApplicationLinks = ({ linkPrefix, classNameForMobileView = "" }) => {
-  const { t } = useTranslation(); // Translation hook
+  const { t } = useTranslation();
 
-  // Array of all available links
   const allLinks = [
     {
-      text: t("ES_TITILE_SEARCH_APPLICATION"), // Translated text for the link
-      link: `${linkPrefix}/search`, // Link URL
+      text: t("ES_TITILE_SEARCH_APPLICATION"),
+      link: `${linkPrefix}/search`,
     },
   ];
 
-  const [links, setLinks] = useState([]); // State to store filtered links
+  const [links, setLinks] = useState([]);
+  const { roles } = Digit.UserService.getUser().info;
 
-  const { roles } = Digit.UserService.getUser().info; // Fetching the roles of the logged-in user
-
-  // Function to check if the user has access to a specific link
+  /**
+   * Verifies if the user has access to specific functionality based on their roles.
+   *
+   * @param {string[]} accessTo Array of role codes required for access
+   * @returns {number} Number of matching roles found
+   */
   const hasAccess = (accessTo) => {
-    return roles.filter((role) => accessTo.includes(role.code)).length; // Check if the user's roles match the required roles
+    return roles.filter((role) => accessTo.includes(role.code)).length;
   };
 
-  // Effect to filter and set the links based on the user's roles
+  /**
+   * Filters available links based on user role permissions.
+   * Links without access restrictions are always included.
+   * Links with access restrictions are only included if the user has the required role.
+   */
   useEffect(() => {
-    let linksToShow = []; // Array to store links to be displayed
+    let linksToShow = [];
     allLinks.forEach((link) => {
       if (link.accessTo) {
-        // If the link has access restrictions
         if (hasAccess(link.accessTo)) {
-          linksToShow.push(link); // Add the link if the user has access
+          linksToShow.push(link);
         }
       } else {
-        linksToShow.push(link); // Add the link if there are no access restrictions
+        linksToShow.push(link);
       }
     });
-    setLinks(linksToShow); // Update the state with the filtered links
+    setLinks(linksToShow);
   }, []);
 
-  // Function to render the logo and header text
+  /**
+   * Renders the E-Waste service logo and header text.
+   *
+   * @returns {JSX.Element} Header section with logo and title
+   */
   const GetLogo = () => (
     <div className="header">
       <span className="logo">
-        <ShippingTruck /> {/* Icon for the E-Waste service */}
+        <ShippingTruck />
       </span>{" "}
-      <span className="text">{t("EWASTE_TITLE_INBOX")}</span> {/* Translated text for the inbox title */}
+      <span className="text">{t("EWASTE_TITLE_INBOX")}</span>
     </div>
   );
 
   return (
     <Card className="employeeCard filter">
       <div className={`complaint-links-container ${classNameForMobileView}`}>
-        {GetLogo()} {/* Render the logo and header */}
+        {GetLogo()}
         <div className="body">
-          {/* Render the filtered links */}
           {links.map(({ link, text }, index) => (
             <span className="link" key={index}>
-              <Link to={link}>{text}</Link> {/* Render the link */}
+              <Link to={link}>{text}</Link>
             </span>
           ))}
         </div>
@@ -68,4 +83,4 @@ const ApplicationLinks = ({ linkPrefix, classNameForMobileView = "" }) => {
   );
 };
 
-export default ApplicationLinks; // Exporting the component for use in other parts of the application
+export default ApplicationLinks;
