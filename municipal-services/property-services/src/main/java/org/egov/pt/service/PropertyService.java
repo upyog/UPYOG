@@ -320,6 +320,8 @@ public class PropertyService {
 
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
 		util.mergeAdditionalDetails(request, propertyFromSearch);
+		request.getProperty().setId(propertyFromSearch.getId());
+		request.getProperty().setAcknowldgementNumber(propertyFromSearch.getAcknowldgementNumber());
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);		
 	}
 
