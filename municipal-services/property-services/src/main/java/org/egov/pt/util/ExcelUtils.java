@@ -169,12 +169,12 @@ public class ExcelUtils {
 		boolean validLength = columns.stream().allMatch(col -> col.length == length);
 		boolean validData = columns.stream().flatMap(Arrays::stream).allMatch(this::isValidValue);
 
-		if (validLength && validData) {
+//		if (validLength && validData) {
 			// Process each index and create a list of Unit
 			return IntStream.range(0, length).mapToObj(i -> createUnit(columns, i)).collect(Collectors.toList());
-		}
+//		}
 
-		return Collections.emptyList();
+//		return Collections.emptyList();
 	}
 
 	// Helper method to create Unit from column data at the given index
