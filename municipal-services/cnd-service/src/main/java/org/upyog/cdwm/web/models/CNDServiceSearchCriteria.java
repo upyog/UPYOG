@@ -23,6 +23,9 @@ public class CNDServiceSearchCriteria {
 
     @JsonProperty("mobileNumber")
     private String mobileNumber;
+    
+    @JsonProperty("locality")
+    private String locality;
 
     @JsonProperty("offset")
     private Integer offset;

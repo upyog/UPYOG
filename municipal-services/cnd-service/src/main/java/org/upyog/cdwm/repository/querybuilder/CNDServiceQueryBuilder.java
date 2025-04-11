@@ -20,7 +20,7 @@ public class CNDServiceQueryBuilder {
 
     
     private static final String CND_APPLICATION_DETAILS_QUERY =
-    	    "SELECT ucad.application_id, application_number, application_type, vehicle_type, type_of_construction, deposit_centre_details, " +
+    	    "SELECT ucad.application_id, application_number, application_type, vehicle_type, locality, type_of_construction, deposit_centre_details, " +
     	    "applicant_detail_id, requested_pickup_date, application_status, additional_details, house_area, " +
     	    "construction_from_date, construction_to_date, property_type, total_waste_quantity, no_of_trips, ucad.vehicle_id, " +
     	    "vendor_id, pickup_date, completed_on, ucad.created_by, ucad.last_modified_by, ucad.created_time, " +
@@ -103,6 +103,13 @@ public class CNDServiceQueryBuilder {
             query.append(" ucad.applicant_mobile_number = ? ");
             preparedStmtList.add(criteria.getMobileNumber());
         }
+        
+        if (!ObjectUtils.isEmpty(criteria.getLocality())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.locality = ? ");
+            preparedStmtList.add(criteria.getLocality());
+        }
+        
         // If count query, return directly
         if (criteria.isCountCall()) {
             return query.toString();
@@ -153,6 +160,12 @@ public class CNDServiceQueryBuilder {
             query.append(" ucad.applicant_mobile_number = ? ");
             preparedStmtList.add(criteria.getMobileNumber());
         }
+        
+        if (!ObjectUtils.isEmpty(criteria.getLocality())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.locality = ? ");
+            preparedStmtList.add(criteria.getLocality());
+        }
 
         return query.toString();
     }
@@ -200,6 +213,12 @@ public class CNDServiceQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" ucad.applicant_mobile_number = ? ");
             preparedStmtList.add(criteria.getMobileNumber());
+        }
+        
+        if (!ObjectUtils.isEmpty(criteria.getLocality())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.locality = ? ");
+            preparedStmtList.add(criteria.getLocality());
         }
 
         return query.toString();
