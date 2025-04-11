@@ -18,16 +18,15 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
-import org.upyog.cdwm.config.CNDConfiguration;
-import org.upyog.cdwm.kafka.Producer;
+import org.springframework.web.client.RestTemplate;.upyog.cdwm.kafka.Producer;
 import org.upyog.cdwm.notification.constants.NotificationConstants;
 import org.upyog.cdwm.notification.impl.MessageServiceImpl;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
+import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
+import org.upyog.cdwm.web.models.events.Action;
 import org.upyog.cdwm.web.models.events.ActionItem;
 import org.upyog.cdwm.web.models.events.Event;
 import org.upyog.cdwm.web.models.events.EventRequest;
@@ -88,22 +87,25 @@ public class NotificationUtil {
 	/**
 	 * Creates an event request for the CND application notification system.
 	 *
-	 * @param request     The CND application request containing details such as tenant ID 
-	 *                    and applicant information.
-	 * @param actionLink  The URL link to be included in the notification for user action.
-	 * @param messageMap  A map containing the notification message text.
-	 * @return An {@link EventRequest} containing the event details, or {@code null} if no events are created.
+	 * @param request    The CND application request containing details such as
+	 *                   tenant ID and applicant information.
+	 * @param actionLink The URL link to be included in the notification for user
+	 *                   action.
+	 * @param messageMap A map containing the notification message text.
+	 * @return An {@link EventRequest} containing the event details, or {@code null}
+	 *         if no events are created.
 	 *
-	 * The method performs the following actions:
-	 * - Retrieves the tenant ID and applicant's mobile number from the request.
-	 * - Fetches user UUIDs using the mobile number.
-	 * - Constructs a recipient list based on the retrieved UUID.
-	 * - Builds an {@link Event} object with the provided message and action link.
-	 * - Wraps the event in an {@link EventRequest} and returns it.
+	 *         The method performs the following actions: - Retrieves the tenant ID
+	 *         and applicant's mobile number from the request. - Fetches user UUIDs
+	 *         using the mobile number. - Constructs a recipient list based on the
+	 *         retrieved UUID. - Builds an {@link Event} object with the provided
+	 *         message and action link. - Wraps the event in an {@link EventRequest}
+	 *         and returns it.
 	 *
-	 * Logs relevant information such as UUID search results, message content, and recipient details.
+	 *         Logs relevant information such as UUID search results, message
+	 *         content, and recipient details.
 	 */
-	
+
 	public EventRequest getEventsForCND(CNDApplicationRequest request, String actionLink,
 			Map<String, String> messageMap) {
 
@@ -117,30 +119,38 @@ public class NotificationUtil {
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
 			log.info("UUID search failed!");
 		}
-
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String message = null;
-		message = messageMap.get(NotificationConstants.MESSAGE_TEXT);
-		log.info("Message for event in CND:" + message);
+
+		String message = messageMap.get(NotificationConstants.MESSAGE_TEXT);
+		log.info("Message for event in CND: " + message);
+
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-		log.info("Recipient object in CND:" + recepient.toString());
+		log.info("Recipient object in CND: " + recepient);
 
-		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-		List<ActionItem> actionItems = new ArrayList<>();
-		actionItems.add(actionItem);
+		Action action = null;
 
-		events.add(Event.builder().tenantId(tenantId).description(message)
-				.eventType(NotificationConstants.USREVENTS_EVENT_TYPE)
-				.name(NotificationConstants.USREVENTS_EVENT_NAME)
-				.postedBy(NotificationConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-				.actions(null).eventDetails(null).build());
+		if (message.contains("{Action Button}")) {
+			String code = StringUtils.substringBetween(message, "{Action Button}", "{/Action Button}");
+			message = message.replace("{Action Button}", "").replace("{/Action Button}", "").replace(code, "");
 
-		if (!CollectionUtils.isEmpty(events)) {
-			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
-		} else {
-			return null;
+			if ("PAY NOW".equalsIgnoreCase(code)) {
+				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
+				List<ActionItem> actionItems = new ArrayList<>();
+				actionItems.add(actionItem);
+
+				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
+			}
 		}
+	
+		Event event = Event.builder().tenantId(tenantId).description(message)
+				.eventType(NotificationConstants.USREVENTS_EVENT_TYPE).name(NotificationConstants.USREVENTS_EVENT_NAME)
+				.postedBy(NotificationConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+				.actions(action)
+				.eventDetails(null).build();
 
+		events.add(event);
+
+		return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
 	}
 
 	
@@ -444,9 +454,14 @@ public class NotificationUtil {
 	}
 	
 	/**
-	 * Method to shortent the url returns the same url if shortening fails
-	 * 
-	 * @param url
+	 * Shortens a given URL using the configured URL shortening service.
+	 * <p>
+	 * This method sends a POST request with the original URL to the shortening service
+	 * and returns the shortened URL. If the shortening service fails or returns an empty response,
+	 * the original URL is returned as a fallback.
+	 *
+	 * @param url The original long URL to be shortened.
+	 * @return The shortened URL returned by the shortening service, or the original URL if shortening fails.
 	 */
 	public String getShortenedUrl(String url) {
 		String res = null;
@@ -468,5 +483,30 @@ public class NotificationUtil {
 			return res;
 		}
 	}
+	
+	/**
+	 * Generates a shortened payment URL for the citizen to make payment based on the application details.
+	 * <p>
+	 * The final URL is built using a URL template from configuration (`payLinkTemplate`) and fills in dynamic values 
+	 * like business service name, application number, tenant ID, and mobile number. The constructed URL is then 
+	 * prefixed with the UI host and passed through a shortening service.
+	 *
+	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
+	 * @param message              The notification message (not used in this method, but kept for signature consistency).
+	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
+	 */
+	public String getPayUrl(CNDApplicationDetail cndApplicationDetail, String message) {
+	    String payLinkTemplate = config.getPayLink();
+	    String actionLink = String.format(payLinkTemplate,
+	            config.getBusinessServiceName(),
+	            cndApplicationDetail.getApplicationNumber(),
+	            cndApplicationDetail.getTenantId());
+	    String extraParams = String.format("&mobile=%s", cndApplicationDetail.getApplicantDetail().getMobileNumber());
+	    String finalUrl = config.getUiAppHost() + actionLink + extraParams;
+
+	    return getShortenedUrl(finalUrl);
+	}
+
+
 
 }

@@ -5,6 +5,7 @@ CREATE TABLE ug_cnd_application_details (
     application_type VARCHAR(50), -- Assuming it will be ENUM
     type_of_construction VARCHAR(255),
     deposit_centre_details TEXT,
+    locality VARCHAR(64),
     applicant_detail_id VARCHAR(64),
     requested_pickup_date DATE,
     address_detail_id VARCHAR(64),
