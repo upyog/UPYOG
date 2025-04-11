@@ -25,8 +25,7 @@ const Inbox = ({
   isInbox,
   EmptyResultInboxComp,
 }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const [enableSarch, setEnableSearch] = useState(() => (isInbox ? {} : { enabled: false }));
   const [TableConfig, setTableConfig] = useState(() => Digit.ComponentRegistryService?.getComponent("CNDInboxConfig"));

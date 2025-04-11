@@ -24,8 +24,7 @@ import EditCreate from "./pages/employee/Edit/EditCreate";
 import { ApplicationProvider } from "./pages/employee/Edit/ApplicationContext";
 import EditSubmissionResponse from "./pages/employee/Edit/EditSubmissionResponse";
 import PropertyNature from "./pageComponents/PropertyNature";
-// import EditApplicantDetails from "./pageComponents/EditApplicantDetails";
-// import CndFieldInspectorInfo from "./pageComponents/CndFieldInspectorInfo";
+import CNDVendorCard from "./components/CNDVendorCard";
 
 
 const componentsToRegister = {
@@ -47,9 +46,8 @@ const componentsToRegister = {
   EditCreate,
   ApplicationProvider,
   EditSubmissionResponse,
-  PropertyNature
-  // EditApplicantDetails,
-  // CndFieldInspectorInfo
+  PropertyNature,
+  CNDVendorCard
   };
   
   // function to register the component as per standard 

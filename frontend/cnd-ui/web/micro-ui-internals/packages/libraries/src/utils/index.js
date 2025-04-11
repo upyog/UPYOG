@@ -117,24 +117,13 @@ const didEmployeeHasRole = (role) => {
 
 
 
-
-
-
-
 const cndUserAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const svRoles = ["CND_CEMP"];
+  const svRoles = ["CND_CEMP","CND_VENDOR", "FIELD_INSPECTOR", "CND_FACILITY_CEMP"];
   const SV_ACCESS = userRoles?.filter((role) => svRoles?.includes(role));
   return SV_ACCESS?.length > 0;
 };
-
-
-
-
-
-
-
 
 
 export default {

@@ -17,7 +17,7 @@ import SearchApplication from "./inbox/search";
  */
 
 const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
-  
+  let isCitizen = window.location.href.includes("citizen");
   const { data, useNewInboxAPI } = props;
   const { t } = useTranslation();
   // Dynamically load components from registry service
@@ -103,7 +103,7 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div style={{ marginRight: isCitizen?"30%":"", flex: 1 }}>
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={(d) => {

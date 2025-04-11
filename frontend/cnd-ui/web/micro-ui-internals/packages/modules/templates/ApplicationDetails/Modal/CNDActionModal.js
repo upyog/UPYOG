@@ -43,6 +43,43 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   );
   const history = useHistory(); // Initialize useHistory
 
+    /* we have used it here to fetch vendor data when the state is "PENDING_FOR_VEHICLE_DRIVER_ASSIGN". */
+   const { data: dsoData } = Digit.Hooks.cnd.useVendorSearch({
+    tenantId,
+    config: { enabled: true },
+  });
+  /*  
+   This is used to filter vendors from `dsoData` that have an additional 
+   description field with the value "CND".The filtered vendors are then stored in the `vendorDescription` array with their names 
+   as code, name, and i18nKey */
+  
+  let vendorDescription = [];
+  dsoData?.vendor?.map((item) => {
+    if (item?.additionalDetails?.serviceType === "CND") {
+      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name, vendorId: item?.ownerId});
+    }
+  });
+
+  const { data:vehicleData,isSuccess } = Digit.Hooks.cnd.useVehiclesSearch({
+    tenantId,
+    config: { enabled: true },
+  });
+
+  /*  
+   This is used to extract vehicle details from `vehicleData` and store them in the `vehicleDescription` array. 
+   Each entry contains the vehicle's registration number and vehicle capacity.
+   */
+  let vehicleDescription = [];
+  vehicleData?.vehicle?.map((item) => {
+    if(item?.additionalDetails?.serviceType==="CND"){
+    vehicleDescription.push({
+      code: item?.registrationNumber,
+      name: item?.registrationNumber,
+      i18nKey: item?.registrationNumber,
+      tankerCapacity: item?.tankCapacity,
+      vehicleId: item?.id,
+    })};
+  });
 
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
@@ -52,6 +89,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [selectVehicle, setSelectVehicle] = useState(null);
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
@@ -61,7 +100,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     setIsUploading(true);
     setFile(e.target.files[0]);
   }
-
 
 
   useEffect(() => {
@@ -93,15 +131,21 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
 
   function submit(data) {
-    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
-    // if (uploadedFile)
-    //   workflow["documents"] = [
-    //     {
-    //       documentType: action?.action + " DOC",
-    //       fileName: file?.name,
-    //       fileStoreId: uploadedFile,
-    //     },
-    //   ];
+    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes:
+      action?.state === "WASTE_PICKUP_INPROGRESS"
+      ? null
+      : action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN"
+      ? [selectedVendor?.vendorId]
+      : [selectedApprover?.uuid]};
+      
+    if (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN") {
+      applicationData.vendorId = selectedVendor?.vendorId;
+      applicationData.pickupDate = data?.date;
+
+    };
+    if (action?.action === "ASSIGN_VEHICLE_DRIVER") {
+      applicationData.vehicleId = selectVehicle?.vehicleId;
+    };
     submitAction({
       cndApplication:
       {
@@ -129,6 +173,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setUploadedFile,
         businessService,
         isUploading,
+        vendorDescription:dsoData ? vendorDescription : undefined,
+        selectedVendor,
+        setSelectedVendor,
+        vehicleDescription: vehicleData ? vehicleDescription : undefined, 
+        selectVehicle,
+        setSelectVehicle
       })
     )};
   }, [action, approvers, uploadedFile]);
