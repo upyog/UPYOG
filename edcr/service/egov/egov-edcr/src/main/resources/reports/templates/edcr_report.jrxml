@@ -53,6 +53,7 @@
 	<parameter name="bpaApplicationDate" class="java.lang.String"/>
 	<parameter name="planPermissionNumber" class="java.lang.String"/>
 	<parameter name="serviceType" class="java.lang.String"/>
+	<parameter name="ulbType" class="java.lang.String"/>
 	<field name="planInformation" class="org.egov.common.entity.edcr.PlanInformation"/>
 	<field name="plot" class="org.egov.common.entity.edcr.Plot"/>
 	<field name="electricLine" class="org.egov.common.entity.edcr.ElectricLine"/>
@@ -90,7 +91,7 @@
 				<reportElement mode="Transparent" x="410" y="3" width="138" height="56" uuid="9575ccfe-2f3c-480c-bea6-2bc196c44f6f"/>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
-			<image scaleImage="RetainShape"  isUsingCache="true" onErrorType="Blank">
+			<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
 				<reportElement mode="Transparent" x="10" y="0" width="300" height="80" uuid="f778375a-96b7-42de-8819-00bbfd34ae68">
 					<printWhenExpression><![CDATA[$P{cityLogo}  != null]]></printWhenExpression>
 				</reportElement>
@@ -284,7 +285,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="309" width="146" height="21" uuid="1688cff2-ebdb-4833-8ad4-58856fa1fa1f"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -387,7 +388,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getTypeOfArea()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getUlbType()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="330" width="114" height="21" uuid="10f0b035-0fa1-470b-9b21-2a84161cdc18"/>
@@ -402,7 +403,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["AREA TYPE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ULB TYPE"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="330" width="16" height="21" uuid="6aa97529-5f46-4fcf-bfd5-27cc1edbd803"/>
@@ -449,7 +450,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["SURRENDER ROAD WIDTH AREA in  m²"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="309" width="130" height="21" uuid="a732c1c1-fd0a-4f6b-aa1c-b42c329c4479"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -717,7 +718,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["KHATUNI NO"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DISTRICT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="246" width="146" height="21" uuid="83458a69-6cf0-44af-b9f1-d27925ba674b"/>
@@ -732,7 +733,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getKhatuniNo()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getDistrict()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="165" width="406" height="21" uuid="eb3c9a40-3143-4f3c-b8a7-1bc769be2c4d"/>
@@ -1454,7 +1455,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{dcrNo} != null  && $P{dcrNo} !=  ""  ?  $P{dcrNo} : "NA"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#.##" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="330" width="130" height="21" uuid="28774628-3a1d-47ef-aed7-bbd00e19487e"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -1467,7 +1468,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getDemolitionArea()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getNumberOfFloors()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="288" y="330" width="16" height="21" uuid="9102bb24-54f2-451c-9595-f75d0d4f4c60"/>
@@ -1497,7 +1498,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DEMOLITION AREA in m²"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["NUMBER OF FLOORS"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="12" y="62" width="537" height="28" isRemoveLineWhenBlank="true" uuid="283d9cc4-203f-4c6b-9cbe-a1f081f3c94e">

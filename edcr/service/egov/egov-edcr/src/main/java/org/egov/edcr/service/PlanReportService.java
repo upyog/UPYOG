@@ -681,6 +681,10 @@ public class PlanReportService {
         valuesMap.put("egovLogo", imageURL);
         String domainurl = ReportUtil.getImageURL("/egi/resources/global/images/logo_dep.png");
         valuesMap.put("cityLogo", domainurl);
+        //new fields added into Plot Details
+        valuesMap.put("numberOfFloors", plan.getPlanInformation().getNumberOfFloors());
+        valuesMap.put("ulbType", plan.getPlanInformation().getUlbType());
+        valuesMap.put("district", plan.getPlanInformation().getDistrict());
 
         if (clientSpecificSubReport) {
 
