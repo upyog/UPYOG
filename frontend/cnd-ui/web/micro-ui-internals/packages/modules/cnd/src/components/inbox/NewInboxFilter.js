@@ -68,7 +68,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   };
 
 
-
+  if (window.location.href.includes("employee")){
   return (
     <React.Fragment>
       <div className="filter">
@@ -146,7 +146,8 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
         </div>
       </div>
     </React.Fragment>
-  );
+  )}
+  else return null;
 };
 
 export default Filter;

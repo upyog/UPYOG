@@ -36,6 +36,24 @@ export const CNDService = {
       params: {},
       auth: true,
   }),
+  vendorSearch: (tenantId, filters) =>
+    Request({
+      url: Urls.vendorSearch,
+      useCache: true,
+      userService: true,
+      method: "POST",
+      params: { tenantId, ...filters },
+      auth: true,
+    }),
+  vehiclesSearch: (tenantId, details) =>
+    Request({
+      url: Urls.vehicleSearch,
+      useCache: false,
+      userService: true,
+      method: "POST",
+      params: { tenantId, ...details },
+      auth: true,
+    }),
 
 
 

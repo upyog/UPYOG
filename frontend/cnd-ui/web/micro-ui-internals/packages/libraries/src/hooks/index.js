@@ -57,12 +57,16 @@ import useCndCreateApi from "./cnd/useCndCreateApi";
 import useCndSearchApplication from "./cnd/useCndSearchApplication";
 import useCndApplicationDetails from "./cnd/useCndApplicationDetails";
 import useCndApplicationAction from "./cnd/useCndApplicationAction";
+import useVendorSearch from "./cnd/useVendorSearch";
+import useVehiclesSearch from "./cnd/useVehiclesSearch";
 
 const cnd ={
   useCndCreateApi,
   useCndSearchApplication,
   useCndApplicationDetails,
-  useCndApplicationAction
+  useCndApplicationAction,
+  useVendorSearch,
+  useVehiclesSearch
 }
 
 const Hooks = {
