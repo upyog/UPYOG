@@ -2,6 +2,7 @@ package org.egov.pt.calculator.service;
 
 import static org.egov.pt.calculator.util.CalculatorConstants.ADHOC_PENALTY;
 import static org.egov.pt.calculator.util.CalculatorConstants.ADHOC_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.AGE_OF_PROPERTY_RATES;
 import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_AREA;
 import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_ERROR_CODE;
 import static org.egov.pt.calculator.util.CalculatorConstants.BILLING_SLAB_MATCH_ERROR_MESSAGE;
@@ -16,10 +17,6 @@ import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_CREATE_FAIL
 import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_UPDATE_FAILED;
 import static org.egov.pt.calculator.util.CalculatorConstants.DEMAND_UPDATE_FAILED_MSG;
 import static org.egov.pt.calculator.util.CalculatorConstants.DOCUMENT_DATE;
-import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_DEPRECIATING_ASSESSMENT_ERROR;
-import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_DEPRECIATING_ASSESSMENT_ERROR_MSG_ESTIMATE;
-import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_ESTIMATE_ARV_NULL;
-import static org.egov.pt.calculator.util.CalculatorConstants.EG_PT_ESTIMATE_ARV_NULL_MSG;
 import static org.egov.pt.calculator.util.CalculatorConstants.EXEMPTION_FIELD_NAME;
 import static org.egov.pt.calculator.util.CalculatorConstants.FINANCIALYEAR_MASTER_KEY;
 import static org.egov.pt.calculator.util.CalculatorConstants.FINANCIAL_YEAR_ENDING_DATE;
@@ -28,32 +25,37 @@ import static org.egov.pt.calculator.util.CalculatorConstants.MARKET_VALUE;
 import static org.egov.pt.calculator.util.CalculatorConstants.MUTATION_PAYMENT_PERIOD_IN_MONTH;
 import static org.egov.pt.calculator.util.CalculatorConstants.OWNER_STATUS_ACTIVE;
 import static org.egov.pt.calculator.util.CalculatorConstants.OWNER_TYPE_MASTER;
-import static org.egov.pt.calculator.util.CalculatorConstants.SPECIAL_EXCEMPTION;
-import static org.egov.pt.calculator.util.CalculatorConstants.ROAD_TYPE_RATES;
-import static org.egov.pt.calculator.util.CalculatorConstants.STRUCTURE_TYPE_RATES;
-import static org.egov.pt.calculator.util.CalculatorConstants.AGE_OF_PROPERTY_RATES;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_PENALTY;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE_INVALID_AMOUNT;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE_INVALID_AMOUNT_MSG;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_CARRYFORWARD;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_CANCER_CESS;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_AGE_FACTOR_TAX;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_COMPLEMENTARY_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_MSG;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANCT;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANT_MSG;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ESTIMATE_BILLINGSLABS_UNMATCH_replace_id;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_FIRE_CESS;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_OWNER_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_REBATE;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_ROAD_TYPE_TAX;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_SPECIAL_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_STRUCTURE_TYPE_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_INTEREST;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_PENALTY;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_TIME_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_TYPE_VACANT_LAND;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_UNIT_USAGE_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.PT_VACANT_LAND_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.ROAD_TYPE_RATES;
 import static org.egov.pt.calculator.util.CalculatorConstants.SEPARATER;
 import static org.egov.pt.calculator.util.CalculatorConstants.SERVICE_FIELD_FOR_SEARCH_URL;
 import static org.egov.pt.calculator.util.CalculatorConstants.SERVICE_FIELD_VALUE_PT_MUTATION;
+import static org.egov.pt.calculator.util.CalculatorConstants.SPECIAL_EXCEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.STRUCTURE_TYPE_RATES;
 import static org.egov.pt.calculator.util.CalculatorConstants.TAXHEADMASTER_MASTER_KEY;
 import static org.egov.pt.calculator.util.CalculatorConstants.TAX_PERIOD_SEARCH_FAILED;
 import static org.egov.pt.calculator.util.CalculatorConstants.TAX_PERIOD_SEARCH_FAILED_MSG;
@@ -63,17 +65,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_DETAIL_MASTE
 import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_MAJOR_MASTER;
 import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_MINOR_MASTER;
 import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_SUB_MINOR_MASTER;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_SPECIAL_EXEMPTION;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_ROAD_TYPE_TAX;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_STRUCTURE_TYPE_TAX;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_AGE_FACTOR_TAX;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_COMPLEMENTARY_REBATE;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_MODEOFPAYMENT_REBATE;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_MANDATORY_PAYMENT;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_PASTDUE_CARRYFORWARD;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADVANCE_REBATE;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_PAST_DUE_PENALTY;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_VACANT_LAND_EXEMPTION;
+import static org.egov.pt.calculator.util.CalculatorConstants.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -85,21 +77,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -129,7 +115,6 @@ import org.egov.pt.calculator.web.models.demand.DemandDetail;
 import org.egov.pt.calculator.web.models.demand.DemandRequest;
 import org.egov.pt.calculator.web.models.demand.DemandResponse;
 import org.egov.pt.calculator.web.models.demand.TaxHeadMaster;
-import org.egov.pt.calculator.web.models.demand.TaxHeadMasterResponse;
 import org.egov.pt.calculator.web.models.demand.TaxPeriod;
 import org.egov.pt.calculator.web.models.demand.TaxPeriodResponse;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
@@ -140,25 +125,24 @@ import org.egov.pt.calculator.web.models.property.Unit;
 import org.egov.pt.calculator.web.models.property.Vacantland;
 import org.egov.pt.calculator.web.models.propertyV2.AssessmentResponseV2;
 import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2;
-import org.egov.pt.calculator.web.models.propertyV2.AssessmentV2.ModeOfPayment;
 import org.egov.pt.calculator.web.models.propertyV2.PropertyV2;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
 @Service
 @Slf4j
 public class EstimationService {
+
+	
 
 	private static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";
 
@@ -430,13 +414,13 @@ public class EstimationService {
 		/*
 		 * by default land should get only one slab from database per tenantId
 		 */
-		if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType()) && filteredBillingSlabs.size() != 1)
+		if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType()) && filteredBillingSlabs.size() != CALCULATION_1)
 			throw new CustomException(PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANCT,PT_ESTIMATE_BILLINGSLABS_UNMATCH_VACANT_MSG
 					.replace("{count}",String.valueOf(filteredBillingSlabs.size())));
 
 		else if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType())) {
 			taxAmt = taxAmt.add(BigDecimal.valueOf(filteredBillingSlabs.get(0).getUnitRate() * detail.getLandArea()));
-			billingSlabIds.add(filteredBillingSlabs.get(0).getId()+"|"+1);
+			billingSlabIds.add(filteredBillingSlabs.get(0).getId()+"|"+CALCULATION_1);
 
 			/*
 			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,taxAmt,
@@ -455,7 +439,7 @@ public class EstimationService {
 			taxAmt=getApplicableTaxForOwnerUsageCategory(taxAmt, propertyBasedExemptionMasterMap, detail,null);
 
 			String[] vacantusagecategoryMasterData  = detail.getUsageCategoryMajor().split("\\_");
-			String vacantusagecategory = vacantusagecategoryMasterData[1];
+			String vacantusagecategory = vacantusagecategoryMasterData[CALCULATION_1];
 			if(!vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
 			{
 				taxAmt = BigDecimal.ZERO;
@@ -506,7 +490,7 @@ public class EstimationService {
 
 				//Ground Floor area is deducted as ground floor is connected to vacant land
 				if (unit.getFloorNo().equalsIgnoreCase("0")) {
-					groundUnitsCount += 1;
+					groundUnitsCount += CALCULATION_1;
 					groundUnitsArea += unit.getUnitArea();
 					if (null != slab.getUnBuiltUnitRate())
 						unBuiltRate += slab.getUnBuiltUnitRate();
@@ -516,7 +500,7 @@ public class EstimationService {
 				usageExemption = usageExemption
 						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
 
-				unit.setTaxamount(currentUnitTax.setScale(2, 2));
+				unit.setTaxamount(currentUnitTax.setScale(CALCULATION_2, CALCULATION_2));
 				unitList.add(unit);
 				i++;
 			}
@@ -544,16 +528,16 @@ public class EstimationService {
 
 			unbuiltAmount=getApplicableTaxForOwnerUsageCategory(unbuiltAmount, propertyBasedExemptionMasterMap, detail,null);
 
-			vctland.setVacantlandamount(unbuiltAmount.setScale(2, 2));
+			vctland.setVacantlandamount(unbuiltAmount.setScale(CALCULATION_2, CALCULATION_2));
 			vctland.setVacantlandtype(detail.getVacantusagecategory());
 			vacantland.add(vctland);
 
-			if(detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
+			if(detail.getPropertySubType().equalsIgnoreCase(INDEPENDENTPROPERTY))
 			{
 				if(detail.getVacantusagecategory()!=null)
 				{
 					String[] vacantusagecategoryMasterData  = detail.getVacantusagecategory().split("\\_");
-					String vacantusagecategory = vacantusagecategoryMasterData[1];
+					String vacantusagecategory = vacantusagecategoryMasterData[CALCULATION_1];
 					if(vacantusagecategory.equalsIgnoreCase("COMMERCIAL"))
 					{
 						iscommercial=true;
@@ -570,7 +554,7 @@ public class EstimationService {
 			/*
 			 * special case to handle property with one unit
 			 */
-			if (detail.getUnits().size() == 1)
+			if (detail.getUnits().size() == CALCULATION_1)
 				usageExemption = getExemption(detail.getUnits().get(0), taxAmt, assessmentYear,
 						propertyBasedExemptionMasterMap);
 		}
@@ -851,7 +835,7 @@ public class EstimationService {
 		String assessmentYear = detail.getFinancialYear();
 		// taxes
 
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TAX).estimateAmount(taxAmt.setScale(2, 2)).build());
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TAX).estimateAmount(taxAmt.setScale(CALCULATION_2, CALCULATION_2)).build());
 
 		//Get tax for type of road
 		searchFilterForManipur.append(detail.getPropertyType()).append("_").append(detail.getAddress().getTypeOfRoad().getCode());
@@ -888,7 +872,7 @@ public class EstimationService {
 			 */
 
 			BigDecimal userExemption = getSpecialExemption(detail.getExemption(), payableTax, assessmentYear,
-					propertyBasedExemptionMasterMap).setScale(2, 2).negate();
+					propertyBasedExemptionMasterMap).setScale(CALCULATION_2, CALCULATION_2).negate();
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_SPECIAL_EXEMPTION).estimateAmount(userExemption).build());
 			payableTax = payableTax.add(userExemption);
 		}
@@ -990,13 +974,13 @@ public class EstimationService {
 			if(unit != null)
 			{
 				BigDecimal typeofroadValue = typeofRoadEstimate("BUILTUP_"+detail.getAddress().getTypeOfRoad().getCode(), payableTax, assessmentYear,
-						propertyBasedExemptionMasterMap).setScale(2, 2);
+						propertyBasedExemptionMasterMap).setScale(CALCULATION_2, CALCULATION_2);
 				typeofroad.add(typeofroadValue);
 			}
 			else
 			{
 				BigDecimal typeofroadValue = typeofRoadEstimate("VACANT_"+detail.getAddress().getTypeOfRoad().getCode(), payableTax, assessmentYear,
-						propertyBasedExemptionMasterMap).setScale(2, 2);
+						propertyBasedExemptionMasterMap).setScale(CALCULATION_2, CALCULATION_2);
 				typeofroad.add(typeofroadValue);
 			}
 
@@ -1010,7 +994,7 @@ public class EstimationService {
 		if(unit !=null)
 		{
 			BigDecimal structurvale = structuretypeEsti(unit.getStructureType(), payableTax, assessmentYear,
-					propertyBasedExemptionMasterMap).setScale(2, 2);
+					propertyBasedExemptionMasterMap).setScale(CALCULATION_2, CALCULATION_2);
 
 			structuretype.add(structurvale);
 		}
@@ -1022,12 +1006,12 @@ public class EstimationService {
 
 		try {
 			BigDecimal agefactorvalue = agefactorEsti(unit.getStructureType(), payableTax, assessmentYear,
-					propertyBasedExemptionMasterMap).setScale(2, 2);
+					propertyBasedExemptionMasterMap).setScale(CALCULATION_2, CALCULATION_2);
 			agefactor.add(agefactorvalue);
 		} catch (Exception e) {
 
 			BigDecimal agefactorvalue = agefactorEsti("VACANT", payableTax, assessmentYear,
-					propertyBasedExemptionMasterMap).setScale(2, 2);
+					propertyBasedExemptionMasterMap).setScale(CALCULATION_2, CALCULATION_2);
 			agefactor.add(agefactorvalue);
 		}
 
@@ -1125,9 +1109,9 @@ public class EstimationService {
 		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) || detail.getExemption().equalsIgnoreCase(null))
 		{
 			if(!commercial.isEmpty() && !vacantland.isEmpty())
-				if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase("INDEPENDENTPROPERTY"))
+				if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase(INDEPENDENTPROPERTY))
 				{
-					taxAfterVacExemption=vacantland.get(0).getVacantlandamount().setScale(2, 2);
+					taxAfterVacExemption=vacantland.get(0).getVacantlandamount().setScale(CALCULATION_2, CALCULATION_2);
 					totalAmount=totalAmount.subtract(taxAfterVacExemption);
 					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption.negate()).build());
 					taxAfterVacExemption=taxAmt.subtract(taxAfterVacExemption);
@@ -1137,21 +1121,21 @@ public class EstimationService {
 				taxAfterVacExemption=taxAmt;
 
 			switch (criteria.getModeOfPayment()) {
-			case "QUARTERLY":
-				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(3).divide(new BigDecimal(100)).negate());
-				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+			case QUARTERLY:
+				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_3).divide(new BigDecimal(CALCULATION_100)).negate());
+				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
 				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 				break;
 
-			case "HALFYEARLY":
-				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(6).divide(new BigDecimal(100)).negate());
-				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+			case HALFYEARLY:
+				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_6).divide(new BigDecimal(CALCULATION_100)).negate());
+				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
 				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 				break;
 
-			case "YEARLY":
-				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(10).divide(new BigDecimal(100)).negate());
-				modeofpayment_rebate=modeofpayment_rebate.setScale(2,2);
+			case YEARLY:
+				modeofpayment_rebate=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_10).divide(new BigDecimal(CALCULATION_100)).negate());
+				modeofpayment_rebate=modeofpayment_rebate.setScale(CALCULATION_2,CALCULATION_2);
 				updatedtaxammount=taxAfterVacExemption.add(modeofpayment_rebate);
 				break;
 
@@ -1161,8 +1145,8 @@ public class EstimationService {
 
 
 
-			complementary_rebate=updatedtaxammount.multiply(new BigDecimal(92).divide(new BigDecimal(100)).negate());
-			complementary_rebate=complementary_rebate.setScale(2,2);
+			complementary_rebate=updatedtaxammount.multiply(new BigDecimal(CALCULATION_92).divide(new BigDecimal(CALCULATION_100)).negate());
+			complementary_rebate=complementary_rebate.setScale(CALCULATION_2,CALCULATION_2);
 
 			//if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
 			//taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new BigDecimal(100)).setScale(2,2);
@@ -1184,48 +1168,45 @@ public class EstimationService {
 		totalAmount = totalAmount.add(taxAmt).add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
-		if(units.size()==1)
-			if(units.get(0).getAgeOfProperty().equalsIgnoreCase("HERITAGE_PROPERTY"))
+		if(units.size()==CALCULATION_1)
+			if(units.get(0).getAgeOfProperty().equalsIgnoreCase(HERITAGE_PROPERTY))
 				isHeritage=true;
 
+		
 		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) && !isHeritage) {
-			if(tenantId.equalsIgnoreCase("mn.imphal"))
-			{
-				if(totalAmount.compareTo(new BigDecimal(600)) < 0)
-				{
-					mandatorypay=new BigDecimal(600).subtract(totalAmount);
-					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
-					totalAmount=new BigDecimal(600);
-				}
-			}
-			else
-			{
 				BigDecimal lowerammount=lowervalue.get(tenantId);
-				if(totalAmount.compareTo(new BigDecimal(350)) < 0 && lowerammount.compareTo(new BigDecimal(350)) == 0)
+				if(totalAmount.compareTo(lowerammount) <= 0)
 				{
-					mandatorypay=new BigDecimal(350).subtract(totalAmount);
+					mandatorypay=lowerammount.subtract(totalAmount);
 					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
-					totalAmount=new BigDecimal(350);
+					totalAmount=lowerammount;
 				}
-				else if(totalAmount.compareTo(new BigDecimal(300)) < 0 && lowerammount.compareTo(new BigDecimal(300)) == 0)
-				{
-					mandatorypay=new BigDecimal(300).subtract(totalAmount);
-					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
-					totalAmount=new BigDecimal(300);
-				}
-				else if(totalAmount.compareTo(new BigDecimal(250)) < 0 && lowerammount.compareTo(new BigDecimal(250)) == 0)
-				{
-					mandatorypay=new BigDecimal(250).subtract(totalAmount);
-					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
-					totalAmount=new BigDecimal(250);
-				}
-				else if(totalAmount.compareTo(new BigDecimal(200)) < 0 && lowerammount.compareTo(new BigDecimal(200)) == 0)
-				{
-					mandatorypay=new BigDecimal(200).subtract(totalAmount);
-					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
-					totalAmount=new BigDecimal(200);
-				}
-			}
+			//removed for better performance
+			/*
+			 * else { //totalamount=200
+			 * 
+			 * BigDecimal lowerammount=lowervalue.get(tenantId);
+			 * if(totalAmount.compareTo(lowerammount) <=0) {
+			 * mandatorypay=lowerammount.subtract(totalAmount);
+			 * estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).
+			 * category(Category.TAX).estimateAmount(mandatorypay).build());
+			 * totalAmount=lowerammount; } else if(totalAmount.compareTo(new
+			 * BigDecimal(300)) < 0 && lowerammount.compareTo(new BigDecimal(300)) == 0) {
+			 * mandatorypay=new BigDecimal(300).subtract(totalAmount);
+			 * estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).
+			 * category(Category.TAX).estimateAmount(mandatorypay).build()); totalAmount=new
+			 * BigDecimal(300); } else if(totalAmount.compareTo(new BigDecimal(250)) < 0 &&
+			 * lowerammount.compareTo(new BigDecimal(250)) == 0) { mandatorypay=new
+			 * BigDecimal(250).subtract(totalAmount);
+			 * estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).
+			 * category(Category.TAX).estimateAmount(mandatorypay).build()); totalAmount=new
+			 * BigDecimal(250); } else if(totalAmount.compareTo(new BigDecimal(200)) < 0 &&
+			 * lowerammount.compareTo(new BigDecimal(200)) == 0) { mandatorypay=new
+			 * BigDecimal(200).subtract(totalAmount);
+			 * estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).
+			 * category(Category.TAX).estimateAmount(mandatorypay).build()); totalAmount=new
+			 * BigDecimal(200); } }
+			 */
 
 		}
 
@@ -1234,14 +1215,14 @@ public class EstimationService {
 		BigDecimal collectedAmtForOldDemand = demandService.getCarryForwardAndCancelOldDemand(ptTax, criteria, requestInfo,oldDemand, false);
 		BigDecimal remainAdvanceAmount=BigDecimal.ZERO;
 		BigDecimal pastdue=BigDecimal.ZERO;
-		BigDecimal advanceRebate=taxAmt.multiply(new BigDecimal(75).divide(new BigDecimal(100)));
+		BigDecimal advanceRebate=taxAmt.multiply(new BigDecimal(CALCULATION_75).divide(new BigDecimal(CALCULATION_100)));
 		BigDecimal pastduePenalty=BigDecimal.ZERO;
 
 		if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) > 0)
 		{
 			if(advanceRebate.compareTo(collectedAmtForOldDemand)>=0)
 			{
-				advanceRebate=taxAmt.multiply(new BigDecimal(20).divide(new BigDecimal(100)).negate()).setScale(2,2);
+				advanceRebate=taxAmt.multiply(new BigDecimal(CALCULATION_20).divide(new BigDecimal(CALCULATION_100)).negate()).setScale(CALCULATION_2,CALCULATION_2);
 				estimates.add(TaxHeadEstimate.builder()
 						.taxHeadCode(PT_ADVANCE_REBATE)
 						.estimateAmount(advanceRebate).build());
@@ -1271,8 +1252,8 @@ public class EstimationService {
 		}
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
-			collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
-			pastdue=collectedAmtForOldDemand.setScale(2,2);
+			collectedAmtForOldDemand=collectedAmtForOldDemand.negate().setScale(CALCULATION_2,CALCULATION_2);
+			pastdue=collectedAmtForOldDemand.setScale(CALCULATION_2,CALCULATION_2);
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
 					.estimateAmount(collectedAmtForOldDemand).build());
@@ -1283,8 +1264,8 @@ public class EstimationService {
 			date=date.concat(String.valueOf(endDate.getYear()));
 			LocalDate startDate = LocalDate.parse(date, dtf);
 			BigDecimal daysdiff=new BigDecimal(ChronoUnit.DAYS.between(startDate, endDate));
-			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(0.027).divide(new BigDecimal(100)).multiply(daysdiff));
-			pastduePenalty=pastduePenalty.setScale(2,2);
+			pastduePenalty=collectedAmtForOldDemand.multiply(new BigDecimal(CALCULATION_0_027).divide(new BigDecimal(CALCULATION_100)).multiply(daysdiff));
+			pastduePenalty=pastduePenalty.setScale(CALCULATION_2,CALCULATION_2);
 			//if(pastduePenalty.compareTo(BigDecimal.ZERO)>0){
 			/*
 			 * estimates.add(TaxHeadEstimate.builder() .taxHeadCode(PT_PAST_DUE_PENALTY)
@@ -1296,12 +1277,12 @@ public class EstimationService {
 			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
 		}
 		
-		BigDecimal payblepenalty=taxAfterVacExemption.multiply(new BigDecimal(15).divide(new BigDecimal(100))).setScale(2,2);
+		BigDecimal payblepenalty=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_15).divide(new BigDecimal(CALCULATION_100))).setScale(CALCULATION_2,CALCULATION_2);
 		if(penalty.compareTo(payblepenalty)>0)
 		{
-			if(penalty.compareTo(new BigDecimal(20000))>0)
-				if(payblepenalty.compareTo(new BigDecimal(20000))>0)
-					payblepenalty=new BigDecimal(20000);				
+			if(penalty.compareTo(new BigDecimal(PENALTY_20000))>0)
+				if(payblepenalty.compareTo(new BigDecimal(PENALTY_20000))>0)
+					payblepenalty=new BigDecimal(PENALTY_20000);				
 		}
 		else
 			payblepenalty=penalty;
@@ -1364,81 +1345,81 @@ public class EstimationService {
 		Set<String> h1 = new HashSet<>(Arrays.asList("4","5","6","7","8","9"));
 		Set<String> h2 = new HashSet<>(Arrays.asList("10","11","12","1","2","3"));
 
-		SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf=new SimpleDateFormat(DD_MM_YYYY);
 		SimpleDateFormat year=new SimpleDateFormat("yyyy");
 		SimpleDateFormat month=new SimpleDateFormat("M");
 		Date currentDate=new Date();
 		String formateDate=sdf.format(currentDate);
 		String dateyear=year.format(currentDate);
 		int currentyear=Integer.parseInt((dateyear));
-		currentyear=currentyear+1;
+		currentyear=currentyear+CALCULATION_1;
 		String nextyear=String.valueOf(currentyear);
 		String datemonth=month.format(currentDate);
 		if(datemonth.equalsIgnoreCase("1") || datemonth.equalsIgnoreCase("2") || datemonth.equalsIgnoreCase("3"))
 		{
 			nextyear=dateyear;
-			currentyear=Integer.parseInt(dateyear)-1;
+			currentyear=Integer.parseInt(dateyear)-CALCULATION_1;
 			dateyear=String.valueOf(currentyear);
 		}
 
 		switch (modeOfPayment) {
-		case "QUARTERLY":
-			String q1startDate="01/04/"+dateyear;
-			String q1endDate="30/06/"+dateyear;
-			String q2startDate="01/07/"+dateyear;
-			String q2endDate="30/09/"+dateyear;
-			String q3startDate="01/10/"+dateyear;
-			String q3endDate="31/12/"+dateyear;
-			String q4startDate="01/01/"+nextyear;
-			String q4endDate="31/03/"+nextyear;
+		case QUARTERLY:
+			String q1startDate=MONTH_01_04+dateyear;
+			String q1endDate=MONTH_30_06+dateyear;
+			String q2startDate=MONTH_01_07+dateyear;
+			String q2endDate=MONTH_30_09+dateyear;
+			String q3startDate=MONTH_01_10+dateyear;
+			String q3endDate=MONTH_31_12+dateyear;
+			String q4startDate=MONTH_01_01+nextyear;
+			String q4endDate=MONTH_31_03+nextyear;
 
 			int quater=0;
 			if(q1.contains(datemonth))
-				quater=1;
+				quater=CALCULATION_1;
 			else if(q2.contains(datemonth))
-				quater=2;
+				quater=CALCULATION_2;
 			else if(q3.contains(datemonth))
-				quater=3;
+				quater=CALCULATION_3;
 			else if(q4.contains(datemonth))
-				quater=4;
+				quater=CALCULATION_4;
 
-			BigDecimal taxAmount=totalAmount.divide(new BigDecimal(4)).setScale(0, RoundingMode.HALF_UP);
-			for(int i=1;i<=quater;i++)
+			BigDecimal taxAmount=totalAmount.divide(new BigDecimal(CALCULATION_4)).setScale(0, RoundingMode.HALF_UP);
+			for(int i=CALCULATION_1;i<=quater;i++)
 			{
 				paymentDetails=new ModeOfPaymentDetails();
 				try {
-					if(i==1)
+					if(i==CALCULATION_1)
 					{
-						BigDecimal Amount=taxAmount.add(collectedAmtForOldDemand).setScale(2,2);
+						BigDecimal Amount=taxAmount.add(collectedAmtForOldDemand).setScale(CALCULATION_2,CALCULATION_2);
 						paymentDetails.setPaymentMode("Quater1");
-						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(q1startDate).getTime());
-						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(q1endDate).getTime());
+						paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(q1startDate).getTime());
+						paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(q1endDate).getTime());
 						if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
+							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(CALCULATION_2,CALCULATION_2));
 						paymentDetails.setTaxAmount(Amount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
-					else if(i==2)
+					else if(i==CALCULATION_2)
 					{
 						paymentDetails.setPaymentMode("Quater2");
-						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(q2startDate).getTime());
-						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(q2endDate).getTime());
+						paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(q2startDate).getTime());
+						paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(q2endDate).getTime());
 						paymentDetails.setTaxAmount(taxAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
-					else if(i==3)
+					else if(i==CALCULATION_3)
 					{
 						paymentDetails.setPaymentMode("Quater3");
-						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(q3startDate).getTime());
-						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(q3endDate).getTime());
+						paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(q3startDate).getTime());
+						paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(q3endDate).getTime());
 						paymentDetails.setTaxAmount(taxAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
-					else if(i==4)
+					else if(i==CALCULATION_4)
 					{
 						paymentDetails.setPaymentMode("Quater4");
-						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(q4startDate).getTime());
-						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(q4endDate).getTime());
+						paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(q4startDate).getTime());
+						paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(q4endDate).getTime());
 						paymentDetails.setTaxAmount(taxAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
@@ -1451,40 +1432,40 @@ public class EstimationService {
 
 			break;
 
-		case "HALFYEARLY":
+		case HALFYEARLY:
 
-			String h1startDate="01/04/"+dateyear;
-			String h1endDate="30/09/"+dateyear;
-			String h2startDate="01/10/"+dateyear;
-			String h2endDate="31/03/"+nextyear;
+			String h1startDate=MONTH_01_04+dateyear;
+			String h1endDate=MONTH_30_09+dateyear;
+			String h2startDate=MONTH_01_10+dateyear;
+			String h2endDate=MONTH_31_03+nextyear;
 
 			int halfyear=0;
 			if(h1.contains(datemonth))
-				halfyear=1;
+				halfyear=CALCULATION_1;
 			else if(h2.contains(datemonth))
-				halfyear=2;
+				halfyear=CALCULATION_2;
 
-			BigDecimal htaxAmount=totalAmount.divide(new BigDecimal(2)).setScale(0, RoundingMode.HALF_UP);
-			for(int i=1;i<=halfyear;i++)
+			BigDecimal htaxAmount=totalAmount.divide(new BigDecimal(CALCULATION_2)).setScale(0, RoundingMode.HALF_UP);
+			for(int i=CALCULATION_1;i<=halfyear;i++)
 			{
 				paymentDetails=new ModeOfPaymentDetails();
 				try {
-					if(i==1)
+					if(i==CALCULATION_1)
 					{
-						BigDecimal hAmount=htaxAmount.add(collectedAmtForOldDemand).setScale(2,2);
+						BigDecimal hAmount=htaxAmount.add(collectedAmtForOldDemand).setScale(CALCULATION_2,CALCULATION_2);
 						paymentDetails.setPaymentMode("Halfyearly1");
-						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(h1startDate).getTime());
-						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(h1endDate).getTime());
+						paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(h1startDate).getTime());
+						paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(h1endDate).getTime());
 						if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
+							paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(CALCULATION_2,CALCULATION_2));
 						paymentDetails.setTaxAmount(hAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
-					else if(i==2)
+					else if(i==CALCULATION_2)
 					{
 						paymentDetails.setPaymentMode("Halfyearly2");
-						paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(h2startDate).getTime());
-						paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(h2endDate).getTime());
+						paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(h2startDate).getTime());
+						paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(h2endDate).getTime());
 						paymentDetails.setTaxAmount(htaxAmount);
 						modeOfPaymentDetails.add(paymentDetails);
 					}
@@ -1496,23 +1477,23 @@ public class EstimationService {
 
 			break;
 
-		case "YEARLY":
+		case YEARLY:
 
-			String y1startDate="01/04/"+dateyear;
-			String y1endDate="31/03/"+nextyear;
+			String y1startDate=MONTH_01_04+dateyear;
+			String y1endDate=MONTH_31_03+nextyear;
 
-			int yearcount=1;
+			int yearcount=CALCULATION_1;
 			for(int i=0;i<yearcount;i++)
 			{
 				try {
 
-					BigDecimal yAmount=totalAmount.add(collectedAmtForOldDemand).setScale(2,2);
+					BigDecimal yAmount=totalAmount.add(collectedAmtForOldDemand).setScale(CALCULATION_2,CALCULATION_2);
 					paymentDetails=new ModeOfPaymentDetails();
 					paymentDetails.setPaymentMode("Yearly");
-					paymentDetails.setFormDate(new SimpleDateFormat("dd/MM/yyyy").parse(y1startDate).getTime());
-					paymentDetails.setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(y1endDate).getTime());
+					paymentDetails.setFormDate(new SimpleDateFormat(DD_MM_YYYY).parse(y1startDate).getTime());
+					paymentDetails.setToDate(new SimpleDateFormat(DD_MM_YYYY).parse(y1endDate).getTime());
 					if(collectedAmtForOldDemand.compareTo(new BigDecimal(0))>0)
-						paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(2,2));
+						paymentDetails.setPastAmount(collectedAmtForOldDemand.setScale(CALCULATION_2,CALCULATION_2));
 					paymentDetails.setTaxAmount(yAmount);
 					modeOfPaymentDetails.add(paymentDetails);
 				} catch (ParseException e) {
@@ -1558,6 +1539,7 @@ public class EstimationService {
 		lowervalue.put("mn.sekmai", new BigDecimal(250));
 		lowervalue.put("mn.lamlai", new BigDecimal(200));
 		lowervalue.put("mn.heirok", new BigDecimal(200));
+		lowervalue.put("mn.imphal", new BigDecimal(600));
 		return lowervalue;
 	}
 
@@ -1575,7 +1557,7 @@ public class EstimationService {
 
 		String tenantId = property.getTenantId();
 		String validFrom=criteria.getFinancialYear().split("-")[0]+"-04-01";
-		String validTo=dateyear.substring(0,2)+criteria.getFinancialYear().split("-")[1]+"-03-31";
+		String validTo=dateyear.substring(0,CALCULATION_2)+criteria.getFinancialYear().split("-")[CALCULATION_1]+"-03-31";
 		BillingSlabSearchCriteria slabSearchCriteria = BillingSlabSearchCriteria.builder().tenantId(tenantId).validFrom(validFrom).validTo(validTo).build();
 		List<BillingSlab> billingSlabs = billingSlabService.searchBillingSlabs(requestInfo, slabSearchCriteria)
 				.getBillingSlab();
@@ -1591,7 +1573,7 @@ public class EstimationService {
 		final String dtlSubOwnerShipCat = detail.getSubOwnershipCategory();
 		log.debug("dtlSubOwnerShipCat"+dtlSubOwnerShipCat);
 		final String dtlAreaType = property.getAddress().getLocality().getArea();
-		final Boolean dtlIsMultiFloored = detail.getNoOfFloors() > 1;
+		final Boolean dtlIsMultiFloored = detail.getNoOfFloors() > CALCULATION_1;
 
 
 		return billingSlabs.stream().filter(slab -> {
@@ -1688,7 +1670,7 @@ public class EstimationService {
 				log.debug(" The Id of the matching slab : " + billSlb.getId());
 			}
 		}
-		if (matchingList.size() == 1)
+		if (matchingList.size() == CALCULATION_1)
 			return matchingList.get(0);
 		else if (matchingList.size() == 0)
 			return null;
@@ -1718,7 +1700,7 @@ public class EstimationService {
 		Map<String, List<Object>> ownerTypeMap = propertyMasterMap.get(OWNER_TYPE_MASTER);
 		BigDecimal userExemption = BigDecimal.ZERO;
 		final int userCount = owners.size();
-		BigDecimal share = taxAmt.divide(BigDecimal.valueOf(userCount),2, 2);
+		BigDecimal share = taxAmt.divide(BigDecimal.valueOf(userCount),CALCULATION_2, CALCULATION_2);
 
 		for (OwnerInfo owner : owners) {
 
@@ -2016,8 +1998,8 @@ public class EstimationService {
 			penalty = getPenalty(taxAmt,timeBasedExemptionMasterMap.get(CalculatorConstants.PENANLTY_MASTER),docDate);
 		}
 
-		calculation.setRebate(rebate.setScale(2, 2).negate());
-		calculation.setPenalty(penalty.setScale(2, 2));
+		calculation.setRebate(rebate.setScale(CALCULATION_2, CALCULATION_2).negate());
+		calculation.setPenalty(penalty.setScale(CALCULATION_2, CALCULATION_2));
 		calculation.setExemption(BigDecimal.ZERO);
 
 
@@ -2235,7 +2217,7 @@ public class EstimationService {
 			String[] time = ((String) objMap.get(dateFiledName)).split("/");
 			Calendar cal = Calendar.getInstance();
 			Long startDate = setDateToCalendar(objFinYear, time, cal,0);
-			Long endDate = setDateToCalendar(objFinYear, time, cal,1);
+			Long endDate = setDateToCalendar(objFinYear, time, cal,CALCULATION_1);
 			if(System.currentTimeMillis()>=startDate && System.currentTimeMillis()<=endDate )
 				objToBeReturned = objMap;
 
@@ -2265,7 +2247,7 @@ public class EstimationService {
 		month = month + mutationPaymentPeriodInMonth;
 		if(month>12){
 			month = month - 12;
-			year = year + 1;
+			year = year + CALCULATION_1;
 		}
 		cal.clear();
 		cal.set(year, month, day);
@@ -2285,10 +2267,10 @@ public class EstimationService {
 		cal.clear();
 		Long date = null;
 		Integer day = Integer.valueOf(time[0]);
-		Integer month = Integer.valueOf(time[1])-1;
+		Integer month = Integer.valueOf(time[CALCULATION_1])-CALCULATION_1;
 		Integer year = Integer.valueOf(assessmentYear);
-		if(flag==1)
-			year=year+1;
+		if(flag==CALCULATION_1)
+			year=year+CALCULATION_1;
 		cal.set(year, month, day);
 		date = cal.getTimeInMillis();
 
@@ -2311,8 +2293,8 @@ public class EstimationService {
 		String[] usageCategoryMasterData = property.getUsageCategory().split("\\.");
 		String usageCategoryMajor = null,usageCategoryMinor = null;
 		usageCategoryMajor = usageCategoryMasterData[0];
-		if(usageCategoryMasterData.length > 1)
-			usageCategoryMinor = usageCategoryMasterData[1];
+		if(usageCategoryMasterData.length > CALCULATION_1)
+			usageCategoryMinor = usageCategoryMasterData[CALCULATION_1];
 
 		if(usageCategoryMajor != null)
 			billingSlabSearchCriteria.setUsageCategoryMajor(usageCategoryMajor);
@@ -2322,8 +2304,8 @@ public class EstimationService {
 		String[] propertyTypeCollection = property.getPropertyType().split("\\.");
 		String propertyType = null,propertySubType = null;
 		propertyType = propertyTypeCollection[0];
-		if(propertyTypeCollection.length > 1)
-			propertySubType = propertyTypeCollection[1];
+		if(propertyTypeCollection.length > CALCULATION_1)
+			propertySubType = propertyTypeCollection[CALCULATION_1];
 
 		if(propertyType != null)
 			billingSlabSearchCriteria.setPropertyType(propertyType);
@@ -2333,8 +2315,8 @@ public class EstimationService {
 		String[] ownership = property.getOwnershipCategory().split("\\.");
 		String ownershipCategory = null,subownershipCategory = null;
 		ownershipCategory = ownership[0];
-		if(ownership.length > 1)
-			subownershipCategory = ownership[1];
+		if(ownership.length > CALCULATION_1)
+			subownershipCategory = ownership[CALCULATION_1];
 
 		if(ownershipCategory != null)
 			billingSlabSearchCriteria.setOwnerShipCategory(ownershipCategory);

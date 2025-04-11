@@ -1461,18 +1461,19 @@ public class BillServicev2 {
 					if(previousYear) {
 						noFODays=new BigDecimal(Q3FlatDays);
 						totalAMountForInterest = totalAMountForInterest.add(adjustedQ3Amount).multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100)));
-						totalAMountForInterest=totalAMountForInterest.setScale(2,2);
-						totalAmountForInterestCal=adjustedQ3Amount;
+						//totalAMountForInterest=totalAMountForInterest.setScale(2,2);
+						//totalAmountForInterestCal=adjustedQ3Amount;
 
-						String startDateQ3 = "01-10-" + currentyear;
-						String expiryDateQ3 = "31-12-" + currentyear;
-						mpdObj = new ModeOfPaymentDetails();
-						mpdObj = getModeOfPaymentDetails(amountforquaterly, startDateQ3, expiryDateQ3,
-								ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), BigDecimal.ZERO);
-						mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
-						mpdObj.setInterestAmount(adjustedQ3Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
-						mpdObj.setRemaingAdvance(advancedBillAmount);
-						mpdList.add(mpdObj);
+						/*
+						 * String startDateQ3 = "01-10-" + currentyear; String expiryDateQ3 = "31-12-" +
+						 * currentyear; mpdObj = new ModeOfPaymentDetails(); mpdObj =
+						 * getModeOfPaymentDetails(amountforquaterly, startDateQ3, expiryDateQ3,
+						 * ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(),
+						 * BigDecimal.ZERO); mpdObj.setPeriod(TxnPeriodEnum.QUARTER_3);
+						 * mpdObj.setInterestAmount(adjustedQ3Amount.multiply(noFODays).multiply(new
+						 * BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
+						 * mpdObj.setRemaingAdvance(advancedBillAmount); mpdList.add(mpdObj);
+						 */
 
 					}
 
@@ -1653,6 +1654,7 @@ public class BillServicev2 {
 					mpdObj = getModeOfPaymentDetails(amountwithpastduehalf, startDateh1, expiryDateh1,
 							ModeOfPaymentDetails.TxnStatusEnum.PAYMENT_FAILED.toString(), pastDue);
 					mpdObj.setPeriod(TxnPeriodEnum.HALF_YEAR_1);
+					mpdObj.setInterestAmount(adjustedH1Amount.multiply(noFODays).multiply(new BigDecimal(InterestPrecentage).divide(new BigDecimal(100))).setScale(2,2));
 					mpdObj.setRemaingAdvance(advancedBillAmount);
 					mpdList.add(mpdObj);
 				}
