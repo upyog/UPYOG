@@ -140,8 +140,8 @@ public class AssessmentService {
 		notice.setNoticeType(NoticeType.NOTICE_FOR_PENALTY);
 		notice.setTenantId(property.getTenantId());
 		noticeRequest.setNotice(notice);
-		/*if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
-		{*/
+		if(props.getAssesmentStartyear()>=Integer.parseInt(propertyCreationYear))
+		{
 			propertyIds.add(property.getPropertyId());
 			crt.setPropertyIds(propertyIds);
 			String assemtmentyearFromRequest = request.getAssessment().getFinancialYear().split("-")[0].toString();
@@ -149,7 +149,7 @@ public class AssessmentService {
 				Integer checkForYearStart = props.getAssesmentStartyear()+i;
 				Integer checkForYearEnd = props.getAssesmentStartyear()+1+i;
 				
-				//if(checkForYearStart.compareTo(props.getFinYearStart())!=0 && checkForYearEnd.compareTo(props.getFinYearEnd())!=0) {
+				if(checkForYearStart.compareTo(props.getFinYearStart())!=0 && checkForYearEnd.compareTo(props.getFinYearEnd())!=0) {
 					crt.setFinancialYear(checkForYearStart.toString()+"-"+checkForYearEnd.toString().substring(2));
 					earlierAssesmentForTheFinancialYear=  searchAssessments(crt, request.getRequestInfo());
 					if(null==earlierAssesmentForTheFinancialYear || earlierAssesmentForTheFinancialYear.isEmpty()) {
@@ -158,10 +158,10 @@ public class AssessmentService {
 				}
 				
 					
-				//}
+				}
 			}
 			
-		//}
+		}
 		if(!found) {
 			throw new CustomException("ASSESMENT_EXCEPTION",sb.toString());
 		}

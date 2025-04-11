@@ -1271,7 +1271,7 @@ public class EstimationService {
 		}
 		else if(collectedAmtForOldDemand.compareTo(BigDecimal.ZERO) < 0)
 		{
-			collectedAmtForOldDemand=collectedAmtForOldDemand.negate();
+			collectedAmtForOldDemand=collectedAmtForOldDemand.negate().setScale(2,2);
 			pastdue=collectedAmtForOldDemand.setScale(2,2);
 			estimates.add(TaxHeadEstimate.builder()
 					.taxHeadCode(PT_PASTDUE_CARRYFORWARD)
