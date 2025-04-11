@@ -670,7 +670,11 @@ public class UserService {
         if (userId == null) {
             throw new IllegalArgumentException("USER_UUID_NOT_VALID: The provided user UUID:"+userUuid+" is not valid");
         }
-        return addressRepository.createAddressV2(address, userId, address.getTenantId());
+        // Encrypt address before saving
+        address = encryptionDecryptionUtil.encryptObject(address, "Address", Address.class);
+        Address savedAddress = addressRepository.createAddressV2(address, userId, address.getTenantId());
+        // Decrypt address before returning
+        return encryptionDecryptionUtil.decryptObject(savedAddress, "Address", Address.class, null);
     }
 
     /**
@@ -680,12 +684,11 @@ public class UserService {
      * @param tenantId
      */
     public List<Address> getAddress(String user_uuid, String tenantId) {
-
-        List<Address> address;
-        address = addressRepository.getAddressByUserUuid(user_uuid, tenantId);
-        return address;
-
+        List<Address> addressList = addressRepository.getAddressByUserUuid(user_uuid, tenantId);
+        // Decrypt addresses before returning
+        return encryptionDecryptionUtil.decryptObject(addressList, "Address", Address.class, null);
     }
+
     /**
      * Updates an existing address based on the provided address ID.
      *
@@ -698,7 +701,11 @@ public class UserService {
         if (!isAddressPresent(addressId)) {
             throw new IllegalArgumentException("ADDRESS_ID_NOT_VALID" + "Address ID " + addressId + " does not exist.");
         }
-        return addressRepository.updateAddressV2(addressId, address);
+        // Encrypt address before updating
+        address = encryptionDecryptionUtil.encryptObject(address, "Address", Address.class);
+        Address updatedAddress = addressRepository.updateAddressV2(addressId, address);
+        // Decrypt address before returning
+        return encryptionDecryptionUtil.decryptObject(updatedAddress, "Address", Address.class, null);
     }
 
     /**
@@ -812,7 +819,7 @@ public class UserService {
      * @return A list of users matching the search criteria.
      */
     public List<org.egov.user.domain.model.User> searchUsersV2(UserSearchCriteria searchCriteria,
-                                                             boolean isInterServiceCall, RequestInfo requestInfo) {
+                                                               boolean isInterServiceCall, RequestInfo requestInfo) {
 
         searchCriteria.validate(isInterServiceCall);
 
