@@ -1,13 +1,16 @@
+// Utility function to check if a value is not null, undefined, or an empty string
 export const checkForNotNull = (value = "") => {
   return value && value != null && value != undefined && value != "" ? true : false;
 };
 
+// Utility function to replace all dots in a string with underscores
 export const convertDotValues = (value = "") => {
   return (
     (checkForNotNull(value) && ((value.replaceAll && value.replaceAll(".", "_")) || (value.replace && stringReplaceAll(value, ".", "_")))) || "NA"
   );
 };
 
+// Utility function to truncate a filename to a fixed size and append ellipsis
 export const getFixedFilename = (filename = "", size = 5) => {
   if (filename.length <= size) {
     return filename;
@@ -15,12 +18,14 @@ export const getFixedFilename = (filename = "", size = 5) => {
   return `${filename.substr(0, size)}...`;
 };
 
+// Utility function to determine if the back button should be hidden based on the current URL
 export const shouldHideBackButton = (config = []) => {
   return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 || window.location.href.includes("acknowledgement")
     ? true
     : false;
 };
 
+// Utility function to set address details in the provided data object
 export const setAddressDetails = (data) => {
   let { address } = data;
 
@@ -41,6 +46,7 @@ export const setAddressDetails = (data) => {
   return data;
 };
 
+// Utility function to set product details in the provided data object
 export const setProductDetails = (data) => {
   let { ewdet } = data;
 
@@ -59,6 +65,7 @@ export const setProductDetails = (data) => {
   return data;
 };
 
+// Utility function to convert E-Waste data into the required format
 export const EWDataConvert = (data) => {
   data = setProductDetails(data);
   data = setAddressDetails(data);
@@ -113,6 +120,7 @@ export const EWDataConvert = (data) => {
   return formdata;
 };
 
+// Utility function to compare two objects and check if they are equal
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
   Object.keys(ob1).map((key) => {
@@ -129,15 +137,13 @@ export const CompareTwoObjects = (ob1, ob2) => {
   else return true;
 };
 
-/*   method to check value  if not returns NA*/
+// Utility function to check if a value is not null; returns "EWASTE_NA" if null
 export const checkForNA = (value = "") => {
   return checkForNotNull(value) ? value : "EWASTE_NA";
 };
 
-/*   method to get required format from fielstore url*/
+// Utility function to extract the download link for a PDF document
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
-  /* Need to enhance this util to return required format*/
-
   let downloadLink = documents[fileStoreId] || "";
   let differentFormats = downloadLink?.split(",") || [];
   let fileURL = "";
@@ -150,15 +156,14 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
   return fileURL;
 };
 
-/*   method to get filename  from fielstore url*/
+// Utility function to extract the filename from a file store URL
 export const pdfDocumentName = (documentLink = "", index = 0) => {
   let documentName = decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) || `Document - ${index + 1}`;
   return documentName;
 };
 
-/* methid to get date from epoch */
+// Utility function to convert an epoch timestamp to a formatted date
 export const convertEpochToDate = (dateEpoch, businessService) => {
-  // Returning null in else case because new Date(null) returns initial date from calender
   if (dateEpoch) {
     const dateFromApi = new Date(dateEpoch);
     let month = dateFromApi.getMonth() + 1;
@@ -173,6 +178,7 @@ export const convertEpochToDate = (dateEpoch, businessService) => {
   }
 };
 
+// Utility function to replace all occurrences of a substring in a string
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   if (searcher == "") return str;
   while (str.includes(searcher)) {
@@ -181,18 +187,23 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
+// Utility function to download a receipt for a given consumer code and business service
 export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
 };
 
+// Utility function to check if an object is an array
 export const checkIsAnArray = (obj = []) => {
   return obj && Array.isArray(obj) ? true : false;
 };
+
+// Utility function to check if an array has a length greater than a specified value
 export const checkArrayLength = (obj = [], length = 0) => {
   return checkIsAnArray(obj) && obj.length > length ? true : false;
 };
 
+// Utility function to get workflow details for E-Waste
 export const getWorkflow = (data = {}) => {
   return {
     businessService: `ewst`,

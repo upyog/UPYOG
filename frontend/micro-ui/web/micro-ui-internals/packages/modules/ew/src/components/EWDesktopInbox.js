@@ -5,25 +5,49 @@ import ApplicationTable from "./inbox/ApplicationTable";
 import InboxLinks from "./inbox/InboxLink";
 import SearchApplication from "./inbox/search";
 
+/**
+ * Renders the desktop inbox interface for the E-Waste module.
+ * Provides filtering, searching, and display of E-Waste applications.
+ * 
+ * @param {Object} props - Component properties
+ * @param {Object} props.tableConfig - Configuration for the applications table
+ * @param {string} props.filterComponent - Name of filter component to load
+ * @param {Array} props.data - Application data to display
+ * @param {boolean} props.useNewInboxAPI - Flag to use updated inbox API
+ * @param {boolean} props.isSearch - Flag indicating search mode
+ * @param {Function} props.onSearch - Handler for search actions
+ * @param {Function} props.onFilterChange - Handler for filter changes
+ * @param {Object} props.searchParams - Current search parameters
+ * @param {string} props.moduleCode - Module identifier
+ * @param {Object} props.defaultSearchParams - Default search parameters
+ * @returns {JSX.Element} Desktop inbox interface
+ */
 const EWDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
-  
   const { data, useNewInboxAPI } = props;
   const { t } = useTranslation();
+
+  /**
+   * @type {[Function, Function]} FilterComponent - Dynamically loaded filter component
+   */
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
+
+  /**
+   * @type {[Function, Function]} EmptyInboxComp - Component for empty inbox state
+   */
   const [EmptyInboxComp, setEmptyInboxComp] = useState(() => {
     const com = Digit.ComponentRegistryService?.getComponent(props.EmptyResultInboxComp);
     return com;
   });
- 
+
   const [clearSearchCalled, setClearSearchCalled] = useState(false);
 
   const columns = React.useMemo(() => (props.isSearch ? tableConfig.searchColumns(props) : tableConfig.inboxColumns(props) || []), []);
 
   let result;
+
   if (props.isLoading) {
     result = <Loader />;
-  } else 
-  if (clearSearchCalled) {
+  } else if (clearSearchCalled) {
     result = null;
   } else if (!data || data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty)) {
     result =
@@ -41,22 +65,19 @@ const EWDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
       ) : (
         <Loader />
       ));
-  } 
-    else  if (data?.length > 0) {
+  } else if (data?.length > 0) {
     result = (
       <ApplicationTable
         t={t}
         data={data}
         columns={columns}
-        getCellProps={(cellInfo) => {
-          return {
-            style: {
-              minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-              padding: "20px 18px",
-              fontSize: "16px",
-            },
-          };
-        }}
+        getCellProps={(cellInfo) => ({
+          style: {
+            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+            padding: "20px 18px",
+            fontSize: "16px",
+          },
+        })}
         onPageSizeChange={props.onPageSizeChange}
         currentPage={props.currentPage}
         onNextPage={props.onNextPage}

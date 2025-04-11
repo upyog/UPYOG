@@ -26,6 +26,11 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * WorkflowService is responsible for managing the workflow of Ewaste
+ * applications. It interacts with the workflow service to update the status of
+ * applications and fetches workflow configurations.
+ */
 @Service
 public class WorkflowService {
 

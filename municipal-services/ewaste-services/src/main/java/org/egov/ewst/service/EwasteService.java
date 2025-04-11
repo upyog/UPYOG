@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Service class for managing Ewaste applications.
+ * This class handles the creation, update, and search operations for Ewaste applications.
+ */
 @Service
 public class EwasteService {
 
@@ -48,8 +52,11 @@ public class EwasteService {
 	private EwasteRequestValidator ewasteRequestValidator;
 
 	/**
-	 * Enriches the Request and pushes to the Queue
+	 * Creates a new Ewaste application request.
+	 * Validates, enriches, and pushes the request to the Kafka topic.
 	 *
+	 * @param ewasteRegistrationRequest The Ewaste registration request.
+	 * @return A list of created Ewaste applications.
 	 */
 	public List<EwasteApplication> createEwasteRequest(EwasteRegistrationRequest ewasteRegistrationRequest) {
 
@@ -61,6 +68,13 @@ public class EwasteService {
 		return ewasteRegistrationRequest.getEwasteApplication();
 	}
 
+	/**
+	 * Searches for Ewaste applications based on the provided criteria.
+	 *
+	 * @param requestInfo The request information.
+	 * @param ewasteApplicationSearchCriteria The search criteria.
+	 * @return A list of matching Ewaste applications.
+	 */
 	public List<EwasteApplication> searchEwasteApplications(RequestInfo requestInfo,
 			EwasteApplicationSearchCriteria ewasteApplicationSearchCriteria) {
 
@@ -73,6 +87,13 @@ public class EwasteService {
 		return applications;
 	}
 
+	/**
+	 * Updates an existing Ewaste application request.
+	 * Validates, updates, and pushes the updated request to the Kafka topic.
+	 *
+	 * @param ewasteRegistrationRequest The Ewaste registration request.
+	 * @return The updated Ewaste application.
+	 */
 	public EwasteApplication updateEwasteRequest(EwasteRegistrationRequest ewasteRegistrationRequest) {
 
 		// Validate the existence of the application
