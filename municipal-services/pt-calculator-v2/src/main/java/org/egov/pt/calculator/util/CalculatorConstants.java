@@ -371,4 +371,58 @@ public class CalculatorConstants {
 
 	public static final String TAX_PERIOD_SEARCH_FAILED = "EGPT_CALCULATOR_TAX_PERIOD_SEARCH_ERROR";
 	public static final String TAX_PERIOD_SEARCH_FAILED_MSG = "Tax period for current financial year is not present. Please add the tax period details";
+	
+	public static final String MONTH_31_03 = "31/03/";
+
+	public static final String MONTH_01_01 = "01/01/";
+
+	public static final String MONTH_31_12 = "31/12/";
+
+	public static final String MONTH_01_10 = "01/10/";
+
+	public static final String MONTH_30_09 = "30/09/";
+
+	public static final String MONTH_01_07 = "01/07/";
+
+	public static final String MONTH_30_06 = "30/06/";
+
+	public static final String MONTH_01_04 = "01/04/";
+
+	public static final String DD_MM_YYYY = "dd/MM/yyyy";
+
+	public static final int CALCULATION_1 = 1;
+
+	public static final int CALCULATION_4 = 4;
+
+	public static final int PENALTY_20000 = 20000;
+
+	public static final double CALCULATION_0_027 = 0.027;
+
+	public static final int CALCULATION_15 = 15;
+
+	public static final int CALCULATION_20 = 20;
+
+	public static final int CALCULATION_75 = 75;
+
+	public static final int CALCULATION_10 = 10;
+
+	public static final int CALCULATION_6 = 6;
+
+	public static final int CALCULATION_3 = 3;
+
+	public static final int CALCULATION_100 = 100;
+
+	public static final int CALCULATION_92 = 92;
+
+	public static final int CALCULATION_2 = 2;
+
+	public static final String YEARLY = "YEARLY";
+
+	public static final String HALFYEARLY = "HALFYEARLY";
+
+	public static final String QUARTERLY = "QUARTERLY";
+
+	public static final String INDEPENDENTPROPERTY = "INDEPENDENTPROPERTY";
+
+	public static final String HERITAGE_PROPERTY = "HERITAGE_PROPERTY";
 }
