@@ -28,6 +28,7 @@ import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
 import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.FacilityCenterDetail;
 import org.upyog.cdwm.web.models.WasteTypeDetail;
 import org.upyog.cdwm.web.models.user.User;
 import org.upyog.cdwm.web.models.workflow.State;
@@ -97,22 +98,31 @@ public class CNDServiceImpl implements CNDService {
         if (!CollectionUtils.isEmpty(applications) && Boolean.TRUE.equals(cndServiceSearchCriteria.getIsUserDetailRequired())) {
             log.info("Enriching CND applications with user, address, waste, and document details for applications: {}", applications);
 
-            // Fetch waste and document details
+            // Fetch waste, document and deposit center details
             List<WasteTypeDetail> wasteDetails = cndApplicationRepository.getCNDWasteTypeDetail(cndServiceSearchCriteria);
             List<DocumentDetail> documentDetails = cndApplicationRepository.getCNDDocumentDetail(cndServiceSearchCriteria);
+            List<FacilityCenterDetail> facilityCenterDetails = cndApplicationRepository.getCNDFacilityCenterDetail(cndServiceSearchCriteria);
 
-            // Group waste and document details by applicationId
+            // Group waste, facility, and document details by applicationId
             Map<String, List<WasteTypeDetail>> wasteByAppId = wasteDetails.stream()
                 .collect(Collectors.groupingBy(WasteTypeDetail::getApplicationId));
 
             Map<String, List<DocumentDetail>> docsByAppId = documentDetails.stream()
                 .collect(Collectors.groupingBy(DocumentDetail::getApplicationId));
+            
+            Map<String, List<FacilityCenterDetail>> facilityByAppId = facilityCenterDetails.stream()
+                    .collect(Collectors.groupingBy(FacilityCenterDetail::getApplicationId));
 
             // Enrich each application with waste, document, user, and address details
             for (CNDApplicationDetail application : applications) {
                 application.setWasteTypeDetails(wasteByAppId.getOrDefault(application.getApplicationId(), Collections.emptyList()));
                 application.setDocumentDetails(docsByAppId.getOrDefault(application.getApplicationId(), Collections.emptyList()));
-
+                
+                List<FacilityCenterDetail> facilityDetails = facilityByAppId.get(application.getApplicationId());
+                if (facilityDetails != null && !facilityDetails.isEmpty()) {
+                    application.setFacilityCenterDetail(facilityDetails.get(0));
+                }
+                
                 User user = userService.getUser(application.getApplicantDetailId(), application.getTenantId(), requestInfo);
                 application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
                 application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
