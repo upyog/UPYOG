@@ -15,11 +15,13 @@ import org.upyog.cdwm.repository.CNDServiceRepository;
 import org.upyog.cdwm.repository.querybuilder.CNDServiceQueryBuilder;
 import org.upyog.cdwm.repository.rowMapper.CNDApplicationDetailRowmapper;
 import org.upyog.cdwm.repository.rowMapper.DocumentDetailsRowMapper;
+import org.upyog.cdwm.repository.rowMapper.FacilityCenterDetailRowMapper;
 import org.upyog.cdwm.repository.rowMapper.WasteTypeDetailsRowMapper;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
 import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.FacilityCenterDetail;
 import org.upyog.cdwm.web.models.WasteTypeDetail;
 
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +87,7 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
     public List<WasteTypeDetail> getCNDWasteTypeDetail(CNDServiceSearchCriteria cndServiceSearchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getCNDWasteQuery(cndServiceSearchCriteria, preparedStmtList);
-        log.info("Final query for getCndApplicationDetails: {} with params: {}", query, preparedStmtList);
+        log.info("Final query for getCndWasteDetails: {} with params: {}", query, preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new WasteTypeDetailsRowMapper());
     }
     
@@ -106,6 +108,28 @@ public class CNDServiceRepositoryImpl implements CNDServiceRepository {
         log.info("Final query for getCndDocumentDetails: {} with params: {}", query, preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), new DocumentDetailsRowMapper());
     }
+    
+    /**
+     * Retrieves a list of FacilityCenterDetails based on the provided search criteria.
+     * The method constructs a query using the search criteria, executes it using the JDBC template,
+     * and maps the result set to a list of FacilityCenterDetail objects.
+     *
+     * @param cndServiceSearchCriteria The criteria used to filter the CND (Construction and Demolition) 
+     *                                 deposit center details. It contains various fields such as 
+     *                                 applicationId, tenantId, and other filtering parameters.
+     * @return A list of {@link FacilityCenterDetail} objects that match the search criteria.
+     *         Returns an empty list if no results are found.
+     * @throws DataAccessException if there is an error executing the SQL query.
+     */
+    
+    @Override
+    public List<FacilityCenterDetail> getCNDFacilityCenterDetail(CNDServiceSearchCriteria cndServiceSearchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getCNDFacilityCenterDetailQuery(cndServiceSearchCriteria, preparedStmtList);
+        log.info("Final query for getCndFacilityDetails: {} with params: {}", query, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new FacilityCenterDetailRowMapper());
+    }
+    
     /**
      * Retrieves the count of CND applications based on search criteria.
      * 

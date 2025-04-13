@@ -48,7 +48,14 @@ public class CNDServiceQueryBuilder {
     	    "file_store_id as fileStoreId " + 
     	    "FROM ug_cnd_document_detail dd " +
     	    "JOIN ug_cnd_application_details ucad ON ucad.application_id = dd.application_id " ;
-  
+    
+    
+    private static final String CND_DISPOSAL_DEPOSIT_CENTRE_DETAIL_QUERY =
+    	    "SELECT disposal_id, application_id, vehicle_id, vehicle_depot_no, net_weight, gross_weight, " +
+    	    "dumping_station_name, disposal_date, disposal_type, name_of_disposal_site, " +
+    	    "created_by, last_modified_by, created_time, last_modified_time " +
+    	    "FROM ug_cnd_disposal_deposit_centre_detail";
+
 			
     // Pagination wrapper query
     private static final String PAGINATION_WRAPPER = 
@@ -189,6 +196,58 @@ public class CNDServiceQueryBuilder {
     public String getCNDDocQuery(CNDServiceSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(DOCUMENT_DETAIL_SELECT_QUERY);
 
+        if (!ObjectUtils.isEmpty(criteria.getApplicationNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            String[] appNumbers = criteria.getApplicationNumber().split(",");
+            String placeholders = String.join(",", Collections.nCopies(appNumbers.length, "?"));
+            query.append(" ucad.application_number IN (").append(placeholders).append(") ");
+            Collections.addAll(preparedStmtList, appNumbers);
+        }
+
+        if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.tenant_id LIKE ? ");
+            preparedStmtList.add("%" + criteria.getTenantId() + "%");
+        }
+
+        if (!ObjectUtils.isEmpty(criteria.getStatus())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.application_status = ? ");
+            preparedStmtList.add(criteria.getStatus());
+        }
+
+        if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.applicant_mobile_number = ? ");
+            preparedStmtList.add(criteria.getMobileNumber());
+        }
+        
+        if (!ObjectUtils.isEmpty(criteria.getLocality())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ucad.locality = ? ");
+            preparedStmtList.add(criteria.getLocality());
+        }
+
+        return query.toString();
+    }
+    
+    /**
+     * Constructs a SQL query to retrieve CND deposit center details based on the provided search criteria.
+     * The method dynamically builds the query by adding filters based on the non-null values in the
+     * {@link CNDServiceSearchCriteria} object. It also prepares the list of parameters that will be used
+     * in the query execution.
+     * 
+     * @param criteria The criteria used to filter the CND deposit center details. This may contain fields
+     *                 like applicationNumber, tenantId, status, mobileNumber, and locality.
+     * @param preparedStmtList The list that holds the prepared statement parameters. This list is populated
+     *                          with values that correspond to the filters in the query.
+     * @return A SQL query string with the necessary filters applied, and the prepared statement parameters
+     *         will be added to the provided list.
+     */
+    
+    public String getCNDFacilityCenterDetailQuery(CNDServiceSearchCriteria criteria, List<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder(CND_DISPOSAL_DEPOSIT_CENTRE_DETAIL_QUERY);
+        
         if (!ObjectUtils.isEmpty(criteria.getApplicationNumber())) {
             addClauseIfRequired(query, preparedStmtList);
             String[] appNumbers = criteria.getApplicationNumber().split(",");
