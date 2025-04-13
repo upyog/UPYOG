@@ -51,10 +51,11 @@ public class CNDServiceQueryBuilder {
     
     
     private static final String CND_DISPOSAL_DEPOSIT_CENTRE_DETAIL_QUERY =
-    	    "SELECT disposal_id, application_id, vehicle_id, vehicle_depot_no, net_weight, gross_weight, " +
+    	    "SELECT disposal_id, dc.application_id, dc.vehicle_id, vehicle_depot_no, net_weight, gross_weight, " +
     	    "dumping_station_name, disposal_date, disposal_type, name_of_disposal_site, " +
-    	    "created_by, last_modified_by, created_time, last_modified_time " +
-    	    "FROM ug_cnd_disposal_deposit_centre_detail";
+    	    "dc.created_by, dc.last_modified_by, dc.created_time, dc.last_modified_time " +
+    	    "FROM ug_cnd_disposal_deposit_centre_detail dc " +
+    	    "JOIN ug_cnd_application_details ucad ON ucad.application_id = dc.application_id ";
 
 			
     // Pagination wrapper query
