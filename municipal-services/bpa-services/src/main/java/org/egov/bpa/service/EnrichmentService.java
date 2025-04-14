@@ -301,13 +301,14 @@ public class EnrichmentService {
 	 */
 	private void generateApprovalNo(BPARequest bpaRequest, String state) {
 		BPA bpa = bpaRequest.getBPA();
-		if (((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE) || bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN))
+		if ((bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
+				|| (bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN) && bpa.getStatus().equalsIgnoreCase(BPAConstants.APPROVED_STATE))
 				|| (!bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BPA_OC_MODULE_CODE)
 				&& ((!bpa.getRiskType().toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE)
 				&& state.equalsIgnoreCase(BPAConstants.APPROVED_STATE))
 				|| (state.equalsIgnoreCase(BPAConstants.DOCVERIFICATION_STATE) && bpa.getRiskType()
-				.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE))))) {
+				.toString().equalsIgnoreCase(BPAConstants.LOW_RISKTYPE) &&  !bpa.getBusinessService().equalsIgnoreCase(BPAConstants.BUSINESSSERVICE_PREAPPROVEDPLAN) )))) {
 			int vailidityInMonths = config.getValidityInMonths();
 			Calendar calendar = Calendar.getInstance();
 			bpa.setApprovalDate(Calendar.getInstance().getTimeInMillis());
