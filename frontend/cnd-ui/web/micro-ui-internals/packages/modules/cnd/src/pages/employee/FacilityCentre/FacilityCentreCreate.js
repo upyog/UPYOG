@@ -15,7 +15,7 @@ import { CND_VARIABLES } from "../../../utils";
  */
 
 
-const FacilityCentreCreate = () => {
+const FacilityCentreCreationDetails = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const isUserDetailRequired=true;
   const { id: applicationNumber } = useParams();
@@ -154,7 +154,7 @@ const FacilityCentreCreate = () => {
   );
 };
 
-export default FacilityCentreCreate;
+export default FacilityCentreCreationDetails;
 
 
 

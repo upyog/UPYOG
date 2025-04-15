@@ -23,7 +23,7 @@ const EmployeeApp = () => {
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const EditCreate = Digit?.ComponentRegistryService?.getComponent("EditCreate");
   const EditResponse = Digit?.ComponentRegistryService?.getComponent("EditSubmissionResponse");
-  const FacilityCentreCreate = Digit?.ComponentRegistryService?.getComponent("FacilityCentreCreate");
+  const FacilityCentreCreationDetails = Digit?.ComponentRegistryService?.getComponent("FacilityCentreCreationDetails");
   const FacilitySubmissionResponse = Digit?.ComponentRegistryService?.getComponent("FacilitySubmissionResponse");
 
   return (
@@ -49,7 +49,7 @@ const EmployeeApp = () => {
           <PrivateRoute path={`${path}/cnd-service/edit/:id`} component={() => <EditCreate parentUrl={url} />} />
           <PrivateRoute path={`${path}/edit-response`} component={(props) => <EditResponse {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/my-request`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/cnd-service/facility-centre/:id`} component={() => <FacilityCentreCreate parentUrl={url} />} />
+          <PrivateRoute path={`${path}/cnd-service/facility-centre/:id`} component={() => <FacilityCentreCreationDetails parentUrl={url} />} />
           <PrivateRoute path={`${path}/facility-response`} component={(props) => <FacilitySubmissionResponse {...props} parentRoute={path} />} />
 
         </AppContainer>

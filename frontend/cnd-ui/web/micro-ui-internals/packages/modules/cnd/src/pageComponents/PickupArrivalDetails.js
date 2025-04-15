@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext";
 /**
- * PickupArrived Component
+ * PickupArrivalDetails Component
  * 
  * This component handles the display and input of pickup details for a waste collection application.
  * It uses React Hook Form for form state management and dynamically renders forms based on the number of pickups.
@@ -22,13 +22,16 @@ const pickupDetails = () => ({
     key: Date.now(),
 });
 
-const PickupArrived = ({ config, onSelect, formData, setError, clearErrors }) => {
+const PickupArrivalDetails = ({ config, onSelect, formData, setError, clearErrors }) => {
   const { t } = useTranslation();
   const isEmployee =  window.location.href.includes("/employee");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const applicationDetails = isEmployee ? useApplicationDetails():null;
   const [pickup, setpickup] = useState(formData?.pickup || [pickupDetails()]);
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+
+  /* Whenever the `pickup` state changes (like form updates or adding/removing entries),
+    we call `onSelect` to pass the latest data back to the parent component or config handler.*/
   useEffect(() => {
     onSelect(config?.key, pickup);
   }, [pickup]);
@@ -76,6 +79,11 @@ const OwnerForm = (_props) => {
   const { errors } = localFormState;
   const [part, setPart] = React.useState({});
 
+  /**
+   * This useEffect tracks changes in the form values (`formValue`). If the form values differ from the previously saved state (`part`), 
+   * it updates the main `pickup` list with the latest values for this particular pickup entry.
+   * It also triggers validation for updated fields.
+   */
   useEffect(() => {
     if (!_.isEqual(part, formValue)) {
       setPart({ ...formValue });
@@ -84,6 +92,10 @@ const OwnerForm = (_props) => {
     }
   }, [formValue]);
 
+  /**
+   * This useEffect checks for form validation errors and sets or clears errors accordingly
+   *  in the overall form state managed by the parent. It ensures proper validation feedback is shown.
+   */
   useEffect(() => {
     if (Object.keys(errors).length && !_.isEqual(localFormState.errors[config.key]?.type || {}, errors)) setError(config.key, { type: errors });
     else if (!Object.keys(errors).length && localFormState.errors[config.key]) clearErrors(config.key);
@@ -346,4 +358,4 @@ const OwnerForm = (_props) => {
   );
 };
 
-export default PickupArrived;
+export default PickupArrivalDetails;

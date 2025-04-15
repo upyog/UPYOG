@@ -25,8 +25,8 @@ import { ApplicationProvider } from "./pages/employee/Edit/ApplicationContext";
 import EditSubmissionResponse from "./pages/employee/Edit/EditSubmissionResponse";
 import PropertyNature from "./pageComponents/PropertyNature";
 import CNDVendorCard from "./components/CNDVendorCard";
-import FacilityCentreCreate from "./pages/employee/FacilityCentre/FacilityCentreCreate";
-import PickupArrived from "./pageComponents/PickupArrived";
+import FacilityCentreCreationDetails from "./pages/employee/FacilityCentre/FacilityCentreCreate";
+import PickupArrivalDetails from "./pageComponents/PickupArrivalDetails";
 import DisposeDetails from "./pageComponents/DisposeDetails";
 import FacilitySubmissionResponse from "./pages/employee/FacilityCentre/FacilitySubmissionResponse";
 
@@ -51,8 +51,8 @@ const componentsToRegister = {
   EditSubmissionResponse,
   PropertyNature,
   CNDVendorCard,
-  FacilityCentreCreate,
-  PickupArrived,
+  FacilityCentreCreationDetails,
+  PickupArrivalDetails,
   DisposeDetails,
   FacilitySubmissionResponse
   };

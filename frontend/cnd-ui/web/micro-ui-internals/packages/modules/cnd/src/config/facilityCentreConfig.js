@@ -4,7 +4,7 @@ export const FacilityCentreConfig =
     {
         "body": [
             {
-                "component": "PickupArrived",
+                "component": "PickupArrivalDetails",
                 "withoutLabel": true,
                 "key": "pickup",
                 "type": "component",
