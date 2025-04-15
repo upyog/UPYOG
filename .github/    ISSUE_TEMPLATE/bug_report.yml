@@ -1,0 +1,15 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Please fill out the form below to report a bug."
+  - type: input
+    id: summary
+    attributes:
+      label: Bug Summary
+      description: A brief description of the bug
+    validations:
+      required: true
