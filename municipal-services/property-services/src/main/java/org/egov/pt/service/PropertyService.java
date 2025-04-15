@@ -311,7 +311,10 @@ public class PropertyService {
 					throw new CustomException("EG_PT_UPDATE_OWNER_NAME_ERROR", "Update request cannot change owner Information");
 			}
 		}
-
+		
+		if(propertyFromSearch.getStatus()!=Status.ACTIVE)
+			throw new CustomException("PROPERTY_IS_NOTACTIVE", "Property is not in Active State");
+		
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
 		} else {			
