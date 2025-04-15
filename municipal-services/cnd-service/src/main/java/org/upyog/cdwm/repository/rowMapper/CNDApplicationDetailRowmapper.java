@@ -70,6 +70,7 @@ public class CNDApplicationDetailRowmapper implements ResultSetExtractor<List<CN
                             .applicationType(applicationType)
                             .typeOfConstruction(rs.getString("type_of_construction"))
                             .depositCentreDetails(rs.getString("deposit_centre_details"))
+                            .locality(rs.getString("locality"))
                             .applicantDetailId(rs.getString("applicant_detail_id"))
                             .requestedPickupDate(rs.getDate("requested_pickup_date") != null
                                     ? rs.getDate("requested_pickup_date").toLocalDate()
