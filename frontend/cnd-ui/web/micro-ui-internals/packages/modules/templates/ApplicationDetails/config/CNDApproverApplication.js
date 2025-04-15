@@ -21,6 +21,7 @@ export const configCNDApproverApplication = ({ t, action,approvers, selectedAppr
                   {
                     label: t("CND_VENDOR_ASSIGN"),
                     type: "dropdown",
+                    isMandatory: true,
                     populators: (
                       <Dropdown
                         option={vendorDescription}
@@ -32,7 +33,7 @@ export const configCNDApproverApplication = ({ t, action,approvers, selectedAppr
                     ),
                   },
                   {
-                    label: t("CND_SCHEDULE_PICKUP"),
+                    label: t("CND_EMP_SCHEDULE_PICKUP"),
                     type: "date",
                     isMandatory: true,
                     populators: {
@@ -61,6 +62,7 @@ export const configCNDApproverApplication = ({ t, action,approvers, selectedAppr
                   {
                     label: t("CND_ASSIGNEE"),
                     type: "dropdown",
+                    isMandatory: true,
                     populators: (
                       <Dropdown
                         option={approvers}

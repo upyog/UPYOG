@@ -99,17 +99,17 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
           <TextInput
             t={t}
             type={"text"}
-            isMandatory={false}
+            isMandatory={true}
             optionKey="i18nKey"
             name="houseArea"
             value={houseArea}
             onChange={setHouseArea}
             style={inputStyles}
-            ValidationRequired={false}
+            ValidationRequired={true}
             {...(validation = {
               isRequired: true,
-              pattern: "^[0-9. ]{1,3}$",
-              type: "tel",
+              pattern: "^[0-9]+(\\.[0-9]+)?$",
+              type: "number",
               title: "",
             })}
           />

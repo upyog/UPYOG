@@ -968,7 +968,7 @@ export const convertEpochToDate = (dateEpoch) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )} */}
-      {business_service == "cnd" && (
+      {business_service == "cnd-service" && (
         <Link to={`/cnd-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
         </Link>

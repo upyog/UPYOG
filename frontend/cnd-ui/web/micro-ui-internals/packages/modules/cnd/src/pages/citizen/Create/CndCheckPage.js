@@ -92,7 +92,7 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(owner?.mobileNumber))}`}
           />
            <Row
-              label={t("WT_ALT_MOBILE_NUMBER")}
+              label={t("COMMON_ALT_MOBILE_NUMBER")}
               text={`${t(checkForNA(owner?.alternateNumber))}`}
           />
           <Row
