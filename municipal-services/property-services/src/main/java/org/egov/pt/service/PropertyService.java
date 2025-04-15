@@ -298,7 +298,7 @@ public class PropertyService {
 
 	private void processMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
 
-		if(!request.getProperty().getWorkflow().equals(null))
+		if(!StringUtils.isEmpty(request.getProperty().getWorkflow()))
 		{
 			if(request.getProperty().getWorkflow().getAction().equalsIgnoreCase("REOPEN"))
 			{
