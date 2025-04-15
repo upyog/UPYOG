@@ -63,7 +63,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
       <KeyNote keyValue={t("SV_APPLICATION_NUMBER")} note={application?.applicationNo} />
       <KeyNote keyValue={t("SV_VENDOR_NAME")} note={application?.vendorDetail?.[0]?.name} />
       <KeyNote keyValue={t("SV_VENDING_TYPE")} note={application?.vendingActivity} />
-      <KeyNote keyValue={t("SV_VENDING_ZONES")} note={application?.vendingZone} />
+      <KeyNote keyValue={t("SV_VENDING_ZONES")} note={t(application?.vendingZone)} />
       <KeyNote keyValue={t("SV_VALIDITY_DATE")} note={application?.validityDate} />
       <KeyNote keyValue={t("SV_APPLICATION_STATUS")} note={application?.applicationStatus} />
       {application?.vendingActivity==="STATIONARY"&&(
