@@ -11,6 +11,7 @@ import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.postgresql.jdbc.PgArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,17 +234,31 @@ public class ccAvanueGateway implements Gateway {
         // Check if the current time is within the validity period
         return currentTimeMillis <= expirationTimeMillis;
     }
- @Override
+
+    
+    @Override
     public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
        		 Transaction txn =null;     
              String vResponse="";
  		 
 	         AesUtil aesUtilenc=new AesUtil(MERCHANT_WORKING_KEY);
 
-       		String encRequest = aesUtilenc.encrypt("{'order_no': '"+currentStatus.getTxnId()+"'}");  
-  	    	StringBuffer wsDataBuff=new StringBuffer();
-  	    	wsDataBuff.append("enc_request="+encRequest+"&access_code="+MERCHANT_ACCESS_CODE+"&command="+PgConstants.CCAVENUE_PCOMMAND+"&response_type="+PgConstants.CCAVENUE_TYPE+"&request_type="+PgConstants.CCAVENUE_TYPE+"&version="+ PgConstants.CCAVENUE_VERSION);
-		
+	         String txnId = currentStatus.getTxnId(); 
+	         String[] parts = txnId.split("_"); // Split the transaction ID by "_"
+	         String datePart = parts[2] + "_" + parts[3] + "_" + parts[4]; 
+
+	         // Convert to DD-MM-YYYY format
+	         String[] dateComponents = datePart.split("_"); 
+	         String formattedDate = dateComponents[2] + "-" + dateComponents[1] + "-" + dateComponents[0];
+	         String encRequest = aesUtilenc.encrypt("{'order_no': '" + txnId + "'}");  
+	         StringBuffer wsDataBuff = new StringBuffer();
+	         wsDataBuff.append("enc_request=" + encRequest +
+	                           "&access_code=" + MERCHANT_ACCESS_CODE +
+	                           "&command=" + PgConstants.CCAVENUE_PCOMMAND +
+	                           "&response_type=" + PgConstants.CCAVENUE_TYPE +
+	                           "&request_type=" + PgConstants.CCAVENUE_TYPE +
+	                           "&version=" + PgConstants.CCAVENUE_VERSION +
+	                           "&from_date=" + formattedDate);
   	     try {
   	    	 
 			  vResponse = processUrlConnectionReq(wsDataBuff.toString(), MERCHANT_URL_STATUS);
@@ -391,32 +406,52 @@ public static String processUrlConnectionReq(String pBankData,String pBankUrl) t
     }
 
 
-    private Transaction transformRawResponseNew(JSONObject response,Transaction currentStatus) {
+    private Transaction transformRawResponseNew(JSONObject response, Transaction currentStatus) {
         Transaction.TxnStatusEnum status;
-        if ((response.optString("order_status").equalsIgnoreCase("Successful")|| 
-        		response.optString("order_status").equalsIgnoreCase("Success")|| response.optString("order_status").equalsIgnoreCase("Shipped"))) {
+
+        JSONArray orderStatusList = response.optJSONArray("order_Status_List");
+        JSONObject lastSuccessfulOrder = null;
+
+        // Check if any order status is "Shipped" or "Successful"
+        if (orderStatusList != null) {
+            for (int i = 0; i < orderStatusList.length(); i++) {
+                JSONObject order = orderStatusList.optJSONObject(i);
+                if (order != null) {
+                    String orderStatus = order.optString("order_status");
+                    if ("Successful".equalsIgnoreCase(orderStatus) || 
+                        "Success".equalsIgnoreCase(orderStatus) || 
+                        "Shipped".equalsIgnoreCase(orderStatus)) {
+                        lastSuccessfulOrder = order; 
+                    }
+                }
+            }
+        }
+
+        if (lastSuccessfulOrder != null) {
             status = Transaction.TxnStatusEnum.SUCCESS;
             return Transaction.builder()
-                    .txnId(response.optString("order_no"))
-                    .txnAmount(response.optString("order_amt"))
+                    .txnId(lastSuccessfulOrder.optString("order_no")) 
+                    .txnAmount(lastSuccessfulOrder.optString("order_amt"))
                     .txnStatus(status)
-                    .gatewayTxnId(response.optString("reference_no"))
-                    .gatewayPaymentMode(response.optString("order_card_name"))
-                    .gatewayStatusCode(response.optString("status"))
-                    .gatewayStatusMsg(response.optString("order_bank_response"))
+                    .gatewayTxnId(lastSuccessfulOrder.optString("reference_no"))
+                    .gatewayPaymentMode(lastSuccessfulOrder.optString("order_card_name"))
+                    .gatewayStatusCode(lastSuccessfulOrder.optString("status"))
+                    .gatewayStatusMsg(response.toString())
                     .responseJson(response)
                     .build();
         } else {
-        	 return Transaction.builder()
-	                    .txnId(currentStatus.getTxnId())
-	                    .txnAmount(currentStatus.getTxnAmount())
-	                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
-	                    .gatewayTxnId(currentStatus.getGatewayTxnId())
-	                    .gatewayPaymentMode(currentStatus.getGatewayTxnId())
-	            		.build();
-        }	    
+            return Transaction.builder()
+                    .txnId(currentStatus.getTxnId())
+                    .txnAmount(currentStatus.getTxnAmount())
+                    .txnStatus(Transaction.TxnStatusEnum.FAILURE)
+                    .gatewayTxnId(currentStatus.getGatewayTxnId())
+                    .gatewayPaymentMode(currentStatus.getGatewayPaymentMode()) 
+                    .gatewayStatusCode(currentStatus.getGatewayStatusCode()) 
+                    .gatewayStatusMsg(response.toString()) 
+                    .responseJson(response) 
+                    .build();
+        }
     }
-
     private Transaction transformRawResponse(ccAvanueresponse resp, Transaction currentStatus) {
 
         Transaction.TxnStatusEnum status;

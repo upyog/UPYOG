@@ -177,7 +177,7 @@ public class PayuGateway implements Gateway {
                     .gatewayTxnId(resp.getMihpayid())
                     .gatewayPaymentMode(resp.getMode())
                     .gatewayStatusCode(resp.getUnmappedstatus())
-                    .gatewayStatusMsg(resp.getStatus())
+                    .gatewayStatusMsg(resp.getStatus()+"+"+resp)
                     .responseJson(resp)
                     .build();
         } else {
@@ -188,7 +188,7 @@ public class PayuGateway implements Gateway {
                     .txnStatus(status)
                     .gatewayTxnId(resp.getMihpayid())
                     .gatewayStatusCode(resp.getError_code())
-                    .gatewayStatusMsg(resp.getError_Message())
+                    .gatewayStatusMsg(resp.getStatus()+"+"+resp)
                     .responseJson(resp)
                     .build();
         }
