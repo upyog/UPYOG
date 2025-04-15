@@ -52,7 +52,6 @@ const FacilityCentreCreate = () => {
 
 
   const onSubmit = (data) => {
-    console.log("datatattata",data);
     const user = Digit.UserService.getUser();
     const formData = {
       tenantId: applicationDetails?.applicationData?.applicationData?.tenantId,

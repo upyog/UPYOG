@@ -33,7 +33,6 @@ const CndApplicationDetails = () => {
   let  cndData = (cndApplicationDetail && cndApplicationDetail.length > 0 && cndApplicationDetail[0]) || {};
   const application =  cndData;
   sessionStorage.setItem("cnd-application", JSON.stringify(application));
-  console.log("cndDatacndData",cndData);
   const [loading, setLoading]=useState(false);
 
   const fetchBillData=async()=>{
