@@ -46,7 +46,7 @@ public class ChallanQueryBuilder {
       public static final String CANCEL_RECEIPT_UPDATE_SQL = "UPDATE eg_echallan SET applicationStatus='ACTIVE' WHERE challanNo=? and businessService=?";
       public static final String CHALLAN_COUNT_QUERY = "SELECT applicationstatus, count(*)  FROM eg_echallan WHERE tenantid ";
     
-      public static final String TOTAL_COLLECTION_QUERY = "SELECT sum(amountpaid) FROM egbs_billdetail_v1 INNER JOIN egcl_paymentdetail ON egbs_billdetail_v1.billid=egcl_paymentdetail.billid INNER JOIN eg_echallan ON consumercode=challanno WHERE eg_echallan.tenantid=? AND eg_echallan.applicationstatus='PAID' AND egcl_paymentdetail.createdtime>? ";
+      public static final String TOTAL_COLLECTION_QUERY = "SELECT sum(amountpaid) FROM egbs_billdetail_v1 INNER JOIN egcl_paymentdetail ON egbs_billdetail_v1.billid=egcl_paymentdetail.billid and egcl_paymentdetail.tenantid=egbs_billdetail_v1.tenantid INNER JOIN eg_echallan ON consumercode=challanno  and egbs_billdetail_v1.tenantid=eg_echallan.tenantid WHERE egbs_billdetail_v1.tenantid=? AND eg_echallan.applicationstatus='PAID' AND egcl_paymentdetail.createdtime>? ";
     
       public static final String TOTAL_SERVICES_QUERY = "SELECT count(distinct(businessservice)) FROM eg_echallan WHERE tenantid=? AND createdtime>? ";
 
