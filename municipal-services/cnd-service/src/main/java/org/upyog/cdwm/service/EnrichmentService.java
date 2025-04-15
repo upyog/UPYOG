@@ -15,6 +15,7 @@ import org.upyog.cdwm.util.CNDServiceUtil;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.FacilityCenterDetail;
 import org.upyog.cdwm.web.models.WasteTypeDetail;
 
 import digit.models.coremodels.AuditDetails;
@@ -75,6 +76,15 @@ public class EnrichmentService {
                 wasteTypeDetail.setApplicationId(applicationId);
             }
         }
+        
+        FacilityCenterDetail facilityCentreDetail = cndApplicationDetails.getFacilityCenterDetail();
+        if (facilityCentreDetail != null) { 	
+        	String disposalId = CNDServiceUtil.getRandomUUID();
+        	facilityCentreDetail.setDisposalId(disposalId);
+        	facilityCentreDetail.setApplicationId(applicationId);
+        	
+        	}
+        
         
         List<DocumentDetail> documentDetails = cndApplicationDetails.getDocumentDetails();
         if (documentDetails != null) {

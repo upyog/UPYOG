@@ -102,13 +102,19 @@ public class MessageServiceImpl implements MessageService{
 			break;
 		}
 		
+
+		if (message.contains("PAY NOW")) {
+		   
+		    link = util.getPayUrl(cndApplicationDetail, message);
+		}
 		
-		Map<String, String> messageMap = new HashMap<String, String>();
-		messageMap.put(NotificationConstants.ACTION_LINK, link);
+		Map<String, String> messageMap = new HashMap<>();
+		messageMap.put(NotificationConstants.ACTION_LINK, link); 
 		messageMap.put(NotificationConstants.MESSAGE_TEXT, message);
-		
+
 		log.info("getCustomizedMsg messageTemplate : " + message);
 		return messageMap;
+
 
 	}
 

@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +37,7 @@ public class  FacilityCenterDetail {
 
     private String dumpingStationName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime disposalDate;
 
     private String disposalType;

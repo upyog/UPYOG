@@ -4,6 +4,7 @@ import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.CNDServiceSearchCriteria;
 import org.upyog.cdwm.web.models.DocumentDetail;
+import org.upyog.cdwm.web.models.FacilityCenterDetail;
 import org.upyog.cdwm.web.models.WasteTypeDetail;
 
 import java.util.List;
@@ -24,5 +25,7 @@ public interface CNDServiceRepository {
 	List<WasteTypeDetail> getCNDWasteTypeDetail(CNDServiceSearchCriteria cndServiceSearchCriteria);
 	
 	List<DocumentDetail> getCNDDocumentDetail(CNDServiceSearchCriteria cndServiceSearchCriteria);
+
+	List<FacilityCenterDetail> getCNDFacilityCenterDetail(CNDServiceSearchCriteria cndServiceSearchCriteria);
 
 }

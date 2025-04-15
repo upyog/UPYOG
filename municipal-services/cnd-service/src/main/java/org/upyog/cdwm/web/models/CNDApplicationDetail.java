@@ -44,7 +44,7 @@ public class CNDApplicationDetail {
     
     private String description;
     
-    private String location;
+    private String locality;
     
     private String wasteType;
     
