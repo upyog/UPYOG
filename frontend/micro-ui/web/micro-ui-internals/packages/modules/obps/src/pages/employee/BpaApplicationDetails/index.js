@@ -9,7 +9,7 @@ import orderBy from "lodash/orderBy";
 import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
 import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
-
+import useWorkflowDetails from "../../../../../../libraries/src/hooks/workflow";
 const BpaApplicationDetail = () => {
 
   const { id } = useParams();
@@ -183,7 +183,7 @@ const BpaApplicationDetail = () => {
 
   let configs =  newConfig?.InspectionReportConfig ? newConfig?.InspectionReportConfig : newConfigFI;
   
-  let workflowDetails = Digit.Hooks.useWorkflowDetails({
+  let workflowDetails = useWorkflowDetails({
     tenantId: tenantId,
     id: id,
     moduleCode: "BPA",
