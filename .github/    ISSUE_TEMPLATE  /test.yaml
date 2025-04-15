@@ -1,1 +1,20 @@
+name: Bug Report
+description: Report a bug to help us improve.
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: input
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you saw.
+    validations:
+      required: true
 
