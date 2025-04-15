@@ -23,6 +23,8 @@ const EmployeeApp = () => {
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const EditCreate = Digit?.ComponentRegistryService?.getComponent("EditCreate");
   const EditResponse = Digit?.ComponentRegistryService?.getComponent("EditSubmissionResponse");
+  const FacilityCentreCreationDetails = Digit?.ComponentRegistryService?.getComponent("FacilityCentreCreationDetails");
+  const FacilitySubmissionResponse = Digit?.ComponentRegistryService?.getComponent("FacilitySubmissionResponse");
 
   return (
     <span className={"cnd-citizen"}style={{width:"100%"}}>
@@ -47,6 +49,9 @@ const EmployeeApp = () => {
           <PrivateRoute path={`${path}/cnd-service/edit/:id`} component={() => <EditCreate parentUrl={url} />} />
           <PrivateRoute path={`${path}/edit-response`} component={(props) => <EditResponse {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/my-request`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/cnd-service/facility-centre/:id`} component={() => <FacilityCentreCreationDetails parentUrl={url} />} />
+          <PrivateRoute path={`${path}/facility-response`} component={(props) => <FacilitySubmissionResponse {...props} parentRoute={path} />} />
+
         </AppContainer>
       </Switch>
     </span>

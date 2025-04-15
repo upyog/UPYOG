@@ -17,7 +17,7 @@ const CNDVendorCard = () => {
       tenantId: tenantId,
       ModuleCode: "CND",
       filters: { limit: 10, offset: 0, services: ["cnd"] },
-  
+
       config: {
         select: (data) => {
           return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";

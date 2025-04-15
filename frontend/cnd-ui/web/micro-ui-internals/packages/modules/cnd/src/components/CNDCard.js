@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-components";
 /**
@@ -8,11 +8,23 @@ import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-co
 
 const CNDCard = () => {
   const { t } = useTranslation();
-  const user = Digit.UserService.getUser().info;
+  const [total, setTotal] = useState("-");
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  let filter1 =  { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
-  // Through the search Call i am extracting the Counts to show the total Application
-  const { data } = Digit.Hooks.cnd.useCndSearchApplication({ filters: filter1 });
+  const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
+    tenantId: tenantId,
+    ModuleCode: "CND",
+    filters: { limit: 10, offset: 0, services: ["cnd"] },
+    config: {
+      select: (data) => {
+        return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
+      },
+      enabled: Digit.Utils.cndUserAccess(),
+    },
+  });
+
+  useEffect(() => {
+        if (!isFetching && isSuccess) setTotal(data);
+      }, [isFetching]);
 
   if (!Digit.Utils.cndUserAccess()) {
     return null;
@@ -20,7 +32,7 @@ const CNDCard = () => {
 
   const links = [
     {
-      count: data?.count,
+      count: total?.totalCount,
       label: t("CND_INBOX"),
       link: `/cnd-ui/employee/cnd/inbox`,
     },
@@ -35,7 +47,7 @@ const CNDCard = () => {
     Icon: <PropertyHouse />,
     moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("MODULE_CND")}</div>,
     kpis: [{
-      count: data?.count,
+      count: total?.totalCount,
       label: t("CND_APPLICANT_COUNT"),
       link: `/cnd-ui/employee/cnd/inbox`,
   }],

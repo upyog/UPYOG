@@ -33,7 +33,6 @@ const CndApplicationDetails = () => {
   let  cndData = (cndApplicationDetail && cndApplicationDetail.length > 0 && cndApplicationDetail[0]) || {};
   const application =  cndData;
   sessionStorage.setItem("cnd-application", JSON.stringify(application));
-  console.log("cndDatacndData",cndData);
   const [loading, setLoading]=useState(false);
 
   const fetchBillData=async()=>{
@@ -180,12 +179,34 @@ const CndApplicationDetails = () => {
               label={t("CND_SCHEDULE_PICKUP")}
               text={cndData?.requestedPickupDate} 
             />
+            {
+              cndData?.applicationStatus==="COMPLETED" &&(
+              <Row
+              className="border-none"
+              label={t("CND_EMP_SCHEDULE_PICKUP")}
+              text={cndData?.pickupDate} 
+            />
+              )
+            }
             <Row
               className="border-none"
               label={t("CND_AREA_HOUSE")}
               text={cndData?.houseArea} 
             />
           </StatusTable>
+
+          {cndData?.applicationStatus==="COMPLETED" &&(
+          <React.Fragment>
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("CND_FACILITY_DETAILS")}</CardSubHeader>
+          <StatusTable>
+            <Row className="border-none" label={t("CND_DISPOSE_DATE")} text={cndData?.facilityCenterDetail?.disposalDate?.split(" ")[0] || t("CS_NA")} />
+            <Row className="border-none" label={t("CND_DISPOSE_TYPE")} text={cndData?.facilityCenterDetail?.disposalType || t("CS_NA")} />
+            <Row className="border-none" label={t("CND_DISPOSAL_SITE_NAME")} text={cndData?.facilityCenterDetail?.nameOfDisposalSite || t("CS_NA")} />
+            <Row className="border-none" label={t("CND_DUMPING_STATION")} text={cndData?.facilityCenterDetail?.dumpingStationName|| t("CS_NA")} />
+            <Row className="border-none" label={t("CND_GROSS_WEIGHT")} text={cndData?.facilityCenterDetail?.grossWeight || t("CS_NA")} />
+            <Row className="border-none" label={t("CND_NET_WEIGHT")} text={cndData?.facilityCenterDetail?.netWeight|| t("CS_NA")} />
+          </StatusTable>
+          </React.Fragment>)}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("COMMON_APPLICANT_NAME")} text={cndData?.applicantDetail?.nameOfApplicant || t("CS_NA")} />
@@ -204,8 +225,18 @@ const CndApplicationDetails = () => {
             <Row className="border-none" label={t("PINCODE")} text={cndData?.addressDetail?.pinCode|| t("CS_NA")} />
           </StatusTable>
 
+          <CardSubHeader style={{ fontSize: "24px" }}>{t("CND_WASTE_DETAILS")}</CardSubHeader>
+          <StatusTable>
+              {cndData.wasteTypeDetails.map((material, index) => (
+              <Row
+                className="border-none"
+                key={`waste-material-${index}`}
+                label={`${t("CND_WASTE_TYPE")} ${index + 1}`}
+                text={material.wasteType + ", "+material.quantity+" "+material.metrics}
+              />
+            ))}
+          </StatusTable>
 
-         
           <CNDApplicationTimeLine application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast
