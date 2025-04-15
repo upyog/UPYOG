@@ -52,6 +52,7 @@ const FacilityCentreCreate = () => {
 
 
   const onSubmit = (data) => {
+    console.log("datatattata",data);
     const user = Digit.UserService.getUser();
     const formData = {
       tenantId: applicationDetails?.applicationData?.applicationData?.tenantId,
@@ -75,7 +76,7 @@ const FacilityCentreCreate = () => {
         totalWasteQuantity: applicationDetails?.applicationData?.applicationData?.totalWasteQuantity,
         typeOfConstruction: applicationDetails?.applicationData?.applicationData?.typeOfConstruction,
         noOfTrips: 0,
-        pickupDate:data?.wasteType?.pickupDate,
+        pickupDate:data?.wasteType?.pickupDate||applicationDetails?.applicationData?.applicationData?.pickupDate,
         requestedPickupDate:data?.wasteType?.pickupDate || applicationDetails?.applicationData?.applicationData?.requestedPickupDate,
         facilityCenterDetail: {
             applicationId: applicationDetails?.applicationData?.applicationData?.applicationId,

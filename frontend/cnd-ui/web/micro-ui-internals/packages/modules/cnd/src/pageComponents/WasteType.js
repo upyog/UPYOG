@@ -286,12 +286,12 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           <TextInput
             t={t}
             type={"text"}
-            isMandatory={false}
+            isMandatory={true}
             optionKey="i18nKey"
             name="wasteQuantity"
             value={wasteQuantity}
             onChange={setWasteQuantity}
-            style={{width:isInPickupProgress?"72%":inputStyles}}
+            style={{width:isInPickupProgress?"72%":userType === "EMPLOYEE" ? "50%" : "100%"}}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
