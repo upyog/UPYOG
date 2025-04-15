@@ -87,7 +87,7 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                 title : t("BPA_BASIC_DETAILS_TITLE"),
                 values:[
                     { 
-                        title: application?.businessService !== t("BPA_OC") ? t("BPA_EDCR_NO_LABEL") : t("BPA_OC_EDCR_NO_LABEL"), 
+                        title: application?.businessService ==="BPA-PAP" ? t("BPA_DRAWING_NUMBER") : application?.businessService !== t("BPA_OC") ? t("BPA_EDCR_NO_LABEL") : t("BPA_OC_EDCR_NO_LABEL"), 
                         value: application?.edcrNumber || "NA" 
                     },
                     { 
