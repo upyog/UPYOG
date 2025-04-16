@@ -1,5 +1,5 @@
 {
-  "name": "@egovernments/digit-ui-module-fsm",
+  "name": "@upyog/digit-ui-module-fsm",
   "version": "1.7.0-beta.5",
   "license": "MIT",
   "main": "dist/index.js",
@@ -19,7 +19,7 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-    "@egovernments/digit-ui-react-components": "^1.7.0-beta.2",
+    "@upyog/digit-ui-react-components": "^1.8.0",
     "microbundle-crl":  "0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",

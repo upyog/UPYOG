@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CheckBox, CardLabel, LabelFieldPair, TextArea } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CheckBox, CardLabel, LabelFieldPair, TextArea } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
@@ -30,9 +30,16 @@ const SelectOwnerAddress = ({ t, config, onSelect, userType, formData, ownerInde
       let obj = {
         doorNo: address?.doorNo,
         street: address?.street,
+        dagNo: address?.dagNo,
+        pattaNo: address?.pattaNo,
+        village: address?.village,
+        commonNameOfBuilding: address?.commonNameOfBuilding,
+        principalRoadName: address?.principalRoadName,
+        subSideRoadName: address?.subSideRoadName,
+        typeOfRoad: address?.typeOfRoad?.i18nkey,
         landmark: address?.landmark,
         locality: address?.locality?.i18nkey,
-        city: address?.city?.code,
+        city: address?.city?.name,
         pincode: address?.pincode,
       };
 

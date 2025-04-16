@@ -1,7 +1,7 @@
 import React from "react";
 
 const Label = (props) => {
-  return <h4 className="h4">{props.children}</h4>;
+  return <h2 className="" style={{marginBottom: "5px"}}>{props.children}</h2>;
 };
 
 export default Label;

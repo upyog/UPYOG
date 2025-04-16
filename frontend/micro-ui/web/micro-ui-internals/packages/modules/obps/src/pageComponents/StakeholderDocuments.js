@@ -9,7 +9,7 @@ import {
     CitizenInfoLabel,
     OpenLinkContainer,
     BackButton
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const StakeholderDocuments = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {

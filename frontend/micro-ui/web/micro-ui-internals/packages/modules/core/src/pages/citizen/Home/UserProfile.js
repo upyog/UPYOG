@@ -10,7 +10,7 @@ import {
   BreadCrumb,
   BackButton,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -453,7 +453,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 onClick={updateProfile}
                 style={{
                   marginTop: "24px",
-                  backgroundColor: "#a82227",
+                  backgroundColor: "#0f4f9e",
                   width: "100%",
                   height: "40px",
                   color: "white",
@@ -572,7 +572,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
               <LabelFieldPair>
                 <div>
-                  <a style={{ color: "#a82227", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
+                  <a style={{ color: "#0f4f9e", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
                     {t("CORE_COMMON_CHANGE_PASSWORD")}
                   </a>
                   {changepassword ? (
@@ -649,7 +649,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             onClick={updateProfile}
             style={{
               marginTop: "24px",
-              backgroundColor: "#a82227",
+              backgroundColor: "#0f4f9e",
               width: windowWidth < 768 ? "100%" : "248px",
               height: "40px",
               float: "right",
