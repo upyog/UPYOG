@@ -1052,12 +1052,7 @@ public class EstimationService {
 		String assessmentNumber = null != detail.getAssessmentNumber() ? detail.getAssessmentNumber() : criteria.getAssessmentNumber();
 		String tenantId = null != property.getTenantId() ? property.getTenantId() : criteria.getTenantId();
 		boolean isHeritage=false;
-		if(units.size()==CALCULATION_1)
-			if(units.get(0).getAgeOfProperty().equalsIgnoreCase(HERITAGE_PROPERTY)) {
-				isHeritage=true;
-				detail.setExemption(EXEMPTION_E);;
-				
-			}
+		
 				
 
 		
@@ -1115,6 +1110,12 @@ public class EstimationService {
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
 		BigDecimal taxAfterVacExemption=BigDecimal.ZERO;
 		BigDecimal totalAmount=BigDecimal.ZERO;
+		
+		//Incase of Exemption and Heritage
+		if(units.size()==CALCULATION_1)
+			if(units.get(0).getAgeOfProperty().equalsIgnoreCase(HERITAGE_PROPERTY)) {
+				isHeritage=true;
+			}
 
 		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()))
 		{
@@ -1122,13 +1123,13 @@ public class EstimationService {
 				if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase(INDEPENDENTPROPERTY))
 				{
 					taxAfterVacExemption=vacantland.get(0).getVacantlandamount().setScale(CALCULATION_2, CALCULATION_2);
-					//if()
 					totalAmount=totalAmount.subtract(taxAfterVacExemption);
 					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_VACANT_LAND_EXEMPTION).category(Category.EXEMPTION).estimateAmount( taxAfterVacExemption.negate()).build());
 					taxAfterVacExemption=taxAmt.subtract(taxAfterVacExemption);
 				}
 			
-			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0)
+			//This line is added in case property is not an indipendentproperty
+			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0 && totalAmount.compareTo(BigDecimal.ZERO)>=0)
 				taxAfterVacExemption=taxAmt;
 
 			switch (criteria.getModeOfPayment()) {
@@ -1174,9 +1175,6 @@ public class EstimationService {
 
 		}
 		//Incase of Exemption and Heritage
-		else {
-			taxAmt = BigDecimal.ZERO;
-		}
 
 		penalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
 		
