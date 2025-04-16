@@ -113,7 +113,7 @@ public class EnrichmentService {
 	public void enrichStreetVendingApplicationUponUpdate(String applicationStatus, StreetVendingRequest vendingRequest) {
 		StreetVendingDetail vendingDetail = vendingRequest.getStreetVendingDetail();
 		vendingDetail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
-		vendingDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+		vendingDetail.getAuditDetails().setLastModifiedTime(StreetVendingUtil.getCurrentTimestamp());
 		vendingDetail.setApplicationStatus(applicationStatus);
 		//set validityDateForPersisterDate based on validityDate
 		vendingDetail.setValidityDateForPersisterDate(

@@ -23,6 +23,7 @@ import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.service.WorkflowService;
 import org.upyog.sv.util.MdmsUtil;
+import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.validator.StreetVendingValidator;
 import org.upyog.sv.web.models.BankDetail;
 import org.upyog.sv.web.models.RenewalStatus;
@@ -130,40 +131,77 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 	@Override
 	public StreetVendingDetail updateStreetVendingApplication(StreetVendingRequest vendingRequest) {
-		StreetVendingDetail existingApplication = validator
-				.validateApplicationExistence(vendingRequest.getStreetVendingDetail());
-
+		// Validate application existence
+		StreetVendingDetail existingApplication = validator.validateApplicationExistence(vendingRequest.getStreetVendingDetail());
 		if (existingApplication == null) {
 			throw new CustomException(StreetVendingConstants.INVALID_APPLICATION, "Application not found");
 		}
-        RenewalStatus renewalStatus = vendingRequest.getStreetVendingDetail().getRenewalStatus();
-		log.info("Renewal status: {}", renewalStatus);
-        // If RenewalStatus is RENEW_IN_PROGRESS, create demand and skip workflow service
-        if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
-            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-        } else {
-            // Call workflow service only if renewal status is NOT RENEW_IN_PROGRESS
-            State state = workflowService.updateWorkflowStatus(vendingRequest);
-            enrichmentService.enrichStreetVendingApplicationUponUpdate(state.getApplicationStatus(), vendingRequest);
-        }
-        // If action is APPROVE, create demand
-        if (StreetVendingConstants.ACTION_APPROVE.equals(vendingRequest.getStreetVendingDetail().getWorkflow().getAction())) {
-            demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
-        }
+		
+		// Process based on renewal status
+		StreetVendingDetail detail = vendingRequest.getStreetVendingDetail();
+		RenewalStatus renewalStatus = detail.getRenewalStatus();
+		log.info("Processing application update with renewal status: {}", renewalStatus);
+
+		// Handle renewal in progress
+		if (RenewalStatus.RENEW_IN_PROGRESS.equals(renewalStatus)) {
+			handleRenewalInProgress(vendingRequest); // Create demand and update validity date when user make direct payment for renewal
+		} else {
+			// Process normal workflow
+			processWorkflowForUpdate(vendingRequest);
+		}
+
+		// Create demand if action is APPROVE
+		if (StreetVendingConstants.ACTION_APPROVE.equals(detail.getWorkflow().getAction())) {
+			demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+		}
+		
+		// Handle encryption and update
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
 		streetVendingRepository.update(vendingRequest);
+		
+		// Restore original unencrypted fields for response
 		StreetVendingDetail streetVendingDetail = vendingRequest.getStreetVendingDetail();
 		streetVendingDetail.setVendorDetail(originalDetail.getVendorDetail());
 		streetVendingDetail.setBankDetail(originalDetail.getBankDetail());
+		
 		return streetVendingDetail;
 	}
 
-	@Override
-	public List<Demand> demandCreation(StreetVendingRequest vendingRequest) {
-		log.info("Generating demand for application no {} ",
-				vendingRequest.getStreetVendingDetail().getApplicationNo());
-		return demandService.createDemand(vendingRequest, extractTenantId(vendingRequest));
+	/**
+	 * Handle renewal in progress by creating demand and updating validity date
+	 * 
+	 * @param vendingRequest The street vending request
+	 */
+	private void handleRenewalInProgress(StreetVendingRequest vendingRequest) {
+		StreetVendingDetail detail = vendingRequest.getStreetVendingDetail();
+		String tenantId = extractTenantId(vendingRequest);
+		
+		// Create demand for renewal
+		demandService.createDemand(vendingRequest, tenantId);
+		
+		// Update validity date and audit details
+		detail.setValidityDateForPersisterDate(
+			detail.getValidityDate() != null ? detail.getValidityDate().toString() : null
+		);
+		detail.getAuditDetails().setLastModifiedBy(vendingRequest.getRequestInfo().getUserInfo().getUuid());
+		detail.getAuditDetails().setLastModifiedTime(StreetVendingUtil.getCurrentTimestamp());
+	}
+
+	/**
+	 * Process normal workflow by updating workflow status and enriching application
+	 * 
+	 * @param vendingRequest The street vending request
+	 */
+	private void processWorkflowForUpdate(StreetVendingRequest vendingRequest) {
+		// Update workflow status
+		State state = workflowService.updateWorkflowStatus(vendingRequest);
+		
+		// Enrich application with updated status
+		enrichmentService.enrichStreetVendingApplicationUponUpdate(
+			state.getApplicationStatus(), 
+			vendingRequest
+		);
 	}
 
 	private String extractTenantId(StreetVendingRequest request) {
