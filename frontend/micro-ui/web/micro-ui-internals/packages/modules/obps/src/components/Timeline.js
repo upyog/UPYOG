@@ -5,12 +5,25 @@ import { TickMark } from "@upyog/digit-ui-react-components";
 let actions = [];
 
 const getAction = (flow) => {
+  console.log("flowww",flow)
   switch (flow) {
     case "STAKEHOLDER":
       actions = ["BPA_LICENSE_DETAILS_LABEL", "BPA_NEW_ADDRESS_HEADER_DETAILS", "BPA_DOC_DETAILS_SUMMARY", "BPA_STEPPER_SUMMARY_HEADER"];
       break;
     case "OCBPA":
       actions = ["BPA_BASIC_AND_PLOT_DETAILS_LABEL", "BPA_SCRUTINY_DETAILS", "BPA_DOCUMENT_AND_NOC_DETAILS_LABEL", "BPA_STEPPER_SUMMARY_HEADER"];
+      break;
+    case "PRE_APPROVE":
+      actions = [
+        "BPA_STEPPER_PRE_APPROVE_DETAILS",
+        "BPA_BASIC_DETAILS",
+        "BPA_PLOT_DETAILS",
+        "BPA_PLAN_DETAILS",
+        "BPA_LOCATION_DETAILS",
+        "BPA_OWNER_DETAILS",
+        "BPA_DOCUMENT_DETAILS",
+        "BPA_STEPPER_SUMMARY_HEADER",
+      ]
       break;
     default:
       actions = [

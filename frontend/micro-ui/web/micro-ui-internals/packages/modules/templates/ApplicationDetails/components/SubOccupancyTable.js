@@ -56,7 +56,7 @@ const SubOccupancyTable = ({ edcrDetails, applicationData }) => {
       floors.push({
         Floor: ob?.floorName||t(`BPA_FLOOR_NAME_${ob.number}`),
         Level: ob?.number || ob?.floorNo,
-        Occupancy:t(`${ob.occupancies?.[0]?.type}`)||"NA",
+        Occupancy:t(`${applicationData?.businessService==="BPA-PAP"?"Residential": ob.occupancies?.[0]?.type}`)||"NA",
         BuildupArea: ob?.occupancies?.[0]?.builtUpArea || ob?.builtUpArea,
         FloorArea: ob?.occupancies?.[0]?.floorArea || ob?.builtUpArea,
         CarpetArea: ob?.occupancies?.[0]?.carpetArea || 0,
