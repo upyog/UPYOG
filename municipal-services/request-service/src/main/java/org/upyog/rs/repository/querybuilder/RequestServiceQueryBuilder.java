@@ -29,7 +29,7 @@ public class RequestServiceQueryBuilder {
                     + "join public.upyog_rs_address_details addr on appl.applicant_id = addr.applicant_id ");
 
     private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY = (
-            "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, description, " +
+            "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, mobile_number, locality_code, description, " +
                     "delivery_from_date, delivery_to_date, delivery_from_time, delivery_to_time, vendor_id, " +
                     "vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_status, urmt.createdby, " +
                     "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id " +
@@ -126,6 +126,18 @@ public class RequestServiceQueryBuilder {
             // Add the booking numbers to the preparedStmtList
             String[] bookingNumbers = criteria.getBookingNo().split(",");
             Collections.addAll(preparedStmtList, bookingNumbers);
+        }
+
+        if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" urmt.mobile_number = ? ");
+            preparedStmtList.add(criteria.getMobileNumber());
+        }
+
+        if(!ObjectUtils.isEmpty(criteria.getLocalityCode())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" urmt.locality_code = ? ");
+            preparedStmtList.add(criteria.getLocalityCode());
         }
 
         if (!ObjectUtils.isEmpty(criteria.getStatus())) {

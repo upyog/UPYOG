@@ -94,7 +94,8 @@ public class EnrichmentService {
 		mobileToiletDetail.setBookingStatus(RequestServiceStatus.valueOf(mobileToiletDetail.getBookingStatus()).toString());
 		mobileToiletDetail.setAuditDetails(auditDetails);
 		mobileToiletDetail.setTenantId(mobileToiletRequest.getMobileToiletBookingDetail().getTenantId());
-
+		mobileToiletDetail.setMobileNumber(mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber());
+		mobileToiletDetail.setLocalityCode(mobileToiletRequest.getMobileToiletBookingDetail().getAddress().getLocalityCode());
 		List<String> customIds = getIdList(requestInfo, mobileToiletDetail.getTenantId(),
 				config.getMobileToiletApplicationKey(), config.getMobileToiletApplicationFormat(), 1);
 
