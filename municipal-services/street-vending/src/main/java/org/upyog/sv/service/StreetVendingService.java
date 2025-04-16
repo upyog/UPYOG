@@ -31,5 +31,4 @@ public interface StreetVendingService {
 
 	public String deleteStreetVendingDraft(String draftId);
 
-	public List<Demand> demandCreation(StreetVendingRequest vendingRequest);
 }
