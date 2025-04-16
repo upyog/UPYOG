@@ -20,7 +20,9 @@ import { scrutinyDetailsData } from "../utils";
 const BasicDetails = ({ formData, onSelect, config }) => {
   const [showToast, setShowToast] = useState(null);
   const [basicData, setBasicData] = useState(formData?.selectedPlot);
-  console.log("basicData", basicData)
+  
+  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot ? "PRE_APPROVE":"";
+  
   const [scrutinyNumber, setScrutinyNumber] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo);
   const [isDisabled, setIsDisabled] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo ? true : false);
   const { t } = useTranslation();
@@ -33,7 +35,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
     basicData?.planDetail?.blocks
   ) || "LOW";
   let user = Digit.SessionStorage.get("User")?.info?.name;
-  console.log("Userrr", user)
+  
 
   const handleKeyPress = async (event) => {
     if (event.key === "Enter") {
@@ -110,9 +112,9 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   return (
     <div>
       {showToast && <Toast error={true} label={t(`${showToast?.message}`)} onClose={closeToast} isDleteBtn={true} />}
-      <Timeline />
+      <Timeline currentStep={checkingFlow==="PRE_APPROVE" ? 2 : 1 } flow={checkingFlow}/>
       <div className={isMobile ? "obps-search" : ""} style={!isMobile ? { margin: "8px" } : {}}>
-        <Label>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP") ? t(`OBPS_SEARCH_EDCR_NUMBER`) : t("SEARCH_BY_DRAWING_NUMBER")}</Label>
+        <Label>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP") ? t(`OBPS_SEARCH_EDCR_NUMBER`) : t("DRAWING_NUMBER")}</Label>
         <TextInput
           className="searchInput"
           onKeyPress={handleKeyPress}
@@ -126,7 +128,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       </div>
       {basicData && (
         <Card>
-          <CardCaption>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP")?t(`BPA_SCRUTINY_DETAILS`):t(`BPA_DRAWING_DETAILS`)}</CardCaption>
+          <CardCaption>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP")?t(`BPA_SCRUTINY_DETAILS`):null}</CardCaption>
           <CardHeader>{t(`BPA_BASIC_DETAILS_TITLE`)}</CardHeader>
           <StatusTable>
             <Row

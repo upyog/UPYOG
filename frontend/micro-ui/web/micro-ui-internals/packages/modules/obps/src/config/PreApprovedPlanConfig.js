@@ -11,10 +11,10 @@ export const newConfig = [
           component: "BuildingPlanScrutiny",
           texts: {
             headerCaption: "",
-            header: "NEW_BUILDING_PLAN_SCRUTINY",
+            header: "PRE_APPROVED_APPLICATION_DETAILS",
             cardText: "",
-            submitBarLabel: "CS_COMMON_SUBMIT",
-            skipText: "CLEAR_FORM"
+            submitBarLabel: "CS_COMMON_PROCEED",
+            
 
           },
           nextStep: "BasicDetails",
@@ -41,26 +41,9 @@ export const newConfig = [
             header: "BPA_PLOT_DETAILS_TITLE",
             cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
-            skipText: "CORE_COMMON_SKIP_CONTINUE",
+            // skipText: "CORE_COMMON_SKIP_CONTINUE",
           },
-          inputs: [
-            {
-              label: "BPA_HOLDING_NUMBER_LABEL",
-              type: "text",
-              validation: {
-                // required: true,
-              },
-              name: "holdingNumber"
-            },
-            {
-              label: "BPA_BOUNDARY_LAND_REG_DETAIL_LABEL",
-              type: "textarea",
-              validation: {
-                // required: true
-              },
-              name: "registrationDetails"
-            }
-          ]
+          
         },
         {
           route: "scrutiny-details",
@@ -70,10 +53,10 @@ export const newConfig = [
           key: "subOccupancy",
           texts: {
             headerCaption: "",
-            header: "BPA_STEPPER_DRAWING_DETAILS_HEADER",
+            header: "BPA_STEPPER_PLAN_DETAILS_HEADER",
             cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
-            skipText:"CORE_COMMON_SKIP_CONTINUE",
+            
           },
         },
         {
@@ -83,7 +66,7 @@ export const newConfig = [
           hideInEmployee: true,
           key: "address",
           texts: {
-            headerCaption: "BPA_STEPPER_SCRUTINY_DETAILS_HEADER",
+            headerCaption: "",
             header: "BPA_NEW_TRADE_DETAILS_HEADER_DETAILS",
             cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
@@ -98,7 +81,7 @@ export const newConfig = [
           nextStep: "document-details",
           key: "owners",
           texts: {
-            headerCaption: "BPA_OWNER_AND_DOCUMENT_DETAILS_LABEL",
+            headerCaption: "",
             header: "BPA_APPLICANT_DETAILS_HEADER",
             submitBarLabel: "CS_COMMON_NEXT"
           }
@@ -109,7 +92,7 @@ export const newConfig = [
           nextStep: null,
           key: "documents",
           texts: {
-            headerCaption: "BPA_OWNER_AND_DOCUMENT_DETAILS_LABEL",
+            headerCaption: "",
             header: "BPA_DOCUMENT_DETAILS_LABEL",
             submitBarLabel: "CS_COMMON_NEXT",
           }

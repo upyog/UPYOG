@@ -533,7 +533,7 @@ export const OBPSService = {
         { title: "BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL", value: edcr?.applicationSubType||edcr?.drawingDetail?.serviceType },
         { title: "BPA_BASIC_DETAILS_OCCUPANCY_LABEL", value: edcr?.planDetail?.planInformation?.occupancy||edcr?.drawingDetail?.occupancy},
         { title: "BPA_BASIC_DETAILS_RISK_TYPE_LABEL", value: `WF_BPA_${riskType}`},
-        { title: "BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL", value: edcr?.planDetail?.planInformation?.applicantName },
+        { title: "BPA_BASIC_DETAILS_APPLICATION_NAME_LABEL", value: edcr?.planDetail?.planInformation?.applicantName || BPA?.additionalDetails?.applicantName },
       ]
     };
 
@@ -552,7 +552,7 @@ export const OBPSService = {
     };
 
     const scrutinyDetails = BPA?.businessService==="BPA-PAP" ? {
-      title: "BPA_STEPPER_DRAWING_DETAILS_HEADER",
+      title: "BPA_STEPPER_PLAN_DETAILS_HEADER",
       isScrutinyDetails: true,
       isBackGroundColor: true,
       additionalDetails: {
@@ -561,7 +561,9 @@ export const OBPSService = {
           { title:  "BPA_DRAWING_NUMBER" , value: BPA?.edcrNumber || "NA" },
         ],
         scruntinyDetails: [
-          { title: "BPA_UPLOADED_PLAN_DIAGRAM", value: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl, text: "Uploaded Plan.pdf" },
+          { title: "BPA_UPLOADED_PDF_DIAGRAM", value: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl, text: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName },
+          { title: "BPA_UPLOADED_IMAGE_DIAGRAM", value: edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl, text: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileName},
+          { title: "BPA_UPLOADED_CAD_DIAGRAM", value: edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl, text: edcr?.updatedDxfFile|| edcr?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName },
         ]
       }
     }:{
@@ -586,7 +588,7 @@ export const OBPSService = {
       isBackGroundColor: true,
       additionalDetails: {
         values: [
-          { title: BPA?.businessService !== "BPA_OC" ? "BPA_BUILDING_EXTRACT_HEADER" : "BPA_ACTUAL_BUILDING_EXTRACT_HEADER", value : " ", isHeader: true},
+          { title:BPA?.businessService==="BPA-PAP" ? "BPA_BUILDING_EXTRACT_DETAILS": BPA?.businessService !== "BPA_OC" ? "BPA_BUILDING_EXTRACT_HEADER" :"BPA_ACTUAL_BUILDING_EXTRACT_HEADER", value : " ", isHeader: true},
           { title: "BPA_TOTAL_BUILT_UP_AREA_HEADER", value: edcr?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea||edcr?.drawingDetail?.totalBuitUpArea, isUnit: "BPA_SQ_MTRS_LABEL"},
           { title: "BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL", value: edcr?.planDetail?.blocks?.[0]?.building?.totalFloors || edcr?.drawingDetail?.blocks[0]?.building?.totalFloors||"NA" },
           { title: "BPA_HEIGHT_FROM_GROUND_LEVEL", value: edcr?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeigh||edcr?.drawingDetail?.blocks[0]?.building?.buildingHeight ,  isUnit: "BPA_MTRS_LABEL" }
@@ -614,7 +616,7 @@ export const OBPSService = {
       isTitleRepeat: true,
       additionalDetails: {
         values: [
-          { title: "BPA_OCC_SUBOCC_HEADER", value : " ", isHeader: true} 
+          { title: BPA?.businessService==="BPA-PAP"?"BPA_BLOCK_HEADER":"BPA_OCC_SUBOCC_HEADER", value : " ", isHeader: true} 
         ],
         subOccupancyTableDetails: [
           { title: "BPA_APPLICATION_DEMOLITION_AREA_LABEL", value: edcr },

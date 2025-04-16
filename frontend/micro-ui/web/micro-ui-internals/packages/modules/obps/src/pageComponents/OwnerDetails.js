@@ -25,6 +25,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [isDisable, setIsDisable] = useState(false);
     const [ownerRoleCheck, setownerRoleCheck] = useState({});
     let Webview = !Digit.Utils.browser.isMobile();
+    const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot ? "PRE_APPROVE":"";
     const ismultiple = ownershipCategory?.code.includes("MULTIPLEOWNERS") ? true : false;
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
@@ -433,8 +434,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 // Additonal details
                 payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
-                if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
-                if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
+                if (formData?.data?.holdingNumber||formData?.holdingNumber) payload.additionalDetails.holdingNo = formData?.holdingNumber||formData?.data?.holdingNumber;
+                if (formData?.data?.registrationDetails||formData?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.registrationDetails||formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
                 //For LandInfo
@@ -510,7 +511,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             if(flag !== 1 && (!ob?.name || !ob?.mobileNumber || !ob?.gender?.code) )
             flag = 1;
         })
-        console.log("flag",flag)
+        
         if(flag == 0)
         return false;
         else
@@ -568,7 +569,7 @@ useEffect(()=>{
 
     return (
         <div>
-        <Timeline currentStep={2} />
+        <Timeline currentStep={checkingFlow === "OCBPA"  ? 2 : checkingFlow==="PRE_APPROVE"? 6 : 1 } flow={checkingFlow}/>
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={canmovenext || getCanMoveNextMultiple() || !ownershipCategory || isDisable || showToast} forcedError={t(error)}>   
             {!isLoading ?
                 <div style={{marginBottom: "10px"}}>

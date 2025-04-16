@@ -20,7 +20,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
     const [error, setError] = useState(null);
     const [enableSubmit, setEnableSubmit] = useState(true)
     const [checkRequiredFields, setCheckRequiredFields] = useState(false);
-    const checkingFlow = formData?.uiFlow?.flow;
+    const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.businessService==="BPA-PAP" ? "PRE_APPROVE":"";
     const beforeUploadDocuments = cloneDeep(formData?.PrevStateDocuments || []);
     const {data: bpaTaxDocuments, isLoading} = Digit.Hooks.obps.useBPATaxDocuments(stateId, formData, beforeUploadDocuments || []);
     const handleSubmit = () => {
@@ -57,7 +57,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
 
     return (
         <div>
-            <Timeline currentStep={checkingFlow === "OCBPA" ? 3 : 2} flow= {checkingFlow === "OCBPA" ? "OCBPA" : ""}/>
+        <Timeline currentStep={checkingFlow === "OCBPA"  ? 3 : checkingFlow==="PRE_APPROVE"? 7 : 2 } flow={checkingFlow}/>    
             {!isLoading ?
                 <FormStep
                     t={t}

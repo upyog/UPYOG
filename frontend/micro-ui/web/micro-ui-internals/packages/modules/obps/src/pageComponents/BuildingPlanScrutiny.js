@@ -1,9 +1,12 @@
-import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon,  Row, ImageViewer, StatusTable, Header, SubmitBar } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon,  Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
 import DisplayPhotos from "../../../../react-components/src/atoms/DisplayPhotos";
 import React, { useEffect, useState } from "react";
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 import  usePreApprovedSearch  from "../../../../libraries/src/hooks/obps/usePreApprovedSearch";
+import { useTranslation } from "react-i18next";
+import { Link, useHistory, useParams } from "react-router-dom";
 import useEstimateDetails from "../../../../libraries/src/hooks/obps/useEstimateDetails";
+import Timeline from "../components/Timeline";
 const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [isPlanApproved, setIsPlanApproved] = useState(formData?.isPlanApproved || "");
@@ -37,14 +40,14 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   ];
 
   const projectComponentOptions = [
-    { code: "PRE_APPROVED_RESIDENTIAL", key: "PreApproved Residential" },
+    { code: "PRE_APPROVED_RESIDENTIAL", key: "Residential" },
     { code: "OTHERS", key: "Others" },
   ];
   const [searchData, setSearchData] = useState(null); 
   const [estimatePayload, setEstimatePayload] = useState(null); 
   const preApprovedResponse = usePreApprovedSearch(searchData, {enabled:searchData!==null});
   const estimateResponse = useEstimateDetails({CalulationCriteria:estimatePayload},estimatePayload!==null?true:false, null)
-  
+ 
   const getPreApprovedPlanDetails = async() => {
     const data = { 
       plotLengthInFeet: lengthInInches ? parseInt(lengthInFeet) + parseInt((lengthInInches * (1 / 12))) : parseInt(lengthInFeet), 
@@ -84,10 +87,12 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     setError("");
   };
   useEffect(() => {
-    if (isPlanApproved?.code === "NO" || projectComponent?.code === "OTHERS") {
-      setError(t("PRE_APPROVED_PLAN_CANNOT_CREATED_WITH_SELECTED"));
+    if (isPlanApproved?.code === "NO") {
+      setError(t("PRE_APPROVED_PLAN_CANNOT_CREATED_WITH_SELECTED_CRITERIA"));
     } else if (landStatus?.code === "BUILDING_CONSTRUCTED" || landStatus?.code === "UNDER_CONSTRUCTION") {
       setError(t("CANNOT_APPLY_FOR_PLOT_UNDER_CONSTRUCTION_ALREADY_CONSTRUCTED"));
+    } else if  (projectComponent?.code === "OTHERS"){
+      setError(t("PRE_APPROVED_PLAN_CAN_BE_CREATED_FOR_RESIDENTIAL"));
     } else {
       setError("");
     }
@@ -127,7 +132,7 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     if (res.data.fileStoreIds && res.data.fileStoreIds.length !== 0) {
       const fetchDrawingNo = preApprovedResponse.data.reduce((acc, plan) => {
         plan.documents.forEach(doc => {
-          acc[doc.fileStoreId] = plan.drawingNo;
+          acc[doc.fileStoreId] = plan.preApprovedCode;
         });
         return acc;
       }, {});
@@ -149,7 +154,7 @@ const getDetailsRow = (estimateDetails) => {
       <div>
       <StatusTable>
       <Header style={{marginTop:"18px", marginBottom:"10px"}}>{t("BPA_FEE_DETAILS")}</Header>
-      <Row label={t("BPA_DRAWING_NUMBER")} text={estimateDetails?.BPA?.edcrNumber || "NA"} />
+      <Row label={t("BPA_DRAWING_NUMBER")} text={selectedPlot?.preApprovedCode || "NA"} />
       {estimateDetails?.taxHeadEstimates.map((item, index) => (
         <Row key={index} label={t(`${item.taxHeadCode}`)} text={item.estimateAmount} />
       ))}  
@@ -163,6 +168,14 @@ const getDetailsRow = (estimateDetails) => {
   function zoomImage(imageSource, index) {
     setImageZoom(imageSource);
   }
+  const ActionButton = ({ label, jumpTo }) => {
+    const { t } = useTranslation();
+    const history = useHistory();
+    function routeTo() {
+      location.href = jumpTo;
+    }
+    return <LinkButton style={{marginTop:"-0.5px" }} label={t(label)} onClick={routeTo} />;
+  };
   function zoomImageWrapper(imageSource, index){
       zoomImage(imagesToShowBelowComplaintDetails?.fullImage[index]);
       const selectedObject = preApprovedResponse?.data.find(obj => {
@@ -200,11 +213,12 @@ const getDetailsRow = (estimateDetails) => {
 
   return (
     <div>
+    <Timeline currentStep={1} flow="PRE_APPROVE" /> 
     <FormStep
       t={t}
       config={config}
       onSelect={handleNext}
-      onSkip={onSkip}
+      
       isDisabled={!isPlanApproved?.code || !landStatus?.code || !projectComponent?.code || error || !estimateResponse?.data?.Calculations}
     >
       <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
@@ -292,7 +306,7 @@ const getDetailsRow = (estimateDetails) => {
                 value={abuttingRoadWidth || ''}
                 onChange={handleInputChange(setAbuttingRoadWidth)}
               />
-              <div style={{ marginTop: "10px"}}>
+              <div style={{ marginTop: "10px", marginBottom:"10px"}}>
                <SubmitBar label={t("SEARCH")}  onSubmit={getPreApprovedPlanDetails} disabled={!lengthInFeet || ! widthInFeet || !abuttingRoadWidth}/> 
               </div>
             </React.Fragment>
@@ -303,35 +317,44 @@ const getDetailsRow = (estimateDetails) => {
               <CardLabel style={{ marginTop: '18px', fontWeight: 'bolder', marginBottom: "15px" }}>{t("")}</CardLabel>
               <DisplayPhotos srcs={imagesToShowBelowComplaintDetails} onClick={(source, index) => zoomImageWrapper(source, index)} />
             </div>
-          ) : <div style={{ marginBottom: "15px", marginTop: "18px" }}>{t("PLOTS_NOT_AVAILABLE")}</div>}
+          ) : null}
+          {preApprovedResponse?.data && preApprovedResponse?.data.length===0 ? (
+            <div style={{ marginBottom: "15px", marginTop: "18px" }}>{t("PLOTS_NOT_AVAILABLE")}</div>
+          ):null}
           
           {estimateResponse?.data?.Calculations ? (
             getDetailsRow(estimateResponse?.data?.Calculations[0])
           ) : null}
           
-          {selectedPlot && selectedPlot?.documents?.length > 0 && (
-            <div style={{ marginTop: "20px", display: "flex", gap: "10px", marginBottom: "10px" }}>
-              {selectedPlot?.documents?.map((doc, index) => (
-                <div
-                  key={index}
-                  style={{
-                    padding: '10px',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    width: "auto",
-                    display: 'flex',
-                    alignItems: 'center',
-                    backgroundColor: 'lightgoldenrodyellow'
-                  }}
-                  onClick={() => window.location.href = doc?.additionalDetails?.fileUrl}
-                >
-                  <CardLabel style={{ color: 'rgb(255, 133, 27)' }}>{t(`${doc?.additionalDetails?.title}`)}</CardLabel>
-                </div>
-              ))}
+          {selectedPlot && selectedPlot?.documents?.length > 0 ? (
+            <div>
+            <Header>{t("PLAN_DRAWING_IMAGES")}</Header>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontWeight: "bold", marginRight: "2rem"}}>{t("BPA_UPLOADED_PDF_DIAGRAM")}</span>
+                <ActionButton
+                  label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName)}
+                  jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl}
+                />
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontWeight: "bold", marginRight: "2rem" }}>{t("BPA_UPLOADED_CAD_DIAGRAM")}</span>
+                <ActionButton
+                  label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName)}
+                  jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl}
+                />
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontWeight: "bold", marginRight: "1rem" }}>{t("BPA_UPLOADED_IMAGE_DIAGRAM")}</span>
+                <ActionButton
+                  label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileName)}
+                  jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl}
+                />
+              </div>
             </div>
-          )}
+        ) : null}
+          
         </div>
         
         <div style={{ marginLeft: "20px", display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "40px" }}>

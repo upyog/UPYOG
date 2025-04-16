@@ -28,7 +28,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   //let scrutinyNumber = `DCR82021WY7QW`;
   let user = Digit.UserService.getUser();
   const tenantId = user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
-  const checkingFlow = formData?.uiFlow?.flow;
+  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow : formData?.selectedPlot ? "PRE_APPROVE" : "";
   const [showToast, setShowToast] = useState(null);
   const stateCode = Digit.ULBService.getStateId();
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["SubOccupancyType"]);
@@ -220,8 +220,8 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   if (isMdmsLoading) return <Loader /> 
   return (
     <React.Fragment>
-      <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : 1} flow={checkingFlow === "OCBPA" ? "OCBPA" : ""} />
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} /* isDisabled={Object.keys(subOccupancyObject).length === 0} */>
+      <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : checkingFlow==="PRE_APPROVE"? 4: 1 } flow={checkingFlow}/>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={!(formData?.data?.edcrDetails?.drawingDetail) ? onSkip : undefined}  /* isDisabled={Object.keys(subOccupancyObject).length === 0} */>
         <CardSubHeader style={{ fontSize: "20px" }}>{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_DRAWING_DETAILS"):t("BPA_EDCR_DETAILS")}</CardSubHeader>
         <StatusTable style={{ border: "none" }}>
           <Row
@@ -232,23 +232,45 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             labelStyle={{wordBreak: "break-all"}} 
             textStyle={{wordBreak: "break-all"}}
           ></Row>
+          
+          {formData?.data?.edcrDetails?.drawingDetail ? (
+            <div>
+            <Row
+            className="border-none"
+            label={t("BPA_UPLOADED_PDF_DIAGRAM")}
+            text={<ActionButton label={t(formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName)} jumpTo={ formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl} />}
+          ></Row>
+            <Row
+            className="border-none"
+            label={t("BPA_UPLOADED_CAD_DIAGRAM")}
+            text={<ActionButton label={t(formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName)} jumpTo={ formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl} />}
+          ></Row>
           <Row
             className="border-none"
-            label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
-            text={<ActionButton label={t("Uploaded Plan.pdf")} jumpTo={data?.updatedDxfFile || formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl} />}
+            label={t("BPA_UPLOADED_IMAGE_DIAGRAM")}
+            text={<ActionButton label={t(formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileName)} jumpTo={ formData?.data?.edcrDetails?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl} />}
           ></Row>
+          </div>
+          ):null}
           {data?.planReport ? (
+            <div>
+            <Row
+            className="border-none"
+            label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
+            text={<ActionButton label={t("Uploaded Plan.pdf")}  jumpTo={data?.planReport}/>}
+          ></Row>
             <Row
             className="border-none"
             label={t("BPA_SCRUNTINY_REPORT_OUTPUT")}
             text={<ActionButton label={t("BPA_SCRUTINY_REPORT_PDF")} jumpTo={data?.planReport} />}
           ></Row>
+          </div>
           ):null}
           
         </StatusTable>
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
         <CardSubHeader style={{ fontSize: "20px" }}>
-          {checkingFlow === "OCBPA" ? t("BPA_ACTUAL_BUILDING_EXTRACT_HEADER") : t("BPA_BUILDING_EXTRACT_HEADER")}
+          {checkingFlow === "OCBPA" ? t("BPA_ACTUAL_BUILDING_EXTRACT_HEADER") : formData?.data?.edcrDetails?.drawingDetail ? t("BPA_BUILDING_EXTRACT_DETAILS"):t("BPA_BUILDING_EXTRACT_HEADER")}
         </CardSubHeader>
         <StatusTable style={{ border: "none" }}>
           <Row
@@ -276,7 +298,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           ></Row>
         </StatusTable>
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
-        <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
+        <CardSubHeader style={{ fontSize: "20px" }}>{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_BLOCK_HEADER"):t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
         {data?.planDetail?.blocks?.map((block, index) => (
           <div key={index} style={{ marginTop: "20px" }}>
             <CardSubHeader style={{ fontSize: "18px" }}>
@@ -321,7 +343,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             <div style={{ marginTop: "20px" }}>
               {checkingFlow === "OCBPA" ? (
                 <StatusTable>
-                  <Row className="border-none" label={`${t("BPA_SUB_OCCUPANCY_LABEL77")}`} text={getSubOccupancyValues(index)}></Row>
+                  <Row className="border-none" label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>
                 </StatusTable>
               ) : null}
               <div style={{ overflowX: "scroll" }}>
@@ -353,12 +375,12 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             <CardSubHeader style={{ fontSize: "18px" }}>
               {t("BPA_BLOCK_SUBHEADER")} {index + 1}
             </CardSubHeader>
-            {!(checkingFlow === "OCBPA") ? (
+            {!(checkingFlow === "OCBPA") && !(formData?.data?.edcrDetails?.drawingDetail) ? (
               <CardSectionHeader style={{ fontWeight: "normal" }} className="card-label-smaller">
                 {t("BPA_SUB_OCCUPANCY_LABEL")}
               </CardSectionHeader>
             ) : null}
-            {!(checkingFlow === "OCBPA") ? (
+            {!(checkingFlow === "OCBPA") && !(formData?.data?.edcrDetails?.drawingDetail)? (
               <MultiSelectDropdown
                 BlockNumber={block.number}
                 className="form-field"

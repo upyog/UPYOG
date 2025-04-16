@@ -25,9 +25,9 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";
     else if(value.businessService === "BPA"||value.businessService ==="BPA-PAP")
     BusinessService="BPA.NC_APP_FEE";
-
+    const checkingFlow = value?.businessService==="BPA-PAP"?"PRE_APPROVE":"";
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
-    console.log("dataa7777", data)
+    
     const isEditApplication = window.location.href.includes("editApplication");
     
       // for application documents
@@ -65,7 +65,14 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
     }
 
 
-
+    const ActionButton = ({ label, jumpTo }) => {
+      const { t } = useTranslation();
+      const history = useHistory();
+      function routeTo() {
+        location.href = jumpTo;
+      }
+      return <LinkButton label={t(label)} onClick={routeTo} />;
+    };
       const {data:paymentDetails} = Digit.Hooks.useFetchBillsForBuissnessService(
         { businessService: BusinessService, ...fetchBillParams, tenantId: tenantId },
         {
@@ -135,7 +142,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
           floors.push({
             Floor: ob?.floorName||t(`BPA_FLOOR_NAME_${ob.number}`),
             Level: ob?.number || ob?.floorNo,
-            Occupancy: "NA",
+            Occupancy:  value?.data?.occupancyType,
             BuildupArea: ob?.occupancies?.[0]?.builtUpArea || ob?.builtUpArea,
             FloorArea: ob?.occupancies?.[0]?.floorArea || ob?.builtUpArea,
             CarpetArea: ob?.occupancies?.[0]?.carpetArea || 0,
@@ -167,7 +174,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
 
     return (
     <React.Fragment>
-    <Timeline currentStep={4} />
+    <Timeline currentStep={checkingFlow==="PRE_APPROVE"? 8 : 4 } flow={checkingFlow}/>
     <Header styles={{marginLeft: "10px"}}>{t("BPA_STEPPER_SUMMARY_HEADER")}</Header>
     <Card style={{paddingRight:"16px"}}>
         <StatusTable>
@@ -196,23 +203,42 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
           <Row className="border-none" textStyle={{paddingLeft:"12px"}} label={t(`BPA_BOUNDARY_PLOT_AREA_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotArea ? `${datafromAPI?.planDetail?.planInformation?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}` : `${preApprovedResponse?.[0]?.drawingDetail?.plotArea} ${t(`BPA_SQ_FT_LABEL`)}`}/>
           <Row className="border-none" label={t(`BPA_PLOT_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.plotNo || value?.additionalDetails?.plotNo||"NA"} />
           <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.khataNo ||value?.additionalDetails?.khataNo||"NA"}/>
-          <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
-          <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={value?.additionalDetails?.holdingNo||data?.holdingNumber || t("CS_NA")} />
+          <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={value?.additionalDetails?.registrationDetails||data?.registrationDetails || t("CS_NA")} />
     </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
-    <CardHeader>{value.businessService==="BPA-PAP" ? t("BPA_DRAWING_DETAILS") : t("BPA_STEPPER_SCRUTINY_DETAILS_HEADER")}</CardHeader>
+    <CardHeader>{value.businessService==="BPA-PAP" ? t("BPA_STEPPER_PLAN_DETAILS_HEADER") : t("BPA_STEPPER_SCRUTINY_DETAILS_HEADER")}</CardHeader>
     <CardSubHeader style={{fontSize: "20px"}}>{value.businessService==="BPA-PAP" ? t("BPA_DRAWING_DETAILS") : t("BPA_EDCR_DETAILS")}</CardSubHeader>
     <StatusTable  style={{border:"none"}}>
       <Row className="border-none" label={value.businessService==="BPA-PAP" ? t("BPA_DRAWING_NUMBER") : t("BPA_EDCR_NO_LABEL")} text={data?.scrutinyNumber?.edcrNumber||value?.edcrNumber}></Row>
-      <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
+      {preApprovedResponse?.[0]?.documents ? (
+        <div>
+          <Row
+            className="border-none"
+            label={t("BPA_UPLOADED_IMAGE_DIAGRAM")}
+            text={<ActionButton label={t(preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileName)} jumpTo={ preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl} />}
+          ></Row>
+          <Row
+            className="border-none"
+            label={t("BPA_UPLOADED_PDF_DIAGRAM")}
+            text={<ActionButton label={t(preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName)} jumpTo={ preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl} />}
+          ></Row>
+          <Row
+            className="border-none"
+            label={t("BPA_UPLOADED_CAD_DIAGRAM")}
+            text={<ActionButton label={t(preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName)} jumpTo={ preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl} />}
+          ></Row>
+          </div>
+      ):null}
+       {datafromAPI?.planReport ? (
+        <div>
+        <CardSubHeader>{t("BPA_UPLOADED_PLAN_DIAGRAM")}</CardSubHeader>
       <LinkButton
         label={ <PDFSvg /> }
           onClick={() => routeTo(datafromAPI?.updatedDxfFile||preApprovedResponse?.[0]?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl)}
        />
        <p style={{ marginTop: "8px", marginBottom: "20px", textAlign:"Left", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{datafromAPI?.updatedDxfFile?t(`BPA_UPLOADED_PLAN_DXF`):t(`BPA_UPLOADED_PLAN_PDF`)}</p>
-       {datafromAPI?.planReport ? (
-        <div>
       <CardSubHeader>{t("BPA_SCRUNTINY_REPORT_OUTPUT")}</CardSubHeader>
       <LinkButton
         label={ <PDFSvg /> }
@@ -223,14 +249,14 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
        ):null}
       </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
-      <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_BUILDING_EXTRACT_HEADER")}</CardSubHeader>
+      <CardSubHeader style={{fontSize: "20px"}}>{preApprovedResponse?.[0]?.drawingDetail? t("BPA_BUILDING_EXTRACT_DETAILS") :t("BPA_BUILDING_EXTRACT_HEADER")}</CardSubHeader>
       <StatusTable>
       <Row className="border-none" label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")} text={`${preApprovedResponse?.[0]?.drawingDetail?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`||`${datafromAPI?.planDetail?.blocks?.[0]?.building?.totalBuitUpArea} ${t("BPA_SQ_MTRS_LABEL")}`}></Row>
       <Row className="border-none" label={t("BPA_SCRUTINY_DETAILS_NUMBER_OF_FLOORS_LABEL")} text={datafromAPI?.planDetail?.blocks?.[0]?.building?.totalFloors||preApprovedResponse?.[0]?.drawingDetail?.blocks[0]?.building?.totalFloors}></Row>
       <Row className="border-none" label={t("BPA_HEIGHT_FROM_GROUND_LEVEL_FROM_MUMTY")} text={`${preApprovedResponse?.[0]?.drawingDetail?.blocks?.[0]?.building?.buildingHeight} ${t("BPA_MTRS_LABEL")}`||`${datafromAPI?.planDetail?.blocks?.[0]?.building?.declaredBuildingHeight} ${t("BPA_MTRS_LABEL")}`}></Row>
       </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
-      <CardSubHeader style={{fontSize: "20px"}}>{t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
+      <CardSubHeader style={{fontSize: "20px"}}>{preApprovedResponse?.[0]?.drawingDetail ? t("BPA_BLOCK_HEADER"):t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
       {datafromAPI?.planDetail?.blocks.map((block,index)=>(
       <div key={index} style={datafromAPI?.planDetail?.blocks?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
       <CardSubHeader style={{marginTop:"15px", fontSize: "18px"}}>{t("BPA_BLOCK_SUBHEADER")} {index+1}</CardSubHeader>
@@ -259,9 +285,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
       {preApprovedResponse?.[0]?.drawingDetail?.blocks.map((block,index)=>(
       <div key={index} style={preApprovedResponse?.[0]?.drawingDetail?.blocks?.length > 1 ?{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
       <CardSubHeader style={{marginTop:"15px", fontSize: "18px"}}>{t("BPA_BLOCK_SUBHEADER")} {index+1}</CardSubHeader>
-      <StatusTable >
-      <Row className="border-none" textStyle={{wordBreak:"break-word"}} label={t("BPA_SUB_OCCUPANCY_LABEL")} text={getBlockSubOccupancy(index) === ""?t("CS_NA"):getBlockSubOccupancy(index)}></Row>
-      </StatusTable>
+      
       <div style={{overflow:"scroll"}}>
       <Table
         className="customTable table-fixed-first-column table-border-style"
@@ -333,8 +357,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
         {<DocumentsPreview documents={getOrderDocuments(applicationDocs)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "18px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
         </StatusTable>
       </Card>
-      <Card style={{paddingRight:"16px"}}>
-      <StatusTable>
+      
       {nocDocuments && nocDocuments?.NocDetails?.map((noc, index) => (
   <div key={`noc-${index}`} style={nocDocuments?.NocDetails?.length > 1 ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" } : {}}>
     <CardHeader>{t("BPA_NOC_DETAILS_SUMMARY")}</CardHeader>
@@ -356,8 +379,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
         </StatusTable>
       </div>
       ))}
-      </StatusTable>
-      </Card>
+      
       <Card style={{paddingRight:"16px"}}>
       <CardSubHeader>{t("BPA_SUMMARY_FEE_EST")}</CardSubHeader> 
       <StatusTable>
