@@ -129,19 +129,6 @@ const EmployeeSideBar = () => {
     {
       res.sort((a,b) => a.moduleName.localeCompare(b.moduleName));
     }
-    //reverting the newsidebar change for now, in order to solve ndss login issue
-    //let newconfig = restructuringOfConfig(configEmployeeSideBar1);
-    //below lines are used for shifting home object to first place
-    // newconfig.splice(newconfig.findIndex((ob) => ob?.label === ""),1);
-    // newconfig.sort((a,b) => a.label.localeCompare(b.label));
-    // const fndindex = newconfig?.findIndex((el) => el?.label === "Home");
-    // const homeitem = newconfig.splice(fndindex,1);
-    // newconfig.unshift(homeitem?.[0]);
-    // return (
-    //   newconfig.map((item, index) => {
-    //       return <NavItem key={`${item?.label}-${index}`} item={item} />;
-    //     })
-    // );
     return res?.map((item, index) => {
       return <SubMenu item={item} key={index + 1} />;
     });

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
-import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
+import { PaymentModule } from "@upyog/digit-ui-module-common";
 import { CndUI } from "@upyog/digit-ui-module-core";
 import { initBillsComponents, BillsModule } from "@upyog/digit-ui-module-bills";
 import "@nudmcdgnpm/cnd-css";
@@ -15,7 +15,6 @@ var Digit = window.Digit || {};
 const enabledModules = [
   "Payment",
   "QuickPayLinks",
-  // "BillAmendment",
   "CND"
 ];
 
@@ -49,8 +48,6 @@ const initTokens = (stateCode) => {
 const initDigitUI = () => {
   window?.Digit.ComponentRegistryService.setupRegistry({
   PaymentModule,
-  ...paymentConfigs,
-  PaymentLinks,
   BillsModule,
   ...CNDComponents, 
   CNDLinks, 

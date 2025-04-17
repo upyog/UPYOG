@@ -20,10 +20,6 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
       }
     Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu );
 
-  // if (((window.location.href.includes("/obps") || window.location.href.includes("/noc")) && actions?.length == 1) || (actions?.[0]?.redirectionUrl?.pathname.includes("/pt/property-details/")) && actions?.length == 1) {
-  //   isMenuBotton = false;
-  //   isSingleButton = true; 
-  // } else
   if (actions?.length > 0) {
     isMenuBotton = true; 
     isSingleButton = false;
@@ -46,15 +42,6 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
               style={MenuStyle}
             />
           ) : null}
-          {/* {businessService === "ewst" ? (
-            modified === uuid || modified == null ? (
-              <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-            ) : (
-              <CardLabel style={{ color: "red", font: "30px", fontWeight: "bold" }}>{`${t("EW_ALERT_ANOTHER_VENDOR")}`}</CardLabel>
-            )
-          ) : (
-            <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-          )} */}
           <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
         </ActionBar>
       )}

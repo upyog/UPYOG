@@ -87,7 +87,7 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   return (
     <div className="inbox-container">
       {!props.isSearch && (
-        <div className="filters-container">
+        <div className={isCitizen?"":"filters-container"}>
           <div>
             {
               <FilterComponent
@@ -103,7 +103,7 @@ const CNDDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ marginRight: isCitizen?"30%":"", flex: 1 }}>
+      <div style={{ width: isCitizen?"75%":"" }}>
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={(d) => {

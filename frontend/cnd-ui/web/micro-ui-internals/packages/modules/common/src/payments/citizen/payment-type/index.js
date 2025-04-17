@@ -223,7 +223,7 @@ export const SelectPaymentType = (props) => {
           {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} /*disabled={timerEnabledForBusinessService(businessService)? Time ===0:null}*/ />}       
         </Card>
       </form>
-      <InfoBanner label={t("CS_COMMON_INFO")} text={t("CS_PAYMENT_REDIRECT_NOTICE")} />
+      <InfoBanner label={t("CS_COMMON_INFO")} text={t("CND_PAYMENT_REDIRECT_NOTICE")} />
       {showToast && (
         <Toast
           error={showToast.key}

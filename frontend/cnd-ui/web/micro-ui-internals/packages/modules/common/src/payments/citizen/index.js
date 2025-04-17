@@ -1,8 +1,6 @@
 import React from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
-import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import PayersDetails from "./payers-details";
-
 import { MyBills } from "./bills";
 import { SelectPaymentType } from "./payment-type/index";
 import { SuccessfulPayment, FailedPayment } from "./response";

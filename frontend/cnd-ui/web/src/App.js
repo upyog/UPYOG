@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  PaymentModule,
-  PaymentLinks,
-  paymentConfigs,
-} from "@upyog/digit-ui-module-common";
+import {PaymentModule} from "@upyog/digit-ui-module-common";
 import { CndUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 import { initBillsComponents } from "@upyog/digit-ui-module-bills";
@@ -15,13 +11,10 @@ initLibraries();
 const enabledModules = [
   "Payment",
   "QuickPayLinks",
-  // "BillAmendment",
   "CND"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
-  ...paymentConfigs,
   PaymentModule,
-  PaymentLinks,
   ...CNDComponents, 
   CNDLinks, 
   CNDModule

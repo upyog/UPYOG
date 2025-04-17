@@ -10,7 +10,6 @@ const useCndSearchApplication = ({ tenantId, filters, auth,searchedFrom="" }, co
 
   // Selects the data to be returned by the hook
   const defaultSelect = (data) => {
-    console.log("datadatadata",data);
     if(data.cndApplicationDetail.length > 0)  data.cndApplicationDetail[0].cndApplicationDetail = data.cndApplicationDetail[0].cndApplicationDetail || [];
     return data;
   };
