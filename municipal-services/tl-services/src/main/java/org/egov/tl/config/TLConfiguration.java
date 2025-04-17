@@ -374,8 +374,8 @@ public class TLConfiguration {
     private String alfrescoUploadEndPoint;
     
   
-//    @Value("${egov.bill.expiry.after}")
-//    private String billExpiryAfter;
+   @Value("${egov.bill.expiry.after}")
+   private String billExpiryAfter;
 
 
 }
