@@ -507,7 +507,7 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
 
-    - query: UPDATE eg_pt_unit SET floorno=?, unittype=?, usagecategory=?, occupancytype=?, occupancydate=?, carpetarea=?, builtuparea=?, plintharea=?, superbuiltuparea=?, arv=?, constructiontype=?, constructiondate=?, dimensions=?, active=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+    - query: UPDATE eg_pt_unit SET floorno=?, unittype=?, usagecategory=?, occupancytype=?, occupancydate=?, carpetarea=?, builtuparea=?, plintharea=?, superbuiltuparea=?, arv=?, constructiontype=?, constructiondate=?, dimensions=?, active=?, lastmodifiedby=?, lastmodifiedtime=?, additional_details=? WHERE id=?;
       basePath: Property.units.*
       jsonMaps:
 
@@ -544,6 +544,10 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedBy
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
+      
+      - jsonPath: $.Property.units.*.additionalDetails
+        type: JSON
+        dbType: JSONB
 
       - jsonPath: $.Property.units.*.id
 
