@@ -17,11 +17,10 @@ import { useLocation } from "react-router-dom";
  * The timeline is auto-sorted based on `currentStep`, and route-matching logic ensures the correct
  * step is active based on the URL.
  * 
- * Also have hideOnRoutes which you can control from parent component 
  */
 
 
-const Timeline = ({ config, hideOnRoutes=[] }) => {
+const Timeline = ({ config }) => {
   const { t } = useTranslation();
   const user = Digit.UserService.getUser().info;
   const isMobile = window.Digit.Utils.browser.isMobile();
