@@ -300,7 +300,7 @@ public class PropertyValidator {
 
     	Property property = request.getProperty();
    	
-		if (property.getAddress().getGeoLocation() == null)
+		if ( null != property.getAddress() && property.getAddress().getGeoLocation() == null )
 			property.getAddress().setGeoLocation(new GeoLocation());
 
 		if (property.getSource() == null)

@@ -65,10 +65,6 @@ public class ExcelUtils {
 				Address address = enrichAddress(row);
 				// populate additional details
 				ObjectNode additionalDetails = enrichAdditionalDetails(row);
-				
-				log.info("1st cell : " + getCellValue(row.getCell(0)));
-				log.info("Tenant Id: " + row.getRowNum() + " : " + getCellValue(row.getCell(1)));
-
 				Property property = Property.builder().tenantId(getCellValue(row.getCell(1)))
 						.propertyType(getCellValue(row.getCell(2))).ownershipCategory(getCellValue(row.getCell(3)))
 						.owners(owners)
@@ -173,12 +169,12 @@ public class ExcelUtils {
 		boolean validLength = columns.stream().allMatch(col -> col.length == length);
 		boolean validData = columns.stream().flatMap(Arrays::stream).allMatch(this::isValidValue);
 
-		if (validLength && validData) {
+//		if (validLength && validData) {
 			// Process each index and create a list of Unit
 			return IntStream.range(0, length).mapToObj(i -> createUnit(columns, i)).collect(Collectors.toList());
-		}
+//		}
 
-		return Collections.emptyList();
+//		return Collections.emptyList();
 	}
 
 	// Helper method to create Unit from column data at the given index
