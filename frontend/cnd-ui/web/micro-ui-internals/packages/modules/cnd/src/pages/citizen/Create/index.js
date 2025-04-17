@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { Config } from "../../../config/config";
+import Timeline from "../../../components/Timeline";
 
 const CndCreate = ({ parentRoute }) => {
   const queryClient = useQueryClient();
@@ -110,6 +111,8 @@ const CndCreate = ({ parentRoute }) => {
   
   
   return (
+    <React.Fragment>
+    <Timeline config={config}/>
     <Switch>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key} = routeObj;
@@ -132,6 +135,7 @@ const CndCreate = ({ parentRoute }) => {
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>
     </Switch>
+    </React.Fragment>
   );
 };
 

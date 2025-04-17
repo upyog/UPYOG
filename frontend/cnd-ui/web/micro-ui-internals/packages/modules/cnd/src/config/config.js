@@ -7,7 +7,7 @@ export const Config =
                 "route":"info",
                 "component":"CndRequirementDetails",
                 "nextStep": "request-details",
-                "key": "Documents"
+                "key": "Documents",
             },
             {
                 "route": "request-details",
@@ -20,7 +20,11 @@ export const Config =
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
                     "header": "CND_WASTE_PICKUP_DEPOSIT",
-                }
+                },
+                "timeLine":[{
+                    "currentStep":1,
+                    "actions":"CND_WASTE_PICKUP_DEPOSIT"
+                }]
             },
             {
                 "route": "applicant-details",
@@ -33,7 +37,11 @@ export const Config =
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
                     "header": "COMMON_PERSONAL_DETAILS",
-                }
+                },
+                "timeLine":[{
+                    "currentStep":2,
+                    "actions":"COMMON_PERSONAL_DETAILS"
+                }]
             },
             {
                 "route": "property",
@@ -46,7 +54,11 @@ export const Config =
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
                     "header": "CND_NATURE_PROPERTY",
-                }
+                },
+                "timeLine":[{
+                    "currentStep":3,
+                    "actions":"CND_NATURE_PROPERTY"
+                }]
             },
             {
                 "route": "waste-material-details",
@@ -59,7 +71,11 @@ export const Config =
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
                     "header": "CND_WASTE_TYPE",
-                }
+                },
+                "timeLine":[{
+                    "currentStep":4,
+                    "actions":"CND_WASTE_TYPE"
+                }]
             },
             {
                 "route": "address-details",
@@ -72,7 +88,11 @@ export const Config =
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
                     "header": "ADDRESS_DEATILS",
-                }
+                },
+                "timeLine":[{
+                    "currentStep":5,
+                    "actions":"ADDRESS_DEATILS"
+                }]
             }
         ],
     },
