@@ -64,24 +64,6 @@ const ChangeCity = (prop) => {
       />
     </div>
   );
-  // } else {
-  //   return (
-  //     <React.Fragment>
-  //       <div style={{ marginBottom: "5px" }}>City</div>
-  //       <div className="language-selector" style={{display: "flex", flexWrap: "wrap"}}>
-  //         {selectCityData?.map((city, index) => (
-  //           <div className="language-button-container" key={index}>
-  //             <CustomButton
-  //               selected={city.value === Digit.SessionStorage.get("Employee.tenantId")}
-  //               text={city.label}
-  //               onClick={() => handleChangeCity(city)}
-  //             ></CustomButton>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </React.Fragment>
-  //   );
-  // }
 };
 
 export default ChangeCity;

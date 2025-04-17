@@ -28,33 +28,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
     const data = await Digit.DigiLockerService.token({TokenReq })
     registerUser(data)
-  // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
-  //   method: 'POST',
-  //   mode: 'cors',
-  //   headers: {
-  //     'Content-Type': 'application/x-www-form-urlencoded',
-  //     "Access-Control-Allow-Origin": "*",
-  //     "Access-Control-Allow-Methods": "PUT, DELETE,POST"
-  //   },
-  //   body: new URLSearchParams({
-  //     'code': code,
-  //     'grant_type': "authorization_code",
-  //     'client_id': "YN77ADDADE",
-  //     "client_secret": "71abd480b5811ab72277",
-  //     "redirect_uri": "https://upyog.niua.org/cnd-ui/citizen/login/otp",
-  //     "code_verifier": sessionStorage.getItem("code_verfier_register")
-  //   })
-  // }) .then(response =>
-  //   {response.json().then(data => (
-
-      
-    
-
-  //   ))})
-
-
-    //console.log("datadatadata",data,newData)
-    //sessionStorage.setItem("DigiLocker.registerToken",data?.TokenRes?.access_token)
     
   }
   else if (window.location.href.includes("error="))
@@ -63,7 +36,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
   },[])
   const registerUser = async (response) => {
-    console.log("registerUser",response?.TokenRes?.mobile)
     const data = {
       dob: response?.TokenRes?.dob.substring(0, 2) +"/"+response?.TokenRes?.dob.substring(2,4)+"/"+response?.TokenRes?.dob.substring(4, 8),
       mobileNumber: response?.TokenRes?.mobile,
@@ -72,7 +44,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       userType: getUserType(),
     };
       sessionStorage.setItem("userName",response?.TokenRes?.mobile)
-      console.log("datadatadata",data,sessionStorage.getItem("userName"))
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });

@@ -112,7 +112,7 @@ const CndCreate = ({ parentRoute }) => {
   return (
     <Switch>
       {config.map((routeObj, index) => {
-        const { component, texts, inputs, key } = routeObj;
+        const { component, texts, inputs, key} = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         const user = Digit.UserService.getUser().info.type;
         return (

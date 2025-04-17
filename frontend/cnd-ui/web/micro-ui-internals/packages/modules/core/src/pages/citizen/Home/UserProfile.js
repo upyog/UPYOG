@@ -51,7 +51,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
   const dateOfBirth= userDetails?.dob
-  console.log("ddd", dateOfBirth)
   const formattedDob=(dateOfBirth!==undefined) ?format(new Date(dateOfBirth), 'MM/dd/yyyy') : ""
   //const dateOfBirth1= (dateOfBirth!==undefined) ?dateOfBirth.split("-").reverse().join("-") : ""
   const [dob, setDob] = useState(dateOfBirth);

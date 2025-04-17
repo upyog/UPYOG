@@ -232,7 +232,7 @@ const CndApplicationDetails = () => {
                 className="border-none"
                 key={`waste-material-${index}`}
                 label={`${t("CND_WASTE_TYPE")} ${index + 1}`}
-                text={material.wasteType + ", "+material.quantity+" "+material.metrics}
+                text={material?.quantity>0?  material.wasteType + ", "+material.quantity+" "+material.metrics:material.wasteType}
               />
             ))}
           </StatusTable>

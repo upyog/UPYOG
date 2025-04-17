@@ -106,22 +106,6 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
 
   };
 
-
-  const getCardHeaderAndText = (type) => {
-    //this is used if need to show default card text and header in pop up : removing the same for now
-    // if(type === "Header" && popup)
-    // return "PT_RATE_HELP_TEXT";
-    // else if(type === "Text" && popup)
-    // return "PT_RATE_TEXT";
-    let tempObject = RatingAndFeedBack?.enabledScreensList?.filter((ob) => ob?.module === "PT" && (redirectedFrom?.includes(ob?.screenfrom) || ob?.bussinessService?.includes(data?.Properties?.[0]?.creationReason)))?.[0] 
-    if(type === "Header")
-    return tempObject?.cardHeader;
-    else if(type === "Text")
-    {
-      return tempObject?.cardText;
-    }
-  }
-
   const getCommentHeader = () => {
     return RatingAndFeedBack?.headerByRating?.filter((ob) => rating >= ob?.minvalue && rating <= ob?.maxvalue)?.[0]?.code || t("CS_WHAT_WENT_WRONG");
   }
@@ -140,12 +124,12 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
       <form>
         <Card>
           <div style={popup ? {display:"flex", justifyContent: "space-between"} : {}}>
-          <CardHeader>{t(getCardHeaderAndText("Header")) || t(`PT_RATE_HELP_TEXT`)}</CardHeader>
+          <CardHeader>{t(`PT_RATE_HELP_TEXT`)}</CardHeader>
           {popup && <span style={{marginTop:"8px"}} onClick={() => onClose(false)}>
                   <CloseSvg />
             </span>}
           </div>
-          <CardText>{t(getCardHeaderAndText("Text"),{acknowldgementNumber : acknowldgementNumber || data?.Properties?.[0]?.acknowldgementNumber,propertyId : propertyId || data?.Properties?.[0]?.propertyId}) ||t(`PT_RATE_TEXT`)}</CardText>
+          <CardText>{t(`PT_RATE_TEXT`)}</CardText>
           <Rating styles={{justifyContent:"center"}} currentRating={rating} maxRating={5} onFeedback={(e, ref, i) => feedback(e, ref, i)} />
           {rating !== 0 && <div>
           <CardLabel>{t(getCommentHeader())}</CardLabel>

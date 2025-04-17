@@ -68,12 +68,6 @@ const SubMenu = ({ item }) => {
                 </ReactTooltip>}
               </a>
             ) : (
-              // <a className="custom-link" href={getOrigin + "/employee/" + item.navigationURL}>
-              //   <div className="tooltip">
-              //     <p className="p1">{trimModuleName}</p>
-              //     <span className="tooltiptext">{t(`ACTION_TEST_${getModuleName}`)}</span>
-              //   </div>
-              // </a>
               <Link className="custom-link" to={item.navigationURL}>
                 <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
                   <span> {trimModuleName} </span>
@@ -82,10 +76,6 @@ const SubMenu = ({ item }) => {
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}
                 </div>
-                {/* <div className="tooltip">
-                  <p className="p1">{trimModuleName}</p>
-                  <span className="tooltiptext">{t(`ACTION_TEST_${getModuleName}`)}</span>
-                </div>{" "} */}
               </Link>
             )}
           </div>
@@ -106,10 +96,6 @@ const SubMenu = ({ item }) => {
                   {t(`ACTION_TEST_${getModuleName}`)}
                 </ReactTooltip>}
               </div>
-              {/* <div className="tooltip">
-                <p className="p1">{trimModuleName}</p>
-                <span className="tooltiptext">{t(`ACTION_TEST_${getModuleName}`)}</span>
-              </div>{" "} */}
             </div>
             <div> {item.links && subnav ? <ArrowVectorDown /> : item.links ? <ArrowForward /> : null} </div>
           </div>
@@ -138,12 +124,6 @@ const SubMenu = ({ item }) => {
                         {t(`ACTION_TEST_${getChildName}`)}
                       </ReactTooltip>}
                     </div>
-                    {/* <div className="actions">
-                      <div className="tooltip">
-                        <p className="p1">{trimModuleName}</p>
-                        <span className="tooltiptext">{t(`ACTION_TEST_${getChildName}`)}</span>
-                      </div>{" "}
-                    </div> */}
                   </a>
                 );
               }
@@ -158,10 +138,6 @@ const SubMenu = ({ item }) => {
                    {trimModuleName?.includes("...") &&<ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${index}`}>
                       {t(`ACTION_TEST_${getChildName}`)}
                     </ReactTooltip>}
-                    {/* <div className="tooltip">
-                      <p className="p1">{trimModuleName}</p>
-                      <span className="tooltiptext">{t(`ACTION_TEST_${getChildName}`)}</span>
-                    </div>{" "} */}
                   </div>
                 </Link>
               );

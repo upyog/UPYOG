@@ -90,27 +90,7 @@ const Home = () => {
         name: t(citizenServicesObj?.props?.[0]?.label),
         Icon: <ComplaintIcon />,
         onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl),
-      },
-      // {
-      //   name: t(citizenServicesObj?.props?.[1]?.label),
-      //   Icon: <PTIcon className="fill-path-primary-main" />,
-      //   onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl),
-      // },
-      // {
-      //   name: t(citizenServicesObj?.props?.[2]?.label),
-      //   Icon: <CaseIcon className="fill-path-primary-main" />,
-      //   onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
-      // },
-      // {
-      //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
-      //     Icon: <DropIcon/>,
-      //     onClick: () => history.push("/cnd-ui/citizen")
-      // },
-      // {
-      //   name: t(citizenServicesObj?.props?.[3]?.label),
-      //   Icon: <CHBIcon />,
-      //   onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
-      // },
+      }
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
@@ -140,11 +120,7 @@ const Home = () => {
         name: t(infoAndUpdatesObj?.props?.[3]?.label),
         Icon: <DocumentIcon />,
         onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl),
-      },
-      // {
-      //     name: t("CS_COMMON_HELP"),
-      //     Icon: <HelpIcon/>
-      // }
+      }
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
