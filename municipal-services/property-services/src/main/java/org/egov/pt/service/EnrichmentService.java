@@ -140,6 +140,11 @@ public class EnrichmentService {
 		noticeRequest.getNotice().setAuditDetails(noticeutil.getAuditDetails(noticeRequest.getRequestInfo().getUserInfo().getUuid(), true));
 		if(!noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_HEARING) && !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_ENTER_PREMISE) && !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FILE_RETURN) && !noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
 			noticeRequest.getNotice().getNoticeComment().stream().forEach(audt->audt.setAuditDetails(noticeutil.getAuditDetails(noticeRequest.getRequestInfo().getUserInfo().getUuid(), true)));
+		if(noticeRequest.getNotice().getNoticeType().equals(NoticeType.NOTICE_FOR_PENALTY))
+		{
+			if(StringUtils.isEmpty(noticeRequest.getNotice().getPenaltyAmount()))
+				noticeRequest.getNotice().setPenaltyAmount("0");
+		}
 	}
 
 	private void setCommentIds(Notice noticerequest) {

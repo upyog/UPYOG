@@ -144,6 +144,8 @@ public class EstimationService {
 
 	
 
+	private static final String EXEMPTION_E = "EXEMPTION_E";
+
 	private static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";
 
 	private static final String CALCULTED_ROAD_TYPE_TAX = "CALCULTED_ROAD_TYPE_TAX";
@@ -1050,7 +1052,10 @@ public class EstimationService {
 		String assessmentNumber = null != detail.getAssessmentNumber() ? detail.getAssessmentNumber() : criteria.getAssessmentNumber();
 		String tenantId = null != property.getTenantId() ? property.getTenantId() : criteria.getTenantId();
 		boolean isHeritage=false;
+		
+				
 
+		
 		log.info("masterMap::::"+masterMap);
 		//Map<String, Category> taxHeadCategoryMap=objectmapper.convertValue(masterMap.get(TAXHEADMASTER_MASTER_KEY), Map.class);
 		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
@@ -1105,8 +1110,14 @@ public class EstimationService {
 		BigDecimal complementary_rebate=BigDecimal.ZERO;
 		BigDecimal taxAfterVacExemption=BigDecimal.ZERO;
 		BigDecimal totalAmount=BigDecimal.ZERO;
+		
+		//Incase of Exemption and Heritage
+		if(units.size()==CALCULATION_1)
+			if(units.get(0).getAgeOfProperty().equalsIgnoreCase(HERITAGE_PROPERTY)) {
+				isHeritage=true;
+			}
 
-		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) || detail.getExemption().equalsIgnoreCase(null))
+		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()))
 		{
 			if(!commercial.isEmpty() && !vacantland.isEmpty())
 				if(!commercial.get(0) && detail.getPropertySubType().equalsIgnoreCase(INDEPENDENTPROPERTY))
@@ -1117,7 +1128,8 @@ public class EstimationService {
 					taxAfterVacExemption=taxAmt.subtract(taxAfterVacExemption);
 				}
 			
-			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0)
+			//This line is added in case property is not an indipendentproperty
+			if(taxAfterVacExemption.compareTo(BigDecimal.ZERO)==0 && totalAmount.compareTo(BigDecimal.ZERO)>=0)
 				taxAfterVacExemption=taxAmt;
 
 			switch (criteria.getModeOfPayment()) {
@@ -1162,15 +1174,14 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_COMPLEMENTARY_REBATE).category(Category.REBATE).estimateAmount( complementary_rebate).build());
 
 		}
+		//Incase of Exemption and Heritage
 
 		penalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
 		
 		totalAmount = totalAmount.add(taxAmt).add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
-		if(units.size()==CALCULATION_1)
-			if(units.get(0).getAgeOfProperty().equalsIgnoreCase(HERITAGE_PROPERTY))
-				isHeritage=true;
+		
 
 		
 		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) && !isHeritage) {
