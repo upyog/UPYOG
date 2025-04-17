@@ -783,7 +783,7 @@ export const getCheckBoxLabelData = (t, appData) => {
 
 
 export const scrutinyDetailsData = async (edcrNumber, tenantId) => {
-  if(edcrNumber.includes("PAP")){
+  if(edcrNumber.length===8){
     const preApprovedResponse = await PreApprovedPlanService.search({drawingNo:edcrNumber})
     return preApprovedResponse
   }
