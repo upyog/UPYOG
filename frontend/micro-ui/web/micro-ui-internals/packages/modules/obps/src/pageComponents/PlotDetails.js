@@ -5,13 +5,13 @@ import Timeline from "../components/Timeline";
 
 const PlotDetails = ({ formData, onSelect, config }) => {
   const { t } = useTranslation();
-  const [holdingNumber, setHoldingNumber] = useState(formData?.holdingNumber||"");
+  const [holdingNumber, setHoldingNumber] = useState(formData?.holdingNumber||formData?.additionalDetails?.holdingNo||"");
   const [boundaryWallLength, setBoundaryWallLength] = useState("");
-  const [registrationDetails, setRegistrationDetails] = useState(formData?.registrationDetails||"");
-  const [plotNo, setPlotNo] = useState(formData?.plotNo||"");
-  const [khataNo, setKhataNo] = useState(formData?.khataNo||"");
+  const [registrationDetails, setRegistrationDetails] = useState(formData?.registrationDetails||formData?.additionalDetails?.registrationDetails||"");
+  const [plotNo, setPlotNo] = useState(formData?.plotNo||formData?.additionalDetails?.plotNo||"");
+  const [khataNo, setKhataNo] = useState(formData?.khataNo||formData?.additionalDetails?.khataNo||"");
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot ? "PRE_APPROVE":"";
+  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? "PRE_APPROVE":"";
   const state = Digit.ULBService.getStateId();
   const { data, isLoading } = Digit.Hooks.obps.useScrutinyDetails(state, formData?.data?.scrutinyNumber)
   
@@ -38,7 +38,7 @@ const PlotDetails = ({ formData, onSelect, config }) => {
   return (
     <div>
       <Timeline currentStep={checkingFlow==="PRE_APPROVE" ? 3 : 1 } flow={checkingFlow}/>
-      {formData?.selectedPlot ? (
+      {formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? (
         <FormStep config={config} onSelect={handleSubmit} childrenAtTheBottom={false} t={t}  isDisabled={plotNo===""||khataNo===""||holdingNumber===""}>
         <div>
         <CardLabel>{t("PLOT_NUMBER")} *</CardLabel>

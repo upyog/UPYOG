@@ -28,7 +28,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   //let scrutinyNumber = `DCR82021WY7QW`;
   let user = Digit.UserService.getUser();
   const tenantId = user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
-  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow : formData?.selectedPlot ? "PRE_APPROVE" : "";
+  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow : formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? "PRE_APPROVE" : "";
   const [showToast, setShowToast] = useState(null);
   const stateCode = Digit.ULBService.getStateId();
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["SubOccupancyType"]);

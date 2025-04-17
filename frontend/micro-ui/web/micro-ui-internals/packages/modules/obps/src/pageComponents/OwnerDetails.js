@@ -25,7 +25,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [isDisable, setIsDisable] = useState(false);
     const [ownerRoleCheck, setownerRoleCheck] = useState({});
     let Webview = !Digit.Utils.browser.isMobile();
-    const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot ? "PRE_APPROVE":"";
+    const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP"    ? "PRE_APPROVE":"";
     const ismultiple = ownershipCategory?.code.includes("MULTIPLEOWNERS") ? true : false;
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false

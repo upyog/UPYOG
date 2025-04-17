@@ -23,7 +23,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   const [street, setStreet] = useState(formData?.address?.street || propertyData?.address.street||"");
   const [landmark, setLandmark] = useState(formData?.address?.landmark || formData?.address?.Landmark || propertyData?.address.landmark|| "");
   const [placeName, setplaceName] = useState(formData?.address?.placeName || formData?.placeName || "");
-  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot ? "PRE_APPROVE":"";
+  const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? "PRE_APPROVE":"";
   //const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
   let [cities, setcitiesopetions] = useState(allCities);
   let validation = { };
@@ -86,7 +86,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   const [localities, setLocalities] = useState();
 
-  const [selectedLocality, setSelectedLocality] = useState(propertyData?.address.locality ||null);
+  const [selectedLocality, setSelectedLocality] = useState(formData?.address?.locality||propertyData?.address.locality ||null);
   
 
   useEffect(() => {
