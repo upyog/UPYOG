@@ -535,24 +535,24 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				.hallsBookingApplication(communityHallApplication).requestInfo(requestInfo).build();
 
 		setRelatedAssetData(communityHallsBookingRequest);
+		
+Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(requestInfo, communityHallApplication.getTenantId(),communityHallApplication.getPurpose().getPurpose());
+//		
+////		String code = (String) asset.get("code");
+////		String ulbName = (String) asset.get("UlbName");
+		Integer assetGstCost = (Integer) AssetParentCategoryDetails.get("assetGstCost");
+		Integer securityAmount = (Integer) AssetParentCategoryDetails.get("securityAmount");
+		Integer gstPercentage = (Integer) AssetParentCategoryDetails.get("gstPercentage");
+		Integer assetCost = (Integer) AssetParentCategoryDetails.get("assetCost");
+
 
 		long days = calculateDaysBetween(communityHallApplication.getBookingSlotDetails().get(0).getBookingDate(),
 				communityHallApplication.getBookingSlotDetails().get(0).getBookingToDate());
 		
 		// Total Payable amount
 		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
-			    .multiply(new BigDecimal(communityHallsBookingRequest
-			            .getHallsBookingApplication()
-			            .getRelatedAsset()
-			            .getAssetDetails()
-			            .get("gstAssetCost")
-			            .asText())) // Converts assetCost string to BigDecimal
-			    .add(new BigDecimal(communityHallsBookingRequest
-			            .getHallsBookingApplication()
-			            .getRelatedAsset()
-			            .getAssetDetails()
-			            .get("securityAmount")
-			            .asText())); // Converts securityAmount string to BigDecimal
+			    .multiply(new BigDecimal(assetGstCost)) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(securityAmount)); // Converts securityAmount string to BigDecimal
 		
 
 
@@ -562,14 +562,11 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingDate() + "</b>), To Date: " + "(<b>"
 				+ communityHallApplication.getBookingSlotDetails().get(0).getBookingToDate()
 				+ "</b>) = Number Of Days (<b>" + days + "</b>) * Cost per day: (<b>"
-				+ communityHallsBookingRequest
-						.getHallsBookingApplication().getRelatedAsset().getAssetDetails().get("assetCost").asText()
+				+ assetCost
 				+ "</b>) + Tax(<b>"
-				+ communityHallsBookingRequest
-						.getHallsBookingApplication().getRelatedAsset().getAssetDetails().get("gstPercnetage").asText()
+				+ gstPercentage
 				+ "</b>) + Security(<b>"
-				+ communityHallsBookingRequest.getHallsBookingApplication().getRelatedAsset().getAssetDetails()
-						.get("securityAmount").asText()
+				+ securityAmount
 				+ ")</b> " + "= Total Payable Amount(<b>" + totalPayableAmount + "</b>)");
 
 		// search bill Details
