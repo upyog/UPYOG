@@ -222,7 +222,11 @@ public class UserTypeQueryBuilder {
             selectQuery.append(" userdata.uuid IN (").append(getQueryForCollection(userSearchCriteria.getUuid(),
                     preparedStatementValues)).append(" )");
         }
-
+        if (userSearchCriteria.getAddressId() != null) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
+            selectQuery.append(" addr.id = ?");
+            preparedStatementValues.add(userSearchCriteria.getAddressId().trim());
+        }
 //        if(!isEmpty(userSearchCriteria.getRoleCodes())){
 //            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
 //            selectQuery.append(" ur.role_code IN (").append(getQueryForCollection(userSearchCriteria.getRoleCodes(),
@@ -337,7 +341,8 @@ public class UserTypeQueryBuilder {
     @SuppressWarnings("rawtypes")
     public String getQueryV2(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
         final StringBuilder selectQuery;
-        if (Boolean.TRUE.equals(userSearchCriteria.getExcludeAddressDetails())) {
+        // If the address details excluded flag is true and addressId is null then the query without address will be used
+        if (Boolean.TRUE.equals(userSearchCriteria.getExcludeAddressDetails()) && userSearchCriteria.getAddressId() == null){
             log.info("Excluding address details from the query");
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2_NO_ADDRESS);
         } else {
