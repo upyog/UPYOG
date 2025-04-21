@@ -53,7 +53,7 @@ public class DemandService {
     								.build();
     	
     	Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(15));
+		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(config.getBillExpiryAfter()));
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
     	
     	Demand demandOne = Demand.builder()
