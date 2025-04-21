@@ -330,7 +330,7 @@ const getDetailsRow = (estimateDetails) => {
             <div>
             <Header>{t("PLAN_DRAWING_IMAGES")}</Header>
               <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontWeight: "bold", marginRight: "2rem"}}>{t("BPA_UPLOADED_PDF_DIAGRAM")}</span>
+                <span style={{ fontWeight: "bold", marginRight: "10rem"}}>{t("BPA_UPLOADED_PDF_DIAGRAM")}</span>
                 <ActionButton
                   label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName)}
                   jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl}
@@ -338,7 +338,7 @@ const getDetailsRow = (estimateDetails) => {
               </div>
 
               <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontWeight: "bold", marginRight: "2rem" }}>{t("BPA_UPLOADED_CAD_DIAGRAM")}</span>
+                <span style={{ fontWeight: "bold", marginRight: "10.2rem" }}>{t("BPA_UPLOADED_CAD_DIAGRAM")}</span>
                 <ActionButton
                   label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName)}
                   jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl}
@@ -346,7 +346,7 @@ const getDetailsRow = (estimateDetails) => {
               </div>
 
               <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontWeight: "bold", marginRight: "1rem" }}>{t("BPA_UPLOADED_IMAGE_DIAGRAM")}</span>
+                <span style={{ fontWeight: "bold", marginRight: "9rem" }}>{t("BPA_UPLOADED_IMAGE_DIAGRAM")}</span>
                 <ActionButton
                   label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileName)}
                   jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl}

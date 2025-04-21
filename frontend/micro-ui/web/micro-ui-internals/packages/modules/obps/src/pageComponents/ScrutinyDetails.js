@@ -33,7 +33,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const stateCode = Digit.ULBService.getStateId();
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["SubOccupancyType"]);
   const { data, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId, formData?.data?.scrutinyNumber, {
-    enabled: true,
+    enabled: formData?.data?.scrutinyNumber.length!==8 ? true: false,
   });
 
 

@@ -18,7 +18,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [ownershipCategory, setOwnershipCategory] = useState(formData?.owners?.ownershipCategory);
     const [name, setName] = useState(formData?.owners?.name || "");
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
-    const [gender, setGender] = useState(formData?.owners?.gender);
+    const [gender, setGender] = useState(!formData?.owners?.gender?.i18nKey ? {
+        code: formData?.owners?.gender || "", 
+        active: formData?.owners?.gender ? true : false, 
+        i18nKey: formData?.owners?.gender ? `COMMON_GENDER_${formData?.owners?.gender}` : ""
+    }:formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
     const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [showToast, setShowToast] = useState(null);
@@ -30,9 +34,13 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
-    let [fields, setFeilds] = useState(
-        (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
-    );
+    let [fields, setFeilds] = useState(() => {
+        const owners = formData?.owners?.owners || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }];
+        return owners.map(owner => ({
+          ...owner,
+          gender: typeof owner.gender === 'object' ? owner.gender : { value: owner.gender }
+        }));
+      });
 
     useEffect(() => {
         var flag=0;

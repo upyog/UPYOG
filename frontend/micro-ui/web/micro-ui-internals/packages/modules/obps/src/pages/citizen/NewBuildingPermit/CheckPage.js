@@ -50,7 +50,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
       }
 
     const { data:datafromAPI, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId,value?.data?.scrutinyNumber, {
-        enabled: value?.data?.scrutinyNumber?true:false,
+        enabled: value?.data?.scrutinyNumber.length!==8?true:false,
       })
       const CalculationCriteria=JSON.parse(sessionStorage.getItem("CalculationCriteria"))
       const { data: preApprovedResponse} = usePreApprovedSearch({drawingNo:value?.edcrNumber})
@@ -82,7 +82,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
       );
 
       const sendbacktocitizenApp = window.location.href.includes("sendbacktocitizen");
-      let routeLink = `/digit-ui/citizen/obps/bpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`;
+      let routeLink = value?.businessService==="BPA-PAP" ? `/digit-ui/citizen/obps/preApprovedPlan`:`/digit-ui/citizen/obps/bpa/${additionalDetails?.applicationType.toLowerCase()}/${additionalDetails?.serviceType.toLowerCase()}`;
       if (isEditApplication) routeLink = `/digit-ui/citizen/obps/editApplication/bpa/${value?.tenantId}/${value?.applicationNo}`;
       if( sendbacktocitizenApp ) routeLink = `/digit-ui/citizen/obps/sendbacktocitizen/bpa/${value?.tenantId}/${value?.applicationNo}`;
 
