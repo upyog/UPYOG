@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "@nudmcdgnpm/digit-ui-react-components";  //imported all from our common library
 
@@ -45,9 +45,16 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
   const [landmark, setLandmark] = useState(formData?.address?.landmark ||formData?.infodetails?.existingDataSet?.address?.landmark || "");
   const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || formData?.infodetails?.existingDataSet?.address?.addressline1 || "");
   const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || formData?.infodetails?.existingDataSet?.address?.addressline2 || "");
+  const [addressType, setAddressType] = useState(formData?.address?.addressType || formData?.infodetails?.existingDataSet?.address?.addressType || "");
   const { control } = useForm();
   const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
   
+  const addressTypeOptions = [
+    { name: "Correspondence", code: "CORRESPONDENCE", i18nKey: "COMMON_ADDRESS_TYPE_CORRESPONDENCE" },
+    { name: "Permanent", code: "PERMANENT", i18nKey: "COMMON_ADDRESS_TYPE_PERMANENT" },
+    { name: "Other", code: "OTHER", i18nKey: "COMMON_ADDRESS_TYPE_OTHER" },
+  ];
+
   const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
     "revenue",
@@ -65,9 +72,23 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
   
   const goNext = () => {
     let ownerAddress = formData.address;
-    let addressStep = { ...ownerAddress, pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName };
+    let addressStep = { ...ownerAddress, pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName, addressType };
     onSelect(config.key, { ...formData[config.key], ...addressStep }, false);
+    // Checks if the `config` is undefined, and if so, calls the `onSelect` function with the `addressStep` object.
+   // This ensures that the address step is selected when no specific configuration is provided.
+    if(config===undefined){
+      onSelect(addressStep);
+    }
   };
+  /* If `config` is undefined and all required address fields are filled, it creates an `addressStep` object
+    containing the address details and calls the `onSelect` function with it.
+   **/
+  useEffect(() => {
+    if (config === undefined && houseNo && city && locality && pincode && addressLine1 && streetName && addressLine2) {
+      let addressStep = { pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName, addressType };
+      onSelect(addressStep);
+    }
+  }, [pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName, addressType]);
   return (
     <React.Fragment>
         <FormStep
@@ -77,7 +98,19 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         isDisabled={!houseNo || !city || !locality || !pincode || !addressLine1||!streetName||!addressLine2}
         >
     <div>
-      <CardLabel> {`${t("HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
+    <CardLabel>{`${t("COMMON_ADDRESS_TYPE")}`} <span className="check-page-link-button">*</span></CardLabel>
+            <Dropdown
+              className="form-field"
+              selected={addressType}
+              select={setAddressType}
+              option={addressTypeOptions}
+              optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+              optionKey="i18nKey"
+              t={t}
+              style={{ width: "100%" }} 
+              placeholder={"Select Address Type"}
+            />
+    <CardLabel>{`${t("HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
       <TextInput
         t={t}
         type={"text"}
@@ -85,7 +118,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         optionKey="i18nKey"
         name="houseNo"
         value={houseNo}
-        style={inputStyles}
+        style={{width: "100%"}}
         placeholder={"Enter House No"}
         onChange={(e) => {
             setHouseNo(e.target.value);
@@ -107,7 +140,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         optionKey="i18nKey"
         name="streetName"
         value={streetName}
-        style={inputStyles}
+        style={{width: "100%"}}
         placeholder={"Enter Street Name"}
         onChange={(e) => {
           setstreetName(e.target.value);
@@ -128,7 +161,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         optionKey="i18nKey"
         name="addressLine1"
         value={addressLine1}
-        style={inputStyles}
+        style={{width: "100%"}}
         placeholder={"Enter Address"}
         onChange={(e) => {
           setAddressLine1(e.target.value);
@@ -150,7 +183,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         optionKey="i18nKey"
         name="addressLine2"
         value={addressLine2}
-        style={inputStyles}
+        style={{width: "100%"}}
         placeholder={"Enter Address"}
         onChange={(e) => {
          setAddressLine2(e.target.value);
@@ -172,7 +205,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         optionKey="i18nKey"
         name="landmark"
         value={landmark}
-        style={inputStyles}
+        style={{width: "100%"}}
         placeholder={"Enter Landmark"}
         onChange={(e) => {
           setLandmark(e.target.value);
@@ -201,6 +234,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
             optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
             optionKey="i18nKey"
             t={t}
+            style={{ width: "100%" }}
             placeholder={"Select"}
           />
         )}
@@ -221,6 +255,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
             optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
             optionKey="i18nKey"
             t={t}
+            style={{ width: "100%" }}
             placeholder={"Select"}
           />
         )}
@@ -237,13 +272,13 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         onChange={(e) => {
             setPincode(e.target.value);
           }}
-        style={inputStyles}
+        style={{width: "100%"}}
         placeholder="Enter Pincode"
         ValidationRequired={true}
         validation={{
-            required: false,
+            required: true,
             pattern: "^[0-9]{6}$",
-            type: "tel",
+            type: "number",
             title: t("SV_ADDRESS_PINCODE_INVALID"),
           }}
           maxLength={6}
