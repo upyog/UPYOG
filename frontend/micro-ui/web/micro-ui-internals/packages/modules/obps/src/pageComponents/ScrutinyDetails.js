@@ -19,7 +19,6 @@ import Timeline from "../components/Timeline";
 import { stringReplaceAll } from "../utils";
 
 const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
-  console.log("formDataa",formData)
   const { t } = useTranslation();
   const history = useHistory();
   const [subOccupancy, setsubOccupancy] = useState([]);
