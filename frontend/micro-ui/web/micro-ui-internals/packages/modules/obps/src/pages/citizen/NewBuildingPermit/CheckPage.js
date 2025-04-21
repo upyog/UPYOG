@@ -50,7 +50,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
       }
 
     const { data:datafromAPI, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId,value?.data?.scrutinyNumber, {
-        enabled: value?.data?.scrutinyNumber?true:false,
+        enabled: value?.data?.scrutinyNumber.length!==8?true:false,
       })
       const CalculationCriteria=JSON.parse(sessionStorage.getItem("CalculationCriteria"))
       const { data: preApprovedResponse} = usePreApprovedSearch({drawingNo:value?.edcrNumber})
