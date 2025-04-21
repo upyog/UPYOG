@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { Config } from "../../../config/config";
-import Timeline from "../../../components/Timeline";
+import { Timeline } from "@nudmcdgnpm/digit-ui-react-components";
 
 const CndCreate = ({ parentRoute }) => {
   const queryClient = useQueryClient();

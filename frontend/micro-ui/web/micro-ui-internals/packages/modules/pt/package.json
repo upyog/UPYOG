@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "axios": "0.21.1",
-    "@nudmcdgnpm/digit-ui-react-components": "1.2.10",
+    "@nudmcdgnpm/digit-ui-react-components": "1.2.11",
     "microbundle-crl": "0.13.11",
     "lodash.merge": "^4.6.2",
     "react": "17.0.2",
