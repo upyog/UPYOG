@@ -79,15 +79,15 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [activeTab, setActiveTab] = useState("profile");
   const [showModal, setShowModal] = useState(false);
   /*
- * Fetches the user's address details using the `Digit.UserService.userSearchNew` API.
+ * Fetches the user's address details using the `Digit.UserService.userSearchNewV2` API.
  * - Retrieves the user's UUID from `userInfo`.
  * - Calls the API with the tenant ID and UUID to fetch user data.
  * - Updates the `userAddresses` state with the fetched address list if available.
  */
-  const userSearchNew = async () => {
+  const userSearchNewV2 = async () => {
     const uuid = userInfo?.uuid;
     if (uuid) {
-      const usersResponse = await Digit.UserService.userSearchNew(tenant, { uuid: [uuid] }, {});
+      const usersResponse = await Digit.UserService.userSearchNewV2(tenant, { uuid: [uuid] }, {});
       if (usersResponse && usersResponse.user && usersResponse.user.length) {
         setUserAddresses(usersResponse.user[0]?.addresses || []); // Set addresses separately
       }
@@ -113,7 +113,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
   useEffect(() => {
     setLoading(true);
-    userSearchNew();
+    userSearchNewV2();
     getUserInfo();
 
     setGender({

@@ -25,8 +25,8 @@ const Urls = {
   ChangePassword: "/user/password/nologin/_update",
   ChangePassword1: "/user/password/_update",
   UserProfileUpdate: "/user/profile/_update",
-  UserCreateAddress: "/user/_createAddress",  //create address in user profile
-  UserSearchNew: "/user/users/v2/_search",    // search  user address
+  UserCreateAddressV2: "/user/_createAddress",  //create address in user profile
+  UserSearchNewV2: "/user/users/v2/_search",    // search  user address
   EmployeeSearch: "/egov-hrms/employees/_search",
 
   InboxSearch: "/inbox/v1/_search",

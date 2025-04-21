@@ -95,10 +95,10 @@ export const UserService = {
     }),
    
     //create address for user
-      createAddress: async (details, stateCode, userUuid) =>
+      createAddressV2: async (details, stateCode, userUuid) =>
         ServiceRequest({
           serviceName: "createAddress",
-          url: Urls.UserCreateAddress,
+          url: Urls.UserCreateAddressV2,
           auth: true,
           data: {
             address: details,
@@ -142,9 +142,9 @@ export const UserService = {
     });
   },
   // user search for user profile
-  userSearchNew: async (tenantId, data, filters) => {
+  userSearchNewV2: async (tenantId, data, filters) => {
     return Request({
-      url: Urls.UserSearchNew,
+      url: Urls.UserSearchNewV2,
       params: { ...filters },
       method: "POST",
       auth: true,

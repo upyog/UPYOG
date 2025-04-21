@@ -25,11 +25,11 @@ const Address = ({ actionCancelOnSubmit }) => {
     landmark: "",
     addressLine1: "",
     addressLine2: "",
-  });
+  }); 
   /*
  * This component renders a modal for capturing and updating user address details.
  * - Manages form state for address fields like pincode, city, locality, etc., using `useState`.
- * - Uses `updateProfile` to send updated address details to the backend via `Digit.UserService.createAddress`.
+ * - Uses `updateProfile` to send updated address details to the backend via `Digit.UserService.createAddressV2`.
  * - Displays success or error toasts based on the API response.
  * - Renders a form inside a modal using `AddressDetails` for input fields and React Hook Form for submission handling.
  */
@@ -53,7 +53,7 @@ const Address = ({ actionCancelOnSubmit }) => {
         type: formData.addressType?.code,
       };
 
-      const { responseInfo, address } = await Digit.UserService.createAddress(requestData, stateCode, userUuid);
+      const { responseInfo, address } = await Digit.UserService.createAddressV2(requestData, stateCode, userUuid);
 
       if (responseInfo?.status === "200") {
         Digit.UI.Toast.success(t("CORE_COMMON_PROFILE_UPDATE_SUCCESS"));

@@ -87,7 +87,6 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
     if (config === undefined && houseNo && city && locality && pincode && addressLine1 && streetName && addressLine2) {
       let addressStep = { pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName, addressType };
       onSelect(addressStep);
-      console.log("addressStep", addressStep);
     }
   }, [pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName, addressType]);
   return (
@@ -277,7 +276,7 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         placeholder="Enter Pincode"
         ValidationRequired={true}
         validation={{
-            required: false,
+            required: true,
             pattern: "^[0-9]{6}$",
             type: "number",
             title: t("SV_ADDRESS_PINCODE_INVALID"),
