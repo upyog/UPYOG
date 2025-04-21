@@ -933,7 +933,8 @@ public class EstimationService {
 			BigDecimal rebate = rebatePenaltyMap.get(PT_TIME_REBATE);
 			BigDecimal penalty = rebatePenaltyMap.get(PT_TIME_PENALTY);
 			BigDecimal interest = rebatePenaltyMap.get(PT_TIME_INTEREST);
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_REBATE).estimateAmount(rebate).build());
+			//Removed Time PT_TIME_REBATE not required
+			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_REBATE).estimateAmount(rebate).build());
 			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).estimateAmount(penalty).build());
 			//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_INTEREST).estimateAmount(interest).build());
 			payableTax = payableTax.add(rebate).add(penalty).add(interest);
