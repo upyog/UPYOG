@@ -1056,7 +1056,7 @@ public class EstimationService {
 				
 
 		
-		log.info("masterMap::::"+masterMap);
+		//log.info("masterMap::::"+masterMap);
 		//Map<String, Category> taxHeadCategoryMap=objectmapper.convertValue(masterMap.get(TAXHEADMASTER_MASTER_KEY), Map.class);
 		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
 				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
@@ -1178,16 +1178,20 @@ public class EstimationService {
 
 		penalty=penalty.add(utils.getNoticePenaltyAmount(requestInfo, criteria));	
 		
-		totalAmount = totalAmount.add(taxAmt).add(penalty).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
+		totalAmount = totalAmount.add(taxAmt).add(rebate).add(exemption).add(complementary_rebate).add(modeofpayment_rebate);
 		BigDecimal mandatorypay=BigDecimal.ZERO;
 		Map<String, BigDecimal> lowervalue=lowervaluemap();
 		
-
+		//These two are added to add to show property tax and lower limit amount before adding minimum payble amount
+		BigDecimal PropertyTaxValue = BigDecimal.ZERO;
+        BigDecimal MunicipalLowerLimit=BigDecimal.ZERO;
 		
 		if(org.springframework.util.StringUtils.isEmpty(detail.getExemption()) && !isHeritage) {
 				BigDecimal lowerammount=lowervalue.get(tenantId);
 				if(totalAmount.compareTo(lowerammount) <= 0)
 				{
+					PropertyTaxValue=totalAmount;
+					MunicipalLowerLimit=lowerammount;
 					mandatorypay=lowerammount.subtract(totalAmount);
 					estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_MANDATORY_PAYMENT).category(Category.TAX).estimateAmount(mandatorypay).build());
 					totalAmount=lowerammount;
@@ -1285,18 +1289,22 @@ public class EstimationService {
 
 			//}
 			penalty=penalty.add(pastduePenalty);
-			totalAmount=totalAmount.add(collectedAmtForOldDemand).add(pastduePenalty);
+			totalAmount=totalAmount.add(collectedAmtForOldDemand);
 		}
 		
 		BigDecimal payblepenalty=taxAfterVacExemption.multiply(new BigDecimal(CALCULATION_15).divide(new BigDecimal(CALCULATION_100))).setScale(CALCULATION_2,CALCULATION_2);
-		if(penalty.compareTo(payblepenalty)>0)
+		BigDecimal maxAllowedPenalty=payblepenalty.min(new BigDecimal(PENALTY_20000));
+		if(penalty.compareTo(maxAllowedPenalty)>0)
 		{
-			if(penalty.compareTo(new BigDecimal(PENALTY_20000))>0)
-				if(payblepenalty.compareTo(new BigDecimal(PENALTY_20000))>0)
-					payblepenalty=new BigDecimal(PENALTY_20000);				
+			//if(penalty.compareTo(new BigDecimal(PENALTY_20000))>0)
+				//if(payblepenalty.compareTo(new BigDecimal(PENALTY_20000))>0)
+					//payblepenalty=new BigDecimal(PENALTY_20000);
+			payblepenalty=maxAllowedPenalty;
 		}
 		else
 			payblepenalty=penalty;
+		
+		totalAmount=totalAmount.add(payblepenalty);
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_TIME_PENALTY).category(Category.TAX).estimateAmount( payblepenalty).build());
 		//Added For Manipur 
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(totalAmount, BigDecimal.ZERO);
@@ -1338,6 +1346,8 @@ public class EstimationService {
 				.vacantland(vacantland)
 				.remainAdvanceamount(remainAdvanceAmount)
 				.modeOfPaymentDetails(modeOfPaymentDetails)
+				.PropertyTaxValue(PropertyTaxValue)
+				.MunicipalLowerLimit(MunicipalLowerLimit)
 				.build();
 	}
 

@@ -66,5 +66,9 @@ public class Calculation   {
         private List<Vacantland> vacantland;
         
         private List<ModeOfPaymentDetails> modeOfPaymentDetails;
+        
+        private BigDecimal PropertyTaxValue;
+        
+        private BigDecimal MunicipalLowerLimit;
 }
 
