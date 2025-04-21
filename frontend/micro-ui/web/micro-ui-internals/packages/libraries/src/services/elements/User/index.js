@@ -93,6 +93,19 @@ export const UserService = {
       },
       params: { tenantId: stateCode },
     }),
+   
+    //create address for user
+      createAddress: async (details, stateCode, userUuid) =>
+        ServiceRequest({
+          serviceName: "createAddress",
+          url: Urls.UserCreateAddress,
+          auth: true,
+          data: {
+            address: details,
+            userUuid: userUuid,
+          },
+          params: { tenantId: stateCode },
+        }),
   hasAccess: (accessTo) => {
     const user = Digit.UserService.getUser();
     if (!user || !user.info) return false;
@@ -128,4 +141,16 @@ export const UserService = {
       data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
     });
   },
+  // user search for user profile
+  userSearchNew: async (tenantId, data, filters) => {
+    return Request({
+      url: Urls.UserSearchNew,
+      params: { ...filters },
+      method: "POST",
+      auth: true,
+      userService: true,
+      data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
+    });
+  },
+
 };
