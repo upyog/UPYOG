@@ -65,7 +65,7 @@ import useVehicleTripCreate from "./fsm/useVehicleTripCreate";
 import useFSMInbox from "./fsm/useInbox";
 import useApplicationUpdate from "./fsm/useApplicationUpdate";
 import useWorkflowData from "./fsm/useWorkflowData";
-import useRouteSubscription from "./fsm/useRouteSubscription";
+import useRouteSubscription from "./useRouteSubscription";
 import useDsoSearch from "./fsm/useDsoSearch";
 import usePropertySearch from "./pt/usePropertySearch";
 import usePropertySearchNew from "./pt/usePropertySearchNew";
@@ -382,7 +382,6 @@ const fsm = {
   useDesludging: useDesludging,
   useMDMS: useMDMS,
   useSearch,
-  useRouteSubscription,
   useSearchAll,
   useInbox: useFSMInbox,
   useApplicationUpdate,
@@ -777,7 +776,8 @@ const Hooks = {
   cm,
   useCustomBackNavigation,
   wt,
-  vendor
+  vendor,
+  useRouteSubscription
 };
 
 export default Hooks;

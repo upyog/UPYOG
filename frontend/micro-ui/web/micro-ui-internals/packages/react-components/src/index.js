@@ -230,6 +230,7 @@ import ToggleSwitch from "./atoms/ToggleSwitch";
 import CitizenConsentForm from "./atoms/CitizenConsentForm";
 import AddressDetails from "./molecules/AddressDetails";
 import ApplicantDetails from "./molecules/ApplicantDetails";
+import Timeline from "./molecules/Timeline";
 
 export {
   Phone,
@@ -468,5 +469,6 @@ export {
   PTRIcon,
   CHBIcon,
   AddressDetails,
-  ApplicantDetails
+  ApplicantDetails,
+  Timeline
 };
