@@ -77,7 +77,7 @@ const Home = ({
     }
   );
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
+  const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";

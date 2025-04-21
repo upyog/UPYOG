@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { commonConfig } from "../../../config/config";
+import { Timeline } from "@nudmcdgnpm/digit-ui-react-components";
 
 
 const WTCreate = () => {
@@ -119,6 +120,8 @@ const WTCreate = () => {
 
 
   return (
+    <React.Fragment>
+    <Timeline config={config}/>
     <Switch>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key,additionaFields } = routeObj;
@@ -129,8 +132,6 @@ const WTCreate = () => {
           </Route>
         );
       })}
-
-
       <Route path={`${match.path}/check`}>
         <CheckPage onSubmit={wt_create} value={params} />
       </Route>
@@ -144,6 +145,7 @@ const WTCreate = () => {
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>
     </Switch>
+    </React.Fragment>
   );
 };
 

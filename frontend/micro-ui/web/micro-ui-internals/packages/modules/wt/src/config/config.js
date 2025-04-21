@@ -1,4 +1,3 @@
-//Main Config File designed for rendering of Components in multistep forms
 export const commonConfig =
     [
         {
@@ -36,6 +35,10 @@ export const commonConfig =
                         "submitBarLabel": "COMMON_SAVE_NEXT",
                         "header":"ES_APPLICANT_DETAILS"
                     },
+                    "timeLine":[{
+                        "currentStep":1,
+                        "actions":"ES_APPLICANT_DETAILS"
+                    }]
                    
                 },
             ],
@@ -55,7 +58,11 @@ export const commonConfig =
                     "texts": {
                         "submitBarLabel": "COMMON_SAVE_NEXT",
                         "header":"ES_ADDRESS_DETAILS"
-                    }
+                    },
+                    "timeLine":[{
+                        "currentStep":2,
+                        "actions":"ES_ADDRESS_DETAILS"
+                    }]
                 },
             ],
         },
@@ -74,12 +81,16 @@ export const commonConfig =
                     "texts": {
                         "submitBarLabel": "COMMON_SAVE_NEXT",
                         "header":"ES_REQUEST_DETAILS"
-                    }
+                    },
+                    "timeLine":[{
+                        "currentStep":3,
+                        "actions":"ES_REQUEST_DETAILS"
+                    }]
                 },
             ],
         },
         {
-            "head": "ES_REQUEST_DETAILS",
+            "head": "ES_TOILET_REQUEST_DETAILS",
             "body": [
                 {
                     "route": "toiletRequest-details",
@@ -92,8 +103,12 @@ export const commonConfig =
                     "nextStep":null,
                     "texts": {
                         "submitBarLabel": "COMMON_SAVE_NEXT",
-                        "header":"ES_REQUEST_DETAILS"
-                    }
+                        "header":"ES_TOILET_REQUEST_DETAILS"
+                    },
+                    "timeLine":[{
+                        "currentStep":3,
+                        "actions":"ES_TOILET_REQUEST_DETAILS"
+                    }]
                 },
             ],
         },
