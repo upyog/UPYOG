@@ -223,7 +223,7 @@ public class UserTypeQueryBuilder {
             selectQuery.append(" userdata.uuid IN (").append(getQueryForCollection(userSearchCriteria.getUuid(),
                     preparedStatementValues)).append(" )");
         }
-        if (userSearchCriteria.getAddressId() != null) {
+        if (StringUtils.isNotBlank(userSearchCriteria.getAddressId())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
             selectQuery.append(" addr.id = ?");
             preparedStatementValues.add(userSearchCriteria.getAddressId().trim());
