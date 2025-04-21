@@ -336,6 +336,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             const usersResponse = await Digit.UserService.userSearch(Digit.ULBService.getStateId(), { userName: field?.mobileNumber }, {});
             if(usersResponse?.user?.[0]?.dob){ 
                 usersResponse.user[0].dob = convertDateToEpoch(usersResponse?.user?.[0]?.dob);}
+            if(usersResponse?.user?.[0]?.gender===null ||usersResponse?.user?.[0]?.gender===undefined){
+                usersResponse.user[0].gender=gender;
+            }
             if (usersResponse?.user?.[0]?.createdDate) {
                     usersResponse.user[0].createdDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.createdDate);
                     usersResponse.user[0].lastModifiedDate = convertDateTimeToEpoch(usersResponse?.user?.[0]?.lastModifiedDate);
