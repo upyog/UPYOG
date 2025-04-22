@@ -22,7 +22,6 @@ import org.upyog.cdwm.web.models.CNDApplicantDetail;
 import org.upyog.cdwm.web.models.CNDApplicationDetail;
 import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.user.*;
-import org.upyog.cdwm.web.models.user.enums.AddressType;
 import org.upyog.cdwm.web.models.user.enums.UserType;
 
 /**
@@ -78,7 +77,7 @@ public class UserService {
     private User createUserHandler(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, CNDAddressDetail cndAddressDetail, String tenantId) {
         Role role = getCitizenRole();
         User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
-        Address address = convertApplicantAddressToUserAddress(cndAddressDetail, tenantId);
+        AddressV2 address = convertApplicantAddressToUserAddress(cndAddressDetail, tenantId);
         user.addAddressItem(address);
         UserDetailResponseV2 userDetailResponse = createUser(requestInfo, user, tenantId);
         String newUuid = userDetailResponse.getUser().get(0).getUuid();
@@ -141,11 +140,11 @@ public class UserService {
      * @param tenantId         The tenant ID.
      * @return The converted User address object.
      */
-    private Address convertApplicantAddressToUserAddress(CNDAddressDetail cndAddressDetail, String tenantId) {
+    private AddressV2 convertApplicantAddressToUserAddress(CNDAddressDetail cndAddressDetail, String tenantId) {
         if (cndAddressDetail == null) {
             log.info("The address details are empty or null");
         }
-        Address address = Address.builder().
+        AddressV2 address = AddressV2.builder().
                 address(cndAddressDetail.getAddressLine1()).
                 address2(cndAddressDetail.getAddressLine2()).
                 city(cndAddressDetail.getCity()).
@@ -282,14 +281,39 @@ public class UserService {
                 .tenantId(tenantId).active(true).build();
     }
 
-    // get User by user uuid
-    public User getUser(String uuid, String addressId ,String tenantId, RequestInfo requestInfo) {
+    /**
+     * Fetches a user based on the provided UUID, address ID, and tenant ID.
+     *
+     * The method performs the following:
+     * 1. Initializes a user search request with the given tenant ID and request info.
+     * 2. Sets the UUID and address ID in the search request.
+     * 3. Executes the user search and retrieves the response.
+     * 4. Extracts the list of users and returns the first user if the list is not empty.
+     *
+     * This method will bring particular address of the user if addressId is provided
+     * @param uuid       The unique identifier of the user.
+     * @param addressId  The address ID associated with the user.
+     * @param tenantId   The tenant ID under which the user is registered.
+     * @param requestInfo Additional request metadata.
+     * @return The first matching User object, or {@code null} if no users are found.
+     */
+    public User getUser(String uuid, String addressId, String tenantId, RequestInfo requestInfo) {
+        if (uuid == null || tenantId == null || requestInfo == null) {
+            log.warn("Invalid input parameters: uuid={}, tenantId={}, requestInfo={}", uuid, tenantId, requestInfo);
+            return null;
+        }
+
         UserSearchRequestV2 userSearchRequest = getBaseUserSearchRequest(tenantId, requestInfo);
         userSearchRequest.setUuid(Collections.singletonList(uuid));
         userSearchRequest.setAddressId(addressId);
+
         UserDetailResponseV2 userDetailResponse = getUser(userSearchRequest);
-        List<User> users = userDetailResponse.getUser();
-        return CollectionUtils.isEmpty(users) ? null : users.get(0);
+        if (userDetailResponse == null || CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+            log.warn("No users found for uuid={}, tenantId={}", uuid, tenantId);
+            return null;
+        }
+
+        return userDetailResponse.getUser().get(0);
     }
 
     /**
@@ -317,12 +341,12 @@ public class UserService {
      * @param addresses The set of addresses.
      * @return The converted address detail.
      */
-    public CNDAddressDetail convertUserAddressToAddressDetail(Set<Address> addresses) {
+    public CNDAddressDetail convertUserAddressToAddressDetail(Set<AddressV2> addresses) {
         if (CollectionUtils.isEmpty(addresses)) {
             return null;
         }
         //Below line will get the first address from the set of addresses
-        Address address = addresses.iterator().next();
+        AddressV2 address = addresses.iterator().next();
         return CNDAddressDetail.builder()
                 .addressLine1(address.getAddress())
                 .addressLine2(address.getAddress2())
@@ -351,11 +375,11 @@ public class UserService {
      * @param cndApplicationRequest The request object containing the application data and user information.
      * @return The newly created Address object, or null if creation fails.
      */
-    public Address getNewAddressByUserUuid(CNDApplicationRequest cndApplicationRequest) {
-        Address address = convertApplicantAddressToUserAddress(cndApplicationRequest.getCndApplication().getAddressDetail(), CNDServiceUtil.extractTenantId(cndApplicationRequest.getCndApplication().getTenantId()));
-        AddressRequest addressRequest = AddressRequest.builder().requestInfo(cndApplicationRequest.getRequestInfo()).address(address).userUuid(cndApplicationRequest.getCndApplication().getApplicantDetailId()).build();
+    public AddressV2 createNewAddressV2ByUserUuid(CNDApplicationRequest cndApplicationRequest) {
+        AddressV2 address = convertApplicantAddressToUserAddress(cndApplicationRequest.getCndApplication().getAddressDetail(), CNDServiceUtil.extractTenantId(cndApplicationRequest.getCndApplication().getTenantId()));
+        AddressRequestV2 addressRequest = AddressRequestV2.builder().requestInfo(cndApplicationRequest.getRequestInfo()).address(address).userUuid(cndApplicationRequest.getCndApplication().getApplicantDetailId()).build();
 
-        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserCreateAddressEndpoint());
+        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserCreateAddressEndpointV2());
         Object response = serviceRequestRepository.fetchResult(uri, addressRequest);
 
         if (response == null) {
@@ -365,8 +389,8 @@ public class UserService {
         try {
             LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
             log.info("Response from user service after address creation: {}", responseMap);
-            AddressResponse addressResponse = mapper.convertValue(responseMap, AddressResponse.class);
-            return Optional.ofNullable(addressResponse).map(AddressResponse::getAddress).filter(addresses -> !addresses.isEmpty()).map(addresses -> addresses.get(0)).orElse(null);
+            AddressResponseV2 addressResponse = mapper.convertValue(responseMap, AddressResponseV2.class);
+            return Optional.ofNullable(addressResponse).map(AddressResponseV2::getAddress).filter(addresses -> !addresses.isEmpty()).map(addresses -> addresses.get(0)).orElse(null);
 
         } catch (Exception e) {
             log.error("Error while parsing response from user service: {}", e.getMessage(), e);

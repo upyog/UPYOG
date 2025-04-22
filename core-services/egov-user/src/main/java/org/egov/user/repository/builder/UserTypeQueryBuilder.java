@@ -225,7 +225,7 @@ public class UserTypeQueryBuilder {
         }
         if (StringUtils.isNotBlank(userSearchCriteria.getAddressId())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
-            selectQuery.append(" addr.id = CAST(? AS BIGINT)");
+            selectQuery.append(" addr.id = CAST(? AS INT)");
             preparedStatementValues.add(userSearchCriteria.getAddressId().trim());
         }
 //        if(!isEmpty(userSearchCriteria.getRoleCodes())){

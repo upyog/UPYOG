@@ -22,7 +22,7 @@ import org.upyog.cdwm.web.models.WasteTypeDetail;
 import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.upyog.cdwm.web.models.user.Address;
+import org.upyog.cdwm.web.models.user.AddressV2;
 import org.upyog.cdwm.web.models.user.User;
 import org.upyog.cdwm.web.models.user.enums.AddressType;
 
@@ -123,16 +123,21 @@ public class EnrichmentService {
      * @param cndApplicationDetails The application details object to be enriched with the new address ID.
      */
     private void enrichAddressDetails(CNDApplicationRequest cndApplicationRequest, CNDApplicationDetail cndApplicationDetails) {
+
+        // If applicantDetailId is null or blank, throw custom exception
+        if (StringUtils.isBlank(cndApplicationRequest.getCndApplication().getApplicantDetailId())) {
+            throw new CustomException("APPLICANTID_IS_BLANK", "Applicant Detail ID is blank");
+        }
         try {
             // Fetch the new address associated with the user's UUID
-            Address address = userService.getNewAddressByUserUuid(cndApplicationRequest);
+            AddressV2 address = userService.createNewAddressV2ByUserUuid(cndApplicationRequest);
 
             if (address != null) {
                 // Set the address detail ID in the application details object
                 cndApplicationDetails.setAddressDetailId(String.valueOf(address.getId()));
                 log.info("Address details successfully enriched with ID: {}", address.getId());
             } else {
-                log.warn("Failed to fetch the new address for user UUID: {}", cndApplicationRequest.getCndApplication().getApplicantDetailId());
+                log.warn("Failed to create new address for user UUID: {}", cndApplicationRequest.getCndApplication().getApplicantDetailId());
             }
         } catch (Exception e) {
             log.error("Error while enriching address details: {}", e.getMessage(), e);
@@ -155,7 +160,7 @@ public class EnrichmentService {
                 User user = userService.getExistingOrNewUser(cndApplicationRequest);
                 cndApplicationDetails.setApplicantDetailId(user.getUuid());
 
-                Address selectedAddress = user.getAddresses().stream()
+                AddressV2 selectedAddress = user.getAddresses().stream()
                         .filter(address -> AddressType.PERMANENT.equals(address.getType()))
                         .findFirst()
                         .orElseGet(() -> user.getAddresses().stream()

@@ -6,19 +6,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
-import org.upyog.cdwm.web.models.user.Address;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
-public class AddressRequest {
+public class AddressRequestV2 {
 
     @JsonProperty("requestInfo")
     RequestInfo requestInfo;
 
     @JsonProperty("address")
-    Address address;
+    AddressV2 address;
 
     @JsonProperty("userUuid")
     String userUuid;

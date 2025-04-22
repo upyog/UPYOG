@@ -324,7 +324,7 @@ public class UserController {
      * @return the response object containing matching user details
      */
     @PostMapping("/users/v2/_search")
-    public UserSearchResponse getUsersV2(@RequestBody UserSearchRequest request, @RequestHeader HttpHeaders headers) {
+    public UserSearchResponse getUsersV2(@RequestBody UserSearchRequestV2 request, @RequestHeader HttpHeaders headers) {
 
         UserSearchCriteria searchCriteria = request.toDomain();
 

@@ -80,12 +80,6 @@ public class UserSearchRequest {
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
 
-    @JsonProperty("addressId")
-    private String addressId;
-
-    @JsonProperty("excludeAddressDetails")
-    private Boolean excludeAddressDetails;
-
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
                 .id(id)
@@ -103,8 +97,6 @@ public class UserSearchRequest {
                 .tenantId(tenantId)
                 .roleCodes(roleCodes)
                 .uuid(uuid)
-                .addressId(addressId)
-                .excludeAddressDetails(excludeAddressDetails)
                 .build();
     }
 }
