@@ -83,6 +83,9 @@ public class UserSearchRequestV2 {
     @JsonProperty("excludeAddressDetails")
     private Boolean excludeAddressDetails = false;
 
+    @JsonProperty("addressId")
+    private String addressId;
+
 
     public UserSearchCriteria toDomain() {
         return UserSearchCriteria.builder()
@@ -90,7 +93,6 @@ public class UserSearchRequestV2 {
                 .userName(userName)
                 .name(name)
                 .mobileNumber(mobileNumber)
-//				.pan(pan)
                 .emailId(emailId)
                 .fuzzyLogic(fuzzyLogic)
                 .active(active)
@@ -102,6 +104,7 @@ public class UserSearchRequestV2 {
                 .roleCodes(roleCodes)
                 .uuid(uuid)
                 .excludeAddressDetails(excludeAddressDetails)
+                .addressId(addressId)
                 .build();
     }
 }

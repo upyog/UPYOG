@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
-public class Address {
+public class AddressV2 {
     private String pinCode;
     private String city;
     private String address;

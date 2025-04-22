@@ -88,6 +88,9 @@ public class CNDConfiguration {
     @Value("${egov.user.v2.update.path}")
     private String userV2UpdateEndpoint;
 
+    @Value("${egov.user.create.address.endpointv2}")
+    private String userCreateAddressEndpointV2;
+
     // Pagination config for search results
     @Value("${upyog.cnd.service.default.limit}")
     private Integer defaultLimit;
@@ -193,5 +196,6 @@ public class CNDConfiguration {
 
  	@Value("${egov.cnd.calculator.endpoint}")
  	private String calulatorEndPoint;
+
 
 }

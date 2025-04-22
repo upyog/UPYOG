@@ -82,4 +82,7 @@ public class UserSearchRequestV2 {
     @JsonProperty("excludeAddressDetails")
     private Boolean excludeAddressDetails = false;
 
+    @JsonProperty("addressId")
+    private String addressId;
+
 }
