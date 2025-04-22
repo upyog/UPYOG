@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.constants.CNDConstants;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
+import org.upyog.cdwm.util.CNDServiceUtil;
 import org.upyog.cdwm.util.UserUtil;
 import org.upyog.cdwm.web.models.CNDAddressDetail;
 import org.upyog.cdwm.web.models.CNDApplicantDetail;
@@ -153,9 +154,8 @@ public class UserService {
                 pinCode(cndAddressDetail.getPinCode()).
                 houseNumber(cndAddressDetail.getHouseNumber()).
                 tenantId(tenantId).
-                type(AddressType.PERMANENT).
+                type(cndAddressDetail.getAddressType()).
                 build();
-
 
         return address;
     }
@@ -283,9 +283,10 @@ public class UserService {
     }
 
     // get User by user uuid
-    public User getUser(String uuid, String tenantId, RequestInfo requestInfo) {
+    public User getUser(String uuid, String addressId ,String tenantId, RequestInfo requestInfo) {
         UserSearchRequestV2 userSearchRequest = getBaseUserSearchRequest(tenantId, requestInfo);
         userSearchRequest.setUuid(Collections.singletonList(uuid));
+        userSearchRequest.setAddressId(addressId);
         UserDetailResponseV2 userDetailResponse = getUser(userSearchRequest);
         List<User> users = userDetailResponse.getUser();
         return CollectionUtils.isEmpty(users) ? null : users.get(0);
@@ -320,9 +321,8 @@ public class UserService {
         if (CollectionUtils.isEmpty(addresses)) {
             return null;
         }
-        //Below line will stream addresses to find address which has address type as Permanent
-        Address address = addresses.stream().filter(addr -> addr.getType().equals(AddressType.PERMANENT)).findFirst()
-                .orElse(null);
+        //Below line will get the first address from the set of addresses
+        Address address = addresses.iterator().next();
         return CNDAddressDetail.builder()
                 .addressLine1(address.getAddress())
                 .addressLine2(address.getAddress2())
@@ -331,8 +331,47 @@ public class UserService {
                 .locality(address.getLocality())
                 .pinCode(address.getPinCode())
                 .houseNumber(address.getHouseNumber())
+                .addressType(address.getType())
                 .build();
 
+    }
+
+    /**
+     * Creates a new address for the user UUID provided in the CNDApplicationRequest.
+     *
+     * This method:
+     * 1. Converts the address details from the application into a user address.
+     * 2. Builds an AddressRequest object with the converted address, user UUID, and request information.
+     * 3. Sends the AddressRequest to the user service to create the new address.
+     * 4. Parses the response to extract and return the first created address, if available.
+     *
+     * If the response is null or an error occurs during processing, appropriate logs are generated
+     * and the method returns null.
+     *
+     * @param cndApplicationRequest The request object containing the application data and user information.
+     * @return The newly created Address object, or null if creation fails.
+     */
+    public Address getNewAddressByUserUuid(CNDApplicationRequest cndApplicationRequest) {
+        Address address = convertApplicantAddressToUserAddress(cndApplicationRequest.getCndApplication().getAddressDetail(), CNDServiceUtil.extractTenantId(cndApplicationRequest.getCndApplication().getTenantId()));
+        AddressRequest addressRequest = AddressRequest.builder().requestInfo(cndApplicationRequest.getRequestInfo()).address(address).userUuid(cndApplicationRequest.getCndApplication().getApplicantDetailId()).build();
+
+        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserCreateAddressEndpoint());
+        Object response = serviceRequestRepository.fetchResult(uri, addressRequest);
+
+        if (response == null) {
+            log.warn("Response from user service is null.");
+            return null;
+        }
+        try {
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
+            log.info("Response from user service after address creation: {}", responseMap);
+            AddressResponse addressResponse = mapper.convertValue(responseMap, AddressResponse.class);
+            return Optional.ofNullable(addressResponse).map(AddressResponse::getAddress).filter(addresses -> !addresses.isEmpty()).map(addresses -> addresses.get(0)).orElse(null);
+
+        } catch (Exception e) {
+            log.error("Error while parsing response from user service: {}", e.getMessage(), e);
+            return null;
+        }
     }
 
 }

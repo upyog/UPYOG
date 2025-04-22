@@ -194,4 +194,6 @@ public class CNDConfiguration {
  	@Value("${egov.cnd.calculator.endpoint}")
  	private String calulatorEndPoint;
 
+    @Value("${egov.user.create.address.endpoint}")
+    private String userCreateAddressEndpoint;
 }

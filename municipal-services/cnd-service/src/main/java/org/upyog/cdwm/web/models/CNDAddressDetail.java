@@ -1,6 +1,7 @@
 package org.upyog.cdwm.web.models;
 
 import lombok.*;
+import org.upyog.cdwm.web.models.user.enums.AddressType;
 
 @Getter
 @Setter
@@ -17,4 +18,5 @@ public class CNDAddressDetail {
     private String locality;
     private String city;
     private String pinCode;
+    private AddressType addressType;
 }

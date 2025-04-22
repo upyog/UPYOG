@@ -3,6 +3,7 @@ package org.upyog.cdwm.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,17 @@ public class EnrichmentService {
         RequestInfo requestInfo = cndApplicationRequest.getRequestInfo();
         AuditDetails auditDetails = CNDServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
-        // Enrich user-related details
-        enrichUserDetails(cndApplicationRequest, cndApplicationDetails);
+//        Checks the conditions for Applicant ID and Address ID in the application details object
+//          and invokes appropriate methods to enrich the user details or address details
+        if (StringUtils.isBlank(cndApplicationDetails.getAddressDetailId())) {
+            if (StringUtils.isBlank(cndApplicationDetails.getApplicantDetailId())) {
+                // Both Applicant ID and Address ID are null or blank; enrich user details with address.
+                enrichUserDetails(cndApplicationRequest, cndApplicationDetails);
+            } else {
+                // Applicant ID is present but Address ID is null or blank; enrich address details only.
+                enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
+            }
+        }
 
         // Set application details
         cndApplicationDetails.setApplicationId(applicationId);
@@ -103,6 +113,32 @@ public class EnrichmentService {
         cndApplicationDetails.setApplicationNumber(applicationNumber);
 
     }
+
+    /**
+     * Enriches the address details in the given CNDApplicationDetail object by creating a new address
+     * based on the user UUID provided in the CNDApplicationRequest object. If the new address is created
+     * successfully, the addressDetailId in the CNDApplicationDetail object is updated.
+     *
+     * @param cndApplicationRequest The request object containing necessary data for address creation.
+     * @param cndApplicationDetails The application details object to be enriched with the new address ID.
+     */
+    private void enrichAddressDetails(CNDApplicationRequest cndApplicationRequest, CNDApplicationDetail cndApplicationDetails) {
+        try {
+            // Fetch the new address associated with the user's UUID
+            Address address = userService.getNewAddressByUserUuid(cndApplicationRequest);
+
+            if (address != null) {
+                // Set the address detail ID in the application details object
+                cndApplicationDetails.setAddressDetailId(String.valueOf(address.getId()));
+                log.info("Address details successfully enriched with ID: {}", address.getId());
+            } else {
+                log.warn("Failed to fetch the new address for user UUID: {}", cndApplicationRequest.getCndApplication().getApplicantDetailId());
+            }
+        } catch (Exception e) {
+            log.error("Error while enriching address details: {}", e.getMessage(), e);
+        }
+    }
+
 
     /**
      * Fetches and assigns user details to the CND application.
