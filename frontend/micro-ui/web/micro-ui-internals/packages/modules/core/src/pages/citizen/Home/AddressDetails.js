@@ -3,7 +3,7 @@ import { Modal, AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 
-const Heading = () => <h1 className="heading-m">Address Details</h1>;
+const Heading = ({t}) => <h1 className="heading-m">{t("FILL_ADDRESS_DETAILS")}</h1>;
 /**
  * AddressDetailss component renders a  popup for capturing and submitting user address details.
  * It utilizes Digit's UI components and services to present a form and update the user's profile address.
@@ -74,15 +74,15 @@ const Address = ({ actionCancelOnSubmit }) => {
 
   return (
     <Modal
-      headerBarMain={<Heading />}
+      headerBarMain={<Heading t={t} />}
       popupStyles={{
         backgroundColor: "#fff",
         position: "relative",
         maxHeight: "90vh",
         overflowY: "auto",
       }}
-      actionCancelLabel={"BACK"}
-      actionSaveLabel={"CS_COMMON_SUBMIT"}
+      actionSaveLabel={t("CS_COMMON_SUBMIT")}
+      actionCancelLabel={t("BACK")}
       actionCancelOnSubmit={actionCancelOnSubmit}
       actionSaveOnSubmit={handleSubmit(updateProfile)}
       formId="modal-action"
