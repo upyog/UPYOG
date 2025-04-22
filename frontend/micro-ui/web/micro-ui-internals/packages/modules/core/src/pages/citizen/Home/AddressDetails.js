@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Modal, AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,7 @@ const Address = ({ actionCancelOnSubmit }) => {
   const { t } = useTranslation();
   const { data: allCities } = Digit.Hooks.useTenants();
   const { handleSubmit } = useForm();
-
+  const [showToast, setShowToast] = useState(null);
   const [formData, setFormData] = useState({
     addressType: "",
     pincode: "",
@@ -33,6 +33,17 @@ const Address = ({ actionCancelOnSubmit }) => {
  * - Displays success or error toasts based on the API response.
  * - Renders a form inside a modal using `AddressDetails` for input fields and React Hook Form for submission handling.
  */
+    // timer for toast
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+
   const updateProfile = async () => {
     try {
       const stateCode = Digit.ULBService.getStateId();
@@ -43,7 +54,7 @@ const Address = ({ actionCancelOnSubmit }) => {
         tenantId: tenantId,
         address: formData.addressLine1,
         address2: formData.addressLine2,
-        houseNo: formData.houseNo,
+        houseNumber: formData.houseNo,
         streetName: formData.streetName,
         landmark: formData.landmark,
         pinCode: formData.pincode,
@@ -54,21 +65,19 @@ const Address = ({ actionCancelOnSubmit }) => {
       };
 
       const { responseInfo, address } = await Digit.UserService.createAddressV2(requestData, stateCode, userUuid);
-
-      if (responseInfo?.status === "200") {
-        Digit.UI.Toast.success(t("CORE_COMMON_PROFILE_UPDATE_SUCCESS"));
+      if (responseInfo?.status === "201") {
+        actionCancelOnSubmit();
       }
     } catch (error) {
       let message = t("CORE_COMMON_PROFILE_UPDATE_ERROR");
       try {
         const errorObj = JSON.parse(error);
-        if (errorObj?.message) {
-          message = errorObj.message;
-        }
-      } catch (e) {
-        // fallback to default error message
-      }
-      Digit.UI.Toast.error(message);
+        message = errorObj?.message || message;
+      } catch (e) {}
+      setShowToast({ 
+        error: true,
+        label: message
+      });
     }
   };
 
@@ -86,11 +95,11 @@ const Address = ({ actionCancelOnSubmit }) => {
       actionCancelOnSubmit={actionCancelOnSubmit}
       actionSaveOnSubmit={handleSubmit(updateProfile)}
       formId="modal-action"
+      setError={setShowToast}
+      error={showToast?.label}
     >
       <div style={{ boxShadow: "none" }}>
-        <form onSubmit={handleSubmit(updateProfile)}>
           <AddressDetails t={t} formData={formData} onSelect={setFormData} />
-        </form>
       </div>
     </Modal>
   );
