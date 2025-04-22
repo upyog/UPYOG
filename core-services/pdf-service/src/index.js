@@ -1102,6 +1102,7 @@ const generateQRCodes = async (
     "$.DataConfigs.mappings.*.mappings.*.qrcodeConfig.*"
   );
 
+  // Add Module key for which QR code generation is required
   const moduleKey = [
     'mcollect-challan',
     'firenoc-receipt',
