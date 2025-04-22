@@ -169,7 +169,7 @@ public class PropertyController {
 						.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
 			PropertyCriteria propertyCriteriaCreatedBy = PropertyCriteria.builder()
 					.createdBy(Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()))
-					.tenantId(propertyCriteria.getTenantId()).build();
+					.tenantId(propertyCriteria.getTenantId()).limit(propertyCriteria.getLimit()).offset(propertyCriteria.getOffset()).build();
 
 			propertiesCreatedBy = propertyService.searchProperty(propertyCriteriaCreatedBy,
 					requestInfoWrapper.getRequestInfo());
@@ -186,7 +186,8 @@ public class PropertyController {
 				if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_VERIFIER)) {
 					PropertyCriteria propertyCriteriaFromExcel = PropertyCriteria.builder()
 							.tenantId(propertyCriteria.getTenantId()).status(Collections.singleton(Status.INITIATED))
-							.channels(Collections.singleton(Channel.MIGRATION)).build();
+							.channels(Collections.singleton(Channel.MIGRATION))
+							.limit(propertyCriteria.getLimit()).offset(propertyCriteria.getOffset()).build();
 
 					propertiesFromExcel = propertyService.searchProperty(propertyCriteriaFromExcel,
 							requestInfoWrapper.getRequestInfo());
