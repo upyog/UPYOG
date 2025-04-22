@@ -838,7 +838,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                           text=""
                         />
                         <Row className="border-none" label={t("COMMON_HOUSE_NO")} text={address.houseNumber || t("CS_NA")} />
-                        <Row className="border-none" label={t("COMMON_HOUSE_NAME")} text={address.houseName || t("CS_NA")} />
                         <Row className="border-none" label={t("COMMON_STREET_NAME")} text={address.streetName || t("CS_NA")} />
                         <Row className="border-none" label={t("COMMON_ADDRESS_LINE1")} text={address.address || t("CS_NA")} />
                         <Row className="border-none" label={t("COMMON_ADDRESS_LINE2")} text={address.address2 || t("CS_NA")} />
