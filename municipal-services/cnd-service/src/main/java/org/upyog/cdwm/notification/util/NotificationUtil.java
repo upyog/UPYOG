@@ -508,7 +508,7 @@ public class NotificationUtil {
 	public String getPayUrl(CNDApplicationDetail cndApplicationDetail, String message) {
 	    String payLinkTemplate = config.getPayLink();
 	    String actionLink = String.format(payLinkTemplate,
-	            config.getBusinessServiceName(),
+	            config.getModuleName(),
 	            cndApplicationDetail.getApplicationNumber()
 //	            cndApplicationDetail.getTenantId()
 	            );

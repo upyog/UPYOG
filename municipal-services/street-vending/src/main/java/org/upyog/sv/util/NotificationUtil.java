@@ -565,7 +565,7 @@ public class NotificationUtil {
 	public String getPayUrl(StreetVendingDetail streetVendingDetail, String message) {
 	    String payLinkTemplate = config.getPayLink();
 	    String actionLink = String.format(payLinkTemplate,
-	            config.getBusinessServiceName(),
+	            config.getModuleName(),
 	            streetVendingDetail.getApplicationNo()
 	           // streetVendingDetail.getTenantId()
 	            );
