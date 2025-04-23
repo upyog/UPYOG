@@ -1,6 +1,7 @@
 package org.upyog.chb.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
@@ -83,7 +84,7 @@ public class DemandService {
 
 		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
 			    .multiply(new BigDecimal(assetGstCost)) // Converts assetCost string to BigDecimal
-			    .add(new BigDecimal(securityAmount)); // Converts securityAmount string to BigDecimal
+			    .add(new BigDecimal(securityAmount)).setScale(0, RoundingMode.CEILING); // Converts securityAmount string to BigDecimal
     	
     	
 		List<DemandDetail> demandDetails = new LinkedList<>();
