@@ -142,6 +142,14 @@ public class NotificationUtil {
 
 				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
 			}
+			
+			if ("Download Receipt".equalsIgnoreCase(code)) {
+				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
+				List<ActionItem> actionItems = new ArrayList<>();
+				actionItems.add(actionItem);
+
+				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
+			}
 		}
 	
 		Event event = Event.builder().tenantId(tenantId).description(message)
@@ -501,14 +509,42 @@ public class NotificationUtil {
 	    String payLinkTemplate = config.getPayLink();
 	    String actionLink = String.format(payLinkTemplate,
 	            config.getBusinessServiceName(),
-	            cndApplicationDetail.getApplicationNumber(),
-	            cndApplicationDetail.getTenantId());
-	    String extraParams = String.format("&mobile=%s", cndApplicationDetail.getApplicantDetail().getMobileNumber());
-	    String finalUrl = config.getUiAppHost() + actionLink + extraParams;
+	            cndApplicationDetail.getApplicationNumber()
+//	            cndApplicationDetail.getTenantId()
+	            );
+	    String finalUrl = config.getUiAppHost() + actionLink;
+	    
+	    log.info("Final url for Payment link ---- " + finalUrl);
 
 	    return getShortenedUrl(finalUrl);
 	}
+	
+	
+	/**
+	 * Generates a downloadable receipt link for the given {@link CNDApplicationDetail}.
+	 * <p>
+	 * This method constructs the download URL using the configured request link template
+	 * and the application number and tenant ID from the provided {@code CNDApplicationDetail} object.
+	 * The full URL is then shortened before returning.
+	 *
+	 * @param cndApplicationDetail the application detail containing the application number and tenant ID
+	 * @return a shortened URL string for downloading the receipt
+	 */
+	
+public String getReceiptDownloadLink(CNDApplicationDetail cndApplicationDetail) {
+		
+		String downloadReceiptLinkTemplate = config.getMyRequestsLink();
+	    String actionLink = String.format(downloadReceiptLinkTemplate,
+	    		cndApplicationDetail.getApplicationNumber(),
+	    		cndApplicationDetail.getTenantId()
+	            );
+	    
+	    String finalUrl = config.getUiAppHost() + actionLink;
+	    
+	    log.info("Final url to download receipt ---- " + finalUrl);
 
+	    return getShortenedUrl(finalUrl);
 
-
+	}
+	
 }

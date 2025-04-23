@@ -106,6 +106,11 @@ public class MessageServiceImpl implements MessageService{
 		if (message.contains("PAY NOW")) {
 		   
 		    link = util.getPayUrl(cndApplicationDetail, message);
+		}		
+		
+		if (message.contains("Download Receipt")) {
+			   
+		    link = util.getReceiptDownloadLink(cndApplicationDetail);
 		}
 		
 		Map<String, String> messageMap = new HashMap<>();

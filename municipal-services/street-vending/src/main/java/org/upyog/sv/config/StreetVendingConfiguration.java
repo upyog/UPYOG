@@ -216,4 +216,10 @@ public class StreetVendingConfiguration {
 
 	@Value("${egov.localization.fallback.locale}")
 	private String fallBackLocale;
+ 	
+ 	 @Value("${egov.myrequests.link}")
+     private String myRequestsLink;
+ 	 
+ 	 @Value("${egov.usr.events.pay.link}")
+     private String payLink;
 }

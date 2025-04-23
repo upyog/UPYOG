@@ -21,7 +21,6 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +29,6 @@ import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.kafka.producer.Producer;
 import org.upyog.sv.repository.ServiceRequestRepository;
 import org.upyog.sv.service.StreetVendingEncryptionService;
-import org.upyog.sv.service.impl.StreetyVendingNotificationServiceImpl;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.VendorDetail;
@@ -154,7 +152,7 @@ public class NotificationUtil {
 	public void enrichSMSRequest(StreetVendingRequest request, List<SMSRequest> smsRequests) {
 	    String tenantId = request.getStreetVendingDetail().getTenantId();
 	    String localizationMessages = getLocalizationMessages(tenantId, request.getRequestInfo());
-	    String messageMap = getCustomizedMsg(request.getRequestInfo(), request.getStreetVendingDetail(), localizationMessages);
+	    Map<String, String> messageMap = getCustomizedMsg(request.getRequestInfo(), request.getStreetVendingDetail(), localizationMessages);
 	    List<VendorDetail> vendorDetails = request.getStreetVendingDetail().getVendorDetail();
 	    String mobileNumber = null;
 	    
@@ -164,7 +162,7 @@ public class NotificationUtil {
 	    
 	    if (mobileNumber != null) {
 	        Map<String, String> mobileNumberToOwner = fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId, request.getStreetVendingDetail());
-	        smsRequests.addAll(createSMSRequest(messageMap, mobileNumberToOwner));
+	        smsRequests.addAll(createSMSRequest(messageMap.get(StreetVendingConstants.MESSAGE_TEXT), mobileNumberToOwner));
 	    }
 	}
 
@@ -447,9 +445,10 @@ public class NotificationUtil {
 	 * @return a customized notification message for the user
 	 */
 
-	public String getCustomizedMsg(RequestInfo requestInfo, StreetVendingDetail streetVendingDetail,
+	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, StreetVendingDetail streetVendingDetail,
 			String localizationMessage) {
 		String message = null, messageTemplate;
+		String link = null;
 		String ACTION_STATUS = streetVendingDetail.getWorkflow().getAction();
 		switch (ACTION_STATUS) {
 
@@ -468,6 +467,11 @@ public class NotificationUtil {
 			}
 			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
 			break;
+			
+		case StreetVendingConstants.ACTION_STATUS_APPROVE:
+			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_APPROVED, localizationMessage);
+			message = getMessageWithNumber(streetVendingDetail, messageTemplate);
+			break;	
 
 		case StreetVendingConstants.ACTION_STATUS_SENDBACKTOCITIZEN:
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_SENTBACK, localizationMessage);
@@ -493,10 +497,28 @@ public class NotificationUtil {
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_APPLICATIONEXPIRED,
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
-			break;
+			break; 
 		}
+		
+		
+		
+		if (message.contains("PAY NOW")) {
+			   
+		    link = getPayUrl(streetVendingDetail, message);
+		}		
+		
+		if (message.contains("Download Receipt")) {
+			   
+		    link = getReceiptDownloadLink(streetVendingDetail);
+		}
+		
 
-		return message;
+		Map<String, String> messageMap = new HashMap<>();
+		messageMap.put(StreetVendingConstants.ACTION_LINK, link); 
+		messageMap.put(StreetVendingConstants.MESSAGE_TEXT, message);
+
+		log.info("getCustomizedMsg messageTemplate : " + message);
+		return messageMap;
 	}
 
 	/**
@@ -528,5 +550,90 @@ public class NotificationUtil {
 		message = message.replace("{3}", streetVendingDetail.getCertificateNo());
 		return message;
 	}
+	
+	/**
+	 * Generates a shortened payment URL for the citizen to make payment based on the application details.
+	 * <p>
+	 * The final URL is built using a URL template from configuration (`payLinkTemplate`) and fills in dynamic values 
+	 * like business service name, application number, tenant ID, and mobile number. The constructed URL is then 
+	 * prefixed with the UI host and passed through a shortening service.
+	 *
+	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
+	 * @param message              The notification message (not used in this method, but kept for signature consistency).
+	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
+	 */
+	public String getPayUrl(StreetVendingDetail streetVendingDetail, String message) {
+	    String payLinkTemplate = config.getPayLink();
+	    String actionLink = String.format(payLinkTemplate,
+	            config.getBusinessServiceName(),
+	            streetVendingDetail.getApplicationNo()
+	           // streetVendingDetail.getTenantId()
+	            );
+	    
+	    String finalUrl = config.getUiAppHost() + actionLink;
+	    
+	    log.info("Final url for Payment link  ---- " + finalUrl);
+
+	    return getShortenedUrl(finalUrl);
+	}
+	
+	/**
+	 * Generates a downloadable receipt link for the given {@link StreetVendingDetail}.
+	 * <p>
+	 * This method builds the receipt download URL using the configured link template,
+	 * filling in the application number and tenant ID from the provided {@code StreetVendingDetail} object.
+	 * The constructed URL is then appended to the UI host and passed through a URL shortener before being returned.
+	 *
+	 * @param streetVendingDetail the street vending detail object containing the application number and tenant ID
+	 * @return a shortened URL string for downloading the receipt
+	 */
+	
+	public String getReceiptDownloadLink(StreetVendingDetail streetVendingDetail) {
+		
+		String downloadReceiptLinkTemplate = config.getMyRequestsLink();
+	    String actionLink = String.format(downloadReceiptLinkTemplate,
+	            streetVendingDetail.getApplicationNo(),
+	            streetVendingDetail.getTenantId()
+	            );
+	    
+	    String finalUrl = config.getUiAppHost() + actionLink;
+	    
+	    log.info("Final url to download receipt ---- " + finalUrl);
+	    return getShortenedUrl(finalUrl);
+
+	}
+	
+	
+	/**
+	 * Shortens a given URL using the configured URL shortening service.
+	 * <p>
+	 * This method sends a POST request with the original URL to the shortening service
+	 * and returns the shortened URL. If the shortening service fails or returns an empty response,
+	 * the original URL is returned as a fallback.
+	 *
+	 * @param url The original long URL to be shortened.
+	 * @return The shortened URL returned by the shortening service, or the original URL if shortening fails.
+	 */
+	public String getShortenedUrl(String url) {
+		String res = null;
+		HashMap<String, String> body = new HashMap<>();
+		body.put("url", url);
+		StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
+		builder.append(config.getShortenerEndpoint());
+		try {
+			res = restTemplate.postForObject(builder.toString(), body, String.class);
+
+		} catch (Exception e) {
+			log.error("Error while shortening the url: " + url, e);
+
+		}
+		if (StringUtils.isEmpty(res)) {
+			log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
+			return url;
+		} else {
+			return res;
+		}
+	}
+	
 
 }

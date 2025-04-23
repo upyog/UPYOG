@@ -1,33 +1,30 @@
 package org.upyog.sv.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
-import org.upyog.sv.repository.ServiceRequestRepository;
-import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.service.StreetyVendingNotificationService;
 import org.upyog.sv.util.NotificationUtil;
-import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.events.Action;
+import org.upyog.sv.web.models.events.ActionItem;
 import org.upyog.sv.web.models.events.Event;
 import org.upyog.sv.web.models.events.EventRequest;
 import org.upyog.sv.web.models.events.Recepient;
 import org.upyog.sv.web.models.events.Source;
 import org.upyog.sv.web.models.notification.EmailRequest;
 import org.upyog.sv.web.models.notification.SMSRequest;
-
-import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,14 +46,14 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 	 * @param status  the status of the street vending request
 	 */
 	public void process(StreetVendingRequest request, String status) {
-		EventRequest eventRequest = getEventsForSV(request);
-		log.info("Event Request in StreetVending process method" + eventRequest.toString());
+		
+		
 		 String tenantId = request.getStreetVendingDetail().getTenantId();
 	        RequestInfo requestInfo = request.getRequestInfo();
-
 	        String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
-	        String messageMap = util.getCustomizedMsg(requestInfo, request.getStreetVendingDetail(), localizationMessages);
-	        log.info("Event Request in CND service process method: {}", eventRequest);
+	        Map<String, String> messageMap = util.getCustomizedMsg(requestInfo, request.getStreetVendingDetail(), localizationMessages);
+	        EventRequest eventRequest = getEventsForSV(request, messageMap.get(StreetVendingConstants.ACTION_LINK), messageMap);
+	        log.info("Event Request in StreetVending service process method: {}", eventRequest);
 
 	        Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
 	        List<String> configuredChannelNames = util.fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(), status);
@@ -78,7 +75,7 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 	        // Send Email notification
 	        if (isNotificationEnabled(config.getIsEmailNotificationEnabled(), configuredChannelNames, StreetVendingConstants.CHANNEL_NAME_EMAIL)) {
 	            Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
-	            List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap, mapOfPhnoAndEmail);
+	            List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(StreetVendingConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
 	            util.sendEmail(emailRequests);
 	        }
 
@@ -103,7 +100,8 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
      * @param request the StreetVendingRequest containing details of the street vending application
      * @return an EventRequest containing event details for notifications, or null if no events are generated
      */
-	private EventRequest getEventsForSV(StreetVendingRequest request) {
+	private EventRequest getEventsForSV(StreetVendingRequest request, String actionLink,
+			Map<String, String> messageMap) {
 
 		List<Event> events = new ArrayList<>();
 		String tenantId = request.getStreetVendingDetail().getTenantId();
@@ -118,17 +116,42 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 		}
 
 		toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
-		String message = null;
-		message = util.getCustomizedMsg(request.getRequestInfo(), request.getStreetVendingDetail(),
+		
+		messageMap = util.getCustomizedMsg(request.getRequestInfo(), request.getStreetVendingDetail(),
 				localizationMessages);
+		String message = messageMap.get(StreetVendingConstants.MESSAGE_TEXT);
 		log.info("Message for event in StreetVending:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in StreetVending:" + recepient.toString());
+		
+		Action action = null;
+
+		if (message.contains("{Action Button}")) {
+			String code = StringUtils.substringBetween(message, "{Action Button}", "{/Action Button}");
+			message = message.replace("{Action Button}", "").replace("{/Action Button}", "").replace(code, "");
+
+			if ("PAY NOW".equalsIgnoreCase(code)) {
+				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
+				List<ActionItem> actionItems = new ArrayList<>();
+				actionItems.add(actionItem);
+
+				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
+			}
+			
+			if ("Download Receipt".equalsIgnoreCase(code)) {
+				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
+				List<ActionItem> actionItems = new ArrayList<>();
+				actionItems.add(actionItem);
+
+				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
+			}
+		}
+	
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(StreetVendingConstants.USREVENTS_EVENT_TYPE)
 				.name(StreetVendingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(StreetVendingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-				.eventDetails(null).actions(null).build());
+				.eventDetails(null).actions(action).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
