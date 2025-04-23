@@ -663,7 +663,7 @@ public class UserService {
         if (userId == null) {
             throw new IllegalArgumentException("USER_UUID_NOT_VALID: The provided user UUID:"+userUuid+" is not valid");
         }
-        // Check if Permanent or Correspondence address already exists
+        // Check if Permanent or Correspondence address already exists and not Other category as Other can be created multiple times
         if ((address.getType() == AddressType.PERMANENT || address.getType() == AddressType.CORRESPONDENCE
                 && addressRepository.existsAddressByType(userId, String.valueOf(address.getType())))){
             throw new IllegalArgumentException("A " + address.getType() + " address already exists for user ID: " + userId);
