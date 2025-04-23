@@ -1,18 +1,12 @@
 package org.egov.user.domain.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.user.domain.exception.*;
 import org.egov.user.domain.model.*;
+import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.domain.model.enums.UserType;
 import org.egov.user.domain.service.utils.EncryptionDecryptionUtil;
 import org.egov.user.domain.service.utils.NotificationUtil;
@@ -38,7 +32,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -670,6 +663,11 @@ public class UserService {
         if (userId == null) {
             throw new IllegalArgumentException("USER_UUID_NOT_VALID: The provided user UUID:"+userUuid+" is not valid");
         }
+        // Check if Permanent or Correspondence address already exists
+        if ((address.getType() == AddressType.PERMANENT || address.getType() == AddressType.CORRESPONDENCE
+                && addressRepository.existsAddressByType(userId, String.valueOf(address.getType())))){
+            throw new IllegalArgumentException("A " + address.getType() + " address already exists for user ID: " + userId);
+        }
         // Encrypt address before saving
         address = encryptionDecryptionUtil.encryptObject(address, "Address", Address.class);
         Address savedAddress = addressRepository.createAddressV2(address, userId, address.getTenantId());
@@ -685,6 +683,10 @@ public class UserService {
      */
     public List<Address> getAddress(String user_uuid, String tenantId) {
         List<Address> addressList = addressRepository.getAddressByUserUuid(user_uuid, tenantId);
+        //if addressList is empty, return empty list
+        if (addressList.isEmpty()) {
+            return Collections.emptyList();
+        }
         // Decrypt addresses before returning
         return encryptionDecryptionUtil.decryptObject(addressList, "Address", Address.class, null);
     }
@@ -692,20 +694,22 @@ public class UserService {
     /**
      * Updates an existing address based on the provided address ID.
      *
-     * @param addressId The unique identifier of the address.
      * @param address   The updated address details.
      * @return List of updated addresses.
      * @throws IllegalArgumentException if the address ID does not exist in the database.
      */
-    public Address updateAddress(String addressId, Address address) {
-        if (!isAddressPresent(addressId)) {
-            throw new IllegalArgumentException("ADDRESS_ID_NOT_VALID" + "Address ID " + addressId + " does not exist.");
+    public Address updateAddress(Address address) {
+        if (!isAddressPresent(address.getId())) {
+            throw new IllegalArgumentException("ADDRESS_ID_NOT_VALID" + "Address ID " + address.getUserId() + " does not exist.");
         }
         // Encrypt address before updating
         address = encryptionDecryptionUtil.encryptObject(address, "Address", Address.class);
-        Address updatedAddress = addressRepository.updateAddressV2(addressId, address);
+        // Update the old address status to inactive
+        addressRepository.updateAddressStatus(address.getId());
+        // Create a new address entry with the updated details with the same user id
+        Address savedAddress = addressRepository.createAddressV2(address, address.getUserId(), address.getTenantId());
         // Decrypt address before returning
-        return encryptionDecryptionUtil.decryptObject(updatedAddress, "Address", Address.class, null);
+        return encryptionDecryptionUtil.decryptObject(savedAddress, "Address", Address.class, null);
     }
 
     /**
@@ -714,7 +718,7 @@ public class UserService {
      * @param addressId The unique identifier of the address.
      * @return true if the address exists, false otherwise.
      */
-    private boolean isAddressPresent(String addressId) {
+    private boolean isAddressPresent(Long addressId) {
         return addressRepository.isAddressPresent(addressId);
     }
 
@@ -818,7 +822,7 @@ public class UserService {
      * @param requestInfo       Metadata about the request, used for decryption.
      * @return A list of users matching the search criteria.
      */
-    public List<org.egov.user.domain.model.User> searchUsersV2(UserSearchCriteria searchCriteria,
+    public List<org.egov.user.domain.model.User>  searchUsersV2(UserSearchCriteria searchCriteria,
                                                                boolean isInterServiceCall, RequestInfo requestInfo) {
 
         searchCriteria.validate(isInterServiceCall);
