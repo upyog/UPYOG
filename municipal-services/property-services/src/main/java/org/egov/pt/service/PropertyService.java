@@ -165,14 +165,14 @@ public class PropertyService {
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 
-		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
+		boolean isOwnerUpdate = checkIsRequestForOwnerUpdate(request, propertyFromSearch);
 
 		boolean isRequestForStatusChange = CreationReason.STATUS.equals(request.getProperty().getCreationReason());
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
-		else if (isNumberDifferent)
-			processMobileNumberUpdate(request, propertyFromSearch);
+		else if (isOwnerUpdate)
+			processOwnerUpdate(request, propertyFromSearch);
 
 		else {
 			if (isRequestForStatusChange) {
@@ -223,39 +223,45 @@ public class PropertyService {
 	 * Method to check if the update request is for updating owner mobile numbers
 	 */
 
-	private boolean checkIsRequestForMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
+	private boolean checkIsRequestForOwnerUpdate(PropertyRequest request, Property propertyFromSearch) {
 		Map<String, String> uuidToMobileNumber = new HashMap<String, String>();
+		Map<String, String> uuidToName = new HashMap<String, String>();
+		Map<String, String> uuidToEmail = new HashMap<String, String>();
 		List<OwnerInfo> owners = propertyFromSearch.getOwners();
 
 		for (OwnerInfo owner : owners) {
 			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
+			uuidToName.put(owner.getUuid(), owner.getName());
+			uuidToEmail.put(owner.getUuid(), owner.getEmailId());
 		}
 
 		List<OwnerInfo> ownersFromRequest = request.getProperty().getOwners();
 
-		Boolean isNumberDifferent = false;
+		Boolean isUpdate = false;
 
 		for (OwnerInfo owner : ownersFromRequest) {
 			if (uuidToMobileNumber.containsKey(owner.getUuid())
-					&& !uuidToMobileNumber.get(owner.getUuid()).equals(owner.getMobileNumber())) {
-				isNumberDifferent = true;
+					&& (!uuidToMobileNumber.get(owner.getUuid()).equals(owner.getMobileNumber())
+							|| !uuidToName.get(owner.getUuid()).equals(owner.getName())
+							|| !uuidToEmail.get(owner.getUuid()).equals(owner.getEmailId()))) {
+				isUpdate = true;
 				break;
 			}
 		}
 
-		return isNumberDifferent;
+		return isUpdate;
 	}
 
 	/*
 	 * Method to process owner mobile number update
 	 */
 
-	private void processMobileNumberUpdate(PropertyRequest request, Property propertyFromSearch) {
+	private void processOwnerUpdate(PropertyRequest request, Property propertyFromSearch) {
 
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
 		} else {
-			updateOwnerMobileNumbers(request, propertyFromSearch);
+			userService.updateOwnerDetails(request);
 		}
 
 		enrichmentService.enrichUpdateRequest(request, propertyFromSearch);
@@ -326,18 +332,18 @@ public class PropertyService {
 	 * Method to update owners mobile number
 	 */
 
-	private void updateOwnerMobileNumbers(PropertyRequest request, Property propertyFromSearch) {
-
-		Map<String, String> uuidToMobileNumber = new HashMap<String, String>();
-		List<OwnerInfo> owners = propertyFromSearch.getOwners();
-
-		for (OwnerInfo owner : owners) {
-			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
-		}
-
-		userService.updateUserMobileNumber(request, uuidToMobileNumber);
-		notifService.sendNotificationForMobileNumberUpdate(request, propertyFromSearch, uuidToMobileNumber);
-	}
+//	private void updateOwnerDetails(PropertyRequest request, Property propertyFromSearch) {
+//
+//		Map<String, String> uuidToMobileNumber = new HashMap<String, String>();
+//		List<OwnerInfo> owners = propertyFromSearch.getOwners();
+//
+//		for (OwnerInfo owner : owners) {
+//			uuidToMobileNumber.put(owner.getUuid(), owner.getMobileNumber());
+//		}
+//
+//		userService.updateOwnerDetails(request);
+//		notifService.sendNotificationForMobileNumberUpdate(request, propertyFromSearch, uuidToMobileNumber);
+//	}
 
 	/**
 	 * method to process owner mutation
