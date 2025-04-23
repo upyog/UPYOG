@@ -123,7 +123,7 @@ public class CNDServiceImpl implements CNDService {
                     application.setFacilityCenterDetail(facilityDetails.get(0));
                 }
                 
-                User user = userService.getUser(application.getApplicantDetailId(), application.getTenantId(), requestInfo);
+                User user = userService.getUser(application.getApplicantDetailId(), application.getAddressDetailId() ,application.getTenantId(), requestInfo);
                 application.setApplicantDetail(userService.convertUserToApplicantDetail(user));
                 application.setAddressDetail(userService.convertUserAddressToAddressDetail(user.getAddresses()));
             }

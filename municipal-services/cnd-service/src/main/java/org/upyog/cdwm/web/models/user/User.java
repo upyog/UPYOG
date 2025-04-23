@@ -3,7 +3,6 @@ package org.upyog.cdwm.web.models.user;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
@@ -47,7 +46,7 @@ public class User {
     private String altContactNumber;
     private String pan;
     private String aadhaarNumber;
-    private Set<Address> addresses;
+    private Set<AddressV2> addresses;
     private Boolean active;
     private List<Role> roles;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -65,7 +64,7 @@ public class User {
     private Long lastModifiedBy;
     private String alternatemobilenumber;
 
-    public User addAddressItem(Address addressItem) {
+    public User addAddressItem(AddressV2 addressItem) {
         if (this.addresses == null) {
             this.addresses = new HashSet<>();
         }
