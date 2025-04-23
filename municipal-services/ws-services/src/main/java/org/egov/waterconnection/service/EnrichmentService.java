@@ -125,6 +125,10 @@ public class EnrichmentService {
 		
 		String userType = waterConnectionRequest.getRequestInfo().getUserInfo().getType().toUpperCase();
 		
+		if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)){
+			waterConnectionRequest.getWaterConnection().setStatus(StatusEnum.INACTIVE);
+		}
+		
 		Object thirdPartyData = fetchThirdPartyIntegration(waterConnectionRequest.getRequestInfo(), config.getStateLevelTenantId(), WCConstants.MDMS_WC_ROLE_MODLENAME , WCConstants.MDMS_WC_ROLE_MASTERNAME, userType,true);
 
 		 Map<String, String> roleMap = new HashMap<>();

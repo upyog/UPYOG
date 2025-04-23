@@ -45,6 +45,8 @@ public class SWConstants {
 	public static final String STATUS_APPLIED = "APPLIED";
 
 	public static final String STATUS_APPROVED = "CONNECTION_ACTIVATED";
+	
+	public static final String APPROVED = "APPROVED";
 
 	public static final String STATUS_REJECTED = "REJECTED";
 
