@@ -71,9 +71,8 @@ public class ADVNotificationService {
 		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 
-		if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_EVENT)) {
-			sendEventNotification(localizationMessages, bookingRequest, status);
-		}
+		sendEventNotification(localizationMessages, bookingRequest, status);
+		
 
 //		Uncomment below when sms Integration is required
 //		if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_SMS)) {
@@ -184,19 +183,33 @@ public class ADVNotificationService {
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in ADV event :" + recepient.toString());
 
-		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-		List<ActionItem> actionItems = new ArrayList<>();
-		actionItems.add(actionItem);
+		Action action = null;
 
-		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-				.eventId(BookingConstants.CHANNEL_NAME_EVENT).build();
-		// new Action(tenantId, mobileNumber,
-		// CommunityHallBookingConstants.CHANNEL_NAME_EVENT , null) ;
+		if (message.contains("{Action Button}")) {
+			String code = StringUtils.substringBetween(message, "{Action Button}", "{/Action Button}");
+			message = message.replace("{Action Button}", "").replace("{/Action Button}", "").replace(code, "");
 
+			if ("PAY NOW".equalsIgnoreCase(code)) {
+				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
+				List<ActionItem> actionItems = new ArrayList<>();
+				actionItems.add(actionItem);
+
+				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
+			}
+			
+			if ("Download Receipt".equalsIgnoreCase(code)) {
+				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
+				List<ActionItem> actionItems = new ArrayList<>();
+				actionItems.add(actionItem);
+
+				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
+			}
+		}
+	
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(BookingConstants.USREVENTS_EVENT_TYPE).name(BookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(BookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).actions(action)
-				.recepient(recepient).eventDetails(null).actions(null).build());
+				.recepient(recepient).eventDetails(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();

@@ -21,6 +21,7 @@ import org.upyog.adv.repository.ServiceRequestRepository;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.events.EventRequest;
+
 import com.jayway.jsonpath.JsonPath;
 
 import digit.models.coremodels.SMSRequest;
@@ -201,12 +202,12 @@ public class NotificationUtil {
 
 		case BOOKING_CREATED:
 			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
-			link = getActionLink(bookingDetail, actionStatus);
+		//	link = getActionLink(bookingDetail, actionStatus);
 			break;
 
 		case BOOKED:
 			messageTemplate = getMessageTemplate(notificationEventType, localizationMessage);
-			link = getActionLink(bookingDetail, actionStatus);
+		//	link = getActionLink(bookingDetail, actionStatus);
 			break;
 
 		case CANCELLED:
@@ -222,6 +223,16 @@ public class NotificationUtil {
 			messageTemplate = "Localization message not available for  status : " + actionStatus;
 			break;
 
+		}
+		
+		if (messageTemplate.contains("PAY NOW")) {
+			   
+		    link = getPayUrl(bookingDetail, messageTemplate);
+		}		
+		
+		if (messageTemplate.contains("Download Receipt")) {
+			   
+		    link = getReceiptDownloadLink(bookingDetail);
 		}
 
 		Map<String, String> messageMap = new HashMap<String, String>();
@@ -262,5 +273,60 @@ public class NotificationUtil {
 		Object response = serviceRequestRepository.getShorteningURL(new StringBuilder(url), obj);
 		return response.toString();
 	}
+	
+	
+	/**
+	 * Generates a shortened payment URL for the citizen to make payment based on the application details.
+	 * <p>
+	 * The final URL is built using a URL template from configuration (`payLinkTemplate`) and fills in dynamic values 
+	 * like business service name, application number, tenant ID, and mobile number. The constructed URL is then 
+	 * prefixed with the UI host and passed through a shortening service.
+	 *
+	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
+	 * @param message              The notification message (not used in this method, but kept for signature consistency).
+	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
+	 */
+	public String getPayUrl(BookingDetail bookingDetail, String message) {
+	    String payLinkTemplate = config.getPayLink();
+	    String actionLink = String.format(payLinkTemplate,
+	            config.getBusinessServiceName(),
+	            bookingDetail.getBookingNo()
+//	            cndApplicationDetail.getTenantId()
+	            );
+	    String finalUrl = config.getUiAppHost() + actionLink;
+	    
+	    log.info("Final url For pay link ---- " + finalUrl);
+
+	    return getShortnerURL(finalUrl);
+	}
+	
+	
+	/**
+	 * Generates a downloadable receipt link for the given {@link BookingDetail}.
+	 * <p>
+	 * This method constructs the download URL using the configured request link template
+	 * and the application number and tenant ID from the provided {@code CNDApplicationDetail} object.
+	 * The full URL is then shortened before returning.
+	 *
+	 * @param cndApplicationDetail the application detail containing the application number and tenant ID
+	 * @return a shortened URL string for downloading the receipt
+	 */
+	
+     public String getReceiptDownloadLink(BookingDetail bookingDetail) {
+		
+		String downloadReceiptLinkTemplate = config.getMyRequestsLink();
+	    String actionLink = String.format(downloadReceiptLinkTemplate,
+	    		bookingDetail.getBookingNo(),
+	    		bookingDetail.getTenantId()
+	            );
+	    
+	    String finalUrl = config.getUiAppHost() + actionLink;
+	    
+	    log.info("Final url to download receipt ---- " + finalUrl);
+
+	    return getShortnerURL(finalUrl);
+
+	}
+	
 
 }
