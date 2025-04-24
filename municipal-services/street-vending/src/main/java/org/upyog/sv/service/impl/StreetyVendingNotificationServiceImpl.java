@@ -126,11 +126,11 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 		
 		Action action = null;
 
-		if (message.contains("{Action Button}")) {
-			String code = StringUtils.substringBetween(message, "{Action Button}", "{/Action Button}");
-			message = message.replace("{Action Button}", "").replace("{/Action Button}", "").replace(code, "");
+		if (message.contains(StreetVendingConstants.NOTIFICATION_ACTION)) {
+			String code = StringUtils.substringBetween(message, StreetVendingConstants.NOTIFICATION_ACTION, StreetVendingConstants.NOTIFICATION_ACTION_BUTTON);
+			message = message.replace(StreetVendingConstants.NOTIFICATION_ACTION, "").replace(StreetVendingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
 
-			if ("PAY NOW".equalsIgnoreCase(code)) {
+			if (StreetVendingConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code)) {
 				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
 				List<ActionItem> actionItems = new ArrayList<>();
 				actionItems.add(actionItem);
@@ -138,7 +138,7 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
 			}
 			
-			if ("Download Receipt".equalsIgnoreCase(code)) {
+			if (StreetVendingConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
 				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
 				List<ActionItem> actionItems = new ArrayList<>();
 				actionItems.add(actionItem);

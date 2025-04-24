@@ -131,11 +131,11 @@ public class NotificationUtil {
 
 		Action action = null;
 
-		if (message.contains("{Action Button}")) {
-			String code = StringUtils.substringBetween(message, "{Action Button}", "{/Action Button}");
-			message = message.replace("{Action Button}", "").replace("{/Action Button}", "").replace(code, "");
+		if (message.contains(NotificationConstants.NOTIFICATION_ACTION)) {
+			String code = StringUtils.substringBetween(message, NotificationConstants.NOTIFICATION_ACTION, NotificationConstants.NOTIFICATION_ACTION_BUTTON);
+			message = message.replace(NotificationConstants.NOTIFICATION_ACTION, "").replace(NotificationConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
 
-			if ("PAY NOW".equalsIgnoreCase(code)) {
+			if (NotificationConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code)) {
 				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
 				List<ActionItem> actionItems = new ArrayList<>();
 				actionItems.add(actionItem);
@@ -143,7 +143,7 @@ public class NotificationUtil {
 				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
 			}
 			
-			if ("Download Receipt".equalsIgnoreCase(code)) {
+			if (NotificationConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
 				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
 				List<ActionItem> actionItems = new ArrayList<>();
 				actionItems.add(actionItem);
@@ -533,7 +533,7 @@ public class NotificationUtil {
 	
 public String getReceiptDownloadLink(CNDApplicationDetail cndApplicationDetail) {
 		
-		String downloadReceiptLinkTemplate = config.getMyRequestsLink();
+		String downloadReceiptLinkTemplate = config.getDownloadReceiptLink();
 	    String actionLink = String.format(downloadReceiptLinkTemplate,
 	    		cndApplicationDetail.getApplicationNumber(),
 	    		cndApplicationDetail.getTenantId()

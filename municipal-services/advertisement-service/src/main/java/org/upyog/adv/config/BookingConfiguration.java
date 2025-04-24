@@ -216,8 +216,8 @@ public class BookingConfiguration {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
  	
- 	@Value("${egov.myrequests.link}")
-    private String myRequestsLink;
+ 	@Value("${egov.download.receipt.link}")
+    private String downloadReceiptLink;
  	 
     @Value("${egov.usr.events.pay.link}")
     private String payLink;

@@ -124,4 +124,12 @@ public class StreetVendingConstants {
     
     public static final String ACTION_LINK = "ACTION_LINK";
     
+    public static final String NOTIFICATION_PAY_NOW = "PAY NOW";
+	
+	public static final String NOTIFICATION_DOWNLOAD_RECEIPT = "Download Receipt";
+	
+	public static final String NOTIFICATION_ACTION = "{Action Button}";
+	
+	public static final String NOTIFICATION_ACTION_BUTTON = "{/Action Button}";
+    
 }

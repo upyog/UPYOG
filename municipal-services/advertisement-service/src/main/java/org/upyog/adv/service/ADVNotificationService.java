@@ -5,9 +5,11 @@ import static com.jayway.jsonpath.Filter.filter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -30,6 +32,7 @@ import org.upyog.adv.web.models.events.Event;
 import org.upyog.adv.web.models.events.EventRequest;
 import org.upyog.adv.web.models.events.Recepient;
 import org.upyog.adv.web.models.events.Source;
+import org.upyog.adv.web.models.notification.EmailRequest;
 
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
@@ -56,6 +59,8 @@ public class ADVNotificationService {
 
 	public void process(BookingRequest bookingRequest, String status) {
 		BookingDetail bookingDetail = bookingRequest.getBookingApplication();
+        RequestInfo requestInfo = bookingRequest.getRequestInfo();
+
 		// Decrypt applicant detail it will be used in notification
 		bookingDetail = advEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
 
@@ -64,20 +69,31 @@ public class ADVNotificationService {
 		String tenantId = bookingRequest.getBookingApplication().getTenantId();
 		String action = status;
 
+        Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
 		List<String> configuredChannelNames = fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0],
 				config.getModuleName(), action);
 
 		log.info("Fetching localization message for notification");
 		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
-
+		Map<String, String> messageMap = util.getCustomizedMsg(bookingRequest.getBookingApplication(), localizationMessages, status,
+				BookingConstants.CHANNEL_NAME_SMS);
+		// Send event notification
+		if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_EVENT)) {
 		sendEventNotification(localizationMessages, bookingRequest, status);
+	    }
+		// Send sms notification
+		if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_SMS)) {
+			sendMessageNotification(localizationMessages, bookingRequest, status);
+		}
 		
+		// Send Email notification
+        if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_EMAIL)) {
+            Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+            List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(BookingConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
+            util.sendEmail(emailRequests);
+        }
 
-//		Uncomment below when sms Integration is required
-//		if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_SMS)) {
-//			sendMessageNotification(localizationMessages, bookingRequest, status);
-//		}
 	}
 
 	/**
@@ -185,11 +201,11 @@ public class ADVNotificationService {
 
 		Action action = null;
 
-		if (message.contains("{Action Button}")) {
-			String code = StringUtils.substringBetween(message, "{Action Button}", "{/Action Button}");
-			message = message.replace("{Action Button}", "").replace("{/Action Button}", "").replace(code, "");
+		if (message.contains(BookingConstants.NOTIFICATION_ACTION)) {
+			String code = StringUtils.substringBetween(message, BookingConstants.NOTIFICATION_ACTION, BookingConstants.NOTIFICATION_ACTION_BUTTON);
+			message = message.replace(BookingConstants.NOTIFICATION_ACTION, "").replace(BookingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
 
-			if ("PAY NOW".equalsIgnoreCase(code)) {
+			if (BookingConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code)) {
 				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
 				List<ActionItem> actionItems = new ArrayList<>();
 				actionItems.add(actionItem);
@@ -197,7 +213,7 @@ public class ADVNotificationService {
 				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
 			}
 			
-			if ("Download Receipt".equalsIgnoreCase(code)) {
+			if (BookingConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
 				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
 				List<ActionItem> actionItems = new ArrayList<>();
 				actionItems.add(actionItem);

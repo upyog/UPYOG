@@ -1,11 +1,13 @@
 package org.upyog.adv.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -21,6 +23,8 @@ import org.upyog.adv.repository.ServiceRequestRepository;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.upyog.adv.web.models.events.EventRequest;
+import org.upyog.adv.web.models.notification.Email;
+import org.upyog.adv.web.models.notification.EmailRequest;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -225,12 +229,12 @@ public class NotificationUtil {
 
 		}
 		
-		if (messageTemplate.contains("PAY NOW")) {
+		if (messageTemplate.contains(BookingConstants.NOTIFICATION_PAY_NOW)) {
 			   
 		    link = getPayUrl(bookingDetail, messageTemplate);
 		}		
 		
-		if (messageTemplate.contains("Download Receipt")) {
+		if (messageTemplate.contains(BookingConstants.NOTIFICATION_DOWNLOAD_RECEIPT)) {
 			   
 		    link = getReceiptDownloadLink(bookingDetail);
 		}
@@ -314,7 +318,7 @@ public class NotificationUtil {
 	
      public String getReceiptDownloadLink(BookingDetail bookingDetail) {
 		
-		String downloadReceiptLinkTemplate = config.getMyRequestsLink();
+		String downloadReceiptLinkTemplate = config.getDownloadReceiptLink();
 	    String actionLink = String.format(downloadReceiptLinkTemplate,
 	    		bookingDetail.getBookingNo(),
 	    		bookingDetail.getTenantId()
@@ -327,6 +331,167 @@ public class NotificationUtil {
 	    return getShortnerURL(finalUrl);
 
 	}
+     
+     /**
+      * Fetches UUIDs (unique user identifiers) for a set of mobile numbers.
+      * <p>
+      * This method sends a search request for each mobile number to the user service endpoint
+      * and retrieves the corresponding UUIDs from the JSON response using JsonPath. The results are
+      * stored in a map where the key is the mobile number and the value is the UUID.
+      * </p>
+      *
+      * <p>
+      * If a user is not found or an error occurs during the fetch, appropriate error logs are generated.
+      * </p>
+      *
+      * @param mobileNumbers the set of mobile numbers to search for
+      * @param requestInfo   the {@link RequestInfo} object containing metadata for the request
+      * @param tenantId      the tenant ID under which the search is performed
+      * @return a map of mobile numbers to corresponding user UUIDs
+      */
+     
+ 	public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
+
+ 		Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
+ 		StringBuilder uri = new StringBuilder();
+ 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+ 		Map<String, Object> userSearchRequest = new HashMap<>();
+ 		userSearchRequest.put("RequestInfo", requestInfo);
+ 		userSearchRequest.put("tenantId", tenantId);
+ 		userSearchRequest.put("userType", "CITIZEN");
+ 		for (String mobileNo : mobileNumbers) {
+ 			userSearchRequest.put("userName", mobileNo);
+ 			try {
+ 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+ 				if (null != user) {
+ 					String uuid = JsonPath.read(user, "$.user[0].uuid");
+ 					mapOfPhnoAndUUIDs.put(mobileNo, uuid);
+ 				} else {
+ 					log.error("Service returned null while fetching user for username - " + mobileNo);
+ 				}
+ 			} catch (Exception e) {
+ 				log.error("Exception while fetching user for username - " + mobileNo);
+ 				log.error("Exception trace: ", e);
+ 				continue;
+ 			}
+ 		}
+ 		return mapOfPhnoAndUUIDs;
+ 	}
 	
+ 	
+ 	/**
+ 	 * Fetches the email IDs of users based on their mobile numbers.
+ 	 * <p>
+ 	 * For each mobile number in the input set, this method constructs a user search request and
+ 	 * queries the user service to retrieve the corresponding email ID. The email IDs are extracted
+ 	 * from the JSON response using JsonPath and mapped to their respective mobile numbers.
+ 	 * </p>
+ 	 *
+ 	 * <p>
+ 	 * If an email ID is not found or an exception occurs during the fetch, appropriate logs are generated.
+ 	 * The method returns a map where keys are mobile numbers and values are the associated email IDs.
+ 	 * </p>
+ 	 *
+ 	 * @param mobileNumbers the set of mobile numbers for which email IDs need to be fetched
+ 	 * @param requestInfo   the {@link RequestInfo} object containing metadata for the service request
+ 	 * @param tenantId      the tenant ID used for scoping the user search
+ 	 * @return a map of mobile numbers to their corresponding email IDs
+ 	 */
+ 	
+	public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
+		Map<String, String> mapOfPhnoAndEmailIds = new HashMap<>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
+		Map<String, Object> userSearchRequest = new HashMap<>();
+		userSearchRequest.put("RequestInfo", requestInfo);
+		userSearchRequest.put("tenantId", tenantId);
+		userSearchRequest.put("userType", "CITIZEN");
+		for (String mobileNo : mobileNumbers) {
+			userSearchRequest.put("userName", mobileNo);
+			try {
+				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+				if (null != user) {
+					if (JsonPath.read(user, "$.user[0].emailId") != null) {
+						String email = JsonPath.read(user, "$.user[0].emailId");
+						mapOfPhnoAndEmailIds.put(mobileNo, email);
+					}
+				} else {
+					log.error("Service returned null while fetching user for username - " + mobileNo);
+				}
+			} catch (Exception e) {
+				log.error("Exception while fetching user for username - " + mobileNo);
+				log.error("Exception trace: ", e);
+				continue;
+			}
+		}
+		return mapOfPhnoAndEmailIds;
+	}
+	
+	/**
+	 * Creates a list of {@link EmailRequest} objects using the provided message template and a map
+	 * of mobile numbers to email IDs.
+	 * <p>
+	 * For each entry in the map, the placeholder {@code BookingConstants.NOTIFICATION_EMAIL} in the message
+	 * is replaced with the corresponding email ID. Each customized message is then used to create an
+	 * {@link Email} object, which is wrapped in an {@link EmailRequest} along with the given {@link RequestInfo}.
+	 * </p>
+	 *
+	 * @param requestInfo          the request information containing metadata about the request
+	 * @param message              the email message template that may contain placeholders
+	 * @param mobileNumberToEmailId a map where keys are mobile numbers and values are corresponding email IDs
+	 * @return a list of {@link EmailRequest} objects ready to be sent
+	 */
+	public List<EmailRequest> createEmailRequest(RequestInfo requestInfo, String message,
+			Map<String, String> mobileNumberToEmailId) {
+
+		List<EmailRequest> emailRequest = new LinkedList<>();
+		for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
+			String customizedMsg = "";
+			if (message.contains(BookingConstants.NOTIFICATION_EMAIL))
+				customizedMsg = message.replace(BookingConstants.NOTIFICATION_EMAIL, entryset.getValue());
+
+			String subject = "";
+			String body = customizedMsg;
+			Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false)
+					.body(body).subject(subject).build();
+			EmailRequest email = new EmailRequest(requestInfo, emailobj);
+			emailRequest.add(email);
+		}
+		return emailRequest;
+	}
+
+	
+	/**
+	 * Sends email notifications based on the provided list of {@link EmailRequest}.
+	 * <p>
+	 * This method checks whether email notifications are enabled through the configuration.
+	 * If enabled and the list of email requests is not empty, it iterates through each request,
+	 * and pushes it to the configured Kafka topic for further processing, provided the email body is not empty.
+	 * </p>
+	 *
+	 * <p>
+	 * If the list is empty or the email body is empty, appropriate logs are generated and the email is not sent.
+	 * </p>
+	 *
+	 * @param emailRequestList the list of {@link EmailRequest} objects to be processed for email notifications
+	 */
+	public void sendEmail(List<EmailRequest> emailRequestList) {
+
+		if (config.getIsEmailNotificationEnabled()) {
+			if (CollectionUtils.isEmpty(emailRequestList))
+				log.info("Messages from localization couldn't be fetched!");
+			for (EmailRequest emailRequest : emailRequestList) {
+				if (!StringUtils.isEmpty(emailRequest.getEmail().getBody())) {
+					producer.push(config.getEmailNotifTopic(), emailRequest);
+					log.info("Sending EMAIL notification! ");
+					log.info("Email Id: " + emailRequest.getEmail().toString());
+				} else {
+					log.info("Email body is empty, hence no email notification will be sent.");
+				}
+			}
+
+		}
+	}
+
 
 }

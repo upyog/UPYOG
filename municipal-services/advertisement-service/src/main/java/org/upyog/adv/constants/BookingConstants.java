@@ -91,6 +91,14 @@ public class BookingConstants {
 	public static final String NOTIFICATION_LOCALE = "en_IN";
 	
 	public static final String NOTIFICATION_MODULE_NAME = "rainmaker-adv-notification";
+	
+	public static final String NOTIFICATION_PAY_NOW = "PAY NOW";
+	
+	public static final String NOTIFICATION_DOWNLOAD_RECEIPT = "Download Receipt";
+	
+	public static final String NOTIFICATION_ACTION = "{Action Button}";
+	
+	public static final String NOTIFICATION_ACTION_BUTTON = "{/Action Button}";
 
 	public static final String APPLICANT_NAME = "{APPLICANT_NAME}";
 
@@ -109,6 +117,10 @@ public class BookingConstants {
 	public static final String DRAFT_DISCARDED = "Draft discarded";
 	
 	public static final String ACTIVE = "active";
+	
+	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
+	
+	public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
 
 
 }

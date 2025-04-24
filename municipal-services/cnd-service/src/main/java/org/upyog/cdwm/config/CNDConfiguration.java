@@ -200,8 +200,8 @@ public class CNDConfiguration {
  	@Value("${egov.cnd.calculator.endpoint}")
  	private String calulatorEndPoint;
  	
- 	 @Value("${egov.cnd.myrequests.link}")
-     private String myRequestsLink;
+ 	 @Value("${egov.download.receipt.link}")
+     private String downloadReceiptLink;
 
 
 }

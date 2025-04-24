@@ -502,12 +502,12 @@ public class NotificationUtil {
 		
 		
 		
-		if (message.contains("PAY NOW")) {
+		if (message.contains(StreetVendingConstants.NOTIFICATION_PAY_NOW)) {
 			   
 		    link = getPayUrl(streetVendingDetail, message);
 		}		
 		
-		if (message.contains("Download Receipt")) {
+		if (message.contains(StreetVendingConstants.NOTIFICATION_DOWNLOAD_RECEIPT)) {
 			   
 		    link = getReceiptDownloadLink(streetVendingDetail);
 		}
@@ -590,7 +590,7 @@ public class NotificationUtil {
 	
 	public String getReceiptDownloadLink(StreetVendingDetail streetVendingDetail) {
 		
-		String downloadReceiptLinkTemplate = config.getMyRequestsLink();
+		String downloadReceiptLinkTemplate = config.getDownloadReceiptLink();
 	    String actionLink = String.format(downloadReceiptLinkTemplate,
 	            streetVendingDetail.getApplicationNo(),
 	            streetVendingDetail.getTenantId()
