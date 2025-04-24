@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.enums.AddressType;
+import org.egov.user.domain.service.utils.UserConstants;
 import org.egov.user.repository.rowmapper.AddressRowMapper;
 import org.egov.user.repository.rowmapper.AddressRowMapperV2;
 import org.springframework.dao.DuplicateKeyException;
@@ -37,7 +38,7 @@ public class AddressRepository {
     public static final String INSERT_ADDRESS_BYUSERID_V2 = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality, status) "
             + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby, :address2, :houseNumber, :houseName, :streetName, :landmark, :locality, :status)";
 
-    public static final String UPDATE_ADDRESS_STATUS_INACTIVE = "UPDATE eg_user_address SET status = 'inactive' WHERE id = :addressId";
+    public static final String UPDATE_ADDRESS_STATUS_INACTIVE = "UPDATE eg_user_address SET status = :status WHERE id = :addressId";
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -69,7 +70,7 @@ public class AddressRepository {
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("createdby", userId);
         addressInputs.put("lastmodifiedby", address.getUserId());
-        addressInputs.put("status", "active");
+        addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS); // Set status to active
 
         namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID, addressInputs);
         return address;
@@ -164,7 +165,7 @@ public class AddressRepository {
         addressInputs.put("tenantid", matchingEntityAddress.getTenantId());
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("lastmodifiedby", userId);
-        addressInputs.put("status", "active");
+        addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS);
 
         namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID, addressInputs);
     }
@@ -269,7 +270,7 @@ public class AddressRepository {
         addressInputs.put("streetName", address.getStreetName());
         addressInputs.put("landmark", address.getLandmark());
         addressInputs.put("locality", address.getLocality());
-        addressInputs.put("status", "active");
+        addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS); // Set status to active
 
         try {
             namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID_V2, addressInputs);
@@ -289,6 +290,7 @@ public class AddressRepository {
     public void updateAddressStatus(Long addressId) {
         final Map<String, Object> params = new HashMap<>();
         params.put("addressId", addressId);
+        params.put("status", UserConstants.ADDRESS_INACTIVE_STATUS);
 
         namedParameterJdbcTemplate.update(UPDATE_ADDRESS_STATUS_INACTIVE, params);
     }
