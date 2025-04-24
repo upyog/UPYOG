@@ -22,6 +22,8 @@ import org.upyog.adv.kafka.Producer;
 import org.upyog.adv.repository.ServiceRequestRepository;
 import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
+import org.upyog.adv.web.models.events.Action;
+import org.upyog.adv.web.models.events.ActionItem;
 import org.upyog.adv.web.models.events.EventRequest;
 import org.upyog.adv.web.models.notification.Email;
 import org.upyog.adv.web.models.notification.EmailRequest;
@@ -291,7 +293,7 @@ public class NotificationUtil {
 	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
 	 */
 	public String getPayUrl(BookingDetail bookingDetail, String message) {
-	    String payLinkTemplate = config.getPayLink();
+	    String payLinkTemplate = config.getPayNowLink();
 	    String actionLink = String.format(payLinkTemplate,
 	            config.getBusinessServiceName(),
 	            bookingDetail.getBookingNo()
@@ -299,7 +301,7 @@ public class NotificationUtil {
 	            );
 	    String finalUrl = config.getUiAppHost() + actionLink;
 	    
-	    log.info("Final url For pay link ---- " + finalUrl);
+	    log.info("Final url For pay link : " + finalUrl);
 
 	    return getShortnerURL(finalUrl);
 	}
@@ -326,7 +328,7 @@ public class NotificationUtil {
 	    
 	    String finalUrl = config.getUiAppHost() + actionLink;
 	    
-	    log.info("Final url to download receipt ---- " + finalUrl);
+	    log.info("Final url to download receipt : " + finalUrl);
 
 	    return getShortnerURL(finalUrl);
 
@@ -492,6 +494,49 @@ public class NotificationUtil {
 
 		}
 	}
+	
+	/**
+	 * Generates an {@link Action} object based on specific placeholders found in the input message.
+	 * <p>
+	 * This method checks if the provided message contains the {@code NOTIFICATION_ACTION} and 
+	 * {@code NOTIFICATION_ACTION_BUTTON} placeholders. If present, it extracts the action code 
+	 * between these placeholders and validates it against known constants like 
+	 * {@code NOTIFICATION_PAY_NOW} or {@code NOTIFICATION_DOWNLOAD_RECEIPT}.
+	 * If the code is valid, it constructs an {@link ActionItem} with the provided action URL and tenant ID,
+	 * wraps it in an {@link Action} object, and returns it.
+	 *
+	 * @param message    The notification message which may contain action placeholders.
+	 * @param actionLink The URL to be used for the action (e.g., pay now or download receipt).
+	 * @param tenantId   The tenant ID to associate with the generated action.
+	 * @return An {@link Action} object if the message contains a recognized action code, otherwise {@code null}.
+	 * EX- Hi Nehatest your advertisement booking under booking number: ADV-1508-000470 has been completed successfully. Please download receipt using link {Action Button}Download Receipt{/Action Button}
+	 */
+	
+	public Action getActionLinkAndCode(String message, String actionLink, String tenantId) {
+	   
+	        String code = StringUtils.substringBetween(
+	                message, 
+	                BookingConstants.NOTIFICATION_ACTION, 
+	                BookingConstants.NOTIFICATION_ACTION_BUTTON
+	        );
+
+	        if (BookingConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code) || 
+	            BookingConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
+
+	            ActionItem actionItem = ActionItem.builder()
+	                    .actionUrl(actionLink)
+	                    .code(code)
+	                    .build();
+
+	            return Action.builder()
+	                    .tenantId(tenantId)
+	                    .actionUrls(Collections.singletonList(actionItem))
+	                    .build();
+	        }
+	    
+	    return null;
+	}
+
 
 
 }

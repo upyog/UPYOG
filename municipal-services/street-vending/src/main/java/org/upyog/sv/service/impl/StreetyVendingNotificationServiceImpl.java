@@ -127,24 +127,12 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 		Action action = null;
 
 		if (message.contains(StreetVendingConstants.NOTIFICATION_ACTION)) {
+			
+			action = util.getActionLinkAndCode(message, actionLink, tenantId);
+			
 			String code = StringUtils.substringBetween(message, StreetVendingConstants.NOTIFICATION_ACTION, StreetVendingConstants.NOTIFICATION_ACTION_BUTTON);
 			message = message.replace(StreetVendingConstants.NOTIFICATION_ACTION, "").replace(StreetVendingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
 
-			if (StreetVendingConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code)) {
-				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
-				List<ActionItem> actionItems = new ArrayList<>();
-				actionItems.add(actionItem);
-
-				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
-			}
-			
-			if (StreetVendingConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
-				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
-				List<ActionItem> actionItems = new ArrayList<>();
-				actionItems.add(actionItem);
-
-				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
-			}
 		}
 	
 		events.add(Event.builder().tenantId(tenantId).description(message)

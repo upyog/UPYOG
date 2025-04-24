@@ -132,24 +132,12 @@ public class NotificationUtil {
 		Action action = null;
 
 		if (message.contains(NotificationConstants.NOTIFICATION_ACTION)) {
+			
+			action = getActionLinkAndCode(message, actionLink, tenantId);
+			
 			String code = StringUtils.substringBetween(message, NotificationConstants.NOTIFICATION_ACTION, NotificationConstants.NOTIFICATION_ACTION_BUTTON);
 			message = message.replace(NotificationConstants.NOTIFICATION_ACTION, "").replace(NotificationConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
-
-			if (NotificationConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code)) {
-				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
-				List<ActionItem> actionItems = new ArrayList<>();
-				actionItems.add(actionItem);
-
-				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
-			}
 			
-			if (NotificationConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
-				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
-				List<ActionItem> actionItems = new ArrayList<>();
-				actionItems.add(actionItem);
-
-				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
-			}
 		}
 	
 		Event event = Event.builder().tenantId(tenantId).description(message)
@@ -506,7 +494,7 @@ public class NotificationUtil {
 	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
 	 */
 	public String getPayUrl(CNDApplicationDetail cndApplicationDetail, String message) {
-	    String payLinkTemplate = config.getPayLink();
+	    String payLinkTemplate = config.getPayNowLink();
 	    String actionLink = String.format(payLinkTemplate,
 	            config.getModuleName(),
 	            cndApplicationDetail.getApplicationNumber()
@@ -514,7 +502,7 @@ public class NotificationUtil {
 	            );
 	    String finalUrl = config.getUiAppHost() + actionLink;
 	    
-	    log.info("Final url for Payment link ---- " + finalUrl);
+	    log.info("Final url for Payment link : " + finalUrl);
 
 	    return getShortenedUrl(finalUrl);
 	}
@@ -531,20 +519,62 @@ public class NotificationUtil {
 	 * @return a shortened URL string for downloading the receipt
 	 */
 	
-public String getReceiptDownloadLink(CNDApplicationDetail cndApplicationDetail) {
+		public String getReceiptDownloadLink(CNDApplicationDetail cndApplicationDetail) {
+				
+				String downloadReceiptLinkTemplate = config.getDownloadReceiptLink();
+			    String actionLink = String.format(downloadReceiptLinkTemplate,
+			    		cndApplicationDetail.getApplicationNumber(),
+			    		cndApplicationDetail.getTenantId()
+			            );
+			    
+			    String finalUrl = config.getUiAppHost() + actionLink;
+			    
+			    log.info("Final url to download receipt : " + finalUrl);
 		
-		String downloadReceiptLinkTemplate = config.getDownloadReceiptLink();
-	    String actionLink = String.format(downloadReceiptLinkTemplate,
-	    		cndApplicationDetail.getApplicationNumber(),
-	    		cndApplicationDetail.getTenantId()
-	            );
-	    
-	    String finalUrl = config.getUiAppHost() + actionLink;
-	    
-	    log.info("Final url to download receipt ---- " + finalUrl);
+			    return getShortenedUrl(finalUrl);
+		
+			}
 
-	    return getShortenedUrl(finalUrl);
+		/**
+		 * Generates an {@link Action} object based on specific placeholders found in the input message.
+		 * <p>
+		 * This method checks if the provided message contains the {@code NOTIFICATION_ACTION} and 
+		 * {@code NOTIFICATION_ACTION_BUTTON} placeholders. If present, it extracts the action code 
+		 * between these placeholders and validates it against known constants like 
+		 * {@code NOTIFICATION_PAY_NOW} or {@code NOTIFICATION_DOWNLOAD_RECEIPT}.
+		 * If the code is valid, it constructs an {@link ActionItem} with the provided action URL and tenant ID,
+		 * wraps it in an {@link Action} object, and returns it.
+		 *
+		 * @param message    The notification message which may contain action placeholders.
+		 * @param actionLink The URL to be used for the action (e.g., pay now or download receipt).
+		 * @param tenantId   The tenant ID to associate with the generated action.
+		 * @return An {@link Action} object if the message contains a recognized action code, otherwise {@code null}.
+		 * ex-  Dear Shivank, You have successfully completed your cnd registration under application number: CND-1013-000163. Your certificate id: 234567 and can be downloaded from your account. Thank you. {Action Button}Download Receipt{/Action Button}
 
-	}
-	
+		 */
+		
+		public Action getActionLinkAndCode(String message, String actionLink, String tenantId) {
+		   
+		        String code = StringUtils.substringBetween(
+		                message, 
+		                NotificationConstants.NOTIFICATION_ACTION, 
+		                NotificationConstants.NOTIFICATION_ACTION_BUTTON
+		        );
+		
+		        if (NotificationConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code) || 
+		        		NotificationConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
+		
+		            ActionItem actionItem = ActionItem.builder()
+		                    .actionUrl(actionLink)
+		                    .code(code)
+		                    .build();
+		
+		            return Action.builder()
+		                    .tenantId(tenantId)
+		                    .actionUrls(Collections.singletonList(actionItem))
+		                    .build();
+		        }
+		    
+		    return null;
+		}
 }

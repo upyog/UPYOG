@@ -220,6 +220,6 @@ public class StreetVendingConfiguration {
  	 @Value("${egov.download.receipt.link}")
      private String downloadReceiptLink;
  	 
- 	 @Value("${egov.usr.events.pay.link}")
-     private String payLink;
+ 	 @Value("${egov.usr.events.paynow.link}")
+     private String payNowLink;
 }

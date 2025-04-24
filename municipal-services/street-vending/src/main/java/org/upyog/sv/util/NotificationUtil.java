@@ -32,6 +32,8 @@ import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.VendorDetail;
+import org.upyog.sv.web.models.events.Action;
+import org.upyog.sv.web.models.events.ActionItem;
 import org.upyog.sv.web.models.events.EventRequest;
 import org.upyog.sv.web.models.notification.Email;
 import org.upyog.sv.web.models.notification.EmailRequest;
@@ -563,7 +565,7 @@ public class NotificationUtil {
 	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
 	 */
 	public String getPayUrl(StreetVendingDetail streetVendingDetail, String message) {
-	    String payLinkTemplate = config.getPayLink();
+	    String payLinkTemplate = config.getPayNowLink();
 	    String actionLink = String.format(payLinkTemplate,
 	            config.getModuleName(),
 	            streetVendingDetail.getApplicationNo()
@@ -572,7 +574,7 @@ public class NotificationUtil {
 	    
 	    String finalUrl = config.getUiAppHost() + actionLink;
 	    
-	    log.info("Final url for Payment link  ---- " + finalUrl);
+	    log.info("Final url for Payment link :  " + finalUrl);
 
 	    return getShortenedUrl(finalUrl);
 	}
@@ -598,7 +600,7 @@ public class NotificationUtil {
 	    
 	    String finalUrl = config.getUiAppHost() + actionLink;
 	    
-	    log.info("Final url to download receipt ---- " + finalUrl);
+	    log.info("Final url to download receipt :  " + finalUrl);
 	    return getShortenedUrl(finalUrl);
 
 	}
@@ -633,6 +635,49 @@ public class NotificationUtil {
 		} else {
 			return res;
 		}
+	}
+	
+	/**
+	 * Generates an {@link Action} object based on specific placeholders found in the input message.
+	 * <p>
+	 * This method checks if the provided message contains the {@code NOTIFICATION_ACTION} and 
+	 * {@code NOTIFICATION_ACTION_BUTTON} placeholders. If present, it extracts the action code 
+	 * between these placeholders and validates it against known constants like 
+	 * {@code NOTIFICATION_PAY_NOW} or {@code NOTIFICATION_DOWNLOAD_RECEIPT}.
+	 * If the code is valid, it constructs an {@link ActionItem} with the provided action URL and tenant ID,
+	 * wraps it in an {@link Action} object, and returns it.
+	 *
+	 * @param message    The notification message which may contain action placeholders.
+	 * @param actionLink The URL to be used for the action (e.g., pay now or download receipt).
+	 * @param tenantId   The tenant ID to associate with the generated action.
+	 * @return An {@link Action} object if the message contains a recognized action code, otherwise {@code null}.
+	 * ex-  Dear Shivank, You have successfully completed your street vending registration under application number: SV-1013-000163. Your certificate id: 234567 and can be downloaded from your account. Thank you. {Action Button}Download Receipt{/Action Button}
+
+	 */
+	
+	public Action getActionLinkAndCode(String message, String actionLink, String tenantId) {
+	    
+	        String code = StringUtils.substringBetween(
+	                message, 
+	                StreetVendingConstants.NOTIFICATION_ACTION, 
+	                StreetVendingConstants.NOTIFICATION_ACTION_BUTTON
+	        );
+	
+	        if (StreetVendingConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code) || 
+	        		StreetVendingConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
+	
+	            ActionItem actionItem = ActionItem.builder()
+	                    .actionUrl(actionLink)
+	                    .code(code)
+	                    .build();
+	
+	            return Action.builder()
+	                    .tenantId(tenantId)
+	                    .actionUrls(Collections.singletonList(actionItem))
+	                    .build();
+	        }
+	    
+	    return null;
 	}
 	
 

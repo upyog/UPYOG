@@ -202,26 +202,14 @@ public class ADVNotificationService {
 		Action action = null;
 
 		if (message.contains(BookingConstants.NOTIFICATION_ACTION)) {
-			String code = StringUtils.substringBetween(message, BookingConstants.NOTIFICATION_ACTION, BookingConstants.NOTIFICATION_ACTION_BUTTON);
-			message = message.replace(BookingConstants.NOTIFICATION_ACTION, "").replace(BookingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
-
-			if (BookingConstants.NOTIFICATION_PAY_NOW.equalsIgnoreCase(code)) {
-				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
-				List<ActionItem> actionItems = new ArrayList<>();
-				actionItems.add(actionItem);
-
-				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
-			}
 			
-			if (BookingConstants.NOTIFICATION_DOWNLOAD_RECEIPT.equalsIgnoreCase(code)) {
-				ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code(code).build();
-				List<ActionItem> actionItems = new ArrayList<>();
-				actionItems.add(actionItem);
-
-				action = Action.builder().tenantId(tenantId).actionUrls(actionItems).build();
-			}
+			 action = util.getActionLinkAndCode(message, actionLink, tenantId);
+			 
+			 String code = StringUtils.substringBetween(message, BookingConstants.NOTIFICATION_ACTION, BookingConstants.NOTIFICATION_ACTION_BUTTON);
+			 message = message.replace(BookingConstants.NOTIFICATION_ACTION, "").replace(BookingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
 		}
-	
+		
+		
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(BookingConstants.USREVENTS_EVENT_TYPE).name(BookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(BookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).actions(action)
