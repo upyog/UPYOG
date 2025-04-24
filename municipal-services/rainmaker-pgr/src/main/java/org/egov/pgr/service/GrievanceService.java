@@ -494,6 +494,7 @@ public class GrievanceService {
 					throw new CustomException(ErrorConstants.NO_DATA_KEY, ErrorConstants.NO_DATA_MSG);
 				}
 				serviceReqSearchCriteria.setTenantId(serviceReqSearchCriteria.getTenantId());
+
 						//requestInfo.getUserInfo().getTenantId());
 			}
 			/**
