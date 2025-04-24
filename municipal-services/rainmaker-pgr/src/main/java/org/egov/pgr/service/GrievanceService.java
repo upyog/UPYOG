@@ -494,6 +494,8 @@ public class GrievanceService {
 					throw new CustomException(ErrorConstants.NO_DATA_KEY, ErrorConstants.NO_DATA_MSG);
 				}
 				serviceReqSearchCriteria.setTenantId(serviceReqSearchCriteria.getTenantId());
+
+						//requestInfo.getUserInfo().getTenantId());
 			}
 			/**
 			 * An Employee can by default search only the complaints assigned to him.

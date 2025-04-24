@@ -75,7 +75,7 @@ public class WorkflowIntegrator {
 		
 		ProcessInstance processInstance = ProcessInstance.builder()
 				.businessId(waterConnectionRequest.getWaterConnection().getApplicationNo())
-				.tenantId(property.getTenantId())
+				.tenantId(waterConnectionRequest.getWaterConnection().getTenantId())
 				.businessService(wfBusinessServiceName).moduleName(MODULENAMEVALUE)
 				.action(waterConnectionRequest.getWaterConnection().getProcessInstance().getAction()).build();
 		if (!StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getProcessInstance())) {
