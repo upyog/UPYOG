@@ -31,8 +31,8 @@ public class CNDConfiguration {
     @Value("${egov.idgen.cnd.application.id.name}")
     private String CNDApplicationKey;
 
-    @Value("${egov.usr.events.pay.link}")
-    private String payLink;
+    @Value("${egov.usr.events.paynow.link}")
+    private String payNowLink;
 
     @Value("${egov.idgen.cnd.application.id.format}")
     private String CNDApplicationFormat;
@@ -196,6 +196,9 @@ public class CNDConfiguration {
 
  	@Value("${egov.cnd.calculator.endpoint}")
  	private String calulatorEndPoint;
+ 	
+ 	 @Value("${egov.download.receipt.link}")
+     private String downloadReceiptLink;
 
 
 }

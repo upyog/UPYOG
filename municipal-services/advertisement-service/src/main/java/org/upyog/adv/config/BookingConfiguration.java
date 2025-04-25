@@ -215,5 +215,12 @@ public class BookingConfiguration {
 
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationSearchEndpoint;
+ 	
+ 	@Value("${egov.download.receipt.link}")
+    private String downloadReceiptLink;
+ 	 
+    @Value("${egov.usr.events.paynow.link}")
+    private String payNowLink;
+	
 
 }
