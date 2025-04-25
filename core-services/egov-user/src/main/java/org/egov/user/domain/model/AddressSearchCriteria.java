@@ -1,6 +1,7 @@
 package org.egov.user.domain.model;
 
 import lombok.*;
+import org.egov.user.domain.model.enums.AddressType;
 
 @AllArgsConstructor
 @Getter
@@ -11,7 +12,7 @@ public class AddressSearchCriteria {
     private Long id;
     private Long userId;
     private String tenantId;
-    private String addressType;
+    private AddressType addressType;
     private String city;
     private String pinCode;
     private String status;
