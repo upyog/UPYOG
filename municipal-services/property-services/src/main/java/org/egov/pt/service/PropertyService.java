@@ -46,6 +46,7 @@ import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
 import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
+import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -810,5 +811,43 @@ public class PropertyService {
 	public boolean isCriteriaEmpty(PropertyCriteria propertyCriteria) {
 		return propertyValidator.isCriteriaEmpty(propertyCriteria);
 	}
+	
+	public Map<String, Object> totalCount(TotalCountRequest totalCountRequest) {
+		Map<String, Object> return1 = new HashMap<>();
+		if(hasRequiredRole(totalCountRequest.getRequestInfo(),"EMPLOYEE")) {
+			List<Map<String, Object>> result = repository.getStatusCounts(totalCountRequest);
+			return result.get(0);
+			
+		}else if(hasRequiredRole(totalCountRequest.getRequestInfo(),"CITIZEN")){
+			
+		}
+		
+		return return1;
 
+	}
+
+	public boolean hasRequiredRole(RequestInfo requestInfo, String type) {
+	    if (requestInfo == null || requestInfo.getUserInfo() == null) {
+	        return false;
+	    }
+
+	    List<Role> roles = requestInfo.getUserInfo().getRoles();
+	    if (roles == null || roles.isEmpty()) {
+	        return false;
+	    }
+
+	    if ("CITIZEN".equalsIgnoreCase(type)) {
+	        return roles.stream()
+	                .anyMatch(role -> type.equalsIgnoreCase(role.getCode()));
+	    }
+
+	    return roles.stream()
+	            .anyMatch(role -> containsIgnoreCase(role.getCode(), "PROPERTY_APPROVER") ||
+	                              containsIgnoreCase(role.getCode(), "PROPERTY_VERIFIER") ||
+	                              containsIgnoreCase(role.getCode(), "EMPLOYEE"));
+	}
+
+	private boolean containsIgnoreCase(String source, String target) {
+	    return source != null && source.toLowerCase().contains(target.toLowerCase());
+	}
 }

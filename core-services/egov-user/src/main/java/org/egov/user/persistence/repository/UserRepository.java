@@ -69,7 +69,7 @@ public class UserRepository {
         final List<Object> preparedStatementValues = new ArrayList<>();
         boolean RoleSearchHappend = false;
         List<Long> userIds = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(userSearch.getRoleCodes()) && userSearch.getUlbName() != null) {
+        if (!CollectionUtils.isEmpty(userSearch.getRoleCodes()) && userSearch.getTenantId() != null) {
             userIds = findUsersWithRole(userSearch);
             RoleSearchHappend = true;
         }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ import org.egov.pt.repository.rowmapper.PtTaxCalculatorTrackerRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.TotalCountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -331,5 +333,11 @@ public class PropertyRepository {
 		List<PtTaxCalculatorTracker> ptTaxCalculatorTrackers = jdbcTemplate.query(query, preparedStmtList.toArray(),
 				ptTaxCalculatorTrackerRowMapper);
 		return ptTaxCalculatorTrackers;
+	}
+	
+	public List<Map<String, Object>> getStatusCounts(TotalCountRequest totalCountRequest) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getStatusBasedCountQuery(totalCountRequest, preparedStmtList);
+		return jdbcTemplate.queryForList(query, preparedStmtList.toArray());
 	}
 }

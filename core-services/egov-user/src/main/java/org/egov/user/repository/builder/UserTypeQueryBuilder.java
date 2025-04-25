@@ -244,10 +244,10 @@ public class UserTypeQueryBuilder {
         selectQuery.append(" WHERE");
         boolean isAppendAndClause = false;
 
-        if (userSearchCriteria.getUlbName() != null) {
+        if (userSearchCriteria.getTenantId() != null) {
             isAppendAndClause = addAndClauseIfRequired(false, selectQuery);
             selectQuery.append(" ur.role_tenantid = ?");
-            preparedStatementValues.add(userSearchCriteria.getUlbName().trim());
+            preparedStatementValues.add(userSearchCriteria.getTenantId().trim());
         }
 
 
