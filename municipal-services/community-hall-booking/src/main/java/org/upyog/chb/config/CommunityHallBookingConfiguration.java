@@ -99,6 +99,13 @@ public class CommunityHallBookingConfiguration {
 
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsPath;
+	
+	// MDMSV2 Config
+	@Value("${egov.mdmsV2.host}")
+	private String mdmsHostV2;
+
+	@Value("${egov.mdmsV2.search.endpoint}")
+	private String mdmsPathV2;
 
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -88,6 +89,10 @@ public class MdmsUtil {
 	public StringBuilder getMdmsSearchUrl() {
 		return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsPath());
 	}
+	
+	public StringBuilder getMdmsV2SearchUrl() {
+		return new StringBuilder().append(config.getMdmsHostV2()).append(config.getMdmsPathV2());
+	}
 
 	/**
 	 * prepares the mdms request object
@@ -149,6 +154,64 @@ public class MdmsUtil {
 		return Arrays.asList(moduleDetail, commonMasterMDtl);
 
 	}
+	
+	public Map<String, Object> getCHBAssetParentCategoryDetails(RequestInfo requestInfo,String tenantId,String purpose) {
+
+		// master details for CHB module
+		List<MasterDetail> chbMasterDtls = new ArrayList<>();
+		
+		 String ulbName = null;
+		// Split by dot
+		String[] parts = tenantId.split("\\.");
+
+		if (parts.length > 1) {
+		     ulbName = parts[1];
+		}
+
+		// filter to only get code field from master data
+			
+		    final String filterCode = String.format("[?(@.code == \"%s\" && @.UlbName == \"%s\")]", purpose, ulbName);
+
+//			final String filterCode = "[?(@.code == \"purpose\" && @.UlbName == \"ulbName\")]";
+			
+		
+
+		chbMasterDtls.add(MasterDetail.builder().name("AssetCategory").filter(filterCode).build());
+		
+		ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(chbMasterDtls).moduleName("AssetParentCategory")
+				.build();
+
+		List<ModuleDetail> moduleDetails = new LinkedList<>();
+		
+		moduleDetails.addAll(moduleDetails);
+
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId(tenantId)
+				.build();
+
+		MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo)
+				.build();
+
+		Object result = serviceRequestRepository.fetchResult(getMdmsV2SearchUrl(), mdmsCriteriaReq);
+		
+		// 2. Cast the top-level result
+		Map<String, Object> resultMap = (Map<String, Object>) result;
+		
+		Map<String, Object> mdmsRes = (Map<String, Object>) resultMap.get("MdmsRes");
+		Map<String, Object> assetParentCategory = (Map<String, Object>) mdmsRes.get("AssetParentCategory");
+		List<Map<String, Object>> assetCategoryList = (List<Map<String, Object>>) assetParentCategory.get("AssetCategory");
+
+		Map<String, Object> asset = assetCategoryList.get(0);
+		
+//		String code = (String) asset.get("code");
+//		String ulbName = (String) asset.get("UlbName");
+//		Integer assetCost = (Integer) asset.get("assetCost");
+		
+//		setMDMSDataMap(result);
+		
+		return asset;
+	}
+	
+	
 
 	public static void setMDMSDataMap(Object mdmsDataMap) {
 		mdmsMap = mdmsDataMap;

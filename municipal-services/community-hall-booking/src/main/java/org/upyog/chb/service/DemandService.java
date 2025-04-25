@@ -1,6 +1,7 @@
 package org.upyog.chb.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -68,23 +70,21 @@ public class DemandService {
 		
 		User owner = User.builder().name(user.getName()).emailId(user.getEmailId())
 				.mobileNumber(user.getMobileNumber()).tenantId(bookingDetail.getTenantId()).build();
+		Map<String, Object> detailMap = (Map<String, Object>) bookingRequest.getHallsBookingApplication().getAdditionaldetail();
+		String bookingFor = (String) detailMap.get("bookingFor");
+		Map<String, Object> AssetParentCategoryDetails = mdmsUtil.getCHBAssetParentCategoryDetails(bookingRequest.getRequestInfo(), tenantId,bookingFor);
 		
+//		String code = (String) asset.get("code");
+//		String ulbName = (String) asset.get("UlbName");
+		Integer assetGstCost = (Integer) AssetParentCategoryDetails.get("assetGstCost");
+		Integer securityAmount = (Integer) AssetParentCategoryDetails.get("securityAmount");
+
 		// Calculate Fees for the booking 
         long days = calculateDaysBetween(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingDate(), bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingToDate());    	
 
 		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
-			    .multiply(new BigDecimal(bookingRequest
-			            .getHallsBookingApplication()
-			            .getRelatedAsset()
-			            .getAssetDetails()
-			            .get("gstAssetCost")
-			            .asText())) // Converts assetCost string to BigDecimal
-			    .add(new BigDecimal(bookingRequest
-			            .getHallsBookingApplication()
-			            .getRelatedAsset()
-			            .getAssetDetails()
-			            .get("securityAmount")
-			            .asText())); // Converts securityAmount string to BigDecimal
+			    .multiply(new BigDecimal(assetGstCost)) // Converts assetCost string to BigDecimal
+			    .add(new BigDecimal(securityAmount)).setScale(0, RoundingMode.CEILING); // Converts securityAmount string to BigDecimal
     	
     	
 		List<DemandDetail> demandDetails = new LinkedList<>();

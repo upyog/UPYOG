@@ -87,6 +87,9 @@ public class UserSearchRequest {
     @JsonProperty("roleCodes")
     private List<String> roleCodes;
     
+    @JsonProperty("ulbName")
+    private String ulbName;
+    
     @Builder.Default
     private Boolean skipValidate = false;
 
@@ -105,6 +108,7 @@ public class UserSearchRequest {
                 .sort(sort)
                 .type(UserType.fromValue(userType))
                 .tenantId(tenantId)
+                .ulbName(ulbName)
                 .roleCodes(roleCodes)
                 .uuid(uuid)
                 .skipValidate(skipValidate)
