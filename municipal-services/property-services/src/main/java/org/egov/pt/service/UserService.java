@@ -524,7 +524,7 @@ public class UserService {
 		Method to update user mobile number
 	*/
     
-	public void updateUserMobileNumber(PropertyRequest request,Map <String, String> uuidToMobileNumber) {
+	public void updateOwnerDetails(PropertyRequest request) {
 		
 		Property property = request.getProperty();
 		RequestInfo requestInfo = request.getRequestInfo();
