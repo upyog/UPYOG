@@ -665,9 +665,16 @@ public class UserService {
             throw new IllegalArgumentException("USER_UUID_NOT_VALID: The provided user UUID:"+userUuid+" is not valid");
         }
         // Check if Permanent or Correspondence address already exists and not Other category as Other can be created multiple times
-        if ((AddressType.PERMANENT == address.getType() || AddressType.CORRESPONDENCE == address.getType())
-                && addressRepository.existsAddressByType(userId, String.valueOf(address.getType()))){
-            throw new IllegalArgumentException("A " + address.getType() + " address already exists for user ID: " + userId);
+        if (AddressType.PERMANENT == address.getType() || AddressType.CORRESPONDENCE == address.getType()) {
+            AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
+                    .userId(userId)
+                    .addressType(String.valueOf(address.getType()))
+                    .status(UserConstants.ADDRESS_ACTIVE_STATUS)
+                    .build();
+            Address existingAddress = addressRepository.getAddressV2(addressSearchCriteria).get(0);
+            if (existingAddress != null) {
+                throw new IllegalArgumentException("An address of type " + address.getType() + " already exists for user ID: " + userUuid);
+            }
         }
         // Encrypt address before saving
         address = encryptionDecryptionUtil.encryptObject(address, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class);
@@ -683,7 +690,13 @@ public class UserService {
      * @param tenantId
      */
     public List<Address> getAddress(String user_uuid, String tenantId) {
-        List<Address> addressList = addressRepository.getAddressByUserUuid(user_uuid, tenantId);
+
+        AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
+                .userUuid(user_uuid)
+                .tenantId(tenantId)
+                .status(UserConstants.ADDRESS_ACTIVE_STATUS)
+                .build();
+        List<Address> addressList = addressRepository.getAddressV2(addressSearchCriteria);
         //if addressList is empty, return empty list
         if (addressList.isEmpty()) {
             return Collections.emptyList();
@@ -700,28 +713,25 @@ public class UserService {
      * @throws IllegalArgumentException if the address ID does not exist in the database.
      */
     public Address updateAddress(Address address) {
-        if (!isAddressPresent(address.getId())) {
-            throw new IllegalArgumentException("ADDRESS_ID_NOT_VALID" + "Address ID " + address.getUserId() + " does not exist.");
+
+        AddressSearchCriteria addressSearchCriteria = AddressSearchCriteria.builder()
+                .id(address.getId())
+                .status(UserConstants.ADDRESS_ACTIVE_STATUS)
+                .build();
+        Address existingAddress = addressRepository.getAddressV2(addressSearchCriteria).get(0);
+        if (existingAddress == null) {
+            throw new IllegalArgumentException("ADDRESS_NOT_VALID: Address ID " + address.getId() + " does not exist.");
         }
         // Encrypt address before updating
         address = encryptionDecryptionUtil.encryptObject(address, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class);
         // Update the old address status to inactive
-        addressRepository.updateAddressStatus(address.getId());
+        addressRepository.updateAddressV2(address.getId());
         // Create a new address entry with the updated details with the same user id
         Address savedAddress = addressRepository.createAddressV2(address, address.getUserId(), address.getTenantId());
         // Decrypt address before returning
         return encryptionDecryptionUtil.decryptObject(savedAddress, UserConstants.USER_ADDRESS_ENCRYPTION_KEY, Address.class, null);
     }
 
-    /**
-     * Checks if the address exists in the database based on the address ID.
-     *
-     * @param addressId The unique identifier of the address.
-     * @return true if the address exists, false otherwise.
-     */
-    private boolean isAddressPresent(Long addressId) {
-        return addressRepository.isAddressPresent(addressId);
-    }
 
 
     /**
@@ -791,7 +801,7 @@ public class UserService {
      * @param requestInfo Request information containing user metadata.
      * @return The updated user object with decrypted details.
      */
-    public User updateWithAddressV2(User user, RequestInfo requestInfo) {
+    public User updateUserV2(User user, RequestInfo requestInfo) {
         final User existingUser = getUserByUuid(user.getUuid());
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         validateUserRoles(user);

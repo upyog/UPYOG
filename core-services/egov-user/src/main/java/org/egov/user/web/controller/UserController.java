@@ -295,13 +295,13 @@ public class UserController {
      * @return the response object containing updated user details
      */
     @PostMapping("/users/v2/_update")
-    public UpdateResponse updateUserWithAddress(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
+    public UpdateResponse updateUserV2(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
                                                 @RequestHeader HttpHeaders headers) {
 
         User user = createUserRequest.toDomain(false);
         user.setMobileValidationMandatory(isMobileValidationRequired(headers));
 
-        final User updatedUser = userService.updateWithAddressV2(user, createUserRequest.getRequestInfo());
+        final User updatedUser = userService.updateUserV2(user, createUserRequest.getRequestInfo());
 
         return createResponseforUpdate(updatedUser);
     }
