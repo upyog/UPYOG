@@ -1,6 +1,7 @@
 package org.egov.garbageservice.repository;
 
 import org.egov.garbageservice.model.GrbgOldDetails;
+import org.egov.garbageservice.repository.builder.GrbgAddressQueryBuilder;
 import org.egov.garbageservice.repository.builder.GrbgOldDetailsQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,4 +29,8 @@ public class GrbgOldDetailsRepository {
                 grbgOldDetails.getOldGarbageId(),
                 grbgOldDetails.getUuid());
     }
+
+	public void delete(Long garbageId) {
+		jdbcTemplate.update(queryBuilder.DELETE_QUERY, garbageId);
+	}
 }

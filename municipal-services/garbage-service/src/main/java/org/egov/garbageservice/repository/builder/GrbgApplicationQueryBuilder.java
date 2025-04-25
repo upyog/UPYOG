@@ -12,4 +12,6 @@ public class GrbgApplicationQueryBuilder {
     public static final String UPDATE_QUERY = "UPDATE eg_grbg_application " +
                                               "SET application_no = ?, status = ?, garbage_id = ? " +
                                               "WHERE uuid = ?";
+    
+    public static final String DELETE_QUERY = "DELETE FROM eg_grbg_application WHERE garbage_id = ?";
 }

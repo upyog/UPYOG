@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +49,8 @@ public class GarbageAccountRepository {
 			+ ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active"
 			+ ", sub_acc.id as sub_acc_id, sub_acc.uuid as sub_acc_uuid, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
-			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status"
+			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status, sub_acc.business_service as sub_acc_business_service"
+			+ ", sub_acc.approval_date as sub_acc_approval_date"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
 			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account, sub_acc.is_active as sub_acc_is_active, sub_acc.sub_account_count as sub_acc_sub_account_count"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
@@ -89,10 +93,10 @@ public class GarbageAccountRepository {
     
     private static final String INSERT_ACCOUNT = "INSERT INTO eg_grbg_account (id, uuid, garbage_id, property_id, type, name"
     		+ ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, "
-    		+ "last_modified_by, last_modified_date, tenant_id, parent_account, business_service, approval_date) "
+    		+ "last_modified_by, last_modified_date, tenant_id, parent_account, business_service, approval_date, is_active) "
     		+ "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, "
     		+ ":status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
-    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount, :businessService, :approvalDate)";
+    		+ ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount, :businessService, :approvalDate, :isActive)";
     
     private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE eg_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
     		+ ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
@@ -101,6 +105,8 @@ public class GarbageAccountRepository {
     		+ " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate WHERE id = :id";
 
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
+	
+	public static final String DELETE_QUERY = "UPDATE eg_grbg_account SET is_active = false WHERE garbage_id = ?";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -137,6 +143,7 @@ public class GarbageAccountRepository {
         accountInputs.put("parentAccount", account.getParentAccount());
         accountInputs.put("businessService", account.getBusinessService());
         accountInputs.put("approvalDate", account.getApprovalDate());
+        accountInputs.put("isActive", account.getIsActive());
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, accountInputs);
         return account;
@@ -187,6 +194,27 @@ public class GarbageAccountRepository {
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
 
+		if (!CollectionUtils.isEmpty(garbageAccounts) && searchCriteriaGarbageAccount.getIsActiveAccount() != null) {
+			// Filter garbage accounts based on the active account criteria
+			garbageAccounts = garbageAccounts.stream().filter(garbageAccount -> searchCriteriaGarbageAccount
+					.getIsActiveAccount().equals(garbageAccount.getIsActive())).collect(Collectors.toList());
+		}
+
+		garbageAccounts = garbageAccounts.stream().filter(Objects::nonNull).map(garbageAccount -> {
+			// If sub-account filtering is enabled, filter child garbage accounts
+			if (searchCriteriaGarbageAccount.getIsActiveSubAccount() != null) {
+				Optional.ofNullable(garbageAccount.getChildGarbageAccounts())
+						.filter(childAccounts -> !childAccounts.isEmpty()).ifPresent(childAccounts -> {
+							List<GarbageAccount> filteredChildren = childAccounts.stream()
+									.filter(child -> searchCriteriaGarbageAccount.getIsActiveSubAccount()
+											.equals(child.getIsActive()))
+									.collect(Collectors.toList());
+							garbageAccount.setChildGarbageAccounts(filteredChildren);
+						});
+			}
+			return garbageAccount;
+		}).collect(Collectors.toList());
+        
         return garbageAccounts;
     }
 
@@ -325,7 +353,7 @@ public class GarbageAccountRepository {
         	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
             searchQuery.append(" acc.id <= ").append(+searchCriteriaGarbageAccount.getEndId());
         }
-		
+        
         return searchQuery;
 	}
 	
@@ -348,4 +376,8 @@ public class GarbageAccountRepository {
         }
         return builder.toString();
     }
+
+	public void delete(GarbageAccount garbageAccount) {
+		jdbcTemplate.update(DELETE_QUERY, garbageAccount.getGarbageId());
+	}
 }

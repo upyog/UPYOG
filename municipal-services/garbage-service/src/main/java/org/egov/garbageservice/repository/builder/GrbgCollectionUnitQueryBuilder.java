@@ -15,4 +15,5 @@ public class GrbgCollectionUnitQueryBuilder {
                                               + ", garbage_id = ?, unit_type = ?, category = ?, sub_category = ?, sub_category_type = ?, is_active = ? "
                                               + " WHERE uuid = ?";
     
+    public static final String DELETE_QUERY = "DELETE FROM eg_grbg_collection_unit WHERE garbage_id = ?";
 }
