@@ -23,15 +23,17 @@ export const SuccessfulPayment = (props) => {
   const { addParams, clearParams } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const isFSMResponse = location?.pathname?.includes("payment/success/FSM.TRIP_CHARGES");
   const combineResponseFSM = isFSMResponse ? `${t("PAYMENT_COLLECT_LABEL")} / ${t("PAYMENT_COLLECT")}` : t("PAYMENT_LOCALIZATION_RESPONSE");
-
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
+  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
   props.setLink(combineResponseFSM);
   let { consumerCode, receiptNumber, businessService } = useParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+ 
   receiptNumber = receiptNumber.replace(/%2F/g, "/");
   const { data = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
     "",
@@ -480,8 +482,7 @@ export const SuccessfulPayment = (props) => {
   };
   if (businessService?.includes("BPA") && isBpaSearchLoading) return <Loader />;
 
-  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
+
 
   const svCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
