@@ -42,6 +42,7 @@ package org.egov.user.repository.builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.user.domain.model.UserSearchCriteria;
+import org.egov.user.domain.service.utils.UserConstants;
 import org.egov.user.persistence.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,7 +70,7 @@ public class UserTypeQueryBuilder {
             ".tenantid as " +
             "addr_tenantid, addr.userid as addr_userid, ur.role_code as role_code, ur.role_tenantid as role_tenantid \n" +
             "\tFROM eg_user userdata LEFT OUTER JOIN eg_user_address addr ON userdata.id = addr.userid AND userdata.tenantid = addr" +
-            ".tenantid LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
+            ".tenantid AND addr.status = 'active' LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
 
     private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY id) offset_ FROM " +
@@ -103,7 +104,7 @@ public class UserTypeQueryBuilder {
             // below are the additional columns added for V2 in the address table
             "addr.address2 as addr_address2, addr.houseNumber as addr_houseNumber, addr.houseName as addr_houseName, addr.streetName as addr_streetName, addr.landmark as addr_landmark, addr.locality as addr_locality" +
             "\tFROM eg_user userdata LEFT OUTER JOIN eg_user_address addr ON userdata.id = addr.userid AND userdata.tenantid = addr" +
-            ".tenantid LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
+            ".tenantid AND addr.status = 'active' LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid  ";
 
     // Below is the query to bring the user details along with the addresses and roles part of V2 api endpoints without address
     private static final String SELECT_USER_QUERY_V2_NO_ADDRESS = "SELECT userdata.title, userdata.salutation, userdata.dob, userdata.locale, userdata.username, userdata" +
@@ -228,6 +229,11 @@ public class UserTypeQueryBuilder {
             selectQuery.append(" addr.id = CAST(? AS INT)");
             preparedStatementValues.add(userSearchCriteria.getAddressId().trim());
         }
+        if (userSearchCriteria.getAddressStatus() != null) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
+            selectQuery.append(" addr.status = ? ");
+            preparedStatementValues.add(userSearchCriteria.getAddressStatus());
+        }
 //        if(!isEmpty(userSearchCriteria.getRoleCodes())){
 //            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
 //            selectQuery.append(" ur.role_code IN (").append(getQueryForCollection(userSearchCriteria.getRoleCodes(),
@@ -347,6 +353,7 @@ public class UserTypeQueryBuilder {
             log.info("Excluding address details from the query");
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2_NO_ADDRESS);
         } else {
+            userSearchCriteria.setAddressStatus(UserConstants.ADDRESS_ACTIVE_STATUS);
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2);
         }
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);

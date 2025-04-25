@@ -774,9 +774,6 @@ public class UserRepository {
             validateAndEnrichRoles(Collections.singletonList(user));
             updateRoles(user);
         }
-        if (user.getPermanentAndCorrespondenceAddresses() != null) {
-            addressRepository.updateV2(user.getPermanentAndCorrespondenceAddresses(), user.getId(), user.getTenantId()); // This will call new method to update new fields of address object
-        }
     }
 
     /**
