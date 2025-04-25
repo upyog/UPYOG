@@ -243,7 +243,8 @@ public class PropertyService {
 			if (uuidToMobileNumber.containsKey(owner.getUuid())
 					&& (!uuidToMobileNumber.get(owner.getUuid()).equals(owner.getMobileNumber())
 							|| !uuidToName.get(owner.getUuid()).equals(owner.getName())
-							|| !uuidToEmail.get(owner.getUuid()).equals(owner.getEmailId()))) {
+							|| (!StringUtils.isEmpty(owner.getEmailId())
+									&& !uuidToEmail.get(owner.getUuid()).equals(owner.getEmailId())))) {
 				isUpdate = true;
 				break;
 			}
@@ -283,8 +284,8 @@ public class PropertyService {
 		} else if (request.getProperty().getSource().toString().equals("WS")
 				&& CreationReason.UPDATE.equals(request.getProperty().getCreationReason())) {
 			userService.updateUser(request);
-		} else {
-			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
+//		} else {
+//			request.getProperty().setOwners(util.getCopyOfOwners(propertyFromSearch.getOwners()));
 		}
 
 		enrichmentService.enrichAssignes(request.getProperty());
