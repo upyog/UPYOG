@@ -46,4 +46,9 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getUuid());
     }
 
+
+	public void delete(Long garbageId) {
+		jdbcTemplate.update(queryBuilder.DELETE_QUERY, garbageId);
+	}
+
 }

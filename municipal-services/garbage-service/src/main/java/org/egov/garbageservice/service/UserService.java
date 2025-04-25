@@ -13,8 +13,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GarbageAccountRequest;
 import org.egov.garbageservice.model.UserResponse;
 import org.egov.garbageservice.model.UserSearchRequest;
@@ -115,39 +117,71 @@ public class UserService {
 		return uuidToUserMap;
 	}
 
-	public void createUser(GarbageAccountRequest createGarbageRequest) {
+	public GarbageAccountRequest createUser(GarbageAccountRequest createGarbageRequest) {
+	    RequestInfo requestInfo = createGarbageRequest.getRequestInfo();
+	    Role role = getCitizenRole();
 
-		RequestInfo requestInfo = createGarbageRequest.getRequestInfo();
-		List<OwnerInfo> owners = new ArrayList<>();
-		Role role = getCitizenRole();
+	    createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
+	        // Process parent garbage account
+	        processGarbageAccount(requestInfo, role, garbageAccount);
 
-		// Build the owners list from the garbage accounts
-		owners.addAll(createGarbageRequest.getGarbageAccounts().stream()
-				.map(garbageAccount -> OwnerInfo.builder().name(garbageAccount.getName())
-						.mobileNumber(garbageAccount.getMobileNumber()).tenantId(garbageAccount.getTenantId()).build())
-				.collect(Collectors.toList()));
+	        // Process child garbage accounts if they exist
+	        if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
+	            garbageAccount.getChildGarbageAccounts().forEach(childGarbageAccount -> {
+	                processGarbageAccount(requestInfo, role, childGarbageAccount);
+	            });
+	        }
+	    });
 
-		owners.forEach(owner -> {
-			addUserDefaultFields(role, owner);
-			UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
-			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
-
-			if (existingUsersFromService.isEmpty()) {
-				owner.setUserName(UUID.randomUUID().toString());
-				userDetailResponse = createUser(requestInfo, owner);
-			} else {
-				String mobileNumber = owner.getMobileNumber();
-				List<OwnerInfo> existingUserWithMobile = findUserByMobile(existingUsersFromService, mobileNumber);
-				if (!existingUserWithMobile.isEmpty()) {
-					userDetailResponse = updateExistingUser(requestInfo, role, owner, existingUserWithMobile.get(0));
-				} else {
-					owner.setUserName(UUID.randomUUID().toString());
-					userDetailResponse = createUser(requestInfo, owner);
-				}
-			}
-		});
-
+	    return createGarbageRequest;
 	}
+
+	private void processGarbageAccount(RequestInfo requestInfo, Role role, GarbageAccount garbageAccount) {
+	    OwnerInfo owner = createOwnerInfoFromAccount(garbageAccount);
+	    addUserDefaultFields(role, owner);
+
+	    // Check if the user already exists
+	    UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
+	    List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
+
+	    if (existingUsersFromService.isEmpty()) {
+	        // Create new user if not found
+	        owner.setUserName(UUID.randomUUID().toString());
+	        userDetailResponse = createUser(requestInfo, owner);
+	    } else {
+	        // Update existing user if found
+	        updateOrCreateUser(existingUsersFromService, requestInfo, role, owner);
+	    }
+
+	    // Assign user UUID to the garbage account
+	    if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) 
+	        && !StringUtils.isEmpty(userDetailResponse.getUser().get(0).getUuid())) {
+	        garbageAccount.setUserUuid(userDetailResponse.getUser().get(0).getUuid());
+	    }
+	}
+
+	private OwnerInfo createOwnerInfoFromAccount(GarbageAccount garbageAccount) {
+	    return OwnerInfo.builder()
+	            .name(garbageAccount.getName())
+	            .mobileNumber(garbageAccount.getMobileNumber())
+	            .tenantId(garbageAccount.getTenantId())
+	            .build();
+	}
+
+	private void updateOrCreateUser(List<OwnerInfo> existingUsersFromService, RequestInfo requestInfo, Role role, OwnerInfo owner) {
+	    String mobileNumber = owner.getMobileNumber();
+	    List<OwnerInfo> existingUserWithMobile = findUserByMobile(existingUsersFromService, mobileNumber);
+
+	    if (!existingUserWithMobile.isEmpty()) {
+	        // Update existing user
+	        updateExistingUser(requestInfo, role, owner, existingUserWithMobile.get(0));
+	    } else {
+	        // Create new user if not found
+	        owner.setUserName(UUID.randomUUID().toString());
+	        createUser(requestInfo, owner);
+	    }
+	}
+
 
 	private List<OwnerInfo> findUserByMobile(List<OwnerInfo> users, String mobileNumber) {
 		return users.stream().filter(user -> mobileNumber.equals(user.getMobileNumber())).collect(Collectors.toList());

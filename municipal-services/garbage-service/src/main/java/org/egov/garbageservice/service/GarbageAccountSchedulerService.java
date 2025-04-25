@@ -155,7 +155,8 @@ public class GarbageAccountSchedulerService {
 				.searchCriteriaGarbageAccount(SearchCriteriaGarbageAccount.builder()
 						.applicationNumber(generateBillRequest.getGrbgApplicationNumbers())
 						.mobileNumber(generateBillRequest.getMobileNumbers())
-						.status(Collections.singletonList("APPROVED")).build())
+						.status(Collections.singletonList("APPROVED")).isActiveAccount(true).isActiveSubAccount(true)
+						.build())
 				.isSchedulerCall(true).build();
 		GarbageAccountResponse garbageAccountResponse = garbageAccountService
 				.searchGarbageAccounts(searchCriteriaGarbageAccountRequest);

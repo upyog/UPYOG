@@ -30,4 +30,8 @@ public class GrbgApplicationRepository {
                 grbgApplication.getGarbageId(),
                 grbgApplication.getUuid());
     }
+
+	public void delete(Long garbageId) {
+		jdbcTemplate.update(queryBuilder.DELETE_QUERY, garbageId);
+	}
 }
