@@ -1,15 +1,6 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
-## 2.0.0 - 2025-04-20
-- Added 3 Api endpoints V2 for new address fields to create, update and search users
-- Added new address fields in address model and table - address2, houseNumber,houseName, streetName, landmark, locality
-- Added new Address api endpoints to create, update and search address
-- Added new status field in address table to handle update Address functionality
-- During update old address will be made inactive and new address will be created 
-- Unique address constraint was modified to include created date
-- Duplicate 'Other' addresses can be made except 'permanent' and 'correspondence' address
-
 ## 1.3.0 - 2023-02-06
 
 - Transition from 1.3.0-beta version to 1.3.0 version
