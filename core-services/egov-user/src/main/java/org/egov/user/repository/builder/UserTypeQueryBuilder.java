@@ -42,7 +42,6 @@ package org.egov.user.repository.builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.user.domain.model.UserSearchCriteria;
-import org.egov.user.domain.service.utils.UserConstants;
 import org.egov.user.persistence.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -229,11 +228,6 @@ public class UserTypeQueryBuilder {
             selectQuery.append(" addr.id = CAST(? AS INT)");
             preparedStatementValues.add(userSearchCriteria.getAddressId().trim());
         }
-        if (userSearchCriteria.getAddressStatus() != null) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
-            selectQuery.append(" addr.status = ? ");
-            preparedStatementValues.add(userSearchCriteria.getAddressStatus());
-        }
 //        if(!isEmpty(userSearchCriteria.getRoleCodes())){
 //            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, selectQuery);
 //            selectQuery.append(" ur.role_code IN (").append(getQueryForCollection(userSearchCriteria.getRoleCodes(),
@@ -353,7 +347,6 @@ public class UserTypeQueryBuilder {
             log.info("Excluding address details from the query");
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2_NO_ADDRESS);
         } else {
-            userSearchCriteria.setAddressStatus(UserConstants.ADDRESS_ACTIVE_STATUS);
             selectQuery = new StringBuilder(SELECT_USER_QUERY_V2);
         }
         addWhereClause(selectQuery, preparedStatementValues, userSearchCriteria);
