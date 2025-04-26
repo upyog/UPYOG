@@ -33,15 +33,12 @@ public class AddressRepositoryTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private AddressQueryBuilder addressQueryBuilder;
-
     @InjectMocks
     private AddressRepository addressRepository;
 
     @Before
     public void before() {
-        addressRepository = new AddressRepository(namedParameterJdbcTemplate, jdbcTemplate, addressQueryBuilder);
+        addressRepository = new AddressRepository(namedParameterJdbcTemplate, jdbcTemplate);
     }
 
     @Test
