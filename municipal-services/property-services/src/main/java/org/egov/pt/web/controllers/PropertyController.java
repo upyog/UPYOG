@@ -36,6 +36,7 @@ import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
+import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -324,4 +325,22 @@ public class PropertyController {
 
 	}
 
+	@PostMapping(value = "/_counts")
+	public ResponseEntity<Map<String, Object>> counts(@Valid @RequestBody TotalCountRequest totalCountRequest) {
+//		List<Property> properties = new ArrayList<Property>();
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(totalCountRequest.getRequestInfo(), true);
+	    Map<String, Object> response = new HashMap<>();
+		Map<String, Object> result = propertyService.totalCount(totalCountRequest);
+
+	    response.put("ResponseInfo", resInfo);
+	    response.put("Counts", result);
+
+		
+//		Property property = propertyService.updateStatus(request);
+//		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+//		PropertyResponse response = PropertyResponse.builder().properties(Arrays.asList(property)).responseInfo(resInfo)
+//				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
 }

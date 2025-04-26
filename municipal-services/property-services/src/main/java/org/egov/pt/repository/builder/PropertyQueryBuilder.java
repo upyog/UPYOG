@@ -13,6 +13,7 @@ import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.PtTaxCalculatorTrackerSearchCriteria;
 import org.egov.pt.models.enums.Status;
+import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
 import org.jsoup.helper.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,6 +211,16 @@ public class PropertyQueryBuilder {
 			+ " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
 
 	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from eg_pt_enc_audit where tenantid = ? order by createdTime desc limit 1;";
+	
+	private static final String COUNT_STATUS_BASED_QUERY = "SELECT COUNT(DISTINCT property.id) AS count,"
+			+ "COUNT(DISTINCT CASE WHEN property.status = 'INITIATED' THEN property.id END) AS applicationInitiated,"
+			+ "COUNT(DISTINCT CASE WHEN property.status = 'PENDINGFORVERIFICATION' THEN property.id END) AS applicationPendingForVerification,"
+			+ "COUNT(distinct case when property.status = 'PENDINGFORMODIFICATION' then property.id end) as applicationPendingForModification,"
+			+ "COUNT(distinct case when property.status = 'PENDINGFORAPPROVAL' then property.id end) as applicationPendingForApproval,"
+			+ "COUNT(distinct case when property.status = 'APPROVED' then property.id end) as applicationApproved,"
+			+ "COUNT(distinct case when property.status = 'REJECTED' then property.id end) as applicationRejected "
+			+ "from EG_PT_PROPERTY property";
+	
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
 
@@ -687,6 +698,18 @@ public class PropertyQueryBuilder {
 	
 	private static void andClauseIfRequired(List<Object> values, StringBuilder queryString) {
 		queryString.append(" AND");
+	}
+	
+	public String getStatusBasedCountQuery(TotalCountRequest totalCountRequest,List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(COUNT_STATUS_BASED_QUERY);
+		builder.append(" WHERE 1 = 1 ");
+		if (!StringUtils.isEmpty(totalCountRequest.getTenantId())) {
+			andClauseIfRequired(preparedStmtList, builder);
+			builder.append(" property.tenantId = ? ");
+			preparedStmtList.add(totalCountRequest.getTenantId());
+		}
+		return builder.toString();
 	}
 
 }

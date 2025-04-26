@@ -30,6 +30,7 @@ public class UserSearchCriteria {
     private List<String> sort;
     private UserType type;
     private String tenantId;
+    private String ulbName;
     private List<String> roleCodes;
     private String alternatemobilenumber;
     
