@@ -306,13 +306,6 @@ public class AddressRepository {
         return count != null && count > 0;
     }
 
-    /**
-     * Checks if an address of a specific type exists for a given userId.
-     *
-     * @param userId      The unique identifier of the user.
-     * @param addressType The type of the address to check for.
-     * @return true if an address of the specified type exists for the user, false otherwise.
-     */
     public boolean existsAddressByType(Long userId, String addressType) {
         String query = "SELECT COUNT(*) FROM public.eg_user_address WHERE userid = :userId AND type = :type AND status = 'active'";
         Map<String, Object> params = new HashMap<>();
