@@ -26,19 +26,20 @@ public class AddressRepository {
     public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_eg_user_address')";
     public static final String DELETE_ADDRESSES = "delete from eg_user_address where id IN (:id)";
     public static final String DELETE_ADDRESS = "delete from eg_user_address where id=:id";
-    public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate, status=:status where userid=:userid and tenantid=:tenantid and type=:type";
+    public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate where userid=:userid and tenantid=:tenantid and type=:type";
     private static final String GET_ADDRESS_BY_USER_UUID = "select uadd.id as id, uadd.type as type, uadd.address as address, uadd.city as city, uadd.pincode as pincode, uadd.userid as userid,\n" +
             "uadd.tenantid as tenantid, uadd.createddate as createddate, uadd.lastmodifieddate as lastmodifieddate, uadd.createdby as createdby,\n" +
             // Adding new fields in Address select query: address2, houseNumber, houseName, streetName, landmark, locality
             "uadd.address2, uadd.houseNumber, uadd.houseName, uadd.streetName, uadd.landmark, uadd.locality, " +
             "uadd.lastmodifiedby as lastmodifiedby from eg_user_address uadd left join eg_user usr on uadd.userid = usr.id\n" +
-            "where usr.uuid=:uuid and uadd.tenantid=:tenantId AND uadd.status = 'active' ";
+            "where usr.uuid=:uuid and uadd.tenantid=:tenantId";
     // Adding new fields in Address insert query: address2, houseNumber, houseName, streetName, landmark, locality
-    public static final String INSERT_ADDRESS_BYUSERID_V2 = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality, status) "
-            + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby, :address2, :houseNumber, :houseName, :streetName, :landmark, :locality, :status)";
-
-    public static final String UPDATE_ADDRESS_STATUS_INACTIVE = "UPDATE eg_user_address SET status = 'inactive' WHERE id = :addressId";
-
+    public static final String INSERT_ADDRESS_BYUSERID_V2 = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality) "
+            + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby, :address2, :houseNumber, :houseName, :streetName, :landmark, :locality)";
+    public static final String UPDATE_ADDRESS_BYIDAND_TENANTID_V2 = "UPDATE eg_user_address SET address = :address, city = :city, pincode = :pincode, lastmodifiedby = :lastmodifiedby, " +
+            "lastmodifieddate = :lastmodifieddate, address2 = :address2, houseNumber = :houseNumber, houseName = :houseName, streetName = :streetName, landmark = :landmark," +
+            " locality = :locality " +
+            "WHERE userid = :userid AND tenantid = :tenantid AND type = :type";
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
 
@@ -46,7 +47,21 @@ public class AddressRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
     }
+    public String getInsertUserAddressQuery() {
+        return "INSERT INTO eg_user_address (id, version, createddate, lastmodifieddate, createdby, lastmodifiedby, " +
+                "type, address, city, pincode, userid, tenantid, housenumber, housename, streetname, address2, " +
+                "landmark, locality) VALUES (:id, :version, :createddate, :lastmodifieddate, :createdby, :lastmodifiedby, " +
+                ":type, :address, :city, :pincode, " +
+                "(SELECT id FROM eg_user WHERE uuid=:userUuid AND tenantid=:tenantid), :tenantid, " +
+                ":housenumber, :housename, :streetname, :address2, :landmark, :locality)";
+    }
 
+    public String getUpdateUserAddressQuery() {
+        return "UPDATE eg_user_address SET version=:version, lastmodifieddate=:lastmodifieddate, lastmodifiedby=:lastmodifiedby, " +
+                "type=:type, address=:address, city=:city, pincode=:pincode, housenumber=:housenumber, housename=:housename, " +
+                "streetname=:streetname, address2=:address2, landmark=:landmark, locality=:locality " +
+                "WHERE id=:id";
+    }
     /**
      * api will create the address for particular userId and tenantId.
      *
@@ -69,7 +84,6 @@ public class AddressRepository {
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("createdby", userId);
         addressInputs.put("lastmodifiedby", address.getUserId());
-        addressInputs.put("status", "active");
 
         namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID, addressInputs);
         return address;
@@ -164,7 +178,6 @@ public class AddressRepository {
         addressInputs.put("tenantid", matchingEntityAddress.getTenantId());
         addressInputs.put("lastmodifieddate", new Date());
         addressInputs.put("lastmodifiedby", userId);
-        addressInputs.put("status", "active");
 
         namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID, addressInputs);
     }
@@ -269,7 +282,6 @@ public class AddressRepository {
         addressInputs.put("streetName", address.getStreetName());
         addressInputs.put("landmark", address.getLandmark());
         addressInputs.put("locality", address.getLocality());
-        addressInputs.put("status", "active");
 
         try {
             namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID_V2, addressInputs);
@@ -282,15 +294,113 @@ public class AddressRepository {
     }
 
     /**
-     * Updates the status of an address to inactive based on the provided addressId.
+     * Updates the user address records (v2) for a given user.
+     * It first retrieves the existing addresses for the user and then:
+     *   - Deletes addresses that are no longer present in the update request,
+     *   - Creates new addresses for any newly added address details,
+     *   - Updates existing addresses with the new information.
      *
-     * @param addressId the unique identifier of the address to be updated
+     * @param domainAddresses the new set of Address objects to update
+     * @param userId          the user identifier for which addresses are updated
+     * @param tenantId        the tenant identifier
      */
-    public void updateAddressStatus(Long addressId) {
+    public void updateV2(List<Address> domainAddresses, Long userId, String tenantId) {
         final Map<String, Object> params = new HashMap<>();
-        params.put("addressId", addressId);
+        params.put("userId", userId);
+        params.put("tenantId", tenantId);
 
-        namedParameterJdbcTemplate.update(UPDATE_ADDRESS_STATUS_INACTIVE, params);
+        List<Address> entityAddresses = namedParameterJdbcTemplate.query(GET_ADDRESS_BY_USERID, params,
+                new AddressRowMapperV2());
+
+        if (isEmpty(domainAddresses) && isEmpty(entityAddresses)) {
+            return;
+        }
+
+        // Delete all addresses if needed, then remove addresses that are no longer present,
+        // create any new addresses, and finally update the existing addresses.
+        conditionallyDeleteAllAddresses(domainAddresses, entityAddresses);
+        deleteRemovedAddresses(domainAddresses, entityAddresses);
+        createNewAddresses(domainAddresses, entityAddresses, userId, tenantId);
+        updateAddressesV2(domainAddresses, entityAddresses, userId);
+    }
+
+    /**
+     * Iterates over the provided list of new addresses (domainAddresses) and updates each address
+     * by matching it with the corresponding address (based on type) in the existing entityAddresses.
+     *
+     * @param domainAddresses the new set of Address objects provided for update
+     * @param entityAddresses the current set of Address objects from the database
+     * @param userId          the user identifier
+     */
+    private void updateAddressesV2(List<Address> domainAddresses, List<Address> entityAddresses, Long userId) {
+        // Create a map from address type to entity address for fast lookup
+        Map<String, Address> typeToEntityAddressMap = toMap(entityAddresses);
+        domainAddresses.forEach(address -> updateAddressV2(typeToEntityAddressMap, address, userId));
+    }
+
+    /**
+     * Updates a specific address for a user based on the address type.
+     * It retrieves the existing address using the address type; if a matching address exists,
+     * it updates that address with the new values provided.
+     *
+     * @param typeToEntityAddressMap a map of existing addresses keyed by address type name
+     * @param address                the new Address object containing updated details
+     * @param userId                 the user identifier
+     */
+    private void updateAddressV2(Map<String, Address> typeToEntityAddressMap, Address address, Long userId) {
+        // Retrieve the existing address for the given address type (using the enum name as key)
+        final Address matchingEntityAddress = typeToEntityAddressMap.getOrDefault(address.getType().name(), null);
+        if (matchingEntityAddress == null) {
+            return;
+        }
+        Map<String, Object> addressInputs = new HashMap<>();
+        addressInputs.put("address", address.getAddress());
+        addressInputs.put("type", address.getType().toString());
+        addressInputs.put("city", address.getCity());
+        addressInputs.put("pincode", address.getPinCode());
+        addressInputs.put("userid", userId);
+        addressInputs.put("tenantid", matchingEntityAddress.getTenantId());
+        addressInputs.put("lastmodifieddate", new Date());
+        addressInputs.put("lastmodifiedby", userId);
+        // New fields for v2 update: additional address details
+        addressInputs.put("address2", address.getAddress2());
+        addressInputs.put("houseNumber", address.getHouseNumber());
+        addressInputs.put("houseName", address.getHouseName());
+        addressInputs.put("streetName", address.getStreetName());
+        addressInputs.put("landmark", address.getLandmark());
+        addressInputs.put("locality", address.getLocality());
+
+        namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID_V2, addressInputs);
+    }
+
+    /**
+     * Updates the address record for a specific addressId (update address endpoint).
+     * Only the address record corresponding to the given primary key (id) is updated.
+     *
+     * @param addressId the unique identifier of the address record to update
+     * @param address   the new Address details to update the record with
+     * @return the updated Address object
+     */
+    public Address updateAddressV2(String addressId, Address address) {
+        Map<String, Object> addressInputs = new HashMap<>();
+        addressInputs.put("id", addressId);
+        addressInputs.put("address", address.getAddress());
+        addressInputs.put("type", address.getType().toString());
+        addressInputs.put("city", address.getCity());
+        addressInputs.put("pincode", address.getPinCode());
+        addressInputs.put("userid", address.getUserId());
+        addressInputs.put("tenantid", address.getTenantId());
+        addressInputs.put("lastmodifieddate", new Date());
+        addressInputs.put("lastmodifiedby", address.getUserId());
+        addressInputs.put("address2", address.getAddress2());
+        addressInputs.put("houseNumber", address.getHouseNumber());
+        addressInputs.put("houseName", address.getHouseName());
+        addressInputs.put("streetName", address.getStreetName());
+        addressInputs.put("landmark", address.getLandmark());
+        addressInputs.put("locality", address.getLocality());
+
+        namedParameterJdbcTemplate.update(UPDATE_ADDRESS_BYIDAND_TENANTID, addressInputs);
+        return address;
     }
 
     /**
@@ -299,19 +409,10 @@ public class AddressRepository {
      * @param addressId The unique identifier of the address.
      * @return true if the address exists, false otherwise.
      */
-    public Boolean isAddressPresent(Long addressId) {
+    public Boolean isAddressPresent(String addressId) {
         final Map<String, Object> Map = new HashMap<String, Object>();
-        Map.put("id", addressId);
+        Map.put("id", Long.parseLong(addressId));
         Integer count = namedParameterJdbcTemplate.queryForObject("select count(*) from eg_user_address where id=:id", Map, Integer.class);
         return count != null && count > 0;
-    }
-
-    public boolean existsAddressByType(Long userId, String addressType) {
-        String query = "SELECT COUNT(*) FROM public.eg_user_address WHERE userid = :userId AND type = :type AND status = 'active'";
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("type", addressType);
-
-        return namedParameterJdbcTemplate.queryForObject(query, params, Integer.class) > 0;
     }
 }

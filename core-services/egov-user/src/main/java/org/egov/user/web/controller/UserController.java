@@ -245,7 +245,7 @@ public class UserController {
     @PostMapping("/_updateAddress")
     public AddressResponse updateAddress(@RequestBody AddressRequest addressRequest) {
 
-        Address userAddress = userService.updateAddress(addressRequest.getAddress());
+        Address userAddress = userService.updateAddress(addressRequest.getAddressId(), addressRequest.getAddress());
         List<Address> userAddressList = new ArrayList<>();
         userAddressList.add(userAddress);
         ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
