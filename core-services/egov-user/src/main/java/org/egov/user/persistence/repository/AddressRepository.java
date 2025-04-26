@@ -2,24 +2,22 @@ package org.egov.user.persistence.repository;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.user.domain.model.Address;
-import org.egov.user.domain.model.AddressSearchCriteria;
 import org.egov.user.domain.model.enums.AddressType;
 import org.egov.user.domain.service.utils.UserConstants;
-import org.egov.user.repository.builder.AddressQueryBuilder;
 import org.egov.user.repository.rowmapper.AddressRowMapper;
 import org.egov.user.repository.rowmapper.AddressRowMapperV2;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-@Slf4j
 @Repository
 public class AddressRepository {
 
@@ -30,15 +28,24 @@ public class AddressRepository {
     public static final String DELETE_ADDRESSES = "delete from eg_user_address where id IN (:id)";
     public static final String DELETE_ADDRESS = "delete from eg_user_address where id=:id";
     public static final String UPDATE_ADDRESS_BYIDAND_TENANTID = "update eg_user_address set address=:address,city=:city,pincode=:pincode,lastmodifiedby=:lastmodifiedby,lastmodifieddate=:lastmodifieddate, status=:status where userid=:userid and tenantid=:tenantid and type=:type";
+    private static final String GET_ADDRESS_BY_USER_UUID = "select uadd.id as id, uadd.type as type, uadd.address as address, uadd.city as city, uadd.pincode as pincode, uadd.userid as userid,\n" +
+            "uadd.tenantid as tenantid, uadd.createddate as createddate, uadd.lastmodifieddate as lastmodifieddate, uadd.createdby as createdby,\n" +
+            // Adding new fields in Address select query: address2, houseNumber, houseName, streetName, landmark, locality
+            "uadd.address2, uadd.houseNumber, uadd.houseName, uadd.streetName, uadd.landmark, uadd.locality, " +
+            "uadd.lastmodifiedby as lastmodifiedby from eg_user_address uadd left join eg_user usr on uadd.userid = usr.id\n" +
+            "where usr.uuid=:uuid and uadd.tenantid=:tenantId AND uadd.status = 'active' ";
+    // Adding new fields in Address insert query: address2, houseNumber, houseName, streetName, landmark, locality
+    public static final String INSERT_ADDRESS_BYUSERID_V2 = "insert into eg_user_address (id,type,address,city,pincode,userid,tenantid,createddate,lastmodifieddate,createdby,lastmodifiedby, address2, houseNumber, houseName, streetName, landmark, locality, status) "
+            + "values(:id,:type,:address,:city,:pincode,:userid,:tenantid,:createddate,:lastmodifieddate,:createdby,:lastmodifiedby, :address2, :houseNumber, :houseName, :streetName, :landmark, :locality, :status)";
+
+    public static final String UPDATE_ADDRESS_STATUS_INACTIVE = "UPDATE eg_user_address SET status = :status WHERE id = :addressId";
+
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
-    private AddressQueryBuilder addressQueryBuilder;
 
-    public AddressRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate,
-                             AddressQueryBuilder addressQueryBuilder) {
+    public AddressRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
-        this.addressQueryBuilder =  addressQueryBuilder;
     }
 
     /**
@@ -217,6 +224,23 @@ public class AddressRepository {
     }
 
     /**
+     * Fetches the user's addresses (both permanent and correspondence) by the user's UUID and tenantId.
+     *
+     * @param uuid     the unique identifier for the user
+     * @param tenantId the tenant identifier
+     * @return a List of Address objects associated with the given user
+     */
+    public List<Address> getAddressByUserUuid(String uuid, String tenantId) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("uuid", uuid);
+        params.put("tenantId", tenantId);
+
+        List<Address> addressList = namedParameterJdbcTemplate.query(GET_ADDRESS_BY_USER_UUID, params,
+                new AddressRowMapperV2());
+        return addressList;
+    }
+
+    /**
      * Creates a new address record (v2) for the specified user. The userId is determined by the provided UUID.
      *
      * @param address  the Address object containing the address details to be saved
@@ -249,18 +273,9 @@ public class AddressRepository {
         addressInputs.put("status", UserConstants.ADDRESS_ACTIVE_STATUS); // Set status to active
 
         try {
-            String query = AddressQueryBuilder.INSERT_ADDRESS_BYUSERID_V2;
-            namedParameterJdbcTemplate.update(query, addressInputs);
+            namedParameterJdbcTemplate.update(INSERT_ADDRESS_BYUSERID_V2, addressInputs);
         } catch (DuplicateKeyException e) {
             throw new DuplicateKeyException("Address already exists for user with type: " + address.getType());
-        } catch (DataIntegrityViolationException e) {
-            // Handle foreign key constraint violation specifically
-            if (e.getMessage() != null && e.getMessage().contains("eg_user_address_user_fkey")) {
-                throw new IllegalArgumentException("User not found: Cannot add address for non-existent user with ID " + userId + " and tenantId '" + tenantId + "'");
-            }
-            throw new RuntimeException("Data integrity violation while creating address: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error while creating address: " + e.getMessage(), e);
         }
         address.setUserId(userId);
         address.setId(addressId);
@@ -272,25 +287,40 @@ public class AddressRepository {
      *
      * @param addressId the unique identifier of the address to be updated
      */
-    public void updateAddressV2(Long addressId) {
+    public void updateAddressStatus(Long addressId) {
         final Map<String, Object> params = new HashMap<>();
         params.put("addressId", addressId);
         params.put("status", UserConstants.ADDRESS_INACTIVE_STATUS);
-        String query = AddressQueryBuilder.UPDATE_ADDRESS_STATUS_INACTIVE;
-        namedParameterJdbcTemplate.update(query, params);
+
+        namedParameterJdbcTemplate.update(UPDATE_ADDRESS_STATUS_INACTIVE, params);
     }
 
+    /**
+     * Checks if the address exists in the database by querying the `eg_user_address` table.
+     *
+     * @param addressId The unique identifier of the address.
+     * @return true if the address exists, false otherwise.
+     */
+    public Boolean isAddressPresent(Long addressId) {
+        final Map<String, Object> Map = new HashMap<String, Object>();
+        Map.put("id", addressId);
+        Integer count = namedParameterJdbcTemplate.queryForObject("select count(*) from eg_user_address where id=:id", Map, Integer.class);
+        return count != null && count > 0;
+    }
 
-    public List<Address> getAddressV2(AddressSearchCriteria addressSearchCriteria) {
+    /**
+     * Checks if an address of a specific type exists for a given userId.
+     *
+     * @param userId      The unique identifier of the user.
+     * @param addressType The type of the address to check for.
+     * @return true if an address of the specified type exists for the user, false otherwise.
+     */
+    public boolean existsAddressByType(Long userId, String addressType) {
+        String query = "SELECT COUNT(*) FROM public.eg_user_address WHERE userid = :userId AND type = :type AND status = 'active'";
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("type", addressType);
 
-        final List<Object> preparedStatementValues = new ArrayList<>();
-        String queryStr = addressQueryBuilder.getAddressQuery(addressSearchCriteria, preparedStatementValues);
-        // Add debug logging for the query AND prepared statement values
-        log.debug("Query: {}", queryStr);
-        log.debug("Prepared Statement Values: {}", preparedStatementValues);
-
-        List<Address> addresses = jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), new AddressRowMapperV2());
-
-        return addresses;
+        return namedParameterJdbcTemplate.queryForObject(query, params, Integer.class) > 0;
     }
 }
