@@ -135,7 +135,7 @@ public class UserService {
 
         /* encrypt here */
 
-        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User", UserSearchCriteria.class);
+        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, UserConstants.USER_ENCRYPTION_KEY, UserSearchCriteria.class);
         List<User> users = userRepository.findAll(userSearchCriteria);
 
         if (users.isEmpty())
@@ -186,7 +186,7 @@ public class UserService {
         	altmobnumber = searchCriteria.getMobileNumber();
         }
 
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, UserConstants.USER_ENCRYPTION_KEY, UserSearchCriteria.class);
         
         if(altmobnumber!=null) {
         	searchCriteria.setAlternatemobilenumber(altmobnumber);
@@ -213,7 +213,7 @@ public class UserService {
         user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
         /* encrypt here */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class);
         validateUserUniqueness(user);
         if (isEmpty(user.getPassword())) {
             user.setPassword(UUID.randomUUID().toString());
@@ -224,7 +224,7 @@ public class UserService {
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         User persistedNewUser = persistNewUser(user);
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, UserConstants.USER_SELF_ENCRYPTION_KEY, User.class, requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
 
@@ -352,7 +352,7 @@ public class UserService {
         validatePassword(user.getPassword());
         user.setPassword(encryptPwd(user.getPassword()));
         /* encrypt */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class);
         userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
 
         // If user is being unlocked via update, reset failed login attempts
@@ -360,7 +360,7 @@ public class UserService {
             resetFailedLoginAttempts(user);
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, UserConstants.USER_SELF_ENCRYPTION_KEY, User.class, requestInfo);
         return decryptedupdatedUserfromDB;
     }
 
@@ -403,7 +403,7 @@ public class UserService {
      */
     public User partialUpdate(User user, RequestInfo requestInfo) {
         /* encrypt here */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class);
 
         User existingUser = getUserByUuid(user.getUuid());
         validateProfileUpdateIsDoneByTheSameLoggedInUser(user);
@@ -413,8 +413,8 @@ public class UserService {
         User updatedUser = getUserByUuid(user.getUuid());
         
         /* decrypt here */
-        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
-        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
+        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, UserConstants.USER_SELF_ENCRYPTION_KEY, User.class, requestInfo);
+        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, UserConstants.USER_SELF_ENCRYPTION_KEY, User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
         String oldEmail = existingUser.getEmailId();
@@ -466,14 +466,14 @@ public class UserService {
         }
         /* decrypt here */
         /* the reason for decryption here is the otp service requires decrypted username */
-        user = encryptionDecryptionUtil.decryptObject(user, "User", User.class, requestInfo);
+        user = encryptionDecryptionUtil.decryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class, requestInfo);
         user.setOtpReference(request.getOtpReference());
         validateOtp(user);
         validatePassword(request.getNewPassword());
         user.updatePassword(encryptPwd(request.getNewPassword()));
         /* encrypt here */
         /* encrypted value is stored in DB*/
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class);
         userRepository.update(user, user, requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid());
     }
 
@@ -758,7 +758,7 @@ public class UserService {
         // Validate user details, including name, mobile number, and addresses
         user.validateNewUser(createUserValidateName);
         conditionallyValidateOtp(user);
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class);
 
         // Ensure the user does not already exist
         validateUserUniqueness(user);
@@ -776,7 +776,7 @@ public class UserService {
         // Persist the validated and encrypted user in the database
         User persistedNewUser = persistNewUserWithAddressV2(user);
         // Decrypt the persisted user before returning the response
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, UserConstants.USER_SELF_ENCRYPTION_KEY, User.class, requestInfo);
     }
 
     /**
@@ -809,7 +809,7 @@ public class UserService {
         validatePassword(user.getPassword());
         user.setPassword(encryptPwd(user.getPassword()));
         /* encrypt */
-        user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
+        user = encryptionDecryptionUtil.encryptObject(user, UserConstants.USER_ENCRYPTION_KEY, User.class);
         userRepository.updateV2(user, existingUser, requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid());
 
         // If user is being unlocked via update, reset failed login attempts
@@ -817,7 +817,7 @@ public class UserService {
             resetFailedLoginAttempts(user);
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, UserConstants.USER_SELF_ENCRYPTION_KEY, User.class, requestInfo);
         return decryptedupdatedUserfromDB;
     }
 
@@ -845,7 +845,7 @@ public class UserService {
             altmobnumber = searchCriteria.getMobileNumber();
         }
         /* encrypt here / encrypted searchcriteria will be used for search*/
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, UserConstants.USER_ENCRYPTION_KEY, UserSearchCriteria.class);
 
         if (altmobnumber != null) {
             searchCriteria.setAlternatemobilenumber(altmobnumber);
@@ -859,7 +859,7 @@ public class UserService {
         }
 
         /* decrypt here / final reponse decrypted*/
-        list = encryptionDecryptionUtil.decryptObject(list, "User", User.class, requestInfo);
+        list = encryptionDecryptionUtil.decryptObject(list, UserConstants.USER_ENCRYPTION_KEY, User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
