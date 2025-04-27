@@ -245,7 +245,7 @@ public class UserController {
     @PostMapping("/_updateAddress")
     public AddressResponse updateAddress(@RequestBody AddressRequest addressRequest) {
 
-        Address userAddress = userService.updateAddress(addressRequest.getAddressId(), addressRequest.getAddress());
+        Address userAddress = userService.updateAddress(addressRequest.getAddress());
         List<Address> userAddressList = new ArrayList<>();
         userAddressList.add(userAddress);
         ResponseInfo responseInfo = ResponseInfo.builder().status(String.valueOf(HttpStatus.OK.value())).build();
@@ -295,13 +295,13 @@ public class UserController {
      * @return the response object containing updated user details
      */
     @PostMapping("/users/v2/_update")
-    public UpdateResponse updateUserWithAddress(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
+    public UpdateResponse updateUserV2(@RequestBody @Valid CreateUserRequestV2 createUserRequest,
                                                 @RequestHeader HttpHeaders headers) {
 
         User user = createUserRequest.toDomain(false);
         user.setMobileValidationMandatory(isMobileValidationRequired(headers));
 
-        final User updatedUser = userService.updateWithAddressV2(user, createUserRequest.getRequestInfo());
+        final User updatedUser = userService.updateUserV2(user, createUserRequest.getRequestInfo());
 
         return createResponseforUpdate(updatedUser);
     }
