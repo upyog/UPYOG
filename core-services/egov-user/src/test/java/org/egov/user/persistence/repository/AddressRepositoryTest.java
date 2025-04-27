@@ -2,6 +2,7 @@ package org.egov.user.persistence.repository;
 
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.enums.AddressType;
+import org.egov.user.repository.builder.AddressQueryBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

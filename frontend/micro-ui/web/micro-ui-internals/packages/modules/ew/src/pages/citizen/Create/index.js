@@ -127,6 +127,14 @@ const EWCreate = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("EWCheckPage");
   const EWASTEAcknowledgement = Digit?.ComponentRegistryService?.getComponent("EWASTEAcknowledgement");
 
+  if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
+    clearParams();
+    queryClient.invalidateQueries("EWASTE_CREATE");
+  }
+
+  const ewasteCreate = async () => {
+    history.push(`${match.path}/acknowledgement`);
+  };
   return (
     <Switch>
       {config.map((routeObj, index) => {
