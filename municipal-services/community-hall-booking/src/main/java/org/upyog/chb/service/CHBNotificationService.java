@@ -247,7 +247,7 @@ public class CHBNotificationService {
 				.name(CommunityHallBookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(CommunityHallBookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP)
 				.actions(action)
-				.recepient(recepient).eventDetails(null).actions(null).build());
+				.recepient(recepient).eventDetails(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
