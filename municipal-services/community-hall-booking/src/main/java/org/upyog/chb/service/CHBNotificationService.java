@@ -5,9 +5,11 @@ import static com.jayway.jsonpath.Filter.filter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -25,11 +27,11 @@ import org.upyog.chb.util.NotificationUtil;
 import org.upyog.chb.web.models.CommunityHallBookingDetail;
 import org.upyog.chb.web.models.CommunityHallBookingRequest;
 import org.upyog.chb.web.models.events.Action;
-import org.upyog.chb.web.models.events.ActionItem;
 import org.upyog.chb.web.models.events.Event;
 import org.upyog.chb.web.models.events.EventRequest;
 import org.upyog.chb.web.models.events.Recepient;
 import org.upyog.chb.web.models.events.Source;
+import org.upyog.chb.web.models.notification.EmailRequest;
 import org.upyog.chb.web.models.notification.SMSRequest;
 
 import com.jayway.jsonpath.Filter;
@@ -86,26 +88,37 @@ public class CHBNotificationService {
 		CommunityHallBookingDetail bookingDetail = bookingRequest.getHallsBookingApplication();
 		// Decrypt applicant detail it will be used in notification
 		bookingDetail = chbEncryptionService.decryptObject(bookingDetail, bookingRequest.getRequestInfo());
+		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 
 		log.info("Processing notification for booking no : " + bookingDetail.getBookingNo() + " with status : "
 				+ status);
 		String tenantId = bookingRequest.getHallsBookingApplication().getTenantId();
 		String action = status;
-
+		Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
 		List<String> configuredChannelNames = fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0],
 				config.getModuleName(), action);
 
 		log.info("Fetching localization message for notification");
 		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
+		Map<String, String> messageMap = util.getCustomizedMsg(bookingRequest.getHallsBookingApplication(), localizationMessages, status,
+				CommunityHallBookingConstants.CHANNEL_NAME_EVENT);
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
+
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
 			sendEventNotification(localizationMessages, bookingRequest, status);
 		}
 
-		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EVENT)) {
+		if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_SMS)) {
 			sendMessageNotification(localizationMessages, bookingRequest, status);
 		}
+		
+		// Send Email notification
+        if (configuredChannelNames.contains(CommunityHallBookingConstants.CHANNEL_NAME_EMAIL)) {
+            Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+            List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(CommunityHallBookingConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
+            util.sendEmail(emailRequests);
+        }
 	}
 	
 	/**
@@ -218,20 +231,23 @@ public class CHBNotificationService {
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in CHB event :" + recepient.toString());
 		
-		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-		List<ActionItem> actionItems = new ArrayList<>();
-		actionItems.add(actionItem);
-		
-		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-				.eventId(CommunityHallBookingConstants.CHANNEL_NAME_EVENT ).build();
-				//new Action(tenantId, mobileNumber, CommunityHallBookingConstants.CHANNEL_NAME_EVENT , null) ;
+		Action action = null;
+
+		if (message.contains(CommunityHallBookingConstants.NOTIFICATION_ACTION)) {
+			
+			action = util.getActionLinkAndCode(message, actionLink, tenantId);
+			String code = StringUtils.substringBetween(message, CommunityHallBookingConstants.NOTIFICATION_ACTION, CommunityHallBookingConstants.NOTIFICATION_ACTION_BUTTON);
+			message = message.replace(CommunityHallBookingConstants.NOTIFICATION_ACTION, "").replace(CommunityHallBookingConstants.NOTIFICATION_ACTION_BUTTON, "").replace(code, "");
+
+		}
+	
 		
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(CommunityHallBookingConstants.USREVENTS_EVENT_TYPE)
 				.name(CommunityHallBookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(CommunityHallBookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP)
 				.actions(action)
-				.recepient(recepient).eventDetails(null).actions(null).build());
+				.recepient(recepient).eventDetails(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();

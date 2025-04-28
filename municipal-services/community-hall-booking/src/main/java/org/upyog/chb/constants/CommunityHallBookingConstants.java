@@ -154,5 +154,17 @@ public class CommunityHallBookingConstants {
 	public static final String CHB_TENANTID = "pg.mohali";
 	
 	public static final String SYSTEM_CITIZEN_USERNAME= "8888888888";
+	
+    public static final String NOTIFICATION_PAY_NOW = "PAY NOW";
+	
+	public static final String NOTIFICATION_DOWNLOAD_RECEIPT = "Download Receipt";
+	
+	public static final String NOTIFICATION_ACTION = "{Action Button}";
+	
+	public static final String NOTIFICATION_ACTION_BUTTON = "{/Action Button}";
+	
+	public static final String NOTIFICATION_EMAIL = "{EMAIL_ID}";
+	
+	public static final String MESSAGE_TEXT = "MESSAGE_TEXT";
 
 }
