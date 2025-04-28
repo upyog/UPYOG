@@ -47,6 +47,10 @@ public class SearchCriteriaGarbageAccount {
 
     private Long endId;
     
+    private Boolean isActiveSubAccount;
+    
+    private Boolean isActiveAccount;
+    
     @Builder.Default
 	private Boolean isSchedulerCall = false;
     

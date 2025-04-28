@@ -12,4 +12,6 @@ public class GrbgAddressQueryBuilder {
     								+ " SET address_type = ?, address1 = ?, address2 = ?, city = ?, state = ?, pincode = ?, is_active = ? " 
     								+ ", zone = ?, ulb_name = ?, ulb_type = ?, ward_name = ?, garbage_id = ?, additional_detail = ? :: JSONB "
     								+ " WHERE uuid = ?";
+    
+    public static final String DELETE_QUERY = "DELETE FROM eg_grbg_address WHERE garbage_id = ?";
 }

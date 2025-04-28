@@ -53,4 +53,9 @@ public class GrbgAddressRepository {
                 null == grbgAddress.getAdditionalDetail() ? null : objectMapper.convertValue(grbgAddress.getAdditionalDetail(), ObjectNode.class).toString(),
                 grbgAddress.getUuid());
     }
+
+	public void delete(Long garbageId) {
+		jdbcTemplate.update(GrbgAddressQueryBuilder.DELETE_QUERY, garbageId);
+		
+	}
 }
