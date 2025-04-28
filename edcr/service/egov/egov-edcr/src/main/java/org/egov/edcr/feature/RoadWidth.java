@@ -87,7 +87,7 @@ public class RoadWidth extends FeatureProcess {
 
     private static final Logger LOG = LogManager.getLogger(RoadWidth.class);
     private static final String RULE_34 = "34-1";
-    public static final String ROADWIDTH_DESCRIPTION = "Minimum Road Width and Type";
+    public static final String ROADWIDTH_DESCRIPTION = "Road Width and Type";
     public static final BigDecimal TWELVE_POINT_TWENTY = BigDecimal.valueOf(12.20);
     public static final BigDecimal THREE = BigDecimal.valueOf(3);
     public static final String NEW = "NEW";
@@ -117,9 +117,9 @@ public class RoadWidth extends FeatureProcess {
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
                 scrutinyDetail.addColumnHeading(3, OCCUPANCY +" - "+ ROADTYPE);
-                scrutinyDetail.addColumnHeading(4, PERMITTED);
-                scrutinyDetail.addColumnHeading(5, PROVIDED);
-                scrutinyDetail.addColumnHeading(6, STATUS);
+//                scrutinyDetail.addColumnHeading(4, PERMITTED);
+                scrutinyDetail.addColumnHeading(4, PROVIDED);
+//                scrutinyDetail.addColumnHeading(6, STATUS);
 
                 Map<String, String> details = new HashMap<>();
                 details.put(RULE_NO, RULE_34);
@@ -137,19 +137,19 @@ public class RoadWidth extends FeatureProcess {
                         details.put(OCCUPANCY +" - "+ ROADTYPE, occupancyType.getName() +" - "+ "("+ roadType +")");
                         BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
                         if (roadWidthRequired != null) {
-                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+//                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
+//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
                                 details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Accepted.getResultVal());
+//                                details.put(STATUS, Result.Accepted.getResultVal());
                                 scrutinyDetail.getDetail().add(details);
                                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            } else {
-                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
-                                details.put(PROVIDED, roadWidth.toString() + "m");
-                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            }
+//                            } else {
+//                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+//                                details.put(PROVIDED, roadWidth.toString() + "m");
+//                                details.put(STATUS, Result.Not_Accepted.getResultVal());
+//                                scrutinyDetail.getDetail().add(details);
+//                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+//                            }
                         }
                     }
                 }

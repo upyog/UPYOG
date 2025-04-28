@@ -114,7 +114,7 @@ public class Balcony extends FeatureProcess {
 
                             String value = typicalFloorValues.get("typicalFloors") != null
                                     ? (String) typicalFloorValues.get("typicalFloors")
-                                    : " floor " + floor.getNumber();
+                                    : "" + floor.getNumber();
 
                             if (isAccepted) {
                                 setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
