@@ -51,6 +51,7 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Component
 @Slf4j
@@ -104,8 +105,10 @@ public class UserTypeQueryBuilder {
     @SuppressWarnings("rawtypes")
     public String getQueryUserRoleSearch(final UserSearchCriteria userSearchCriteria, final List preparedStatementValues) {
         final StringBuilder selectQuery = new StringBuilder(SELECT_USER_ROLE_QUERY);
+        if (!isEmpty(userSearchCriteria.getRoleCodes())) {
+            addWhereClauseUserRoles(selectQuery, preparedStatementValues, userSearchCriteria);
 
-        addWhereClauseUserRoles(selectQuery, preparedStatementValues, userSearchCriteria);
+        }
         return selectQuery.toString();
 
     }

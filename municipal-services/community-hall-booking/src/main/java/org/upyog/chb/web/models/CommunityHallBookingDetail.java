@@ -89,7 +89,9 @@ public class CommunityHallBookingDetail {
 	
  	private ProcessInstance workflow;
 
-
+    @JsonProperty("additionaldetail")
+	private Object additionaldetail;
+    
 	 @JsonProperty("applicationStatus")
 	 private String applicationStatus;
 	 
