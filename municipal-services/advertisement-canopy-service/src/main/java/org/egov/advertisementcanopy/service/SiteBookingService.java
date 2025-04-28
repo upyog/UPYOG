@@ -2,6 +2,7 @@ package org.egov.advertisementcanopy.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -851,7 +852,7 @@ public class SiteBookingService {
 												.multiply(new BigDecimal(cost.get()))
 												.add(BigDecimal.valueOf(booking.getSiteCreationData().getSecurityAmount() != null 
 										                ? booking.getSiteCreationData().getSecurityAmount() 
-										                        : 0.0));
+										                        : 0.0)).setScale(0, RoundingMode.CEILING);
 				siteBookingDetail.setTotalPayableAmount(totalPayableAmount);
 				siteBookingDetail.setFeeCalculationFormula("From Date: (<b>"+fromDate+"</b>), To Date: "
 						+ "(<b>"+toDate+"</b>) = Number Of Days (<b>"+numberOfDays+"</b>) * Cost per day: (<b>"
