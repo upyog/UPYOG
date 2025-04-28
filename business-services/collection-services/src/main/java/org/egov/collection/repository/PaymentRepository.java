@@ -1090,87 +1090,71 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 		
 	@SuppressWarnings("null")
 	public Object Curl_WS(RequestInfo requestInfo, Set<String> consumerCodes,
-		Set<String> applicationNo, String tenantId, String businessservice ){
-		
-		
-		List<Map<String, Object>> waterConnections = new ArrayList<>();
-		StringBuilder url = null;
+	                      Set<String> applicationNo, String tenantId, String businessservice) {
 
-		if(businessservice.contains("WS")) {
-			url = new StringBuilder(config.getWsHost());
-		    url.append(config.getWsUrl());
-		       
-		} else {
-			url = new StringBuilder(config.getSwHost());
-		    url.append(config.getSwUrl());
-		}
-		
-		if (consumerCodes != null && !consumerCodes.isEmpty() 
-			    && (applicationNo == null || applicationNo.isEmpty())) {
-			    
-			    url.append("searchType=CONNECTION")
-			       .append("&connectionNumber=")
-			       .append(consumerCodes);
+	    List<Map<String, Object>> waterConnections = new ArrayList<>();
+	    StringBuilder url = null;
 
-			} else if ((applicationNo != null && !applicationNo.isEmpty()) 
-			           && (consumerCodes == null || consumerCodes.isEmpty())) {
-			    
-			    url.append("isConnectionSearch=true");
-			    String applicationNumbersStr = String.join(",", applicationNo);
-			    url.append("&applicationNumber=").append(applicationNumbersStr);
+	    if (businessservice.contains("WS")) {
+	        url = new StringBuilder(config.getWsHost());
+	        url.append(config.getWsUrl());
+	    } else {
+	        url = new StringBuilder(config.getSwHost());
+	        url.append(config.getSwUrl());
+	    }
 
-			} else if (consumerCodes != null && !consumerCodes.isEmpty()) {
-			    
-			    // Fallback to using consumerCodes if both are present or neither are empty
-			    url.append("isConnectionSearch=true");
-			    url.append("&connectionNumber=").append(consumerCodes);
+	    String consumerCodeStr = (consumerCodes != null && !consumerCodes.isEmpty()) ? consumerCodes.iterator().next() : null;
+	    String applicationNoStr = (applicationNo != null && !applicationNo.isEmpty()) ? applicationNo.iterator().next() : null;
 
-			} else {
-			    // Optional: handle the case where neither is present/valid
-			    throw new IllegalArgumentException("Either consumerCodes or applicationNo must be provided.");
-			}
+	    if (consumerCodeStr != null && (applicationNoStr == null)) {
+	        url.append("searchType=CONNECTION")
+	           .append("&connectionNumber=")
+	           .append(consumerCodeStr);
+	    } else if (applicationNoStr != null && (consumerCodeStr == null)) {
+	        url.append("isConnectionSearch=true");
+	        url.append("&applicationNumber=").append(applicationNoStr);
+	    } else if (consumerCodeStr != null) {
+	        url.append("isConnectionSearch=true");
+	        url.append("&connectionNumber=").append(consumerCodeStr);
+	    } else {
+	        throw new IllegalArgumentException("Either consumerCodes or applicationNo must be provided.");
+	    }
 
-		
-
-		
-		// Validate and append tenantId if present
-		if (tenantId != null && !tenantId.isEmpty()) {
-		    url.append("&tenantId=").append(tenantId);
-		}
-
-		
+	    if (tenantId != null && !tenantId.isEmpty()) {
+	        url.append("&tenantId=").append(tenantId);
+	    }
 
 	    try {
-	    	log.info(url.toString());
+	        log.info(url.toString());
 	        RestTemplate restTemplate = new RestTemplate();
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setContentType(MediaType.APPLICATION_JSON);
 	        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-	        // Creating request body as a map
 	        Map<String, Object> requestBody = new HashMap<>();
 	        requestBody.put("RequestInfo", requestInfo);
 	        requestBody.put("tenantId", tenantId);
 	        requestBody.put("isConnectionSearch", true);
-	        requestBody.put("applicationNumber", applicationNo);
 
-	        // Wrapping request body into HttpEntity
+	        if (applicationNoStr != null) {
+	            requestBody.put("applicationNumber", applicationNoStr);
+	        } else if (consumerCodeStr != null) {
+	            requestBody.put("connectionNumber", consumerCodeStr);
+	        }
+
 	        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-	        // Making POST request
 	        ResponseEntity<String> response = restTemplate.exchange(url.toString(), HttpMethod.POST, entity, String.class);
 
-	        // Check if response is successful
 	        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
 	            ObjectMapper objectMapper = new ObjectMapper();
 	            JsonNode rootNode = objectMapper.readTree(response.getBody());
-	            
-	            JsonNode waterConnectionNode = null;
-	            // Extracting "WaterConnection" array
-	            if(businessservice.contains("WS")) {
-	            	waterConnectionNode = rootNode.path("WaterConnection");
+
+	            JsonNode waterConnectionNode;
+	            if (businessservice.contains("WS")) {
+	                waterConnectionNode = rootNode.path("WaterConnection");
 	            } else {
-	            	waterConnectionNode = rootNode.path("SewerageConnections");
+	                waterConnectionNode = rootNode.path("SewerageConnections");
 	            }
 	            if (waterConnectionNode.isArray()) {
 	                for (JsonNode connection : waterConnectionNode) {
@@ -1179,17 +1163,13 @@ public List<String> fetchConsumerCodeByReceiptNumber(String receiptnumber) {
 	                }
 	            }
 	        }
-	        
 	    } catch (Exception ex) {
 	        log.error("Exception while calling WS service: ", ex);
 	    }
-	    
-	    //if (!waterConnections.isEmpty()){
-	      //  String propertyId = (String) waterConnections.get(0).get("propertyId");}
-		
-		return waterConnections;
-	
-		}
+
+	    return waterConnections;
+	}
+
 	
 
 
