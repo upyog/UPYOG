@@ -1377,6 +1377,8 @@ public class GarbageAccountService {
 					.createdBy(Collections.singletonList(
 							searchCriteriaGarbageAccountRequest.getRequestInfo().getUserInfo().getUuid()))
 					.tenantId(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getTenantId())
+					.isActiveAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsActiveAccount())
+					.isActiveSubAccount(searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount().getIsActiveSubAccount())
 					.build();
 
 			grbgAccsCreatedBy = garbageAccountRepository.searchGarbageAccount(searchCriteriaGarbageAccountCreatedBy);
