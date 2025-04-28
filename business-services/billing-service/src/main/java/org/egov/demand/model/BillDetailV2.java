@@ -52,9 +52,28 @@ public class BillDetailV2 {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
+	@JsonProperty("paymentPeriod")
+	private String paymentPeriod;
+	
 	@JsonProperty("billAccountDetails")
 	@Valid
 	private List<BillAccountDetailV2> billAccountDetails;
+	
+	@JsonProperty("partPaymentAllowed")
+	private boolean partPaymentAllowed;
+	
+	@JsonProperty("paymentModeStatus")
+	private List<ModeOfPaymentDetails> modeOfPaymentDetails;
+	
+	private BigDecimal interestonamount;
+	private String adjusmentfromdate;
+	private String assesmentyear;
+	private String adjustedtosession;
+	private String interestcalculatedsession;
+	private BigDecimal interestpercentage;
+	private int interestfornoofdays;
+	private boolean previousYearAssesment;
+	private BigDecimal totalAmountForIntCal;
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {

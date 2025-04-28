@@ -62,11 +62,11 @@
           <artifactId>jsoup</artifactId>
           <version>1.10.2</version>
       </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <version>4.1.0</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -86,6 +86,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+    </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>5.2.4</version>
     </dependency>
   </dependencies>
 	<repositories>

@@ -32,8 +32,8 @@ public class ResponseFactoryTest {
 
 	@Test
 	public void test_getFilesByTagResponse_from_FileInfo() throws Exception {
-		FileLocation fileLocation1 = new FileLocation(FILE_STORE_ID_1, MODULE, TAG, TENANT_ID,FILENAME,FILE_SOURCE);
-		FileLocation fileLocation2 = new FileLocation(FILE_STORE_ID_2, MODULE, TAG, TENANT_ID,FILENAME,FILE_SOURCE);
+		FileLocation fileLocation1 = new FileLocation(FILE_STORE_ID_1, MODULE, TAG, TENANT_ID,FILENAME,FILE_SOURCE,null);
+		FileLocation fileLocation2 = new FileLocation(FILE_STORE_ID_2, MODULE, TAG, TENANT_ID,FILENAME,FILE_SOURCE,null);
 		FileInfo fileInfo1 = new FileInfo(CONTENT_TYPE_1, fileLocation1, TENANT_ID);
 		FileInfo fileInfo2 = new FileInfo(CONTENT_TYPE_2, fileLocation2, TENANT_ID);
 		List<FileInfo> listOfFileInfo = asList(fileInfo1, fileInfo2);

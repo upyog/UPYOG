@@ -1,5 +1,5 @@
 import React from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, DatePicker } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, DatePicker } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { convertEpochToDate } from "../Utils/index";
 

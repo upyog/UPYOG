@@ -1,15 +1,23 @@
 
 package org.egov.pt.repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.Appeal;
+import org.egov.pt.models.AppealCriteria;
+import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.EncryptionCount;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -18,21 +26,33 @@ import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.PropertyAudit;
+import org.egov.pt.models.PropertyBifurcation;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
+import org.egov.pt.repository.rowmapper.AppealRowMapper;
 import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
+import org.egov.pt.repository.rowmapper.PropertyBifurcationRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.pt.web.contracts.PropertyRequest;
+import org.json.JSONObject;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 
 @Slf4j
@@ -47,6 +67,9 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
+	
+	@Autowired
+	private AppealRowMapper appealRowMapper;
 	
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
@@ -65,6 +88,13 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
+	
+	@Autowired
+	private PropertyBifurcationRowMapper propertyBifurcationRowMapper;
+	
+	
+	@Autowired
+	private ObjectMapper mapper;
     
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -295,5 +325,62 @@ public class PropertyRepository {
 
 		String query = queryBuilder.getpropertyAuditEncQuery();
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), propertyAuditEncRowMapper);
+	}
+	
+	public List<PropertyBifurcation> getBifurcationProperties(String parentProperty) {
+		String query = queryBuilder.getBifurcationPropertyIdsQuery(parentProperty);
+
+		log.info("\nQuery executed:" + query);
+		if (query == null)
+			return null;
+		List<PropertyBifurcation> bifurlist = jdbcTemplate.query(query,  propertyBifurcationRowMapper);
+		return bifurlist;
+	}
+	
+	@Transactional
+	public void savebifurcation(PropertyRequest request) throws JsonProcessingException
+	{
+		String idquery="select nextval('seq_eg_pt_registry_audit')";
+		Integer id=jdbcTemplate.queryForObject(idquery, Integer.class);
+		
+		String createdtimequery="SELECT extract(epoch from now())";
+		Integer createdtime=jdbcTemplate.queryForObject(createdtimequery, Integer.class);
+		String json = mapper.writeValueAsString(request.getProperty());
+		String childpropertyuuid = request.getProperty().getId();
+		AuditDetails a = request.getProperty().getAuditDetails();
+		String lastmodifiedBy = a.getLastModifiedBy();
+		String createdBy = a.getCreatedBy();
+		Long lastModifiedTime = a.getLastModifiedTime();
+		
+		boolean status = false;
+		
+		jdbcTemplate.update(PropertyQueryBuilder.INSERT_BIFURCATION_DETAILS_QUERY, new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				// TODO Auto-generated method stub
+				ps.setString(1, request.getProperty().getParentPropertyId());
+				ps.setString(2,json);
+				ps.setInt(3, request.getProperty().getMaxBifurcation());
+				ps.setInt(4, createdtime);
+				ps.setInt(5, id);
+				ps.setBoolean(6, status);
+				ps.setString(7, childpropertyuuid);
+				ps.setString(8, createdBy);
+				ps.setString(9,lastmodifiedBy);
+				ps.setLong(10, lastModifiedTime);
+				
+				;
+			}
+		});
+	}
+	
+	public List<Appeal> getAppeal(AppealCriteria appealCriteria) {
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getAppealsearchQuery(appealCriteria, preparedStmtList);
+		System.out.println("query::"+query);
+
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), appealRowMapper);
 	}
 }
