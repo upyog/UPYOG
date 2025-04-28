@@ -1,6 +1,7 @@
 package org.egov.advertisementcanopy.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class DemandService {
 				.multiply(new BigDecimal(cost.get()))
 				.add(BigDecimal.valueOf(siteBooking.getSiteCreationData().getSecurityAmount() != null 
 		                ? siteBooking.getSiteCreationData().getSecurityAmount() 
-		                        : 0.0));
+		                        : 0.0)).setScale(0, RoundingMode.CEILING);
     	System.out.println(totalPayableAmount);    	
     	DemandDetail demandDetail = DemandDetail.builder()
     								.taxHeadMasterCode(AdvtConstants.BILLING_TAX_HEAD_MASTER_CODE)
