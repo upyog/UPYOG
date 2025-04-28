@@ -91,22 +91,18 @@ public class MdmsApiMappings {
         try {
             JsonNode response = restService.post(mdmsServiceHost + mdmsSearchEndpoint, "", requestInfo);
             ArrayNode tenants = (ArrayNode) response.findValues(Constants.MDMSKeys.TENANTS).get(0);
-            logger.info("tenants :: "+tenants);
             Map<String, String> ulbCityNamesMappings = getMappings();
             logger.info("ulbCityNamesMappings :: "+ulbCityNamesMappings);
 
 
             for(JsonNode tenant : tenants) {
                 JsonNode tenantId = tenant.findValue(Constants.MDMSKeys.CODE);
-                logger.info("tenantId :: "+tenantId);
                 JsonNode ddrCode = tenant.findValue(Constants.MDMSKeys.DISTRICT_CODE);
-                logger.info("ddrCode :: "+ddrCode);
                 JsonNode ddrName = tenant.findValue(Constants.MDMSKeys.DDR_NAME);
-                logger.info("ddrName :: "+ddrName);
+
                 //JsonNode name = tenant.findValue(NAME);
                 //if(!codeValues.containsKey(tenantId.asText())) codeValues.put(tenantId.asText(), name.asText());
                 String cityName = ulbCityNamesMappings.get(tenantId.asText());
-                logger.info("cityName :: "+cityName);
                 if(cityName!=null){
                     if(!codeValues.containsKey(tenantId.asText())) codeValues.put(tenantId.asText(), cityName);
                 }
@@ -123,22 +119,15 @@ public class MdmsApiMappings {
                         if(cityName!=null) values.add(cityName);
                         ddrValueMap.put(ddrName.asText(), values);
 
-                        logger.info("if block ddrValueMap  = "+ddrValueMap);
-                        logger.info("if block codeValues = "+codeValues);
-                        logger.info("if block ddrTenantMapping1 = "+ddrTenantMapping1);
-
                     } else {
                         ddrTenantMapping1.get(ddrName.asText()).add(tenantId.asText());
                         //ddrValueMap.get(ddrName.asText()).add(name.asText());
                         if(cityName!=null) ddrValueMap.get(ddrName.asText()).add(cityName);
-                        logger.info("else block ddrValueMap  = "+ddrValueMap);
-                        logger.info("else block codeValues = "+codeValues);
-                        logger.info("else block ddrTenantMapping1 = "+ddrTenantMapping1);
+
                     }
 
                     if (!ddrTenantMapping.containsKey(ddrCode.asText())){
                         ddrTenantMapping.put(ddrCode.asText(), ddrName.asText());
-                        logger.info("if block ddrTenantMapping = "+ddrTenantMapping);
                     }
                 }
 
