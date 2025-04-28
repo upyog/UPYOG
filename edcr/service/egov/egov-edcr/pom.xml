@@ -49,11 +49,12 @@
 		
 	</repositories> 
 	<dependencies>
-<!--		<dependency>-->
-<!--			<groupId>com.aspose</groupId>-->
-<!--			<artifactId>aspose-cad</artifactId>-->
-<!--			<version>20.10</version>-->
-<!--		</dependency> -->
+<!--		<dependency>
+			<groupId>com.aspose</groupId>
+			<artifactId>aspose-cad</artifactId>
+			<version>20.10</version>
+		</dependency> -->
+
 		<!--<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>
