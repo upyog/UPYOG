@@ -13,7 +13,7 @@ RUN yarn add @upyog/digit-ui-module-mcollect
 RUN yarn add @upyog/digit-ui-module-pgr
 RUN yarn add @upyog/digit-ui-module-noc
 RUN yarn add @upyog/digit-ui-module-engagement
-RUN yarn add @upyog/digit-ui-module-hrms
+RUN yarn add @nudmcdgnpm/digit-ui-module-hrms
 RUN yarn add @upyog/digit-ui-module-core
 RUN yarn add @upyog/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-commonpt
