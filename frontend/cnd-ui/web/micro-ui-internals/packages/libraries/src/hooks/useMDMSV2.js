@@ -19,9 +19,6 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     return useQuery("BILLS_GENIE_KEY", () => MdmsServiceV2.getBillsGenieKey(tenantId, moduleCode, type), config);
   };
 
-  const useFSTPPlantInfo = () => {
-    return useQuery("FSTP_PLANTINFO", () => MdmsServiceV2.getFSTPPlantInfo(tenantId, moduleCode, type), config);
-  };
 
   const _default = () => {
     return useQuery([tenantId, moduleCode, type], () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config);
@@ -32,8 +29,6 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
       return usePaymentGateway();
     case "ReceiptKey":
       return useReceiptKey();
-    case "FSTPPlantInfo":
-      return useFSTPPlantInfo();
     case "BillsGenieKey":
       return useBillsGenieKey();
     default:

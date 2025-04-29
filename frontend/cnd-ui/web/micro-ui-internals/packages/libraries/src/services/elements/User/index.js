@@ -128,7 +128,7 @@ export const UserService = {
       data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
     });
   },
-  userSearchNew: async (tenantId, data, filters) => {
+  userSearchV2: async (tenantId, data, filters) => {
     return Request({
       url: Urls.UserSearchNew,
       params: { ...filters },

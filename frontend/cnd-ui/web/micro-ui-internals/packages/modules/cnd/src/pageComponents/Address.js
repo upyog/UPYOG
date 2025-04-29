@@ -25,7 +25,7 @@ const Address = ({t, config, formData, onSelect}) => {
     const fetchUserDetails = async () => {
       if (userUUID) {
         try {
-          const response = await Digit.UserService.userSearchNew(stateId, { uuid: [userUUID] }, {});
+          const response = await Digit.UserService.userSearchV2(stateId, { uuid: [userUUID] }, {});
           const user = response?.user?.[0];
           if (user && user.addresses) {
             setAddresses(user.addresses);
