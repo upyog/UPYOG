@@ -49,6 +49,14 @@ const EditCreate = () => {
     setSubmitValve(!Object.keys(formState.errors).length); 
   };
 
+    // Extract just the numeric value from the waste quantity string
+  const extractNumericValue = (quantityString) => {
+    if (!quantityString) return "";
+    // Match numeric values (including decimals)
+    const match = quantityString.toString().match(/(\d+(\.\d+)?)/);
+    return match ? match[0] : "";
+  };
+
 
   const onSubmit = (data) => {
     const user = Digit.UserService.getUser();
@@ -69,14 +77,14 @@ const EditCreate = () => {
         propertyType: data?.propertyNature?.propertyUsage?.code||applicationDetails?.applicationData?.applicationData?.propertyType,
         houseArea: data?.propertyNature?.houseArea || applicationDetails?.applicationData?.applicationData?.houseArea,
         applicantDetailId: applicationDetails?.applicationData?.applicationData?.applicantDetailId,
-        totalWasteQuantity: data?.wasteType?.wasteQuantity || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity,
+        totalWasteQuantity: extractNumericValue(data?.wasteType?.wasteQuantity) || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity,
         typeOfConstruction: data?.propertyNature?.constructionType?.code || applicationDetails?.applicationData?.applicationData?.typeOfConstruction,
         noOfTrips: 0,
         pickupDate:data?.wasteType?.pickupDate,
         requestedPickupDate:data?.wasteType?.pickupDate || applicationDetails?.applicationData?.applicationData?.requestedPickupDate,
         facilityCenterDetail: {
             disposalId: "",
-            netWeight: data?.wasteType?.wasteQuantity || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity
+            netWeight: extractNumericValue(data?.wasteType?.wasteQuantity) || applicationDetails?.applicationData?.applicationData?.totalWasteQuantity
         },
         wasteTypeDetails: data?.wasteType?.wasteMaterialType?.map(item => {
           const matchedWaste = applicationDetails?.applicationData?.applicationData?.wasteTypeDetails?.find(

@@ -35,25 +35,7 @@ const getThumbnails = async (ids, tenantId, documents = []) => {
 
 const makeCommentsSubsidariesOfPreviousActions = async (wf) => {
   const TimelineMap = new Map();
-  // const tenantId = window.location.href.includes("/obps/") ? Digit.ULBService.getStateId() : wf?.[0]?.tenantId;
-  // let fileStoreIdsList = [];
-  // let res = {};
-
-  // if (window.location.href.includes("/obps/")) {
-  //   wf?.map(wfData => {
-  //     wfData?.documents?.map(wfDoc => {
-  //       if (wfDoc?.fileStoreId) fileStoreIdsList.push(wfDoc?.fileStoreId);
-  //     })
-  //   })
-  //   if (fileStoreIdsList?.length > 0) {
-  //     res = await Digit.UploadServices.Filefetch(fileStoreIdsList, tenantId);
-  //   }
-  //   wf?.forEach(wfData => {
-  //     wfData?.documents?.forEach(wfDoc => {
-  //       if (wfDoc?.fileStoreId) wfDoc.url = res.data[wfDoc?.fileStoreId];
-  //     })
-  //   });
-  // }
+  
   for (const eventHappened of wf) {
     if (eventHappened?.documents) {
       eventHappened.thumbnailsToShow = await getThumbnails(eventHappened?.documents?.map(e => e?.fileStoreId), eventHappened?.tenantId, eventHappened?.documents)
@@ -76,15 +58,7 @@ const makeCommentsSubsidariesOfPreviousActions = async (wf) => {
 
 const getAssignerDetails = (instance, nextStep, moduleCode) => {
   let assigner = instance?.assigner
-  // if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE_V1"|| moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_ZERO_PAY_SERVICE") {
-  //   if (instance.state.applicationStatus === "CREATED") {
-  //     assigner = instance?.assigner
-  //   } else {
-  //     assigner = nextStep?.assigner || instance?.assigner
-  //   }
-  // } else {
-  //   assigner = instance?.assigner
-  // }
+  
   return assigner
 }
 
@@ -112,8 +86,7 @@ export const WorkflowService = {
   getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData }) => {
     const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id); 
     const applicationProcessInstance = cloneDeep(workflow?.ProcessInstances);
-    // const getLocationDetails = window.location.href.includes("/obps/") || window.location.href.includes("noc/inbox");
-    const moduleCodeData = /*getLocationDetails ? applicationProcessInstance?.[0]?.businessService :*/ moduleCode;
+    const moduleCodeData =  moduleCode;
     const businessServiceResponse = (await Digit.WorkflowService.init(tenantId, moduleCodeData))?.BusinessServices[0]?.states;
     if (workflow && workflow.ProcessInstances) {
       const processInstances = workflow.ProcessInstances;
@@ -125,8 +98,6 @@ export const WorkflowService = {
       /* To check state is updatable and provide edit option*/
       const currentState = businessServiceResponse?.find((state) => state.uuid === processInstances[0]?.state.uuid);
       if (currentState && currentState?.isStateUpdatable) {
-        // if (moduleCode === "FSM" || moduleCode === "FSM_POST_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE" || moduleCode === "FSM_ADVANCE_PAY_SERVICE_V1" || moduleCode === "FSM_ZERO_PAY_SERVICE" || moduleCode === "PAY_LATER_SERVICE" || moduleCode === "FSM_VEHICLE_TRIP" || moduleCode === "PGR" || moduleCode === "OBPS") null;
-        // else 
         nextActions.push({ action: "EDIT", state: currentState });
       }
 
@@ -144,17 +115,6 @@ export const WorkflowService = {
           });
           return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
         })?.[0];
-
-      // HANDLING ACTION for NEW VEHICLE LOG FROM UI SIDE
-      // const action_newVehicle = [{
-      //   "action": "READY_FOR_DISPOSAL",
-      //   "roles": "FSM_EMP_FSTPO,FSM_EMP_FSTPO"
-      // }]
-
-      // const actionRolePair = nextActions?.map((action) => ({
-      //   action: action?.action,
-      //   roles: action.state?.actions?.map((action) => action.roles).join(","),
-      // }));
 
       if (processInstances.length > 0) {
         const TLEnrichedWithWorflowData = await makeCommentsSubsidariesOfPreviousActions(processInstances)

@@ -22,7 +22,7 @@ const WasteTypeTable = ({
   onQuantityChange,
   onUnitChange,
   t,
-  unitOptions = ["Kilogram", "Ton", "Metric Ton", "No."], //TODO: Add this in MAster
+  unitOptions = ["Kilogram", "Ton", "Metric Ton"], //TODO: Add this in MAster
   availableWasteTypes = [], // All waste types from the MDMS
   onAddWasteType = () => {} // Callback to inform parent component of new waste type
 }) => {

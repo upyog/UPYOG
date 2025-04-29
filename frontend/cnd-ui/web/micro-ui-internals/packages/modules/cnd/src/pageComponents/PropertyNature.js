@@ -26,7 +26,7 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
   const [showToast, setShowToast] = useState(null);
 
 
-  const { data: propertyUsageType } = Digit.Hooks.useCustomMDMS(
+  const { data: propertyUsageType } = Digit.Hooks.useEnabledMDMS(
     Digit.ULBService.getStateId(),
     CND_VARIABLES.MDMS_MASTER,
     [{ name: "PropertyUsage" }],
@@ -39,7 +39,7 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
   );
 
   let common = propertyUsageType?.map((property_usage) => ({ i18nKey: property_usage.code, code: property_usage.code, value: property_usage.code })) || [];
-  const { data: ConstructionType } = Digit.Hooks.useCustomMDMS(
+  const { data: ConstructionType } = Digit.Hooks.useEnabledMDMS(
       Digit.ULBService.getStateId(),
       CND_VARIABLES.MDMS_MASTER,
       [{ name: "ConstructionType" }],
@@ -95,6 +95,25 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
     <React.Fragment>
       <FormStep config={config} onSelect={goNext} t={t} isDisabled={!houseArea || !propertyUsage || !constructionFrom || !constructionTo || !constructionType}>
         <div>
+        <CardLabel>{`${t("CND_TYPE_CONSTRUCTION")}`} <span className="astericColor">*</span></CardLabel>
+          <Controller
+            control={control}
+            name={"constructionType"}
+            defaultValue={constructionType}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={constructionType}
+                select={setconstructionType}
+                style={{inputStyles}}
+                option={constructionDropdownData}
+                optionKey="i18nKey"
+                t={t}
+                placeholder={"Select"}
+              />
+            )}
+          />
           <CardLabel>{`${t("CND_AREA_HOUSE")}`} <span className="astericColor">*</span></CardLabel>
           <TextInput
             t={t}
@@ -137,25 +156,6 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
                 select={setpropertyUsage}
                 style={{inputStyles}}
                 option={common}
-                optionKey="i18nKey"
-                t={t}
-                placeholder={"Select"}
-              />
-            )}
-          />
-          <CardLabel>{`${t("CND_TYPE_CONSTRUCTION")}`} <span className="astericColor">*</span></CardLabel>
-          <Controller
-            control={control}
-            name={"constructionType"}
-            defaultValue={constructionType}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={(props) => (
-              <Dropdown
-                className="form-field"
-                selected={constructionType}
-                select={setconstructionType}
-                style={{inputStyles}}
-                option={constructionDropdownData}
                 optionKey="i18nKey"
                 t={t}
                 placeholder={"Select"}

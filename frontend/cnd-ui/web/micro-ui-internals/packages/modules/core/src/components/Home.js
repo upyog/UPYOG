@@ -26,30 +26,6 @@ export const processLinkData = (newData, code, t) => {
     header: Digit.Utils.locale.getTransformedLocale(`ACTION_TEST_${code}`),
     iconName: `CITIZEN_${code}_ICON`,
   };
-  if (code === "FSM") {
-    const roleBasedLoginRoutes = [
-      {
-        role: "FSM_DSO",
-        from: "/cnd-ui/citizen/fsm/dso-dashboard",
-        dashoardLink: "CS_LINK_DSO_DASHBOARD",
-        loginLink: "CS_LINK_LOGIN_DSO",
-      },
-    ];
-    //RAIN-7297
-    roleBasedLoginRoutes.map(({ role, from, loginLink, dashoardLink }) => {
-      if (Digit.UserService.hasAccess(role))
-        newObj?.links?.push({
-          link: from,
-          i18nKey: t(dashoardLink),
-        });
-      else
-        newObj?.links?.push({
-          link: `/cnd-ui/citizen/login`,
-          state: { role: "FSM_DSO", from },
-          i18nKey: t(loginLink),
-        });
-    });
-  }
 
   return newObj;
 };

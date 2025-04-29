@@ -1,0 +1,21 @@
+name: Trigger CND-UI Build on Jenkins
+
+on:
+  push:
+    branches:
+      - niua-dev
+    paths:
+      - 'frontend/cnd-ui/**'  # Only trigger when changes are in cnd-ui directory
+
+jobs:
+  trigger-jenkins-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Trigger Jenkins Build
+        run: |
+          curl -v -X POST https://niua-cicd.niua.in/job/builds/job/upyog/job/frontend/job/cnd-ui/buildWithParameters \
+          --user ${{ secrets.JENKINS_USERNAME }}:${{ secrets.JENKINS_API_TOKEN }} \
+          --data-urlencode json='{"parameter": [{"name":"BRANCH", "value":"origin/${{ github.ref_name }}"}]}'

@@ -21,23 +21,21 @@ import { useQueryClient } from "react-query";
  */
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`CND_APPLICATION_COMPLETE_SUCCESSFULL`);
+  return t(isSuccess ? `CND_APPLICATION_COMPLETE_SUCCESSFULL`:`CND_APPLICATION_COMPLETION_FAILED`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
   return GetMessage("ACTION", action, isSuccess, isEmployee, t);
 };
 
-const GetLabel = (action, isSuccess, isEmployee, t) => {
-  return GetMessage("LABEL", action, isSuccess, isEmployee, t);
-};
+
 
 const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props?.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
       applicationNumber={props?.data?.cndApplicationDetails?.applicationNumber}
-      info={GetLabel(props.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
+      info={(props.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
       successful={props.isSuccess}
     />
   );

@@ -21,7 +21,7 @@ import { useQueryClient } from "react-query";
  */
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`CND_EDIT_SUCCESSFULL`);
+  return t(isSuccess?`CND_EDIT_SUCCESSFULL`:`CND_APPROVED_FAILED`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -37,7 +37,7 @@ const BannerPicker = (props) => {
     <Banner
       message={GetActionMessage(props?.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
       applicationNumber={props?.data?.cndApplicationDetails?.applicationNumber}
-      info={GetLabel(props.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
+      info={(props.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
       successful={props.isSuccess}
     />
   );
