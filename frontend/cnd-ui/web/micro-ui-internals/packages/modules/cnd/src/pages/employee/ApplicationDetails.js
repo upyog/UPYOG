@@ -153,7 +153,7 @@ const ApplicationDetails = () => {
         setShowToast={setShowToast}
         closeToast={closeToast}
         timelineStatusPrefix={"CND_"}
-        forcedActionPrefix={"CND"}
+        forcedActionPrefix={"C&D"}
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />

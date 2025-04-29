@@ -261,8 +261,6 @@ function ApplicationDetailsContent({
               </Link>
             </div>
           )}
-          {/* {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />} */}
-          {/* {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />} */}
 
         </React.Fragment>
       ))}
