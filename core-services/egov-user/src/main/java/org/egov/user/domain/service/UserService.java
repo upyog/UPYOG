@@ -194,6 +194,10 @@ public class UserService {
         
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
+        if (list.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         /* decrypt here / final reponse decrypted*/
 
         list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
