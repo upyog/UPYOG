@@ -28,7 +28,6 @@ import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.kafka.producer.Producer;
 import org.upyog.sv.repository.ServiceRequestRepository;
-import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.VendorDetail;
@@ -55,9 +54,6 @@ public class NotificationUtil {
 	private Producer producer;
 
 	private RestTemplate restTemplate;
-	
-	@Autowired
-	private StreetVendingEncryptionService decrypt;
 
 	@Autowired
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, StreetVendingConfiguration config,
@@ -181,8 +177,7 @@ public class NotificationUtil {
 		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-	    StreetVendingDetail	decryptedDetail = decrypt.decryptObject(requestDetail, requestInfo);
-	    mobileNumber =  decryptedDetail.getVendorDetail().get(0).getMobileNo();
+	    mobileNumber =  requestDetail.getVendorDetail().get(0).getMobileNo();
 		Map<String, Object> userSearchRequest = new HashMap<>();
 		userSearchRequest.put("RequestInfo", requestInfo);
 		userSearchRequest.put("tenantId", tenantId);
