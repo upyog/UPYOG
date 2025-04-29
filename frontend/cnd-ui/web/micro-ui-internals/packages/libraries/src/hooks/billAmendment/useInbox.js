@@ -15,17 +15,6 @@ const useBillAmendmentInbox = ({ tenantId, filters, config = {} }) => {
   if (!window.location.href.includes("cnd-ui/employee/")) {
     moduleName = moduleName;
   } 
-  // else {
-  //   if (window.location.href.includes("/ws/water/bill-amendment/inbox")) moduleName = "bsWs-service";
-  //   if (window.location.href.includes("/ws/sewerage/bill-amendment/inbox")) moduleName = "bsSw-service";
-  // }
-
-  // if (window.location.href.includes("/ws/water/bill-amendment/inbox")) {
-  //   businessService = ["WS.AMENDMENT"];
-  // }
-  // if (window.location.href.includes("/ws/sewerage/bill-amendment/inbox")) {
-  //   businessService = ["SW.AMENDMENT"];
-  // }
 
   const _filters = {
     tenantId,

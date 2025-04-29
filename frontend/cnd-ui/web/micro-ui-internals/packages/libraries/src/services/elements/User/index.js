@@ -128,4 +128,14 @@ export const UserService = {
       data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
     });
   },
+  userSearchNew: async (tenantId, data, filters) => {
+    return Request({
+      url: Urls.UserSearchNew,
+      params: { ...filters },
+      method: "POST",
+      auth: true,
+      userService: true,
+      data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
+    });
+  },
 };

@@ -17,11 +17,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
-import { stringReplaceAll } from "../bills/routes/bill-details/utils";
 import $ from "jquery";
 import { makePayment } from "./payGov";
-// import TimerServices from "../timer-Services/timerServices";
-// import { timerEnabledForBusinessService } from "../bills/routes/bill-details/utils";
+
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
@@ -41,11 +39,9 @@ export const SelectPaymentType = (props) => {
   const [Time, setTime ] = useState(0);
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
-    { tenantId: tenantId, consumerCode: /*wrkflow === "WNS" ? connectionNo : */consumerCode, businessService },
+    { tenantId: tenantId, consumerCode: consumerCode, businessService },
     {}
   );
-  // if (window.location.href.includes("ISWSCON") || wrkflow === "WNS") consumerCode = decodeURIComponent(consumerCode);
-  // if( wrkflow === "WNS") consumerCode = stringReplaceAll(consumerCode,"+","/")
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
@@ -81,10 +77,7 @@ export const SelectPaymentType = (props) => {
           emailId: "sriranjan.srivastava@owc.com"
         },
         // success
-        callbackUrl: 
-        // window.location.href.includes("mcollect") || wrkflow === "WNS"
-        //   ? `${window.location.protocol}//${window.location.host}/cnd-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? consumerCode:consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-        //   : 
+        callbackUrl:  
           `${window.location.protocol}//${window.location.host}/cnd-ui/citizen/payment/success/${businessService}/${/*wrkflow === "WNS"? encodeURIComponent(consumerCode):*/consumerCode}/${tenantId}?propertyId=${consumerCode}`,
         additionalDetails: {
           isWhatsapp: false,
@@ -111,7 +104,6 @@ export const SelectPaymentType = (props) => {
         let atom = new AtomPaynetz(options, 'uat');
       }
       else {
-        // new payment gatewayfor UPYOG pay
         try {
           const gatewayParam = redirectUrl
             ?.split("?")
@@ -147,19 +139,12 @@ export const SelectPaymentType = (props) => {
             "additionalField5",
           ];
 
-          // override default date for UPYOG Custom pay
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
 
           gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
           gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
-          // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-
-          // var formdata = new FormData();
-
+          
           for (var key of orderForNDSLPaymentSite) {
-
-            // formdata.append(key,gatewayParam[key]);
 
             newForm.append(
               $("<input>", {

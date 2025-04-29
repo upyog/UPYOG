@@ -59,7 +59,6 @@ export const CndUI = ({ stateCode, registry, enabledModules, moduleReducers }) =
   const ComponentProvider = Digit.Contexts.ComponentProvider;
   const PrivacyProvider = Digit.Contexts.PrivacyProvider;
 
-  const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
 
   return (
     <div>

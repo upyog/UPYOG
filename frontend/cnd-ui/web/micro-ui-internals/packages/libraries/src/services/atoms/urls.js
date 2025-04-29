@@ -27,6 +27,7 @@ const Urls = {
   vendorSearch: "/vendor/v1/_search",
   vehicleSearch: "/vehicle/v1/_search",
   UserSearch: "/user/_search",
+  UserSearchNew: "/user/users/v2/_search",
   UserLogout: "/user/_logout",
 
   Shortener: "/egov-url-shortening/shortener",

@@ -66,7 +66,7 @@ export const Config =
                 "withoutLabel": true,
                 "key": "wasteType",
                 "type": "component",
-                "nextStep": "address-details",
+                "nextStep": "select-address-details",
                 "isMandatory": true,
                 "texts": {
                     "submitBarLabel": "COMMON_SAVE_NEXT",
@@ -75,6 +75,23 @@ export const Config =
                 "timeLine":[{
                     "currentStep":4,
                     "actions":"CND_WASTE_TYPE"
+                }]
+            },
+            {
+                "route": "select-address-details",
+                "component": "Address",
+                "withoutLabel": true,
+                "key": "addressDetails",
+                "type": "component",
+                "nextStep": null,
+                "isMandatory": true,
+                "texts": {
+                    "submitBarLabel": "COMMON_SAVE_NEXT",
+                    "header": "SELECT_ADDRESS_DETAILS",
+                },
+                "timeLine":[{
+                    "currentStep":5,
+                    "actions":"ADDRESS_DEATILS"
                 }]
             },
             {

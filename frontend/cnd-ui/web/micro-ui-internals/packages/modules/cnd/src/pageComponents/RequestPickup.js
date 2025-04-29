@@ -15,7 +15,7 @@ const RequestPickup = ({ t, config, onSelect, userType, formData }) => {
   const [showLocationPopup, setShowLocationPopup] = useState(false);
   const [isNextDisabled, setIsNextDisabled] = useState(false);
 
-  const { data: PickupData } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), CND_VARIABLES.MDMS_MASTER, [{ name: "PickupType" }], {
+  const { data: PickupData } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), CND_VARIABLES.MDMS_MASTER, [{ name: "PickupType" }], {
     select: (data) => {
       const formattedData = data?.[CND_VARIABLES.MDMS_MASTER]?.["PickupType"];
       return formattedData?.filter((item) => item.active === true);

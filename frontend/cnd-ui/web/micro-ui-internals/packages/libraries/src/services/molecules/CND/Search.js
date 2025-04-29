@@ -22,6 +22,16 @@ export const CNDSearch = {
     // function to filter out the fields which have values
     const filterEmptyValues = (values) => values.filter(item => item.value);
 
+    const slotlistRows = response?.wasteTypeDetails.map((items,index)=>(
+      [
+        index+1,
+        items?.wasteType,
+        items?.quantity,
+        items?.metrics ? items?.metrics :"-",
+      ]
+    )) || [];
+
+
     return [
       {
         title: "COMMON_CND_DETAILS",
@@ -31,7 +41,7 @@ export const CNDSearch = {
           { title: "CND_REQUEST_TYPE", value: response?.applicationType },
           { title: "CND_PROPERTY_USAGE", value: response?.propertyType },
           { title: "CND_TYPE_CONSTRUCTION", value: response?.typeOfConstruction },
-          { title: "CND_WASTE_QUANTITY", value: response?.totalWasteQuantity },
+          { title: "CND_WASTE_QUANTITY", value: response?.totalWasteQuantity + " Ton"},
           { title: "CND_SCHEDULE_PICKUP", value: response?.requestedPickupDate },
           ...(response?.applicationStatus==="COMPLETED" 
             ? [{title: "CND_EMP_SCHEDULE_PICKUP", value: response.pickupDate, isBold:true}]
@@ -51,8 +61,8 @@ export const CNDSearch = {
               { title: "CND_DISPOSE_TYPE", value: response?.facilityCenterDetail?.disposalType },
               { title: "CND_DUMPING_STATION", value: response?.facilityCenterDetail?.dumpingStationName},
               { title: "CND_DISPOSAL_SITE_NAME", value: response?.facilityCenterDetail?.nameOfDisposalSite},
-              { title: "CND_GROSS_WEIGHT", value: response?.facilityCenterDetail?.grossWeight },
-              { title: "CND_NET_WEIGHT", value: response?.facilityCenterDetail?.netWeight},
+              { title: "CND_GROSS_WEIGHT", value: response?.facilityCenterDetail?.grossWeight + " Ton"},
+              { title: "CND_NET_WEIGHT", value: response?.facilityCenterDetail?.netWeight + " Ton"},
             ],
           }
         ]
@@ -79,18 +89,26 @@ export const CNDSearch = {
           { title: "PINCODE", value: response?.addressDetail?.pinCode },
         ]),
       },
+
       {
         title: "CND_WASTE_DETAILS",
         asSectionHeader: true,
-        values: response?.wasteTypeDetails?.map((items,index)=>{
-          return {
-            title: `${t("CND_WASTE_TYPE")} ${index + 1}`, 
-            value:  items?.quantity > 0
-              ? `${items?.wasteType}, ${items?.quantity} ${items?.metrics}`
-              : items?.wasteType,
-          };
-        })
-      },
+        isTable: true,
+        headers: ["CND_S_NO", "CND_WASTE_TYPE", "CND_QUANTITY", "CND_METRICS"],
+        tableRows: slotlistRows,
+      }
+      // {
+      //   title: "CND_WASTE_DETAILS",
+      //   asSectionHeader: true,
+      //   values: response?.wasteTypeDetails?.map((items,index)=>{
+      //     return {
+      //       title: `${t("CND_WASTE_TYPE")} ${index + 1}`, 
+      //       value:  items?.quantity > 0
+      //         ? `${items?.wasteType}, ${items?.quantity} ${items?.metrics}`
+      //         : items?.wasteType,
+      //     };
+      //   })
+      // },
 
     ];
   },

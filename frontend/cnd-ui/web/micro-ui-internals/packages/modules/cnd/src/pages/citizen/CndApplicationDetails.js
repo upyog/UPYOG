@@ -1,10 +1,11 @@
 import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import get from "lodash/get";
 import CNDApplicationTimeLine from "../../components/CNDApplicationTimeLine";
-// import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
+import ApplicationTable from "../../components/inbox/ApplicationTable";
+import cndAcknowledgementData from "../../utils/cndAcknowledgementData";
 
 
 /**
@@ -45,15 +46,15 @@ const CndApplicationDetails = () => {
     fetchBillData();
     }, [tenantId, applicationNumber]); 
 
-//   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-//     {
-//       tenantId: tenantId,
-//       businessService: "sv-services",
-//       consumerCodes: applicationNo,
-//       isEmployee: false,
-//     },
-//     { enabled: applicationNo ? true : false }
-//   );
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "cnd-service",
+      consumerCodes: applicationNumber,
+      isEmployee: false,
+    },
+    { enabled: applicationNumber ? true : false }
+  );
 
   if (!cndData.workflow) {
     let workflow = {
@@ -71,61 +72,54 @@ const CndApplicationDetails = () => {
      cndData.workflow = workflow;
   }
 
-
   if (isLoading) {
     return <Loader />;
   }
 
-//   const getAcknowledgementData = async () => {
-//     const applications = application || {};
-//     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-//     const acknowldgementDataAPI = await getSVAcknowledgementData({ ...applications }, tenantInfo, t);
-//     Digit.Utils.pdf.generate(acknowldgementDataAPI);
-//   };
+  const getAcknowledgementData = async () => {
+    const applications = application || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+    const acknowldgementDataAPI = await cndAcknowledgementData({ ...applications }, tenantInfo, t);
+    Digit.Utils.pdf.generateTable(acknowldgementDataAPI);
+  };
 
 
-//   async function getRecieptSearch({ tenantId, payments, ...params }) {
-//     let response = { filestoreIds: [payments?.fileStoreId] };
-//     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "svservice-receipt");
-//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-//   };
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let response = { filestoreIds: [payments?.fileStoreId] };
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
 
-//   const printCertificate = async () => {
-//     let response = await Digit.PaymentService.generatePdf(tenantId, { cndApplicationDetail: [data?.cndApplicationDetail?.[0]] }, "svcertificate");
-//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-//   };
-//   const printIdCard = async () => {
-//     let response = await Digit.PaymentService.generatePdf(tenantId, { cndApplicationDetail: [data?.cndApplicationDetail?.[0]] }, "svidentitycard");
-//     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-//     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-//   };
 
-//   let dowloadOptions = [];
-//   dowloadOptions.push({
-//     label: t("SV_ACKNOWLEDGEMENT"),
-//     onClick: () => getAcknowledgementData(),
-//   });
 
-  
-//   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-//     dowloadOptions.push({
-//       label: t("SV_FEE_RECIEPT"),
-//       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-//     });
-//   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-//     dowloadOptions.push({
-//       label: t("SV_CERTIFICATE"),
-//       onClick: () => printCertificate(),
-//     });
+  let dowloadOptions = [];
+  dowloadOptions.push({
+    label: t("CND_ACKNOWLEDGEMENT"),
+    onClick: () => getAcknowledgementData(),
+  });
 
-//     if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-//       dowloadOptions.push({
-//         label: t("SV_ID_CARD"),
-//         onClick: () => printIdCard(),
-//       });
 
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("CND_FEE_RECIEPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+
+
+const columnName = [
+  { Header: t("CND_S_NO"), accessor: "sNo" },
+  { Header: t("CND_WASTE_TYPE"), accessor: "wasteType" },
+  { Header: t("CND_QUANTITY"), accessor: "quantity" },
+  { Header: t("CND_METRICS"), accessor: "siUnit" }
+];
+
+const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
+  sNo: index + 1,
+  wasteType: items?.wasteType || "-",
+  quantity: items?.quantity?items?.quantity:"0",
+  siUnit:items?.metrics ? items?.metrics : "-"
+}));
 
   
   return (
@@ -133,14 +127,14 @@ const CndApplicationDetails = () => {
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("CND_REQUEST_DETAILS")}</Header>
-          {/* {dowloadOptions && dowloadOptions.length > 0 && (
+          {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
               onHeadClick={() => setShowOptions(!showOptions)}
               displayOptions={showOptions}
               options={dowloadOptions}
             />
-          )} */}
+          )}
         </div>
         <Card>
           <StatusTable>
@@ -157,7 +151,7 @@ const CndApplicationDetails = () => {
             <Row
               className="border-none"
               label={t("CND_WASTE_QUANTITY")}
-              text={cndData?.totalWasteQuantity} 
+              text={cndData?.totalWasteQuantity + " Ton"} 
             />
             <Row
               className="border-none"
@@ -203,8 +197,8 @@ const CndApplicationDetails = () => {
             <Row className="border-none" label={t("CND_DISPOSE_TYPE")} text={cndData?.facilityCenterDetail?.disposalType || t("CS_NA")} />
             <Row className="border-none" label={t("CND_DISPOSAL_SITE_NAME")} text={cndData?.facilityCenterDetail?.nameOfDisposalSite || t("CS_NA")} />
             <Row className="border-none" label={t("CND_DUMPING_STATION")} text={cndData?.facilityCenterDetail?.dumpingStationName|| t("CS_NA")} />
-            <Row className="border-none" label={t("CND_GROSS_WEIGHT")} text={cndData?.facilityCenterDetail?.grossWeight || t("CS_NA")} />
-            <Row className="border-none" label={t("CND_NET_WEIGHT")} text={cndData?.facilityCenterDetail?.netWeight|| t("CS_NA")} />
+            <Row className="border-none" label={t("CND_GROSS_WEIGHT"+ " Ton")} text={cndData?.facilityCenterDetail?.grossWeight || t("CS_NA")} />
+            <Row className="border-none" label={t("CND_NET_WEIGHT"+ " Ton")} text={cndData?.facilityCenterDetail?.netWeight|| t("CS_NA")} />
           </StatusTable>
           </React.Fragment>)}
           <CardSubHeader style={{ fontSize: "24px" }}>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
@@ -227,14 +221,21 @@ const CndApplicationDetails = () => {
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("CND_WASTE_DETAILS")}</CardSubHeader>
           <StatusTable>
-              {cndData.wasteTypeDetails.map((material, index) => (
-              <Row
-                className="border-none"
-                key={`waste-material-${index}`}
-                label={`${t("CND_WASTE_TYPE")} ${index + 1}`}
-                text={material?.quantity>0?  material.wasteType + ", "+material.quantity+" "+material.metrics:material.wasteType}
-              />
-            ))}
+          <ApplicationTable
+              t={t}
+              data={operationRows}
+              columns={columnName}
+              getCellProps={(cellInfo) => ({
+                style: {
+                  minWidth: "150px",
+                  padding: "10px",
+                  fontSize: "16px",
+                  paddingLeft: "20px",
+                },
+              })}
+              isPaginationRequired={false}
+              totalRecords={operationRows.length}
+            />
           </StatusTable>
 
           <CNDApplicationTimeLine application={application} id={application?.applicationNumber} userType={"citizen"} />

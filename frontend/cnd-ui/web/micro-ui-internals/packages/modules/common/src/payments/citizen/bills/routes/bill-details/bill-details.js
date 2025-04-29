@@ -71,7 +71,7 @@ const BillDetails = ({ businessService }) => {
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <KeyNote keyValue={t(label)} note={consumerCode} />
         </div>
-          <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} />
+          {/* <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} /> */}
           <KeyNote keyValue={t("CS_PAYMENT_TOTAL_AMOUNT")} note={`₹ ${getTotal().toLocaleString("en-IN")}`} />
         </div>
 

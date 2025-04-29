@@ -116,14 +116,21 @@ export const convertEpochToDate = (dateEpoch) => {
     setPrinting(true);
     let paymentArray=[];
     const state = Digit.ULBService.getStateId();
+    let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
     if (!paymentData?.fileStoreId) {
           let details
           payments.Payments[0].additionalDetails=details;
           paymentArray[0]=payments.Payments[0]
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKey);
           
-        }       
+        } 
+        
+    const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+    if (fileStore && fileStore[response.filestoreIds[0]]) {
+      window.open(fileStore[response.filestoreIds[0]], "_blank");
     }
+    setPrinting(false);
+    };
   
   let bannerText;
   if (workflw) {
@@ -161,7 +168,7 @@ export const convertEpochToDate = (dateEpoch) => {
           rowContainerStyle={rowContainerStyle}
           last
           label={t("CS_PAYMENT_AMOUNT_PAID")}
-          text={paymentData?.totalAmountPaid ||( reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " +  reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0`) }
+          text={"₹ " + paymentData?.totalAmountPaid ||( reciept_data?.paymentDetails?.[0]?.totalAmountPaid ? ("₹ " +  reciept_data?.paymentDetails?.[0]?.totalAmountPaid) : `₹ 0`) }
         />
       </StatusTable>
             

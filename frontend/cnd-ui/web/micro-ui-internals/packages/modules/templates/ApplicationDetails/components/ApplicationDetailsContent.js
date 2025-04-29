@@ -159,17 +159,17 @@ function ApplicationDetailsContent({
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
 
             {detail?.isTable && (
-              <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
-                <tr style={{ textAlign: "left" }}>
+              <table style={{ tableLayout: "fixed", width: "63%", borderCollapse: "collapse",border: "1px solid black" }}>
+                <tr style={{ textAlign: "centre" }}>
                   {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px", paddingLeft: "0px" }}>{t(header)}</th>
+                    <th style={{ padding: "10px", paddingLeft: "0px",  border: "1px solid black" }}>{t(header)}</th>
                   ))}
                 </tr>
                 {detail?.tableRows.map((row, index) => {
                   return <tr>
                   {row.map((element, idx) => (
-                    Array.isArray(element) && element.length > 1 && detail.isMaintenance === true? (
-                      <td style={{ paddingTop: "20px", textAlign: "left" }} key={idx}>
+                    Array.isArray(element) && element.length > 1 ? (
+                      <td style={{ paddingTop: "20px", textAlign: "centre", border: "1px solid black", verticalAlign: "middle" }} key={idx}>
                       <div style={{ display: "flex", flexWrap: "nowrap", gap: "5px" }}>
                         {element.map((file, fileIndex) => (
                           <a
@@ -185,7 +185,7 @@ function ApplicationDetailsContent({
                     </td>
                     
                     ) : (
-                      <td key={idx} style={{ paddingTop: "20px", textAlign: "left" }}>
+                      <td key={idx} style={{ paddingTop: "20px", textAlign: "center", border: "1px solid black" }}>
                         {t(element)}
                       </td>
                     )

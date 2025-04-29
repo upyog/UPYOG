@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import { cndPayload } from "../../../utils";
 import { CND_VARIABLES } from "../../../utils";
+import cndAcknowledgementData from "../../../utils/cndAcknowledgementData";
 
 /**
  * Acknowledgement page which will render when form is submitted, it will show
@@ -62,14 +63,14 @@ const CndAcknowledgement = ({ data, onSuccess }) => {
 
   
 
-//   const handleDownloadPdf = async () => {
-//     const { PetRegistrationApplications = [] } = mutation.data;
-//     let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
-//     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
-//     let tenantId = Pet.tenantId || tenantId;
-//     const data = await getPetAcknowledgementData({ ...Pet }, tenantInfo, t);
-//     Digit.Utils.pdf.generate(data);
-//   };
+  const handleDownloadPdf = async () => {
+    const { cndApplicationDetails = [] } = mutation.data;
+    let Cnd = (cndApplicationDetails) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === Cnd.tenantId);
+    let tenantId = Cnd.tenantId || tenantId;
+    const data = await cndAcknowledgementData({ ...Cnd }, tenantInfo, t);
+    Digit.Utils.pdf.generateTable(data);
+  };
 
   return mutation.isLoading || mutation.isIdle ? (
     <Loader />
@@ -85,7 +86,7 @@ const CndAcknowledgement = ({ data, onSuccess }) => {
           />
         )}
       </StatusTable>
-      {/* {mutation.isSuccess && <SubmitBar label={t("PTR_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />} */}
+      {mutation.isSuccess && <SubmitBar label={t("CND_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
       {user?.type==="CITIZEN"?
       <Link to={`/digit-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />

@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-// import getSVAcknowledgementData from "../../utils/getSVAcknowledgementData";
+import cndAcknowledgementData from "../../utils/cndAcknowledgementData";
 
 /**
 * ApplicationDetails component displays the details of a CND application
@@ -56,7 +56,7 @@ const ApplicationDetails = () => {
   }, [applicationDetails]);
 
 
-  // This code wil check if the the employee has access && businessService is streetvending and nextAction is Pay then it will redirect in the Payment page
+  // This code wil check if the the employee has access && businessService is cnd-service and nextAction is Pay then it will redirect in the Payment page
   const CND_CEMP = Digit.UserService.hasAccess(["CND_CEMP"]) || false;
   if (
     CND_CEMP &&
@@ -75,68 +75,46 @@ const ApplicationDetails = () => {
     });
   }
 
-  // Handling the download of acknowledgement page
-  // const handleDownloadPdf = async () => {
-  //   const SVApplication = appDetailsToShow?.applicationData;
-  //   const tenantInfo = tenants.find((tenant) => tenant.code === SVApplication.tenantId);
-  //   const data = await getSVAcknowledgementData(SVApplication.applicationData, tenantInfo, t);
-  //   Digit.Utils.pdf.generate(data);
-  // };
+  // // Handling the download of acknowledgement page
+  const handleDownloadPdf = async () => {
+    const cndApplicationDetails = appDetailsToShow?.applicationData;
+    const tenantInfo = tenants.find((tenant) => tenant.code === cndApplicationDetails.tenantId);
+    const data = await cndAcknowledgementData(cndApplicationDetails.applicationData, tenantInfo, t);
+    Digit.Utils.pdf.generateTable(data);
+  };
 
-  // const svDetailsPDF = {
-  //   order: 1,
-  //   label: t("SV_ACKNOWLEDGEMENT"),
-  //   onClick: () => handleDownloadPdf(),
-  // };
+  const cndDetailsPDF = {
+    order: 1,
+    label: t("CND_ACKNOWLEDGEMENT"),
+    onClick: () => handleDownloadPdf(),
+  };
 
-  // let dowloadOptions = [svDetailsPDF];
+  let dowloadOptions = [cndDetailsPDF];
 
 
-  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-  //   {
-  //     tenantId: tenantId,
-  //     businessService: "sv-services",
-  //     consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNo,
-  //     isEmployee: false,
-  //   },
-  //   { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNo ? true : false }
-  // );
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "cnd-service",
+      consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNumber,
+      isEmployee: false,
+    },
+    { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNumber ? true : false }
+  );
 
-  // async function getRecieptSearch({ tenantId, payments, ...params }) {
-  //   let response = { filestoreIds: [payments?.fileStoreId] };
-  //   response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "svservice-receipt");
-  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  // };
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let response = { filestoreIds: [payments?.fileStoreId] };
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
 
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("SV_FEE_RECIEPT"),
-  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-  //   });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("CND_FEE_RECIEPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
 
-  // const printCertificate = async () => {
-  //   let response = await Digit.PaymentService.generatePdf(tenantId, { SVDetail: [applicationDetails?.applicationData?.applicationData] }, "svcertificate");
-  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  // };
-  // const printId = async () => {
-  //   let response = await Digit.PaymentService.generatePdf(tenantId, { SVDetail: [applicationDetails?.applicationData?.applicationData] }, "svidentitycard");
-  //   const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-  //   window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  // };
-
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("SV_CERTIFICATE"),
-  //     onClick: () => printCertificate(),
-  //   });
-    
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("SV_ID_CARD"),
-  //     onClick: () => printId(),
-  //   });
   
   return (
     <div>
@@ -145,7 +123,7 @@ const ApplicationDetails = () => {
         <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
          
       <div style={{zIndex: "10",  position: "relative"}}>
-        {/* {dowloadOptions && dowloadOptions.length > 0 && (
+        {dowloadOptions && dowloadOptions.length > 0 && (
           <MultiLink
             className="multilinkWrapper"
             onHeadClick={() => setShowOptions(!showOptions)}
@@ -155,7 +133,7 @@ const ApplicationDetails = () => {
             optionsClassName={"employee-options-btn-className"}
           // ref={menuRef}
           />
-        )} */}
+        )}
         </div>
       </div>
       </div>

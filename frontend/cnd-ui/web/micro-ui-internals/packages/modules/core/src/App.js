@@ -11,31 +11,30 @@ export const CndApp = ({ stateCode, modules, appTenants, logoUrl, initData }) =>
   const userDetails = Digit.UserService.getUser();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
   let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
 
   if (window.location.pathname.split("/").includes("employee")) CITIZEN = false;
 
-  useEffect(() => {
-    if (!pathname?.includes("application-details")) {
-      if (!pathname?.includes("inbox")) {
-        Digit.SessionStorage.del("fsm/inbox/searchParams");
-      }
-      if (pathname?.includes("search")) {
-        Digit.SessionStorage.del("fsm/search/searchParams");
-      }
-    }
-    if (!pathname?.includes("dss")) {
-      Digit.SessionStorage.del("DSS_FILTERS");
-    }
-    if (pathname?.toString() === "/cnd-ui/employee") {
-      Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
-      Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
-    }
-    if (pathname?.toString() === "/cnd-ui/citizen" || pathname?.toString() === "/cnd-ui/employee") {
-      Digit.SessionStorage.del("WS_DISCONNECTION");
-    }
-  }, [pathname]);
+  // useEffect(() => {
+  //   if (!pathname?.includes("application-details")) {
+  //     if (!pathname?.includes("inbox")) {
+  //       Digit.SessionStorage.del("fsm/inbox/searchParams");
+  //     }
+  //     if (pathname?.includes("search")) {
+  //       Digit.SessionStorage.del("fsm/search/searchParams");
+  //     }
+  //   }
+  //   if (!pathname?.includes("dss")) {
+  //     Digit.SessionStorage.del("DSS_FILTERS");
+  //   }
+  //   if (pathname?.toString() === "/cnd-ui/employee") {
+  //     Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
+  //     Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
+  //   }
+  //   if (pathname?.toString() === "/cnd-ui/citizen" || pathname?.toString() === "/cnd-ui/employee") {
+  //     Digit.SessionStorage.del("WS_DISCONNECTION");
+  //   }
+  // }, [pathname]);
 
   history.listen(() => {
     window?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -55,7 +54,6 @@ export const CndApp = ({ stateCode, modules, appTenants, logoUrl, initData }) =>
     mobileView,
     handleUserDropdownSelection,
     logoUrl,
-    DSO,
     stateCode,
     modules,
     appTenants,

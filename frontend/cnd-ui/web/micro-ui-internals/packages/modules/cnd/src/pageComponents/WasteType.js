@@ -5,6 +5,7 @@ import { CND_VARIABLES,LoadingSpinner } from "../utils";
 import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext";
 import { convertToObject } from "../utils";
 import WasteTypeTable from "./WasteTypeTable";
+import { calculateTotalWasteInTons, formatWasteQuantity } from "../utils";
 
 /**
 * WasteType component that collects information about waste collection requests including
@@ -104,6 +105,15 @@ const WasteType = ({ t, config, onSelect, formData }) => {
     }
   }, [formData]);
 
+  // Calculate total waste in tons whenever wasteDetails changes
+  useEffect(() => {
+    if(isEmployee){
+    const totalWasteInTons = calculateTotalWasteInTons(wasteDetails);
+    // Format the total with ton unit and set it as the waste quantity
+    setwasteQuantity(formatWasteQuantity(totalWasteInTons));
+    }
+  }, [wasteDetails, isEmployee]);
+
   const handleFileUpload = async (e, fieldName) => {
     const file = e.target.files[0];
     
@@ -142,7 +152,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
     }
   };
 
-  const { data: waste_Material_Type } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), CND_VARIABLES.MDMS_MASTER, [{ name: "WasteType" }], {
+  const { data: waste_Material_Type } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), CND_VARIABLES.MDMS_MASTER, [{ name: "WasteType" }], {
     select: (data) => {
       const formattedData = data?.[CND_VARIABLES.MDMS_MASTER]?.["WasteType"];
       return formattedData?.filter((item) => item.active === true);
@@ -205,7 +215,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
    };
 
    // Available unit options
-  const unitOptions = ["Kilogram", "Ton", "Metric Ton", "No."];
+  const unitOptions = ["Kilogram", "Ton", "Metric Ton"];
 
   // Handle adding a new waste type from the WasteTypeTable component
   const handleAddWasteType = (wasteType, quantity, unit) => {
@@ -236,16 +246,21 @@ const WasteType = ({ t, config, onSelect, formData }) => {
   }, [wasteMaterialType, wasteQuantity, pickupDate, wasteDetails]);
 
   const goNext = () => {
+    // Get the total waste in tons
+    const totalWasteInTons = calculateTotalWasteInTons(wasteDetails);
+    
     let wasteTypeStep = {
       ...formData.wasteType,
       wasteMaterialType,
-      wasteQuantity,
+      wasteQuantity: isEmployee? formatWasteQuantity(totalWasteInTons):wasteQuantity, // Use the converted total
       pickupDate,
       siteMediaPhoto: fileUploads.siteMediaPhoto,
       siteStack: fileUploads.siteStack,
+      wasteDetails,
     };
     onSelect(config.key, { ...formData[config.key], ...wasteTypeStep }, false);
   };
+
   
   return (
     <React.Fragment>
@@ -283,6 +298,9 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           <CardLabel style={labelStyle}>
             {`${t("CND_WASTE_QUANTITY")}`}<span className="astericColor">*</span>
           </CardLabel>
+         { isEmployee? 
+         <span style={{fontWeight:"bold"}}>{wasteQuantity}</span>
+         :
           <TextInput
             t={t}
             type={"text"}
@@ -299,7 +317,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               type: "number",
               title: "",
             })}
-          />
+          />}
         </div>
         <div style={containerStyle}>
           <CardLabel style={labelStyle}>{t("CND_SCHEDULE_PICKUP")}</CardLabel>

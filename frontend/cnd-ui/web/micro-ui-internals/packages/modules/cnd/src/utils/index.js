@@ -56,6 +56,7 @@ export const cndPayload = (data) => {
             propertyType: data?.propertyNature?.propertyUsage?.code,
             houseArea: data?.propertyNature?.houseArea,
             applicantDetailId: user?.info?.uuid,
+            addressDetailId: data?.addressDetails ? data?.addressDetails?.selectedAddressStatement?.id : "",
             totalWasteQuantity: data?.wasteType?.wasteQuantity,
             typeOfConstruction: data?.propertyNature?.constructionType?.code,
             noOfTrips: 0,
@@ -105,17 +106,80 @@ export const cndPayload = (data) => {
                 emailId: data?.owner?.emailId
             },
             addressDetail: {
-                houseNumber: data?.address?.houseNo,
-                addressLine1: data?.address?.addressLine1,
-                addressLine2: data?.address?.addressLine2,
-                landmark: data?.address?.landmark,
+                houseNumber: data?.addressDetails?.selectedAddressStatement?.houseNumber||data?.address?.houseNo,
+                addressLine1: data?.addressDetails?.selectedAddressStatement?.address||data?.address?.addressLine1,
+                addressLine2: data?.addressDetails?.selectedAddressStatement?.address2||data?.address?.addressLine2,
+                landmark: data?.addressDetails?.selectedAddressStatement?.landmark||data?.address?.landmark,
                 floorNumber: null,
-                locality: data?.address?.locality?.i18nKey,
-                city: data?.address?.city?.city?.name,
-                pinCode: data?.address?.pincode
+                locality: data?.addressDetails?.selectedAddressStatement?.locality||data?.address?.locality?.i18nKey,
+                city: data?.addressDetails?.selectedAddressStatement?.city||data?.address?.city?.city?.name,
+                pinCode: data?.addressDetails?.selectedAddressStatement?.pinCode||data?.address?.pincode,
+                addressType: data?.addressDetails?.selectedAddressStatement?.type||data?.address?.addressType?.code
             }
         }
     };
     return formData;
 
 };
+
+
+
+
+    // Unit conversion constants
+    const CONVERSION_FACTORS = {
+        "Kilogram": 0.001, // 1 Kilogram = 0.001 Ton
+        "Ton": 1,          // 1 Ton = 1 Ton (Standard unit)
+        "Metric Ton": 1.1023 // 1 Metric Ton = 1.1023 Ton (short tons)
+    };
+  
+  /**
+   * Converts quantity from one unit to another
+   * @param {number} quantity - The quantity to convert
+   * @param {string} fromUnit - The source unit (Kilogram, Ton, Metric Ton)
+   * @param {string} toUnit - The target unit (Kilogram, Ton, Metric Ton)
+   * @returns {number} - The converted quantity
+   */
+  export const convertWasteQuantity = (quantity, fromUnit, toUnit) => {
+    if (!quantity || isNaN(Number(quantity))) return 0;
+    
+    const numericQuantity = Number(quantity);
+    
+    // Convert to standard unit (Ton)
+    const inTons = numericQuantity * (CONVERSION_FACTORS[fromUnit] || 0);
+    
+    // Convert from standard unit to target unit
+    return inTons / (CONVERSION_FACTORS[toUnit] || 1);
+  };
+  
+  /**
+   * Calculates the total waste quantity in tons from waste details
+   * @param {Object} wasteDetails - Object containing waste details {wasteTypeCode: {quantity, unit}}
+   * @returns {number} - The total waste quantity in tons
+   */
+  export const calculateTotalWasteInTons = (wasteDetails) => {
+    if (!wasteDetails || typeof wasteDetails !== 'object') return 0;
+    
+    return Object.values(wasteDetails).reduce((total, detail) => {
+      if (!detail.quantity || isNaN(Number(detail.quantity))) return total;
+      
+      const quantityInTons = convertWasteQuantity(
+        detail.quantity, 
+        detail.unit || "Kilogram", 
+        "Ton"
+      );
+      
+      return total + quantityInTons;
+    }, 0);
+  };
+  
+  /**
+   * Formats the waste quantity with appropriate unit
+   * @param {number} quantity - The quantity to format
+   * @returns {string} - Formatted quantity with unit
+   */
+  export const formatWasteQuantity = (quantity) => {
+    if (!quantity || isNaN(Number(quantity))) return "0 Tons";
+    
+    const numericQuantity = Number(quantity);
+    return `${numericQuantity.toFixed(2)} Tons`;
+  };

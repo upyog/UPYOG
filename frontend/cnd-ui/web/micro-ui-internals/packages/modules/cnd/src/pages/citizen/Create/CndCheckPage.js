@@ -3,7 +3,8 @@ import {Card,CardHeader,CardSubHeader,CheckBox,LinkButton,Row,StatusTable,Submit
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { checkForNA, CNDDocumnetPreview,getOrderDocuments } from "../../../utils";
+import { checkForNA } from "../../../utils";
+import ApplicationTable from "../../../components/inbox/ApplicationTable";
 
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
@@ -23,15 +24,27 @@ In Parent Component,  we are passing the data as a props coming through params (
 
   const CndCheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
-    const {owner,address,propertyNature, wasteType} = value;
+    const {owner,address,propertyNature, wasteType, addressDetails} = value;
+    console.log("wasteTypewasteType",wasteType);
     const [agree, setAgree] = useState(false);
 
+    console.log("wasteTypewasteType",wasteType);
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
 
-    
-    
+    const columnName = [
+      { Header: t("CND_S_NO"), accessor: "sNo" },
+      { Header: t("CND_WASTE_TYPE"), accessor: "wasteType" },
+      { Header: t("CND_QUANTITY"), accessor: "quantity" }
+    ];
+
+    const operationRows = wasteType?.wasteMaterialType.map((items, index) => ({
+      sNo: index + 1,
+      wasteType: items?.value || "-",
+      quantity: "0",
+    }));
+
     return (
       <React.Fragment>
       <Card>
@@ -53,22 +66,24 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(propertyNature?.propertyUsage?.code))}`}
           />
           </StatusTable>
+          
           <CardSubHeader>{t("CND_WASTE_TYPE")}</CardSubHeader>
-          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
-           {wasteType.wasteMaterialType.map((material, index) => (
-            <Row
-              key={`waste-material-${index}`}
-              label={`${t("CND_WASTE_TYPE")} ${index + 1}`}
-              text={
-                // Display just the value or use the i18nKey for translation
-                material.value ? 
-                  t(checkForNA(material.value)) : 
-                  material.i18nKey ? 
-                    t(checkForNA(material.i18nKey)) : 
-                    t(checkForNA(material.code))
-              }
+          <ApplicationTable
+              t={t}
+              data={operationRows}
+              columns={columnName}
+              getCellProps={(cellInfo) => ({
+                style: {
+                  minWidth: "150px",
+                  padding: "10px",
+                  fontSize: "16px",
+                  paddingLeft: "20px",
+                },
+              })}
+              isPaginationRequired={false}
+              totalRecords={operationRows.length}
             />
-          ))}
+          <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("CND_SCHEDULE_PICKUP")}
               text={`${t(checkForNA(wasteType?.pickupDate))}`}
@@ -76,7 +91,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           {(wasteType?.wasteQuantity) ? 
            <Row
               label={t("CND_WASTE_QUANTITY")}
-              text={`${t(checkForNA(wasteType?.wasteQuantity))}`}
+              text={`${t(checkForNA(wasteType?.wasteQuantity + " Ton"))}`}
           />:null}
           </StatusTable>
           <CardSubHeader>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>
@@ -104,36 +119,36 @@ In Parent Component,  we are passing the data as a props coming through params (
           <StatusTable style={{marginTop:"30px",marginBottom:"30px"}}>
           <Row
               label={t("HOUSE_NO")}
-              text={`${t(checkForNA(address?.houseNo))}`}
-              actionButton={<ActionButton jumpTo={`/cnd-ui/citizen/cnd/apply/address-details`} />}
+              text={`${t(checkForNA(address?.houseNo|| addressDetails?.selectedAddressStatement?.houseNumber))}`}
+              // actionButton={<ActionButton jumpTo={`/cnd-ui/citizen/cnd/apply/address-details`} />}
               />
           <Row
               label={t("ADDRESS_LINE1")}
-              text={`${t(checkForNA(address?.addressLine1))}`}
+              text={`${t(checkForNA(address?.addressLine1 || addressDetails?.selectedAddressStatement?.address ))}`}
               />
               <Row
               label={t("ADDRESS_LINE2")}
-              text={`${t(checkForNA(address?.addressLine2))}`}
+              text={`${t(checkForNA(address?.addressLine2|| addressDetails?.selectedAddressStatement?.address2))}`}
               />
               <Row
               label={t("CITY")}
-              text={`${t(checkForNA(address?.city?.city?.name))}`}
+              text={`${t(checkForNA(address?.city?.city?.name|| addressDetails?.selectedAddressStatement?.city ))}`}
               />
               <Row
               label={t("LOCALITY")}
-              text={`${t(checkForNA(address?.locality?.i18nKey))}`}
+              text={`${t(checkForNA(address?.locality?.i18nKey|| addressDetails?.selectedAddressStatement?.locality ))}`}
               />
               <Row
               label={t("PINCODE")}
-              text={`${t(checkForNA(address?.pincode))}`}
+              text={`${t(checkForNA(address?.pincode|| addressDetails?.selectedAddressStatement?.pinCode ))}`}
               />
               <Row
               label={t("LANDMARK")}
-              text={`${t(checkForNA(address?.landmark))}`}
+              text={`${t(checkForNA(address?.landmark|| addressDetails?.selectedAddressStatement?.landmark))}`}
               />
               <Row
               label={t("STREET_NAME")}
-              text={`${t(checkForNA(address?.streetName))}`}
+              text={`${t(checkForNA(address?.streetName|| addressDetails?.selectedAddressStatement?.streetName))}`}
               />
           </StatusTable>
          

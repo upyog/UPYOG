@@ -29,6 +29,7 @@ import FacilityCentreCreationDetails from "./pages/employee/FacilityCentre/Facil
 import PickupArrivalDetails from "./pageComponents/PickupArrivalDetails";
 import DisposeDetails from "./pageComponents/DisposeDetails";
 import FacilitySubmissionResponse from "./pages/employee/FacilityCentre/FacilitySubmissionResponse";
+import Address from "./pageComponents/Address";
 
 const componentsToRegister = {
   ApplicantDetails,
@@ -54,7 +55,8 @@ const componentsToRegister = {
   FacilityCentreCreationDetails,
   PickupArrivalDetails,
   DisposeDetails,
-  FacilitySubmissionResponse
+  FacilitySubmissionResponse,
+  Address
   };
   
   // function to register the component as per standard 
