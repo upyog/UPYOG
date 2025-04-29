@@ -49,6 +49,7 @@
 		
 	</repositories> 
 	<dependencies>
+<!--		Below dependency is commented out to avoid manually building the service -->
 <!--		<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>

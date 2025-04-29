@@ -209,11 +209,13 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-<!--			<dependency>
-				<groupId>com.aspose</groupId>
-				<artifactId>aspose-cad</artifactId>
-				<version>20.10</version>
-			</dependency>-->
+
+			<!--		Below dependency is commented out to avoid manually building the service -->
+			<!--			<dependency>
+                            <groupId>com.aspose</groupId>
+                            <artifactId>aspose-cad</artifactId>
+                            <version>20.10</version>
+                        </dependency>-->
 			<dependency>
 				<groupId>org.egov.edcr</groupId>
 				<artifactId>egov-egi</artifactId>
