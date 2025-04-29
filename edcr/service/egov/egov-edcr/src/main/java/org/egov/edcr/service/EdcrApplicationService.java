@@ -269,7 +269,14 @@ public class EdcrApplicationService {
         return fileAsString;
     }
 
-
+/**
+  * This method updates the DXF file with the scrutinized data.
+  * It replaces the "ENTITIES" line in the DXF file with the scrutinized data.
+  * The updated file is saved with a new name and stored in the file store.
+  *
+  * @param pl The Plan object containing the scrutinized data.
+  * @param edcrApplication The EdcrApplication object containing the original DXF file.
+ */
   private void updateFile(Plan pl, EdcrApplication edcrApplication) {
   String readFile = readFile(edcrApplication.getSavedDxfFile());
   String replace = readFile.replace("ENTITIES", "ENTITIES\n0\n" + pl.getAdditionsToDxf());
