@@ -49,11 +49,13 @@
 		
 	</repositories> 
 	<dependencies>
-		<dependency>
+		<!--		Below dependency is commented out to avoid jenkinds build issue -->
+<!--		<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>
 			<version>20.10</version>
-		</dependency> 
+		</dependency> -->
+
 		<!--<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-cad</artifactId>

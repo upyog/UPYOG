@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.service.StreetyVendingNotificationService;
 import org.upyog.sv.util.NotificationUtil;
+import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.events.Action;
-import org.upyog.sv.web.models.events.ActionItem;
 import org.upyog.sv.web.models.events.Event;
 import org.upyog.sv.web.models.events.EventRequest;
 import org.upyog.sv.web.models.events.Recepient;
@@ -37,6 +38,10 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 
 	@Autowired
 	private NotificationUtil util;
+	
+	@Autowired
+	private StreetVendingEncryptionService decrypt;
+
 	
 	/**
 	 * Processes the Street Vending request by generating events, sending notifications, 
@@ -107,8 +112,9 @@ public class StreetyVendingNotificationServiceImpl implements StreetyVendingNoti
 		String tenantId = request.getStreetVendingDetail().getTenantId();
 		String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
 		List<String> toUsers = new ArrayList<>();
-		String mobileNumber = request.getStreetVendingDetail().getVendorDetail().get(0).getMobileNo();
-
+		StreetVendingDetail	decryptedDetail = decrypt.decryptObject(request.getStreetVendingDetail(), request.getRequestInfo());
+		String mobileNumber = decryptedDetail.getVendorDetail().get(0).getMobileNo();
+		log.info("mobileNumber for SV EVENT: " +  mobileNumber);
 		Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, request.getRequestInfo(), tenantId, request.getStreetVendingDetail());
 
 		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
