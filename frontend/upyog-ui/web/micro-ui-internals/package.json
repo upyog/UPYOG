@@ -13,7 +13,8 @@
     "packages/modules/noc",
     "packages/modules/obps",
     "packages/modules/commonPt",
-    "packages/modules/common"
+    "packages/modules/common",
+    "packages/modules/pt"
   ],
   "license": "MIT",
   "private": true,
