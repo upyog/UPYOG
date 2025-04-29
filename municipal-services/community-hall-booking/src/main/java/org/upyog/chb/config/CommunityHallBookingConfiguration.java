@@ -227,6 +227,10 @@ public class CommunityHallBookingConfiguration {
 	@Value("${booking.payment.timer.value}")
 	private String bookingPaymentTimerValue;
 	
-	
+	@Value("${egov.download.receipt.link}")
+    private String downloadReceipt;
+ 	 
+    @Value("${egov.usr.events.pay.now.link}")
+    private String payNowLink;
 
 }
