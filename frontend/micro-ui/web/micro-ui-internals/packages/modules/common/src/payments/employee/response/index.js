@@ -23,15 +23,17 @@ export const SuccessfulPayment = (props) => {
   const { addParams, clearParams } = props;
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const isFSMResponse = location?.pathname?.includes("payment/success/FSM.TRIP_CHARGES");
   const combineResponseFSM = isFSMResponse ? `${t("PAYMENT_COLLECT_LABEL")} / ${t("PAYMENT_COLLECT")}` : t("PAYMENT_LOCALIZATION_RESPONSE");
-
+  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
+  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
   props.setLink(combineResponseFSM);
   let { consumerCode, receiptNumber, businessService } = useParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+ 
   receiptNumber = receiptNumber.replace(/%2F/g, "/");
   const { data = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
     "",
@@ -67,9 +69,9 @@ export const SuccessfulPayment = (props) => {
   useEffect(() => {
     switch (selectedAction) {
       case "GO_TO_HOME":
-        return history.push("/digit-ui/employee");
+        return history.push("/upyog-ui/employee");
       case "ASSIGN_TO_DSO":
-        return history.push(`/digit-ui/employee/fsm/application-details/${consumerCode}`);
+        return history.push(`/upyog-ui/employee/fsm/application-details/${consumerCode}`);
       default:
         return null;
     }
@@ -245,7 +247,7 @@ export const SuccessfulPayment = (props) => {
           response = await Digit.PaymentService.generatePdf(state, { Payments: [{...updatedpayments}] }, generatePdfKey);
         }
         else {
-          console.log("0987", payments.Payments)
+          
           response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
         }
       
@@ -260,7 +262,7 @@ export const SuccessfulPayment = (props) => {
     await Digit.Utils.downloadReceipt(consumercode, businessService, "consolidatedreceipt", tenantid);
   }
   const printRecieptNew = async (payment) => {
-    console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
+   
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     let paymentArray=[];
@@ -465,7 +467,7 @@ export const SuccessfulPayment = (props) => {
         }
     
          paymentArray[0]=payments.Payments[0]
-        console.log("payments",payments)
+       
         if(payment.Payments[0].paymentDetails[0].businessService == "PT.MUTATION")
         {
           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, "pt-receipt");
@@ -480,8 +482,7 @@ export const SuccessfulPayment = (props) => {
   };
   if (businessService?.includes("BPA") && isBpaSearchLoading) return <Loader />;
 
-  const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-  const AdvertisementCreateApi = Digit.Hooks.ads.useADSCreateAPI(tenantId, false);
+
 
   const svCertificate = async () => {
     //const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -749,7 +750,7 @@ export const SuccessfulPayment = (props) => {
         </ActionBar>
       ) : (
         <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-          <Link to="/digit-ui/employee">
+          <Link to="/upyog-ui/employee">
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         </ActionBar>
@@ -772,7 +773,7 @@ export const FailedPayment = (props) => {
         <CardText>{t("ES_PAYMENT_FAILED_DETAILS")}</CardText>
       </Card>
       <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-        <Link to="/digit-ui/employee">
+        <Link to="/upyog-ui/employee">
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>
