@@ -290,6 +290,9 @@ public class NotificationUtil {
 	 *
 	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
 	 * @param message              The notification message (not used in this method, but kept for signature consistency).
+     * We are redirecting the pay now link to myBookings page in ADV because in the normal flow we need timer value, 
+	 * and we get that timer value by hitting the make payment button
+	 * if timer value is not given then the proceed to pay button will be disabled
 	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
 	 */
 	public String getPayUrl(BookingDetail bookingDetail, String message) {
