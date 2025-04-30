@@ -80,17 +80,19 @@ const Address = ({t, config, formData, onSelect}) => {
   return (
     <React.Fragment>
       <FormStep t={t} config={config} onSelect={goNext} isDisabled={!selectedAddressStatement}>
-      {addresses.length < 3 &&(
         <div style={{marginBottom:"5px"}}>
-        <Link to={`/cnd-ui/citizen/cnd/apply/address-details`}>
-        <LinkButton label={t("CND_NEW_OTHER_ADDRESS")} />
+        <Link
+          to={{
+            pathname: "/cnd-ui/citizen/cnd/apply/address-details",
+            state: { usedAddressTypes: addresses.map(a => a.addressType) }
+          }}
+        >
+          <LinkButton label={t("CND_NEW_OTHER_ADDRESS")} />
         </Link>
         </div>
-        )}
         <div>
           {addresses.length > 0 &&
             addresses.map((address, index) => {
-              console.log("address",address);
               const selected = isSelected(address);
               return (
                 <div key={index}> 
