@@ -14,6 +14,8 @@ import {
   Card,
   StatusTable,
   Row,
+  EditIcon,
+  LinkButton
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
@@ -78,6 +80,8 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [activeTab, setActiveTab] = useState("profile");
   const [showModal, setShowModal] = useState(false);
+  const [isEdit, setisEdit] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
   /*
  * Fetches the user's address details using the `Digit.UserService.userSearchNewV2` API.
  * - Retrieves the user's UUID from `userInfo`.
@@ -360,6 +364,13 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   };
 
   if (loading) return <Loader></Loader>;
+
+  //function for edit button with edit icon and functioanality of redirecting to differnt URL's
+  const ActionButton = ({ onClick }) => {
+    return <LinkButton 
+    label={<EditIcon style={{  float: "right" }} />}
+    className="check-page-link-button" onClick={onClick} />;
+  };
 
   return (
     <div>
@@ -816,26 +827,36 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
           )}
         </section>
       </div>
+
+      {/*
+       * For rendering the user's address details when the "address" tab is active.
+       * - Checks if the `activeTab` is set to "address".
+       * - If the user has addresses (`userAddresses.length > 0`), it iterates over the `userAddresses` array and displays each address inside a `Card` component.
+       * - Each address is displayed using a `StatusTable` with rows for various address fields such as:
+       * - If no addresses are available, it displays a fallback message card with "No Address Available".
+       */}
+      
       {activeTab === "address" && (
         <>
-          {userAddresses.length > 0
-            /*
-             * For rendering the user's address details when the "address" tab is active.
-             * - Checks if the `activeTab` is set to "address".
-             * - If the user has addresses (`userAddresses.length > 0`), it iterates over the `userAddresses` array and displays each address inside a `Card` component.
-             * - Each address is displayed using a `StatusTable` with rows for various address fields such as:
-             * - If no addresses are available, it displays a fallback message card with "No Address Available".
-             */
-            ? (
-              userAddresses.map((address, index) => {
-                return (
+          {userAddresses.length > 0 ? (
+              <>
+                {userAddresses.map((address, index) => (
                   <Card key={index}>
                     <StatusTable>
                       <>
                         <Row
                           className="border-none"
-                          label={t(`${address.addressType}`)} // Assumes translation key like "PERMANENT_ADDRESS"
+                          label={t(`${address.addressType}`)}
                           text=""
+                          actionButton={
+                            <ActionButton
+                              onClick={() => {
+                                setSelectedAddress(address);
+                                setShowModal(true);
+                                setisEdit(true);
+                              }}
+                            />
+                          }
                         />
                         <Row className="border-none" label={t("COMMON_HOUSE_NO")} text={address.houseNumber || t("CS_NA")} />
                         <Row className="border-none" label={t("COMMON_STREET_NAME")} text={address.streetName || t("CS_NA")} />
@@ -848,13 +869,22 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                       </>
                     </StatusTable>
                   </Card>
-                );
-              })
+                ))}
+
+                {showModal && selectedAddress && (
+                  <Address
+                    isEdit={isEdit}
+                    address={selectedAddress}
+                    actionCancelOnSubmit={() => setShowModal(false)}
+                  />
+                )}
+              </>
             ) : (
               <Card>
                 <p>{t("CS_NO_ADDRESS_AVAILABLE")}</p>
               </Card>
             )}
+
         </>
       )}
 
