@@ -316,12 +316,12 @@ public class NotificationUtil {
 	 */
 	public String getPayUrl(CommunityHallBookingDetail bookingDetail, String message) {
 	    String payLinkTemplate = config.getPayNowLink();
-	    String actionLink = String.format(payLinkTemplate,
+	   /*  String actionLink = String.format(payLinkTemplate,
 	            config.getBusinessServiceName(),
 	            bookingDetail.getBookingNo()
-//	            cndApplicationDetail.getTenantId()
-	            );
-	    String finalUrl = config.getUiAppHost() + actionLink;
+	            cndApplicationDetail.getTenantId()
+	            ); */
+	    String finalUrl = config.getUiAppHost() + payLinkTemplate;
 
 	    return getShortnerURL(finalUrl);
 	}

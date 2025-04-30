@@ -77,7 +77,7 @@ public class ADVNotificationService {
 		// All notification messages are part of this messages object
 		String localizationMessages = util.getLocalizationMessages(tenantId, bookingRequest.getRequestInfo());
 		Map<String, String> messageMap = util.getCustomizedMsg(bookingRequest.getBookingApplication(), localizationMessages, status,
-				BookingConstants.CHANNEL_NAME_SMS);
+				BookingConstants.CHANNEL_NAME_EVENT);
 		// Send event notification
 		if (configuredChannelNames.contains(BookingConstants.CHANNEL_NAME_EVENT)) {
 		sendEventNotification(localizationMessages, bookingRequest, status);
@@ -214,6 +214,7 @@ public class ADVNotificationService {
 				.eventType(BookingConstants.USREVENTS_EVENT_TYPE).name(BookingConstants.USREVENTS_EVENT_NAME)
 				.postedBy(BookingConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).actions(action)
 				.recepient(recepient).eventDetails(null).build());
+		log.info("EVENT in ADV : " + events.toString());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
