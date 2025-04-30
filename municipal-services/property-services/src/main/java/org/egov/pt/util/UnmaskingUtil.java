@@ -42,7 +42,7 @@ public class UnmaskingUtil {
 		
 		Property propertyFromRequest = request.getProperty(); 
         PropertyCriteria criteria = validator.getPropertyCriteriaForSearch(request);
-        List<Property> propertiesFromSearchResponse = service.searchProperty(criteria, request.getRequestInfo());
+        List<Property> propertiesFromSearchResponse = service.searchProperty(criteria, request.getRequestInfo(), null);
 		if (CollectionUtils.isEmpty(propertiesFromSearchResponse)) {
 			throw new CustomException("EG_PT_PROPERTY_NOT_FOUND", "The property to be updated does not exist in the system");
 		}

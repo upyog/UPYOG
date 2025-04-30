@@ -98,7 +98,7 @@ public class PaymentUpdateService {
 				.tenantId(tenantId)
 				.build();
 				
-		List<Property> properties = propertyRepository.getPropertiesWithOwnerInfo(criteria, requestInfo, true);
+		List<Property> properties = propertyRepository.getPropertiesWithOwnerInfo(criteria, requestInfo, true, null);
 
 		if (CollectionUtils.isEmpty(properties))
 			throw new CustomException("INVALID RECEIPT",

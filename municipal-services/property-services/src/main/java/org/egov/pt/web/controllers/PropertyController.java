@@ -91,7 +91,7 @@ public class PropertyController {
 							propertyCriteria
 									.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
 							List<Property> properties = propertyService.searchProperty(propertyCriteria,
-									propertyRequest.getRequestInfo());
+									propertyRequest.getRequestInfo(), null);
 							if (!properties.isEmpty())
 								throw new CustomException(null,
 										"Document numbers added in Owner Information is already present in the system.");
@@ -121,7 +121,7 @@ public class PropertyController {
 							propertyCriteria
 									.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
 							List<Property> properties = propertyService.searchProperty(propertyCriteria,
-									propertyRequest.getRequestInfo());
+									propertyRequest.getRequestInfo(), null);
 							if (!properties.isEmpty())
 								throw new CustomException(null,
 										"Document numbers added in Owner Information is already present in the system.");
@@ -152,66 +152,59 @@ public class PropertyController {
 		}
 
 		List<Property> properties = new ArrayList<Property>();
-		List<Property> propertiesCreatedBy = new ArrayList<Property>();
-		List<Property> propertiesFromExcel = new ArrayList<Property>();
-		Set<Property> finalProperties = new HashSet<Property>();
-		List<Property> finalPropertiesList = new ArrayList<Property>();
+		Map<Integer, PropertyCriteria> propertyCriteriaMap = new HashMap<>();
 		Integer count = 0;
+		Integer counter = 1;
 
 		if (propertyCriteria.getIsRequestForCount()) {
 			count = propertyService.count(requestInfoWrapper.getRequestInfo(), propertyCriteria);
 
 		} else {
-			properties = propertyService.searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo());
-		}
-		
-		if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
-				&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
-						.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
-			PropertyCriteria propertyCriteriaCreatedBy = PropertyCriteria.builder()
-					.createdBy(Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()))
-					.tenantId(propertyCriteria.getTenantId()).limit(propertyCriteria.getLimit()).offset(propertyCriteria.getOffset()).build();
+			propertyCriteriaMap.put(counter++, propertyCriteria);
 
-			propertiesCreatedBy = propertyService.searchProperty(propertyCriteriaCreatedBy,
-					requestInfoWrapper.getRequestInfo());
-		}
-		
-		if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
-				&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
-						.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
+			if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
+					&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
+							.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
+				PropertyCriteria propertyCriteriaCreatedBy = PropertyCriteria.builder()
+						.createdBy(Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()))
+						.tenantId(propertyCriteria.getTenantId()).limit(propertyCriteria.getLimit())
+						.offset(propertyCriteria.getOffset()).build();
 
-			List<String> rolesWithinTenant = propertyValidator.getRolesByTenantId(propertyCriteria.getTenantId(),
-					requestInfoWrapper.getRequestInfo().getUserInfo().getRoles());
+				propertyCriteriaMap.put(counter++, propertyCriteriaCreatedBy);
+			}
 
-			for (String role : rolesWithinTenant) {
-				if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_VERIFIER)) {
-					PropertyCriteria propertyCriteriaFromExcel = PropertyCriteria.builder()
-							.tenantId(propertyCriteria.getTenantId()).status(Collections.singleton(Status.INITIATED))
-							.channels(Collections.singleton(Channel.MIGRATION))
-							.limit(propertyCriteria.getLimit()).offset(propertyCriteria.getOffset()).build();
+			if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
+					&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
+							.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
 
-					propertiesFromExcel = propertyService.searchProperty(propertyCriteriaFromExcel,
-							requestInfoWrapper.getRequestInfo());
+				List<String> rolesWithinTenant = propertyValidator.getRolesByTenantId(propertyCriteria.getTenantId(),
+						requestInfoWrapper.getRequestInfo().getUserInfo().getRoles());
+
+				for (String role : rolesWithinTenant) {
+					if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_VERIFIER)) {
+						PropertyCriteria propertyCriteriaFromExcel = PropertyCriteria.builder()
+								.tenantId(propertyCriteria.getTenantId())
+								.status(Collections.singleton(Status.INITIATED))
+								.channels(Collections.singleton(Channel.MIGRATION)).limit(propertyCriteria.getLimit())
+								.offset(propertyCriteria.getOffset()).build();
+
+						propertyCriteriaMap.put(counter++, propertyCriteriaFromExcel);
+					}
 				}
 			}
+
+			properties = propertyService.searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo(),
+					propertyCriteriaMap);
 		}
 
-		finalProperties.addAll(properties);
-		finalProperties.addAll(propertiesCreatedBy);
-		finalProperties.addAll(propertiesFromExcel);
-
-		finalPropertiesList = finalProperties.stream().collect(
-				Collectors.toMap(Property::getPropertyId, property -> property, (existing, replacement) -> replacement))
-				.values().stream().collect(Collectors.toList());
-		
-		log.info("Property count after search" + finalPropertiesList.size());
+		log.info("Property count after search" + properties.size());
 
 		PropertyResponse response = PropertyResponse
 				.builder().responseInfo(responseInfoFactory
 						.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-				.properties(finalPropertiesList).count(finalPropertiesList.size()).build();
+				.properties(properties).count(properties.size()).build();
 		
-		propertyService.setAllCount(finalPropertiesList, response);
+		propertyService.setAllCount(properties, response);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

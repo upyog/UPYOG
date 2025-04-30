@@ -1,6 +1,10 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -358,11 +362,24 @@ public class EnrichmentService {
 		PtTaxCalculatorTracker ptTaxCalculatorTracker = PtTaxCalculatorTracker.builder()
 				.uuid(UUID.randomUUID().toString()).propertyId(property.getPropertyId())
 				.tenantId(property.getTenantId()).financialYear(calculateTaxRequest.getFinancialYear())
-				.fromDate(calculateTaxRequest.getFromDate()).toDate(calculateTaxRequest.getToDate())
-				.propertyTax(finalPropertyTax).auditDetails(createAuditDetails).build();
+				.fromDate(getFromDateInIST(calculateTaxRequest.getFromDate()))
+				.toDate(getFromDateInIST(calculateTaxRequest.getToDate())).propertyTax(finalPropertyTax)
+				.auditDetails(createAuditDetails).build();
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
+	}
+
+	public Date getFromDateInIST(Date date) {
+		if (date == null) {
+			return null;
+		}
+		// Convert the Date to Instant, then to ZonedDateTime in GMT
+		ZonedDateTime gmtZonedDateTime = date.toInstant().atZone(ZoneId.of("GMT"));
+		// Convert to IST
+		ZonedDateTime istZonedDateTime = gmtZonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Kolkata"));
+		// Convert back to Date (in IST)
+		return Date.from(istZonedDateTime.toInstant());
 	}
 
 }

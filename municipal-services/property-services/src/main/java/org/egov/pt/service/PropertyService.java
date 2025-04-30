@@ -424,7 +424,7 @@ public class PropertyService {
 
 		PropertyCriteria criteria = PropertyCriteria.builder().uuids(Sets.newHashSet(propertyUuId))
 				.isSearchInternal(true).tenantId(propertyFromSearch.getTenantId()).build();
-		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo()).get(0);
+		Property previousPropertyToBeReInstated = searchProperty(criteria, request.getRequestInfo(), null).get(0);
 		previousPropertyToBeReInstated.setAuditDetails(
 				util.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid().toString(), true));
 		previousPropertyToBeReInstated.setStatus(Status.ACTIVE);
@@ -493,7 +493,8 @@ public class PropertyService {
 	 * @param criteria PropertyCriteria containing fields on which search is based
 	 * @return list of properties satisfying the containing fields in criteria
 	 */
-	public List<Property> searchProperty(PropertyCriteria criteria, RequestInfo requestInfo) {
+	public List<Property> searchProperty(PropertyCriteria criteria, RequestInfo requestInfo,
+			Map<Integer, PropertyCriteria> propertyCriteriaMap) {
 
 		List<Property> properties;
 		/* encrypt here */
@@ -515,26 +516,7 @@ public class PropertyService {
 				&& (criteria.getDoorNo() != null || criteria.getOldPropertyId() != null)) {
 			properties = fuzzySearchService.getProperties(requestInfo, criteria);
 		} else {
-//			if (criteria.getMobileNumber() != null || criteria.getName() != null || criteria.getOwnerIds() != null) {
-//
-//				log.info("In Property Search");
-//				/* converts owner information to associated property ids */
-//				Boolean shouldReturnEmptyList = repository.enrichCriteriaFromUser(criteria, requestInfo);
-//
-//				if (shouldReturnEmptyList)
-//					return Collections.emptyList();
-//
-//				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
-//				log.info("In Property Search before filtering");
-//
-//				filterPropertiesForUser(properties, criteria.getOwnerIds());
-//			} else {
-				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
-//			}
-
-//			properties.forEach(property -> {
-//				enrichmentService.enrichBoundary(property, requestInfo);
-//			});
+			properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false, propertyCriteriaMap);
 		}
 
 		/* Decrypt here */
@@ -764,7 +746,7 @@ public class PropertyService {
 
 		List<Property> properties = searchProperty(
 				PropertyCriteria.builder().propertyIds(Collections.singleton(request.getPropertyId())).build(),
-				request.getRequestInfo());
+				request.getRequestInfo(), null);
 
 		if (null == properties || CollectionUtils.isEmpty(properties)) {
 			throw new CustomException("PROPERTY NOT FOUND", "No Property found with given property id.");

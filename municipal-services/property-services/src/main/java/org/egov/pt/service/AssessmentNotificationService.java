@@ -62,7 +62,7 @@ public class AssessmentNotificationService {
                                     .build();
 
 
-        List<Property> properties = propertyService.searchProperty(criteria, requestInfo);
+        List<Property> properties = propertyService.searchProperty(criteria, requestInfo, null);
 
         if(CollectionUtils.isEmpty(properties))
             log.error("NO_PROPERTY_FOUND","No property found for the assessment: "+assessment.getPropertyId());
