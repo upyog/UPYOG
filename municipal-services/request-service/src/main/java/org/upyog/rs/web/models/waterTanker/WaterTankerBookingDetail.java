@@ -89,6 +89,8 @@ public class WaterTankerBookingDetail {
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String tenantId;
 
+	private String addressDetailId;
+
 	@JsonProperty("bookingStatus")
 	@NotBlank
 	private String bookingStatus;

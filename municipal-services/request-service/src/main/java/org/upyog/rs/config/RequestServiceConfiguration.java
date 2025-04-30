@@ -90,13 +90,16 @@ public class RequestServiceConfiguration {
 	@Value("${egov.user.context.path}")
 	private String userContextPath;
 
-	@Value("${egov.user.create.path}")
+	@Value("${egov.user.v2.create.path}")
 	private String userCreateEndpoint;
 
-	@Value("${egov.user.search.path}")
+	@Value("${egov.user.create.address.endpointv2}")
+	private String userCreateAddressEndpointV2;
+
+	@Value("${egov.user.v2.search.path}")
 	private String userSearchEndpoint;
 
-	@Value("${egov.user.update.path}")
+	@Value("${egov.user.v2.update.path}")
 	private String userUpdateEndpoint;
 
 	// Pagination config for search results

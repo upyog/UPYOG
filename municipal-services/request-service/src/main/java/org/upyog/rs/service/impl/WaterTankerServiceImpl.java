@@ -19,6 +19,7 @@ import org.upyog.rs.service.EnrichmentService;
 import org.upyog.rs.service.UserService;
 import org.upyog.rs.service.WaterTankerService;
 import org.upyog.rs.service.WorkflowService;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
@@ -62,9 +63,9 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		// Get the uuid of User from user registry
 		try {
-			String uuid = userService.getUuidExistingOrNewUser(waterTankerRequest);
-			waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(uuid);
-			log.info("Applicant or User Uuid: " + uuid);
+			org.upyog.rs.web.models.user.User user = userService.getExistingOrNewUser(waterTankerRequest);
+			waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.getUuid());
+			log.info("Applicant or User Uuid: " + user.getUuid());
 		} catch (Exception e) {
 			log.error("Error while creating user: " + e.getMessage(), e);
 		}
@@ -93,6 +94,11 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		 */
 		if (CollectionUtils.isEmpty(applications)) {
 			return new ArrayList<>();
+		}
+
+		// Enrich each booking with user details
+		for (WaterTankerBookingDetail booking : applications) {
+			userService.enrichBookingWithUserDetails(booking, waterTankerBookingSearchCriteria);
 		}
 
 		// Return retrieved application

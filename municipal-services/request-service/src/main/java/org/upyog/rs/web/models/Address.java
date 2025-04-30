@@ -3,6 +3,7 @@ package org.upyog.rs.web.models;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
+import org.upyog.rs.enums.AddressType;
 import org.upyog.rs.validator.CreateApplicationGroup;
 
 import io.swagger.annotations.ApiModel;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @Builder
 public class Address {
 
-	private String addressId;
+	private Long addressId;
 
 	private String applicantId;
 
@@ -60,5 +61,7 @@ public class Address {
 
 	@NotBlank
 	private String pincode;
+
+	private AddressType addressType;
 
 }

@@ -20,32 +20,31 @@ public class RequestServiceQueryBuilder {
     private RequestServiceConfiguration requestServiceConfiguration;
 
     private static final String BOOKING_DETAILS_SEARCH_QUERY = (
-            "SELECT ursbd.booking_id, booking_no, tanker_type, tanker_quantity, water_quantity, description, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_status, "
-                    + "ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, ursbd.lastmodifiedtime, ursbd.tenant_id, "
-                    + "appl.name, mobile_number, gender, email_id, alternate_number, "
-                    + "addr.house_no, address_line_1, address_line_2, street_name, landmark, city, city_code, locality, locality_code, pincode "
-                    + "FROM public.upyog_rs_tanker_booking_details ursbd "
-                    + "join public.upyog_rs_applicant_details appl on ursbd.booking_id = appl.booking_id "
-                    + "join public.upyog_rs_address_details addr on appl.applicant_id = addr.applicant_id ");
+            "SELECT ursbd.booking_id, booking_no,applicant_uuid, tanker_type, tanker_quantity, water_quantity, description, " +
+                    "delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, " +
+                    "vehicle_capacity,address_detail_id, booking_status, ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, " +
+                    "ursbd.lastmodifiedtime, ursbd.tenant_id " +
+                    "FROM public.upyog_rs_tanker_booking_details ursbd"
+    );
 
     private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY = (
-            "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, mobile_number, locality_code, description, " +
-                    "delivery_from_date, delivery_to_date, delivery_from_time, delivery_to_time, vendor_id, " +
-                    "vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_status, urmt.createdby, " +
+            "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, mobile_number, locality_code, " +
+                    "description, delivery_from_date, delivery_to_date, delivery_from_time, delivery_to_time, vendor_id, " +
+                    "vehicle_id, driver_id, vehicle_type, vehicle_capacity,address_detail_id, booking_status, urmt.createdby, " +
                     "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id " +
                     "FROM public.upyog_rs_mobile_toilet_booking_details urmt"
     );
 
-    private final String paginationWrapper = "SELECT * FROM " + "(SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM " + "({})"
-            + " result) result_offset " + "WHERE offset_ > ? AND offset_ <= ?";
+    private final String paginationWrapper =
+            "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM ({}) result) result_offset " +
+                    "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String applicationsCount = "SELECT count(ursbd.booking_id) "
-            + " FROM upyog_rs_tanker_booking_details ursbd "
-            + " join upyog_rs_applicant_details appl on ursbd.booking_id = appl.booking_id  \n";
+    private static final String applicationsCount =
+            "SELECT count(ursbd.booking_id) FROM upyog_rs_tanker_booking_details ursbd";
 
-    private static final String applicationsMtCount = "SELECT count(urmt.booking_id) "
-            + " FROM upyog_rs_mobile_toilet_booking_details urmt "
-            + " join upyog_rs_applicant_details appl on urmt.booking_id = appl.booking_id  \n";
+    private static final String applicationsMtCount =
+            "SELECT count(urmt.booking_id) FROM upyog_rs_mobile_toilet_booking_details urmt";
+
 
     public String getWaterTankerQuery(WaterTankerBookingSearchCriteria criteria, List<Object> preparedStmtList) {
 
