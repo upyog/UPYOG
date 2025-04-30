@@ -313,15 +313,18 @@ public class NotificationUtil {
 	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
 	 * @param message              The notification message (not used in this method, but kept for signature consistency).
 	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
+	 * We are redirecting the pay now link to myBookings page in CHB because in the normal flow we need timer value, 
+	 * and we get that timer value by hitting the make payment button
+	 * if timer value is not given then the proceed to pay button will be disabled
 	 */
 	public String getPayUrl(CommunityHallBookingDetail bookingDetail, String message) {
 	    String payLinkTemplate = config.getPayNowLink();
-	    String actionLink = String.format(payLinkTemplate,
+	   /*  String actionLink = String.format(payLinkTemplate,
 	            config.getBusinessServiceName(),
 	            bookingDetail.getBookingNo()
-//	            cndApplicationDetail.getTenantId()
-	            );
-	    String finalUrl = config.getUiAppHost() + actionLink;
+	            cndApplicationDetail.getTenantId()
+	            ); */
+	    String finalUrl = config.getUiAppHost() + payLinkTemplate;
 
 	    return getShortnerURL(finalUrl);
 	}
