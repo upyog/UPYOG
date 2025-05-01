@@ -28,6 +28,9 @@ console.log("DigitAppDigitAppDigitApp",stateCode, modules, appTenants, logoUrl, 
     if (!pathname?.includes("dss")) {
       Digit.SessionStorage.del("DSS_FILTERS");
     }
+    if (!pathname?.includes("landing")) {
+      Digit.SessionStorage.del("DSS_FILTERS_CUMILATIVETRANSACTIONS");
+    }
     if (pathname?.toString() === "/upyog-ui/employee") {
       Digit.SessionStorage.del("SEARCH_APPLICATION_DETAIL");
       Digit.SessionStorage.del("WS_EDIT_APPLICATION_DETAILS");
