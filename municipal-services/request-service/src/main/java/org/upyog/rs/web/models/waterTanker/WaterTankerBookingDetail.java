@@ -101,6 +101,10 @@ public class WaterTankerBookingDetail {
 
 	private String paymentReceiptFilestoreId;
 
+	private String mobileNumber;
+
+	private String localityCode;
+
 	@Valid
 	@NotNull
 	private ApplicantDetail applicantDetail;

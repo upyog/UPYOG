@@ -74,6 +74,8 @@ public class EnrichmentService {
 		waterTankerDetail.setDescription(waterTankerRequest.getWaterTankerBookingDetail().getDescription());
 		waterTankerDetail.setDeliveryDate(waterTankerRequest.getWaterTankerBookingDetail().getDeliveryDate());
 		waterTankerDetail.setDeliveryTime(waterTankerRequest.getWaterTankerBookingDetail().getDeliveryTime());
+		waterTankerDetail.setMobileNumber(waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber());
+		waterTankerDetail.setLocalityCode(waterTankerRequest.getWaterTankerBookingDetail().getAddress().getLocalityCode());
 		String roles = waterTankerRequest.getRequestInfo().getUserInfo().getRoles()
                 .stream()
                 .map(Role::getName)

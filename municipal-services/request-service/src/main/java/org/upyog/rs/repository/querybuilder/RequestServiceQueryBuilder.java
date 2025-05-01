@@ -20,7 +20,7 @@ public class RequestServiceQueryBuilder {
     private RequestServiceConfiguration requestServiceConfiguration;
 
     private static final String BOOKING_DETAILS_SEARCH_QUERY = (
-            "SELECT ursbd.booking_id, booking_no,applicant_uuid, tanker_type, tanker_quantity, water_quantity, description, " +
+            "SELECT ursbd.booking_id, booking_no,applicant_uuid, mobile_number, locality_code, tanker_type, tanker_quantity, water_quantity, description, " +
                     "delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, " +
                     "vehicle_capacity,address_detail_id, booking_status, ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, " +
                     "ursbd.lastmodifiedtime, ursbd.tenant_id " +
@@ -76,8 +76,14 @@ public class RequestServiceQueryBuilder {
 
         if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" appl.mobile_number = ? ");
+            query.append(" ursbd.mobile_number = ? ");
             preparedStmtList.add(criteria.getMobileNumber());
+        }
+
+        if(!ObjectUtils.isEmpty(criteria.getLocalityCode())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ursbd.locality_code = ? ");
+            preparedStmtList.add(criteria.getLocalityCode());
         }
 
         if (!ObjectUtils.isEmpty(criteria.getStatus())) {
