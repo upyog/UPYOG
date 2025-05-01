@@ -192,6 +192,7 @@ const PropertyOwnerDetails = ({ t, config, onSelect, userType, formData, formSta
               selected={value}
               option={dropdownData}
               select={(value) => {
+                value.value = value.value.split('.')[0];
                 if (!value?.code?.includes("MULTIPLEOWNERS") && ownerDetails?.length > 1) {
                   setOwnerDetails([...ownerDetails.filter((own, ind) => ind == 0)]);
                 }
