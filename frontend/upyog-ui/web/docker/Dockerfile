@@ -4,11 +4,11 @@ RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @upyog/digit-ui-libraries@3.0.1
 RUN yarn add @upyog/digit-ui-module-fsm@3.0.3
-RUN yarn add @upyog/digit-ui-module-pt@3.0.4
+RUN yarn add @upyog/digit-ui-module-pt@3.0.5
 RUN yarn add @upyog/digit-ui-module-tl@3.0.6
 RUN yarn add @upyog/digit-ui-module-obps@3.0.3
 RUN yarn add @upyog/digit-ui-module-ws@3.0.5
-RUN yarn add @upyog/digit-ui-module-dss@3.0.3
+RUN yarn add @upyog/digit-ui-module-dss@3.0.4
 RUN yarn add @upyog/digit-ui-module-mcollect@3.0.3
 RUN yarn add @upyog/digit-ui-module-pgr@3.0.3
 RUN yarn add @upyog/digit-ui-module-noc@3.0.1
