@@ -152,5 +152,16 @@ export const UserService = {
       data: data.pageSize ? { tenantId, ...data } : { tenantId, ...data, pageSize: "100" },
     });
   },
+  //update address for user
+  updateAddressV2: async (details, stateCode) =>
+    ServiceRequest({
+      serviceName: "updateAddress",
+      url: Urls.UserUpdateAddressV2,
+      auth: true,
+      data: {
+        address: details
+      },
+      params: { tenantId: stateCode },
+    }),
 
 };

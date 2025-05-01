@@ -26,6 +26,7 @@ const Urls = {
   ChangePassword1: "/user/password/_update",
   UserProfileUpdate: "/user/profile/_update",
   UserCreateAddressV2: "/user/_createAddress",  //create address in user profile
+  UserUpdateAddressV2:"/user/_updateAddress",
   UserSearchNewV2: "/user/users/v2/_search",    // search  user address
   EmployeeSearch: "/egov-hrms/employees/_search",
 

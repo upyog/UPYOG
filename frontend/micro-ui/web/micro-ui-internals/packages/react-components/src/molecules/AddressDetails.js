@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "@nudmcdgnpm/digit-ui-react-components";  //imported all from our common library
+import { useLocation } from "react-router-dom";
+
 
 /**
  * Common Address Details component so that developer can use it just by importing it accross the UPYOG.
@@ -32,28 +34,39 @@ import { CardLabel, TextInput,TextArea,Dropdown,FormStep } from "@nudmcdgnpm/dig
       TODO: Need to check how to use Timeline functioality 
  */
 
-const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previousData}) => {
-  //added userType, editData and previous data for the future reference.
+const AddressDetails = ({t, config, onSelect, formData}) => {
   const { data: allCities, isLoading } = Digit.Hooks.useTenants();
   let validation = {};
+  const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const user = Digit.UserService.getUser().info;
-  const [pincode, setPincode] = useState(formData?.address?.pincode || formData?.infodetails?.existingDataSet?.address?.pincode ||  "");
-  const [city, setCity] = useState(formData?.address?.city ||formData?.infodetails?.existingDataSet?.address?.cityValue || "");
-  const [locality, setLocality] = useState(formData?.address?.locality || formData?.infodetails?.existingDataSet?.address?.locality || "");
-  const [houseNo, setHouseNo] = useState(formData?.address?.houseNo || formData?.infodetails?.existingDataSet?.address?.houseNo ||"");
-  const [streetName, setstreetName] = useState(formData?.address?.streetName ||formData?.infodetails?.existingDataSet?.address?.streetName ||"");
-  const [landmark, setLandmark] = useState(formData?.address?.landmark ||formData?.infodetails?.existingDataSet?.address?.landmark || "");
-  const [addressLine1, setAddressLine1] = useState(formData?.address?.addressLine1 || formData?.infodetails?.existingDataSet?.address?.addressline1 || "");
-  const [addressLine2, setAddressLine2] = useState(formData?.address?.addressLine2 || formData?.infodetails?.existingDataSet?.address?.addressline2 || "");
-  const [addressType, setAddressType] = useState(formData?.address?.addressType || formData?.infodetails?.existingDataSet?.address?.addressType || "");
+  const [pincode, setPincode] = useState(formData?.pincode||formData?.address?.pincode || formData?.infodetails?.existingDataSet?.address?.pincode ||  "");
+  const [city, setCity] = useState( convertToObject(formData?.city) ||formData?.address?.city ||formData?.infodetails?.existingDataSet?.address?.cityValue || "");
+  const [locality, setLocality] = useState( convertToObject(formData?.locality) || formData?.address?.locality || formData?.infodetails?.existingDataSet?.address?.locality || "");
+  const [houseNo, setHouseNo] = useState(formData?.houseNo ||formData?.address?.houseNo || formData?.infodetails?.existingDataSet?.address?.houseNo ||"");
+  const [streetName, setstreetName] = useState(formData?.streetName ||formData?.address?.streetName ||formData?.infodetails?.existingDataSet?.address?.streetName ||"");
+  const [landmark, setLandmark] = useState(formData?.landmark ||formData?.address?.landmark ||formData?.infodetails?.existingDataSet?.address?.landmark || "");
+  const [addressLine1, setAddressLine1] = useState(formData?.addressLine1 ||formData?.address?.addressLine1 || formData?.infodetails?.existingDataSet?.address?.addressline1 || "");
+  const [addressLine2, setAddressLine2] = useState(formData?.addressLine2 ||formData?.address?.addressLine2 || formData?.infodetails?.existingDataSet?.address?.addressline2 || "");
+  const [addressType, setAddressType] = useState( convertToObject(formData?.addressType) ||formData?.address?.addressType || formData?.infodetails?.existingDataSet?.address?.addressType || "");
   const { control } = useForm();
+  const location = useLocation();
+  const usedAddressTypes = location.state?.usedAddressTypes || [];
+
   const inputStyles = {width:user.type === "EMPLOYEE" ? "50%" : "86%"};
   
-  const addressTypeOptions = [
-    { name: "Correspondence", code: "CORRESPONDENCE", i18nKey: "COMMON_ADDRESS_TYPE_CORRESPONDENCE" },
-    { name: "Permanent", code: "PERMANENT", i18nKey: "COMMON_ADDRESS_TYPE_PERMANENT" },
-    { name: "Other", code: "OTHER", i18nKey: "COMMON_ADDRESS_TYPE_OTHER" },
-  ];
+  const availableAddressTypeOptions = useMemo(() => {
+    const allOptions = [
+      { name: "Correspondence", code: "CORRESPONDENCE", i18nKey: "COMMON_ADDRESS_TYPE_CORRESPONDENCE" },
+      { name: "Permanent", code: "PERMANENT", i18nKey: "COMMON_ADDRESS_TYPE_PERMANENT" },
+      { name: "Other", code: "OTHER", i18nKey: "COMMON_ADDRESS_TYPE_OTHER" },
+    ];
+    if (usedAddressTypes.length === 3) {
+      // If all are available → show only "Other"
+      return allOptions.filter(opt => opt.code === "OTHER");
+    }
+    // Otherwise, show whatever is not used
+    return allOptions.filter(opt => !usedAddressTypes.includes(opt.code));
+  }, [usedAddressTypes]);
 
   const { data: fetchedLocalities, isLoading: isLoadingLocalities } = Digit.Hooks.useBoundaryLocalities(
     city?.code,
@@ -99,17 +112,17 @@ const AddressDetails = ({t, config, onSelect, userType, formData,editdata,previo
         >
     <div>
     <CardLabel>{`${t("COMMON_ADDRESS_TYPE")}`} <span className="check-page-link-button">*</span></CardLabel>
-            <Dropdown
-              className="form-field"
-              selected={addressType}
-              select={setAddressType}
-              option={addressTypeOptions}
-              optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
-              optionKey="i18nKey"
-              t={t}
-              style={{ width: "100%" }} 
-              placeholder={"Select Address Type"}
-            />
+    <Dropdown
+      className="form-field"
+      selected={addressType}
+      select={setAddressType}
+      option={availableAddressTypeOptions}
+      optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+      optionKey="i18nKey"
+      t={t}
+      style={{ width: "100%" }} 
+      placeholder={"Select Address Type"}
+    />
     <CardLabel>{`${t("HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
       <TextInput
         t={t}
