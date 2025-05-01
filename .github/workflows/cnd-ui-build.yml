@@ -21,4 +21,4 @@ jobs:
         run: |
           curl -v -X POST https://niua-cicd.niua.in/job/builds/job/upyog/job/frontend/job/cnd-ui/buildWithParameters \
           --user ${{ secrets.JENKINS_USERNAME }}:${{ secrets.JENKINS_API_TOKEN }} \
-          --data-urlencode json='{"parameter": [{"name":"BRANCH", "value":"origin/niua-dev"}]}'
+          --data-urlencode json='{"parameter": [{"name":"BRANCH", "value":"origin/${{ github.ref_name }}"}]}'
