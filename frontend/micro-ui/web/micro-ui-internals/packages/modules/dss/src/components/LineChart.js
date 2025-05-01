@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { useTranslation } from "react-i18next";
 import FilterContext from "./FilterContext";
-import { addMonths, endOfYear, format, startOfYear,startOfMonth,subMonths } from "date-fns";
+import { addMonths, endOfYear, format, startOfYear,startOfMonth,subMonths, endOfMonth} from "date-fns";
 
 const LineChartWithData = () => {
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ const LineChartWithData = () => {
   const { value } = useContext(FilterContext);
   const [totalCapacity, setTotalCapacity] = useState(0);
   const stateTenant = Digit.ULBService.getStateId();
-  const [selectedQuarter, setSelectedQuarter] = useState();
+  const [selectedQuarter, setSelectedQuarter] = useState("Last 12 Months");
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.useCommonMDMS(
     stateTenant,
     "FSM",
@@ -29,6 +29,31 @@ const LineChartWithData = () => {
     }
   );
   const key = "DSS_FILTERS_CUMILATIVETRANSACTIONS";
+
+  useEffect(() => {
+    const { startDate, endDate } = getQuarterDates("Last 12 Months");
+  
+    const dataWithDates = {
+      startDate,
+      endDate,
+      interval: "month",
+    };
+  
+    Digit.SessionStorage.set(key, dataWithDates);
+  
+    setFilters({
+      range: { startDate, endDate },
+      requestDate: {
+        startDate: startDate.getTime(),
+        endDate: endDate.getTime(),
+        interval: "month",
+        title: `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`,
+      },
+      filters: {
+        tenantId: tenantId,
+      },
+    });
+  }, []);  
 
   const getInitialRange = () => {
     const data = Digit.SessionStorage.get(key);
@@ -73,27 +98,26 @@ const LineChartWithData = () => {
     filters: value?.filters,
   },
   {
-    enabled: !!selectedQuarter, // hook is triggered only when a valid quarter is selected
+    enabled: selectedQuarter === "Last 12 Months" || ["Q1", "Q2", "Q3", "Q4"].includes(selectedQuarter),
   });
 
 
   
   const getLast12Months = () => {
-    const currentMonth = new Date().getMonth(); 
-    const currentYear = new Date().getFullYear();
-    const startMonth = 4;
     const months = [];
-    for (let i = 0; i < 12; i++) {
-      const monthIndex = (startMonth + i) % 12;
-      const year = startMonth + i < 12 ? currentYear - 1 : currentYear;
+    const now = new Date();
+  
+    // Start 11 months before the current month to include current month as last
+    for (let i = 11; i >= 0; i--) {
+      const date = subMonths(now, i);
       months.push({
-        month: monthIndex,
-        year,
-        label: format(new Date(year, monthIndex), "MMM yyyy"),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+        label: format(date, "MMM yyyy"),
       });
     }
     return months;
-  };
+  };  
 
   // Divide the last 12 months into quarters
   const getQuarterDates = (selectedQuarter) => {
@@ -108,29 +132,30 @@ const LineChartWithData = () => {
 
     switch (selectedQuarter) {
       case "Last 12 Months":
-        return {
-          startDate: new Date(last12Months[0].year, last12Months[0].month, 1),
-          endDate: new Date(last12Months[11].year, last12Months[11].month, 1),
-        };
+      const currentDate = new Date();
+      return {
+        startDate: startOfMonth(subMonths(currentDate, 11)),
+        endDate: currentDate,
+      };
       case "Q1":
-        return {
-          startDate: new Date(quarters[0][0].year, quarters[0][0].month, 1),
-          endDate: new Date(quarters[0][2].year, quarters[0][2].month, 1),
-        };
+      return {
+        startDate: new Date(quarters[0][0].year, quarters[0][0].month, 1),
+        endDate: endOfMonth(new Date(quarters[0][2].year, quarters[0][2].month)),
+      };
       case "Q2":
-        return {
-          startDate: new Date(quarters[1][0].year, quarters[1][0].month, 1),
-          endDate: new Date(quarters[1][2].year, quarters[1][2].month, 1),
-        };
+      return {
+        startDate: new Date(quarters[1][0].year, quarters[1][0].month, 1),
+        endDate: endOfMonth(new Date(quarters[1][2].year, quarters[1][2].month)),
+      };
       case "Q3":
-        return {
-          startDate: new Date(quarters[2][0].year, quarters[2][0].month, 1),
-          endDate: new Date(quarters[2][2].year, quarters[2][2].month, 1),
-        };
+      return {
+        startDate: new Date(quarters[2][0].year, quarters[2][0].month, 1),
+        endDate: endOfMonth(new Date(quarters[2][2].year, quarters[2][2].month)),
+      };
       case "Q4":
         return {
           startDate: new Date(quarters[3][0].year, quarters[3][0].month, 1),
-          endDate: new Date(quarters[3][2].year, quarters[3][2].month, 1),
+          endDate: endOfMonth(new Date(quarters[3][2].year, quarters[3][2].month)),
         };
       default:
         return { startDate: new Date(), endDate: new Date() };
@@ -191,18 +216,18 @@ const LineChartWithData = () => {
           Select Quarter:
         </label>
         <select
-          id="quarterSelect"
-          value={selectedQuarter}
-          onChange={handleFilters}
-          style={{ padding: '8px', fontSize: '14px' }}
-        >
-          <option value="FY">Financial year</option>
-          <option value="Last 12 Months">Last 12 Months</option>
-          <option value="Q1">Q1</option>
-          <option value="Q2">Q2</option>
-          <option value="Q3">Q3</option>
-          <option value="Q4">Q4</option>
-        </select>
+        id="quarterSelect"
+        value={selectedQuarter}
+        onChange={handleFilters}
+        style={{ padding: '8px', fontSize: '14px' }}
+      >
+        <option value="Last 12 Months">Last 12 Months</option>
+        <option value="Q1">Q1</option>
+        <option value="Q2">Q2</option>
+        <option value="Q3">Q3</option>
+        <option value="Q4">Q4</option>
+      </select>
+
       </div>
 
       <ResponsiveContainer width="100%" height={400}>
