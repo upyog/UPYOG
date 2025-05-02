@@ -15,8 +15,9 @@ import lombok.ToString;
 @ToString
 public class Notes {
 
-	private String branch;
+	private String ulbName;
 
-	private String name;
+	private String orderId;
 
+	private String gatewayTxnId;
 }

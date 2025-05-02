@@ -3,7 +3,6 @@ package org.egov.pg.service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 import org.egov.pg.models.BankAccount;
 import org.egov.pg.models.BankAccountResponse;
 import org.egov.pg.models.Notes;
-import org.egov.pg.models.Orders;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.models.Transaction.TxnStatusEnum;
 import org.egov.pg.models.Transfer;
@@ -42,8 +40,8 @@ public class TransactionsSchedulerService {
 
 		TransactionCriteria transactionCriteria = TransactionCriteria.builder().txnStatus(TxnStatusEnum.SUCCESS)
 				.startDateTime(
-						LocalDate.now().minusDays(6).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
-				.endDateTime(LocalDate.now().minusDays(6).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
+						LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
+				.endDateTime(LocalDate.now().minusDays(1).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
 						.toInstant().toEpochMilli())
 				.build(); // TODO
 
@@ -75,15 +73,17 @@ public class TransactionsSchedulerService {
 						bankAccountModuleMap.getOrDefault(moduleKey, new ArrayList<>()).stream()
 								.filter(bankAccountModule -> tenantId.equalsIgnoreCase(bankAccountModule.getTenantId()))
 								.findFirst().ifPresent(bankAccountModule -> {
-
-									// enrich Order object
-									transferList.add(Transfer.builder().account(bankAccountModule.getAccountNumber())
+									String ulbName = null != transaction.getTenantId()
+											? transaction.getTenantId().split("\\.")[1]
+											: "";
+									// enrich transfer list object
+									transferList.add(Transfer.builder().account(bankAccountModule.getPayTo())
 											.amount(null != transaction.getTxnAmount()
 													? Integer.parseInt(transaction.getTxnAmount().replace(".", ""))
 													: 0)
-											.notes(Notes.builder().branch(null).name(null).build())
-											.linkedAccountNotes(Collections.singletonList(null)).onHold(0)
-											.onHoldUntil(null).build()); // TODO
+											.notes(Notes.builder().ulbName(ulbName).orderId(transaction.getOrderId())
+													.gatewayTxnId(transaction.getGatewayTxnId()).build())
+											.build());
 								});
 
 					});
@@ -94,17 +94,23 @@ public class TransactionsSchedulerService {
 
 		if (!CollectionUtils.isEmpty(transferList)) {
 
-			Integer totalAmount = transferList.stream()
-					.filter(transfer -> null != transfer && null != transfer.getAmount()).map(Transfer::getAmount)
-					.reduce(0, Integer::sum);
+			System.err.println(transferList);
 
-			Orders orders = Orders.builder().amount(totalAmount).transfers(transferList).build();
+//			Integer totalAmount = transferList.stream()
+//					.filter(transfer -> null != transfer && null != transfer.getAmount()).map(Transfer::getAmount)
+//					.reduce(0, Integer::sum);
+//
+			transferList.stream().forEach(transfer -> {
+				System.err.println(transfer);
+
+			});
+//			Orders orders = Orders.builder().amount(totalAmount).transfers(transferList).build();
 
 			// call settlement api
 
 		}
 
-		return bankAccountResponse;
+		return transferList;
 	}
 
 }

@@ -21,7 +21,7 @@ public class TransactionsSchedulerController {
 
 //		transactionsSchedulerService.transferAmount(requestInfoWrapper);
 
-		return ResponseEntity.ok("Amount transfered successfully!!!");
-//		return ResponseEntity.ok(transactionsSchedulerService.transferAmount(requestInfoWrapper));
+//		return ResponseEntity.ok("Amount transfered successfully!!!");
+		return ResponseEntity.ok(transactionsSchedulerService.transferAmount(requestInfoWrapper));
 	}
 }

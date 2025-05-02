@@ -17,11 +17,6 @@ import lombok.ToString;
 @ToString
 public class Orders {
 
-	private Integer amount;
-
-	@Builder.Default
-	private String currency = "INR";
-
 	private List<Transfer> transfers;
 
 }
