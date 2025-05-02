@@ -165,10 +165,12 @@ public class PropertyController {
 			if (propertyService.isCriteriaEmpty(propertyCriteria) && null != requestInfoWrapper.getRequestInfo()
 					&& null != requestInfoWrapper.getRequestInfo().getUserInfo() && requestInfoWrapper.getRequestInfo()
 							.getUserInfo().getType().equalsIgnoreCase(PTConstants.USER_TYPE_EMPLOYEE)) {
-				PropertyCriteria propertyCriteriaCreatedBy = PropertyCriteria.builder()
-						.createdBy(Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()))
-						.tenantId(propertyCriteria.getTenantId()).limit(propertyCriteria.getLimit())
-						.offset(propertyCriteria.getOffset()).build();
+				PropertyCriteria propertyCriteriaCreatedBy = propertyCriteria.copy();
+				if (!CollectionUtils.isEmpty(propertyCriteriaCreatedBy.getStatusList())) {
+					propertyCriteriaCreatedBy.setStatusList(null);
+				}
+				propertyCriteriaCreatedBy.setCreatedBy(
+						Collections.singleton(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid()));
 
 				propertyCriteriaMap.put(counter++, propertyCriteriaCreatedBy);
 			}
@@ -182,11 +184,12 @@ public class PropertyController {
 
 				for (String role : rolesWithinTenant) {
 					if (role.equalsIgnoreCase(PTConstants.USER_ROLE_PROPERTY_VERIFIER)) {
-						PropertyCriteria propertyCriteriaFromExcel = PropertyCriteria.builder()
-								.tenantId(propertyCriteria.getTenantId())
-								.status(Collections.singleton(Status.INITIATED))
-								.channels(Collections.singleton(Channel.MIGRATION)).limit(propertyCriteria.getLimit())
-								.offset(propertyCriteria.getOffset()).build();
+						PropertyCriteria propertyCriteriaFromExcel = propertyCriteria.copy();
+						if (!CollectionUtils.isEmpty(propertyCriteriaFromExcel.getStatusList())) {
+							propertyCriteriaFromExcel.setStatusList(null);
+						}
+						propertyCriteriaFromExcel.setStatus(Collections.singleton(Status.INITIATED));
+						propertyCriteriaFromExcel.setChannels(Collections.singleton(Channel.MIGRATION));
 
 						propertyCriteriaMap.put(counter++, propertyCriteriaFromExcel);
 					}

@@ -313,7 +313,7 @@ public class PropertyQueryBuilder {
 		preparedStmtList.add(1);
 		
 		String whereClause = "";
-		if (!propertyCriteriaMap.isEmpty()) {
+		if (null != propertyCriteriaMap && !propertyCriteriaMap.isEmpty()) {
 			List<String> clause = new ArrayList<>();
 			propertyCriteriaMap.entrySet().forEach(propertyCriteriaValue -> {
 				clause.add(
@@ -473,6 +473,27 @@ public class PropertyQueryBuilder {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
+		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getAdditionalDetailsPropertyIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.additionaldetails->>'propertyId' IN (")
+					.append(createQuery(criteria.getAdditionalDetailsPropertyIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getAdditionalDetailsPropertyIds());
+		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getAddressAdditionalDetailsWardNumbers())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("address.additionaldetails->>'wardNumber' IN (")
+					.append(createQuery(criteria.getAddressAdditionalDetailsWardNumbers())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getAddressAdditionalDetailsWardNumbers());
+		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getOwnerOldCustomerIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("owner.additionaldetails->>'ownerOldCustomerId' IN (")
+					.append(createQuery(criteria.getOwnerOldCustomerIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getOwnerOldCustomerIds());
 		}
 		
 		return builder.toString();

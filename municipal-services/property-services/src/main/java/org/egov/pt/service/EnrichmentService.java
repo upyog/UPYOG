@@ -362,9 +362,8 @@ public class EnrichmentService {
 		PtTaxCalculatorTracker ptTaxCalculatorTracker = PtTaxCalculatorTracker.builder()
 				.uuid(UUID.randomUUID().toString()).propertyId(property.getPropertyId())
 				.tenantId(property.getTenantId()).financialYear(calculateTaxRequest.getFinancialYear())
-				.fromDate(getFromDateInIST(calculateTaxRequest.getFromDate()))
-				.toDate(getFromDateInIST(calculateTaxRequest.getToDate())).propertyTax(finalPropertyTax)
-				.auditDetails(createAuditDetails).build();
+				.fromDate(calculateTaxRequest.getFromDate()).toDate(calculateTaxRequest.getToDate())
+				.propertyTax(finalPropertyTax).auditDetails(createAuditDetails).build();
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();
