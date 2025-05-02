@@ -10,7 +10,7 @@
 import { MdmsService } from "../services/elements/MDMS";
 import { MdmsServiceV2 } from "../services/elements/MDMSV2";
 
-const mdmsV2Enabled = true;
+const mdmsV2Enabled = false;
 let mdmsRef = null;
 
 const getMDMSServiceRef = () => {
