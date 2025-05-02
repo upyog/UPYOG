@@ -21,7 +21,7 @@ export const GetServiceDefinitions = {
       },
     };
 
-    const serviceDefs = await MdmsServiceV2.getDataByCriteria(tenantId, criteria, "PGR");
+    const serviceDefs = await MdmsService.getDataByCriteria(tenantId, criteria, "PGR");
     Storage.set("serviceDefinitions", serviceDefs);
     return serviceDefs;
   },
