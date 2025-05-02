@@ -78,12 +78,21 @@ public class EnrichmentService {
 		streetVendingDetail.getBankDetail().setId(StreetVendingUtil.getRandonUUID());
 		streetVendingDetail.getBankDetail().setApplicationId(applicationId);
 		streetVendingDetail.getBankDetail().setAuditDetails(auditDetails);
-
+		
+		
 		// Updating id and status for vending operation details
 		streetVendingDetail.getVendingOperationTimeDetails().stream().forEach(timedetails -> {
 			timedetails.setApplicationId(applicationId);
 			timedetails.setId(StreetVendingUtil.getRandonUUID());
 		});
+		
+		// Updating id for beneficiary scheme details
+		if (streetVendingDetail.getBenificiaryOfSocialSchemes() != null) {
+		    streetVendingDetail.getBenificiaryOfSocialSchemes().forEach(beneficiary -> {
+		        beneficiary.setId(StreetVendingUtil.getRandonUUID());
+		        beneficiary.setApplicationId(applicationId);
+		    });
+		}
 		
 		log.info("Enriched application request data :" + streetVendingDetail);
 

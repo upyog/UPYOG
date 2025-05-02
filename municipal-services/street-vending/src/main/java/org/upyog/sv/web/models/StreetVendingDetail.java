@@ -75,7 +75,7 @@ public class StreetVendingDetail {
 
 	private String disabilityStatus;
 
-	private String benificiaryOfSocialSchemes;
+	private List<BeneficiaryScheme> benificiaryOfSocialSchemes;
 
 	private String termsAndCondition;
 

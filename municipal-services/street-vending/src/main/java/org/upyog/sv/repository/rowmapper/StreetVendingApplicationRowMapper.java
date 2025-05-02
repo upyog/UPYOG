@@ -64,7 +64,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.paymentReceiptId(rs.getString("SVPAYMENTRECEIPTID"))
 						.vendingLicenseId(rs.getString("SVVENDINGLICENSEID"))
 						.disabilityStatus(rs.getString("SVDISABILITYSTATUS"))
-						.benificiaryOfSocialSchemes(rs.getString("SVBENEFICIARYOFSOCIALSCHEMES"))
+						//.benificiaryOfSocialSchemes(rs.getString("SVBENEFICIARYOFSOCIALSCHEMES"))
 						.enrollmentId(rs.getString("SVENROLLMENTID"))
 						.termsAndCondition(rs.getString("SVTERMSANDCONDITION")).auditDetails(auditDetails)
 						.validityDate(validityDate != null ? validityDate.toLocalDate() : null)
@@ -75,7 +75,9 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.oldApplicationNo(rs.getString("SVOLDAPPLICATIONNO"))
 						.validFrom(validFromString).validTo(validToString).addressDetails(new ArrayList<>())
 						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
-						.vendingOperationTimeDetails(new ArrayList<>()).build();
+						.vendingOperationTimeDetails(new ArrayList<>())
+						.benificiaryOfSocialSchemes(new ArrayList<>())
+						.build();
 
 				streetVendingApplicationMap.put(applicationId, streetVendingDetail);
 			}
@@ -85,6 +87,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 			addVendorDetailsToApplication(rs, streetVendingDetail);
 			addDocumentsToApplication(rs, streetVendingDetail);
 			addVendingOperationTimeDetailsToApplication(rs, streetVendingDetail);
+			addBeneficiarySchemeDetailsToApplication(rs, streetVendingDetail);
 		}
 
 		return new ArrayList<>(streetVendingApplicationMap.values());
@@ -161,6 +164,20 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 					.fromTime(rs.getTime("OPERATIONTIMEFROMTIME").toLocalTime())
 					.toTime(rs.getTime("OPERATIONTIMETOTIME").toLocalTime()).build();
 			streetVendingDetail.getVendingOperationTimeDetails().add(operationTime);
+		}
+	}
+	
+	private void addBeneficiarySchemeDetailsToApplication(ResultSet rs, StreetVendingDetail streetVendingDetail)
+			throws SQLException {
+		String beneficiaryId = rs.getString("BENEFICIARYID");
+		if (beneficiaryId != null && streetVendingDetail.getBenificiaryOfSocialSchemes().stream()
+				.noneMatch(opTime -> opTime.getId().equals(beneficiaryId))) {
+			BeneficiaryScheme beneficiarySchemeDetail = BeneficiaryScheme.builder().id(beneficiaryId)
+					.applicationId(rs.getString("BENEFICIARYSCHEMEAPPLICATIONID"))
+					.schemeName(rs.getString("BENEFICIARYSCHEMENAME"))
+					.enrollmentId(rs.getString("BENEFICIARYENROLLMENTID"))
+					.build();
+			streetVendingDetail.getBenificiaryOfSocialSchemes().add(beneficiarySchemeDetail);
 		}
 	}
 }
