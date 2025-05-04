@@ -1,7 +1,6 @@
-package org.egov.swservice.service;
+package org.egov.waterconnection.service;
 
-import org.egov.swservice.web.models.SewerageConnection;
-import org.egov.swservice.web.models.SewerageConnectionRequest;
+import org.egov.waterconnection.web.models.WaterConnectionRequest;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,7 +34,7 @@ public class EODBredirect {
 	
 	
 	
-    public boolean runEodbFlow(SewerageConnectionRequest connection) {
+    public boolean runEodbFlow(WaterConnectionRequest connection) {
         String token = fetchToken();
         if (token != null && !token.isEmpty()) {
             return updateStatusWithToken(token, connection);
@@ -83,11 +82,11 @@ public class EODBredirect {
     }
 
 
-    private boolean updateStatusWithToken(String token, SewerageConnectionRequest connection) {
+    private boolean updateStatusWithToken(String token, WaterConnectionRequest connection) {
         String apiUrl = updateUrl;
 
         // Extract additionalDetails from the connection (assuming it is a Map)
-        Object additionalDetailsObject = connection.getSewerageConnection().getAdditionalDetails();  // This should be a Map<String, Object>
+        Object additionalDetailsObject = connection.getWaterConnection().getAdditionalDetails();  // This should be a Map<String, Object>
 
         // Null check for additionalDetailsObject
         if (additionalDetailsObject == null) {
@@ -121,7 +120,7 @@ public class EODBredirect {
         statusIdMap.put("PENDING_FOR_CONNECTION_ACTIVATION", 2);  // Payment Raised (Estimation Notice Generated)
         statusIdMap.put("REJECTED", 3);  // Rejected
         statusIdMap.put("CONNECTION_ACTIVATED", 4);  // Clearance Issued
-        statusIdMap.put("PENDING_FOR_PAYMENT", 5);  // Fees Paid (Estimation amount paid)
+        statusIdMap.put("PENDING_FOR_CONNECTION_ACTIVATION", 5);  // Fees Paid (Estimation amount paid)
         statusIdMap.put("PENDING_FOR_CITIZEN_ACTION", 6);  // Objection Raised
       //  statusIdMap.put("PENDING_FOR_FIELD_INSPECTION", 7);  // Objection Resolved
         statusIdMap.put("PENDING_FOR_PAYMENT", 8);  // Form Filled and Fee Pending
@@ -141,7 +140,7 @@ public class EODBredirect {
 
         
         // Get the status from the connection and find the corresponding StatusId and StatusDesc
-        String applicationStatus = connection.getSewerageConnection().getApplicationStatus();
+        String applicationStatus = connection.getWaterConnection().getApplicationStatus();
 
         // Check if a valid status exists in the map
         Integer statusId = statusIdMap.get(applicationStatus);

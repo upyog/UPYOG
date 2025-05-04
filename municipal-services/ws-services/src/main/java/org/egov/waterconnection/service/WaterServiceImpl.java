@@ -46,6 +46,10 @@ public class WaterServiceImpl implements WaterService {
 
 	@Autowired
 	private ValidateProperty validateProperty;
+	
+	
+	@Autowired
+	private EODBredirect eodbRedirect;
 
 	@Autowired
 	private MDMSValidator mDMSValidator;
@@ -340,6 +344,7 @@ Boolean isMigration=false;
 	 */
 	@Override
 	public List<WaterConnection> updateWaterConnection(WaterConnectionRequest waterConnectionRequest) {
+		boolean eodbPushed = false;
 		if (waterConnectionRequest.isDisconnectRequest() || waterConnectionRequest.getWaterConnection()
 				.getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION)) {
 			return updateWaterConnectionForDisconnectFlow(waterConnectionRequest);
@@ -446,6 +451,19 @@ Boolean isMigration=false;
 		/* decrypt here */
 		waterConnectionRequest.setWaterConnection(decryptConnectionDetails(waterConnectionRequest.getWaterConnection(),
 				waterConnectionRequest.getRequestInfo()));
+
+		
+
+		try {
+		    String channel = waterConnectionRequest.getWaterConnection().getChannel();
+		    if ("EODB".equalsIgnoreCase(channel)) {
+		    	log.info("Channel Name EODB found");
+		        eodbPushed = eodbRedirect.runEodbFlow(waterConnectionRequest);
+		    }
+		} catch (Exception e) {
+		    log.error("EODB push failed", e);
+		}
+		log.info("EODB push status: {}", eodbPushed ? "SUCCESS" : "SKIPPED OR FAILED");
 
 		return Arrays.asList(waterConnectionRequest.getWaterConnection());
 	}
