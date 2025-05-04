@@ -48,6 +48,10 @@ public class SewerageServiceImpl implements SewerageService {
 
 	@Autowired
 	ValidateProperty validateProperty;
+	
+	@Autowired
+	private EODBredirect eodbRedirect;
+
 
 	@Autowired
 	MDMSValidator mDMSValidator;
@@ -297,6 +301,8 @@ public class SewerageServiceImpl implements SewerageService {
 	@Override
 	public List<SewerageConnection> updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 
+		
+		boolean eodbPushed = false;
 		if(sewerageConnectionRequest.isDisconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) {
 			return updateSewerageConnectionForDisconnectFlow(sewerageConnectionRequest);
 		}
@@ -360,6 +366,16 @@ public class SewerageServiceImpl implements SewerageService {
 
 		/* decrypt here */
 		sewerageConnectionRequest.setSewerageConnection(decryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection(), sewerageConnectionRequest.getRequestInfo()));
+	
+		try {
+		    String channel = sewerageConnectionRequest.getSewerageConnection().getChannel();
+		    if ("EODB".equalsIgnoreCase(channel)) {
+		        eodbPushed = eodbRedirect.runEodbFlow(sewerageConnectionRequest);
+		    }
+		} catch (Exception e) {
+		    log.error("EODB push failed", e);
+		}
+		log.info("EODB push status: {}", eodbPushed ? "SUCCESS" : "SKIPPED OR FAILED");
 
 		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
 	}
