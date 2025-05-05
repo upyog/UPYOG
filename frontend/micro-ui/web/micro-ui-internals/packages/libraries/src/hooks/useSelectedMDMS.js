@@ -21,11 +21,12 @@ const mdmsV2Modules = [
   'PetService'
 ];
 
+const mdmsV2Enabled = true;
 let mdmsRef = null;
 
 const getMDMSServiceRef = (moduleName) => {
   // Check if the module is in the list of modules that should use V2
-  if (moduleName && mdmsV2Modules.includes(moduleName)) {
+  if (mdmsV2Enabled && mdmsV2Modules.includes(moduleName)) {
     return MdmsServiceV2;
   } else {
     return MdmsService;
