@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
+import org.upyog.sv.enums.ApplicationCreatedByEnum;
 import org.upyog.sv.validator.CreateApplicationGroup;
 import org.upyog.sv.web.models.common.AuditDetails;
 
@@ -77,7 +78,7 @@ public class StreetVendingDetail {
 	
 	private String locality;
 	
-	private String applicationCreatedBy;
+	private ApplicationCreatedByEnum applicationCreatedBy;
 
 	private List<BeneficiaryScheme> benificiaryOfSocialSchemes;
 

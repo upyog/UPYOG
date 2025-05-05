@@ -1,23 +1,30 @@
 package org.upyog.sv.repository.rowmapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.stereotype.Component;
-import org.upyog.sv.util.StreetVendingUtil;
-import org.upyog.sv.web.models.*;
-import org.upyog.sv.web.models.common.AuditDetails;
-
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Component;
+import org.upyog.sv.enums.ApplicationCreatedByEnum;
+import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.web.models.Address;
+import org.upyog.sv.web.models.BankDetail;
+import org.upyog.sv.web.models.BeneficiaryScheme;
+import org.upyog.sv.web.models.DocumentDetail;
+import org.upyog.sv.web.models.RenewalStatus;
+import org.upyog.sv.web.models.StreetVendingDetail;
+import org.upyog.sv.web.models.VendingOperationTimeDetails;
+import org.upyog.sv.web.models.VendorDetail;
+import org.upyog.sv.web.models.common.AuditDetails;
 
 @Component
 public class StreetVendingApplicationRowMapper implements ResultSetExtractor<List<StreetVendingDetail>> {
@@ -65,7 +72,11 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.vendingLicenseId(rs.getString("SVVENDINGLICENSEID"))
 						.disabilityStatus(rs.getString("SVDISABILITYSTATUS"))
 						.locality(rs.getString("SVLOCALITY"))
-						.applicationCreatedBy(rs.getString("SVAPPLICATIONCREATEDBY"))
+						.applicationCreatedBy(
+							    Optional.ofNullable(rs.getString("SVAPPLICATIONCREATEDBY"))
+							            .map(ApplicationCreatedByEnum::fromValue)
+							            .orElse(null)
+							)
 						.termsAndCondition(rs.getString("SVTERMSANDCONDITION")).auditDetails(auditDetails)
 						.validityDate(validityDate != null ? validityDate.toLocalDate() : null)
 //						.eligibleToRenew(rs.getBoolean("SVELIGIBLETORENEW"))
