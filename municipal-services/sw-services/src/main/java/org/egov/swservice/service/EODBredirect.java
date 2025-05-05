@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -153,6 +155,10 @@ public class EODBredirect {
             return false;
         }
         
+        
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(dateTimeFormatter);
+        
         try {
             // Create the JSON payload for the API request
             JSONObject jsonInput = new JSONObject();
@@ -169,7 +175,7 @@ public class EODBredirect {
             jsonInput.put("clearanceExpiredOn", "NA");
             jsonInput.put("licenseNo", "NA");
             jsonInput.put("clearanceFile", "NA");
-            jsonInput.put("statusDate", LocalDate.now().toString());
+            jsonInput.put("statusDate", formattedDateTime);
             jsonInput.put("integrationSource", "LG");
             jsonInput.put("deemedApproval", "false");
 
@@ -178,7 +184,7 @@ public class EODBredirect {
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Authorization", "Bearer " + token);
+            con.setRequestProperty("Authorization", token);
             con.setDoOutput(true);
 
             try (OutputStream os = con.getOutputStream()) {
