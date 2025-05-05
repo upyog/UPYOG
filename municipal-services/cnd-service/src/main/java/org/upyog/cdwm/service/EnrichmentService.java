@@ -24,7 +24,6 @@ import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.upyog.cdwm.web.models.user.AddressV2;
 import org.upyog.cdwm.web.models.user.User;
-import org.upyog.cdwm.web.models.user.enums.AddressType;
 
 /**
  * Service class responsible for enriching CND application requests.
@@ -54,19 +53,29 @@ public class EnrichmentService {
 
         CNDApplicationDetail cndApplicationDetails = cndApplicationRequest.getCndApplication();
         RequestInfo requestInfo = cndApplicationRequest.getRequestInfo();
-        AuditDetails auditDetails = CNDServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
+        String userUuid = requestInfo.getUserInfo().getUuid();
+        AuditDetails auditDetails = CNDServiceUtil.getAuditDetails(userUuid, true);
 
-//        Checks the conditions for Applicant ID and Address ID in the application details object
-//          and invokes appropriate methods to enrich the user details or address details
-        if (StringUtils.isBlank(cndApplicationDetails.getAddressDetailId())) {
-            if (StringUtils.isBlank(cndApplicationDetails.getApplicantDetailId())) {
-                // Both Applicant ID and Address ID are null or blank; enrich user details with address.
-                enrichUserDetails(cndApplicationRequest, cndApplicationDetails);
-            } else {
-                // Applicant ID is present but Address ID is null or blank; enrich address details only.
-                enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
-            }
+        // If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
+        if (CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
+            cndApplicationDetails.setApplicantDetailId(userUuid);
+        } else { // If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+            cndApplicationDetails.setApplicantDetailId(null);
+            cndApplicationDetails.setAddressDetailId(null);
         }
+
+        String applicantDetailId = cndApplicationDetails.getApplicantDetailId();
+        String addressDetailId = cndApplicationDetails.getAddressDetailId();
+
+        if (StringUtils.isBlank(applicantDetailId)) {
+            // Enrich user details for new user
+            enrichUserDetails(cndApplicationRequest);
+        }
+        if (StringUtils.isBlank(addressDetailId)) {
+            // Enrich address details
+            enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
+        }
+
 
         // Set application details
         cndApplicationDetails.setApplicationId(applicationId);
@@ -76,30 +85,30 @@ public class EnrichmentService {
 
         // Copy mobile number from applicant details to a separate field to save in application table
         cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
-       
-        
+
+
         List<WasteTypeDetail> wasteTypeDetails = cndApplicationDetails.getWasteTypeDetails();
         if (wasteTypeDetails != null) {
             for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
-                String wasteTypeId = CNDServiceUtil.getRandomUUID(); 
+                String wasteTypeId = CNDServiceUtil.getRandomUUID();
                 wasteTypeDetail.setWasteTypeId(wasteTypeId);
                 wasteTypeDetail.setApplicationId(applicationId);
             }
         }
-        
+
         FacilityCenterDetail facilityCentreDetail = cndApplicationDetails.getFacilityCenterDetail();
-        if (facilityCentreDetail != null) { 	
-        	String disposalId = CNDServiceUtil.getRandomUUID();
-        	facilityCentreDetail.setDisposalId(disposalId);
-        	facilityCentreDetail.setApplicationId(applicationId);
-        	
-        	}
-        
-        
+        if (facilityCentreDetail != null) {
+            String disposalId = CNDServiceUtil.getRandomUUID();
+            facilityCentreDetail.setDisposalId(disposalId);
+            facilityCentreDetail.setApplicationId(applicationId);
+
+        }
+
+
         List<DocumentDetail> documentDetails = cndApplicationDetails.getDocumentDetails();
         if (documentDetails != null) {
             for (DocumentDetail documentDetail : documentDetails) {
-                String documentId = CNDServiceUtil.getRandomUUID(); 
+                String documentId = CNDServiceUtil.getRandomUUID();
                 documentDetail.setDocumentDetailId(documentId);
                 documentDetail.setApplicationId(applicationId);
             }
@@ -128,7 +137,6 @@ public class EnrichmentService {
         if (StringUtils.isBlank(cndApplicationRequest.getCndApplication().getApplicantDetailId())) {
             throw new CustomException("APPLICANTID_IS_BLANK", "Applicant Detail ID is blank");
         }
-        try {
             // Fetch the new address associated with the user's UUID
             AddressV2 address = userService.createNewAddressV2ByUserUuid(cndApplicationRequest);
 
@@ -136,48 +144,46 @@ public class EnrichmentService {
                 // Set the address detail ID in the application details object
                 cndApplicationDetails.setAddressDetailId(String.valueOf(address.getId()));
                 log.info("Address details successfully enriched with ID: {}", address.getId());
-            } else {
-                log.warn("Failed to create new address for user UUID: {}", cndApplicationRequest.getCndApplication().getApplicantDetailId());
             }
-        } catch (Exception e) {
-            log.error("Error while enriching address details: {}", e.getMessage(), e);
-        }
+
     }
 
 
     /**
-     * Fetches and assigns user details to the CND application.
-     * If the user exists, their UUID is assigned as the applicantDetailId.
-     * The permanent address ID is also set in the application details
-     * if not found correspondence address id is set if not found first address id is set.
+     * Enriches the applicant and address detail IDs in the given application detail.
+     * <p>
+     * If the applicantDetailId is present, it attempts to fetch an existing user based on the request.
+     * - If an existing user is found, sets the applicantDetailId accordingly.
+     * - If not found, it creates a new user and sets both applicantDetailId and addressDetailId
+     *   from the newly created user and their associated address.
+     * </p>
      *
-     * @param cndApplicationRequest   The request containing applicant details.
-     * @param cndApplicationDetails   The application object to be enriched.
+     * @param request The full application request containing applicant and address info.
      */
-    private void enrichUserDetails(CNDApplicationRequest cndApplicationRequest, CNDApplicationDetail cndApplicationDetails) {
-        try {
-            if (cndApplicationDetails.getApplicantDetailId() != null) {
-                User user = userService.getExistingOrNewUser(cndApplicationRequest);
-                cndApplicationDetails.setApplicantDetailId(user.getUuid());
+    private void enrichUserDetails(CNDApplicationRequest request) {
+        // Try fetching an existing user for the given request
+        CNDApplicationDetail detail = request.getCndApplication();
+        List<User> existingUsers = userService.getUserDetails(request);
 
-                AddressV2 selectedAddress = user.getAddresses().stream()
-                        .filter(address -> AddressType.PERMANENT.equals(address.getType()))
-                        .findFirst()
-                        .orElseGet(() -> user.getAddresses().stream()
-                                .filter(address -> AddressType.CORRESPONDENCE.equals(address.getType()))
-                                .findFirst()
-                                .orElse(user.getAddresses().stream().findFirst().orElse(null))
-                        );
-
-                if (selectedAddress != null) {
-                    cndApplicationDetails.setAddressDetailId(String.valueOf(selectedAddress.getId()));
-                }
-                log.info("Applicant/User UUID: {}", user.getUuid());
-            }
-        } catch (Exception e) {
-            log.error("Error while fetching user details: {}", e.getMessage(), e);
+        if (!CollectionUtils.isEmpty(existingUsers)) {
+            detail.setApplicantDetailId(existingUsers.get(0).getUuid());
+            log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+            return;
         }
+
+        // Create a new user if no existing user was found
+        User newUser = userService.createUserHandler(request.getRequestInfo(), request.getCndApplication().getApplicantDetail(),
+                request.getCndApplication().getAddressDetail(), request.getCndApplication().getTenantId());
+        log.info("New user created with ID: {}", newUser.getUuid());
+        detail.setApplicantDetailId(newUser.getUuid());
+
+        // Set addressDetailId from the first address with a non-null ID, if present
+        newUser.getAddresses().stream()
+                .filter(addr -> addr.getId() != null)
+                .findFirst()
+                .ifPresent(addr -> detail.setAddressDetailId(String.valueOf(addr.getId())));
     }
+
 
     /**
      * Fetches a list of generated IDs for the application.

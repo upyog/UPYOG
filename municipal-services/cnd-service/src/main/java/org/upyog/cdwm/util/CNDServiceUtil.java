@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.stereotype.Component;
+import org.upyog.cdwm.web.models.CNDApplicationRequest;
 import org.upyog.cdwm.web.models.ResponseInfo;
 import org.upyog.cdwm.web.models.ResponseInfo.StatusEnum;
 
@@ -181,6 +182,25 @@ public class CNDServiceUtil {
 		} else {
 			LocalDate localDate = LocalDate.parse(date, formatter);
 			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
+	}
+
+	/**
+	 * Checks whether the logged-in user is the same as the applicant in the given application request.
+	 * <p>
+	 * This is done by comparing the mobile number from the user info in the request with
+	 * the mobile number provided in the applicant details of the application.
+	 *
+	 * @param applicationRequest The application request containing user and applicant details.
+	 * @return true if the mobile numbers match (case-insensitive), false otherwise.
+	 */
+	public static boolean isCurrentUserApplicant(CNDApplicationRequest applicationRequest){
+		String userMobileNumber = applicationRequest.getRequestInfo().getUserInfo().getMobileNumber();
+		String applicationMobileNumber = applicationRequest.getCndApplication().getApplicantDetail().getMobileNumber();
+		if (userMobileNumber.equalsIgnoreCase(applicationMobileNumber)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
