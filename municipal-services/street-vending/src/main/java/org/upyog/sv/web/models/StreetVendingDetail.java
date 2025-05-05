@@ -74,6 +74,10 @@ public class StreetVendingDetail {
 	private String vendingLicenseId;
 
 	private String disabilityStatus;
+	
+	private String locality;
+	
+	private String applicationCreatedBy;
 
 	private List<BeneficiaryScheme> benificiaryOfSocialSchemes;
 
@@ -103,8 +107,6 @@ public class StreetVendingDetail {
 	private List<VendorDetail> vendorDetail;
 
 	private List<VendingOperationTimeDetails> vendingOperationTimeDetails;
-
-	private String enrollmentId;
 
 	private Workflow workflow;
 
