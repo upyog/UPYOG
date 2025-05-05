@@ -1,31 +1,41 @@
 /**
  * Determines which MDMS service reference should be used.
  * 
- * This function checks the flag `mdmsV2Enabled` to decide whether to use the 
- * new version of the MDMS service (`MdmsServiceV2`) or the old one (`MdmsService`). 
- * It then assigns the appropriate service reference to `mdmsRef`.
+ * This function checks if the requested module is in the mdmsV2Modules list
+ * to decide whether to use the new version of the MDMS service (`MdmsServiceV2`)
+ * or the old one (`MdmsService`).
  * 
  */
 
 import { MdmsService } from "../services/elements/MDMS";
 import { MdmsServiceV2 } from "../services/elements/MDMSV2";
 
-const mdmsV2Enabled = false;
+/**
+ * List of modules that should use MdmsServiceV2,
+ * it should match with the modulename you enter in MDMS (masterData).
+ */
+const mdmsV2Modules = [
+  'StreetVending',
+  'Advertisement',
+  'CHB',
+  'PetService'
+];
+
 let mdmsRef = null;
 
-const getMDMSServiceRef = () => {
-        if (mdmsV2Enabled) {
-            mdmsRef = MdmsServiceV2;
-        } else {
-            mdmsRef = MdmsService;
-        }
+const getMDMSServiceRef = (moduleName) => {
+  // Check if the module is in the list of modules that should use V2
+  if (moduleName && mdmsV2Modules.includes(moduleName)) {
+    return MdmsServiceV2;
+  } else {
+    return MdmsService;
+  }
 }
 
-getMDMSServiceRef();
-
-const useSelectedMDMS = () => {
-    return mdmsRef;
+const useSelectedMDMS = (moduleName) => {
+  // Get the appropriate service reference based on the module name
+  mdmsRef = getMDMSServiceRef(moduleName);
+  return mdmsRef;
 };
-useSelectedMDMS();
 
 export default useSelectedMDMS;
