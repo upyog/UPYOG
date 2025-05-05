@@ -46,11 +46,16 @@ public class EnrichmentService {
 		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
+		// Fetch the existing or new user based on the request
+		if (requestInfo.getUserInfo().getMobileNumber().equals(waterTankerDetail.getApplicantDetail().getMobileNumber())) {
+			waterTankerDetail.setApplicantUuid(requestInfo.getUserInfo().getUuid());
+		} else{
+			User user = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
+			waterTankerDetail.setApplicantUuid(user.getUuid());
+		}
+
 		// If addressDetailId is null or blank, create a new address and set the ID
 		if (StringUtils.isBlank(waterTankerDetail.getAddressDetailId())) {
-			// Fetch the existing or new user based on the request
-			User user = userService.getExistingOrNewUser(waterTankerRequest);
-			waterTankerDetail.setApplicantUuid(user.getUuid());
 			enrichAddressDetails(waterTankerRequest, waterTankerDetail);
 		}
 		
@@ -101,23 +106,20 @@ public class EnrichmentService {
 	 */
 	private void enrichAddressDetails(WaterTankerBookingRequest waterTankerRequest, WaterTankerBookingDetail waterTankerDetail) {
 
-		// If applicantDetailId is null or blank, throw custom exception
+		// If applicant UUID is null or blank, throw custom exception
 		if (StringUtils.isBlank(waterTankerRequest.getWaterTankerBookingDetail().getApplicantUuid())) {
-			throw new CustomException("APPLICANTID_IS_BLANK", "Applicant Detail ID is blank");
+			throw new CustomException("APPLICANT_UUID_NULL", "Applicant UUID is blank");
 		}
-		try {
-			// Fetch the new address associated with the user's UUID
-			AddressV2 address = userService.createNewAddressV2ByUserUuid(waterTankerRequest);
 
-			if (address != null) {
-				// Set the address detail ID in the application details object
-				waterTankerDetail.setAddressDetailId(String.valueOf(address.getId()));
-				log.info("Address details successfully enriched with ID: {}", address.getId());
-			} else {
-				log.warn("Failed to create new address for user UUID: {}", waterTankerRequest.getWaterTankerBookingDetail().getApplicantUuid());
-			}
-		} catch (Exception e) {
-			log.error("Error while enriching address details: {}", e.getMessage(), e);
+		// Fetch the new address associated with the user's UUID
+		AddressV2 address = userService.createNewAddressV2ByUserUuid(waterTankerRequest);
+
+		if (address != null) {
+			// Set the address detail ID in the booking detail
+			waterTankerDetail.setAddressDetailId(String.valueOf(address.getId()));
+			log.info("Address successfully enriched with ID: {}", address.getId());
+		} else {
+			throw new CustomException("ADDRESS_CREATION_FAILED", "Failed to create address for the given applicant UUID");
 		}
 	}
 
@@ -136,11 +138,16 @@ public class EnrichmentService {
 		RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
+		if (requestInfo.getUserInfo().getMobileNumber().equals(mobileToiletDetail.getApplicantDetail().getMobileNumber())) {
+			mobileToiletDetail.setApplicantUuid(requestInfo.getUserInfo().getUuid());
+		} else{
+			// Fetch the existing or new user based on the request
+			User user = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
+			mobileToiletDetail.setApplicantUuid(user.getUuid());
+		}
+
 		// If addressDetailId is null or blank, create a new address and set the ID
 		if (StringUtils.isBlank(mobileToiletDetail.getAddressDetailId())) {
-			// Fetch the existing or new user based on the request
-			User user = userService.getExistingOrNewUser(mobileToiletRequest);
-			mobileToiletDetail.setApplicantUuid(user.getUuid());
 			enrichAddressDetails(mobileToiletRequest, mobileToiletDetail);
 		}
 
@@ -190,12 +197,10 @@ public class EnrichmentService {
 	 */
 
 	private void enrichAddressDetails(MobileToiletBookingRequest mobileToiletRequest, MobileToiletBookingDetail mobileToiletDetail) {
-
-		// If applicantDetailId is null or blank, throw custom exception
+		// If applicant UUID is null or blank, throw custom exception
 		if (StringUtils.isBlank(mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid())) {
-			throw new CustomException("APPLICANTID_IS_BLANK", "Applicant Detail ID is blank");
+			throw new CustomException("APPLICANT_UUID_NULL", "Applicant UUID is blank");
 		}
-		try {
 			// Fetch the new address associated with the user's UUID
 			AddressV2 address = userService.createNewAddressV2ByUserUuid(mobileToiletRequest);
 
@@ -204,11 +209,8 @@ public class EnrichmentService {
 				mobileToiletDetail.setAddressDetailId(String.valueOf(address.getId()));
 				log.info("Address details successfully enriched with ID: {}", address.getId());
 			} else {
-				log.warn("Failed to create new address for user UUID: {}", mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid());
+				throw new CustomException("ADDRESS_CREATION_FAILED", "Failed to create address for the given applicant UUID");
 			}
-		} catch (Exception e) {
-			log.error("Error while enriching address details: {}", e.getMessage(), e);
-		}
 	}
 
 	/**

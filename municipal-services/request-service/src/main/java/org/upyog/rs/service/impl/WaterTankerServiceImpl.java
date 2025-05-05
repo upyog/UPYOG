@@ -63,7 +63,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 		// Get the uuid of User from user registry
 		try {
-			org.upyog.rs.web.models.user.User user = userService.getExistingOrNewUser(waterTankerRequest);
+			org.upyog.rs.web.models.user.User user = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
 			waterTankerRequest.getWaterTankerBookingDetail().setApplicantUuid(user.getUuid());
 			log.info("Applicant or User Uuid: " + user.getUuid());
 		} catch (Exception e) {

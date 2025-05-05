@@ -57,7 +57,7 @@ public class MobileToiletServiceImpl implements MobileToiletService{
 
         // Get the uuid of User from user registry
         try {
-            org.upyog.rs.web.models.user.User user = userService.getExistingOrNewUser(mobileToiletRequest);
+            org.upyog.rs.web.models.user.User user = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
             mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.getUuid());
             log.info("Applicant or User Uuid: " + user.getUuid());
         } catch (Exception e) {

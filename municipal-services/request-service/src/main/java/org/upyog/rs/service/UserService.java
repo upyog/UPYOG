@@ -49,7 +49,7 @@ public class UserService {
 	 * @param bookingRequest The application request containing user details.
 	 * @return The existing or newly created user.
 	 */
-	public User getExistingOrNewUser(WaterTankerBookingRequest bookingRequest) {
+	public User fetchExistingOrCreateNewUser(WaterTankerBookingRequest bookingRequest) {
 
 		WaterTankerBookingDetail bookingDetail = bookingRequest.getWaterTankerBookingDetail();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
@@ -57,7 +57,7 @@ public class UserService {
 		String tenantId = bookingDetail.getTenantId();
 
 		// Fetch existing user details
-		UserDetailResponse userDetailResponse = userExists(applicantDetail, requestInfo, tenantId);
+		UserDetailResponse userDetailResponse = fetchExistingUserDetails(applicantDetail, requestInfo, tenantId);
 		List<User> existingUsers = userDetailResponse.getUser();
 
 		// Create a new user if no existing user found
@@ -74,7 +74,7 @@ public class UserService {
 	 * @param bookingRequest The application request containing user details.
 	 * @return The existing or newly created user.
 	 */
-	public User getExistingOrNewUser(MobileToiletBookingRequest bookingRequest) {
+	public User fetchExistingOrCreateNewUser(MobileToiletBookingRequest bookingRequest) {
 
 		MobileToiletBookingDetail bookingDetail = bookingRequest.getMobileToiletBookingDetail();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
@@ -82,7 +82,7 @@ public class UserService {
 		String tenantId = bookingDetail.getTenantId();
 
 		// Fetch existing user details
-		UserDetailResponse userDetailResponse = userExists(applicantDetail, requestInfo, tenantId);
+		UserDetailResponse userDetailResponse = fetchExistingUserDetails(applicantDetail, requestInfo, tenantId);
 		List<User> existingUsers = userDetailResponse.getUser();
 
 		// Create a new user if no existing user found
@@ -96,7 +96,7 @@ public class UserService {
 	private UserDetailResponse createUser(RequestInfo requestInfo, User user, String tenantId) {
 
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
-				.append(requestConfig.getUserCreateEndpoint());
+				.append(requestConfig.getUserCreateEndpointV2());
 		CreateUserRequest userRequest = CreateUserRequest.builder().requestInfo(requestInfo).user(user).build();
 		UserDetailResponse userDetailResponse = userServiceCall(userRequest, uri);
 
@@ -161,14 +161,14 @@ public class UserService {
 	 * @return UserDetailResponse containing the user if present and the
 	 *         responseInfo
 	 */
-	private UserDetailResponse userExists(ApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
+	private UserDetailResponse fetchExistingUserDetails(ApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
 
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(UserUtil.getStateLevelTenant(tenantId), requestInfo);
 		userSearchRequest.setMobileNumber(applicant.getMobileNumber());
 		userSearchRequest.setUserType(RequestServiceConstants.CITIZEN);
 		userSearchRequest.setUserName(applicant.getMobileNumber());
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
-				.append(requestConfig.getUserSearchEndpoint());
+				.append(requestConfig.getUserSearchEndpointV2());
 		return userServiceCall(userSearchRequest, uri);
 	}
 
@@ -182,7 +182,7 @@ public class UserService {
 	public UserDetailResponse getUser(UserSearchRequest userSearchRequest) {
 
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost())
-				.append(requestConfig.getUserSearchEndpoint());
+				.append(requestConfig.getUserSearchEndpointV2());
 		UserDetailResponse userDetailResponse = userServiceCall(userSearchRequest, uri);
 		return userDetailResponse;
 	}
@@ -198,10 +198,10 @@ public class UserService {
 	private UserDetailResponse userServiceCall(Object userRequest, StringBuilder url) {
 
 		String dobFormat = null;
-		if (url.indexOf(requestConfig.getUserSearchEndpoint()) != -1
-				|| url.indexOf(requestConfig.getUserUpdateEndpoint()) != -1)
+		if (url.indexOf(requestConfig.getUserSearchEndpointV2()) != -1
+				|| url.indexOf(requestConfig.getUserUpdateEndpointV2()) != -1)
 			dobFormat = "yyyy-MM-dd";
-		else if (url.indexOf(requestConfig.getUserCreateEndpoint()) != -1)
+		else if (url.indexOf(requestConfig.getUserCreateEndpointV2()) != -1)
 			dobFormat = "dd/MM/yyyy";
 		try {
 			Object response = serviceRequestRepository.fetchResult(url, userRequest);

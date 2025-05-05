@@ -90,17 +90,26 @@ public class RequestServiceConfiguration {
 	@Value("${egov.user.context.path}")
 	private String userContextPath;
 
-	@Value("${egov.user.v2.create.path}")
+	@Value("${egov.user.create.path}")
 	private String userCreateEndpoint;
+
+	@Value("${egov.user.search.path}")
+	private String userSearchEndpoint;
+
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
+
+	@Value("${egov.user.v2.create.path}")
+	private String userCreateEndpointV2;
 
 	@Value("${egov.user.create.address.endpointv2}")
 	private String userCreateAddressEndpointV2;
 
 	@Value("${egov.user.v2.search.path}")
-	private String userSearchEndpoint;
+	private String userSearchEndpointV2;
 
 	@Value("${egov.user.v2.update.path}")
-	private String userUpdateEndpoint;
+	private String userUpdateEndpointV2;
 
 	// Pagination config for search results
 	@Value("${upyog.request.service.default.limit}")

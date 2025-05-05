@@ -19,7 +19,7 @@ public class RequestServiceQueryBuilder {
     @Autowired
     private RequestServiceConfiguration requestServiceConfiguration;
 
-    private static final String BOOKING_DETAILS_SEARCH_QUERY = (
+    private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT ursbd.booking_id, booking_no,applicant_uuid, mobile_number, locality_code, tanker_type, tanker_quantity, water_quantity, description, " +
                     "delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, " +
                     "vehicle_capacity,address_detail_id, booking_status, ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, " +
@@ -39,10 +39,10 @@ public class RequestServiceQueryBuilder {
             "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY createdtime DESC) AS offset_ FROM ({}) result) result_offset " +
                     "WHERE offset_ > ? AND offset_ <= ?";
 
-    private static final String applicationsCount =
+    private static final String waterTankerBookingCount =
             "SELECT count(ursbd.booking_id) FROM upyog_rs_tanker_booking_details ursbd";
 
-    private static final String applicationsMtCount =
+    private static final String mobileToiletBookingCount =
             "SELECT count(urmt.booking_id) FROM upyog_rs_mobile_toilet_booking_details urmt";
 
 
@@ -51,9 +51,9 @@ public class RequestServiceQueryBuilder {
         StringBuilder query;
 
         if (!criteria.isCountCall()) {
-            query = new StringBuilder(BOOKING_DETAILS_SEARCH_QUERY);
+            query = new StringBuilder(WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY);
         } else {
-            query = new StringBuilder(applicationsCount);
+            query = new StringBuilder(waterTankerBookingCount);
         }
 
         if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
@@ -109,7 +109,7 @@ public class RequestServiceQueryBuilder {
         if (!criteria.isCountCall()) {
             query = new StringBuilder(MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY);
         } else {
-            query = new StringBuilder(applicationsMtCount);
+            query = new StringBuilder(mobileToiletBookingCount);
         }
 
         if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
