@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -95,8 +97,23 @@ public class SearchService {
 		}
 		if(null == data) {
 			try{
-				data = formatResult(maps, searchDefinition, searchRequest);
-			}catch(Exception e){
+	            if (!maps.isEmpty() && maps.get(0) instanceof String) {
+	                String response = maps.get(0);
+	                JsonElement element = JsonParser.parseString(response);
+
+	                if (element.isJsonObject()) {
+	                    data = formatResult(maps, searchDefinition, searchRequest);
+	                } else if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
+	                    Map<String, Object> result = new HashMap<>();
+	                    result.put("TotalCount", element.getAsInt());
+	                    data = result;
+	                } else {
+	                    data = formatResult(maps, searchDefinition, searchRequest);
+	                }
+	            } else {
+	                data = formatResult(maps, searchDefinition, searchRequest);
+	            }
+	        }catch(Exception e){
 				log.error("Exception: ",e);
 				throw new CustomException("RESULT_FORMAT_ERROR", 
 						"There was an error encountered while formatting the result, Verify output config from the yaml file.");
