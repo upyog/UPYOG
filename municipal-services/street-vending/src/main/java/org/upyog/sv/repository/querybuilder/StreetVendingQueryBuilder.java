@@ -15,7 +15,7 @@ public class StreetVendingQueryBuilder {
 			+ "sv.vending_zone as svVendingZone, sv.cart_latitude as svCartLatitude, sv.cart_longitude as svCartLongitude, sv.vending_area as svVendingArea, "
 			+ "sv.vending_license_certificate_id as svVendingLicenseCertificateId, sv.payment_receipt_id as svPaymentReceiptId , sv.vending_license_id as svVendingLicenseId, "
 			+ "sv.local_authority_name as svLocalAuthorityName, "
-			+ "sv.disability_status as svDisabilityStatus, sv.beneficiary_of_social_schemes as svBeneficiaryOfSocialSchemes, sv.enrollment_id as svenrollmentid, "
+			+ "sv.disability_status as svDisabilityStatus, sv.enrollment_id as svenrollmentid, "
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
 			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime, "
 			+ "sv.expire_flag as svExpireFlag, sv.renewal_status as svRenewalStatus, sv.validity_date as svValidityDate, "
@@ -41,13 +41,17 @@ public class StreetVendingQueryBuilder {
 
 	private static final String OPERATION_TIME_SELECT_QUERY = " ,opTime.id as operationTimeId, opTime.application_id as operationTimeApplicationId, "
 			+ "opTime.day_of_week as operationTimeDayOfWeek, opTime.from_time as operationTimeFromTime, opTime.to_time as operationTimeToTime ";
+	
+	private static final String BENEFICIARY_SCHEME_SELECT_QUERY = " ,scheme.id as beneficiaryId, scheme.application_id as beneficiarySchemeApplicationId, "
+			+ "scheme.scheme_name as beneficiarySchemeName, scheme.enrollment_id as beneficiaryEnrollmentId ";
 
 	private static final String FROM_TABLES = " FROM eg_sv_street_vending_detail sv "
 			+ "LEFT JOIN eg_sv_vendor_detail vendor ON sv.application_id = vendor.application_id "
 			+ "LEFT JOIN eg_sv_address_detail address ON vendor.id = address.vendor_id "
 			+ "LEFT JOIN eg_sv_document_detail doc ON sv.application_id = doc.application_id "
 			+ "LEFT JOIN eg_sv_bank_detail bank ON sv.application_id = bank.application_id "
-			+ "LEFT JOIN eg_sv_operation_time_detail opTime ON sv.application_id = opTime.application_id ";
+			+ "LEFT JOIN eg_sv_operation_time_detail opTime ON sv.application_id = opTime.application_id "
+	        + "LEFT JOIN eg_sv_beneficiary_schemes_detail scheme ON sv.application_id = scheme.application_id ";
 
 	private final String ORDERBY_CREATEDTIME = " ORDER BY sv.createdtime DESC ";
 
@@ -65,6 +69,7 @@ public class StreetVendingQueryBuilder {
 			query.append(DOCUMENT_SELECT_QUERY);
 			query.append(BANK_SELECT_QUERY);
 			query.append(OPERATION_TIME_SELECT_QUERY);
+			query.append(BENEFICIARY_SCHEME_SELECT_QUERY);
 			query.append(FROM_TABLES);
 		} else {
 			query = new StringBuilder(applicationsCount);
@@ -125,6 +130,7 @@ public class StreetVendingQueryBuilder {
 			query.append(" sv.validity_date <= ? ");
 			preparedStmtList.add(criteria.getValidityDate());
 		}
+		
 		if (!criteria.isCountCall()) {
 			query.append(ORDERBY_CREATEDTIME);
 		}
