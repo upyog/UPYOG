@@ -120,9 +120,9 @@ public class EODBredirect {
         statusIdMap.put("PENDING_FOR_CONNECTION_ACTIVATION", 2);  // Payment Raised (Estimation Notice Generated)
         statusIdMap.put("REJECTED", 3);  // Rejected
         statusIdMap.put("CONNECTION_ACTIVATED", 4);  // Clearance Issued
-        statusIdMap.put("PENDING_FOR_CONNECTION_ACTIVATION", 5);  // Fees Paid (Estimation amount paid)
+        //statusIdMap.put("PENDING_FOR_CONNECTION_ACTIVATION", 5);  // Fees Paid (Estimation amount paid)
         statusIdMap.put("PENDING_FOR_CITIZEN_ACTION", 6);  // Objection Raised
-      //  statusIdMap.put("PENDING_FOR_FIELD_INSPECTION", 7);  // Objection Resolved
+        statusIdMap.put("PENDING_FOR_DOCUMENT_VERIFICATION", 7);  // Form Filled and Fee Pending
         statusIdMap.put("PENDING_FOR_PAYMENT", 8);  // Form Filled and Fee Pending
         statusIdMap.put("PENDING_FOR_FIELD_INSPECTION", 9);  // Pending for on-site inspection
         statusIdMap.put("PENDING_APPROVAL_FOR_CONNECTION", 10);  // Inspection done, pending for final approval
@@ -131,13 +131,14 @@ public class EODBredirect {
         statusDescMap.put("PENDING_FOR_CONNECTION_ACTIVATION", "Payment Raised (Estimation Notice Generated)");
         statusDescMap.put("REJECTED", "Rejected");
         statusDescMap.put("CONNECTION_ACTIVATED", "Clearance Issued");
-        statusDescMap.put("PENDING_FOR_CONNECTION_ACTIVATION", "Fees Paid (Estimation amount paid)");
+      //  statusDescMap.put("PENDING_FOR_CONNECTION_ACTIVATION", "Fees Paid (Estimation amount paid)");
         statusDescMap.put("PENDING_FOR_CITIZEN_ACTION", "Objection Raised");
-        //statusDescMap.put("PENDING_FOR_FIELD_INSPECTION", "Objection Resolved");
+        statusDescMap.put("PENDING_FOR_DOCUMENT_VERIFICATION", "Form Filled and Fee Pending");
         statusDescMap.put("PENDING_FOR_PAYMENT", "Form Filled and Fee Pending");
         statusDescMap.put("PENDING_FOR_FIELD_INSPECTION", "Pending for on-site inspection");
         statusDescMap.put("PENDING_APPROVAL_FOR_CONNECTION", "Inspection done, pending for final approval");
 
+        
         
         // Get the status from the connection and find the corresponding StatusId and StatusDesc
         String applicationStatus = connection.getWaterConnection().getApplicationStatus();
