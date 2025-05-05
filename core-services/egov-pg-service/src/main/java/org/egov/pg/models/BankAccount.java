@@ -54,6 +54,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,7 +62,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @EqualsAndHashCode(exclude = { "bankBranch", "chartOfAccount", "fund", "type" }, callSuper = false)
-
+@ToString
 public class BankAccount extends Auditable {
 
 	private String id;

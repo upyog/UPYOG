@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.GatewayStatus;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransferWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,6 +126,14 @@ public class GatewayService {
         log.info(GATEWAY_MAP.toString());
         log.info(TXN_IDS_KEY_SET.toString());
     }
+    
+	Object settlementAmount(Transaction transaction, TransferWrapper transferWrapper) throws CustomException {
+		if (!isGatewayActive(transaction.getGateway()))
+			throw new CustomException("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
+
+		Gateway gateway = getGateway(transaction.getGateway());
+		return gateway.transferAmount(transferWrapper);
+	}
 
 
 }

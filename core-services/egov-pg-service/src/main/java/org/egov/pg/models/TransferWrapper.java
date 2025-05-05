@@ -15,7 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Orders {
+public class TransferWrapper {
 
 	private List<Transfer> transfers;
 

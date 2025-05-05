@@ -192,6 +192,12 @@ public class Transaction {
 
 	@JsonProperty("bankTransactionNo")
 	private String bankTransactionNo;
+	
+	@JsonProperty("txnSettlementStatus")
+	private String txnSettlementStatus;
+	
+	@JsonProperty("settlementResponse")
+	private Object settlementResponse;
 
 	/**
 	 * Current status of the transaction

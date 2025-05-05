@@ -19,9 +19,9 @@ public class TransactionsSchedulerController {
 	@PostMapping("/transfer-amount")
 	public ResponseEntity<?> transferAmount(@RequestBody RequestInfoWrapper requestInfoWrapper) {
 
-//		transactionsSchedulerService.transferAmount(requestInfoWrapper);
+		transactionsSchedulerService.transferAmount(requestInfoWrapper);
 
-//		return ResponseEntity.ok("Amount transfered successfully!!!");
-		return ResponseEntity.ok(transactionsSchedulerService.transferAmount(requestInfoWrapper));
+		return ResponseEntity.ok("Amount transfered successfully!!!");
+//		return ResponseEntity.ok(transactionsSchedulerService.transferAmount(requestInfoWrapper));
 	}
 }

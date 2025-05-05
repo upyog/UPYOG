@@ -1,11 +1,10 @@
 package org.egov.pg.service;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.config.AppProperties;
 import org.egov.pg.models.BankAccountResponse;
+import org.egov.pg.models.BankAccountSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,15 +22,21 @@ public class BankAccountService {
 	@Autowired
 	private AppProperties appProperties;
 
-	public BankAccountResponse searchBankAccount(Set<String> tenantIds, RequestInfo requestInfo) {
+	public BankAccountResponse searchBankAccount(BankAccountSearchCriteria bankAccountSearchCriteria) {
 		StringBuilder url = new StringBuilder(appProperties.getEgfMasterHost());
 		url.append(appProperties.getEgfMasterBankaccountSearchEndpoint());
 
-		url.append("?tenantIds=").append(tenantIds.stream().collect(Collectors.joining(", ")));
+		url.append("?tenantIds=")
+				.append(bankAccountSearchCriteria.getTenantIds().stream().collect(Collectors.joining(", ")));
+
+		if (null != bankAccountSearchCriteria.getActive()) {
+			url.append("&active=").append(bankAccountSearchCriteria.getActive());
+		}
 
 		BankAccountResponse bankAccountResponse = null;
 		try {
-			bankAccountResponse = restTemplate.postForObject(url.toString(), requestInfo, BankAccountResponse.class);
+			bankAccountResponse = restTemplate.postForObject(url.toString(), bankAccountSearchCriteria.getRequestInfo(),
+					BankAccountResponse.class);
 		} catch (Exception e) {
 			log.error("Error occured while bank account search.", e);
 			throw new CustomException("BANK_ACCOUNT_SEARCH_ERROR",

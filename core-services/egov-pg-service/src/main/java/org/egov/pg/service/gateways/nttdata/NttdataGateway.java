@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransferWrapper;
 import org.egov.pg.service.Gateway;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -347,5 +348,11 @@ public class NttdataGateway implements Gateway {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public Object transferAmount(TransferWrapper transferWrapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

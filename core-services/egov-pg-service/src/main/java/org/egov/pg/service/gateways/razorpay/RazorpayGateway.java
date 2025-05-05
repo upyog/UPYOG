@@ -12,6 +12,8 @@ import java.util.Base64;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.Transfer;
+import org.egov.pg.models.TransferWrapper;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.service.gateways.razorpay.models.Order;
 import org.egov.pg.service.gateways.razorpay.models.Payment;
@@ -59,6 +61,8 @@ public class RazorpayGateway implements Gateway {
 	private final String MERCHANT_CREATE_ORDER_URL;
 
 	private final String MERCHANT_FETCH_PAYMENT_BY_ORDER_ID_URL;
+	
+	private final String MERCHANT_PAYMENT_TRANSFER_URL;
 
 	@Autowired
 	public RazorpayGateway(RestTemplate restTemplate, Environment environment, ObjectMapper objectMapper) {
@@ -72,6 +76,8 @@ public class RazorpayGateway implements Gateway {
 		MERCHANT_CREATE_ORDER_URL = environment.getRequiredProperty("razorpay.order.create.url");
 		MERCHANT_FETCH_PAYMENT_BY_ORDER_ID_URL = environment
 				.getRequiredProperty("razorpay.merchant.payments.orderid.fetch.url");
+		MERCHANT_PAYMENT_TRANSFER_URL = environment
+				.getRequiredProperty("razorpay.merchant.payments.transfer.url");
 	}
 
 	@Override
@@ -248,4 +254,27 @@ public class RazorpayGateway implements Gateway {
 	 public String generateRedirectFormData(Transaction transaction ) {
 		 return null;
 	 }
+
+	@Override
+	public Object transferAmount(TransferWrapper transferWrapper) {
+
+		Transfer transfer = transferWrapper.getTransfers().stream().findFirst().get();
+		// HttpHeaders
+		HttpHeaders headers = buildHttpHeaders();
+
+		String url = String.format(MERCHANT_PAYMENT_TRANSFER_URL, transfer.getNotes().getGatewayTxnId());
+
+		try {
+			// Make the POST request with Basic Authentication and get the response as an
+			// object
+			ResponseEntity<?> responseEntity = restTemplate.exchange(url, HttpMethod.POST,
+					new HttpEntity<>(transferWrapper, headers), Object.class);
+
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Unable to transfer amount for the orderId: " + transfer.getNotes().getOrderId(), e);
+			throw new CustomException("ERR_RAZORPAY_PG_SERVICE",
+					"Unable to transfer amount for the orderId: " + transfer.getNotes().getOrderId());
+		}
+	}
 }
