@@ -29,7 +29,6 @@ const TopBar = ({
   //     return <BackButton className="top-back-btn" />;
   //   }
   // };
-  console.log("hambuger-back-wrapper==",cityOfCitizenShownBesideLogo,hideNotificationIconOnSomeUrlsWhenNotLoggedIn)
   return (
     <div className="navbar">
       <div className="center-container back-wrapper" style={{display:"flex",justifyContent:"space-between"}}>
@@ -50,7 +49,7 @@ const TopBar = ({
             </div>
           {/* <span>Property Tax - Manipur</span> */}
           </a>
-          <h3>{cityOfCitizenShownBesideLogo}</h3>
+          <h3 style={{fontSize: "20px"}}>{cityOfCitizenShownBesideLogo} {cityOfCitizenShownBesideLogo ? 'MC' : ''}</h3>
         </div>
 
         <div className="RightMostTopBarOptions">

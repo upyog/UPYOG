@@ -11,9 +11,15 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
 
 
   function setPropertyfloorarea(e) {
-    setfloorarea(e.target.value);
-  }
+    let value = e.target.value;
 
+    // Allow only numbers with up to 2 decimals
+    value = value.replace(/^(\d+(\.\d{0,2})?).*$/, "$1");
+    setfloorarea(value);
+  }
+  // const onBlurArea = (e) => {
+  //   setfloorarea((prev) => (prev ? parseFloat(prev).toFixed(2) : ""));
+  // }
   const goNext = () => {
       onSelect("landArea", { floorarea });
   };
@@ -50,7 +56,9 @@ const Area = ({ t, config, onSelect, value, userType, formData, setError: setFor
         optionKey="i18nKey"
         name="floorarea"
         value={floorarea}
+        step="0.01"
         onChange={setPropertyfloorarea}
+        // onBlur={onBlurArea}
         {...(validation = { pattern: "^([0-9]){0,8}$", type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
       />
     </FormStep>

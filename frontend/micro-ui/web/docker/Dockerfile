@@ -6,6 +6,7 @@ ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"
 ENV GENERATE_SOURCEMAP "false"
+ENV REACT_APP_SECRET_KEY "PaXJBEnwt4tGSo/8"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
@@ -16,6 +17,8 @@ RUN cd web/ \
     && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
     && chmod +x install-deps.sh \
     && ./install-deps.sh \
+    && yarn cache clean --force \
+    && rm -rf node_modules \
     && yarn install \
     && yarn build 
 

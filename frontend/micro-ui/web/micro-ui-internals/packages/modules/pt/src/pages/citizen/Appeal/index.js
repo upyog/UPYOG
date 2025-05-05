@@ -93,10 +93,8 @@ const CitizenAppeal = (props) => {
   const actionButtonLabel = 'Select'
   const consumerCode = propertyIds && result?.data?.Properties?.map((a) => a.propertyId).join(",");
   const propertyOwnerName = propertyIds && result?.data?.Properties[0]?.owners?.map((a) => a.name).join(",");
-  console.log("propertyOwnerName==",propertyOwnerName)
   
   
-  console.log("ownerName==",ownerName)
   const ptAddress = propertyIds && result?.data?.Properties[0]?.address;
   let obj = {
     doorNo: ptAddress?.doorNo,
@@ -149,6 +147,7 @@ const CitizenAppeal = (props) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // console.log("---",name, value)
     setFormData({
         ...formData,
         [name]: value,
@@ -161,11 +160,11 @@ const CitizenAppeal = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("validateForm==",data)
+    // console.log("data==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {
-        if(!data[k]) {
+        if((k!= "assessingOfficerDesignation" && k!= "nameOfAssessingOfficer") && !data[k]) {
           return errors[k] = 'This field is required';
         }
     });
@@ -231,7 +230,6 @@ const CitizenAppeal = (props) => {
     try {
       // TODO: change module in file storage
       const response = await Digit.PTService.appealCreate({Appeal:payloadData});
-      console.log("response==",response)
       if (response?.Appeals?.length > 0) {
         setShowAcknowledgement(true);
         setAppealResponse(response);
@@ -256,7 +254,6 @@ const CitizenAppeal = (props) => {
   const removeProperty = (result, index)=> {
     propertyDetails.splice(index, 1);
     // setPropertyDetails(pDetails);
-    console.log("propertyDetails--",propertyDetails)
   }
   const [payloadData, setPayloadData] = useState({});
   
@@ -283,7 +280,6 @@ const CitizenAppeal = (props) => {
     }
     setPayloadData(payload)
     setCurrentStep(2);
-    console.log("payload===",payload);
   } else {
       return;
   }
@@ -318,7 +314,6 @@ const CitizenAppeal = (props) => {
               setError(t("PT_FILE_UPLOAD_ERROR"));
             }
           } catch (err) {
-            console.log("err==",err?.response?.data)
             setError(err?.response?.data?.Errors[0].message);
           }
         }
@@ -378,7 +373,6 @@ const CitizenAppeal = (props) => {
 
  const [agree, setAgree] = useState(false);
   const setdeclarationhandler = (e) => {
-    console.log("setdeclarationhandler==",e)
     setAgree(e);
     
   };
@@ -406,7 +400,7 @@ const CitizenAppeal = (props) => {
             </div>
             <div className="col-sm-4">
                 <label for="formControlInputPtAssessmentYear" class="form-label">Assessment Year*</label>
-                <input type="text" className={fieldError.assessmentYear ? "form-control error-message" : "form-control"} id="formControlInputPtAssessmentYear" name="assessmentYear" placeholder="Enter Assessment Year" value={formData.assessmentYear} onChange={handleChange} required />
+                <input type="text" className={fieldError.assessmentYear ? "form-control error-message" : "form-control"} id="formControlInputPtAssessmentYear" name="assessmentYear" placeholder="Enter Assessment Year(Ex: 0000-00)" value={formData.assessmentYear} onChange={handleChange} required />
                 {fieldError.assessmentYear &&
                         <span className="error-message">
                             {fieldError.assessmentYear}
@@ -417,9 +411,9 @@ const CitizenAppeal = (props) => {
         
         <div className="row appeal-row-cls">
             <div className="col-sm-4">
-                <label for="formControlInputPtAssessingOfcrName" class="form-label">Name of Assessing Officer*</label>
+                <label for="formControlInputPtAssessingOfcrName" class="form-label">Name of Assessing Officer</label>
                 {/* <input type="text" class="form-control" id="formControlInputPtAssessingOfcrName" placeholder="Enter Name of Assessing Officer" value={nameOfAssessingOfficer} onChange={(e)=>setNameOfAssessingOfficer(e?.target?.value)} required /> */}
-                <input type="text" className={fieldError.nameOfAssessingOfficer ? "form-control error-message" : "form-control"} id="formControlInputPtAssessingOfcrName" placeholder="Enter Name of Assessing Officer" name="nameOfAssessingOfficer" value={formData.nameOfAssessingOfficer} onChange={handleChange} required />
+                <input type="text" className={fieldError.nameOfAssessingOfficer ? "form-control error-message" : "form-control"} id="formControlInputPtAssessingOfcrName" placeholder="Enter Name of Assessing Officer" name="nameOfAssessingOfficer" value={formData.nameOfAssessingOfficer} onChange={handleChange} />
                 {fieldError.nameOfAssessingOfficer &&
                         <span className="error-message">
                             {fieldError.nameOfAssessingOfficer}
@@ -427,9 +421,9 @@ const CitizenAppeal = (props) => {
                     }
             </div>
             <div className="col-sm-4">
-                <label for="formControlInputPtAssissingDesg" class="form-label">Designation*</label>
+                <label for="formControlInputPtAssissingDesg" class="form-label">Designation</label>
                 {/* <input type="text" class="form-control" id="formControlInputPtAssissingDesg" placeholder="Enter Designation" value={assessingOfficerDesignation} onChange={(e)=>setAssessingOfficerDesignation(e?.target?.value)} required/> */}
-                <input type="text" className={fieldError.assessingOfficerDesignation ? "form-control error-message" : "form-control"} id="formControlInputPtAssissingDesg" placeholder="Enter Designation" name="assessingOfficerDesignation" value={formData.assessingOfficerDesignation} onChange={handleChange} required />
+                <input type="text" className={fieldError.assessingOfficerDesignation ? "form-control error-message" : "form-control"} id="formControlInputPtAssissingDesg" placeholder="Enter Designation" name="assessingOfficerDesignation" value={formData.assessingOfficerDesignation} onChange={handleChange} />
                 {fieldError.assessingOfficerDesignation &&
                         <span className="error-message">
                             {fieldError.assessingOfficerDesignation}

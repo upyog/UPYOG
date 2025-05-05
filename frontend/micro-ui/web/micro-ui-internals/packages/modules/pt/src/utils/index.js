@@ -26,7 +26,7 @@ export const getPropertyUsageTypeLocale = (value = "") => {
 };
 
 export const getPropertySubUsageTypeLocale = (value = "") => {
-  return convertToLocale(value, "COMMON_PROPSUBUSGTYPE");
+  return convertToLocale(value, "COMMON_PROPUSGTYPE");
 };
 export const getPropertyOccupancyTypeLocale = (value = "") => {
   return convertToLocale(value, "PROPERTYTAX_OCCUPANCYTYPE");
@@ -48,6 +48,15 @@ export const getCityLocale = (value = "") => {
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(convertedValue, `TENANT_TENANTS`);
+};
+
+export const getTypeOfRoad = (value = "") => {
+  let convertedValue = convertDotValues(value);
+  if (convertedValue == "NA" || !checkForNotNull(value)) {
+    return "PT_NA";
+  }
+  convertedValue = convertedValue.toUpperCase();
+  return convertToLocale(convertedValue, `PROPERTYTAX_ROADTYPE`);
 };
 
 export const getPropertyOwnerTypeLocale = (value = "") => {
@@ -169,49 +178,79 @@ export const setOwnerDetails = (data) => {
 };
 
 export const setDocumentDetails = (data) => {
-  const { address, owners, exemption, propertyPhoto } = data;
+  console.log("setDocumentDetails==",setDocumentDetails)
+  const { address, owners, exemption, buildingPermission, propertyPhoto } = data;
+  console.log("setDocumentDetails--address==",address)
+  console.log("setDocumentDetails--owners==",owners)
+  console.log("setDocumentDetails--exemption==",exemption)
+
+  console.log("setDocumentDetails--buildingPermission==",buildingPermission)
+  console.log("setDocumentDetails--propertyPhoto==",propertyPhoto)
   let documents = [];
-  if (address?.documents["ProofOfAddress"]?.id) {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-      id: address?.documents["ProofOfAddress"]?.id || "",
-      status: address?.documents["ProofOfAddress"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-    });
+  if(address) {
+    if (address?.documents["ProofOfAddress"]?.id) {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+        id: address?.documents["ProofOfAddress"]?.id || "",
+        status: address?.documents["ProofOfAddress"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || address?.documents["ProofOfAddress"]?.documentType || "",
+      });
+    }
   }
-
-  if (exemption?.documents["exemptionProof"]?.id) {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
-      id: exemption?.documents["exemptionProof"]?.id || "",
-      status: exemption?.documents["exemptionProof"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
-    });
+  
+  if(buildingPermission && buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId && buildingPermission?.buildingPermissionRequired?.code=="PT_COMMON_YES") {
+    if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
+        id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
+        status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
+      });
+    }
   }
-
-  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
-      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
-      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
-    });
+  
+  if(exemption && exemption?.documents["exemptionProof"]?.fileStoreId && exemption?.exemptionRequired?.code=="PT_COMMON_YES") {
+    if (exemption?.documents["exemptionProof"]?.id) {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+        id: exemption?.documents["exemptionProof"]?.id || "",
+        status: exemption?.documents["exemptionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+      });
+    }
   }
+  
+  if(propertyPhoto) {
+    if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+        id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+        status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+      });
+    }
+  }
+  
 
   owners &&
     owners.length > 0 &&
@@ -524,9 +563,10 @@ export const setPropertyDetails = (data) => {
       units: data?.units,
       landArea: data?.landArea?.floorarea,
       propertyType: data?.PropertyType?.code,
-      noOfFloors: data?.noOfFloors?.code+1,
+      noOfFloors: data?.noOfFloors?.code + 1,
       superBuiltUpArea: null,
       usageCategory: data?.units?.[0]?.usageCategory,
+      VacantUsagecategory: getUsageType(data),
     };
   } else {
     propertyDetails = {
@@ -555,7 +595,7 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
-  console.log("convertToProperty=",data);
+  // console.log("convertToProperty=", data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -569,29 +609,29 @@ export const convertToProperty = (data = {}) => {
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
   let amalgamationDetails = null;
-  if(data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" && data?.amalgamationDetails?.propertyDetails.length>0) {
-    let arr=[];
-    data?.amalgamationDetails?.propertyDetails.map((e)=>{
+  if (data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" && data?.amalgamationDetails?.propertyDetails.length > 0) {
+    let arr = [];
+    data?.amalgamationDetails?.propertyDetails.map((e) => {
       let obj = {};
-      obj['propertyId'] = e.property_id;
-      obj['tenantId'] = e.tenantId;
-      arr.push(obj)
-    })
-    
-    amalgamationDetails = arr
-  };
+      obj["propertyId"] = e.property_id;
+      obj["tenantId"] = e.tenantId;
+      arr.push(obj);
+    });
+
+    amalgamationDetails = arr;
+  }
   let bifurcationDetails = null;
   let parentPropertyId = null;
   let maxBifurcation = null;
-  if(data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" && data?.bifurcationDetails?.propertyDetails) {
+  if (data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" && data?.bifurcationDetails?.propertyDetails) {
     let obj = {};
-      obj['propertyId'] = data?.bifurcationDetails?.propertyDetails?.propertyId;
-      obj['tenantId'] = data?.bifurcationDetails?.propertyDetails?.tenantId;
-    
-      bifurcationDetails = obj
-      parentPropertyId = data?.bifurcationDetails?.propertyDetails?.propertyId;
-      maxBifurcation = 2;
-  };
+    obj["propertyId"] = data?.bifurcationDetails?.propertyDetails?.propertyId;
+    obj["tenantId"] = data?.bifurcationDetails?.propertyDetails?.tenantId;
+
+    bifurcationDetails = obj;
+    parentPropertyId = data?.bifurcationDetails?.propertyDetails?.propertyId;
+    maxBifurcation = 2;
+  }
   let isPartOfProperty = data?.isPartOfProperty;
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
@@ -604,7 +644,7 @@ export const convertToProperty = (data = {}) => {
       tenantId: data.tenantId,
       address: data.address,
       exemption: data.exemption,
-      usageCategory: data?.usageCategory?.code || '',
+      usageCategory: data?.usageCategory?.code || "",
 
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
@@ -634,10 +674,14 @@ export const convertToProperty = (data = {}) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
-        
       },
 
-      creationReason: data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation" ? 'AMALGAMATION' : data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION" ? 'BIFURCATION' : getCreationReason(data),
+      creationReason:
+        data?.amalgamationDetails && data?.amalgamationDetails?.action == "Amalgamation"
+          ? "AMALGAMATION"
+          : data?.bifurcationDetails && data?.bifurcationDetails?.action == "BIFURCATION"
+          ? "BIFURCATION"
+          : getCreationReason(data),
       source: "MUNICIPAL_RECORDS",
       channel: "CITIZEN",
     },
@@ -647,31 +691,19 @@ export const convertToProperty = (data = {}) => {
 
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
-Object.keys(ob1).map((key) =>{
-  if(typeof ob1[key] == "object")
-  {
-    if(key == "institution")
-    {
-      if((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name)
-      comp=1
-      else if(ob1[key]?.type?.code !== ob2[key]?.type?.code)
-      comp=1
-      
+  Object.keys(ob1).map((key) => {
+    if (typeof ob1[key] == "object") {
+      if (key == "institution") {
+        if ((ob1[key].name || ob2[key].name) && ob1[key]?.name !== ob2[key]?.name) comp = 1;
+        else if (ob1[key]?.type?.code !== ob2[key]?.type?.code) comp = 1;
+      } else if (ob1[key]?.code !== ob2[key]?.code) comp = 1;
+    } else {
+      if ((ob1[key] || ob2[key]) && ob1[key] !== ob2[key]) comp = 1;
     }
-    else if(ob1[key]?.code !== ob2[key]?.code)
-    comp=1
-  }
-  else
-  {
-    if((ob1[key] || ob2[key]) && ob1[key] !== ob2[key])
-    comp=1
-  }
-});
-if(comp==1)
-return false
-else
-return true;
-}
+  });
+  if (comp == 1) return false;
+  else return true;
+};
 
 export const setUpdateOwnerDetails = (data = []) => {
   const { institution, owners } = data;
@@ -751,49 +783,82 @@ export const setUpdateOwnerDetails = (data = []) => {
   return data;
 };
 export const setUpdatedDocumentDetails = (data) => {
-  const { address, owners, exemption, propertyPhoto } = data;
+  console.log("setUpdatedDocumentDetails==",data)
+  const { address, owners, exemption, buildingPermission, propertyPhoto } = data;
+
+  console.log("setUpdatedDocumentDetails--address==",address)
+  console.log("setUpdatedDocumentDetails--owners==",owners)
+  console.log("setUpdatedDocumentDetails--exemption==",exemption)
+
+  console.log("setUpdatedDocumentDetails--buildingPermission==",buildingPermission)
+  console.log("setUpdatedDocumentDetails--propertyPhoto==",propertyPhoto)
   let documents = [];
-  if (address?.documents["ProofOfAddress"]?.id) {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-      id: address?.documents["ProofOfAddress"]?.id || "",
-      status: address?.documents["ProofOfAddress"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-    });
+  if(address) {
+    if (address?.documents["ProofOfAddress"]?.id) {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+        id: address?.documents["ProofOfAddress"]?.id || "",
+        status: address?.documents["ProofOfAddress"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
+        documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+      });
+    }
   }
+ 
 
-  if (exemption?.documents["exemptionProof"]?.id) {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
-      id: exemption?.documents["exemptionProof"]?.id || "",
-      status: exemption?.documents["exemptionProof"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
-      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
-    });
+  if(buildingPermission) {
+    if (buildingPermission?.documents["buildingPermissionProof"]?.id) {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
+        id: buildingPermission?.documents["buildingPermissionProof"]?.id || "",
+        status: buildingPermission?.documents["buildingPermissionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: buildingPermission?.documents["buildingPermissionProof"]?.fileStoreId || "",
+        documentType: buildingPermission?.documents["buildingPermissionProof"]?.documentType?.code || buildingPermission?.documents["buildingPermissionProof"]?.documentType || "",
+      });
+    }
   }
-
-  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
-      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
-      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
-      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
-    });
+  
+  if(exemption && exemption?.documents["exemptionProof"]?.fileStoreId && exemption?.exemptionRequired?.code=="PT_COMMON_YES") {
+    if (exemption?.documents["exemptionProof"]?.id) {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType?.code || exemption?.documents["exemptionProof"]?.documentType || "",
+        id: exemption?.documents["exemptionProof"]?.id || "",
+        status: exemption?.documents["exemptionProof"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+        documentType: exemption?.documents["exemptionProof"]?.documentType?.code || exemption?.documents["exemptionProof"]?.documentType || "",
+      });
+    }
   }
+  
+  console.log("propertyPhoto?.documents==",propertyPhoto?.documents["propertyPhoto"])
+  if(propertyPhoto) {
+    if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+        id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+        status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+      });
+    } else {
+      documents.push({
+        fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+        documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+      });
+    }
+  }
+  
 
   owners &&
     owners.length > 0 &&
@@ -806,7 +871,7 @@ export const setUpdatedDocumentDetails = (data) => {
   return data;
 };
 export const convertToUpdateProperty = (data = {}, t) => {
-  console.log("convertToUpdateProperty==",data)
+  console.log("convertToUpdateProperty==", data);
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -817,9 +882,12 @@ export const convertToUpdateProperty = (data = {}, t) => {
   let noOfFloors = data?.noOfFloors;
   let noOofBasements = data?.noOofBasements;
   let unit = data?.units;
-  data.units = data?.units?.map((ob) => {return({
-    ...ob, unitType : ob?.unitType?.code
-  })})
+  data.units = data?.units?.map((ob) => {
+    return {
+      ...ob,
+      unitType: ob?.unitType?.code,
+    };
+  });
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
   data = setAddressDetails(data);
@@ -827,7 +895,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
   data = setUpdatedDocumentDetails(data);
   data = setPropertyDetails(data);
   data = setExemptionDetails(data);
-  data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
+  data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(), ".", "_")}`);
   let isPartOfProperty = data?.isPartOfProperty;
 
   const formdata = {
@@ -840,7 +908,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
       tenantId: data.tenantId,
       address: data.address,
       exemption: data.exemption,
-      usageCategory: data?.usageCategory?.code || '',
+      usageCategory: data?.usageCategory?.code || "",
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
       institution: data.institution || null,
@@ -966,7 +1034,7 @@ export const pdfDocumentName = (documentLink = "", index = 0) => {
 };
 
 /* methid to get date from epoch */
-export const convertEpochToDate = (dateEpoch,businessService) => {
+export const convertEpochToDate = (dateEpoch, businessService) => {
   // Returning null in else case because new Date(null) returns initial date from calender
   if (dateEpoch) {
     const dateFromApi = new Date(dateEpoch);
@@ -975,10 +1043,8 @@ export const convertEpochToDate = (dateEpoch,businessService) => {
     let year = dateFromApi.getFullYear();
     month = (month > 9 ? "" : "0") + month;
     day = (day > 9 ? "" : "0") + day;
-    if(businessService == "PT")
-    return `${day}-${month}-${year}`;
-    else
-    return `${day}/${month}/${year}`;
+    if (businessService == "PT") return `${day}-${month}-${year}`;
+    else return `${day}/${month}/${year}`;
   } else {
     return null;
   }
@@ -993,207 +1059,224 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
 };
 
 // export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
-//   console.log("DownloadReceipt===")
 //   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  
+
 //   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
 // };
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,payments,pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey = "consolidatedreceipt") => {
+  // console.log("============", consumerCode, tenantId, businessService, receiptNumber, payments, pdfKey);
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
   let response = { filestoreIds: [payments?.fileStoreId] };
-  if (!payments?.fileStoreId) {
-    let assessmentYear="",assessmentYearForReceipt="";
-    let count=0;
-    let toDate,fromDate;
-  if(payments.paymentDetails[0].businessService=="PT"){
-     let arrearRow={};  let arrearArray=[];
-        let taxRow={};  let taxArray=[];
-       
+  // if (!payments?.fileStoreId) {
+    let assessmentYear = "",
+      assessmentYearForReceipt = "";
+    let count = 0;
+    let toDate, fromDate;
+    if (payments.paymentDetails[0].businessService == "PT") {
+      let arrearRow = {};
+      let arrearArray = [];
+      let taxRow = {};
+      let taxArray = [];
 
-        let roundoff=0,tax=0,firecess=0,cancercess=0,penalty=0,rebate=0,interest=0,usage_exemption=0,special_category_exemption=0,adhoc_penalty=0,adhoc_rebate=0,total=0;
-        let roundoffT=0,taxT=0,firecessT=0,cancercessT=0,penaltyT=0,rebateT=0,interestT=0,usage_exemptionT=0,special_category_exemptionT=0,adhoc_penaltyT=0,adhoc_rebateT=0,totalT=0;
+      let roundoff = 0,
+        tax = 0,
+        firecess = 0,
+        cancercess = 0,
+        penalty = 0,
+        rebate = 0,
+        interest = 0,
+        usage_exemption = 0,
+        special_category_exemption = 0,
+        adhoc_penalty = 0,
+        adhoc_rebate = 0,
+        total = 0;
+      let roundoffT = 0,
+        taxT = 0,
+        firecessT = 0,
+        cancercessT = 0,
+        penaltyT = 0,
+        rebateT = 0,
+        interestT = 0,
+        usage_exemptionT = 0,
+        special_category_exemptionT = 0,
+        adhoc_penaltyT = 0,
+        adhoc_rebateT = 0,
+        totalT = 0;
 
-   
-        payments.paymentDetails[0].bill.billDetails.map(element => {
+      payments.paymentDetails[0].bill.billDetails.map((element) => {
+        if (element.amount > 0 || element.amountPaid > 0) {
+          count = count + 1;
+          toDate = convertEpochToDate(element.toPeriod).split("/")[2];
+          fromDate = convertEpochToDate(element.fromPeriod).split("/")[2];
+          assessmentYear =
+            assessmentYear == ""
+              ? fromDate + "-" + toDate + "(Rs." + element.amountPaid + ")"
+              : assessmentYear + "," + fromDate + "-" + toDate + "(Rs." + element.amountPaid + ")";
+          assessmentYearForReceipt = fromDate + "-" + toDate;
 
-        if(element.amount >0 || element.amountPaid>0)
-        { count=count+1;
-          toDate=convertEpochToDate(element.toPeriod).split("/")[2];
-          fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
-          assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
-          assessmentYearForReceipt=fromDate+"-"+toDate;
-        
-     element.billAccountDetails.map(ele => {
-    if(ele.taxHeadCode == "PT_TAX")
-  {tax=ele.adjustedAmount;
-    taxT=ele.amount}
-  else if(ele.taxHeadCode == "PT_TIME_REBATE")
-  {rebate=ele.adjustedAmount;
-    rebateT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_CANCER_CESS")
-  {cancercess=ele.adjustedAmount;
-  cancercessT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_FIRE_CESS")
-  {firecess=ele.adjustedAmount;
-    firecessT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_TIME_INTEREST")
-  {interest=ele.adjustedAmount;
-    interestT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_TIME_PENALTY")
-  {penalty=ele.adjustedAmount;
-    penaltyT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
-  {special_category_exemption=ele.adjustedAmount;
-    special_category_exemptionT=ele.amount;}	
-  else if(ele.taxHeadCode == "PT_ROUNDOFF")
-  {roundoff=ele.adjustedAmount;
-    roundoffT=ele.amount;}	
-  else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
-  {usage_exemption=ele.adjustedAmount;
-    usage_exemptionT=ele.amount;}	
-  else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
-  {adhoc_penalty=ele.adjustedAmount;
-    adhoc_penaltyT=ele.amount;}
-  else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
-  {adhoc_rebate=ele.adjustedAmount;
-    adhoc_rebateT=ele.amount;}
+          element.billAccountDetails.map((ele) => {
+            if (ele.taxHeadCode == "PT_TAX") {
+              tax = ele.adjustedAmount;
+              taxT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_TIME_REBATE") {
+              rebate = ele.adjustedAmount;
+              rebateT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_CANCER_CESS") {
+              cancercess = ele.adjustedAmount;
+              cancercessT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_FIRE_CESS") {
+              firecess = ele.adjustedAmount;
+              firecessT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_TIME_INTEREST") {
+              interest = ele.adjustedAmount;
+              interestT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_TIME_PENALTY") {
+              penalty = ele.adjustedAmount;
+              penaltyT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_OWNER_EXEMPTION") {
+              special_category_exemption = ele.adjustedAmount;
+              special_category_exemptionT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_ROUNDOFF") {
+              roundoff = ele.adjustedAmount;
+              roundoffT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION") {
+              usage_exemption = ele.adjustedAmount;
+              usage_exemptionT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_ADHOC_PENALTY") {
+              adhoc_penalty = ele.adjustedAmount;
+              adhoc_penaltyT = ele.amount;
+            } else if (ele.taxHeadCode == "PT_ADHOC_REBATE") {
+              adhoc_rebate = ele.adjustedAmount;
+              adhoc_rebateT = ele.amount;
+            }
 
-  totalT=totalT+ele.amount;
-  });
-arrearRow={
-"year":assessmentYearForReceipt,
-"tax":tax,
-"firecess":firecess,
-"cancercess":cancercess,
-"penalty":penalty,
-"rebate": rebate,
-"interest":interest,
-"usage_exemption":usage_exemption,
-"special_category_exemption": special_category_exemption,
-"adhoc_penalty":adhoc_penalty,
-"adhoc_rebate":adhoc_rebate,
-"roundoff":roundoff,
-"total":element.amountPaid
-};
-taxRow={
-  "year":assessmentYearForReceipt,
-  "tax":taxT,
-  "firecess":firecessT,
-  "cancercess":cancercessT,
-  "penalty":penaltyT,
-  "rebate": rebateT,
-  "interest":interestT,
-  "usage_exemption":usage_exemptionT,
-  "special_category_exemption": special_category_exemptionT,
-  "adhoc_penalty":adhoc_penaltyT,
-  "adhoc_rebate":adhoc_rebateT,
-  "roundoff":roundoffT,
-  "total":element.amount
-  };
-arrearArray.push(arrearRow);
-taxArray.push(taxRow);
-          } 
- 
-  
-        });
-
-        if(count==0)
-        {
-          let toDate=convertEpochToDate( payments.paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
-          let fromDate=convertEpochToDate( payments.paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
-          assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
-          assessmentYearForReceipt=fromDate+"-"+toDate;
-       
-        
-          payments.paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
-       
-      if(ele.taxHeadCode == "PT_TAX")
-      {tax=ele.adjustedAmount;
-      taxT=ele.amount}
-      else if(ele.taxHeadCode == "PT_TIME_REBATE")
-      {rebate=ele.adjustedAmount;
-      rebateT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_CANCER_CESS")
-      {cancercess=ele.adjustedAmount;
-      cancercessT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_FIRE_CESS")
-      {firecess=ele.adjustedAmount;
-      firecessT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_TIME_INTEREST")
-      {interest=ele.adjustedAmount;
-      interestT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_TIME_PENALTY")
-      {penalty=ele.adjustedAmount;
-      penaltyT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_OWNER_EXEMPTION")
-      {special_category_exemption=ele.adjustedAmount;
-      special_category_exemptionT=ele.amount;}	
-      else if(ele.taxHeadCode == "PT_ROUNDOFF")
-      {roundoff=ele.adjustedAmount;
-      roundoffT=ele.amount;}	
-      else if(ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION")
-      {usage_exemption=ele.adjustedAmount;
-      usage_exemptionT=ele.amount;}	
-      else if(ele.taxHeadCode == "PT_ADHOC_PENALTY")
-      {adhoc_penalty=ele.adjustedAmount;
-      adhoc_penaltyT=ele.amount;}
-      else if(ele.taxHeadCode == "PT_ADHOC_REBATE")
-      {adhoc_rebate=ele.adjustedAmount;
-      adhoc_rebateT=ele.amount;}
-    
-      total=total+ele.adjustedAmount;
-      totalT=totalT+ele.amount;
-
-      });
-    arrearRow={
-    "year":assessmentYearForReceipt,
-    "tax":tax,
-    "firecess":firecess,
-    "cancercess":cancercess,
-    "penalty":penalty,
-    "interest":interest,
-    "usage_exemption":usage_exemption,
-    "special_category_exemption": special_category_exemption,
-    "adhoc_penalty":adhoc_penalty,
-    "adhoc_rebate":adhoc_rebate,
-    "roundoff":roundoff,
-    "total": payments.paymentDetails[0].bill.billDetails[0].amountPaid
-
-    };
-    taxRow={
-      "year":assessmentYearForReceipt,
-      "tax":taxT,
-      "firecess":firecessT,
-      "cancercess":cancercessT,
-      "penalty":penaltyT,
-      "rebate": rebateT,
-      "interest":interestT,
-      "usage_exemption":usage_exemptionT,
-      "special_category_exemption": special_category_exemptionT,
-      "adhoc_penalty":adhoc_penaltyT,
-      "adhoc_rebate":adhoc_rebateT,
-      "roundoff":roundoffT,
-      "total": payments.paymentDetails[0].bill.billDetails[0].amount
-    };
-    arrearArray.push(arrearRow);
-    taxArray.push(taxRow);
-    
-}  
-     
-  const details = {
-      "assessmentYears": assessmentYear,
-      "arrearArray":arrearArray,
-      "taxArray": taxArray
-          }
-    payments.paymentDetails[0].additionalDetails=details;   
+            totalT = totalT + ele.amount;
+          });
+          arrearRow = {
+            year: assessmentYearForReceipt,
+            tax: tax,
+            firecess: firecess,
+            cancercess: cancercess,
+            penalty: penalty,
+            rebate: rebate,
+            interest: interest,
+            usage_exemption: usage_exemption,
+            special_category_exemption: special_category_exemption,
+            adhoc_penalty: adhoc_penalty,
+            adhoc_rebate: adhoc_rebate,
+            roundoff: roundoff,
+            total: element.amountPaid,
+          };
+          taxRow = {
+            year: assessmentYearForReceipt,
+            tax: taxT,
+            firecess: firecessT,
+            cancercess: cancercessT,
+            penalty: penaltyT,
+            rebate: rebateT,
+            interest: interestT,
+            usage_exemption: usage_exemptionT,
+            special_category_exemption: special_category_exemptionT,
+            adhoc_penalty: adhoc_penaltyT,
+            adhoc_rebate: adhoc_rebateT,
+            roundoff: roundoffT,
+            total: element.amount,
+          };
+          arrearArray.push(arrearRow);
+          taxArray.push(taxRow);
         }
+      });
+
+      if (count == 0) {
+        let toDate = convertEpochToDate(payments.paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+        let fromDate = convertEpochToDate(payments.paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+        assessmentYear = assessmentYear == "" ? fromDate + "-" + toDate : assessmentYear + "," + fromDate + "-" + toDate;
+        assessmentYearForReceipt = fromDate + "-" + toDate;
+
+        payments.paymentDetails[0].bill.billDetails[0].billAccountDetails.map((ele) => {
+          if (ele.taxHeadCode == "PT_TAX") {
+            tax = ele.adjustedAmount;
+            taxT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_TIME_REBATE") {
+            rebate = ele.adjustedAmount;
+            rebateT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_CANCER_CESS") {
+            cancercess = ele.adjustedAmount;
+            cancercessT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_FIRE_CESS") {
+            firecess = ele.adjustedAmount;
+            firecessT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_TIME_INTEREST") {
+            interest = ele.adjustedAmount;
+            interestT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_TIME_PENALTY") {
+            penalty = ele.adjustedAmount;
+            penaltyT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_OWNER_EXEMPTION") {
+            special_category_exemption = ele.adjustedAmount;
+            special_category_exemptionT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_ROUNDOFF") {
+            roundoff = ele.adjustedAmount;
+            roundoffT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_UNIT_USAGE_EXEMPTION") {
+            usage_exemption = ele.adjustedAmount;
+            usage_exemptionT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_ADHOC_PENALTY") {
+            adhoc_penalty = ele.adjustedAmount;
+            adhoc_penaltyT = ele.amount;
+          } else if (ele.taxHeadCode == "PT_ADHOC_REBATE") {
+            adhoc_rebate = ele.adjustedAmount;
+            adhoc_rebateT = ele.amount;
+          }
+
+          total = total + ele.adjustedAmount;
+          totalT = totalT + ele.amount;
+        });
+        arrearRow = {
+          year: assessmentYearForReceipt,
+          tax: tax,
+          firecess: firecess,
+          cancercess: cancercess,
+          penalty: penalty,
+          interest: interest,
+          usage_exemption: usage_exemption,
+          special_category_exemption: special_category_exemption,
+          adhoc_penalty: adhoc_penalty,
+          adhoc_rebate: adhoc_rebate,
+          roundoff: roundoff,
+          total: payments.paymentDetails[0].bill.billDetails[0].amountPaid,
+        };
+        taxRow = {
+          year: assessmentYearForReceipt,
+          tax: taxT,
+          firecess: firecessT,
+          cancercess: cancercessT,
+          penalty: penaltyT,
+          rebate: rebateT,
+          interest: interestT,
+          usage_exemption: usage_exemptionT,
+          special_category_exemption: special_category_exemptionT,
+          adhoc_penalty: adhoc_penaltyT,
+          adhoc_rebate: adhoc_rebateT,
+          roundoff: roundoffT,
+          total: payments.paymentDetails[0].bill.billDetails[0].amount,
+        };
+        arrearArray.push(arrearRow);
+        taxArray.push(taxRow);
+      }
+
+      const details = {
+        assessmentYears: assessmentYear,
+        arrearArray: arrearArray,
+        taxArray: taxArray,
+      };
+      payments.paymentDetails[0].additionalDetails = details;
+    }
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
-  }
-    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response?.filestoreIds[0]], "_blank");
-
+  // }
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  window.open(fileStore[response?.filestoreIds[0]], "_blank");
 };
-
 
 export const checkIsAnArray = (obj = []) => {
   return obj && Array.isArray(obj) ? true : false;
@@ -1211,5 +1294,181 @@ export const getWorkflow = (data = {}) => {
 };
 
 export const getCreationReason = (data = {}) => {
-  return data?.isUpdateProperty  ? "UPDATE" : "CREATE";
+  return data?.isUpdateProperty ? "UPDATE" : "CREATE";
+};
+
+export const printNotice = (e = null, divId = "", tenant="") => {
+  if(e && divId && tenant) {
+    var printContents = document.getElementById(divId).innerHTML;
+    // var originalContents = document.body.innerHTML;
+
+    // document.body.innerHTML = printContents;
+
+    // window.print();
+
+    // document.body.innerHTML = originalContents;
+    // return false;
+
+    // Create a new window for printing
+    var printWindow = window.open('', '', 'height=600,width=800');
+     // Check if the new window is ready (not about:blank)
+     printWindow.document.open();
+
+    // Add a header and the content to print
+    printWindow.document.write('<html><head><title></title>');
+    printWindow.document.write(`<style>
+      body{font-family: Arial, sans-serif;}
+      .print-header{
+        border-bottom: 1px solid;
+        margin-bottom: 20px;
+      } 
+      .h1 {
+        color: rgba(11, 12, 12, var(--text-opacity));
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .mn-cls {
+          font-size: 24px;
+          position: relative;
+          top: -40px;
+          left: 20px;
+      }
+      .card .card-label, .card-emp .card-label {
+        font-size: 16px;
+        font-weight: 400;
+        
+        --text-opacity: 1;
+        color: #0b0c0c;
+        color: rgba(11, 12, 12, var(--text-opacity));
+        margin-bottom: 8px;
+      }
+      .employee-card-input, .employee-select-wrap {
+        border: none !important;
+      
+      font-weight: bold;
+      }
+      .assment-yr-cls h2 {
+        position: relative !important;
+        top: 30px !important;
+      }
+      .employee-select-wrap--elipses {
+        border: none;
+        font-weight: bold;
+
+      }
+      .employee-select-wrap, .select-wrap {
+        position: relative !important;
+        top: 30px !important;
+      }
+      .select .cp {
+        display: none;
+      }
+      tr td {
+        text-align: center;
+      }
+      .content{margin: 20px;}
+      .notice-txt {
+        padding: 0 !important;
+      }
+      .checkbox-wrap {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: inline-block;
+        margin-bottom: 16px;
+        position: relative;
+        -webkit-box-align: baseline;
+        -ms-flex-align: baseline;
+        align-items: baseline; }
+        .checkbox-wrap input, .checkbox-wrap .input-emp {
+          width: 38px;
+          height: 38px;
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 10; }
+        .checkbox-wrap .input-emp {
+          width: 24px;
+          height: 24px; }
+        .checkbox-wrap .custom-checkbox, .checkbox-wrap .custom-checkbox-emp {
+          width: 30px;
+          height: 30px;
+          border-radius: 6px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          --border-opacity:1;
+          border: 1px solid #464646;
+          border-color: rgba(70, 70, 70, var(--border-opacity));
+          z-index: 0; }
+          .checkbox-wrap .custom-checkbox img, .checkbox-wrap .custom-checkbox-emp img, .checkbox-wrap .custom-checkbox svg, .checkbox-wrap .custom-checkbox-emp svg {
+            opacity: 0;
+            }
+        .checkbox-wrap .custom-checkbox-emp {
+          width: 24px;
+          height: 24px; }
+        .checkbox-wrap input:checked ~ .custom-checkbox, .checkbox-wrap .input-emp:checked ~ .custom-checkbox, .checkbox-wrap input:checked ~ .custom-checkbox-emp, .checkbox-wrap .input-emp:checked ~ .custom-checkbox-emp, .checkbox-wrap input:hover ~ .custom-checkbox, .checkbox-wrap .input-emp:hover ~ .custom-checkbox, .checkbox-wrap input:hover ~ .custom-checkbox-emp, .checkbox-wrap .input-emp:hover ~ .custom-checkbox-emp {
+          border-width: 1px;
+          --border-opacity:1;
+          border-color: #0f4f9e;
+          border-color: #0f4f9e; }
+        .checkbox-wrap input.checked ~ .custom-checkbox-emp svg {
+          opacity: 1; 
+        }
+        .checkbox-wrap .label {
+          margin-left: 34px;
+          font-size: 16px;
+          line-height: 20px;
+          --text-opacity:1;
+          color: #0b0c0c;
+          color: rgba(11, 12, 12, var(--text-opacity));
+          position: relative;
+          top: -2px; 
+        }
+      .label {
+        font-size: 100% !important;
+        color: inherit !important;
+        text-align: left !important;
+        white-space: normal;
+      }
+      ol, ul {
+        list-style: none;
+        padding: 0;
+      }
+      @media print {
+        #printPageButton {
+          display: none;
+        }
+        .assment-yr-cls {
+          top: -35px !important;
+        }
+      }
+      @media print {
+        .notice-txt li {
+          width: 100% !important;
+        }
+        .notice-txt li div {
+          width: 100% !important;
+        }
+      }
+      @page { size: auto;  margin: 0mm; }
+    </style></head><body>`);
+    
+    // Add a header
+    printWindow.document.write(`<div class="print-header"><img src="https://mnptapp-terraform.s3.ap-south-1.amazonaws.com/images/trlogo2.png" height="80px" /><span class="mn-cls">${tenant} Municipal Corporation</span></div>`);
+
+    // Add the content to print
+    printWindow.document.write('<div class="content">' + printContents + '</div>');
+
+    printWindow.document.write('</body></html>');
+
+    // Close the document to finish writing
+    printWindow.document.close();
+
+    // Wait for the window to load and then print
+    printWindow.onload = function () {
+      printWindow.print();
+      printWindow.close();
+    };
+  }
 };

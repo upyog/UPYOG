@@ -26,16 +26,13 @@ const FormStep = ({
   childrenAtTheBottom = true,
   textInputStyle
 }) => {
-  console.log("config444==",config)
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
   });
 
   const goNext = (data) => {
-    console.log("goNext==",data)
     onSelect(data);
   };
-  console.log("errors==",errors)
 
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 

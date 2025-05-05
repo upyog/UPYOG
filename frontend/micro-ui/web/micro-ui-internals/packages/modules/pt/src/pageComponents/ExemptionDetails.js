@@ -7,7 +7,7 @@ import Timeline from "../components/TLTimeline";
 
 const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, onBlur }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
-  console.log("formData11----",formData)
+  // console.log("formData11----",formData)
   let index = window.location.href.split("/").pop();
   let validation = {};
   const onSkip = () => onSelect();
@@ -19,32 +19,50 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
   const [uploadedFile, setUploadedFile] = useState(
     !isMutation ? formData?.exemption?.documents?.exemptionProof?.fileStoreId || null : formData?.[config.key]?.fileStoreId
   );
-
-  const [exemptionRequired, setExemptionRequired] = useState(formData?.exemption ? {code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"});
-  const [exemptionType, setExemptionType] = useState(formData?.exemption);
+//  {code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"}
+  const [exemptionRequired, setExemptionRequired] = useState((formData?.exemption  && formData?.exemption?.exemptionRequired?.code=='PT_COMMON_YES') ?{code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"}: {code: 'PT_COMMON_NO', i18nKey: "PT_COMMON_NO"});
+  const [exemptionType, setExemptionType] = useState(formData?.exemption?.exemptionType);
   const [file, setFile] = useState(formData?.exemption?.documents?.exemptionProof);
   
   const [hidden, setHidden] = useState(true);
  
   const [error, setError] = useState(null);
- 
+
+  
+//  useEffect(()=>{
+//   if(formData?.documents && formData?.documents.length>0) {
+//     let obj = formData?.documents.find(o => o.documentType === "PROOF_OF_EXEMPTION") || null;
+//       if(obj) {
+//         setExemptionRequired({code: 'PT_COMMON_YES', i18nKey: "PT_COMMON_YES"});
+//         setFile(obj);
+//         setUploadedFile(!isMutation ? obj?.fileStoreId || null : formData?.[config.key]?.fileStoreId)
+//       }
+//   }
+//  },[])
   
   const goNext=()=> {
     // sessionStorage.setItem("exemption", electricity.i18nKey);
     let fileStoreId = uploadedFile;
     let fileDetails = file;
+    
     if (fileDetails) fileDetails.documentType = 'PROOF_OF_EXEMPTION';
     if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
-    console.log("formData----",formData,fileDetails)
+    if(formData?.exemption?.documents?.exemptionProof && formData?.exemption?.documents?.exemptionProof?.id) {
+      fileDetails.id = formData?.exemption?.documents?.exemptionProof?.id || "";
+      fileDetails.status = formData?.exemption?.documents?.exemptionProof?.status || "";
+      fileDetails.documentUid = formData?.exemption?.documents?.exemptionProof?.documentUid || null;
+      fileDetails.auditDetails = formData?.exemption?.documents?.exemptionProof?.auditDetails || null;
+
+    }
     let exemption =  { exemptionRequired: exemptionRequired,  exemptionType: exemptionType};
-    console.log("formData22----",formData,exemption)
+    
     if (exemption && exemption.documents) {
       exemption.documents["exemptionProof"] = fileDetails;
     } else {
-      exemption["documents"] = [];
+      exemption["documents"] = {};
       exemption.documents["exemptionProof"] = fileDetails;
     }
-    console.log("exemption===",exemption)
+    // console.log("exemption==",exemption)
     // if (!isMutation) onSelect(config.key, exemption, "", index);
     // else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
     onSelect("exemption", exemption, "", index);
@@ -90,6 +108,12 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
       enable: false,
     }
   );
+  // useEffect(()=>{
+  //   if(formData?.exemption?.exemptionType?.code && mdmsData?.ExemptionList?.length>0) {
+  //     let eData = mdmsData?.ExemptionList.filter(e=> e.code == formData?.exemption?.exemptionType?.code);
+  //     setExemptionType(eData && eData.length>0 ? eData[0] : '')
+  //   }
+  // },[mdmsData])
   
   function selectExemptionRequired(value) {
     setExemptionRequired(value);
@@ -179,7 +203,7 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
                   optionKey="i18nKey"
                   isMandatory={config.isMandatory}
                   option={mdmsData?.ExemptionList}
-                  selected={formData?.exemption?.exemptionType}
+                  selected={exemptionType}
                   select={(e) => selectExemptionType(e)}
                 />
               </div>
@@ -193,6 +217,7 @@ const ExemptionDetails = ({ t, config, onSelect, value, userType, formData, setE
                 }}
                 message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)}
                 error={error}
+                hasFile={uploadedFile ? true : false}
               />
             </div>
             

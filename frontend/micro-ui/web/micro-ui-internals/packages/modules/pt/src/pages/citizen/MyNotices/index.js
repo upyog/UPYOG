@@ -32,7 +32,6 @@ import {
 
   const getNotices = async (tenantId,setTableList, setUpdateNotice) => {
     const response = await Digit.PTService.noticeSearch({},tenantId);
-    console.log("response==",response)
     if (response && response?.Notice?.length>0) {
         setTableList(response?.Notice);
         
@@ -61,7 +60,6 @@ const MyNotices = (props) => {
   }
 
   const gotoNotice = (el)=> {
-    console.log("gotoNotice===",el)
     history.push({pathname: "/digit-ui/citizen/pt/property/notice/"+el?.noticeNumber, state: el})
   }
   

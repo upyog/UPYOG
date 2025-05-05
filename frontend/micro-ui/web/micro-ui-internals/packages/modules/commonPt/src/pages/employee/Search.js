@@ -11,7 +11,8 @@ const PTSearchFields = {
       placeHolder: "PT_PROPERTY_UNIQUE_ID_PLACEHOLDER",
       validation: {
         pattern: {
-          value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+          value: "",
+          // "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
           message: "ERR_INVALID_PROPERTY_ID",
         },
       },
@@ -22,7 +23,8 @@ const PTSearchFields = {
       placeholder: "PT_EXISTING_PROPERTY_ID_PLACEHOLDER",
       validation: {
         pattern: {
-          value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+          value: "",
+          // "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
           message: "ERR_INVALID_PROPERTY_ID",
         },
       },

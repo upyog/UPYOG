@@ -61,7 +61,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   let modeOfPayments = [{code: 'YEARLY', name: 'YEARLY'},{code: 'HALFYEARLY', name: 'HALFYEARLY'},{code: 'QUARTERLY', name: 'QUARTERLY'}]
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====",financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);

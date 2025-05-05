@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { printNotice } from "../../../utils";
 
 
 const NoticeToEnterPremises = (props) => {
@@ -8,8 +9,9 @@ const NoticeToEnterPremises = (props) => {
 
   const { t } = useTranslation();
   const [financialYears, setFinancialYears] = useState([]);
-  const [selectedFinancialYear, setSelectedFinancialYear] = useState(null);
-  const [submissionDate, setSubmissionDate] = useState();
+  const [selectedFinancialYear, setSelectedFinancialYear] = useState(props?.noticeData && props?.noticeData.assessmentYear? {code: props?.noticeData.assessmentYear, name: props?.noticeData.assessmentYear} : null);
+  const [dateOfAnnualRet, setDateOfAnnualRet] = useState(props?.noticeData?.dateOfAnnualRet ? props?.noticeData?.dateOfAnnualRet : props?.noticeData?.dateOfOrder ? props?.noticeData?.dateOfOrder : null);
+
 
   const [notice, setNotice] = useState();
   const [showModal, setShowModal] = useState(false)
@@ -19,58 +21,37 @@ const NoticeToEnterPremises = (props) => {
   const handleChangeNotice = (value) => {
 
   }
-  const [name, setName] = useState();
+  const [name, setName] = useState(props?.noticeData?.ownerName ? props?.noticeData?.ownerName : props?.noticeData?.name ? props?.noticeData?.name : null);
   const onChangeName = (e) => {
     setName(e.target?.value)
   }
-  const [propertyAddress, setPropertyAddress] = useState();
+  const [address, setAddress] = useState(props?.noticeData?.address ? props?.noticeData?.address : null);
   const onChangePtAddress = (e) => {
-    setPropertyAddress(e.target?.value)
+    setAddress(e.target?.value)
   }
-  const [propertyId, setPropertyId] = useState();
+  const [propertyId, setPropertyId] = useState(props?.noticeData?.propertyId ? props?.noticeData?.propertyId : null);
   const onChangePtId = (e) => {
     setPropertyId(e.target?.value)
   }
-  const [acknowledgementNo, setAcknowledgementNo] = useState();
+  const [acknowledgementNumber, setAcknowledgementNumber] = useState(props?.noticeData?.acknowledgementNumber ? props?.noticeData?.acknowledgementNumber : null);
   const onChangeAcknowledgementNo=(e)=>{
-    setAcknowledgementNo(e.target.value)
+    setAcknowledgementNumber(e.target.value)
   }
   const [returnFormData, setReturnFormData] = useState({
-    authorizedPersonName: null,
-    authorizedPersonDesignation: null
+    authorisedpersonName: props?.noticeData?.authorisedpersonName ? props?.noticeData?.authorisedpersonName : null,
+    designation: props?.noticeData?.designation ? props?.noticeData?.designation : null
   });
   const [returnTimeFormData, setReturnTimeFormData] = useState({
-    time: null,
-    date: null
+    entryTime: props?.noticeData?.entryTime ? props?.noticeData?.entryTime : null,
+    entryDate: props?.noticeData?.entryDate ? props?.noticeData?.entryDate : null
   });
   const [returnMobileFormData, setReturnMobileFormData] = useState({
-    mobileNo: null
+    mobilenumber: props?.noticeData?.mobilenumber ? props?.noticeData?.mobilenumber : null
   });
   const [returnPenaltyFormData, setReturnPenaltyFormData] = useState({
-    penaltyAmount: null
+    penaltyAmount: props?.noticeData?.penaltyAmount ? props?.noticeData?.penaltyAmount : null
   });
-  // const [particulars, setParticulars] = useState();
-  // const [asPerReturnFiled, setAsPerReturnFiled] = useState();
-  // const [asPerMunicipality, setAsPerMunicipality] = useState();
-  // const [remarks, setRemarks] = useState();
-  const [tableList, setTableList] = useState([]);
-  const [timeMeridian, setTimeMeridian] = useState('');
-  const [time, setTime] = useState();
-  const [editDate, setEditDate] = useState();
-
-  const onChangeParticulars = (e)=>{
-    setParticulars(e.target.value)
-  }
-  const onChangeAsPerReturnFiled = (e)=>{
-    setAsPerReturnFiled(e.target.value)
-  }
-  const onChangeMunicipality = (e)=>{
-    setAsPerMunicipality(e.target.value)
-  }
-  const onChangeRemarks = (e)=>{
-    setRemarks(e.target.value)
-  }
-
+  
   const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
     Digit.ULBService.getStateId(),
     '',
@@ -85,7 +66,6 @@ const NoticeToEnterPremises = (props) => {
   );
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====", financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -187,7 +167,6 @@ const NoticeToEnterPremises = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("validateForm==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {
@@ -242,6 +221,7 @@ const NoticeToEnterPremises = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
+    printNotice(e,divId,t(props?.isCitizen ? props?.noticeData?.tenantId : tenantId));
     // var printContent = document.getElementById(divId);
     // var WinPrint = window.open('', '', 'width=900,height=650');
     // WinPrint.document.write(printContent.innerHTML);
@@ -249,35 +229,35 @@ const NoticeToEnterPremises = (props) => {
     // WinPrint.focus();
     // WinPrint.print();
     // WinPrint.close();
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
+    // var printContents = document.getElementById(divId).innerHTML;
+    // var originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
+    // document.body.innerHTML = printContents;
 
-    window.print();
+    // window.print();
 
-    document.body.innerHTML = originalContents;
-    return false;
+    // document.body.innerHTML = originalContents;
+    // return false;
     
   }
   const onSubmit = (e) => {
     e.preventDefault();
     let noticeDetails = {
       name: name,
-      propertyAddress: propertyAddress,
+      address: address,
       "propertyId": propertyId,
-      "acknowledgementNumber": acknowledgementNo,
-      assessmentDate: submissionDate,
+      "acknowledgementNumber": acknowledgementNumber,
+      dateOfAnnualRet: dateOfAnnualRet,
       "assessmentYear": selectedFinancialYear?.code,
       "noticeType": "Notice to enter Premises",      
       "tenantId": tenantId,      
       "channel": "CITIZEN",
-      "noticeComment": tableList,
-      authorizedPersonName: returnFormData.authorizedPersonName,
-      authorizedPersonDesignation: returnFormData.authorizedPersonDesignation,
-      noticeDate: returnTimeFormData?.date,
-      noticeTime: returnTimeFormData?.time,
-      mobileNo: returnMobileFormData.mobileNo,
+      "noticeComment": [],
+      authorisedpersonName: returnFormData.authorisedpersonName,
+      designation: returnFormData.designation,
+      entryDate: returnTimeFormData?.entryDate,
+      entryTime: returnTimeFormData?.entryTime,
+      mobilenumber: returnMobileFormData.mobilenumber,
       penaltyAmount: returnPenaltyFormData.penaltyAmount
     }
     props.submit(noticeDetails)
@@ -285,6 +265,8 @@ const NoticeToEnterPremises = (props) => {
   const onCancelNotice = () => {
     
   }
+  const citizenStyle = props?.isCitizen ? { width: "100%" } : {};
+  const citizenStyleMaxWidth = props?.isCitizen ? {  } : {maxWidth: "100%"};
   return (
     <div>
       
@@ -293,7 +275,7 @@ const NoticeToEnterPremises = (props) => {
           <form>
             <div id="form-print">
             {<Header>{t("Notice to Enter Premises")}</Header>}
-              <div className="row card" style={{ maxWidth: '100%' }}>
+              <div className="row card" style={{ ...citizenStyleMaxWidth }}>
                 <div >
                   <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                     <CardLabel>{`${t("Name")}`}</CardLabel>
@@ -304,19 +286,19 @@ const NoticeToEnterPremises = (props) => {
                       value={name}
                       onChange={(e) => onChangeName(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Property Address")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'propertyAddress'}
-                      name={'propertyAddress'}
-                      value={propertyAddress}
+                      key={'address'}
+                      name={'address'}
+                      value={address}
                       onChange={(e) => onChangePtAddress(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                 </div>
@@ -330,19 +312,19 @@ const NoticeToEnterPremises = (props) => {
                       value={propertyId}
                       onChange={(e) => onChangePtId(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                     <CardLabel>{`${t("Return Acknowledgement Number")}`}</CardLabel>
                     <TextInput
                       style={{ background: "#FAFAFA" }}
-                      key={'acknowledgementNo'}
-                      name={'acknowledgementNo'}
-                      value={acknowledgementNo}
+                      key={'acknowledgementNumber'}
+                      name={'acknowledgementNumber'}
+                      value={acknowledgementNumber}
                       onChange={(e) => onChangeAcknowledgementNo(e)}
                       isMandatory={false}
-                      disable={false}
+                      disable={props?.isCitizen ? true : false}
                     />
                   </div>
 
@@ -354,17 +336,22 @@ const NoticeToEnterPremises = (props) => {
                     <input
                       className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
                       style={{ width: "calc(100%-62px)" }}
-                      value={submissionDate ? submissionDate : ""}
+                      value={dateOfAnnualRet ? dateOfAnnualRet : ""}
                       type="date"
                       onChange={(d) => {
-                        setSubmissionDate(d.target.value);
+                        setDateOfAnnualRet(d.target.value);
                       }}
                       required={false}
+                      readOnly={props?.isCitizen ? true : false}
+                      disabled={props?.isCitizen ? true : false}
                     />
                   </div>
                   <div className="col-sm-4 assment-yr-cls" style={{ width: '48%', display: 'inline-block', position: 'relative', top: '0px' }}>
                     <CardLabel>{`${t("Assessment Year")}`}</CardLabel>
-                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} />
+                    <Dropdown isMandatory optionCardStyles={{ zIndex: 111111 }} selected={selectedFinancialYear} optionKey="name" option={financialYears} select={setSelectedFinancialYear} t={t} 
+                    isDisabled={props?.isCitizen ? true : false}
+                    disable={props?.isCitizen ? true : false}
+                    />
 
                   </div>
                 </div>
@@ -372,15 +359,15 @@ const NoticeToEnterPremises = (props) => {
                 <div style={{ marginTop: '20px' }}>
                   <p><span style={{ fontWeight: 600 }}>Sub: Notice under Rule 29 of Manipur Municipalities (Property Tax) Rules, 2019 </span>
                     <ul style={{ marginTop: '10px' }} className="notice-txt">
-                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
+                      <li style={{ width: '60%', listStyle: 'auto', marginLeft: '16px', padding: '6px', ...citizenStyle }}>
                         Whereas it is necessary to verify the covered area/land area/identity of the owner or occupie of the property, and for this it is necessary to enter the property.
                       </li>
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                            You are here by informed that {returnFormData?.authorizedPersonName && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorizedPersonName}</span>}{!returnFormData?.authorizedPersonName && <span>__________________</span>}[name of authorized person] designated as {returnFormData?.authorizedPersonDesignation && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorizedPersonDesignation}</span>}{!returnFormData?.authorizedPersonDesignation && <span>__________________</span>} [exact designation of the search officer] has been authorized to enter your property for the above purpose.
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                            You are here by informed that {returnFormData?.authorisedpersonName && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorisedpersonName}</span>}{!returnFormData?.authorisedpersonName && <span>__________________</span>}[name of authorized person] designated as {returnFormData?.designation && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.designation}</span>}{!returnFormData?.designation && <span>__________________</span>} [exact designation of the search officer] has been authorized to enter your property for the above purpose.
                         </div>
                         
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditNameAndDesg(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -391,14 +378,14 @@ const NoticeToEnterPremises = (props) => {
                           >
                             + {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
 
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                        {returnFormData?.authorizedPersonName && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorizedPersonName}</span>}{!returnFormData?.authorizedPersonName && <span>__________________</span>} proposes to visit your premises on {returnTimeFormData?.date && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.date}</span>}{!returnTimeFormData?.date && <span>__________________</span>} at {returnTimeFormData?.time && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.time}</span>} {!returnTimeFormData?.time && <span>________________ </span>}in the chamber of the undersigned.
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                        {returnFormData?.authorisedpersonName && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnFormData?.authorisedpersonName}</span>}{!returnFormData?.authorisedpersonName && <span>__________________</span>} proposes to visit your premises on {returnTimeFormData?.entryDate && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryDate}</span>}{!returnTimeFormData?.entryDate && <span>__________________</span>} at {returnTimeFormData?.entryTime && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnTimeFormData?.entryTime}</span>} {!returnTimeFormData?.entryTime && <span>________________ </span>}in the chamber of the undersigned.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditDate(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -409,14 +396,14 @@ const NoticeToEnterPremises = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
 
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                          In case this is not convenient to you, you may kindly contact him at telephone number {returnMobileFormData?.mobileNo && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnMobileFormData?.mobileNo}</span>}{!returnMobileFormData?.mobileNo && <span>__________________</span>}, to fix a suitable time and date.
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                          In case this is not convenient to you, you may kindly contact him at telephone number {returnMobileFormData?.mobilenumber && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnMobileFormData?.mobilenumber}</span>}{!returnMobileFormData?.mobilenumber && <span>__________________</span>}, to fix a suitable time and date.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditMobile(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -427,14 +414,14 @@ const NoticeToEnterPremises = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
 
                       <li style={{ listStyle: 'auto', marginLeft: '16px', padding: '6px' }}>
-                        <div style={{ width: '60%' }}>
-                          In the event, you fail to cooperate with the designated officer or fail to comply with the noyice, a penalty upto Rs {returnPenaltyFormData?.penaltyAmount && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnPenaltyFormData?.penaltyAmount}</span>}{!returnPenaltyFormData?.penaltyAmount && <span>__________________</span>} may be imposed under Rule 29 for each default.
+                        <div style={{ width: '60%', ...citizenStyle }}>
+                          In the event, you fail to cooperate with the designated officer or fail to comply with the notice, a penalty upto Rs {returnPenaltyFormData?.penaltyAmount && <span style={{fontWeight: "600", textDecoration: "underline"}}>{returnPenaltyFormData?.penaltyAmount}</span>}{!returnPenaltyFormData?.penaltyAmount && <span>__________________</span>} may be imposed under Rule 29 for each default.
                         </div>
-                        <div style={{ width: '40%', display: 'inline' }}>
+                        {!props?.isCitizen && <div style={{ width: '40%', display: 'inline' }}>
                           <button id="printPageButton" onClick={(e) => onEditPenalty(e)} className="submit-bar"
                             style={{
                               color: 'white',
@@ -445,16 +432,16 @@ const NoticeToEnterPremises = (props) => {
                           >
                             {t("Edit")}
                           </button>
-                        </div>
+                        </div>}
                       </li>
                     </ul>
                   </p>
                 </div>
               </div>
-              <div className="card" style={{ maxWidth: '100%' }}>
+              <div className="card" style={{ ...citizenStyleMaxWidth }}>
                 <div className="row">
-                    <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                        <span>Date</span>
+                    <div className="" style={{display: "inline-block", width: "87%", paddingLeft: "15px"}}>
+                        <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
                     <div className="" style={{display: "inline-block", width: "10%"}}>
@@ -465,7 +452,7 @@ const NoticeToEnterPremises = (props) => {
               </div>
             </div>
             
-            <div className="card" style={{ maxWidth: '100%' }}>
+            <div className="card" style={{ ...citizenStyleMaxWidth }}>
               <div style={{display: 'inline-flex'}}>
                 <div style={{ width: '100%', display: 'inline' }}>
                   <button onClick={(e) => printDiv(e,'form-print')} className="submit-bar"
@@ -477,7 +464,7 @@ const NoticeToEnterPremises = (props) => {
                     {t("Print")}
                   </button>
                 </div>
-                <div style={{  display: 'inline' }}>
+                {!props?.isCitizen && <div style={{  display: 'inline' }}>
                   <button onClick={() => onCancelNotice()} className="submit-bar"
                     style={{
                       color: 'white',
@@ -486,8 +473,8 @@ const NoticeToEnterPremises = (props) => {
                   >
                     {t("Cancel")}
                   </button>
-                </div>
-                <div style={{ display: 'inline' }}>
+                </div>}
+               {!props?.isCitizen && <div style={{ display: 'inline' }}>
                   <button onClick={onSubmit} className="submit-bar"
                     style={{
                       color: 'white',
@@ -497,7 +484,7 @@ const NoticeToEnterPremises = (props) => {
                   >
                     {t("Submit")}
                   </button>
-                </div>
+                </div>}
               </div>
             </div>
           </form>
@@ -519,20 +506,20 @@ const NoticeToEnterPremises = (props) => {
               <div className="col-sm-4" style={{ width: '48%', marginRight: '10px', display: 'inline-block' }}>
                 
                 <label for="formControlInputAuthorizedPersonName" class="form-label">Authorized Person Name*</label>
-                <input type="text" className={fieldError.authorizedPersonName ? "form-control error-message" : "form-control"} id="formControlInputAuthorizedPersonName" name="authorizedPersonName" placeholder="Enter Authorized Person Name" value={returnFormData.authorizedPersonName} onChange={handleChangeReturn} required />
-                {fieldError.authorizedPersonName &&
+                <input type="text" className={fieldError.authorisedpersonName ? "form-control error-message" : "form-control"} id="formControlInputAuthorizedPersonName" name="authorisedpersonName" placeholder="Enter Authorized Person Name" value={returnFormData.authorisedpersonName} onChange={handleChangeReturn} required />
+                {fieldError.authorisedpersonName &&
                         <span className="error-message">
-                            {fieldError.authorizedPersonName}
+                            {fieldError.authorisedpersonName}
                         </span>
                     }
               </div>
               <div className="col-sm-4" style={{ width: '48%', display: 'inline-block' }}>
                
                 <label for="formControlInputAuthorizedPersonDesg" class="form-label">Authorized Person Designation*</label>
-                <input type="text" className={fieldError.authorizedPersonDesignation ? "form-control error-message" : "form-control"} id="formControlInputAuthorizedPersonDesg" name="authorizedPersonDesignation" placeholder="Enter Authorized Person Designation" value={returnFormData.authorizedPersonDesignation} onChange={handleChangeReturn} required />
-                {fieldError.authorizedPersonDesignation &&
+                <input type="text" className={fieldError.designation ? "form-control error-message" : "form-control"} id="formControlInputAuthorizedPersonDesg" name="designation" placeholder="Enter Authorized Person Designation" value={returnFormData.designation} onChange={handleChangeReturn} required />
+                {fieldError.designation &&
                     <span className="error-message">
-                        {fieldError.authorizedPersonDesignation}
+                        {fieldError.designation}
                     </span>
                 }
               </div>
@@ -585,10 +572,10 @@ const NoticeToEnterPremises = (props) => {
                   required={false}
                 /> */}
                 <label for="formControlInputReturnDate" class="form-label">Date*</label>
-                <input type="date" className={fieldError.date ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="date" placeholder="Enter Date" value={returnTimeFormData.date} onChange={handleChangeTimeReturn} required />
-                {fieldError.date &&
+                <input type="date" className={fieldError.entryDate ? "form-control error-message" : "form-control"} id="formControlInputReturnDate" name="entryDate" placeholder="Enter date" value={returnTimeFormData.entryDate} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryDate &&
                     <span className="error-message">
-                        {fieldError.date}
+                        {fieldError.entryDate}
                     </span>
                 }
               </div>
@@ -601,14 +588,14 @@ const NoticeToEnterPremises = (props) => {
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                   isMandatory={true}
-                  disable={false}
+                  disable={props?.isCitizen ? true : false}
                   type={'number'}
                 /> */}
                 <label for="formControlInputReturnTime" class="form-label">Time*</label>
-                <input type="time" className={fieldError.time ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="time" placeholder="Enter Time" value={returnTimeFormData.time} onChange={handleChangeTimeReturn} required />
-                {fieldError.time &&
+                <input type="time" className={fieldError.entryTime ? "form-control error-message" : "form-control"} id="formControlInputReturnTime" name="entryTime" placeholder="Enter Time" value={returnTimeFormData.entryTime} onChange={handleChangeTimeReturn} required />
+                {fieldError.entryTime &&
                     <span className="error-message">
-                        {fieldError.time}
+                        {fieldError.entryTime}
                     </span>
                 }
               </div>
@@ -650,10 +637,10 @@ const NoticeToEnterPremises = (props) => {
               <div className="col-sm-12" style={{ width: '100%', marginRight: '10px', display: 'inline-block' }}>
                 
                 <label for="formControlInputReturnMobileNo" class="form-label">Mobile/Telephone No.*</label>
-                <input type="text" className={fieldError.mobileNo ? "form-control error-message" : "form-control"} id="formControlInputReturnMobileNo" name="mobileNo" placeholder="Enter Mobile/Telephone No." value={returnMobileFormData.mobileNo} onChange={handleChangeMobileReturn} required />
-                {fieldError.mobileNo &&
+                <input type="text" className={fieldError.mobilenumber ? "form-control error-message" : "form-control"} id="formControlInputReturnMobileNo" name="mobilenumber" placeholder="Enter Mobile/Telephone No." value={returnMobileFormData.mobilenumber} onChange={handleChangeMobileReturn} required />
+                {fieldError.mobilenumber &&
                     <span className="error-message">
-                        {fieldError.mobileNo}
+                        {fieldError.mobilenumber}
                     </span>
                 }
               </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, Toast } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -8,9 +8,18 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const mutationScreen = url.includes("/property-mutation/");
+  const getUserType = () => Digit.UserService.getType();
+  const TYPE_OWNER_VALIDATE = { type: "owner_validate" };
 
   let index = mutationScreen ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
+  const [showToast, setShowToast] = useState(null);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [showToastErrorMsg, setShowToastErrorMsg] = useState(null);
+  const [otp, setOtp] = useState();
+  const [isOtpValid, setIsOtpValid] = useState(true);
+  const [disableSendOtp, setDisableSendOtp] = useState(true);
+  const [disableValidateOtp, setDisableValidateOtp] = useState(true);
   const [name, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].name) || formData?.owners?.name || "");
   const [email, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].email) || formData?.owners?.emailId || "");
   const [gender, setGender] = useState((formData.owners && formData.owners[index] && formData.owners[index].gender) || formData?.owners?.gender);
@@ -49,12 +58,21 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
 
   function setMobileNo(e) {
     setMobileNumber(e.target.value);
+    setIsOtpValid(false);
+    if(e.target.value && e.target.value.length==10) {
+      setDisableSendOtp(false)
+    } else {
+      setDisableSendOtp(true)
+    }
   }
   function setGuardiansName(e) {
     setFatherOrHusbandName(e.target.value);
   }
   function setGuardianName(value) {
     setRelationship(value);
+  }
+  function onChangeOtp(e) {
+    setOtp(e.target.value);
   }
 
   const goNext = () => {
@@ -73,6 +91,101 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect(config.key, ownerStep, false, index);
     }
   };
+  // const validateOtp = (e) => {
+    
+  // }
+
+  const validateOtp = async (e) => {
+    try {
+      e.preventDefault();
+      
+      const requestData = {
+        identity: mobileNumber,
+        otp: otp,
+        tenantId: 'mn'
+      };
+      const res = await Digit.UserService.validateOtp({otp:{...requestData}});
+      // console.log("selectOtp==",res)
+      if(res && res?.otp?.isValidationSuccessful) {
+        setIsOtpValid(true);
+        setShowToast({ key: true, label: "OTP validate successfully!" });
+        setIsOtpSent(false);
+        setTimeout(() => {
+          closeToast();
+        }, 10000);
+      } else {
+        setShowToastErrorMsg({ key: true, label: "Invalid OTP" });
+      setTimeout(() => {
+        closeToastError();
+      }, 10000);
+        setIsOtpValid(false);
+      }
+    } catch (err) {
+      setShowToastErrorMsg({ key: true, label: "Invalid OTP" });
+      setTimeout(() => {
+        closeToastError();
+      }, 10000);
+      setIsOtpValid(false);
+    }
+  };
+  
+  const sendOtp = async (e) => {
+    e.preventDefault();
+    // console.log("sendOtp==",e)
+    setIsOtpSent(false);
+    setOtp("")
+    if(!mobileNumber || mobileNumber.length<10) {
+      setShowToastErrorMsg({ key: true, label: "Invalid Mobile No." });
+      setTimeout(() => {
+        closeToastError();
+      }, 10000);
+      return;
+    }
+    // const { mobileNumber } = params;
+    const data = {
+      mobileNumber,
+      tenantId: 'mn',
+      userType: getUserType(),
+    };
+    setDisableValidateOtp(true);
+    try {
+      const [res, err] = await sendOtpService({ otp: { ...data, ...TYPE_OWNER_VALIDATE } });
+      // console.log("TYPE_OWNER_VALIDATE--RES==",res)
+      
+      if(res && res?.isSuccessful) {
+        setIsOtpSent(true);
+        setShowToast({ key: true, label: "OTP sent successfully!" });
+        setDisableSendOtp(true);
+        setDisableValidateOtp(false);
+        setTimeout(() => {
+          closeToast();
+          setDisableSendOtp(false)
+        }, 10000);
+        return;
+      }
+    } catch (err) {
+    }
+    
+  }
+
+  const sendOtpService = async (data) => {
+    try {
+      const res = await Digit.UserService.sendOtp(data, 'mn');
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  };
+
+  const closeToast = () => {
+    setShowToast(null);
+  };
+  const closeToastError = ()=> {
+    setShowToastErrorMsg(null)
+  }
+  
+
+  
 
   const onSkip = () => onSelect();
   // As Ticket RAIN-2619 other option in gender and gaurdian will be enhance , dont uncomment it
@@ -104,7 +217,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
     return (
       <div>
         <LabelFieldPair>
-          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")}`}</CardLabel>
+          <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("PT_FORM3_MOBILE_NUMBER")} *On change Mobile number, you need to verify the OTP every time.`}</CardLabel>
           <div className="field">
             <TextInput
               type={"text"}
@@ -223,10 +336,10 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName}
+      isDisabled={!name || !mobileNumber || !gender || !relationship || !fatherOrHusbandName || !isOtpValid}
     >
       <div>
-        <CardLabel>{`${t("PT_OWNER_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("PT_OWNER_NAME")} *`}</CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -244,7 +357,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("PT_FORM3_GENDER")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_GENDER")} *`}</CardLabel>
         <RadioButtons
           t={t}
           options={menu}
@@ -257,15 +370,53 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           labelKey="PT_COMMON_GENDER"
           disabled={isUpdateProperty || isEditProperty}
         />
-        <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")}`}</CardLabel>
-        <MobileNumber
-          value={mobileNumber}
-          name="mobileNumber"
-          onChange={(value) => setMobileNo({ target: { value } })}
-          disable={isUpdateProperty || isEditProperty}
-          {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
-        />
-        <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")}`}</CardLabel>
+        
+        <CardLabel>{`${t("PT_FORM3_MOBILE_NUMBER")} *`}</CardLabel>
+        <div>
+          <MobileNumber
+            value={mobileNumber}
+            name="mobileNumber"
+            onChange={(value) => setMobileNo({ target: { value } })}
+            disable={isUpdateProperty || isEditProperty}
+            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+          />
+          <small>N.B: On change mobile number, you need to verify the OTP every time.</small>
+          <div>
+            <button className="submit-bar" disabled={disableSendOtp} onClick={sendOtp} type="submit" style={{display: "inline", marginRight: "10px"}}><header>Send OTP</header></button>
+            {isOtpSent && (
+              <React.Fragment>
+                <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              placeholder={"Enter OTP"}
+              name="otp"
+              value={otp}
+              onChange={onChangeOtp}
+              textInputStyle={{width: "fit-content", display: "inline-flex"}}
+              disable={isUpdateProperty || isEditProperty}
+              ValidationRequired = {true}
+              {...(validation = {
+                isRequired: true,
+                pattern: "[0-9]{6}",
+                type: "text",
+                title: t("This field is required"),
+              })}
+            />
+           
+            <button className="submit-bar" disabled={disableValidateOtp || (!otp || otp?.length<6)} type="submit" style={{display: "inline", marginLeft: "10px"}} onClick={validateOtp}><header>Validate OTP</header></button>
+              </React.Fragment>
+              )}
+          </div>
+          {/* <div style={{position: "relative", top: "-10px"}}>          
+            {isOtpValid && <small style={{color: "green"}}>OTP validate successfully.</small>}
+            {!isOtpValid && otpError && <small style={{color: "red"}}>Invalid OTP.</small>}
+          </div> */}
+
+          
+        </div>
+        <CardLabel>{`${t("PT_FORM3_GUARDIAN_NAME")} *`}</CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -283,7 +434,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
-        <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")}`}</CardLabel>
+        <CardLabel>{`${t("PT_FORM3_RELATIONSHIP")} *`}</CardLabel>
         <RadioButtons
           t={t}
           optionsKey="i18nKey"
@@ -298,6 +449,9 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
         />
       </div>
     </FormStep>
+    {showToast && <Toast success={showToast.key} label={t(showToast.label)} onClose={closeToast} isDleteBtn={true} />}
+    {showToastErrorMsg && <Toast error={showToastErrorMsg.key} label={t(showToastErrorMsg.label)} onClose={closeToastError} isDleteBtn={true} />}
+
     </React.Fragment>
   );
 };

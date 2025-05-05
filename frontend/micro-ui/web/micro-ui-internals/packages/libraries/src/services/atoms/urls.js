@@ -24,6 +24,8 @@ const Urls = {
   ChangePassword1: "/user/password/_update",
   UserProfileUpdate: "/user/profile/_update",
   EmployeeSearch: "/egov-hrms/employees/_search",
+  ValidateOTP: "/otp/v1/_validate",
+  GenerateCaptcha: "/user/users/_generateCaptcha",
 
   InboxSearch: "/inbox/v1/_search",
 
@@ -66,6 +68,7 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
+    no_dues: "/billing-service/bill/v2/_nodues",
   },
 
   pt: {

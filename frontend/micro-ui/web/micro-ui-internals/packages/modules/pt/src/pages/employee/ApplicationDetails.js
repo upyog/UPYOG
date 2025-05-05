@@ -48,7 +48,6 @@ const ApplicationDetails = () => {
     },
     { enabled: enableAudit, select: (data) => data.Properties?.filter((e) => e.status === "ACTIVE") }
   );
-  console.log("Application Details==", auditData)
 
 
   const showTransfererDetails = React.useCallback(() => {
@@ -180,7 +179,7 @@ const ApplicationDetails = () => {
     const tenantInfo  = tenants.find((tenant) => tenant.code === Property.tenantId);
 
     const data = await getPTAcknowledgementData(Property, tenantInfo, t);
-    Digit.Utils.pdf.generate(data);
+        Digit.Utils.pdf.generate(data);
   };
 
   const propertyDetailsPDF = {

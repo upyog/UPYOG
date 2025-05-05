@@ -40,7 +40,6 @@ const Notices = ({
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
   const [showToast, setShowToast] = useState(null);
   const location = useLocation();
-  console.log("location===",location)
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
@@ -119,11 +118,9 @@ const Notices = ({
   }
 
   const submit = async (e)=>{
-    console.log("submit===",e)
     try {
       // TODO: change module in file storage
       const response = await Digit.PTService.noticeCreate({notice:e});
-      console.log("response==",response)
       if (response) {
         setShowToast({
           key: false,

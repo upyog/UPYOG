@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CardLabel, DatePicker, Dropdown, Header, Modal, TextInput } from "@upyog/digit-ui-react-components";
+import { printNotice } from "../../../utils";
 
 
 const NoticeForRectification = (props) => {
@@ -73,7 +74,6 @@ const NoticeForRectification = (props) => {
   );
   useEffect(() => {
     if (financialYearsData && financialYearsData["egf-master"]) {
-      console.log("=====", financialYearsData["egf-master"]?.["FinancialYear"]);
       setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
     }
   }, [financialYearsData]);
@@ -135,7 +135,6 @@ const NoticeForRectification = (props) => {
     setFieldError(newErrors);
   };
   const validateForm = (data) => {
-    console.log("validateForm==",data)
     const errors = {};
 
     var exists = Object.keys(data).forEach(function(k) {
@@ -195,6 +194,7 @@ const NoticeForRectification = (props) => {
   };
   const printDiv = (e,divId)=> {
     e.preventDefault();
+    printNotice(e,divId,t(props?.isCitizen ? props?.noticeData?.tenantId : tenantId));
     // var printContent = document.getElementById(divId);
     // var WinPrint = window.open('', '', 'width=900,height=650');
     // WinPrint.document.write(printContent.innerHTML);
@@ -202,15 +202,15 @@ const NoticeForRectification = (props) => {
     // WinPrint.focus();
     // WinPrint.print();
     // WinPrint.close();
-    var printContents = document.getElementById(divId).innerHTML;
-    var originalContents = document.body.innerHTML;
+    // var printContents = document.getElementById(divId).innerHTML;
+    // var originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
+    // document.body.innerHTML = printContents;
 
-    window.print();
+    // window.print();
 
-    document.body.innerHTML = originalContents;
-    return false;
+    // document.body.innerHTML = originalContents;
+    // return false;
     
   }
   const onSubmit = (e) => {
@@ -351,7 +351,6 @@ const NoticeForRectification = (props) => {
                               <th>Comments</th>
                             </tr>
                             {tableList.map((e, indx)=>{
-                              console.log("tableList===",tableList);
                               return (<tr>
                                 <td style={{paddingLeft: "10px"}}>{indx+1}</td>
                                 <td>{e?.comment}</td>
@@ -397,8 +396,8 @@ const NoticeForRectification = (props) => {
               </div>
               <div className="card" style={{...citizenStyleMaxWidth}}>
                 <div className="row">
-                    <div className="" style={{display: "inline-block", width: "90%", paddingLeft: "15px"}}>
-                        <span>Date</span>
+                    <div className="" style={{display: "inline-block", width: "87%", paddingLeft: "15px"}}>
+                        <span>Date(mm/dd/yyyy)</span>
                         <div>{new Date().toLocaleDateString()}</div>
                     </div>
                     <div className="" style={{display: "inline-block", width: "10%"}}>

@@ -7,6 +7,8 @@ import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 import SelectOtp from "../../citizen/Login/SelectOtp";
+import CryptoJS from "crypto-js";
+
 
 const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   const [user, setUser] = useState(null);
@@ -45,18 +47,35 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
 
     try {
       await Digit.UserService.sendOtp(requestData, tenantId);
-      setShowToast(t("ES_OTP_RESEND"));
+      setShowToast(t("OTP send successfully"));
     } catch (err) {
       setShowToast(err?.response?.data?.error_description || t("ES_INVALID_LOGIN_CREDENTIALS"));
     }
     setTimeout(closeToast, 5000);
   };
-
+  const secretKey = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_KEY); // Ensure 16 bytes key
+  const generateIV = () => CryptoJS.lib.WordArray.random(16);
+  
+  const encryptPassword = (plainText) => {
+    const iv = generateIV();
+    const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+      mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
+      padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
+      iv: iv, 
+    });
+    return iv.toString(CryptoJS.enc.Base64) + ":" + encrypted.toString();
+  
+    // return encrypted.toString(); // Returns Base64 encoded encrypted text
+  };
   const onChangePassword = async (data) => {
     try {
       if (data.newPassword !== data.confirmPassword) {
         return setShowToast(t("ERR_PASSWORD_DO_NOT_MATCH"));
       }
+      const newPassword = encryptPassword(data?.newPassword);
+      const confPassword = encryptPassword(data?.confirmPassword);
+      data.newPassword = newPassword;
+      data.confirmPassword = confPassword;
       const requestData = {
         ...data,
         otpReference: otp,

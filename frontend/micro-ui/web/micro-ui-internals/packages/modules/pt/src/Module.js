@@ -55,9 +55,11 @@ import SearchAssessmentResultsComponent from "./pages/citizen/SearchAssessmentRe
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
 import AmalgamateProperty from "./pages/citizen/Amalgamate";
-import ExemptionDetails from "./pageComponents/ExemptionDetails"
+import ExemptionDetails from "./pageComponents/ExemptionDetails";
 import PropertyPhoto from "./pageComponents/PropertyPhoto";
-import UsageCategoryVacantLand from "./pageComponents/UsageCategoryVacantLand"
+import UsageCategoryVacantLand from "./pageComponents/UsageCategoryVacantLand";
+import PTBuildingPermission from "./pageComponents/PTBuildingPermission";
+
 
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
@@ -187,7 +189,8 @@ const componentsToRegister = {
   PTSelectLandmark,
   ExemptionDetails,
   PropertyPhoto,
-  UsageCategoryVacantLand
+  UsageCategoryVacantLand,
+  PTBuildingPermission
 };
 
 const addComponentsToRegistry = () => {
@@ -204,7 +207,6 @@ export const PTModule = ({ stateCode, userType, tenants }) => {
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   addComponentsToRegistry();
-  console.log("tenants===",tenants)
   Digit.SessionStorage.set("PT_TENANTS", tenants);
   useEffect(
     () =>

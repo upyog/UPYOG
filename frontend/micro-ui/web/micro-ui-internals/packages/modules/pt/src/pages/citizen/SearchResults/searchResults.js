@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 
 
 const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation, isAmalgamation, onSelect, config, clearParams = () => {} }) => {
-  console.log("=====",template,actionButtonLabel)
   const { t } = useTranslation();
   const modalRef = useRef();
   const { mobileNumber, propertyIds, oldPropertyIds, locality, city,doorNo,name, PToffset } = Digit.Hooks.useQueryParams();

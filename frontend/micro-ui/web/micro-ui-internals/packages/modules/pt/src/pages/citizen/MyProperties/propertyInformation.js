@@ -18,10 +18,11 @@ import PropertyDocument from "../../../pageComponents/PropertyDocument";
 import { getCityLocale, getPropertyTypeLocale, stringReplaceAll } from "../../../utils";
 import ActionModal from "../../../../../templates/ApplicationDetails/Modal/index"
 import ArrearSummary from "../../../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary";
-const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
+const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData,updateAssessmentData) => {
   const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
   let billData = {};
   if (assessmentData?.Assessments?.length > 0) {
+    updateAssessmentData(assessmentData?.Assessments)
     billData = await Digit.PaymentService.fetchBill(tenantId, {
       businessService: "PT",
       consumerCode: propertyIds,
@@ -36,8 +37,21 @@ const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCan
 };
 
 const getBillAmount = (fetchBillData = null) => {
-  if (fetchBillData == null) return "CS_NA";
+  if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
   return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
+};
+const checkBillExpiry = (fetchBillData = null) => {
+  if (fetchBillData == null || Object.keys(fetchBillData)?.length==0) return "CS_NA";
+  if(fetchBillData && fetchBillData?.Bill?.length>0 && fetchBillData?.Bill[0]?.billDetails?.length>0 && fetchBillData?.Bill[0]?.billDetails[0]?.expiryDate) {
+    const expiryTimestamp = fetchBillData?.Bill[0]?.billDetails[0]?.expiryDate; // e.g., milliseconds
+    const expiryDate = new Date(expiryTimestamp);
+    const today = new Date();
+
+    const isExpired = expiryDate < today;
+    // console.log("isExpired==",isExpired)
+    return isExpired
+  }
+  // return fetchBillData ? (fetchBillData?.Bill && fetchBillData.Bill[0] ? fetchBillData.Bill[0]?.totalAmount : "0") : "0";
 };
 
 const PropertyInformation = () => {
@@ -95,6 +109,7 @@ const state = Digit.ULBService.getStateId();
   });
 
   const [fetchBillData, updatefetchBillData] = useState({});
+  const [fetchAssessmentData, updateAssessmentData] = useState(null);
 
   const [property, setProperty] = useState(() => data?.Properties[0] || " ");
   const mutation = Digit.Hooks.pt.usePropertyAPI(property?.tenantId, false);
@@ -123,7 +138,6 @@ const handleClick=()=>{
   setshowModal(true)
 }
 const onBifurcate = () =>{
-  console.log("property.onBifurcate==",property.length,property)
   history.push({pathname: "/digit-ui/citizen/pt/property/new-application", state: {propertyDetails: property, action: 'BIFURCATION'}})
 }
 const onAppeal =()=>{
@@ -171,7 +185,7 @@ const onAppeal =()=>{
       loaded: false,
       canLoad: true,
     });
-    setBillData(property?.tenantId || tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData);
+    setBillData(property?.tenantId || tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData,updateAssessmentData);
   }
 
   let flrno,
@@ -191,7 +205,6 @@ const onAppeal =()=>{
 
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
-        console.log("customFunctionToExecute")
        
         data?.customFunctionToExecute({ ...data });
        
@@ -275,7 +288,6 @@ const onAppeal =()=>{
     return <Loader />;
   }
   const closeModal = () => {
-    console.log("closeModal")
     setshowModal(false)
   };
 
@@ -291,7 +303,6 @@ const onAppeal =()=>{
   sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
   history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
   }
-  console.log("data78", data)
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -299,15 +310,143 @@ const onAppeal =()=>{
         <Card>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
-            <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
-            <LinkLabel
+            <Row
+              className="border-none"
+              label={t("Creation Reason")}
+              text={t(`${property?.creationReason}`)}
+            />
+            <Row className="border-none" label={t("Assessment Status")} text={fetchAssessmentData==null ? 'NA' : fetchAssessmentData?.[0]?.status} />
+
+            <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={getBillAmount(fetchBillData)=='CS_NA' ? 'NA' : `₹${t(getBillAmount(fetchBillData))}`} />
+            {/* {getBillAmount(fetchBillData)!=='CS_NA' && <LinkLabel
             onClick={() => history.push({ pathname: `/digit-ui/citizen/pt/payment-details/${property?.propertyId}`})}
             style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
           >
             {t("PT_VIEW_PAYMENT")}
-          </LinkLabel>
+          </LinkLabel>} */}
           </StatusTable>
           <ArrearSummary bill={fetchBillData.Bill?.[0]} />
+          {property?.creationReason =="AMALGAMATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{ fontSize: "16px" }}>{t("Amalgamation Details")}</CardSubHeader>
+                {property?.amalgamatedProperty && property?.amalgamatedProperty.length>0 &&  
+                property.amalgamatedProperty.map((amalgamatePropertyDetails)=>(
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={amalgamatePropertyDetails?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(amalgamatePropertyDetails?.property?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(amalgamatePropertyDetails?.property?.landArea && `${t(`${amalgamatePropertyDetails?.property?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={amalgamatePropertyDetails?.property?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${amalgamatePropertyDetails?.property?.address?.locality?.area}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={amalgamatePropertyDetails?.property?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={amalgamatePropertyDetails?.property?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("Dag No")} text={amalgamatePropertyDetails?.property?.address?.dagNo || t("CS_NA")} />
+                        {
+                          amalgamatePropertyDetails?.property?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                amalgamatePropertyDetails.property.owners.map((amalgamatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={amalgamatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={amalgamatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={amalgamatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
+          {property?.creationReason =="BIFURCATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{ fontSize: "16px" }}>{t("Separated Property Details")}</CardSubHeader>
+                {property?.additionalDetails?.parentProperty && 
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={property?.additionalDetails?.parentProperty?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(property?.additionalDetails?.parentProperty?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(property?.additionalDetails?.parentProperty?.landArea && `${t(`${property?.additionalDetails?.parentProperty?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.additionalDetails?.parentProperty?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${property?.additionalDetails?.parentProperty?.address?.locality?.area}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={property?.additionalDetails?.parentProperty?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={property?.additionalDetails?.parentProperty?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("Dag No")} text={property?.additionalDetails?.parentProperty?.address?.dagNo || t("CS_NA")} />
+                        {
+                          property?.additionalDetails?.parentProperty?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                property?.additionalDetails?.parentProperty?.owners.map((separatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={separatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={separatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={separatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                // ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
           <CardSubHeader>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={`${property.address?.pincode || t("CS_NA")}`} />
@@ -352,9 +491,9 @@ const onAppeal =()=>{
                           className="border-none" 
                           label={t("PT_ASSESSMENT_UNIT_USAGE_TYPE")}
                           text={
-                            `${t(
-                              (property.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
-                                (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property.usageCategory) 
+                            `${t("COMMON_PROPUSGTYPE_NONRESIDENTIAL_"+unit?.usageCategory
+                              // (property.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
+                              //   (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property.usageCategory) 
                                 /* (property.usageCategory !== "RESIDENTIAL" ? "_" + unit?.usageCategory.split(".").pop() : "") */
                             )}` || t("CS_NA")
                           }
@@ -388,7 +527,7 @@ const onAppeal =()=>{
                     <Row 
                       className="border-none" 
                       label={t("PT_COMMON_APPLICANT_NAME_LABEL")}
-                      textStyle={isMobile?{marginLeft:"27%",marginRight:"5%",wordBreak:"break-word"}:{marginLeft:"18%"}}
+                      textStyle={isMobile?{marginLeft:"27%",marginRight:"5%",wordBreak:"break-word"}:{marginLeft:"2%"}}
                       text={`${owner?.name || t("CS_NA")}`}
                       actionButtonStyle={{marginRight:"-10px"}}
                       actionButton={
@@ -401,9 +540,10 @@ const onAppeal =()=>{
                     className="border-none" 
                     label={t("PT_FORM3_MOBILE_NUMBER")}
                     text={`${t(owner?.mobileNumber)}` || t("CS_NA")}
-                    textStyle={isMobile?{marginLeft:"16%"}:{marginLeft:"12%"}}
+                    textStyle={isMobile?{marginLeft:"16%"}:{marginLeft:"0%"}}
                     actionButton={
-                    property?.status === "ACTIVE"&&owner?.mobileNumber&&Digit.UserService.getUser()?.info?.mobileNumber&&owner.mobileNumber===Digit.UserService.getUser()?.info?.mobileNumber&&<div onClick={() => showPopup({ name: owner?.name, mobileNumber: owner?.mobileNumber, ownerIndex: index })}>
+                    property?.status === "ACTIVE"&& !enableAudit &&owner?.mobileNumber&&Digit.UserService.getUser()?.info?.mobileNumber&&owner.mobileNumber===Digit.UserService.getUser()?.info?.mobileNumber&&
+                    <div onClick={() => showPopup({ name: owner?.name, mobileNumber: owner?.mobileNumber, ownerIndex: index })}>
                     <EditIcon />
                     </div>
                     }
@@ -418,7 +558,7 @@ const onAppeal =()=>{
                     <Row className="border-none"  label={t("PT_FORM3_RELATIONSHIP")} text={`${owner?.relationship || t("CS_NA")}`} />
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_TYPE")} text={`${t(stringReplaceAll(specialCategoryDoc[index]?.documentType,".","_"))}` || t("NA")} />}
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_ID")} text={`${t(specialCategoryDoc[index]?.id)}` || t("CS_NA")} />}
-                    <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} />
+                    {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} /> */}
                     <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.permanentAddress)}` || t("CS_NA")} />
                     {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={(owner?.ownerType || t("CS_NA"))} /> }
                   </StatusTable>
@@ -441,14 +581,14 @@ const onAppeal =()=>{
             <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
             </div>              
             )} */}
-            {property?.status === "ACTIVE" && !enableAudit && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                 <Link to={{ pathname: `/digit-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>
                   <SubmitBar label={t("PT_UPDATE_PROPERTY_BUTTON")} />
                 </Link>
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA" || checkBillExpiry(fetchBillData)) && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") &&  (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
@@ -456,7 +596,7 @@ const onAppeal =()=>{
                
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
@@ -464,7 +604,7 @@ const onAppeal =()=>{
                
               </div>
             )}
-            {property?.status === "ACTIVE" && !enableAudit && getBillAmount(fetchBillData)==0 && (
+            {property?.status === "ACTIVE" && !enableAudit && (getBillAmount(fetchBillData)==0 || getBillAmount(fetchBillData)=="CS_NA") && (fetchAssessmentData == null || fetchAssessmentData?.[0]?.status != "INWORKFLOW") && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}

@@ -33,7 +33,7 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
     return {
       ...unit,
       builtUpArea: unit?.constructionDetail?.builtUpArea,
-      usageCategory: usageCategory ? { code: usageCategory, i18nKey: `PROPERTYTAX_BILLING_SLAB_${usageCategory}` } : {},
+      usageCategory: unit?.usageCategory ? { code: unit?.usageCategory, i18nKey: `PROPERTYTAX_${unit?.usageCategory}` } : {},
       occupancyType: unit?.occupancyType ? { code: unit.occupancyType, i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${unit?.occupancyType}` } : "",
       structureType: unit?.structureType ? { code: unit.structureType, i18nKey: `PROPERTYTAX_STRUCTURETYPE_${unit?.structureType}` } : "",
       ageOfProperty: unit?.ageOfProperty ? { code: unit.ageOfProperty, i18nKey: `PROPERTYTAX_AGEOFPROPERTY_${unit?.ageOfProperty}` } : "",
@@ -43,8 +43,10 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
   });
 };
 const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) => {
+  let validation = {};
   let path = window.location.pathname.split("/");
   let currentFloor = Number(path[path.length - 1]);
+  const [builtUpAreaError, setBuilUpAreaError] = useState(false);
   let isFloor = window.location.pathname.includes("new-application/units") || window.location.pathname.includes("/edit-application/units");
   const [fields, setFields] = useState(
     formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor)
@@ -185,7 +187,10 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
   }
   function onChangeArea(i, e) {
     let units = [...fields];
-    units[i].builtUpArea = e.target.value;
+    let value = e.target.value;
+    // Allow only numbers with up to 2 decimals
+    value = value.replace(/^(\d+(\.\d{0,2})?).*$/, "$1");
+    units[i].builtUpArea = value;
     setFields(units);
   }
 
@@ -223,6 +228,25 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
       units = units?.filter((e) => e.floorNo != currentFloor);
       unitsdata = [...units, ...unitsdata];
     }
+    // console.log("unitsData==",unitsdata)
+    let totalBuiltupArea = 0;
+    if(unitsdata && unitsdata?.length>0) {
+      
+      unitsdata.map((e)=>{
+        let builtupArea = +e?.constructionDetail?.builtUpArea
+        if(currentFloor==e?.floorNo){
+          totalBuiltupArea = totalBuiltupArea + builtupArea
+        }
+        
+      });
+      // console.log("totalBuiltupArea==",totalBuiltupArea,formData)
+    }
+    // if(totalBuiltupArea > +formData?.landArea?.floorarea) {
+    //   setBuilUpAreaError(true);
+    //   return;
+    // } else {
+    //   setBuilUpAreaError(false);
+    // }
     if (currentFloor === formData?.noOfFloors?.code || !isFloor) {
       // if(formData?.noOofBasements?.code==1){
       //   onSelect(config.key, unitsdata,false,-1,true);
@@ -251,7 +275,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
 
   function isAllowedNext (){
     let valueNotthere=0;
-    console.log("fields==",fields)
     fields && fields?.map((ob) => {
       
       if((!(ob?.usageCategory) || Object.keys(ob?.usageCategory) == 0) || !(ob?.occupancyType) || !(ob?.builtUpArea) /* || (!(ob?.floorNo)|| Object.keys(ob?.floorNo) == 0 )*/)
@@ -261,13 +284,11 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
       else if(ob?.occupancyType?.code === "RENTED" && !(ob?.arv))
       valueNotthere=1;
     })
-    console.log("valueNotthere==",valueNotthere)
     if(valueNotthere == 0)
     return false;
     else 
     return true;
   }
-  console.log("mdmsData==",mdmsData)
 
   return (
     <React.Fragment>
@@ -383,18 +404,20 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
               <TextInput
                 style={{ background: "#FAFAFA" }}
                 t={t}
-                type={"text"}
+                type={"number"}
                 isMandatory={false}
                 optionKey="i18nKey"
+                step="0.01"
                 name="builtUpArea"
                 value={field?.builtUpArea || ""}
                 onChange={(e) => onChangeArea(index, e)}
-                {...{
-                  isRequired: true,
-                  pattern: "[0-9]+",
-                  type: "text",
-                  title: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                }}
+                {...(validation = { pattern: "^([0-9]){0,8}$", isRequired: true, type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
+                // {...{
+                //   isRequired: true,
+                //   pattern: "^([0-9]){0,8}$",
+                //   type: "number", 
+                //   title: t("PT_PLOT_SIZE_ERROR_MESSAGE")
+                // }}
               />
               {!isFloor && (
                 <>
@@ -420,6 +443,9 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
           {`${t("PT_ADD_UNIT")}`}
         </button>
       </div>
+      {/* {builtUpAreaError && <div style={{ justifyContent: "left", display: "flex", paddingBottom: "15px", color: "red" }}>
+          Total Built-up area of a floor can not be more than the Land Area({formData?.landArea?.floorarea} Sq.Ft.)
+      </div>} */}
     </FormStep>
     </React.Fragment>
   );

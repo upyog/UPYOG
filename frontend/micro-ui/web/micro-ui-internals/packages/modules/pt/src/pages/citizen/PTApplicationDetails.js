@@ -30,7 +30,7 @@ const PTApplicationDetails = () => {
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
 
-
+// console.log("propertySearch===",data)
   let serviceSearchArgs = {
     tenantId : tenantId,
     code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
@@ -48,6 +48,7 @@ const PTApplicationDetails = () => {
 
   const properties = get(data, "Properties", []);
   const propertyId = get(data, "Properties[0].propertyId", []);
+  // console.log("properties===",properties)
   let property = (properties && properties.length > 0 && properties[0]) || {};
   const application = property;
   sessionStorage.setItem("pt-property", JSON.stringify(application));
@@ -179,6 +180,7 @@ const PTApplicationDetails = () => {
   owners = application?.owners;
   let docs = [];
   docs = application?.documents;
+  // console.log("docs===",docs)
 
   if (isLoading || auditDataLoading) {
     return <Loader />;
@@ -194,6 +196,7 @@ const PTApplicationDetails = () => {
     const applications = application || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
     const acknowldgementDataAPI = await getPTAcknowledgementData({ ...applications }, tenantInfo, t);
+  //  console.log("getAcknowledgementData===",acknowldgementDataAPI)
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
     //setAcknowldgementData(acknowldgementDataAPI);
   };
@@ -273,6 +276,11 @@ const PTApplicationDetails = () => {
               label={t("PT_APPLICATION_CHANNEL_LABEL")}
               text={t(`ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${property?.channel}`)}
             />
+            <Row
+              className="border-none"
+              label={t("Creation Reason")}
+              text={t(`${property?.creationReason}`)}
+            />
 
             {isPropertyTransfer && (
               <React.Fragment>
@@ -281,6 +289,127 @@ const PTApplicationDetails = () => {
               </React.Fragment>
             )}
           </StatusTable>
+          {property?.creationReason =="AMALGAMATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{ fontSize: "16px" }}>{t("Amalgamation Details")}</CardSubHeader>
+                {property?.amalgamatedProperty && property?.amalgamatedProperty.length>0 &&  
+                property.amalgamatedProperty.map((amalgamatePropertyDetails)=>(
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={amalgamatePropertyDetails?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(amalgamatePropertyDetails?.property?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(amalgamatePropertyDetails?.property?.landArea && `${t(`${amalgamatePropertyDetails?.property?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={amalgamatePropertyDetails?.property?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${amalgamatePropertyDetails?.property?.address?.locality?.area}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={amalgamatePropertyDetails?.property?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={amalgamatePropertyDetails?.property?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("Dag No")} text={amalgamatePropertyDetails?.property?.address?.dagNo || t("CS_NA")} />
+                        {
+                          amalgamatePropertyDetails?.property?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                amalgamatePropertyDetails.property.owners.map((amalgamatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={amalgamatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={amalgamatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={amalgamatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
+          {property?.creationReason =="BIFURCATION" && (
+            <React.Fragment>
+              <div style={{border: "1px solid", borderRadius: "8px", padding: "10px"}}>
+                <CardSubHeader style={{ fontSize: "16px" }}>{t("Separated Property Details")}</CardSubHeader>
+                {property?.additionalDetails?.parentProperty && 
+                  <div style={{border: "1px solid", padding: "10px", marginBottom: "10px", borderRadius: "8px"}}>
+                    <StatusTable>
+                        <Row
+                          className="border-none"
+                          label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
+                          text={property?.additionalDetails?.parentProperty?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Property Type")}
+                          text={t(`${getPropertyTypeLocale(property?.additionalDetails?.parentProperty?.propertyType)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <Row
+                          className="border-none"
+                          label={t("Land Area")}
+                          text={(property?.additionalDetails?.parentProperty?.landArea && `${t(`${property?.additionalDetails?.parentProperty?.landArea} sq.ft`)}`) || t("CS_NA")} /* textStyle={{ whiteSpace: "pre" }} */
+                        />
+                        <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Property Address: </h3>
+                        <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.additionalDetails?.parentProperty?.address?.city || t("CS_NA")} />
+                        <Row
+                          className="border-none"
+                          label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
+                          text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${property?.additionalDetails?.parentProperty?.address?.locality?.area}`) || t("CS_NA")}
+                        />
+                        <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={property?.additionalDetails?.parentProperty?.address?.street || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={property?.additionalDetails?.parentProperty?.address?.doorNo || t("CS_NA")} />
+                        <Row className="border-none" label={t("Dag No")} text={property?.additionalDetails?.parentProperty?.address?.dagNo || t("CS_NA")} />
+                        {
+                          property?.additionalDetails?.parentProperty?.owners?.length>0 && (
+                            <React.Fragment>
+                              <h3 style={{fontWeight: 600, color: "#0f4f9e", marginBottom: "10px"}}>Owner Details: </h3>
+                              {
+                                property?.additionalDetails?.parentProperty?.owners.map((separatedPropertyOwner)=>(
+                                  <StatusTable>
+                                    <Row className="border-none" label={t("Owner Name")} text={separatedPropertyOwner?.name || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Mobile")} text={separatedPropertyOwner?.mobileNumber || t("CS_NA")} />
+                                    <Row className="border-none" label={t("Owner Address")} text={separatedPropertyOwner?.permanentAddress || t("CS_NA")} />
+                                  </StatusTable>
+                                ))
+                              }
+                              
+                            </React.Fragment>
+                            
+                          )
+                        }
+                      </StatusTable>
+                  </div>
+                  
+                // ))
+                }
+                
+              </div>
+              
+            </React.Fragment>
+          )}
           <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={property?.address?.pincode || t("CS_NA")} />
@@ -316,7 +445,7 @@ const PTApplicationDetails = () => {
                         <Row className="border-none" label={t("PT_COMMON_APPLICANT_NAME_LABEL")} text={owner?.name || t("CS_NA")} />
                         <Row className="border-none" label={t("PT_FORM3_GUARDIAN_NAME")} text={owner?.fatherOrHusbandName || t("CS_NA")} />
                         <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
-                        <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
+                        {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} /> */}
                         <Row
                           className="border-none"
                           label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}
@@ -356,7 +485,7 @@ const PTApplicationDetails = () => {
                             label={t("PT_INSTITUTION_DESIGNATION")}
                             text={transferorInstitution?.designation || t("CS_NA")}
                           />
-                          <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
+                          {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} /> */}
                           <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
                         </StatusTable>
                       </div>
@@ -384,7 +513,7 @@ const PTApplicationDetails = () => {
                             text={`${application?.ownershipCategory ? t(`PT_OWNERSHIP_${application?.ownershipCategory}`) : t("CS_NA")}`}
                           />
                           <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
+                          {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} /> */}
                           <Row
                             className="border-none"
                             label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}
@@ -435,7 +564,7 @@ const PTApplicationDetails = () => {
                   label={t("PT_ASSESMENT_INFO_USAGE_TYPE")}
                   text={
                     `${t(
-                      (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPSUBUSGTYPE_") +
+                      (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
                         (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
                     )}` || t("CS_NA")
                   }
@@ -521,9 +650,9 @@ const PTApplicationDetails = () => {
                           text={`${property?.ownershipCategory ? t(`PT_OWNERSHIP_${property?.ownershipCategory}`) : t("CS_NA")}`}
                         />
                         <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber} />
-                        <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={`${owner?.emailId || t("CS_NA")}`} />
+                        {/* <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={`${owner?.emailId || t("CS_NA")}`} /> */}
                         <Row className="border-none" label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")} text={(owner?.ownerType).toLowerCase()} />
-                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
+                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.permanentAddress || t("CS_NA")} />
                       </StatusTable>
                     </div>
                   ))}

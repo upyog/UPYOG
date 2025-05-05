@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
+import CryptoJS from "crypto-js";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
@@ -26,13 +27,55 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [user, setUser] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
+  const [captcha, setCaptcha] = useState([]);
+  const [secretKey, setSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
+  const [envsecretKey, setEnvSecretKey] = useState(process.env.REACT_APP_SECRET_KEY);
+  // const [config, setConfig] = useState([]);
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
   let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
-  useEffect(() => {
+  const [userId, password, city, captchaTxt,captchaField] = propsConfig.inputs;
+
+  useEffect(async ()=>{
+    let isMounted = true;
+    
+    fetchCaptcha();
+    
+    return()=>{
+      isMounted = false;
+    }
+  },[])
+  const fetchCaptcha = async()=>{
+    try {
+      const res = await Digit.UserService.generateCaptcha({});
+      if(res && res?.captcha?.captcha && res?.captcha?.captchaUuid) {
+        let decriptedCaptcha = decryptCaptcha(res?.captcha?.captcha);
+        // console.log("decriptedCaptcha==",decriptedCaptcha)
+        if(decriptedCaptcha) {
+          res.captcha.captcha = decriptedCaptcha
+        }
+        // console.log("captchaRes==",res)
+        let tt = [];
+        tt.push(res?.captcha)
+        // if(isMounted) {
+          setCaptcha(tt)
+        // res?.captcha?.captcha+process.env.REACT_APP_SECRET_KEY.subString(6)
+          setSecretKey((prev)=>res?.captcha?.captcha+prev.slice(6))
+        // }
+        // loadForm()
+
+      }
+      // return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  }
+  useEffect(()=>{
+    // console.log("captcha----",captcha)
+  },[captcha])
+  useEffect(async () => {
     if (!user) {
       return;
     }
@@ -40,6 +83,8 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     const filteredRoles = user?.info?.roles?.filter((role) => role.tenantId === Digit.SessionStorage.get("Employee.tenantId"));
     if (user?.info?.roles?.length > 0) user.info.roles = filteredRoles;
     Digit.UserService.setUser(user);
+    // Digit.UserService.generateCaptcha({})
+    
     setEmployeeDetail(user?.info, user?.access_token);
     let redirectPath = "/digit-ui/employee";
 
@@ -59,10 +104,78 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
     history.replace(redirectPath);
   }, [user]);
+//   const secretKey = '1234567890123456'
+//   //  process.env.REACT_APP_SECRET_KEY; // Store in environment variables
+
+// const encryptPassword = (password) => {
+//   console.log("secretKey==",secretKey)
+//   return CryptoJS.AES.encrypt(password, secretKey).toString();
+// };
+
+// const secretKey = "1234567890123456"
+// // CryptoJS.enc.Utf8.parse("1234567890123456"); // 16-byte key
+
+// const encryptPassword = (password) => {
+//   const iv = CryptoJS.enc.Base64.parse('1234567890abcdef'); 
+//   const encrypted = CryptoJS.AES.encrypt(password, secretKey,  { iv: iv });
+//   console.log("encrypted===",encrypted)
+//   return encrypted.toString(); // Base64 encode before sending
+// };
+// console.log("captcha[0].captcha+process.env.REACT_APP_SECRET_KEY.subString(6)=",captcha[0]?.captcha+process.env.REACT_APP_SECRET_KEY.subString(6))
+// const secretKey = CryptoJS.enc.Utf8.parse(captcha[0].captcha+process.env.REACT_APP_SECRET_KEY.subString(6)); // Ensure 16 bytes key
+const generateIV = () => CryptoJS.lib.WordArray.random(16);
+
+const encryptPassword = (plainText) => {
+  // console.log("secretKey==",secretKey)
+  // let secretKeyN = secretKey.subString(6);
+  // secretKeyN = captcha[0].captcha+secretKeyN;
+  // console.log("secretKeyN==",secretKeyN)
+  let ss = CryptoJS.enc.Utf8.parse(secretKey); // Ensure 16 bytes key
+
+  const iv = generateIV();
+  const encrypted = CryptoJS.AES.encrypt(plainText, ss, {
+    mode: CryptoJS.mode.CBC, // Matches Java ECB Mode
+    padding: CryptoJS.pad.Pkcs7, // Matches Java PKCS5Padding
+    iv: iv, 
+  });
+  return iv.toString(CryptoJS.enc.Base64) + ":" + encrypted.toString();
+
+  // return encrypted.toString(); // Returns Base64 encoded encrypted text
+};
+// const decryptPassword = (cipherText) => {
+//   const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+//   console.log("bytes==",bytes.toString())
+//   return bytes.toString(CryptoJS.enc.Utf8);
+// };
+
+const decryptCaptcha = (encryptedText) => {
+  // Split the IV and ciphertext
+  const [ivBase64, cipherText] = encryptedText.split(":");
+  const iv = CryptoJS.enc.Base64.parse(ivBase64);
+
+  // Use the same key as used in encryption
+  const ss = CryptoJS.enc.Utf8.parse(envsecretKey); // Must match exactly
+
+  const decrypted = CryptoJS.AES.decrypt(cipherText, ss, {
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+    iv: iv,
+  });
+
+  return decrypted.toString(CryptoJS.enc.Utf8); // Plain text
+};
 
   const onLogin = async (data) => {
+    let encriptedPass = encryptPassword(data?.password)
+    data.password = encriptedPass;
+    // let decriptedPass = decryptPassword(encriptedPass)
+
     if (!data.city) {
       alert("Please Select City!");
+      return;
+    }
+    if (!data.captcha) {
+      alert("Please write captcha");
       return;
     }
     setDisable(true);
@@ -80,6 +193,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     } catch (err) {
       setShowToast(err?.response?.data?.error_description || "Invalid login credentials!");
       setTimeout(closeToast, 5000);
+      onCaptchaRefresh();
     }
     setDisable(false);
   };
@@ -92,51 +206,76 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     sessionStorage.getItem("User") && sessionStorage.removeItem("User")
     history.push("/digit-ui/employee/user/forgot-password");
   };
+  // const loadForm = () => {
+  //   console.log("loadForm==",captcha)
+    const config = [
+      {
+        body: [
+          {
+            label: t(userId.label),
+            type: userId.type,
+            populators: {
+              name: userId.name,
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(password.label),
+            type: password.type,
+            populators: {
+              name: password.name,
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(city.label),
+            type: city.type,
+            populators: {
+              name: city.name,
+              customProps: {},
+              component: (props, customProps) => (
+                <Dropdown
+                  option={cities}
+                  className="login-city-dd"
+                  optionKey="i18nKey"
+                  select={(d) => {
+                    props.onChange(d);
+                  }}
+                  t={t}
+                  {...customProps}
+                />
+              ),
+            },
+            isMandatory: true,
+          },
+          {
+            label: t(captchaTxt.label),
+            type: captchaTxt.type,
+            populators: {
+              name: captchaTxt.name,
+            },
+            captchaTxt: captcha,
+            isMandatory: true,
+          },
+          {
+            label: t(captchaField?.label),
+            type: captchaField.type,
+            populators: {
+              name: captchaField.name,
+            },
+            isMandatory: true,
+          },
+          
+        ],
+      },
+    ];
+  //   setConfig(config)
+  // }
 
-  const [userId, password, city] = propsConfig.inputs;
-  const config = [
-    {
-      body: [
-        {
-          label: t(userId.label),
-          type: userId.type,
-          populators: {
-            name: userId.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(password.label),
-          type: password.type,
-          populators: {
-            name: password.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                className="login-city-dd"
-                optionKey="i18nKey"
-                select={(d) => {
-                  props.onChange(d);
-                }}
-                t={t}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
-      ],
-    },
-  ];
+  const onCaptchaRefresh = ()=> {
+    fetchCaptcha()
+  }
+  
 
   return isLoading || isStoreLoading ? (
     <Loader />
@@ -152,16 +291,18 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         noBoxShadow
         inline
         submitInForm
-        config={config}
+        config={[...config]}
+        captchaDetails={[...captcha]}
+        onCaptchaRefresh={onCaptchaRefresh}
         label={propsConfig.texts.submitButtonLabel}
         secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
-        headingStyle={{ textAlign: "center" }}
+        headingStyle={{ display: "flex", justifyContent: 'center' }}
         headingLogo={'true'}
         cardStyle={{ margin: "auto", minWidth: "408px" }}
         className="loginFormStyleEmployee"
-        formStyle={{position: "absolute",right: "0", top: "40px"}}
+        formStyle={{position: "absolute",right: "0", top: "-10px"}}
         buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
       >
         {/* <Header /> */}

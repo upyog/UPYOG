@@ -21,7 +21,6 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-  console.log("cities==",cities,allCities)
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;
   });
@@ -201,7 +200,6 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       </div>
     );
   }
-  console.log("selectedCity && localities==",selectedCity , localities)
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? (

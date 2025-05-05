@@ -45,7 +45,6 @@ const CitizenNotice = ({
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
   const [showToast, setShowToast] = useState(null);
   const location = useLocation();
-  console.log("location citizen notice===",location)
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
@@ -130,11 +129,9 @@ const CitizenNotice = ({
   }
 
   const submit = async (e)=>{
-    console.log("submit===",e)
     try {
       // TODO: change module in file storage
       const response = await Digit.PTService.noticeCreate({notice:e});
-      console.log("response==",response)
       if (response) {
         setShowToast({
           key: false,
@@ -176,7 +173,7 @@ const CitizenNotice = ({
                 <NoticeForHearing notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeForHearing>
               )}
               {notice && notice.code=='7' && (
-                <NoticeForImpositionOfPenalty notice={notice} submit={submit} isCitizen={true}></NoticeForImpositionOfPenalty>
+                <NoticeForImpositionOfPenalty notice={notice} submit={submit} noticeData={noticeData} isCitizen={true}></NoticeForImpositionOfPenalty>
               )}
             </div>
             {showToast && <Toast isDleteBtn={true} error={showToast?.key} label={showToast?.label} onClose={() => setShowToast(null)} />}

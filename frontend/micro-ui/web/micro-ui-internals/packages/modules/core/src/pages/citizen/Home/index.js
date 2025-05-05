@@ -147,10 +147,10 @@ const Home = () => {
           </div> */}
           <div className="ServicesSection">
             <div role="button" tabindex="0" class="pt-card-main" onClick={()=> history.push(citizenServicesObj?.props?.[1]?.navigationUrl)}>
-              <img src="https://cdn.ksmart.lsgkerala.gov.in/common/webpage/services/property_tax.webp" loading="lazy" alt="img" class="pt-card-img1" />
+              <img src="https://mnptapp-terraform.s3.amazonaws.com/images/property_tax.jpg" loading="lazy" alt="img" class="pt-card-img1" />
               <div class="pt-card-mn2">
                 <div class="">
-                  <img src="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" alt="https://cdn.ksmart.lsgkerala.gov.in/ui/web-portal/assets/propertyTax-407e902e.svg" class="pt-img2" />
+                  <img src="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" alt="https://mnptapp-terraform.s3.amazonaws.com/images/propertyTax-407e902e.svg" class="pt-img2" />
                 </div>
                 </div>
                   <p style={{fontSize: "16px", fontWeight: "600", textAlign: "center"}}>Property Tax</p>

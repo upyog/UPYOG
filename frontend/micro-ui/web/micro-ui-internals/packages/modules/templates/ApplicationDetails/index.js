@@ -50,6 +50,8 @@ const ApplicationDetails = (props) => {
     isInfoLabel = false,
     clearDataDetails
   } = props;
+
+  console.log("workflowDetails===",workflowDetails)
   
   useEffect(() => {
     if (showToast) {
@@ -58,7 +60,6 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
-    console.log("onActionSelect==",action)
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
