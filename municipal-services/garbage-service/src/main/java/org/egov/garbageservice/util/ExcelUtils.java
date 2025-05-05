@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -15,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.GrbgCollectionUnit;
+import org.egov.garbageservice.model.GrbgOldDetails;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,7 +50,6 @@ public class ExcelUtils {
 				if (row.getRowNum() == 0) {
 					continue;
 				}
-
 				// populate address details
 				List<GrbgAddress> addresses = enrichAddresses(row);
 				// populate garbage collection unit details
@@ -57,13 +58,19 @@ public class ExcelUtils {
 				List<GarbageAccount> childGarbageAccounts = enrichChildGarbageAccounts(row);
 				// populate additional details
 				ObjectNode additionalDetails = enrichAdditionalDetails(row);
+				// populate old garbage details
+				GrbgOldDetails oldGarbageDetails = enrichOldGarbageDetails(row);
 
 				GarbageAccount garbageAccount = GarbageAccount.builder().tenantId(getCellValue(row.getCell(0)))
 						.name(getCellValue(row.getCell(1))).mobileNumber(getCellValue(row.getCell(2)))
 						.gender(getCellValue(row.getCell(3))).emailId(getCellValue(row.getCell(4)))
-						.isOwner(Boolean.valueOf(getCellValue(row.getCell(5)))).addresses(addresses)
+						.isOwner(Boolean.valueOf(getCellValue(row.getCell(5)))).channel(GrbgConstants.CHANNEL_TYPE_MIGRATE)
+						.addresses(addresses)
 						.grbgCollectionUnits(grbgCollectionUnits).childGarbageAccounts(childGarbageAccounts)
 						.additionalDetail(additionalDetails).build();
+				if (null != oldGarbageDetails) {
+					garbageAccount.setGrbgOldDetails(oldGarbageDetails);
+				}
 				garbageAccountList.add(garbageAccount);
 			}
 		} catch (Exception e) {
@@ -73,6 +80,13 @@ public class ExcelUtils {
 		}
 
 		return garbageAccountList;
+	}
+
+	private GrbgOldDetails enrichOldGarbageDetails(Row row) {
+		if (!StringUtils.isEmpty(getCellValue(row.getCell(29)))) {
+			return GrbgOldDetails.builder().oldGarbageId(String.valueOf(getCellValue(row.getCell(29)))).build();
+		}
+		return null;
 	}
 
 	private ObjectNode enrichAdditionalDetails(Row row) {
@@ -122,6 +136,7 @@ public class ExcelUtils {
 		List<GrbgCollectionUnit> childGrbgCollectionUnits = enrichChildGrbgCollectionUnits(columns, index);
 
 		return GarbageAccount.builder().isOwner(Boolean.valueOf(isOwner)).name(name).gender(gender)
+				.channel(GrbgConstants.CHANNEL_TYPE_MIGRATE)
 				.mobileNumber(mobileNumber).grbgCollectionUnits(childGrbgCollectionUnits).build();
 	}
 

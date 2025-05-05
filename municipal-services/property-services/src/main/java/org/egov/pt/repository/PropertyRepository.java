@@ -86,7 +86,8 @@ public class PropertyRepository {
 		return jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
 	}
 
-	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch) {
+	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch,
+			Map<Integer, PropertyCriteria> propertyCriteriaMap) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query;
@@ -94,7 +95,7 @@ public class PropertyRepository {
 		if(criteria.getIsDefaulterNoticeSearch())
 			query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
 		else
-			query=queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
+			query=queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false, propertyCriteriaMap);
 		
 		log.info("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
 		if (isApiOpen)
@@ -108,13 +109,13 @@ public class PropertyRepository {
 	public List<String> getPropertyIds(PropertyCriteria criteria) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true);
+		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true, null);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>());
 	}
 	
 	public List<PropertyInfo> getPropertyId(PropertyCriteria criteria){
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true);
+		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true, null);
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>());
 		
 	}
@@ -172,7 +173,8 @@ public class PropertyRepository {
 	 * @param requestInfo RequestInfo object of the request
 	 * @return properties with owner information added from user service
 	 */
-	public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo, Boolean isInternal) {
+	public List<Property> getPropertiesWithOwnerInfo(PropertyCriteria criteria, RequestInfo requestInfo,
+			Boolean isInternal, Map<Integer, PropertyCriteria> propertyCriteriaMap) {
 
 		List<Property> properties;
 		
@@ -181,8 +183,7 @@ public class PropertyRepository {
 		if (criteria.isAudit() && !isOpenSearch) {
 			properties = getPropertyAudit(criteria);
 		} else {
-
-			properties = getProperties(criteria, isOpenSearch, false);
+			properties = getProperties(criteria, isOpenSearch, false, propertyCriteriaMap);
 		}
 		if (CollectionUtils.isEmpty(properties))
 			return Collections.emptyList();
@@ -285,7 +286,7 @@ public class PropertyRepository {
 	public Integer getCount(PropertyCriteria propertyCriteria, RequestInfo requestInfo) {
 		
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false);
+        String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false, null);
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }

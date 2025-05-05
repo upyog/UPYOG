@@ -59,7 +59,7 @@ public class FuzzySearchService {
 
             PropertyCriteria propertyCriteria = PropertyCriteria.builder().tenantId(tenantId).propertyIds(propertyIds).build();
 
-            properties.addAll(propertyRepository.getPropertiesWithOwnerInfo(propertyCriteria,requestInfo,false));
+            properties.addAll(propertyRepository.getPropertiesWithOwnerInfo(propertyCriteria,requestInfo,false, null));
 
         }
 

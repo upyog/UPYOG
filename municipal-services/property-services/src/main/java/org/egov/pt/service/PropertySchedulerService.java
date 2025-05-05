@@ -289,8 +289,8 @@ public class PropertySchedulerService {
 			LocalDate currentDate = LocalDate.now();
 			// Calculate the current financial year
 			int currentYear = currentDate.getYear();
-			int financialYearStart = currentDate.isBefore(LocalDate.of(currentYear, 4, 1)) ? currentYear - 1
-					: currentYear;
+			int financialYearStart = currentDate.isBefore(LocalDate.of(currentYear, 4, 1)) ? currentYear
+					: currentYear - 1;
 			int financialYearEnd = financialYearStart + 1;
 			LocalDate startDate = LocalDate.of(financialYearStart, 4, 1);
 			LocalDate endDate = LocalDate.of(financialYearStart + 1, 3, 31);
@@ -314,7 +314,7 @@ public class PropertySchedulerService {
 				.build();
 
 		List<Property> properties = propertyService.searchProperty(propertyCriteria,
-				calculateTaxRequest.getRequestInfo());
+				calculateTaxRequest.getRequestInfo(), null);
 
 		if (!CollectionUtils.isEmpty(mobileNumbers)) {
 			properties = properties.stream()

@@ -122,7 +122,7 @@ public class PaymentNotificationService {
                     .propertyIds(Collections.singleton(consumerCode))
                     .build();
 
-            List<Property> properties = PropertyRepository.getPropertiesWithOwnerInfo(criteria, requestInfo, true);
+            List<Property> properties = PropertyRepository.getPropertiesWithOwnerInfo(criteria, requestInfo, true, null);
 
             if(CollectionUtils.isEmpty(properties)){
                 log.error("PROPERTY_NOT_FOUND","Unable to send payment notification to propertyId: "+consumerCode);
@@ -215,7 +215,7 @@ public class PaymentNotificationService {
                     .propertyIds(Collections.singleton(consumerCode))
                     .build();
 
-            List<Property> properties = PropertyRepository.getPropertiesWithOwnerInfo(criteria, requestInfo, true);
+            List<Property> properties = PropertyRepository.getPropertiesWithOwnerInfo(criteria, requestInfo, true, null);
 
             if(CollectionUtils.isEmpty(properties)){
                 log.error("PROPERTY_NOT_FOUND","Unable to send payment notification to propertyId: "+consumerCode);

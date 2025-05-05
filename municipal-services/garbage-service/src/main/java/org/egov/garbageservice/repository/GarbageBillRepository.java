@@ -115,7 +115,7 @@ public class GarbageBillRepository {
 		//generate search query
     	searchQuery = getSearchQueryByCriteria(searchQuery, garbageBillSearchCriteria, preparedStatementValues);
         
-        log.debug(searchQuery.toString());
+        //log.debug(searchQuery.toString());
 
         List<GarbageBill> garbageBills = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageBillRowMapper);
         

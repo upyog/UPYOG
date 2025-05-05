@@ -36,7 +36,7 @@ public class AssessmentUtils extends CommonUtils {
                 .tenantId(assessment.getTenantId())
                 .propertyIds(Collections.singleton(assessment.getPropertyId()))
                 .build();
-        List<Property> properties = propertyService.searchProperty(criteria, requestInfo);
+        List<Property> properties = propertyService.searchProperty(criteria, requestInfo, null);
         if(CollectionUtils.isEmpty(properties))
             throw new CustomException("PROPERTY_NOT_FOUND","The property with id: "+assessment.getPropertyId()+" is not found");
 

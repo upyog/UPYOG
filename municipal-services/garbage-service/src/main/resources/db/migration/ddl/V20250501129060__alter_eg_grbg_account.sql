@@ -1,0 +1,1 @@
+ALTER TABLE public.eg_grbg_account ADD COLUMN channel varchar(256) NULL;

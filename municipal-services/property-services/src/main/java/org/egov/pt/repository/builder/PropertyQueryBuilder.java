@@ -1,10 +1,13 @@
 package org.egov.pt.repository.builder;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -280,7 +283,8 @@ public class PropertyQueryBuilder {
 	 * @param preparedStmtList
 	 * @return
 	 */
-	public String getPropertySearchQuery(PropertyCriteria criteria, List<Object> preparedStmtList,Boolean isPlainSearch, Boolean onlyIds) {
+	public String getPropertySearchQuery(PropertyCriteria criteria, List<Object> preparedStmtList,
+			Boolean isPlainSearch, Boolean onlyIds, Map<Integer, PropertyCriteria> propertyCriteriaMap) {
 
 		Boolean isEmpty = CollectionUtils.isEmpty(criteria.getPropertyIds())
 					&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
@@ -297,90 +301,79 @@ public class PropertyQueryBuilder {
 					&& CollectionUtils.isEmpty(criteria.getCreationReason())
 					&& StringUtils.isEmpty(criteria.getTenantId());
 		
-		Boolean isOnlyTenantId = CollectionUtils.isEmpty(criteria.getPropertyIds())
-				&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
-				&& CollectionUtils.isEmpty(criteria.getOldpropertyids())
-				&& CollectionUtils.isEmpty(criteria.getUuids())
-				&& null == criteria.getMobileNumber()
-				&& null == criteria.getName()
-				&& null == criteria.getDoorNo()
-				&& null == criteria.getOldPropertyId()
-				&& null == criteria.getDocumentNumbers()
-				&& null == criteria.getLocality()
-				&& null == criteria.getPropertyType()
-				&& (null == criteria.getFromDate() && null == criteria.getToDate())
-				&& CollectionUtils.isEmpty(criteria.getCreationReason())
-				&& StringUtils.isNotEmpty(criteria.getTenantId());
-		
-		
 		if(isEmpty && !criteria.getIsSchedulerCall())
 			throw new CustomException("EG_PT_SEARCH_ERROR"," No criteria given for the property search");
 		
 		StringBuilder builder = new StringBuilder();
 		
-		//if(!isOnlyTenantId) 
-			 
+		builder.append(QUERY);
 		
-//		 if (onlyIds)
-//			builder.append(ID_QUERY);
-//		
-//		else if (criteria.getIsRequestForCount()) 
-//			builder.append(COUNT_QUERY);
-//			
-//		else if(isOnlyTenantId) {
-//			builder.append(BASE_QUERY);
-//		 	log.info("The Base query is :"+builder);
-//		}
-//			
-//		else
-		 builder.append(QUERY);
-		 
-			  
-			  
-			 
-
-		if(isPlainSearch)
-		{
-			Set<String> tenantIds = criteria.getTenantIds();
-			if(!CollectionUtils.isEmpty(tenantIds))
-			{
-				addClauseIfRequired(preparedStmtList,builder);
-				builder.append("property.tenantid IN (").append(createQuery(tenantIds)).append(")");
-				addToPreparedStatement(preparedStmtList,tenantIds);
+		addClauseIfRequired(preparedStmtList, builder);
+		builder.append(" 1 = ? ");
+		preparedStmtList.add(1);
+		
+		String whereClause = "";
+		if (null != propertyCriteriaMap && !propertyCriteriaMap.isEmpty()) {
+			List<String> clause = new ArrayList<>();
+			propertyCriteriaMap.entrySet().forEach(propertyCriteriaValue -> {
+				clause.add(
+						"(" + addWhereClause(propertyCriteriaValue.getValue(), preparedStmtList, isPlainSearch) + ")");
+			});
+			if (!CollectionUtils.isEmpty(clause)) {
+				addClauseIfRequired(preparedStmtList, builder);
+				whereClause = String.join(" OR ", clause);
 			}
+		} else {
+			addClauseIfRequired(preparedStmtList, builder);
+			whereClause = addWhereClause(criteria, preparedStmtList, isPlainSearch);
 		}
-		else
-		{
+		
+		builder.append(whereClause);
+
+		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
+//		if (onlyIds || criteria.getIsRequestForCount() || StringUtils.isNotEmpty(criteria.getTenantId()))
+//			return builder.toString();
+//		else 
+			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
+	}
+
+	private String addWhereClause(PropertyCriteria criteria, List<Object> preparedStmtList, Boolean isPlainSearch) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(" 1 = ? ");
+		preparedStmtList.add(1);
+		if (isPlainSearch) {
+			Set<String> tenantIds = criteria.getTenantIds();
+			if (!CollectionUtils.isEmpty(tenantIds)) {
+				addClauseIfRequired(preparedStmtList, builder);
+				builder.append("property.tenantid IN (").append(createQuery(tenantIds)).append(")");
+				addToPreparedStatement(preparedStmtList, tenantIds);
+			}
+		} else {
 			String tenantId = criteria.getTenantId();
-			
+
 			if (tenantId != null) {
 				if (tenantId.equalsIgnoreCase(config.getStateLevelTenantId())) {
-					addClauseIfRequired(preparedStmtList,builder);
+					addClauseIfRequired(preparedStmtList, builder);
 					builder.append(" property.tenantId LIKE ? ");
 					preparedStmtList.add(tenantId + '%');
 				} else {
-					addClauseIfRequired(preparedStmtList,builder);
+					addClauseIfRequired(preparedStmtList, builder);
 					builder.append(" property.tenantId= ? ");
 					preparedStmtList.add(tenantId);
 				}
 			}
 		}
-		if (criteria.getFromDate() != null)
-		{
-			addClauseIfRequired(preparedStmtList,builder);
+		if (criteria.getFromDate() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
 			// If user does NOT specify toDate, take today's date as the toDate by default
-			if (criteria.getToDate() == null)
-			{
+			if (criteria.getToDate() == null) {
 				criteria.setToDate(Instant.now().toEpochMilli());
 			}
 			builder.append("property.createdTime BETWEEN ? AND ?");
 			preparedStmtList.add(criteria.getFromDate());
 			preparedStmtList.add(criteria.getToDate());
-		}
-		else
-		{
-			if(criteria.getToDate()!=null)
-			{
+		} else {
+			if (criteria.getToDate() != null) {
 				throw new CustomException("INVALID SEARCH", "From Date should be mentioned first");
 			}
 		}
@@ -390,62 +383,56 @@ public class PropertyQueryBuilder {
 			criteria.getStatus().forEach(status -> {
 				statusStringList.add(status.toString());
 			});
-			addClauseIfRequired(preparedStmtList,builder);
-			builder.append(" property.status IN ( ")
-				.append(createQuery(statusStringList))
-				.append(" )");
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" property.status IN ( ").append(createQuery(statusStringList)).append(" )");
 			addToPreparedStatement(preparedStmtList, statusStringList);
 		}
-		
+
 		Set<String> statusStringList2 = new HashSet<>();
 		if (!CollectionUtils.isEmpty(criteria.getStatusList())) {
 			criteria.getStatusList().forEach(status -> {
 				statusStringList2.add(status.toString());
 			});
-			addClauseIfRequired(preparedStmtList,builder);
-			builder.append(" property.status IN ( ")
-			.append(createQuery(statusStringList2))
-			.append(" )");
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" property.status IN ( ").append(createQuery(statusStringList2)).append(" )");
 			addToPreparedStatement(preparedStmtList, statusStringList2);
 		}
-		
+
 		Set<String> channelStringList = new HashSet<>();
 		if (!CollectionUtils.isEmpty(criteria.getChannels())) {
 			criteria.getChannels().forEach(channel -> {
 				channelStringList.add(channel.toString());
 			});
-			addClauseIfRequired(preparedStmtList,builder);
-			builder.append(" property.channel IN ( ")
-				.append(createQuery(channelStringList))
-				.append(" )");
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" property.channel IN ( ").append(createQuery(channelStringList)).append(" )");
 			addToPreparedStatement(preparedStmtList, channelStringList);
 		}
 
 		Set<String> creationReasonsList = criteria.getCreationReason();
-		if(!CollectionUtils.isEmpty(creationReasonsList)){
+		if (!CollectionUtils.isEmpty(creationReasonsList)) {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.creationreason IN ( ").append(createQuery(creationReasonsList)).append(" )");
 			addToPreparedStatement(preparedStmtList, creationReasonsList);
 		}
-		
+
 		Set<String> documentNumberList = criteria.getDocumentNumbers();
 
-		if(!CollectionUtils.isEmpty(documentNumberList)){
+		if (!CollectionUtils.isEmpty(documentNumberList)) {
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
+			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ")
+					.append(createQuery(documentNumberList)).append(" )");
 			addToPreparedStatement(preparedStmtList, documentNumberList);
 		}
-		
-		
+
 		if (null != criteria.getLocality()) {
 
-			addClauseIfRequired(preparedStmtList,builder);
+			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("address.locality = ?");
 			preparedStmtList.add(criteria.getLocality());
 		}
 		if (null != criteria.getDoorNo()) {
 
-			addClauseIfRequired(preparedStmtList,builder);
+			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("address.doorno = ?");
 			preparedStmtList.add(criteria.getDoorNo());
 		}
@@ -453,23 +440,23 @@ public class PropertyQueryBuilder {
 		Set<String> propertyIds = criteria.getPropertyIds();
 		if (!CollectionUtils.isEmpty(propertyIds)) {
 
-			addClauseIfRequired(preparedStmtList,builder);
+			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatement(preparedStmtList, propertyIds);
 		}
-		
+
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
 
-			addClauseIfRequired(preparedStmtList,builder);
+			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
 			addToPreparedStatement(preparedStmtList, acknowledgementIds);
 		}
-		
+
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
 
-			addClauseIfRequired(preparedStmtList,builder);
+			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.id IN (").append(createQuery(uuids)).append(")");
 			addToPreparedStatement(preparedStmtList, uuids);
 		}
@@ -477,41 +464,39 @@ public class PropertyQueryBuilder {
 		Set<String> oldpropertyids = criteria.getOldpropertyids();
 		if (!CollectionUtils.isEmpty(oldpropertyids)) {
 
-			addClauseIfRequired(preparedStmtList,builder);
+			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
 		}
-		
+
 		if (!CollectionUtils.isEmpty(criteria.getCreatedBy())) {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.createdBy IN (").append(createQuery(criteria.getCreatedBy())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getCreatedBy());
 		}
 		
-		/* 
-		 * Condition to evaluate if owner is active.
-		 * Inactive owners should never be shown in results
-		*/
+		if (!CollectionUtils.isEmpty(criteria.getAdditionalDetailsPropertyIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.additionaldetails->>'propertyId' IN (")
+					.append(createQuery(criteria.getAdditionalDetailsPropertyIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getAdditionalDetailsPropertyIds());
+		}
 		
-//		if (!CollectionUtils.isEmpty(criteria.getStatus())) {
-//			Set<String> statuses = criteria.getStatus().stream().map(Status::name).collect(Collectors.toSet());
-//			addClauseIfRequired(preparedStmtList, builder);
-//			builder.append("property.status IN (").append(createQuery(statuses)).append(")");
-//			addToPreparedStatement(preparedStmtList, statuses);
-//		if(isOnlyTenantId) {
-//		builder.append("property.status = ?");
-//		}
-//		else
-//		builder.append("owner.status = ?");
-//		preparedStmtList.add(Status.ACTIVE.toString());
-//		}
-	
-
-		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
-//		if (onlyIds || criteria.getIsRequestForCount() || StringUtils.isNotEmpty(criteria.getTenantId()))
-//			return builder.toString();
-//		else 
-			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
+		if (!CollectionUtils.isEmpty(criteria.getAddressAdditionalDetailsWardNumbers())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("address.additionaldetails->>'wardNumber' IN (")
+					.append(createQuery(criteria.getAddressAdditionalDetailsWardNumbers())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getAddressAdditionalDetailsWardNumbers());
+		}
+		
+		if (!CollectionUtils.isEmpty(criteria.getOwnerOldCustomerIds())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("owner.additionaldetails->>'ownerOldCustomerId' IN (")
+					.append(createQuery(criteria.getOwnerOldCustomerIds())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getOwnerOldCustomerIds());
+		}
+		
+		return builder.toString();
 	}
 
 	public String getPropertyQueryForBulkSearch(PropertyCriteria criteria, List<Object> preparedStmtList,

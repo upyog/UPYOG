@@ -194,7 +194,7 @@ public class AssessmentValidator {
 		Boolean propertyExists = false;
 		Set<String> propertyIds = new HashSet<>(); propertyIds.add(propertyId);
 		PropertyCriteria criteria = PropertyCriteria.builder().propertyIds(propertyIds).tenantId(tenantId).build();
-		List<Property> properties = propertyService.searchProperty(criteria, requestInfo);
+		List<Property> properties = propertyService.searchProperty(criteria, requestInfo, null);
 		if(!CollectionUtils.isEmpty(properties))
 			propertyExists = true;
 
