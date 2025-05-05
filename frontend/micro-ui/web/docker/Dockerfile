@@ -10,7 +10,7 @@ RUN yarn add @upyog/digit-ui-module-obps
 RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @upyog/digit-ui-module-dss
 RUN yarn add @upyog/digit-ui-module-mcollect
-RUN yarn add @upyog/digit-ui-module-pgr
+RUN yarn add @nudmcdgnpm/digit-ui-module-pgr
 RUN yarn add @upyog/digit-ui-module-noc
 RUN yarn add @upyog/digit-ui-module-engagement
 RUN yarn add @nudmcdgnpm/digit-ui-module-hrms
