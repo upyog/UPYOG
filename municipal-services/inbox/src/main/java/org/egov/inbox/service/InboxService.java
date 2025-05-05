@@ -33,6 +33,7 @@ import static org.egov.inbox.util.SWConstants.SW;
 import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
 import static org.egov.inbox.util.PGRConstants.PGR;
+import static org.egov.inbox.util.PGRConstants.SWACH;
 
 import java.util.*;
 import java.util.function.Function;
@@ -100,6 +101,9 @@ public class InboxService {
     
     @Autowired
     private PGRInboxFilterService pgrInboxFilterService;
+    
+    @Autowired
+    private SWACHInboxFilterService swachInboxFilterService;
 
     @Autowired
     private TLInboxFilterService tlInboxFilterService;
@@ -368,6 +372,21 @@ public class InboxService {
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && (processCriteria.getModuleName().equals(PGR))) {
                 totalCount = pgrInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 List<String> applicationNumbers = pgrInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
+                        StatusIdNameMap, requestInfo);
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    moduleSearchCriteria.put(APPLICATION_NUMBER_PARAM, applicationNumbers);
+                    businessKeys.addAll(applicationNumbers);
+                    moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
+                    moduleSearchCriteria.remove(LOCALITY_PARAM);
+                    moduleSearchCriteria.remove(OFFSET_PARAM);
+                } else {
+                    isSearchResultEmpty = true;
+                }
+            }
+            
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && (processCriteria.getModuleName().equals(SWACH))) {
+                totalCount = swachInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
+                List<String> applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
                         StatusIdNameMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers)) {
                     moduleSearchCriteria.put(APPLICATION_NUMBER_PARAM, applicationNumbers);
