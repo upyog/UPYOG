@@ -10,7 +10,6 @@
     "packages/modules/ptr",
     "packages/modules/core",
     "packages/modules/noc",
-    "packages/modules/obps",
     "packages/modules/commonPt",
     "packages/modules/common"
   ],
