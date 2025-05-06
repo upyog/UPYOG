@@ -62,6 +62,8 @@ public class VendorDetail {
 	private String specialCategory;
 
 	private Boolean isInvolved;
+	
+	private String vendorPaymentFrequency;
 
 	private AuditDetails auditDetails;
 
@@ -79,6 +81,7 @@ public class VendorDetail {
 		this.userCategory = vendorDetail.getUserCategory();
 		this.specialCategory = vendorDetail.getSpecialCategory();
 		this.isInvolved = vendorDetail.getIsInvolved();
+		this.vendorPaymentFrequency = vendorDetail.getVendorPaymentFrequency();
 		this.auditDetails = vendorDetail.getAuditDetails();
 	}
 

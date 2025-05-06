@@ -25,7 +25,7 @@ public class StreetVendingQueryBuilder {
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
 			+ "vendor.email_id as vendorEmailId, vendor.mobile_no as vendorMobileNo, vendor.gender as vendorGender,  "
 			+ "vendor.relationship_type as vendorRelationshipType, vendor.user_category as vendorusercategory, vendor.special_category as vendorspecialcategory, "
-			+ "vendor.is_involved as vendorisinvolved  ";
+			+ "vendor.is_involved as vendorisinvolved, vendor.vendor_payment_frequency as vendorPayFrequency ";
 
 	private static final String ADDRESS_SELECT_QUERY = " ,address.address_id as addressId, address.address_type as addressType, "
 			+ "address.vendor_id as addressVendorId, address.house_no as addressHouseNo, address.address_line_1 as addressLine1, "
@@ -129,6 +129,12 @@ public class StreetVendingQueryBuilder {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" sv.validity_date <= ? ");
 			preparedStmtList.add(criteria.getValidityDate());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getVendorPaymentFrequency())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" vendor.vendor_payment_frequency <= ? ");
+			preparedStmtList.add(criteria.getVendorPaymentFrequency());
 		}
 		
 		if (!criteria.isCountCall()) {
