@@ -18,7 +18,9 @@ const mdmsV2Modules = [
   'StreetVending',
   'Advertisement',
   'CHB',
-  'PetService'
+  'PetService',
+  'Ewaste',
+  'common-masters'
 ];
 
 const mdmsV2Enabled = true;

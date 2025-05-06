@@ -40,7 +40,14 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
+  // const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
+  const { data: hallList } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["CHB"]?.["CommunityHalls"]
+        return formattedData;
+      },
+    });
   let HallName = [];
   hallList && hallList.map((slot) => {
     HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`});

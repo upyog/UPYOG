@@ -43,7 +43,14 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Menu } = Digit.Hooks.ew.useProductPriceMDMS(stateId, "Ewaste", "ProductName");
+
+  const { data: Menu } = Digit.Hooks.useEnabledMDMS(stateId, "Ewaste", [{ name: "ProductName" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["Ewaste"]?.["ProductName"]
+        return formattedData;
+      },
+    });
   const { control, setError, clearErrors } = useForm();
 
   /**
