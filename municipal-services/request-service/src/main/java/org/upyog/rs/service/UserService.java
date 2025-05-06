@@ -49,23 +49,17 @@ public class UserService {
 	 * @param bookingRequest The application request containing user details.
 	 * @return The existing or newly created user.
 	 */
-	public User fetchExistingOrCreateNewUser(WaterTankerBookingRequest bookingRequest) {
+	public List<User> fetchExistingOrCreateNewUser(WaterTankerBookingRequest bookingRequest) {
 
 		WaterTankerBookingDetail bookingDetail = bookingRequest.getWaterTankerBookingDetail();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
 		ApplicantDetail applicantDetail = bookingDetail.getApplicantDetail();
 		String tenantId = bookingDetail.getTenantId();
-
 		// Fetch existing user details
 		UserDetailResponse userDetailResponse = fetchExistingUserDetails(applicantDetail, requestInfo, tenantId);
 		List<User> existingUsers = userDetailResponse.getUser();
 
-		// Create a new user if no existing user found
-		if (CollectionUtils.isEmpty(existingUsers)) {
-			return createUserHandler(requestInfo, applicantDetail, tenantId);
-		}
-
-		return existingUsers.get(0);
+		return existingUsers;
 	}
 
 	/**
@@ -74,7 +68,7 @@ public class UserService {
 	 * @param bookingRequest The application request containing user details.
 	 * @return The existing or newly created user.
 	 */
-	public User fetchExistingOrCreateNewUser(MobileToiletBookingRequest bookingRequest) {
+	public List<User> fetchExistingOrCreateNewUser(MobileToiletBookingRequest bookingRequest) {
 
 		MobileToiletBookingDetail bookingDetail = bookingRequest.getMobileToiletBookingDetail();
 		RequestInfo requestInfo = bookingRequest.getRequestInfo();
@@ -85,12 +79,7 @@ public class UserService {
 		UserDetailResponse userDetailResponse = fetchExistingUserDetails(applicantDetail, requestInfo, tenantId);
 		List<User> existingUsers = userDetailResponse.getUser();
 
-		// Create a new user if no existing user found
-		if (CollectionUtils.isEmpty(existingUsers)) {
-			return createUserHandler(requestInfo, applicantDetail, tenantId);
-		}
-
-		return existingUsers.get(0);
+		return existingUsers;
 	}
 
 	private UserDetailResponse createUser(RequestInfo requestInfo, User user, String tenantId) {
@@ -142,9 +131,11 @@ public class UserService {
 	 * @param tenantId        The tenant ID.
 	 * @return The created user.
 	 */
-	private User createUserHandler(RequestInfo requestInfo,  ApplicantDetail applicantDetail, String tenantId) {
+	public User createUserHandler(RequestInfo requestInfo,  ApplicantDetail applicantDetail, Address address, String tenantId) {
 		Role role = getCitizenRole();
 		User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
+		AddressV2 addressV2 = convertApplicantAddressToUserAddress(address, tenantId);
+		user.addAddressItem(addressV2);
 		UserDetailResponse userDetailResponse = createUser(requestInfo, user, tenantId);
 		String newUuid = userDetailResponse.getUser().get(0).getUuid();
 		log.info("New user uuid returned from user service: {}", newUuid);
