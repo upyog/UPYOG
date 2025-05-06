@@ -229,6 +229,8 @@ public class UserService {
 		userSearchRequest.setMobileNumber(owner.getMobileNumber());
 		userSearchRequest.setUserType(owner.getType());
 		userSearchRequest.setName(owner.getName());
+		
+		//log.info(owner.getName());
 
 		StringBuilder uri = new StringBuilder(grbgConfig.getUserServiceHostUrl())
 				.append(grbgConfig.getUserSearchEndpoint());

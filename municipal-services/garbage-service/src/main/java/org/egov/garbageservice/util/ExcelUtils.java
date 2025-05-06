@@ -50,7 +50,6 @@ public class ExcelUtils {
 				if (row.getRowNum() == 0) {
 					continue;
 				}
-
 				// populate address details
 				List<GrbgAddress> addresses = enrichAddresses(row);
 				// populate garbage collection unit details
@@ -65,7 +64,8 @@ public class ExcelUtils {
 				GarbageAccount garbageAccount = GarbageAccount.builder().tenantId(getCellValue(row.getCell(0)))
 						.name(getCellValue(row.getCell(1))).mobileNumber(getCellValue(row.getCell(2)))
 						.gender(getCellValue(row.getCell(3))).emailId(getCellValue(row.getCell(4)))
-						.isOwner(Boolean.valueOf(getCellValue(row.getCell(5)))).addresses(addresses)
+						.isOwner(Boolean.valueOf(getCellValue(row.getCell(5)))).channel(GrbgConstants.CHANNEL_TYPE_MIGRATE)
+						.addresses(addresses)
 						.grbgCollectionUnits(grbgCollectionUnits).childGarbageAccounts(childGarbageAccounts)
 						.additionalDetail(additionalDetails).build();
 				if (null != oldGarbageDetails) {
@@ -136,6 +136,7 @@ public class ExcelUtils {
 		List<GrbgCollectionUnit> childGrbgCollectionUnits = enrichChildGrbgCollectionUnits(columns, index);
 
 		return GarbageAccount.builder().isOwner(Boolean.valueOf(isOwner)).name(name).gender(gender)
+				.channel(GrbgConstants.CHANNEL_TYPE_MIGRATE)
 				.mobileNumber(mobileNumber).grbgCollectionUnits(childGrbgCollectionUnits).build();
 	}
 

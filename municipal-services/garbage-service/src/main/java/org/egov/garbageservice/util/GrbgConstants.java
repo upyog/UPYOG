@@ -76,6 +76,10 @@ public class GrbgConstants {
 	public static final String USER_TYPE_EMPLOYEE = "EMPLOYEE";
 	
 	public static final String USER_TYPE_SYSTEM = "SYSTEM";
+	
+	public static final String CHANNEL_TYPE_CREATE = "CREATE";
+	
+	public static final String CHANNEL_TYPE_MIGRATE = "MIGRATION";
 
 	public static final String BILLING_TAX_HEAD_MASTER_CODE = "LCF.Garbage_Collection_Fee";
 
