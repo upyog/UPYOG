@@ -30,6 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
 
+import javax.validation.Valid;
+
 @Slf4j
 @Service
 public class UserService {
@@ -56,7 +58,7 @@ public class UserService {
 		ApplicantDetail applicantDetail = bookingDetail.getApplicantDetail();
 		String tenantId = bookingDetail.getTenantId();
 		// Fetch existing user details
-		UserDetailResponse userDetailResponse = fetchExistingUserDetails(applicantDetail, requestInfo, tenantId);
+		UserDetailResponse userDetailResponse = getUserDetails(applicantDetail, requestInfo, tenantId);
 		List<User> existingUsers = userDetailResponse.getUser();
 
 		return existingUsers;
@@ -76,7 +78,7 @@ public class UserService {
 		String tenantId = bookingDetail.getTenantId();
 
 		// Fetch existing user details
-		UserDetailResponse userDetailResponse = fetchExistingUserDetails(applicantDetail, requestInfo, tenantId);
+		UserDetailResponse userDetailResponse = getUserDetails(applicantDetail, requestInfo, tenantId);
 		List<User> existingUsers = userDetailResponse.getUser();
 
 		return existingUsers;
@@ -152,7 +154,7 @@ public class UserService {
 	 * @return UserDetailResponse containing the user if present and the
 	 *         responseInfo
 	 */
-	private UserDetailResponse fetchExistingUserDetails(ApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
+	private UserDetailResponse getUserDetails(ApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
 
 		UserSearchRequest userSearchRequest = getBaseUserSearchRequest(UserUtil.getStateLevelTenant(tenantId), requestInfo);
 		userSearchRequest.setMobileNumber(applicant.getMobileNumber());
@@ -189,8 +191,7 @@ public class UserService {
 	private UserDetailResponse userServiceCall(Object userRequest, StringBuilder url) {
 
 		String dobFormat = null;
-		if (url.indexOf(requestConfig.getUserSearchEndpointV2()) != -1
-				|| url.indexOf(requestConfig.getUserUpdateEndpoint()) != -1)
+		if (url.indexOf(requestConfig.getUserSearchEndpointV2()) != -1)
 			dobFormat = "yyyy-MM-dd";
 		else if (url.indexOf(requestConfig.getUserCreateEndpointV2()) != -1)
 			dobFormat = "dd/MM/yyyy";
@@ -260,7 +261,7 @@ public class UserService {
 	 * @param user The user object.
 	 * @return The converted applicant detail.
 	 */
-	public ApplicantDetail convertUserToApplicantDetail(User user, MobileToiletBookingDetail booking) {
+	public ApplicantDetail convertUserToApplicantDetail(User user, String applicantUuid, String bookingId) {
 		if (user == null) {
 			return null;
 		}
@@ -270,29 +271,8 @@ public class UserService {
 				.emailId(user.getEmailId())
 				.mobileNumber(user.getMobileNumber())
 				.alternateNumber(user.getAltContactNumber())
-				.bookingId(booking.getBookingId())
-				.applicantId(booking.getApplicantUuid())
-				.build();
-	}
-
-	/**
-	 * Converts a user object to an applicant detail object.
-	 *
-	 * @param user The user object.
-	 * @return The converted applicant detail.
-	 */
-	public ApplicantDetail convertUserToApplicantDetail(User user, WaterTankerBookingDetail booking) {
-		if (user == null) {
-			return null;
-		}
-		// Convert User to ApplicantDetail
-		return ApplicantDetail.builder()
-				.name(user.getName())
-				.emailId(user.getEmailId())
-				.mobileNumber(user.getMobileNumber())
-				.alternateNumber(user.getAltContactNumber())
-				.bookingId(booking.getBookingId())
-				.applicantId(booking.getApplicantUuid())
+				.bookingId(bookingId)
+				.applicantId(applicantUuid)
 				.build();
 	}
 
@@ -302,47 +282,23 @@ public class UserService {
 	 * @param user The set of addresses.
 	 * @return The converted address detail.
 	 */
-	public Address convertUserAddressToAddressDetail(User user, MobileToiletBookingDetail booking) {
+	public Address convertUserAddressToAddressDetail(User user, String applicantUuid) {
 		if (CollectionUtils.isEmpty(user.getAddresses())) {
 			return null;
 		}
+		AddressV2 addressV2 = user.getAddresses().get(0);
 		return Address.builder()
-				.addressLine1(user.getAddresses().get(0).getAddress())
-				.addressLine2(user.getAddresses().get(0).getAddress2())
-				.city(user.getAddresses().get(0).getCity())
-				.pincode(user.getAddresses().get(0).getPinCode())
-				.streetName(user.getAddresses().get(0).getStreetName())
-				.landmark(user.getAddresses().get(0).getLandmark())
-				.houseNo(user.getAddresses().get(0).getHouseNumber())
-				.locality(user.getAddresses().get(0).getLocality())
-				.addressId(user.getAddresses().get(0).getId())
-				.addressType(user.getAddresses().get(0).getType())
-				.applicantId(booking.getApplicantUuid())
-				.build();
-	}
-
-	/**
-	 * Converts a user address to an address detail object.
-	 *
-	 * @param user The set of addresses.
-	 * @return The converted address detail.
-	 */
-	public Address convertUserAddressToAddressDetail(User user, WaterTankerBookingDetail booking) {
-		if (CollectionUtils.isEmpty(user.getAddresses())) {
-			return null;
-		}
-		return Address.builder()
-				.addressLine1(user.getAddresses().get(0).getAddress())
-				.addressLine2(user.getAddresses().get(0).getAddress2())
-				.city(user.getAddresses().get(0).getCity())
-				.pincode(user.getAddresses().get(0).getPinCode())
-				.streetName(user.getAddresses().get(0).getStreetName())
-				.landmark(user.getAddresses().get(0).getLandmark())
-				.houseNo(user.getAddresses().get(0).getHouseNumber())
-				.locality(user.getAddresses().get(0).getLocality())
-				.addressId(user.getAddresses().get(0).getId())
-				.addressType(user.getAddresses().get(0).getType())
-				.applicantId(booking.getApplicantUuid())
+				.addressLine1(addressV2.getAddress())
+				.addressLine2(addressV2.getAddress2())
+				.city(addressV2.getCity())
+				.pincode(addressV2.getPinCode())
+				.streetName(addressV2.getStreetName())
+				.landmark(addressV2.getLandmark())
+				.houseNo(addressV2.getHouseNumber())
+				.locality(addressV2.getLocality())
+				.addressId(addressV2.getId())
+				.addressType(addressV2.getType())
+				.applicantId(applicantUuid)
 				.build();
 	}
 
@@ -378,10 +334,10 @@ public class UserService {
 			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
 				User user = userDetailResponse.getUser().get(0);
 
-				booking.setApplicantDetail(convertUserToApplicantDetail(user, booking));
+				booking.setApplicantDetail(convertUserToApplicantDetail(user, booking.getApplicantUuid(), booking.getBookingId()));
 
 				if (excludeAddressDetails) {
-					booking.setAddress(convertUserAddressToAddressDetail(user, booking));
+					booking.setAddress(convertUserAddressToAddressDetail(user, booking.getApplicantUuid()));
 				}
 			}
 		}catch (Exception e) {
@@ -421,10 +377,10 @@ public class UserService {
 			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
 				User user = userDetailResponse.getUser().get(0);
 
-				booking.setApplicantDetail(convertUserToApplicantDetail(user, booking));
+				booking.setApplicantDetail(convertUserToApplicantDetail(user, booking.getApplicantUuid(), booking.getBookingId()));
 
 				if (excludeAddressDetails) {
-					booking.setAddress(convertUserAddressToAddressDetail(user, booking));
+					booking.setAddress(convertUserAddressToAddressDetail(user, booking.getApplicantUuid()));
 				}
 			}
 		}catch (Exception e) {
@@ -439,7 +395,7 @@ public class UserService {
 	 * @param tenantId         The tenant ID.
 	 * @return The converted User address object.
 	 */
-	private AddressV2 convertApplicantAddressToUserAddress(Address address, String tenantId) {
+	public static AddressV2 convertApplicantAddressToUserAddress(Address address, String tenantId) {
 		if (address == null) {
 			log.info("The address details are empty or null");
 		}
@@ -470,12 +426,11 @@ public class UserService {
 	 * If the response is null or an error occurs during processing, appropriate logs are generated
 	 * and the method returns null.
 	 *
-	 * @param waterTankerRequest The request object containing the application data and user information.
+	 * @param address The request object containing the application data and user information.
 	 * @return The newly created Address object, or null if creation fails.
 	 */
-	public AddressV2 createNewAddressV2ByUserUuid(WaterTankerBookingRequest waterTankerRequest) {
-		AddressV2 address = convertApplicantAddressToUserAddress(waterTankerRequest.getWaterTankerBookingDetail().getAddress(), RequestServiceUtil.extractTenantId(waterTankerRequest.getWaterTankerBookingDetail().getTenantId()));
-		AddressRequestV2 addressRequest = AddressRequestV2.builder().requestInfo(waterTankerRequest.getRequestInfo()).address(address).userUuid(waterTankerRequest.getWaterTankerBookingDetail().getApplicantUuid()).build();
+	public AddressV2 createNewAddressV2ByUserUuid(AddressV2 address, @Valid RequestInfo requestInfo, String applicantUuid) {
+		AddressRequestV2 addressRequest = AddressRequestV2.builder().requestInfo(requestInfo).address(address).userUuid(applicantUuid).build();
 
 		StringBuilder uri = new StringBuilder(requestConfig.getUserHost()).append(requestConfig.getUserCreateAddressEndpointV2());
 		Object response = serviceRequestRepository.fetchResult(uri, addressRequest);
@@ -495,47 +450,4 @@ public class UserService {
 			return null;
 		}
 	}
-
-	/**
-	 * Creates a new address for the user UUID provided in the MobileToiletBookingRequest.
-	 *
-	 * This method:
-	 * 1. Converts the address details from the application into a user address.
-	 * 2. Builds an AddressRequest object with the converted address, user UUID, and request information.
-	 * 3. Sends the AddressRequest to the user service to create the new address.
-	 * 4. Parses the response to extract and return the first created address, if available.
-	 *
-	 * If the response is null or an error occurs during processing, appropriate logs are generated
-	 * and the method returns null.
-	 *
-	 * @param mobileToiletRequest The request object containing the application data and user information.
-	 * @return The newly created Address object, or null if creation fails.
-	 */
-	public AddressV2 createNewAddressV2ByUserUuid(MobileToiletBookingRequest mobileToiletRequest) {
-		AddressV2 address = convertApplicantAddressToUserAddress(mobileToiletRequest.getMobileToiletBookingDetail().getAddress(), RequestServiceUtil.extractTenantId(mobileToiletRequest.getMobileToiletBookingDetail().getTenantId()));
-		AddressRequestV2 addressRequest = AddressRequestV2.builder().requestInfo(mobileToiletRequest.getRequestInfo()).address(address).userUuid(mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid()).build();
-
-		StringBuilder uri = new StringBuilder(requestConfig.getUserHost()).append(requestConfig.getUserCreateAddressEndpointV2());
-		Object response = serviceRequestRepository.fetchResult(uri, addressRequest);
-
-		if (response == null) {
-			log.warn("Response from user service is null.");
-			return null;
-		}
-		try {
-			LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) response;
-			log.info("Response from user service after address creation: {}", responseMap);
-			AddressResponseV2 addressResponse = mapper.convertValue(responseMap, AddressResponseV2.class);
-			return Optional.ofNullable(addressResponse).map(AddressResponseV2::getAddress).filter(addresses -> !addresses.isEmpty()).map(addresses -> addresses.get(0)).orElse(null);
-
-		} catch (Exception e) {
-			log.error("Error while parsing response from user service: {}", e.getMessage(), e);
-			return null;
-		}
-	}
-
-
-
-
-
 }

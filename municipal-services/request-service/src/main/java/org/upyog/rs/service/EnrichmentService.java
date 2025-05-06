@@ -158,7 +158,8 @@ public class EnrichmentService {
 		}
 
 		// Fetch the new address associated with the user's UUID
-		AddressV2 address = userService.createNewAddressV2ByUserUuid(waterTankerRequest);
+		AddressV2 addressDetails = UserService.convertApplicantAddressToUserAddress(waterTankerRequest.getWaterTankerBookingDetail().getAddress(), RequestServiceUtil.extractTenantId(waterTankerRequest.getWaterTankerBookingDetail().getTenantId()));
+		AddressV2 address = userService.createNewAddressV2ByUserUuid(addressDetails,waterTankerRequest.getRequestInfo(),waterTankerRequest.getWaterTankerBookingDetail().getApplicantUuid());
 
 		if (address != null) {
 			// Set the address detail ID in the booking detail
@@ -291,8 +292,10 @@ public class EnrichmentService {
 		if (StringUtils.isBlank(mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid())) {
 			throw new CustomException("APPLICANT_UUID_NULL", "Applicant UUID is blank");
 		}
-			// Fetch the new address associated with the user's UUID
-			AddressV2 address = userService.createNewAddressV2ByUserUuid(mobileToiletRequest);
+
+		// Fetch the new address associated with the user's UUID
+		AddressV2 addressDetails = UserService.convertApplicantAddressToUserAddress(mobileToiletRequest.getMobileToiletBookingDetail().getAddress(), RequestServiceUtil.extractTenantId(mobileToiletRequest.getMobileToiletBookingDetail().getTenantId()));
+		AddressV2 address = userService.createNewAddressV2ByUserUuid(addressDetails,mobileToiletRequest.getRequestInfo(),mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid());
 
 			if (address != null) {
 				// Set the address detail ID in the application details object

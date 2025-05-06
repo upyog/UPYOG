@@ -108,9 +108,6 @@ public class RequestServiceConfiguration {
 	@Value("${egov.user.v2.search.path}")
 	private String userSearchEndpointV2;
 
-	@Value("${egov.user.v2.update.path}")
-	private String userUpdateEndpointV2;
-
 	// Pagination config for search results
 	@Value("${upyog.request.service.default.limit}")
 	private Integer defaultLimit;
