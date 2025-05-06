@@ -19,13 +19,17 @@ const mdmsV2Modules = [
   'Advertisement',
   'CHB',
   'PetService',
-  'Ewaste',
-  'common-masters'
+  'Ewaste'
 ];
 
 const mdmsV2Enabled = true;
 let mdmsRef = null;
 
+/**
+ * Wrapper hook/function to get the correct MDMS service.
+ * if mdmsV2Enabled is true and moduleName matches to any of mention inside mdmsV2Modules array
+ * then it return MdmsServiceV2 and if any of thsi is false then it return  MdmsService
+ */
 const getMDMSServiceRef = (moduleName) => {
   // Check if the module is in the list of modules that should use V2
   if (mdmsV2Enabled && mdmsV2Modules.includes(moduleName)) {
@@ -36,6 +40,7 @@ const getMDMSServiceRef = (moduleName) => {
 }
 
 const useSelectedMDMS = (moduleName) => {
+  console.log("midtttttttt",moduleName);
   // Get the appropriate service reference based on the module name
   mdmsRef = getMDMSServiceRef(moduleName);
   return mdmsRef;
