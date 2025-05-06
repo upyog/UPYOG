@@ -12,6 +12,7 @@ import org.springframework.util.ObjectUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.constants.CNDConstants;
 import org.upyog.cdwm.repository.ServiceRequestRepository;
@@ -47,23 +48,15 @@ public class UserService {
      * @param bookingRequest The application request containing user details.
      * @return The existing or newly created user.
      */
-    public User getExistingOrNewUser(CNDApplicationRequest bookingRequest) {
+    public List<User> getUserDetails(CNDApplicationRequest bookingRequest) {
 
         CNDApplicationDetail applicationDetail = bookingRequest.getCndApplication();
-        RequestInfo requestInfo = bookingRequest.getRequestInfo();
-        CNDApplicantDetail applicantDetail = applicationDetail.getApplicantDetail();
-        String tenantId = applicationDetail.getTenantId();
-
         // Fetch existing user details
-        UserDetailResponseV2 userDetailResponse = fetchUser(applicantDetail, requestInfo, tenantId);
+        UserDetailResponseV2 userDetailResponse = fetchUserByCriteria(applicationDetail.getApplicantDetail(),
+                bookingRequest.getRequestInfo(), applicationDetail.getTenantId());
         List<User> existingUsers = userDetailResponse.getUser();
 
-        // Create a new user if no existing user found
-        if (CollectionUtils.isEmpty(existingUsers)) {
-            return createUserHandler(requestInfo, applicantDetail, applicationDetail.getAddressDetail(), tenantId);
-        }
-
-        return existingUsers.get(0);
+        return existingUsers;
     }
 
     /**
@@ -74,7 +67,7 @@ public class UserService {
      * @param tenantId        The tenant ID.
      * @return The created user.
      */
-    private User createUserHandler(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, CNDAddressDetail cndAddressDetail, String tenantId) {
+    public User createUserHandler(RequestInfo requestInfo, CNDApplicantDetail applicantDetail, CNDAddressDetail cndAddressDetail, String tenantId) {
         Role role = getCitizenRole();
         User user = convertApplicantToUserRequest(applicantDetail, role, tenantId);
         AddressV2 address = convertApplicantAddressToUserAddress(cndAddressDetail, tenantId);
@@ -96,7 +89,7 @@ public class UserService {
      */
     private UserDetailResponseV2 createUser(RequestInfo requestInfo, User user, String tenantId) {
 
-        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserCreateEndpoint());
+        StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserV2CreateEndpoint());
         CreateUserRequestV2 userRequest = CreateUserRequestV2.builder().requestInfo(requestInfo).user(user).build();
         UserDetailResponseV2 userDetailResponse = userServiceCall(userRequest, uri);
 
@@ -144,6 +137,10 @@ public class UserService {
         if (cndAddressDetail == null) {
             log.info("The address details are empty or null");
         }
+        // Check if address type is null or empty throw exception
+        if (StringUtils.isEmpty(cndAddressDetail.getAddressType().toString())) {
+            throw new CustomException("INVALID ADDRESS TYPE", "The address type is empty or null");
+        }
         AddressV2 address = AddressV2.builder().
                 address(cndAddressDetail.getAddressLine1()).
                 address2(cndAddressDetail.getAddressLine2()).
@@ -179,7 +176,7 @@ public class UserService {
      * @return UserDetailResponseV2 containing the user if present and the
      * responseInfo
      */
-    private UserDetailResponseV2 fetchUser(CNDApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
+    private UserDetailResponseV2 fetchUserByCriteria(CNDApplicantDetail applicant, RequestInfo requestInfo, String tenantId) {
 
         UserSearchRequestV2 userSearchRequest = getBaseUserSearchRequest(tenantId, requestInfo);
         userSearchRequest.setMobileNumber(applicant.getMobileNumber());
