@@ -575,28 +575,21 @@ serviceMaps:
     fromTopic: save-property-tax-calculator-tracker
     isTransaction: true
     queryMaps:
-    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_tax_calculator_tracker (uuid, propertyid, tenantid, financialyear, fromdate, todate, propertytax, createdby, lastmodifiedby, createdtime, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: ptTaxCalculatorTracker
       jsonMaps:
       - jsonPath: $.ptTaxCalculatorTracker.uuid
-      
       - jsonPath: $.ptTaxCalculatorTracker.propertyId
-      
       - jsonPath: $.ptTaxCalculatorTracker.tenantId
-      
       - jsonPath: $.ptTaxCalculatorTracker.financialYear
-      
-      - jsonPath: $.ptTaxCalculatorTracker.fromDate
-      
-      - jsonPath: $.ptTaxCalculatorTracker.toDate
-      
+      - jsonPath: $.ptTaxCalculatorTracker.fromDateString
+      - jsonPath: $.ptTaxCalculatorTracker.toDateString
       - jsonPath: $.ptTaxCalculatorTracker.propertyTax
-
       - jsonPath: $.ptTaxCalculatorTracker.auditDetails.createdBy
-      
       - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedBy
-      
       - jsonPath: $.ptTaxCalculatorTracker.auditDetails.createdTime
-      
       - jsonPath: $.ptTaxCalculatorTracker.auditDetails.lastModifiedTime
+      - jsonPath: $.ptTaxCalculatorTracker.additionalDetails
+        type: JSON
+        dbType: JSONB
 

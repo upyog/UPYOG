@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Property Collection Bill</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			line-height: 1.6;
+			margin: 20px;
+			color: #333;
+		}
+
+		.container {
+			max-width: 600px;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			background-color: #f9f9f9;
+		}
+
+		h1 {
+			font-size: 24px;
+			text-align: center;
+			color: #4CAF50;
+		}
+
+		p {
+			margin: 10px 0;
+		}
+
+		.bill-details {
+			margin-top: 20px;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		.bill-details th,
+		.bill-details td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			text-align: left;
+		}
+
+		.bill-details th {
+			background-color: #f2f2f2;
+		}
+
+		.footer {
+			text-align: center;
+			margin-top: 20px;
+			font-size: 14px;
+			color: #666;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>Property Collection Bill</h1>
+		<p>Dear {recipients_name},</p>
+		<p>We hope this message finds you well. We would like to inform you that your property collection bill for the
+			period of <strong>{month}</strong> has been generated. Below are the details of your bill:</p>
+
+		<table class="bill-details">
+			<tr>
+				<th>Bill Details</th>
+				<th></th>
+			</tr>
+			<tr>
+				<td>Bill ID</td>
+				<td>{bill_no}</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>{recipients_name}</td>
+			</tr>
+			<tr>
+				<td>Total Amount</td>
+				<td>{amount}</td>
+			</tr>
+		</table>
+
+		<p class="footer">Thank you for your cooperation and timely payment. <a href="{property_pay_now_bill_url}">CitizenSeva Portal</a></p>
+	</div>
+</body>
+
+</html>

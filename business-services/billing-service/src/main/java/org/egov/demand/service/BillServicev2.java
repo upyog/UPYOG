@@ -523,6 +523,7 @@ public class BillServicev2 {
 						.auditDetails(util.getAuditDetail(requestInfo))
 						.payerAddress(payer.getPermanentAddress())
 						.mobileNumber(payer.getMobileNumber())
+						.payerEmail(payer.getEmailId())
 						.billDate(System.currentTimeMillis())
 						.businessService(business.getCode())
 						.payerName(payer.getName())

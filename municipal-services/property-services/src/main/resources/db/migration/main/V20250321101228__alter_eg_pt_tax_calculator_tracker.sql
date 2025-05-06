@@ -1,0 +1,1 @@
+ALTER TABLE eg_pt_tax_calculator_tracker ADD COLUMN additionaldetails JSONB DEFAULT NULL ;
