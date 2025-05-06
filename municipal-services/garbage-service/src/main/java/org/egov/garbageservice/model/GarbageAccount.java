@@ -88,4 +88,7 @@ public class GarbageAccount {
 	
 	private String businessService;
 	
+	private String channel;
+
+	
 }
