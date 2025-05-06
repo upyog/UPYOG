@@ -68,11 +68,11 @@ public class EnrichmentService {
         String addressDetailId = cndApplicationDetails.getAddressDetailId();
 
         if (StringUtils.isBlank(applicantDetailId)) {
-            // Enrich user details for new user
+            // Enrich user details for existing user or user details with address for new user
             enrichUserDetails(cndApplicationRequest);
         }
         if (StringUtils.isBlank(addressDetailId)) {
-            // Enrich address details
+            // Enrich address details only
             enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
         }
 
@@ -171,7 +171,7 @@ public class EnrichmentService {
             return;
         }
 
-        // Create a new user if no existing user was found
+        // Create a new user with address details if no existing user was found
         User newUser = userService.createUserHandler(request.getRequestInfo(), request.getCndApplication().getApplicantDetail(),
                 request.getCndApplication().getAddressDetail(), request.getCndApplication().getTenantId());
         log.info("New user created with ID: {}", newUser.getUuid());

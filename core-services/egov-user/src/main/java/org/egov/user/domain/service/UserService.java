@@ -723,20 +723,6 @@ public class UserService {
                 .status(UserConstants.ADDRESS_ACTIVE_STATUS)
                 .build();
         Address existingAddress = addressRepository.getAddressV2(addressSearchCriteria).get(0);
-
-        // Check if Permanent or Correspondence address already exists and not Other category as Other can be created multiple times
-        if (AddressType.PERMANENT == address.getType() || AddressType.CORRESPONDENCE == address.getType()) {
-             addressSearchCriteria = AddressSearchCriteria.builder()
-                    .userId(address.getUserId())
-                    .addressType(address.getType())
-                    .status(UserConstants.ADDRESS_ACTIVE_STATUS)
-                    .build();
-            List<Address> existingAddresses = addressRepository.getAddressV2(addressSearchCriteria);
-            if (!existingAddresses.isEmpty()) {
-                throw new IllegalArgumentException("An address of type " + address.getType() + " already exists for the User.");
-            }
-        }
-
         if (existingAddress == null) {
             throw new IllegalArgumentException("ADDRESS_NOT_VALID: Address ID " + address.getId() + " does not exist.");
         }

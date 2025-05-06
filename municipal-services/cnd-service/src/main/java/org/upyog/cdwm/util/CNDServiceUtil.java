@@ -197,7 +197,7 @@ public class CNDServiceUtil {
 	public static boolean isCurrentUserApplicant(CNDApplicationRequest applicationRequest){
 		String userMobileNumber = applicationRequest.getRequestInfo().getUserInfo().getMobileNumber();
 		String applicationMobileNumber = applicationRequest.getCndApplication().getApplicantDetail().getMobileNumber();
-		if (userMobileNumber.equalsIgnoreCase(applicationMobileNumber)) {
+		if (userMobileNumber.equals(applicationMobileNumber)) {
 			return true;
 		} else {
 			return false;
