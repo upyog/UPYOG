@@ -15,12 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Orders {
-
-	private Integer amount;
-
-	@Builder.Default
-	private String currency = "INR";
+public class TransferWrapper {
 
 	private List<Transfer> transfers;
 

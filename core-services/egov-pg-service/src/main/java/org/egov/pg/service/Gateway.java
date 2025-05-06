@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransferWrapper;
 
 
 
@@ -61,5 +62,7 @@ public interface Gateway {
     String transactionIdKeyInResponse();
 
     String generateRedirectFormData(Transaction transaction );
+    
+    Object transferAmount(TransferWrapper transferWrapper);
     
 }

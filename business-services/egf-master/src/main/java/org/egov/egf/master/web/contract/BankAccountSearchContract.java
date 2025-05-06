@@ -16,4 +16,5 @@ private String  sortBy;
 private Integer pageSize; 
 private Integer offset; 
 private List<String> tenantIds;
+private Boolean active;
 } 

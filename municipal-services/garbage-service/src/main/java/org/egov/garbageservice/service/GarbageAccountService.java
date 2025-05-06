@@ -150,11 +150,11 @@ public class GarbageAccountService {
 		List<String> propertyIds = createGarbageRequest.getGarbageAccounts().stream()
 				.map(account -> account.getPropertyId()).collect(Collectors.toList());
 		List<GarbageAccount> existingAccounts = new ArrayList<>();
-		if (!createGarbageRequest.getCreateChildAccountOnly()) {
-			// search existing account
-			existingAccounts = garbageAccountRepository.searchGarbageAccount(
-					SearchCriteriaGarbageAccount.builder().propertyId(propertyIds).parentAccount(null).build());
-		}
+//		if (!createGarbageRequest.getCreateChildAccountOnly()) {
+//			// search existing account
+//			existingAccounts = garbageAccountRepository.searchGarbageAccount(
+//					SearchCriteriaGarbageAccount.builder().propertyId(propertyIds).parentAccount(null).build());
+//		}
 
 		if (!CollectionUtils.isEmpty(createGarbageRequest.getGarbageAccounts())) {
 			for (GarbageAccount garbageAccount : createGarbageRequest.getGarbageAccounts()) {
