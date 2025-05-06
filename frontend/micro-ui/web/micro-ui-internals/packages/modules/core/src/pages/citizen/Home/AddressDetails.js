@@ -139,7 +139,7 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
       error={showToast?.label}
     >
       <div style={{ boxShadow: "none" }}>
-          <AddressDetails t={t} formData={formData} onSelect={setFormData} />
+          <AddressDetails t={t} formData={formData} onSelect={setFormData} isEdit={isEdit} />
       </div>
     </Modal>
   );

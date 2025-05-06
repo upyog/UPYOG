@@ -34,7 +34,7 @@ import { useLocation } from "react-router-dom";
       TODO: Need to check how to use Timeline functioality 
  */
 
-const AddressDetails = ({t, config, onSelect, formData}) => {
+const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
   const { data: allCities, isLoading } = Digit.Hooks.useTenants();
   let validation = {};
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
@@ -116,6 +116,7 @@ const AddressDetails = ({t, config, onSelect, formData}) => {
       className="form-field"
       selected={addressType}
       select={setAddressType}
+      disable={isEdit}
       option={availableAddressTypeOptions}
       optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
       optionKey="i18nKey"
