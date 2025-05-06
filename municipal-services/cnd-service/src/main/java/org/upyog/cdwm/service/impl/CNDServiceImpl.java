@@ -235,11 +235,6 @@ public class CNDServiceImpl implements CNDService {
 			enrichmentService.enrichCNDApplicationUponUpdate(state.getApplicationStatus(), cndApplicationRequest);
 			updateWasteAndDocumentDetails(cndApplicationRequest);
 
-			// If action is APPROVE, create demand
-			if (CNDConstants.ACTION_APPROVE
-					.equals(cndApplicationRequest.getCndApplication().getWorkflow().getAction())) {
-			calculationService.addCalculation(cndApplicationRequest);
-			}
 		} else {
 			// Handle payment request updates
 			log.info("Inside Payment application status update method For Application no: {}", applicationNumber );
@@ -263,6 +258,12 @@ public class CNDServiceImpl implements CNDService {
 
 		log.info("Updating CND Application in the database: {}", updatedCNDApplicationRequest);
 		cndApplicationRepository.updateCNDApplicationDetail(updatedCNDApplicationRequest);
+		
+		// If action is APPROVE, create demand
+		if (CNDConstants.ACTION_APPROVE
+			.equals(updatedCNDApplicationRequest.getCndApplication().getWorkflow().getAction())) {
+	        calculationService.addCalculation(updatedCNDApplicationRequest);
+			}
 
 		return updatedCNDApplicationRequest.getCndApplication();
 	}
