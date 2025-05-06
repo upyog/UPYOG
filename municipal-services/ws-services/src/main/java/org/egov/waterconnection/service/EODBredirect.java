@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -124,8 +128,8 @@ public class EODBredirect {
         statusIdMap.put("REJECTED", 3);  // Rejected
         statusIdMap.put("PENDING_FOR_CONNECTION_ACTIVATION", 4);  // Clearance Issued
         statusIdMap.put("PENDING_FOR_CITIZEN_ACTION", 5);  // Objection Raised
-        statusIdMap.put("PENDING_FOR_FIELD_INSPECTION", 7);  // Pending for on-site inspection
-        statusIdMap.put("PENDING_APPROVAL_FOR_CONNECTION", 8);  // Inspection done, pending for final approval
+        statusIdMap.put("PENDING_FOR_FIELD_INSPECTION", 6);  // Pending for on-site inspection
+        statusIdMap.put("PENDING_APPROVAL_FOR_CONNECTION", 7);  // Inspection done, pending for final approval
 
         statusDescMap.put("PENDING_FOR_DOCUMENT_VERIFICATION", "Form Submitted (Created)");
         statusDescMap.put("PENDING_FOR_PAYMENT", "Payment Raised (Estimation Notice Generated)");
@@ -148,25 +152,55 @@ public class EODBredirect {
             log.error("Invalid applicationStatus: " + applicationStatus);
             return false;
         }
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = LocalDateTime.now().format(dateTimeFormatter);
+  
+        
+        String senderName = "LG";
+        String receiverName = "LG";
+        String designation = "NA";
+
+        if ("PENDING_FOR_CITIZEN_ACTION".equals(applicationStatus)) {
+            receiverName = connection.getRequestInfo().getUserInfo().getName();
+        }
+
+        switch (applicationStatus) {
+            case "PENDING_FOR_DOCUMENT_VERIFICATION":
+            case "PENDING_FOR_FIELD_INSPECTION":
+            case "REJECTED":
+                designation = "Junior Engineer";
+                break;
+            case "PENDING_APPROVAL_FOR_CONNECTION":
+                designation = "SDO/SDE/EO";
+                break;
+            case "PENDING_FOR_PAYMENT":
+                designation = "CITIZEN/CLERK";
+                break;
+            case "PENDING_FOR_CONNECTION_ACTIVATION":
+                designation = "CLERK";
+                break;
+        }
+
+        String clearanceIssuedOn = "PENDING_FOR_PAYMENT".equals(applicationStatus) ?
+                                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                                    "NA";
+
+        String statusDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         try {
-            // Create the JSON payload for the API request
             JSONObject jsonInput = new JSONObject();
-            jsonInput.put("iPin", iPin);  
-            jsonInput.put("AppId", appId);  
+            jsonInput.put("iPin", iPin);
+            jsonInput.put("AppId", appId);
             jsonInput.put("statusId", statusId);
             jsonInput.put("statusDesc", statusDesc);
             jsonInput.put("comments", "NA");
             jsonInput.put("senderName", connection.getRequestInfo().getUserInfo().getName());
             jsonInput.put("senderDesignation", "NA");
-            jsonInput.put("receiverName", "NA");
-            jsonInput.put("receiverDesignation", "NA");
-            jsonInput.put("clearanceIssuedOn", "NA");
+            jsonInput.put("receiverName", receiverName);
+            jsonInput.put("receiverDesignation", designation);
+            jsonInput.put("clearanceIssuedOn", clearanceIssuedOn);
             jsonInput.put("clearanceExpiredOn", "NA");
             jsonInput.put("licenseNo", "NA");
             jsonInput.put("clearanceFile", "NA");
-            jsonInput.put("statusDate", formattedDateTime);
+            jsonInput.put("statusDate", statusDate);
             jsonInput.put("integrationSource", "LG");
             jsonInput.put("deemedApproval", "false");
 
@@ -183,6 +217,20 @@ public class EODBredirect {
             }
 
             int responseCode = con.getResponseCode();
+            
+            InputStream inputStream = responseCode >= 200 && responseCode < 300 ? con.getInputStream() : con.getErrorStream();
+
+            if (inputStream != null) {
+                try (BufferedReader in = new BufferedReader(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    log.info("EODB API Response: " + response.toString());
+                }
+            }
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 log.info("EODB status update success.");
                 return true;
