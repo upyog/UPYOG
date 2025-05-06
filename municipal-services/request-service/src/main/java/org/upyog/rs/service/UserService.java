@@ -190,7 +190,7 @@ public class UserService {
 
 		String dobFormat = null;
 		if (url.indexOf(requestConfig.getUserSearchEndpointV2()) != -1
-				|| url.indexOf(requestConfig.getUserUpdateEndpointV2()) != -1)
+				|| url.indexOf(requestConfig.getUserUpdateEndpoint()) != -1)
 			dobFormat = "yyyy-MM-dd";
 		else if (url.indexOf(requestConfig.getUserCreateEndpointV2()) != -1)
 			dobFormat = "dd/MM/yyyy";
