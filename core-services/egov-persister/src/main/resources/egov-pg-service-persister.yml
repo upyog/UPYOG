@@ -125,7 +125,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-        - query: UPDATE eg_pg_transactions SET txn_status=?, gateway_txn_id=?,gateway_payment_mode=?,gateway_status_code=?, gateway_status_msg=?,last_modified_time=? where txn_id=? AND tenant_id=?;
+        - query: UPDATE eg_pg_transactions SET txn_status=?, gateway_txn_id=?,gateway_payment_mode=?,gateway_status_code=?, gateway_status_msg=?,last_modified_time=?,txn_settlement_status=?,settlement_response=? where txn_id=? AND tenant_id=?;
           basePath: Transaction
           jsonMaps:
 
@@ -140,6 +140,12 @@ serviceMaps:
            - jsonPath: $.Transaction.gatewayStatusMsg
            
            - jsonPath: $.Transaction.auditDetails.lastModifiedTime
+           
+           - jsonPath: $.Transaction.txnSettlementStatus
+
+           - jsonPath: $.Transaction.settlementResponse
+             type: JSON
+             dbType: JSONB
 
            - jsonPath: $.Transaction.txnId
 

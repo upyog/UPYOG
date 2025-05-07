@@ -39,21 +39,24 @@
  */
 package org.egov.pg.models;
 
+import java.util.List;
+
+import org.egov.common.contract.response.ResponseInfo;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.egov.common.contract.response.ResponseInfo;
-
-import java.util.List;
+import lombok.ToString;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class BankAccountResponse {
 
-    private ResponseInfo responseInfo;
+	private ResponseInfo responseInfo;
 
-    private List<BankAccount> bankAccounts;
+	private List<BankAccount> bankAccounts;
 }

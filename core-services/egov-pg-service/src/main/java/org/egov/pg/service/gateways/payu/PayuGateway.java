@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransferWrapper;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
@@ -272,5 +273,11 @@ public class PayuGateway implements Gateway {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public Object transferAmount(TransferWrapper transferWrapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

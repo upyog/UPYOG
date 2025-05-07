@@ -39,31 +39,63 @@
  */
 package org.egov.pg.models;
 
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.egov.pg.models.enums.BankAccountType;
+import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class BankAccount {
+@Builder
+@EqualsAndHashCode(exclude = { "bankBranch", "chartOfAccount", "fund", "type" }, callSuper = false)
+@ToString
+public class BankAccount extends Auditable {
 
-    private Long id;
-    
-    private String tenantId;
+	private String id;
 
-    private String accountNumber;
+	@NotNull
+	private BankBranch bankBranch;
 
-    private String description;
+	@NotNull
+	private ChartOfAccount chartOfAccount;
 
-    private Boolean active;
+	@NotNull
+	private Fund fund;
 
-    private String type;
+	@NotNull
+	@Length(max = 25)
+	private String accountNumber;
 
-    private ChartOfAccount chartOfAccount;
+	// is this required ?
+	private String accountType;
 
-    private BankBranch bankBranch;
+	@Length(max = 256)
+	private String description;
+
+	@NotNull
+	private Boolean active;
+
+	@Length(max = 100)
+	private String payTo;
+
+	@NotNull
+	private BankAccountType type;
+
+	@JsonIgnore
+	private List<String> tenantIds;
 
 }

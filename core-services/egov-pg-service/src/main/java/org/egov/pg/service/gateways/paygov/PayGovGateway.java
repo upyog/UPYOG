@@ -16,6 +16,7 @@ import org.egov.common.contract.request.User;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.models.PgDetail;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransferWrapper;
 import org.egov.pg.repository.PgDetailRepository;
 import org.egov.pg.service.Gateway;
 import org.egov.pg.utils.Utils;
@@ -668,5 +669,11 @@ public class PayGovGateway implements Gateway {
             throw new CustomException(UNABLE_TO_FETCH_STATUS, UNABLE_TO_FETCH_STATUS_FROM_PAY_GOV_GATEWAY);
         }
     }
+
+	@Override
+	public Object transferAmount(TransferWrapper transferWrapper) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
