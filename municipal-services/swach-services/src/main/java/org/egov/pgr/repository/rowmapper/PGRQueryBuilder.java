@@ -9,10 +9,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class PGRQueryBuilder {
@@ -88,11 +90,22 @@ public class PGRQueryBuilder {
             addToPreparedStatement(preparedStmtList, applicationStatuses);
         }
 
-        if (criteria.getServiceRequestId() != null) {
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" ser.serviceRequestId=? ");
-            preparedStmtList.add(criteria.getServiceRequestId());
+        if (criteria.getServiceRequestId() != null && !criteria.getServiceRequestId().isEmpty()) {
+            List<String> requestIds = Arrays.stream(criteria.getServiceRequestId().split(","))
+                                            .map(String::trim)
+                                            .filter(s -> !s.isEmpty())
+                                            .collect(Collectors.toList());
+
+            if (!requestIds.isEmpty()) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" ser.serviceRequestId IN (");
+                builder.append(requestIds.stream().map(id -> "?").collect(Collectors.joining(", ")));
+                builder.append(") ");
+                preparedStmtList.addAll(requestIds);
+            }
         }
+
+
 
         Set<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
