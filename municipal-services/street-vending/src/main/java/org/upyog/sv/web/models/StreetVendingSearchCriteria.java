@@ -37,6 +37,9 @@ public class StreetVendingSearchCriteria {
 
 	@JsonProperty("mobileNumber")
 	private String mobileNumber;
+	
+	@JsonProperty("vendorPaymentFrequency")
+	private String vendorPaymentFrequency;
 
 	@JsonProperty("vendingType")
 	private String vendingType;

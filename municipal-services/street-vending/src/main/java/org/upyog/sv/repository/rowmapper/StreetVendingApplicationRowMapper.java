@@ -142,6 +142,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 					.relationshipType(rs.getString("VENDORRELATIONSHIPTYPE"))
 					.userCategory(rs.getString("VENDORUSERCATEGORY"))
 					.specialCategory(rs.getString("VENDORSPECIALCATEGORY"))
+					.vendorPaymentFrequency(rs.getString("VENDORPAYFREQUENCY"))
 					.isInvolved(rs.getBoolean("VENDORISINVOLVED")).build();
 			streetVendingDetail.getVendorDetail().add(vendorDetail);
 		}
