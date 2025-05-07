@@ -34,6 +34,7 @@ import static org.egov.inbox.util.BSConstants.*;
 import static org.egov.inbox.util.WSConstants.WS;
 import static org.egov.inbox.util.PGRConstants.PGR;
 import static org.egov.inbox.util.PGRConstants.SWACH;
+import static org.egov.inbox.util.PGRConstants.PGRANDSWACH_APPLICATION_PARAM;
 
 import java.util.*;
 import java.util.function.Function;
@@ -374,7 +375,7 @@ public class InboxService {
                 List<String> applicationNumbers = pgrInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
                         StatusIdNameMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers)) {
-                    moduleSearchCriteria.put(APPLICATION_NUMBER_PARAM, applicationNumbers);
+                    moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNumbers);
                     businessKeys.addAll(applicationNumbers);
                     moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
                     moduleSearchCriteria.remove(LOCALITY_PARAM);
@@ -389,7 +390,7 @@ public class InboxService {
                 List<String> applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
                         StatusIdNameMap, requestInfo);
                 if (!CollectionUtils.isEmpty(applicationNumbers)) {
-                    moduleSearchCriteria.put(APPLICATION_NUMBER_PARAM, applicationNumbers);
+                    moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNumbers);
                     businessKeys.addAll(applicationNumbers);
                     moduleSearchCriteria.remove(TLConstants.STATUS_PARAM);
                     moduleSearchCriteria.remove(LOCALITY_PARAM);
