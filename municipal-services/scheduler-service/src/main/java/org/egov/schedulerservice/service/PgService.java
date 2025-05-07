@@ -25,7 +25,7 @@ public class PgService {
 	public String transferAmount(RequestInfo requestInfo) {
 
 		try {
-			StringBuilder url = new StringBuilder(applicationConfig.getPgrServiceHostUrl());
+			StringBuilder url = new StringBuilder(applicationConfig.getPgServiceHostUrl());
 			url.append(applicationConfig.getPgTransferAmountEndpoint());
 			// Make the POST request
 
