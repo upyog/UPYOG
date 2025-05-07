@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Instance of Service request raised for a particular service. As per extension propsed in the Service definition \&quot;attributes\&quot; carry the input values requried by metadata definition in the structure as described by the corresponding schema.  * Any one of &#39;address&#39; or &#39;(lat and lang)&#39; or &#39;addressid&#39; is mandatory 
@@ -55,10 +56,6 @@ public class Service   {
         private String serviceRequestId = null;
 
         @SafeHtml
-        @JsonProperty("description")
-        private String description = null;
-
-        @SafeHtml
         @JsonProperty("accountId")
         private String accountId = null;
 
@@ -88,7 +85,7 @@ public class Service   {
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails = null;
 
-        @NotNull
+//        @NotNull
         @JsonProperty("priority")
         private Priority priority = null;
 
@@ -97,6 +94,7 @@ public class Service   {
         private String serviceType = null;
 
         @NotNull
+        @Size(max = 1000)
         @JsonProperty("inputGrievance")
         private String inputGrievance = null;
 }

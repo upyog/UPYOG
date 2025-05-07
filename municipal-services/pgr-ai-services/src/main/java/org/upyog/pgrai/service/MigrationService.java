@@ -315,7 +315,6 @@ public class MigrationService {
                 .additionalDetail(attributes)
                 .serviceCode(serviceCode)
                 .serviceRequestId(serviceRequestId)
-                .description(description)
                 .source(source)
                 .address(address)
                 .active(active)
