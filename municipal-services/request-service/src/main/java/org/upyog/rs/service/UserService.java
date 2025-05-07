@@ -1,5 +1,6 @@
 package org.upyog.rs.service;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -303,88 +304,62 @@ public class UserService {
 	}
 
 	/**
-	 * Enriches the booking details with user information.
+	 * Enriches a generic booking object with user details by using reflection to dynamically
+	 * access and invoke methods on either MobileToiletBookingDetail or WaterTankerBookingDetail.
 	 *
-	 * @param booking         The booking details.
-	 * @param searchCriteria   The search criteria for the booking.
+	 * This method:
+	 * - Extracts the applicant UUID, address detail ID, and booking ID from the booking object.
+	 * - Uses the applicant UUID to fetch user details via a user search service.
+	 * - Populates the booking object with applicant and optionally address details.
+	 * - Supports both MobileToilet and WaterTanker bookings using reflection.
+	 *
+	 * @param booking         The booking object (either MobileToiletBookingDetail or WaterTankerBookingDetail).
+	 * @param searchCriteria  The corresponding search criteria object used to determine enrichment behavior.
 	 */
-	public void enrichBookingWithUserDetails(MobileToiletBookingDetail booking,
-											  MobileToiletBookingSearchCriteria searchCriteria) {
-
-		String applicantUuid = booking.getApplicantUuid();
-
-		if (applicantUuid == null) {
-			return;
-		}
-
-		boolean excludeAddressDetails = searchCriteria.getBookingNo() != null;
-
-		UserSearchRequest userSearchRequest = UserSearchRequest.builder()
-				.uuid(Collections.singleton(applicantUuid))
-				.excludeAddressDetails(excludeAddressDetails)
-				.build();
-
-		if (excludeAddressDetails) {
-			userSearchRequest.setAddressId(booking.getAddressDetailId());
-		}
-
+	public void enrichBookingWithUserDetails(Object booking, Object searchCriteria) {
 		try {
-			UserDetailResponse userDetailResponse =getUser(userSearchRequest);
+			Method getApplicantUuid = booking.getClass().getMethod("getApplicantUuid");
+			String applicantUuid = (String) getApplicantUuid.invoke(booking);
+
+			if (applicantUuid == null) {
+				return;
+			}
+
+			Method getBookingNo = searchCriteria.getClass().getMethod("getBookingNo");
+			boolean excludeAddressDetails = getBookingNo.invoke(searchCriteria) != null;
+
+			Method getAddressDetailId = booking.getClass().getMethod("getAddressDetailId");
+			String addressDetailId = (String) getAddressDetailId.invoke(booking);
+
+			Method getBookingId = booking.getClass().getMethod("getBookingId");
+			String bookingId = (String) getBookingId.invoke(booking);
+
+			UserSearchRequest userSearchRequest = UserSearchRequest.builder()
+					.uuid(Collections.singleton(applicantUuid))
+					.excludeAddressDetails(excludeAddressDetails)
+					.build();
+
+			if (excludeAddressDetails) {
+				userSearchRequest.setAddressId(addressDetailId);
+			}
+
+			UserDetailResponse userDetailResponse = getUser(userSearchRequest);
 
 			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
 				User user = userDetailResponse.getUser().get(0);
 
-				booking.setApplicantDetail(convertUserToApplicantDetail(user, booking.getApplicantUuid(), booking.getBookingId()));
+				Object applicantDetail = convertUserToApplicantDetail(user, applicantUuid, bookingId);
+				Method setApplicantDetail = booking.getClass().getMethod("setApplicantDetail", applicantDetail.getClass());
+				setApplicantDetail.invoke(booking, applicantDetail);
 
 				if (excludeAddressDetails) {
-					booking.setAddress(convertUserAddressToAddressDetail(user, booking.getApplicantUuid()));
+					Object address = convertUserAddressToAddressDetail(user, applicantUuid);
+					Method setAddress = booking.getClass().getMethod("setAddress", address.getClass());
+					setAddress.invoke(booking, address);
 				}
 			}
-		}catch (Exception e) {
-			log.error("Error while fetching user details: " + e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * Enriches the booking details with user information.
-	 *
-	 * @param booking         The booking details.
-	 * @param searchCriteria   The search criteria for the booking.
-	 */
-	public void enrichBookingWithUserDetails(WaterTankerBookingDetail booking,
-											 WaterTankerBookingSearchCriteria searchCriteria) {
-
-		String applicantUuid = booking.getApplicantUuid();
-
-		if (applicantUuid == null) {
-			return;
-		}
-
-		boolean excludeAddressDetails = searchCriteria.getBookingNo() != null;
-
-		UserSearchRequest userSearchRequest = UserSearchRequest.builder()
-				.uuid(Collections.singleton(applicantUuid))
-				.excludeAddressDetails(excludeAddressDetails)
-				.build();
-
-		if (excludeAddressDetails) {
-			userSearchRequest.setAddressId(booking.getAddressDetailId());
-		}
-
-		try {
-			UserDetailResponse userDetailResponse =getUser(userSearchRequest);
-
-			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
-				User user = userDetailResponse.getUser().get(0);
-
-				booking.setApplicantDetail(convertUserToApplicantDetail(user, booking.getApplicantUuid(), booking.getBookingId()));
-
-				if (excludeAddressDetails) {
-					booking.setAddress(convertUserAddressToAddressDetail(user, booking.getApplicantUuid()));
-				}
-			}
-		}catch (Exception e) {
-			log.error("Error while fetching user details: " + e.getMessage(), e);
+		} catch (Exception e) {
+			log.error("Error while enriching booking with user details: " + e.getMessage(), e);
 		}
 	}
 
