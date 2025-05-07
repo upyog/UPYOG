@@ -27,6 +27,9 @@ public class WaterTankerBookingSearchCriteria {
     @JsonProperty("offset")
     private Integer offset;
 
+    @JsonProperty("localityCode")
+    private String localityCode;
+
     @JsonProperty("limit")
     private Integer limit;
 
@@ -48,13 +51,13 @@ public class WaterTankerBookingSearchCriteria {
         return (this.tenantId == null && this.status == null && this.bookingNo == null
                 && this.mobileNumber == null
                 // && this.offset == null && this.limit == null
-                && this.fromDate == null && this.toDate == null && this.createdBy==null);
+                && this.fromDate == null && this.toDate == null && this.createdBy==null && localityCode==null);
     }
 
     public boolean tenantIdOnly() {
         return (this.tenantId != null && this.status == null && this.bookingNo == null
                 && this.mobileNumber == null
                 // && this.offset == null && this.limit == null
-                && this.fromDate == null && this.toDate == null && this.createdBy==null);
+                && this.fromDate == null && this.toDate == null && this.createdBy==null && this.localityCode==null);
     }
 }

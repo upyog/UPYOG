@@ -89,6 +89,8 @@ public class WaterTankerBookingDetail {
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String tenantId;
 
+	private String addressDetailId;
+
 	@JsonProperty("bookingStatus")
 	@NotBlank
 	private String bookingStatus;
@@ -98,6 +100,10 @@ public class WaterTankerBookingDetail {
 	private String permissionLetterFilestoreId;
 
 	private String paymentReceiptFilestoreId;
+
+	private String mobileNumber;
+
+	private String localityCode;
 
 	@Valid
 	@NotNull

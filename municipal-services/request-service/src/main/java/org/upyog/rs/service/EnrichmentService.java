@@ -13,11 +13,15 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.enums.RequestServiceStatus;
 import org.upyog.rs.repository.IdGenRepository;
 import org.upyog.rs.util.RequestServiceUtil;
+import org.upyog.rs.util.UserUtil;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.user.AddressV2;
+import org.upyog.rs.web.models.user.User;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
+import org.apache.commons.lang3.StringUtils;
 
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +36,38 @@ public class EnrichmentService {
 	@Autowired
 	private IdGenRepository idGenRepository;
 
+	@Autowired
+	private UserService userService;
+
 	public void enrichCreateWaterTankerRequest(WaterTankerBookingRequest waterTankerRequest) {
 		String bookingId = RequestServiceUtil.getRandonUUID();
 		log.info("Enriching water tanker booking id :" + bookingId);
 
 		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
 		RequestInfo requestInfo = waterTankerRequest.getRequestInfo();
+		String userUuid = requestInfo.getUserInfo().getUuid();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
-		
+
+		// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
+		if (UserUtil.isCurrentUserApplicant(waterTankerRequest)) {
+			waterTankerDetail.setApplicantUuid(userUuid);
+		} else {
+			// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+			waterTankerDetail.setApplicantUuid(null);
+			waterTankerDetail.setAddressDetailId(null);
+		}
+
+		String applicantDetailId = waterTankerDetail.getApplicantUuid();
+		String addressDetailId = waterTankerDetail.getAddressDetailId();
+
+		if (StringUtils.isBlank(applicantDetailId)) {
+			// Enrich user details for existing user or user details with address for new user
+			enrichUserDetails(waterTankerRequest);
+		}
+		if (StringUtils.isBlank(addressDetailId)) {
+			// Enrich address details only
+			enrichAddressDetails(waterTankerRequest, waterTankerDetail);
+		}
 		
 		waterTankerDetail.setBookingId(bookingId);
 		waterTankerDetail.setApplicationDate(auditDetails.getCreatedTime());
@@ -61,6 +89,8 @@ public class EnrichmentService {
 		waterTankerDetail.setDescription(waterTankerRequest.getWaterTankerBookingDetail().getDescription());
 		waterTankerDetail.setDeliveryDate(waterTankerRequest.getWaterTankerBookingDetail().getDeliveryDate());
 		waterTankerDetail.setDeliveryTime(waterTankerRequest.getWaterTankerBookingDetail().getDeliveryTime());
+		waterTankerDetail.setMobileNumber(waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber());
+		waterTankerDetail.setLocalityCode(waterTankerRequest.getWaterTankerBookingDetail().getAddress().getLocalityCode());
 		String roles = waterTankerRequest.getRequestInfo().getUserInfo().getRoles()
                 .stream()
                 .map(Role::getName)
@@ -70,24 +100,111 @@ public class EnrichmentService {
 		waterTankerDetail.getApplicantDetail().setBookingId(bookingId);
 		waterTankerDetail.getApplicantDetail().setApplicantId(RequestServiceUtil.getRandonUUID());
 		waterTankerDetail.getApplicantDetail().setAuditDetails(auditDetails);
-	
-
-		waterTankerDetail.getAddress().
-			setAddressId(RequestServiceUtil.getRandonUUID());
 		waterTankerDetail.getAddress().setApplicantId(waterTankerDetail.getApplicantDetail().getApplicantId());
 		
 		log.info("Enriched application request data :" + waterTankerDetail);
 
 	}
 
+	/**
+	 * Enriches the applicant and address detail IDs in the given application detail.
+	 * <p>
+	 * If the applicantDetailId is present, it attempts to fetch an existing user based on the request.
+	 * - If an existing user is found, sets the applicantDetailId accordingly.
+	 * - If not found, it creates a new user and sets both applicantDetailId and addressDetailId
+	 *   from the newly created user and their associated address.
+	 * </p>
+	 *
+	 * @param waterTankerRequest The full application request containing applicant and address info.
+	 */
+	private void enrichUserDetails(WaterTankerBookingRequest waterTankerRequest) {
+		// Try fetching an existing user for the given request
+		WaterTankerBookingDetail waterTankerDetail = waterTankerRequest.getWaterTankerBookingDetail();
+		List<User> existingUsers = userService.fetchExistingOrCreateNewUser(waterTankerRequest);
+
+		if (!CollectionUtils.isEmpty(existingUsers)) {
+			waterTankerDetail.setApplicantUuid(existingUsers.get(0).getUuid());
+			log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+			return;
+		}
+
+		// Create a new user with address details if no existing user was found
+		User newUser = userService.createUserHandler(waterTankerRequest.getRequestInfo(), waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail(),
+				waterTankerRequest.getWaterTankerBookingDetail().getAddress(), waterTankerRequest.getWaterTankerBookingDetail().getTenantId());
+		log.info("New user created with ID: {}", newUser.getUuid());
+		waterTankerDetail.setApplicantUuid(newUser.getUuid());
+
+		// Set addressDetailId from the first address with a non-null ID, if present
+		newUser.getAddresses().stream()
+				.filter(addr -> addr.getId() != null)
+				.findFirst()
+				.ifPresent(addr -> waterTankerDetail.setAddressDetailId(String.valueOf(addr.getId())));
+	}
+
+
+	/**
+	 * Enriches the address details in the given WaterTankerBookingDetail object by creating a new address
+	 * based on the user UUID provided in the WaterTankerBookingRequest object. If the new address is created
+	 * successfully, the addressDetailId in the WaterTankerBookingDetail object is updated.
+	 *
+	 * @param waterTankerRequest The request object containing necessary data for address creation.
+	 * @param waterTankerDetail The application details object to be enriched with the new address ID.
+	 */
+	private void enrichAddressDetails(WaterTankerBookingRequest waterTankerRequest, WaterTankerBookingDetail waterTankerDetail) {
+
+		// If applicant UUID is null or blank, throw custom exception
+		if (StringUtils.isBlank(waterTankerRequest.getWaterTankerBookingDetail().getApplicantUuid())) {
+			throw new CustomException("APPLICANT_UUID_NULL", "Applicant UUID is blank");
+		}
+
+		// Fetch the new address associated with the user's UUID
+		AddressV2 addressDetails = UserService.convertApplicantAddressToUserAddress(waterTankerRequest.getWaterTankerBookingDetail().getAddress(), RequestServiceUtil.extractTenantId(waterTankerRequest.getWaterTankerBookingDetail().getTenantId()));
+		AddressV2 address = userService.createNewAddressV2ByUserUuid(addressDetails,waterTankerRequest.getRequestInfo(),waterTankerRequest.getWaterTankerBookingDetail().getApplicantUuid());
+
+		if (address != null) {
+			// Set the address detail ID in the booking detail
+			waterTankerDetail.setAddressDetailId(String.valueOf(address.getId()));
+			log.info("Address successfully enriched with ID: {}", address.getId());
+		} else {
+			throw new CustomException("ADDRESS_CREATION_FAILED", "Failed to create address for the given applicant UUID");
+		}
+	}
+
+
+	/**
+	 * Enriches the mobile toilet booking request with necessary details such as booking ID, application date,
+	 * booking status, and address details. It also generates a unique booking number using the ID generation service.
+	 *
+	 * @param mobileToiletRequest The request object containing necessary data for mobile toilet booking.
+	 */
 	public void enrichCreateMobileToiletRequest(MobileToiletBookingRequest mobileToiletRequest) {
 		String bookingId = RequestServiceUtil.getRandonUUID();
 		log.info("Enriching water tanker booking id :" + bookingId);
 
 		MobileToiletBookingDetail mobileToiletDetail = mobileToiletRequest.getMobileToiletBookingDetail();
 		RequestInfo requestInfo = mobileToiletRequest.getRequestInfo();
+		String userUuid = requestInfo.getUserInfo().getUuid();
 		AuditDetails auditDetails = RequestServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);
 
+		// If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
+		if (UserUtil.isCurrentUserApplicant(mobileToiletRequest)) {
+			mobileToiletDetail.setApplicantUuid(userUuid);
+		} else {
+			// If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
+			mobileToiletDetail.setApplicantUuid(null);
+			mobileToiletDetail.setAddressDetailId(null);
+		}
+
+		String applicantDetailId = mobileToiletDetail.getApplicantUuid();
+		if (StringUtils.isBlank(applicantDetailId)) {
+			// Enrich user details for existing user or user details with address for new user
+			enrichUserDetails(mobileToiletRequest);
+		}
+		String addressDetailId = mobileToiletDetail.getAddressDetailId();
+		if (StringUtils.isBlank(addressDetailId)) {
+			// Enrich address details only
+			enrichAddressDetails(mobileToiletRequest, mobileToiletDetail);
+		}
 
 		mobileToiletDetail.setBookingId(bookingId);
 		mobileToiletDetail.setApplicationDate(auditDetails.getCreatedTime());
@@ -119,14 +236,74 @@ public class EnrichmentService {
 		mobileToiletDetail.getApplicantDetail().setBookingId(bookingId);
 		mobileToiletDetail.getApplicantDetail().setApplicantId(RequestServiceUtil.getRandonUUID());
 		mobileToiletDetail.getApplicantDetail().setAuditDetails(auditDetails);
-
-
-		mobileToiletDetail.getAddress().
-				setAddressId(RequestServiceUtil.getRandonUUID());
 		mobileToiletDetail.getAddress().setApplicantId(mobileToiletDetail.getApplicantDetail().getApplicantId());
 
 		log.info("Enriched application request data :" + mobileToiletDetail);
 
+	}
+
+	/**
+	 * Enriches the applicant and address detail IDs in the given application detail.
+	 * <p>
+	 * If the applicantDetailId is present, it attempts to fetch an existing user based on the request.
+	 * - If an existing user is found, sets the applicantDetailId accordingly.
+	 * - If not found, it creates a new user and sets both applicantDetailId and addressDetailId
+	 *   from the newly created user and their associated address.
+	 * </p>
+	 *
+	 * @param mobileToiletRequest The full application request containing applicant and address info.
+	 */
+	private void enrichUserDetails(MobileToiletBookingRequest mobileToiletRequest) {
+		// Try fetching an existing user for the given request
+		MobileToiletBookingDetail mobileToiletDetail = mobileToiletRequest.getMobileToiletBookingDetail();
+		List<User> existingUsers = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
+
+		if (!CollectionUtils.isEmpty(existingUsers)) {
+			mobileToiletDetail.setApplicantUuid(existingUsers.get(0).getUuid());
+			log.info("Existing user found with ID: {}", existingUsers.get(0).getUuid());
+			return;
+		}
+
+		// Create a new user with address details if no existing user was found
+		User newUser = userService.createUserHandler(mobileToiletRequest.getRequestInfo(), mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail(),
+				mobileToiletRequest.getMobileToiletBookingDetail().getAddress(), mobileToiletRequest.getMobileToiletBookingDetail().getTenantId());
+		log.info("New user created with ID: {}", newUser.getUuid());
+		mobileToiletDetail.setApplicantUuid(newUser.getUuid());
+
+		// Set addressDetailId from the first address with a non-null ID, if present
+		newUser.getAddresses().stream()
+				.filter(addr -> addr.getId() != null)
+				.findFirst()
+				.ifPresent(addr -> mobileToiletDetail.setAddressDetailId(String.valueOf(addr.getId())));
+	}
+
+
+	/**
+	 * Enriches the address details in the given mobileToiletDetail object by creating a new address
+	 * based on the user UUID provided in the mobileToiletRequest object. If the new address is created
+	 * successfully, the addressDetailId in the mobileToiletDetail object is updated.
+	 *
+	 * @param mobileToiletRequest The request object containing necessary data for address creation.
+	 * @param mobileToiletDetail The application details object to be enriched with the new address ID.
+	 */
+
+	private void enrichAddressDetails(MobileToiletBookingRequest mobileToiletRequest, MobileToiletBookingDetail mobileToiletDetail) {
+		// If applicant UUID is null or blank, throw custom exception
+		if (StringUtils.isBlank(mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid())) {
+			throw new CustomException("APPLICANT_UUID_NULL", "Applicant UUID is blank");
+		}
+
+		// Fetch the new address associated with the user's UUID
+		AddressV2 addressDetails = UserService.convertApplicantAddressToUserAddress(mobileToiletRequest.getMobileToiletBookingDetail().getAddress(), RequestServiceUtil.extractTenantId(mobileToiletRequest.getMobileToiletBookingDetail().getTenantId()));
+		AddressV2 address = userService.createNewAddressV2ByUserUuid(addressDetails,mobileToiletRequest.getRequestInfo(),mobileToiletRequest.getMobileToiletBookingDetail().getApplicantUuid());
+
+			if (address != null) {
+				// Set the address detail ID in the application details object
+				mobileToiletDetail.setAddressDetailId(String.valueOf(address.getId()));
+				log.info("Address details successfully enriched with ID: {}", address.getId());
+			} else {
+				throw new CustomException("ADDRESS_CREATION_FAILED", "Failed to create address for the given applicant UUID");
+			}
 	}
 
 	/**

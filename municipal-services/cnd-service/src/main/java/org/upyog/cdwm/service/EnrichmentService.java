@@ -65,12 +65,12 @@ public class EnrichmentService {
         }
 
         String applicantDetailId = cndApplicationDetails.getApplicantDetailId();
-        String addressDetailId = cndApplicationDetails.getAddressDetailId();
 
         if (StringUtils.isBlank(applicantDetailId)) {
             // Enrich user details for existing user or user details with address for new user
             enrichUserDetails(cndApplicationRequest);
         }
+        String addressDetailId = cndApplicationDetails.getAddressDetailId();
         if (StringUtils.isBlank(addressDetailId)) {
             // Enrich address details only
             enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);

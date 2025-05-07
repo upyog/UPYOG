@@ -76,5 +76,10 @@ public class UserSearchRequest {
 	@JsonProperty("roleCodes")
 	private List<String> roleCodes;
 
+	@JsonProperty("addressId")
+	private String addressId;
+
+	@JsonProperty("excludeAddressDetails")
+	private boolean excludeAddressDetails;
 
 }

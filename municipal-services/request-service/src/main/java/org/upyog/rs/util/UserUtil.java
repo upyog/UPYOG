@@ -17,6 +17,8 @@ import org.upyog.rs.repository.ServiceRequestRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.UserDetailResponse;
+import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 @Component
 public class UserUtil {
@@ -128,8 +130,45 @@ public class UserUtil {
         return role;
     }
 
-    public String getStateLevelTenant(String tenantId){
+    public static String getStateLevelTenant(String tenantId){
         return tenantId.split("\\.")[0];
     }
 
+    /**
+     * Checks whether the logged-in user is the same as the applicant in the given application request.
+     * <p>
+     * This is done by comparing the mobile number from the user info in the request with
+     * the mobile number provided in the applicant details of the application.
+     *
+     * @param waterTankerRequest The application request containing user and applicant details.
+     * @return true if the mobile numbers match (case-insensitive), false otherwise.
+     */
+    public static boolean isCurrentUserApplicant(WaterTankerBookingRequest waterTankerRequest){
+        String userMobileNumber = waterTankerRequest.getRequestInfo().getUserInfo().getMobileNumber();
+        String applicationMobileNumber = waterTankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
+        if (userMobileNumber.equals(applicationMobileNumber)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks whether the logged-in user is the same as the applicant in the given application request.
+     * <p>
+     * This is done by comparing the mobile number from the user info in the request with
+     * the mobile number provided in the applicant details of the application.
+     *
+     * @param mobileToiletRequest The application request containing user and applicant details.
+     * @return true if the mobile numbers match (case-insensitive), false otherwise.
+     */
+    public static boolean isCurrentUserApplicant(MobileToiletBookingRequest mobileToiletRequest){
+        String userMobileNumber = mobileToiletRequest.getRequestInfo().getUserInfo().getMobileNumber();
+        String applicationMobileNumber = mobileToiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
+        if (userMobileNumber.equals(applicationMobileNumber)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

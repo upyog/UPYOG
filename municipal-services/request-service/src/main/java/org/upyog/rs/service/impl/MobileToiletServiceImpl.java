@@ -14,17 +14,13 @@ import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.repository.RequestServiceRepository;
 import org.upyog.rs.service.*;
-import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.Workflow;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingRequest;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingSearchCriteria;
-import org.upyog.rs.web.models.user.UserDetailResponse;
-import org.upyog.rs.web.models.user.UserSearchRequest;
 import org.upyog.rs.web.models.workflow.State;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -61,9 +57,9 @@ public class MobileToiletServiceImpl implements MobileToiletService{
 
         // Get the uuid of User from user registry
         try {
-            String uuid = userService.getUuidExistingOrNewUser(mobileToiletRequest);
-            mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(uuid);
-            log.info("Applicant or User Uuid: " + uuid);
+            List<org.upyog.rs.web.models.user.User> user = userService.fetchExistingOrCreateNewUser(mobileToiletRequest);
+            mobileToiletRequest.getMobileToiletBookingDetail().setApplicantUuid(user.get(0).getUuid());
+            log.info("Applicant or User Uuid: " + user.get(0).getUuid());
         } catch (Exception e) {
             log.error("Error while creating user: " + e.getMessage(), e);
         }
@@ -86,8 +82,6 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         List<MobileToiletBookingDetail> applications = requestServiceRepository
                 .getMobileToiletBookingDetails(mobileToiletBookingSearchCriteria);
 
-
-
         /**
          * Check if the retrieved list is empty using Spring's CollectionUtils Prevents
          * potential null pointer exceptions by returning an empty list Ensures
@@ -96,39 +90,9 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         if (CollectionUtils.isEmpty(applications)) {
             return new ArrayList<>();
         }
-        // Loop through each booking and fetch user details
+        // Enrich each booking with user details
         for (MobileToiletBookingDetail booking : applications) {
-            String applicantUuid = booking.getApplicantUuid();  // Extract UUID
-
-            if (applicantUuid != null) {
-                // Using builder pattern to create UserSearchRequest
-                UserSearchRequest userSearchRequest = UserSearchRequest.builder()
-                        .uuid(Collections.singleton(applicantUuid))
-                        .build();
-
-                try {
-                    // Fetch user details
-                    UserDetailResponse userDetailResponse = userService.getUser(userSearchRequest);
-
-                    if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
-                        org.upyog.rs.web.models.user.User user = userDetailResponse.getUser().get(0);
-
-                        // Using builder pattern to create ApplicantDetail
-                        ApplicantDetail applicant = ApplicantDetail.builder()
-                                .name(user.getName())
-                                .emailId(user.getEmailId())
-                                .mobileNumber(user.getMobileNumber())
-                                .alternateNumber(user.getAltContactNumber())
-                                .bookingId(booking.getBookingId())
-                                .applicantId(booking.getApplicantUuid())
-                                .build();
-
-                        booking.setApplicantDetail(applicant);
-                    }
-                } catch (Exception e) {
-                    log.error("Error while fetching user details: " + e.getMessage(), e);
-                }
-            }
+            userService.enrichBookingWithUserDetails(booking, mobileToiletBookingSearchCriteria);
         }
 
         return applications;

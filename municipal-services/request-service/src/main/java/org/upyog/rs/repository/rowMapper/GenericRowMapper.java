@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.upyog.rs.web.models.Address;
-import org.upyog.rs.web.models.ApplicantDetail;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
@@ -87,29 +85,6 @@ public class GenericRowMapper<T> implements ResultSetExtractor<List<T>> {
                 // Special handling for WaterTankerBookingDetail
                 if (instance instanceof WaterTankerBookingDetail) {
                     WaterTankerBookingDetail bookingDetail = (WaterTankerBookingDetail) instance;
-
-                    // Applicant Details
-                    ApplicantDetail applicantDetail = new ApplicantDetail();
-                    applicantDetail.setName(rs.getString("name"));
-                    applicantDetail.setMobileNumber(rs.getString("mobile_number"));
-                    applicantDetail.setGender(rs.getString("gender"));
-                    applicantDetail.setEmailId(rs.getString("email_id"));
-                    applicantDetail.setAlternateNumber(rs.getString("alternate_number"));
-                    bookingDetail.setApplicantDetail(applicantDetail);
-
-                    // Address Details
-                    Address address = new Address();
-                    address.setHouseNo(rs.getString("house_no"));
-                    address.setAddressLine1(rs.getString("address_line_1"));
-                    address.setAddressLine2(rs.getString("address_line_2"));
-                    address.setStreetName(rs.getString("street_name"));
-                    address.setLandmark(rs.getString("landmark"));
-                    address.setCity(rs.getString("city"));
-                    address.setCityCode(rs.getString("city_code"));
-                    address.setLocality(rs.getString("locality"));
-                    address.setLocalityCode(rs.getString("locality_code"));
-                    address.setPincode(rs.getString("pincode"));
-                    bookingDetail.setAddress(address);
 
                     // Audit Details
                     AuditDetails auditDetails = extractAuditDetails(rs);

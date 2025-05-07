@@ -200,6 +200,16 @@ public class User   {
         @JsonProperty("alternatemobilenumber")
         private String alternatemobilenumber;
 
+        @JsonProperty("addresses") // Make sure this is present
+        private List<AddressV2> addresses;
+
+        public User addAddressItem(AddressV2 addressItem) {
+            if (this.addresses == null) {
+                this.addresses = new ArrayList<>();
+            }
+            this.addresses.add(addressItem);
+            return this;
+        }
 
         public User addRolesItem(Role rolesItem) {
             if (this.roles == null) {
