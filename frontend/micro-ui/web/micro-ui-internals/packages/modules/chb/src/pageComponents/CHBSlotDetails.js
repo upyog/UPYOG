@@ -55,8 +55,22 @@ const CHBSlotDetails
     let validation = {};
     const tenantId =  Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-    const { data: Category } = Digit.Hooks.chb.useSpecialCategory(tenantId, "CHB", "ChbSpecialCategory");
-    const { data: Purposes } = Digit.Hooks.chb.usePurpose(tenantId, "CHB", "ChbPurpose");
+
+    const { data: Category } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "SpecialCategory" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["SpecialCategory"]
+          return formattedData;
+        },
+      });
+
+    const { data: Purposes } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Purpose" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["Purpose"]
+          return formattedData;
+        },
+      });
     
     let category=[];
     let purposes=[];

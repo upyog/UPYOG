@@ -70,13 +70,21 @@
       const [bookingDetails,setBookingDetails]=useState("");
       const [showModal,setShowModal] = useState(false)
       const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-      const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
+      // const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
+
+    const { data: Menu } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["CHB"]?.["CommunityHalls"]
+        return formattedData;
+      },
+    });
     
-      let menu = [];
+    let menu = [];
 
       
 
-      Menu &&
+    Menu &&
     Menu.map((one) => {
       menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
     });

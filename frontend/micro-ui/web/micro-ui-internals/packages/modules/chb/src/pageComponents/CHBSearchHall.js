@@ -83,8 +83,26 @@ const CommunityHallSearch = ({ t, onSelect, config, userType, formData }) => {
     endDate: null,
     key: 'selection'
   }]);
-  const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
-  const { data: Hall } = Digit.Hooks.chb.useChbHallCode(tenantId, "CHB", "HallCode");
+
+
+  const { data: hallList } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["CHB"]?.["CommunityHalls"]
+        return formattedData;
+      },
+    });
+
+  const { data: Hall } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "HallCode" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["CHB"]?.["HallCode"]
+        return formattedData;
+      },
+    });
+
+
+
   let HallName = [];
   let HallId = [];
 

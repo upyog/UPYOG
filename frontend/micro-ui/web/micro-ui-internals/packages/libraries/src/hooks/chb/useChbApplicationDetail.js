@@ -42,14 +42,10 @@ const useChbApplicationDetail = (t, tenantId, applicationNo, config = {}, userTy
     
   
   const defaultSelect = (data) => {
-    console.log("datatatat",data);
-    
      let applicationDetails = data.applicationDetails.map((obj) => {
-    
       return obj;
     });
     
-
     return {
       applicationData : data,
       applicationDetails
