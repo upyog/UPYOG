@@ -27,7 +27,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.upyog.pgrai", "org.upyog.pgrai.web.controllers" , "org.upyog.pgrai.config"})
 @Import({TracerConfiguration.class, MultiStateInstanceUtil.class})
-public class PGRApp {
+public class PGRAiApp {
 
     @Value("${app.timezone}")
     private String timeZone;
@@ -50,6 +50,6 @@ public class PGRApp {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(PGRApp.class, args);
+        SpringApplication.run(PGRAiApp.class, args);
     }
 }

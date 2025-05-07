@@ -1,0 +1,101 @@
+{
+  "responseInfo": {
+    "apiId": "Rainmaker",
+    "ver": null,
+    "ts": null,
+    "resMsgId": "uief87324",
+    "msgId": "1746189266914|en_IN",
+    "status": "successful"
+  },
+  "ServiceWrappers": [
+    {
+      "service": {
+        "active": true,
+        "citizen": {
+          "id": 790,
+          "userName": "9999009999",
+          "name": "Shivank",
+          "type": "CITIZEN",
+          "mobileNumber": "9999009999",
+          "emailId": "",
+          "roles": [
+            {
+              "id": null,
+              "name": "Citizen",
+              "code": "CITIZEN",
+              "tenantId": "pg"
+            }
+          ],
+          "tenantId": "pg",
+          "uuid": "7e1ebe9e-d040-413f-896a-5460def381e9",
+          "active": true
+        },
+        "id": "d77bd84c-b66e-4af7-8718-64e40d8f7e29",
+        "tenantId": "pg.citya",
+        "serviceCode": "StreetLightNotWorking",
+        "serviceRequestId": "PG-PGR-2025-05-07-000023",
+        "accountId": "7e1ebe9e-d040-413f-896a-5460def381e9",
+        "rating": null,
+        "additionalDetail": {},
+        "applicationStatus": "PENDINGFORASSIGNMENT",
+        "source": "web",
+        "address": {
+          "tenantId": "pg.citya",
+          "doorNo": null,
+          "plotNo": null,
+          "id": "bf6751a7-0e67-4ae6-af8b-eac5f489b038",
+          "landmark": "near banyan tree",
+          "city": "New Delhi",
+          "district": "New Delhi",
+          "region": "New Delhi",
+          "state": "Demo",
+          "country": null,
+          "pincode": "143002",
+          "additionDetails": null,
+          "buildingName": null,
+          "street": null,
+          "locality": {
+            "code": "JLC477",
+            "name": "Gali No,. 2 To Gali No. 6",
+            "label": null,
+            "latitude": null,
+            "longitude": null,
+            "children": null,
+            "materializedPath": null
+          },
+          "geoLocation": {
+            "latitude": null,
+            "longitude": null,
+            "additionalDetails": null
+          }
+        },
+        "auditDetails": {
+          "createdBy": "7e1ebe9e-d040-413f-896a-5460def381e9",
+          "lastModifiedBy": "7e1ebe9e-d040-413f-896a-5460def381e9",
+          "createdTime": 1746599262174,
+          "lastModifiedTime": 1746599262174
+        },
+        "priority": null,
+        "serviceType": "StreetLights",
+        "inputGrievance": "Street lights are not present"
+      },
+      "workflow": {
+        "action": "APPLY",
+        "assignes": null,
+        "comments": null,
+        "verificationDocuments": [
+          {
+            "id": "f4acbe16-b737-42f4-b1fe-3f989472dd8c",
+            "documentType": "PHOTO",
+            "fileStoreId": "8d0ebd2b-ac6b-40f7-9a5d-1d96b4756af2",
+            "documentUid": "",
+            "additionalDetails": {}
+          }
+        ]
+      }
+    }
+  ],
+  "complaintsResolved": 0,
+  "averageResolutionTime": 0,
+  "complaintTypes": 0
+}
