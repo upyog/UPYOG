@@ -556,11 +556,25 @@ public class InboxService {
             if (!isSearchResultEmpty && !(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS))) {
                 businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
                         requestInfo, srvMap);
+                
             }
             Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
-                    .collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(),
-                            s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
-            ArrayList businessIds = new ArrayList();
+            	    .collect(Collectors.toMap(
+            	        s1 -> {
+            	            JSONObject json = (JSONObject) s1;
+            	            if ("service".equals(businessIdParam)) {
+            	                // Only dig inside the nested service object if businessIdParam is 'service'
+            	                JSONObject serviceObj = (JSONObject) json.get("service");
+            	                return serviceObj.get("serviceRequestId").toString();
+            	            } else {
+            	                return json.get(businessIdParam).toString();
+            	            }
+            	        },
+            	        s1 -> s1,
+            	        (e1, e2) -> e1, // In case of duplicate keys, keep the first
+            	        LinkedHashMap::new // Maintain insertion order
+            	    ));
+            	ArrayList businessIds = new ArrayList();
             if(processCriteria.getModuleName().equals("pgr-services") || processCriteria.getModuleName().equals("swach-reform")) {
             	for (Object obj : businessObjects) {
             	    JSONObject jsonObject = (JSONObject) obj;
