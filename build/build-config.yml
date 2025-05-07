@@ -930,3 +930,12 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "municipal-services/cnd-service/src/main/resources/db"
         image-name: "cnd-service-db"
+        
+  - name: 'builds/upyog/municipal-services/pgr-ai-services'
+    build:
+      - work-dir: 'municipal-services/pgr-ai-services'
+        image-name: 'pgr-ai-services'
+        dockerfile: 'build/maven/Dockerfile'
+      - work-dir: "municipal-services/pgr-ai-services/src/main/resources/db"
+        image-name: "pgr-ai-services-db"
+        
