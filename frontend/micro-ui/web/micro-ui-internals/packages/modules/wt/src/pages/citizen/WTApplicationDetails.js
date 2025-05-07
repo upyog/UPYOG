@@ -17,6 +17,7 @@ import get from "lodash/get";
 import { size } from "lodash";
 import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
 import { convertTo12HourFormat, formatDate } from "../../utils";
+import getWTAcknowledgementData from "../../utils/getWTAcknowledgementData";
 
 /**
  * `WTApplicationDetails` is a React component that fetches and displays detailed information for a specific Water Tanker (WT) service application.
@@ -52,7 +53,37 @@ const WTApplicationDetails = () => {
   const application = wt_details;
 
   sessionStorage.setItem("wt", JSON.stringify(application));
-  let immediateRequired = (wt_details?.extraCharge) ? "YES":"NO"
+  let immediateRequired = (wt_details?.extraCharge==="N") ? "No":"Yes"
+
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "request-service.water_tanker",
+      consumerCodes: acknowledgementIds,
+      isEmployee: false,
+    },
+    { enabled: acknowledgementIds ? true : false }
+  );
+
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let application = waterTankerBookingDetail[0] || {};
+    let fileStoreId = application?.paymentReceiptFilestoreId
+    if (!fileStoreId) {
+    let response = { filestoreIds: [payments?.fileStoreId] };
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "request-service.water_tanker-receipt");
+    // const updatedApplication = {
+    //   ...application,
+    //   paymentReceiptFilestoreId: response?.filestoreIds[0]
+    // };
+    // await mutation.mutateAsync({
+    //   hallsBookingApplication: updatedApplication
+    // });
+    fileStoreId = response?.filestoreIds[0];
+    refetch();
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  }
 
   
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.wt.useTankerSearchAPI(
@@ -65,6 +96,17 @@ const WTApplicationDetails = () => {
     }
   );
   let dowloadOptions=[];
+    dowloadOptions.push({
+      label: t("WT_DOWNLOAD_ACKNOWLEDGEMENT"),
+      onClick: () => getAcknowledgementData(),
+    });
+    
+    const getAcknowledgementData = async () => {
+      const applications = application || {};
+      const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+      const acknowldgementDataAPI = await getWTAcknowledgementData({ ...applications }, tenantInfo, t);
+      Digit.Utils.pdf.generate(acknowldgementDataAPI);
+    };
   
   let docs = [];
   docs = application?.documents;
@@ -72,7 +114,11 @@ const WTApplicationDetails = () => {
   if (isLoading || auditDataLoading) {
     return <Loader />;
   }
-
+  if (true)
+    dowloadOptions.push({
+      label: t("CHB_FEE_RECEIPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
 
   return (
     <React.Fragment>
@@ -118,7 +164,7 @@ const WTApplicationDetails = () => {
             <StatusTable>
               <Row className="border-none" label={t("WT_TANKER_TYPE")} text={wt_details?.tankerType || t("CS_NA")} />
               <Row className="border-none" label={t("WT_TANKER_QUANTITY")} text={wt_details?.tankerQuantity|| t("CS_NA")}/>
-              <Row className="border-none" label={t("WT_WATER_QUANTITY")} text={wt_details?.waterQuantity|| t("CS_NA")} />
+              <Row className="border-none" label={t("WT_WATER_QUANTITY")} text={wt_details?.waterQuantity + " Ltr"|| t("CS_NA")} />
               <Row className="border-none" label={t("WT_DELIVERY_DATE")} text={formatDate(wt_details?.deliveryDate)|| t("CS_NA")} />
               <Row className="border-none" label={t("WT_DELIVERY_TIME")} text={convertTo12HourFormat(wt_details?.deliveryTime) || t("CS_NA")} />
               <Row className="border-none" label={t("WT_DESCRIPTION")} text={wt_details?.description || t("CS_NA")} />

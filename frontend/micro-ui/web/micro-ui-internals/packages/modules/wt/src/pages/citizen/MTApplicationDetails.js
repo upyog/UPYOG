@@ -14,7 +14,7 @@ import {
       import get from "lodash/get";
       import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
       import { convertTo12HourFormat, formatDate } from "../../utils";
-      
+      import getMTAcknowledgementData from "../../utils/getMTAcknowledgementData";
       /**
        * `MTApplicationDetails` is a React component that fetches and displays detailed information for a specific Mobile Toilet (MT) service application.
        * It fetches data for the booking using the `useMobileToiletSearchAPI` hook and displays the details in sections such as:
@@ -49,6 +49,36 @@ import {
         const application = mt_details;
       
         sessionStorage.setItem("mt", JSON.stringify(application));
+
+        const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+          {
+            tenantId: tenantId,
+            businessService: "request-service.mobile_toilet",
+            consumerCodes: acknowledgementIds,
+            isEmployee: false,
+          },
+          { enabled: acknowledgementIds ? true : false }
+        );
+      
+        async function getRecieptSearch({ tenantId, payments, ...params }) {
+          let application = mobileToiletBookingDetail[0] || {};
+          let fileStoreId = application?.paymentReceiptFilestoreId
+          if (!fileStoreId) {
+          let response = { filestoreIds: [payments?.fileStoreId] };
+          response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "request-service.mobile_toilet-receipt");
+          // const updatedApplication = {
+          //   ...application,
+          //   paymentReceiptFilestoreId: response?.filestoreIds[0]
+          // };
+          // await mutation.mutateAsync({
+          //   hallsBookingApplication: updatedApplication
+          // });
+          fileStoreId = response?.filestoreIds[0];
+          refetch();
+          }
+          const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+          window.open(fileStore[fileStoreId], "_blank");
+        }
       
         const { isLoading: auditDataLoading, data: auditResponse } = Digit.Hooks.wt.useMobileToiletSearchAPI(
           {
@@ -61,13 +91,29 @@ import {
         );
       
         let dowloadOptions = [];
+
+        dowloadOptions.push({
+          label: t("MT_DOWNLOAD_ACKNOWLEDGEMENT"),
+          onClick: () => getAcknowledgementData(),
+        });
         let docs = application?.documents || [];
       
         if (isLoading || auditDataLoading) {
           return <Loader />;
         }
-      console.log("application",application);
-      console.log("mt_details",mt_details);
+
+        if (true)
+          dowloadOptions.push({
+            label: t("MT_FEE_RECEIPT"),
+            onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+          });
+      const getAcknowledgementData = async () => {
+        const applications = application || {};
+        const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+        const acknowldgementDataAPI = await getMTAcknowledgementData({ ...applications }, tenantInfo, t);
+        Digit.Utils.pdf.generate(acknowldgementDataAPI);
+      };
+      
         return (
           <React.Fragment>
             <div>

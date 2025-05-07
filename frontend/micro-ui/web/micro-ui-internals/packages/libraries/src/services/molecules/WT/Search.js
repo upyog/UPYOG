@@ -1,4 +1,5 @@
 import { WTService } from "../../elements/WT";
+import { format } from "date-fns";
 import React from "react";
 
 /**
@@ -23,7 +24,7 @@ export const WTSearch = {
   },
   BookingDetails: ({ waterTankerBookingDetail: response, t }) => {
 
-   let immediateRequired = (response?.extraCharge) ? "YES":"NO"
+   let immediateRequired = (response?.extraCharge === "Y") ? "YES":"NO"
     return [
       {
         title: "WT_BOOKING_NO", 
@@ -60,8 +61,8 @@ export const WTSearch = {
         values: [
           { title: "WT_TANKER_TYPE", value: response?.tankerType || t("CS_NA")},
           { title: "WT_TANKER_QUANTITY", value: response?.tankerQuantity || t("CS_NA")},
-          { title: "WT_WATER_QUANTITY", value: response?.waterQuantity || t("CS_NA")},
-          { title: "WT_DELIVERY_DATE", value: response?.deliveryDate || t("CS_NA")},
+          { title: "WT_WATER_QUANTITY", value: response?.waterQuantity + " Ltr" || t("CS_NA")},
+          { title: "WT_DELIVERY_DATE", value:  format(new Date(response?.deliveryDate), 'dd-MM-yyyy') || t("CS_NA")},
           { title: "WT_DELIVERY_TIME", value: response?.deliveryTime?.replace(":", "h ") + "m" || t("CS_NA")},
           { title: "WT_DESCRIPTION", value: response?.description || t("CS_NA")},
           { title: "WT_IMMEDIATE", value:immediateRequired || t("CS_NA")},
