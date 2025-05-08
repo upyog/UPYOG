@@ -442,24 +442,24 @@ public class GarbageAccountService {
 		}
 	}
 
-	private void createGarbageDocuments(GarbageAccount garbageAccount) {
+//	private void createGarbageDocuments(GarbageAccount garbageAccount) {
+//
+//		garbageAccount.getDocuments().stream().forEach(doc -> {
+//			grbgDocumentRepository.create(doc);
+//		});
+//
+//	}
 
-		garbageAccount.getDocuments().stream().forEach(doc -> {
-			grbgDocumentRepository.create(doc);
-		});
-
-	}
-
-	private void enrichCreateGarbageDocuments(GarbageAccount garbageAccount) {
-
-		garbageAccount.getDocuments().stream().forEach(doc -> {
-			doc.setUuid(UUID.randomUUID().toString());
-			if (StringUtils.equalsIgnoreCase(doc.getDocCategory(), GrbgConstants.DOCUMENT_ACCOUNT)) {
-				doc.setTblRefUuid(garbageAccount.getUuid());
-			}
-		});
-
-	}
+//	private void enrichCreateGarbageDocuments(GarbageAccount garbageAccount) {
+//
+//		garbageAccount.getDocuments().stream().forEach(doc -> {
+//			doc.setUuid(UUID.randomUUID().toString());
+//			if (StringUtils.equalsIgnoreCase(doc.getDocCategory(), GrbgConstants.DOCUMENT_ACCOUNT)) {
+//				doc.setTblRefUuid(garbageAccount.getUuid());
+//			}
+//		});
+//
+//	}
 
 	private void enrichCreateGarbageApplication(GarbageAccount garbageAccount, RequestInfo requestInfo) {
 
@@ -1192,20 +1192,20 @@ public class GarbageAccountService {
 		}
 
 		// 2. update commercial details
-		if (null != newGarbageAccount.getGrbgCommercialDetails()
-				&& StringUtils.isEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())) {
-			// create commercial details
-			grbgCommercialDetailsRepository.create(newGarbageAccount.getGrbgCommercialDetails());
-		} else if (null != newGarbageAccount.getGrbgCommercialDetails()
-				&& StringUtils.isNotEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid()) && !newGarbageAccount
-						.getGrbgCommercialDetails().equals(existingGarbageAccount.getGrbgCommercialDetails())) {
-			// enrich
-//			newGarbageAccount.getGrbgCommercialDetails().setUuid(existingGarbageAccount.getGrbgCommercialDetails().getUuid());
-			newGarbageAccount.getGrbgCommercialDetails()
-					.setGarbageId(existingGarbageAccount.getGrbgCommercialDetails().getGarbageId());
-			// update commercial details
-			grbgCommercialDetailsRepository.update(newGarbageAccount.getGrbgCommercialDetails());
-		}
+//		if (null != newGarbageAccount.getGrbgCommercialDetails()
+//				&& StringUtils.isEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid())) {
+//			// create commercial details
+//			grbgCommercialDetailsRepository.create(newGarbageAccount.getGrbgCommercialDetails());
+//		} else if (null != newGarbageAccount.getGrbgCommercialDetails()
+//				&& StringUtils.isNotEmpty(newGarbageAccount.getGrbgCommercialDetails().getUuid()) && !newGarbageAccount
+//						.getGrbgCommercialDetails().equals(existingGarbageAccount.getGrbgCommercialDetails())) {
+//			// enrich
+////			newGarbageAccount.getGrbgCommercialDetails().setUuid(existingGarbageAccount.getGrbgCommercialDetails().getUuid());
+//			newGarbageAccount.getGrbgCommercialDetails()
+//					.setGarbageId(existingGarbageAccount.getGrbgCommercialDetails().getGarbageId());
+//			// update commercial details
+//			grbgCommercialDetailsRepository.update(newGarbageAccount.getGrbgCommercialDetails());
+//		}
 
 		// 3. update grbgOldDetails
 		if (null != newGarbageAccount.getGrbgOldDetails()

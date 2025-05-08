@@ -75,8 +75,8 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .parentAccount(rs.getString("parent_account"))
                         .isActive(rs.getBoolean("is_active"))
                         .subAccountCount(rs.getLong("sub_account_count"))
-                        .documents(new ArrayList<>())
-                        .garbageBills(new ArrayList<>())
+//                        .documents(new ArrayList<>())
+//                        .garbageBills(new ArrayList<>())
                         .childGarbageAccounts(new ArrayList<>())
                         .grbgCollectionUnits(new ArrayList<>())
                         .addresses(new ArrayList<>())
@@ -100,11 +100,11 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 									: null);
             }
 
-            if (null != rs.getString("comm_uuid")
-            		&& null == garbageAccount.getGrbgCommercialDetails()) {
-            	GrbgCommercialDetails garbageCommDetails = populateGrbgCommercialDetails(rs, "comm_");
-                    garbageAccount.setGrbgCommercialDetails(garbageCommDetails);
-            }
+//            if (null != rs.getString("comm_uuid")
+//            		&& null == garbageAccount.getGrbgCommercialDetails()) {
+//            	GrbgCommercialDetails garbageCommDetails = populateGrbgCommercialDetails(rs, "comm_");
+//                    garbageAccount.setGrbgCommercialDetails(garbageCommDetails);
+//            }
 
             if (null != rs.getString("old_dtl_uuid")
             		&& null == garbageAccount.getGrbgOldDetails()) {
@@ -133,24 +133,24 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
             }
             
             
-            if (null != rs.getString("bill_id")) {
-                String billId = rs.getString("bill_id");
-                GarbageBill garbageBill = findBillByUuid(garbageAccount.getGarbageBills(), billId);
-                if (null == garbageBill) {
-                    GarbageBill garbageBill1 = populateGarbageBill(rs, "bill_");
-                    garbageAccount.getGarbageBills().add(garbageBill1);
-                }
-            }
+//            if (null != rs.getString("bill_id")) {
+//                String billId = rs.getString("bill_id");
+//                GarbageBill garbageBill = findBillByUuid(garbageAccount.getGarbageBills(), billId);
+//                if (null == garbageBill) {
+//                    GarbageBill garbageBill1 = populateGarbageBill(rs, "bill_");
+//                    garbageAccount.getGarbageBills().add(garbageBill1);
+//                }
+//            }
 
             
-            if (null != rs.getString("doc_uuid")) {
-                String docUuid = rs.getString("doc_uuid");
-                GrbgDocument garbageDocument = findDocumentByUuid(garbageAccount.getDocuments(), docUuid);
-                if (null == garbageDocument) {
-                	GrbgDocument garbageDocument1 = populateGarbageDocument(rs, "doc_");
-                    garbageAccount.getDocuments().add(garbageDocument1);
-                }
-            }
+//            if (null != rs.getString("doc_uuid")) {
+//                String docUuid = rs.getString("doc_uuid");
+//                GrbgDocument garbageDocument = findDocumentByUuid(garbageAccount.getDocuments(), docUuid);
+//                if (null == garbageDocument) {
+//                	GrbgDocument garbageDocument1 = populateGarbageDocument(rs, "doc_");
+//                    garbageAccount.getDocuments().add(garbageDocument1);
+//                }
+//            }
 
             
             if (StringUtils.isEmpty(garbageAccount.getParentAccount())
@@ -169,11 +169,11 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                     	subGarbageAccount.setGrbgApplication(subGarbageApplication);
                 }
                 
-                if (null != rs.getString("sub_comm_uuid")
-                		&& null == subGarbageAccount.getGrbgCommercialDetails()) {
-                	GrbgCommercialDetails garbageCommDetails = populateGrbgCommercialDetails(rs, "sub_comm_");
-                	subGarbageAccount.setGrbgCommercialDetails(garbageCommDetails);
-                }
+//                if (null != rs.getString("sub_comm_uuid")
+//                		&& null == subGarbageAccount.getGrbgCommercialDetails()) {
+//                	GrbgCommercialDetails garbageCommDetails = populateGrbgCommercialDetails(rs, "sub_comm_");
+//                	subGarbageAccount.setGrbgCommercialDetails(garbageCommDetails);
+//                }
 
                 if (null != rs.getString("sub_old_dtl_uuid")
                 		&& null == subGarbageAccount.getGrbgOldDetails()) {
@@ -191,23 +191,23 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                     }
                 }
                 
-                if (null != rs.getString("sub_doc_uuid")) {
-                    String subDocUuid = rs.getString("sub_doc_uuid");
-                    GrbgDocument subGarbageDocument = findDocumentByUuid(subGarbageAccount.getDocuments(), subDocUuid);
-                    if (null == subGarbageDocument) {
-                    	GrbgDocument subGarbageDocument1 = populateGarbageDocument(rs, "sub_doc_");
-                    	subGarbageAccount.getDocuments().add(subGarbageDocument1);
-                    }
-                }
+//                if (null != rs.getString("sub_doc_uuid")) {
+//                    String subDocUuid = rs.getString("sub_doc_uuid");
+//                    GrbgDocument subGarbageDocument = findDocumentByUuid(subGarbageAccount.getDocuments(), subDocUuid);
+//                    if (null == subGarbageDocument) {
+//                    	GrbgDocument subGarbageDocument1 = populateGarbageDocument(rs, "sub_doc_");
+//                    	subGarbageAccount.getDocuments().add(subGarbageDocument1);
+//                    }
+//                }
                 
-                if (null != rs.getString("sub_acc_bill_id")) {
-                    String subAccBillId = rs.getString("sub_acc_bill_id");
-                    GarbageBill subAccGarbageBill = findBillByUuid(subGarbageAccount.getGarbageBills(), subAccBillId);
-                    if (null == subAccGarbageBill) {
-                        GarbageBill subAccGarbageBill1 = populateGarbageBill(rs, "sub_acc_bill_");
-                        subGarbageAccount.getGarbageBills().add(subAccGarbageBill1);
-                    }
-                }
+//                if (null != rs.getString("sub_acc_bill_id")) {
+//                    String subAccBillId = rs.getString("sub_acc_bill_id");
+//                    GarbageBill subAccGarbageBill = findBillByUuid(subGarbageAccount.getGarbageBills(), subAccBillId);
+//                    if (null == subAccGarbageBill) {
+//                        GarbageBill subAccGarbageBill1 = populateGarbageBill(rs, "sub_acc_bill_");
+//                        subGarbageAccount.getGarbageBills().add(subAccGarbageBill1);
+//                    }
+//                }
 
                 
                 if (null != rs.getString("sub_address_uuid")) {
@@ -322,26 +322,26 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 		return garbageDocument;
 	}
 
-	private GrbgDocument findDocumentByUuid(List<GrbgDocument> documents, String docUuid) {
-    	if (!CollectionUtils.isEmpty(documents)) {
-            return documents.stream()
-                    .filter(doc -> StringUtils.equals(doc.getUuid(), docUuid))
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
-	}
+//	private GrbgDocument findDocumentByUuid(List<GrbgDocument> documents, String docUuid) {
+//    	if (!CollectionUtils.isEmpty(documents)) {
+//            return documents.stream()
+//                    .filter(doc -> StringUtils.equals(doc.getUuid(), docUuid))
+//                    .findFirst()
+//                    .orElse(null);
+//        }
+//        return null;
+//	}
 
-	private GrbgCommercialDetails populateGrbgCommercialDetails(ResultSet rs, String prefix) throws SQLException {
-		GrbgCommercialDetails grbgCommercialDetails = GrbgCommercialDetails.builder()
-				.uuid(rs.getString(prefix+"uuid"))
-				.garbageId(rs.getLong(prefix+"garbage_id"))
-				.businessName(rs.getString(prefix+"business_name"))
-				.businessType(rs.getString(prefix+"business_type"))
-				.ownerUserUuid(rs.getString(prefix+"owner_user_uuid"))
-				.build();
-		return grbgCommercialDetails;
-	}
+//	private GrbgCommercialDetails populateGrbgCommercialDetails(ResultSet rs, String prefix) throws SQLException {
+//		GrbgCommercialDetails grbgCommercialDetails = GrbgCommercialDetails.builder()
+//				.uuid(rs.getString(prefix+"uuid"))
+//				.garbageId(rs.getLong(prefix+"garbage_id"))
+//				.businessName(rs.getString(prefix+"business_name"))
+//				.businessType(rs.getString(prefix+"business_type"))
+//				.ownerUserUuid(rs.getString(prefix+"owner_user_uuid"))
+//				.build();
+//		return grbgCommercialDetails;
+//	}
 
 	private GrbgApplication populateGarbageApplication(ResultSet rs, String prefix) throws SQLException {
     	GrbgApplication grbgApplication = GrbgApplication.builder()
@@ -378,8 +378,8 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .businessService(rs.getString(prefix + "business_service"))
                 .approvalDate(rs.getLong(prefix + "approval_date"))
                 .channel(rs.getString(prefix + "channel"))
-                .documents(new ArrayList<>())
-                .garbageBills(new ArrayList<>())
+//                .documents(new ArrayList<>())
+//                .garbageBills(new ArrayList<>())
                 .grbgCollectionUnits(new ArrayList<>())
                 .addresses(new ArrayList<>())
                 .auditDetails(AuditDetails.builder()
@@ -404,16 +404,16 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
         return null;
     }
 
-    private GarbageBill findBillByUuid(List<GarbageBill> garbageBills, String bill_id) {
-
-        if (!CollectionUtils.isEmpty(garbageBills)) {
-            return garbageBills.stream()
-                    .filter(bill -> bill.getId().toString().equals(bill_id)) // Adjusted to compare as string
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
-    }
+//    private GarbageBill findBillByUuid(List<GarbageBill> garbageBills, String bill_id) {
+//
+//        if (!CollectionUtils.isEmpty(garbageBills)) {
+//            return garbageBills.stream()
+//                    .filter(bill -> bill.getId().toString().equals(bill_id)) // Adjusted to compare as string
+//                    .findFirst()
+//                    .orElse(null);
+//        }
+//        return null;
+//    }
 
     private GarbageBill populateGarbageBill(ResultSet rs, String prefix) throws SQLException {
 
