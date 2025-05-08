@@ -3,7 +3,6 @@ package org.upyog.rs.web.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -19,8 +18,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import org.upyog.rs.web.models.RequestServiceRequest;
 import org.upyog.rs.util.TestRequestBuilder;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
 import java.lang.reflect.Method;
 import java.net.UnknownHostException;
@@ -68,11 +67,11 @@ public class GlobalExceptionHandlerTest {
         String invalidJson = "{ invalid json }";
         
         // Mock the controller to throw HttpMessageNotReadableException
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new HttpMessageNotReadableException("Invalid JSON", new RuntimeException()));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidJson))
                 .andExpect(status().isBadRequest())
@@ -86,27 +85,27 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleMethodArgumentNotValidExceptionCreate() throws Exception {
         // Create a request with invalid data
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Create a MethodArgumentNotValidException with field errors
         BindingResult bindingResult = org.mockito.Mockito.mock(BindingResult.class);
         List<FieldError> fieldErrors = new ArrayList<>();
-        fieldErrors.add(new FieldError("requestServiceRequest", "request.description", null, false, null, null, "must not be null"));
+        fieldErrors.add(new FieldError("waterTankerRequest", "request.description", null, false, null, null, "must not be null"));
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         when(bindingResult.getAllErrors()).thenReturn(new ArrayList<>(fieldErrors));
         
         // Create a MethodParameter for the createRequest method
-        Method createRequestMethod = RequestServiceController.class.getMethod("createRequest", RequestServiceRequest.class);
+        Method createRequestMethod = RequestServiceController.class.getMethod("createRequest", WaterTankerBookingRequest.class);
         MethodParameter methodParameter = new MethodParameter(createRequestMethod, 0);
         
         // Mock the controller to throw the exception
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenAnswer(invocation -> {
                     throw new MethodArgumentNotValidException(methodParameter, bindingResult);
                 });
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -120,14 +119,14 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleCustomException() throws Exception {
         // Create a request
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Mock the controller to throw CustomException
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new CustomException("CUSTOM_ERROR", "Custom validation error"));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -141,14 +140,14 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleHttpClientErrorException() throws Exception {
         // Create a request
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Mock the controller to throw HttpClientErrorException
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Client error"));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -162,14 +161,14 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleHttpServerErrorException() throws Exception {
         // Create a request
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Mock the controller to throw HttpServerErrorException
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error"));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isInternalServerError())
@@ -183,14 +182,14 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleResourceAccessException() throws Exception {
         // Create a request
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Mock the controller to throw ResourceAccessException
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new ResourceAccessException("Connection timeout"));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isServiceUnavailable())
@@ -204,14 +203,14 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleUnknownHostException() throws Exception {
         // Create a request
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Mock the controller to throw UnknownHostException wrapped in RuntimeException
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new RuntimeException(new UnknownHostException("Unknown host")));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isServiceUnavailable())
@@ -225,14 +224,14 @@ public class GlobalExceptionHandlerTest {
 //     @Test
     public void testHandleGenericException() throws Exception {
         // Create a request
-        RequestServiceRequest request = TestRequestBuilder.createRequestServiceRequest();
+        WaterTankerBookingRequest request = TestRequestBuilder.createWaterTankerRequest();
         
         // Mock the controller to throw a generic Exception
-        lenient().when(requestServiceController.createRequest(any()))
+        lenient().when(requestServiceController.createWaterTankerBooking(any()))
                 .thenThrow(new RuntimeException("Unexpected error"));
         
         // Perform the request and verify the response
-        mockMvc.perform(post("/request/v1/_create")
+        mockMvc.perform(post("/water-tanker/v1/_create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isInternalServerError())
