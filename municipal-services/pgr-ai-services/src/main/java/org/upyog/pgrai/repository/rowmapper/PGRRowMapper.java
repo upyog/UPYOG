@@ -54,7 +54,6 @@ public class PGRRowMapper implements ResultSetExtractor<List<Service>> {
                 id = rs.getString("ser_id");
                 String serviceCode = rs.getString("serviceCode");
                 String serviceRequestId = rs.getString("serviceRequestId");
-                String description = rs.getString("description");
                 String accountId = rs.getString("accountId");
                 String applicationStatus = rs.getString("applicationStatus");
                 String source = rs.getString("source");
@@ -72,14 +71,13 @@ public class PGRRowMapper implements ResultSetExtractor<List<Service>> {
                 currentService = Service.builder().id(id).active(active)
                         .serviceCode(serviceCode)
                         .serviceRequestId(serviceRequestId)
-                        .description(description)
                         .accountId(accountId)
                         .applicationStatus(applicationStatus)
                         .source(source)
                         .tenantId(tenantId)
                         .rating(rating)
                         .auditDetails(auditDetails)
-                        .priority(Priority.fromValue(priority))
+                        .priority(priority != null ? Priority.fromValue(priority) : null)
                         .build();
 
                 JsonNode additionalDetails = getAdditionalDetail("ser_additionaldetails",rs);
