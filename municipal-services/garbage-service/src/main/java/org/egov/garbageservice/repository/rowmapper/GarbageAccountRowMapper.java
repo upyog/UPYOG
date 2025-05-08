@@ -7,18 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.AuditDetails;
 import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.model.GarbageBill;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.GrbgApplication;
 import org.egov.garbageservice.model.GrbgCollectionUnit;
-import org.egov.garbageservice.model.GrbgCommercialDetails;
-import org.egov.garbageservice.model.GrbgDocument;
 import org.egov.garbageservice.model.GrbgOldDetails;
-import org.egov.garbageservice.service.GarbageAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -309,18 +304,18 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 		return jsonNode;
 	}
 
-	private GrbgDocument populateGarbageDocument(ResultSet rs, String prefix) throws SQLException {
-		
-    	GrbgDocument garbageDocument = GrbgDocument.builder()
-    			.uuid(rs.getString(prefix+"uuid"))
-    			.docRefId(rs.getString(prefix+"doc_ref_id"))
-    			.docName(rs.getString(prefix+"doc_name"))
-    			.docType(rs.getString(prefix+"doc_type"))
-    			.docCategory(rs.getString(prefix+"doc_category"))
-    			.tblRefUuid(rs.getString(prefix+"tbl_ref_uuid"))
-    			.build();
-		return garbageDocument;
-	}
+//	private GrbgDocument populateGarbageDocument(ResultSet rs, String prefix) throws SQLException {
+//		
+//    	GrbgDocument garbageDocument = GrbgDocument.builder()
+//    			.uuid(rs.getString(prefix+"uuid"))
+//    			.docRefId(rs.getString(prefix+"doc_ref_id"))
+//    			.docName(rs.getString(prefix+"doc_name"))
+//    			.docType(rs.getString(prefix+"doc_type"))
+//    			.docCategory(rs.getString(prefix+"doc_category"))
+//    			.tblRefUuid(rs.getString(prefix+"tbl_ref_uuid"))
+//    			.build();
+//		return garbageDocument;
+//	}
 
 //	private GrbgDocument findDocumentByUuid(List<GrbgDocument> documents, String docUuid) {
 //    	if (!CollectionUtils.isEmpty(documents)) {
@@ -415,33 +410,33 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
 //        return null;
 //    }
 
-    private GarbageBill populateGarbageBill(ResultSet rs, String prefix) throws SQLException {
-
-        GarbageBill bill = GarbageBill.builder()
-                .id(rs.getLong(prefix + "id"))
-                .billRefNo(rs.getString(prefix + "bill_ref_no"))
-                .garbageId(rs.getLong(prefix + "garbage_id"))
-                .billAmount(rs.getDouble(prefix + "bill_amount"))
-                .arrearAmount(rs.getDouble(prefix + "arrear_amount"))
-                .paneltyAmount(rs.getDouble(prefix + "panelty_amount"))
-                .discountAmount(rs.getDouble(prefix + "discount_amount"))
-                .totalBillAmount(rs.getDouble(prefix + "total_bill_amount"))
-                .totalBillAmountAfterDueDate(rs.getDouble(prefix + "total_bill_amount_after_due_date"))
-                .billGeneratedBy(rs.getString(prefix + "bill_generated_by"))
-                .billGeneratedDate(rs.getLong(prefix + "bill_generated_date"))
-                .billDueDate(rs.getLong(prefix + "bill_due_date"))
-                .billPeriod(rs.getString(prefix + "bill_period"))
-                .bankDiscountAmount(rs.getDouble(prefix + "bank_discount_amount"))
-                .paymentId(rs.getString(prefix + "payment_id"))
-                .paymentStatus(rs.getString(prefix + "payment_status"))
-                .auditDetails(AuditDetails.builder()
-                        .createdBy(rs.getString(prefix + "created_by"))
-                        .createdDate(rs.getLong(prefix + "created_date"))
-                        .lastModifiedBy(rs.getString(prefix + "last_modified_by"))
-                        .lastModifiedDate(rs.getLong(prefix + "last_modified_date"))
-                        .build())
-                .build();
-
-        return bill;
-    }
+//    private GarbageBill populateGarbageBill(ResultSet rs, String prefix) throws SQLException {
+//
+//        GarbageBill bill = GarbageBill.builder()
+//                .id(rs.getLong(prefix + "id"))
+//                .billRefNo(rs.getString(prefix + "bill_ref_no"))
+//                .garbageId(rs.getLong(prefix + "garbage_id"))
+//                .billAmount(rs.getDouble(prefix + "bill_amount"))
+//                .arrearAmount(rs.getDouble(prefix + "arrear_amount"))
+//                .paneltyAmount(rs.getDouble(prefix + "panelty_amount"))
+//                .discountAmount(rs.getDouble(prefix + "discount_amount"))
+//                .totalBillAmount(rs.getDouble(prefix + "total_bill_amount"))
+//                .totalBillAmountAfterDueDate(rs.getDouble(prefix + "total_bill_amount_after_due_date"))
+//                .billGeneratedBy(rs.getString(prefix + "bill_generated_by"))
+//                .billGeneratedDate(rs.getLong(prefix + "bill_generated_date"))
+//                .billDueDate(rs.getLong(prefix + "bill_due_date"))
+//                .billPeriod(rs.getString(prefix + "bill_period"))
+//                .bankDiscountAmount(rs.getDouble(prefix + "bank_discount_amount"))
+//                .paymentId(rs.getString(prefix + "payment_id"))
+//                .paymentStatus(rs.getString(prefix + "payment_status"))
+//                .auditDetails(AuditDetails.builder()
+//                        .createdBy(rs.getString(prefix + "created_by"))
+//                        .createdDate(rs.getLong(prefix + "created_date"))
+//                        .lastModifiedBy(rs.getString(prefix + "last_modified_by"))
+//                        .lastModifiedDate(rs.getLong(prefix + "last_modified_date"))
+//                        .build())
+//                .build();
+//
+//        return bill;
+//    }
 }
