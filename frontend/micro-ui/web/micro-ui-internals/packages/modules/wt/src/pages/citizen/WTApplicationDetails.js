@@ -55,6 +55,8 @@ const WTApplicationDetails = () => {
   sessionStorage.setItem("wt", JSON.stringify(application));
   let immediateRequired = (wt_details?.extraCharge==="N") ? "No":"Yes"
 
+  const mutation = Digit.Hooks.wt.useTankerCreateAPI(tenantId,false); 
+
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId: tenantId,
@@ -65,19 +67,41 @@ const WTApplicationDetails = () => {
     { enabled: acknowledgementIds ? true : false }
   );
 
+/**
+ * This function handles the receipt generation and updates the water tanker booking details
+ * with the generated receipt's file store ID.
+ * 
+ * Steps:
+ * 1. Retrieve the first application from `waterTankerBookingDetail`.
+ * 2. Check if the `paymentReceiptFilestoreId` already exists in the application.
+ *    - If it exists, no further action is taken.
+ *    - If it does not exist:
+ *      a. Generate a PDF receipt using the `Digit.PaymentService.generatePdf` method.
+ *      b. Update the application with the generated `paymentReceiptFilestoreId`.
+ *      c. Use the `mutation.mutateAsync` method to persist the updated application.
+ *      d. Refetch the data to ensure the UI reflects the latest state.
+ * 
+ * Parameters:
+ * - tenantId: The tenant ID for which the receipt is being generated.
+ * - payments: Payment details used to generate the receipt.
+ * - params: Additional parameters (not used in this function).
+ * 
+ * Returns:
+ * - None (the function performs asynchronous updates and refetches data).
+ */
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let application = waterTankerBookingDetail[0] || {};
     let fileStoreId = application?.paymentReceiptFilestoreId
     if (!fileStoreId) {
     let response = { filestoreIds: [payments?.fileStoreId] };
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "request-service.water_tanker-receipt");
-    // const updatedApplication = {
-    //   ...application,
-    //   paymentReceiptFilestoreId: response?.filestoreIds[0]
-    // };
-    // await mutation.mutateAsync({
-    //   hallsBookingApplication: updatedApplication
-    // });
+    const updatedApplication = {
+      ...application,
+      paymentReceiptFilestoreId: response?.filestoreIds[0]
+    };
+    await mutation.mutateAsync({
+      waterTankerBookingDetail: updatedApplication
+    });
     fileStoreId = response?.filestoreIds[0];
     refetch();
     }
@@ -107,16 +131,13 @@ const WTApplicationDetails = () => {
       const acknowldgementDataAPI = await getWTAcknowledgementData({ ...applications }, tenantInfo, t);
       Digit.Utils.pdf.generate(acknowldgementDataAPI);
     };
-  
-  let docs = [];
-  docs = application?.documents;
 
   if (isLoading || auditDataLoading) {
     return <Loader />;
   }
-  if (true)
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
     dowloadOptions.push({
-      label: t("CHB_FEE_RECEIPT"),
+      label: t("WT_FEE_RECEIPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
 

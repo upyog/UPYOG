@@ -28,6 +28,15 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
     },
   });
 
+  // Fetch TankerType data from MDMS
+  const { data: TankerType } = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "TankerType" }], {
+    select: (data) => {
+      const formattedData = data?.["request-service"]?.["TankerType"];
+      return formattedData;
+    },
+  });
+
+
   // Fetch TankerQuantity data from MDMS
   const { data: TankerDetails} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "TankerQuantity" }], {
     select: (data) => {
@@ -40,6 +49,8 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
 
   let tankerDetails =[];
 
+  let tankerTypeDetails = [];
+
   // Iterate over the TankerQuantity array and push data to the Vehicle array
   TankerDetails && TankerDetails.map((data) => {
     tankerDetails.push({ i18nKey: `${data.code}`, code: `${data.code}`, value: `${data.code}`});
@@ -48,6 +59,11 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   // Iterate over the VehicleType  array and push data to the Vehicle array
   VehicleType && VehicleType.map((data) => {
     Vehicle.push({ i18nKey: `${data.capacity}`, code: `${data.capacity}`, value: `${data.capacity}`, vehicleType: data.vehicleType, capacityName: data.capacityName });
+  });
+
+  // Iterate over the TankerType  array and push data to the tankerTypeDetails array
+  TankerType && TankerType.map((data) => {
+    tankerTypeDetails.push({ i18nKey: `${data.i18nKey}`, code: `${data.code}`, value: `${data.value}`});
   });
 
 // Iterate over the Vehicle array, check if tankerType.code matches vehicleType, and return data
@@ -95,24 +111,11 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
     onSelect(config.key, request, false);
   };
 
-  const common = [
-    {
-      code: "TANKER",
-      i18nKey: "TANKER",
-      value: "Tanker"
-    },
-    {
-      code: "TROLLEY",
-      i18nKey: "TROLLEY",
-      value: "Trolley"
-    }
-  ];
-
   useEffect(() => {
-    if (userType === "citizen") {
-      goNext();
+    if (!tankerType && tankerTypeDetails?.length) {
+      settankerType(tankerTypeDetails[0]);
     }
-  }, [tankerType, deliveryDate, tankerQuantity, waterQuantity, deliveryTime, description,extraCharge]);
+  }, [tankerTypeDetails]);
 
   return (
     <React.Fragment>
@@ -126,7 +129,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
           <CardLabel>{`${t("WT_TANKER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
           <RadioButtons
             t={t}
-            options={common}
+            options={tankerTypeDetails}
             style={{ display: "flex", flexWrap: "wrap", maxHeight: "30px" }}
             innerStyles={{ minWidth: "24%" }}
             optionsKey="i18nKey"

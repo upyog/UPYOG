@@ -64,8 +64,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   
   let vendorDescription = [];
   dsoData?.vendor?.map((item) => {
-    if (item?.additionalDetails?.description === "WT") {
-      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name, vendorId: item?.id});
+    if (item?.additionalDetails?.serviceType === "WT") {
+      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name, vendorId: item?.id, mobileNumber:item?.mobileNumber });
     }
   });
 
@@ -194,6 +194,11 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
+      isDisabled={
+        (action?.docUploadRequired && !uploadedFile) ||
+        (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" && !selectedVendor) ||
+        (action?.state === "DELIVERY_PENDING" && !selectVehicle)
+      }
     >
        
       <FormComposer

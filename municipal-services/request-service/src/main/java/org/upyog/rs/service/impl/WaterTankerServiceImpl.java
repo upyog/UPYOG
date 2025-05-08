@@ -153,7 +153,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		}
 
 		// If no payment request, update workflow status and process booking request
-		if (paymentRequest == null) {
+		if (paymentRequest == null && waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null) {
 			State state = workflowService.updateWorkflowStatus(null, waterTankerRequest);
 			enrichmentService.enrichWaterTankerBookingUponUpdate(state.getApplicationStatus(), waterTankerRequest);
 
