@@ -14,7 +14,7 @@ import {
       import get from "lodash/get";
       import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
       import { convertTo12HourFormat, formatDate } from "../../utils";
-      
+      import getMTAcknowledgementData from "../../utils/getMTAcknowledgementData";
       /**
        * `MTApplicationDetails` is a React component that fetches and displays detailed information for a specific Mobile Toilet (MT) service application.
        * It fetches data for the booking using the `useMobileToiletSearchAPI` hook and displays the details in sections such as:
@@ -49,6 +49,59 @@ import {
         const application = mt_details;
       
         sessionStorage.setItem("mt", JSON.stringify(application));
+
+        const mutation = Digit.Hooks.wt.useMobileToiletCreateAPI(tenantId,false); 
+        const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+          {
+            tenantId: tenantId,
+            businessService: "request-service.mobile_toilet",
+            consumerCodes: acknowledgementIds,
+            isEmployee: false,
+          },
+          { enabled: acknowledgementIds ? true : false }
+        );
+      
+      /**
+       * This function handles the receipt generation and updates the application details
+       * with the generated receipt's file store ID.
+       * 
+       * Steps:
+       * 1. Retrieve the first application from `mobileToiletBookingDetail`.
+       * 2. Check if the `paymentReceiptFilestoreId` already exists in the application.
+       *    - If it exists, no further action is taken.
+       *    - If it does not exist:
+       *      a. Generate a PDF receipt using the `Digit.PaymentService.generatePdf` method.
+       *      b. Update the application with the generated `paymentReceiptFilestoreId`.
+       *      c. Use the `mutation.mutateAsync` method to persist the updated application.
+       *      d. Refetch the data to ensure the UI reflects the latest state.
+       * 
+       * Parameters:
+       * - tenantId: The tenant ID for which the receipt is being generated.
+       * - payments: Payment details used to generate the receipt.
+       * - params: Additional parameters (not used in this function).
+       * 
+       * Returns:
+       * - None (the function performs asynchronous updates and refetches data).
+       */
+        async function getRecieptSearch({ tenantId, payments, ...params }) {
+          let application = mobileToiletBookingDetail[0] || {};
+          let fileStoreId = application?.paymentReceiptFilestoreId
+          if (!fileStoreId) {
+          let response = { filestoreIds: [payments?.fileStoreId] };
+          response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "request-service.mobile_toilet-receipt");
+          const updatedApplication = {
+            ...application,
+            paymentReceiptFilestoreId: response?.filestoreIds[0]
+          };
+          await mutation.mutateAsync({
+            mobileToiletBookingDetail: updatedApplication
+          });
+          fileStoreId = response?.filestoreIds[0];
+          refetch();
+          }
+          const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+          window.open(fileStore[fileStoreId], "_blank");
+        }
       
         const { isLoading: auditDataLoading, data: auditResponse } = Digit.Hooks.wt.useMobileToiletSearchAPI(
           {
@@ -61,13 +114,28 @@ import {
         );
       
         let dowloadOptions = [];
-        let docs = application?.documents || [];
+
+        dowloadOptions.push({
+          label: t("MT_DOWNLOAD_ACKNOWLEDGEMENT"),
+          onClick: () => getAcknowledgementData(),
+        });
       
         if (isLoading || auditDataLoading) {
           return <Loader />;
         }
-      console.log("application",application);
-      console.log("mt_details",mt_details);
+
+        if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+          dowloadOptions.push({
+            label: t("MT_FEE_RECEIPT"),
+            onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+          });
+      const getAcknowledgementData = async () => {
+        const applications = application || {};
+        const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
+        const acknowldgementDataAPI = await getMTAcknowledgementData({ ...applications }, tenantInfo, t);
+        Digit.Utils.pdf.generate(acknowldgementDataAPI);
+      };
+      
         return (
           <React.Fragment>
             <div>

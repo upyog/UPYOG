@@ -55,7 +55,7 @@ const getWTAcknowledgementData = async (booking, tenantInfo, t) => {
         values: [
           { title: t("WT_TANKER_TYPE"), value: booking?.tankerType },
           { title: t("WT_TANKER_QUANTITY"), value: booking?.tankerQuantity },
-          { title: t("WT_WATER_QUANTITY"), value: booking?.waterQuantity },
+          { title: t("WT_WATER_QUANTITY"), value: booking?.waterQuantity + " Ltr" },
           { 
             title: t("WT_DELIVERY_DATE_TIME"), 
             value: `${formatDate(booking?.deliveryDate)} (${convertTo12HourFormat(booking?.deliveryTime)})` 

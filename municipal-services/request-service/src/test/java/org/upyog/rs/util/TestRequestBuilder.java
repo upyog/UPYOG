@@ -2,9 +2,15 @@ package org.upyog.rs.util;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.upyog.rs.web.models.RequestServiceRequest;
-import org.upyog.rs.web.models.Request;
+import org.upyog.rs.web.models.Address;
+import org.upyog.rs.web.models.ApplicantDetail;
+import org.upyog.rs.web.models.AuditDetails;
+import org.upyog.rs.web.models.Workflow;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
+import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.UUID;
 
 /**
@@ -18,29 +24,66 @@ public class TestRequestBuilder {
      * 
      * @return A RequestServiceRequest with valid data
      */
-    public static RequestServiceRequest createRequestServiceRequest() {
+    public static WaterTankerBookingRequest createWaterTankerRequest() {
         // Set request info
         RequestInfo requestInfo = createRequestInfo();
-        
-        // Set request detail
-        Request request = new Request();
-        request.setTenantId("pb");
-        request.setRequestNo("REQ-" + UUID.randomUUID().toString().substring(0, 8));
-        request.setStatus("INITIATED");
-        request.setDescription("Test request description");
-        request.setRequestType("GENERAL");
-        request.setDepartment("ADMIN");
-        request.setWard("W1");
-        request.setLocality("L1");
-        request.setAddress("123 Test Street");
-        request.setLatitude(12.9716);
-        request.setLongitude(77.5946);
-        
-        // Create and return the request
-        return RequestServiceRequest.builder()
-                .requestInfo(requestInfo)
-                .request(request)
+        WaterTankerBookingDetail waterTankerBookingDetail = WaterTankerBookingDetail.builder()
+                .bookingId("BK12345")
+                .bookingNo("WT-2025-0001")
+                .tankerType("Large")
+                .tankerQuantity(2)
+                .waterQuantity(5000)
+                .description("Water tanker booking for construction site")
+                .applicantUuid("applicant-uuid-123")
+                .deliveryDate(LocalDate.of(2025, 5, 15))
+                .deliveryTime(LocalTime.of(10, 30))
+                .extraCharge("200")
+                .vendorId("vendor-001")
+                .vehicleId("vehicle-001")
+                .driverId("driver-001")
+                .vehicleType("Truck")
+                .vehicleCapacity("5000L")
+                .paymentDate(System.currentTimeMillis())
+                .applicationDate(System.currentTimeMillis())
+                .bookingCreatedBy("Citizen")
+                .tenantId("pb.amritsar")
+                .addressDetailId("address-001")
+                .bookingStatus("PENDING")
+                .receiptNo("RCPT-987654")
+                .permissionLetterFilestoreId("file-store-id-permission")
+                .paymentReceiptFilestoreId("file-store-id-payment")
+                .mobileNumber("9876543210")
+                .localityCode("LOC001")
+                .applicantDetail(ApplicantDetail.builder()
+                        .name("John Doe")
+                        .emailId("john.doe@example.com")
+                        .mobileNumber("9876543210")
+                        .build())
+                .address(Address.builder()
+                        .doorNo("123")
+                        .streetName("Main Street")
+                        .city("Amritsar")
+                        .pincode("143001")
+                        .build())
+                .workflow(Workflow.builder()
+                        .action("APPLY")
+                        .status("INITIATED")
+                        .build())
+                .auditDetails(AuditDetails.builder()
+                        .createdBy("system")
+                        .createdTime(System.currentTimeMillis())
+                        .lastModifiedBy("system")
+                        .lastModifiedTime(System.currentTimeMillis())
+                        .build())
                 .build();
+        // Set request detail
+        WaterTankerBookingRequest request = WaterTankerBookingRequest.builder()
+                .requestInfo(requestInfo)
+                .waterTankerBookingDetail(waterTankerBookingDetail)
+                .build();
+
+        // Create and return the request
+        return request;
     }
     
     /**

@@ -146,7 +146,7 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         }
 
         // If no payment request, update workflow status and process booking request
-        if (paymentRequest == null) {
+        if (paymentRequest == null && mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow() != null) {
             State state = workflowService.updateMTWorkflowStatus(null, mobileToiletRequest);
             enrichmentService.enrichMobileToiletBookingUponUpdate(state.getApplicationStatus(), mobileToiletRequest);
 

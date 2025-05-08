@@ -21,7 +21,7 @@ public class RequestServiceQueryBuilder {
 
     private static final String WATER_TANKER_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT ursbd.booking_id, booking_no,applicant_uuid, mobile_number, locality_code, tanker_type, tanker_quantity, water_quantity, description, " +
-                    "delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, " +
+                    "delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type,payment_receipt_filestore_id " +
                     "vehicle_capacity,address_detail_id, booking_status, ursbd.createdby, ursbd.lastModifiedby, ursbd.createdtime, " +
                     "ursbd.lastmodifiedtime, ursbd.tenant_id " +
                     "FROM public.upyog_rs_tanker_booking_details ursbd"
@@ -30,7 +30,7 @@ public class RequestServiceQueryBuilder {
     private static final String MOBILE_TOILET_BOOKING_DETAILS_SEARCH_QUERY = (
             "SELECT urmt.booking_id, booking_no, applicant_uuid, no_of_mobile_toilet, mobile_number, locality_code, " +
                     "description, delivery_from_date, delivery_to_date, delivery_from_time, delivery_to_time, vendor_id, " +
-                    "vehicle_id, driver_id, vehicle_type, vehicle_capacity,address_detail_id, booking_status, urmt.createdby, " +
+                    "vehicle_id, driver_id, vehicle_type, vehicle_capacity,address_detail_id, payment_receipt_filestore_id,booking_status, urmt.createdby, " +
                     "urmt.lastModifiedby, urmt.createdtime, urmt.lastmodifiedtime, urmt.tenant_id " +
                     "FROM public.upyog_rs_mobile_toilet_booking_details urmt"
     );
