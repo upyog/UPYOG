@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -438,7 +439,6 @@ public class GarbageAccountService {
 				address.setGarbageId(garbageAccount.getGarbageId());
 			});
 		} else {
-			//log.info(garbageAccount.getName() + ","+ garbageAccount.getAddresses());
 			throw new CustomException("MISSING_ADDRESS", "Provide address.");
 		}
 	}
@@ -539,10 +539,19 @@ public class GarbageAccountService {
 			garbageAccount.setAuditDetails(auditDetails);
 		}
 
+		Random random = new Random();
+		 
+        // Generate a 13-digit random number
+        long min = 1000000000000L; // Minimum value (13-digit)
+        long max = 9999999999999L; // Maximum value (13-digit)
+ 
+        // Generate the random number in the given range
+        long random13Digit = min + (long) (random.nextDouble() * (max - min));
+        
 		// generate garbage_id
 		garbageAccount.setId(garbageAccountRepository.getNextSequence());
 		garbageAccount.setUuid(UUID.randomUUID().toString());
-		garbageAccount.setGarbageId(System.currentTimeMillis());
+		garbageAccount.setGarbageId(random13Digit);
 		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 		garbageAccount.setWorkflowAction(GrbgConstants.WORKFLOW_ACTION_INITIATE);
 		garbageAccount.setParentAccount(null);
