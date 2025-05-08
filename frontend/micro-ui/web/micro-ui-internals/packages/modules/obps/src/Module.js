@@ -10,6 +10,7 @@ import BPACitizenHomeScreen from "./pages/citizen/home";
 import EDCRForm from "./pageComponents/EDCRForm";
 import BasicDetails from "./pageComponents/BasicDetails";
 import BuildingPlanScrutiny from "./pageComponents/BuildingPlanScrutiny";
+import PreApprovedDocsRequired from "./pageComponents/PreApprovedDocsRequired";
 import DocsRequired from "./pageComponents/DocsRequired";
 import PlotDetails from "./pageComponents/PlotDetails";
 import ScrutinyDetails from "./pageComponents/ScrutinyDetails";
@@ -109,6 +110,7 @@ const componentsToRegister = {
   EDCRForm,
   BasicDetails,
   BuildingPlanScrutiny,
+  PreApprovedDocsRequired,
   DocsRequired,
   PlotDetails,
   ScrutinyDetails,

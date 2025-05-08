@@ -66,8 +66,8 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     value: owner?.emailId || "NA"
                 },
                 { 
-                    title: t("BPA_IS_PRIMARY_OWNER_LABEL"), 
-                    value: owner?.isPrimaryOwner || "NA"
+                    title: application?.businessService==="BPA-PAP" ? t("PRIMARY_OWNER_LABEL") : t("BPA_IS_PRIMARY_OWNER_LABEL"), 
+                    value: application?.businessService==="BPA-PAP" ? owners.length===1 ? "Single Owner" : "Multiple Owner" : owner?.isPrimaryOwner || "NA"
                 }
             ];
                values.push(...doc);
@@ -97,6 +97,10 @@ const getMohallaLocale = (value = "", tenantId = "") => {
                     { 
                         title: t("BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL"), 
                         value: t(`WF_BPA_${application?.data?.edcrDetails?.appliactionType||application?.data?.applicationType}`) || "NA"
+                    },
+                    {
+                        title: t("BPA_IS_PREAPPROVED"), 
+                        value:application?.additionalDetails?.isPreApproved ? application?.additionalDetails?.isPreApproved: application?.businessService==="BPA-PAP" ? "true" : "false"
                     },
                     { 
                         title: t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL"), 

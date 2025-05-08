@@ -179,6 +179,7 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
     <Card style={{paddingRight:"16px"}}>
         <StatusTable>
           <Row className="border-none" label={t(`BPA_APPLICATION_NUMBER_LABEL`)} text={applicationNo?applicationNo:""} />
+          <Row className="border-none" label={t(`BPA_IS_PREAPPROVED`)} text={t(value?.additionalDetails?.isPreApproved ? value?.additionalDetails?.isPreApproved : value.businessService==="BPA-PAP" ? "true" : "false")} />
         </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
@@ -341,7 +342,10 @@ import useEstimateDetails from "../../../../../../libraries/src/hooks/obps/useEs
         <Row className="border-none" textStyle={index==0 && owners.owners.length == 1 ?{paddingLeft:"12px"}:{}} label={t(`CORE_COMMON_NAME`)} text={ob?.name} />
         <Row className="border-none" label={t(`BPA_APPLICANT_GENDER_LABEL`)} text={t(ob?.gender?.i18nKey||ob?.gender)} />
         <Row className="border-none" label={t(`CORE_COMMON_MOBILE_NUMBER`)} text={ob?.mobileNumber} /> 
-        <Row className="border-none" label={t(`BPA_IS_PRIMARY_OWNER_LABEL`)} text={`${ob?.isPrimaryOwner?ob?.isPrimaryOwner:owners?.owners.length===1?"true":""}`} /> 
+        {value.businessService ==="BPA-PAP" ? (
+          <Row className="border-none" label={t(`PRIMARY_OWNER_LABEL`)} text={`${owners?.owners.length===1?"Single Owner":"Multiple Owner"}`} /> 
+        ):(<Row className="border-none" label={t(`BPA_IS_PRIMARY_OWNER_LABEL`)} text={`${ob?.isPrimaryOwner?ob?.isPrimaryOwner:owners?.owners.length===1?"true":""}`} /> )}
+        
         </StatusTable>
         </div>))}
         </StatusTable>
