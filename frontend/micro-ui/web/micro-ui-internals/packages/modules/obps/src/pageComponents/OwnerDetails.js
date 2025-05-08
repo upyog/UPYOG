@@ -449,6 +449,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (formData?.data?.registrationDetails||formData?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.registrationDetails||formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
+                payload.additionalDetails.isPreApproved = formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? true : false;
                 //For LandInfo
                 payload.landInfo = {};
                 //For Address

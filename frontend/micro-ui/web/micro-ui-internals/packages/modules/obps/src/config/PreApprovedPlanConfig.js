@@ -2,6 +2,12 @@ export const newConfig = [
     {
       head: "ES_NEW_APPLICATION_PROPERTY_ASSESSMENT",
       body: [
+        {
+          route: "documents-required",
+          component: "PreApprovedDocsRequired",
+          key: "data",
+          nextStep: "planDetails"
+        },
         
         {
           type: "component",

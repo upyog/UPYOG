@@ -7,6 +7,7 @@ import { UploadServices } from "../atoms/UploadServices";
 import { PTService } from "./PT";
 import usePreApprovedSearch from "../../hooks/obps/usePreApprovedSearch";
 import { PreApprovedPlanService } from "./PREAPPROVEDPLAN";
+import { useTranslation } from "react-i18next";
 export const OBPSService = {
   scrutinyDetails: (tenantId, params) =>
     Request({
@@ -484,7 +485,8 @@ export const OBPSService = {
       title: " ",
       isCommon: true,
       values: [
-        { title: "BPA_APPLICATION_NUMBER_LABEL", value: BPA?.applicationNo || "NA" }
+        { title: "BPA_APPLICATION_NUMBER_LABEL", value: BPA?.applicationNo || "NA" },
+        { title: "BPA_IS_PREAPPROVED", value: `${BPA?.additionalDetails?.isPreApproved || BPA?.businessService === "BPA-PAP" ? "true" : "false"}`}
       ]
     };
 
@@ -656,7 +658,7 @@ export const OBPSService = {
               { title: "BPA_APPLICANT_GENDER_LABEL", value: owner?.gender },
               { title: "CORE_COMMON_MOBILE_NUMBER", value: owner?.mobileNumber },
               { title: "CORE_COMMON_EMAIL_ID", value: owner?.emailId },
-              { title: "BPA_IS_PRIMARY_OWNER_LABEL", value: owner?.isPrimaryOwner, isNotTranslated: false }
+              { title: BPA?.businessService === "BPA-PAP" ? "PRIMARY_OWNER_LABEL" : "BPA_IS_PRIMARY_OWNER_LABEL", value: BPA?.businessService === "BPA-PAP" ? (Number(checkOwnerLength) > 1) ? "Multiple Owner" : "Single Owner" : owner?.isPrimaryOwner, isNotTranslated: false }
             ],
           };
         })
