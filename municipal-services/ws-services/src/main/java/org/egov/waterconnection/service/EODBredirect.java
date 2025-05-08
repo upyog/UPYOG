@@ -18,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +40,7 @@ public class EODBredirect {
 	
 	@Value("${eodb.integration.key}")
 	private String integrationKey;
-	
+	ZoneId zoneId = ZoneId.of("Asia/Kolkata");
 	
 	
     public boolean runEodbFlow(WaterConnectionRequest connection) {
@@ -179,12 +181,12 @@ public class EODBredirect {
                 break;
         }
 
-        String clearanceIssuedOn = "PENDING_FOR_PAYMENT".equals(applicationStatus) ?
-                                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
-                                    "NA";
+        String clearanceIssuedOn = "PENDING_FOR_PAYMENT".equals(applicationStatus)
+        	    ? ZonedDateTime.now(zoneId).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        	    : "NA";
 
-        String statusDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
+        	String statusDate = ZonedDateTime.now(zoneId).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+     
         try {
             JSONObject jsonInput = new JSONObject();
             jsonInput.put("iPin", iPin);
