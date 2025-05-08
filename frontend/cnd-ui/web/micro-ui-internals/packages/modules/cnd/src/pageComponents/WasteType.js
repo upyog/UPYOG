@@ -241,7 +241,9 @@ const WasteType = ({ t, config, onSelect, formData }) => {
       wasteMaterialType,
       wasteQuantity,
       pickupDate,
-      wasteDetails
+      wasteDetails,
+      siteMediaPhoto: fileUploads.siteMediaPhoto,
+      siteStack: fileUploads.siteStack,
     })};
   }, [wasteMaterialType, wasteQuantity, pickupDate, wasteDetails]);
 
@@ -335,10 +337,9 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             }}
           />
           </div>
-         { !isEmployee && (
-          <React.Fragment>
+         
           <CardLabel>{`${t("CND_SITE_MEDIA")}`}</CardLabel>
-          <div style={{ marginBottom: "15px", width:"100%" }}>
+          <div style={{ marginBottom: "15px", width:userType === "EMPLOYEE" ? "50%" : "100%" }}>
             <UploadFile
               onUpload={(e) => handleFileUpload(e, "siteMediaPhoto")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteMediaPhoto: null }))}
@@ -361,7 +362,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           </div>
           
           <CardLabel>{`${t("CND_SITE_STACK")}`}</CardLabel>
-          <div style={{ marginBottom: "20px", width:"100%" }}>
+          <div style={{ marginBottom: "20px", width:userType === "EMPLOYEE" ? "50%" : "100%" }}>
             <UploadFile
               onUpload={(e) => handleFileUpload(e, "siteStack")}
               onDelete={() => setFileUploads((prev) => ({ ...prev, siteStack: null }))}
@@ -382,7 +383,6 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               style={{inputStyles}}
             />
           </div>
-          </React.Fragment>)}
         </div>
       </FormStep>
     </React.Fragment>

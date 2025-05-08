@@ -71,7 +71,7 @@ const TopBar = ({
   };
 
   function onNotificationIconClick() {
-    history.push("/cnd-ui/citizen/engagement/notifications");
+    history.push("/digit-ui/citizen/engagement/notifications");
   }
 
   const urlsToDisableNotificationIcon = (pathname) =>

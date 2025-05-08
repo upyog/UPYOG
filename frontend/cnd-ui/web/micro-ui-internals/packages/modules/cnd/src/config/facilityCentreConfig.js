@@ -20,16 +20,16 @@ export const FacilityCentreConfig =
                 "texts": {
                     "header": "CND_WASTE_TYPE",
                 }
-            },
-            {
-                "component": "DisposeDetails",
-                "withoutLabel": true,
-                "key": "disposeDetails",
-                "type": "component",
-                "texts": {
-                    "header": "CND_FACILITY_DISPOSE_DETAILS",
-                }
-            },
+            }
+            // {
+            //     "component": "DisposeDetails",
+            //     "withoutLabel": true,
+            //     "key": "disposeDetails",
+            //     "type": "component",
+            //     "texts": {
+            //         "header": "CND_FACILITY_DISPOSE_DETAILS",
+            //     }
+            // },
         ],
     },
 ];

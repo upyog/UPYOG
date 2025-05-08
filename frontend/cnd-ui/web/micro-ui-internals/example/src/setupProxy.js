@@ -33,7 +33,8 @@ module.exports = function (app) {
     "/egov-hrms/employees/_search",
     "/cnd-service/v1/_update",
     "/vendor/v1/_search",
-    "/vehicle/v1/_search"
+    "/vehicle/v1/_search",
+    "/egov-user-event",
   ].forEach((location) => app.use(location, createProxy));
 /**
  * Above loops through a list of API paths and applies the createProxy middleware to each one.

@@ -89,27 +89,36 @@ export const CNDSearch = {
           { title: "PINCODE", value: response?.addressDetail?.pinCode },
         ]),
       },
-
       {
         title: "CND_WASTE_DETAILS",
         asSectionHeader: true,
         isTable: true,
         headers: ["CND_S_NO", "CND_WASTE_TYPE", "CND_QUANTITY", "CND_METRICS"],
         tableRows: slotlistRows,
-      }
-      // {
-      //   title: "CND_WASTE_DETAILS",
-      //   asSectionHeader: true,
-      //   values: response?.wasteTypeDetails?.map((items,index)=>{
-      //     return {
-      //       title: `${t("CND_WASTE_TYPE")} ${index + 1}`, 
-      //       value:  items?.quantity > 0
-      //         ? `${items?.wasteType}, ${items?.quantity} ${items?.metrics}`
-      //         : items?.wasteType,
-      //     };
-      //   })
-      // },
-
+      },
+      ...(response?.documentDetails && response?.documentDetails.length > 0 
+        ? [
+            {
+              title: "CND_DOC_DETAILS",
+              additionalDetails: {
+                documents: [
+                  {
+                    values: response?.documentDetails
+                      ?.map((document) => {
+                        return {
+                          title: `${document?.documentType?.toUpperCase()}`,
+                          documentType: document?.documentType,
+                          documentUid: document?.documentDetailId,
+                          fileStoreId: document?.fileStoreId,
+                          status: document.status,
+                        };
+                      }),
+                  },
+                ],
+              },
+            }
+          ] 
+        : [])
     ];
   },
 
