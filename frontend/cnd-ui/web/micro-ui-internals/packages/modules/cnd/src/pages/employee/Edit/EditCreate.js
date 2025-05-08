@@ -46,7 +46,18 @@ const EditCreate = () => {
 
   
   const onFormValueChange = (setValue, formData, formState) => {
-    setSubmitValve(!Object.keys(formState.errors).length); 
+    // Check if waste type quantity is filled and greater than zero
+    let hasValidWasteQuantity = false;
+    // Check if total waste quantity field is filled with value > 0
+    if (formData?.wasteType?.wasteQuantity) {
+      // Extract numeric value from "0 Tons" format
+      const match = formData.wasteType.wasteQuantity.toString().match(/(\d+(\.\d+)?)/);
+      const numericValue = match ? parseFloat(match[0]) : 0;
+      if (numericValue > 0) {
+        hasValidWasteQuantity = true;
+      }
+    }
+    setSubmitValve(!Object.keys(formState.errors).length && hasValidWasteQuantity);
   };
 
     // Extract just the numeric value from the waste quantity string
@@ -152,7 +163,7 @@ const EditCreate = () => {
     <ApplicationProvider applicationDetails={applicationDetails?.applicationData?.applicationData}>
     <FormComposer
       heading={t("CND_EDIT_PAGE")}
-      // isDisabled={!canSubmit}
+      isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={EditConfig.map((config) => {
        

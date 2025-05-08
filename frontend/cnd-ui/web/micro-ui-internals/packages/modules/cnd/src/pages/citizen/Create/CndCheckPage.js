@@ -25,10 +25,8 @@ In Parent Component,  we are passing the data as a props coming through params (
   const CndCheckPage = ({ onSubmit, value = {} }) => {
     const { t } = useTranslation();
     const {owner,address,propertyNature, wasteType, addressDetails} = value;
-    console.log("wasteTypewasteType",wasteType);
     const [agree, setAgree] = useState(false);
 
-    console.log("wasteTypewasteType",wasteType);
     const setdeclarationhandler = () => {
       setAgree(!agree);
     };
