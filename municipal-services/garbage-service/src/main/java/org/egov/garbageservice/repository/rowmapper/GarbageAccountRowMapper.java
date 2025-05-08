@@ -84,6 +84,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .auditDetails(audit)
                         .businessService(rs.getString("business_service"))
                         .approvalDate(rs.getLong("approval_date"))
+                        .channel(rs.getString("channel"))
                         .build();
 
                 accountsMap.put(accountId, garbageAccount);
@@ -376,6 +377,7 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                 .subAccountCount(rs.getLong("sub_account_count"))
                 .businessService(rs.getString(prefix + "business_service"))
                 .approvalDate(rs.getLong(prefix + "approval_date"))
+                .channel(rs.getString(prefix + "channel"))
                 .documents(new ArrayList<>())
                 .garbageBills(new ArrayList<>())
                 .grbgCollectionUnits(new ArrayList<>())

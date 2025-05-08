@@ -37,6 +37,8 @@ public class SearchCriteriaGarbageAccount {
     
     private List<String> statusList;
     
+    private List<String> channels;
+    
     private Boolean isOwner;
     
     private String parentAccount;
@@ -53,5 +55,24 @@ public class SearchCriteriaGarbageAccount {
     
     @Builder.Default
 	private Boolean isSchedulerCall = false;
+    
+    private Long offset;
+
+	private Long limit;
+	
+	public SearchCriteriaGarbageAccount copy() {
+		return SearchCriteriaGarbageAccount.builder().id(copyList(this.id)).garbageId(copyList(this.garbageId))
+				.propertyId(copyList(this.propertyId)).uuid(copyList(this.uuid)).type(copyList(this.type))
+				.name(copyList(this.name)).mobileNumber(copyList(this.mobileNumber)).createdBy(copyList(this.createdBy))
+				.applicationNumber(copyList(this.applicationNumber)).tenantId(this.tenantId)
+				.status(copyList(this.status)).statusList(copyList(this.statusList)).isOwner(this.isOwner)
+				.parentAccount(this.parentAccount).orderBy(this.orderBy).startId(this.startId).endId(this.endId)
+				.isActiveSubAccount(this.isActiveSubAccount).isActiveAccount(this.isActiveAccount)
+				.isSchedulerCall(this.isSchedulerCall).offset(this.offset).limit(this.limit).build();
+	}
+
+	private <T> List<T> copyList(List<T> originalList) {
+		return originalList != null ? new java.util.ArrayList<>(originalList) : null;
+	}
     
 }

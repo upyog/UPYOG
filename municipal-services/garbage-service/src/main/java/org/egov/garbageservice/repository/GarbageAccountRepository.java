@@ -13,7 +13,10 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
+import org.egov.garbageservice.model.contract.DmsRequest;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
+import org.egov.garbageservice.service.UserService;
+import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,7 +39,7 @@ public class GarbageAccountRepository {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.*, doc.uuid as doc_uuid, doc.doc_ref_id as doc_doc_ref_id, doc.doc_name as doc_doc_name, doc.doc_type as doc_doc_type, doc.doc_category as doc_doc_category, doc.tbl_ref_uuid as doc_tbl_ref_uuid "
+	private static final String SELECT_QUERY_ACCOUNT = "SELECT distinct on (acc.id) acc.*, doc.uuid as doc_uuid, doc.doc_ref_id as doc_doc_ref_id, doc.doc_name as doc_doc_name, doc.doc_type as doc_doc_type, doc.doc_category as doc_doc_category, doc.tbl_ref_uuid as doc_tbl_ref_uuid "
 			+ ", bill.id as bill_id, bill.bill_ref_no as bill_bill_ref_no, bill.garbage_id as bill_garbage_id"
 			+ ", bill.bill_amount as bill_bill_amount, bill.arrear_amount as bill_arrear_amount, bill.panelty_amount as bill_panelty_amount, bill.discount_amount as bill_discount_amount"
 			+ ", bill.total_bill_amount as bill_total_bill_amount, bill.total_bill_amount_after_due_date as bill_total_bill_amount_after_due_date"
@@ -50,7 +53,7 @@ public class GarbageAccountRepository {
 			+ ", sub_acc.id as sub_acc_id, sub_acc.uuid as sub_acc_uuid, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
 			+ ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
 			+ ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status, sub_acc.business_service as sub_acc_business_service"
-			+ ", sub_acc.approval_date as sub_acc_approval_date"
+			+ ", sub_acc.approval_date as sub_acc_approval_date, sub_acc.channel as sub_acc_channel"
 			+ ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
 			+ ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account, sub_acc.is_active as sub_acc_is_active, sub_acc.sub_account_count as sub_acc_sub_account_count"
 			+ ", sub_acc_bill.id as sub_acc_bill_id, sub_acc_bill.bill_ref_no as sub_acc_bill_bill_ref_no, sub_acc_bill.garbage_id as sub_acc_bill_garbage_id " 
@@ -184,13 +187,14 @@ public class GarbageAccountRepository {
         namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
     }
 
-    public List<GarbageAccount> searchGarbageAccount(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
+	public List<GarbageAccount> searchGarbageAccount(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount,
+			Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
     	
     	StringBuilder searchQuery = null;
-		final List preparedStatementValues = new ArrayList<>();
+		final List<Object> preparedStatementValues = new ArrayList<>();
 
 		//generate search query
-    	searchQuery = getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues);
+    	searchQuery = getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
         
         log.debug("### search garbage account: "+searchQuery.toString());
 
@@ -221,11 +225,57 @@ public class GarbageAccountRepository {
     }
 
 	private StringBuilder getSearchQueryByCriteria(StringBuilder searchQuery,
-			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List preparedStatementValues) {
-		
+			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
+			Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
+
 		searchQuery = new StringBuilder(SELECT_QUERY_ACCOUNT);
-		searchQuery = addWhereClause(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+
+		searchQuery.append(" WHERE");
+		searchQuery.append(" 1=1 ");
+
+		String whereClause = "";
+		if (null != garbageCriteriaMap && !garbageCriteriaMap.isEmpty()) {
+			List<String> clause = new ArrayList<>();
+			garbageCriteriaMap.entrySet().forEach(garbageCriteriaValue -> {
+				clause.add("(" + addWhereClause(preparedStatementValues, garbageCriteriaValue.getValue()) + ")");
+			});
+			if (!CollectionUtils.isEmpty(clause) && !clause.contains("()")) {
+				addAndClauseIfRequired(true, searchQuery);
+				whereClause = String.join(" OR ", clause);
+			}
+		} else {
+			addAndClauseIfRequired(true, searchQuery);
+			whereClause = addWhereClause(preparedStatementValues, searchCriteriaGarbageAccount);
+		}
+
+		searchQuery.append(whereClause);
+
 		searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
+		searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+		return searchQuery;
+	}
+	
+	private StringBuilder addPaginationWrapper(StringBuilder searchQuery, List<Object> preparedStatementValues,
+			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
+
+//		Long limit = config.getDefaultLimit();
+		Long limit = 500L;
+//		Long offset = config.getDefaultOffset();
+		Long offset = 0L;
+
+		if (null != searchCriteriaGarbageAccount.getLimit()) {
+			limit = searchCriteriaGarbageAccount.getLimit();
+		}
+		if (null != searchCriteriaGarbageAccount.getOffset()) {
+			offset = searchCriteriaGarbageAccount.getOffset();
+		}
+
+		searchQuery.append(" limit ? ");
+		searchQuery.append(" offset ? ");
+
+		preparedStatementValues.add(limit + offset);
+		preparedStatementValues.add(offset);
+
 		return searchQuery;
 	}
 
@@ -239,9 +289,10 @@ public class GarbageAccountRepository {
 		return searchQuery;
 	}
 
-	private StringBuilder addWhereClause(StringBuilder searchQuery, List preparedStatementValues,
+	private String addWhereClause(List<Object> preparedStatementValues,
 			SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
 
+		StringBuilder whereClause = new StringBuilder();
 
 		if (!searchCriteriaGarbageAccount.getIsSchedulerCall()
 				&& (CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())
@@ -258,110 +309,118 @@ public class GarbageAccountRepository {
 			throw new CustomException("INCORRECT_SEARCH_CRITERIA", "Provide criteria to search garbage account.");
 		}
 
-        searchQuery.append(" WHERE");
-        searchQuery.append(" 1=1 ");
+//        searchQuery.append(" WHERE");
+//        searchQuery.append(" 1=1 ");
         
-        boolean isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
+//        boolean isAppendAndClause = addAndClauseIfRequired(false, whereClause);
+        boolean isAppendAndClause = false;
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
-            isAppendAndClause = addAndClauseIfRequired(false, searchQuery);
-            searchQuery.append(" acc.id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getId(),
+            isAppendAndClause = addAndClauseIfRequired(false, whereClause);
+            whereClause.append(" acc.id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getId(),
                     preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
                     preparedStatementValues)).append(" )");
         }
         
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.garbage_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getGarbageId(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.garbage_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getGarbageId(),
                     preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.property_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getPropertyId(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.property_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getPropertyId(),
                     preparedStatementValues)).append(" )");
         }
         
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-        	searchQuery.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+        	whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
         			preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.type IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getType(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.type IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getType(),
                     preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.name IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getName(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.name IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getName(),
                     preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.mobile_number IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getMobileNumber(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.mobile_number IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getMobileNumber(),
                     preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" app.application_no IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getApplicationNumber(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" app.application_no IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getApplicationNumber(),
                     preparedStatementValues)).append(" )");
         }
 
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.status IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getStatus(),
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.status IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getStatus(),
                     preparedStatementValues)).append(" )");
         }
         
 		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatusList())) {
-			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-			searchQuery.append(" acc.status IN ( ").append(
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" acc.status IN ( ").append(
 					getQueryForCollection(searchCriteriaGarbageAccount.getStatusList(), preparedStatementValues))
 					.append(" )");
 		}
         
         if (null != searchCriteriaGarbageAccount.getTenantId()) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.tenant_id = ").append("'"+searchCriteriaGarbageAccount.getTenantId()+"'");
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.tenant_id = ").append("'"+searchCriteriaGarbageAccount.getTenantId()+"'");
         }
         
         if (null != searchCriteriaGarbageAccount.getIsOwner()) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.is_owner = ").append(searchCriteriaGarbageAccount.getIsOwner());
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.is_owner = ").append(searchCriteriaGarbageAccount.getIsOwner());
         }
         
         if (null != searchCriteriaGarbageAccount.getParentAccount()) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.parent_account = ").append(searchCriteriaGarbageAccount.getParentAccount());
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.parent_account = ").append(searchCriteriaGarbageAccount.getParentAccount());
         }
         
         if (null != searchCriteriaGarbageAccount.getStartId()) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.id >= ").append(+searchCriteriaGarbageAccount.getStartId());
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.id >= ").append(+searchCriteriaGarbageAccount.getStartId());
         }
         
         if (null != searchCriteriaGarbageAccount.getEndId()) {
-        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, searchQuery);
-            searchQuery.append(" acc.id <= ").append(+searchCriteriaGarbageAccount.getEndId());
+        	isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.id <= ").append(+searchCriteriaGarbageAccount.getEndId());
         }
         
-        return searchQuery;
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getChannels())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" acc.channel IN ( ")
+					.append(getQueryForCollection(searchCriteriaGarbageAccount.getChannels(), preparedStatementValues))
+					.append(" )");
+		}
+        
+        return whereClause.toString();
 	}
 	
 	private boolean addAndClauseIfRequired(final boolean appendAndClauseFlag, final StringBuilder queryString) {
         if (appendAndClauseFlag)
-            queryString.append(" AND");
+            queryString.append(" AND ");
 
         return true;
     }
