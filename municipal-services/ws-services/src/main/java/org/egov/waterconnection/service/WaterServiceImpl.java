@@ -456,8 +456,15 @@ Boolean isMigration=false;
 
 		try {
 		    String channel = waterConnectionRequest.getWaterConnection().getChannel();
-		    if ("EODB".equalsIgnoreCase(channel)) {
-		    	log.info("Channel Name EODB found");
+		    String thirdPartyCode = null;
+		    Object additionalDetailsObj = waterConnectionRequest.getWaterConnection().getAdditionalDetails();
+		    if (additionalDetailsObj instanceof Map) {
+		        Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+		        Object isavail = additionalDetails.get("thirdPartyCode");
+		        thirdPartyCode = isavail != null ? isavail.toString() : null;
+		    }
+
+		    if ("EODB".equalsIgnoreCase(channel) || "EODB".equalsIgnoreCase(thirdPartyCode)) {
 		        eodbPushed = eodbRedirect.runEodbFlow(waterConnectionRequest);
 		    }
 		} catch (Exception e) {

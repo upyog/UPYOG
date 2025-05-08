@@ -369,7 +369,15 @@ public class SewerageServiceImpl implements SewerageService {
 	
 		try {
 		    String channel = sewerageConnectionRequest.getSewerageConnection().getChannel();
-		    if ("EODB".equalsIgnoreCase(channel)) {
+		    String thirdPartyCode = null;
+		    Object additionalDetailsObj = sewerageConnectionRequest.getSewerageConnection().getAdditionalDetails();
+		    if (additionalDetailsObj instanceof Map) {
+		        Map<String, Object> additionalDetails = (Map<String, Object>) additionalDetailsObj;
+		        Object isavail = additionalDetails.get("thirdPartyCode");
+		        thirdPartyCode = isavail != null ? isavail.toString() : null;
+		    }
+
+		    if ("EODB".equalsIgnoreCase(channel) || "EODB".equalsIgnoreCase(thirdPartyCode)) {
 		        eodbPushed = eodbRedirect.runEodbFlow(sewerageConnectionRequest);
 		    }
 		} catch (Exception e) {
