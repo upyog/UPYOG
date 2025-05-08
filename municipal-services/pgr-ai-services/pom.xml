@@ -58,9 +58,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>1.5.18</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <!-- For generating the Swagger UI -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.joschi.jackson</groupId>
@@ -127,11 +133,11 @@
         </dependency>
     </dependencies>
     <repositories>
-     		<repository>
-			<id>repo.digit.org</id>
-			<name>eGov DIGIT Releases Repository</name>
-			<url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
-		</repository>
+        <repository>
+            <id>repo.digit.org</id>
+            <name>eGov DIGIT Releases Repository</name>
+            <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+        </repository>
         <repository>
             <id>repo.egovernments.org</id>
             <name>eGov ERP Releases Repository</name>

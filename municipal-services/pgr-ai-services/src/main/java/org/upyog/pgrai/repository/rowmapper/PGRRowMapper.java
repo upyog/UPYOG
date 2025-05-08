@@ -64,6 +64,8 @@ public class PGRRowMapper implements ResultSetExtractor<List<Service>> {
                 Integer rating = rs.getInt("rating");
                 if(rs.wasNull()){rating = null;}
                 String priority= rs.getString("priority");
+                String serviceType = rs.getString("serviceType");
+                String inputGrievance = rs.getString("inputGrievance");
 
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                                                 .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime).build();
@@ -78,6 +80,8 @@ public class PGRRowMapper implements ResultSetExtractor<List<Service>> {
                         .rating(rating)
                         .auditDetails(auditDetails)
                         .priority(priority != null ? Priority.fromValue(priority) : null)
+                        .serviceType(serviceType)
+                        .inputGrievance(inputGrievance)
                         .build();
 
                 JsonNode additionalDetails = getAdditionalDetail("ser_additionaldetails",rs);
