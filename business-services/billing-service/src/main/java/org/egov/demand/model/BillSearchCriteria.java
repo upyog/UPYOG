@@ -23,6 +23,8 @@ public class BillSearchCriteria {
 	@Size(max = 256)
 	private String tenantId;
 
+	private String payerId;
+
 	private Set<String> billId;
 
 	private Long fromPeriod;
@@ -31,6 +33,9 @@ public class BillSearchCriteria {
 
 	@Default
 	private Boolean retrieveOldest = false;
+	
+	@Default
+	private Boolean skipValidation = false;
 
 	@Default
 	private Boolean retrieveAll = false;
