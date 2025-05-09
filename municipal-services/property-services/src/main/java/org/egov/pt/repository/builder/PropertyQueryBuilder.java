@@ -319,7 +319,7 @@ public class PropertyQueryBuilder {
 				clause.add(
 						"(" + addWhereClause(propertyCriteriaValue.getValue(), preparedStmtList, isPlainSearch) + ")");
 			});
-			if (!CollectionUtils.isEmpty(clause)) {
+			if (!CollectionUtils.isEmpty(clause) && !clause.contains("()")) {
 				addClauseIfRequired(preparedStmtList, builder);
 				whereClause = String.join(" OR ", clause);
 			}
