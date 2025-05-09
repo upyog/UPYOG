@@ -223,7 +223,9 @@ public class GarbageAccountRepository {
 		searchQuery.append(whereClause);
 
 		searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
-		searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+		if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
+			searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+		}
 		return searchQuery;
 	}
 	
@@ -384,6 +386,34 @@ public class GarbageAccountRepository {
 			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
 			whereClause.append(" acc.channel IN ( ")
 					.append(getQueryForCollection(searchCriteriaGarbageAccount.getChannels(), preparedStatementValues))
+					.append(" )");
+		}
+		
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getWardNames())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" address.ward_name IN ( ")
+					.append(getQueryForCollection(searchCriteriaGarbageAccount.getWardNames(), preparedStatementValues))
+					.append(" )");
+		}
+		
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getOldGarbageIds())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" old_dtl.old_garbage_id IN ( ").append(
+					getQueryForCollection(searchCriteriaGarbageAccount.getOldGarbageIds(), preparedStatementValues))
+					.append(" )");
+		}
+		
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUnitCategories())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" unit.category IN ( ").append(
+					getQueryForCollection(searchCriteriaGarbageAccount.getUnitCategories(), preparedStatementValues))
+					.append(" )");
+		}
+		
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUnitTypes())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" unit.unit_type IN ( ")
+					.append(getQueryForCollection(searchCriteriaGarbageAccount.getUnitTypes(), preparedStatementValues))
 					.append(" )");
 		}
         

@@ -39,6 +39,14 @@ public class SearchCriteriaGarbageAccount {
     
     private List<String> channels;
     
+    private List<String> wardNames;
+    
+    private List<String> oldGarbageIds;
+    
+    private List<String> unitTypes;
+    
+    private List<String> unitCategories;
+    
     private Boolean isOwner;
     
     private String parentAccount;
@@ -68,7 +76,10 @@ public class SearchCriteriaGarbageAccount {
 				.status(copyList(this.status)).statusList(copyList(this.statusList)).isOwner(this.isOwner)
 				.parentAccount(this.parentAccount).orderBy(this.orderBy).startId(this.startId).endId(this.endId)
 				.isActiveSubAccount(this.isActiveSubAccount).isActiveAccount(this.isActiveAccount)
-				.isSchedulerCall(this.isSchedulerCall).offset(this.offset).limit(this.limit).build();
+				.isSchedulerCall(this.isSchedulerCall).offset(this.offset).limit(this.limit)
+				.channels(copyList(this.channels)).wardNames(copyList(this.wardNames))
+				.oldGarbageIds(copyList(this.oldGarbageIds)).unitTypes(copyList(this.unitTypes))
+				.unitCategories(copyList(this.unitCategories)).build();
 	}
 
 	private <T> List<T> copyList(List<T> originalList) {
