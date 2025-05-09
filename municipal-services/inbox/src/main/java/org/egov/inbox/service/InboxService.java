@@ -61,10 +61,7 @@ import org.egov.inbox.model.vehicle.VehicleTripDetailResponse;
 import org.egov.inbox.model.vehicle.VehicleTripSearchCriteria;
 import org.egov.inbox.repository.ElasticSearchRepository;
 import org.egov.inbox.repository.ServiceRequestRepository;
-import org.egov.inbox.util.BpaConstants;
-import org.egov.inbox.util.ErrorConstants;
-import org.egov.inbox.util.FSMConstants;
-import org.egov.inbox.util.TLConstants;
+import org.egov.inbox.util.*;
 import org.egov.inbox.web.model.Inbox;
 import org.egov.inbox.web.model.InboxResponse;
 import org.egov.inbox.web.model.InboxSearchCriteria;
@@ -763,9 +760,24 @@ public class InboxService {
 				businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
 						requestInfo, srvMap);
 			}
-			Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
-					.collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(), s1 -> s1,
-							(e1, e2) -> e1, LinkedHashMap::new));
+			Map<String, Object> businessMap = new HashMap<>();
+// Added below if condition to handle PGR response business object as the structure of response is different from others
+			if (businessServiceName.contains(PGRAiConstants.PGR_SERVICE)){
+				 businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
+						.collect(Collectors.toMap(
+								s1 -> ((JSONObject) s1).getJSONObject("service").get(businessIdParam).toString(),
+								s1 -> s1,
+								(e1, e2) -> e1,
+								LinkedHashMap::new
+						));
+
+			}else{
+				businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
+						.collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(), s1 -> s1,
+								(e1, e2) -> e1, LinkedHashMap::new));
+			}
+
+
 			ArrayList businessIds = new ArrayList();
 			businessIds.addAll(businessMap.keySet());
 			processCriteria.setBusinessIds(businessIds);
@@ -868,6 +880,7 @@ public class InboxService {
 					});
 				}
 			}
+			Map<String, Object> finalBusinessMap = businessMap; // Create a final reference
 			if (businessObjects.length() > 0 && processInstances.size() > 0) {
 				if (CollectionUtils.isEmpty(businessKeys)) {
 					businessMap.keySet().forEach(businessKey -> {
@@ -876,13 +889,13 @@ public class InboxService {
 								// For non- Bill Amendment Inbox search
 								Inbox inbox = new Inbox();
 								inbox.setProcessInstance(processInstanceMap.get(businessKey));
-								inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+								inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 								inboxes.add(inbox);
 							} else {
 								// When Bill Amendment objects are searched
 								Inbox inbox = new Inbox();
 								inbox.setProcessInstance(processInstanceMap.get(businessKey));
-								inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+								inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 								inbox.setServiceObject(toMap((JSONObject) serviceSearchMap
 										.get(inbox.getBusinessObject().get("consumerCode"))));
 								inboxes.add(inbox);
@@ -897,7 +910,7 @@ public class InboxService {
 						businessKeys.forEach(businessKey -> {
 							Inbox inbox = new Inbox();
 							inbox.setProcessInstance(processInstanceMap.get(businessKey));
-							inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+							inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 							if (inbox.getProcessInstance() != null)
 								inboxes.add(inbox);
 						});
@@ -907,7 +920,7 @@ public class InboxService {
 							Inbox inbox = new Inbox();
 
 							inbox.setProcessInstance(processInstanceMap.get(businessKey));
-							inbox.setBusinessObject(toMap((JSONObject) businessMap.get(businessKey)));
+							inbox.setBusinessObject(toMap((JSONObject) finalBusinessMap.get(businessKey)));
 							inbox.setServiceObject(toMap(
 									(JSONObject) serviceSearchMap.get(inbox.getBusinessObject().get("consumerCode"))));
 							if (inbox.getProcessInstance() != null)
