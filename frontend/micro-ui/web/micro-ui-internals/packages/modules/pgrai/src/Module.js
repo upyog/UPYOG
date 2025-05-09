@@ -1,4 +1,4 @@
-import { Header, CitizenHomeCard,CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, CitizenHomeCard,PGRIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
@@ -10,14 +10,12 @@ import {PGRAIMyApplications} from "./pages/citizen/Create/PGRAIMyApplications";
 import PGRApplication from "./pages/citizen/Create/PGRAIMyApplications/PGRAI-application";
 import PGRApplicationDetails from "./pages/citizen/PGRApplicationDetails";
 
-import { AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 // Component registry for the PGR_AI module, mapping component names to their implementations.
 // Enables dynamic registration and access of components in the application.
 const componentsToRegister = {
   NewGrievance,
   PGRAICreate,
   Location,
-  AddressDetails,
   PGRAIMyApplications,
   PGRApplication,
   PGRApplicationDetails:PGRApplicationDetails,
@@ -40,7 +38,7 @@ export const PGRAIModule = ({ stateCode, userType, tenants }) => {
 
   addComponentsToRegistry();
 
-  Digit.SessionStorage.set("ADS_TENANTS", tenants);
+  Digit.SessionStorage.set("PGRAI_TENANTS", tenants);
 
   // Fetch localization data if the user is an employee
   useEffect(
@@ -60,7 +58,7 @@ export const PGRAIModule = ({ stateCode, userType, tenants }) => {
   } else return <CitizenApp />;
 };
 
-// ADSLinks component for rendering links in the UI
+// PGR_AILinks component for rendering links in the UI
 export const PGRAILinks = ({ matchPath, userType }) => {
   const { t } = useTranslation();
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PGRAI", {});
@@ -71,7 +69,7 @@ export const PGRAILinks = ({ matchPath, userType }) => {
 
   const links = [];
 
-  return <CitizenHomeCard header={t("PGRAI")} links={links} Icon={() => <CHBIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("PGRAI")} links={links} Icon={() => <PGRIcon className="fill-path-primary-main" />} />;
 };
 
 export const PGRAIComponents = {

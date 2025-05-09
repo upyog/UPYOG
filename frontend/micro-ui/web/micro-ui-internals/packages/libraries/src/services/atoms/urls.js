@@ -17,9 +17,8 @@ const Urls = {
 
   FileFetch: "/filestore/v1/files/url",
   PGR_Create: `/pgr-services/v2/request/_create`,
-  PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
   pgr_count: `/pgr-services/v2/request/_count`,
-  PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+
     
  
 
@@ -274,6 +273,11 @@ const Urls = {
     additionaldetailsCreate: "/vendor-management/api/v1/_create",
     vendorcommonSearch: "/vendor-management/api/v1/vendorPlusAdditional/_search"
     
+  },
+  // urls for making api calls for pgr-ai module
+  pgrAi:{
+    PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
+    PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
   },
 
 digiLocker:{
