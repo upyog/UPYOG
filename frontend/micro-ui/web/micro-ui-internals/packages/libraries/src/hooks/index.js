@@ -40,6 +40,8 @@ import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
+import useCreate from "./pgrAi/useCreate";
+import useSearchPGRAI from "./pgrAi/useSearchPGRAI";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
 import useComplaintStatus from "./pgr/useComplaintStatus";
 import useComplaintTable from "./pgr/useComplaintTable";
@@ -357,7 +359,11 @@ const wt={
   useMTApplicationDetail,
   useMTApplicationAction
 };
+const pgrAi={
 
+  useCreate,
+  useSearchPGRAI
+}
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -777,7 +783,8 @@ const Hooks = {
   useCustomBackNavigation,
   wt,
   vendor,
-  useRouteSubscription
+  useRouteSubscription,
+  pgrAi
 };
 
 export default Hooks;

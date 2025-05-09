@@ -17,7 +17,11 @@ const Urls = {
 
   FileFetch: "/filestore/v1/files/url",
   PGR_Create: `/pgr-services/v2/request/_create`,
+  PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
   pgr_count: `/pgr-services/v2/request/_count`,
+  PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    
+ 
 
   OTP_Send: "/user-otp/v1/_send",
   Authenticate: "/user/oauth/token",

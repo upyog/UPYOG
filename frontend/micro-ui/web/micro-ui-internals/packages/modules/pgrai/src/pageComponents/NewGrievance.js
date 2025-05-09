@@ -1,0 +1,351 @@
+import React, { useEffect, useState, Fragment } from "react";
+import { FormStep, TextInput, CardLabel, Loader, CardLabelError, LabelFieldPair, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { fetchCurrentLocation, reverseGeocode } from "../components/locationUtils";
+import PhotoUpload from "../components/Document";
+import AddressPopup from "../components/AddressPopup";
+
+const styles = {
+  suggestionContainer: {
+    position: "absolute",
+    top: "60%",
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    zIndex: 10,
+    maxHeight: "200px",
+    overflowY: "auto",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    width: "58.5%"
+  },
+  suggestionItem: {
+    padding: "10px 12px",
+    cursor: "pointer",
+    borderBottom: "1px solid #eee",
+    transition: "background-color 0.2s"
+  },
+  lastSuggestionItem: {
+    borderBottom: "none"
+  },
+  suggestionSubtype: {
+    fontSize: "0.9em",
+    color: "#666"
+  },
+  locationField: {
+    display: "flex",
+    position: "relative"
+  },
+  locationIcon: {
+    position: "relative",
+    left: "8px",
+    cursor: "pointer"
+  },
+  readOnlyInput: {
+    color: "#666"
+  },
+  errorMessage: {
+    color: "red",
+    margin: "10px 0"
+  }
+};
+
+const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
+  const [grievanceText, setGrievanceText] = useState("");
+  const [grievanceType, setGrievanceType] = useState("");
+  const [grievanceSubType, setGrievanceSubType] = useState("");
+  const [location, setLocation] = useState(formData?.location || "");
+  const [address, setAddress] = useState(formData?.address || "");
+  const [locationError, setLocationError] = useState(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [isFetchingAddress, setIsFetchingAddress] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
+  const [addressDetails, setAddressDetails] = useState(formData?.addressDetails || {});
+  const [documents, setDocuments] = useState(formData?.documents || {});
+  const [showAddressPopup, setShowAddressPopup] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const [document_uploaded, setDocumentUploaded] = useState();
+  console.log("hgkhjgjfkuhfliwuehflkwerhjflkwjerhlgfwehrglwkehrjglkwjhrflksjerh", document_uploaded);
+
+  const user = Digit.UserService.getUser().info;
+
+  const goNext = () => {
+    if (!location.trim()) {
+      setLocationError(t("REQUIRED_FIELD"));
+      return;
+    }
+
+    const formStepData = {
+      grievance: grievanceText,
+      grievanceType,
+      grievanceSubType,
+      documents,
+      address,
+      addressDetails,
+      document_uploaded,
+    };
+
+    if (userType === "citizen") {
+      onSelect(config.key, { ...formData[config.key], ...formStepData }, false, 0);
+    } else {
+      onSelect(config.key, formStepData, false, 0);
+    }
+  };
+
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value);
+    if (locationError) setLocationError(null);
+  };
+
+  const handleFetchLocation = async () => {
+    setIsFetchingLocation(true);
+    setLocationError(null);
+
+    try {
+      const { coords, latitude, longitude } = await fetchCurrentLocation(t);
+      setLocation(coords);
+
+      setIsFetchingAddress(true);
+      try {
+        const { formatted, addressDetails } = await reverseGeocode(latitude, longitude, t);
+        setAddressDetails(addressDetails);
+        setAddress(formatted);
+      } catch (error) {
+        console.error(error.message);
+        setAddress("Address not available");
+      }
+      setIsFetchingAddress(false);
+    } catch (error) {
+      setLocationError(error.error);
+    } finally {
+      setIsFetchingLocation(false);
+    }
+  };
+
+  const handleAddAddressClick = () => {
+    setShowAddressPopup(true);
+  };
+
+  const handleAddressSubmit = (addressData) => {
+    if (addressData) {
+      const addressDetails = {
+        houseNo: addressData.houseNo,
+        streetName: addressData.streetName,
+        locality: addressData.locality?.code,
+        city: addressData.city?.name,
+        pincode: addressData.pincode,
+        landmark: addressData.landmark,
+        addressLine1: addressData.addressLine1,
+        addressLine2: addressData.addressLine2,
+      };
+      setAddressDetails(addressDetails);
+      const formattedAddress = [
+        addressData.houseNo,
+        addressData.streetName,
+        addressData.locality?.name || addressData.locality,
+        addressData.city?.name || addressData.city,
+        addressData.pincode,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      setAddress(formattedAddress);
+    }
+    setShowAddressPopup(false);
+  };
+
+  const handlePhotoUpload = (key, documentStep) => {
+    setDocuments(documentStep);
+    if (userType === "citizen") {
+      goNext();
+    }
+  };
+
+  const fetchGrievanceCategories = async (prompt) => {
+    setIsLoading(true);
+    setApiError(null);
+    try {
+      const response = await fetch(`http://3.111.52.140:5002/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
+        method: "GET",
+        headers: { accept: "application/json" },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch grievance categories");
+
+      const data = await response.json();
+      if (data && data.length > 0) {
+        setSuggestions(data);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      setApiError("Failed to fetch suggestions. Please try again.");
+      setSuggestions([]);
+      setShowSuggestions(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSuggestionSelect = (suggestion) => {
+    setGrievanceType(suggestion.type || "");
+    setGrievanceSubType(suggestion.subtype || "");
+    setShowSuggestions(false);
+  };
+
+  const handleInputBlur = () => {
+    setTimeout(() => {
+      setShowSuggestions(false);
+    }, 200);
+  };
+
+  const handleInputFocus = () => {
+    if (suggestions.length > 0) {
+      setShowSuggestions(true);
+    }
+  };
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (grievanceText.trim() !== "") {
+        fetchGrievanceCategories(grievanceText);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(debounceTimer);
+  }, [grievanceText]);
+
+  const onSkip = () => {
+    onSelect();
+  };
+
+  useEffect(() => {
+    if (userType === "citizen") goNext();
+  }, [grievanceText, grievanceType, grievanceSubType, location, documents, address]);
+
+  return (
+    <Fragment>
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip}>
+        <CardLabel>
+          {`${t("GRIEVANCE")}`} <span className="astericColor">*</span>
+        </CardLabel>
+        <div style={{ position: "relative" }}>
+          <TextInput
+            t={t}
+            type="text"
+            isMandatory
+            name="grievance"
+            value={grievanceText}
+            onChange={(e) => setGrievanceText(e.target.value)}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+          />
+
+          {showSuggestions && suggestions.length > 0 && (
+            <div style={styles.suggestionContainer}>
+              {suggestions.map((suggestion, index) => (
+                <div
+                  key={suggestion.id || index}
+                  onClick={() => handleSuggestionSelect(suggestion)}
+                  style={index < suggestions.length - 1 ? styles.suggestionItem : {...styles.suggestionItem, ...styles.lastSuggestionItem}}
+                >
+                  <div style={{ fontWeight: "500" }}>{suggestion.type}</div>
+                  <div style={styles.suggestionSubtype}>{suggestion.subtype}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {isLoading && <Loader />}
+        {apiError && <div style={styles.errorMessage}>{apiError}</div>}
+
+        <CardLabel>
+          {`${t("GRIEVANCE_TYPE")}`} <span className="astericColor">*</span>
+        </CardLabel>
+        <TextInput
+          t={t}
+          type="text"
+          isMandatory
+          name="grievanceType"
+          value={grievanceType}
+          onChange={(e) => setGrievanceType(e.target.value)}
+          disabled={isLoading}
+        />
+
+        <CardLabel>
+          {`${t("GRIEVANCE_SUB_TYPE")}`} <span className="astericColor">*</span>
+        </CardLabel>
+        <TextInput
+          t={t}
+          type="text"
+          isMandatory
+          name="grievanceSubType"
+          value={grievanceSubType}
+          onChange={(e) => setGrievanceSubType(e.target.value)}
+          disabled={isLoading}
+        />
+         
+        <LabelFieldPair>
+          <CardLabel>
+            {`${t("GRIEVANCE_LOCATION")}`} <span className="astericColor">*</span>
+          </CardLabel>
+          <div className="field" style={styles.locationField}>
+            <TextInput
+              t={t}
+              value={location}
+              onChange={handleLocationChange}
+              onBlur={(e) => !e.target.value && setLocationError(t("REQUIRED_FIELD"))}
+              style={{ paddingRight: "30px" }}
+            />
+            <div style={styles.locationIcon} onClick={handleFetchLocation}>
+              <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
+            </div>
+          </div>
+        </LabelFieldPair>
+
+        <LabelFieldPair>
+          <CardLabel>{`${t("LANDMARK")}`} <span className="astericColor">*</span></CardLabel>
+        </LabelFieldPair>
+        <TextInput
+          t={t}
+          type="text"
+          isMandatory
+          name="landmark"
+          value={addressDetails.landmark || ""}
+          onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}
+          disabled={isLoading}
+        />
+        {locationError && <CardLabelError>{locationError}</CardLabelError>}
+
+        {address && (
+          <LabelFieldPair>
+            <CardLabel>{`${t("ADDRESS")}`}</CardLabel>
+            <div className="field">
+              <TextInput t={t} value={address} readOnly style={styles.readOnlyInput} />
+            </div>
+          </LabelFieldPair>
+        )}
+
+        <PhotoUpload t={t} config={{ key: "documents" }} onSelect={handlePhotoUpload} formData={{ documents }} setDocumentUploaded={setDocumentUploaded} />
+
+        <SubmitBar label={t("ADD_ADDRESS_DETAILS")} onSubmit={handleAddAddressClick} style={{ marginTop: "16px" }} />
+
+        {showAddressPopup && (
+          <AddressPopup t={t} isOpen={showAddressPopup} onClose={() => setShowAddressPopup(false)} onSubmit={handleAddressSubmit} />
+        )}
+      </FormStep>
+    </Fragment>
+  );
+};
+
+export default NewGrievance;

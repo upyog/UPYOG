@@ -14,7 +14,8 @@
     "packages/modules/asset",
     "packages/modules/vendor",
     "packages/modules/sv",
-    "packages/modules/wt"
+    "packages/modules/wt",
+    "packages/modules/pgrai"
   ],
   "license": "MIT",
   "private": true,
@@ -55,6 +56,7 @@
     "dev:ew": "cd packages/modules/ew && yarn start",
     "dev:sv": "cd packages/modules/sv && yarn start",
     "dev:wt": "cd packages/modules/wt && yarn start",
+    "dev:pgrai": "cd packages/modules/pgrai && yarn start",
     "dev:vendor": "cd packages/modules/vendor && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
@@ -83,6 +85,7 @@
     "build:sv": "cd packages/modules/sv && yarn build",
     "buildD:cm": "cd packages/modules/cm && yarn build",
     "build:wt": "cd packages/modules/wt && yarn build",
+    "build:pgrai": "cd packages/modules/pgrai && yarn build",
     "build:vendor": "cd packages/modules/vendor && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"

@@ -109,7 +109,9 @@ module.exports = function (app) {
     "/request-service/mobile-toilet/v1/_update",
     "/request-service/mobile-toilet/v1/_search",
     "/vendor-management/api/v1/vendorPlusAdditional/_search",
-    "/user/_updateAddress"
+    "/user/_updateAddress",
+    "/pgr-ai-services/v1/request/_create",
+    "/pgr-ai-services/v1/request/_search"
     
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
