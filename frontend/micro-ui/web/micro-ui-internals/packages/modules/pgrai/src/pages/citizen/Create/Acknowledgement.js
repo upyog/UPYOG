@@ -7,11 +7,11 @@ import { DataConvert } from "../../../utils";
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {
-    return !window.location.href.includes("editbookads") ? t("ES_RESPONSE_CREATE_ACTION") : t("CS_UPDATE_BOOKING_SUCCESS");
+    return  t("PGR_AI_REQUEST_CREATED");
   } else if (props.isLoading) {
-    return !window.location.href.includes("editbookads") ? t("CS_ PGR_AI_BOOKING_PENDING") : t("CS_ PGR_AI_UPDATE_BOOKING_PENDING");
+    return  t("CS_ PGR_AI_PENDING");
   } else if (!props.isSuccess) {
-    return !window.location.href.includes("editbookads") ? t("CS_ PGR_AI_BOOKING_FAILED") : t("CS_ PGR_AI_UPDATE_BOOKING_FAILED");
+    return t("CS_ PGR_AI_FAILED");
   }
 };
 
@@ -33,7 +33,7 @@ const BannerPicker = (props) => {
   );
 };
 /**
- *  PGR_AIAcknowledgement component displays the acknowledgment of an advertisement 
+ * PGR_AIAcknowledgement component displays the acknowledgment of an advertisement 
  * booking request. It shows the status of the booking operation, including 
  * success or failure messages.The component handles the mutation of 
  * booking data and manages loading states effectively.
