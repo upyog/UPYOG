@@ -226,6 +226,10 @@ public class PropertyQueryBuilder {
 	
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
+		
+		if (criteria.getIsSchedulerCall()) {
+			return query;
+		}
 
 		Long limit = config.getDefaultLimit();
 		Long offset = config.getDefaultOffset();
