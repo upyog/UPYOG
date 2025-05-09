@@ -229,6 +229,9 @@
 							org.egov.pg.models.TransactionRequest:TransactionRequestModel</customTypeNaming>
 						<customTypeNaming>
 							org.egov.pg.models.Bill$StatusEnum:BillStatus</customTypeNaming>
+						<customTypeNaming>
+							org.egov.common.contract.request.User:CommonUser</customTypeNaming>
+						<customTypeNaming>org.egov.pg.web.models.User:PgModelUser</customTypeNaming>
 					</customTypeNaming>
 					<customTypeMappings>
 						<customTypeMapping>
