@@ -68,17 +68,12 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const [document_uploaded, setDocumentUploaded] = useState();
-  console.log("hgkhjgjfkuhfliwuehflkwerhjflkwjerhlgfwehrglwkehrjglkwjhrflksjerh", document_uploaded);
+  const [ verificationDocuments,  setVerificationDocuments] = useState();
 
   const user = Digit.UserService.getUser().info;
 
   const goNext = () => {
-    if (!location.trim()) {
-      setLocationError(t("REQUIRED_FIELD"));
-      return;
-    }
-
+    
     const formStepData = {
       grievance: grievanceText,
       grievanceType,
@@ -86,7 +81,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       documents,
       address,
       addressDetails,
-      document_uploaded,
+      verificationDocuments,
     };
 
     if (userType === "citizen") {
@@ -135,8 +130,14 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       const addressDetails = {
         houseNo: addressData.houseNo,
         streetName: addressData.streetName,
-        locality: addressData.locality?.code,
-        city: addressData.city?.name,
+        locality: {
+          code:addressData.locality?.code,
+          name:addressData.locality?.i18nKey
+        },
+        city: {
+          name:addressData.city?.name,
+          district:addressData.city?.code.split(".")[0]
+        },
         pincode: addressData.pincode,
         landmark: addressData.landmark,
         addressLine1: addressData.addressLine1,
@@ -336,7 +337,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           </LabelFieldPair>
         )}
 
-        <PhotoUpload t={t} config={{ key: "documents" }} onSelect={handlePhotoUpload} formData={{ documents }} setDocumentUploaded={setDocumentUploaded} />
+        <PhotoUpload t={t} config={{ key: "documents" }} onSelect={handlePhotoUpload} formData={{ documents }}  setDocumentUploaded={ setVerificationDocuments} />
 
         <SubmitBar label={t("ADD_ADDRESS_DETAILS")} onSubmit={handleAddAddressClick} style={{ marginTop: "16px" }} />
 

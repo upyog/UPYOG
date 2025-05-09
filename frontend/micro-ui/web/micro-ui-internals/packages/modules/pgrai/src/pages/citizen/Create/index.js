@@ -69,9 +69,7 @@ const PGRAICreate = ({ parentRoute }) => {
     redirectWithHistory(nextPage);
   };
 
-  const chbcreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
-  };
+  
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
       let owners = params.owners || [];
