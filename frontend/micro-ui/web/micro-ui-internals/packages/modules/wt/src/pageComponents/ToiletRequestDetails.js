@@ -6,7 +6,7 @@ import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@nudmcdgnpm/d
    
 const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
-  const [mobileToilet, setMobileToilet] = useState(formData?.serviceType?.mobileToilet || "");
+  const [mobileToilet, setMobileToilet] = useState(formData?.toiletRequestDetails?.mobileToilet || "");
   const [deliveryfromTime, setdeliveryfromTime] = useState(formData?.toiletRequestDetails?.deliveryfromTime || "");
   const [deliverytoTime, setdeliverytoTime] = useState(formData?.toiletRequestDetails?.deliverytoTime || "");
   const [deliveryfromDate, setdeliveryfromDate] = useState(formData?.toiletRequestDetails?.deliveryfromDate || "");
@@ -83,7 +83,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
         config={config}
         onSelect={goNext}
         t={t}
-        isDisabled={!mobileToilet || !deliveryfromTime || !deliverytoTime || !deliveryfromDate || !deliverytoDate}
+        isDisabled={!mobileToilet || !deliveryfromTime || !deliverytoTime || !deliveryfromDate || !deliverytoDate || !specialRequest}
       >
         <div>
           <CardLabel>{t("MT_NUMBER_OF_MOBILE_TOILETS")} <span className="check-page-link-button">*</span></CardLabel>

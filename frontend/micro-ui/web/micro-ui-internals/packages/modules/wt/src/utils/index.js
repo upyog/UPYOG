@@ -45,7 +45,7 @@ export const waterTankerPayload = (data) =>{
         deliveryDate: data?.requestDetails?.deliveryDate,
         deliveryTime: data?.requestDetails?.deliveryTime,
         extraCharge: (data?.requestDetails?.extraCharge) ? "Y":"N",
-
+        addressDetailId: data?.address?.addressDetailId || "",
         applicantDetail: {
             name: data?.owner?.applicantName,
             mobileNumber: data?.owner?.mobileNumber,
@@ -53,6 +53,7 @@ export const waterTankerPayload = (data) =>{
             emailId: data?.owner?.emailId,
         },
         address: {
+            addressType:data?.address?.addressType?.code,
             pincode: data?.address?.pincode,
             city: data?.address?.city?.city?.name,
             cityCode: data?.address?.city?.city?.code,
@@ -86,7 +87,7 @@ export const waterTankerPayload = (data) =>{
         deliveryToDate: data?.toiletRequestDetails?.deliverytoDate,
         deliveryFromTime: data?.toiletRequestDetails?.deliveryfromTime,
         deliveryToTime: data?.toiletRequestDetails?.deliverytoTime,
-
+        addressDetailId: data?.address?.addressDetailId || "",
         applicantDetail: {
             name: data?.owner?.applicantName,
             mobileNumber: data?.owner?.mobileNumber,
@@ -94,6 +95,7 @@ export const waterTankerPayload = (data) =>{
             emailId: data?.owner?.emailId,
         },
         address: {
+            addressType:data?.address?.addressType?.code,
             pincode: data?.address?.pincode,
             city: data?.address?.city?.city?.name,
             cityCode: data?.address?.city?.city?.code,

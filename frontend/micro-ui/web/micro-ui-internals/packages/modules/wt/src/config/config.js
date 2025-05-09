@@ -80,7 +80,7 @@ export const commonConfig =
                     "nextStep": null,
                     "texts": {
                         "submitBarLabel": "COMMON_SAVE_NEXT",
-                        "header":"ES_REQUEST_DETAILS"
+                        "header":"WT_REQUEST_DETAILS"
                     },
                     "timeLine":[{
                         "currentStep":3,
@@ -103,7 +103,7 @@ export const commonConfig =
                     "nextStep":null,
                     "texts": {
                         "submitBarLabel": "COMMON_SAVE_NEXT",
-                        "header":"ES_TOILET_REQUEST_DETAILS"
+                        "header":"MT_REQUEST_DETAILS"
                     },
                     "timeLine":[{
                         "currentStep":3,

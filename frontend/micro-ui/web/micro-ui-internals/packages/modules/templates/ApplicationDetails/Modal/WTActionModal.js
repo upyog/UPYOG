@@ -64,8 +64,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   
   let vendorDescription = [];
   dsoData?.vendor?.map((item) => {
-    if (item?.additionalDetails?.serviceType === "WT") {
-      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name, vendorId: item?.id, mobileNumber:item?.mobileNumber });
+    if (item?.additionalDetails?.serviceType === applicationData?.bookingNo.split("-")[0]) {
+      vendorDescription.push({ code: item?.name, name: item?.name, i18nKey: item?.name, vendorId: item?.id, uuid:item?.owner?.uuid });
     }
   });
 
@@ -90,6 +90,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       i18nKey: item?.registrationNumber,
       tankerCapacity: item?.tankCapacity,
       vehicleId: item?.id,
+      uuid: item?.owner?.uuid,
     });
   });
 
@@ -145,6 +146,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         },
       ];
     if (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN") {
+      workflow.assignes =[selectedVendor?.uuid];
       applicationData.vendorId = selectedVendor?.vendorId;
     };
 

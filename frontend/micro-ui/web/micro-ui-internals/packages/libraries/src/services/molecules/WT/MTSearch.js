@@ -39,20 +39,20 @@ export const MTSearch = {
           { title: "MT_EMAIL_ID", value: response?.applicantDetail?.emailId || t("CS_NA")}
         ],
       },
-//       {
-//         title: "MT_ADDRESS_DETAILS",
-//         asSectionHeader: true,
-//         values: [
-//           { title: "MT_PINCODE", value: response?.address?.pincode || t("CS_NA")},
-//           { title: "MT_CITY", value: response?.address?.city  || t("CS_NA")},
-//           { title: "MT_LOCALITY", value: response?.address?.locality  || t("CS_NA")},
-//           { title: "MT_STREET_NAME", value: response?.address?.streetName  || t("CS_NA")},
-//           { title: "MT_HOUSE_NO", value: response?.address?.houseNo  || t("CS_NA")},
-//           { title: "MT_LANDMARK", value: response?.address?.landmark  || t("CS_NA")},
-//           { title: "MT_ADDRESS_LINE1", value: response?.address?.addressLine1  || t("CS_NA")},
-//           { title: "MT_ADDRESS_LINE2", value: response?.address?.addressLine2  || t("CS_NA")}
-//         ],
-//       },
+      {
+        title: "ES_TITLE_ADDRESS_DETAILS",
+        asSectionHeader: true,
+        values: [
+          { title: "PINCODE", value: response?.address?.pincode || t("CS_NA")},
+          { title: "CITY", value: response?.address?.city  || t("CS_NA")},
+          { title: "LOCALITY", value: response?.address?.locality  || t("CS_NA")},
+          { title: "STREET_NAME", value: response?.address?.streetName  || t("CS_NA")},
+          { title: "HOUSE_NO", value: response?.address?.houseNo  || t("CS_NA")},
+          { title: "LANDMARK", value: response?.address?.landmark  || t("CS_NA")},
+          { title: "ADDRESS_LINE1", value: response?.address?.addressLine1  || t("CS_NA")},
+          { title: "ADDRESS_LINE2", value: response?.address?.addressLine2  || t("CS_NA")}
+        ],
+      },
       {
         title: "MT_REQUEST_DETAILS",
         asSectionHeader: true,

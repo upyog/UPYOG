@@ -165,19 +165,18 @@ import {
                   <Row className="border-none" label={t("MT_EMAIL_ID")} text={mt_details?.applicantDetail?.emailId || t("CS_NA")} />
                 </StatusTable>
       
-                {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("MT_ADDRESS_DETAILS")}</CardSubHeader>
+                <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
                 <StatusTable>
-                  <Row className="border-none" label={t("MT_PINCODE")} text={mt_details?.address?.pincode || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_CITY")} text={mt_details?.address?.city || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_LOCALITY")} text={mt_details?.address?.locality || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_STREET_NAME")} text={mt_details?.address?.streetName || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_DOOR_NO")} text={mt_details?.address?.doorNo || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_HOUSE_NO")} text={mt_details?.address?.houseNo || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_ADDRESS_LINE1")} text={mt_details?.address?.addressLine1 || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_ADDRESS_LINE2")} text={mt_details?.address?.addressLine2 || t("CS_NA")} />
-                  <Row className="border-none" label={t("MT_LANDMARK")} text={mt_details?.address?.landmark || t("CS_NA")} />
+                  <Row className="border-none" label={t("PINCODE")} text={mt_details?.address?.pincode || t("CS_NA")} />
+                  <Row className="border-none" label={t("CITY")} text={mt_details?.address?.city || t("CS_NA")} />
+                  <Row className="border-none" label={t("LOCALITY")} text={mt_details?.address?.locality || t("CS_NA")} />
+                  <Row className="border-none" label={t("STREET_NAME")} text={mt_details?.address?.streetName || t("CS_NA")} />
+                  <Row className="border-none" label={t("HOUSE_NO")} text={mt_details?.address?.houseNo || t("CS_NA")} />
+                  <Row className="border-none" label={t("ADDRESS_LINE1")} text={mt_details?.address?.addressLine1 || t("CS_NA")} />
+                  <Row className="border-none" label={t("ADDRESS_LINE2")} text={mt_details?.address?.addressLine2 || t("CS_NA")} />
+                  <Row className="border-none" label={t("LANDMARK")} text={mt_details?.address?.landmark || t("CS_NA")} />
                 </StatusTable>
-       */}
+      
                 <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("MT_NUMBER_OF_MOBILE_TOILETS")} text={mt_details?.noOfMobileToilet || t("CS_NA")} />
