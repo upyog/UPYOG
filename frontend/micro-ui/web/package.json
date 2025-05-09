@@ -13,7 +13,8 @@
     "micro-ui-internals/packages/modules/asset",
     "micro-ui-internals/packages/modules/vendor",
     "micro-ui-internals/packages/modules/sv",
-    "micro-ui-internals/packages/modules/wt"
+    "micro-ui-internals/packages/modules/wt",
+    "micro-ui-internals/packages/modules/pgrai"
     
   ],
   "engines": {
@@ -46,6 +47,7 @@
     "@nudmcdgnpm/upyog-ui-module-chb":"1.2.9",
     "@nudmcdgnpm/upyog-ui-module-ads":"1.2.12",
     "@nudmcdgnpm/upyog-ui-module-wt":"1.0.0",
+    "@nudmcdgnpm/upyog-ui-module-pgrai":"1.0.0",
     "@nudmcdgnpm/upyog-ui-module-vendor":"1.2.1",
     "babel-loader": "8.1.0",
     "react": "17.0.2",

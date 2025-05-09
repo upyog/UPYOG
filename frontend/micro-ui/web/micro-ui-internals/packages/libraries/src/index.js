@@ -38,6 +38,7 @@ import { FileDesludging } from "./services/molecules/FSM/FileDesludging";
 import { ComponentRegistryService } from "./services/elements/ComponentRegistry";
 import StoreData from "./services/molecules/StoreData";
 
+
 import Contexts from "./contexts";
 import Hooks from "./hooks";
 import Utils from "./utils";
@@ -62,6 +63,7 @@ import { CMServices } from "./services/elements/CM";
 import { WTService } from "./services/elements/WT";
 import { VendorService } from "./services/elements/EmpVendor";
 import { MTService } from "./services/elements/MT";
+import { PGRAIService } from "./services/elements/PGRAI";
    
 
 
@@ -135,6 +137,7 @@ const initLibraries = () => {
   setupLibraries("WTService",WTService);
   setupLibraries("VendorService", VendorService);
   setupLibraries("MTService", MTService);
+  setupLibraries("PGRAIService", PGRAIService);
 
   return new Promise((resolve) => {
     initI18n(resolve);
