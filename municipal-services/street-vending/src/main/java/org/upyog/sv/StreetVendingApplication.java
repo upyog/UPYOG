@@ -15,11 +15,11 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Import({ TracerConfiguration.class, EncryptionConfiguration.class })
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.upyog.sv", "org.upyog.sv.web.controllers" , "org.upyog.sv.config"})
+//@EnableScheduling
 public class StreetVendingApplication {
 
 

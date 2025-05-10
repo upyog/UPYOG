@@ -1,12 +1,19 @@
 package org.upyog.sv.service;
 
+import static org.upyog.sv.web.models.RenewalStatus.RENEWED;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
@@ -14,10 +21,13 @@ import org.upyog.sv.repository.ServiceRequestRepository;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.util.IdgenUtil;
 import org.upyog.sv.util.StreetVendingUtil;
+import org.upyog.sv.web.models.PaymentScheduleStatus;
 import org.upyog.sv.web.models.RenewalStatus;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
+import org.upyog.sv.web.models.VendorPaymentSchedule;
+import org.upyog.sv.web.models.VendorPaymentScheduleRequest;
 import org.upyog.sv.web.models.workflow.ProcessInstance;
 import org.upyog.sv.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.sv.web.models.workflow.ProcessInstanceResponse;
@@ -27,9 +37,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.PaymentRequest;
+import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
-
-import static org.upyog.sv.web.models.RenewalStatus.RENEWED;
 
 @Slf4j
 @Service
@@ -55,6 +64,12 @@ public class PaymentService {
 
 	@Autowired
 	private IdgenUtil idgenUtil;
+	
+	@Autowired
+	private DemandService demand;
+	
+	@Autowired
+	private UserService userService;
 
 	/**
 	 *
@@ -73,6 +88,11 @@ public class PaymentService {
 				log.info("Updating payment status for street vending booking : " + applicationNo);
 
 				updateApplicationStatusAndWorkflow(paymentRequest);
+				
+			}
+		String receiptNumber = paymentRequest.getPayment().getPaymentDetails().get(0).getReceiptNumber();
+			if(receiptNumber.contains(StreetVendingConstants.MONTHLY) || receiptNumber.contains(StreetVendingConstants.QUATERLY)){
+				updateVendorPaymentStatus(paymentRequest);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Illegal argument exception occured while sending notification Street Vending : " + e.getMessage());
@@ -233,6 +253,14 @@ public class PaymentService {
 
 		detail.setValidityDateForPersisterDate(StreetVendingUtil.getCurrentDateFromYear(1).toString());
 		enrichCertificateNumber(detail, paymentRequest.getRequestInfo(), detail.getTenantId());
+		
+		VendorPaymentSchedule schedule = enrichAndSetPaymentSchedule(detail);
+		VendorPaymentScheduleRequest scheduleRequest = VendorPaymentScheduleRequest.builder()
+			.requestInfo(paymentRequest.getRequestInfo())
+			.vendorPaymentSchedules(Collections.singletonList(schedule))
+			.build();
+
+		streetVendingRepository.savePaymentSchedule(scheduleRequest);
 
 		return applicationStatus;
 	}
@@ -275,5 +303,228 @@ public class PaymentService {
 			streetVendingDetail.setCertificateNo(certificateNo);
 		}
 	}
+	
+	/**
+	 * Constructs and returns a new {@link VendorPaymentSchedule} using information from the provided {@link StreetVendingDetail}.
+	 *
+	 * <p>
+	 * The method initializes the payment schedule with:
+	 * <ul>
+	 *   <li>A randomly generated UUID as the schedule ID</li>
+	 *   <li>The certificate number and vendor ID from the first element in the vendor details list</li>
+	 *   <li>A due date set to one month from the current date</li>
+	 *   <li>{@code null} values for {@code lastPaymentDate} and {@code paymentReceiptNo}</li>
+	 *   <li>Status set to {@link PaymentScheduleStatus#PENDING_DEMAND_GENERATION}</li>
+	 *   <li>Audit details copied from the {@code StreetVendingDetail}</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <p><b>Note:</b> It assumes that {@code detail.getVendorDetail()} is non-null and contains at least one item.</p>
+	 *
+	 * @param detail The {@link StreetVendingDetail} from which to extract data for creating the schedule.
+	 * @return A fully initialized {@link VendorPaymentSchedule} instance.
+	 */
+	
+	private VendorPaymentSchedule enrichAndSetPaymentSchedule(StreetVendingDetail detail) {
+		
+		return VendorPaymentSchedule.builder()
+				.id(StreetVendingUtil.getRandonUUID())
+				.certificateNo(detail.getCertificateNo())
+				.vendorId(detail.getVendorDetail().get(0).getId())
+				.applicationNo(detail.getApplicationNo())
+				.lastPaymentDate(null)
+				.dueDate(LocalDate.now().plusMonths(1))
+				.paymentReceiptNo(null)
+				.status(PaymentScheduleStatus.PENDING_DEMAND_GENERATION)
+				.auditDetails(detail.getAuditDetails())
+				.build();
+	}
+	
+	/**
+	 * Processes all vendor payment schedules that are due for demand generation.
+	 *
+	 * <p>
+	 * This method retrieves a list of {@link VendorPaymentSchedule} objects that are due for demand
+	 * generation, based on the current date and the {@link PaymentScheduleStatus#PENDING_DEMAND_GENERATION} status.
+	 * For each due schedule, it invokes the {@link #processSchedule(VendorPaymentSchedule, PaymentRequest)} method
+	 * to handle the payment processing.
+	 * </p>
+	 *
+	 * @param paymentRequest The {@link PaymentRequest} containing details about the payment. This is passed to
+	 *                       the {@link #processSchedule} method for further processing.
+	 */
+	
+	public void processDueVendorPayments(PaymentRequest paymentRequest) {
+	    List<VendorPaymentSchedule> dueSchedules = streetVendingRepository
+	            .getDueDateAndStatus(LocalDate.now(), PaymentScheduleStatus.PENDING_DEMAND_GENERATION);
+
+	    for (VendorPaymentSchedule schedule : dueSchedules) {
+	        processSchedule(schedule, paymentRequest);
+	    }
+	}
+	
+	public void updateVendorPaymentStatus(PaymentRequest paymentRequest) {
+		
+		String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
+				.getConsumerCode();
+	    List<VendorPaymentSchedule> dueSchedules = streetVendingRepository
+	            .getVendorPaymentScheduleApplication(applicationNo, PaymentScheduleStatus.PENDING_PAYMENT);
+	    for (VendorPaymentSchedule schedule : dueSchedules) {
+	        processSchedule(schedule, paymentRequest);
+	    }
+	}
+	
+	
+	/**
+	 * Processes a vendor payment schedule based on whether a payment has been made or not.
+	 *
+	 * <p>
+	 * If {@code paymentRequest} is {@code null}, it indicates the schedule is being processed
+	 * by the scheduler (pre-payment), and the method:
+	 * <ul>
+	 *   <li>Fetches the related {@link StreetVendingDetail} using the certificate number</li>
+	 *   <li>Calculates the next due date based on the vendor’s payment frequency</li>
+	 *   <li>Creates a demand for the schedule if it's within the valid period</li>
+	 *   <li>Updates the schedule status to {@code PENDING_PAYMENT}</li>
+	 *   <li>Creates the next schedule if the validity period extends beyond the current cycle</li>
+	 * </ul>
+	 *
+	 * If {@code paymentRequest} is not {@code null}, it indicates a successful payment event,
+	 * and the method marks the current schedule as {@code PAID}.
+	 *
+	 * @param schedule        The vendor's current payment schedule to be processed.
+	 * @param paymentRequest  The payment request details. If {@code null}, scheduler-triggered processing is assumed.
+	 */
+	
+	private void processSchedule(VendorPaymentSchedule schedule, PaymentRequest paymentRequest) {
+	    if (paymentRequest == null) {
+	        LocalDate currentDueDate = schedule.getDueDate();
+	        List<StreetVendingDetail> detailList = getValidityDateAndPayCycleByCertificateNo(schedule.getCertificateNo());
+
+	        if (detailList != null && !detailList.isEmpty()) {
+	            StreetVendingDetail detail = detailList.get(0);
+	            LocalDate validityDate = detail.getValidityDate();
+	            int paymentCycleInMonths = getPaymentCycleInMonths(detail.getVendorPaymentFrequency());
+
+	            LocalDate nextDueDate = currentDueDate.plusMonths(paymentCycleInMonths);
+	            boolean isPartialCycle = validityDate.isBefore(nextDueDate);
+	            LocalDate actualEndDate = isPartialCycle ? validityDate : nextDueDate;
+	        //    long days = ChronoUnit.DAYS.between(currentDueDate, actualEndDate);
+
+	            UserDetailResponse systemUser = userService.searchByUserName(
+	                StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
+	                StreetVendingConstants.SYSTEM_CITIZEN_TENANTID
+	            );
+
+	            if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
+	                log.error("System user not found");
+	                return;
+	            }
+
+	            StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
+	                .requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
+	                .streetVendingDetail(detail)
+	                .build();
+
+	            demand.createDemand(streetVendingRequest, null);
+
+	            schedule.setStatus(PaymentScheduleStatus.PENDING_PAYMENT);
+	            updateSchedule(schedule);
+
+	            if (!validityDate.isBefore(nextDueDate)) {
+	                VendorPaymentSchedule newSchedule = VendorPaymentSchedule.builder()
+	                    .id(StreetVendingUtil.getRandonUUID())
+	                    .vendorId(schedule.getVendorId())
+	                    .certificateNo(schedule.getCertificateNo())
+	                    .applicationNo(detail.getApplicationNo())                
+	                    .dueDate(nextDueDate)
+	                    .status(PaymentScheduleStatus.PENDING_DEMAND_GENERATION)
+	                    .build();
+
+	                VendorPaymentScheduleRequest paymentSchedule = VendorPaymentScheduleRequest.builder()
+	                    .requestInfo(null)
+	                    .vendorPaymentSchedules(Arrays.asList(newSchedule))
+	                    .build();
+
+	                streetVendingRepository.savePaymentSchedule(paymentSchedule);
+	            }
+	        }
+	    } else {
+	        schedule.setStatus(PaymentScheduleStatus.PAID);
+	        updateSchedule(schedule);
+	    }
+	}
+
+	/**
+	 * Updates the status of a single vendor payment schedule in the repository.
+	 *
+	 * <p>
+	 * Wraps the given {@link VendorPaymentSchedule} in a request object and delegates the update
+	 * operation to the {@code streetVendingRepository}. This is typically used to update the
+	 * status of a schedule to {@code PENDING_PAYMENT} or {@code PAID} based on its processing stage.
+	 * </p>
+	 *
+	 * @param schedule The vendor payment schedule to be updated.
+	 */
+	
+	private void updateSchedule(VendorPaymentSchedule schedule) {
+	    VendorPaymentScheduleRequest updateSchedule = VendorPaymentScheduleRequest.builder()
+	        .requestInfo(null)
+	        .vendorPaymentSchedules(Arrays.asList(schedule))
+	        .build();
+
+	    streetVendingRepository.updatePaymentSchedule(updateSchedule);
+	}
+
+
+	/**
+	 * Retrieves a list of {@link StreetVendingDetail} records associated with the given certificate number.
+	 *
+	 * <p>
+	 * This method constructs a {@link StreetVendingSearchCriteria} using the provided certificate number
+	 * and delegates the search to the {@code streetVendingRepository}. The returned list typically includes
+	 * validity date and payment cycle details used for further demand and schedule processing.
+	 * </p>
+	 *
+	 * @param certificateNo The certificate number used to search for street vending application details.
+	 * @return A list of {@link StreetVendingDetail} objects matching the certificate number, or an empty list if none found.
+	 */
+	
+	private List<StreetVendingDetail> getValidityDateAndPayCycleByCertificateNo(String certificateNo) {
+		StreetVendingSearchCriteria searchCriteria = StreetVendingSearchCriteria.builder().certificateNo(certificateNo)
+				.build();
+
+		return streetVendingRepository.getStreetVendingApplications(searchCriteria);
+	}
+
+	/**
+	 * Converts a vendor's payment cycle string into its corresponding duration in months.
+	 *
+	 * <p>
+	 * This method maps predefined payment frequency constants (e.g., "monthly", "quaterly", etc.)
+	 * to the number of months they represent. If the input is {@code null} or does not match any
+	 * known frequency, the method returns {@code 0}.
+	 * </p>
+	 *
+	 * @param paymentCycle The vendor's payment frequency as a string. Expected values are defined in {@link StreetVendingConstants}.
+	 * @return The number of months corresponding to the payment cycle, or {@code 0} if the cycle is unknown or null.
+	 */
+	
+	private int getPaymentCycleInMonths(String paymentCycle) {
+	    if (paymentCycle == null) return 0;
+	    switch (paymentCycle) {
+	        case StreetVendingConstants.MONTHLY:
+	            return 1;
+	        case StreetVendingConstants.QUATERLY:
+	            return 3;
+	        case StreetVendingConstants.HALFYEARLY:
+	            return 6;
+	        case StreetVendingConstants.YEARLY:
+	            return 12;
+	        default:
+	            return 0;
+	    }
+	}
+
 
 }

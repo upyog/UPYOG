@@ -202,7 +202,7 @@ public class MdmsUtil {
 
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName("TaxHeadMaster");
-		masterDetail.setFilter("$.[?(@.service=='sv-services')]");
+		masterDetail.setFilter("$.[?(@.service=='sv-services' || @.service=='sv-services.monthly' || @.service=='sv-services.quaterly')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 

@@ -88,6 +88,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
 						.vendingOperationTimeDetails(new ArrayList<>())
 						.benificiaryOfSocialSchemes(new ArrayList<>())
+						.vendorPaymentFrequency(rs.getString("SVPAYFREQUENCY"))
 						.build();
 
 				streetVendingApplicationMap.put(applicationId, streetVendingDetail);
@@ -142,7 +143,6 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 					.relationshipType(rs.getString("VENDORRELATIONSHIPTYPE"))
 					.userCategory(rs.getString("VENDORUSERCATEGORY"))
 					.specialCategory(rs.getString("VENDORSPECIALCATEGORY"))
-					.vendorPaymentFrequency(rs.getString("VENDORPAYFREQUENCY"))
 					.isInvolved(rs.getBoolean("VENDORISINVOLVED")).build();
 			streetVendingDetail.getVendorDetail().add(vendorDetail);
 		}

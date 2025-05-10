@@ -38,8 +38,16 @@ public class CalculationService {
 				StreetVendingConstants.SV_MASTER_MODULE_NAME);
 
 		log.info("calculationTypes " + calculationTypes);
+		
+	    String vendorPaymentFrequency = bookingRequest.getStreetVendingDetail().getVendorPaymentFrequency();
+	    
+	    String requiredApplicationType = getApplicationTypeFromFrequency(vendorPaymentFrequency);
+	    
+	    List<CalculationType> filteredCalculationType = calculationTypes.stream()
+	            .filter(type -> requiredApplicationType.equalsIgnoreCase(type.getApplicationType()))
+	            .collect(Collectors.toList());
 
-		List<DemandDetail> demandDetails = processCalculationForDemandGeneration(tenantId, calculationTypes,
+		List<DemandDetail> demandDetails = processCalculationForDemandGeneration(tenantId, filteredCalculationType,
 				bookingRequest, headMasters);
 
 		return demandDetails;
@@ -72,5 +80,16 @@ public class CalculationService {
 		return demandDetails;
 
 	}
+	
+	private String getApplicationTypeFromFrequency(String vendorPaymentfrequency) {
+	    if (StreetVendingConstants.MONTHLY.equalsIgnoreCase(vendorPaymentfrequency)) {
+	        return StreetVendingConstants.SVMONTHLYFEE;
+	    } else if (StreetVendingConstants.QUATERLY.equalsIgnoreCase(vendorPaymentfrequency)) {
+	        return  StreetVendingConstants.SVQUATERLYYFEE;
+	    } else {
+	        return StreetVendingConstants.SVQUATERLYYFEE;
+	    }
+	}
+
 
 }
