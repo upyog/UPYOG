@@ -14,9 +14,7 @@ const useFilterEmployee = (tenantId, roles, complaintDetails,isActive) => {
   const { t } = useTranslation();
   useEffect(() => {
     (async () => {
-      // const _roles = roles.join(",");
       const searchResponse = await Digit.PGRAIService.employeeSearch(tenantId, roles,isActive );
-console.log("searchResponsesearchResponse",searchResponse);
       const serviceDefs = await Digit.MDMSService.getServiceDefs(tenantId, "PGR");
       const serviceCode = complaintDetails.service.serviceCode;
       const service = serviceDefs?.find((def) => def.serviceCode === serviceCode);
