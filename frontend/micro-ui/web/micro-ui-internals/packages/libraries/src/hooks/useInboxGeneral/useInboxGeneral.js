@@ -9,6 +9,7 @@ import { TLService } from "../../services/elements/TL";
 import { CHBServices } from "../../services/elements/CHB";
 import { SVService } from "../../services/elements/SV";
 import { EwService } from "../../services/elements/EW";
+import { PGRAIService } from "../../services/elements/PGRAI";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -66,6 +67,14 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNo",
     fetchFilters: filterFunctions.SV,
     _searchFn: () => SVService.search({ tenantId, filters }),
+  },
+  PGRAI: {
+    services: ["PGRAI"],
+    searchResponseKey: "ServiceWrappers",
+    businessIdsParamForSearch: "serviceRequestId",
+    businessIdAliasForSearch: "serviceRequestId",
+    fetchFilters: filterFunctions.PGRAI,
+    _searchFn: () => PGRAIService.search({ tenantId, filters }),
   },
 });
 

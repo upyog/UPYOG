@@ -221,7 +221,6 @@ export const filterFunctions = {
   },
 
   SV: (filtersArg) => {
-    console.log("filtersArg",filtersArg);
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
@@ -328,5 +327,56 @@ export const filterFunctions = {
     }
 
     return { requestId,searchFilters, workflowFilters };
-  }
+  },
+  PGRAI: (filtersArg) => {
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+    const { serviceRequestId, mobileNumber,limit, offset, sortBy, sortOrder, total, applicationStatus, status, services } = filtersArg || {};
+    if (filtersArg?.serviceRequestId) {
+      searchFilters.serviceRequestId = filtersArg?.serviceRequestId;
+    }
+    if (applicationStatus && applicationStatus?.[0]) {
+      workflowFilters.applicationStatus = applicationStatus.map((status) => status.code).join(",");
+    }
+    if (status && status?.[0]) {
+      workflowFilters.status = status.map((status) => status.code).join(",");
+    }
+    if (filtersArg?.locality?.length) {
+      searchFilters.locality = filtersArg?.locality.map((item) => item.code.split("_").pop()).join(",");
+    }
+
+    if (filtersArg?.locality?.code) {
+      searchFilters.locality = filtersArg?.locality?.code;
+    }
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if (serviceRequestId) {
+      searchFilters.serviceRequestId = serviceRequestId;
+    }
+    // if (sortBy) {
+    //   searchFilters.sortBy = sortBy;
+    // }
+    if (sortOrder) {
+      searchFilters.sortOrder = sortOrder;
+    }
+    if (services) {
+      workflowFilters.businessServices = services.join();
+    }
+    if (limit) {
+      searchFilters.limit = limit;
+    }
+    if (offset) {
+      searchFilters.offset = offset;
+    }
+
+    return { searchFilters, workflowFilters };
+  },
 };

@@ -30,7 +30,7 @@ export const PGRAIService = {
     },
   update: (details) =>
     Request({
-      url: Urls.pgr_update,
+      url: Urls.pgrAi.PGR_Update_AI,
       data: details,
       useCache: true,
       auth: true,
@@ -38,5 +38,12 @@ export const PGRAIService = {
       params: { tenantId: details.tenantId },
       userService: true,
     }),
+  employeeSearch: (tenantId, roles, isActive) => {
+    return Request({
+      url: Urls.EmployeeSearch,
+      params: { tenantId, roles, isActive },
+      auth: true,
+    });
+  },
 
 };

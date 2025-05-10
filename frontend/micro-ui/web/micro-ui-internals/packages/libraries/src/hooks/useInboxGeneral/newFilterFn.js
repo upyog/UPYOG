@@ -95,8 +95,7 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },
   ASSET: (filtersArg) => {
-    
-    console.log("filtersArgss",filtersArg);
+  
         let { uuid } = Digit.UserService.getUser()?.info || {};
     
         const searchFilters = {};
@@ -331,8 +330,6 @@ export const filterFunctions = {
   },
 
   SV: (filtersArg) => {
-    
-    console.log("filtersArgssIN NEWFILTERFN",filtersArg);
         let { uuid } = Digit.UserService.getUser()?.info || {};
     
         const searchFilters = {};
@@ -379,5 +376,47 @@ export const filterFunctions = {
         workflowFilters["moduleName"] = "sv-services";
         
         return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder, isDraftApplication:false };
+  },
+  PGRAI: (filtersArg) => {
+        let { uuid } = Digit.UserService.getUser()?.info || {};
+    
+        const searchFilters = {};
+        const workflowFilters = {};
+    
+        const { serviceRequestId, services, mobileNumber, limit, offset, sortBy, sortOrder, applicationStatus, status } = filtersArg || {};
+
+        if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+          workflowFilters.status = applicationStatus.map((status) => status.uuid);
+          if (applicationStatus?.some((e) => e.nonActionableRole)) {
+            searchFilters.fetchNonActionableRecords = true;
+          }
+        }
+        if (status && status?.[0]?.status) {
+          workflowFilters.status = status.map((status) => status.uuid);
+          if (status?.some((e) => e.nonActionableRole)) {
+            searchFilters.fetchNonActionableRecords = true;
+          }
+        }
+
+        if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+          workflowFilters.assignee = uuid;
+        }
+        if (mobileNumber) {
+          searchFilters.mobileNumber = mobileNumber;
+        }
+        if (status) {
+          searchFilters.status = status;
+        }
+        if (serviceRequestId) {
+          searchFilters.serviceRequestId = serviceRequestId;
+        }
+        if (services) {
+          workflowFilters.businessService = services;
+        }
+        searchFilters["isInboxSearch"] = true;
+        searchFilters["creationReason"] = [""];
+        workflowFilters["moduleName"] = "pgr-ai-services";
+        
+        return { searchFilters, workflowFilters, limit, offset, sortOrder };
   },
 };

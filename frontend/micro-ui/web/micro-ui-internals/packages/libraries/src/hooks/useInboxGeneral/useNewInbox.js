@@ -11,6 +11,7 @@ import { getSearchFields } from "./searchFields";
 import { InboxGeneral } from "../../services/elements/InboxService";
 import {WTService} from "../../services/elements/WT";
 import {MTService} from "../../services/elements/MT";
+import { PGRAIService } from "../../services/elements/PGRAI";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -84,7 +85,16 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "bookingNo",
     fetchFilters: filterFunctions.MT,
     _searchFn: () => MTService.search({ tenantId, filters }),
-  }
+  },
+  PGRAI: {
+    services: ["PGRAI"],
+    searchResponseKey: "ServiceWrappers",
+    businessIdsParamForSearch: "serviceRequestId",
+    businessIdAliasForSearch: "serviceRequestId",
+    fetchFilters: filterFunctions.PGRAI,
+    _searchFn: () => PGRAIService.search({ tenantId, filters }),
+  },
+
 });
 
 

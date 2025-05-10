@@ -14,6 +14,7 @@
     "micro-ui-internals/packages/modules/vendor",
     "micro-ui-internals/packages/modules/sv",
     "micro-ui-internals/packages/modules/wt",
+    "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/pgrai"
     
   ],
