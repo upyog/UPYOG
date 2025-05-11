@@ -38,6 +38,8 @@ public class RequestServiceConstants {
 
 	public static final String MDMS_TANKER_CALCULATION_TYPE = "WaterTankerCalculationType";
 
+	public static final String MDMS_TANKER_DELIVERY_TIME_CALCULATION_TYPE = "TankerDeliveryTimeCalculationType";
+
 	public static final String MDMS_MOBILE_TOILET_CALCULATION_TYPE = "MobileToiletCalculationType";
 
 	public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
@@ -45,7 +47,11 @@ public class RequestServiceConstants {
 	public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";
 
 	public static final String REQUEST_SERVICE_TAX_MASTER_CODE = "WATER_TANKER_FEE";
-	
+
+	public static final String IMMEDIATE_DELIVERY_TAX_HEAD = "IMMEDIATE_DELIVERY_FEE";
+
+	public static final String IMMEDIATE_DELIVERY_YES = "Y";
+
 	public static final String CHANNEL_NAME_SMS = "SMS";
 
 	public static final String CHANNEL_NAME_EVENT = "EVENT";
