@@ -278,6 +278,7 @@ const Urls = {
   pgrAi:{
     PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
     PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
   },
 
 digiLocker:{
