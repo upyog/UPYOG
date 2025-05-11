@@ -53,39 +53,34 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
   export const APPLICATION_PATH = "/digit-ui";
 
 export const DataConvert = (data) => {
-  console.log("DataConvert", data);
-  const formdata = {
+   
+ const formdata = {
   service: {
     tenantId: data.tenantId,
     serviceCode: data.newGrievance.grievanceSubType,
     serviceType: data.newGrievance.grievanceType,
     inputGrievance: data.newGrievance.grievance,
-    additionalDetail: {}, // As in original
-    source: "web", // As in original
+    additionalDetail: {},
+        source: "web",
     address: {
       landmark: data.newGrievance.addressDetails?.landmark,
-      city: data.newGrievance.addressDetails?.city.name || "city",
-      district: data.newGrievance.addressDetails?.city.district,
+      city: data.newGrievance.addressDetails?.city?.name || data.newGrievance.addressDetails?.city,
+      district: data.newGrievance.addressDetails?.city?.district,
       region: data.newGrievance.addressDetails?.state_Code,
-     state: data.newGrievance.addressDetails?.state,
+      state: data.newGrievance.addressDetails?.state,
     pincode: data.newGrievance.addressDetails?.pincode,
         locality: {
-          code: data.newGrievance.addressDetails?.locality?.code,
-          name: data.newGrievance.addressDetails?.locality?.name
-        },
-      geoLocation: {
-        latitude: data.newGrievance.addressDetails?.geoLocation?.latitude || null,
-        longitude: data.newGrievance.addressDetails?.geoLocation?.longitude || null,
-        additionalDetails: data.newGrievance.addressDetails?.geoLocation?.additionalDetails || null
-      }
-    },
-
- },
+       code: data.newGrievance.addressDetails?.locality?.code||"dfd",
+            name: data.newGrievance.addressDetails?.locality?.name || data.newGrievance.addressDetails?.locality?.i18nKey || "dfd"
+          },
+          geoLocation: data.newGrievance.geoLocation,
+        }
+  },
     workflow: {
       action: "APPLY",
-      verificationDocuments: data.newGrievance?.verificationDocuments,
+      verificationDocuments: data.newGrievance?.verificationDocuments
     }
-  }
+  };
 
   return formdata;
 };

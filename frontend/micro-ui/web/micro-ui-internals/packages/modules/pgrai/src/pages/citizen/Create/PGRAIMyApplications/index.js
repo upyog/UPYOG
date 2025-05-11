@@ -57,7 +57,7 @@ export const PGRAIMyApplications = () => {
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
               <div style={{ flex: 2 }}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                  <CardLabel>{t("PGR_AIR_BOOKING_NO")}</CardLabel>
+                  <CardLabel>{t("PGR_AI_GRIEVANCE_NO")}</CardLabel>
                   <TextInput
                     placeholder={t("Enter Booking No.")}
                     value={searchTerm}

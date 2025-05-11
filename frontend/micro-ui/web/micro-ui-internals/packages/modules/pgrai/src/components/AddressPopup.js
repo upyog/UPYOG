@@ -40,7 +40,7 @@ const AddressPopup = ({ t, isOpen, onClose, onSubmit }) => {
   console.log("formData", formData);
   return (
     <Modal
-      headerBarMain={<h1 className="heading-m">{t("FILL_ADDRESS_DETAILS")}</h1>}
+      headerBarMain={<h1 className="heading-m">{t("PGR_AI_FILL_ADDRESS_DETAILS")}</h1>}
       actionSaveLabel={t("CS_COMMON_SUBMIT")}
       actionCancelLabel={t("BACK")}
       actionCancelOnSubmit={onClose}
