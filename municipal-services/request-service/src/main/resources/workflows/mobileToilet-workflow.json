@@ -165,7 +165,7 @@
               ],
               "action": "COMPLETE_REQUEST",
               "active": true,
-              "nextState": "CITIZEN_FEEDBACK_PENDING"
+              "nextState": "DELIVERED"
             }
           ],
           "isStartState": false,
@@ -174,33 +174,13 @@
           "applicationStatus": "IN_TRANSIT",
           "docUploadRequired": false
         },
-
-        {
-          "sla": "",
-          "state": "CITIZEN_FEEDBACK_PENDING",
-          "actions": [
-            {
-              "roles": [
-                "CITIZEN"
-              ],
-              "action": "RATE",
-              "active": true,
-              "nextState": "DELIVERED"
-            }
-          ],
-          "isStartState": false,
-          "isStateUpdatable": true,
-          "isTerminateState": false,
-          "applicationStatus": "CITIZEN_FEEDBACK_PENDING",
-          "docUploadRequired": false
-        },
         {
           "sla": "",
           "state": "DELIVERED",
           "isStartState": false,
           "isStateUpdatable": false,
           "isTerminateState": true,
-          "applicationStatus": "TANKER_DELIVERED",
+          "applicationStatus": "MOBILE_TOILET_DELIVERED",
           "docUploadRequired": false
         },
         {

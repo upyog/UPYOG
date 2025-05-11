@@ -165,33 +165,13 @@
                       ],
                       "action": "COMPLETE_REQUEST",
                       "active": true,
-                      "nextState": "CITIZEN_FEEDBACK_PENDING"
-                    }
-                  ],
-                  "isStartState": false,
-                  "isStateUpdatable": true,
-                  "isTerminateState": false,
-                  "applicationStatus": "IN_TRANSIT",
-                  "docUploadRequired": false
-                },
-
-                {
-                  "sla": "",
-                  "state": "CITIZEN_FEEDBACK_PENDING",
-                  "actions": [
-                    {
-                      "roles": [
-                        "CITIZEN"
-                      ],
-                      "action": "RATE",
-                      "active": true,
                       "nextState": "DELIVERED"
                     }
                   ],
                   "isStartState": false,
                   "isStateUpdatable": true,
                   "isTerminateState": false,
-                  "applicationStatus": "CITIZEN_FEEDBACK_PENDING",
+                  "applicationStatus": "IN_TRANSIT",
                   "docUploadRequired": false
                 },
                 {
