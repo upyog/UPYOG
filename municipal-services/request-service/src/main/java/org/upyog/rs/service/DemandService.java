@@ -94,6 +94,23 @@ public class DemandService {
 				.mobileNumber(applicantDetail.getMobileNumber()).tenantId(tenantId).build();
 	}
 
+	/**
+	 * Builds a list of DemandDetail objects for the given payable amounts.
+	 * 
+	 * Steps:
+	 * 1. Checks if an immediate delivery fee is applicable:
+	 *    - If greater than 0, adds a DemandDetail for the immediate delivery fee.
+	 * 2. Adds a DemandDetail for the main payable amount.
+	 * 3. Logs the final list of demand details.
+	 * 
+	 * Parameters:
+	 * - amountPayable: The main amount to be paid.
+	 * - tenantId: The tenant ID for which the demand is created.
+	 * - immediateDeliveryFee: The fee for immediate delivery, if applicable.
+	 * 
+	 * Returns:
+	 * - A list of DemandDetail objects containing tax details.
+	 */
 	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, BigDecimal immediateDeliveryFee) {
 		List<DemandDetail> demandDetails = new ArrayList<>();
 		if(immediateDeliveryFee.compareTo(BigDecimal.ZERO) > 0) {

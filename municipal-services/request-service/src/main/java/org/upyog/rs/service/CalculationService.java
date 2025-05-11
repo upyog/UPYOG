@@ -37,6 +37,28 @@ public class CalculationService {
 		throw new CustomException("FEE_NOT_FOUND", "Fee not found for application type: " + tankerType);
 	}
 
+	/**
+	 * Calculates the immediate delivery fee for a tanker booking.
+	 * 
+	 * Steps:
+	 * 1. Checks if immediate delivery is requested. If not, returns 0.
+	 * 2. Fetches the immediate delivery fee configuration from MDMS.
+	 * 3. Validates the fetched configuration:
+	 *    - Throws an exception if no configuration is found.
+	 *    - Throws an exception if the fee amount is not configured.
+	 * 4. Logs and returns the configured immediate delivery fee amount.
+	 * 
+	 * Parameters:
+	 * - immediateDelivery: Indicates if immediate delivery is requested.
+	 * - requestInfo: Metadata about the request.
+	 * - tenantId: The tenant ID for which the fee is calculated.
+	 * 
+	 * Returns:
+	 * - The immediate delivery fee as a BigDecimal.
+	 * 
+	 * Exceptions:
+	 * - CustomException: Thrown if fee configuration is missing or invalid.
+	 */
 	public BigDecimal immediateDeliveryFee(String immediateDelivery, RequestInfo requestInfo, String tenantId) {
 		// If immediateDelivery is not "Yes", return amount 0
 		if (!RequestServiceConstants.IMMEDIATE_DELIVERY_YES.equalsIgnoreCase(immediateDelivery)) {

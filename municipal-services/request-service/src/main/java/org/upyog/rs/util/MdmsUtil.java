@@ -65,6 +65,29 @@ public class MdmsUtil {
 
 	}
 
+	/**
+	 * Fetches the immediate delivery fee configuration from MDMS.
+	 * 
+	 * Steps:
+	 * 1. Constructs the MDMS API endpoint URI using the host and endpoint configuration.
+	 * 2. Prepares the MDMS request criteria for fetching tanker delivery time calculation types.
+	 * 3. Sends the request to MDMS and parses the response.
+	 * 4. Validates the response:
+	 *    - Throws an exception if the module data is not available.
+	 * 5. Converts the JSON array from the response into a list of TankerDeliveryTimeCalculationType objects.
+	 * 6. Logs any exceptions that occur during JSON processing.
+	 * 
+	 * Parameters:
+	 * - requestInfo: Metadata about the request.
+	 * - tenantId: The tenant ID for which the fee configuration is fetched.
+	 * - moduleName: The MDMS module name to query.
+	 * 
+	 * Returns:
+	 * - A list of TankerDeliveryTimeCalculationType objects containing fee configurations.
+	 * 
+	 * Exceptions:
+	 * - CustomException: Thrown if the fee configuration is not available.
+	 */
 	public List<TankerDeliveryTimeCalculationType> getImmediateDeliveryFee(RequestInfo requestInfo, String tenantId, String moduleName) {
 
 		List<TankerDeliveryTimeCalculationType> tankerDeliveryTimeCalculationType = new ArrayList<TankerDeliveryTimeCalculationType>();
