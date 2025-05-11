@@ -1,13 +1,21 @@
 package org.upyog.sv.web.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.service.PaymentService;
 import org.upyog.sv.service.SchedulerService;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.util.StreetVendingUtil;
@@ -17,12 +25,10 @@ import org.upyog.sv.web.models.StreetVendingListResponse;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingResponse;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
-import org.upyog.sv.web.models.billing.Demand;
 import org.upyog.sv.web.models.common.RequestInfoWrapper;
 import org.upyog.sv.web.models.common.ResponseInfo;
 import org.upyog.sv.web.models.common.ResponseInfo.StatusEnum;
-import org.upyog.sv.web.models.StreetVendingDemandResponse;
-import org.upyog.sv.validator.CreateApplicationGroup;
+
 import io.swagger.annotations.ApiParam;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-10-16T13:19:19.125+05:30")
@@ -38,6 +44,9 @@ public class StreetVendingController {
 	private SchedulerService schedulerService;
 
 	private final StreetVendingValidationService validationService;
+	
+	 @Autowired
+	    private PaymentService paymentService;
 
 	public StreetVendingController(StreetVendingValidationService validationService) {
 		this.validationService = validationService;
@@ -134,4 +143,16 @@ public class StreetVendingController {
 					.body("Failed to trigger scheduler: " + e.getMessage());
 		}
 	}
+
+	@PostMapping("/trigger-payment-schedule")
+    public ResponseEntity<String> triggerPaymentSchedule() {
+        try {
+        	paymentService.processDueVendorPayments(null); 
+            return ResponseEntity.ok("Payment Scheduler triggered successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to trigger scheduler: " + e.getMessage());
+        }
+    }
+	
 }

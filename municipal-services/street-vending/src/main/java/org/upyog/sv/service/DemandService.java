@@ -59,11 +59,18 @@ public class DemandService {
 		log.info("demandDetails : " + demandDetails);
 		
 		String businessService = config.getModuleName(); 
-
+		
+		// If demand details are present, determine the business service based on tax head code
 		if (demandDetails != null && !demandDetails.isEmpty()) {
+			
+			// Get the tax head code from demand detail entry
 		    String taxHeadCode = demandDetails.get(0).getTaxHeadMasterCode();
+		    
+		    // Check if it's a monthly tax head and override the business service accordingly
 		    if (StreetVendingConstants.TAXHEADMONTHLY.equals(taxHeadCode)) {
 		    	businessService = config.getServiceNameMonthly();
+		    	
+		    // Check if it's a quarterly tax head and override the business service accordingly
 		    } else if (StreetVendingConstants.TAXHEADQUATERLY.equals(taxHeadCode)) {
 		    	businessService = config.getServiceNameQuaterly();
 		    } 

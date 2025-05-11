@@ -192,7 +192,7 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 	 */
 	
 	@Override
-	public List<VendorPaymentSchedule> getDueDateAndStatus(LocalDate dueDate, PaymentScheduleStatus status) {
+	public List<VendorPaymentSchedule> getVendorPayScheduleForDueDateAndStatus(LocalDate dueDate, PaymentScheduleStatus status) {
 	    String query = StreetVendingQueryBuilder.PAYMENT_SCHEDULE;
 
 	    return jdbcTemplate.query(query, new Object[] { dueDate, status.toString() }, new VendorPaymentScheduleRowMapper());

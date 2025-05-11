@@ -35,7 +35,7 @@ public interface StreetVendingRepository {
 	
 	void savePaymentSchedule(VendorPaymentScheduleRequest paymentSchedule);
 	
-    List<VendorPaymentSchedule> getDueDateAndStatus(LocalDate dueDate, PaymentScheduleStatus status);
+    List<VendorPaymentSchedule> getVendorPayScheduleForDueDateAndStatus(LocalDate dueDate, PaymentScheduleStatus status);
 
 	void updatePaymentSchedule(VendorPaymentScheduleRequest updateSchedule);
 

@@ -355,8 +355,12 @@ public class PaymentService {
 	 */
 	
 	public void processDueVendorPayments(PaymentRequest paymentRequest) {
+		
+		log.info("Scheduler started for vendor payment schedule inside processDueVendorPayments method");
+		log.info("Payment Request " + paymentRequest);
+		
 	    List<VendorPaymentSchedule> dueSchedules = streetVendingRepository
-	            .getDueDateAndStatus(LocalDate.now(), PaymentScheduleStatus.PENDING_DEMAND_GENERATION);
+	            .getVendorPayScheduleForDueDateAndStatus(LocalDate.now(), PaymentScheduleStatus.PENDING_DEMAND_GENERATION);
 
 	    for (VendorPaymentSchedule schedule : dueSchedules) {
 	        processSchedule(schedule, paymentRequest);
@@ -397,6 +401,8 @@ public class PaymentService {
 	 */
 	
 	private void processSchedule(VendorPaymentSchedule schedule, PaymentRequest paymentRequest) {
+		log.info("Inside processSchedule method for payment schedule " + schedule);
+		
 	    if (paymentRequest == null) {
 	        LocalDate currentDueDate = schedule.getDueDate();
 	        List<StreetVendingDetail> detailList = getValidityDateAndPayCycleByCertificateNo(schedule.getCertificateNo());
@@ -451,6 +457,7 @@ public class PaymentService {
 	        }
 	    } else {
 	        schedule.setStatus(PaymentScheduleStatus.PAID);
+	        schedule.setLastPaymentDate(LocalDate.now());
 	        updateSchedule(schedule);
 	    }
 	}
