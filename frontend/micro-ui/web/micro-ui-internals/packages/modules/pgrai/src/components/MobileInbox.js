@@ -6,7 +6,17 @@ import ApplicationLinks from "./inbox/ApplicationLinks";
 import PropTypes from "prop-types";
 
 /**
- * Inbox Developed for Mobile View
+ * MobileInbox Component
+ *
+ * Renders a mobile-friendly view of complaints/applications inbox.
+ * Handles loading state, localization, search and filter logic.
+ *
+ * Props:
+ * - data: Array of complaint objects from search response
+ * - onFilterChange: Callback to update filters
+ * - onSearch: Callback to trigger search
+ * - isLoading: Boolean indicating if data is being loaded
+ * - searchParams: Current search/filter params
  */
 
 const MobileInbox = ({ data, onFilterChange, onSearch, isLoading, searchParams }) => {

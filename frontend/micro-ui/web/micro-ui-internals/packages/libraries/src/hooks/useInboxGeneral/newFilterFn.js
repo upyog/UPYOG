@@ -377,6 +377,17 @@ export const filterFunctions = {
         
         return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder, isDraftApplication:false };
   },
+
+  /**
+ * PGRAI Inbox Filter Builder
+ *
+ * Builds the `searchFilters` and `workflowFilters` for fetching complaints in the PGRAI inbox view.
+ * Supports filtering by application status, mobile number, assignment, and other workflow criteria.
+ * Handles non-actionable role checks and pagination.
+ *
+ * @param {Object} filtersArg - Incoming filters from the UI or API request
+ * @returns {Object} An object containing `searchFilters`, `workflowFilters`, `limit`, `offset`, and `sortOrder`
+ */
   PGRAI: (filtersArg) => {
         let { uuid } = Digit.UserService.getUser()?.info || {};
     

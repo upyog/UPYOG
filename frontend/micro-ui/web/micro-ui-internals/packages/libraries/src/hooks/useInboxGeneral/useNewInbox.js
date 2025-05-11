@@ -86,6 +86,14 @@ const inboxConfig = (tenantId, filters) => ({
     fetchFilters: filterFunctions.MT,
     _searchFn: () => MTService.search({ tenantId, filters }),
   },
+
+  /**
+ * PGRAI Workflow Module Configuration
+ *
+ * Configuration object for the PGRAI module used with the workflow/inbox engine.
+ * Defines how service data should be fetched, what keys to use in responses,
+ * and how filtering should be applied using predefined filter functions.
+ */
   PGRAI: {
     services: ["PGRAI"],
     searchResponseKey: "ServiceWrappers",

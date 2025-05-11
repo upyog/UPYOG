@@ -328,6 +328,19 @@ export const filterFunctions = {
 
     return { requestId,searchFilters, workflowFilters };
   },
+
+  /**
+ * PGRAI Filter Builder
+ *
+ * This function prepares the search and workflow filters used to fetch complaints in PGRAI.
+ * It extracts filter arguments like serviceRequestId, application status, locality, etc.,
+ * and formats them into two filter objects:
+ *  - `searchFilters` for PGRAIService search
+ *  - `workflowFilters` for workflow status & assignment filtering
+ *
+ * @param {Object} filtersArg - Filters input from UI or API (includes things like status, serviceRequestId, etc.)
+ * @returns {Object} { searchFilters, workflowFilters } - Filter objects for backend query
+ */
   PGRAI: (filtersArg) => {
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
