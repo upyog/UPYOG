@@ -24,6 +24,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.upyog.rs.web.models.billing.TankerDeliveryTimeCalculationType;
 
 @Slf4j
 @Component
@@ -62,6 +63,78 @@ public class MdmsUtil {
 
 		return calculationTypes;
 
+	}
+
+	/**
+	 * Fetches the immediate delivery fee configuration from MDMS.
+	 * 
+	 * Steps:
+	 * 1. Constructs the MDMS API endpoint URI using the host and endpoint configuration.
+	 * 2. Prepares the MDMS request criteria for fetching tanker delivery time calculation types.
+	 * 3. Sends the request to MDMS and parses the response.
+	 * 4. Validates the response:
+	 *    - Throws an exception if the module data is not available.
+	 * 5. Converts the JSON array from the response into a list of TankerDeliveryTimeCalculationType objects.
+	 * 6. Logs any exceptions that occur during JSON processing.
+	 * 
+	 * Parameters:
+	 * - requestInfo: Metadata about the request.
+	 * - tenantId: The tenant ID for which the fee configuration is fetched.
+	 * - moduleName: The MDMS module name to query.
+	 * 
+	 * Returns:
+	 * - A list of TankerDeliveryTimeCalculationType objects containing fee configurations.
+	 * 
+	 * Exceptions:
+	 * - CustomException: Thrown if the fee configuration is not available.
+	 */
+	public List<TankerDeliveryTimeCalculationType> getImmediateDeliveryFee(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		List<TankerDeliveryTimeCalculationType> tankerDeliveryTimeCalculationType = new ArrayList<TankerDeliveryTimeCalculationType>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndpoint());
+
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTankerDeliveryTimeCalculationType(requestInfo, tenantId, moduleName);
+		MdmsResponse mdmsResponse = mapper.convertValue(restRepo.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
+
+		if (mdmsResponse.getMdmsRes().get(RequestServiceConstants.MDMS_MODULE_NAME) == null) {
+			throw new CustomException("FEE_NOT_AVAILABLE", "Water Tank fee not available.");
+		}
+		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(RequestServiceConstants.MDMS_MODULE_NAME)
+				.get(RequestServiceConstants.MDMS_TANKER_DELIVERY_TIME_CALCULATION_TYPE);
+
+		try {
+			tankerDeliveryTimeCalculationType = mapper.readValue(jsonArray.toJSONString(),
+					mapper.getTypeFactory().constructCollectionType(List.class, TankerDeliveryTimeCalculationType.class));
+		} catch (JsonProcessingException e) {
+			log.info("Exception occured while converting calculation type  for tanker request: " + e);
+		}
+
+		return tankerDeliveryTimeCalculationType;
+	}
+
+	private MdmsCriteriaReq getMdmsRequestTankerDeliveryTimeCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(RequestServiceConstants.MDMS_TANKER_DELIVERY_TIME_CALCULATION_TYPE);
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
 	}
 
 	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {

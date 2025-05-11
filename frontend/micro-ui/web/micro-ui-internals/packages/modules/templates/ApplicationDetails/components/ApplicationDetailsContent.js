@@ -223,6 +223,20 @@ function ApplicationDetailsContent({
   };
 
   const getTextValue = (value) => {
+     // Handle time values specially
+     if (value?.isTimeValue && value?.value) {
+      // Format time from "HH:MM" to "H:MM AM/PM"
+      const timeString = value.value;
+      const [hours, minutes] = timeString.split(':').map(part => parseInt(part, 10));
+      
+      if (!isNaN(hours) && !isNaN(minutes)) {
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const hour12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
+        return `${hour12}:${minutes} ${period}`;
+      }
+      return value.value; // Return original if parsing failed
+    }
+    // Handle other values as before
     if (value?.skip) return value.value;
     else if (value?.isUnit) return value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("N/A");
     else return value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("N/A");

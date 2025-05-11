@@ -9,6 +9,11 @@ import Location from "./pageComponents/Location";
 import {PGRAIMyApplications} from "./pages/citizen/Create/PGRAIMyApplications";
 import PGRApplication from "./pages/citizen/Create/PGRAIMyApplications/PGRAI-application";
 import PGRApplicationDetails from "./pages/citizen/PGRApplicationDetails";
+import PGRAICard from "./components/PGRAICard";
+import { TableConfig } from "./config/inbox-table-config";
+import EmployeeApp from "./pages/employee";
+import InboxFilter from "./components/inbox/NewInboxFilter";
+import { ComplaintDetails } from "./pages/employee/ComplaintDetails";
 
 // Component registry for the PGR_AI module, mapping component names to their implementations.
 // Enables dynamic registration and access of components in the application.
@@ -18,6 +23,7 @@ const componentsToRegister = {
   Location,
   PGRAIMyApplications,
   PGRApplication,
+  PGRAIApplicationDetails:ComplaintDetails,
   PGRApplicationDetails:PGRApplicationDetails,
  };
 
@@ -74,5 +80,8 @@ export const PGRAILinks = ({ matchPath, userType }) => {
 
 export const PGRAIComponents = {
   PGRAIModule,
-  PGRAILinks
+  PGRAILinks,
+  PGRAICard,
+  PGRAI_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  PGRAIInboxTableConfig:TableConfig
 };
