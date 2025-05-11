@@ -63,7 +63,7 @@ export const WTSearch = {
           { title: "WT_TANKER_QUANTITY", value: response?.tankerQuantity || t("CS_NA")},
           { title: "WT_WATER_QUANTITY", value: response?.waterQuantity + " Ltr" || t("CS_NA")},
           { title: "WT_DELIVERY_DATE", value:  format(new Date(response?.deliveryDate), 'dd-MM-yyyy') || t("CS_NA")},
-          { title: "WT_DELIVERY_TIME", value: response?.deliveryTime?.replace(":", "h ") + "m" || t("CS_NA")},
+          { title: "WT_DELIVERY_TIME", value: response?.deliveryTime || t("CS_NA"), isTimeValue: true},
           { title: "WT_DESCRIPTION", value: response?.description || t("CS_NA")},
           { title: "WT_IMMEDIATE", value:immediateRequired || t("CS_NA")},
         ],
