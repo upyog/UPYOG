@@ -7,10 +7,16 @@ import BookingPopup from "../components/BookingPopup";
 const InfoPage = ({ t, onSelect, formData, config, userType }) => {
   const [existingDataSet, setExistingDataSet] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isExistingPopupRequired,setIsExistingPopupRequired] = useState(false);
+  
 
   // Function to open the BookingPopup
   const handleOpenModal = () => {
-    setShowModal(true);
+    if(isExistingPopupRequired){
+      setShowModal(true);  // Show modal when button is clicked
+    }else{
+      goNext();  // Ensure action is called only when submitting
+    }
   };
   // Function to handle the next action
   const goNext = () => {

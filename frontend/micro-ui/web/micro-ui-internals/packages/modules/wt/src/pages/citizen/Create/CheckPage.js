@@ -138,6 +138,7 @@ In Parent Component,  we are passing the data as a props coming through params (
                   <Row
                     label={t("MT_NUMBER_OF_MOBILE_TOILETS")}
                     text={`${t(checkForNA(toiletRequestDetails?.mobileToilet?.code))}`}
+                    actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/toiletRequest-details`} />}
                   />
                   <Row
                     label={t("MT_DELIVERY_FROM_DATE")}

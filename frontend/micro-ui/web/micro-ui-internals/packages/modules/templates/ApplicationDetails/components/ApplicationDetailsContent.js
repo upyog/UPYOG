@@ -232,7 +232,8 @@ function ApplicationDetailsContent({
       if (!isNaN(hours) && !isNaN(minutes)) {
         const period = hours >= 12 ? 'PM' : 'AM';
         const hour12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
-        return `${hour12}:${minutes} ${period}`;
+        const paddedMinutes = String(minutes).padStart(2, '0'); // Ensures minutes are always two digits
+        return `${hour12}:${paddedMinutes} ${period}`;
       }
       return value.value; // Return original if parsing failed
     }
