@@ -24,6 +24,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.upyog.rs.web.models.billing.TankerDeliveryTimeCalculationType;
 
 @Slf4j
 @Component
@@ -62,6 +63,55 @@ public class MdmsUtil {
 
 		return calculationTypes;
 
+	}
+
+	public List<TankerDeliveryTimeCalculationType> getImmediateDeliveryFee(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		List<TankerDeliveryTimeCalculationType> tankerDeliveryTimeCalculationType = new ArrayList<TankerDeliveryTimeCalculationType>();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getMdmsHost()).append(config.getMdmsEndpoint());
+
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestTankerDeliveryTimeCalculationType(requestInfo, tenantId, moduleName);
+		MdmsResponse mdmsResponse = mapper.convertValue(restRepo.fetchResult(uri, mdmsCriteriaReq), MdmsResponse.class);
+
+		if (mdmsResponse.getMdmsRes().get(RequestServiceConstants.MDMS_MODULE_NAME) == null) {
+			throw new CustomException("FEE_NOT_AVAILABLE", "Water Tank fee not available.");
+		}
+		JSONArray jsonArray = mdmsResponse.getMdmsRes().get(RequestServiceConstants.MDMS_MODULE_NAME)
+				.get(RequestServiceConstants.MDMS_TANKER_DELIVERY_TIME_CALCULATION_TYPE);
+
+		try {
+			tankerDeliveryTimeCalculationType = mapper.readValue(jsonArray.toJSONString(),
+					mapper.getTypeFactory().constructCollectionType(List.class, TankerDeliveryTimeCalculationType.class));
+		} catch (JsonProcessingException e) {
+			log.info("Exception occured while converting calculation type  for tanker request: " + e);
+		}
+
+		return tankerDeliveryTimeCalculationType;
+	}
+
+	private MdmsCriteriaReq getMdmsRequestTankerDeliveryTimeCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {
+
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(RequestServiceConstants.MDMS_TANKER_DELIVERY_TIME_CALCULATION_TYPE);
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
+
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
+
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
+
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
+
+		return mdmsCriteriaReq;
 	}
 
 	private MdmsCriteriaReq getMdmsRequestCalculationType(RequestInfo requestInfo, String tenantId, String moduleName) {

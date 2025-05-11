@@ -1,6 +1,7 @@
 package org.upyog.rs.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,9 +59,13 @@ public class DemandService {
 				+ waterTankerBookingDetail.getWaterQuantity();
 		BigDecimal amountPayable = calculationService.calculateFee(waterTankerBookingDetail.getTankerQuantity(),
 				tankerCapacityType, waterTankerRequest.getRequestInfo(), tenantId);
+		BigDecimal immediateDeliveryFee = calculationService.immediateDeliveryFee(waterTankerBookingDetail.getExtraCharge(),
+				waterTankerRequest.getRequestInfo(), tenantId);
+		log.info("immediateDeliveryFee for tanker booking : {}", immediateDeliveryFee);
 		log.info("Final amount payable after calculation : " + amountPayable);
+
 		User owner = buildUser(waterTankerBookingDetail.getApplicantDetail(), tenantId);
-		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId);
+		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId,immediateDeliveryFee);
 		Demand demand = buildDemand(tenantId, consumerCode, owner, demandDetails, amountPayable);
 		log.info("Final demand generation object" + demand.toString());
 		return demandRepository.saveDemand(waterTankerRequest.getRequestInfo(), Collections.singletonList(demand));
@@ -89,10 +94,20 @@ public class DemandService {
 				.mobileNumber(applicantDetail.getMobileNumber()).tenantId(tenantId).build();
 	}
 
-	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId) {
-		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
+	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, BigDecimal immediateDeliveryFee) {
+		List<DemandDetail> demandDetails = new ArrayList<>();
+		if(immediateDeliveryFee.compareTo(BigDecimal.ZERO) > 0) {
+			demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
+					.taxAmount(immediateDeliveryFee).taxHeadMasterCode(RequestServiceConstants.IMMEDIATE_DELIVERY_TAX_HEAD)
+					.tenantId(tenantId).build());
+		}
+		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
+
+		log.info("Final demand details: {}", demandDetails);
+
+		return demandDetails;
 	}
 
 	private List<DemandDetail> buildMTDemandDetails(BigDecimal amountPayable, String feeType, String tenantId) {
