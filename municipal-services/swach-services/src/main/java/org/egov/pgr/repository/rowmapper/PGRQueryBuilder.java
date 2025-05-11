@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -88,11 +89,25 @@ public class PGRQueryBuilder {
             addToPreparedStatement(preparedStmtList, applicationStatuses);
         }
 
-        if (criteria.getServiceRequestId() != null) {
-            addClauseIfRequired(preparedStmtList, builder);
-            builder.append(" ser.serviceRequestId=? ");
-            preparedStmtList.add(criteria.getServiceRequestId());
+//        if (criteria.getServiceRequestId() != null) {
+//            addClauseIfRequired(preparedStmtList, builder);
+//            builder.append(" ser.serviceRequestId=? ");
+//            preparedStmtList.add(criteria.getServiceRequestId());
+//        }
+        
+        String serviceRequestId = criteria.getServiceRequestId();
+        if (serviceRequestId != null && !serviceRequestId.trim().isEmpty()) {
+            // Split the serviceRequestId by comma (or any other delimiter you expect)
+            List<String> serviceRequestIdsList = Arrays.asList(serviceRequestId.split(","));
+
+            if (!CollectionUtils.isEmpty(serviceRequestIdsList)) {
+            	
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" ser.serviceRequestId IN (").append(createQuery(serviceRequestIdsList)).append(")");
+                addToPreparedStatement(preparedStmtList, serviceRequestIdsList);
+            }
         }
+
 
         Set<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {

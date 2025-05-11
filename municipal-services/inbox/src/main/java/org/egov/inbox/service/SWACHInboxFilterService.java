@@ -116,6 +116,9 @@ public class SWACHInboxFilterService {
             // Paginating searcher results
             searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
             searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
+            if (moduleSearchCriteria.containsKey(PGRANDSWACH_APPLICATION_PARAM)) {
+                searchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, moduleSearchCriteria.get(PGRANDSWACH_APPLICATION_PARAM));
+            }
             moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
             searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
