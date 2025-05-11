@@ -16,6 +16,8 @@ import java.util.List;
 
 import static org.egov.pgr.util.PGRConstants.HRMS_DEPARTMENT_JSONPATH;
 
+import static org.egov.pgr.util.PGRConstants.HRMS_EMPLOYEEID_JSONPATH ;
+
 @Component
 public class HRMSUtil {
 
@@ -61,18 +63,57 @@ public class HRMSUtil {
 
     }
 
+    
+    public List<String> getward(String wardids,String tenantid, RequestInfo requestInfo){
+
+        StringBuilder url = getwardurl(wardids,tenantid);
+
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+        Object res = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+
+        List<String> employeeId = null;
+
+        try {
+        	employeeId = JsonPath.read(res, HRMS_EMPLOYEEID_JSONPATH );
+        }
+        catch (Exception e){
+            throw new CustomException("PARSING_ERROR","Failed to parse HRMS response");
+        }
+
+        if (CollectionUtils.isEmpty(employeeId)) {
+            throw new CustomException("EMPLOYEE_NOT_FOUND", "No employeeId found in HRMS response for ward: " + wardids);
+        }
+        return employeeId;
+
+    }
+
     /**
      * Builds HRMS search URL
      * @param uuids
      * @return
      */
 
-    public StringBuilder getHRMSURI(List<String> uuids){
+    public StringBuilder getHRMSURI(List<String> wardid){
 
         StringBuilder builder = new StringBuilder(config.getHrmsHost());
         builder.append(config.getHrmsEndPoint());
-        builder.append("?uuids=");
-        builder.append(StringUtils.join(uuids, ","));
+        builder.append("?wardId=");
+        builder.append(StringUtils.join(wardid, ","));
+
+        return builder;
+    }
+
+    
+    public StringBuilder getwardurl(String wardid, String tenantId) {
+        StringBuilder builder = new StringBuilder(config.getHrmsHost());
+        builder.append(config.getHrmswardEndPoint());
+        builder.append("?wardId=");
+        builder.append(StringUtils.join(wardid));
+        
+        // Append tenantId to the URL
+        builder.append("&tenantId=");
+        builder.append(tenantId);
 
         return builder;
     }

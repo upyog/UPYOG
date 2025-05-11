@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.repository.ServiceRequestRepository;
+import org.egov.pgr.util.HRMSUtil;
 import org.egov.pgr.web.models.*;
 import org.egov.pgr.web.models.workflow.*;
 import org.egov.tracer.model.CustomException;
@@ -26,7 +27,9 @@ public class WorkflowService {
 
     private ObjectMapper mapper;
 
-
+    @Autowired
+    private HRMSUtil hrmsUtil;
+    
     @Autowired
     public WorkflowService(PGRConfiguration pgrConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
         this.pgrConfiguration = pgrConfiguration;
@@ -186,6 +189,23 @@ public class WorkflowService {
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());
         processInstance.setComment(workflow.getComments());
+        String localityName = request.getService().getAddress().getLocality().getName();
+
+        String wardId = extractWardId(localityName);
+        
+        
+        if (wardId == null) {
+            throw new RuntimeException("Ward ID not found in locality name: " + localityName);
+        }
+        if (hrmsUtil == null) {
+            // Log or handle the null case
+            throw new NullPointerException("hrmsUtil is null");
+        }
+        System.out.println("wardId: " + wardId);
+        System.out.println("tenantId: " + service.getTenantId());
+        System.out.println("requestInfo: " + request.getRequestInfo());
+
+        List<String> employeeIds = hrmsUtil.getward(wardId,service.getTenantId(), request.getRequestInfo());
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())){
             List<User> users = new ArrayList<>();
@@ -198,10 +218,28 @@ public class WorkflowService {
 
             processInstance.setAssignes(users);
         }
+        else if (!CollectionUtils.isEmpty(employeeIds)) {
+            List<User> users = new ArrayList<>();
+            String employeeId = employeeIds.get(0); // Taking the first employeeId from the list
+            User user = new User();
+            user.setUuid(employeeId); // Assuming employeeId is the UUID here
+            users.add(user);
+            processInstance.setAssignes(users);
+        }
 
         return processInstance;
     }
 
+    
+    
+    
+    public String extractWardId(String localityName) {
+        if (localityName != null && localityName.contains("-")) {
+            String[] parts = localityName.split("-");
+            return parts[parts.length - 1].trim(); // e.g., "WARD_1"
+        }
+        return null;
+    }
     /**
      *
      * @param processInstances

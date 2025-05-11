@@ -32,6 +32,9 @@ public class PGRConstants {
 
     public static final String HRMS_DEPARTMENT_JSONPATH = "$.Employees.*.assignments.*.department";
 
+    public static final String HRMS_EMPLOYEEID_JSONPATH = "$.Employees[*].employeeId";
+
+    
     public static final String HRMS_DESIGNATION_JSONPATH = "$.Employees.*.assignments[?(@.department=='{department}')].designation";
 
     public static final String HRMS_EMP_NAME_JSONPATH = "$.Employees.*.user.name";
