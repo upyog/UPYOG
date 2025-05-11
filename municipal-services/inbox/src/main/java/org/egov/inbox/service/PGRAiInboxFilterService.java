@@ -122,21 +122,8 @@ public class PGRAiInboxFilterService {
         Integer totalCount = 0;
         HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-        boolean isUserPresentForGivenMobileNumber = false;
         List<String> userUUIDs = new ArrayList<>();
 
-        if (moduleSearchCriteria.containsKey(PGRAiConstants.MOBILE_NUMBER_PARAM)) {
-            String tenantId = criteria.getTenantId();
-            String mobileNumber = String.valueOf(moduleSearchCriteria.get(PGRAiConstants.MOBILE_NUMBER_PARAM));
-            userUUIDs = userService.fetchUserUUID(mobileNumber, requestInfo, tenantId);
-            isUserPresentForGivenMobileNumber = !CollectionUtils.isEmpty(userUUIDs);
-
-            if (!isUserPresentForGivenMobileNumber) {
-                return 0;
-            }
-        }
-
-        if (isUserPresentForGivenMobileNumber) {
             Object result;
 
             Map<String, Object> searcherRequest = new HashMap<>();
@@ -164,6 +151,9 @@ public class PGRAiInboxFilterService {
                 }
             }
 
+        if (moduleSearchCriteria.containsKey(PGRAiConstants.APPLICATION_STATUS)) {
+            searchCriteria.put(PGRAiConstants.APPLICATION_STATUS, moduleSearchCriteria.get(PGRAiConstants.APPLICATION_STATUS));
+        }
             searcherRequest.put(PGRAiConstants.REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(PGRAiConstants.SEARCH_CRITERIA_PARAM, searchCriteria);
 
@@ -174,7 +164,7 @@ public class PGRAiInboxFilterService {
 
             double count = JsonPath.read(result, "$.TotalCount[0].count");
             totalCount = (int) count;
-        }
+
         return totalCount;
     }
 }
