@@ -221,7 +221,9 @@ const transformDocuments = (documents) => {
           lastModifiedTime: 0
         },
       },
-      benificiaryOfSocialSchemes: "",
+      benificiaryOfSocialSchemes: [],
+      applicationCreatedBy: formData?.owner?.applicationCreatedBy,
+      locality: formData?.vendorLocality?.code || "",
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,

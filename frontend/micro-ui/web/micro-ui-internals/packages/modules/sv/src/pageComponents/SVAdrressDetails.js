@@ -305,7 +305,9 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData,editdata,pre
           lastModifiedTime: 0
         },
       },
-      benificiaryOfSocialSchemes: "",
+      benificiaryOfSocialSchemes: [],
+      applicationCreatedBy: formData?.owner?.applicationCreatedBy,
+      locality: formData?.vendorLocality?.code || "",
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,
