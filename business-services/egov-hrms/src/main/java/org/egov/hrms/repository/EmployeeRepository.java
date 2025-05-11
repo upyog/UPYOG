@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import lombok.extern.slf4j.Slf4j;
 
 import org.egov.hrms.model.Employee;
+import org.egov.hrms.model.EmployeeWithWard;
 import org.springframework.util.CollectionUtils;
 
 @Repository
@@ -67,6 +68,23 @@ public class EmployeeRepository {
 		}
 		return employees;
 	}
+	
+	
+	
+	public List<EmployeeWithWard> fetchEmployeesward(EmployeeWithWard criteria, RequestInfo requestInfo){
+		List<EmployeeWithWard> employees = new ArrayList<>();
+		List<Object> preparedStmtList = new ArrayList<>();
+
+		String query = queryBuilder.getEmployeewithwardSearchQuery(criteria, preparedStmtList);
+		try {
+			employees = jdbcTemplate.query(query, preparedStmtList.toArray(),new EmployeeWardRowMapper());
+		}catch(Exception e) {
+			log.error("Exception while making the db call: ",e);
+			log.error("query; "+query);
+		}
+		return employees;
+	}
+
 
 	private List<String> fetchEmployeesforAssignment(EmployeeSearchCriteria criteria, RequestInfo requestInfo) {
 		List<String> employeesIds = new ArrayList<>();

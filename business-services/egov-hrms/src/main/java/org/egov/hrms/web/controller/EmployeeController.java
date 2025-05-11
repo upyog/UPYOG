@@ -42,10 +42,12 @@ package org.egov.hrms.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.hrms.model.EmployeeWithWard;
 import org.egov.hrms.service.EmployeeService;
 import org.egov.hrms.web.contract.EmployeeRequest;
 import org.egov.hrms.web.contract.EmployeeResponse;
 import org.egov.hrms.web.contract.EmployeeSearchCriteria;
+import  org.egov.hrms.model.EmployeewardResponse;
 import org.egov.hrms.web.contract.RequestInfoWrapper;
 import org.egov.hrms.web.validator.EmployeeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +122,21 @@ public class EmployeeController {
 		return new ResponseEntity<>(employeeResponse,HttpStatus.OK);
 	}
 
+	@PostMapping(value = "/_searchward")
+	@ResponseBody
+	public ResponseEntity<?> searchwithward(
+	        @RequestBody @Valid RequestInfoWrapper requestInfoWrapper,
+	        @ModelAttribute @Valid EmployeeWithWard criteria) {
+
+	    validator.validatewardSearchRequest(requestInfoWrapper.getRequestInfo(), criteria);
+
+	    EmployeewardResponse employeeResponse = employeeService.searchemployee(criteria, requestInfoWrapper.getRequestInfo());
+
+	    return new ResponseEntity<>(employeeResponse, HttpStatus.OK);
+	}
+
+	
+	
 	@PostMapping("_count")
 	@ResponseBody
 	private ResponseEntity<?> count(@RequestParam("tenantId") String tenantId, @RequestBody RequestInfo requestInfo) {

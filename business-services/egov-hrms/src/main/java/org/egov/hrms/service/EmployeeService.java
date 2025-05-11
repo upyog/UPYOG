@@ -49,6 +49,8 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.hrms.config.PropertiesManager;
 import org.egov.hrms.model.AuditDetails;
 import org.egov.hrms.model.Employee;
+import org.egov.hrms.model.EmployeeWithWard;
+import org.egov.hrms.model.EmployeewardResponse;
 import org.egov.hrms.model.enums.UserType;
 import org.egov.hrms.producer.HRMSProducer;
 import org.egov.hrms.repository.EmployeeRepository;
@@ -211,6 +213,24 @@ public class EmployeeService {
 				.employees(employees).build();
 	}
 	
+	
+	
+	
+	
+	
+	public EmployeewardResponse searchemployee(EmployeeWithWard criteria, RequestInfo requestInfo) {
+	
+	    List<EmployeeWithWard> employees = new ArrayList<>();
+
+	    // Fetch employees based on criteria
+	    employees = repository.fetchEmployeesward(criteria, requestInfo);
+
+	    return EmployeewardResponse.builder()
+	            .responseInfo(factory.createResponseInfoFromRequestInfo(requestInfo, true))
+	            .employees(employees)
+	            .build();
+	}
+
 	
 	/**
 	 * Creates user by making call to egov-user.
