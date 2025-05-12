@@ -16,7 +16,7 @@ public class PGRAiConstants {
     public static final String SORT_BY = "sortBy";
     public static final String SORT_ORDER = "sortOrder";
     public static final String LOCALITY = "locality";
-    public static final String PGR_APPLICATION_NUMBER_PARAM = "applicationNumbers";
+    public static final String PGR_APPLICATION_NUMBER_PARAM = "serviceRequestId";
     public static final String MOBILE_NUMBER_PARAM = "mobileNumber";
     public static final String USERID_PARAM = "userid";
     public static final String PGR_MODULE = "pgr-ai-services";
