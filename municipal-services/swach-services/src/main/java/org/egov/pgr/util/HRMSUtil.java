@@ -94,12 +94,11 @@ public class HRMSUtil {
      * @return
      */
 
-    public StringBuilder getHRMSURI(List<String> wardid){
-
+    public StringBuilder getHRMSURI(List<String> uuids){
         StringBuilder builder = new StringBuilder(config.getHrmsHost());
         builder.append(config.getHrmsEndPoint());
-        builder.append("?wardId=");
-        builder.append(StringUtils.join(wardid, ","));
+        builder.append("?uuids=");
+        builder.append(StringUtils.join(uuids, ","));
 
         return builder;
     }
