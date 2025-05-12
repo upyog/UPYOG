@@ -286,12 +286,34 @@ public class WorkflowService {
      * and return wf-response to sets the resultant status
      */
     private State callWorkFlow(ProcessInstanceRequest workflowReq) {
+        try {
+            // Log the request
+            String reqJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(workflowReq);
+            log.info("Workflow Request:\n{}", reqJson);
 
-        ProcessInstanceResponse response = null;
-        StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowReq);
-        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        return response.getProcessInstances().get(0).getState();
+            // Prepare URL
+            StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
+
+            // Make the call
+            Object optional = repository.fetchResult(url, workflowReq);
+
+            // Log the raw response object
+            String resJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(optional);
+            log.info("Workflow Raw Response:\n{}", resJson);
+
+            // Convert to typed response
+            ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+
+            // Log parsed response (optional)
+            String parsedResJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
+            log.info("Workflow Parsed Response:\n{}", parsedResJson);
+
+            return response.getProcessInstances().get(0).getState();
+
+        } catch (Exception e) {
+            log.error("Error during workflow call: {}", e.getMessage(), e);
+            return null;
+        }
     }
 
 
