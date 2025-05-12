@@ -15,9 +15,14 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.egov.pgr.util.PGRConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @org.springframework.stereotype.Service
 public class WorkflowService {
 
@@ -192,10 +197,14 @@ public class WorkflowService {
         String localityName = request.getService().getAddress().getLocality().getName();
 
         String wardId = extractWardId(localityName);
-
+        log.info("Ward Id "+wardId);
+        log.info("locality "+ localityName);
         List<String> employeeIds = null;
         if (wardId != null) {
+        	
             employeeIds = hrmsUtil.getward(wardId, service.getTenantId(), request.getRequestInfo());
+       
+            log.info("employeeIds "+ employeeIds);
         }
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())){

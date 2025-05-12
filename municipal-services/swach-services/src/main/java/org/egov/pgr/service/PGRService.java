@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @org.springframework.stereotype.Service
 public class PGRService {
 
@@ -64,6 +66,7 @@ public class PGRService {
      * @return
      */
     public ServiceRequest create(ServiceRequest request){
+    	log.info("Request "+ request.toString());
         Object mdmsData = mdmsUtils.mDMSCall(request);
         validator.validateCreate(request, mdmsData);
         enrichmentService.enrichCreateRequest(request);
