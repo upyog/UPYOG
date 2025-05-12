@@ -47,6 +47,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     { enabled: action?.isTerminateState }
   );
 
+  
   const [config, setConfig] = useState({});
   const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
@@ -59,20 +60,36 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [vendingZones, setvendingZones] = useState();
 
   
-  const UserVendingZone = applicationData?.vendingZone;
+
   
-  const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+  // const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+  //   {
+  //     select: (data) => {
+  //       const formattedData = data?.["StreetVending"]?.["VendingZones"]
+  //       return formattedData;
+  //     },
+  //   });
+
+  // let vending_Zone = [];
+  // vendingZone && vendingZone.map((zone) => {
+  //   vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+  // })
+  const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
+    applicationData?.locality,
+    "vendingzones",
     {
-      select: (data) => {
-        const formattedData = data?.["StreetVending"]?.["VendingZones"]
-        return formattedData;
-      },
-    });
+      enabled: true,
+    },
+    t
+  );
 
   let vending_Zone = [];
-  vendingZone && vendingZone.map((zone) => {
-    vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+  fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
+    vending_Zone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
   })
+
+  const vz = vending_Zone?.filter((zone) => zone?.code === applicationData?.vendingZone);
+  const UserVendingZone = vz[0]?.value;
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));

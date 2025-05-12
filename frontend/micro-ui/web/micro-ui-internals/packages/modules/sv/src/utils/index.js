@@ -350,7 +350,7 @@ export const svPayloadData = (data) =>{
     },
     benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiaryList,
     applicationCreatedBy: data?.owner?.applicationCreatedBy,
-    locality: "",
+    locality: data?.businessDetails?.vendorLocality?.code,
     vendorPaymentFrequency: data?.vendorPayment?.code,
     enrollmentId:"",
     cartLatitude: 0,
