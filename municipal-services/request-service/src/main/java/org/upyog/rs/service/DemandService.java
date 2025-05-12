@@ -113,14 +113,14 @@ public class DemandService {
 	 */
 	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, BigDecimal immediateDeliveryFee) {
 		List<DemandDetail> demandDetails = new ArrayList<>();
+		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
+				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_TAX_MASTER_CODE)
+				.tenantId(tenantId).build());
 		if(immediateDeliveryFee.compareTo(BigDecimal.ZERO) > 0) {
 			demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 					.taxAmount(immediateDeliveryFee).taxHeadMasterCode(RequestServiceConstants.IMMEDIATE_DELIVERY_TAX_HEAD)
 					.tenantId(tenantId).build());
 		}
-		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
-				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_TAX_MASTER_CODE)
-				.tenantId(tenantId).build());
 
 		log.info("Final demand details: {}", demandDetails);
 
