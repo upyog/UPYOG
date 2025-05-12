@@ -210,22 +210,22 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const vendingPaymentOptions = [
     {
       i18nKey: "Monthly",
-      code: "Monthly",
+      code: "MONTHLY",
       value: "Monthly"
     },
     {
       i18nKey: "Quarterly",
-      code: "Quarterly",
+      code: "QUARTERLY",
       value: "Quarterly"
     },
     {
       i18nKey: "Half Yearly",
-      code: "Half Yearly",
+      code: "HALFYEARLY",
       value: "Half Yearly"
     },
     {
       i18nKey: "Yearly",
-      code: "Yearly",
+      code: "YEARLY",
       value: "Yearly"
     }
   ]
@@ -493,6 +493,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
       benificiaryOfSocialSchemes: [],
       applicationCreatedBy: formData?.owner?.applicationCreatedBy,
       locality: vendorLocality?.code,
+      vendorPaymentFrequency: vendingPayment?.code,
       enrollmentId: "",
       cartLatitude: 0,
       cartLongitude: 0,
