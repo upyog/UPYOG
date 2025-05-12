@@ -44,7 +44,7 @@ public class ServiceRequestValidator {
         validateUserData(request,errorMap);
         validateSource(request.getService().getSource());
         validateMDMS(request, mdmsData);
-        validateDepartment(request, mdmsData);
+       // validateDepartment(request, mdmsData);
         if(!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
@@ -87,7 +87,7 @@ public class ServiceRequestValidator {
         String id = request.getService().getId();
         validateSource(request.getService().getSource());
         validateMDMS(request, mdmsData);
-        validateDepartment(request, mdmsData);
+        //validateDepartment(request, mdmsData);
         validateReOpen(request);
         RequestSearchCriteria criteria = RequestSearchCriteria.builder().ids(Collections.singleton(id)).build();
         criteria.setIsPlainSearch(false);
