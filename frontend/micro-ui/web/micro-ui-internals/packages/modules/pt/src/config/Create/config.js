@@ -85,7 +85,8 @@ export const newConfig =[
                   "header": "PT_PROOF_OF_ADDRESS_HEADER",
                   "cardText": "",
                   "nextText": "PT_COMMONS_NEXT",
-                  "submitBarLabel": "PT_COMMONS_NEXT"
+                  "submitBarLabel": "PT_COMMONS_NEXT",
+                  "isAsteriskRequired":true,
               },
               "key": "address",
               "nextStep": "owner-ship-details@0",
@@ -539,7 +540,8 @@ export const newConfig =[
                   "headerCaption": "PT_OWNERS_DETAILS",
                   "header": "PT_SPECIAL_OWNER_CATEGORY_PROOF_HEADER",
                   "cardText": "",
-                  "submitBarLabel": "PT_COMMON_NEXT"
+                  "submitBarLabel": "PT_COMMON_NEXT",
+                  "isAsteriskRequired":true,
               },
               "key": "owners",
               "withoutLabel": true,
@@ -556,6 +558,7 @@ export const newConfig =[
                   "header": "PT_PROOF_IDENTITY_HEADER",
                   "cardText": "",
                   "submitBarLabel": "PT_COMMON_NEXT",
+                  "isAsteriskRequired":true,
                   "addMultipleText": "PT_COMMON_ADD_APPLICANT_LABEL"
               },
               "key": "owners",
@@ -604,7 +607,8 @@ export const newConfig =[
                   "headerCaption": "PT_OWNERS_DETAILS",
                   "header": "PT_PROOF_IDENTITY_HEADER",
                   "cardText": "",
-                  "submitBarLabel": "PT_COMMON_NEXT"
+                  "submitBarLabel": "PT_COMMON_NEXT",
+                  "isAsteriskRequired" : true
               },
               "key": "owners",
               "withoutLabel": true,

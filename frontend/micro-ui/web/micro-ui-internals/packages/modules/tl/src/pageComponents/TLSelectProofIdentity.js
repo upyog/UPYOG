@@ -1,7 +1,8 @@
-import { CardLabel, CardLabelDesc, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc,  UploadFile } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
 import { getOwnersfromProperty } from "../utils";
+import FormStep from "../../../../react-components/src/molecules/FormStep"
 
 const TLSelectProofIdentity = ({ t, config, onSelect, userType, formData }) => {
   const [uploadedFile, setUploadedFile] = useState(formData?.owners?.documents?.ProofOfIdentity?.fileStoreId || null);

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
+import { UploadFile, CardLabelDesc, Dropdown, CardLabel } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
+import FormStep from "../../../../react-components/src/molecules/FormStep";
 
 const TLProof = ({ t, config, onSelect, userType, formData }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);

@@ -28,7 +28,14 @@ const InputCard = ({
   return (
     <Card style={cardStyle}>
       {texts.headerCaption && <CardCaption>{t(texts.headerCaption)}</CardCaption>}
-      {texts?.header && <CardHeader>{t(texts.header)}</CardHeader>}
+      {texts?.header && 
+      <CardHeader>
+        {texts?.isAsteriskRequired ? (
+          <React.Fragment>
+              {t(texts.header)} <span style={{ color: 'red' }}>*</span>
+          </React.Fragment>
+        ):t(texts.header)}
+      </CardHeader>}
       {texts?.cardText && <CardText>{t(texts.cardText)}</CardText>}
       {children}
       {texts.submitBarLabel ? <SubmitBar disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onSubmit={onNext} /> : null}

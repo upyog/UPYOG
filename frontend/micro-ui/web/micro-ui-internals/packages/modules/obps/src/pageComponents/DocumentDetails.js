@@ -6,7 +6,6 @@ import {
     Toast,
     Loader,
     FormStep,
-    MultiUploadWrapper,
     CitizenInfoLabel
 } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
@@ -259,7 +258,15 @@ const SelectDocument = React.memo(function MyComponent({
 
     return (
         <div /* style={{ marginBottom: "24px" }} */>
-            <CardLabel>{doc?.required ? `${t(doc?.code)} *` : `${t(doc?.code)}`}</CardLabel>
+           <CardLabel>
+                {doc?.required ? (
+                    <React.Fragment>
+                    {t(doc?.code)} <span style={{ color: 'red' }}>*</span>
+                    </React.Fragment>
+                ) : (
+                    t(doc?.code)
+                )}
+            </CardLabel>
             <Dropdown
                 t={t}
                 isMandatory={false}
@@ -279,6 +286,7 @@ const SelectDocument = React.memo(function MyComponent({
                 allowedMaxSizeInMB={5}
                 acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
             /> 
+            <div style={{marginTop:"10px", fontSize:'12px'}}>{t("CS_FILE_SIZE_RESTRICTIONS")}</div>
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
         </div>
     );
