@@ -66,6 +66,8 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
   const isRenew = window.location.href.includes("renew") ? true : false; // creating common variable so that i dont have to write this much long condition every where
   const isMakePayment = window.location.href.includes("makePayment") ? true : false;
 
+
+  console.log("value", value);
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
@@ -227,8 +229,16 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
               actionButton={(isRenew) ? null : <ActionButton jumpTo={`/digit-ui/citizen/sv/apply/business-details`} />}
             />
             <Row
+              label={t("SV_VENDING_LOCALITY")}
+              text={`${t(checkForNA((isRenew) ? renewalData?.vendorLocality : businessDetails?.vendorLocality?.name))}`}
+            />
+            <Row
               label={t("SV_VENDING_ZONES")}
               text={`${t(checkForNA((isRenew) ? renewalData?.vendingZone : businessDetails?.vendingZones?.i18nKey))}`}
+            />
+            <Row
+              label={t("SV_VENDING_PAYMENT")}
+              text={`${t(checkForNA((isRenew) ? renewalData?.vendingPayment : businessDetails?.vendingPayment?.value))}`}
             />
             <Row
               label={t("SV_AREA_REQUIRED")}

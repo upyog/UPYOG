@@ -25,7 +25,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || convertToObject(previousData?.vendingZone || editdata?.vendingZone) || "");
   const [location, setlocation] = useState(formData?.businessDetails?.location || "");
   const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || convertToObject(previousData?.[0]?.vendorLocality || editdata?.[0]?.vendorLocality) || "");
-  const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea || editdata?.vendingArea || "22");
+  const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea || editdata?.vendingArea || "2.12");
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || previousData?.localAuthorityName || editdata?.localAuthorityName || "");
   const [vendingPayment, setVendingPayment] = useState(formData?.businessDetails?.vendingPayment || convertToObject(previousData?.vendingPayment || editdata?.vendingPayment) || formData?.businessDetails?.vendingPayment || "");
   const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || previousData?.vendingLiscence || editdata?.vendingLiscence || "");
@@ -60,7 +60,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   console.log("fetchedVendingZones", fetchedVendingZones);
   let structuredVendingZone = [];
   fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
-    structuredVendingZone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, label: vendingData?.label })
+    structuredVendingZone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
   })
 
 
@@ -760,12 +760,6 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
                   onChange={setAreaRequired}
                   style={inputStyles}
                   ValidationRequired={false}
-                  {...(validation = {
-                    isRequired: true,
-                    pattern: "^[0-9. ]{1,3}$",
-                    type: "tel",
-                    title: t("SV_INVALID_AREA"),
-                  })}
                 />
               </React.Fragment>
             }
