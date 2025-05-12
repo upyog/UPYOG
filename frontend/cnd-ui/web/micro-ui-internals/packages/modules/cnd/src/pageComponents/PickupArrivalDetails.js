@@ -13,6 +13,7 @@ import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext
  * The component also displays key application details from the context for reference.
  */
 const pickupDetails = () => ({
+    disposeDate: "",
     vehicleNumber: "",
     vehicleDepoNumber: "",
     driverName: "",
@@ -344,6 +345,37 @@ const OwnerForm = (_props) => {
             </div>
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.dumpingStation ? errors?.dumpingStation?.message : ""}</CardLabelError>
+
+          <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("CND_DISPOSE_DATE")} <span className="astericColor">*</span></CardLabel>
+            <div className="field">
+              <Controller
+                control={control}
+                name={"disposeDate"}
+                rules={{
+                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  }}
+                render={(props) => (
+                  <TextInput
+                    type={"date"}
+                    value={props.value}
+                    disable={false}
+                    autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "disposeDate"}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      setFocusIndex({ index: pickup.key, type: "disposeDate" });
+                    }}
+                    onBlur={(e) => {
+                      setFocusIndex({ index: -1 });
+                      props.onBlur(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
+          <CardLabelError style={errorStyle}>{localFormState.touched.disposeDate ? errors?.disposeDate?.message : ""}</CardLabelError>
         </div>
       </div>
       {showToast?.label && (

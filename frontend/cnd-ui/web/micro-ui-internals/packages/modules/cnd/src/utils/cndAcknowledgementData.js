@@ -22,9 +22,9 @@ const cndAcknowledgementData = async (application, tenantInfo, t) => {
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: t("CND_APPLICATION_NUMBER"), value: application?.applicationNumber },
-          { title: t("CND_REQUEST_TYPE"), value: application?.applicationType },
-          { title: t("CND_PROPERTY_USAGE"), value: application?.propertyType },
-          { title: t("CND_TYPE_CONSTRUCTION"), value: application?.typeOfConstruction },
+          { title: t("CND_REQUEST_TYPE"), value: t(application?.applicationType) },
+          { title: t("CND_PROPERTY_USAGE"), value: t(application?.propertyType) },
+          { title: t("CND_TYPE_CONSTRUCTION"), value: t(application?.typeOfConstruction) },
           { title: t("CND_WASTE_QUANTITY"), value: application?.totalWasteQuantity + " Ton"},
           { title: t("CND_SCHEDULE_PICKUP"), value: application?.requestedPickupDate },
           { title: t("CND_TIME_CONSTRUCTION"), value: application?.constructionFromDate + " to " + application?.constructionToDate},
