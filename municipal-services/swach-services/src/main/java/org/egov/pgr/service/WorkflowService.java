@@ -192,20 +192,11 @@ public class WorkflowService {
         String localityName = request.getService().getAddress().getLocality().getName();
 
         String wardId = extractWardId(localityName);
-        
-        
-        if (wardId == null) {
-            throw new RuntimeException("Ward ID not found in locality name: " + localityName);
-        }
-        if (hrmsUtil == null) {
-            // Log or handle the null case
-            throw new NullPointerException("hrmsUtil is null");
-        }
-        System.out.println("wardId: " + wardId);
-        System.out.println("tenantId: " + service.getTenantId());
-        System.out.println("requestInfo: " + request.getRequestInfo());
 
-        List<String> employeeIds = hrmsUtil.getward(wardId,service.getTenantId(), request.getRequestInfo());
+        List<String> employeeIds = null;
+        if (wardId != null) {
+            employeeIds = hrmsUtil.getward(wardId, service.getTenantId(), request.getRequestInfo());
+        }
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())){
             List<User> users = new ArrayList<>();
