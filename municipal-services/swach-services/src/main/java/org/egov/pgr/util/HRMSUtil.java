@@ -81,9 +81,9 @@ public class HRMSUtil {
             throw new CustomException("PARSING_ERROR","Failed to parse HRMS response");
         }
 
-        if (CollectionUtils.isEmpty(employeeId)) {
-            throw new CustomException("EMPLOYEE_NOT_FOUND", "No employeeId found in HRMS response for ward: " + wardids);
-        }
+//        if (CollectionUtils.isEmpty(employeeId)) {
+//            throw new CustomException("EMPLOYEE_NOT_FOUND", "No employeeId found in HRMS response for ward: " + wardids);
+//        }
         return employeeId;
 
     }
