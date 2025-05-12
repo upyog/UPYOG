@@ -22,6 +22,7 @@ const InputCard = ({
   onAdd,
   isMultipleAllow = false,
   cardStyle = {},
+  isMandatory
 }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   // TODO: inputs handle
@@ -30,7 +31,7 @@ const InputCard = ({
       {texts.headerCaption && <CardCaption>{t(texts.headerCaption)}</CardCaption>}
       {texts?.header && 
       <CardHeader>
-        {texts?.isAsteriskRequired ? (
+        {isMandatory ? (
           <React.Fragment>
               {t(texts.header)} <span style={{ color: 'red' }}>*</span>
           </React.Fragment>

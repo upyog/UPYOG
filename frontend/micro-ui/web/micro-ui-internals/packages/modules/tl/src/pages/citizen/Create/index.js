@@ -139,12 +139,12 @@ const CreateTradeLicence = ({ parentRoute }) => {
   return (
     <Switch>
       {config?.map((routeObj, index) => {
-        const { component, texts, inputs, key, isSkipEnabled } = routeObj;
+        const { component, texts, inputs, key, isSkipEnabled, isMandatory } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
             <Component
-              config={{ texts, inputs, key, isSkipEnabled }}
+              config={{ texts, inputs, key, isSkipEnabled, isMandatory }}
               onSelect={handleSelect}
               onSkip={handleSkip}
               t={t}

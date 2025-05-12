@@ -6,7 +6,7 @@ import Timeline from "../components/TLTimeline";
 import UploadFileDigiLocker from "../utils/UploadFile"
 import FormStep from "../../../../react-components/src/molecules/FormStep"
 
-const Proof = ({ t, config, onSelect, userType, formData }) => {
+const Proof = ({ t, config, onSelect, userType, formData, isMandatory}) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
   const [digiLockerUpload,setDigilockerUpload] = useState(false)
   const { pathname: url } = useLocation();
@@ -104,6 +104,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
         onSelect={handleSubmit}
         onSkip={onSkip}
         t={t}
+        isMandatory={isMandatory}
         isDisabled={isUpdateProperty || isEditProperty ? false : !uploadedFile || !dropdownValue || error}
       >
         <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
