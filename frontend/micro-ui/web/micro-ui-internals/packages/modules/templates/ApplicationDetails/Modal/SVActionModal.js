@@ -1,6 +1,8 @@
-import { Loader, Modal, FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, Modal, FormComposer, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect, act } from "react";
 import { configSVApproverApplication } from "../config";
+import { useHistory } from "react-router-dom";
+import EXIF from "exif-js";
 
 /* This component, ActionModal, is responsible for displaying a modal dialog 
  that allows users to submit actions related to a specific application. 
@@ -31,6 +33,9 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
+  const history = useHistory();
+  const user = Digit.UserService.getUser().info;
+  const selectApprover = user?.roles
 
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
 
@@ -50,6 +55,24 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [geoLocationData, setGeoLocationData] = useState();
+  const [vendingZones, setvendingZones] = useState();
+
+  
+  const UserVendingZone = applicationData?.vendingZone;
+  
+  const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
+    {
+      select: (data) => {
+        const formattedData = data?.["StreetVending"]?.["VendingZones"]
+        return formattedData;
+      },
+    });
+
+  let vending_Zone = [];
+  vendingZone && vendingZone.map((zone) => {
+    vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
+  })
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
@@ -58,6 +81,73 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   function selectFile(e) {
     setIsUploading(true);
     setFile(e.target.files[0]);
+  }
+
+  function convertToDecimal(coordinate) {
+    const degrees = coordinate[0];
+    const minutes = coordinate[1];
+    const seconds = coordinate[2];
+    return degrees + minutes / 60 + seconds / 3600;
+  }
+
+  const fetchAddress = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch address");
+
+      const data = await response.json();
+      if (data && data.address) {
+
+        const addr = [
+          data.address?.amenity,
+          data.address?.road,
+          data.address?.neighbourhood,
+          data.address?.suburb,
+          data.address?.city,
+          data.address?.state,
+          data.address?.postcode,
+          data.address?.country
+        ]
+          .filter(Boolean) // Removes undefined or null values
+          .join(", ");
+        setGeoLocationData(addr);
+      }
+
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  }
+
+  useEffect(() => {
+    if (file) {
+      extractGeoLocation(file).then(({ latitude, longitude }) => {
+        if (!latitude || !longitude) {
+          console.log("No geolocation data found in the image.");
+        }
+        else {
+          fetchAddress(latitude, longitude);
+        }
+      });
+    }
+  }, [file]);
+
+  function extractGeoLocation(file) {
+    return new Promise((resolve) => {
+      EXIF.getData(file, function () {
+        const lat = EXIF.getTag(this, 'GPSLatitude');
+        const lon = EXIF.getTag(this, 'GPSLongitude');
+        if (lat && lon) {
+          const latDecimal = convertToDecimal(lat);
+          const lonDecimal = convertToDecimal(lon);
+          resolve({ latitude: latDecimal, longitude: lonDecimal });
+        } else {
+          resolve({ latitude: null, longitude: null });
+        }
+      });
+    });
   }
 
 
@@ -88,13 +178,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }, [file]);
 
 
-  console.log("actyhdesh,jhfsefsef",action,applicationData);
-
-
-
-
   function submit(data) {
-    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: action?.action==="SENDBACKTOCITIZEN"?[applicationData?.auditDetails?.createdBy]:selectedApprover?.uuid?[selectedApprover?.uuid]:null };
+    let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes: action?.action === "SENDBACKTOCITIZEN" ? [applicationData?.auditDetails?.createdBy] : selectedApprover?.uuid ? [selectedApprover?.uuid] : null };
     if (uploadedFile)
       workflow["documents"] = [
         {
@@ -107,11 +192,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       streetVendingDetail:
       {
         ...applicationData,
+        vendingZone: vendingZones?.value || UserVendingZone,
         workflow,
       },
 
     });
   }
+
 
   useEffect(() => {
     setConfig(
@@ -126,6 +213,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setUploadedFile,
         businessService,
         isUploading,
+        geoLocationData,
+        vending_Zone,
+        vendingZones,
+        setvendingZones,
+        UserVendingZone,
+        selectApprover,
       })
     );
   }, [action, approvers, uploadedFile]);

@@ -348,8 +348,10 @@ export const svPayloadData = (data) =>{
         lastModifiedTime: 0
       },
     },
-    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiary?.value,
-    enrollmentId:data?.specialCategoryData?.enrollmentId,
+    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiaryList,
+    applicationCreatedBy: data?.owner?.applicationCreatedBy,
+    locality: "",
+    enrollmentId:"",
     cartLatitude: 0,
     cartLongitude: 0,
     certificateNo: null,
@@ -575,8 +577,8 @@ export const svUpdatePayload = (data) =>{
         lastModifiedTime: 0
       },
     },
-    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiary?.value,
-    enrollmentId:data?.specialCategoryData?.enrollmentId,
+    benificiaryOfSocialSchemes: data?.specialCategoryData?.beneficiaryList,
+    enrollmentId: "",
     cartLatitude: 0,
     cartLongitude: 0,
     certificateNo: null,
