@@ -84,4 +84,7 @@ public class StreetVendingSearchCriteria {
 	@JsonProperty("validityDate")
 	private LocalDate validityDate;
 	
+	@JsonProperty("certificateNo")
+	private String certificateNo;
+	
 }

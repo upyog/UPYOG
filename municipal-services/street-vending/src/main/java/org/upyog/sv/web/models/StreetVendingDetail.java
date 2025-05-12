@@ -125,6 +125,9 @@ public class StreetVendingDetail {
 	private String oldApplicationNo;
 
 	private RenewalStatus renewalStatus;
+	
+	private String vendorPaymentFrequency;
+
 }
 
 /**

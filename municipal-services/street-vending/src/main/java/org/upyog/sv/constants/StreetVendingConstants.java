@@ -131,5 +131,24 @@ public class StreetVendingConstants {
 	public static final String NOTIFICATION_ACTION = "{Action Button}";
 	
 	public static final String NOTIFICATION_ACTION_BUTTON = "{/Action Button}";
+	
+	public static final String MONTHLY = "MONTHLY";
+	
+	public static final String SVMONTHLYFEE = "SV.MONTHLY_FEE";
+	
+	public static final String SVQUATERLYYFEE = "SV.QUATERLY_FEE";
+	
+	public static final String SVONETIMEFEE = "SV.ONE_TIME_FEE";
+	
+	public static final String QUATERLY = "QUATERLY";
+	
+	public static final String HALFYEARLY = "HALFYEARLY";
+	
+	public static final String YEARLY = "YEARLY";
+	
+	public static final String TAXHEADMONTHLY = "SV_STREET_VENDING_MONTHLY_FEE";
+	
+	public static final String TAXHEADQUATERLY = "SV_STREET_VENDING_QUATERLY_FEE";
+	
     
 }
