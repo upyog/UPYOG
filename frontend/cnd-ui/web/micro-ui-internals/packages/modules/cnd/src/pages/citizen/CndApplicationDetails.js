@@ -116,7 +116,7 @@ const columnName = [
 
 const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
   sNo: index + 1,
-  wasteType: items?.wasteType || "-",
+  wasteType: t(items?.wasteType) || "-",
   quantity: items?.quantity?items?.quantity:"0",
   siUnit:items?.metrics ? items?.metrics : "-"
 }));
@@ -146,7 +146,7 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
             <Row
               className="border-none"
               label={t("CND_APPLICATION_TYPE")}
-              text={cndData?.applicationType} 
+              text={t(cndData?.applicationType)} 
             />
             <Row
               className="border-none"
@@ -156,12 +156,12 @@ const operationRows = cndData.wasteTypeDetails.map((items, index) => ({
             <Row
               className="border-none"
               label={t("CND_TYPE_CONSTRUCTION")}
-              text={cndData?.typeOfConstruction} 
+              text={t(cndData?.typeOfConstruction)} 
             />
             <Row
               className="border-none"
               label={t("CND_PROPERTY_USAGE")}
-              text={cndData?.propertyType} 
+              text={t(cndData?.propertyType)} 
             />
             <Row
               className="border-none"

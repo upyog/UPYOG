@@ -133,7 +133,7 @@ const CNDApplicationTimeLine = (props) => {
                         isCompleted={index === 0}
                        //label={checkpoint.state ? t(`WF_${businessService}_${checkpoint.state}`) : "NA"}
                        label={t(
-                        `${data?.processInstances[index].state?.["state"]
+                        `CND_${data?.processInstances[index].state?.["state"]
                         }${timelineStatusPostfix}`
                       )}
                         customChild={getTimelineCaptions(checkpoint)}

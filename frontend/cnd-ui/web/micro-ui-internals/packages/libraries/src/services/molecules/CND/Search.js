@@ -25,7 +25,7 @@ export const CNDSearch = {
     const slotlistRows = response?.wasteTypeDetails.map((items,index)=>(
       [
         index+1,
-        items?.wasteType,
+        t(items?.wasteType),
         items?.quantity,
         items?.metrics ? items?.metrics :"-",
       ]
@@ -38,9 +38,9 @@ export const CNDSearch = {
         asSectionHeader: true,
         values: filterEmptyValues([
           { title: "CND_APPLICATION_NUMBER", value: response?.applicationNumber },
-          { title: "CND_REQUEST_TYPE", value: response?.applicationType },
-          { title: "CND_PROPERTY_USAGE", value: response?.propertyType },
-          { title: "CND_TYPE_CONSTRUCTION", value: response?.typeOfConstruction },
+          { title: "CND_REQUEST_TYPE", value: t(response?.applicationType) },
+          { title: "CND_PROPERTY_USAGE", value: t(response?.propertyType) },
+          { title: "CND_TYPE_CONSTRUCTION", value: t(response?.typeOfConstruction) },
           { title: "CND_WASTE_QUANTITY", value: response?.totalWasteQuantity + " Ton"},
           { title: "CND_SCHEDULE_PICKUP", value: response?.requestedPickupDate },
           ...(response?.applicationStatus==="COMPLETED" 
@@ -106,7 +106,7 @@ export const CNDSearch = {
                     values: response?.documentDetails
                       ?.map((document) => {
                         return {
-                          title: `${document?.documentType?.toUpperCase()}`,
+                          title: `${t(document?.documentType?.toUpperCase())}`,
                           documentType: document?.documentType,
                           documentUid: document?.documentDetailId,
                           fileStoreId: document?.fileStoreId,

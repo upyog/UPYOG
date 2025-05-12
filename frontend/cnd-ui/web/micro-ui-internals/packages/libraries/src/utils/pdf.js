@@ -697,7 +697,7 @@ function tableContent(t, details) {
               fontSize: 10,
             },
             {
-              text: d.wasteType, 
+              text: t(d.wasteType), 
               fontSize: 10,
             },
            ]

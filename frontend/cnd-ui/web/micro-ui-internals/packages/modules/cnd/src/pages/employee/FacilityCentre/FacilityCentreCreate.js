@@ -50,6 +50,15 @@ const FacilityCentreCreationDetails = () => {
     setSubmitValve(!Object.keys(formState.errors).length); 
   };
 
+     // Extract just the numeric value from the waste quantity string
+     const extractNumericValue = (quantityString) => {
+      if (!quantityString) return "";
+      // Match numeric values (including decimals)
+      const match = quantityString.toString().match(/(\d+(\.\d+)?)/);
+      return match ? match[0] : "";
+    };
+  
+
 
   const onSubmit = (data) => {
     const user = Digit.UserService.getUser();
@@ -66,13 +75,13 @@ const FacilityCentreCreationDetails = () => {
         vehicleType: "",
         vendorId: applicationDetails?.applicationData?.applicationData?.vendorId,
         location: "",
-        completedOn:data?.disposeDetails?.[0]?.disposeDate + " 00:00 ",
+        completedOn:data?.pickup?.[0]?.disposeDate + " 00:00 ",
         applicantDetailId: applicationDetails?.applicationData?.applicationData?.applicantDetailId,
         constructionFromDate: applicationDetails?.applicationData?.applicationData?.constructionFromDate,
         constructionToDate: applicationDetails?.applicationData?.applicationData?.constructionToDate,
         propertyType: applicationDetails?.applicationData?.applicationData?.propertyType,
         houseArea:  applicationDetails?.applicationData?.applicationData?.houseArea,
-        totalWasteQuantity: applicationDetails?.applicationData?.applicationData?.totalWasteQuantity,
+        totalWasteQuantity: extractNumericValue(data?.wasteType?.wasteQuantity)|| extractNumericValue(applicationDetails?.applicationData?.applicationData?.totalWasteQuantity),
         typeOfConstruction: applicationDetails?.applicationData?.applicationData?.typeOfConstruction,
         noOfTrips: 0,
         pickupDate:data?.wasteType?.pickupDate||applicationDetails?.applicationData?.applicationData?.pickupDate,
@@ -80,11 +89,11 @@ const FacilityCentreCreationDetails = () => {
         facilityCenterDetail: {
             applicationId: applicationDetails?.applicationData?.applicationData?.applicationId,
             disposalId: applicationDetails?.applicationData?.applicationData?.facilityCenterDetail?.disposalId,
-            disposalDate:data?.disposeDetails?.[0]?.disposeDate + " 00:00 ",
-            disposalType: data?.disposeDetails?.[0]?.disposeType?.code,
+            disposalDate:data?.pickup?.[0]?.disposeDate + " 00:00 ",
+            disposalType: data?.disposeDetails?.[0]?.disposeType?.code || "",
             dumpingStationName: data?.pickup?.[0]?.dumpingStation,
             grossWeight: data?.pickup?.[0]?.grossWeight,
-            nameOfDisposalSite: data?.disposeDetails?.[0]?.disposalSiteName,
+            nameOfDisposalSite: data?.disposeDetails?.[0]?.disposalSiteName || "",
             netWeight: data?.pickup?.[0]?.netWeight,
             vehicleDepotNo:  data?.pickup?.[0]?.vehicleDepoNumber,
             vehicleId: applicationDetails?.applicationData?.applicationData?.vehicleId

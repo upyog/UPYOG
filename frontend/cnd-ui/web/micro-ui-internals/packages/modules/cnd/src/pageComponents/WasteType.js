@@ -338,6 +338,8 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           />
           </div>
          
+         { !window.location.href.includes("facility-centre")&&(
+          <React.Fragment>
           <CardLabel>{`${t("CND_SITE_MEDIA")}`}</CardLabel>
           <div style={{ marginBottom: "15px", width:userType === "EMPLOYEE" ? "50%" : "100%" }}>
             <UploadFile
@@ -383,6 +385,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               style={{inputStyles}}
             />
           </div>
+          </React.Fragment>)}
         </div>
       </FormStep>
     </React.Fragment>
