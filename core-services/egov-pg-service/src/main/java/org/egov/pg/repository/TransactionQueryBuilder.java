@@ -13,12 +13,7 @@ import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.springframework.util.CollectionUtils;
 
 class TransactionQueryBuilder {
-    private static final String SEARCH_TXN_SQL = "SELECT pg.txn_id, pg.txn_amount, pg.txn_status, pg.txn_status_msg, " +
-            "pg.gateway, pg.module, pg.consumer_code, pg.bill_id, pg.product_info, pg.user_uuid, pg.user_name, pg" +
-            ".mobile_number, pg.email_id, pg.name, pg.user_tenant_id, pg.tenant_id, pg.gateway_txn_id, pg.gateway_payment_mode, " +
-            "pg.gateway_status_code, pg.gateway_status_msg, pg.receipt, pg.additional_details,  pg.created_by, pg" +
-            ".created_time, pg.last_modified_by, pg.last_modified_time " +
-            "FROM eg_pg_transactions pg ";
+    private static final String SEARCH_TXN_SQL = "SELECT pg.* FROM eg_pg_transactions pg ";
 
     private TransactionQueryBuilder() {
     }
@@ -84,58 +79,70 @@ class TransactionQueryBuilder {
     }
 
 
-    private static String buildQuery(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
-        StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
-        Map<String, Object> queryParams = new HashMap<>();
+	private static String buildQuery(TransactionCriteria transactionCriteria, List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
+		boolean isAppendAndClause = true;
+		builder.append(" WHERE 1=1 ");
 
-        if (!Objects.isNull(transactionCriteria.getTenantId())) {
-            queryParams.put("pg.tenant_id", transactionCriteria.getTenantId());
-        }
+		if (!Objects.isNull(transactionCriteria.getTenantId())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.tenant_id = ").append("'" + transactionCriteria.getTenantId() + "'");
+		}
 
-        if (!Objects.isNull(transactionCriteria.getTxnId())) {
-            queryParams.put("pg.txn_id", transactionCriteria.getTxnId());
-        }
+		if (!Objects.isNull(transactionCriteria.getTxnId())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_id = ").append("'" + transactionCriteria.getTxnId() + "'");
+		}
 
-        if (!Objects.isNull(transactionCriteria.getUserUuid())) {
-            queryParams.put("pg.user_uuid", transactionCriteria.getUserUuid());
-        }
+		if (!Objects.isNull(transactionCriteria.getUserUuid())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.user_uuid = ").append("'" + transactionCriteria.getUserUuid() + "'");
+		}
 
-        if (!Objects.isNull(transactionCriteria.getBillId())) {
-            queryParams.put("pg.bill_id", transactionCriteria.getBillId());
-        }
+		if (!Objects.isNull(transactionCriteria.getBillId())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.bill_id = ").append("'" + transactionCriteria.getBillId() + "'");
+		}
 
-        if (!Objects.isNull(transactionCriteria.getTxnStatus())) {
-            queryParams.put("pg.txn_status", transactionCriteria.getTxnStatus().toString());
-        }
+		if (!Objects.isNull(transactionCriteria.getTxnStatus())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_status = ").append("'" + transactionCriteria.getTxnStatus() + "'");
+		}
 
-        if (!Objects.isNull(transactionCriteria.getConsumerCode())) {
-            queryParams.put("pg.consumer_code", transactionCriteria.getConsumerCode());
-        }
+		if (!Objects.isNull(transactionCriteria.getConsumerCode())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.consumer_code = ").append("'" + transactionCriteria.getConsumerCode() + "'");
+		}
 
-        if (!Objects.isNull(transactionCriteria.getReceipt())) {
-            queryParams.put("pg.receipt", transactionCriteria.getReceipt());
-        }
+		if (!Objects.isNull(transactionCriteria.getReceipt())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.receipt = ").append("'" + transactionCriteria.getReceipt() + "'");
+		}
 
+		if (!Objects.isNull(transactionCriteria.getTxnSettlementStatus())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_settlement_status = ")
+					.append("'" + transactionCriteria.getTxnSettlementStatus() + "'");
+		}
 
+		if (!CollectionUtils.isEmpty(transactionCriteria.getTxnSettlementStatusses())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_settlement_status IN ( ")
+					.append(getQueryForCollection(new ArrayList<>(transactionCriteria.getTxnSettlementStatusses()),
+							preparedStmtList))
+					.append(" )");
+		}
+		
+		if (!CollectionUtils.isEmpty(transactionCriteria.getNotTxnSettlementStatusses())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, builder);
+			builder.append(" pg.txn_settlement_status NOT IN ( ")
+			.append(getQueryForCollection(new ArrayList<>(transactionCriteria.getNotTxnSettlementStatusses()),
+					preparedStmtList))
+			.append(" )");
+		}
 
-        if (!queryParams.isEmpty()) {
-
-            builder.append(" WHERE ");
-
-            Iterator<Map.Entry<String, Object>> iterator = queryParams.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Object> entry = iterator.next();
-                builder.append(entry.getKey()).append(" = ? ");
-
-                preparedStmtList.add(entry.getValue());
-
-                if (iterator.hasNext())
-                    builder.append(" AND ");
-            }
-        }
-
-        return builder.toString();
-    }
+		return builder.toString();
+	}
     
 	private static String buildQuery(TransactionCriteriaV2 transactionCriteriaV2, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(TransactionQueryBuilder.SEARCH_TXN_SQL);
@@ -205,6 +212,9 @@ class TransactionQueryBuilder {
 
 	private static String addPagination(String query, TransactionCriteria transactionCriteria, List<Object>
             preparedStmtList){
+		if(transactionCriteria.getIsSchedulerCall()) {
+			return query;
+		}
         if (transactionCriteria.getLimit() > 0) {
             query = query + " limit ? ";
             preparedStmtList.add(transactionCriteria.getLimit());
