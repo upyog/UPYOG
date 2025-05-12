@@ -197,6 +197,8 @@ public class WorkflowService {
         String localityName = request.getService().getAddress().getLocality().getName();
 
         String wardId = extractWardId(localityName);
+        
+        
         log.info("Ward Id "+wardId);
         log.info("locality "+ localityName);
         List<String> employeeIds = null;
@@ -236,10 +238,18 @@ public class WorkflowService {
     public String extractWardId(String localityName) {
         if (localityName != null && localityName.contains("-")) {
             String[] parts = localityName.split("-");
-            return parts[parts.length - 1].trim(); // e.g., "WARD_1"
+            String wardPart = parts[parts.length - 1].trim(); // e.g., "WARD 2" or "WARD_2"
+            
+            // Normalize to format: WARD_X
+            if (wardPart.matches("(?i)WARD\\s+\\d+")) {
+                wardPart = wardPart.replaceAll("(?i)WARD\\s+(\\d+)", "WARD_$1");
+            }
+
+            return wardPart.toUpperCase(); // ensure consistent casing like "WARD_2"
         }
         return null;
     }
+
     /**
      *
      * @param processInstances
