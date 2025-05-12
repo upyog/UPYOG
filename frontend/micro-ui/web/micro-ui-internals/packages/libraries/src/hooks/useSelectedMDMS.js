@@ -15,7 +15,7 @@ import { MdmsServiceV2 } from "../services/elements/MDMSV2";
  * it should match with the modulename you enter in MDMS (masterData).
  */
 const mdmsV2Modules = [
-  'StreetVending',
+  // 'StreetVending',
   'Advertisement',
   'CHB',
   'PetService',
@@ -40,7 +40,6 @@ const getMDMSServiceRef = (moduleName) => {
 }
 
 const useSelectedMDMS = (moduleName) => {
-  console.log("midtttttttt",moduleName);
   // Get the appropriate service reference based on the module name
   mdmsRef = getMDMSServiceRef(moduleName);
   return mdmsRef;

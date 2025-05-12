@@ -442,6 +442,7 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
       benificiaryOfSocialSchemes: [],
       applicationCreatedBy: pathname.includes("citizen") ? "citizen" : "employee",
       locality: "",
+      vendorPaymentFrequency: "", 
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,

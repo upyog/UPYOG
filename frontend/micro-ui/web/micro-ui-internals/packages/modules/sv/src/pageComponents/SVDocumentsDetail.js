@@ -224,6 +224,7 @@ const transformDocuments = (documents) => {
       benificiaryOfSocialSchemes: [],
       applicationCreatedBy: formData?.owner?.applicationCreatedBy,
       locality: formData?.vendorLocality?.code || "",
+      vendorPaymentFrequency: formData?.vendorPayment?.code,
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,

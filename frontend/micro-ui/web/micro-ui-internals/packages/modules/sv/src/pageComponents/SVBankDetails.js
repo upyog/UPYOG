@@ -266,6 +266,7 @@ const SVBankDetails = ({ t, config, onSelect, userType, formData, editdata,previ
       benificiaryOfSocialSchemes: [],
       applicationCreatedBy: formData?.owner?.applicationCreatedBy,
       locality: formData?.vendorLocality?.code || "",
+      vendorPaymentFrequency: formData?.vendorPayment?.code,
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,
