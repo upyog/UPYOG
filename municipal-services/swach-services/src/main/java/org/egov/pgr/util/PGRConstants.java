@@ -20,6 +20,8 @@ public class PGRConstants {
 
     public static final String PGR_MODULENAME = "SBMR";
 
+    public static final String PGR_ACTION = "ASSIGN";
+    
     public static final String PGR_WF_REOPEN = "REOPEN";
 
     public static final String MDMS_SERVICEDEF = "SwachBharatCategory";

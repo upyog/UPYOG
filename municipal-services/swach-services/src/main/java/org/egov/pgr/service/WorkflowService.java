@@ -219,6 +219,7 @@ public class WorkflowService {
             });
 
             processInstance.setAssignes(users);
+            
         }
         else if (!CollectionUtils.isEmpty(employeeIds)) {
             List<User> users = new ArrayList<>();
@@ -226,6 +227,7 @@ public class WorkflowService {
             User user = new User();
             user.setUuid(employeeId); // Assuming employeeId is the UUID here
             users.add(user);
+            processInstance.setAction(PGR_ACTION);
             processInstance.setAssignes(users);
         }
 
