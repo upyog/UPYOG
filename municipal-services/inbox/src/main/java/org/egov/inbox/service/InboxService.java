@@ -38,7 +38,6 @@ import static org.egov.inbox.util.PGRConstants.PGRANDSWACH_APPLICATION_PARAM;
 import static org.egov.inbox.util.PGRConstants.PGR_MOBILE_NUMBER_PARAM;
 import static org.egov.inbox.util.PGRConstants.PGR_LOCALITY_PARAM;
 import static org.egov.inbox.util.PGRConstants.PGR_SERVICECODE_PARAM;
-import static org.egov.inbox.util.PGRConstants.STATUS_PARAM;
 import static org.egov.inbox.util.PGRConstants.PGR_APPLICATION_NUMBER_PARAM;
 import static org.egov.inbox.util.PGRConstants.PGR_CITIZEN_PARAM;
 import static org.egov.inbox.util.PGRConstants.PGR_ADDRESS_PARAM;
