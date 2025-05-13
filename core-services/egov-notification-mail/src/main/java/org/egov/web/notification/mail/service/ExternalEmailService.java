@@ -29,6 +29,7 @@ public class ExternalEmailService implements EmailService {
     @Override
     public void sendEmail(Email email) {
 		if(email.isHTML()) {
+			log.info("enter for email html");
 			sendHTMLEmail(email);
 		} else {
 			sendTextEmail(email);
@@ -36,6 +37,7 @@ public class ExternalEmailService implements EmailService {
     }
 
 	private void sendTextEmail(Email email) {
+		log.info("enter for email text");
 		final SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(email.getEmailTo().toArray(new String[0]));
 		mailMessage.setSubject(email.getSubject());
@@ -44,6 +46,7 @@ public class ExternalEmailService implements EmailService {
 	}
 
 	private void sendHTMLEmail(Email email) {
+		log.info("send html mail");
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper;
 		Attachments attachment = email.getAttachments();
@@ -54,12 +57,13 @@ public class ExternalEmailService implements EmailService {
 			helper.setSubject(email.getSubject());
 			helper.setText(email.getBody(), true);
 			helper.addAttachment(attachment.getFileName(), bar, attachment.getContentType());
-	        //log.info("Printing Records for Email");
-	        //log.info("Recors is ================================"+message);
+	        log.info("Printing Records for Email");
+	        log.info("Recors is ================================"+message);
 		} catch (MessagingException e) {
 			log.error(EXCEPTION_MESSAGE, e);
 			throw new RuntimeException(e);
 		}
 		mailSender.send(message);
+		log.info("sending Email");
 	}
 }

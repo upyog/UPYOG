@@ -92,6 +92,7 @@ public class OcComparisonDetail extends AbstractAuditable {
 
     @Transient
     private EdcrApplicationDetail permitDcr;
+	
 
     @Override
     public Long getId() {
@@ -170,5 +171,6 @@ public class OcComparisonDetail extends AbstractAuditable {
     public void setPermitDcr(EdcrApplicationDetail permitDcr) {
         this.permitDcr = permitDcr;
     }
+
 
 }
