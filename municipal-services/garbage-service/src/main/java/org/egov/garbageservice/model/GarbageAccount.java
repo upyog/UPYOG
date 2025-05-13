@@ -62,13 +62,13 @@ public class GarbageAccount {
 	
 	private GrbgOldDetails grbgOldDetails;
 
-	private GrbgCommercialDetails grbgCommercialDetails;
+//	private GrbgCommercialDetails grbgCommercialDetails;
 	
-	private List<GrbgDocument> documents;
+//	private List<GrbgDocument> documents;
 
 	private AuditDetails auditDetails;
 	
-	private List<GarbageBill> garbageBills;
+//	private List<GarbageBill> garbageBills;
 
 	private List<GrbgCollectionUnit> grbgCollectionUnits;
 
