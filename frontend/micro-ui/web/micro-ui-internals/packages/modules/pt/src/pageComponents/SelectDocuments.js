@@ -325,7 +325,11 @@ function SelectDocument({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown ? (
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
+          <CardLabel className="card-label-smaller">
+          <React.Fragment>
+              {t(doc?.code.replaceAll(".", "_"))} <span style={{ color: 'red' }}>*</span>
+          </React.Fragment>
+          </CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedDocument}
@@ -353,6 +357,7 @@ function SelectDocument({
             buttonType="button"
             error={!uploadedFile}
           />
+          <div style={{marginTop:"10px", fontSize:'12px'}}>{t("CS_FILE_SIZE_RESTRICTIONS_PT")}</div>
         </div>
       </LabelFieldPair>
     </div>

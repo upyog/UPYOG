@@ -217,9 +217,15 @@ function SelectDocument({
     <div style={{ marginBottom: "24px" }}>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
-          {doc?.documentType != "OLDLICENCENO" ?
-            `${t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)} * ` :
-            `${t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)} `}
+          {doc?.documentType != "OLDLICENCENO" ? (
+            <React.Fragment>
+                {t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)} <span style={{ color: 'red' }}>*</span>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+            {t(`TL_NEW_${doc?.documentType.replaceAll(".", "_")}`)}
+            </React.Fragment>
+          )}
         </CardLabel>
         <div className="field">
           <UploadFile
@@ -234,6 +240,7 @@ function SelectDocument({
             // disabled={enabledActions?.[action].disableUpload || !selectedDocument?.code}
             buttonType="button"
           />
+          <div style={{marginTop:"10px", fontSize:'12px'}}>{t("CS_FILE_SIZE_RESTRICTIONS_TL")}</div>
         </div>
       </LabelFieldPair>
     </div>

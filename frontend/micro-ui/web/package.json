@@ -11,7 +11,12 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/commonpt",
-    "micro-ui-internals/packages/modules/obps"
+    "micro-ui-internals/packages/modules/obps",
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/ws",
+    "micro-ui-internals/packages/modules/fsm",
+    "micro-ui-internals/packages/modules/pgr",
+    "micro-ui-internals/packages/modules/mCollect"
   ],
   "engines": {
     "node": ">=14"
