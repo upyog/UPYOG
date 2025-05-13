@@ -2,6 +2,7 @@ package org.egov.search.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -60,7 +61,19 @@ public class SearchUtils {
 		String finalQuery = null;
 		queryString.append(query.getBaseQuery());
 		if(!CollectionUtils.isEmpty(searchParam.getParams())) {
-			String whereClause = buildWhereClause(searchRequest, searchParam, preparedStatementValues);
+			Object criteriaObj = searchRequest.getSearchCriteria();
+			String whereClause;
+			if (criteriaObj instanceof Map) {
+			    Map<String, Object> criteriaMap = (Map<String, Object>) criteriaObj;
+			    Object url = criteriaMap.get("url");
+			    if (url != null && url.toString().contains("inboxswachsearchall")) {
+			        whereClause = buildWhereClauseForSwachSearchAll(searchRequest, searchParam, preparedStatementValues); // custom logic
+			    } else {
+			        whereClause = buildWhereClause(searchRequest, searchParam, preparedStatementValues); // default logic
+			    }
+			} else {
+			    whereClause = buildWhereClause(searchRequest, searchParam, preparedStatementValues); // fallback
+			}
 			String paginationClause = getPaginationClause(searchRequest, searchParam.getPagination());
 			where.append(" WHERE ").append(whereClause + " ");
 			if (null != query.getGroupBy()) {
@@ -89,6 +102,119 @@ public class SearchUtils {
 	 * @param preparedStatementValues
 	 * @return
 	 */
+	
+	public String buildWhereClauseForSwachSearchAll(SearchRequest searchRequest, SearchParams searchParam,  Map<String, Object> preparedStatementValues) {
+	    StringBuilder whereClause = new StringBuilder();
+	    String condition = searchParam.getCondition();
+	    Pattern p = Pattern.compile("->>");
+	    try {
+	        String request = mapper.writeValueAsString(searchRequest);
+	        List<Params> paramsList = searchParam.getParams();
+
+	        for (int i = 0; i < paramsList.size(); i++) {
+	            Params param = paramsList.get(i);
+	            Object paramValue = null;
+
+	            try {
+	                if (null != param.getIsConstant()) {
+	                    if (param.getIsConstant())
+	                        paramValue = param.getValue();
+	                    else
+	                        paramValue = JsonPath.read(request, param.getJsonPath());
+	                } else
+	                    paramValue = JsonPath.read(request, param.getJsonPath());
+	            } catch (Exception e) {
+	                log.error("Error while building where clause: " + e.getMessage());
+	                continue;
+	            }
+
+	            // custom tenantid handling starts
+	            if ("ser.tenantid".equals(param.getName())) {
+	                if (i > 0) whereClause.append(" " + condition + " ");
+
+	                String namedParam = param.getName();
+	                List<String> tenantIds = new ArrayList<>();
+
+	                if (paramValue instanceof Collection && !((Collection<?>) paramValue).isEmpty()) {
+	                    for (Object val : (Collection<?>) paramValue) {
+	                        tenantIds.add(val.toString());
+	                    }
+	                    whereClause.append("ser.tenantid IN (:").append(namedParam).append(")");
+	                    preparedStatementValues.put(namedParam, tenantIds);
+	                } else if (paramValue != null) {
+	                	if("pb".equals(paramValue.toString()) || paramValue.toString().trim().isEmpty()) {
+	                		whereClause.append("ser.tenantid LIKE :").append(namedParam);
+	                		preparedStatementValues.put(namedParam, "%pb%");
+	                	}
+	                	else {
+	                		tenantIds.add(paramValue.toString());
+		                    whereClause.append("ser.tenantid IN (:").append(namedParam).append(")");
+		                    preparedStatementValues.put(namedParam, tenantIds);
+	                	}
+	                } else {
+	                    whereClause.append("ser.tenantid LIKE :").append(namedParam);
+	                    preparedStatementValues.put(namedParam, "%pb%");
+	                }
+	                continue;
+	            }
+	            // custom tenantid handling ends
+
+	            if (paramValue == null) continue;
+
+	            if (i > 0) {
+	                whereClause.append(" " + condition + " ");
+	            }
+
+	            Matcher matcher = p.matcher(param.getName());
+	            String namedParam = param.getName();
+	            if (matcher.find())
+	                namedParam = removeJSONOperatorsForNamedParam(namedParam);
+
+	            String operator = null;
+	            if (paramValue instanceof net.minidev.json.JSONArray) {
+	                String[] validListOperators = {"NOT IN", "IN"};
+	                operator = (!StringUtils.isEmpty(param.getOperator())) ? " " + param.getOperator() + " " : " IN ";
+	                if (!Arrays.asList(validListOperators).contains(operator))
+	                    operator = " IN ";
+
+	                whereClause.append(param.getName()).append(operator).append("(").append(":").append(namedParam).append(")");
+	            } else {
+	                List<String> validOperators = operators;
+	                operator = (!StringUtils.isEmpty(param.getOperator())) ? param.getOperator() : "=";
+
+	                if (!validOperators.contains(operator)) {
+	                    operator = "=";
+	                }
+
+	                if (operator.equals("GE")) {
+	                    operator = ">=";
+	                } else if (operator.equals("LE")) {
+	                    operator = "<=";
+	                } else if (operator.equals("NE")) {
+	                    operator = "!=";
+	                } else if (operator.equals("LIKE") || operator.equals("ILIKE")) {
+	                    paramValue = "%" + paramValue + "%";
+	                } else if (operator.equals("TOUPPERCASE")) {
+	                    operator = "=";
+	                    paramValue = ((String) paramValue).toUpperCase();
+	                } else if (operator.equals("TOLOWERCASE")) {
+	                    operator = "=";
+	                    paramValue = ((String) paramValue).toLowerCase();
+	                }
+
+	                whereClause.append(param.getName()).append(" ").append(operator).append(" :").append(namedParam);
+	            }
+
+	            preparedStatementValues.put(namedParam, paramValue);
+	        }
+	    } catch (Exception e) {
+	        log.error("Exception while bulding query: ", e);
+	        throw new CustomException("QUERY_BUILD_ERROR", "Exception while bulding query");
+	    }
+	    return whereClause.toString();
+	}
+
+	
 	public String buildWhereClause(SearchRequest searchRequest, SearchParams searchParam,  Map<String, Object> preparedStatementValues) {
 		StringBuilder whereClause = new StringBuilder();
 		String condition = searchParam.getCondition();
