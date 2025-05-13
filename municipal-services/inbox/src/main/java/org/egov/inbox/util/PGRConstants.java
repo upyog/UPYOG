@@ -4,7 +4,12 @@ public class PGRConstants {
     public static final String PGR = "pgr-services";
     public static final String SWACH = "swach-reform";
     public static final String PGRANDSWACH_APPLICATION_PARAM = "serviceRequestId";
-    public static final String MOBILE_NUMBER_PARAM = "mobileNumber";
+    public static final String PGR_MOBILE_NUMBER_PARAM = "mobileNumber";
+    public static final String PGR_LOCALITY_PARAM = "locality";
+    public static final String PGR_SERVICECODE_PARAM = "serviceCode";
+    public static final String PGR_CITIZEN_PARAM = "citizen";
+    public static final String PGR_ADDRESS_PARAM = "address";
+    public static final String PGR_ADDRESSCODE_PARAM = "code";
     public static final String BUSINESS_SERVICE_PARAM = "businessservice";
     public static final String TENANT_ID_PARAM = "tenantId";
     public static final String LOCALITY_PARAM = "locality";

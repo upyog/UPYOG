@@ -104,7 +104,19 @@ public class SWACHInboxFilterService {
                 searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
             }
             if(!ObjectUtils.isEmpty(processCriteria.getStatus())){
-                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	if(processCriteria.getModuleName().equals(SWACH)) { //if needed for all modules, remove comment
+            		List<String> desiredStatuses = processCriteria.getStatus();
+            		List<String> matchingKeys = StatusIdNameMap.entrySet()
+            		    .stream()
+            		    .filter(entry -> desiredStatuses.contains(entry.getValue()))
+            		    .map(Map.Entry::getKey)
+            		    .collect(Collectors.toList());
+            		
+            		searchCriteria.put(STATUS_PARAM, matchingKeys);
+            	}
+            	else {
+            		searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	}
             }else{
                 if(StatusIdNameMap.values().size() > 0) {
                     if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
@@ -202,7 +214,19 @@ public class SWACHInboxFilterService {
                 searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
             }
             if(!ObjectUtils.isEmpty(processCriteria.getStatus())){
-                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	if(processCriteria.getModuleName().equals(SWACH)) { //if needed for all modules, remove comment
+            		List<String> desiredStatuses = processCriteria.getStatus();
+            		List<String> matchingKeys = StatusIdNameMap.entrySet()
+            		    .stream()
+            		    .filter(entry -> desiredStatuses.contains(entry.getValue()))
+            		    .map(Map.Entry::getKey)
+            		    .collect(Collectors.toList());
+            		
+            		searchCriteria.put(STATUS_PARAM, matchingKeys);
+            	}
+            	else {
+            		searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	}
             }else{
                 if(StatusIdNameMap.values().size() > 0) {
                     if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
