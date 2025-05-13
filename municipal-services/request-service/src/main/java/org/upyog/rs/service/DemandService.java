@@ -3,6 +3,7 @@ package org.upyog.rs.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.common.contract.request.User;
@@ -112,7 +113,7 @@ public class DemandService {
 	 * - A list of DemandDetail objects containing tax details.
 	 */
 	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, BigDecimal immediateDeliveryFee) {
-		List<DemandDetail> demandDetails = new ArrayList<>();
+		List<DemandDetail> demandDetails = new LinkedList<>();
 		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
