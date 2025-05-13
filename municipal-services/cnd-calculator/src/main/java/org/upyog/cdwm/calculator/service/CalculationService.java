@@ -50,7 +50,7 @@ public class CalculationService {
         CalculationType calculation = calculationTypes.get(0);
         log.info("Calculation total waste quantity {} " + cndApplicationDetail.getTotalWasteQuantity());
         log.info("Calculation amount {} " + calculation.getAmount());
-        return calculation.getAmount().multiply(BigDecimal.valueOf(cndApplicationDetail.getTotalWasteQuantity()));
+        return calculation.getAmount().multiply(cndApplicationDetail.getTotalWasteQuantity());
     }
 
 
