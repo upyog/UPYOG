@@ -158,7 +158,7 @@ const defaultLogo =
   pdfMake.vfs = Fonts;
   let locale = Digit.SessionStorage.get("locale") || "en_IN";
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
-  let ack="acknowledgement"
+  let ack="C&D-Acknowledgement"
   pdfMake.fonts = { Hind: { ...Hind } };
   const generatedPDF = pdfMake.createPdf(dd);
   downloadPDFFileUsingBase64(generatedPDF, ack);
@@ -232,7 +232,7 @@ const jsPdfGeneratorForTable = async ({ breakPageLimit = null, tenantId, logo, n
   let Hind = pdfFonts[locale] || pdfFonts["Hind"];
   pdfMake.fonts = { Hind: { ...Hind } };
   const generatedPDF = pdfMake.createPdf(dd);
-  downloadPDFFileUsingBase64(generatedPDF, "acknowledgement.pdf");
+  downloadPDFFileUsingBase64(generatedPDF, "C&D-Acknowledgement.pdf");
 };
 
 

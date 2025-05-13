@@ -46,7 +46,7 @@ export const MyRequests = () => {
         {applicationsList?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/cnd-ui/citizen/cnd/cnd-service/my-requests/${t1}`}>{t("CND_LOAD_MORE")}</Link>}</span>
+              <span className="link">{<Link to={`/cnd-ui/citizen/cnd/my-request/${t1}`}>{t("CND_LOAD_MORE")}</Link>}</span>
             </p>
           </div>
         )}

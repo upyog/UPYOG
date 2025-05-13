@@ -89,7 +89,7 @@ In Parent Component,  we are passing the data as a props coming through params (
           {(wasteType?.wasteQuantity) ? 
            <Row
               label={t("CND_WASTE_QUANTITY")}
-              text={`${t(checkForNA(wasteType?.wasteQuantity + " Ton"))}`}
+              text={`${t(checkForNA(wasteType?.wasteQuantity + " Tons"))}`}
           />:null}
           </StatusTable>
           <CardSubHeader>{t("COMMON_PERSONAL_DETAILS")}</CardSubHeader>

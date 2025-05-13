@@ -121,7 +121,7 @@ export const convertEpochToDate = (dateEpoch) => {
           let details
           payments.Payments[0].additionalDetails=details;
           paymentArray[0]=payments.Payments[0]
-            response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKey);
+            response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, "cnd-service");
           
         } 
         

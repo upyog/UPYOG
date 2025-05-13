@@ -41,7 +41,7 @@ export const CNDSearch = {
           { title: "CND_REQUEST_TYPE", value: t(response?.applicationType) },
           { title: "CND_PROPERTY_USAGE", value: t(response?.propertyType) },
           { title: "CND_TYPE_CONSTRUCTION", value: t(response?.typeOfConstruction) },
-          { title: "CND_WASTE_QUANTITY", value: response?.totalWasteQuantity + " Ton"},
+          { title: "CND_WASTE_QUANTITY", value: response?.totalWasteQuantity + " Tons"},
           { title: "CND_SCHEDULE_PICKUP", value: response?.requestedPickupDate },
           ...(response?.applicationStatus==="COMPLETED" 
             ? [{title: "CND_EMP_SCHEDULE_PICKUP", value: response.pickupDate, isBold:true}]

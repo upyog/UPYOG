@@ -117,22 +117,22 @@ const OwnerForm = (_props) => {
                 <Row
                     className="border-none"
                     label={t("CND_APPLICATION_TYPE")}
-                    text={applicationDetails?.applicationType} 
+                    text={t(applicationDetails?.applicationType)} 
                 />
                 <Row
                     className="border-none"
                     label={t("CND_WASTE_QUANTITY")}
-                    text={applicationDetails?.totalWasteQuantity} 
+                    text={applicationDetails?.totalWasteQuantity + " Tons"} 
                 />
                 <Row
                     className="border-none"
                     label={t("CND_TYPE_CONSTRUCTION")}
-                    text={applicationDetails?.typeOfConstruction} 
+                    text={t(applicationDetails?.typeOfConstruction)} 
                 />
                 <Row
                     className="border-none"
                     label={t("CND_PROPERTY_USAGE")}
-                    text={applicationDetails?.propertyType} 
+                    text={t(applicationDetails?.propertyType)} 
                 />
                 <Row
                     className="border-none"
