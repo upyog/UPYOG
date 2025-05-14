@@ -142,7 +142,7 @@ public class SearchUtils {
 	                    whereClause.append("ser.tenantid IN (:").append(namedParam).append(")");
 	                    preparedStatementValues.put(namedParam, tenantIds);
 	                } else if (paramValue != null) {
-	                	if("pb.punjab".equals(paramValue.toString()) || paramValue.toString().trim().isEmpty()) {
+	                	if("pb.punjab".equals(paramValue.toString()) ||"pb".equals(paramValue.toString()) || paramValue.toString().trim().isEmpty()) {
 	                		whereClause.append("ser.tenantid LIKE :").append(namedParam);
 	                		preparedStatementValues.put(namedParam, "%pb%");
 	                	}
