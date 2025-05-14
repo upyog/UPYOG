@@ -560,11 +560,16 @@ public class InboxService {
 				}
 			}
 
-			// for pgr ai service
+			// fetching total count and application numbers from searcher for pgr ai service
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PGRAiConstants.PGR_MODULE)) {
 
 				totalCount = pgrAiInboxFilterService.fetchApplicationIdsCountFromSearcher(criteria, StatusIdNameMap,
 						requestInfo);
+				List<String> applicationNumbers = pgrAiInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					businessKeys.addAll(applicationNumbers);
+				}
 			}
 
 			if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
