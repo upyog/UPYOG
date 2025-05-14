@@ -144,8 +144,8 @@ public class TransactionsSchedulerService {
 		TransactionCriteria transactionCriteria = TransactionCriteria.builder().isSchedulerCall(true)
 				.txnStatus(TxnStatusEnum.SUCCESS)
 				.startDateTime(
-						LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
-				.endDateTime(LocalDate.now().minusDays(3).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
+						LocalDate.now().minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
+				.endDateTime(LocalDate.now().minusDays(2).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
 						.toInstant().toEpochMilli())
 				.txnSettlementStatus(TxnSettlementStatus.CREATED.name()).build();
 
