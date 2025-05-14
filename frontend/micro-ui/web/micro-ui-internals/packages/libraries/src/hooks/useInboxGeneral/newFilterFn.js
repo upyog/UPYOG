@@ -266,7 +266,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
+    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -279,6 +279,9 @@ export const filterFunctions = {
     }
     if (services) {
       workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
     }
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
@@ -307,7 +310,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
+    const { bookingNo, mobileNumber,limit, offset, sortBy, sortOrder, total, services, locality } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -320,6 +323,9 @@ export const filterFunctions = {
     }
     if (services) {
       workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
     }
 
     searchFilters["isInboxSearch"] = true;

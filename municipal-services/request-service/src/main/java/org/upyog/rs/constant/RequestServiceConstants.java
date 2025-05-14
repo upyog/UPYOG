@@ -46,9 +46,9 @@ public class RequestServiceConstants {
 
 	public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";
 
-	public static final String REQUEST_SERVICE_TAX_MASTER_CODE = "WATER_TANKER_BOOKING_FEE";
+	public static final String REQUEST_SERVICE_TAX_MASTER_CODE = "WATER_TANKER_FEE";
 
-	public static final String IMMEDIATE_DELIVERY_TAX_HEAD = "WATER_TANKER_IMMEDIATE_DELIVERY_FEE";
+	public static final String IMMEDIATE_DELIVERY_TAX_HEAD = "IMMEDIATE_DELIVERY_FEE";
 
 	public static final String IMMEDIATE_DELIVERY_YES = "Y";
 

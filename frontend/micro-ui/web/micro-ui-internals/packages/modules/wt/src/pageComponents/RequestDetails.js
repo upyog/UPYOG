@@ -198,13 +198,11 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />
-          <div style={{ display: "flex", gap: "22px" }}>
-            <CardLabel>{`${t("WT_IMMEDIATE")}`}<span className="astericColor"></span></CardLabel>
-            <CheckBox
-                onChange={setextrachargeHandler}
-                checked={extraCharge}
+           <CheckBox
+              label={t("WT_IMMEDIATE")}
+              onChange={setextrachargeHandler}
+              checked={extraCharge}
             />
-            </div>
         </div>
       </FormStep>
     </React.Fragment>

@@ -22,7 +22,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   };
 
   const applyLocalFilters = () => {
-    if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
+    if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services:defaultSearchParams.services });
     else onFilterChange(_searchParams);
   };
 
