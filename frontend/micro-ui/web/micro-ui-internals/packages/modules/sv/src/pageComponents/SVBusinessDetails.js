@@ -22,9 +22,9 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
 
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || convertToObject(previousData?.vendingActivity || editdata?.vendingActivity) || formData?.businessDetails?.vendingType || "");
-  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || convertToObject(previousData?.vendingZone || editdata?.vendingZone) || "");
+  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || convertToObject(previousData?.vendingZoneValue || editdata?.vendingZone) || "");
   const [location, setlocation] = useState(formData?.businessDetails?.location || "");
-  const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || convertToObject(previousData?.[0]?.vendorLocality || editdata?.[0]?.vendorLocality) || "");
+  const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || convertToObject(previousData?.localityValue || editdata?.localityValue) || "");
   const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea || editdata?.vendingArea || "2.12");
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || previousData?.localAuthorityName || editdata?.localAuthorityName || "");
   const [vendingPayment, setVendingPayment] = useState(formData?.businessDetails?.vendingPayment || convertToObject(previousData?.vendingPayment || editdata?.vendingPayment) || formData?.businessDetails?.vendingPayment || "");
@@ -493,6 +493,8 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
       benificiaryOfSocialSchemes: [],
       applicationCreatedBy: formData?.owner?.applicationCreatedBy,
       locality: vendorLocality?.code,
+      localityValue: "",
+      vendingZoneValue: "",
       vendorPaymentFrequency: vendingPayment?.code,
       enrollmentId: "",
       cartLatitude: 0,
