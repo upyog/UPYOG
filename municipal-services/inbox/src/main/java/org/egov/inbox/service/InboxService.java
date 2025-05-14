@@ -803,6 +803,10 @@ public class InboxService {
                 } else {
                 	//For non- Bill Amendment Inbox search
 			if (!isBusinessServiceWSOrSW) {
+				List<String> filteredBusinessKeys = businessKeys.stream()
+					    .filter(key -> processInstanceMap.containsKey(key) && businessMap.containsKey(key))
+					    .collect(Collectors.toList());
+				businessKeys = filteredBusinessKeys;
 				businessKeys.forEach(businessKey -> {
 					Inbox inbox = new Inbox();
 					inbox.setProcessInstance(processInstanceMap.get(businessKey));
