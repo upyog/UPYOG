@@ -68,7 +68,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [geoLocation, setGeoLocation] = useState(formData?.geoLocation || {});
-  const [ verificationDocuments,  setVerificationDocuments] = useState();
+  const [verificationDocuments, setVerificationDocuments] = useState();
 
   const user = Digit.UserService.getUser().info;
 
@@ -242,7 +242,9 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <Fragment>
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip}>
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip}
+       isDisabled={!grievanceText || !grievanceType || !grievanceSubType}
+      >
         <CardLabel>
           {`${t("PGR_AI_INPUT_GRIEVANCE")}`} <span className="astericColor">*</span>
         </CardLabel>
@@ -250,7 +252,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           <TextInput
             t={t}
             type="text"
-            isMandatory
+            isMandatory={false}
             name="grievance"
             value={grievanceText}
             onChange={(e) => setGrievanceText(e.target.value)}
@@ -283,7 +285,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         <TextInput
           t={t}
           type="text"
-          isMandatory
+          isMandatory={false}
           name="grievanceType"
           value={grievanceType}
           onChange={(e) => setGrievanceType(e.target.value)}
@@ -296,7 +298,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         <TextInput
           t={t}
           type="text"
-          isMandatory
+          isMandatory={false}
           name="grievanceSubType"
           value={grievanceSubType}
           onChange={(e) => setGrievanceSubType(e.target.value)}
@@ -312,7 +314,6 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               t={t}
               value={location}
               onChange={handleLocationChange}
-              onBlur={(e) => !e.target.value && setLocationError(t("REQUIRED_FIELD"))}
               style={{ paddingRight: "30px" }}
             />
             <div style={styles.locationIcon} onClick={handleFetchLocation}>
@@ -327,7 +328,6 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         <TextInput
           t={t}
           type="text"
-          isMandatory
           name="landmark"
           value={addressDetails.landmark || ""}
           onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}

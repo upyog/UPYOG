@@ -11,7 +11,6 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
 
-  console.log("filees", files);
   /**
    * Initializes document states from existing form data
    */
@@ -32,7 +31,6 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   //   onSelect(config.key, documentStep);
   // };
 
-  console.log("uploadedFiles", uploadedFiles);
 
   useEffect(() => {
     setDocumentUploaded(uploadedFiles.filter((file) => file !== null));

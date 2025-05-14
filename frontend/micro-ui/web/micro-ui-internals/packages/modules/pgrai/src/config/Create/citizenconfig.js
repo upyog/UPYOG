@@ -14,7 +14,7 @@ export const citizenConfig = [
         "type": "component",
         "texts": {
           "header":"NEW_GRIEVANCE",
-          "submitBarLabel": "PGR_COMMON_NEXT",
+          "submitBarLabel": "COMMON_BUTTON_SUBMIT",
         },
       },
     ],

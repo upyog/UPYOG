@@ -2,6 +2,7 @@ import { Card, CardSubHeader, Header, Loader, Row, StatusTable, Toast } from "@n
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
+import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
 
 /**
  * Detailed view of a citizen's PGR AI application.
@@ -18,8 +19,8 @@ const PGRApplicationDetails = () => {
     filters: { requestId: acknowledgementIds },
   });
   const serviceWrapper = data?.ServiceWrappers?.[0] || {};
- 
   const service = serviceWrapper?.service || {};
+  const [showToast, setShowToast] = useState(null);
 
   if (isLoading) {
     return <Loader />;
@@ -78,14 +79,29 @@ const PGRApplicationDetails = () => {
           </StatusTable>
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PGR_AI_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("PGR_AI_CITY")} text={service?.address?.city || t("CS_NA")} />
-            <Row className="border-none" label={t("PGR_AI_DISTRICT")} text={service?.address?.district || t("CS_NA")} />
+            <Row className="border-none" label={t("PGR_AI_REGION")} text={service?.address?.region || t("CS_NA")} />
+            <Row className="border-none" label={t("PGR_AI_STATE")} text={service?.address?.state || t("CS_NA")} />
             <Row className="border-none" label={t("PGR_AI_PINCODE")} text={service?.address?.pincode || t("CS_NA")} />
             <Row className="border-none" label={t("PGR_AI_LANDMARK")} text={service?.address?.landmark || t("CS_NA")} />
-            <Row className="border-none" label={t("PGR_AI_LOCALITY")} text={service?.address?.locality?.name || t("CS_NA")} />
-            <Row className="border-none" label={t("PGR_AI_STREET")} text={service?.address?.street || t("CS_NA")} />
-            <Row className="border-none" label={t("PGR_AI_DOOR_NO")} text={service?.address?.doorNo || t("CS_NA")} />
+            <Row className="border-none" label={t("PGR_AI_LOCALITY")} text={service?.address?.locality?.code || t("CS_NA")} />
           </StatusTable>
+
+          <WFApplicationTimeline
+            application={serviceWrapper}
+            id={acknowledgementIds}
+            tenantId={tenantId} 
+            userType="citizen"
+          />
+          {showToast && (
+            <Toast
+              error={showToast.key}
+              label={t(showToast.label)}
+              style={{ bottom: "0px" }}
+              onClose={() => {
+                setShowToast(null);
+              }}
+            />
+          )}
         </Card>
       </div>
     </React.Fragment>

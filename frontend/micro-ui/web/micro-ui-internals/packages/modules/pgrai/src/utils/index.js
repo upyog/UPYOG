@@ -70,8 +70,8 @@ export const DataConvert = (data) => {
       state: data.newGrievance.addressDetails?.state,
     pincode: data.newGrievance.addressDetails?.pincode,
         locality: {
-       code: data.newGrievance.addressDetails?.locality?.code||"dfd",
-            name: data.newGrievance.addressDetails?.locality?.name || data.newGrievance.addressDetails?.locality?.i18nKey || "dfd"
+       code: data.newGrievance.addressDetails?.locality?.code||"JLC476",
+            name: data.newGrievance.addressDetails?.locality?.name || data.newGrievance.addressDetails?.locality?.i18nKey || "JLC476",
           },
           geoLocation: data.newGrievance.geoLocation,
         }

@@ -21,7 +21,6 @@ const rowContainerStyle = {
 };
 
 const BannerPicker = (props) => {
-  console.log("BannerPicker props:", props);
   return (
     <Banner
       message={GetActionMessage(props)}
@@ -50,7 +49,6 @@ const Acknowledgement = ({ data, onSuccess }) => {
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
 
-  console.log("data", data);
   useEffect(() => {
     try {
       data.tenantId = tenantId;
