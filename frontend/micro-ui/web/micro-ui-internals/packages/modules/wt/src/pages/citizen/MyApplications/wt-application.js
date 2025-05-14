@@ -13,6 +13,7 @@ const WTApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("BOOKING_NO")} note={application?.bookingNo} />
       <KeyNote keyValue={t("APPLICANT_NAME")} note={application?.applicantDetail?.name} />
       <KeyNote keyValue={t("MOBILE_NUMBER")} note={t(`${application?.applicantDetail?.mobileNumber}`)} />
+      <KeyNote keyValue={t("LOCALITY")} note={t(`${application?.localityCode}`)} />
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
       <div>
       {bookingCode==="WT" &&(
