@@ -141,7 +141,8 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
         log.info("Flattening incoming request took: " + (endTime - startTime) + " ms");
         return finalDocumentsToBeIndexed;
     }
- @Override
+    
+    @Override
     public List<JsonNode> createFlattenedIndexRequestForCommon(Data ingestData) {
         Long startTime = System.currentTimeMillis();
         List<JsonNode> finalDocumentsToBeIndexed = new ArrayList<>();
@@ -220,6 +221,7 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
         log.info("Flattening incoming request took: " + (endTime - startTime) + " ms");
         return finalDocumentsToBeIndexed;
     }
+
 
     @Override
     public List<String> createFlattenedMasterDataRequest(MasterData masterData) {

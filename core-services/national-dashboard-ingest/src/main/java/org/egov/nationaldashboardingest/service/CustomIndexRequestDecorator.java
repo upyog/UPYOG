@@ -10,5 +10,6 @@ import java.util.List;
 public interface CustomIndexRequestDecorator {
     List<JsonNode> createFlattenedIndexRequest(Data ingestData);
 	List<JsonNode> createFlattenedIndexRequestForCommon(Data ingestData);
+
     List<String> createFlattenedMasterDataRequest(MasterData masterData);
 }
