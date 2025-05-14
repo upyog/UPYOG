@@ -179,7 +179,8 @@ const SvApplicationDetails = () => {
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_VENDOR_BUSINESS_DETAILS")}</CardSubHeader>
           <StatusTable>
-            <Row className="border-none" label={t("SV_VENDING_ZONES")} text={streetVendingDetails?.vendingZone || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_VENDING_ZONES")} text={streetVendingDetails?.vendingZoneValue || t("CS_NA")} />
+            <Row className="border-none" label={t("SV_VENDING_LOCALITY")} text={streetVendingDetails?.localityValue || t("CS_NA")} />
             <Row className="border-none" label={t("SV_VENDING_TYPE")} text={streetVendingDetails?.vendingActivity || t("CS_NA")} />
             {streetVendingDetails?.vendingActivity === "STATIONARY" && (
               <Row className="border-none" label={t("SV_AREA_REQUIRED")} text={streetVendingDetails?.vendingArea || t("CS_NA")} />)}

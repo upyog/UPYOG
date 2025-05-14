@@ -1,8 +1,9 @@
 import { Loader, Modal, FormComposer, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useState, useEffect, act } from "react";
+import React, { useState, useEffect } from "react";
 import { configSVApproverApplication } from "../config";
 import { useHistory } from "react-router-dom";
 import EXIF from "exif-js";
+import { getOpenStreetMapUrl } from "../../../../libraries/src/services/atoms/urls";
 
 /* This component, ActionModal, is responsible for displaying a modal dialog 
  that allows users to submit actions related to a specific application. 
@@ -32,7 +33,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
+const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode, vending_Zone, UserVendingZone, UserVendingZoneCode }) => {
   const history = useHistory();
   const user = Digit.UserService.getUser().info;
   const selectApprover = user?.roles
@@ -59,38 +60,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [geoLocationData, setGeoLocationData] = useState();
   const [vendingZones, setvendingZones] = useState();
 
-  
-
-  
-  // const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
-  //   {
-  //     select: (data) => {
-  //       const formattedData = data?.["StreetVending"]?.["VendingZones"]
-  //       return formattedData;
-  //     },
-  //   });
-
-  // let vending_Zone = [];
-  // vendingZone && vendingZone.map((zone) => {
-  //   vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
-  // })
-  const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
-    applicationData?.locality,
-    "vendingzones",
-    {
-      enabled: true,
-    },
-    t
-  );
-
-  let vending_Zone = [];
-  fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
-    vending_Zone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
-  })
-
-  const vz = vending_Zone?.filter((zone) => zone?.code === applicationData?.vendingZone);
-  const UserVendingZone = vz[0]?.value;
-
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
@@ -109,9 +78,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
   const fetchAddress = async (lat, lng) => {
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
-      );
+      const response = await fetch(getOpenStreetMapUrl(lat, lng));
 
       if (!response.ok) throw new Error("Failed to fetch address");
 
@@ -138,19 +105,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     }
   }
 
-  useEffect(() => {
-    if (file) {
-      extractGeoLocation(file).then(({ latitude, longitude }) => {
-        if (!latitude || !longitude) {
-          console.log("No geolocation data found in the image.");
-        }
-        else {
-          fetchAddress(latitude, longitude);
-        }
-      });
-    }
-  }, [file]);
-
   function extractGeoLocation(file) {
     return new Promise((resolve) => {
       EXIF.getData(file, function () {
@@ -168,11 +122,20 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }
 
 
-
   useEffect(() => {
     (async () => {
       setError(null);
       if (file) {
+
+        extractGeoLocation(file).then(({ latitude, longitude }) => {
+          if (!latitude || !longitude) {
+            console.log("No geolocation data found in the image.");
+          }
+          else {
+            fetchAddress(latitude, longitude);
+          }
+        });
+
         if (file.size >= 5242880) {
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
         } else {
@@ -209,7 +172,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       streetVendingDetail:
       {
         ...applicationData,
-        vendingZone: vendingZones?.value || UserVendingZone,
+        vendingZone: vendingZones?.code || UserVendingZoneCode,
         workflow,
       },
 
@@ -239,6 +202,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       })
     );
   }, [action, approvers, uploadedFile]);
+
 
   return action && config.form ? (
     <Modal

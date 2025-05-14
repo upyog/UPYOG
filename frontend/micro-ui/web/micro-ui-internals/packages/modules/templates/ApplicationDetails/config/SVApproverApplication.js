@@ -4,7 +4,7 @@
  * 
  */
 import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 
 export const configSVApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, approvers, selectedApprover, setSelectedApprover, isUploading, geoLocationData, vending_Zone, vendingZones, setvendingZones, UserVendingZone, selectApprover }) => {
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;

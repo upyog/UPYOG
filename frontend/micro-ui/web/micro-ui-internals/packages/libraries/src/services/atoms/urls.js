@@ -326,3 +326,7 @@ digiLocker:{
 };
 
 export default Urls;
+
+export const getOpenStreetMapUrl = (lat, lng) => {
+  return `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+}
