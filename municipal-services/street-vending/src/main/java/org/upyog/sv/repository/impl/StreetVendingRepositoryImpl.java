@@ -228,4 +228,24 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 		   return jdbcTemplate.query(query, new Object[] { applicationNo, status.toString() }, new VendorPaymentScheduleRowMapper());
 	}
 	
+	/**
+	 * Checks if a scheduled payment is pending for the given application number and status.
+	 *
+	 * @param applicationNo the application number of the vendor
+	 * @param status the payment schedule status to check against
+	 * @return {@code true} if there is at least one pending scheduled payment for the given application,
+	 *         {@code false} otherwise
+	 */
+	
+	@Override
+	public boolean isSchedulePaymentPending(String applicationNo, PaymentScheduleStatus status) {
+	    String query = StreetVendingQueryBuilder.VENDOR_PAYMENT_SCHEDULE;
+
+	    List<Object> result = jdbcTemplate.query(query, new Object[]{applicationNo, status.toString()},
+	            (rs, rowNum) -> new Object());
+
+	    return !result.isEmpty();
+	}
+
+	
 }

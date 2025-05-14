@@ -27,6 +27,7 @@ import org.upyog.sv.util.MdmsUtil;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.validator.StreetVendingValidator;
 import org.upyog.sv.web.models.BankDetail;
+import org.upyog.sv.web.models.PaymentScheduleStatus;
 import org.upyog.sv.web.models.RenewalStatus;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
@@ -183,6 +184,15 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		// Handle encryption and update
 		StreetVendingDetail originalDetail = copyFieldsToBeEncrypted(vendingRequest.getStreetVendingDetail());
 		encryptionService.encryptObject(vendingRequest);
+		
+		//Handle vendorPaymentFrequency update
+		boolean isSchedulePaymentPending = streetVendingRepository.isSchedulePaymentPending(
+			    detail.getApplicationNo(), PaymentScheduleStatus.PENDING_PAYMENT);
+		
+		if (!isSchedulePaymentPending) {
+			detail.setVendorPaymentFrequency(detail.getVendorPaymentFrequency());
+		}
+		
 		streetVendingRepository.update(vendingRequest);
 		
 		// Restore original unencrypted fields for response
