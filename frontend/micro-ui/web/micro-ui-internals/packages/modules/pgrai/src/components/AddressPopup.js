@@ -37,7 +37,6 @@ const AddressPopup = ({ t, isOpen, onClose, onSubmit }) => {
   });
 
 
-  console.log("formData", formData);
   return (
     <Modal
       headerBarMain={<h1 className="heading-m">{t("PGR_AI_FILL_ADDRESS_DETAILS")}</h1>}
