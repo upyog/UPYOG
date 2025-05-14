@@ -94,6 +94,14 @@ public class Scheduler {
 		pgService.transferAmount(requestInfo);
 		log.info("transferAmount CRON JOB Ends");
 	}
+	
+	@Scheduled(cron = "${cron.job.default.pg.settlement.status.update}", zone = "IST")
+	public void settlementStatusUpdate() {
+		log.info("settlementStatusUpdate CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		pgService.settlementStatusUpdate(requestInfo);
+		log.info("settlementStatusUpdate CRON JOB Ends");
+	}
 
 	@Scheduled(cron = "${cron.job.default.adrvcanopy.site.booking.change.site.status}", zone = "IST")
 	public void changeSiteStatus() {
