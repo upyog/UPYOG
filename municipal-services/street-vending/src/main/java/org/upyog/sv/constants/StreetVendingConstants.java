@@ -97,6 +97,8 @@ public class StreetVendingConstants {
 	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "SVApplicantDetailDecryptionDisabled";
 
 	public static final String NOTIFICATION_APPLICATIONEXPIRED = "sv.en.counter.applicationexpired";
+	
+	public static final String NOTIFICATION_SCHEDULEPAYMENT = "sv.en.schedule.payment";
 
 	public static final String ACTION_STATUS_APPLY = "APPLY";
 
@@ -159,6 +161,8 @@ public class StreetVendingConstants {
 	public static final String TENANTBOUNDARY = "TenantBoundary";
 	
 	public static final String BOUNDARY = "boundary";
+	
+	public static final String ACTION_STATUS_SCHEDULE_PAYMENT = "SCHEDULE_PAYMENT_PENDING";
 	
     
 }

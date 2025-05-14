@@ -2,9 +2,7 @@ package org.upyog.sv.service;
 
 import static org.upyog.sv.web.models.RenewalStatus.RENEWED;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +11,6 @@ import java.util.List;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.config.StreetVendingConfiguration;
 import org.upyog.sv.constants.StreetVendingConstants;
@@ -28,6 +25,7 @@ import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
 import org.upyog.sv.web.models.VendorPaymentSchedule;
 import org.upyog.sv.web.models.VendorPaymentScheduleRequest;
+import org.upyog.sv.web.models.Workflow;
 import org.upyog.sv.web.models.workflow.ProcessInstance;
 import org.upyog.sv.web.models.workflow.ProcessInstanceRequest;
 import org.upyog.sv.web.models.workflow.ProcessInstanceResponse;
@@ -70,6 +68,9 @@ public class PaymentService {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private StreetyVendingNotificationService notificationService;
 
 	/**
 	 *
@@ -436,6 +437,13 @@ public class PaymentService {
 
 	            schedule.setStatus(PaymentScheduleStatus.PENDING_PAYMENT);
 	            updateSchedule(schedule);
+	            
+	            if (detail.getWorkflow() == null) {
+	                detail.setWorkflow(new Workflow()); 
+	            }
+	            detail.getWorkflow().setAction(StreetVendingConstants.ACTION_STATUS_SCHEDULE_PAYMENT);
+
+	            notificationService.process(streetVendingRequest, null);
 
 	            if (!validityDate.isBefore(nextDueDate)) {
 	                VendorPaymentSchedule newSchedule = VendorPaymentSchedule.builder()
