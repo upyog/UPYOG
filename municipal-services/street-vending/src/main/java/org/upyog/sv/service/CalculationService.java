@@ -2,6 +2,7 @@ package org.upyog.sv.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.tracer.model.CustomException;
@@ -102,7 +103,7 @@ public class CalculationService {
 	    } else if (StreetVendingConstants.QUATERLY.equalsIgnoreCase(vendorPaymentfrequency)) {
 	        return  StreetVendingConstants.SVQUATERLYYFEE;
 	    } else {
-	        return StreetVendingConstants.SVQUATERLYYFEE;
+	        return StreetVendingConstants.SVONETIMEFEE;
 	    }
 	}
 
