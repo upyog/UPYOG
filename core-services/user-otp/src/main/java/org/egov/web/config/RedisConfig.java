@@ -16,7 +16,7 @@ public class RedisConfig {
 	
 	@Bean
 	public JedisConnectionFactory connectionFactory() {
-		return new JedisConnectionFactory(new JedisShardInfo(host));
+		return new JedisConnectionFactory(new JedisShardInfo("redis.backbone"));
 	}
 
 	@Bean
