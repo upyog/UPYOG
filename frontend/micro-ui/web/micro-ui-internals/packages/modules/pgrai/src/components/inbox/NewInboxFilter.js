@@ -1,196 +1,140 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Dropdown, RadioButtons, ActionBar, RemoveableTag, ApplyFilterBar, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState } from "react";
+import { Dropdown, CloseSvg, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import Status from "./Status";
-
-let pgrQuery = {};
-let wfQuery = {};
+import _ from "lodash";
 
 /**
  * Filter Component
- *
- * This component allows users to filter complaints based on various criteria such as assignee, complaint type,
- * locality, and application status. It manages and applies both PGR-AI and workflow-related filters, updating the
- * query parameters accordingly. Supports both desktop and mobile views with the ability to clear all filters or apply them.
+ * 
+ * This component renders a set of filter options (Assignee, Sub complaint type, Locality) for filtering application data.
+ * It's used in the PGR AI module and allows users to apply and clear filters.
+ * The component handles syncing local filter state with parent state via callbacks.
  */
 
-const Filter = (props) => {
-  let { uuid } = Digit.UserService.getUser().info;
-  const { searchParams } = props;
+
+const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, moduleCode, ...props }) => {
   const { t } = useTranslation();
-  const isAssignedToMe = searchParams?.filters?.wfFilters?.assignee && searchParams?.filters?.wfFilters?.assignee[0]?.code ? true : false;
-
-  const assignedToOptions = useMemo(
-    () => [
-      { code: "ASSIGNED_TO_ME", name: t("ASSIGNED_TO_ME") },
-      { code: "ASSIGNED_TO_ALL", name: t("ASSIGNED_TO_ALL") },
-    ],
-    [t]
-  );
-
-  const [selectAssigned, setSelectedAssigned] = useState(isAssignedToMe ? assignedToOptions[0] : assignedToOptions[1]);
-
-  useEffect(() => setSelectedAssigned(isAssignedToMe ? assignedToOptions[0] : assignedToOptions[1]), [t]);
-
-  const [selectedComplaintType, setSelectedComplaintType] = useState(null);
-  const [selectedLocality, setSelectedLocality] = useState(null);
-  const [pgrfilters, setPgrFilters] = useState(
-    searchParams?.filters?.pgrfilters || {
-      serviceCode: [],
-      locality: [],
-      applicationStatus: [],
-    }
-  );
-
-  const [wfFilters, setWfFilters] = useState(
-    searchParams?.filters?.wfFilters || {
-      assignee: [{ code: uuid }],
-    }
-  );
-
+  let { uuid } = Digit.UserService.getUser().info;
+  const [_searchParams, setSearchParams] = useState(() => ({ ...searchParams, services: [] }));
+  const [app_status, setAppStatus] = useState()
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  // let localities = Digit.Hooks.pgr.useLocalities({ city: tenantId });
+  const [selectAssigned, setSelectedAssigned] = useState();
+  const [selectedLocality, setSelectedLocality] = useState();
   const { data: localities } = Digit.Hooks.useBoundaryLocalities(tenantId, "admin", {}, t);
-  let serviceDefs = Digit.Hooks.pgr.useServiceDefs(tenantId, "PGR");
+  const serviceDefs = Digit.Hooks.pgr.useServiceDefs(tenantId, "PGR");
+  const [selectedComplaintType, setSelectedComplaintType] = useState();
 
-  const onRadioChange = (value) => {
-    setSelectedAssigned(value);
-    uuid = value.code === "ASSIGNED_TO_ME" ? uuid : "";
-    setWfFilters({ ...wfFilters, assignee: [{ code: uuid }] });
+
+
+    const assignedToOptions =  [
+      { code: "ASSIGNED_TO_ME", name: t("ASSIGNED_TO_ME"), i18nKey:"ASSIGNED_TO_ME" },
+      { code: "ASSIGNED_TO_ALL", name: t("ASSIGNED_TO_ALL"), i18nKey:"ASSIGNED_TO_ALL" },
+    ];
+
+  const ApplicationTypeMenu = [
+    {
+      label: "PGR_AI_MODULE",
+      value: "PGRAI",
+    },
+  ];
+
+  let StatusFields = [
+    {
+      i18nKey: "PENDINGFORASSIGNMENT"
+    },
+    {
+      i18nKey: "PENDINGFORREASSIGNMENT"
+    },
+    {
+      i18nKey: "PENDINGATLME"
+    },
+    {
+      i18nKey: "RESOLVED"
+    },
+    {
+      i18nKey: "REJECTED"
+    },
+    {
+      i18nKey: "CLOSEDAFTERREJECTION"
+    },
+    {
+      i18nKey: "CLOSEDAFTERRESOLUTION"
+    },
+  ];
+
+
+ /**
+   * Updates local filter state and removes any keys listed in `filterParam.delete`
+   */
+  const localParamChange = (filterParam) => {
+    let keys_to_delete = filterParam.delete;
+    let _new = { ..._searchParams, ...filterParam };
+    
+    // Remove keys that should be deleted
+    if (keys_to_delete) keys_to_delete.forEach((key) => delete _new[key]);
+    delete filterParam.delete;
+    setSearchParams({ ..._new });
   };
 
+  /**
+   * Triggers the parent filter handler with the updated filter state
+   */
+  const applyFilters = () => {
+    if (_searchParams.services.length === 0) onFilterChange({ ..._searchParams, services: ApplicationTypeMenu.map((e) => e.value) });
+    else 
+    onFilterChange(_searchParams);
+  };
+
+  /**
+   * Clears all selected filters and resets to default values
+   */
+  const clearAll = () => {
+    setSearchParams({ ...defaultSearchParams, services: [] });
+    onFilterChange({ ...defaultSearchParams });
+    setAppStatus(null)
+    setSelectedAssigned(null)
+    setSelectedComplaintType(null)
+    setSelectedLocality(null)
+  };
+
+  // Sync selected filters to local param state
   useEffect(() => {
-    let count = 0;
-    for (const property in pgrfilters) {
-      if (Array.isArray(pgrfilters[property])) {
-        count += pgrfilters[property].length;
-        let params = pgrfilters[property].map((prop) => prop.code).join();
-        if (params) {
-          pgrQuery[property] = params;
-        }
-        else{
-          delete pgrQuery?.[property]
-        }
-      }
+    if(selectedLocality) localParamChange({ locality: selectedLocality?.code || "" });
+    if(selectAssigned?.code==="ASSIGNED_TO_ME") localParamChange({ assignee: uuid });
+    if(app_status) localParamChange({ status: app_status?.i18nKey || "" });
+    if(selectedLocality) localParamChange({ locality: selectedLocality?.code || "" });
+    if (selectedComplaintType) {
+      localParamChange({ serviceCode: selectedComplaintType.serviceCode });
     }
-    for (const property in wfFilters) {
-      if (Array.isArray(wfFilters[property])) {
-        let params = wfFilters[property].map((prop) => prop.code).join();
-        if (params) {
-          wfQuery[property] = params;
-        } else {
-          wfQuery = {};
-        }
-      }
-    }
-    count += wfFilters?.assignee?.length || 0;
-
-    if (props.type !== "mobile") {
-      handleFilterSubmit();
-    }
-
-    Digit.inboxFilterCount = count;
-  }, [pgrfilters, wfFilters]);
-
-  const ifExists = (list, key) => {
-    return list.filter((object) => object.code === key.code).length;
-  };
-  function applyFiltersAndClose() {
-    handleFilterSubmit();
-    props.onClose();
-  }
-  function complaintType(_type) {
-    const type = { i18nKey: t("SERVICEDEFS." + _type.serviceCode.toUpperCase()), code: _type.serviceCode };
-    if (!ifExists(pgrfilters.serviceCode, type)) {
-      setPgrFilters({ ...pgrfilters, serviceCode: [...pgrfilters.serviceCode, type] });
-    }
-  }
-
-  function onSelectLocality(value, type) {
-    if (!ifExists(pgrfilters.locality, value)) {
-      setPgrFilters({ ...pgrfilters, locality: [...pgrfilters.locality, value] });
-    }
-  }
-
-  useEffect(() => {
-    if (pgrfilters.serviceCode.length > 1) {
-      setSelectedComplaintType({ i18nKey: `${pgrfilters.serviceCode.length} selected` });
-    } else {
-      setSelectedComplaintType(pgrfilters.serviceCode[0]);
-    }
-  }, [pgrfilters.serviceCode]);
-
-  useEffect(() => {
-    if (pgrfilters.locality.length > 1) {
-      setSelectedLocality({ name: `${pgrfilters.locality.length} selected` });
-    } else {
-      setSelectedLocality(pgrfilters.locality[0]);
-    }
-  }, [pgrfilters.locality]);
-
-  const onRemove = (index, key) => {
-    let afterRemove = pgrfilters[key].filter((value, i) => {
-      return i !== index;
-    });
-    setPgrFilters({ ...pgrfilters, [key]: afterRemove });
-  };
-
-  const handleAssignmentChange = (e, type) => {
-    if (e.target.checked) {
-      setPgrFilters({ ...pgrfilters, applicationStatus: [...pgrfilters.applicationStatus, { code: type.code }] });
-    } else {
-      const filteredStatus = pgrfilters.applicationStatus.filter((value) => {
-        return value.code !== type.code;
-      });
-      setPgrFilters({ ...pgrfilters, applicationStatus: filteredStatus });
-    }
-  };
-
-  function clearAll() {
-    let pgrReset = { serviceCode: [], locality: [], applicationStatus: [] };
-    let wfRest = { assigned: [{ code: [] }] };
-    setPgrFilters(pgrReset);
-    setWfFilters(wfRest);
-    pgrQuery = {};
-    wfQuery = {};
-    setSelectedAssigned("");
-    setSelectedComplaintType(null);
-    setSelectedLocality(null);
-  }
-
-  const handleFilterSubmit = () => {
-    props.onFilterChange({ pgrQuery: pgrQuery, wfQuery: wfQuery, wfFilters, pgrfilters });
-  };
-
-  const GetSelectOptions = (lable, options, selected = null, select, optionKey, onRemove, key) => {
-    selected = selected || { [optionKey]: " ", code: "" };
-    return (
-      <div>
-        <div className="filter-label">{lable}</div>
-        {<Dropdown option={options} selected={selected} select={(value) => select(value, key)} optionKey={optionKey} />}
-
-        <div className="tag-container">
-          {pgrfilters[key].length > 0 &&
-            pgrfilters[key].map((value, index) => {
-              return <RemoveableTag key={index} text={`${value[optionKey].slice(0, 22)} ...`} onClick={() => onRemove(index, key)} />;
-            })}
-        </div>
-      </div>
-    );
-  };
+  }, [selectedLocality, selectAssigned, app_status, selectedComplaintType])
 
   return (
     <React.Fragment>
       <div className="filter">
         <div className="filter-card">
-          <div className="heading">
-            <div className="filter-label">{t("ES_COMMON_FILTER_BY")}:</div>
+          <div className="heading" style={{ alignItems: "center" }}>
+            <div className="filter-label" style={{ display: "flex", alignItems: "center" }}>
+              <span>
+                <svg width="17" height="17" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M0.66666 2.48016C3.35999 5.9335 8.33333 12.3335 8.33333 12.3335V20.3335C8.33333 21.0668 8.93333 21.6668 9.66666 21.6668H12.3333C13.0667 21.6668 13.6667 21.0668 13.6667 20.3335V12.3335C13.6667 12.3335 18.6267 5.9335 21.32 2.48016C22 1.60016 21.3733 0.333496 20.2667 0.333496H1.71999C0.613327 0.333496 -0.01334 1.60016 0.66666 2.48016Z"
+                    fill="#505A5F"
+                  />
+                </svg>
+              </span>
+              <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{t("ES_COMMON_FILTER_BY")}:</span>
+            </div>
             <div className="clearAll" onClick={clearAll}>
               {t("ES_COMMON_CLEAR_ALL")}
             </div>
             {props.type === "desktop" && (
-              <span className="clear-search" onClick={clearAll}>
-                {t("ES_COMMON_CLEAR_ALL")}
+              <span className="clear-search" onClick={clearAll} style={{ border: "1px solid #e0e0e0", padding: "6px" }}>
+                <svg width="17" height="17" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8 5V8L12 4L8 0V3C3.58 3 0 6.58 0 11C0 12.57 0.46 14.03 1.24 15.26L2.7 13.8C2.25 12.97 2 12.01 2 11C2 7.69 4.69 5 8 5ZM14.76 6.74L13.3 8.2C13.74 9.04 14 9.99 14 11C14 14.31 11.31 17 8 17V14L4 18L8 22V19C12.42 19 16 15.42 16 11C16 9.43 15.54 7.97 14.76 6.74Z"
+                    fill="#505A5F"
+                  />
+                </svg>
               </span>
             )}
             {props.type === "mobile" && (
@@ -200,35 +144,83 @@ const Filter = (props) => {
             )}
           </div>
           <div>
-            <RadioButtons onSelect={onRadioChange} selectedOption={selectAssigned} optionsKey="name" options={assignedToOptions} />
-            <div>
-              {GetSelectOptions(
-                t("CS_COMPLAINT_DETAILS_COMPLAINT_SUBTYPE"),
-                serviceDefs,
-                selectedComplaintType,
-                complaintType,
-                "i18nKey",
-                onRemove,
-                "serviceCode"
-              )}
+
+          <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("PGR_AI_ASSIGNES")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={selectAssigned}
+                  select={setSelectedAssigned}
+                  option={assignedToOptions}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+
+              </div>
+
             </div>
-            <div>{GetSelectOptions(t("CS_PGR_LOCALITY"), localities, selectedLocality, onSelectLocality, "i18nkey", onRemove, "locality")}</div>
-            {<Status complaints={props.complaints} onAssignmentChange={handleAssignmentChange} pgrfilters={pgrfilters} />}
+
+
+            <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("PGR_AI_STATUS")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={app_status}
+                  select={setAppStatus}
+                  option={StatusFields}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("CS_PGR_LOCALITY")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={selectedLocality}
+                  select={setSelectedLocality}
+                  option={localities}
+                  optionKey="i18nkey"
+                  t={t}
+                  placeholder={"Select"}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="filter-label" style={{ fontWeight: "normal" }}>
+                {t("CS_COMPLAINT_DETAILS_COMPLAINT_SUBTYPE")}:
+              </div>
+              <div>
+                <Dropdown
+                  selected={selectedComplaintType}
+                  select={setSelectedComplaintType}
+                  option={serviceDefs}
+                  optionKey="i18nKey"
+                  t={t}
+                  placeholder="Select"
+                />
+              </div>
+            </div>
+            <div>
+            </div>
+            <div>
+              <SubmitBar onSubmit={() => applyFilters()} label={t("ES_COMMON_APPLY")} />
+            </div>
           </div>
         </div>
       </div>
-      <ActionBar>
-        {props.type === "mobile" && (
-          <ApplyFilterBar
-            labelLink={t("ES_COMMON_CLEAR_ALL")}
-            buttonLink={t("ES_COMMON_FILTER")}
-            onClear={clearAll}
-            onSubmit={applyFiltersAndClose}
-          />
-        )}
-      </ActionBar>
     </React.Fragment>
   );
 };
 
 export default Filter;
+

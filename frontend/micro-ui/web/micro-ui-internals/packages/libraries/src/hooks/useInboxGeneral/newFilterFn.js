@@ -394,8 +394,7 @@ export const filterFunctions = {
         const searchFilters = {};
         const workflowFilters = {};
     
-        const { serviceRequestId, services, mobileNumber, limit, offset, sortBy, sortOrder, applicationStatus, status } = filtersArg || {};
-
+        const { serviceRequestId, services, mobileNumber, limit, offset, sortOrder, applicationStatus, status, assignee , locality, serviceCode} = filtersArg || {};
         if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
           workflowFilters.status = applicationStatus.map((status) => status.uuid);
           if (applicationStatus?.some((e) => e.nonActionableRole)) {
@@ -408,15 +407,20 @@ export const filterFunctions = {
             searchFilters.fetchNonActionableRecords = true;
           }
         }
-
-        if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
-          workflowFilters.assignee = uuid;
+        if(assignee && assignee !==undefined){
+          searchFilters.assignee = assignee;
         }
         if (mobileNumber) {
           searchFilters.mobileNumber = mobileNumber;
         }
         if (status) {
-          searchFilters.status = status;
+          searchFilters.applicationStatus = status;
+        }
+        if (locality) {
+          searchFilters.locality = locality;
+        }
+        if (serviceCode) {
+          searchFilters.serviceCode = serviceCode;
         }
         if (serviceRequestId) {
           searchFilters.serviceRequestId = serviceRequestId;
@@ -425,7 +429,6 @@ export const filterFunctions = {
           workflowFilters.businessService = services;
         }
         searchFilters["isInboxSearch"] = true;
-        searchFilters["creationReason"] = [""];
         workflowFilters["moduleName"] = "pgr-ai-services";
         
         return { searchFilters, workflowFilters, limit, offset, sortOrder };

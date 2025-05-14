@@ -10,9 +10,6 @@ import Inbox from "./Inbox";
  */
 const EmployeeApp = () => {
   const { path, url, ...match } = useRouteMatch();
-  const { t } = useTranslation();
-  const location = useLocation();
-  const isMobile = false
   const inboxInitialState = {
     searchParams: {
       uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
@@ -22,11 +19,13 @@ const EmployeeApp = () => {
 
  
   const ComplaintDetails = Digit?.ComponentRegistryService?.getComponent("PGRAIApplicationDetails");
+  const PGRAICreate = Digit?.ComponentRegistryService?.getComponent("PGRAICreate");
   return (
-    <span className={"pgr-ai-citizen"}style={{width:"100%"}}>
+    <span className={"pgr-ai-citizen"}style={{width:"50%"}}>
       <Switch>
         <AppContainer>
           <BackButton style={{marginTop:"15px"}}>Back</BackButton>
+          <PrivateRoute path={`${path}/complaint/create`} component={PGRAICreate} />
           <PrivateRoute
             path={`/digit-ui/employee/pgrai/inbox`}
             component={() => (
