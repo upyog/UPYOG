@@ -23,9 +23,11 @@ public class StreetVendingConstants {
 	public static final String COMMON_MASTERS_MODULE = "common-masters";
 
 	// Street vending master data
-	public static final String VENDIING_ZONES = "VendingZones";
+	public static final String VENDING_ZONES = "VendingZones";
 	public static final String VENDING_ACTIVITY_TYPE = "VendingActivityType";
 	public static final String DOCUMENTS = "Documents";
+	public static final String VENDOR_LOCALITY = "VendorLocality";
+	
 
 	// For demand generation constants
 	public static final String BILLING_SERVICE = "BillingService";
@@ -149,6 +151,14 @@ public class StreetVendingConstants {
 	public static final String TAXHEADMONTHLY = "SV_STREET_VENDING_MONTHLY_FEE";
 	
 	public static final String TAXHEADQUATERLY = "SV_STREET_VENDING_QUATERLY_FEE";
+	
+	public static final String CODE = "code";
+	
+	public static final String NAME = "name";
+	
+	public static final String TENANTBOUNDARY = "TenantBoundary";
+	
+	public static final String BOUNDARY = "boundary";
 	
     
 }

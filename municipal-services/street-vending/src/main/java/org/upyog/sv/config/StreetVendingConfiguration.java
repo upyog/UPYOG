@@ -235,4 +235,13 @@ public class StreetVendingConfiguration {
  	@Value("${persister.update.payment-schedule.topic}")
 	private String streetVendingPaymentScheduleUpdateTopic;
  	
+ 	@Value("${egov.location.host}")
+	private String locationHost;
+ 	
+ 	@Value("${egov.location.path}")
+	private String locationPath;
+ 	
+ 	@Value("${egov.location.heirarchy}")
+	private String locationHierarchyTypeCode;
+ 	
 }

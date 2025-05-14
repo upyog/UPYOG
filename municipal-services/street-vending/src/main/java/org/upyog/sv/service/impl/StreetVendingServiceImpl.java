@@ -19,6 +19,7 @@ import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.service.DemandService;
 import org.upyog.sv.service.EnrichmentService;
+import org.upyog.sv.service.MdmsCacheService;
 import org.upyog.sv.service.StreetVendingEncryptionService;
 import org.upyog.sv.service.StreetVendingService;
 import org.upyog.sv.service.WorkflowService;
@@ -61,6 +62,9 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 
 	@Autowired
 	private StreetVendingEncryptionService encryptionService;
+	
+	@Autowired
+	private MdmsCacheService mdmsCache;
 
 	@Override
 	public StreetVendingDetail createStreetVendingApplication(StreetVendingRequest vendingRequest) {
@@ -109,25 +113,46 @@ public class StreetVendingServiceImpl implements StreetVendingService {
 		return streetVendingDetail;
 	}
 
-	@Override
-	public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
-			StreetVendingSearchCriteria streetVendingSearchCriteria) {
+		@Override
+		public List<StreetVendingDetail> getStreetVendingDetails(RequestInfo requestInfo,
+				StreetVendingSearchCriteria streetVendingSearchCriteria) {
+	
+			if (StringUtils.isNotBlank(streetVendingSearchCriteria.getMobileNumber())) {
+				String encryptedMobileNumber = encryptMobileNumber(streetVendingSearchCriteria.getMobileNumber(),
+						requestInfo);
+				streetVendingSearchCriteria.setMobileNumber(encryptedMobileNumber);
+	
+				log.info("Updated search criteria with encrypted mobile number: {}", streetVendingSearchCriteria);
+			}
+			
+			List<StreetVendingDetail> applications = streetVendingRepository
+					.getStreetVendingApplications(streetVendingSearchCriteria);
+			
+			if (CollectionUtils.isEmpty(applications)) {
+				return new ArrayList<>();
+			}
+			applications = encryptionService.decryptObject(applications, requestInfo);
+			
+			 for (StreetVendingDetail detail : applications) {
+			        String tenantId = detail.getLocality();
 
-		if (StringUtils.isNotBlank(streetVendingSearchCriteria.getMobileNumber())) {
-			String encryptedMobileNumber = encryptMobileNumber(streetVendingSearchCriteria.getMobileNumber(),
-					requestInfo);
-			streetVendingSearchCriteria.setMobileNumber(encryptedMobileNumber);
+			        // Set locality name
+			        String localityCode = detail.getLocality();
+			        if (StringUtils.isNotBlank(tenantId) && StringUtils.isNotBlank(localityCode)) {
+			            String localityName = mdmsCache.getLocalityName(tenantId, localityCode, requestInfo);
+			            detail.setLocalityValue(localityName);
+			        }
 
-			log.info("Updated search criteria with encrypted mobile number: {}", streetVendingSearchCriteria);
+			        // Set vending zone name
+			        String vendingZoneCode = detail.getVendingZone();
+			        if (StringUtils.isNotBlank(tenantId) && StringUtils.isNotBlank(vendingZoneCode)) {
+			            String vendingZoneName = mdmsCache.getVendingZoneName(tenantId, vendingZoneCode, requestInfo);
+			            detail.setVendingZoneValue(vendingZoneName);
+			        }
+			    }
+
+			return applications;
 		}
-		List<StreetVendingDetail> applications = streetVendingRepository
-				.getStreetVendingApplications(streetVendingSearchCriteria);
-		if (CollectionUtils.isEmpty(applications)) {
-			return new ArrayList<>();
-		}
-		applications = encryptionService.decryptObject(applications, requestInfo);
-		return applications;
-	}
 
 	@Override
 	public StreetVendingDetail updateStreetVendingApplication(StreetVendingRequest vendingRequest) {
