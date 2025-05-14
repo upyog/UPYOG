@@ -9,6 +9,7 @@ import org.egov.wf.web.models.Escalation;
 import org.egov.wf.web.models.EscalationSearchCriteria;
 import org.egov.wf.web.models.ProcessInstance;
 import org.egov.wf.web.models.ProcessInstanceRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class EscalationService {
 
 
@@ -90,6 +92,8 @@ public class EscalationService {
             List<String> businessIds = escalationRepository.getBusinessIds(criteria);
             Integer numberOfBusinessIds = businessIds.size();
             Integer batchSize = config.getEscalationBatchSize();
+            log.info("Number of Business Ids for "+ escalation.getModuleName());
+            log.info(" are ::: " + numberOfBusinessIds);
 
             for(int i = 0; i < numberOfBusinessIds; i = i + batchSize){
 

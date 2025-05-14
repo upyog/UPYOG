@@ -29,11 +29,11 @@ public class EmailNotificationListener {
 
     @KafkaListener(topics = "${kafka.topics.notification.mail.name}")
     public void listen(final HashMap<String, Object> record) {
-       // log.info("Entering mail topic");
+        log.info("Entering mail topic");
     	EmailRequest emailRequest = objectMapper.convertValue(record, EmailRequest.class);
         emailService.sendEmail(emailRequest.getEmail());
-       //log.info("Printing Records");
-       //log.info("Recors is ================================"+record);
+       log.info("Printing Records");
+       log.info("Recors is ================================"+record);
 
         
     }
