@@ -494,9 +494,13 @@ public class NotificationUtil {
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_APPLICATIONEXPIRED,
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
-			break; 
+			break; 		
+		case StreetVendingConstants.ACTION_STATUS_SCHEDULE_PAYMENT:
+		    messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_SCHEDULEPAYMENT, localizationMessage);
+		    message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
+		    break;
+	
 		}
-		
 		
 		
 		if (message.contains(StreetVendingConstants.NOTIFICATION_PAY_NOW)) {
