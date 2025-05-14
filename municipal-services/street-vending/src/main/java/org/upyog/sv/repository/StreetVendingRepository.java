@@ -40,6 +40,9 @@ public interface StreetVendingRepository {
 	void updatePaymentSchedule(VendorPaymentScheduleRequest updateSchedule);
 
 	List<VendorPaymentSchedule> getVendorPaymentScheduleApplication(String applicationNo, PaymentScheduleStatus status);
+	
+	boolean isSchedulePaymentPending(String applicationNo, PaymentScheduleStatus status);
+
 
 
 }
