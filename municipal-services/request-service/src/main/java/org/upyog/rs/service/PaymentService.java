@@ -82,7 +82,7 @@ public class PaymentService {
 					log.info("Updating payment status for mobile Toilet booking : " + applicationNo);
 					State state = workflowService.updateMTWorkflowStatus(paymentRequest, null);
 					String applicationStatus = state.getApplicationStatus();
-					mobileToiletService.updateMobileToiletBooking(null, paymentRequest, applicationStatus);
+					mobileToiletService.updateMobileToiletBooking(paymentRequest, applicationStatus);
 			}
 		} catch (IllegalArgumentException e) {
 			log.error(

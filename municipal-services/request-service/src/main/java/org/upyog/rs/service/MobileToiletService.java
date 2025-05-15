@@ -16,6 +16,9 @@ public interface MobileToiletService {
 
       public Integer getApplicationsCount(MobileToiletBookingSearchCriteria mobileToiletBookingSearchCriteria, RequestInfo requestInfo);
 
-      public MobileToiletBookingDetail updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest, PaymentRequest paymentRequest, String applicationStatus);
+      public void updateMobileToiletBooking(PaymentRequest paymentRequest, String applicationStatus);
+
+      public MobileToiletBookingDetail updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest, String applicationStatus);
+
 
 }
