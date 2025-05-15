@@ -244,15 +244,21 @@ public class WorkflowService {
             processInstance.setAssignes(users);
             
         }
-        else if (!CollectionUtils.isEmpty(employeeIds)) {
+        else if (!CollectionUtils.isEmpty(employeeIds) && APPLY.equals(workflow.getAction())) {
+            // Prepare assignee list
             List<User> users = new ArrayList<>();
-            String employeeId = employeeIds.get(0); // Taking the first employeeId from the list
+            
+            // Take the first employee ID and assign
+            String employeeId = employeeIds.get(0); 
             User user = new User();
-            user.setUuid(employeeId); // Assuming employeeId is the UUID here
+            user.setUuid(employeeId);
             users.add(user);
-            processInstance.setAction(PGR_ACTION);
+            
+            // Set action and assignees to processInstance
+            processInstance.setAction(PGR_ACTION);  
             processInstance.setAssignes(users);
         }
+
 
         return processInstance;
     }
