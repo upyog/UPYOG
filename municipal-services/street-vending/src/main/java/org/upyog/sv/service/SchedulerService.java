@@ -15,6 +15,7 @@ import org.upyog.sv.web.models.*;
 
 import digit.models.coremodels.UserDetailResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 @Slf4j
 @Service
@@ -40,7 +41,25 @@ public class SchedulerService {
 	 * Scheduled job to handle street vending applications. Runs daily at 1 AM if
 	 * enabled via configuration.
 	 */
+
+	/** SCHEDLOCK USE: All pods load the scheduler and attempt to run the scheduled job at the same time.
+	* Each pod first attempts to acquire a lock in the shared database (usually in a shedlock table) using an atomic SQL update:
+	* UPDATE shedlock
+	* SET lock_until = :futureTime, locked_by = :podName
+	* WHERE name = :jobName AND lock_until <= NOW()
+	* Only one pod can successfully execute this SQL query and get the lock:
+	* The first pod that reaches the DB and finds the lock expired will update the row and acquire the lock.
+	* Other pods will fail because the lock_until value is now in the future, and the WHERE condition doesn’t match.
+	* The pod that acquired the lock proceeds with job execution.
+	* Other pods skip execution silently since they couldn’t obtain the lock.
+    * The database ensures atomicity and concurrency control.
+	* Even if multiple pods send the SQL query simultaneously, only one will succeed due to the transactional guarantees of RDBMS.
+	* ShedLock checks the number of affected rows — if it's zero, the job is skipped. **/
+	
 	@Scheduled(cron = "0 0 1 * * *")
+	@SchedulerLock(name = "streetVendingPaymentSchedulerJob",
+	lockAtLeastFor = "PT5M",  // Hold the lock for at least 5 minute
+    lockAtMostFor = "PT30M")  // Auto-release after 30 minutes if job crashes)
 	public void processStreetVendingApplications() {
 		if (!isSchedulerEnabled) {
 			log.info("Scheduler is disabled via configuration.");
@@ -50,7 +69,12 @@ public class SchedulerService {
 
 		markEligibleForRenewalAndNotify();
 		markExpiredApplicationsAndNotify();
+		
+		log.info("Starting: processDueVendorPayments()");
+		
 		service.processDueVendorPayments(null);
+		
+		log.info("Completed: processDueVendorPayments()");
 	}
 
 	/**
