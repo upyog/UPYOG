@@ -244,8 +244,24 @@ public class SWACHInboxFilterService {
             result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
 //            double count = JsonPath.read(result, "$.TotalCount[0].count");
-            double count = JsonPath.read(result, "$.TotalCount");
-            totalCount = new Integer((int) count);
+//            double count = JsonPath.read(result, "$.TotalCount");
+            double count = 0.0;
+            try {
+                Object rawCount = JsonPath.read(result, "$.TotalCount");
+                if (rawCount instanceof Number) {
+                    count = ((Number) rawCount).doubleValue();
+                } else if (rawCount instanceof List) {
+                    List<?> countList = (List<?>) rawCount;
+                    if (!countList.isEmpty() && countList.get(0) instanceof Number) {
+                        count = ((Number) countList.get(0)).doubleValue();
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Error reading TotalCount from searcher response: " + e.getMessage());
+            }
+            totalCount = (int) count;
+
+//            totalCount = new Integer((int) count);
         }
         return  totalCount;
     }
