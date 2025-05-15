@@ -15,7 +15,7 @@ const OBPSResponse = (props) => {
     bpaData = state?.data?.response?.BPA?.[0];
   }
   else{
-    bpaData = state?.data?.BPA?.[0]||updateData?.BPA;
+    bpaData = state?.data?.BPA?.[0]
   }
   const [applicationData, setApplicationData] = useState({});
   const [isLoader, setIsLoader] = useState(true);
@@ -49,7 +49,7 @@ const OBPSResponse = (props) => {
   }
 
   const getSubHeaderMessage = () => {
-    return t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaData?.workflow?.action}_${bpaData?.additionalDetails?.typeOfArchitect ? bpaData?.additionalDetails?.typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus, " ", "_").toUpperCase()}${isSanctionFee ? isSanctionFee : ""}`)
+    return bpaBusinessService==="BPA-PAP" ? t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaData?.workflow?.action}_${stringReplaceAll(bpaStatus, " ", "_").toUpperCase()}${isSanctionFee ? isSanctionFee : ""}`) : t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaData?.workflow?.action}_${bpaData?.additionalDetails?.typeOfArchitect ? bpaData?.additionalDetails?.typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus, " ", "_").toUpperCase()}${isSanctionFee ? isSanctionFee : ""}`)
   }
 
   const printReciept = async () => {

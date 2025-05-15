@@ -3,8 +3,7 @@ import ApplicationUpdateActions from "../../services/molecules/OBPS/ApplicationU
 
 const useApplicationActions = (tenantId) => {
   return useMutation((applicationData) => {
-    console.log("applicationDataaaa88", applicationData)
-    ApplicationUpdateActions(applicationData, tenantId)
+    return ApplicationUpdateActions(applicationData, tenantId);
   });
 };
 

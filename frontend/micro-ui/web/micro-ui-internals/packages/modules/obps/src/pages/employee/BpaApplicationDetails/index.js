@@ -10,6 +10,7 @@ import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "
 import cloneDeep from "lodash/cloneDeep";
 import useBPADetailsPage from "../../../../../../libraries/src/hooks/obps/useBPADetailsPage";
 import useWorkflowDetails from "../../../../../../libraries/src/hooks/workflow";
+import useApplicationActions from "../../../../../../libraries/src/hooks/obps/useApplicationActions";
 const BpaApplicationDetail = () => {
 
   const { id } = useParams();
@@ -146,7 +147,7 @@ const BpaApplicationDetail = () => {
     data: updateResponse,
     error: updateError,
     mutate,
-  } = Digit.Hooks.obps.useApplicationActions(tenantId);
+  } = useApplicationActions(tenantId);
 
   const nocMutation = Digit.Hooks.obps.useObpsAPI(
     tenantId,
