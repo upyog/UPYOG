@@ -58,7 +58,7 @@ public class StreetVendingApplication {
         return new JdbcTemplateLockProvider(
             JdbcTemplateLockProvider.Configuration.builder()
                 .withJdbcTemplate(new JdbcTemplate(dataSource))
-                .usingDbTime() // Optional: sync with DB time instead of system clock
+                .usingDbTime()
                 .build()
         );
     }
