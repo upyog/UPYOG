@@ -23,7 +23,7 @@
     "@upyog/digit-ui-module-common": "3.0.5",
     "@upyog/digit-ui-module-commonpt": "3.0.3",
     "@upyog/digit-ui-module-core": "3.0.3",
-    "@upyog/digit-ui-module-dss": "3.0.5",
+    "@upyog/digit-ui-module-dss": "3.0.6",
     "@upyog/digit-ui-module-engagement": "3.0.3",
     "@upyog/digit-ui-module-fsm": "3.0.3",
     "@upyog/digit-ui-module-hrms": "3.0.1",
