@@ -136,7 +136,8 @@ public class MobileToiletServiceImpl implements MobileToiletService{
 
     @Override
     public MobileToiletBookingDetail updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest,
-                                                             PaymentRequest paymentRequest, String applicationStatus) {
+                                                              String applicationStatus) {
+
         String bookingNo = mobileToiletRequest.getMobileToiletBookingDetail().getBookingNo();
         log.info("Updating booking for booking no: {}", bookingNo);
 
@@ -146,7 +147,7 @@ public class MobileToiletServiceImpl implements MobileToiletService{
         }
 
         // If no payment request, update workflow status and process booking request
-        if (paymentRequest == null && mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow() != null) {
+        if (mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow() != null) {
             State state = workflowService.updateMTWorkflowStatus(null, mobileToiletRequest);
             enrichmentService.enrichMobileToiletBookingUponUpdate(state.getApplicationStatus(), mobileToiletRequest);
 
@@ -157,36 +158,6 @@ public class MobileToiletServiceImpl implements MobileToiletService{
             }
         }
 
-        // Handle the payment request and update the mobile Toilet booking if applicable
-        if (paymentRequest != null) {
-            String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
-            MobileToiletBookingDetail mobileToiletDetail = requestServiceRepository
-                    .getMobileToiletBookingDetails(
-                            MobileToiletBookingSearchCriteria.builder().bookingNo(consumerCode).build())
-                    .stream().findFirst().orElse(null);
-
-            if (mobileToiletDetail == null) {
-                log.info("Application not found in consumer class while updating status");
-                return null;
-            }
-
-            // Update the booking details
-            mobileToiletDetail.getAuditDetails()
-                    .setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-            mobileToiletDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-            mobileToiletDetail.setBookingStatus(applicationStatus);
-            mobileToiletDetail.setPaymentDate(System.currentTimeMillis());
-
-            // Update mobile toilet booking request
-            MobileToiletBookingRequest updatedMobileToiletRequest = MobileToiletBookingRequest.builder()
-                    .requestInfo(paymentRequest.getRequestInfo()).mobileToiletBookingDetail(mobileToiletDetail).build();
-
-            log.info("Mobile Toilet Request to update application status in consumer: {}", updatedMobileToiletRequest);
-            requestServiceRepository.updateMobileToiletBooking(updatedMobileToiletRequest);
-
-            return mobileToiletDetail;
-        }
-        
         requestServiceRepository.updateMobileToiletBooking(mobileToiletRequest);
 
         Workflow workflow = mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow();
@@ -205,6 +176,50 @@ public class MobileToiletServiceImpl implements MobileToiletService{
 
         return mobileToiletRequest.getMobileToiletBookingDetail();
     }
+
+    @Override
+    public void updateMobileToiletBooking(PaymentRequest paymentRequest, String applicationStatus) {
+         log.info("Payment request: {}", paymentRequest);
+
+        MobileToiletBookingDetail mobileToiletDetail=null;
+        // Handle the payment request and update the mobile Toilet booking if applicable
+        if (paymentRequest != null) {
+            try{
+                String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
+                mobileToiletDetail = requestServiceRepository
+                        .getMobileToiletBookingDetails(
+                                MobileToiletBookingSearchCriteria.builder().bookingNo(consumerCode).build())
+                        .stream().findFirst().orElse(null);
+                log.info("Mobile toilet booking detail: {}", mobileToiletDetail);
+                log.info("Consumer code: {}", consumerCode);
+
+                if (mobileToiletDetail == null) {
+                    log.info("Application not found in consumer class while updating status");
+                }
+                else {
+                    // Update the booking details
+                    mobileToiletDetail.getAuditDetails()
+                            .setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+                    mobileToiletDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                    mobileToiletDetail.setBookingStatus(applicationStatus);
+                    mobileToiletDetail.setPaymentDate(System.currentTimeMillis());
+
+                    // Update mobile toilet booking request
+                    MobileToiletBookingRequest updatedMobileToiletRequest = MobileToiletBookingRequest.builder()
+                            .requestInfo(paymentRequest.getRequestInfo()).mobileToiletBookingDetail(mobileToiletDetail).build();
+
+                    log.info("Mobile Toilet Request to update application status in consumer: {}", updatedMobileToiletRequest);
+                    requestServiceRepository.updateMobileToiletBooking(updatedMobileToiletRequest);
+                }
+            }
+            catch (Exception e) {
+                log.error("Error while updating mobile toilet booking: {}", e.getMessage(), e);
+                throw new CustomException("UPDATE_FAILED", "Failed to update mobile toilet booking");
+            }
+        }
+        log.info("final object {}", mobileToiletDetail);
+    }
+
     private void handleRSSubmitFeeback(MobileToiletBookingRequest mobileToiletRequest) {
         log.info("Handling mobile Toilet Submit Feedback for request: {}", mobileToiletRequest);
         User citizen = mobileToiletRequest.getRequestInfo().getUserInfo();
