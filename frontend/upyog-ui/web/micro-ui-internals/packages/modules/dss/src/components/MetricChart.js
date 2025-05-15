@@ -23,6 +23,12 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
 
         data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION") ||  data?.headerName.includes("DSS_STATE_GDP_PT_REVENUE_COLLECTION") ?(`${Number(data?.headerValue*100).toFixed(4)}`):
         data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)}`):
+        data?.headerName.includes("NSS_OBPS_SLA_COMPLIANCE_OC") ||  data?.headerName.includes("NSS_OBPS__SLA_COMPLIANCE_PERMIT") ? 
+        (
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} % ${
+            code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
+          }`
+        ):
 
         
         (
