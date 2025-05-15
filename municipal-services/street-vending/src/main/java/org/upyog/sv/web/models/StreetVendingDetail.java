@@ -131,6 +131,11 @@ public class StreetVendingDetail {
 	private RenewalStatus renewalStatus;
 	
 	private String vendorPaymentFrequency;
+	
+	private String formattedApprovalDate;
+	
+	private String formattedApplicationDate;
+
 
 }
 

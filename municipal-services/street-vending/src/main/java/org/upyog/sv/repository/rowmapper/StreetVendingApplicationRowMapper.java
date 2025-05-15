@@ -60,7 +60,13 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 				streetVendingDetail = StreetVendingDetail.builder().applicationId(applicationId)
 						.tenantId(rs.getString("SVTENANTID")).applicationNo(rs.getString("SVAPPLICATIONNO"))
 						.applicationDate(rs.getLong("SVAPPLICATIONDATE")).certificateNo(rs.getString("SVCERTIFICATENO"))
+						.formattedApplicationDate(
+							    streetVendingUtil.convertEpochToFormattedDate(rs.getLong("SVAPPLICATIONDATE"), "dd-MM-yyyy")
+							)
 						.approvalDate(rs.getLong("SVAPPROVALDATE"))
+						.formattedApprovalDate(
+							    streetVendingUtil.convertEpochToFormattedDate(rs.getLong("SVAPPROVALDATE"), "dd-MM-yyyy")
+							)
 						.applicationStatus(rs.getString("SVAPPLICATIONSTATUS"))
 						.tradeLicenseNo(rs.getString("SVTRADELICENSENO"))
 						.vendingActivity(rs.getString("SVVENDINGACTIVITY")).vendingZone(rs.getString("SVVENDINGZONE"))
@@ -135,9 +141,13 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 		String vendorId = rs.getString("VENDORID");
 		if (vendorId != null && streetVendingDetail.getVendorDetail().stream()
 				.noneMatch(vendor -> vendor.getId().equals(vendorId))) {
+			
+	        String formattedDob = streetVendingUtil.formatSqlDateToString(rs, "VENDORDATEOFBIRTH", "dd-MM-yyyy");
+
+
 			VendorDetail vendorDetail = VendorDetail.builder().id(vendorId)
 					.applicationId(rs.getString("VENDORAPPLICATIONID")).name(rs.getString("VENDORNAME"))
-					.dob(rs.getDate("VENDORDATEOFBIRTH").toString()).fatherName(rs.getString("VENDORFATHERNAME"))
+					.dob(formattedDob).fatherName(rs.getString("VENDORFATHERNAME"))
 					.mobileNo(rs.getString("VENDORMOBILENO")).emailId(rs.getString("VENDOREMAILID"))
 					.gender(rs.getString("VENDORGENDER").charAt(0))
 					.relationshipType(rs.getString("VENDORRELATIONSHIPTYPE"))
