@@ -46,9 +46,11 @@ public class PaymentService {
 
 	@Autowired
 	private WorkflowService workflowService;
-	
+
+	@Autowired
 	private WaterTankerServiceImpl waterTankerService;
 
+	@Autowired
 	private MobileToiletServiceImpl mobileToiletService;
 
 	/**
