@@ -17,7 +17,9 @@ public interface WaterTankerService {
 
 	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria, RequestInfo requestInfo);
 
-	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest, PaymentRequest paymentRequest, String applicationStatus);
+	public void updateWaterTankerBooking(PaymentRequest paymentRequest, String applicationStatus);
+
+	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest, String applicationStatus);
 
 
 }

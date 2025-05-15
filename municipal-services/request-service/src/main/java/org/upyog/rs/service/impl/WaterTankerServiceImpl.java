@@ -19,7 +19,6 @@ import org.upyog.rs.service.EnrichmentService;
 import org.upyog.rs.service.UserService;
 import org.upyog.rs.service.WaterTankerService;
 import org.upyog.rs.service.WorkflowService;
-import org.upyog.rs.web.models.mobileToilet.MobileToiletBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingDetail;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingSearchCriteria;
@@ -143,7 +142,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Override
 	public WaterTankerBookingDetail updateWaterTankerBooking(WaterTankerBookingRequest waterTankerRequest,
-			PaymentRequest paymentRequest, String applicationStatus) {
+			String applicationStatus) {
 		String bookingNo = waterTankerRequest.getWaterTankerBookingDetail().getBookingNo();
 		log.info("Updating booking for booking no: {}", bookingNo);
 
@@ -153,7 +152,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		}
 
 		// If no payment request, update workflow status and process booking request
-		if (paymentRequest == null && waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null) {
+		if (waterTankerRequest.getWaterTankerBookingDetail().getWorkflow() != null) {
 			State state = workflowService.updateWorkflowStatus(null, waterTankerRequest);
 			enrichmentService.enrichWaterTankerBookingUponUpdate(state.getApplicationStatus(), waterTankerRequest);
 
@@ -162,46 +161,6 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 					.equals(waterTankerRequest.getWaterTankerBookingDetail().getWorkflow().getAction())) {
 				demandService.createDemand(waterTankerRequest);
 			}
-		}
-		log.info("Payment request: {}", paymentRequest);
-		// Handle the payment request and update the water tanker booking if applicable
-		WaterTankerBookingDetail waterTankerDetail=null;
-		if (paymentRequest != null) {
-			try {
-				String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
-				 waterTankerDetail = requestServiceRepository
-						.getWaterTankerBookingDetails(
-								WaterTankerBookingSearchCriteria.builder().bookingNo(consumerCode).build())
-						.stream().findFirst().orElse(null);
-				 log.info("Water tanker booking detail: {}", waterTankerDetail);
-				 log.info("Consumer code: {}", consumerCode);
-				if (waterTankerDetail == null) {
-					log.info("Application not found in consumer class while updating status");
-					return null;
-				}
-
-				// Update the booking details
-				waterTankerDetail.getAuditDetails()
-						.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
-				waterTankerDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-				waterTankerDetail.setBookingStatus(applicationStatus);
-				waterTankerDetail.setPaymentDate(System.currentTimeMillis());
-
-				log.info("Water tanker detail after updating booking status: {}", waterTankerDetail);
-
-				// Update water tanker booking request
-				WaterTankerBookingRequest updatedWaterTankerRequest = WaterTankerBookingRequest.builder()
-						.requestInfo(paymentRequest.getRequestInfo()).waterTankerBookingDetail(waterTankerDetail).build();
-
-				log.info("Water Tanker Request to update application status in consumer: {}", updatedWaterTankerRequest);
-				requestServiceRepository.updateWaterTankerBooking(updatedWaterTankerRequest);
-			}
-			catch (Exception e) {
-				log.error("Error while updating water tanker booking: {}", e.getMessage(), e);
-				throw new CustomException("UPDATE_FAILED", "Failed to update water tanker booking");
-			}
-
-			return waterTankerDetail;
 		}
 
 		log.info("Payment request is null, updating water tanker booking without payment");
@@ -223,6 +182,49 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		}
 
 		return waterTankerRequest.getWaterTankerBookingDetail();
+	}
+
+	@Override
+	public void updateWaterTankerBooking(PaymentRequest paymentRequest, String applicationStatus) {
+		log.info("Payment request: {}", paymentRequest);
+		// Handle the payment request and update the water tanker booking if applicable
+		WaterTankerBookingDetail waterTankerDetail=null;
+		if (paymentRequest != null) {
+			try {
+				String consumerCode = paymentRequest.getPayment().getPaymentDetails().get(0).getBill().getConsumerCode();
+				waterTankerDetail = requestServiceRepository
+						.getWaterTankerBookingDetails(
+								WaterTankerBookingSearchCriteria.builder().bookingNo(consumerCode).build())
+						.stream().findFirst().orElse(null);
+				log.info("Water tanker booking detail: {}", waterTankerDetail);
+				log.info("Consumer code: {}", consumerCode);
+				if (waterTankerDetail == null) {
+					log.info("Application not found in consumer class while updating status");
+				} else{
+					// Update the booking details
+					waterTankerDetail.getAuditDetails()
+							.setLastModifiedBy(paymentRequest.getRequestInfo().getUserInfo().getUuid());
+					waterTankerDetail.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+					waterTankerDetail.setBookingStatus(applicationStatus);
+					waterTankerDetail.setPaymentDate(System.currentTimeMillis());
+
+					log.info("Water tanker detail after updating booking status: {}", waterTankerDetail);
+
+					// Update water tanker booking request
+					WaterTankerBookingRequest updatedWaterTankerRequest = WaterTankerBookingRequest.builder()
+							.requestInfo(paymentRequest.getRequestInfo()).waterTankerBookingDetail(waterTankerDetail).build();
+
+					log.info("Water Tanker Request to update application status in consumer: {}", updatedWaterTankerRequest);
+					requestServiceRepository.updateWaterTankerBooking(updatedWaterTankerRequest);
+				}
+			}
+			catch (Exception e) {
+				log.error("Error while updating water tanker booking: {}", e.getMessage(), e);
+				throw new CustomException("UPDATE_FAILED", "Failed to update water tanker booking");
+			}
+
+		}
+		log.info("final object {}", waterTankerDetail);
 	}
 
 	private void handleRSSubmitFeeback(WaterTankerBookingRequest waterTankerRequest) {

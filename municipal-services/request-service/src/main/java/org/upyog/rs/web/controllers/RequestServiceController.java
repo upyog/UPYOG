@@ -98,7 +98,7 @@ public class RequestServiceController {
 			@ApiParam(value = "Updated water tanker details and RequestInfo meta data.", required = true)
 			@RequestBody WaterTankerBookingRequest waterTankerRequest) {
 		
-		WaterTankerBookingDetail waterTankerDetail = waterTankerService.updateWaterTankerBooking(waterTankerRequest, null, null);
+		WaterTankerBookingDetail waterTankerDetail = waterTankerService.updateWaterTankerBooking(waterTankerRequest, null);
 
 		WaterTankerBookingResponse response = WaterTankerBookingResponse.builder().waterTankerBookingApplication(waterTankerDetail)
 				.responseInfo(RequestServiceUtil.createReponseInfo(waterTankerRequest.getRequestInfo(),
