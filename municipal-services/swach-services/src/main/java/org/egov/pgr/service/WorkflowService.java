@@ -1,5 +1,6 @@
 package org.egov.pgr.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -7,6 +8,7 @@ import org.egov.common.contract.request.User;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.repository.ServiceRequestRepository;
 import org.egov.pgr.util.HRMSUtil;
+import org.egov.pgr.util.MDMSUtils;
 import org.egov.pgr.web.models.*;
 import org.egov.pgr.web.models.workflow.*;
 import org.egov.tracer.model.CustomException;
@@ -34,6 +36,8 @@ public class WorkflowService {
 
     @Autowired
     private HRMSUtil hrmsUtil;
+    @Autowired
+    private MDMSUtils mdmsUtils;
     
     @Autowired
     public WorkflowService(PGRConfiguration pgrConfiguration, ServiceRequestRepository repository, ObjectMapper mapper) {
@@ -72,9 +76,26 @@ public class WorkflowService {
      *
      * */
     public String updateWorkflowStatus(ServiceRequest serviceRequest) {
+
+
         ProcessInstance processInstance = getProcessInstanceForPGR(serviceRequest);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(serviceRequest.getRequestInfo(), Collections.singletonList(processInstance));
+        if (processInstance == null) {
+            throw new IllegalStateException("Failed to generate ProcessInstance for the given ServiceRequest");
+        }
+
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(
+            serviceRequest.getRequestInfo(),
+            Collections.singletonList(processInstance)
+        );
+
         State state = callWorkFlow(workflowRequest);
+        if (state == null) {
+            throw new IllegalStateException("Workflow service returned null State");
+        }
+        if (state.getApplicationStatus() == null) {
+            throw new IllegalStateException("ApplicationStatus in workflow State is null");
+        }
+
         serviceRequest.getService().setApplicationStatus(state.getApplicationStatus());
         return state.getApplicationStatus();
     }
@@ -194,13 +215,15 @@ public class WorkflowService {
         processInstance.setBusinessService(getBusinessService(request).getBusinessService());
         processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());
         processInstance.setComment(workflow.getComments());
-        String localityName = request.getService().getAddress().getLocality().getName();
+        String localityCode = request.getService().getAddress().getLocality().getCode();
 
-        String wardId = extractWardId(localityName);
+      //  String wardId = extractWardId(localityName);
         
-        
+        Object mdmsData = mdmsUtils.wardmDMSCall(request);
+        String wardId = extractWardNameFromAdminHierarchy(mdmsData, localityCode);
+
         log.info("Ward Id "+wardId);
-        log.info("locality "+ localityName);
+        log.info("locality "+ localityCode);
         List<String> employeeIds = null;
         if (wardId != null) {
         	
@@ -237,21 +260,48 @@ public class WorkflowService {
     
     
     
-    public String extractWardId(String localityName) {
-        if (localityName != null && localityName.contains("-")) {
-            String[] parts = localityName.split("-");
-            String wardPart = parts[parts.length - 1].trim(); // e.g., "WARD 2" or "WARD_2"
-            
-            // Normalize to format: WARD_X
-            if (wardPart.matches("(?i)WARD\\s+\\d+")) {
-                wardPart = wardPart.replaceAll("(?i)WARD\\s+(\\d+)", "WARD_$1");
+    public static String extractWardNameFromAdminHierarchy(Object mdmsData, String localityCode) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.convertValue(mdmsData, JsonNode.class);
+
+            JsonNode tenantBoundaries = root.path("MdmsRes")
+                                            .path("egov-location")
+                                            .path("TenantBoundary");
+
+            for (JsonNode tenantBoundary : tenantBoundaries) {
+                JsonNode hierarchyType = tenantBoundary.path("hierarchyType");
+                if ("ADMIN".equals(hierarchyType.path("code").asText())) {
+                    JsonNode boundary = tenantBoundary.path("boundary");
+                    JsonNode zones = boundary.path("children");
+
+                    for (JsonNode zone : zones) {
+                        JsonNode wards = zone.path("children");
+                        for (JsonNode ward : wards) {
+                            JsonNode localities = ward.path("children");
+                            for (JsonNode locality : localities) {
+                                if (localityCode.equals(locality.path("code").asText())) {
+                                    return ward.path("name").asText(); 
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            return wardPart.toUpperCase(); // ensure consistent casing like "WARD_2"
+        } catch (Exception e) {
+            e.printStackTrace(); 
         }
-        return null;
+
+        return null; 
     }
 
+
+    
+    
+    
+    
+    
     /**
      *
      * @param processInstances
@@ -291,7 +341,7 @@ public class WorkflowService {
         try {
             // Log the request
             String reqJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(workflowReq);
-            log.info("Workflow Request:\n{}", reqJson);
+//            log.info("Workflow Request:\n{}", reqJson);
 
             // Prepare URL
             StringBuilder url = new StringBuilder(pgrConfiguration.getWfHost().concat(pgrConfiguration.getWfTransitionPath()));
@@ -301,14 +351,14 @@ public class WorkflowService {
 
             // Log the raw response object
             String resJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(optional);
-            log.info("Workflow Raw Response:\n{}", resJson);
+//            log.info("Workflow Raw Response:\n{}", resJson);
 
             // Convert to typed response
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
 
             // Log parsed response (optional)
             String parsedResJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
-            log.info("Workflow Parsed Response:\n{}", parsedResJson);
+//            log.info("Workflow Parsed Response:\n{}", parsedResJson);
 
             return response.getProcessInstances().get(0).getState();
 
