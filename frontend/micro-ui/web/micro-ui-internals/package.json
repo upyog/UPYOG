@@ -12,10 +12,8 @@
     "packages/modules/core",
     "packages/modules/commonPt",
     "packages/modules/dss",
-    "packages/modules/obps",
     "packages/modules/ws",
     "packages/modules/tl",
-    "packages/modules/pgr",
     "packages/modules/fsm",
     "packages/modules/mCollect"
   ],
