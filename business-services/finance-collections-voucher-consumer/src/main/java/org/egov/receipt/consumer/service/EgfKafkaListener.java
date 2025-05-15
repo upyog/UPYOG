@@ -187,7 +187,7 @@ public class EgfKafkaListener {
 					for (Receipt recpt : recRequest.getReceipt()) {
 						recRequestTemp.setReceipt(Arrays.asList(recpt));
 						Bill bill = recpt.getBill().get(0);
-						VoucherResponse voucherByServiceAndRefDoc = voucherService.getVoucherByServiceAndRefDoc(recRequestTemp.getRequestInfo(), recpt.getTenantId(), null, recpt.getPaymentId());
+						VoucherResponse voucherByServiceAndRefDoc = voucherService.getVoucherByServiceAndRefDoc(recRequestTemp.getRequestInfo(), recpt.getTenantId(), recpt.getBill().get(0).getBusinessService(), recpt.getPaymentId());
 						if (voucherService.isVoucherCreationEnabled(recpt, recRequestTemp.getRequestInfo(), finSerMdms)) {
 							if(!voucherByServiceAndRefDoc.getVouchers().isEmpty() && !voucherByServiceAndRefDoc.getVouchers().get(0).getStatus().getCode().equals("4")){
 	        					voucherNumber = voucherByServiceAndRefDoc.getVouchers().get(0).getVoucherNumber();
