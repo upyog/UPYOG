@@ -76,26 +76,21 @@ public class PGRAiInboxFilterService {
             if (moduleSearchCriteria.containsKey(PGRAiConstants.LOCALITY_PARAM)) {
                 searchCriteria.put(PGRAiConstants.LOCALITY_PARAM, moduleSearchCriteria.get(PGRAiConstants.LOCALITY_PARAM));
             }
-            if (moduleSearchCriteria.containsKey(PGRAiConstants.PGR_APPLICATION_NUMBER_PARAM)) {
-                searchCriteria.put(PGRAiConstants.PGR_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(PGRAiConstants.PGR_APPLICATION_NUMBER_PARAM));
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.PGR_SERVICE_REQUEST_ID)) {
+                searchCriteria.put(PGRAiConstants.PGR_SERVICE_REQUEST_ID, moduleSearchCriteria.get(PGRAiConstants.PGR_SERVICE_REQUEST_ID));
             }
-
-            // Accommodating process search criteria in searcher request
-            if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
-                searchCriteria.put(PGRAiConstants.ASSIGNEE_PARAM, processCriteria.getAssignee());
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.ASSIGNEE_PARAM)) {
+                searchCriteria.put(PGRAiConstants.ASSIGNEE_PARAM,  moduleSearchCriteria.get(PGRAiConstants.ASSIGNEE_PARAM));
             }
-            if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
-                searchCriteria.put(PGRAiConstants.STATUS_PARAM, processCriteria.getStatus());
-            } else {
-                if (!CollectionUtils.isEmpty(statusIdNameMap.keySet())) {
-                    searchCriteria.put(PGRAiConstants.STATUS_PARAM, statusIdNameMap.keySet());
-                }
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.APPLICATION_STATUS)) {
+                searchCriteria.put(PGRAiConstants.APPLICATION_STATUS, moduleSearchCriteria.get(PGRAiConstants.APPLICATION_STATUS));
             }
-
-            // Paginating searcher results
-            searchCriteria.put(PGRAiConstants.OFFSET_PARAM, criteria.getOffset());
-            searchCriteria.put(PGRAiConstants.NO_OF_RECORDS_PARAM, criteria.getLimit());
-            moduleSearchCriteria.put(PGRAiConstants.LIMIT_PARAM, criteria.getLimit());
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.MOBILE_NUMBER_PARAM)) {
+                searchCriteria.put(PGRAiConstants.MOBILE_NUMBER_PARAM, moduleSearchCriteria.get(PGRAiConstants.MOBILE_NUMBER_PARAM));
+            }
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.SERVICE_CODE)) {
+                searchCriteria.put(PGRAiConstants.SERVICE_CODE, moduleSearchCriteria.get(PGRAiConstants.SERVICE_CODE));
+            }
 
             searcherRequest.put(PGRAiConstants.REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(PGRAiConstants.SEARCH_CRITERIA_PARAM, searchCriteria);
@@ -110,7 +105,7 @@ public class PGRAiInboxFilterService {
 
             result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
-            applicationNumberList = JsonPath.read(result, "$.PGRAi.*.application_no");
+            applicationNumberList = JsonPath.read(result, "$.ServiceRequests.*.servicerequestid");
 
             log.info("applicationNumberList fetched from searcher endpoint: " + applicationNumberList);
         }
@@ -135,25 +130,23 @@ public class PGRAiInboxFilterService {
             if (moduleSearchCriteria.containsKey(PGRAiConstants.LOCALITY_PARAM)) {
                 searchCriteria.put(PGRAiConstants.LOCALITY_PARAM, moduleSearchCriteria.get(PGRAiConstants.LOCALITY_PARAM));
             }
-            if (moduleSearchCriteria.containsKey(PGRAiConstants.PGR_APPLICATION_NUMBER_PARAM)) {
-                searchCriteria.put(PGRAiConstants.PGR_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(PGRAiConstants.PGR_APPLICATION_NUMBER_PARAM));
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.PGR_SERVICE_REQUEST_ID)) {
+                searchCriteria.put(PGRAiConstants.PGR_SERVICE_REQUEST_ID, moduleSearchCriteria.get(PGRAiConstants.PGR_SERVICE_REQUEST_ID));
+            }
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.ASSIGNEE_PARAM)) {
+                searchCriteria.put(PGRAiConstants.ASSIGNEE_PARAM,  moduleSearchCriteria.get(PGRAiConstants.ASSIGNEE_PARAM));
+            }
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.APPLICATION_STATUS)) {
+                searchCriteria.put(PGRAiConstants.APPLICATION_STATUS, moduleSearchCriteria.get(PGRAiConstants.APPLICATION_STATUS));
+            }
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.MOBILE_NUMBER_PARAM)) {
+                searchCriteria.put(PGRAiConstants.MOBILE_NUMBER_PARAM, moduleSearchCriteria.get(PGRAiConstants.MOBILE_NUMBER_PARAM));
+            }
+            if (moduleSearchCriteria.containsKey(PGRAiConstants.SERVICE_CODE)) {
+                searchCriteria.put(PGRAiConstants.SERVICE_CODE, moduleSearchCriteria.get(PGRAiConstants.SERVICE_CODE));
             }
 
-            // Accommodating process search criteria in searcher request
-            if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
-                searchCriteria.put(PGRAiConstants.ASSIGNEE_PARAM, processCriteria.getAssignee());
-            }
-            if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
-                searchCriteria.put(PGRAiConstants.STATUS_PARAM, processCriteria.getStatus());
-            } else {
-                if (!CollectionUtils.isEmpty(statusIdNameMap.keySet())) {
-                    searchCriteria.put(PGRAiConstants.STATUS_PARAM, statusIdNameMap.keySet());
-                }
-            }
 
-        if (moduleSearchCriteria.containsKey(PGRAiConstants.APPLICATION_STATUS)) {
-            searchCriteria.put(PGRAiConstants.APPLICATION_STATUS, moduleSearchCriteria.get(PGRAiConstants.APPLICATION_STATUS));
-        }
             searcherRequest.put(PGRAiConstants.REQUESTINFO_PARAM, requestInfo);
             searcherRequest.put(PGRAiConstants.SEARCH_CRITERIA_PARAM, searchCriteria);
 
