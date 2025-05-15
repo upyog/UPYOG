@@ -19,13 +19,13 @@ public class StreetVendingQueryBuilder {
 			+ "sv.terms_and_condition as svTermsAndCondition, sv.createdby as svCreatedBy, sv.lastmodifiedby as svLastModifiedBy, "
 			+ "sv.createdtime as svCreatedTime, sv.lastmodifiedtime as svLastModifiedTime, "
 			+ "sv.expire_flag as svExpireFlag, sv.renewal_status as svRenewalStatus, sv.validity_date as svValidityDate, "
-			+ "sv.old_application_no as svOldApplicationNo ";
+			+ "sv.old_application_no as svOldApplicationNo, sv.vendor_payment_frequency as svPayFrequency ";
 
 	private static final String VENDOR_SELECT_QUERY = " ,vendor.id as vendorId, vendor.application_id as vendorApplicationId, vendor.vendor_id as vendorVendorId, "
 			+ "vendor.name as vendorName, vendor.father_name as vendorFatherName, vendor.date_of_birth as vendorDateOfBirth, "
 			+ "vendor.email_id as vendorEmailId, vendor.mobile_no as vendorMobileNo, vendor.gender as vendorGender,  "
 			+ "vendor.relationship_type as vendorRelationshipType, vendor.user_category as vendorusercategory, vendor.special_category as vendorspecialcategory, "
-			+ "vendor.is_involved as vendorisinvolved, vendor.vendor_payment_frequency as vendorPayFrequency ";
+			+ "vendor.is_involved as vendorisinvolved ";
 
 	private static final String ADDRESS_SELECT_QUERY = " ,address.address_id as addressId, address.address_type as addressType, "
 			+ "address.vendor_id as addressVendorId, address.house_no as addressHouseNo, address.address_line_1 as addressLine1, "
@@ -44,6 +44,10 @@ public class StreetVendingQueryBuilder {
 	
 	private static final String BENEFICIARY_SCHEME_SELECT_QUERY = " ,scheme.id as beneficiaryId, scheme.application_id as beneficiarySchemeApplicationId, "
 			+ "scheme.scheme_name as beneficiarySchemeName, scheme.enrollment_id as beneficiaryEnrollmentId ";
+	
+	public static final String PAYMENT_SCHEDULE = "SELECT * FROM eg_sv_vendor_payment_schedule WHERE due_date = ? AND status = ?";
+	
+	public static final String VENDOR_PAYMENT_SCHEDULE = "SELECT * FROM eg_sv_vendor_payment_schedule WHERE application_no = ? AND status = ?";
 
 	private static final String FROM_TABLES = " FROM eg_sv_street_vending_detail sv "
 			+ "LEFT JOIN eg_sv_vendor_detail vendor ON sv.application_id = vendor.application_id "
@@ -133,8 +137,14 @@ public class StreetVendingQueryBuilder {
 		
 		if (!ObjectUtils.isEmpty(criteria.getVendorPaymentFrequency())) {
 			addClauseIfRequired(query, preparedStmtList);
-			query.append(" vendor.vendor_payment_frequency <= ? ");
+			query.append(" sv.vendor_payment_frequency <= ? ");
 			preparedStmtList.add(criteria.getVendorPaymentFrequency());
+		}
+		
+		if (!ObjectUtils.isEmpty(criteria.getCertificateNo())) {
+			addClauseIfRequired(query, preparedStmtList);
+			query.append(" sv.certificate_no <= ? ");
+			preparedStmtList.add(criteria.getCertificateNo());
 		}
 		
 		if (!criteria.isCountCall()) {

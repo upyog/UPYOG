@@ -25,7 +25,7 @@
               </div>
             );
           },
-          mobileCell: (original) => {GetMobCell(original?.searchData?.["applicationNumber"])},
+          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
         },
         {
           Header: t("COMMON_APPLICANT_NAME"),
@@ -40,6 +40,13 @@
             return GetCell(t(`${row?.original?.searchData?.["applicantMobileNumber"]}`));
           },
           mobileCell: (original) => GetMobCell(t(`${original?.searchData?.applicantDetail?.["mobileNumber"]}`)),
+        },
+        {
+          Header: t("LOCALITY"),
+          Cell: ({ row }) => {
+            return GetCell(t(`${row?.original?.searchData?.addressDetail?.["locality"]}`));
+          },
+          mobileCell: (original) => GetMobCell(t(`${original?.searchData?.addressDetail?.["locality"]}`)),
         },
         {
           Header: t("CND_SCHEDULE_PICKUP"),

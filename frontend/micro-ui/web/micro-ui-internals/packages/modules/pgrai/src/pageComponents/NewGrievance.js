@@ -67,8 +67,8 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   const [showAddressPopup, setShowAddressPopup] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  const [ verificationDocuments,  setVerificationDocuments] = useState();
+  const [geoLocation, setGeoLocation] = useState(formData?.geoLocation || {});
+  const [verificationDocuments, setVerificationDocuments] = useState();
 
   const user = Digit.UserService.getUser().info;
 
@@ -82,6 +82,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       address,
       addressDetails,
       verificationDocuments,
+      geoLocation
     };
 
     if (userType === "citizen") {
@@ -103,6 +104,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
     try {
       const { coords, latitude, longitude } = await fetchCurrentLocation(t);
       setLocation(coords);
+      setGeoLocation({ latitude:latitude, longitude:longitude, additionalDetails: {} });
 
       setIsFetchingAddress(true);
       try {
@@ -178,7 +180,12 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
       const data = await response.json();
       if (data && data.length > 0) {
-        setSuggestions(data);
+        // Transform the subtypes to camelCase format
+        const transformedData = data.map(item => ({
+          ...item,
+          subtype: item.subtype.replace(/\s+(\w)/g, (_, letter) => letter.toUpperCase())
+        }));
+        setSuggestions(transformedData);
         setShowSuggestions(true);
       } else {
         setSuggestions([]);
@@ -235,15 +242,17 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
   return (
     <Fragment>
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip}>
+      <FormStep config={config} onSelect={goNext} onSkip={onSkip}
+       isDisabled={!grievanceText || !grievanceType || !grievanceSubType}
+      >
         <CardLabel>
-          {`${t("GRIEVANCE")}`} <span className="astericColor">*</span>
+          {`${t("PGR_AI_INPUT_GRIEVANCE")}`} <span className="astericColor">*</span>
         </CardLabel>
         <div style={{ position: "relative" }}>
           <TextInput
             t={t}
             type="text"
-            isMandatory
+            isMandatory={false}
             name="grievance"
             value={grievanceText}
             onChange={(e) => setGrievanceText(e.target.value)}
@@ -271,12 +280,12 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         {apiError && <div style={styles.errorMessage}>{apiError}</div>}
 
         <CardLabel>
-          {`${t("GRIEVANCE_TYPE")}`} <span className="astericColor">*</span>
+          {`${t("PGR_AI_GRIEVANCE_TYPE")}`} <span className="astericColor">*</span>
         </CardLabel>
         <TextInput
           t={t}
           type="text"
-          isMandatory
+          isMandatory={false}
           name="grievanceType"
           value={grievanceType}
           onChange={(e) => setGrievanceType(e.target.value)}
@@ -284,12 +293,12 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         />
 
         <CardLabel>
-          {`${t("GRIEVANCE_SUB_TYPE")}`} <span className="astericColor">*</span>
+          {`${t("PGR_AI_GRIEVANCE_SUB_TYPE")}`} <span className="astericColor">*</span>
         </CardLabel>
         <TextInput
           t={t}
           type="text"
-          isMandatory
+          isMandatory={false}
           name="grievanceSubType"
           value={grievanceSubType}
           onChange={(e) => setGrievanceSubType(e.target.value)}
@@ -298,14 +307,13 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
          
         <LabelFieldPair>
           <CardLabel>
-            {`${t("GRIEVANCE_LOCATION")}`} <span className="astericColor">*</span>
+            {`${t("PGR_AI_GRIEVANCE_LOCATION")}`} <span className="astericColor">*</span>
           </CardLabel>
           <div className="field" style={styles.locationField}>
             <TextInput
               t={t}
               value={location}
               onChange={handleLocationChange}
-              onBlur={(e) => !e.target.value && setLocationError(t("REQUIRED_FIELD"))}
               style={{ paddingRight: "30px" }}
             />
             <div style={styles.locationIcon} onClick={handleFetchLocation}>
@@ -315,12 +323,11 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         </LabelFieldPair>
 
         <LabelFieldPair>
-          <CardLabel>{`${t("LANDMARK")}`} <span className="astericColor">*</span></CardLabel>
+          <CardLabel>{`${t("PGR_AI_LANDMARK")}`} <span className="astericColor">*</span></CardLabel>
         </LabelFieldPair>
         <TextInput
           t={t}
           type="text"
-          isMandatory
           name="landmark"
           value={addressDetails.landmark || ""}
           onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}
@@ -330,7 +337,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
         {address && (
           <LabelFieldPair>
-            <CardLabel>{`${t("ADDRESS")}`}</CardLabel>
+            <CardLabel>{`${t("PGR_AI_ADDRESS")}`}</CardLabel>
             <div className="field">
               <TextInput t={t} value={address} readOnly style={styles.readOnlyInput} />
             </div>
@@ -339,7 +346,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
         <PhotoUpload t={t} config={{ key: "documents" }} onSelect={handlePhotoUpload} formData={{ documents }}  setDocumentUploaded={ setVerificationDocuments} />
 
-        <SubmitBar label={t("ADD_ADDRESS_DETAILS")} onSubmit={handleAddAddressClick} style={{ marginTop: "16px" }} />
+        <SubmitBar label={t("PGR_AI_ADD_ADDRESS_DETAILS")} onSubmit={handleAddAddressClick} style={{ marginTop: "16px" }} />
 
         {showAddressPopup && (
           <AddressPopup t={t} isOpen={showAddressPopup} onClose={() => setShowAddressPopup(false)} onSubmit={handleAddressSubmit} />

@@ -9,6 +9,7 @@ import { TLService } from "../../services/elements/TL";
 import { CHBServices } from "../../services/elements/CHB";
 import { SVService } from "../../services/elements/SV";
 import { EwService } from "../../services/elements/EW";
+import { PGRAIService } from "../../services/elements/PGRAI";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -66,6 +67,22 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "applicationNo",
     fetchFilters: filterFunctions.SV,
     _searchFn: () => SVService.search({ tenantId, filters }),
+  },
+  
+  /**
+ * PGRAI Workflow Module Configuration
+ *
+ * Configuration object for the PGRAI module used with the workflow/inbox engine.
+ * Defines how service data should be fetched, what keys to use in responses,
+ * and how filtering should be applied using predefined filter functions.
+ */
+  PGRAI: {
+    services: ["PGRAI"],
+    searchResponseKey: "ServiceWrappers",
+    businessIdsParamForSearch: "serviceRequestId",
+    businessIdAliasForSearch: "serviceRequestId",
+    fetchFilters: filterFunctions.PGRAI,
+    _searchFn: () => PGRAIService.search({ tenantId, filters }),
   },
 });
 

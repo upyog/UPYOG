@@ -348,6 +348,8 @@ import useSelectedMDMS from "./useSelectedMDMS";
 import useVendorAdditionaldetailsAPI from "./vendor/useVendorAdditionaldetailsAPI";
 import useCreateDemand from "./sv/useCreateDemand";
 import useEmpvendorCommonSearch from "./vendor/useEmpvendorCommonSearch";
+import useFilterEmployee from "./pgrAi/useFilterEmployee";
+import useApplicationDetails from "./pgrAi/useApplicationDetails";
 
 const wt={
   useTankerCreateAPI,
@@ -360,9 +362,10 @@ const wt={
   useMTApplicationAction
 };
 const pgrAi={
-
   useCreate,
-  useSearchPGRAI
+  useSearchPGRAI,
+  useFilterEmployee,
+  useApplicationDetails
 }
 const pgr = {
   useComplaintDetails,

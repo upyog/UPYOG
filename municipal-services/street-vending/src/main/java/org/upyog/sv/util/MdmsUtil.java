@@ -2,8 +2,10 @@ package org.upyog.sv.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -122,7 +124,7 @@ public class MdmsUtil {
 		// filter to only get code field from master data
 		final String filterCode = "$.[?(@.active==true)].code";
 
-		svMasterDtls.add(MasterDetail.builder().name(StreetVendingConstants.VENDIING_ZONES).filter(filterCode).build());
+		svMasterDtls.add(MasterDetail.builder().name(StreetVendingConstants.VENDING_ZONES).filter(filterCode).build());
 		svMasterDtls.add(
 				MasterDetail.builder().name(StreetVendingConstants.VENDING_ACTIVITY_TYPE).filter(filterCode).build());
 		svMasterDtls.add(MasterDetail.builder().name(StreetVendingConstants.DOCUMENTS).filter(filterCode).build());
@@ -202,7 +204,7 @@ public class MdmsUtil {
 
 		MasterDetail masterDetail = new MasterDetail();
 		masterDetail.setName("TaxHeadMaster");
-		masterDetail.setFilter("$.[?(@.service=='sv-services')]");
+		masterDetail.setFilter("$.[?(@.service=='sv-services' || @.service=='sv-services.monthly' || @.service=='sv-services.quaterly')]");
 		List<MasterDetail> masterDetailList = new ArrayList<>();
 		masterDetailList.add(masterDetail);
 
@@ -246,5 +248,40 @@ public class MdmsUtil {
 
 		return mdmsCriteriaReq;
 	}
+	
+
+	/**
+	 * Fetches location boundary data from the MDMS Location service for a given tenant.
+	 * <p>
+	 * Constructs a URL using configured host, path, and hierarchy type, appending the tenant ID
+	 * as a query parameter. The method sends a POST request to the location endpoint with the
+	 * provided {@link RequestInfo} and returns the raw response received from the service.
+	 * <p>
+	 * The expected response structure is a Map containing boundary data, typically used to extract
+	 * locality and vending zone information.
+	 *
+	 * @param requestInfo the {@link RequestInfo} object containing user and context metadata for the request
+	 * @param tenantId    the tenant ID for which the location data is being requested
+	 * @return the raw response object from the location service, typically a Map containing boundary data
+	 */
+	
+	public Object getLocationData(RequestInfo requestInfo, String tenantId) {
+
+	    StringBuilder url = new StringBuilder();
+	    url.append(config.getLocationHost())
+	       .append(config.getLocationPath())
+	       .append("?hierarchyTypeCode=").append(config.getLocationHierarchyTypeCode())
+	       .append("&tenantId=").append(tenantId);
+
+	    Map<String, Object> requestMap = new HashMap<>();
+	    requestMap.put("RequestInfo", requestInfo);
+	    
+	    Object response = serviceRequestRepository.fetchResult(url, requestMap);
+
+	    return response;
+	}
+
+
+
 
 }

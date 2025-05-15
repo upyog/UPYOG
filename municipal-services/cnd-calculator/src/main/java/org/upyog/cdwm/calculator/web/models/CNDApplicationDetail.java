@@ -1,5 +1,7 @@
 package org.upyog.cdwm.calculator.web.models;
 
+import java.math.BigDecimal;
+
 import org.egov.common.contract.request.User;
 import org.springframework.validation.annotation.Validated;
 
@@ -43,7 +45,7 @@ public class CNDApplicationDetail   {
   private String applicationStatus = null;
   
   @JsonProperty("totalWasteQuantity")
-  private long totalWasteQuantity;
+  private BigDecimal totalWasteQuantity;
 
   @JsonProperty("noOfTrips")
   private Integer noOfTrips = null;

@@ -102,6 +102,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [error, setError] = useState(null);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectVehicle, setSelectVehicle] = useState(null);
+  const [comment, setComment] = useState("");
+
 
 
   useEffect(() => {
@@ -197,9 +199,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
       isDisabled={
-        (action?.docUploadRequired && !uploadedFile) ||
-        (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" && !selectedVendor) ||
-        (action?.state === "DELIVERY_PENDING" && !selectVehicle)
+        (action?.docUploadRequired && !uploadedFile && !comment) ||
+        (action?.state === "PENDING_FOR_VEHICLE_DRIVER_ASSIGN" && !selectedVendor && !comment) ||
+        (action?.state === "DELIVERY_PENDING" && !selectVehicle && !comment) ||
+        !comment
       }
     >
        
@@ -211,6 +214,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         onSubmit={submit}
         defaultValues={defaultValues}
         formId="modal-action"
+        onFormValueChange={(setValue, values) => {
+          setComment(values?.comments);
+        }}
       />
       
     </Modal>

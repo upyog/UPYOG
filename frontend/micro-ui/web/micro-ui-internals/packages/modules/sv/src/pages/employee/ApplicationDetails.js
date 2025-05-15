@@ -54,9 +54,28 @@ const ApplicationDetails = () => {
     }
   }, [applicationDetails]);
 
+  const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
+    appDetailsToShow?.applicationData?.applicationData?.locality,
+    "vendingzones",
+    {
+      enabled: !!appDetailsToShow?.applicationData?.applicationData?.locality,
+    },
+    t
+  );
+
+  let vending_Zone = [];
+  fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
+    vending_Zone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
+  })
+
+  const vz = vending_Zone?.filter((zone) => zone?.code === appDetailsToShow?.applicationData?.applicationData?.vendingZone || zone?.value === appDetailsToShow?.applicationData?.applicationData?.vendingZone);
+  const UserVendingZone = vz[0]?.value;
+  const UserVendingZoneCode = vz[0]?.code;
+  console.log("vendcbdfging_Zone", vz, vending_Zone);
+
 
   // This code wil check if the the employee has access && businessService is streetvending and nextAction is Pay then it will redirect in the Payment page
-  const SV_CEMP = Digit.UserService.hasAccess(["SVCEMP"]) || false;
+  const SV_CEMP = Digit.UserService.hasAccess(["SVCEMP", "TVCEMPLOYEE"]) || false;
   if (
     SV_CEMP &&
     workflowDetails?.data?.applicationBusinessService === "street-vending" &&
@@ -161,6 +180,9 @@ const ApplicationDetails = () => {
 
       <ApplicationDetailsTemplate
         isAction={isAction}
+        vending_Zone={vending_Zone}
+        UserVendingZone={UserVendingZone}
+        UserVendingZoneCode={UserVendingZoneCode}
         applicationDetails={appDetailsToShow?.applicationData}
         isLoading={isLoading}
         isDataLoading={isLoading}

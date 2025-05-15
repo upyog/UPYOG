@@ -52,7 +52,14 @@ export const TableConfig = (t) => ({
         mobileCell: (original) => GetMobCell(original?.searchData?.applicantDetail?.["mobileNumber"]),
         
       },
-      
+      {
+        Header: t("LOCALITY"),
+        Cell: ({ row }) => {
+          return GetCell(t(`${row.original?.searchData?.["localityCode"]}`));
+        },
+        mobileCell: (original) => GetMobCell(t(`${original?.searchData?.["localityCode"]}`)),
+    
+      },
       {
         Header: t("WT_STATUS"),
         Cell: ({ row }) => {
@@ -111,7 +118,14 @@ export const TableConfig = (t) => ({
         mobileCell: (original) => GetMobCell(original?.searchData?.applicantDetail?.["mobileNumber"]),
         
       },
-      
+      {
+        Header: t("LOCALITY"),
+        Cell: ({ row }) => {
+          return GetCell(t(`${row.original?.searchData?.["localityCode"]}`));
+        },
+        mobileCell: (original) => GetMobCell(t(`${original?.searchData?.["localityCode"]}`)),
+    
+      },
       {
         Header: t("MT_STATUS"),
         Cell: ({ row }) => {

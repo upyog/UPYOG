@@ -82,6 +82,12 @@ public class StreetVendingConfiguration {
 
 	@Value("${sv.module.name}")
 	private String moduleName;
+	
+	@Value("${sv.service.monthly.name}")
+	private String serviceNameMonthly;
+	
+	@Value("${sv.service.quaterly.name}")
+	private String serviceNameQuaterly;
 
 	@Value("${sv.payment.business.service.name}")
 	private String paymentBusinessServiceName;
@@ -222,4 +228,20 @@ public class StreetVendingConfiguration {
  	 
  	 @Value("${egov.usr.events.paynow.link}")
      private String payNowLink;
+ 	 
+ 	@Value("${persister.create.payment-schedule.topic}")
+	private String streetVendingPaymentScheduleSaveTopic;
+ 	
+ 	@Value("${persister.update.payment-schedule.topic}")
+	private String streetVendingPaymentScheduleUpdateTopic;
+ 	
+ 	@Value("${egov.location.host}")
+	private String locationHost;
+ 	
+ 	@Value("${egov.location.path}")
+	private String locationPath;
+ 	
+ 	@Value("${egov.location.heirarchy}")
+	private String locationHierarchyTypeCode;
+ 	
 }

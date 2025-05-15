@@ -8,6 +8,7 @@ const Urls = {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
     gramPanchayats: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=GP`,
+    vendingZones: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=VendingZone`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -278,6 +279,7 @@ const Urls = {
   pgrAi:{
     PGR_Create_AI:"/pgr-ai-services/v1/request/_create",
     PGR_Search_AI: "/pgr-ai-services/v1/request/_search",
+    PGR_Update_AI:"/pgr-ai-services/v1/request/_update"
   },
 
 digiLocker:{
@@ -324,3 +326,7 @@ digiLocker:{
 };
 
 export default Urls;
+
+export const getOpenStreetMapUrl = (lat, lng) => {
+  return `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+}

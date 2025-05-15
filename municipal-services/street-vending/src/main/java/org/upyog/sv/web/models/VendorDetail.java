@@ -1,18 +1,14 @@
 package org.upyog.sv.web.models;
 
-import java.time.LocalDate;
-
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
-import org.upyog.sv.enums.VendorRelationshipType;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.validator.CreateApplicationGroup;
 import org.upyog.sv.web.models.common.AuditDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import io.micrometer.core.lang.NonNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,8 +58,6 @@ public class VendorDetail {
 	private String specialCategory;
 
 	private Boolean isInvolved;
-	
-	private String vendorPaymentFrequency;
 
 	private AuditDetails auditDetails;
 
@@ -81,7 +75,6 @@ public class VendorDetail {
 		this.userCategory = vendorDetail.getUserCategory();
 		this.specialCategory = vendorDetail.getSpecialCategory();
 		this.isInvolved = vendorDetail.getIsInvolved();
-		this.vendorPaymentFrequency = vendorDetail.getVendorPaymentFrequency();
 		this.auditDetails = vendorDetail.getAuditDetails();
 	}
 

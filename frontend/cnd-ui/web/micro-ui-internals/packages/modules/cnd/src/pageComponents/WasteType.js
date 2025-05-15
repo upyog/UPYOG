@@ -79,7 +79,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
         if (!detailsByType[detail.wasteType]) {
           detailsByType[detail.wasteType] = {
             quantity: detail.quantity || 0,
-            unit: detail.unit || "Kilogram"
+            unit: detail.metrics || "Kilogram"
           };
         }
       });
@@ -322,7 +322,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           />}
         </div>
         <div style={containerStyle}>
-          <CardLabel style={labelStyle}>{t("CND_SCHEDULE_PICKUP")}</CardLabel>
+          <CardLabel style={labelStyle}>{t("CND_SCHEDULE_PICKUP")}<span className="astericColor">*</span></CardLabel>
           <DatePicker
             date={pickupDate}
             name="pickupDate"
@@ -338,6 +338,8 @@ const WasteType = ({ t, config, onSelect, formData }) => {
           />
           </div>
          
+         { !window.location.href.includes("facility-centre")&&(
+          <React.Fragment>
           <CardLabel>{`${t("CND_SITE_MEDIA")}`}</CardLabel>
           <div style={{ marginBottom: "15px", width:userType === "EMPLOYEE" ? "50%" : "100%" }}>
             <UploadFile
@@ -356,7 +358,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
                   "No File Uploaded"
                 )
               }
-              accept=".pdf, .jpeg, .jpg, .png"
+              accept=".jpeg, .jpg, .png"
               style={{inputStyles}}
             />
           </div>
@@ -379,10 +381,11 @@ const WasteType = ({ t, config, onSelect, formData }) => {
                   "No File Uploaded"
                 )
               }
-              accept=".pdf, .jpeg, .jpg, .png"
+              accept=".jpeg, .jpg, .png"
               style={{inputStyles}}
             />
           </div>
+          </React.Fragment>)}
         </div>
       </FormStep>
     </React.Fragment>

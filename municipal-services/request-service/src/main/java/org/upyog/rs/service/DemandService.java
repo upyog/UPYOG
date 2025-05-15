@@ -1,7 +1,9 @@
 package org.upyog.rs.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.egov.common.contract.request.User;
@@ -58,9 +60,13 @@ public class DemandService {
 				+ waterTankerBookingDetail.getWaterQuantity();
 		BigDecimal amountPayable = calculationService.calculateFee(waterTankerBookingDetail.getTankerQuantity(),
 				tankerCapacityType, waterTankerRequest.getRequestInfo(), tenantId);
+		BigDecimal immediateDeliveryFee = calculationService.immediateDeliveryFee(waterTankerBookingDetail.getExtraCharge(),
+				waterTankerRequest.getRequestInfo(), tenantId);
+		log.info("immediateDeliveryFee for tanker booking : {}", immediateDeliveryFee);
 		log.info("Final amount payable after calculation : " + amountPayable);
+
 		User owner = buildUser(waterTankerBookingDetail.getApplicantDetail(), tenantId);
-		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId);
+		List<DemandDetail> demandDetails = buildDemandDetails(amountPayable, tenantId,immediateDeliveryFee);
 		Demand demand = buildDemand(tenantId, consumerCode, owner, demandDetails, amountPayable);
 		log.info("Final demand generation object" + demand.toString());
 		return demandRepository.saveDemand(waterTankerRequest.getRequestInfo(), Collections.singletonList(demand));
@@ -89,10 +95,37 @@ public class DemandService {
 				.mobileNumber(applicantDetail.getMobileNumber()).tenantId(tenantId).build();
 	}
 
-	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId) {
-		return Collections.singletonList(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
+	/**
+	 * Builds a list of DemandDetail objects for the given payable amounts.
+	 * 
+	 * Steps:
+	 * 1. Checks if an immediate delivery fee is applicable:
+	 *    - If greater than 0, adds a DemandDetail for the immediate delivery fee.
+	 * 2. Adds a DemandDetail for the main payable amount.
+	 * 3. Logs the final list of demand details.
+	 * 
+	 * Parameters:
+	 * - amountPayable: The main amount to be paid.
+	 * - tenantId: The tenant ID for which the demand is created.
+	 * - immediateDeliveryFee: The fee for immediate delivery, if applicable.
+	 * 
+	 * Returns:
+	 * - A list of DemandDetail objects containing tax details.
+	 */
+	private List<DemandDetail> buildDemandDetails(BigDecimal amountPayable, String tenantId, BigDecimal immediateDeliveryFee) {
+		List<DemandDetail> demandDetails = new LinkedList<>();
+		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
 				.taxAmount(amountPayable).taxHeadMasterCode(RequestServiceConstants.REQUEST_SERVICE_TAX_MASTER_CODE)
 				.tenantId(tenantId).build());
+		if(immediateDeliveryFee.compareTo(BigDecimal.ZERO) > 0) {
+			demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO)
+					.taxAmount(immediateDeliveryFee).taxHeadMasterCode(RequestServiceConstants.IMMEDIATE_DELIVERY_TAX_HEAD)
+					.tenantId(tenantId).build());
+		}
+
+		log.info("Final demand details: {}", demandDetails);
+
+		return demandDetails;
 	}
 
 	private List<DemandDetail> buildMTDemandDetails(BigDecimal amountPayable, String feeType, String tenantId) {

@@ -1,4 +1,5 @@
 import { MTService } from "../../elements/MT";
+import format from "date-fns/format";
 import React from "react";
 
 /**
@@ -58,10 +59,10 @@ export const MTSearch = {
         asSectionHeader: true,
         values: [
           { title: "MT_NUMBER_OF_MOBILE_TOILETS", value: response?.noOfMobileToilet || t("CS_NA")},
-          { title: "MT_DELIVERY_FROM_DATE", value: response?.deliveryFromDate || t("CS_NA")},
-          { title: "MT_DELIVERY_TO_DATE", value: response?.deliveryToDate || t("CS_NA")},
-          { title: "MT_REQUIREMNENT_FROM_TIME", value: response?.deliveryFromTime || t("CS_NA")},
-          { title: "MT_REQUIREMNENT_TO_TIME", value: response?.deliveryToTime || t("CS_NA")},
+          { title: "MT_DELIVERY_FROM_DATE", value: format(new Date(response?.deliveryFromDate), 'dd-MM-yyyy')  || t("CS_NA")},
+          { title: "MT_DELIVERY_TO_DATE", value: format(new Date(response?.deliveryToDate), 'dd-MM-yyyy')  || t("CS_NA")},
+          { title: "MT_REQUIREMNENT_FROM_TIME", value: response?.deliveryFromTime || t("CS_NA"), isTimeValue: true },
+          { title: "MT_REQUIREMNENT_TO_TIME", value: response?.deliveryToTime || t("CS_NA"), isTimeValue: true },
           { title: "MT_SPECIAL_REQUEST", value: response?.description || t("CS_NA")},
         ],
       },

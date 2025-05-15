@@ -49,9 +49,9 @@
         {
           Header: t("SV_VENDING_ZONES"),
           Cell: ( row ) => {
-            return GetCell(`${t(row?.cell?.row?.original?.searchData?.["vendingZone"])}`)
+            return GetCell(`${t(row?.cell?.row?.original?.searchData?.["vendingZoneValue"])}`)
           },
-          mobileCell: (original) => GetMobCell(t(original?.searchData?.["vendingZone"])),
+          mobileCell: (original) => GetMobCell(t(original?.searchData?.["vendingZoneValue"])),
         },
         
         {

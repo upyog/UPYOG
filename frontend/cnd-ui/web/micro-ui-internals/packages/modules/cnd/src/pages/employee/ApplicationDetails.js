@@ -104,7 +104,7 @@ const ApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "cnd-service");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };

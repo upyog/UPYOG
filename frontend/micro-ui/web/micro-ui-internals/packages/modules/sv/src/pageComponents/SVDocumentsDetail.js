@@ -221,7 +221,12 @@ const transformDocuments = (documents) => {
           lastModifiedTime: 0
         },
       },
-      benificiaryOfSocialSchemes: "",
+      benificiaryOfSocialSchemes: [],
+      applicationCreatedBy: formData?.owner?.applicationCreatedBy,
+      locality: formData?.businessDetails?.vendorLocality?.code || "",
+      localityValue: "",
+      vendingZoneValue: "",
+      vendorPaymentFrequency: formData?.vendingPayment?.code,
       enrollmentId:"",
       cartLatitude: 0,
       cartLongitude: 0,

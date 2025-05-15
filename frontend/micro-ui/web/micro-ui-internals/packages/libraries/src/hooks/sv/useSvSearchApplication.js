@@ -10,7 +10,7 @@ const useSvSearchApplication = ({ tenantId, filters, auth,searchedFrom="" }, con
 
   // Selects the data to be returned by the hook
   const defaultSelect = (data) => {
-    if(data.SVDetail.length > 0)  data.SVDetail[0].applicationNo = data.SVDetail[0].applicationNo || [];
+    // if(data.SVDetail.length > 0)
     return data;
   };
 

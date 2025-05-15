@@ -1,5 +1,5 @@
 import { Header, Loader, Card, CardLabel, TextInput, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PGRApplication from "./PGRAI-application";
@@ -15,6 +15,7 @@ export const PGRAIMyApplications = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const user = Digit.UserService.getUser().info;
+    const [filters, setFilters] = useState(null);
 
  const [searchTerm, setSearchTerm] = useState("");
   
@@ -29,18 +30,22 @@ export const PGRAIMyApplications = () => {
     }
   
     let initialFilters = !isNaN(parseInt(filter))
-      ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-      : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0", tenantId, mobileNumber: user?.mobileNumber };
+      ? { limit: "50", offset: off, tenantId }
+      : { limit: "4", offset: "0", tenantId};
 
-  const { isLoading, isError, error, data } = Digit.Hooks.pgrAi.useSearchPGRAI({ tenantId });
-  
+  const { isLoading, isError, error, data } = Digit.Hooks.pgrAi.useSearchPGRAI({ filters });
+   
+  useEffect(() => {
+      setFilters(initialFilters);
+    }, [filter]);
 
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
     const searchFilters = {
       ...initialFilters,
-      bookingNo: trimmedSearchTerm || undefined,
+      serviceRequestId: trimmedSearchTerm || undefined,
     };
+    setFilters(searchFilters);
   };
 
   if (isLoading) {
@@ -57,7 +62,7 @@ export const PGRAIMyApplications = () => {
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
               <div style={{ flex: 2 }}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                  <CardLabel>{t("PGR_AIR_BOOKING_NO")}</CardLabel>
+                  <CardLabel>{t("PGR_AI_GRIEVANCE_NO")}</CardLabel>
                   <TextInput
                     placeholder={t("Enter Booking No.")}
                     value={searchTerm}

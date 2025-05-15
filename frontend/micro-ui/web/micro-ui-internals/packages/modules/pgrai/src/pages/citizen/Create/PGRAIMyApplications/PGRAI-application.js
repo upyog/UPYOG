@@ -18,8 +18,7 @@ import { Link } from "react-router-dom";
  */
 const PGRApplication = ({ application, tenantId, buttonLabel }) => {
   const { t } = useTranslation();
-  console.log("PGRApplication application", application);
-  
+    
   return (
     <Card>
       <KeyNote 

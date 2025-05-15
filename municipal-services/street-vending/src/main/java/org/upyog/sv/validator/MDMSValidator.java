@@ -33,7 +33,7 @@ public class MDMSValidator {
 //			MdmsUtil.setMDMSDataMap(masterData);
 //		}
 
-		String[] masterArray = { StreetVendingConstants.VENDIING_ZONES, StreetVendingConstants.VENDING_ACTIVITY_TYPE,
+		String[] masterArray = { StreetVendingConstants.VENDING_ZONES, StreetVendingConstants.VENDING_ACTIVITY_TYPE,
 				StreetVendingConstants.DOCUMENTS};
 
 		log.info("Validating master data from MDMS for : "
