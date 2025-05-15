@@ -6,11 +6,11 @@ RUN yarn add @upyog/digit-ui-libraries
 RUN yarn add @upyog/digit-ui-module-fsm@3.0.1
 RUN yarn add @upyog/digit-ui-module-pt@2.0.0
 RUN yarn add @upyog/digit-ui-module-tl@2.0.0
-RUN yarn add @upyog/digit-ui-module-obps@2.0.6
+RUN yarn add @upyog/digit-ui-module-obps@2.0.7
 RUN yarn add @upyog/digit-ui-module-ws@1.8.16
 RUN yarn add @upyog/digit-ui-module-dss@1.8.11
 RUN yarn add @upyog/digit-ui-module-mcollect@2.0.0
-RUN yarn add @upyog/digit-ui-module-pgr@1.8.4
+RUN yarn add @upyog/digit-ui-module-pgr@1.8.6
 RUN yarn add @upyog/digit-ui-module-noc@1.8.0
 RUN yarn add @upyog/digit-ui-module-engagement@1.8.0
 RUN yarn add @upyog/digit-ui-module-hrms@1.8.0

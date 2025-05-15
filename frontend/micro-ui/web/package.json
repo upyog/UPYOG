@@ -11,11 +11,9 @@
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/commonpt",
-    "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/fsm",
-    "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/mCollect"
   ],
   "engines": {
@@ -33,9 +31,9 @@
     "@upyog/digit-ui-module-hrms": "1.8.0",
     "@upyog/digit-ui-module-mcollect": "2.0.0",
     "@upyog/digit-ui-module-commonpt":"2.0.0",
-    "@upyog/digit-ui-module-obps": "2.0.6",
+    "@upyog/digit-ui-module-obps": "2.0.7",
     "@upyog/digit-ui-module-noc": "1.8.0",
-    "@upyog/digit-ui-module-pgr": "1.8.4",
+    "@upyog/digit-ui-module-pgr": "1.8.6",
     "@upyog/digit-ui-module-pt": "2.0.0",
     "@upyog/digit-ui-module-receipts": "1.8.0",
     "@upyog/digit-ui-module-tl": "2.0.0",
