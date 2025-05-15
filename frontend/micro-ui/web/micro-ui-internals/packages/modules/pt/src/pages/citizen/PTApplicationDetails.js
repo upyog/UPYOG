@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -7,7 +7,7 @@ import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
 import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -29,6 +29,7 @@ const PTApplicationDetails = () => {
   );
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
+
 
   let serviceSearchArgs = {
     tenantId : tenantId,
@@ -245,7 +246,7 @@ const PTApplicationDetails = () => {
     <React.Fragment>
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-          <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+          <Header styles={{ fontSize: "16px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -280,7 +281,7 @@ const PTApplicationDetails = () => {
               </React.Fragment>
             )}
           </StatusTable>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={property?.address?.pincode || t("CS_NA")} />
             <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.address?.city || t("CS_NA")} />
@@ -299,7 +300,7 @@ const PTApplicationDetails = () => {
 
           {isPropertyTransfer ? (
             <React.Fragment>
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
                   transferorOwners.map((owner, index) => (
@@ -327,7 +328,7 @@ const PTApplicationDetails = () => {
                   ))}
               </div>
 
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
               {isInstitution ? (
                 <div>
                   {Array.isArray(transfereeOwners) &&
@@ -395,7 +396,7 @@ const PTApplicationDetails = () => {
                     ))}
                 </div>
               )}
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
               <StatusTable>
                 <Row
                   className="border-none"
@@ -411,7 +412,7 @@ const PTApplicationDetails = () => {
                 <Row className="border-none" label={t("PT_DETAILS_GOV_AQUISITION")} text={t("CS_NA")} />
               </StatusTable>
 
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
               <StatusTable>
                 <Row
                   className="border-none"
@@ -427,7 +428,7 @@ const PTApplicationDetails = () => {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <CardSubHeader style={{ fontSize: "24px" }}> {t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}> {t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
               <StatusTable>
                 <Row
                   className="border-none"
@@ -459,7 +460,7 @@ const PTApplicationDetails = () => {
                       {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
                         <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
                       )}
-                      <div style={{ border: "groove", padding: "7px", marginBottom: "10px" }}>
+                      <div style={{ border: "groove", padding: "7px", marginBottom: "10px", borderRadius: "6px" }}>
                         <CardSubHeader>
                           {t("ES_APPLICATION_DETAILS_UNIT")} {i}
                         </CardSubHeader>
@@ -498,7 +499,7 @@ const PTApplicationDetails = () => {
                     </div>
                   ))}
               </div>
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
+              <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div>
                 {Array.isArray(owners) &&
                   owners.map((owner, index) => (
@@ -530,7 +531,7 @@ const PTApplicationDetails = () => {
             </React.Fragment>
           )}
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_DOCS")}</CardSubHeader>
+          <CardSubHeader style={{ fontSize: "16px" }}>{t("PT_COMMON_DOCS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
               docs.length > 0 && <PropertyDocument property={property}></PropertyDocument>
@@ -552,7 +553,7 @@ const PTApplicationDetails = () => {
           />
         )}
         </Card>
-        {/* <LinkButton style={{marginLeft:"5%",color:"#a82227"}} label={t("CS_RATE_US")} onClick={() => setpopup(true)} /> */}
+        {/* <LinkButton style={{marginLeft:"5%",color:"#0f4f9e"}} label={t("CS_RATE_US")} onClick={() => setpopup(true)} /> */}
         {/* {popup && (<PopUp>
           <div style={{margin:"0 auto", top:"15%", position:"relative"}}>
           <PTCitizenFeedback popup={true} onClose={setpopup} setShowToast={setShowToast} data={data}/>
