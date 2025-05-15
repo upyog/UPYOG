@@ -37,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,6 +62,9 @@ public class PropertySchedulerService {
 
 	@Autowired
 	private EnrichmentService enrichmentService;
+
+	@Autowired
+	private NotificationService notificationService;
 
 	public CalculateTaxResponse calculateTax(CalculateTaxRequest calculateTaxRequest) {
 
@@ -109,6 +113,7 @@ public class PropertySchedulerService {
 
 		for (Property property : properties) {
 
+			ArrayNode TrackeradditionalDetails = objectMapper.createArrayNode();
 			BigDecimal totalPropertyTax = BigDecimal.ZERO;
 			BigDecimal oneDayPropertyTax = BigDecimal.ZERO;
 			BigDecimal finalPropertyTax = BigDecimal.ZERO;
@@ -150,20 +155,21 @@ public class PropertySchedulerService {
 				for (JsonNode buildingPurpose : objectMapper.valueToTree(buildingPurposes)) {
 					if (ulbName.equalsIgnoreCase(buildingPurpose.get("ulbName").asText())
 							&& buildingPurpose.get("purposeName").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText())) {
+									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText() + "." + ulbName)) {
 						occupancyFactor = new BigDecimal(buildingPurpose.get("rate").asText());
 					}
 				}
 				for (JsonNode buildingUse : objectMapper.valueToTree(buildingUses)) {
 					if (ulbName.equalsIgnoreCase(buildingUse.get("ulbName").asText())
-							&& buildingUse.get("useOfBuilding").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("useOfBuilding").asText())) {
+							&& buildingUse.get("useOfBuilding").asText().equalsIgnoreCase(
+									ulbName + "." + unitAdditionalDetails.get("useOfBuilding").asText())) {
 						useFactor = new BigDecimal(buildingUse.get("rate").asText());
 					}
 				}
 
 				for (JsonNode zone : objectMapper.valueToTree(zones)) {
-					if (addressAdditionalDetails.get("zone").asText().equalsIgnoreCase(zone.get("zoneName").asText())) {
+					if (ulbName.equalsIgnoreCase(zone.get("ulbName").asText()) && addressAdditionalDetails.get("zone")
+							.asText().equalsIgnoreCase(zone.get("zoneName").asText())) {
 						locationFactor = new BigDecimal(zone.get("propertyRate").asText());
 					}
 				}
@@ -211,9 +217,9 @@ public class PropertySchedulerService {
 							&& addressAdditionalDetails.get("zone").asText().equalsIgnoreCase(
 									propertyTaxRate.get("zoneName").asText().replaceFirst(ulbName + ".", ""))
 							&& propertyTaxRate.get("purposeName").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText())
-							&& propertyTaxRate.get("useOfBuilding").asText()
-									.equalsIgnoreCase(unitAdditionalDetails.get("useOfBuilding").asText())) {
+									.equalsIgnoreCase(unitAdditionalDetails.get("propType").asText() + "." + ulbName)
+							&& propertyTaxRate.get("useOfBuilding").asText().equalsIgnoreCase(
+									ulbName + "." + unitAdditionalDetails.get("useOfBuilding").asText())) {
 
 						String propertyAreaString = propertyTaxRate.get("propertyArea").asText();
 						BigDecimal unitPropertyArea = new BigDecimal(unitAdditionalDetails.get("propArea").asText());
@@ -240,6 +246,24 @@ public class PropertySchedulerService {
 
 				if (!CollectionUtils.isEmpty(errorSet)) {
 					errorMap.put(property.getPropertyId(), errorSet);
+				} else {
+					JsonNode node = objectMapper.createObjectNode()
+							.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGSTRUCTURE, structuralFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGESTABLISHMENTYEAR, ageFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGPURPOSE, occupancyFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_BUILDINGUSE, useFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_ZONES, locationFactor.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_OVERALLREBATE, oAndMRebatePercentage.doubleValue())
+							.put(PTConstants.MDMS_MASTER_DETAILS_PROPERTYTAXRATE,
+									propertyTaxRatePercentage.doubleValue())
+							.put("netRateableValue", netRateableValue.doubleValue())
+							.put("propertyArea", unitAdditionalDetails.get("propArea").asText())
+							.put("propertyTaxCalculated", propertyTax.doubleValue())
+							.put("propertyTaxGenerated", propertyTax.divide(BigDecimal.valueOf(365), 0).multiply(days))
+							.put("days", days.doubleValue());
+					if (node != null) {
+						TrackeradditionalDetails.add(node);
+					}
 				}
 			}
 
@@ -252,7 +276,8 @@ public class PropertySchedulerService {
 				finalPropertyTax = oneDayPropertyTax.multiply(days);
 
 				PtTaxCalculatorTrackerRequest ptTaxCalculatorTrackerRequest = enrichmentService
-						.enrichTaxCalculatorTrackerCreateRequest(property, calculateTaxRequest, finalPropertyTax);
+						.enrichTaxCalculatorTrackerCreateRequest(property, calculateTaxRequest, finalPropertyTax,
+								TrackeradditionalDetails);
 
 				BillResponse billResponse = generateDemandAndBill(calculateTaxRequest, property, finalPropertyTax);
 
@@ -261,6 +286,10 @@ public class PropertySchedulerService {
 							.saveToPtTaxCalculatorTracker(ptTaxCalculatorTrackerRequest);
 
 					taxCalculatorTrackers.add(ptTaxCalculatorTracker);
+
+					// notification calls
+					notificationService.triggerNotificationsGenerateBill(ptTaxCalculatorTracker,
+							billResponse.getBill().get(0), ptTaxCalculatorTrackerRequest.getRequestInfo());
 				}
 			}
 
@@ -289,8 +318,11 @@ public class PropertySchedulerService {
 			LocalDate currentDate = LocalDate.now();
 			// Calculate the current financial year
 			int currentYear = currentDate.getYear();
-			int financialYearStart = currentDate.isBefore(LocalDate.of(currentYear, 4, 1)) ? currentYear
-					: currentYear - 1;
+//			int financialYearStart = currentDate.isBefore(LocalDate.of(currentYear, 4, 1)) ? currentYear
+//					: currentYear - 1;
+			int financialYearStart = currentDate.isBefore(LocalDate.of(currentYear, 4, 1)) ? currentYear - 1
+					: currentYear;
+
 			int financialYearEnd = financialYearStart + 1;
 			LocalDate startDate = LocalDate.of(financialYearStart, 4, 1);
 			LocalDate endDate = LocalDate.of(financialYearStart + 1, 3, 31);
@@ -350,6 +382,7 @@ public class PropertySchedulerService {
 
 	private List<Property> removeAlreadyTaxCalculatedProperties(List<Property> properties,
 			CalculateTaxRequest calculateTaxRequest) {
+		List<Property> finalProperty = new ArrayList<>();
 
 		Set<String> propertyIds = properties.stream().map(Property::getPropertyId).collect(Collectors.toSet());
 
@@ -362,23 +395,26 @@ public class PropertySchedulerService {
 		Map<String, List<PtTaxCalculatorTracker>> ptTaxCalculatorTrackerMap = ptTaxCalculatorTrackers.stream()
 				.collect(Collectors.groupingBy(PtTaxCalculatorTracker::getPropertyId));
 
-		properties = properties.stream().filter(property -> {
+		for (Property property : properties) {
 			List<PtTaxCalculatorTracker> trackers = ptTaxCalculatorTrackerMap.get(property.getPropertyId());
 			if (trackers == null) {
 				// If no trackers found for the property, we add the property.
-				return true;
-			}
-			// Check if the property matches the conditions
-			return trackers.stream()
-					.noneMatch(ptTaxCalculatorTracker -> property.getPropertyId()
-							.equalsIgnoreCase(ptTaxCalculatorTracker.getPropertyId())
+				finalProperty.add(property);
+			} else {
+				// Check if the property matches the conditions
+				for (PtTaxCalculatorTracker ptTaxCalculatorTracker : trackers) {
+					if (property.getPropertyId().equalsIgnoreCase(ptTaxCalculatorTracker.getPropertyId())
 							&& (ptTaxCalculatorTracker.getFromDate().after(calculateTaxRequest.getFromDate())
 									|| ptTaxCalculatorTracker.getFromDate().equals(calculateTaxRequest.getFromDate()))
 							&& ptTaxCalculatorTracker.getToDate().before(calculateTaxRequest.getToDate())
-							|| ptTaxCalculatorTracker.getToDate().equals(calculateTaxRequest.getToDate()));
-		}).collect(Collectors.toList());
+							|| ptTaxCalculatorTracker.getToDate().equals(calculateTaxRequest.getToDate())) {
+						finalProperty.add(property);
+					}
+				}
+			}
+		}
 
-		return properties;
+		return finalProperty;
 	}
 
 	private BillResponse generateDemandAndBill(CalculateTaxRequest calculateTaxRequest, Property property,

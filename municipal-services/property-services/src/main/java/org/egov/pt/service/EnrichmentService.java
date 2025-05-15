@@ -1,6 +1,7 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -355,15 +357,23 @@ public class EnrichmentService {
     }
     
 	public PtTaxCalculatorTrackerRequest enrichTaxCalculatorTrackerCreateRequest(Property property,
-			CalculateTaxRequest calculateTaxRequest, BigDecimal finalPropertyTax) {
+			CalculateTaxRequest calculateTaxRequest, BigDecimal finalPropertyTax,JsonNode additionalDetails) {
 
+//		Date fromDate = calculateTaxRequest.getFromDate();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+//		String formattedDate = formatter.format(calculateTaxRequest.getFromDate());
 		AuditDetails createAuditDetails = propertyutil
 				.getAuditDetails(calculateTaxRequest.getRequestInfo().getUserInfo().getUuid().toString(), true);
 		PtTaxCalculatorTracker ptTaxCalculatorTracker = PtTaxCalculatorTracker.builder()
 				.uuid(UUID.randomUUID().toString()).propertyId(property.getPropertyId())
 				.tenantId(property.getTenantId()).financialYear(calculateTaxRequest.getFinancialYear())
 				.fromDate(calculateTaxRequest.getFromDate()).toDate(calculateTaxRequest.getToDate())
-				.propertyTax(finalPropertyTax).auditDetails(createAuditDetails).build();
+				.fromDateString(formatter.format(calculateTaxRequest.getFromDate()))
+				.toDateString(formatter.format(calculateTaxRequest.getToDate()))
+				.propertyTax(finalPropertyTax)
+				.additionalDetails(additionalDetails)
+				.auditDetails(createAuditDetails)
+				.build();
 
 		return PtTaxCalculatorTrackerRequest.builder().requestInfo(calculateTaxRequest.getRequestInfo())
 				.ptTaxCalculatorTracker(ptTaxCalculatorTracker).build();

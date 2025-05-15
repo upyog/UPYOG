@@ -42,7 +42,8 @@ public class Utils {
     }
     
 	public static boolean isPositiveInteger(BigDecimal bd) {
-		return bd.compareTo(BigDecimal.ZERO) >= 0
-				&& (bd.signum() == 0 || bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0);
+		return bd.compareTo(BigDecimal.ZERO) >= 1;
+//		return bd.compareTo(BigDecimal.ZERO) >= 0;
+//				&& (bd.signum() == 0 || bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0);
 	}
 }
