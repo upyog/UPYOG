@@ -66,33 +66,27 @@ public class PaymentService {
 			String businessService = paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService();
 			log.info("Payment request processing in Request Service method for businessService : " + businessService);
 			log.info("consumerCode : " + consumerCode);
-			if(consumerCode.equals("WT")){
-			if (configs.getWtModuleName()
-					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+			if(configs.getWtModuleName()
+					.equals(businessService)){
 				String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 						.getConsumerCode();
 				log.info("Updating payment status for water tanker booking : " + applicationNo);
 				State state = workflowService.updateWorkflowStatus(paymentRequest, null);
 				String applicationStatus = state.getApplicationStatus();
-				waterTankerService.updateWaterTankerBooking(null, paymentRequest, applicationStatus);
-			}
-			}
-			if(consumerCode.equals("MT")){
-				if (configs.getMtModuleName()
-						.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+				waterTankerService.updateWaterTankerBooking(paymentRequest, applicationStatus);
+			}else if(configs.getMtModuleName().equals(businessService)){
 					String applicationNo = paymentRequest.getPayment().getPaymentDetails().get(0).getBill()
 							.getConsumerCode();
 					log.info("Updating payment status for mobile Toilet booking : " + applicationNo);
 					State state = workflowService.updateMTWorkflowStatus(paymentRequest, null);
 					String applicationStatus = state.getApplicationStatus();
 					mobileToiletService.updateMobileToiletBooking(null, paymentRequest, applicationStatus);
-				}
 			}
 		} catch (IllegalArgumentException e) {
 			log.error(
 					"Illegal argument exception occured while sending notification Request Service : " + e.getMessage());
 		} catch (Exception e) {
-			log.error("An unexpected exception occurred while sending notification Request Service : ", e);
+			log.error("An unexpected exception occurred while processing payment in Request Service : ", e);
 		}
 
 	}

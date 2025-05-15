@@ -67,24 +67,22 @@ public class NotificationConsumer {
             return;
         }
 
-        log.info("CND Application Received with booking no: " + bookingNo + " and status: " + applicationStatus);
+        log.info("Request Service Application Received with booking no: " + bookingNo + " and status: " + applicationStatus);
 
-        // Send notification except for "PENDING_FOR_PAYMENT"
-        if (!"PENDING_FOR_PAYMENT".equals(applicationStatus) && request != null) {
-            if (request instanceof WaterTankerBookingRequest) {
-                WaterTankerBookingRequest waterTankerRequest = (WaterTankerBookingRequest) request;
-                applicationStatus = extractApplicationStatus(waterTankerRequest.getWaterTankerBookingDetail().getBookingStatus(),
-                        waterTankerRequest.getWaterTankerBookingDetail().getWorkflow());
-            } else if (request instanceof MobileToiletBookingRequest) {
-                MobileToiletBookingRequest mobileToiletRequest = (MobileToiletBookingRequest) request;
-                applicationStatus = extractApplicationStatus(mobileToiletRequest.getMobileToiletBookingDetail().getBookingStatus(),
-                        mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow());
-            }
+        if (request instanceof WaterTankerBookingRequest) {
+            WaterTankerBookingRequest waterTankerRequest = (WaterTankerBookingRequest) request;
+            applicationStatus = extractApplicationStatus(waterTankerRequest.getWaterTankerBookingDetail().getBookingStatus(),
+                    waterTankerRequest.getWaterTankerBookingDetail().getWorkflow());
+        } else if (request instanceof MobileToiletBookingRequest) {
+            MobileToiletBookingRequest mobileToiletRequest = (MobileToiletBookingRequest) request;
+            applicationStatus = extractApplicationStatus(mobileToiletRequest.getMobileToiletBookingDetail().getBookingStatus(),
+                    mobileToiletRequest.getMobileToiletBookingDetail().getWorkflow());
+        }
 
             log.info("Final Application Status: " + applicationStatus);
             notificationService.process(request, applicationStatus);
         }
-    }
+
 
     private String extractApplicationStatus(String bookingStatus, Workflow workflow) {
         if (workflow == null) return bookingStatus;
