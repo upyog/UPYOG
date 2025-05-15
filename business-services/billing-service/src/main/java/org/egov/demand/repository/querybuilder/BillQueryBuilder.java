@@ -138,6 +138,11 @@ public class BillQueryBuilder {
 			selectQuery.append(" AND bd.billno = ?");
 			preparedStatementValues.add(searchBill.getBillNumber());
 		}
+		
+		if (searchBill.getPayerId() != null) {
+			selectQuery.append(" AND b.payerid = ?");
+			preparedStatementValues.add(searchBill.getPayerId());
+		}
 
 		if (!CollectionUtils.isEmpty(searchBill.getConsumerCode())) {
 			selectQuery.append(" AND bd.consumercode IN (");

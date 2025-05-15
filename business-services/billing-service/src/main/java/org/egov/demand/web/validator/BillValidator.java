@@ -52,16 +52,17 @@ public class BillValidator {
 	public void validateBillSearchCriteria(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 
 		util.validateTenantIdForUserType(billCriteria.getTenantId(), requestInfo);
-		
-		if (billCriteria.getBillId() == null && CollectionUtils.isEmpty(billCriteria.getConsumerCode())
-				&& billCriteria.getMobileNumber() == null && billCriteria.getEmail() == null && billCriteria.getBillNumber()==null) {
+		if(!billCriteria.getSkipValidation()) {
+			if (billCriteria.getPayerId() == null && billCriteria.getBillId() == null && CollectionUtils.isEmpty(billCriteria.getConsumerCode())
+					&& billCriteria.getMobileNumber() == null && billCriteria.getEmail() == null && billCriteria.getBillNumber()==null) {
 
-			throw new CustomException("EGBS_MANDATORY_FIELDS_ERROR",
-					"BILL_SEARCH_MANDATORY_FIELDS_MISSING Any one of the fields additional to tenantId is mandatory like consumerCode,billId, mobileNumber or email");
-		} else if ((billCriteria.getConsumerCode() != null && billCriteria.getService() == null)) {
+				throw new CustomException("EGBS_MANDATORY_FIELDS_ERROR",
+						"BILL_SEARCH_MANDATORY_FIELDS_MISSING Any one of the fields additional to tenantId is mandatory like consumerCode,billId,payerId,mobileNumber or email");
+			} else if ((billCriteria.getConsumerCode() != null && billCriteria.getService() == null)) {
 
-			throw new CustomException("BILL_SEARCH_CONSUMERCODE_BUSINESSSERVICE",
-					" the consumerCode & Service values should be given together or mobilenumber/email can be given ");
+				throw new CustomException("BILL_SEARCH_CONSUMERCODE_BUSINESSSERVICE",
+						" the consumerCode & Service values should be given together or mobilenumber/email can be given ");
+			}
 		}
 	}
 

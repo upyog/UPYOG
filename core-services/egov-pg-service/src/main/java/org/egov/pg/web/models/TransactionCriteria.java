@@ -2,7 +2,11 @@ package org.egov.pg.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import java.util.Set;
+
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.enums.TxnSettlementStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,6 +36,12 @@ public class TransactionCriteria {
     @JsonIgnore
     private Long startDateTime;
     
+    private String txnSettlementStatus;
+    
+    private Set<String> txnSettlementStatusses;
+    
+    private Set<String> notTxnSettlementStatusses;
+    
     @JsonIgnore
     private Long endDateTime;
 
@@ -42,5 +52,8 @@ public class TransactionCriteria {
     @JsonIgnore
     @Builder.Default
     private int offset = 0;
+    
+    @Builder.Default
+	private Boolean isSchedulerCall = false;
 
 }

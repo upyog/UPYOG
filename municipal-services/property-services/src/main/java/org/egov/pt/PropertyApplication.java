@@ -3,6 +3,8 @@ package org.egov.pt;
 
 import java.util.TimeZone;
 
+import javax.annotation.PostConstruct;
+
 import org.egov.encryption.config.EncryptionConfiguration;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,4 +38,8 @@ public class PropertyApplication {
         SpringApplication.run(PropertyApplication.class, args);
     }
     
+	@PostConstruct
+	public void initialize() {
+		TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
+	}
 }

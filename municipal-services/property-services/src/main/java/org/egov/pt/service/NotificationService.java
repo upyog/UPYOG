@@ -1,6 +1,10 @@
 package org.egov.pt.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,13 +12,17 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.collection.Bill;
 import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.PtTaxCalculatorTracker;
+import org.egov.pt.models.SMSSentRequest;
 import org.egov.pt.models.enums.CreationReason;
+import org.egov.pt.models.enums.SMSCategory;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.event.Event;
 import org.egov.pt.models.event.EventRequest;
@@ -23,13 +31,19 @@ import org.egov.pt.models.workflow.ProcessInstance;
 import org.egov.pt.util.NotificationUtil;
 import org.egov.pt.util.PTConstants;
 import org.egov.pt.web.contracts.EmailRequest;
+import org.egov.pt.web.contracts.Email;
 import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.SMSRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 import static org.egov.pt.util.PTConstants.*;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +53,26 @@ import com.jayway.jsonpath.JsonPath;
 @Slf4j
 @Service
 public class NotificationService {
+	
+	private static final String SMS_TEMPLATE_BILL_NOTIFICATION = "BILL-NOTIFICATION";
+	private static final String PROPERTY_BILL_EMAIL_TEMPLATE_LOCATION = "templates/PropertyBillEmailTemplate.html";
+	private static final String PROPERTY_PLACEHOLDER = "property";
+	private static final String MONTH_PLACEHOLDER = "{month}";
+	private static final String YEAR_PLACEHOLDER = "{year}";
+	private static final String PROPERTY_ID_PLACEHOLDER = "{property_id}";
+	private static final String LINK_PLACEHOLDER = "{link}";
+	private static final String AMOUNT_PLACEHOLDER = "{amount}";
+	private static final String BILL_NO_PLACEHOLDER = "{bill_no}";
+	private static final String RECIPINTS_NAME_PLACEHOLDER = "{recipients_name}";
+	private static final String PROPERTY_PAY_NOW_BILL_URL_PLACEHOLDER = "{property_pay_now_bill_url}";
 
+	private static final String SMS_BODY_GENERATE_BILL = "The bill for " + PROPERTY_PLACEHOLDER + " for the period "
+			+ MONTH_PLACEHOLDER + " against your ID " + PROPERTY_ID_PLACEHOLDER
+			+ " has been generated on CitizenSeva Portal.  Kindly visit the website and make the necessary payments or use the following link for payment "
+			+ LINK_PLACEHOLDER + ". CitizenSeva H.P.";
+
+	private static final String EMAIL_SUBJECT_GENERATE_BILL = "Your Property Collection Bill for " + MONTH_PLACEHOLDER
+			+ "/" + " with " + PROPERTY_ID_PLACEHOLDER;
 	@Autowired
 	private NotificationUtil notifUtil;
 
@@ -51,8 +84,19 @@ public class NotificationService {
 
 	@Value("${notification.url}")
 	private String notificationURL;
+	
+	@Autowired
+	private KafkaTemplate<String, Object> kafkaTemplate;
 
+	@Value("${kafka.topics.email.service.topic.name}")
+	private String emailTopic;
 
+	@Value("${kafka.topics.notification.sms}")
+	private String smsTopic;
+
+	@Value("${frontend.base.uri}")
+	private String frontEndUri;
+	
 	public void sendNotificationForMutation(PropertyRequest propertyRequest) {
 
 		String msg = null;
@@ -496,5 +540,98 @@ public class NotificationService {
 		notifUtil.sendSMS(smsRequests);
 
 	}
+	
+	public void triggerNotificationsGenerateBill(PtTaxCalculatorTracker propertyTracker, Bill bill, RequestInfo requestInfo) {
+		ClassPathResource resource = new ClassPathResource(PROPERTY_BILL_EMAIL_TEMPLATE_LOCATION);
+		String emailBody = getContentAsString(resource);
+		String smsBody = SMS_BODY_GENERATE_BILL;
+		String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
+	
+		emailBody = populateNotificationPlaceholders(emailBody, propertyTracker, bill);
+		smsBody = populateNotificationPlaceholders(smsBody, propertyTracker, bill);
+		emailSubject = populateNotificationPlaceholders(emailSubject, propertyTracker, bill);
+	
+//		if (!StringUtils.isEmpty(bill.getPayerEmail())) {
+//			sendEmailforGenerateBill(emailBody, Collections.singletonList(bill.getPayerEmail()), requestInfo, null,
+//					emailSubject);
+//		}
+//		if (!StringUtils.isEmpty(bill.getMobileNumber())) {
+//			sendSms(smsBody, bill.getMobileNumber());
+//		}
+
+	}
+	
+	private String populateNotificationPlaceholders(String body, PtTaxCalculatorTracker propertyTracker, Bill bill) {
+
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM - yyyy");
+
+//		Instant instant = Instant.ofEpochMilli(bill.getBillDate());
+//		LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+		body = body.replace(RECIPINTS_NAME_PLACEHOLDER, bill.getPayerName());
+		body = body.replace(MONTH_PLACEHOLDER,  monthFormat.format(propertyTracker.getFromDate())+" / "+monthFormat.format(propertyTracker.getToDate()));
+//		body = body.replace(YEAR_PLACEHOLDER, propertyTracker.getFinancialYear());
+		body = body.replace(BILL_NO_PLACEHOLDER, bill.getBillNumber());
+//		if (!CollectionUtils.isEmpty(garbageAccount.getAddresses())) {
+//			body = body.replace(ADDRESS_PLACEHOLDER, prepareAddress(garbageAccount.getAddresses().get(0)));
+//		}
+//		if (!CollectionUtils.isEmpty(garbageAccount.getGrbgCollectionUnits())) {
+//			body = body.replace(COLLECTION_UNIT_TYPE_PLACEHOLDER,
+//					!StringUtils.isEmpty(garbageAccount.getGrbgCollectionUnits().get(0).getUnitType())
+//							? garbageAccount.getGrbgCollectionUnits().get(0).getUnitType()
+//							: "");
+//		}
+		body = body.replace(AMOUNT_PLACEHOLDER, String.valueOf(bill.getTotalAmount()));
+//		body = body.replace(DUE_DATE_PLACEHOLDER, "");
+
+		body = body.replace(LINK_PLACEHOLDER, "");
+		body = body.replace(PROPERTY_ID_PLACEHOLDER, propertyTracker.getPropertyId());
+		body = body.replace(PROPERTY_PAY_NOW_BILL_URL_PLACEHOLDER,frontEndUri);
+//		body = body.replace(GARBAGE_PAY_NOW_BILL_URL_PLACEHOLDER,
+//				grbgConfig.getGrbgServiceHostUrl() + "" + grbgConfig.getGrbgPayNowBillEndpoint() + ""
+//						+ encryptionService.encryptString(garbageAccount.getCreated_by()));
+
+		return body;
+	}
+	
+	public void sendSms(String message, String mobileNumber) {
+
+		SMSSentRequest smsRequest = SMSSentRequest.builder().message(message).mobileNumber(mobileNumber)
+				.category(SMSCategory.NOTIFICATION).templateName(SMS_TEMPLATE_BILL_NOTIFICATION).build();
+
+		kafkaTemplate.send(smsTopic, smsRequest);
+	}
+	
+	private void sendEmailforGenerateBill(String emailBody, List<String> emailIds, RequestInfo requestInfo,
+			List<String> attachmentDocRefIds, String emailSubject) {
+		Email email = new Email();
+		email.setEmailTo(new HashSet<>(emailIds));
+		email.setBody(emailBody);
+		email.setSubject(emailSubject);
+
+		if (!CollectionUtils.isEmpty(attachmentDocRefIds)) {
+			email.setHTML(true);
+//			email.setFileStoreIds(attachmentDocRefIds);
+		} else {
+			email.setHTML(true);
+		}
+
+		EmailRequest emailRequest = EmailRequest.builder().requestInfo(requestInfo).email(email).build();
+		kafkaTemplate.send(emailTopic, emailRequest);
+	}
+	
+	public String getContentAsString(ClassPathResource resource) {
+		String htmlContent = "";
+		try {
+			// Read all lines from the file and join them into a single string
+			htmlContent = Files.lines(Paths.get(resource.getURI())).collect(Collectors.joining("\n"));
+			// Output the content of the HTML file
+		} catch (IOException e) {
+			// Handle exception if the file is not found or can't be read
+//			e.printStackTrace();
+		}
+		return htmlContent;
+	}
+
 
 }

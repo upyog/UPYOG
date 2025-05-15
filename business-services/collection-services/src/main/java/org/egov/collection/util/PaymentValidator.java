@@ -414,12 +414,12 @@ public class PaymentValidator {
                     "The amount paid for the paymentDetail with bill number: " + paymentDetail.getBillId());
 
         // Checks if the amount to be paid is fractional
-        if ((bill.getTotalAmount().remainder(BigDecimal.ONE)).doubleValue() != 0)
-            errorMap.put("INVALID_BILL", "The due amount cannot be fractional");
+//        if ((bill.getTotalAmount().remainder(BigDecimal.ONE)).doubleValue() != 0)
+//            errorMap.put("INVALID_BILL", "The due amount cannot be fractional");
 
         // Checks if the amount paid is fractional
-        if ((paymentDetail.getTotalAmountPaid().remainder(BigDecimal.ONE)).doubleValue() != 0)
-            errorMap.put("INVALID_PAYMENTDETAIL", "The amount paid cannot be fractional");
+//        if ((paymentDetail.getTotalAmountPaid().remainder(BigDecimal.ONE)).doubleValue() != 0)
+//            errorMap.put("INVALID_PAYMENTDETAIL", "The amount paid cannot be fractional");
 
         // Checks if the bill is expired
         bill.getBillDetails().forEach(billDetail -> {

@@ -9,6 +9,7 @@ import org.egov.pg.models.Transaction;
 import org.egov.pg.web.models.User;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.io.IOException;
@@ -19,6 +20,9 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 public class TransactionRowMapper implements RowMapper<Transaction> {
+	
+	@Autowired
+	private ObjectMapper mapper;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static ObjectReader taxAndPaymentsReader =
@@ -84,6 +88,34 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
                 .additionalDetails(additionalDetails)
                 .taxAndPayments(taxAndPayments)
                 .auditDetails(auditDetails)
+                .txnSettlementStatus(resultSet.getString("txn_settlement_status"))
+                .settlementResponse(getAdditionalDetail(resultSet, "settlement_response"))
                 .build();
     }
+    
+	private JsonNode getAdditionalDetail(ResultSet resultSet, String key) throws SQLException {
+		JsonNode additionalDetails = null;
+
+		try {
+			// Check if the key exists and then retrieve the PGobject
+			if (resultSet.findColumn(key) != -1) {
+				PGobject obj = (PGobject) resultSet.getObject(key);
+				if (obj != null && obj.getValue() != null && !"null".equals(obj.getValue())) {
+					additionalDetails = mapper.readTree(obj.getValue());
+				}
+			}
+		} catch (IOException e) {
+			// Add more information to the exception message
+			throw new CustomException("PARSING ERROR",
+					"Failed to parse the additionalDetails JSON for key '" + key + "'. Error: " + e.getMessage());
+		}
+
+		// If additionalDetails is empty, return null
+		if (additionalDetails != null && additionalDetails.isEmpty()) {
+			additionalDetails = null;
+		}
+
+		return additionalDetails;
+	}
+
 }

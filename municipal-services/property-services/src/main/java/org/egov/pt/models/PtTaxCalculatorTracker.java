@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +30,11 @@ public class PtTaxCalculatorTracker {
 	private Date fromDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date toDate;
+	private String fromDateString;
+	private String toDateString;
 	private BigDecimal propertyTax;
 	private AuditDetails auditDetails;
+	@JsonProperty("additionalDetails")
+	private JsonNode additionalDetails;
 
 }

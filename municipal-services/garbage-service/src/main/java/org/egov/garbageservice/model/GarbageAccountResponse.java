@@ -24,6 +24,9 @@ public class GarbageAccountResponse {
 	
 	private List<GarbageAccount> garbageAccounts;
 	
+	@JsonProperty("applicationCount")
+    private Integer applicationCount;
+	
     @JsonProperty("applicationInitiated")
     private Integer applicationInitiated;
     
