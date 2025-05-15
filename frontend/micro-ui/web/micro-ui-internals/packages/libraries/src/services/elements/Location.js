@@ -28,4 +28,12 @@ export const LocationService = {
     });
     return response;
   },
+  getVendingZones: (tenantId) => {
+    return ServiceRequest({
+      serviceName: "getLocalities",
+      url: Urls.location.vendingZones,
+      params: { tenantId: tenantId },
+      useCache: true,
+    });
+  },
 };

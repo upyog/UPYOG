@@ -81,53 +81,14 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   });
 
   const [config, setConfig] = useState({});
-  const [defaultValues, setDefaultValues] = useState({});
   const [approvers, setApprovers] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState(null);
-  const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [error, setError] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectVehicle, setSelectVehicle] = useState(null);
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
   }, [approverData]);
-
-  function selectFile(e) {
-    setIsUploading(true);
-    setFile(e.target.files[0]);
-  }
-
-
-  useEffect(() => {
-    (async () => {
-      setError(null);
-      if (file) {
-        if (file.size >= 5242880) {
-          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-        } else {
-          try {
-            const response = await Digit.UploadServices.Filestorage("StreetVending", file, tenantId);
-            if (response?.data?.files?.length > 0) {
-              setUploadedFile(response?.data?.files[0]?.fileStoreId);
-            } else {
-              setError(t("CS_FILE_UPLOAD_ERROR"));
-            }
-          } catch (err) {
-            setError(t("CS_FILE_UPLOAD_ERROR"));
-          }
-          finally {
-            setIsUploading(false)
-          }
-        }
-      }
-    })();
-  }, [file]);
-
-
-
 
   function submit(data) {
     let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode, assignes:
@@ -170,11 +131,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         approvers,
         selectedApprover,
         setSelectedApprover,
-        selectFile,
-        uploadedFile,
-        setUploadedFile,
         businessService,
-        isUploading,
         vendorDescription:dsoData ? vendorDescription : undefined,
         selectedVendor,
         setSelectedVendor,
@@ -183,7 +140,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setSelectVehicle
       })
     )};
-  }, [action, approvers, uploadedFile]);
+  }, [action, approvers]);
 
   return action && config.form ? (
     <Modal
@@ -202,7 +159,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         inline
         childrenAtTheBottom
         onSubmit={submit}
-        defaultValues={defaultValues}
         formId="modal-action"
       />
 

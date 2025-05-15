@@ -65,7 +65,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.tradeLicenseNo(rs.getString("SVTRADELICENSENO"))
 						.vendingActivity(rs.getString("SVVENDINGACTIVITY")).vendingZone(rs.getString("SVVENDINGZONE"))
 						.cartLatitude(rs.getBigDecimal("SVCARTLATITUDE"))
-						.cartLongitude(rs.getBigDecimal("SVCARTLONGITUDE")).vendingArea(rs.getInt("SVVENDINGAREA"))
+						.cartLongitude(rs.getBigDecimal("SVCARTLONGITUDE")).vendingArea(rs.getBigDecimal("SVVENDINGAREA"))
 						.localAuthorityName(rs.getString("SVLOCALAUTHORITYNAME"))
 						.vendingLicenseCertificateId(rs.getString("SVVENDINGLICENSECERTIFICATEID"))
 						.paymentReceiptId(rs.getString("SVPAYMENTRECEIPTID"))
@@ -88,6 +88,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.documentDetails(new ArrayList<>()).vendorDetail(new ArrayList<>())
 						.vendingOperationTimeDetails(new ArrayList<>())
 						.benificiaryOfSocialSchemes(new ArrayList<>())
+						.vendorPaymentFrequency(rs.getString("SVPAYFREQUENCY"))
 						.build();
 
 				streetVendingApplicationMap.put(applicationId, streetVendingDetail);
@@ -142,7 +143,6 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 					.relationshipType(rs.getString("VENDORRELATIONSHIPTYPE"))
 					.userCategory(rs.getString("VENDORUSERCATEGORY"))
 					.specialCategory(rs.getString("VENDORSPECIALCATEGORY"))
-					.vendorPaymentFrequency(rs.getString("VENDORPAYFREQUENCY"))
 					.isInvolved(rs.getBoolean("VENDORISINVOLVED")).build();
 			streetVendingDetail.getVendorDetail().add(vendorDetail);
 		}

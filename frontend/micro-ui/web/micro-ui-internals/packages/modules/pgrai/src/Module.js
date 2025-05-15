@@ -5,20 +5,28 @@ import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import NewGrievance from "./pageComponents/NewGrievance";
 import PGRAICreate from "./pages/citizen/Create";
-import Location from "./pageComponents/Location";
 import {PGRAIMyApplications} from "./pages/citizen/Create/PGRAIMyApplications";
 import PGRApplication from "./pages/citizen/Create/PGRAIMyApplications/PGRAI-application";
 import PGRApplicationDetails from "./pages/citizen/PGRApplicationDetails";
+import PGRAICard from "./components/PGRAICard";
+import { TableConfig } from "./config/inbox-table-config";
+import EmployeeApp from "./pages/employee";
+import InboxFilter from "./components/inbox/NewInboxFilter";
+import { ComplaintDetails } from "./pages/employee/ComplaintDetails";
+import WFApplicationTimeline from "./pageComponents/WFApplicationTimeline";
+import WFCaption from "./pageComponents/WFCaption";
 
 // Component registry for the PGR_AI module, mapping component names to their implementations.
 // Enables dynamic registration and access of components in the application.
 const componentsToRegister = {
   NewGrievance,
   PGRAICreate,
-  Location,
   PGRAIMyApplications,
   PGRApplication,
+  PGRAIApplicationDetails:ComplaintDetails,
   PGRApplicationDetails:PGRApplicationDetails,
+  WFApplicationTimeline,
+  WFCaption,
  };
 
 // Function to add components to the registry
@@ -74,5 +82,8 @@ export const PGRAILinks = ({ matchPath, userType }) => {
 
 export const PGRAIComponents = {
   PGRAIModule,
-  PGRAILinks
+  PGRAILinks,
+  PGRAICard,
+  PGRAI_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  PGRAIInboxTableConfig:TableConfig
 };

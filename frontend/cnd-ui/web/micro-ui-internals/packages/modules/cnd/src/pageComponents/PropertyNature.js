@@ -132,7 +132,7 @@ const PropertyNature = ({ t, config, onSelect, formData }) => {
               title: "",
             })}
           />
-          <CardLabel>{t("CND_TIME_CONSTRUCTION")}</CardLabel>
+          <CardLabel>{t("CND_TIME_CONSTRUCTION")}<span className="astericColor">*</span></CardLabel>
           <div style={{ display: "flex", gap: "1rem", width: "50%" }}>
             <DatePicker
               date={constructionFrom}

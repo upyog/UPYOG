@@ -1,5 +1,6 @@
 package org.upyog.sv.repository.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +16,15 @@ import org.upyog.sv.repository.StreetVendingRepository;
 import org.upyog.sv.repository.querybuilder.StreetVendingQueryBuilder;
 import org.upyog.sv.repository.rowmapper.StreetVendingApplicationRowMapper;
 import org.upyog.sv.repository.rowmapper.StreetVendingDraftApplicationRowMapper;
+import org.upyog.sv.repository.rowmapper.VendorPaymentScheduleRowMapper;
+import org.upyog.sv.web.models.PaymentScheduleStatus;
 import org.upyog.sv.web.models.PersisterWrapper;
 import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingDraftDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
 import org.upyog.sv.web.models.StreetVendingSearchCriteria;
+import org.upyog.sv.web.models.VendorPaymentSchedule;
+import org.upyog.sv.web.models.VendorPaymentScheduleRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -164,5 +169,83 @@ public class StreetVendingRepositoryImpl implements StreetVendingRepository {
 				.draftApplicationData(draftApplicationData).auditDetails(streetVendingDetail.getAuditDetails()).build();
 		return streetVendingDraftDetail;
 	}
+	
+	/**
+	 * Saves the vendor payment schedule by publishing the schedule request
+	 * to the configured message queue topic.
+	 *
+	 * @param scheduleRequest the request object containing vendor payment schedule details
+	 */
+	
+	@Override
+	public void savePaymentSchedule(VendorPaymentScheduleRequest scheduleRequest) {
+		
+		producer.push(vendingConfiguration.getStreetVendingPaymentScheduleSaveTopic(), scheduleRequest);
+	}
 
+	/**
+	 * Retrieves a list of vendor payment schedules that match the given due date and status.
+	 *
+	 * @param dueDate the due date of the payment schedules to retrieve
+	 * @param status the status of the payment schedules to retrieve
+	 * @return a list of {@link VendorPaymentSchedule} objects matching the specified criteria
+	 */
+	
+	@Override
+	public List<VendorPaymentSchedule> getVendorPayScheduleForDueDateAndStatus(LocalDate dueDate, PaymentScheduleStatus status) {
+	    String query = StreetVendingQueryBuilder.PAYMENT_SCHEDULE;
+
+	    return jdbcTemplate.query(query, new Object[] { dueDate, status.toString() }, new VendorPaymentScheduleRowMapper());
+	}
+	
+	/**
+	 * Updates an existing vendor payment schedule by publishing the update request
+	 * to the configured message queue topic.
+	 *
+	 * @param schedule the request object containing the updated vendor payment schedule details
+	 */
+
+	@Override
+	public void updatePaymentSchedule(VendorPaymentScheduleRequest schedule) {
+		
+		producer.push(vendingConfiguration.getStreetVendingPaymentScheduleUpdateTopic(), schedule);
+		
+	}
+	
+	/**
+	 * Retrieves a list of vendor payment schedules based on the provided application number
+	 * and payment schedule status.
+	 *
+	 * @param applicationNo the unique identifier of the application
+	 * @param status the status of the payment schedules to filter by
+	 * @return a list of {@link VendorPaymentSchedule} objects matching the application number and status
+	 */
+
+	@Override
+	public List<VendorPaymentSchedule> getVendorPaymentScheduleApplication(String applicationNo, PaymentScheduleStatus status) {
+		   String query = StreetVendingQueryBuilder.VENDOR_PAYMENT_SCHEDULE;
+
+		   return jdbcTemplate.query(query, new Object[] { applicationNo, status.toString() }, new VendorPaymentScheduleRowMapper());
+	}
+	
+	/**
+	 * Checks if a scheduled payment is pending for the given application number and status.
+	 *
+	 * @param applicationNo the application number of the vendor
+	 * @param status the payment schedule status to check against
+	 * @return {@code true} if there is at least one pending scheduled payment for the given application,
+	 *         {@code false} otherwise
+	 */
+	
+	@Override
+	public boolean isSchedulePaymentPending(String applicationNo, PaymentScheduleStatus status) {
+	    String query = StreetVendingQueryBuilder.VENDOR_PAYMENT_SCHEDULE;
+
+	    List<Object> result = jdbcTemplate.query(query, new Object[]{applicationNo, status.toString()},
+	            (rs, rowNum) -> new Object());
+
+	    return !result.isEmpty();
+	}
+
+	
 }

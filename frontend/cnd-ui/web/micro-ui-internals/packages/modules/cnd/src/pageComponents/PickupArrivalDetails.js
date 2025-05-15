@@ -13,6 +13,7 @@ import { useApplicationDetails } from "../pages/employee/Edit/ApplicationContext
  * The component also displays key application details from the context for reference.
  */
 const pickupDetails = () => ({
+    disposeDate: "",
     vehicleNumber: "",
     vehicleDepoNumber: "",
     driverName: "",
@@ -116,22 +117,22 @@ const OwnerForm = (_props) => {
                 <Row
                     className="border-none"
                     label={t("CND_APPLICATION_TYPE")}
-                    text={applicationDetails?.applicationType} 
+                    text={t(applicationDetails?.applicationType)} 
                 />
                 <Row
                     className="border-none"
                     label={t("CND_WASTE_QUANTITY")}
-                    text={applicationDetails?.totalWasteQuantity} 
+                    text={applicationDetails?.totalWasteQuantity + " Tons"} 
                 />
                 <Row
                     className="border-none"
                     label={t("CND_TYPE_CONSTRUCTION")}
-                    text={applicationDetails?.typeOfConstruction} 
+                    text={t(applicationDetails?.typeOfConstruction)} 
                 />
                 <Row
                     className="border-none"
                     label={t("CND_PROPERTY_USAGE")}
-                    text={applicationDetails?.propertyType} 
+                    text={t(applicationDetails?.propertyType)} 
                 />
                 <Row
                     className="border-none"
@@ -344,6 +345,37 @@ const OwnerForm = (_props) => {
             </div>
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.dumpingStation ? errors?.dumpingStation?.message : ""}</CardLabelError>
+
+          <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("CND_DISPOSE_DATE")} <span className="astericColor">*</span></CardLabel>
+            <div className="field">
+              <Controller
+                control={control}
+                name={"disposeDate"}
+                rules={{
+                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                  }}
+                render={(props) => (
+                  <TextInput
+                    type={"date"}
+                    value={props.value}
+                    disable={false}
+                    autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "disposeDate"}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                      setFocusIndex({ index: pickup.key, type: "disposeDate" });
+                    }}
+                    onBlur={(e) => {
+                      setFocusIndex({ index: -1 });
+                      props.onBlur(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </LabelFieldPair>
+          <CardLabelError style={errorStyle}>{localFormState.touched.disposeDate ? errors?.disposeDate?.message : ""}</CardLabelError>
         </div>
       </div>
       {showToast?.label && (

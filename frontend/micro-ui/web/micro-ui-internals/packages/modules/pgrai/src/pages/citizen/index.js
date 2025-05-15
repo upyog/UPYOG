@@ -8,14 +8,12 @@ const hideBackButtonConfig = [];
 
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
-  console.log("path------->", path);
   const { t } = useTranslation();
   const PGRAICreate = Digit?.ComponentRegistryService?.getComponent("PGRAICreate");
   const PGRAIApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PGRAIMyApplications");
   const PGRApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PGRApplicationDetails");
 //  to show back button on top left of the page in order to go back to previous page
 //this has been added in order show my bookings page
-   console.log("first----------------->",path);
   return (
     <span className={"ads-citizen"}style={{width:"100%"}}>
       <Switch>

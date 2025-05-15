@@ -154,6 +154,9 @@ public class InboxService {
 	private MTInboxFilterService mtInboxFilterService;
 
 	@Autowired
+	private PGRAiInboxFilterService pgrAiInboxFilterService;
+
+	@Autowired
 	ElasticSearchRepository elasticSearchRepository;
 
 	@Autowired
@@ -554,6 +557,18 @@ public class InboxService {
 					
 				} else {
 					isSearchResultEmpty = true;
+				}
+			}
+
+			// fetching total count and application numbers from searcher for pgr ai service
+			if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && processCriteria.getModuleName().equals(PGRAiConstants.PGR_MODULE)) {
+
+				totalCount = pgrAiInboxFilterService.fetchApplicationIdsCountFromSearcher(criteria, StatusIdNameMap,
+						requestInfo);
+				List<String> applicationNumbers = pgrAiInboxFilterService.fetchApplicationIdsFromSearcher(criteria,
+						StatusIdNameMap, requestInfo);
+				if (!CollectionUtils.isEmpty(applicationNumbers)) {
+					businessKeys.addAll(applicationNumbers);
 				}
 			}
 

@@ -1,5 +1,6 @@
 package org.upyog.sv.utils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class TestRequestObjectBuilder {
                 .tenantId("pb.amritsar")
                 .vendingActivity("FOOD")
                 .vendingZone("ZONE1")
-                .vendingArea(100)
+                .vendingArea(BigDecimal.valueOf(100))
                 .localAuthorityName("AMRITSAR_MC")
                 .addressDetails(createSampleAddressDetails())
                 .vendorDetail(createSampleVendorDetails())

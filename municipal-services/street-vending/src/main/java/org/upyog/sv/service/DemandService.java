@@ -55,11 +55,30 @@ public class DemandService {
 				.mobileNumber(vendorDetail.getMobileNo()).tenantId(streetVendingRequest.getStreetVendingDetail().getTenantId()).build();
 
 		List<DemandDetail> demandDetails = calculationService.calculateDemand(streetVendingRequest);
-
+		
+		log.info("demandDetails : " + demandDetails);
+		
+		String businessService = config.getModuleName(); 
+		
+		// If demand details are present, determine the business service based on tax head code
+		if (demandDetails != null && !demandDetails.isEmpty()) {
+			
+			// Get the tax head code from demand detail entry
+		    String taxHeadCode = demandDetails.get(0).getTaxHeadMasterCode();
+		    
+		    // Check if it's a monthly tax head and override the business service accordingly
+		    if (StreetVendingConstants.TAXHEADMONTHLY.equals(taxHeadCode)) {
+		    	businessService = config.getServiceNameMonthly();
+		    	
+		    // Check if it's a quarterly tax head and override the business service accordingly
+		    } else if (StreetVendingConstants.TAXHEADQUATERLY.equals(taxHeadCode)) {
+		    	businessService = config.getServiceNameQuaterly();
+		    } 
+		}
 		// TODO: change from date and to date from MDMS
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(user)
 				.tenantId(tenantId).taxPeriodFrom(StreetVendingUtil.getCurrentTimestamp()).taxPeriodTo(1869676199000l)
-				.consumerType(config.getModuleName()).businessService(config.getModuleName()).additionalDetails(null)
+				.consumerType(config.getModuleName()).businessService(businessService).additionalDetails(null)
 				.build();
 
 		List<Demand> demands = new ArrayList<>();

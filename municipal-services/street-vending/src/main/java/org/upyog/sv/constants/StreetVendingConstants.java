@@ -23,9 +23,11 @@ public class StreetVendingConstants {
 	public static final String COMMON_MASTERS_MODULE = "common-masters";
 
 	// Street vending master data
-	public static final String VENDIING_ZONES = "VendingZones";
+	public static final String VENDING_ZONES = "VendingZones";
 	public static final String VENDING_ACTIVITY_TYPE = "VendingActivityType";
 	public static final String DOCUMENTS = "Documents";
+	public static final String VENDOR_LOCALITY = "VendorLocality";
+	
 
 	// For demand generation constants
 	public static final String BILLING_SERVICE = "BillingService";
@@ -95,6 +97,8 @@ public class StreetVendingConstants {
 	public static final String SV_APPLICANT_DETAIL_PLAIN_DECRYPTION_PURPOSE = "SVApplicantDetailDecryptionDisabled";
 
 	public static final String NOTIFICATION_APPLICATIONEXPIRED = "sv.en.counter.applicationexpired";
+	
+	public static final String NOTIFICATION_SCHEDULEPAYMENT = "sv.en.schedule.payment";
 
 	public static final String ACTION_STATUS_APPLY = "APPLY";
 
@@ -131,5 +135,34 @@ public class StreetVendingConstants {
 	public static final String NOTIFICATION_ACTION = "{Action Button}";
 	
 	public static final String NOTIFICATION_ACTION_BUTTON = "{/Action Button}";
+	
+	public static final String MONTHLY = "MONTHLY";
+	
+	public static final String SVMONTHLYFEE = "SV.MONTHLY_FEE";
+	
+	public static final String SVQUATERLYYFEE = "SV.QUATERLY_FEE";
+	
+	public static final String SVONETIMEFEE = "SV.ONE_TIME_FEE";
+	
+	public static final String QUATERLY = "QUATERLY";
+	
+	public static final String HALFYEARLY = "HALFYEARLY";
+	
+	public static final String YEARLY = "YEARLY";
+	
+	public static final String TAXHEADMONTHLY = "SV_STREET_VENDING_MONTHLY_FEE";
+	
+	public static final String TAXHEADQUATERLY = "SV_STREET_VENDING_QUATERLY_FEE";
+	
+	public static final String CODE = "code";
+	
+	public static final String NAME = "name";
+	
+	public static final String TENANTBOUNDARY = "TenantBoundary";
+	
+	public static final String BOUNDARY = "boundary";
+	
+	public static final String ACTION_STATUS_SCHEDULE_PAYMENT = "SCHEDULE_PAYMENT_PENDING";
+	
     
 }

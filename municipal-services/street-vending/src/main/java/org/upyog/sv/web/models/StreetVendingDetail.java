@@ -56,13 +56,15 @@ public class StreetVendingDetail {
 
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String vendingZone;
+	
+	private String vendingZoneValue;
 
 	private BigDecimal cartLatitude;
 
 	private BigDecimal cartLongitude;
 
 	@NotNull(groups = CreateApplicationGroup.class)
-	private Integer vendingArea;
+	private BigDecimal vendingArea;
 
 	@NotBlank(groups = CreateApplicationGroup.class)
 	private String localAuthorityName;
@@ -77,6 +79,8 @@ public class StreetVendingDetail {
 	private String disabilityStatus;
 	
 	private String locality;
+	
+	private String localityValue;
 	
 	private ApplicationCreatedByEnum applicationCreatedBy;
 
@@ -125,6 +129,9 @@ public class StreetVendingDetail {
 	private String oldApplicationNo;
 
 	private RenewalStatus renewalStatus;
+	
+	private String vendorPaymentFrequency;
+
 }
 
 /**

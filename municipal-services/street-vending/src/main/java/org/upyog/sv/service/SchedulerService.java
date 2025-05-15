@@ -24,9 +24,14 @@ public class SchedulerService {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PaymentService service;
+
 
 	@Autowired
 	private StreetyVendingNotificationService notificationService;
+	
 
 	@Value("${scheduler.sv.expiry.enabled:false}")
 	private boolean isSchedulerEnabled;
@@ -45,6 +50,7 @@ public class SchedulerService {
 
 		markEligibleForRenewalAndNotify();
 		markExpiredApplicationsAndNotify();
+		service.processDueVendorPayments(null);
 	}
 
 	/**
@@ -131,4 +137,6 @@ public class SchedulerService {
 			notificationService.process(streetVendingRequest, action);
 		}
 	}
+	
 }
+
