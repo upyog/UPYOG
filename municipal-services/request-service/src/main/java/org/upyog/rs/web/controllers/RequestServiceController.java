@@ -156,7 +156,7 @@ public class RequestServiceController {
 			@ApiParam(value = "Updated water tanker details and RequestInfo meta data.", required = true)
 			@RequestBody MobileToiletBookingRequest mobileToiletRequest) {
 
-		MobileToiletBookingDetail mobileToiletDetail = mobileToiletService.updateMobileToiletBooking(mobileToiletRequest, null, null);
+		MobileToiletBookingDetail mobileToiletDetail = mobileToiletService.updateMobileToiletBooking(mobileToiletRequest, null);
 
 		MobileToiletBookingResponse response = MobileToiletBookingResponse.builder().mobileToiletBookingApplication(mobileToiletDetail)
 				.responseInfo(RequestServiceUtil.createReponseInfo(mobileToiletRequest.getRequestInfo(),
