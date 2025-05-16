@@ -8,6 +8,7 @@ import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
@@ -24,6 +25,7 @@ import java.util.TimeZone;
  *
  * This class is the entry point for the Spring Boot application.
  */
+@EnableFeignClients
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.upyog.pgrai", "org.upyog.pgrai.web.controllers" , "org.upyog.pgrai.config"})
 @Import({TracerConfiguration.class, MultiStateInstanceUtil.class})
