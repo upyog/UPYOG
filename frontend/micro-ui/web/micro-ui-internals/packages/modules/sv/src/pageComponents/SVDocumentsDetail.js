@@ -24,9 +24,7 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
 
   // Utility function to transform documents array into required format
   const transformDocuments = (documents) => {
-
     if (!Array.isArray(documents)) return [];
-
 
     const transformedDocs = documents.map(doc => ({
       applicationId: "",
@@ -281,6 +279,16 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
 
   };
 
+  /**
+   * Handles the submission of the document form.
+   * 
+   * - Merges the current form data with the latest documents.
+   * - Calls the `onSelect` callback with the updated document step.
+   * - If the current URL does not include "edit", triggers saving as draft.
+   *
+   * @function
+   * @returns {void}
+   */
   const handleSubmit = () => {
     let documentStep = { ...formData.documents, documents };
     onSelect(config.key, documentStep);
@@ -328,6 +336,25 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
   );
 };
 
+/**
+ * SVDocuments is a React component for handling document selection and file upload functionality
+ * in the Street Vending module. It manages document dropdowns, file uploads, and updates the parent
+ * state with the selected and uploaded documents.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {function} props.t - Translation function for i18n.
+ * @param {Object} props.document - The document configuration object for the current field.
+ * @param {function} props.setDocuments - Setter function to update the documents array in parent state.
+ * @param {function} props.setError - Setter function to update error messages in parent state.
+ * @param {Array<Object>} props.documents - The current list of uploaded documents.
+ * @param {Object} props.formData - The form data object (not directly used in this component).
+ * @param {string|number} props.id - Unique identifier for the upload input.
+ * @param {Object} props.editdata - Data for editing an existing application.
+ * @param {Object} props.previousData - Data from a previous draft or application.
+ *
+ * @returns {JSX.Element} The rendered document upload and selection UI.
+ */
 function SVDocuments({
   t,
   document: doc,
@@ -370,7 +397,6 @@ function SVDocuments({
   const handleSVSelectDocument = (value) => {
     setSelectedDocument(value);
   }
-
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -472,6 +498,7 @@ function SVDocuments({
     <div style={{ marginBottom: "24px" }}>
       {doc?.hasDropdown && (
         <LabelFieldPair>
+          {/* Condition to check if the current doc is family photo or not and then add a message along with it */}
           <CardLabel className="card-label-smaller" style={{ display: "inline-block", whiteSpace: "normal", width: "100%" }}>
             <span style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexWrap: "wrap" }}>
               {t(doc?.code.replaceAll(".", "_"))}&nbsp;*

@@ -15,8 +15,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const [ownerCategory, setownerCategory] = useState(formData?.specialCategoryData?.ownerCategory || convertToObject(previousData?.disabilityStatus || editdata?.disabilityStatus) || "");
-  // const [enrollmentId, setenrollmentId] = useState(formData?.specialCategoryData?.enrollmentId || previousData?.enrollmentId || editdata?.enrollmentId || "");
-  // const [beneficiary, setbeneficiary] = useState(formData?.specialCategoryData?.beneficiary || convertToObject(previousData?.benificiaryOfSocialSchemes || editdata?.benificiaryOfSocialSchemes) || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "100%" };
   const [file, setFile] = useState(null);
   const filteredDraftDocument = previousData?.documentDetails?.find((item) => item?.documentType?.includes(ownerCategory?.code));
@@ -24,6 +22,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
   const [uploadedFile, setUploadedFile] = useState(filteredDraftDocument?.fileStoreId || filteredDocument?.fileStoreId || formData?.specialCategoryData?.uploadedFile || null);
   const [isUploading, setIsUploading] = useState(false);
 
+  // handled beneficiarylist usestate for prefilling data if available
   const [beneficiaryList, setBeneficiaryList] = useState(
     (formData?.specialCategoryData?.beneficiaryList) || (previousData?.benificiaryOfSocialSchemes) || (editdata?.benificiaryOfSocialSchemes) ||
     [

@@ -110,9 +110,11 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
     [pdfDetails]
   );
 
+  // Determine the gender value for display based on renewalData.
+  // If gender is "M", set as "Male"; if "F", set as "Female"; otherwise, set as "Transgender".
   let gender;
-    if(renewalData?.vendorDetail[0]?.gender){
-     gender = renewalData?.vendorDetail[0]?.gender === "M" ? "Male" : renewalData?.vendorDetail[0]?.gender === "F" ? "Female" : "Transgender" ;
+  if (renewalData?.vendorDetail[0]?.gender) {
+    gender = renewalData?.vendorDetail[0]?.gender === "M" ? "Male" : renewalData?.vendorDetail[0]?.gender === "F" ? "Female" : "Transgender";
   }
 
   /**
@@ -345,6 +347,7 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
               text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.disabilityStatus : specialCategoryData?.ownerCategory?.value))}`}
               actionButton={(isRenew) ? null : <ActionButton jumpTo={`/digit-ui/citizen/sv/apply/special-category`} />}
             />
+            {/* Handles rendering of beneficiaryList based on renew data or the data from normal flow of code */}
             {specialCategoryData?.beneficiaryList[0]?.schemeName ?
               specialCategoryData?.beneficiaryList.map((item) => (
                 <>

@@ -44,6 +44,9 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const [backupDays, setBackupDays] = useState(formData?.businessDetails?.backupDays || [...daysOfOperation]); // Backup array to store original days of operation
 
 
+  // Fetch vending zones based on selected locality (vendorLocality or editdata.locality)
+  // Uses Digit.Hooks.useBoundaryLocalities to get vending zones for the selected city/locality
+  // The result is mapped to a structured array for use in dropdowns
   const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
     editdata?.locality || vendorLocality?.code,
     "vendingzones",
@@ -57,6 +60,16 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
     structuredVendingZone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
   })
 
+  /**
+ * useEffect hook to synchronize vendor locality and vending zones based on editdata and previousData.
+ *
+ * - If `editdata.locality` is present and `allCities` are loaded, sets the vendor locality to the matching city.
+ * - If `editdata.vendingZone` is present and vending zones are loaded, sets the vending zone to the matching zone.
+ * - If `previousData.locality` is present and `allCities` are loaded, sets the vendor locality to the matching city.
+ * - If `previousData.vendingZone` is present and vending zones are loaded, sets the vending zone to the matching zone.
+ *
+ * Dependencies: [allCities, editdata?.locality, fetchedVendingZones, previousData?.locality]
+ */
   useEffect(() => {
   if (editdata?.locality && allCities && allCities.length > 0) {
     allCities.map((city) => {

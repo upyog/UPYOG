@@ -8,6 +8,7 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
   // function to filter out the fields which have values
   const filterEmptyValues = (values) => values.filter(item => item.value);
 
+  // Map gender codes to human-readable strings for vendor and dependent
   let gender, dgender;
   if (application?.vendorDetail[0]?.gender) {
     gender = application?.vendorDetail[0]?.gender == "M" ? "Male" : application?.vendorDetail[0]?.gender == "F" ? "Female" : "Transgender";
@@ -16,6 +17,10 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
     dgender = application?.vendorDetail[0]?.dependentGender == "M" ? "Male" : application?.vendorDetail[0]?.gender == "F" ? "Female" : "Transgender";
   }
 
+  // Prepare and return the acknowledgement data object
+  // - Includes translation function, tenant info, and application details
+  // - Each section (personal, business, bank, address) is grouped with a header and filtered for non-empty values
+  // - Additional details for social schemes are included if present
   return {
     t: t,
     tenantId: tenantInfo?.code,
@@ -86,7 +91,7 @@ const getSVAcknowledgementData = async (application, tenantInfo, t) => {
           { title: t("SV_LANDMARK"), value: application?.addressDetails[0]?.landmark },
         ]),
       },
-
+      // Add additional details section if beneficiary social schemes exist
       ...(application?.benificiaryOfSocialSchemes.length > 0 ? [{
         title: t("SV_ADDITIONAL_DETAILS"),
         asSectionHeader: true,
