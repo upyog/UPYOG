@@ -3,6 +3,7 @@ package org.upyog.pgrai.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.errors.SerializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -51,7 +52,19 @@ public class GrievanceConsumer {
             log.info("Grievance created with response: {}", response);
         }
         catch (FeignException fe) {
-            log.error("Feign client error: {} - {}", fe.status(), fe.getMessage(), fe);
+            int status = fe.status();
+
+            if (status == 401) {
+                log.error("Unauthorized (401) - Invalid credentials or token expired: {}", fe.getMessage(), fe);
+            } else if (status == 403) {
+                log.error("Forbidden (403) - Access denied to grievance API: {}", fe.getMessage(), fe);
+            } else if (status == 500) {
+                log.error("Internal Server Error (500) - Issue at grievance service: {}", fe.getMessage(), fe);
+            } else {
+                log.error("Feign client error with status {}: {}", status, fe.getMessage(), fe);
+            }
+        } catch (SerializationException se) {
+            log.error("Kafka deserialization failed: {}", se.getMessage(), se);
         }
         catch (IllegalArgumentException je) {
             log.error("JSON conversion error: {}", je.getMessage(), je);

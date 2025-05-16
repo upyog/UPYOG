@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Feign client for sending grievance data to the FastAPI service.
  */
-@FeignClient(name = "grievance-api", url = "http://35.154.83.250:5002")
+@FeignClient(name = "grievance-api", url = "${grievance.api.url}")
 public interface GrievanceFeignClient {
 
     /**
