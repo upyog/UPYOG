@@ -26,6 +26,12 @@ public class TransactionDetails {
 	private String billId;
 
 	private String consumerCode;
+	
+	private String status;
+	
+	private String module;
+
+	private String moduleId;
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;

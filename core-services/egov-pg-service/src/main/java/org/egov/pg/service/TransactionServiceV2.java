@@ -26,6 +26,7 @@ import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.TransactionDetailsRepository;
 import org.egov.pg.repository.TransactionRepository;
 import org.egov.pg.validator.TransactionValidator;
+import org.egov.pg.validator.TransactionValidatorV2;
 import org.egov.pg.web.models.ResponseInfo;
 import org.egov.pg.web.models.TransactionCriteriaV2;
 import org.egov.pg.web.models.TransactionDetailsCriteria;
@@ -53,7 +54,10 @@ public class TransactionServiceV2 {
 
 	@Autowired
 	private TransactionValidator validator;
-
+	
+	@Autowired
+	private TransactionValidatorV2 validatorv2;
+	
 	@Autowired
 	private GatewayService gatewayService;
 
@@ -99,7 +103,7 @@ public class TransactionServiceV2 {
 
 		transactionRequests.getTransactions().forEach(transaction -> {
 
-			validator.validateCreateTxn(
+			validatorv2.validateCreateTxn(
 					TransactionRequest.builder().transaction(transaction).requestInfo(requestInfo).build());
 
 			// Enrich transaction by generating txnid, audit details, default status

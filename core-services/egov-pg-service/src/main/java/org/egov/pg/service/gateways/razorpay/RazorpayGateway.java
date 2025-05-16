@@ -117,7 +117,7 @@ public class RazorpayGateway implements Gateway {
 			return responseEntity.getBody();
 		} catch (Exception e) {
 			log.error("Unable to create order for the transactionId: " + transactionId, e);
-			throw new CustomException("ERR_HDFC_PG_SERVICE",
+			throw new CustomException("ERR_RZR_PG_SERVICE",
 					"Unable to create order for the transactionId: " + transactionId);
 		}
 	}

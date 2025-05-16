@@ -15,7 +15,9 @@ import org.egov.pg.constants.TransactionAdditionalFields;
 import org.egov.pg.models.AuditDetails;
 import org.egov.pg.models.BankAccount;
 import org.egov.pg.models.Transaction;
+import org.egov.pg.models.TransactionDetails;
 import org.egov.pg.repository.BankAccountRepository;
+import org.egov.pg.web.models.TransactionDetailsCriteria;
 import org.egov.pg.web.models.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,6 +108,7 @@ public class EnrichmentService {
         newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
         newTxn.setOrderId(currentTxnStatus.getOrderId());
         newTxn.setModule(currentTxnStatus.getModule());
+        newTxn.setIsMultiTransaction(currentTxnStatus.getIsMultiTransaction());
         newTxn.setTxnStatusMsg(currentTxnStatus.getTxnStatusMsg());
         newTxn.setReceipt(currentTxnStatus.getReceipt());
 
@@ -120,8 +123,71 @@ public class EnrichmentService {
 		transaction.getTransactionDetails().forEach(transactionDetails -> {
 			transactionDetails.setUuid(UUID.randomUUID().toString());
 			transactionDetails.setTxnId(transaction.getTxnId());
+			if(null != transactionDetails.getModule()) {
+				transactionDetails.setModule(transaction.getModule());
+			}
+			if(null != transactionDetails.getModuleId()) {
+				transactionDetails.setModuleId(transaction.getModule());
+			}
 			transactionDetails.setAuditDetails(auditDetails);
 		});
+	}
+	
+	public TransactionRequest convertTransactionDetailtoTransactionRequest(TransactionRequest transactionRequest,TransactionDetails transactionDetails ) {
+		 AuditDetails auditDetails = AuditDetails.builder()
+	                .createdBy(transactionRequest.getTransaction().getAuditDetails().getCreatedBy())
+	                .createdTime(transactionRequest.getTransaction().getAuditDetails().getCreatedTime())
+	                .lastModifiedBy(transactionRequest.getRequestInfo().getUserInfo() != null ? transactionRequest.getRequestInfo().getUserInfo().getUuid() : null)
+	                .lastModifiedTime(System.currentTimeMillis()).build();
+		 Transaction transaction = transactionRequest.getTransaction();
+		 
+		 transaction.setAuditDetails(auditDetails);
+	
+		 transaction.setTxnId(transactionRequest.getTransaction().getTxnId());
+		 transaction.setTxnAmount(transactionDetails.getTxnAmount());
+		 transaction.setGateway(transactionRequest.getTransaction().getGateway());
+		 transaction.setBillId(transactionDetails.getBillId());
+		 transaction.setProductInfo(transactionRequest.getTransaction().getProductInfo());
+		 transaction.setTenantId(transactionRequest.getTransaction().getTenantId());
+		 transaction.setUser(transactionRequest.getTransaction().getUser());
+		 transaction.setAdditionalDetails(transactionRequest.getTransaction().getAdditionalDetails());
+		 transaction.setTaxAndPayments(transactionRequest.getTransaction().getTaxAndPayments());
+		 transaction.setConsumerCode(transactionDetails.getConsumerCode());
+		 transaction.setOrderId(transactionRequest.getTransaction().getOrderId());
+		 transaction.setModule(transactionRequest.getTransaction().getModule());
+		 transaction.setIsMultiTransaction(transactionRequest.getTransaction().getIsMultiTransaction());
+		 transaction.setTxnStatusMsg(transactionRequest.getTransaction().getTxnStatusMsg());
+		 transaction.setReceipt(transactionRequest.getTransaction().getReceipt());
+		 
+		 
+		 
+		 
+		 
+//		 
+//		 transaction.set
+//		 Transaction transaction = Transaction.builder()
+//				 .txnAmount(transactionDetails.getTxnAmount())
+//				 .txnStatus(transactionRequest.getTransaction().getTxnStatus())
+//				 .txnId(transactionRequest.getTransaction().getTxnId())
+//				 .gateway(transactionRequest.getTransaction().getGateway())
+//				 .billId(transactionDetails.getBillId())
+//				 .productInfo(transactionRequest.getTransaction().getProductInfo())
+//				 .tenantId(transactionRequest.getTransaction().getTenantId())
+//				 .user(transactionRequest.getTransaction().getUser())
+//				 .taxAndPayments(transactionRequest.getTransaction().getTaxAndPayments())
+//				 .consumerCode(transactionDetails.getConsumerCode())
+//				 .orderId(transactionRequest.getTransaction().getOrderId())
+//				 .module(transactionDetails.getModule())
+//				 .isMultiTransaction(transactionRequest.getTransaction().getIsMultiTransaction())
+//				 .txnStatusMsg(transactionRequest.getTransaction().getTxnStatusMsg())
+//				 .receipt(transactionRequest.getTransaction().getReceipt())
+//				 .additionalDetails(transactionRequest.getTransaction().getAdditionalDetails())
+//				 .auditDetails(auditDetails).build();
+		 TransactionRequest request = TransactionRequest.builder()
+				 .requestInfo(transactionRequest.getRequestInfo())
+				 .transaction(transaction)
+				.build();
+		 return request;
 	}
 
 }

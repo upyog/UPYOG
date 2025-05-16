@@ -198,6 +198,10 @@ public class Transaction {
 	
 	@JsonProperty("settlementResponse")
 	private Object settlementResponse;
+	
+	@JsonProperty("isMultiTransaction")
+    @Builder.Default
+	private Boolean isMultiTransaction = false;
 
 	/**
 	 * Current status of the transaction

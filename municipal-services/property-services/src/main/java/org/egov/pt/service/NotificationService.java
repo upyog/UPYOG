@@ -551,13 +551,13 @@ public class NotificationService {
 		smsBody = populateNotificationPlaceholders(smsBody, propertyTracker, bill);
 		emailSubject = populateNotificationPlaceholders(emailSubject, propertyTracker, bill);
 	
-//		if (!StringUtils.isEmpty(bill.getPayerEmail())) {
-//			sendEmailforGenerateBill(emailBody, Collections.singletonList(bill.getPayerEmail()), requestInfo, null,
-//					emailSubject);
-//		}
-//		if (!StringUtils.isEmpty(bill.getMobileNumber())) {
-//			sendSms(smsBody, bill.getMobileNumber());
-//		}
+		if (!StringUtils.isEmpty(bill.getPayerEmail())) {
+			sendEmailforGenerateBill(emailBody, Collections.singletonList(bill.getPayerEmail()), requestInfo, null,
+					emailSubject);
+		}
+		if (!StringUtils.isEmpty(bill.getMobileNumber())) {
+			sendSms(smsBody, bill.getMobileNumber());
+		}
 
 	}
 	

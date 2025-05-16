@@ -7,7 +7,7 @@ serviceMaps:
    fromTopic: save-pg-txns
    isTransaction: true
    queryMaps:
-    - query: INSERT INTO eg_pg_transactions (txn_id, txn_amount, txn_status, gateway, bill_id, "module", order_id, product_info,user_uuid, user_name, mobile_number, email_id, name, user_tenant_id,  tenant_id, gateway_txn_id, gateway_payment_mode, gateway_status_code, gateway_status_msg, created_time, last_modified_time, additional_details, consumer_code, created_by, last_modified_by) VALUES (?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?);
+    - query: INSERT INTO eg_pg_transactions (txn_id, txn_amount, txn_status, gateway, bill_id, "module", order_id, product_info,user_uuid, user_name, mobile_number, email_id, name, user_tenant_id,  tenant_id, gateway_txn_id, gateway_payment_mode, gateway_status_code, gateway_status_msg, created_time, last_modified_time, additional_details, consumer_code, created_by, last_modified_by, is_multi_transaction) VALUES (?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?);
 
       basePath: Transaction
       jsonMaps:
@@ -63,6 +63,7 @@ serviceMaps:
        - jsonPath: $.Transaction.auditDetails.createdBy
        
        - jsonPath: $.Transaction.auditDetails.lastModifiedBy
+       - jsonPath: $.Transaction.isMultiTransaction
        
  - version: 1.0
    name: pg-service
@@ -70,7 +71,7 @@ serviceMaps:
    fromTopic: save-pg-txns-details
    isTransaction: true
    queryMaps:   
-    - query: INSERT INTO eg_pg_transactions_details (uuid, txn_id, txn_amount, bill_id, consumer_code, created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?::numeric, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pg_transactions_details (uuid, txn_id, txn_amount, bill_id, consumer_code, module, module_id,created_by, last_modified_by, created_time, last_modified_time) VALUES (?, ?, ?::numeric, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: TransactionDetails
       jsonMaps:
       
@@ -83,6 +84,10 @@ serviceMaps:
       - jsonPath: $.TransactionDetails.billId
       
       - jsonPath: $.TransactionDetails.consumerCode
+      
+      - jsonPath: $.TransactionDetails.module
+      
+      - jsonPath: $.TransactionDetails.moduleId
       
       - jsonPath: $.TransactionDetails.auditDetails.createdBy
        

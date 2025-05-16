@@ -175,7 +175,7 @@ public class TransactionValidator {
 
 	}
 
-	private void isUserDetailPresent(TransactionRequest transactionRequest, Map<String, String> errorMap) {
+	public void isUserDetailPresent(TransactionRequest transactionRequest, Map<String, String> errorMap) {
 		User user = transactionRequest.getRequestInfo().getUserInfo();
 		if (isNull(user) || isNull(user.getUuid()) || isEmpty(user.getName()) || isNull(user.getUserName())
 				|| isNull(user.getTenantId()) || isNull(user.getMobileNumber()))
@@ -183,7 +183,7 @@ public class TransactionValidator {
 					"User UUID, Name, Username, Mobile Number and Tenant Id are " + "mandatory");
 	}
 
-	private void validateTxnAmount(TransactionRequest transactionRequest, Map<String, String> errorMap) {
+	public void validateTxnAmount(TransactionRequest transactionRequest, Map<String, String> errorMap) {
 		Transaction txn = transactionRequest.getTransaction();
 		BigDecimal totalPaid = BigDecimal.ZERO;
 
@@ -196,7 +196,7 @@ public class TransactionValidator {
 
 	}
 
-	private void isGatewayActive(Transaction transaction, Map<String, String> errorMap) {
+	public void isGatewayActive(Transaction transaction, Map<String, String> errorMap) {
 		if (!gatewayService.isGatewayActive(transaction.getGateway()))
 			errorMap.put("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
 	}
