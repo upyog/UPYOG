@@ -56,7 +56,7 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
  */
 export const fetchGrievanceCategories = async (prompt, t) => {
   try {
-    const response = await fetch(`http://35.154.83.250:5002/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
+    const response = await fetch(`https://35.154.83.250/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
       method: "GET",
       headers: { accept: "application/json" },
     });
