@@ -164,5 +164,7 @@ public class StreetVendingConstants {
 	
 	public static final String ACTION_STATUS_SCHEDULE_PAYMENT = "SCHEDULE_PAYMENT_PENDING";
 	
+	public static final String DATEFORMAT = "dd-MM-yyyy";
+	
     
 }
