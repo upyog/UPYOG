@@ -60,6 +60,7 @@ import org.egov.garbageservice.model.GrbgCollectionUnit;
 import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
+import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.model.UserSearchResponse;
 import org.egov.garbageservice.model.contract.DmsRequest;
 import org.egov.garbageservice.model.contract.PDFRequest;
@@ -1949,4 +1950,13 @@ public class GarbageAccountService {
 		grbgCollectionUnitRepository.delete(garbageId);
 	}
 
+	
+	public Map<String, Object> totalCount(TotalCountRequest totalCountRequest) {
+		return null;
+		
+		//grbgAccs = garbageAccountRepository.getStatusCounts(totalCountRequest);
+
+		
+	}
+	
 }
