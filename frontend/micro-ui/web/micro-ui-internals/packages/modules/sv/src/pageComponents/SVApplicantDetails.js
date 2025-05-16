@@ -44,8 +44,8 @@ const SVApplicantDetails = ({ t, config, onSelect, userType, formData,editdata,p
   const [tradeNumber, settradeNumber] = useState(formData?.owner?.units?.tradeNumber || formData?.owner?.tradeNumber || "");
   const [error, setError] = useState(null);
 
-  const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || false);
-  const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || false);
+  const [spouseDependentChecked, setSpouseDependentChecked] = useState(formData?.owner?.spouseDependentChecked || editdata?.vendorDetail?.[1]?.isInvolved || false);
+  const [dependentNameChecked, setDependentNameChecked] = useState(formData?.owner?.dependentNameChecked || editdata?.vendorDetail?.[2]?.isInvolved || false);
   const inputStyles = user.type === "EMPLOYEE" ? "50%" : "86%";
   const [showToast, setShowToast] = useState(null);
   const { control } = useForm();

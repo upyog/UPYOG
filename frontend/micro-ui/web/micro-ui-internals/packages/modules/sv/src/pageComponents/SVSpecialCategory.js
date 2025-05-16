@@ -25,7 +25,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
   const [isUploading, setIsUploading] = useState(false);
 
   const [beneficiaryList, setBeneficiaryList] = useState(
-    (formData?.specialCategoryData?.beneficiaryList) ||
+    (formData?.specialCategoryData?.beneficiaryList) || (previousData?.benificiaryOfSocialSchemes) || (editdata?.benificiaryOfSocialSchemes) ||
     [
       {
         schemeName: (formData?.specialCategoryData?.schemeName || convertToObject(previousData?.benificiaryOfSocialSchemes || editdata?.benificiaryOfSocialSchemes) || ""),
@@ -33,7 +33,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
       }
     ]);
 
-  console.log("----------formData", formData?.specialCategoryData?.beneficiaryList);
 
   function handleAdd() {
     const values = [...beneficiaryList];
@@ -60,8 +59,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
     units[i].enrollmentId = e.target.value;
     setBeneficiaryList(units);
   }
-
-  console.log("beneficiaryList", beneficiaryList);
 
 
   const handleFileUpload = (e) => {
@@ -330,7 +327,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
       locality: formData?.businessDetails?.vendorLocality?.code || "",
       localityValue: "",
       vendingZoneValue: "",
-      vendorPaymentFrequency: formData?.vendingPayment?.code,
+      vendorPaymentFrequency: formData?.businessDetails?.vendingPayment?.code,
       enrollmentId: "",
       cartLatitude: 0,
       cartLongitude: 0,

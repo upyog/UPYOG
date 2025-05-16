@@ -18,16 +18,14 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const user = Digit.UserService.getUser().info;
   const allCities = Digit.Hooks.sv.useTenants();
 
-  console.log("------------allCities", allCities);
-
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const [vendingType, setvendingType] = useState(formData?.businessDetails?.vendingType || convertToObject(previousData?.vendingActivity || editdata?.vendingActivity) || formData?.businessDetails?.vendingType || "");
-  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || convertToObject(previousData?.vendingZoneValue || editdata?.vendingZone) || "");
+  const [vendingZones, setvendingZones] = useState(formData?.businessDetails?.vendingZones || "");
   const [location, setlocation] = useState(formData?.businessDetails?.location || "");
-  const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || convertToObject(previousData?.localityValue || editdata?.localityValue) || "");
+  const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || "");
   const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea || editdata?.vendingArea || "2.12");
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || previousData?.localAuthorityName || editdata?.localAuthorityName || "");
-  const [vendingPayment, setVendingPayment] = useState(formData?.businessDetails?.vendingPayment || convertToObject(previousData?.vendingPayment || editdata?.vendingPayment) || formData?.businessDetails?.vendingPayment || "");
+  const [vendingPayment, setVendingPayment] = useState(convertToObject(previousData?.vendorPaymentFrequency || editdata?.vendorPaymentFrequency) || formData?.businessDetails?.vendorPaymentFrequency || "");
   const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || previousData?.vendingLiscence || editdata?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
@@ -46,23 +44,43 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const [backupDays, setBackupDays] = useState(formData?.businessDetails?.backupDays || [...daysOfOperation]); // Backup array to store original days of operation
 
 
-  console.log("vendorLocality", vendorLocality);
-
   const { data: fetchedVendingZones } = Digit.Hooks.useBoundaryLocalities(
-    vendorLocality?.code,
+    editdata?.locality || vendorLocality?.code,
     "vendingzones",
     {
       enabled: !!vendorLocality,
     },
     t
   );
-
-  console.log("fetchedVendingZones", fetchedVendingZones);
   let structuredVendingZone = [];
   fetchedVendingZones && fetchedVendingZones.map((vendingData) => {
     structuredVendingZone.push({ i18nKey: vendingData?.i18nkey, code: vendingData?.code, value: vendingData?.name })
   })
 
+  useEffect(() => {
+  if (editdata?.locality && allCities && allCities.length > 0) {
+    allCities.map((city) => {
+      if (city.code === editdata?.locality) setVendorLocality(city);
+    }
+    )
+  }
+  if(editdata?.vendingZone && structuredVendingZone) {
+    structuredVendingZone.map((zone) => {
+      if (zone.code === editdata?.vendingZone) setvendingZones(zone);
+    })
+  }
+  if (previousData?.locality && allCities && allCities.length > 0) {
+    allCities.map((city) => {
+      if (city.code === previousData?.locality) setVendorLocality(city);
+    }
+    )
+  }
+  if(previousData?.vendingZone && structuredVendingZone) {
+    structuredVendingZone.map((zone) => {
+      if (zone.code === previousData?.vendingZone) setvendingZones(zone);
+    })
+  }
+  }, [allCities, editdata?.locality, fetchedVendingZones, previousData?.locality]);
 
   /* this checks two conditions:
    1. At least one day of the week is selected.
@@ -244,39 +262,6 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   vendingTypeData && vendingTypeData.map((vending) => {
     vendingTypeOptions.push({ i18nKey: `${vending.name}`, code: `${vending.code}`, value: `${vending.name}` })
   })
-
-  // const { data: vendingLocality } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendorLocality" }],
-  //   {
-  //     select: (data) => {
-  //       const formattedData = data?.["StreetVending"]?.["VendorLocality"]
-  //       return formattedData;
-  //     },
-  //   });
-
-  // let structuredLocality = [];
-  // vendingLocality && vendingLocality.map((local) => {
-  //   structuredLocality.push({ i18nKey: `${local.name}`, code: `${local.code}`, value: `${local.name}` })
-  // })
-
-  // const { data: vendingZone } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "StreetVending", [{ name: "VendingZones" }],
-  //   {
-  //     select: (data) => {
-  //       const formattedData = data?.["StreetVending"]?.["VendingZones"]
-  //       return formattedData;
-  //     },
-  //   });
-  // let vending_Zone = [];
-
-  // useEffect(() => {
-  //   if (vendingZone) {
-  //     let tempVendingZone = vendingZone.filter(zone => zone.city === vendorLocality?.value);
-  //     tempVendingZone.map((zone) => {
-  //       vending_Zone.push({ i18nKey: `${zone.name}`, code: `${zone.code}`, value: `${zone.name}` })
-  //     })
-  //   }
-  // }, [vendorLocality]);
-
-  // console.log("structuredLocality", structuredLocality, vending_Zone);
 
   const handleGIS = () => {
     setIsOpen(!isOpen);
