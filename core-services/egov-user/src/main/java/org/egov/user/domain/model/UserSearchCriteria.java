@@ -33,6 +33,8 @@ public class UserSearchCriteria {
     private String ulbName;
     private List<String> roleCodes;
     private String alternatemobilenumber;
+    @Builder.Default
+    private Boolean skipTenantCheck = false;
     
     @Builder.Default
     private Boolean skipValidate = false;

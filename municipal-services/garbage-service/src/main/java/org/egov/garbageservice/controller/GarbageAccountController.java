@@ -1,5 +1,8 @@
 package org.egov.garbageservice.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccountActionRequest;
 import org.egov.garbageservice.model.GarbageAccountActionResponse;
@@ -7,11 +10,13 @@ import org.egov.garbageservice.model.GarbageAccountRequest;
 import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.PayNowRequest;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccountRequest;
+import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.service.GarbageAccountService;
 import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,4 +80,14 @@ public class GarbageAccountController {
 		return new ResponseEntity("User created for garbage account", HttpStatus.OK);
 	}
 
+	@PostMapping("/_counts")
+
+	public ResponseEntity<?> counts(@RequestBody TotalCountRequest totalCountRequest) {
+
+		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> result = service.totalCount(totalCountRequest);
+
+		return new ResponseEntity(response, HttpStatus.OK);
+
+	}
 }

@@ -59,6 +59,9 @@ public class SchedulerConfiguration {
 
 	@Value("${egov.pg.endpoint.transfer-amount}")
 	private String pgTransferAmountEndpoint;
+	
+	@Value("${egov.pg.endpoint.settlement-status-update}")
+	private String pgSettlementStatusUpdateEndpoint;
 
 	@Value("${egov.adrvcanopy.site.booking.context.host}")
 	private String adrvcanopySiteBookingServiceHostUrl;

@@ -134,6 +134,14 @@ public class GatewayService {
 		Gateway gateway = getGateway(transaction.getGateway());
 		return gateway.transferAmount(transferWrapper);
 	}
+	
+	Object getSettlementStatus(Transaction transaction) throws CustomException {
+		if (!isGatewayActive(transaction.getGateway()))
+			throw new CustomException("INVALID_PAYMENT_GATEWAY", "Invalid or inactive payment gateway provided");
+
+		Gateway gateway = getGateway(transaction.getGateway());
+		return gateway.getSettlementStatus(transaction.getGatewayTxnId());
+	}
 
 
 }

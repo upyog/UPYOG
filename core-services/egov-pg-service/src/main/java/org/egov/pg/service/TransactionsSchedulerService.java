@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,13 +51,17 @@ public class TransactionsSchedulerService {
 	@Autowired
 	private GatewayService gatewayService;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	public Object transferAmount(RequestInfoWrapper requestInfoWrapper) {
 
 		Set<String> tenantIds = null;
 		BankAccountResponse bankAccountResponse = null;
 		List<Transfer> transferList = new ArrayList<>();
 
-		TransactionCriteria transactionCriteria = TransactionCriteria.builder().txnStatus(TxnStatusEnum.SUCCESS)
+		TransactionCriteria transactionCriteria = TransactionCriteria.builder().isSchedulerCall(true)
+				.txnStatus(TxnStatusEnum.SUCCESS)
 				.startDateTime(
 						LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
 				.endDateTime(LocalDate.now().minusDays(1).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
@@ -106,9 +112,15 @@ public class TransactionsSchedulerService {
 								TransferWrapper transferWrapper = TransferWrapper.builder()
 										.transfers(Collections.singletonList(transfer)).build();
 
-								// call settlement api
-								Object settlementAmountResponse = gatewayService.settlementAmount(transaction,
-										transferWrapper);
+								Object settlementAmountResponse = null;
+								try {
+									// call settlement api
+									settlementAmountResponse = gatewayService.settlementAmount(transaction,
+											transferWrapper);
+								} catch (Exception e) {
+									log.error("Error while transfering amount for the getway transaction id: "
+											+ transaction.getGatewayTxnId());
+								}
 
 								transaction.setTxnSettlementStatus(TxnSettlementStatus.CREATED.name());
 								transaction.setSettlementResponse(settlementAmountResponse);
@@ -125,6 +137,60 @@ public class TransactionsSchedulerService {
 		}
 
 		return transferList;
+	}
+
+	public Object txnSettlementStatusUpdate(RequestInfoWrapper requestInfoWrapper) {
+
+		TransactionCriteria transactionCriteria = TransactionCriteria.builder().isSchedulerCall(true)
+				.txnStatus(TxnStatusEnum.SUCCESS)
+				.startDateTime(
+						LocalDate.now().minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
+				.endDateTime(LocalDate.now().minusDays(2).atTime(23, 59, 59, 999_999_999).atZone(ZoneId.systemDefault())
+						.toInstant().toEpochMilli())
+				.txnSettlementStatus(TxnSettlementStatus.CREATED.name()).build();
+
+		List<Transaction> transactions = transactionService.getTransactions(transactionCriteria);
+
+		transactions.stream().forEach(transaction -> {
+			if (!StringUtils.isEmpty(transaction.getGatewayTxnId())) {
+				Object settlementStatusResponse = null;
+				try {
+					// call settlement status api
+					settlementStatusResponse = gatewayService.getSettlementStatus(transaction);
+				} catch (Exception e) {
+					log.error("Error while getting settlement status for the getway transaction id: "
+							+ transaction.getGatewayTxnId());
+				}
+
+				if (null != settlementStatusResponse && null != objectMapper.valueToTree(settlementStatusResponse)) {
+					if (null != objectMapper.valueToTree(settlementStatusResponse).get("items")
+							&& objectMapper.valueToTree(settlementStatusResponse).get("items").size() > 0) {
+						if (null != objectMapper.valueToTree(settlementStatusResponse).get("items").get(0)
+								.get("settlement_status")) {
+							// set transaction settlement status to update
+							transaction.setTxnSettlementStatus(objectMapper.valueToTree(settlementStatusResponse)
+									.get("items").get(0).get("settlement_status").asText().toUpperCase());
+						} else {
+							// set transaction settlement status to update
+							transaction.setTxnSettlementStatus(objectMapper.valueToTree(settlementStatusResponse)
+									.get("items").get(0).get("status").asText().toUpperCase());
+						}
+						transaction.setSettlementResponse(settlementStatusResponse);
+						TransactionRequest transactionRequest = TransactionRequest.builder()
+								.requestInfo(requestInfoWrapper.getRequestInfo()).transaction(transaction).build();
+
+						// update transaction settlement status
+						producer.push(appProperties.getUpdateTxnTopic(), transactionRequest);
+					} else {
+						// TODO
+					}
+				} else {
+					// TODO
+				}
+			}
+		});
+
+		return transactions;
 	}
 
 //	Map<String, List<BankAccount>> bankAccountModuleMap = bankAccountResponse.getBankAccounts().stream()
