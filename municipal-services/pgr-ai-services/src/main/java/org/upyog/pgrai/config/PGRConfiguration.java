@@ -231,4 +231,7 @@ public class PGRConfiguration {
     @Value("${egov.grievance.es.consumer.topic}")
     private String grievanceEsConsumerTopic;
 
+    @Value("${grievance.consumer.enabled:true}")
+    private boolean isConsumerEnabled;
+
 }

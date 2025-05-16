@@ -10,6 +10,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+import org.upyog.pgrai.config.PGRConfiguration;
 import org.upyog.pgrai.service.GrievanceFeignClient;
 import org.upyog.pgrai.web.models.ServiceRequest;
 import org.upyog.pgrai.web.models.grievanceClient.Grievance;
@@ -25,8 +26,8 @@ public class GrievanceConsumer {
     @Autowired
     private GrievanceFeignClient grievanceFeignClient;
 
-    @Value("${grievance.consumer.enabled:true}")
-    private boolean isConsumerEnabled;
+    @Autowired
+    private PGRConfiguration pgrConfiguration;
 
     /**
      * Kafka consumer that listens to grievance creation topic and forwards the request
@@ -38,7 +39,7 @@ public class GrievanceConsumer {
     @KafkaListener(topics = {"${egov.grievance.es.consumer.topic}"})
     public void consume(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
-        if (!isConsumerEnabled) {
+        if (!pgrConfiguration.isConsumerEnabled()) {
             log.info("Grievance consumer is disabled via configuration.");
             return;
         }
