@@ -125,17 +125,21 @@ public class UserService {
      *
      * @param userName
      * @param tenantId
+     * @param skipTenantCheck 
      * @return
      */
-    public User getUniqueUser(String userName, String tenantId, UserType userType) {
+    public User getUniqueUser(String userName, String tenantId, UserType userType, Boolean skipTenantCheck) {
 
         UserSearchCriteria userSearchCriteria = UserSearchCriteria.builder()
                 .userName(userName)
-                .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
+//                .tenantId(getStateLevelTenantForCitizen(tenantId, userType))
                 .type(userType)
                 .build();
+        if(!skipTenantCheck) {
+        	userSearchCriteria.setTenantId(getStateLevelTenantForCitizen(tenantId, userType));
+        }
 
-        if (isEmpty(userName) || isEmpty(tenantId) || isNull(userType)) {
+        if (isEmpty(userName) || (isEmpty(tenantId) && !skipTenantCheck) || isNull(userType)) {
             log.error("Invalid lookup, mandatory fields are absent");
             throw new UserNotFoundException(userSearchCriteria);
         }
@@ -182,11 +186,14 @@ public class UserService {
     public List<org.egov.user.domain.model.User> searchUsers(UserSearchCriteria searchCriteria,
                                                              boolean isInterServiceCall, RequestInfo requestInfo) {
 
-		if (!searchCriteria.getSkipValidate()) {
+		if (!searchCriteria.getSkipValidate() && !searchCriteria.getSkipTenantCheck()) {
 			searchCriteria.validate(isInterServiceCall);
 		}
 
-        searchCriteria.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
+		if (!searchCriteria.getSkipTenantCheck()) {
+			searchCriteria
+					.setTenantId(getStateLevelTenantForCitizen(searchCriteria.getTenantId(), searchCriteria.getType()));
+		}
         /* encrypt here / encrypted searchcriteria will be used for search*/
         
         String altmobnumber=null;
@@ -443,7 +450,7 @@ public class UserService {
     public void updatePasswordForLoggedInUser(LoggedInUserUpdatePasswordRequest updatePasswordRequest) {
         updatePasswordRequest.validate();
         final User user = getUniqueUser(updatePasswordRequest.getUserName(), updatePasswordRequest.getTenantId(),
-                updatePasswordRequest.getType());
+                updatePasswordRequest.getType(), false);
 
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased)
             throw new InvalidUpdatePasswordRequestException();
@@ -464,7 +471,7 @@ public class UserService {
     public void updatePasswordForNonLoggedInUser(NonLoggedInUserUpdatePasswordRequest request, RequestInfo requestInfo) {
         request.validate();
         // validateOtp(request.getOtpValidationRequest());
-        User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType());
+        User user = getUniqueUser(request.getUserName(), request.getTenantId(), request.getType(), false);
         if (user.getType().toString().equals(UserType.CITIZEN.toString()) && isCitizenLoginOtpBased) {
             log.info("CITIZEN forgot password flow is disabled");
             throw new InvalidUpdatePasswordRequestException();

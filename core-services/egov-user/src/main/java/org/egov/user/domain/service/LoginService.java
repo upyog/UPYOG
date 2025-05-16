@@ -72,13 +72,15 @@ public class LoginService {
 		UserType userType = UserType.fromValue(loginRequest.getUserType());
 		String tenantId = loginRequest.getTenantId();
 		List<User> users = null;
+		
+		Boolean skipTenantCheck = loginRequest.getSkipTenantCheck();
 
 		// Determining the username from Email or Phone Number
 		
 		if (EmailValidator.getInstance().isValid(usernameValue)) {
 			emailId = usernameValue;
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder().emailId(emailId).tenantId(tenantId).type(userType)
-					.build();
+					.skipTenantCheck(skipTenantCheck).build();
 			users = userService.searchUsers(searchCriteria, true, null);
 			if (CollectionUtils.isNotEmpty(users)) {
 				finalUsername = users.get(0).getUsername();
@@ -86,14 +88,14 @@ public class LoginService {
 		} else if (usernameValue.matches(UserServiceConstants.PATTERN_MOBILE)) {
 			mobileNumber = usernameValue;
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder().mobileNumber(mobileNumber).type(userType)
-					.tenantId(tenantId).build();
+					.tenantId(tenantId).skipTenantCheck(skipTenantCheck).build();
 			users = userService.searchUsers(searchCriteria, true, null);
 			if (CollectionUtils.isNotEmpty(users)) {
 				finalUsername = users.get(0).getUsername();
 			}
 		} else {
 			UserSearchCriteria searchCriteria = UserSearchCriteria.builder().userName(usernameValue).tenantId(tenantId).type(userType)
-					.build();
+					.skipTenantCheck(skipTenantCheck).build();
 			users = userService.searchUsers(searchCriteria, true, null);
 			if (CollectionUtils.isNotEmpty(users)) {
 				finalUsername = users.get(0).getUsername();
@@ -103,7 +105,7 @@ public class LoginService {
 		}
 
 		LinkedHashMap<String, LinkedHashMap<String, String>> authenticateUserResponse = (LinkedHashMap<String, LinkedHashMap<String, String>>) authenticateUser(
-				finalUsername, password, tenantId, userType.name());
+				finalUsername, password, tenantId, userType.name(), skipTenantCheck);
 
 		if (authenticateUserResponse.get("access_token") != null) {
 			User user = users.get(0);
@@ -115,7 +117,7 @@ public class LoginService {
 		return authenticateUserResponse;
 	}
 
-	private Object authenticateUser(String username, String password, String tenantId, String userType) {
+	private Object authenticateUser(String username, String password, String tenantId, String userType, Boolean skipTenantCheck) {
 
 		log.info("Fetch access token for register with login flow");
 		try {
@@ -129,6 +131,9 @@ public class LoginService {
 			map.add("scope", "read");
 			map.add("tenantId", tenantId);
 			map.add("userType", userType);
+			if (skipTenantCheck) {
+				map.add("skipTenantCheck", "TRUE");
+			}
 
 			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
 					headers);

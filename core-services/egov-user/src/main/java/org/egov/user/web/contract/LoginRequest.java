@@ -32,4 +32,7 @@ public class LoginRequest {
 
     @JsonProperty("userType")
 	 private String userType ;
+    
+    @Builder.Default
+    private Boolean skipTenantCheck = false;
 }
