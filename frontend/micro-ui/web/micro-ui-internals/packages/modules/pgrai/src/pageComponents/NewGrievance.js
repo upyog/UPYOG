@@ -2,6 +2,7 @@ import React, { useEffect, useState, Fragment } from "react";
 import { FormStep, TextInput, CardLabel, Loader, CardLabelError, LabelFieldPair, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { fetchCurrentLocation, reverseGeocode } from "../components/locationUtils";
+import { fetchGrievanceCategories } from "../utils/index";
 import PhotoUpload from "../components/Document";
 import AddressPopup from "../components/AddressPopup";
 
@@ -167,25 +168,13 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
     }
   };
 
-  const fetchGrievanceCategories = async (prompt) => {
+  const fetchGrievanceCategoriesHandler = async (prompt) => {
     setIsLoading(true);
     setApiError(null);
     try {
-      const response = await fetch(`http://3.111.52.140:5002/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
-        method: "GET",
-        headers: { accept: "application/json" },
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch grievance categories");
-
-      const data = await response.json();
+      const data = await fetchGrievanceCategories(prompt, t);
       if (data && data.length > 0) {
-        // Transform the subtypes to camelCase format
-        const transformedData = data.map(item => ({
-          ...item,
-          subtype: item.subtype.replace(/\s+(\w)/g, (_, letter) => letter.toUpperCase())
-        }));
-        setSuggestions(transformedData);
+        setSuggestions(data);
         setShowSuggestions(true);
       } else {
         setSuggestions([]);
@@ -222,7 +211,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (grievanceText.trim() !== "") {
-        fetchGrievanceCategories(grievanceText);
+        fetchGrievanceCategoriesHandler(grievanceText);
       } else {
         setSuggestions([]);
         setShowSuggestions(false);
@@ -255,6 +244,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             name="grievance"
             value={grievanceText}
+            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
             onChange={(e) => setGrievanceText(e.target.value)}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
@@ -286,6 +276,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           t={t}
           type="text"
           isMandatory={false}
+          style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           name="grievanceType"
           value={grievanceType}
           onChange={(e) => setGrievanceType(e.target.value)}
@@ -298,29 +289,28 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         <TextInput
           t={t}
           type="text"
+          style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           isMandatory={false}
           name="grievanceSubType"
           value={grievanceSubType}
           onChange={(e) => setGrievanceSubType(e.target.value)}
           disabled={isLoading}
         />
-         
-        <LabelFieldPair>
-          <CardLabel>
-            {`${t("PGR_AI_GRIEVANCE_LOCATION")}`} <span className="astericColor">*</span>
-          </CardLabel>
-          <div className="field" style={styles.locationField}>
-            <TextInput
-              t={t}
-              value={location}
-              onChange={handleLocationChange}
-              style={{ paddingRight: "30px" }}
-            />
-            <div style={styles.locationIcon} onClick={handleFetchLocation}>
-              <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
-            </div>
+
+        <CardLabel>
+          {`${t("PGR_AI_GRIEVANCE_LOCATION")}`} <span className="astericColor">*</span>
+        </CardLabel>
+        <div className="field" style={styles.locationField}>
+          <TextInput
+            t={t}
+            value={location}
+            onChange={handleLocationChange}
+            style={{ paddingRight: "30px", width: user.type === "EMPLOYEE" ? "50%" : "86%"}}
+          />
+          <div style={styles.locationIcon} onClick={handleFetchLocation}>
+            <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
           </div>
-        </LabelFieldPair>
+        </div>
 
         <LabelFieldPair>
           <CardLabel>{`${t("PGR_AI_LANDMARK")}`} <span className="astericColor">*</span></CardLabel>
@@ -329,6 +319,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           t={t}
           type="text"
           name="landmark"
+          style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           value={addressDetails.landmark || ""}
           onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}
           disabled={isLoading}
@@ -336,12 +327,12 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
         {locationError && <CardLabelError>{locationError}</CardLabelError>}
 
         {address && (
-          <LabelFieldPair>
+       <div>
             <CardLabel>{`${t("PGR_AI_ADDRESS")}`}</CardLabel>
             <div className="field">
-              <TextInput t={t} value={address} readOnly style={styles.readOnlyInput} />
+              <TextInput t={t} value={address} readOnly style={{  ...styles.readOnlyInput,  width: user.type === "EMPLOYEE" ? "50%" : "86%" }} />
             </div>
-          </LabelFieldPair>
+          </div>
         )}
 
         <PhotoUpload t={t} config={{ key: "documents" }} onSelect={handlePhotoUpload} formData={{ documents }}  setDocumentUploaded={ setVerificationDocuments} />

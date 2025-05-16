@@ -6,7 +6,7 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   const [uploadedFiles, setUploadedFiles] = useState([null]);
   const [error, setError] = useState(null);
   const [ind, setInd] = useState(1);
-
+  const user = Digit.UserService.getUser().info;
   const tenantId = Digit.ULBService.getStateId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
@@ -113,12 +113,12 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   return (
     <div>
        {files.map((file, index) => (
-  <LabelFieldPair key={index} style={{ marginBottom: "24px" }}>
+  <div key={index} style={{ marginBottom: "24px" }}>
     <CardLabel className="card-label-smaller">
       {t("PHOTO_UPLOAD") + (index !== 0 ? " " + (index + 1) : " 1")}
     </CardLabel>
 
-    <div className="field" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+    <div className="field" style={{ display: "flex", alignItems: "center", justifyContent: "space-between",width: user.type === "EMPLOYEE" ? "50%" : "86%"}}>
       <UploadFile
         onUpload={(e) => handleFileSelect(e, index)}
         onDelete={() =>
@@ -130,8 +130,8 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
         }
         id={`file-upload-${index}`}
         message={uploadedFiles[index] ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
-        textStyles={{ width: "100%" }}
-        inputStyles={{ width: "280px" }}
+        textStyles={{ width: "86%" }}
+        inputStyles={{ width: "86%" }}
         accept=".png"
         buttonType="button"
         error={!uploadedFiles[index]}
@@ -154,7 +154,7 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
         )}
       </div>
     </div>
-  </LabelFieldPair>
+  </div>
 ))}
 {error && <Toast label={error} onClose={() => setError(null)} error />}
 
