@@ -49,6 +49,34 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
     data.documents = doc;
     return data;
   };
+ /**
+ * Fetches grievance categories based on the provided prompt.
+ * Makes an API call to retrieve a list of categories and returns the data.
+ * This will be used to populate the grievance categories in the application.
+ */
+export const fetchGrievanceCategories = async (prompt, t) => {
+  try {
+    const response = await fetch(`https://35.154.83.250/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
+      method: "GET",
+      headers: { accept: "application/json" },
+    });
+
+    if (!response.ok) throw new Error(t("PGR_AI_FETCH_CATEGORIES_ERROR"));
+
+    const data = await response.json();
+    if (data && data.length > 0) {
+      // Transform the subtypes to camelCase format
+      return data.map(item => ({
+        ...item,
+        subtype: item.subtype.replace(/\s+(\w)/g, (_, letter) => letter.toUpperCase())
+      }));
+    }
+    return [];
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};
 
   export const APPLICATION_PATH = "/digit-ui";
 

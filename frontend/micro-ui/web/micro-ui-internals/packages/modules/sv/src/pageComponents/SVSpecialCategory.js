@@ -15,8 +15,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
   const user = Digit.UserService.getUser().info;
   const convertToObject = (String) => String ? { i18nKey: String, code: String, value: String } : null;
   const [ownerCategory, setownerCategory] = useState(formData?.specialCategoryData?.ownerCategory || convertToObject(previousData?.disabilityStatus || editdata?.disabilityStatus) || "");
-  // const [enrollmentId, setenrollmentId] = useState(formData?.specialCategoryData?.enrollmentId || previousData?.enrollmentId || editdata?.enrollmentId || "");
-  // const [beneficiary, setbeneficiary] = useState(formData?.specialCategoryData?.beneficiary || convertToObject(previousData?.benificiaryOfSocialSchemes || editdata?.benificiaryOfSocialSchemes) || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "100%" };
   const [file, setFile] = useState(null);
   const filteredDraftDocument = previousData?.documentDetails?.find((item) => item?.documentType?.includes(ownerCategory?.code));
@@ -24,8 +22,9 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
   const [uploadedFile, setUploadedFile] = useState(filteredDraftDocument?.fileStoreId || filteredDocument?.fileStoreId || formData?.specialCategoryData?.uploadedFile || null);
   const [isUploading, setIsUploading] = useState(false);
 
+  // handled beneficiarylist usestate for prefilling data if available
   const [beneficiaryList, setBeneficiaryList] = useState(
-    (formData?.specialCategoryData?.beneficiaryList) ||
+    (formData?.specialCategoryData?.beneficiaryList) || (previousData?.benificiaryOfSocialSchemes) || (editdata?.benificiaryOfSocialSchemes) ||
     [
       {
         schemeName: (formData?.specialCategoryData?.schemeName || convertToObject(previousData?.benificiaryOfSocialSchemes || editdata?.benificiaryOfSocialSchemes) || ""),
@@ -33,7 +32,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
       }
     ]);
 
-  console.log("----------formData", formData?.specialCategoryData?.beneficiaryList);
 
   function handleAdd() {
     const values = [...beneficiaryList];
@@ -60,8 +58,6 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
     units[i].enrollmentId = e.target.value;
     setBeneficiaryList(units);
   }
-
-  console.log("beneficiaryList", beneficiaryList);
 
 
   const handleFileUpload = (e) => {
@@ -330,7 +326,7 @@ const SVSpecialCategory = ({ t, config, onSelect, userType, formData, editdata, 
       locality: formData?.businessDetails?.vendorLocality?.code || "",
       localityValue: "",
       vendingZoneValue: "",
-      vendorPaymentFrequency: formData?.vendingPayment?.code,
+      vendorPaymentFrequency: formData?.businessDetails?.vendingPayment?.code,
       enrollmentId: "",
       cartLatitude: 0,
       cartLongitude: 0,

@@ -66,8 +66,6 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
   const isRenew = window.location.href.includes("renew") ? true : false; // creating common variable so that i dont have to write this much long condition every where
   const isMakePayment = window.location.href.includes("makePayment") ? true : false;
 
-
-  console.log("value", value);
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
@@ -112,6 +110,12 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
     [pdfDetails]
   );
 
+  // Determine the gender value for display based on renewalData.
+  // If gender is "M", set as "Male"; if "F", set as "Female"; otherwise, set as "Transgender".
+  let gender;
+  if (renewalData?.vendorDetail[0]?.gender) {
+    gender = renewalData?.vendorDetail[0]?.gender === "M" ? "Male" : renewalData?.vendorDetail[0]?.gender === "F" ? "Female" : "Transgender";
+  }
 
   /**
    *  This React component renders the Street Vendor Application Summary Page. 
@@ -136,32 +140,32 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
           <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
             <Row
               label={t("SV_VENDOR_NAME")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendorDetail?.[0]?.name : owner?.units?.[0]?.vendorName))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.name : owner?.units?.[0]?.vendorName))}`}
               actionButton={(isRenew) ? null : <ActionButton jumpTo={`/digit-ui/citizen/sv/apply/applicant-details`} />}
             />
             <Row
               label={t("SV_REGISTERED_MOB_NUMBER")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendorDetail?.[0]?.mobileNo : owner?.units?.[0]?.mobileNumber))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.mobileNo : owner?.units?.[0]?.mobileNumber))}`}
             />
 
             <Row
               label={t("SV_DATE_OF_BIRTH")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendorDetail?.[0]?.dob : owner?.units?.[0]?.vendorDateOfBirth))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.dob : owner?.units?.[0]?.vendorDateOfBirth))}`}
             />
 
             <Row
               label={t("SV_GENDER")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendorDetail?.[0]?.gender : owner?.units?.[0]?.gender?.code))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? gender : owner?.units?.[0]?.gender?.code))}`}
             />
             <Row
               label={t("SV_FATHER_NAME")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendorDetail?.[0]?.fatherName : owner?.units?.[0]?.fatherName))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.fatherName : owner?.units?.[0]?.fatherName))}`}
             />
             {
               (renewalData?.vendorDetail?.[0]?.emailId || owner?.units?.[0]?.email) ?
                 <Row
                   label={t("SV_EMAIL")}
-                  text={`${t(checkForNA((isRenew) ? renewalData?.vendorDetail?.[0]?.emailId : owner?.units?.[0]?.email))}`}
+                  text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.emailId : owner?.units?.[0]?.email))}`}
                 /> : null
             }
             {owner?.units?.[0]?.spouseName && (
@@ -225,34 +229,34 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
           <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
             <Row
               label={t("SV_VENDING_TYPE")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendingActivity : businessDetails?.vendingType?.code))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendingActivity : businessDetails?.vendingType?.code))}`}
               actionButton={(isRenew) ? null : <ActionButton jumpTo={`/digit-ui/citizen/sv/apply/business-details`} />}
             />
             <Row
               label={t("SV_VENDING_LOCALITY")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendorLocality : businessDetails?.vendorLocality?.name))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.localityValue : businessDetails?.vendorLocality?.name))}`}
             />
             <Row
               label={t("SV_VENDING_ZONES")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendingZone : businessDetails?.vendingZones?.i18nKey))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendingZoneValue : businessDetails?.vendingZones?.i18nKey))}`}
             />
             <Row
               label={t("SV_VENDING_PAYMENT")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendingPayment : businessDetails?.vendingPayment?.value))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorPaymentFrequency : businessDetails?.vendingPayment?.value))}`}
             />
             <Row
               label={t("SV_AREA_REQUIRED")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.vendingArea : businessDetails?.areaRequired))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendingArea : businessDetails?.areaRequired))}`}
             />
             <Row
               label={t("SV_LOCAL_AUTHORITY_NAME")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.localAuthorityName : businessDetails?.nameOfAuthority))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.localAuthorityName : businessDetails?.nameOfAuthority))}`}
             />
             {
               (renewalData?.vendingLicenseId || businessDetails?.vendingLiscence) ?
                 <Row
                   label={t("SV_VENDING_LISCENCE")}
-                  text={`${t(checkForNA((isRenew) ? renewalData?.vendingLicenseId : businessDetails?.vendingLiscence))}`}
+                  text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendingLicenseId : businessDetails?.vendingLiscence))}`}
                 /> : null
             }
 
@@ -309,29 +313,29 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
           <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
             <Row
               label={t("SV_ADDRESS_LINE1")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.addressDetails?.[0]?.addressLine1 : address?.addressline1))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.addressDetails?.[0]?.addressLine1 : address?.addressline1))}`}
               actionButton={(isRenew) ? null : <ActionButton jumpTo={`/digit-ui/citizen/sv/apply/address-details`} />}
             />
             <Row
               label={t("SV_ADDRESS_LINE2")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.addressDetails?.[0]?.addressLine2 : address?.addressline2))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.addressDetails?.[0]?.addressLine2 : address?.addressline2))}`}
             />
             <Row
               label={t("SV_CITY")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.addressDetails?.[0]?.city : address?.city?.city?.name))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.addressDetails?.[0]?.city : address?.city?.city?.name))}`}
             />
             <Row
               label={t("SV_LOCALITY")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.addressDetails?.[0]?.locality : address?.locality?.i18nKey))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.addressDetails?.[0]?.locality : address?.locality?.i18nKey))}`}
             />
             <Row
               label={t("SV_ADDRESS_PINCODE")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.addressDetails?.[0]?.pincode : address?.pincode))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.addressDetails?.[0]?.pincode : address?.pincode))}`}
             />
             {(renewalData?.addressDetails?.[0]?.landmark || address?.landmark) ?
               <Row
                 label={t("SV_LANDMARK")}
-                text={`${t(checkForNA((isRenew) ? renewalData?.addressDetails?.[0]?.landmark : address?.landmark))}`}
+                text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.addressDetails?.[0]?.landmark : address?.landmark))}`}
               /> : null
             }
           </StatusTable>
@@ -340,24 +344,39 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
           <StatusTable style={{ marginBottom: "30px" }}>
             <Row
               label={t("SV_CATEGORY")}
-              text={`${t(checkForNA((isRenew) ? renewalData?.disabilityStatus : specialCategoryData?.ownerCategory?.value))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.disabilityStatus : specialCategoryData?.ownerCategory?.value))}`}
               actionButton={(isRenew) ? null : <ActionButton jumpTo={`/digit-ui/citizen/sv/apply/special-category`} />}
             />
+            {/* Handles rendering of beneficiaryList based on renew data or the data from normal flow of code */}
             {specialCategoryData?.beneficiaryList[0]?.schemeName ?
               specialCategoryData?.beneficiaryList.map((item) => (
                 <>
                   <Row
                     label={t("SV_BENEFICIARY_SCHEMES")}
-                    text={`${t(checkForNA((isRenew) ? renewalData?.benificiaryOfSocialSchemes : item?.schemeName))}`}
+                    text={`${t(checkForNA(item?.schemeName))}`}
                   />
 
                   < Row
                     label={t("SV_ENROLLMENT_APPLICATION_NUMBER")}
-                    text={`${t(checkForNA((isRenew) ? renewalData?.enrollmentId : item?.enrollmentId))}`}
+                    text={`${t(checkForNA(item?.enrollmentId))}`}
                   />
                 </>
               ))
-              : null}
+              : renewalData?.benificiaryOfSocialSchemes?.map((item) => (
+                <>
+                  <Row
+                    label={t("SV_BENEFICIARY_SCHEMES")}
+                    text={`${t(checkForNA(item?.schemeName))}`}
+                  />
+
+                  < Row
+                    label={t("SV_ENROLLMENT_APPLICATION_NUMBER")}
+                    text={`${t(checkForNA(item?.enrollmentId))}`}
+                  />
+                </>
+              )
+              )
+            }
           </StatusTable>
 
           <CardSubHeader>{t("SV_DOCUMENT_DETAILS_LABEL")}</CardSubHeader>

@@ -110,7 +110,7 @@ const PGRAICreate = ({ parentRoute }) => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            <Component config={{ texts, inputs, key}} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
           </Route>
         );
       })}

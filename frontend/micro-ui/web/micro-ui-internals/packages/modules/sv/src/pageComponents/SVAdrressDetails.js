@@ -310,7 +310,7 @@ const SVAdrressDetails = ({ t, config, onSelect, userType, formData, editdata, p
       locality: formData?.businessDetails?.vendorLocality?.code || "",
       localityValue: "",
       vendingZoneValue: "",
-      vendorPaymentFrequency: formData?.vendingPayment?.code,
+      vendorPaymentFrequency: formData?.businessDetails?.vendingPayment?.code,
       enrollmentId: "",
       cartLatitude: 0,
       cartLongitude: 0,
