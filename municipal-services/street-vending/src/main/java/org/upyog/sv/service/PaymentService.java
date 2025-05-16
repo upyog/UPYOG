@@ -400,73 +400,95 @@ public class PaymentService {
 	 * @param schedule        The vendor's current payment schedule to be processed.
 	 * @param paymentRequest  The payment request details. If {@code null}, scheduler-triggered processing is assumed.
 	 */
-	
 	private void processSchedule(VendorPaymentSchedule schedule, PaymentRequest paymentRequest) {
-		log.info("Inside processSchedule method for payment schedule " + schedule);
-		
+	    log.info("Inside processSchedule method for payment schedule " + schedule);
+
+	    List<StreetVendingDetail> detailList = getValidityDateAndPayCycleByCertificateNo(schedule.getCertificateNo());
+
+	    if (detailList == null || detailList.isEmpty()) {
+	        log.warn("No StreetVendingDetail found for certificate: " + schedule.getCertificateNo());
+	        return;
+	    }
+
+	    StreetVendingDetail detail = detailList.get(0);
+
 	    if (paymentRequest == null) {
 	        LocalDate currentDueDate = schedule.getDueDate();
-	        List<StreetVendingDetail> detailList = getValidityDateAndPayCycleByCertificateNo(schedule.getCertificateNo());
+	        LocalDate validityDate = detail.getValidityDate();
+	        int paymentCycleInMonths = getPaymentCycleInMonths(detail.getVendorPaymentFrequency());
+	        LocalDate nextDueDate = currentDueDate.plusMonths(paymentCycleInMonths);
 
-	        if (detailList != null && !detailList.isEmpty()) {
-	            StreetVendingDetail detail = detailList.get(0);
-	            LocalDate validityDate = detail.getValidityDate();
-	            int paymentCycleInMonths = getPaymentCycleInMonths(detail.getVendorPaymentFrequency());
+	        boolean isPartialCycle = validityDate.isBefore(nextDueDate);
+	        LocalDate actualEndDate = isPartialCycle ? validityDate : nextDueDate;
 
-	            LocalDate nextDueDate = currentDueDate.plusMonths(paymentCycleInMonths);
-	            boolean isPartialCycle = validityDate.isBefore(nextDueDate);
-	            LocalDate actualEndDate = isPartialCycle ? validityDate : nextDueDate;
-	        //    long days = ChronoUnit.DAYS.between(currentDueDate, actualEndDate);
+	        UserDetailResponse systemUser = userService.searchByUserName(
+	            StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
+	            StreetVendingConstants.SYSTEM_CITIZEN_TENANTID
+	        );
 
-	            UserDetailResponse systemUser = userService.searchByUserName(
-	                StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
-	                StreetVendingConstants.SYSTEM_CITIZEN_TENANTID
-	            );
-
-	            if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
-	                log.error("System user not found");
-	                return;
-	            }
-
-	            StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
-	                .requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
-	                .streetVendingDetail(detail)
-	                .build();
-
-	            demand.createDemand(streetVendingRequest, null);
-
-	            schedule.setStatus(PaymentScheduleStatus.PENDING_PAYMENT);
-	            updateSchedule(schedule);
-	            
-	            if (detail.getWorkflow() == null) {
-	                detail.setWorkflow(new Workflow()); 
-	            }
-	            detail.getWorkflow().setAction(StreetVendingConstants.ACTION_STATUS_SCHEDULE_PAYMENT);
-
-	            notificationService.process(streetVendingRequest, null);
-
-	            if (!validityDate.isBefore(nextDueDate)) {
-	                VendorPaymentSchedule newSchedule = VendorPaymentSchedule.builder()
-	                    .id(StreetVendingUtil.getRandonUUID())
-	                    .vendorId(schedule.getVendorId())
-	                    .certificateNo(schedule.getCertificateNo())
-	                    .applicationNo(detail.getApplicationNo())                
-	                    .dueDate(nextDueDate)
-	                    .status(PaymentScheduleStatus.PENDING_DEMAND_GENERATION)
-	                    .build();
-
-	                VendorPaymentScheduleRequest paymentSchedule = VendorPaymentScheduleRequest.builder()
-	                    .requestInfo(null)
-	                    .vendorPaymentSchedules(Arrays.asList(newSchedule))
-	                    .build();
-
-	                streetVendingRepository.savePaymentSchedule(paymentSchedule);
-	            }
+	        if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
+	            log.error("System user not found");
+	            return;
 	        }
+
+	        StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
+	            .requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
+	            .streetVendingDetail(detail)
+	            .build();
+
+	        demand.createDemand(streetVendingRequest, null);
+
+	        schedule.setStatus(PaymentScheduleStatus.PENDING_PAYMENT);
+	        updateSchedule(schedule);
+
+	        if (detail.getWorkflow() == null) {
+	            detail.setWorkflow(new Workflow());
+	        }
+	        detail.getWorkflow().setAction(StreetVendingConstants.ACTION_STATUS_SCHEDULE_PAYMENT);
+
+	        notificationService.process(streetVendingRequest, null);
 	    } else {
 	        schedule.setStatus(PaymentScheduleStatus.PAID);
-	        schedule.setLastPaymentDate(LocalDate.now());
 	        updateSchedule(schedule);
+	        createNextScheduleIfApplicable(schedule, detail);
+	    }
+	}
+	
+	/**
+	 * Creates the next vendor payment schedule if the next due date falls within the vendor's validity period.
+	 * <p>
+	 * This method calculates the next due date based on the vendor's payment frequency and the current due date.
+	 * If the next due date is before or equal to the validity date of the vendor, a new payment schedule is created
+	 * and persisted with a status of {@code PENDING_DEMAND_GENERATION}.
+	 *
+	 * @param schedule the current {@link VendorPaymentSchedule} containing the latest payment information
+	 * @param detail   the {@link StreetVendingDetail} containing vendor validity and payment frequency
+	 */
+
+	private void createNextScheduleIfApplicable(VendorPaymentSchedule schedule, StreetVendingDetail detail) {
+	    LocalDate currentDueDate = schedule.getDueDate();
+	    LocalDate validityDate = detail.getValidityDate();
+	    int paymentCycleInMonths = getPaymentCycleInMonths(detail.getVendorPaymentFrequency());
+
+	    LocalDate nextDueDate = currentDueDate.plusMonths(paymentCycleInMonths);
+
+	    if (!validityDate.isBefore(nextDueDate)) {
+	        VendorPaymentSchedule newSchedule = VendorPaymentSchedule.builder()
+	            .id(StreetVendingUtil.getRandonUUID())
+	            .vendorId(schedule.getVendorId())
+	            .certificateNo(schedule.getCertificateNo())
+	            .applicationNo(detail.getApplicationNo())
+	            .lastPaymentDate(LocalDate.now())
+	            .dueDate(nextDueDate)
+	            .status(PaymentScheduleStatus.PENDING_DEMAND_GENERATION)
+	            .build();
+
+	        VendorPaymentScheduleRequest paymentSchedule = VendorPaymentScheduleRequest.builder()
+	            .requestInfo(null)
+	            .vendorPaymentSchedules(Arrays.asList(newSchedule))
+	            .build();
+
+	        streetVendingRepository.savePaymentSchedule(paymentSchedule);
 	    }
 	}
 

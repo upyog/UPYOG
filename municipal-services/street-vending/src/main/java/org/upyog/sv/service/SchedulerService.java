@@ -37,11 +37,6 @@ public class SchedulerService {
 	@Value("${scheduler.sv.expiry.enabled:false}")
 	private boolean isSchedulerEnabled;
 
-	/**
-	 * Scheduled job to handle street vending applications. Runs daily at 1 AM if
-	 * enabled via configuration.
-	 */
-
 	/** SCHEDLOCK USE: All pods load the scheduler and attempt to run the scheduled job at the same time.
 	* Each pod first attempts to acquire a lock in the shared database (usually in a shedlock table) using an atomic SQL update:
 	* UPDATE shedlock
@@ -56,21 +51,27 @@ public class SchedulerService {
 	* Even if multiple pods send the SQL query simultaneously, only one will succeed due to the transactional guarantees of RDBMS.
 	* ShedLock checks the number of affected rows — if it's zero, the job is skipped. **/
 	
-	@Scheduled(cron = "0 0 1 * * *")
+	/**
+	 * Scheduled job to handle street vending applications. Runs daily at 1 AM if
+	 * enabled via configuration.
+	 */
+
+	//@Scheduled(cron = "0 0 1 * * *")
+	@Scheduled(cron = "0 */5 * * * *") // runs every 5 min
 	@SchedulerLock(name = "streetVendingPaymentSchedulerJob",
-	lockAtLeastFor = "PT5M",  // Hold the lock for at least 5 minute
+	lockAtLeastFor = "PT1M",  // Hold the lock for at least 5 minute
     lockAtMostFor = "PT30M")  // Auto-release after 30 minutes if job crashes)
 	public void processStreetVendingApplications() {
-		if (!isSchedulerEnabled) {
-			log.info("Scheduler is disabled via configuration.");
-			return;
-		}
+//		if (!isSchedulerEnabled) {
+//			log.info("Scheduler is disabled via configuration.");
+//			return;
+//		}
 		log.info("Street Vending Applications Scheduler started");
 
 		markEligibleForRenewalAndNotify();
 		markExpiredApplicationsAndNotify();
 		
-		log.info("Starting: processDueVendorPayments()");
+		log.info("Starting: processDueVendorPayments()");	
 		
 		service.processDueVendorPayments(null);
 		
