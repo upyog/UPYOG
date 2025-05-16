@@ -20,6 +20,8 @@ public class TransactionDetailsRowMapper implements RowMapper<TransactionDetails
 
 		return TransactionDetails.builder().uuid(resultSet.getString("uuid")).txnId(resultSet.getString("txn_id"))
 				.txnAmount(resultSet.getString("txn_amount")).billId(resultSet.getString("bill_id"))
-				.consumerCode(resultSet.getString("consumer_code")).auditDetails(auditDetails).build();
+				.consumerCode(resultSet.getString("consumer_code")).auditDetails(auditDetails)
+				.status(resultSet.getString("status"))
+				.build();
 	}
 }

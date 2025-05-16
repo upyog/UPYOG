@@ -82,6 +82,7 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
                 .consumerCode(resultSet.getString("consumer_code"))
                 .module(resultSet.getString("module"))
                 .orderId(orderId)
+                .isMultiTransaction(resultSet.getBoolean("is_multi_transaction"))
                 .additionalDetails(additionalDetails)
                 .taxAndPayments(taxAndPayments)
                 .auditDetails(auditDetails)

@@ -11,8 +11,14 @@ class TransactionDetailsQueryBuilder {
 //	private static final String SEARCH_TXN_SQL = "SELECT eptd.uuid, eptd.txn_id, eptd.txn_amount, eptd.bill_id, eptd.consumer_code, "
 //			+ "eptd.created_by, eptd.created_time, eptd.last_modified_by, eptd.last_modified_time "
 //			+ "FROM eg_pg_transactions_details eptd ";
-	private static final String SEARCH_TXN_SQL = "SELECT * FROM eg_pg_transactions_details eptd ";
+	private static final String SEARCH_TXN_SQL = 
+//			"SELECT * FROM eg_pg_transactions_details eptd ";
 
+	 "SELECT eptd.*,ept.txn_status as status " +
+	    "FROM eg_pg_transactions_details eptd " +
+	    "JOIN eg_pg_transactions ept " +
+	    "ON eptd.txn_id = ept.txn_id";
+	
 	private TransactionDetailsQueryBuilder() {
 	}
 
