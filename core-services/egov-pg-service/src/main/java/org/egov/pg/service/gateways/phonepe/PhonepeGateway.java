@@ -201,4 +201,11 @@ public class PhonepeGateway implements Gateway {
 		return null;
 	}
 
+
+	@Override
+	public Object getSettlementStatus(String gatewayTxnId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

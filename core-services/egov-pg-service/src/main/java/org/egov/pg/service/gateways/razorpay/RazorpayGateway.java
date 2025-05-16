@@ -277,4 +277,25 @@ public class RazorpayGateway implements Gateway {
 					"Unable to transfer amount for the orderId: " + transfer.getNotes().getOrderId());
 		}
 	}
+
+	@Override
+	public Object getSettlementStatus(String gatewayTxnId) {
+		// HttpHeaders
+		HttpHeaders headers = buildHttpHeaders();
+
+		String url = String.format(MERCHANT_PAYMENT_TRANSFER_URL, gatewayTxnId);
+
+		try {
+			// Make the GET request with Basic Authentication and get the response as an
+			// object
+			ResponseEntity<?> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
+					Object.class);
+
+			return responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("Unable to get transfer status for the getway transaction id: " + gatewayTxnId, e);
+			throw new CustomException("ERR_RAZORPAY_PG_SERVICE",
+					"Unable to get transfer status for the getway transaction id: " + gatewayTxnId);
+		}
+	}
 }

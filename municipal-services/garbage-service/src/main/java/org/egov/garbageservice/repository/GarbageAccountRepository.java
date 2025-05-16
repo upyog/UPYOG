@@ -13,6 +13,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
+import org.egov.garbageservice.model.TotalCountRequest;
 import org.egov.garbageservice.model.contract.DmsRequest;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
 import org.egov.garbageservice.service.UserService;
@@ -442,5 +443,11 @@ public class GarbageAccountRepository {
 
 	public void delete(GarbageAccount garbageAccount) {
 		jdbcTemplate.update(DELETE_QUERY, garbageAccount.getGarbageId());
+	}
+	
+	public List<GarbageAccount> getStatusCounts(TotalCountRequest totalCountRequest) {
+		return null;
+		
+		
 	}
 }

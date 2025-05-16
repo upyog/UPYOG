@@ -21,9 +21,6 @@ import static java.util.Objects.isNull;
 
 public class TransactionRowMapper implements RowMapper<Transaction> {
 	
-	@Autowired
-	private ObjectMapper mapper;
-
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static ObjectReader taxAndPaymentsReader =
             objectMapper.readerFor(objectMapper.getTypeFactory().constructCollectionType(List.class,
@@ -102,7 +99,7 @@ public class TransactionRowMapper implements RowMapper<Transaction> {
 			if (resultSet.findColumn(key) != -1) {
 				PGobject obj = (PGobject) resultSet.getObject(key);
 				if (obj != null && obj.getValue() != null && !"null".equals(obj.getValue())) {
-					additionalDetails = mapper.readTree(obj.getValue());
+					additionalDetails = objectMapper.readTree(obj.getValue());
 				}
 			}
 		} catch (IOException e) {

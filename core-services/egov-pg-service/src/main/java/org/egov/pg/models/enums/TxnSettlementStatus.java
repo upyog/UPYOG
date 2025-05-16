@@ -3,7 +3,7 @@ package org.egov.pg.models.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum TxnSettlementStatus {
-	CREATED("CREATED"), SETTLED("SETTLED"), FAILED("FAILED");
+	CREATED("CREATED"), PENDING("PENDING"), SETTLED("SETTLED"), FAILED("FAILED");
 
 	@JsonCreator
 	public static TxnSettlementStatus fromValue(String text) {

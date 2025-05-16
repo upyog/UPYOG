@@ -65,4 +65,6 @@ public interface Gateway {
     
     Object transferAmount(TransferWrapper transferWrapper);
     
+    Object getSettlementStatus(String gatewayTxnId);
+    
 }

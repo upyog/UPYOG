@@ -24,4 +24,13 @@ public class TransactionsSchedulerController {
 		return ResponseEntity.ok("Amount transfered successfully!!!");
 //		return ResponseEntity.ok(transactionsSchedulerService.transferAmount(requestInfoWrapper));
 	}
+
+	@PostMapping("/settlement-status-update")
+	public ResponseEntity<?> txnSettlementStatusUpdate(@RequestBody RequestInfoWrapper requestInfoWrapper) {
+
+		transactionsSchedulerService.txnSettlementStatusUpdate(requestInfoWrapper);
+
+		return ResponseEntity.ok("Settlement status updated successfully!!!");
+//		return ResponseEntity.ok(transactionsSchedulerService.txnSettlementStatusUpdate(requestInfoWrapper));
+	}
 }
