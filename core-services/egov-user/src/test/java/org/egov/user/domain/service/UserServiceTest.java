@@ -253,7 +253,7 @@ public class UserServiceTest {
         final User expectedUser = User.builder().build();
         Mockito.doNothing().when(userRepository).update(any(org.egov.user.domain.model.User.class), any(User.class),any(Long.class), any(String.class) );
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(user));
-        when(userService.getUniqueUser(anyString(), anyString(), any(UserType.class))).thenReturn
+        when(userService.getUniqueUser(anyString(), anyString(), any(UserType.class), false)).thenReturn
                 (expectedUser);
 
         User returnedUser = userService.updateWithoutOtpValidation(domainUser, any());

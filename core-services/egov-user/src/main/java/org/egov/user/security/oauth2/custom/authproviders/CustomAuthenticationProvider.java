@@ -77,8 +77,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         String tenantId = details.get("tenantId");
         String userType = details.get("userType");
+        
+        Boolean skipTenantCheck = false;
+        
+		if (null != details.get("skipTenantCheck") && details.get("skipTenantCheck").equals("TRUE")) {
+			skipTenantCheck = true;
+		}
 
-        if (isEmpty(tenantId)) {
+        if (isEmpty(tenantId) && !skipTenantCheck) {
             throw new OAuth2Exception("TenantId is mandatory");
         }
         if (isEmpty(userType) || isNull(UserType.fromValue(userType))) {
@@ -88,7 +94,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         User user;
         RequestInfo requestInfo;
         try {
-            user = userService.getUniqueUser(userName, tenantId, UserType.fromValue(userType));
+            user = userService.getUniqueUser(userName, tenantId, UserType.fromValue(userType), skipTenantCheck);
             /* decrypt here otp service and final response need decrypted data*/
             Set<org.egov.user.domain.model.Role> domain_roles = user.getRoles();
             List<org.egov.common.contract.request.Role> contract_roles = new ArrayList<>();
