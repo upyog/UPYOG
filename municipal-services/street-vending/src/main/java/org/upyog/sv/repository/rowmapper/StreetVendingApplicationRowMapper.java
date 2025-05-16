@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.enums.ApplicationCreatedByEnum;
 import org.upyog.sv.util.StreetVendingUtil;
 import org.upyog.sv.web.models.Address;
@@ -40,7 +41,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 			String validFromString = rs.getString("svApprovalDate");
 			String validToString = "NA";
 			if (!validFromString.equals("0")) {
-				validFromString = streetVendingUtil.convertToFormattedDate(validFromString, "dd-MM-YYYY");
+				validFromString = streetVendingUtil.convertToFormattedDate(validFromString, StreetVendingConstants.DATEFORMAT);
 				validToString = streetVendingUtil.addOneYearToEpoch(validFromString);
 			} else {
 				validFromString = "NA";
@@ -61,11 +62,11 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 						.tenantId(rs.getString("SVTENANTID")).applicationNo(rs.getString("SVAPPLICATIONNO"))
 						.applicationDate(rs.getLong("SVAPPLICATIONDATE")).certificateNo(rs.getString("SVCERTIFICATENO"))
 						.formattedApplicationDate(
-							    streetVendingUtil.convertEpochToFormattedDate(rs.getLong("SVAPPLICATIONDATE"), "dd-MM-yyyy")
+							    streetVendingUtil.convertEpochToFormattedDate(rs.getLong("SVAPPLICATIONDATE"), StreetVendingConstants.DATEFORMAT)
 							)
 						.approvalDate(rs.getLong("SVAPPROVALDATE"))
 						.formattedApprovalDate(
-							    streetVendingUtil.convertEpochToFormattedDate(rs.getLong("SVAPPROVALDATE"), "dd-MM-yyyy")
+							    streetVendingUtil.convertEpochToFormattedDate(rs.getLong("SVAPPROVALDATE"), StreetVendingConstants.DATEFORMAT)
 							)
 						.applicationStatus(rs.getString("SVAPPLICATIONSTATUS"))
 						.tradeLicenseNo(rs.getString("SVTRADELICENSENO"))
@@ -142,7 +143,7 @@ public class StreetVendingApplicationRowMapper implements ResultSetExtractor<Lis
 		if (vendorId != null && streetVendingDetail.getVendorDetail().stream()
 				.noneMatch(vendor -> vendor.getId().equals(vendorId))) {
 			
-	        String formattedDob = streetVendingUtil.formatSqlDateToString(rs, "VENDORDATEOFBIRTH", "dd-MM-yyyy");
+	        String formattedDob = streetVendingUtil.formatSqlDateToString(rs, "VENDORDATEOFBIRTH", StreetVendingConstants.DATEFORMAT);
 
 
 			VendorDetail vendorDetail = VendorDetail.builder().id(vendorId)

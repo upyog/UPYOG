@@ -64,7 +64,7 @@ public class PaymentService {
 	private IdgenUtil idgenUtil;
 	
 	@Autowired
-	private DemandService demand;
+	private DemandService demandService;
 	
 	@Autowired
 	private UserService userService;
@@ -381,29 +381,22 @@ public class PaymentService {
 	
 	
 	/**
-	 * Processes a vendor payment schedule based on whether a payment has been made or not.
-	 *
+	 * Processes the given {@link VendorPaymentSchedule} based on the presence of a {@link PaymentRequest}.
 	 * <p>
-	 * If {@code paymentRequest} is {@code null}, it indicates the schedule is being processed
-	 * by the scheduler (pre-payment), and the method:
-	 * <ul>
-	 *   <li>Fetches the related {@link StreetVendingDetail} using the certificate number</li>
-	 *   <li>Calculates the next due date based on the vendor’s payment frequency</li>
-	 *   <li>Creates a demand for the schedule if it's within the valid period</li>
-	 *   <li>Updates the schedule status to {@code PENDING_PAYMENT}</li>
-	 *   <li>Creates the next schedule if the validity period extends beyond the current cycle</li>
-	 * </ul>
+	 * If the {@code paymentRequest} is {@code null}, this method treats it as a demand creation
+	 * scenario and updates the schedule accordingly by creating a new demand and triggering notifications.
+	 * If {@code paymentRequest} is provided, it marks the schedule as paid and processes creation
+	 * of the next applicable schedule.
+	 * </p>
 	 *
-	 * If {@code paymentRequest} is not {@code null}, it indicates a successful payment event,
-	 * and the method marks the current schedule as {@code PAID}.
-	 *
-	 * @param schedule        The vendor's current payment schedule to be processed.
-	 * @param paymentRequest  The payment request details. If {@code null}, scheduler-triggered processing is assumed.
+	 * @param schedule        the vendor payment schedule to be processed. Must not be null.
+	 * @param paymentRequest  the payment request object if the payment has been made; if null, it triggers demand creation.
 	 */
+	
 	private void processSchedule(VendorPaymentSchedule schedule, PaymentRequest paymentRequest) {
 	    log.info("Inside processSchedule method for payment schedule " + schedule);
 
-	    List<StreetVendingDetail> detailList = getValidityDateAndPayCycleByCertificateNo(schedule.getCertificateNo());
+	    List<StreetVendingDetail> detailList = getStreetVendingDetailByCertificateNo(schedule.getCertificateNo());
 
 	    if (detailList == null || detailList.isEmpty()) {
 	        log.warn("No StreetVendingDetail found for certificate: " + schedule.getCertificateNo());
@@ -413,46 +406,80 @@ public class PaymentService {
 	    StreetVendingDetail detail = detailList.get(0);
 
 	    if (paymentRequest == null) {
-	        LocalDate currentDueDate = schedule.getDueDate();
-	        LocalDate validityDate = detail.getValidityDate();
-	        int paymentCycleInMonths = getPaymentCycleInMonths(detail.getVendorPaymentFrequency());
-	        LocalDate nextDueDate = currentDueDate.plusMonths(paymentCycleInMonths);
-
-	        boolean isPartialCycle = validityDate.isBefore(nextDueDate);
-	        LocalDate actualEndDate = isPartialCycle ? validityDate : nextDueDate;
-
-	        UserDetailResponse systemUser = userService.searchByUserName(
-	            StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
-	            StreetVendingConstants.SYSTEM_CITIZEN_TENANTID
-	        );
-
-	        if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
-	            log.error("System user not found");
-	            return;
-	        }
-
-	        StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
-	            .requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
-	            .streetVendingDetail(detail)
-	            .build();
-
-	        demand.createDemand(streetVendingRequest, null);
-
-	        schedule.setStatus(PaymentScheduleStatus.PENDING_PAYMENT);
-	        updateSchedule(schedule);
-
-	        if (detail.getWorkflow() == null) {
-	            detail.setWorkflow(new Workflow());
-	        }
-	        detail.getWorkflow().setAction(StreetVendingConstants.ACTION_STATUS_SCHEDULE_PAYMENT);
-
-	        notificationService.process(streetVendingRequest, null);
+	        handleVendorPaymentSchedule(schedule, detail);
 	    } else {
-	        schedule.setStatus(PaymentScheduleStatus.PAID);
-	        updateSchedule(schedule);
-	        createNextScheduleIfApplicable(schedule, detail);
+	        updateVendorSchedulePaymentStatus(schedule, detail);
 	    }
 	}
+
+	/**
+	 * Handles the vendor payment schedule when there is no existing payment request.
+	 * <p>
+	 * This method calculates the next due date based on the vendor's payment frequency
+	 * and creates a new demand up to the actual end date (either the vendor's validity date or the next due date).
+	 * It sets the schedule status to {@code PENDING_PAYMENT}, updates the schedule, initializes workflow if needed,
+	 * and triggers notification processing for the vendor.
+	 * </p>
+	 *
+	 * @param schedule the {@link VendorPaymentSchedule} to be updated with demand and status. Must not be null.
+	 * @param detail   the {@link StreetVendingDetail} associated with the vendor's certificate. Must not be null.
+	 */
+	private void handleVendorPaymentSchedule(VendorPaymentSchedule schedule, StreetVendingDetail detail) {
+	    LocalDate currentDueDate = schedule.getDueDate();
+	    LocalDate validityDate = detail.getValidityDate();
+	    int paymentCycleInMonths = getPaymentCycleInMonths(detail.getVendorPaymentFrequency());
+	    LocalDate nextDueDate = currentDueDate.plusMonths(paymentCycleInMonths);
+
+	    boolean isPartialCycle = validityDate.isBefore(nextDueDate);
+	    LocalDate actualEndDate = isPartialCycle ? validityDate : nextDueDate;
+
+	    UserDetailResponse systemUser = userService.searchByUserName(
+	        StreetVendingConstants.SYSTEM_CITIZEN_USERNAME,
+	        StreetVendingConstants.SYSTEM_CITIZEN_TENANTID
+	    );
+
+	    if (systemUser == null || systemUser.getUser() == null || systemUser.getUser().isEmpty()) {
+	        log.error("System user not found");
+	        return;
+	    }
+
+	    StreetVendingRequest streetVendingRequest = StreetVendingRequest.builder()
+	        .requestInfo(RequestInfo.builder().userInfo(systemUser.getUser().get(0)).build())
+	        .streetVendingDetail(detail)
+	        .build();
+
+	    demandService.createDemand(streetVendingRequest, null);
+
+	    schedule.setStatus(PaymentScheduleStatus.PENDING_PAYMENT);
+	    updateSchedule(schedule);
+
+	    if (detail.getWorkflow() == null) {
+	        detail.setWorkflow(new Workflow());
+	    }
+	    detail.getWorkflow().setAction(StreetVendingConstants.ACTION_STATUS_SCHEDULE_PAYMENT);
+
+	    notificationService.process(streetVendingRequest, null);
+	}
+
+	/**
+	 * Updates the vendor payment schedule status to {@code PAID} and processes the creation
+	 * of the next payment schedule if applicable.
+	 * <p>
+	 * This method is typically invoked when a payment has been successfully made.
+	 * It first marks the current schedule as paid, persists the update, and then checks if
+	 * a subsequent schedule needs to be generated based on the vendor's details.
+	 * </p>
+	 *
+	 * @param schedule the {@link VendorPaymentSchedule} to mark as paid. Must not be null.
+	 * @param detail   the {@link StreetVendingDetail} containing vendor information used for determining next schedule.
+	 */
+	
+	private void updateVendorSchedulePaymentStatus(VendorPaymentSchedule schedule, StreetVendingDetail detail) {
+	    schedule.setStatus(PaymentScheduleStatus.PAID);
+	    updateSchedule(schedule);
+	    createNextScheduleIfApplicable(schedule, detail);
+	}
+
 	
 	/**
 	 * Creates the next vendor payment schedule if the next due date falls within the vendor's validity period.
@@ -527,7 +554,7 @@ public class PaymentService {
 	 * @return A list of {@link StreetVendingDetail} objects matching the certificate number, or an empty list if none found.
 	 */
 	
-	private List<StreetVendingDetail> getValidityDateAndPayCycleByCertificateNo(String certificateNo) {
+	private List<StreetVendingDetail> getStreetVendingDetailByCertificateNo(String certificateNo) {
 		StreetVendingSearchCriteria searchCriteria = StreetVendingSearchCriteria.builder().certificateNo(certificateNo)
 				.build();
 

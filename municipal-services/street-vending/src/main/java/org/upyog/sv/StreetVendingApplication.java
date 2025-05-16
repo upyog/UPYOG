@@ -53,6 +53,20 @@ public class StreetVendingApplication {
         return converter;
     }
     
+    /**
+     * Configures the ShedLock LockProvider bean using JDBC.
+     * <p>
+     * This bean sets up ShedLock to use the application's shared database for acquiring and managing distributed locks.
+     * It uses Spring's JdbcTemplate and ensures all instances of the service check and update the same `shedlock` table,
+     * enabling only one instance to run a scheduled task at any given time.
+     * <p>
+     * The `.usingDbTime()` ensures that all instances rely on the database server's time to avoid clock drift issues
+     * across different machines.
+     *
+     * @param dataSource the shared application DataSource
+     * @return a configured LockProvider instance for ShedLock
+     */
+    
     @Bean
     public LockProvider lockProvider(DataSource dataSource) {
         return new JdbcTemplateLockProvider(
