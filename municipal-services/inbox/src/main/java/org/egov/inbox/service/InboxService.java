@@ -166,6 +166,7 @@ public class InboxService {
         }
 
         Integer totalCount = 0;
+        
         if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
@@ -249,6 +250,13 @@ public class InboxService {
             // }else {
             if (StatusIdNameMap.values().size() > 0) {
                 if(processCriteria.getModuleName().equals(SWACH) && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                	List<String> statuses = new ArrayList<String>();
+                	processCriteria.getStatus().forEach(status -> {
+                        statuses.add(status);
+                    });
+                	moduleSearchCriteria.put(applicationStatusParam, StringUtils.arrayToDelimitedString(statuses.toArray(), ","));
+                }
+                else if(processCriteria.getModuleName().equals(PGR) && !CollectionUtils.isEmpty(processCriteria.getStatus())) {
                 	List<String> statuses = new ArrayList<String>();
                 	processCriteria.getStatus().forEach(status -> {
                         statuses.add(status);
@@ -383,10 +391,20 @@ public class InboxService {
                 }
             }
             
+            List<String> inputLocalities = new ArrayList<>();
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && (processCriteria.getModuleName().equals(PGR))) {
                 totalCount = pgrInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 List<String> applicationNumbers = pgrInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
                         StatusIdNameMap, requestInfo);
+                if(moduleSearchCriteria.containsKey(PGR_LOCALITY_PARAM)) {
+                	String pgrLocality = (String) moduleSearchCriteria.get(PGR_LOCALITY_PARAM);
+
+                    if (pgrLocality != null && !pgrLocality.trim().isEmpty()) {
+                        inputLocalities = Arrays.stream(pgrLocality.trim().split("\\s*,\\s*"))
+                                                .filter(s -> !s.isEmpty()) // filter out empty strings
+                                                .collect(Collectors.toList());
+                    }
+                }
                 if (!CollectionUtils.isEmpty(applicationNumbers)) {
                     moduleSearchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, applicationNumbers);
                     businessKeys.addAll(applicationNumbers);
@@ -398,7 +416,6 @@ public class InboxService {
                 }
             }
             
-            List<String> inputLocalities = new ArrayList<>();
             if (!ObjectUtils.isEmpty(processCriteria.getModuleName()) && (processCriteria.getModuleName().equals(SWACH))) {
                 totalCount = swachInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
                 List<String> applicationNumbers = swachInboxFilterService.fetchApplicationNumbersFromSearcher(criteria,
@@ -580,58 +597,59 @@ public class InboxService {
             if (!isSearchResultEmpty && !(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS))) {
                 businessObjects = fetchModuleObjects(moduleSearchCriteria, businessServiceName, criteria.getTenantId(),
                         requestInfo, srvMap);
-                //Specifically handle for swach mobileNumber,locality,servCode filters if given
-                if (processCriteria.getModuleName().equals(SWACH)) {
-                    JSONArray filtered = new JSONArray();
+                //Specifically handle for swach/pgr mobileNumber,locality,servCode filters if given
+                if (processCriteria.getModuleName().equals(SWACH) || processCriteria.getModuleName().equals(PGR)) {
+                	if(moduleSearchCriteria.containsKey(PGR_MOBILE_NUMBER_PARAM) || moduleSearchCriteria.containsKey(PGR_SERVICECODE_PARAM) || moduleSearchCriteria.containsKey(PGR_LOCALITY_PARAM)) {
+                		JSONArray filtered = new JSONArray();
 
-                    String inputMobileNumber = moduleSearchCriteria.containsKey(PGR_MOBILE_NUMBER_PARAM)
-                            ? (String) moduleSearchCriteria.get(PGR_MOBILE_NUMBER_PARAM)
-                            : null;
+                        String inputMobileNumber = moduleSearchCriteria.containsKey(PGR_MOBILE_NUMBER_PARAM)
+                                ? (String) moduleSearchCriteria.get(PGR_MOBILE_NUMBER_PARAM)
+                                : null;
 
-                    List<String> inputServiceCodes = new ArrayList<>();
-                    if (moduleSearchCriteria.containsKey(PGR_SERVICECODE_PARAM)) {
-                        String serviceCodesStr = (String) moduleSearchCriteria.get(PGR_SERVICECODE_PARAM);
-                        if (serviceCodesStr != null && !serviceCodesStr.trim().isEmpty()) {
-                            inputServiceCodes = Arrays.asList(serviceCodesStr.split("\\s*,\\s*")); // Trim each
+                        List<String> inputServiceCodes = new ArrayList<>();
+                        if (moduleSearchCriteria.containsKey(PGR_SERVICECODE_PARAM)) {
+                            String serviceCodesStr = (String) moduleSearchCriteria.get(PGR_SERVICECODE_PARAM);
+                            if (serviceCodesStr != null && !serviceCodesStr.trim().isEmpty()) {
+                                inputServiceCodes = Arrays.asList(serviceCodesStr.split("\\s*,\\s*")); // Trim each
+                            }
                         }
-                    }
-                    
-                    
-                    for (Object obj : businessObjects) {
-                        JSONObject json = (JSONObject) obj;
-                        JSONObject serviceObj = json.optJSONObject(PGR_APPLICATION_NUMBER_PARAM);
-                        if (serviceObj == null) continue;
                         
-                        boolean matches = true;
-                        if (inputMobileNumber != null && !inputMobileNumber.isEmpty()) {
-                            JSONObject citizenObj = serviceObj.optJSONObject(PGR_CITIZEN_PARAM);
-                            String mobile = citizenObj != null ? citizenObj.optString(PGR_MOBILE_NUMBER_PARAM) : null;
-                            if (!inputMobileNumber.equals(mobile)) {
-                                matches = false;
+                        for (Object obj : businessObjects) {
+                            JSONObject json = (JSONObject) obj;
+                            JSONObject serviceObj = json.optJSONObject(PGR_APPLICATION_NUMBER_PARAM);
+                            if (serviceObj == null) continue;
+                            
+                            boolean matches = true;
+                            if (inputMobileNumber != null && !inputMobileNumber.isEmpty()) {
+                                JSONObject citizenObj = serviceObj.optJSONObject(PGR_CITIZEN_PARAM);
+                                String mobile = citizenObj != null ? citizenObj.optString(PGR_MOBILE_NUMBER_PARAM) : null;
+                                if (!inputMobileNumber.equals(mobile)) {
+                                    matches = false;
+                                }
+                            }
+
+                            if (!inputServiceCodes.isEmpty()) {
+                                String serviceCode = serviceObj.optString(PGR_SERVICECODE_PARAM);
+                                if (!inputServiceCodes.contains(serviceCode)) {
+                                    matches = false;
+                                }
+                            }
+
+                            if (!inputLocalities.isEmpty()) {
+                                JSONObject addressObj = serviceObj.optJSONObject(PGR_ADDRESS_PARAM);
+                                JSONObject localityObj = addressObj != null ? addressObj.optJSONObject(PGR_LOCALITY_PARAM) : null;
+                                String localityCode = localityObj != null ? localityObj.optString(PGR_ADDRESSCODE_PARAM) : null;
+                                if (!inputLocalities.contains(localityCode)) {
+                                    matches = false;
+                                }
+                            }
+
+                            if (matches) {
+                                filtered.put(json);
                             }
                         }
-
-                        if (!inputServiceCodes.isEmpty()) {
-                            String serviceCode = serviceObj.optString(PGR_SERVICECODE_PARAM);
-                            if (!inputServiceCodes.contains(serviceCode)) {
-                                matches = false;
-                            }
-                        }
-
-                        if (!inputLocalities.isEmpty()) {
-                            JSONObject addressObj = serviceObj.optJSONObject(PGR_ADDRESS_PARAM);
-                            JSONObject localityObj = addressObj != null ? addressObj.optJSONObject(PGR_LOCALITY_PARAM) : null;
-                            String localityCode = localityObj != null ? localityObj.optString(PGR_ADDRESSCODE_PARAM) : null;
-                            if (!inputLocalities.contains(localityCode)) {
-                                matches = false;
-                            }
-                        }
-
-                        if (matches) {
-                            filtered.put(json);
-                        }
-                    }
-                    businessObjects = filtered; //add all filtered finally
+                        businessObjects = filtered; //add all filtered finally
+                	}
                 }
             }
             Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
@@ -802,10 +820,10 @@ public class InboxService {
                   	    totalCount = processInstanceMap.size();
                 } else {
                 	//For non- Bill Amendment Inbox search
-			if (!isBusinessServiceWSOrSW) {
+			if (!isBusinessServiceWSOrSW) { 
 				List<String> filteredBusinessKeys = businessKeys.stream()
 					    .filter(key -> processInstanceMap.containsKey(key) && businessMap.containsKey(key))
-					    .collect(Collectors.toList());
+					    .collect(Collectors.toList()); //returns only non-null objects
 				businessKeys = filteredBusinessKeys;
 				businessKeys.forEach(businessKey -> {
 					Inbox inbox = new Inbox();

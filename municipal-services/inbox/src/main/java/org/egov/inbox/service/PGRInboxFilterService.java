@@ -104,7 +104,19 @@ public class PGRInboxFilterService {
                 searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
             }
             if(!ObjectUtils.isEmpty(processCriteria.getStatus())){
-                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	if(processCriteria.getModuleName().equals(PGR)) { //if needed for all modules, replicate
+            		List<String> desiredStatuses = processCriteria.getStatus();
+            		List<String> matchingKeys = StatusIdNameMap.entrySet()
+            		    .stream()
+            		    .filter(entry -> desiredStatuses.contains(entry.getValue()))
+            		    .map(Map.Entry::getKey)
+            		    .collect(Collectors.toList());
+            		
+            		searchCriteria.put(STATUS_PARAM, matchingKeys);
+            	}
+            	else {
+            		searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	}
             }else{
                 if(StatusIdNameMap.values().size() > 0) {
                     if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
@@ -116,6 +128,9 @@ public class PGRInboxFilterService {
             // Paginating searcher results
             searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
             searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
+            if (moduleSearchCriteria.containsKey(PGRANDSWACH_APPLICATION_PARAM)) {
+                searchCriteria.put(PGRANDSWACH_APPLICATION_PARAM, moduleSearchCriteria.get(PGRANDSWACH_APPLICATION_PARAM));
+            }
             moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
             searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
@@ -199,7 +214,19 @@ public class PGRInboxFilterService {
                 searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
             }
             if(!ObjectUtils.isEmpty(processCriteria.getStatus())){
-                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	if(processCriteria.getModuleName().equals(PGR)) { //if needed for all modules, replicate
+            		List<String> desiredStatuses = processCriteria.getStatus();
+            		List<String> matchingKeys = StatusIdNameMap.entrySet()
+            		    .stream()
+            		    .filter(entry -> desiredStatuses.contains(entry.getValue()))
+            		    .map(Map.Entry::getKey)
+            		    .collect(Collectors.toList());
+            		
+            		searchCriteria.put(STATUS_PARAM, matchingKeys);
+            	}
+            	else {
+            		searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+            	}
             }else{
                 if(StatusIdNameMap.values().size() > 0) {
                     if(CollectionUtils.isEmpty(processCriteria.getStatus())) {
@@ -217,8 +244,24 @@ public class PGRInboxFilterService {
             result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
 //            double count = JsonPath.read(result, "$.TotalCount[0].count");
-            double count = JsonPath.read(result, "$.TotalCount");
-            totalCount = new Integer((int) count);
+//            double count = JsonPath.read(result, "$.TotalCount");
+//            totalCount = new Integer((int) count);
+            
+            double count = 0.0;
+            try {
+                Object rawCount = JsonPath.read(result, "$.TotalCount");
+                if (rawCount instanceof Number) {
+                    count = ((Number) rawCount).doubleValue();
+                } else if (rawCount instanceof List) {
+                    List<?> countList = (List<?>) rawCount;
+                    if (!countList.isEmpty() && countList.get(0) instanceof Number) {
+                        count = ((Number) countList.get(0)).doubleValue();
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Error reading TotalCount from searcher response: " + e.getMessage());
+            }
+            totalCount = (int) count;
         }
         return  totalCount;
     }
