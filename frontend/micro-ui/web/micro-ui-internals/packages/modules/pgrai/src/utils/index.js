@@ -49,6 +49,11 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
     data.documents = doc;
     return data;
   };
+ /**
+ * Fetches grievance categories based on the provided prompt.
+ * Makes an API call to retrieve a list of categories and returns the data.
+ * This will be used to populate the grievance categories in the application.
+ */
 export const fetchGrievanceCategories = async (prompt, t) => {
   try {
     const response = await fetch(`http://35.154.83.250:5002/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {

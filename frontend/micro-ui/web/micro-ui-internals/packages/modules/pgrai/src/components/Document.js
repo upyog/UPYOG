@@ -6,7 +6,7 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
   const [uploadedFiles, setUploadedFiles] = useState([null]);
   const [error, setError] = useState(null);
   const [ind, setInd] = useState(1);
-  const user = Digit.UserService.getUser().info;
+  const user = Digit.UserService.getUser().info; // Get the user info
   const tenantId = Digit.ULBService.getStateId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);

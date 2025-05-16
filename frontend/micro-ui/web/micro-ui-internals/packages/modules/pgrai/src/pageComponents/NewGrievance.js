@@ -167,7 +167,11 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
       goNext();
     }
   };
-
+ /**
+   * Handles fetching grievance categories based on the provided prompt.
+   * It updates the suggestions list and manages the loading state.
+   * If the API call fails, it sets an error message and clears suggestions.
+   */
   const fetchGrievanceCategoriesHandler = async (prompt) => {
     setIsLoading(true);
     setApiError(null);
@@ -301,12 +305,16 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           {`${t("PGR_AI_GRIEVANCE_LOCATION")}`} <span className="astericColor">*</span>
         </CardLabel>
         <div className="field" style={styles.locationField}>
+            {/* Text input for entering or displaying the location. 
+      The width dynamically adjusts based on the user type (EMPLOYEE or others). */}
           <TextInput
             t={t}
             value={location}
             onChange={handleLocationChange}
             style={{ paddingRight: "30px", width: user.type === "EMPLOYEE" ? "50%" : "86%"}}
           />
+          {/* Icon for fetching the user's current location. 
+      Clicking this triggers the handleFetchLocation function. */}
           <div style={styles.locationIcon} onClick={handleFetchLocation}>
             <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
           </div>
