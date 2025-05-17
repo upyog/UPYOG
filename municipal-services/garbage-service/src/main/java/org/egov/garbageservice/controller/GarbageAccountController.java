@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.garbageservice.model.GarbageAccountActionRequest;
 import org.egov.garbageservice.model.GarbageAccountActionResponse;
 import org.egov.garbageservice.model.GarbageAccountRequest;
@@ -84,10 +85,10 @@ public class GarbageAccountController {
 
 	public ResponseEntity<?> counts(@RequestBody TotalCountRequest totalCountRequest) {
 
-		Map<String, Object> response = new HashMap<>();
+
 		Map<String, Object> result = service.totalCount(totalCountRequest);
 
-		return new ResponseEntity(response, HttpStatus.OK);
+		return new ResponseEntity(result, HttpStatus.OK);
 
 	}
 }

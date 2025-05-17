@@ -83,6 +83,18 @@ public class GarbageAccountRepository {
 	public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_hpudd_grbg_account')";
 	
 	public static final String DELETE_QUERY = "UPDATE eg_grbg_account SET is_active = false WHERE garbage_id = ?";
+	
+	private static final String COUNT_STATUS_BASED_QUERY =  "SELECT COUNT(distinct grbg.id) as count, " +
+		    "COUNT(distinct case when grbg.status = 'INITIATED' then grbg.id end) as applicationInitiated, " +
+		    "COUNT(distinct case when grbg.status = 'PENDINGFORVERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
+		    "COUNT(distinct case when grbg.status = 'PENDINGFORMODIFICATION' then grbg.id end) as applicationPendingForModification, " +
+		    "COUNT(distinct case when grbg.status = 'PENDINGFORAPPROVAL' then grbg.id end) as applicationPendingForApproval, " +
+		    "COUNT(distinct case when grbg.status = 'APPROVED' then grbg.id end) as applicationApproved, " +
+		    "COUNT(distinct case when grbg.status = 'REJECTED' then grbg.id end) as applicationRejected, " +
+		    "COUNT(distinct case when grbg.status = 'PENDINGFORPAYMENT' then grbg.id end) as applicationPendingPayment, " +
+		    "COUNT(distinct case when grbg.status = 'CLOSED' then grbg.id end) as applicationClosed, " +
+		    "COUNT(distinct case when grbg.status = 'TEMPERORYCLOSED' then grbg.id end) as applicationTemporaryClosed " +
+		    "from eg_grbg_account as grbg";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -445,8 +457,21 @@ public class GarbageAccountRepository {
 		jdbcTemplate.update(DELETE_QUERY, garbageAccount.getGarbageId());
 	}
 	
-	public List<GarbageAccount> getStatusCounts(TotalCountRequest totalCountRequest) {
-		return null;
+	public List<Map<String, Object>> getStatusCounts(TotalCountRequest totalCountRequest) {
+		List<Object> preparedStmtList = new ArrayList<>();
+//		String query = queryBuilder.getStatusBasedCountQuery(totalCountRequest, preparedStmtList);
+		StringBuilder builder = new StringBuilder();
+		builder.append(COUNT_STATUS_BASED_QUERY);
+		builder.append(" WHERE 1 = 1 ");
+		if (!StringUtils.isEmpty(totalCountRequest.getTenantId())) {
+			addAndClauseIfRequired(true, builder);
+			builder.append(" grbg.tenant_id = ? ");
+			preparedStmtList.add(totalCountRequest.getTenantId());
+		}
+//		return builder.toString();
+		System.out.println(builder.toString());
+		return jdbcTemplate.queryForList(builder.toString(), preparedStmtList.toArray());
+//		return null;
 		
 		
 	}

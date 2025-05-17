@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.garbageservice.contract.bill.Bill;
 import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
 import org.egov.garbageservice.contract.bill.BillResponse;
@@ -1952,11 +1953,44 @@ public class GarbageAccountService {
 
 	
 	public Map<String, Object> totalCount(TotalCountRequest totalCountRequest) {
-		return null;
 		
+		ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(totalCountRequest.getRequestInfo(), true);
+	    Map<String, Object> response = new HashMap<>();
+		if(hasRequiredRole(totalCountRequest.getRequestInfo(),"EMPLOYEE")) {
+			List<Map<String, Object>> result = garbageAccountRepository.getStatusCounts(totalCountRequest);
+		    response.put("ResponseInfo", resInfo);
+		    response.put("Counts", result.get(0));
+			return response;
+		}else if(hasRequiredRole(totalCountRequest.getRequestInfo(),"CITIZEN")){
+			
+		}
+		return response;
 		//grbgAccs = garbageAccountRepository.getStatusCounts(totalCountRequest);
+	}
+	
+	public boolean hasRequiredRole(RequestInfo requestInfo, String type) {
+	    if (requestInfo == null || requestInfo.getUserInfo() == null) {
+	        return false;
+	    }
 
-		
+	    List<Role> roles = requestInfo.getUserInfo().getRoles();
+	    if (roles == null || roles.isEmpty()) {
+	        return false;
+	    }
+
+	    if ("CITIZEN".equalsIgnoreCase(type)) {
+	        return roles.stream()
+	                .anyMatch(role -> type.equalsIgnoreCase(role.getCode()));
+	    }
+
+	    return roles.stream()
+	            .anyMatch(role -> containsIgnoreCase(role.getCode(), "PROPERTY_APPROVER") ||
+	                              containsIgnoreCase(role.getCode(), "PROPERTY_VERIFIER") ||
+	                              containsIgnoreCase(role.getCode(), "EMPLOYEE"));
+	}
+
+	private boolean containsIgnoreCase(String source, String target) {
+	    return source != null && source.toLowerCase().contains(target.toLowerCase());
 	}
 	
 }
