@@ -2,7 +2,6 @@ package org.upyog.sv.service;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.tracer.model.CustomException;
@@ -10,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.sv.constants.StreetVendingConstants;
 import org.upyog.sv.util.MdmsUtil;
+import org.upyog.sv.web.models.StreetVendingDetail;
 import org.upyog.sv.web.models.StreetVendingRequest;
+import org.upyog.sv.web.models.Workflow;
 import org.upyog.sv.web.models.billing.CalculationType;
 import org.upyog.sv.web.models.billing.DemandDetail;
 import org.upyog.sv.web.models.billing.TaxHeadMaster;
@@ -41,12 +42,22 @@ public class CalculationService {
 		log.info("calculationTypes " + calculationTypes);
 		
 		// Get the vendor's payment frequency (e.g., MONTHLY, QUARTERLY) from the booking request	
-	    String vendorPaymentFrequency = bookingRequest.getStreetVendingDetail().getVendorPaymentFrequency();
-	    
-	    // Derive the application type (e.g., MONTHLY,QUARTERLY) based on the vendor's payment frequency
-	    String requiredApplicationType = getApplicationTypeFromFrequency(vendorPaymentFrequency);
-	    
-	    // Filter the list of calculation types to include only those matching the derived application type
+	    StreetVendingDetail svDetail = bookingRequest.getStreetVendingDetail();
+	    Workflow workflow = (svDetail != null) ? svDetail.getWorkflow() : null;
+
+	    String action = (workflow != null && workflow.getAction() != null) ? workflow.getAction() : "";
+
+	    String vendorPaymentFrequency = (svDetail != null) ? svDetail.getVendorPaymentFrequency() : null;
+
+	    String requiredApplicationType;
+
+	    if (StreetVendingConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
+	        requiredApplicationType = StreetVendingConstants.SVONETIMEFEE;
+	    } else {
+	        requiredApplicationType = getApplicationTypeFromFrequency(vendorPaymentFrequency);
+	    }
+      
+	    //Filter the list of calculation types to include only those matching the derived application type
 	    List<CalculationType> filteredCalculationType = calculationTypes.stream()
 	            .filter(type -> requiredApplicationType.equalsIgnoreCase(type.getApplicationType()))
 	            .collect(Collectors.toList());
@@ -57,7 +68,7 @@ public class CalculationService {
 		log.info("demandDetails : " + demandDetails);
 		
 		log.info("Demand Amount : " + demandDetails.get(0).getTaxAmount());
-
+	    
 		return demandDetails;
 
 	}
