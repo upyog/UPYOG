@@ -102,6 +102,21 @@ export const DataConvert = (data) => {
             name: data.newGrievance.addressDetails?.locality?.name || data.newGrievance.addressDetails?.locality?.i18nKey || "JLC476",
           },
           geoLocation: data.newGrievance.geoLocation,
+        },
+        // for employee side creation and getting the citizen details
+        citizen: {
+          type: "CITIZEN",
+          name: data.newGrievance?.name || data.newGrievance?.citizenName,
+          mobileNumber: data.newGrievance?.mobileNumber || data.newGrievance?.citizenMobile,
+          roles: [
+            {
+              id: null,
+              name: "Citizen",
+              code: "CITIZEN",
+              tenantId: data.tenantId,
+            },
+          ],
+          tenantId: data.tenantId,
         }
   },
     workflow: {
