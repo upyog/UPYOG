@@ -1,5 +1,6 @@
 package org.egov.garbageservice.repository;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,22 +10,21 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.model.TotalCountRequest;
-import org.egov.garbageservice.model.contract.DmsRequest;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
-import org.egov.garbageservice.service.UserService;
-import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -95,6 +95,12 @@ public class GarbageAccountRepository {
 		    "COUNT(distinct case when grbg.status = 'CLOSED' then grbg.id end) as applicationClosed, " +
 		    "COUNT(distinct case when grbg.status = 'TEMPERORYCLOSED' then grbg.id end) as applicationTemporaryClosed " +
 		    "from eg_grbg_account as grbg";
+	
+	private static final String INSERT_ACCOUNT_AUDIT = "INSERT INTO eg_grbg_account_audit (auditid, grbg_application_no, status, type"
+			+ ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_eg_grbg_account_audit')), :grbgApplicationNo, :status"
+			+ ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
+	
+	public static final String SELECT_MAX_GARBAGE_ID = "select max(garbage_id) from eg_grbg_account";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -135,12 +141,29 @@ public class GarbageAccountRepository {
         accountInputs.put("isActive", account.getIsActive());
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, accountInputs);
+        
+        createGarbageAccountAudit(account);
+        
         return account;
     }
+    
+    private void createGarbageAccountAudit(GarbageAccount account) {
+		Map<String, Object> accountAuditInputs = new HashMap<>();
+		accountAuditInputs.put("grbgApplicationNo", account.getGrbgApplication().getApplicationNo());
+		accountAuditInputs.put("status", account.getStatus());
+		accountAuditInputs.put("type", account.getType());
+		SqlParameterSource parameters = new MapSqlParameterSource(accountAuditInputs).addValue("grbgAccountDetails",
+				objectMapper.convertValue(account, JsonNode.class).toString(), Types.OTHER);
+		namedParameterJdbcTemplate.update(INSERT_ACCOUNT_AUDIT, parameters);
+	}
 
     public Long getNextSequence() {
     	return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
+    
+    public Long getMaxGarbageId() {
+    	return jdbcTemplate.queryForObject(SELECT_MAX_GARBAGE_ID, Long.class);
+    }
 
 	public void update(GarbageAccount newGarbageAccount) {
         Map<String, Object> accountInputs = new HashMap<>();
@@ -170,6 +193,8 @@ public class GarbageAccountRepository {
         accountInputs.put("approvalDate", newGarbageAccount.getApprovalDate());
 
         namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
+        
+        createGarbageAccountAudit(newGarbageAccount);
     }
 
 	public List<GarbageAccount> searchGarbageAccount(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount,
