@@ -79,7 +79,9 @@ public class NotificationService {
             ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(request.getService()).workflow(request.getWorkflow()).build();
             String applicationStatus = request.getService().getApplicationStatus();
             String action = request.getWorkflow().getAction();
-
+            log.info("Entering process method. Topic: {}, ServiceRequest: {}", topic, request);
+            log.info("Process method - TenantId: {}, ApplicationStatus: {}, Action: {}",
+                    request.getService().getTenantId(), request.getService().getApplicationStatus(), request.getWorkflow().getAction());
 
             if (!(NOTIFICATION_ENABLE_FOR_STATUS.contains(action+"_"+applicationStatus))) {
                 log.info("Notification Disabled For State :" + applicationStatus);
@@ -174,8 +176,12 @@ public class NotificationService {
      * @return A map containing the final messages for citizen and employee.
      */
     private Map<String, List<String>> getFinalMessage(ServiceRequest request, String topic, String applicationStatus) {
+        log.info("Entering getFinalMessage method for topic: {}, applicationStatus: {}", topic, applicationStatus);
+        log.info("Workflow Action in getFinalMessage: {}", request.getWorkflow().getAction());
+
         String tenantId = request.getService().getTenantId();
         String localizationMessage = notificationUtil.getLocalizationMessages(tenantId, request.getRequestInfo(),PGR_MODULE);
+        log.info("Localization Message fetched: {}", localizationMessage != null ? "SUCCESS" : "NULL");
 
         ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(request.getService()).workflow(request.getWorkflow()).build();
         Map<String, List<String>> message = new HashMap<>();
@@ -191,12 +197,14 @@ public class NotificationService {
          */
         if(serviceWrapper.getService().getApplicationStatus().equalsIgnoreCase(PENDINGFORASSIGNMENT) && serviceWrapper.getWorkflow().getAction().equalsIgnoreCase(APPLY)) {
             messageForCitizen = notificationUtil.getCustomizedMsg(request.getWorkflow().getAction(), applicationStatus, CITIZEN, localizationMessage);
+            log.info("messageForCitizen after customizedMsg call for APPLY: {}", messageForCitizen);
             if (messageForCitizen == null) {
                 log.info("No message Found For Citizen On Topic : " + topic);
                 return null;
             }
 
             defaultMessage = notificationUtil.getDefaultMsg(CITIZEN, localizationMessage);
+            log.info("defaultMessage after getDefaultMsg call for APPLY: {}", defaultMessage);
             if (defaultMessage == null) {
                 log.info("No default message Found For Topic : " + topic);
                 return null;
@@ -512,24 +520,38 @@ public class NotificationService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
         String appLink = notificationUtil.getShortnerURL(config.getMobileDownloadLink());
+        log.info("Before final message replacements - messageForCitizen current value: {}", messageForCitizen);
+        log.info("Before final message replacements - messageForEmployee current value: {}", messageForEmployee);
+        log.info("Before final message replacements - localisedComplaint current value: {}", localisedComplaint);
+        log.info("Before final message replacements - appLink current value: {}", appLink);
 
         if(messageForCitizen != null) {
+            log.info("Attempting to replace placeholders in messageForCitizen...");
             messageForCitizen = messageForCitizen.replace("{complaint_type}", localisedComplaint);
+            log.info("messageForCitizen after complaint_type replace: {}", messageForCitizen);
             messageForCitizen = messageForCitizen.replace("{id}", serviceWrapper.getService().getServiceRequestId());
+            log.info("messageForCitizen after id replace: {}", messageForCitizen);
             messageForCitizen = messageForCitizen.replace("{date}", date.format(formatter));
             messageForCitizen = messageForCitizen.replace("{download_link}", appLink);
         }
 
         if(messageForEmployee != null) {
+            log.info("Attempting to replace placeholders in messageForEmployee...");
             messageForEmployee = messageForEmployee.replace("{complaint_type}", localisedComplaint);
+            log.info("messageForEmployee after complaint_type replace: {}", messageForEmployee);
             messageForEmployee = messageForEmployee.replace("{id}", serviceWrapper.getService().getServiceRequestId());
+            log.info("messageForEmployee after id replace: {}", messageForEmployee);
             messageForEmployee = messageForEmployee.replace("{date}", date.format(formatter));
-            messageForEmployee = messageForEmployee.replace("{download_link}", appLink);
+            log.info("messageForEmployee after date replace: {}", messageForEmployee);
+            messageForEmployee = messageForEmployee.replace("{download_link}", appLink); // This is around the reported line 517
+            log.info("messageForEmployee after download_link replace: {}", messageForEmployee);
+        } else {
+            log.warn("messageForEmployee is NULL, skipping final replacements for employee.");
         }
 
         message.put(CITIZEN, Arrays.asList(new String[] {messageForCitizen, defaultMessage}));
         message.put(EMPLOYEE, Arrays.asList(messageForEmployee));
-
+        log.info("Final messages generated - Citizen: {}, Employee: {}", message.get(CITIZEN), message.get(EMPLOYEE));
         return message;
     }
 
