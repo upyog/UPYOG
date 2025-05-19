@@ -2,15 +2,13 @@ package org.egov.garbageservice.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -540,19 +537,10 @@ public class GarbageAccountService {
 			garbageAccount.setAuditDetails(auditDetails);
 		}
 
-		Random random = new Random();
-		 
-        // Generate a 13-digit random number
-        long min = 1000000000000L; // Minimum value (13-digit)
-        long max = 9999999999999L; // Maximum value (13-digit)
- 
-        // Generate the random number in the given range
-        long random13Digit = min + (long) (random.nextDouble() * (max - min));
-        
 		// generate garbage_id
 		garbageAccount.setId(garbageAccountRepository.getNextSequence());
 		garbageAccount.setUuid(UUID.randomUUID().toString());
-		garbageAccount.setGarbageId(random13Digit);
+		garbageAccount.setGarbageId(garbageAccountRepository.getMaxGarbageId() + 1);
 		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 		garbageAccount.setWorkflowAction(GrbgConstants.WORKFLOW_ACTION_INITIATE);
 		garbageAccount.setParentAccount(null);
