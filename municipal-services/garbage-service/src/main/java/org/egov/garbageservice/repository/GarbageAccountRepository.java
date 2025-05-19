@@ -100,7 +100,7 @@ public class GarbageAccountRepository {
 			+ ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_eg_grbg_account_audit')), :grbgApplicationNo, :status"
 			+ ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
 	
-	public static final String SELECT_MAX_GARBAGE_ID = "select max(garbage_id) from eg_grbg_account";
+	public static final String SELECT_NEXT_GARBAGE_ID = "select nextval('seq_eg_grbg_account_id')";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -161,8 +161,8 @@ public class GarbageAccountRepository {
     	return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
 	}
     
-    public Long getMaxGarbageId() {
-    	return jdbcTemplate.queryForObject(SELECT_MAX_GARBAGE_ID, Long.class);
+    public Long getNextGarbageId() {
+    	return jdbcTemplate.queryForObject(SELECT_NEXT_GARBAGE_ID, Long.class);
     }
 
 	public void update(GarbageAccount newGarbageAccount) {

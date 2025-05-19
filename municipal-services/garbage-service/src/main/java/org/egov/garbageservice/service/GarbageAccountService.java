@@ -351,14 +351,14 @@ public class GarbageAccountService {
 
 	private void enrichCreateGarbageSubAccounts(GarbageAccount garbageAccount, List<GarbageAccount> parentAccount) {
 		if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
-			Long maxGarbageId = garbageAccount.getGarbageId();
-
-			if (!CollectionUtils.isEmpty(parentAccount)
-					&& !CollectionUtils.isEmpty(parentAccount.get(0).getChildGarbageAccounts())) {
-				maxGarbageId = parentAccount.get(0).getChildGarbageAccounts().stream()
-						.mapToLong(childAccount -> childAccount.getGarbageId()).max()
-						.orElse(garbageAccount.getGarbageId()); // or provide a default value if preferred
-			}
+//			Long maxGarbageId = garbageAccount.getGarbageId();
+//
+//			if (!CollectionUtils.isEmpty(parentAccount)
+//					&& !CollectionUtils.isEmpty(parentAccount.get(0).getChildGarbageAccounts())) {
+//				maxGarbageId = parentAccount.get(0).getChildGarbageAccounts().stream()
+//						.mapToLong(childAccount -> childAccount.getGarbageId()).max()
+//						.orElse(garbageAccount.getGarbageId()); // or provide a default value if preferred
+//			}
 
 			AtomicInteger counter = new AtomicInteger(1);
 			for (GarbageAccount subAccount : garbageAccount.getChildGarbageAccounts()) {
@@ -367,7 +367,7 @@ public class GarbageAccountService {
 				subAccount.setPropertyId(garbageAccount.getPropertyId());
 				subAccount.setTenantId(garbageAccount.getTenantId());
 //				subAccount.setIsOwner(false);
-				subAccount.setGarbageId(maxGarbageId + (counter.getAndAdd(1)));
+				subAccount.setGarbageId(garbageAccountRepository.getNextGarbageId());
 				subAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 				subAccount.setWorkflowAction(GrbgConstants.WORKFLOW_ACTION_INITIATE);
 				subAccount.setAuditDetails(garbageAccount.getAuditDetails());
@@ -540,7 +540,7 @@ public class GarbageAccountService {
 		// generate garbage_id
 		garbageAccount.setId(garbageAccountRepository.getNextSequence());
 		garbageAccount.setUuid(UUID.randomUUID().toString());
-		garbageAccount.setGarbageId(garbageAccountRepository.getMaxGarbageId() + 1);
+		garbageAccount.setGarbageId(garbageAccountRepository.getNextGarbageId());
 		garbageAccount.setStatus(GrbgConstants.STATUS_INITIATED);
 		garbageAccount.setWorkflowAction(GrbgConstants.WORKFLOW_ACTION_INITIATE);
 		garbageAccount.setParentAccount(null);

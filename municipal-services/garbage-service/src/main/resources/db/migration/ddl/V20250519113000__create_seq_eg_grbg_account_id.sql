@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_eg_grbg_account_id start WITH 1 increment BY 1 no minvalue no maxvalue cache 1;
