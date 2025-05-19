@@ -56,16 +56,16 @@ public class SchedulerService {
 	 * enabled via configuration.
 	 */
 
-	//@Scheduled(cron = "0 0 1 * * *")
-	@Scheduled(cron = "0 */5 * * * *") // runs every 5 min
+	@Scheduled(cron = "0 0 1 * * *")
+	//@Scheduled(cron = "0 */5 * * * *") // runs every 5 min
 	@SchedulerLock(name = "streetVendingPaymentSchedulerJob",
 	lockAtLeastFor = "PT1M",  // Hold the lock for at least 5 minute
     lockAtMostFor = "PT30M")  // Auto-release after 30 minutes if job crashes)
 	public void processStreetVendingApplications() {
-//		if (!isSchedulerEnabled) {
-//			log.info("Scheduler is disabled via configuration.");
-//			return;
-//		}
+		if (!isSchedulerEnabled) {
+			log.info("Scheduler is disabled via configuration.");
+			return;
+		}
 		log.info("Street Vending Applications Scheduler started");
 
 		markEligibleForRenewalAndNotify();
