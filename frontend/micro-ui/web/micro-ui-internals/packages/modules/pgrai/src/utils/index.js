@@ -56,7 +56,7 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
  */
 export const fetchGrievanceCategories = async (prompt, t) => {
   try {
-    const response = await fetch(`https://35.154.83.250/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
+    const response = await fetch(`https://samar.iitk.ac.in/iitk_upyog_api/search_category/?prompt=${encodeURIComponent(prompt)}&threshold=1.5`, {
       method: "GET",
       headers: { accept: "application/json" },
     });
@@ -102,6 +102,21 @@ export const DataConvert = (data) => {
             name: data.newGrievance.addressDetails?.locality?.name || data.newGrievance.addressDetails?.locality?.i18nKey || "JLC476",
           },
           geoLocation: data.newGrievance.geoLocation,
+        },
+        // for employee side creation and getting the citizen details
+        citizen: {
+          type: "CITIZEN",
+          name: data.newGrievance?.name || data.newGrievance?.citizenName,
+          mobileNumber: data.newGrievance?.mobileNumber || data.newGrievance?.citizenMobile,
+          roles: [
+            {
+              id: null,
+              name: "Citizen",
+              code: "CITIZEN",
+              tenantId: data.tenantId,
+            },
+          ],
+          tenantId: data.tenantId,
         }
   },
     workflow: {

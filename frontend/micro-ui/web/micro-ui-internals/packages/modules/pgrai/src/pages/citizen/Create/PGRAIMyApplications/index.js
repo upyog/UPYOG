@@ -31,7 +31,7 @@ export const PGRAIMyApplications = () => {
   
     let initialFilters = !isNaN(parseInt(filter))
       ? { limit: "50", offset: off, tenantId }
-      : { limit: "4", offset: "0", tenantId};
+      : { limit: "50", offset: "0", tenantId};
 
   const { isLoading, isError, error, data } = Digit.Hooks.pgrAi.useSearchPGRAI({ filters });
    

@@ -53,6 +53,8 @@ const styles = {
 };
 
 const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
+  const [name, setName] = useState(formData?.name || "");
+  const [phoneNumber, setPhoneNumber] = useState(formData?.phoneNumber || "");
   const [grievanceText, setGrievanceText] = useState("");
   const [grievanceType, setGrievanceType] = useState("");
   const [grievanceSubType, setGrievanceSubType] = useState("");
@@ -74,8 +76,16 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
 
   const goNext = () => {
-    
+
     const formStepData = {
+      // Adds employee-specific fields if the user type is "EMPLOYEE".
+      ...(user.type === "EMPLOYEE" && {
+        name,
+        phoneNumber: phoneNumber,
+        citizenName: name,
+        mobileNumber: phoneNumber,
+        citizenMobile: phoneNumber
+      }),
       grievance: grievanceText,
       grievanceType,
       grievanceSubType,
@@ -97,6 +107,12 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
     setLocation(e.target.value);
     if (locationError) setLocationError(null);
   };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value;
+    setPhoneNumber(value);
+  };
+
 
   const handleFetchLocation = async () => {
     setIsFetchingLocation(true);
@@ -231,13 +247,49 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
 
   useEffect(() => {
     if (userType === "citizen") goNext();
-  }, [grievanceText, grievanceType, grievanceSubType, location, documents, address]);
+  }, [grievanceText, grievanceType, grievanceSubType, location, documents, address,
+    ...(user.type === "EMPLOYEE" ? [name, phoneNumber] : [])]);
 
   return (
     <Fragment>
       <FormStep config={config} onSelect={goNext} onSkip={onSkip}
-       isDisabled={!grievanceText || !grievanceType || !grievanceSubType}
+        isDisabled={!grievanceText || !grievanceType || !grievanceSubType ||
+          (user.type === "EMPLOYEE" && (!name || !phoneNumber))}
       >
+        {user.type === "EMPLOYEE" && (// Employee-specific fields for name and phone number
+          <>
+            <CardLabel>
+              {`${t("PGR_NAME")}`} <span className="astericColor">*</span>
+            </CardLabel>
+            <TextInput
+              t={t}
+              type="text"
+              isMandatory={false}
+              name="name"
+              value={name}
+              style={{ width: "50%" }}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </>
+        )}
+
+        {/* Phone Number Field - Only shown for EMPLOYEE users */}
+        {user.type === "EMPLOYEE" && (
+          <>
+            <CardLabel>
+              {`${t("PGR_PHONE_NUMBER")}`} <span className="astericColor">*</span>
+            </CardLabel>
+            <TextInput
+              t={t}
+              type="tel"
+              isMandatory={false}
+              name="phoneNumber"
+              value={phoneNumber}
+              style={{ width: "50%" }}
+              onChange={handlePhoneNumberChange}
+            />
+          </>
+        )}
         <CardLabel>
           {`${t("PGR_AI_INPUT_GRIEVANCE")}`} <span className="astericColor">*</span>
         </CardLabel>
