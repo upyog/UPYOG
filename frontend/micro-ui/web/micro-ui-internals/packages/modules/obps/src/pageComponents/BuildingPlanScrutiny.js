@@ -23,8 +23,7 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
   const [imagesToShowBelowComplaintDetails, setImagesToShowBelowComplaintDetails] = useState();
 
   const [selectedPlot, setSelectedPlot] = useState();
-  const [inchesError, setInchesError] = useState();
-
+  const [inputError, setInputError] = useState()
   
   let plotImage = "https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/plotImage.png"
   
@@ -98,17 +97,29 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
     }
   }, [isPlanApproved, landStatus, projectComponent]);
 
-  const handleInputChange = (setter) => (e) => {
+  const handleInputChange = (setter, fieldName) => (e) => {
+    const regex = /^[0-9]*$/;
+  if (regex.test(e.target.value)) {
     setter(e.target.value);
+    setInputError("");
+  }
+  else{
+    setInputError(`${fieldName} should be in number`)
+  }
   }
   const handleInchesInput=(setter) => (e)=>{
-    if(e.target.value<=12){
-      setter(e.target.value);
-      setInchesError("");
+    const value = e.target.value;
+  const regex = /^[0-9]*$/;
+  if (regex.test(value)) {
+    if (value <= 12) {
+      setter(value);
+      setInputError("");
+    } else {
+      setInputError("Inches should not be more than 12");
     }
-    else{
-      setInchesError("Inches should not be more than 12")
-    }
+  } else {
+    setInputError("Only numbers are allowed");
+  }
   }
 
   const handleNext = () => {
@@ -242,10 +253,10 @@ const getDetailsRow = (estimateDetails) => {
                   <CardLabel style={{fontSize:"18px"}}>{t("FEET")}
                     <TextInput
                       t={t}
-                      type="number"
+                      // type="number"
                       isMandatory={config.isMandatory}
                       value={lengthInFeet || ''}
-                      onChange={handleInputChange(setLengthInFeet)}
+                      onChange={handleInputChange(setLengthInFeet, t("PREAPPROVE_LENGHT_OF_PLOT"))}
                       label={t("Length in Feet")}
                       style={{ width: '79%' }}
                     />
@@ -255,7 +266,7 @@ const getDetailsRow = (estimateDetails) => {
                   <CardLabel style={{fontSize:"18px"}}>{t("INCHES")}
                     <TextInput
                       t={t}
-                      type="number"
+                      // type="number"
                       isMandatory={config.isMandatory}
                       value={lengthInInches || ''}
                       onChange={handleInchesInput(setLengthInInches)}
@@ -263,9 +274,7 @@ const getDetailsRow = (estimateDetails) => {
                       style={{ width: '79%' }}
                     />
                   </CardLabel>
-                  {inchesError && (
-                      <div style={{ color: 'red', fontSize: '12px' }}>{inchesError}</div>
-                  )}
+                  
                 </div>
               </div>
   
@@ -275,10 +284,10 @@ const getDetailsRow = (estimateDetails) => {
                   <CardLabel style={{fontSize:"18px"}}>{t("FEET")}
                     <TextInput
                       t={t}
-                      type="number"
+                      // type="number"
                       isMandatory={config.isMandatory}
                       value={widthInFeet || ''}
-                      onChange={handleInputChange(setWidthInFeet)}
+                      onChange={handleInputChange(setWidthInFeet,t("PREAPPROVE_PLOT_WITH_IN_FT"))}
                       label={t("Width in Feet")}
                       style={{ width: '79%' }}
                     />
@@ -288,7 +297,7 @@ const getDetailsRow = (estimateDetails) => {
                   <CardLabel style={{fontSize:"18px"}}>{t("INCHES")}
                     <TextInput
                       t={t}
-                      type="number"
+                      // type="number"
                       isMandatory={config.isMandatory}
                       value={widthInInches || ''}
                       onChange={handleInchesInput(setWidthInInches)}
@@ -301,10 +310,10 @@ const getDetailsRow = (estimateDetails) => {
               <CardLabel>{t("PREAPPROVE_ABUTTING_ROAD")} *</CardLabel>
               <TextInput
                 t={t}
-                type="number"
+                //type="number"
                 isMandatory={config.isMandatory}
                 value={abuttingRoadWidth || ''}
-                onChange={handleInputChange(setAbuttingRoadWidth)}
+                onChange={handleInputChange(setAbuttingRoadWidth, t("PREAPPROVE_ABUTTING_ROAD"))}
               />
               <div style={{ marginTop: "10px", marginBottom:"10px"}}>
                <SubmitBar label={t("SEARCH")}  onSubmit={getPreApprovedPlanDetails} disabled={!lengthInFeet || ! widthInFeet || !abuttingRoadWidth}/> 
@@ -369,6 +378,7 @@ const getDetailsRow = (estimateDetails) => {
   
     {imageZoom ? <ImageViewer imageSrc={imageZoom} onClose={onCloseImageZoom} /> : null}
     {error && <Toast error={error} label={error} onClose={() => setError("")} />}
+    {inputError && <Toast error={inputError} label={inputError} onClose={() => setInputError("")} />}
     {mandatoryFieldsError && <Toast error={mandatoryFieldsError} label={mandatoryFieldsError} onClose={() => setError("")} />}
   </div>
   

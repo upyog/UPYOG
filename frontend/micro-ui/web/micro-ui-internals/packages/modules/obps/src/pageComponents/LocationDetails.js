@@ -27,7 +27,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
   //const { isLoading, data: citymodules } = Digit.Hooks.obps.useMDMS(stateId, "tenant", ["citymodule"]);
   let [cities, setcitiesopetions] = useState(allCities);
   let validation = { };
-  let cityCode = formData?.data?.edcrDetails?.tenantId;
+  let cityCode = !(formData?.selectedPlot) ? formData?.data?.edcrDetails?.tenantId :  Digit.ULBService.getCitizenCurrentTenant(true);
   formData = { address: { ...formData?.address } };
   const isMobile = window.Digit.Utils.browser.isMobile();
   useEffect(() => {
