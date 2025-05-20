@@ -59,6 +59,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [isUploading, setIsUploading] = useState(false);
   const [geoLocationData, setGeoLocationData] = useState();
   const [vendingZones, setvendingZones] = useState();
+  const [comment, setComment] = useState("");
+
 
   useEffect(() => {
     setApprovers(approverData?.Employees?.map((employee) => ({ uuid: employee?.uuid, name: employee?.user?.name })));
@@ -213,6 +215,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => { }}
       formId="modal-action"
+      isDisabled={(action?.docUploadRequired && !uploadedFile && !comment) || !comment}
     >
 
       <FormComposer
@@ -223,6 +226,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         onSubmit={submit}
         defaultValues={defaultValues}
         formId="modal-action"
+        onFormValueChange={(setValue, values) => {
+          setComment(values?.comments);
+        }}
       />
 
     </Modal>

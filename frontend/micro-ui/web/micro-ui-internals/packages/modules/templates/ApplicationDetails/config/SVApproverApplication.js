@@ -36,7 +36,7 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
                 />
               ),
             },
-          (selectApprover || []).some((item) => item.code === "TVCEMPLOYEE") &&
+          (selectApprover || []).some((item) => item.code === "TVCEMPLOYEE" || item.code === "SVCEMP") &&
           {
             label: t("SV_CONFIRM_VENDING_ZONE"),
             type: "dropdown",

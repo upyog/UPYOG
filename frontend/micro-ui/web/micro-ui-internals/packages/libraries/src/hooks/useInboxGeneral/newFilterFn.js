@@ -369,7 +369,7 @@ export const filterFunctions = {
           searchFilters.vendingZone = vendingZone;
         }
         if (status) {
-          searchFilters.status = status;
+          searchFilters.applicationStatus = status;
         }
         if (applicationNumber) {
           searchFilters.applicationNumber = applicationNumber;
