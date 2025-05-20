@@ -48,6 +48,9 @@ public class WaterTankerBookingDetail {
 	@NotBlank
 	private String tankerType;
 
+	@NotBlank
+	private String waterType;
+
 	@NotNull
 	private int tankerQuantity;
 
