@@ -25,7 +25,7 @@ const SVBusinessDetails = ({ t, config, onSelect, userType, formData, editdata, 
   const [vendorLocality, setVendorLocality] = useState(formData?.businessDetails?.vendorLocality || "");
   const [areaRequired, setareaRequired] = useState(formData?.businessDetails?.areaRequired || previousData?.vendingArea || editdata?.vendingArea || "2.12");
   const [nameOfAuthority, setnameOfAuthority] = useState(formData?.businessDetails?.nameOfAuthority || previousData?.localAuthorityName || editdata?.localAuthorityName || "");
-  const [vendingPayment, setVendingPayment] = useState(convertToObject(previousData?.vendorPaymentFrequency || editdata?.vendorPaymentFrequency) || formData?.businessDetails?.vendorPaymentFrequency || "");
+  const [vendingPayment, setVendingPayment] = useState(formData?.businessDetails?.vendorPaymentFrequency || convertToObject(previousData?.vendorPaymentFrequency || editdata?.vendorPaymentFrequency) || formData?.businessDetails?.vendorPaymentFrequency || "");
   const [vendingLiscence, setvendingLiscence] = useState(formData?.businessDetails?.vendingLiscence || previousData?.vendingLiscence || editdata?.vendingLiscence || "");
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   const [showToast, setShowToast] = useState(null);
