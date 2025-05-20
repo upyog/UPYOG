@@ -184,6 +184,7 @@ const WTApplicationDetails = () => {
             <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
             <StatusTable>
               <Row className="border-none" label={t("WT_TANKER_TYPE")} text={wt_details?.tankerType || t("CS_NA")} />
+              <Row className="border-none" label={t("WT_WATER_TYPE")} text={wt_details?.waterType || t("CS_NA")} />
               <Row className="border-none" label={t("WT_TANKER_QUANTITY")} text={wt_details?.tankerQuantity|| t("CS_NA")}/>
               <Row className="border-none" label={t("WT_WATER_QUANTITY")} text={wt_details?.waterQuantity + " Ltr"|| t("CS_NA")} />
               <Row className="border-none" label={t("WT_DELIVERY_DATE")} text={formatDate(wt_details?.deliveryDate)|| t("CS_NA")} />

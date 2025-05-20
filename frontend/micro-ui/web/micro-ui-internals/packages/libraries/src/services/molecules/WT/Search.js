@@ -60,6 +60,7 @@ export const WTSearch = {
         asSectionHeader: true,
         values: [
           { title: "WT_TANKER_TYPE", value: response?.tankerType || t("CS_NA")},
+          { title: "WT_WATER_TYPE", value: response?.waterType || t("CS_NA")},
           { title: "WT_TANKER_QUANTITY", value: response?.tankerQuantity || t("CS_NA")},
           { title: "WT_WATER_QUANTITY", value: response?.waterQuantity + " Ltr" || t("CS_NA")},
           { title: "WT_DELIVERY_DATE", value:  format(new Date(response?.deliveryDate), 'dd-MM-yyyy') || t("CS_NA")},

@@ -39,6 +39,7 @@ export const waterTankerPayload = (data) =>{
     waterTankerBookingDetail: {
         tenantId: data?.tenantId,
         tankerType: data?.requestDetails?.tankerType?.code,
+        waterType: data?.requestDetails?.waterType?.code,
         tankerQuantity: data?.requestDetails?.tankerQuantity?.code,
         waterQuantity: data?.requestDetails?.waterQuantity?.code,
         description: data?.requestDetails?.description,
