@@ -500,6 +500,18 @@ public class PropertyQueryBuilder {
 			addToPreparedStatement(preparedStmtList, criteria.getOwnerOldCustomerIds());
 		}
 		
+		if (null != criteria.getName()) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("owner.name = ?");
+			preparedStmtList.add(criteria.getName());
+		}
+		
+		if (null != criteria.getMobileNumber()) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("owner.mobile_number = ?");
+			preparedStmtList.add(criteria.getMobileNumber());
+		}
+		
 		return builder.toString();
 	}
 
