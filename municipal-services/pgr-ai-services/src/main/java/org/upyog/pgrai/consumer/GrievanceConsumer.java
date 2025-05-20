@@ -15,6 +15,7 @@ import org.upyog.pgrai.service.GrievanceFeignClient;
 import org.upyog.pgrai.web.models.ServiceRequest;
 import org.upyog.pgrai.web.models.grievanceClient.Grievance;
 import org.upyog.pgrai.web.models.grievanceClient.GrievanceMapper;
+import org.upyog.pgrai.web.models.grievanceClient.GrievanceResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class GrievanceConsumer {
             ObjectMapper mapper = new ObjectMapper();
             ServiceRequest request = mapper.convertValue(record, ServiceRequest.class);
             Grievance grievance = GrievanceMapper.toGrievance(request);
-            Map<String, String> response = grievanceFeignClient.createGrievance(grievance);
+            GrievanceResponse response = grievanceFeignClient.createGrievance(grievance);
 
             log.info("Grievance created with response: {}", response);
         }
