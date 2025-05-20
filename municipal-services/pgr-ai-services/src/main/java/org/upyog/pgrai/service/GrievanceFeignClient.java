@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.upyog.pgrai.web.models.grievanceClient.Grievance;
+import org.upyog.pgrai.web.models.grievanceClient.GrievanceResponse;
 
 import java.util.Map;
 
@@ -20,6 +21,6 @@ public interface GrievanceFeignClient {
      * @return Map with grievance ID and status.
      */
     @PostMapping("/grievances")
-    Map<String, String> createGrievance(@RequestBody Grievance grievance);
+    GrievanceResponse createGrievance(@RequestBody Grievance grievance);
 }
 
