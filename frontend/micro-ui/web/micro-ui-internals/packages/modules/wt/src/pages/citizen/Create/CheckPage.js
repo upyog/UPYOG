@@ -105,6 +105,10 @@ In Parent Component,  we are passing the data as a props coming through params (
               actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/request-details`} />}
               />
               <Row
+              label={t("WT_WATER_TYPE")}
+              text={`${t(checkForNA(requestDetails?.waterType?.code))}`}
+              />
+              <Row
               label={t("WT_TANKER_QUANTITY")}
               text={`${t(checkForNA(requestDetails?.tankerQuantity?.code))}`}
               />

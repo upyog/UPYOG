@@ -14,6 +14,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const [tankerType, settankerType] = useState(formData?.requestDetails?.tankerType  || "");
   const [tankerQuantity, settankerQuantity] = useState(formData?.requestDetails?.tankerQuantity || "");
   const [waterQuantity, setwaterQuantity] = useState(formData?.requestDetails?.waterQuantity || "");
+  const [waterType, setWaterType] = useState(formData?.requestDetails?.waterType || "");
   const [deliveryDate, setdeliveryDate] = useState(formData?.requestDetails?.deliveryDate || "");
   const [description, setdescription] = useState(formData?.requestDetails?.description || "");
   const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime || "");
@@ -45,11 +46,26 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
     },
   });
 
+   // Fetch WaterType data from MDMS
+   const { data: WaterTypeData} = Digit.Hooks.useCustomMDMS(tenantId, "Request-service", [{ name: "WaterType" }], {
+    select: (data) => {
+      const formattedData = data?.["Request-service"]?.["WaterType"];
+      return formattedData;
+    },
+  });
+
   let Vehicle = [];
 
   let tankerDetails =[];
 
   let tankerTypeDetails = [];
+
+  let WaterType = [];
+  
+  // Iterate over the WaterType array and push data to the WaterType array
+  WaterTypeData && WaterTypeData.map((data) => {
+    WaterType.push({ i18nKey: `${data.code}`, code: `${data.code}`, value: `${data.code}`});
+  });
 
   // Iterate over the TankerQuantity array and push data to the Vehicle array
   TankerDetails && TankerDetails.map((data) => {
@@ -107,7 +123,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
 
   const goNext = () => {
     let requestDetails = formData.requestDetails;
-    let request = { ...requestDetails, tankerType, deliveryDate, tankerQuantity, waterQuantity, deliveryTime, description, extraCharge };
+    let request = { ...requestDetails, tankerType, deliveryDate, tankerQuantity,waterType, waterQuantity, deliveryTime, description, extraCharge };
     onSelect(config.key, request, false);
   };
 
@@ -123,7 +139,7 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
         config={config}
         onSelect={goNext}
         t={t}
-        isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description }
+        isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description || !waterType}
       >
         <div>
           <CardLabel>{`${t("WT_TANKER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
@@ -140,6 +156,17 @@ const RequestDetails = ({ t, config, onSelect, userType, formData }) => {
             labelKey="i18nKey"
             isPTFlow={true}
           />
+          <CardLabel>{`${t("WT_WATER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
+            <Dropdown
+              className="form-field"
+              selected={waterType}
+              placeholder={t("WT_SELECT_WATER_TYPE")}
+              select={setWaterType}
+              option={WaterType}
+              style={{ width: "100%" }}
+              optionKey="i18nKey"
+              t={t}
+            />
            <CardLabel>{`${t("WT_WATER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
             <Dropdown
               className="form-field"
