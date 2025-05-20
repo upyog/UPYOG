@@ -105,7 +105,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
         {
             Header: t("SV_VENDING_ZONES"),
             Cell: (row) => {
-                return GetCell(`${t(row?.row?.original?.vendingZone)}`)
+                return GetCell(`${t(row?.row?.original?.vendingZoneValue)}`)
 
             },
             disableSortBy: true,

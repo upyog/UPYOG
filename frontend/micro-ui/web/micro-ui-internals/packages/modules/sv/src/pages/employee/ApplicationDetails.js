@@ -71,8 +71,6 @@ const ApplicationDetails = () => {
   const vz = vending_Zone?.filter((zone) => zone?.code === appDetailsToShow?.applicationData?.applicationData?.vendingZone || zone?.value === appDetailsToShow?.applicationData?.applicationData?.vendingZone);
   const UserVendingZone = vz[0]?.value;
   const UserVendingZoneCode = vz[0]?.code;
-  console.log("vendcbdfging_Zone", vz, vending_Zone);
-
 
   // This code wil check if the the employee has access && businessService is streetvending and nextAction is Pay then it will redirect in the Payment page
   const SV_CEMP = Digit.UserService.hasAccess(["SVCEMP", "TVCEMPLOYEE"]) || false;
