@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.inbox.util.InboxConstants;
+import org.egov.inbox.util.PGRAiConstants;
 import org.egov.inbox.util.StreetVendingConstants;
 import org.egov.inbox.web.model.InboxSearchCriteria;
 import org.egov.inbox.web.model.workflow.ProcessInstanceSearchCriteria;
@@ -94,6 +95,10 @@ public class StreetVendingInboxFilterService {
 			if (moduleSearchCriteria.containsKey(SV_APPLICATION_NUMBER_PARAM)) {
 				searchCriteria.put(SV_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(SV_APPLICATION_NUMBER_PARAM));
 			}
+			
+			if (moduleSearchCriteria.containsKey(STATUS_PARAM)) {
+				searchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(STATUS_PARAM));
+			}
 
 			// Accomodating process search criteria in searcher request
 			if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
@@ -181,11 +186,15 @@ public class StreetVendingInboxFilterService {
 			if (moduleSearchCriteria.containsKey(SV_APPLICATION_NUMBER_PARAM)) {
 				searchCriteria.put(SV_APPLICATION_NUMBER_PARAM, moduleSearchCriteria.get(SV_APPLICATION_NUMBER_PARAM));
 			}
+			if (moduleSearchCriteria.containsKey(STATUS_PARAM)) {
+				searchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(STATUS_PARAM));
+			}
 
 			// Accomodating process search criteria in searcher request
 			if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
 				searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
 			}
+			
 			if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
 				searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
 			} else {

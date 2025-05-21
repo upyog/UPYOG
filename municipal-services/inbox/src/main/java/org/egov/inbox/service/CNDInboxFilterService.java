@@ -123,6 +123,10 @@ public class CNDInboxFilterService {
 				if (moduleSearchCriteria.containsKey(APPLICATION_NO_PARAM)) {
 					searchCriteria.put(APPLICATION_NO_PARAM, moduleSearchCriteria.get(APPLICATION_NO_PARAM));
 				}
+				
+				if (moduleSearchCriteria.containsKey(STATUS_PARAM)) {
+					searchCriteria.put(STATUS_PARAM, moduleSearchCriteria.get(STATUS_PARAM));
+				}
 
 				// Accomodating process search criteria in searcher request
 				if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {

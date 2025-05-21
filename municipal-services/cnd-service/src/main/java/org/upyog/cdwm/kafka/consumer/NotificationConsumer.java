@@ -69,7 +69,7 @@ public class NotificationConsumer {
 				applicationStatus = applicationDetail.getWorkflow().getAction();
 			}
 
-			log.info(" Application status applicationDetail.getWorkflow() : " + applicationDetail.getWorkflow());
+			log.info(" Application status applicationDetail.getWorkflow() : " + applicationDetail.getWorkflow().getAction());
 
 			notificationService.process(cndRequest, applicationStatus);
 		}

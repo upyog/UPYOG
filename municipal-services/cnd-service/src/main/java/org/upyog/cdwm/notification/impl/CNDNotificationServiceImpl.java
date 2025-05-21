@@ -63,12 +63,12 @@ public class CNDNotificationServiceImpl implements CNDNotificationService {
         List<String> configuredChannelNames = util.fetchChannelList(new RequestInfo(), tenantId.split("\\.")[0], config.getModuleName(), status);
 
         // Send app notification
-        if (eventRequest != null) {
+        if (eventRequest != null && configuredChannelNames.contains(NotificationConstants.CHANNEL_NAME_EVENT)) {
             util.sendEventNotification(eventRequest);
         }
 
         // Send SMS notification
-        if (isNotificationEnabled(config.getIsSMSNotificationEnabled(), configuredChannelNames, NotificationConstants.CHANNEL_NAME_SMS)) {
+        if (configuredChannelNames.contains(NotificationConstants.CHANNEL_NAME_SMS)) {
             List<SMSRequest> smsRequests = new LinkedList<>();
             util.enrichSMSRequest(request, smsRequests);
             if (!CollectionUtils.isEmpty(smsRequests)) {
@@ -77,7 +77,7 @@ public class CNDNotificationServiceImpl implements CNDNotificationService {
         }
 
         // Send Email notification
-        if (isNotificationEnabled(config.getIsEmailNotificationEnabled(), configuredChannelNames, NotificationConstants.CHANNEL_NAME_EMAIL)) {
+        if (configuredChannelNames.contains(NotificationConstants.CHANNEL_NAME_SMS)) {
             Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
             List<EmailRequest> emailRequests = util.createEmailRequest(requestInfo, messageMap.get(NotificationConstants.MESSAGE_TEXT), mapOfPhnoAndEmail);
             util.sendEmail(emailRequests);
