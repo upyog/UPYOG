@@ -1,7 +1,9 @@
 package org.upyog.pgrai.service;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.upyog.pgrai.web.models.grievanceClient.Grievance;
 import org.upyog.pgrai.web.models.grievanceClient.GrievanceResponse;
@@ -22,5 +24,17 @@ public interface GrievanceFeignClient {
      */
     @PostMapping("/grievances")
     GrievanceResponse createGrievance(@RequestBody Grievance grievance);
+
+    /**
+     * Calls FastAPI endpoint to update an existing grievance.
+     *
+     * @param grievanceId ID of the grievance to be updated.
+     * @param updateFields Map with fields to be updated.
+     * @return Updated GrievanceResponse object.
+     */
+    @PutMapping("/grievances/{grievance_id}")
+    GrievanceResponse updateGrievance(@PathVariable("grievance_id") String grievanceId,
+            @RequestBody Map<String, Object> updateFields);
+
 }
 

@@ -71,7 +71,7 @@ public class PGRService {
         enrichmentService.enrichCreateRequest(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(tenantId,config.getCreateTopic(),request);
-        producer.push(tenantId,config.getGrievanceEsConsumerTopic(),request);
+        producer.push(tenantId,config.getGrievanceEsConsumerCreateTopic(),request);
         return request;
     }
 
@@ -132,6 +132,7 @@ public class PGRService {
         enrichmentService.enrichUpdateRequest(request);
         workflowService.updateWorkflowStatus(request);
         producer.push(tenantId,config.getUpdateTopic(),request);
+        producer.push(tenantId,config.getGrievanceEsConsumerUpdateTopic(),request);
         return request;
     }
 

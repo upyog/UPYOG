@@ -227,11 +227,17 @@ public class PGRConfiguration {
     @Value("${is.environment.central.instance}")
     private Boolean isEnvironmentCentralInstance;
 
-    // grievance elasticsearch consumer topic
-    @Value("${egov.grievance.es.consumer.topic}")
-    private String grievanceEsConsumerTopic;
+    // create grievance elasticsearch consumer topic
+    @Value("${upyog.grievance.es.consumer.create.topic}")
+    private String grievanceEsConsumerCreateTopic;
 
+    // To enable or disable grievance consumer
     @Value("${grievance.consumer.enabled:true}")
     private boolean isConsumerEnabled;
+
+    // update grievance elasticsearch consumer topic
+    @Value("${upyog.grievance.es.consumer.update.topic}")
+    private String grievanceEsConsumerUpdateTopic;
+
 
 }
