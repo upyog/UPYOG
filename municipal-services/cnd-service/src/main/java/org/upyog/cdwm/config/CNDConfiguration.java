@@ -2,6 +2,9 @@ package org.upyog.cdwm.config;
 
 
 import lombok.Getter;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -112,6 +115,9 @@ public class CNDConfiguration {
 
     @Value("${upyog.mdms.v2.host}")
     private String mdmsV2Host;
+    
+	@Value("${upyog.mdms.v2.search.endpoint}")
+	private String mdmsV2Path;
 
     @Value("${upyog.mdms.v2.search.endpoint}")
     private String mdmsV2Endpoint;
@@ -119,6 +125,13 @@ public class CNDConfiguration {
     @Value("${upyog.mdms.v2.enabled}")
     private boolean mdmsV2Enabled;
 
+	@PostConstruct
+	public void init() {
+		if(mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsPath = mdmsV2Path;
+		}
+	}
 
     // Billing Service configs
     @Value("${egov.billingservice.host}")
