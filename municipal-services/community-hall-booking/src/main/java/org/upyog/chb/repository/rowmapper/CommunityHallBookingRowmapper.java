@@ -42,6 +42,7 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Co
 						.applicationDate(rs.getLong("application_date"))
 						.tenantId(tenantId)
 						//TODO : check payment_date
+						.additionaldetail(rs.getString("additionaldetail"))
 						.communityHallCode(rs.getString("community_hall_code"))
 						.bookingStatus(rs.getString("booking_status"))
 						.specialCategory(specialCategory).purpose(bookingPurpose)
