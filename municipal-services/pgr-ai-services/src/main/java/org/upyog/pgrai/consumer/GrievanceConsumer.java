@@ -1,11 +1,11 @@
 package org.upyog.pgrai.consumer;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -37,7 +37,7 @@ public class GrievanceConsumer {
      * @param record the incoming Kafka message payload
      * @param topic  the Kafka topic the message was received from
      */
-    @KafkaListener(topics = {"${egov.grievance.es.consumer.topic}"})
+    @KafkaListener(topics = {"${upyog.grievance.es.consumer.create.topic}","${upyog.grievance.es.consumer.update.topic}"})
     public void consume(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         if (!pgrConfiguration.isConsumerEnabled()) {
@@ -49,9 +49,16 @@ public class GrievanceConsumer {
             ObjectMapper mapper = new ObjectMapper();
             ServiceRequest request = mapper.convertValue(record, ServiceRequest.class);
             Grievance grievance = GrievanceMapper.toGrievance(request);
-            GrievanceResponse response = grievanceFeignClient.createGrievance(grievance);
-
-            log.info("Grievance created with response: {}", response);
+            if (topic.equalsIgnoreCase(pgrConfiguration.getGrievanceEsConsumerCreateTopic())) {
+                GrievanceResponse response = grievanceFeignClient.createGrievance(grievance);
+                log.info("Grievance created with response: {}", response);
+            } else if (topic.equalsIgnoreCase(pgrConfiguration.getGrievanceEsConsumerUpdateTopic())) {
+                // Convert grievance object to updateFields map
+                Map<String, Object> updateFields = mapper.convertValue(grievance, new TypeReference<Map<String, Object>>() {});
+                String grievanceId = grievance.getGrievanceId();  // Ensure grievanceId is set
+                GrievanceResponse response = grievanceFeignClient.updateGrievance(grievanceId, updateFields);
+                log.info("Grievance updated with response: {}", response);
+            }
         }
         catch (FeignException fe) {
             int status = fe.status();
