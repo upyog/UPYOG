@@ -56,7 +56,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
   /**
    * Transforms MDMS product data into dropdown options
    */
-  const menu = Menu?.Ewaste?.ProductName?.map(ewasteDetails => ({
+  const menu = Menu?.map(ewasteDetails => ({
     i18nKey: `EWASTE_${ewasteDetails.code}`,
     code: ewasteDetails.name,
     value: ewasteDetails.name,
