@@ -118,7 +118,7 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
       {t("PHOTO_UPLOAD") + (index !== 0 ? " " + (index + 1) : " 1")}
     </CardLabel>
 
-    <div className="field" style={{ display: "flex", alignItems: "center", justifyContent: "space-between",width: user.type === "EMPLOYEE" ? "50%" : "86%"}}>
+    <div className="field" style={{ display: "flex", alignItems: "center", justifyContent: "space-between",width: user.type === "EMPLOYEE" ? "50%" : "50%"}}>
       <UploadFile
         onUpload={(e) => handleFileSelect(e, index)}
         onDelete={() =>

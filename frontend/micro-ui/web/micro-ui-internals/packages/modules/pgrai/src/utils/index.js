@@ -103,8 +103,15 @@ export const DataConvert = (data) => {
           },
           geoLocation: data.newGrievance.geoLocation,
         },
-        // for employee side creation and getting the citizen details
-        citizen: {
+      },
+      workflow: {
+        action: "APPLY",
+        verificationDocuments: data.newGrievance?.verificationDocuments
+      }
+    };
+  
+    if (data.userType === "EMPLOYEE") {
+      formdata.service.citizen = {
           type: "CITIZEN",
           name: data.newGrievance?.name || data.newGrievance?.citizenName,
           mobileNumber: data.newGrievance?.mobileNumber || data.newGrievance?.citizenMobile,
@@ -117,13 +124,8 @@ export const DataConvert = (data) => {
             },
           ],
           tenantId: data.tenantId,
-        }
-  },
-    workflow: {
-      action: "APPLY",
-      verificationDocuments: data.newGrievance?.verificationDocuments
-    }
   };
+    }
 
   return formdata;
 };
