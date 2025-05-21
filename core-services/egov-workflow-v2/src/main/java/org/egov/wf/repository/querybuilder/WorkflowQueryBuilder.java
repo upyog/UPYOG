@@ -3,6 +3,7 @@ package org.egov.wf.repository.querybuilder;
 import static java.util.Objects.isNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -78,13 +79,15 @@ public class WorkflowQueryBuilder {
 
         if (!criteria.getHistory())
             builder.append(" latest=true");
+		/* changes for state level Inbox search --Abhishek (21-05-2025) */
+        
+        List<String> stateTenant = Arrays.asList("pb", "pb.punjab");
+        boolean isWildcardTenant = stateTenant.contains(criteria.getTenantId());
 
-        if (criteria.getHistory())
-            builder.append(" pi.tenantid=? ");
-        else
-            builder.append(" AND pi.tenantid=? ");
+        String clause = isWildcardTenant ? " pi.tenantid LIKE ? " : " pi.tenantid = ? ";
+        builder.append(criteria.getHistory() ? clause : " AND" + clause);
+        preparedStmtList.add(isWildcardTenant ? "pb.%" : criteria.getTenantId());
 
-        preparedStmtList.add(criteria.getTenantId());
 
         List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
