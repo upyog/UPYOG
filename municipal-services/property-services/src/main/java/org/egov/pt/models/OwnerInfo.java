@@ -34,6 +34,8 @@ public class OwnerInfo extends User {
 	@SafeHtml
 	@JsonProperty("ownerInfoUuid")
 	private String ownerInfoUuid;
+	
+	private String propertyId;
 
 	@SafeHtml
 	@JsonProperty("gender")

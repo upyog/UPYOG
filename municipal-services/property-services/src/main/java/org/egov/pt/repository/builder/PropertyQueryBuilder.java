@@ -224,6 +224,7 @@ public class PropertyQueryBuilder {
 			+ "COUNT(distinct case when property.status = 'REJECTED' then property.id end) as applicationRejected "
 			+ "from EG_PT_PROPERTY property";
 	
+	private static final String PROPERTY_OWNERS_SEARCH_QUERY = "select * from eg_pt_owner epo ";
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
 		
@@ -710,6 +711,13 @@ public class PropertyQueryBuilder {
 			builder.append(" property.tenantId = ? ");
 			preparedStmtList.add(totalCountRequest.getTenantId());
 		}
+		return builder.toString();
+	}
+
+	public String getOwnerSearchQuery(List<Object> preparedStmtList) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(PROPERTY_OWNERS_SEARCH_QUERY);
+
 		return builder.toString();
 	}
 

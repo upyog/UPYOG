@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
@@ -35,6 +36,7 @@ import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.models.workflow.BusinessServiceResponse;
 import org.egov.pt.models.workflow.State;
 import org.egov.pt.producer.PropertyProducer;
+import org.egov.pt.repository.OwnersRepository;
 import org.egov.pt.repository.PropertyRepository;
 import org.egov.pt.util.EncryptionDecryptionUtil;
 import org.egov.pt.util.PTConstants;
@@ -46,6 +48,7 @@ import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.pt.web.contracts.PropertyResponse;
 import org.egov.pt.web.contracts.PropertyStatusUpdateRequest;
 import org.egov.pt.web.contracts.PtTaxCalculatorTrackerRequest;
+import org.egov.pt.web.contracts.RequestInfoWrapper;
 import org.egov.pt.web.contracts.TotalCountRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +111,9 @@ public class PropertyService {
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
+	
+	@Autowired
+	private OwnersRepository ownersRepository;
 
 	/**
 	 * Enriches the Request and pushes to the Queue
@@ -839,4 +845,50 @@ public class PropertyService {
 	private boolean containsIgnoreCase(String source, String target) {
 	    return source != null && source.toLowerCase().contains(target.toLowerCase());
 	}
+
+	public List<OwnerInfo> updateExistingOwnerDetails(RequestInfoWrapper requestInfoWrapper) {
+		// Fetch all the owners from the repository
+		List<OwnerInfo> owners = ownersRepository.getAllPropertyOwners();
+
+		// Extract all the UUIDs of owners
+		Set<String> ownerUuids = owners.stream().map(OwnerInfo::getUuid).collect(Collectors.toSet());
+
+		// Create a user search request to retrieve the user details for the owners
+		UserSearchRequest userSearchRequest = UserSearchRequest.builder()
+				.requestInfo(requestInfoWrapper.getRequestInfo()).uuid(ownerUuids).build();
+
+		// Fetch the user details in a map (UUID -> User)
+		Map<String, User> uuidToUserMap = userService.searchUser(userSearchRequest);
+
+		// Iterate over the owners and update their details with user info
+		owners.forEach(owner -> {
+			User user = uuidToUserMap.get(owner.getUuid());
+			if (user != null) {
+				owner.setName(user.getName());
+				owner.setMobileNumber(user.getMobileNumber());
+			} else {
+				// Handle case where the user isn't found if necessary (e.g., log or default
+				// values)
+				log.warn("User not found for owner UUID: " + owner.getUuid());
+			}
+		});
+
+		// Now we update owners in batches of 100
+		final int BATCH_SIZE = 100;
+		int totalOwners = owners.size();
+		for (int i = 0; i < totalOwners; i += BATCH_SIZE) {
+			// Calculate the end index for the batch (ensure we don't go out of bounds)
+			int end = Math.min(i + BATCH_SIZE, totalOwners);
+
+			// Get a sublist of owners for this batch
+			List<OwnerInfo> batchOwners = owners.subList(i, end);
+
+			// Update the batch in the repository
+			ownersRepository.updateOwnersBatch(batchOwners);
+		}
+
+		return owners;
+	}
+
+
 }
