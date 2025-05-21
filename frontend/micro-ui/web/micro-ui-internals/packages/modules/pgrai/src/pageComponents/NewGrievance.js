@@ -266,7 +266,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               type="text"
               isMandatory={false}
               name="name"
-              placeholder={"Enter Name"}
+              placeholder={t("PGR_AI_NAME")}
               value={name}
               style={{ width: "50%" }}
               onChange={(e) => setName(e.target.value)}
@@ -285,7 +285,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
               type="tel"
               isMandatory={false}
               name="phoneNumber"
-              placeholder={"Enter Phone Number"}
+              placeholder={t("PGR_AI_PHONE_NUMBER")}
               value={phoneNumber}
               style={{ width: "50%" }}
               onChange={handlePhoneNumberChange}
@@ -302,7 +302,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             name="grievance"
             value={grievanceText}
-            placeholder={t("Start typing to get suggestions")}
+            placeholder={t("PGR_AI_GRIEVANCE_PLACEHOLDER")}
             style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
             onChange={(e) => setGrievanceText(e.target.value)}
             onFocus={handleInputFocus}
@@ -337,7 +337,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           isMandatory={false}
           style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           name="grievanceType"
-          placeholder={"Grievance Type"}
+          placeholder={t("PGR_AI_GRIEVANCE_TYPE")}
           value={grievanceType}
           onChange={(e) => setGrievanceType(e.target.value)}
           disabled={isLoading}
@@ -351,7 +351,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           type="text"
           style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           isMandatory={false}
-          placeholder={"Grievance Sub Type"}
+          placeholder={t("PGR_AI_GRIEVANCE_SUB_TYPE")}
           name="grievanceSubType"
           value={grievanceSubType}
           onChange={(e) => setGrievanceSubType(e.target.value)}
@@ -367,7 +367,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           <TextInput
             t={t}
             value={location}
-            placeholder={"Click on the icon to fetch location"}
+            placeholder={t("PGR_AI_GRIEVANCE_LOCATION")}
             onChange={handleLocationChange}
             style={{ paddingRight: "30px", width: user.type === "EMPLOYEE" ? "50%" : "86%"}}
           />
@@ -392,7 +392,7 @@ const NewGrievance = ({ t, config, onSelect, userType, formData }) => {
           t={t}
           type="text"
           name="landmark"
-          placeholder={"Enter Landmark"}
+          placeholder={t("PGR_AI_LANDMARK")}
           style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
           value={addressDetails.landmark || ""}
           onChange={(e) => setAddressDetails({ ...addressDetails, landmark: e.target.value })}
