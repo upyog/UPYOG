@@ -76,15 +76,21 @@ public class DemandService {
 		
 //		String code = (String) asset.get("code");
 //		String ulbName = (String) asset.get("UlbName");
-		Integer assetGstCost = (Integer) AssetParentCategoryDetails.get("assetGstCost");
-		Integer securityAmount = (Integer) AssetParentCategoryDetails.get("securityAmount");
+//		Double assetGstCost = (Double) AssetParentCategoryDetails.get("assetGstCost");
+//		Double securityAmount = (Double) AssetParentCategoryDetails.get("securityAmount");
+		
+		Number assetGstCostNum = (Number) AssetParentCategoryDetails.get("assetGstCost");
+		Double assetGstCost = assetGstCostNum != null ? assetGstCostNum.doubleValue() : 0.0;
+
+		Number securityAmountNum = (Number) AssetParentCategoryDetails.get("securityAmount");
+		Double securityAmount = securityAmountNum != null ? securityAmountNum.doubleValue() : 0.0;
 
 		// Calculate Fees for the booking 
         long days = calculateDaysBetween(bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingDate(), bookingRequest.getHallsBookingApplication().getBookingSlotDetails().get(0).getBookingToDate());    	
 
 		BigDecimal totalPayableAmount = BigDecimal.valueOf(days)
 			    .multiply(new BigDecimal(assetGstCost)) // Converts assetCost string to BigDecimal
-			    .add(new BigDecimal(securityAmount)).setScale(0, RoundingMode.CEILING); // Converts securityAmount string to BigDecimal
+			    .add(new BigDecimal(securityAmount)).setScale(2, RoundingMode.CEILING); // Converts securityAmount string to BigDecimal
     	
     	
 		List<DemandDetail> demandDetails = new LinkedList<>();
